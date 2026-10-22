@@ -61,6 +61,18 @@
 /// Event_UnusedWaterBurstsByTheRiver, which sets group flag FLAG_PLACE_TEMP_05.
 /// FLAG_SCENE_TEMP_41 pauses the man who watches Isaac while a menu is open.
 /// The TBS_PATCH_4 editions also set Dora's sprite priority before Kalay.
+///
+/// Open questions:
+/// - XXX: whether the exit of the second door of Jenna's grandparents' house
+///   (Event_EnterJennasGrandparentsHouseBySecondDoor) is a slip in the exit
+///   table, since it leads into the room the other door does and no exit
+///   comes back to its own entrance; entering by it in a play-through would
+///   settle it.
+/// - XXX: what the actor animations beyond enum ActorAnimation that the scene
+///   sets (5, 10, 13, 16 and 17) show; each sprite's animation table under
+///   graphics/sprite would settle it.
+/// - XXX (picture): the opening's Psynergy, Garet's sprite cycling its
+///   palettes while the hand of Move pushes the pillar and sheds sparkles.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -130,7 +142,7 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
 static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
                                            s32 departureAnimationId,
                                            s32 resumeMotion);
-static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
+static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode);
 static void Event_MendingTheRoof(void);
 static void Event_RoofMended(void);
 static void Vale_UpdateGaretPaletteAndEffects(void);
@@ -144,8 +156,8 @@ static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
 #else
 static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
 #endif
-static void Vale_ConfigureSpawnedParticle(union FieldObject *fieldObject);
-static void Vale_SpawnRisingDustBurst(struct FieldActor *emitter);
+static void Vale_TrailSparkles(union FieldObject *fieldObject);
+static void Vale_VanishMoveHand(struct FieldActor *emitter);
 static void Vale_UpdateParticlePosition(struct FieldActor *particle,
                                         s32 distance, s32 angle);
 static void Event_SettleMovedPillar(void);
@@ -233,6 +245,8 @@ enum ValeActor {
   ACTOR_MAN_GUARDING_MT_ALEPH,
   /// The boards on the roof, sprite 0xce, which Isaac moves into place with
   /// Psynergy at the roof's end (Event_RoofMended).
+  /// ★ Named from what the player sees: a short plank of yellow wood
+  /// (spr_206.png)
   ACTOR_FIRST_BOARD,
   ACTOR_SECOND_BOARD,
   ACTOR_THIRD_BOARD,
@@ -264,9 +278,11 @@ enum ValeAfterKalayActor {
   /// Event_UnusedWaterBurstsByTheRiver shows them: during a
   /// tremor each in turn grows from a tenth of its size at (266, 1230), north
   /// of ACTOR_STRONGMAN_REMEMBERING_FELIX, and vanishes
-  /// (gValeGrowingWaterAction). The row after them places the woman with fair
+  /// (gVale_UnusedWaterGrows). The row after them places the woman with fair
   /// hair of ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing
   /// names her.
+  /// ★ Named from what the player sees: a spout of white water spraying up
+  /// (spr_214.png)
   ACTOR_FIRST_WATER,
   /// An old woman: "Mt. Aleph's eruption was so powerful, it caused the
   /// continent to crack!"
@@ -308,15 +324,21 @@ enum ValeOpeningActor {
   ACTOR_OPENING_PILLAR,
   /// ★ Named from the game: "your mother, Dora, has been crying"
   /// (MsgValeDoraHasBeenCrying)
-  ACTOR_OPENING_DORA,        ///< calls up to Isaac on the roof
-  ACTOR_OPENING_FIRST_BOARD, ///< the boards on the roof, sprite 0xce
+  ACTOR_OPENING_DORA, ///< calls up to Isaac on the roof
+  /// The boards on the roof, as ACTOR_FIRST_BOARD.
+  /// ★ Named from what the player sees: a short plank of yellow wood
+  /// (spr_206.png)
+  ACTOR_OPENING_FIRST_BOARD,
   ACTOR_OPENING_SECOND_BOARD,
   ACTOR_OPENING_THIRD_BOARD,
   /// Sprite 0xd7, the hand of Move (psynergy_effects/catch.c): it pushes the
-  /// pillar for Garet, trailing dust.
+  /// pillar for Garet, shedding sparkles.
+  /// ★ Named from what the player sees: a large open hand (spr_215.png)
   ACTOR_OPENING_MOVE_HAND
 };
 
+/// The leader's animation of hammering on the roof, beyond enum
+/// ActorAnimation's.
 enum { ANIM_HAMMER = 11 };
 
 #include "common/object_staged_actor.h"
@@ -507,7 +529,7 @@ static void Event_ClearPathCellOverride(void) {
 /// VALE_TO_SANCTUM leads into the Sanctum.
 static void Event_EnterSanctum(void) {
   Event_PlayCue(SE_188);
-  Map_AnimateCells(gValeCellAnimC, 45, 11);
+  Map_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Engine_EventRequestExit(VALE_TO_SANCTUM);
 }
@@ -547,7 +569,7 @@ static void Event_TakeExitToValeGate(void) {
 /// VALE_TO_VALE_INTERIORS_SHOPS_EAST leads in.
 static void Event_EnterGaretsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
-  Map_AnimateCells(gValeCellAnimA, 54, 32);
+  Map_AnimateCells(gVale_IsaacsDoorOpens, 54, 32);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 406, 727);
   Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_EAST);
 }
@@ -557,7 +579,7 @@ static void Event_EnterGaretsHouse(void) {
 /// enters from VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH.
 static void Event_EnterValeInteriorsShops(void) {
   Event_PlayCue(SE_DOOR_OPEN);
-  Map_AnimateCells(gValeCellAnimB, 45, 39);
+  Map_AnimateCells(gVale_GrandparentsDoorOpens, 45, 39);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
   Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_SOUTH);
 }
@@ -584,7 +606,7 @@ static void Event_EnterIsaacsHouse(void) {
     Engine_EventEnd();
   } else {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapAnimateCells(gValeCellAnimA, 50, 44);
+    Engine_MapAnimateCells(gVale_IsaacsDoorOpens, 50, 44);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
     Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_INN);
   }
@@ -594,7 +616,7 @@ static void Event_EnterIsaacsHouse(void) {
 /// opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH leads in.
 static void Event_EnterJennasGrandparentsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
-  Map_AnimateCells(gValeCellAnimB, 49, 69);
+  Map_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_NORTH);
 }
@@ -604,7 +626,7 @@ static void Event_EnterJennasGrandparentsHouse(void) {
 /// enters from VALE_INTERIORS_SHOPS_FROM_VALE_WEST.
 static void Event_EnterValeInteriorsShopsWest(void) {
   Event_PlayCue(SE_DOOR_OPEN);
-  Map_AnimateCells(gValeCellAnimD, 52, 76);
+  Map_AnimateCells(gVale_WestHouseDoorOpens, 52, 76);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 1238);
   Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_WEST);
 }
@@ -612,14 +634,12 @@ static void Event_EnterValeInteriorsShopsWest(void) {
 /// A second door in Vale into the house of Jenna's grandparents (touch cell
 /// 11): it opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR leads in,
 /// to the room ValeInteriorsShops enters from
-/// VALE_INTERIORS_SHOPS_FROM_VALE_NORTH. XXX: likely a slip in the exit table,
-/// because the exit sends this door, beside entrance 11, into that room, whose
-/// door returns the party at VALE_FROM_VALE_INTERIORS_SHOPS_NORTH by the other
-/// door, and no exit leads to entrance 11; entering the room by this door in a
-/// play-through would settle it.
+/// VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, whose door returns the party by the
+/// other door; no exit leads back to this door's entrance, which is likely a
+/// slip in the exit table (an open question).
 static void Event_EnterJennasGrandparentsHouseBySecondDoor(void) {
   Event_PlayCue(SE_DOOR_OPEN);
-  Map_AnimateCells(gValeCellAnimA, 35, 74);
+  Map_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR);
 }
@@ -784,12 +804,12 @@ static void Event_WarnAgainstSneakingUpMtAleph(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(3) / 2, PIXELS(1));
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeLeaderWalkActions);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_FirstWarningLeaderPath);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH,
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH,
-                        gValeAlephGuardWalkActions);
+                        gVale_FirstWarningGuardPath);
   Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 474);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -807,7 +827,7 @@ static void Event_WarnAgainstSneakingUpMtAleph(void) {
 #else
   actor->update = (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
 #endif
-  Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH, gValeAlephGuardActions);
+  Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Engine_EventEnd();
 }
@@ -817,7 +837,8 @@ static void Event_RepeatMtAlephWarningFromFirstApproach(void) {
   struct FieldActor *guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     if (guard->timer == 1) {
-      Vale_AskAboutSneakingToAleph(gValePairTableA, gValePairTableB);
+      Vale_AskAboutSneakingToAleph(gVale_LeaderFromWestPath,
+                                   gVale_GuardFromFirstPausePath);
     }
   }
 }
@@ -858,7 +879,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
 #else
   actor->update = (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
 #endif
-  Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH, gValeAlephGuardActions);
+  Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   Engine_EventEnd();
 }
 
@@ -867,7 +888,8 @@ static void Event_RepeatMtAlephWarningFromSecondApproach(void) {
   struct FieldActor *guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     if (guard->timer == 2) {
-      Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableD);
+      Vale_AskAboutSneakingToAleph(gVale_LeaderPushedBackPath,
+                                   gVale_GuardFromSecondPausePath);
     }
   }
 }
@@ -879,9 +901,11 @@ static void Event_RepeatMtAlephWarningAtEitherPause(void) {
     s32 pause;
     pause = guard->timer;
     if (pause == 1) {
-      Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableB);
+      Vale_AskAboutSneakingToAleph(gVale_LeaderPushedBackPath,
+                                   gVale_GuardFromFirstPausePath);
     } else if (pause == 2) {
-      Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableD);
+      Vale_AskAboutSneakingToAleph(gVale_LeaderPushedBackPath,
+                                   gVale_GuardFromSecondPausePath);
     }
   }
 }
@@ -924,15 +948,15 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(JENNA, FACING_WEST, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
-  SceneActor_ResetActorRun(ACTOR_FIRST_BOARD, 2, 1);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
+  Vale_PlaceOrHideBoards(ACTOR_FIRST_BOARD, 2, 1);
   gEventWork->startTransition = 0;
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
   Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetActionScript(JENNA, gJennaAction);
-  Actor_SetActionScript(GARET, gGaretAction);
+  Actor_SetActionScript(JENNA, gVale_JennaWalksToTheHouse);
+  Actor_SetActionScript(GARET, gVale_GaretWalksToTheHouse);
 
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
@@ -961,7 +985,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_SetChildValue(ACTOR_FIRST_BOARD, 0);
   Actor_SetPosition(ACTOR_FIRST_BOARD, PIXELS(390), PIXELS(842));
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Engine_EventWait(200);
   Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
 
@@ -988,7 +1012,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_SetChildValue(ACTOR_FIRST_BOARD, 0);
   Actor_SetPosition(ACTOR_FIRST_BOARD, 0, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Engine_EventWait(200);
   Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
 
@@ -1015,7 +1039,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_SetChildValue(ACTOR_SECOND_BOARD, 0);
   Actor_SetPosition(ACTOR_SECOND_BOARD, 0, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Engine_EventWait(200);
   Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
@@ -1518,7 +1542,7 @@ s32 Vale_Initialize(void) {
                 (void *)Vale_HaveGuardWatchTheLeader;
 #endif
             Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH,
-                                  gValeAlephGuardActions);
+                                  gVale_AlephGuardPatrol);
           }
         } else {
           Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
@@ -1766,7 +1790,7 @@ UNUSED static void Event_UnusedWaterBurstsByTheRiver(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_WATER + 2, 0);
   Engine_TaskWait(20);
   Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  actions = gValeGrowingWaterAction;
+  actions = gVale_UnusedWaterGrows;
   Actor_SetActionScript(ACTOR_FIRST_WATER, actions);
   Engine_TaskWait(10);
   Actor_SetActionScript(ACTOR_FIRST_WATER + 1, actions);
@@ -1858,8 +1882,9 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
   Engine_ActorSetAnimation(actorId, ANIM_STAND);
 }
 
-/// Resets consecutive repair actors to their staging position or hides them.
-static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode) {
+/// Mode 0 sets count boards from first on the roof by the hole, still and
+/// without shadows; any other mode puts them out of sight.
+static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
   s32 selector = first;
   u32 i;
 
@@ -1938,7 +1963,7 @@ static void Event_MendingTheRoof(void) {
   actor = Object_GetById(ACTOR_OPENING_SECOND_BOARD);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   ObjectSystem_SuspendProjectionAndShowSprites();
   message = MsgValeRepairCaption;
   UiText_ShowCenteredMessage(message, 0, 0);
@@ -2001,7 +2026,7 @@ static void Event_MendingTheRoof(void) {
   Engine_EventWait(40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_OPENING_DORA, 0, 40);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Engine_CameraFollowActor(JENNA, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
@@ -2031,8 +2056,8 @@ static void Event_MendingTheRoof(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
 
-  // Garet trains his Psynergy: the hand of Move pushes the pillar, trailing
-  // dust.
+  // Garet trains his Psynergy: the hand of Move pushes the pillar, shedding
+  // sparkles.
   Scene_BeginCutscenePsynergy();
   Engine_ActorSetAnimation(GARET, 17);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | GARET, 0, 20);
@@ -2051,8 +2076,8 @@ static void Event_MendingTheRoof(void) {
   moveHand->x.fixed = PIXELS(428);
   moveHand->y.fixed = PIXELS(208);
   moveHand->z.fixed = PIXELS(584);
-  moveHand->facing = 0x8000;
-  moveHand->update = Vale_ConfigureSpawnedParticle;
+  moveHand->facing = FACING_WEST;
+  moveHand->update = Vale_TrailSparkles;
   Engine_EventWait(4);
   Actor_SetSpeed(ACTOR_OPENING_MOVE_HAND, PIXELS(2), PIXELS(2));
   FieldObject_SetPosition(moveHand, PIXELS(408), PIXELS(208), PIXELS(584));
@@ -2074,7 +2099,7 @@ static void Event_MendingTheRoof(void) {
   Actor_SetChildValue(ACTOR_OPENING_PILLAR, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Vale_SpawnRisingDustBurst(moveHand);
+  Vale_VanishMoveHand(moveHand);
   Scene_EndCutscenePsynergy();
 
   // Finish the reunion conversation after the repair effects settle.
@@ -2245,18 +2270,18 @@ static void Event_RoofMended(void) {
   Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
   turned = Actor_Get(ACTOR_DORA);
 
-  turned->facing = 0;
-  turnBack = 0xc000;
+  turned->facing = FACING_EAST;
+  turnBack = FACING_NORTH;
   turned->facing = turnBack;
   Actor_SetPosition(GARET, PIXELS(298), PIXELS(736));
   turned = Actor_Get(GARET);
-  turnSide = 0x4000;
+  turnSide = FACING_SOUTH;
   turned->facing = turnSide;
   Actor_SetPosition(JENNA, PIXELS(298), PIXELS(760));
   turned = Actor_Get(JENNA);
   turned->facing = turnSide;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   actor = Actor_Get(ACTOR_FIRST_BOARD);
   actor->motionFlags = 0;
   actor->x.fixed = PIXELS(388);
@@ -2284,8 +2309,8 @@ static void Event_RoofMended(void) {
   Engine_EventOpenScreen();
   Actor_SetSpeed(JENNA, PIXELS(1) / 2, turnSide);
   Actor_SetSpeed(GARET, PIXELS(1) / 2, turnSide);
-  Actor_SetActionScript(JENNA, gJennaAction);
-  Actor_SetActionScript(GARET, gGaretAction);
+  Actor_SetActionScript(JENNA, gVale_JennaWalksToTheHouse);
+  Actor_SetActionScript(GARET, gVale_GaretWalksToTheHouse);
   Engine_EventWait(40);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
@@ -2333,7 +2358,7 @@ static void Event_RoofMended(void) {
   Actor_SetPosition(ACTOR_FIRST_BOARD, 0, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Engine_EventWait(120);
   Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
@@ -2376,7 +2401,7 @@ static void Event_RoofMended(void) {
   Actor_SetPosition(ACTOR_SECOND_BOARD, 0, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Engine_EventWait(120);
   Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
@@ -2420,7 +2445,7 @@ static void Event_RoofMended(void) {
   Actor_SetPosition(ACTOR_THIRD_BOARD, 0, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Engine_EventWait(120);
   Scene_EndCutscenePsynergy();
   Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
@@ -2878,8 +2903,9 @@ static void Vale_CycleThirdBoardPalette(void) {
   Vale_CycleActorPalette(Object_GetById(ACTOR_THIRD_BOARD));
 }
 
-static s32 Runtime_ComputeFixedPointDistance(s32 *first_position,
-                                             s32 *second_position) {
+/// The distance in whole pixels between two positions of 16.16 fixed-point x,
+/// y and z.
+static s32 Vale_DistanceInPixels(s32 *first_position, s32 *second_position) {
   s32 delta_x = (*first_position++ - *second_position++) >> 16;
   s32 delta_y = (*first_position++ - *second_position++) >> 16;
   s32 delta_z = (*first_position - *second_position) >> 16;
@@ -2890,6 +2916,12 @@ static s32 Runtime_ComputeFixedPointDistance(s32 *first_position,
   return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
+/// Whether the man guarding Mt. Aleph sees the target: within range pixels and
+/// in the sixteenth of a turn he faces or the one either side of it, or always
+/// when force is set. Seeing it stops him where he stands (paused, mode 1, with
+/// riseCounter marking why) until it is out of sight again; paused without
+/// riseCounter, as Vale_SynchronizeAlephGuardPause leaves him while a menu is
+/// open, he just stands. Returns 1 when he is stopped.
 static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target,
                            s32 range, s32 force) {
   s32 result;
@@ -2905,8 +2937,7 @@ static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target,
       return 1;
     }
   }
-  if (Runtime_ComputeFixedPointDistance(&target->x.fixed, &obj->x.fixed) <
-          range ||
+  if (Vale_DistanceInPixels(&target->x.fixed, &obj->x.fixed) < range ||
       force != 0) {
     angle = (u16)ArcTan2(target->z.fixed - obj->z.fixed,
                          target->x.fixed - obj->x.fixed);
@@ -2932,6 +2963,8 @@ static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target,
   return result;
 }
 
+/// The update hook of the man guarding Mt. Aleph: while he walks, he stops
+/// when the leader comes within 18 pixels in front of him (Vale_TestFacing).
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 48 to 44 bytes in tbs-en.
 #ifdef UBFIX
@@ -2955,8 +2988,9 @@ static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Emits one dust particle below the moving source actor.
-static void Vale_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
+/// The Move hand's update hook in the opening: each frame it sheds a sparkle
+/// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
+static void Vale_TrailSparkles(union FieldObject *fieldObject) {
   struct FieldActor *source = &fieldObject->actor;
   s32 spawnPosition[3];
   s32 randomDistance;
@@ -2975,7 +3009,7 @@ static void Vale_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
     particle->wait = 12;
     Engine_ActorSetSpriteFlags(particle, 0);
     Object_SetMode(particle, 0);
-    Engine_ObjectSetScript(particle, gDustBurstScript);
+    Engine_ObjectSetScript(particle, gVale_SparkleScript);
     {
       struct AnimationObject *record = particle->sprite;
       s32 priorityFlags = ~12;
@@ -2987,9 +3021,9 @@ static void Vale_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   Engine_AudioPlayCue(SE_ITEM_BREAK);
 }
 
-/// Shrinks and raises the emitter, scatters dust, then clears its motion
-/// targets.
-static void Vale_SpawnRisingDustBurst(struct FieldActor *emitter) {
+/// The Move hand rises, spins and shrinks for 31 frames, bursts into eight
+/// sparkles with SE_131, and is put out of sight.
+static void Vale_VanishMoveHand(struct FieldActor *emitter) {
   s32 frameCountdown;
 
   Engine_AudioPlayCue(SE_CAST);
@@ -3004,13 +3038,13 @@ static void Vale_SpawnRisingDustBurst(struct FieldActor *emitter) {
 
   for (frameCountdown = 7; frameCountdown >= 0; frameCountdown--) {
     struct FieldActor *particle = Engine_ObjectCreate(
-        0x11d, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
+        SPRITE_SPARKLE, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
 
     if (particle != 0) {
       s32 verticalSpeed;
 
       Engine_ActorSetSpriteFlags(particle, 0);
-      Engine_ObjectSetScript(particle, (const void *)&gDustBurstScript[1]);
+      Engine_ObjectSetScript(particle, (const void *)&gVale_SparkleScript[1]);
 
       verticalSpeed = Engine_RandomNext() + PIXELS(1);
       particle->acceleration = Q16_ONE;
@@ -3094,6 +3128,8 @@ static void Event_SettleMovedPillar(void) {
   }
 }
 
+/// The callback that plays SE_131 every 16 frames while Isaac's Psynergy lifts
+/// a board at the roof's end.
 static void Vale_PlayStepSound(void) {
   if ((*(u32 *)&gFrameCount & 15) == 0)
     Engine_AudioPlayCue(SE_131);
@@ -3134,14 +3170,17 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
     pillar = Object_GetById(ACTOR_PILLAR);
   if (pillar != 0) {
     if (leader->y.fixed > PIXELS(200))
-      pillar->priorityFlags = 3;
+      pillar->priorityFlags =
+          ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
     else
-      pillar->priorityFlags = 1;
+      pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 
 #include "common/object_orbit.h"
 
+/// Someone calling up Psynergy: palette 7 for two frames in four, and the
+/// world map's linked sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor) {
 
   if ((gFrameCount & 2) != 0)
@@ -3152,6 +3191,8 @@ static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor) {
     WorldMap_CreateLinkedEffects(actor);
 }
 
+/// Someone using Psynergy: palettes 0 to 5 in turn, and sparks every 16
+/// frames.
 static void Vale_CycleActorPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0)
     Engine_ObjectSetPartPalettes(actor, (gFrameCount >> 1) % 6);
@@ -3159,6 +3200,7 @@ static void Vale_CycleActorPaletteAndSpawnEffects(struct FieldActor *actor) {
     WorldMap_CreateLinkedEffects(actor);
 }
 
+/// What Psynergy moves: palettes 0 to 5 in turn, a step every second frame.
 static void Vale_CycleActorPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0)
     Engine_ObjectSetPartPalettes(actor, (gFrameCount >> 1) % 6);
@@ -3193,9 +3235,12 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gValeAlephGuardActions[] = {
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x4000),
+/// The man guarding Mt. Aleph walks his beat below the path once he has warned
+/// Isaac, looking about at each stop. SW_TIMER says which stretch he is on,
+/// 1 to 3, of which the warning events act on the two pauses, 1 and 2.
+s32 gVale_AlephGuardPatrol[] = {
+    SC_SET(SW_SPEED, PIXELS(1) / 2),
+    SC_SET(SW_ACCEL, PIXELS(1) / 4),
     SC_SET(SW_TIMER, 2),
     SC_LABEL(1),
     SC_ARG(2),
@@ -3282,17 +3327,21 @@ s32 gValeAlephGuardActions[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-s32 gLeaderHammerAction[] = {
+/// Isaac on the roof, his sprite stretching and settling with each blow of
+/// the hammer.
+s32 gVale_LeaderHammers[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_Y, 1966),
     SC_WAIT(12),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(12),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_END,
 };
 
-s32 gGaretAction[] = {
+// Garet and Jenna walk to the front of Isaac's house to watch him on the roof.
+
+s32 gVale_GaretWalksToTheHouse[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(300), 0, PIXELS(880)),
     SC_SYNC,
@@ -3303,7 +3352,7 @@ s32 gGaretAction[] = {
     SC_END,
 };
 
-s32 gJennaAction[] = {
+s32 gVale_JennaWalksToTheHouse[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(300), 0, PIXELS(904)),
     SC_SYNC,
@@ -3314,7 +3363,9 @@ s32 gJennaAction[] = {
     SC_END,
 };
 
-s32 gValeGrowingWaterAction[] = {
+/// A spout of water grows from a tenth of its size north of the strongman by
+/// the river and vanishes (Event_UnusedWaterBurstsByTheRiver).
+s32 gVale_UnusedWaterGrows[] = {
     SC_ARG(1),
     SC_POS(PIXELS(266), 0, PIXELS(1230)),
     SC_SET(SW_SCALE_X, 0x1999),
@@ -3330,10 +3381,12 @@ s32 gValeGrowingWaterAction[] = {
     SC_END,
 };
 
-s32 gDustBurstScript[] = {
+/// A sparkle falls and vanishes after 10 frames; the burst's sparkles start at
+/// its second word, past the first SC_FREE.
+s32 gVale_SparkleScript[] = {
     SC_FREE,
     SC_SYNC,
-    SC_SET(SW_SPEED, 0x1000),
+    SC_SET(SW_SPEED, PIXELS(1) / 16),
     SC_ARG(0),
     SC_WAIT(10),
     SC_FREE,
@@ -3661,31 +3714,41 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
 };
 // clang-format on
 
-u16 gValeCellAnimC[] = {
+// The doors' cell animations, from the map's cells below the village, each
+// picture shown for two frames; vale_storm.c has the same four kinds. Each
+// table takes the name of a door it opens. The two of Jenna's grandparents'
+// kind and the west house's show their one open picture twice, where the
+// stormy night's show two.
+
+u16 gVale_SanctumDoorOpens[] = {
     MAP_CELL_STEP(0, 98, 2, 2, 2),
     MAP_CELL_STEP(2, 98, 2, 2, 2),
     MAP_CELL_STEPS_END,
 };
 
-u16 gValeCellAnimA[] = {
+u16 gVale_IsaacsDoorOpens[] = {
     MAP_CELL_STEP(0, 96, 2, 2, 2),
     MAP_CELL_STEP(2, 96, 2, 2, 2),
     MAP_CELL_STEPS_END,
 };
 
-u16 gValeCellAnimB[] = {
+u16 gVale_GrandparentsDoorOpens[] = {
     MAP_CELL_STEP(4, 98, 2, 2, 2),
     MAP_CELL_STEP(4, 98, 2, 2, 2),
     MAP_CELL_STEPS_END,
 };
 
-u16 gValeCellAnimD[] = {
+u16 gVale_WestHouseDoorOpens[] = {
     MAP_CELL_STEP(4, 96, 2, 2, 2),
     MAP_CELL_STEP(4, 96, 2, 2, 2),
     MAP_CELL_STEPS_END,
 };
 
-s32 gValeLeaderWalkActions[] = {
+// The man guarding Mt. Aleph drives Isaac back down the path: at the first
+// warning (Event_WarnAgainstSneakingUpMtAleph), and again from the west or
+// from either of the guard's pauses (Vale_AskAboutSneakingToAleph).
+
+s32 gVale_FirstWarningLeaderPath[] = {
     SC_ARG(5), SC_MOVE(PIXELS(199), 0, PIXELS(446)),
     SC_SYNC,   SC_MOVE(PIXELS(215), 0, PIXELS(472)),
     SC_SYNC,   SC_MOVE(PIXELS(239), 0, PIXELS(461)),
@@ -3693,7 +3756,7 @@ s32 gValeLeaderWalkActions[] = {
     SC_END,
 };
 
-s32 gValeAlephGuardWalkActions[] = {
+s32 gVale_FirstWarningGuardPath[] = {
     SC_ARG(2), SC_MOVE(PIXELS(199), 0, PIXELS(446)),
     SC_SYNC,   SC_MOVE(PIXELS(215), 0, PIXELS(472)),
     SC_SYNC,   SC_MOVE(PIXELS(239), 0, PIXELS(461)),
@@ -3701,9 +3764,9 @@ s32 gValeAlephGuardWalkActions[] = {
     SC_END,
 };
 
-s32 gValePairTableA[] = {
-    SC_SET(SW_SPEED, 0x20000),
-    SC_SET(SW_ACCEL, 0x20000),
+s32 gVale_LeaderFromWestPath[] = {
+    SC_SET(SW_SPEED, PIXELS(2)),
+    SC_SET(SW_ACCEL, PIXELS(2)),
     SC_ARG(5),
     SC_MOVE(PIXELS(224), 0, PIXELS(458)),
     SC_SYNC,
@@ -3719,9 +3782,9 @@ s32 gValePairTableA[] = {
     SC_END,
 };
 
-s32 gValePairTableB[] = {
-    SC_SET(SW_SPEED, 0x18000),
-    SC_SET(SW_ACCEL, 0x10000),
+s32 gVale_GuardFromFirstPausePath[] = {
+    SC_SET(SW_SPEED, PIXELS(3) / 2),
+    SC_SET(SW_ACCEL, PIXELS(1)),
     SC_ARG(2),
     SC_MOVE(PIXELS(216), 0, PIXELS(458)),
     SC_SYNC,
@@ -3735,9 +3798,9 @@ s32 gValePairTableB[] = {
     SC_END,
 };
 
-s32 gValePairTableC[] = {
-    SC_SET(SW_SPEED, 0x20000),
-    SC_SET(SW_ACCEL, 0x20000),
+s32 gVale_LeaderPushedBackPath[] = {
+    SC_SET(SW_SPEED, PIXELS(2)),
+    SC_SET(SW_ACCEL, PIXELS(2)),
     SC_ARG(5),
     SC_MOVE(PIXELS(256), 0, PIXELS(458)),
     SC_SYNC,
@@ -3751,9 +3814,9 @@ s32 gValePairTableC[] = {
     SC_END,
 };
 
-s32 gValePairTableD[] = {
-    SC_SET(SW_SPEED, 0x18000),
-    SC_SET(SW_ACCEL, 0x10000),
+s32 gVale_GuardFromSecondPausePath[] = {
+    SC_SET(SW_SPEED, PIXELS(3) / 2),
+    SC_SET(SW_ACCEL, PIXELS(1)),
     SC_ARG(2),
     SC_MOVE(PIXELS(256), 0, PIXELS(456)),
     SC_SYNC,

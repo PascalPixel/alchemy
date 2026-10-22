@@ -11,7 +11,7 @@
 #include "item_ids.h"
 
 extern struct SceneEvent gVale_EventsAfterKalay[];
-extern s32 gJennaAction[];
+extern s32 gVale_JennaWalksToTheHouse[];
 
 #include "global_cells.h"
 

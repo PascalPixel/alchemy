@@ -188,7 +188,7 @@ next_page:
       }
       AudioCommand_PlayFar(SE_MENU_CONFIRM);
       WaitFrames(1);
-      quantity = Shop_SelectBuyNum(unitId, shop->selectedItem);
+      quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
       if (quantity == -1)
         continue;
@@ -549,7 +549,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
 /// buy, the artifact's stock and a stack of 30 less what the member carries.
 /// Returns the count (1 for other items), or -1 when cancelled. Called by
 /// Shop_SelectBuy.
-s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
+s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopRuntime *shop;
   struct BattleUnit *unit;
   struct ItemDefinition *item;

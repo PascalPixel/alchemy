@@ -178,7 +178,7 @@ s32 Shop_SelectSell(s32 unitId) {
     if (result != 0)
       break;
 
-    quantity = Shop_SelectSellNum(unitId, slot);
+    quantity = Shop_SelectSellCount(unitId, slot);
     if (quantity != -1)
       Shop_SellItem(unitId, slot, quantity);
     UiMessage_ShowAndWait(MsgSellAnythingElse);
@@ -234,7 +234,7 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
 /// Asks how many to sell when the item is a stack of more than one, and
 /// returns the count (1 otherwise, -1 when cancelled), putting the cursor
 /// back after. Called by Shop_SelectSell.
-s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
+s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
   s16 savedY;

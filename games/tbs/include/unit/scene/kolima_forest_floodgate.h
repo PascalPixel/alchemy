@@ -29,7 +29,8 @@ const struct SceneEvent *KolimaForestFloodgate_GetEvents(void);
 s32 KolimaForestFloodgate_Initialize(void);
 // Native calls precede this definition; see MATCHING.md.
 #ifdef UBFIX
-void State_StampRecordCells(const struct FloodgateLog *records, s32 value);
+void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
+                                         s32 value);
 #endif
 extern struct FloodgateLog gKolimaForestFloodgate_DefaultRecords[];
 extern u8 gKolimaForestFloodgate_PushAnimations[];

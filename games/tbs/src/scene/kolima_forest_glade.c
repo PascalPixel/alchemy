@@ -6,6 +6,14 @@
 /// (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret lifts the curse
 /// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
 /// darker colours.
+///
+/// Until the third patch the Nut's placement row tested Vale's
+/// FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
+/// Vale's Nut had been caught this one was never placed.
+///
+/// Open questions:
+/// - XXX: what the map's name, Glade, rests on; a render of
+///   SceneId_KolimaForestGlade would show whether a clearing sets it apart.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -95,7 +103,8 @@ const struct SceneEvent *KolimaForestGlade_GetEvents(void) {
 /// colours until the curse is lifted.
 s32 KolimaForestGlade_Initialize(void) {
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_NUT);
   }
@@ -156,17 +165,17 @@ u32 gKolimaForestGlade_Exits[] = {
 /// Until the third patch the Nut's placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
 /// catching it sets.
 struct ScenePlacement gKolimaForestGlade_Placements[] = {
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(160), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(136), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #if !TBS_PATCH_3
-    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, ACTOR_RESET_ACTION,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #else
-    { SPRITE_BLANK, FLAG_KOLIMA_FOREST_NUT_CAUGHT, 7,
+    { SPRITE_BLANK, FLAG_KOLIMA_FOREST_NUT_CAUGHT, ACTOR_RESET_ACTION,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #endif
     { SCENE_TABLE_END },

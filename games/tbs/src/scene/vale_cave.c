@@ -47,6 +47,14 @@
 /// (0x301, 0x302) last while the party goes between them. On every arrival
 /// ValeCave_ApplyEntryState rebuilds the cells of each puzzle already solved
 /// and, once Kite has run behind its ledge, puts it back there.
+///
+/// Open questions:
+/// - XXX: why the second room draws a lone crate and a treasure chest as still
+///   objects (ValeCave_ApplyEntryState) rather than as placements or map
+///   cells; the room's render with its objects outlined would show what they
+///   cover.
+/// - XXX (picture): Kite keeping to the far side of its ledge, its twelve
+///   trigger cells and the points of gValeCave_WalkTargets drawn on the map.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -89,7 +97,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// The way in's placements (gValeCave_Placements1), numbered from
+/// The way in's placements (gValeCave_MouthPlacements), numbered from
 /// ACTOR_FIRST_PLACED: three stacks of crates (drawn as the crates of the
 /// Bilibin Barricade in bilibin.c), then two logs (as in Kolima Forest), none
 /// of which moves.
@@ -105,7 +113,7 @@ enum ValeCaveMouthActor {
   ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
-/// The second room's placements (gValeCave_Placements2), numbered from
+/// The second room's placements (gValeCave_KitePlacements), numbered from
 /// ACTOR_FIRST_PLACED.
 enum ValeCaveKiteActor {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
@@ -141,7 +149,7 @@ enum ValeCaveKiteActor {
   ACTOR_SECOND_STANDING_LOG
 };
 
-/// The third room's placements (gValeCave_Placements3), numbered from
+/// The third room's placements (gValeCave_LogsPlacements), numbered from
 /// ACTOR_FIRST_PLACED; its first row places Kite as the second room's does.
 /// Its three logs are pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsActor {
@@ -158,10 +166,9 @@ enum ValeCaveLogsActor {
   ACTOR_SOUTH_LOG ///< lying west to east, pushed north
 };
 
-#define OBJECT_SINK_FRAMES 68
-#define OBJECT_SINK_STEP 0x8000
-#define LANDING_WAIT_FRAMES 60
-#define FIRST_DJINNI_ROUTE_TRIGGER 45
+/// The first of the twelve cell codes that send Kite round its ledge
+/// (Event_KiteKeepsAway), one for each of gValeCave_WalkTargets.
+#define VALE_CAVE_FIRST_KITE_TRIGGER_CELL 45
 
 /// The flag of Kite, set once it is caught.
 /// ★ Named from the game: "Kite" (MsgDjinnName)
@@ -204,7 +211,7 @@ static void Event_TalkToKite(void) {
 
 /// Waits for an actor to land, bounded by a one-second timeout.
 static void ValeCave_WaitForActorLanding(struct FieldActor *actor) {
-  s32 framesRemaining = LANDING_WAIT_FRAMES;
+  s32 framesRemaining = 60;
 
   while (framesRemaining != 0) {
     Engine_TaskWait(1);
@@ -251,13 +258,13 @@ const struct SceneEntrance *ValeCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_ValeCaveMouth) {
-    return gValeCave_Entrances1;
+    return gValeCave_MouthEntrances;
   }
   if (scene == (s32)&SceneId_ValeCaveKite) {
-    return gValeCave_Entrances2;
+    return gValeCave_KiteEntrances;
   }
   if (scene == (s32)&SceneId_ValeCaveLogs) {
-    return gValeCave_Entrances3;
+    return gValeCave_LogsEntrances;
   }
   return gValeCave_EntrancesOther;
 }
@@ -272,15 +279,15 @@ const struct ScenePlacement *ValeCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_ValeCaveMouth) {
-    return gValeCave_Placements1;
+    return gValeCave_MouthPlacements;
   }
   if (scene == (s32)&SceneId_ValeCaveKite) {
-    return gValeCave_Placements2;
+    return gValeCave_KitePlacements;
   }
   if (scene == (s32)&SceneId_ValeCaveLogs) {
-    return gValeCave_Placements3;
+    return gValeCave_LogsPlacements;
   }
-  return gValeCave_Placements1;
+  return gValeCave_MouthPlacements;
 }
 
 /// In Vale Cave's second room, Reveal ends and the hidden tile is hidden again.
@@ -306,13 +313,13 @@ ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
                                  struct EffectOptions *particleOptions) {
   u32 frame;
 
-  for (frame = 0; frame < OBJECT_SINK_FRAMES; frame++) {
+  for (frame = 0; frame < 68; frame++) {
     s32 particleX = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + baseX;
     s32 particleZ = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + baseZ;
 
     FieldFx_Spawn(particleX, 0, particleZ, 0, 0, 0,
                   EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, particleOptions);
-    Object_GetById(actorId)->y.fixed -= OBJECT_SINK_STEP;
+    Object_GetById(actorId)->y.fixed -= PIXELS(1) / 2;
     Engine_EventWait(1);
   }
 }
@@ -345,8 +352,8 @@ static void Event_MoveWestCratesIntoHole(void) {
     Object_GetById(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
     particleOptions = &options;
-    particleOptions->startScaleX = 0x9999;
-    particleOptions->startScaleY = 0x9999;
+    particleOptions->startScaleX = 3 * Q16_ONE / 5;
+    particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
     Engine_AudioPlayCue(SE_216);
     ValeCave_SinkObjectWithParticles(ACTOR_WEST_CRATES, PIXELS(368),
@@ -390,8 +397,8 @@ static void Event_MoveEastCratesIntoHole(void) {
     Object_GetById(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
     particleOptions = &options;
-    particleOptions->startScaleX = 0x9999;
-    particleOptions->startScaleY = 0x9999;
+    particleOptions->startScaleX = 3 * Q16_ONE / 5;
+    particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
     Engine_AudioPlayCue(SE_216);
     ValeCave_SinkObjectWithParticles(ACTOR_EAST_CRATES, PIXELS(432),
@@ -437,13 +444,13 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
 #if TBS_PATCH_1
-  landingPosition[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
+  landingPosition[0].fixed = (leader->x.fixed & -0x100000) + PIXELS(8);
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = (leader->z.fixed & -0x100000) + 0x280000;
+  landingPosition[2].fixed = (leader->z.fixed & -0x100000) + PIXELS(40);
 #else
   landingPosition[0].fixed = leader->x.fixed;
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = leader->z.fixed + 0x200000;
+  landingPosition[2].fixed = leader->z.fixed + PIXELS(32);
 #endif
   // Keep the normal motion flags while staging the hop.
   if (FieldObject_CheckMovementCollision(
@@ -453,9 +460,9 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode(leader, 7);
-    leader->speed = 0x30000;
-    leader->acceleration = 0x20000;
-    leader->velocityY = 0x40000;
+    leader->speed = PIXELS(3);
+    leader->acceleration = PIXELS(2);
+    leader->velocityY = PIXELS(4);
     *motionFlags &= 126;
     Engine_ActorSetSpriteFlags(leader, 0);
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
@@ -481,7 +488,7 @@ static void Event_KiteRunsOff(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
     GameFlag_Set(FLAG_SCENE_TEMP_00);
     Engine_EventBegin();
-    Camera_SetSpeed(Q16_ONE, 0x2000);
+    Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     Engine_CameraFollowActor(ACTOR_KITE, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(60);
@@ -494,7 +501,7 @@ static void Event_KiteRunsOff(void) {
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
     Engine_AudioPlayCue(SE_JUMP);
     djinni = Actor_Get(ACTOR_KITE);
-    djinni->velocityY = 0x80000;
+    djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 280);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
@@ -561,7 +568,7 @@ static void Event_KiteKeepsAway(void) {
       djinni = Object_GetById(ACTOR_KITE);
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->acceleration;
-      routeIndex -= FIRST_DJINNI_ROUTE_TRIGGER;
+      routeIndex -= VALE_CAVE_FIRST_KITE_TRIGGER_CELL;
       // X/Z pairs occupy eight bytes. Plain pair indexing changes six
       // instruction words in the English build, so keep separate offsets.
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
@@ -649,14 +656,14 @@ static void Event_PushLogOffLedge(void) {
 
   Engine_EventBegin();
   Engine_EventWait(10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Engine_EventWait(15);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Engine_EventWait(4);
   Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_239);
-  Actor_SetSpeed(ACTOR_WEST_LOG, 0x8000, 0x1999);
+  Actor_SetSpeed(ACTOR_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
   Engine_ActorSetAnimation(ACTOR_WEST_LOG, 2);
   stationaryMotion = 0;
   Object_GetById(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
@@ -675,7 +682,7 @@ static void Event_PushLogOffLedge(void) {
   ValeCave_WaitForActorLanding(Actor_Get(ACTOR_WEST_LOG));
   Engine_ActorSetAnimation(ACTOR_WEST_LOG, 8);
   Engine_ActorSetSpritePriority(ACTOR_WEST_LOG, 3);
-  Object_GetById(ACTOR_WEST_LOG)->priorityFlags = 2;
+  Object_GetById(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
   StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
   GameFlag_Set(FLAG_SCENE_TEMP_02);
@@ -697,7 +704,7 @@ static void Event_PushLogNorth(void) {
     SceneActor_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the collision footprint.
     Engine_ActorSetAnimation(ACTOR_SOUTH_LOG, 3);
-    Actor_SetSpeed(ACTOR_SOUTH_LOG, 0x4000, 0x8000);
+    Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     Engine_ActorSetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);
     Engine_EventWait(45);
     Engine_AudioPlayCue(SE_240);
@@ -730,13 +737,13 @@ const struct SceneEvent *ValeCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_ValeCaveMouth) {
-    return gValeCave_Events1;
+    return gValeCave_MouthEvents;
   }
   if (scene == (s32)&SceneId_ValeCaveKite) {
-    return gValeCave_Events2;
+    return gValeCave_KiteEvents;
   }
   if (scene == (s32)&SceneId_ValeCaveLogs) {
-    return gValeCave_Events3;
+    return gValeCave_LogsEvents;
   }
   return gValeCave_EventsOther;
 }
@@ -831,8 +838,8 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
     Engine_ActorSetSpritePriority(actorId, 3);
     actor->terrainId = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    actor->x.fixed = (column << 20) + 0x80000;
-    actor->z.fixed = (row << 20) + 0x80000;
+    actor->x.fixed = (column << 20) + PIXELS(8);
+    actor->z.fixed = (row << 20) + PIXELS(8);
   }
 }
 
@@ -845,7 +852,7 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
 /// FLAG_SCENE_TEMP_00 (and _01 from VALE_CAVE_KITE_EAST_FROM_WEST) and puts
 /// Kite back behind the ledge.
 static void ValeCave_ApplyEntryState(void) {
-  s32 southLogOnRow20;
+  s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
   if (gGameState.scene == (s32)&SceneId_ValeCaveKite) {
@@ -856,6 +863,7 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
       Engine_ActorSetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
       Engine_ActorSetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
+      // A lone crate, sprite 223 (spr_223.png), drawn still under the actors.
       OverlayObject_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
       break;
     case VALE_CAVE_KITE_EAST_FROM_WEST:
@@ -882,9 +890,10 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_SOUTH_FROM_WEST:
     case VALE_CAVE_KITE_SOUTH_FROM_EAST:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
-      // The holes' part: the riding log's passage, and the holes already
-      // filled.
-      OverlayObject_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552), 20);
+      // The holes' part: a still treasure chest drawn under the actors, the
+      // riding log's passage, and the holes already filled.
+      OverlayObject_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552),
+                                           SPRITE_CHEST);
       Map_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
@@ -914,12 +923,12 @@ static void ValeCave_ApplyEntryState(void) {
       } else {
         FieldScene_RedrawActorFootprint(ACTOR_EAST_LOG);
       }
-      southLogOnRow20 = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05);
-      if (southLogOnRow20 != 0) {
+      southLogOnSouthernRow = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05);
+      if (southLogOnSouthernRow != 0) {
         StagedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
       } else if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04) != 0) {
         StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2,
-                                               southLogOnRow20);
+                                               southLogOnSouthernRow);
         Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {
@@ -940,17 +949,22 @@ static void Event_TouchRidingLog(void) {
   Engine_ActorSetAnimation(ACTOR_RIDING_LOG, 2);
 }
 
-s32 gEffectScript0[] = {
+// The lifetimes FieldFx_Spawn gives its effects through gEffectScripts: an
+// effect waits 23, 45 or 127 frames, then is put away and freed. FieldFx_Spawn
+// divides a change of scale by the loop count in each one's fourth word, so
+// that the effect reaches its scale as its time runs out.
+
+s32 gValeCave_ShortEffectScript[] = {
     SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gValeCave_MediumEffectScript[] = {
     SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gValeCave_LongEffectScript[] = {
     SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -986,6 +1000,8 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
+/// The twelve points round the far side of Kite's ledge, x then z in pixels,
+/// one for each trigger cell from VALE_CAVE_FIRST_KITE_TRIGGER_CELL on.
 s32 gValeCave_WalkTargets[] = {
     760, 296,
     760, 280,
@@ -1002,9 +1018,9 @@ s32 gValeCave_WalkTargets[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gValeCave_ShortEffectScript,
+    gValeCave_MediumEffectScript,
+    gValeCave_LongEffectScript,
 };
 
 struct SceneEntrance gValeCave_EntrancesOther[] = {
@@ -1012,7 +1028,7 @@ struct SceneEntrance gValeCave_EntrancesOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gValeCave_Entrances1[] = {
+struct SceneEntrance gValeCave_MouthEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_KRADEN_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
@@ -1020,7 +1036,7 @@ struct SceneEntrance gValeCave_Entrances1[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gValeCave_Entrances2[] = {
+struct SceneEntrance gValeCave_KiteEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH, CONDITION_ALWAYS, 328, 0, 392, FACING_NORTH, 0, 48, 32, 544, 416, 0 },
     { VALE_CAVE_KITE_WEST_FROM_EAST, CONDITION_ALWAYS, 312, 0, 160, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
@@ -1035,7 +1051,7 @@ struct SceneEntrance gValeCave_Entrances2[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gValeCave_Entrances3[] = {
+struct SceneEntrance gValeCave_LogsEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 200, 0, 432, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST, CONDITION_ALWAYS, 200, 0, 432, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
     { VALE_CAVE_LOGS_NORTH_FROM_SOUTH, CONDITION_ALWAYS, 344, 0, 120, FACING_SOUTH, 0, 64, 24, 416, 464, 0 },
@@ -1070,7 +1086,7 @@ u32 gValeCave_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gValeCave_Placements1[] = {
+struct ScenePlacement gValeCave_MouthPlacements[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
@@ -1084,7 +1100,7 @@ struct ScenePlacement gValeCave_Placements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeCave_Placements2[] = {
+struct ScenePlacement gValeCave_KitePlacements[] = {
     { JUPITER_DJINNI, FLAG_KITE, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
@@ -1104,7 +1120,7 @@ struct ScenePlacement gValeCave_Placements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeCave_Placements3[] = {
+struct ScenePlacement gValeCave_LogsPlacements[] = {
     { JUPITER_DJINNI, FLAG_KITE, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
@@ -1120,14 +1136,14 @@ struct SceneEvent gValeCave_EventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeCave_Events1[] = {
+struct SceneEvent gValeCave_MouthEvents[] = {
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveRoom) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveRoom) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveRoom) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeCave_Events2[] = {
+struct SceneEvent gValeCave_KiteEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
@@ -1170,7 +1186,7 @@ struct SceneEvent gValeCave_Events2[] = {
 };
 // clang-format on
 
-struct SceneEvent gValeCave_Events3[] = {
+struct SceneEvent gValeCave_LogsEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_LOGS_NORTH_TO_SOUTH},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST},

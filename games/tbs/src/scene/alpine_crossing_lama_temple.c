@@ -1,86 +1,55 @@
 /// @file
-/// The Alpine Crossing and Lama Temple, two places on Silk Road west of Xian
-/// that share this overlay: the Alpine Crossing is
-/// SceneId_AlpineCrossing and Lama Temple is SceneId_LamaTemple. The
-/// getters pick each scene's tables by gGameState.scene, both scenes share one
-/// exit table, and Scene_Initialize sets up the scene being entered from the
-/// story flags of Hsu's rescue.
+/// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
+/// (SceneId_LamaTemple), two places on Silk Road west of Xian that share this
+/// overlay. The getters pick each scene's tables by gGameState.scene, both
+/// scenes share one exit table, and Scene_Initialize sets up the scene being
+/// entered from the story flags of Hsu's rescue, which runs through both.
 ///
-/// The party comes here from Xian, where Feizhi, the daughter of Master Feh,
-/// Xian's kung fu master, has foreseen that Hsu, Feh's apprentice, is in
-/// danger on his way home from training under Master Hama at Lama Temple, and
-/// has gone off alone to find him (FLAG_FEIZHI_WENT_TO_HSU, set in
-/// fuchin_temple.c). At the Alpine Crossing boulders block Silk Road. Stepping
-/// onto the road beside them (TRIGGER_FEIZHI_ARRIVAL) plays
-/// AlpineCrossing_FeizhiArrives: Feizhi runs up behind the party, finds that
-/// her vision has come true, calls for Hsu and runs ahead down the path with
-/// the leader following, and cannot hear him (FLAG_FEIZHI_SAW_ROCKSLIDE). She
-/// stays at the end of that path, asking whether she should go back to Xian,
-/// until Hama's lesson. A signpost reads
-/// `North: Altin Mine West: Lama Temple`; the Crossing opens onto the world
-/// map to the east, north and west, and by two ways
-/// (ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
-/// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) into Altin Peak's
-/// AltinPeakSouthEntrance, whose entrances from here the international editions
-/// also call Alpine Crossing. With the road closed, the villagers of Altin, to
-/// the north, send the party through their mine, Altin Peak (altin.c,
-/// altin_peak.c), and the mine brings it back out here from
-/// AltinPeakSouthEntrance (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST
-/// and ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST); coming in that way
-/// the area name is not shown again.
+/// At the Alpine Crossing boulders block Silk Road. Once Feizhi has left Xian
+/// (FLAG_FEIZHI_WENT_TO_HSU, set in fuchin_temple.c), stepping onto the road
+/// beside them (TRIGGER_FEIZHI_ARRIVAL) plays AlpineCrossing_FeizhiArrives and
+/// sets FLAG_FEIZHI_SAW_ROCKSLIDE; she then waits at the end of the path until
+/// Hama's lesson. A signpost reads `North: Altin Mine West: Lama Temple`; the
+/// Crossing opens onto the world map to the east, north and west, and by
+/// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
+/// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST into Altin Peak's
+/// AltinPeakSouthEntrance, whose entrances from here the international
+/// editions also call Alpine Crossing. Coming back from the mine
+/// (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and _EAST) the area
+/// name is not shown again.
 ///
-/// Lama Temple, west along the road, is Master Hama's temple, the last stop
-/// before the Lamakan Desert. Its five monks talk of the desert ahead, of
-/// Master Feh and of Hama, the greatest master of Chi: one set of lines and
-/// thoughts until Hsu is freed (FLAG_HSU_RESCUED), and advice for the desert
-/// after. A traveling healer offers the Sanctum's services across his counter.
-/// Walking north into the sliding door (LamaTemple_EnterHamasRoom) leads into
-/// Hama's room, in FuchinTempleInteriors
-/// (FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE, in fuchin_temple.c): there Hama
-/// teaches Ivan Reveal for crossing the desert, and Feizhi, who came through
-/// the mine, bursts in to say that Hsu is trapped by the boulders in the
-/// mountains; Hama hurries to his aid, and the party may follow
-/// (FLAG_XIAN_HEARD_HSU_TRAPPED, set as the lesson ends). Coming back out of
-/// the room (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) the area name is not
-/// shown again. Writing on a wall hints at Reveal, which shows a passage behind
-/// a mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
-/// rock back when Reveal wears off and on entry, the rock cell's own attributes
-/// saved at (21, 73). The temple also holds a Psynergy Stone
-/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a place flag)
-/// and a chest with Water of Life.
+/// In Lama Temple the five monks have one set of lines and thoughts until Hsu
+/// is freed (FLAG_HSU_RESCUED) and another after, and a traveling healer serves
+/// across his counter; a defeat anywhere here returns the party to
+/// LAMA_TEMPLE_AFTER_DEFEAT, in front of him. Walking north into the sliding
+/// door (LamaTemple_EnterHamasRoom) leads into Hama's room, in
+/// FuchinTempleInteriors (FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE, in
+/// fuchin_temple.c), whose lesson sets FLAG_XIAN_HEARD_HSU_TRAPPED; coming back
+/// out (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) the area name is not shown
+/// again. Writing on a wall hints at Reveal, which shows a passage behind a
+/// mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
+/// rock back when Reveal wears off and on entry, the rock cell's own
+/// attributes saved at (21, 73). The temple also holds a Psynergy Stone
+/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a place flag) and a chest with Water of
+/// Life.
 ///
 /// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and
 /// Feizhi stand by him, pinned between two boulders. Arriving beside him from
 /// AltinPeakSouthEntrance (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST)
-/// the first time, AlpineCrossing_HamaReachesHsu plays: he is unhurt but cannot
-/// move, and no one knows how to free him (FLAG_HAMA_REACHED_HSU). Lift on the
-/// boulder (AlpineCrossing_LiftBoulder), the Psynergy of the Lifting Gem found
-/// in Altin Peak, makes it float while Hama and Feizhi pull him free; they will
-/// ask Master Feh to tend him and clear the road, and the scene sets
+/// the first time plays AlpineCrossing_HamaReachesHsu
+/// (FLAG_HAMA_REACHED_HSU). Lift on the boulder (AlpineCrossing_LiftBoulder)
+/// raises it while Hama and Feizhi pull him free; the scene sets
 /// FLAG_HSU_RESCUED and leaves for Lama Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE,
 /// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Scene_Initialize plays Hama's
-/// farewell (LamaTemple_RunHamasFarewell). If the party instead comes back by
-/// the world map's north side (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH), Hsu has
-/// been freed without it (FLAG_HSU_RESCUED_WITHOUT_PARTY, which
-/// lamakan_desert.c can set too), and Hama and Feizhi are gone. Once he is
-/// free, two workers from Xian stand by the road they have cleared, and
-/// Scene_Initialize copies the cleared cells over the rocks. The Crossing's
-/// other puzzles are kept only within one visit (scene flags): Reveal shows a
-/// hidden path, Frost freezes a puddle into a pillar the party can climb, and
-/// Growth grows a sprout into a vine; a chest holds Power Bread.
-///
-/// Open questions:
-///
-/// - XXX: what Feizhi's animation 5, as she steps back from the freed Hsu, and
-///   the mossy rock's animation 2 show; the frames they pick in their sprites'
-///   sheets would settle names for them.
-/// - XXX: the mossy rock (sprite 0x125) and the boulder Lift raises (0x127)
-///   have no sprite names; their sheets (spr_293.png, spr_295.png) and the
-///   other scenes that place them would settle them.
-/// - XXX: what reaches Lama Temple's entrance 5, in front of the traveling
-///   healer, which no exit names; likely where the party wakes after it falls
-///   in battle, because Fuchin Temple's healer has an entrance 5 in the same
-///   place, and a battle lost after speaking to the healer would settle it.
+/// farewell (LamaTemple_RunHamasFarewell). Coming back instead by the world
+/// map's north side (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH), Hsu has been freed
+/// without the party (FLAG_HSU_RESCUED_WITHOUT_PARTY, which lamakan_desert.c
+/// can set too), and Hama and Feizhi are gone. Once he is free, two workers
+/// from Xian stand by the road they have cleared, and Scene_Initialize copies
+/// the cleared cells over the rocks. The Crossing's other puzzles are kept
+/// only within one visit (scene flags): Reveal shows a hidden path, Frost
+/// freezes a puddle into a pillar the party can climb, and Growth grows a
+/// sprout into a vine; a chest holds Power Bread.
 
 #include "script.h"
 #include "game_state.h"
@@ -196,6 +165,12 @@ enum {
 enum {
   ANIM_HAMA_PULL = 5,
   ANIM_FEIZHI_PULL = 6,
+  /// Drops into a crouch, then holds a half crouch with her head bowed
+  /// (spr_039.png's frames 33 and 36).
+  ANIM_FEIZHI_CROUCH = 5,
+  /// SPRITE_TURNING_ROCK's mossy rock (spr_293.png's frame 1); its first
+  /// animations show frame 0, a purple glow.
+  TURNING_ROCK_ANIM_MOSSY = 2,
   ANIM_HSU_STRUGGLE = 5,
   ANIM_MONK_MEDITATE = 5,
   PUDDLE_ANIM_FROZEN = 5,
@@ -805,7 +780,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetSpeed(ACTOR_FEIZHI, 0xcccc, 0x6666);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 168, 296);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorSetAnimation(ACTOR_FEIZHI, 5);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_CROUCH);
   Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
@@ -937,7 +912,7 @@ s32 Scene_Initialize(void) {
     FieldFx_SetQueuedSoundAndPlay(SE_169);
     Engine_ActorSetAnimation(ACTOR_MEDITATING_MONK, ANIM_MONK_MEDITATE);
     Engine_ActorSetAnimation(ACTOR_MONK_SENSING_ANXIETY, ANIM_MONK_MEDITATE);
-    Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, 2);
+    Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIM_MOSSY);
     Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
     if (Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
@@ -1106,7 +1081,8 @@ struct SceneEntrance gLamaTemple_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_FROM_ALPINE_CROSSING, CONDITION_ALWAYS, 144, 0, 200,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 232, 0, 352, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {LAMA_TEMPLE_AFTER_DEFEAT, CONDITION_ALWAYS, 232, 0, 352, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1169,7 +1145,7 @@ struct ScenePlacement gLamaTemple_Placements[] = {
         PIXELS(344), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(176), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x125, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TURNING_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1183,7 +1159,7 @@ struct ScenePlacement gAlpineCrossing_Placements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_FEIZHI, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x127, FLAG_HSU_RESCUED, ACTOR_STAND,
+    { SPRITE_ROUND_BOULDER, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerPlacementScript,
         PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },

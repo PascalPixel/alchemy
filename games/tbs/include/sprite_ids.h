@@ -17,6 +17,8 @@ enum SpriteId {
   /// counter, or that a scene draws an item's icon on, as for the Nuts that
   /// Catch takes.
   SPRITE_BLANK = 0x16,
+  /// A blank 32-pixel square (spr_023.png holds no drawn pixel).
+  SPRITE_BLANK_32 = 0x17,
   /// Rings spreading out on water: where someone wades (the field's own
   /// FIELD_SPRITE_RIPPLE), and around the leader at Mercury Lighthouse's pools,
   /// grey in its first animation and blue in its second.
@@ -152,9 +154,11 @@ enum SpriteId {
   /// ★ Named from what the player sees: a stone pipe section lying north to
   /// south (spr_229.png)
   SPRITE_PIPE_NORTH_SOUTH = 0xe5,
-  /// ★ Named from what the player sees: a short capped pipe standing upright
-  /// (spr_230.png)
-  SPRITE_PIPE_STUB = 0xe6,
+  /// The rim of an upright pipe's open end, drawn over the end a pushed pipe
+  /// section comes to rest against.
+  /// ★ Named from what the player sees: the rim at the top of an upright pipe
+  /// (spr_230.png; places/mercury-lighthouse-lower/map-4.png)
+  SPRITE_PIPE_END = 0xe6,
   /// A puddle of water, which Frost freezes into a pillar of ice.
   /// ★ Named from what the player sees: a puddle of water (its render)
   SPRITE_PUDDLE = 0xe3,
@@ -627,10 +631,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a pier with a boat moored at it
   /// (spr_277.png)
   SPRITE_WORLD_MAP_DOCK = 0x115,
-  /// A bridge over a river: whole in its first animation, broken in its
-  /// second.
-  /// ★ Named from what the player sees: a bridge, whole and then broken
-  /// (spr_278.png)
+  /// A drawbridge over a river: raised in its first animation, let down
+  /// across the river in its second.
+  /// ★ Named from what the player sees: a drawbridge raised between its posts,
+  /// then lying across the river (spr_278.png)
   SPRITE_WORLD_MAP_BRIDGE = 0x116,
   /// ★ Named from what the player sees: a grey gatehouse between green walls
   /// (spr_279.png)
@@ -659,6 +663,59 @@ enum PuddleAnimation {
   PUDDLE_ANIM_LOW_ICE = 3, ///< held at the second step of freezing
   PUDDLE_ANIM_PILLAR = 5,  ///< the ice pillar, still
   PUDDLE_ANIM_MELT = 6     ///< sinks from the pillar back into a puddle
+};
+
+/// SPRITE_LOG_NORTH_SOUTH's animations (spr_205.tsv) as a log tips into a
+/// river
+/// (places/kolima-forest-entrance/events/KolimaForestEntrance_PushLog.gif).
+enum LogAnimation {
+  LOG_ANIM_ROLL_WEST = 3, ///< rolling over toward the west
+  LOG_ANIM_FLOAT = 4,     ///< bobbing in the water
+  /// Drops into the water with a ring of spray, then LOG_ANIM_FLOAT.
+  LOG_ANIM_DROP_IN = 8
+};
+
+/// SPRITE_SPLASH's animations (spr_214.tsv), as Kolima Forest's floodgate
+/// plays them
+/// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
+enum SplashAnimation {
+  SPLASH_ANIM_BURST = 1, ///< one burst of spray, then nothing
+  /// Spray churning for about 120 frames, then dying away to nothing.
+  SPLASH_ANIM_CHURN = 2
+};
+
+/// The face animations of SPRITE_TRET and SPRITE_TRET_RAISED (spr_055.tsv):
+/// his gentle face, then his wrathful one, with knotted brows and red eyes.
+/// Left and right are as the face is drawn on screen.
+enum TretFaceAnimation {
+  TRET_FACE_OPEN = 1,
+  TRET_FACE_HALF_CLOSED = 2,
+  TRET_FACE_CLOSED = 3,
+  TRET_FACE_LOOK_RIGHT = 4,
+  TRET_FACE_LOOK_LEFT = 5,
+  TRET_FACE_WRATHFUL_OPEN = 6,
+  TRET_FACE_WRATHFUL_CLOSED = 8,
+  TRET_FACE_WRATHFUL_LOOK_RIGHT = 9,
+  TRET_FACE_WRATHFUL_LOOK_LEFT = 10,
+  /// Between the two faces: his brows half knotted, his eyes shut.
+  TRET_FACE_TURNING_WRATHFUL = 11
+};
+
+/// SPRITE_LAUREL's face animations (spr_056.tsv), as TretFaceAnimation's first
+/// five.
+enum LaurelFaceAnimation {
+  LAUREL_FACE_OPEN = 1,
+  LAUREL_FACE_HALF_CLOSED = 2,
+  LAUREL_FACE_CLOSED = 3,
+  LAUREL_FACE_LOOK_RIGHT = 4,
+  LAUREL_FACE_LOOK_LEFT = 5
+};
+
+/// SPRITE_TORCH's animations (spr_246.tsv).
+enum TorchAnimation {
+  TORCH_ANIM_UNLIT = 1, ///< a cold torch, its bowl grey with ash
+  TORCH_ANIM_LIT = 2,   ///< a flame flickering in the bowl
+  TORCH_ANIM_GO_OUT = 3 ///< the flame dies in smoke, then TORCH_ANIM_UNLIT
 };
 
 #endif

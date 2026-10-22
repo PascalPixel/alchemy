@@ -8,14 +8,12 @@
 /// SceneId_MercuryLighthouseAerie (mercury_lighthouse_aerie.c). The four share
 /// one exit table.
 ///
-/// Where it falls in the story: the waters of the lighthouse's fountain might
-/// save Tret, the tree of Kolima Forest, but they have long since dried up.
-/// Mia, the healer of Imil, is of the Mercury Clan, "sworn protectors of a
-/// special power", Ply; she has hurried there (FLAG_IMIL_MET_MIA), and only she
-/// and Alex, her apprentice who disappeared, can enter. Every entry sets
-/// FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts regain PP faster,
-/// and Retreat leads out to MercuryLighthouseExterior's
-/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP.
+/// Every entry sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
+/// regain PP faster, and Retreat leads out to MercuryLighthouseExterior's
+/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP. The story flags order the
+/// floors: the door opens only to Mia's Ply, once the party has met her in
+/// Imil (FLAG_IMIL_MET_MIA), and the fountain whose water heals Tret flows
+/// only once Saturos is beaten.
 ///
 /// - SceneId_MercuryLighthouseExterior, the lighthouse's door and the ground
 ///   around it, reached from the world map
@@ -36,9 +34,13 @@
 ///   water run (FLAG_PIPE_1_JOINED to _3_JOINED) and carry the party down to
 ///   MercuryLighthouseEntrance
 ///   (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE,
-///   FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN). Once Ply has worked in
-///   MercuryLighthouseEntrance (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), water
-///   pillars rise underfoot to cross on, as there
+///   FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN; the pipe room before and after is
+///   places/mercury-lighthouse-lower/map-4.png and
+///   places/mercury-lighthouse-lower_mercury-lighthouse-channels-open/map-4.png).
+///   Once Ply has worked in MercuryLighthouseEntrance
+///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), the pool's heart gives the
+///   leader golden rings of light (SPRITE_GOLDEN_RINGS) that carry him across
+///   the water, a ring spent with each hop, as there
 ///   (common/mercury_lighthouse_pillar.h). A chest holds a Sleep Bomb.
 /// - SceneId_MercuryLighthouseMiddle. One pipe section raises or lowers stairs
 ///   (FLAG_STAIRS_RAISED), another starts a fountain (FLAG_FOUNTAIN_RUNNING),
@@ -78,21 +80,6 @@
 ///   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR), the fountain
 ///   flows, people come to drink from it, and an Empty Bottle used at it
 ///   becomes Hermes' Water, once a visit (FLAG_HERMES_WATER_TAKEN).
-///
-/// Open questions:
-/// - XXX: whether what the pools give the leader once Ply has worked is a
-///   column of light or a water pillar: mercury_lighthouse_entrance.c and
-///   common/mercury_lighthouse_lights.h say lights, the Lower floor's wrappers
-///   here say water pillars; a recording of a hop across the pool would
-///   settle it, and the losing side's words should follow.
-/// - XXX: what SPRITE_PIPE_STUB shows where it stands beside the pipes (a
-///   pipe's capped end, or a post); a render of the Lower floor would settle
-///   it.
-/// - XXX: what the sounds this overlay plays by number are (SE_141, SE_170,
-///   SE_211, SE_216, SE_217, SE_228 and the rest); recordings of the pipes
-///   joining, the stairs rising and a passage would let songs.h name them.
-/// - XXX (picture): the channel puzzle on the Lower floor, each pipe's track
-///   and the cells its joining redraws, drawn over the floor's map.
 
 #include "script.h"
 #include "game_state.h"
@@ -203,12 +190,12 @@ enum MercuryLighthouseLowerActor {
   /// ★ Named from what the player sees: a stone pipe section lying north to
   /// south (spr_229.png)
   ACTOR_THIRD_PIPE,
-  /// SPRITE_PIPE_STUB, one still frame, 59 pixels south of where
+  /// SPRITE_PIPE_END, one still frame, 59 pixels south of where
   /// ACTOR_THIRD_PIPE comes to rest; pushing it does nothing, and nothing else
-  /// moves it.
-  /// ★ Named from what the player sees: a short capped pipe standing upright
+  /// moves it: the rim of the fixed pipe the third section joins.
+  /// ★ Named from what the player sees: the rim at the top of an upright pipe
   /// (spr_230.png)
-  ACTOR_PIPE_STUB
+  ACTOR_PIPE_END
 };
 
 /// MercuryLighthouseMiddle: the stair and fountain pipes, the statue for the
@@ -219,9 +206,9 @@ enum MercuryLighthouseMiddleActor {
   ACTOR_STAIR_PIPE = ACTOR_FIRST_PLACED,
   /// 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs are
   /// raised; nothing moves it.
-  /// ★ Named from what the player sees: a short capped pipe standing upright
+  /// ★ Named from what the player sees: the rim at the top of an upright pipe
   /// (spr_230.png)
-  ACTOR_STAIR_PIPE_STUB,
+  ACTOR_STAIR_PIPE_END,
   /// ★ Named from what the player sees: a stone pipe section lying west to
   /// east (spr_228.png)
   ACTOR_FOUNTAIN_PIPE,
@@ -251,13 +238,13 @@ enum MercuryLighthouseUpperActor {
   /// south (spr_229.png)
   ACTOR_DOOR_SWITCH_PIPE,
   /// Three in a row south of the stone doors' pipes; nothing moves them.
-  /// ★ Named from what the player sees: a short capped pipe standing upright
+  /// ★ Named from what the player sees: the rim at the top of an upright pipe
   /// (spr_230.png)
-  ACTOR_FIRST_DOOR_PIPE_STUB,
+  ACTOR_FIRST_DOOR_PIPE_END,
   /// Five in a row along the north wall.
   /// ★ Named from what the player sees: stone statues of a robed figure (its
   /// render)
-  ACTOR_FIRST_CROSSING_STATUE = ACTOR_FIRST_DOOR_PIPE_STUB + 3,
+  ACTOR_FIRST_CROSSING_STATUE = ACTOR_FIRST_DOOR_PIPE_END + 3,
   /// ★ Named from what the player sees: a stone statue of a robed figure (its
   /// render)
   ACTOR_LAST_CROSSING_STATUE = ACTOR_FIRST_CROSSING_STATUE + 4,
@@ -439,21 +426,21 @@ static void MercuryLighthouse_RippleWhileInPool(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// MercuryLighthouseLower, touching trigger 31 or 32: the raised pillar is let
-/// go.
-static void MercuryLighthouse_ReleaseRaisedPillar(void) {
+/// MercuryLighthouseLower, touching trigger 31 or 32: the leader loses his
+/// lights.
+static void MercuryLighthouse_LoseLightsOnLower(void) {
   MercuryLighthouse_LoseLights();
 }
 
 /// MercuryLighthouseLower, walking into trigger 11, 21 or 31: one step across
-/// the water pillars.
-static void MercuryLighthouse_TryPillarStep(void) {
+/// the pool, spending a light.
+static void MercuryLighthouse_HopAcrossPoolOnLower(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-/// MercuryLighthouseLower, touching trigger 11: the pillar underfoot rises to
-/// its full height.
-static void MercuryLighthouse_RaiseTouchedPillar(void) {
+/// MercuryLighthouseLower, touching trigger 11, the pool's heart: the
+/// column of lights over the leader grows a stage.
+static void MercuryLighthouse_ChargeLightsOnLower(void) {
   MercuryLighthouse_ChargeLights();
 }
 
@@ -2312,7 +2299,7 @@ s32 MercuryLighthouse_Initialize(void) {
     switch (gGameState.entrance) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
-    case MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_FROM_STATUE:
+    case MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE:
       if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
         Map_CopyCellAttributes(66, 5, 27, 23, 2, 5);
       break;
@@ -2341,7 +2328,7 @@ s32 MercuryLighthouse_Initialize(void) {
       FieldScene_RedrawActorFootprint(ACTOR_FIRST_PIPE);
       FieldScene_RedrawActorFootprint(ACTOR_SECOND_PIPE);
       FieldScene_RedrawActorFootprint(ACTOR_THIRD_PIPE);
-      SetEffectRecordMode(Object_GetById(ACTOR_PIPE_STUB), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_PIPE_END), 1);
       if (Engine_GameFlagIsSet(FLAG_PIPE_1_JOINED)) {
         Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
         if (Engine_GameFlagIsSet(FLAG_PIPE_2_JOINED))
@@ -2350,7 +2337,7 @@ s32 MercuryLighthouse_Initialize(void) {
         Engine_TaskWait(1);
       }
       break;
-    case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATER_PILLARS:
+    case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL:
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS:
       if (!Engine_GameFlagIsSet(FLAG_MIA_JOINED_PARTY)) {
         Actor_SetPosition(MIA, PIXELS(696), PIXELS(632));
@@ -2368,7 +2355,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(Object_GetById(ACTOR_STAIR_PIPE), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_STAIR_PIPE_STUB), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_STAIR_PIPE_END), 1);
       if (Engine_GameFlagIsSet(FLAG_STAIRS_RAISED)) {
         Engine_TaskWait(1);
         Engine_AudioPlayCue(SE_211);
@@ -2531,9 +2518,9 @@ s32 MercuryLighthouse_Initialize(void) {
       Engine_ActorSetSpritePriority(ACTOR_DOOR_ROOM_PIPE, 2);
       Object_GetById(ACTOR_DOOR_ROOM_PIPE)->terrainId = 2;
       SetEffectRecordMode(Object_GetById(ACTOR_DOOR_SWITCH_PIPE), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_DOOR_PIPE_STUB), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_DOOR_PIPE_STUB + 1), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_DOOR_PIPE_STUB + 2), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_DOOR_PIPE_END), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_DOOR_PIPE_END + 1), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_DOOR_PIPE_END + 2), 1);
       FieldScene_RedrawActorFootprint(ACTOR_DOOR_ROOM_PIPE);
       FieldScene_RedrawActorFootprint(ACTOR_DOOR_SWITCH_PIPE);
       if (gGameState.entrance != MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
@@ -2893,7 +2880,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   Actor_SetPosition(ACTOR_PLY_TARGET, PIXELS(840), PIXELS(600));
   Engine_PsynergyBegin(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(MIA, ACTOR_PLY_TARGET);
-  flags = (u8)effectWork->messageMode | 8;
+  flags = (u8)effectWork->messageMode | POSITIONED_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
@@ -3108,13 +3095,13 @@ struct SceneEntrance gMercuryLighthouseEntrancesOther[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST, CONDITION_ALWAYS, 56, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST, CONDITION_ALWAYS, 248, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
-    { MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_FROM_STATUE, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, 16, 16, 496, 448, 0 },
+    { MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, 16, 16, 496, 448, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST, CONDITION_ALWAYS, 760, 0, 344, FACING_NORTH, 0, 544, 16, 816, 352, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE, CONDITION_ALWAYS, 120, 0, 936, FACING_NORTH, 0, 64, 784, 384, 944, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH, CONDITION_ALWAYS, 344, 0, 936, FACING_NORTH, 0, 64, 784, 384, 944, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST, CONDITION_ALWAYS, 120, 0, 584, FACING_SOUTH, 0, 80, 528, 320, 688, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_UPPER, CONDITION_ALWAYS, 280, 0, 584, FACING_SOUTH, 0, 80, 528, 320, 688, 0 },
-    { MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATER_PILLARS, CONDITION_ALWAYS, 776, 0, 472, FACING_SOUTH, 0, 640, 416, 896, 704, 0 },
+    { MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL, CONDITION_ALWAYS, 776, 0, 472, FACING_SOUTH, 0, 640, 416, 896, 704, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS, CONDITION_ALWAYS, 856, 0, 520, FACING_SOUTH, 0, 640, 416, 896, 704, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH, CONDITION_ALWAYS, 472, 0, 696, FACING_NORTH, 0, 352, 512, 592, 720, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE, CONDITION_ALWAYS, 712, 0, 264, FACING_SOUTH, 0, 544, 16, 816, 352, 0 },
@@ -3175,13 +3162,13 @@ u32 gMercuryLighthouse_Exits[] = {
     SCENE_EXITS(MercuryLighthouseLower),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST),
-    SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_TO_STATUE, MercuryLighthouseLower, MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATER_PILLARS),
+    SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE, MercuryLighthouseLower, MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER, MercuryLighthouseUpper, MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH, MercuryLighthouseMiddle, MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTH),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE),
-    SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATER_PILLARS, MercuryLighthouseLower, MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_FROM_STATUE),
+    SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL, MercuryLighthouseLower, MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS, MercuryLighthouseLower, MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE, MercuryLighthouseLower, MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH, MercuryLighthouseMiddle, MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH),
@@ -3242,7 +3229,7 @@ struct ScenePlacement gMercuryLighthouseLowerPlacements[] = {
         PIXELS(704), 0, PIXELS(272), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(744), 0, PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_PIPE_STUB, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_PIPE_END, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(648), 0, PIXELS(299), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3250,7 +3237,7 @@ struct ScenePlacement gMercuryLighthouseLowerPlacements[] = {
 struct ScenePlacement gMercuryLighthouseMiddlePlacements[] = {
     { SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(152), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_PIPE_STUB, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_PIPE_END, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(184), 0, PIXELS(587), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(704), 0, PIXELS(672), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3270,11 +3257,11 @@ struct ScenePlacement gMercuryLighthouseUpperPlacements[] = {
         PIXELS(816), 0, PIXELS(544), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(872), 0, PIXELS(576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_PIPE_STUB, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_PIPE_END, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(760), 0, PIXELS(635), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_PIPE_STUB, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_PIPE_END, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(776), 0, PIXELS(635), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_PIPE_STUB, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_PIPE_END, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(872), 0, PIXELS(635), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3324,8 +3311,8 @@ struct ScenePlacement gMercuryLighthouseExteriorPlacements[] = {
 struct SceneEvent gMercuryLighthouseLowerEvents[] = {
     { EVENT_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST },
     { EVENT_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_TO_STATUE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATER_PILLARS },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL },
     { EVENT_EXIT, 60, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS },
     { EVENT_EXIT, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST },
     { EVENT_EXIT, 61, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE },
@@ -3333,13 +3320,13 @@ struct SceneEvent gMercuryLighthouseLowerEvents[] = {
     { EVENT_EXIT, 57, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
-    { EVENT_TOUCH, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ReleaseRaisedPillar) },
-    { TOUCH_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
-    { EVENT_TOUCH, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ReleaseRaisedPillar) },
-    { TOUCH_WALKING | EVENT_TOUCH_QUICK, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
+    { EVENT_TOUCH, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
+    { TOUCH_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { EVENT_TOUCH, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
+    { TOUCH_WALKING | EVENT_TOUCH_QUICK, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
     { EVENT_TOUCH, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RippleWhileInPool) },
-    { TOUCH_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
-    { EVENT_TOUCH, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RaiseTouchedPillar) },
+    { TOUCH_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { EVENT_TOUCH, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ChargeLightsOnLower) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_EnterRisingPassage) },
     { TOUCH_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushChannelPipes) },
     { EVENT_TALK, MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },

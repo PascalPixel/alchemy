@@ -485,7 +485,9 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 /// his sprite at priority 3. It is a SPRITE_CHEST drawn in
 /// SPRITE_COLOR_HIDDEN, so it shows nothing itself; in tbs-en, with this
 /// function returning at once, the leader vanishes for the 20 frames the
-/// pillar takes to go down, and with it he stays in view.
+/// pillar takes to go down, and with it he stays in view
+/// (https://alchemy.pascalpixel.com/places/venus-lighthouse-second-floor/occluding-chest.png,
+/// with the chest on the left and without it on the right).
 static struct FieldActor *
 VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object;

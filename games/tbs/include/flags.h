@@ -434,10 +434,13 @@
 /// The water beast spitting at Altin's houses has stopped as the party came
 /// near and hopped away into the flood for good; Altin's setup then removes
 /// it.
+/// ★ Named from the game: "The water beasts looked"
+/// (MsgAltinTheWaterBeastsLookedExactlyLike)
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
 /// Altin's stone pillar stands in column 22, where Move pushes it. Checked
 /// after every Move (Village_CheckPillarMoved), which clears it if the pillar
 /// is anywhere else; the setup puts the pillar back there while it is set.
+/// ★ Named from its area name: Altin
 #define FLAG_ALTIN_PILLAR_MOVED 0x906
 /// A barrel in the houses.
 /// ★ Named from the game: "Nut" (MsgItemName)
@@ -787,6 +790,7 @@
 /// The villager at Kolima Bridge has let its drawbridge down across the river,
 /// the first time the party stepped onto it after the curse was lifted. The
 /// bridge is drawn down from then on, and its piece of the world map with it.
+/// ★ Named from its area name: Kolima Bridge
 #define FLAG_KOLIMA_BRIDGE_LOWERED 0x847
 
 // Kolima Forest
@@ -1012,10 +1016,12 @@
 /// Move has pushed aside the statue before Mercury Lighthouse's door, Mia has
 /// learned the word Psynergy, and her Ply has opened the door for her to go in.
 /// Afterwards she is gone from outside and the statue stays moved.
+/// ★ Named from its area name: Mercury Lighthouse
 #define FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE 0x871
 /// Back from the battle with the Lizard Man on the lighthouse's ground floor,
 /// Mia has nodded to the leader and gone on deeper into the lighthouse. Until
 /// then, coming in by the door replays the Lizard Man blocking her way.
+/// ★ Named from its area name: Mercury Lighthouse
 #define FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE 0x872
 /// Move has pushed aside the second statue that blocked Mia, and she has
 /// joined the party with Fizz, a Mercury Djinni. Afterwards she is gone from
@@ -1025,6 +1031,7 @@
 /// The statue on the lighthouse's middle floor has been pushed or moved onto
 /// its floor switch, and the gate it works stays open for good. Until then the
 /// gate opens only while the leader stands on the switch.
+/// ★ Named from its area name: Mercury Lighthouse
 #define FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN 0x874
 /// Ply cast on the heart of the pool, as its inscription bids: the lights
 /// cycle and the pillar routes open.
@@ -1035,11 +1042,13 @@
 /// the water runs, and it carries the party down to the ground floor. Moving
 /// one out again clears it. The ground floor's entrances from the lower floor
 /// place the party by whether it is set.
+/// ★ Named from its area name: Mercury Lighthouse
 #define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876
 /// A pillar pushed along the upper floor's row has sent the blue statue on its
 /// ledge sliding off to the floor below, where Move can set it on the stair
 /// gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). The scene
 /// places the statue below from then on.
+/// ★ Named from its area name: Mercury Lighthouse
 #define FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL 0x877
 /// The fallen statue rests on the floor switch of MercuryLighthouseUpper and
 /// holds its gate open.
@@ -1283,6 +1292,7 @@
 /// The party lost a battle at sea and is back in the passenger hold, where the
 /// voyage starts over. XXX: no code of this game reads it; a reader would say
 /// what it changes.
+/// ★ Named from its area name: Tolbi-bound Ship
 #define FLAG_TOLBI_SHIP_DEFEATED_AT_SEA 0x902
 /// The ship's containers below decks, set once each is searched: a barrel in
 /// the cargo hold, one in the passenger hold and a jar in the captain's

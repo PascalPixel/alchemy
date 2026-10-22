@@ -110,10 +110,12 @@ enum MercuryLighthouseAerieActor {
   ACTOR_BEACON = ACTOR_FIRST_PLACED,
   /// A statue, drawn as the lighthouse's statues all are, standing on
   /// the lift; it rides up and down with it.
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_LIFT_STATUE,
   /// Four more statues flank the beacon, two on each side of it;
   /// the two east of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn
   /// mirrored.
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_FIRST_BEACON_STATUE,
   /// Six of them.
   /// ★ Named from what the player sees: round white platforms at the foot of

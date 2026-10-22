@@ -324,6 +324,8 @@ enum ColosseumEntranceTrigger {
 enum {
   /// The Lucky Guess man has refused Isaac as a finalist
   /// (Event_OfferLuckyGuess).
+  /// ★ Named from the game: "Colosso's Lucky Guess makes the battles in the
+  /// colosseum better." (MsgColosseumColossosLuckyGuessMakesBattles)
   FLAG_LUCKY_GUESS_REFUSED_ISAAC = FLAG_PLACE_TEMP_C0,
   /// Navampa has explained that Dekka will not answer (Event_TalkToDekka).
   FLAG_NAVAMPA_SPOKE_FOR_DEKKA = FLAG_PLACE_TEMP_C1,

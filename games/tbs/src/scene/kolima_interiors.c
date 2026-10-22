@@ -125,7 +125,11 @@ enum KolimaInteriorActor {
   /// ★ Named from the game: "I'm only a merchant, but I got turned into a
   /// tree just for staying here." (MsgKolimaInteriorsImOnlyAMerchantButI)
   ACTOR_MERCHANT_GUEST,
+  /// ★ Named from the game: "I need to help evacuate the other villagers."
+  /// (MsgValeKyleAbleStop)
   ACTOR_FIRST_VILLAGER = ACTOR_OLD_MAN_HEARD_OF_WARRIORS,
+  /// ★ Named from the game: "I need to help evacuate the other villagers."
+  /// (MsgValeKyleAbleStop)
   ACTOR_LAST_VILLAGER = ACTOR_MERCHANT_GUEST
 };
 

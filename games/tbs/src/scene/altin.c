@@ -151,6 +151,8 @@ enum AltinVillageActor {
   /// blocks at the top of the ladder on the east cliff and, two of them, on
   /// the rails below the doorway into the mine (the drained village's render
   /// with them drawn).
+  /// ★ Named from what the player sees: crates, SPRITE_CRATE, where the drained
+  /// village's render draws them (its render)
   ACTOR_FIRST_CRATE,
   ACTOR_SECOND_CRATE,
   ACTOR_THIRD_CRATE

@@ -280,7 +280,9 @@ enum KalayTunnelActor {
   /// first (its render)
   ACTOR_SECOND_STATUE,
   /// A man drawn with SPRITE_BUNZA who waits here once FLAG_KALAY_TUNNEL_OPEN
-  /// is set: "Layana was very hard on all of you, wasn't she?"
+  /// is set.
+  /// ★ Named from the game: "Layana was very hard on all of you, wasn't she?"
+  /// (MsgKalayLayanaWasVeryHardOn)
   ACTOR_WAITING_MAN,
   /// The sprite of the puddle that Frost freezes into an ice pillar in
   /// bilibin_cave.c.
@@ -303,7 +305,9 @@ enum KalayTunnelFlag {
   /// Each statue's particles have started their sound.
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_PLACE_TEMP_02,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_SECOND_PASSAGE_OPEN = FLAG_PLACE_TEMP_03
 };
 

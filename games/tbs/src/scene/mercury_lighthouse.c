@@ -266,6 +266,7 @@ enum MercuryLighthouseExteriorActor {
   /// ★ Named from what the player sees: blue statues either side of the way in
   /// (its render)
   ACTOR_EAST_APPROACH_STATUE,
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_DOOR_STATUE,
   /// ★ Named from the game: "used Ply." (MsgMercuryDidThat)
   ACTOR_PLY_TARGET,
@@ -286,7 +287,9 @@ enum MercuryLighthouseExteriorActor {
 
 /// Puzzle states kept until the party leaves the lighthouse.
 enum {
+  /// ★ Named from its area name: Mercury Lighthouse
   FLAG_STAIRS_RAISED = FLAG_PLACE_TEMP_02,
+  /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_RUNNING = FLAG_PLACE_TEMP_06,
   FLAG_FOUNTAIN_SHOWN =
       FLAG_PLACE_TEMP_07, ///< the camera has shown it start once

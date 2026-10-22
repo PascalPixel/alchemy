@@ -187,6 +187,8 @@ enum {
   /// Growth has grown the Entry's sprout into a vine.
   FLAG_GROWTH_PASSAGE_OPEN = 0x300,
   /// The party is on the far side of BabiLighthouseStoneDoor's stone door.
+  /// ★ Named from the game: "Yes, they opened the stone door and entered!"
+  /// (MsgBabiYoureSureTheyWentThrough)
   FLAG_BEYOND_DOOR = 0x301
 };
 

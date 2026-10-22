@@ -51,14 +51,18 @@ void Engine_AudioPlayCue(s32 cue);
 enum MenuTestActor {
   /// Kraden's sprite, 0x1e (ACTOR_KRADEN in sol_sanctum_elemental_star_room.c);
   /// opens the picker a full party drops an item with.
+  /// ★ Named from the game: "Kraden" (MsgDebugGlyphName)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   /// Dora's sprite, 0x1f (vale_eruption.c). `You got a Djinni!`
+  /// ★ Named from the game: "Dora" (MsgDebugGlyphName)
   ACTOR_DORA,
   /// Saturos's sprite, 0x20 (sol_sanctum_elemental_star_room.c).
   /// `The body is being torn apart.`
+  /// ★ Named from the game: "Saturos" (MsgDebugGlyphName)
   ACTOR_SATUROS,
   /// Menardi's sprite, 0x21 (sol_sanctum_elemental_star_room.c).
   /// `You got treasure!`
+  /// ★ Named from the game: "Menardi" (MsgDebugGlyphName)
   ACTOR_MENARDI,
   /// The sprite of Vale's armor shopkeeper, 0x7d (vale_interiors_shops.c);
   /// opens
@@ -66,17 +70,23 @@ enum MenuTestActor {
   ACTOR_ARMOR_SHOPKEEPER,
   /// Dora's sprite again: the sanctum's service menu, in French a Nut, and in
   /// Spanish and Italian `That IS dangerous!`
+  /// ★ Named from the game: "Dora" (MsgDebugGlyphName)
   ACTOR_SECOND_DORA,
   /// Saturos's sprite again. "Kyle... Will they be able to stop the Boulder?"
+  /// ★ Named from the game: "Saturos" (MsgDebugGlyphName)
   ACTOR_SECOND_SATUROS,
   /// The ivy's sprite, 0xf8 ("trapped in the ivy", goma_cave_entrance.c);
   /// opens the icon browser, and takes Whirlwind, Force and Catch.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY,
   /// Felix's sprite, 0x23 (sol_sanctum_elemental_star_room.c); a shop message
   /// browser, or in Japanese the character selector.
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
   /// Felix's sprite again: a shop message browser, or in Japanese the item
   /// browser.
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_SECOND_FELIX
 };
 

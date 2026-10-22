@@ -23,10 +23,14 @@
 /// placed while its flag (FLAG_DJINNI_0 + element * DJINN_PER_ELEMENT) is
 /// clear.
 enum TestRoomsActor {
-  ACTOR_FLINT = ACTOR_FIRST_PLACED, ///< Venus, "Flint" (MsgDjinnName)
-  ACTOR_FIZZ,                       ///< Mercury, "Fizz"
-  ACTOR_FORGE,                      ///< Mars, "Forge"
-  ACTOR_GUST                        ///< Jupiter, "Gust"
+  /// ★ Named from the game: "Flint" (MsgDjinnName)
+  ACTOR_FLINT = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Fizz" (MsgDjinnName)
+  ACTOR_FIZZ,
+  /// ★ Named from the game: "Forge" (MsgDjinnName)
+  ACTOR_FORGE,
+  /// ★ Named from the game: "Gust" (MsgDjinnName)
+  ACTOR_GUST
 };
 
 u8 *TestRooms_GetEntrances(void) { return (u8 *)gTestRooms_Entrances; }

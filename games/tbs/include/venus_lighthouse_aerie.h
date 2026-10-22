@@ -38,6 +38,8 @@ enum {
   /// A blank actor (SPRITE_BLANK) that runs across the floor under the Venus
   /// Star as Saturos throws it into the beacon, so that only its shadow shows,
   /// the star's shadow (a recording of the throw).
+  /// ★ Named from what the player sees: the Venus Star's shadow crossing the
+  /// floor as Saturos throws it (its render)
   ACTOR_STAR_CARRIER = 22,
   /// The orb the rising particles circle as the party is lifted away:
   /// SPRITE_BLUE_ORB drawn in SPRITE_COLOR_GBR, which turns its blue to green,

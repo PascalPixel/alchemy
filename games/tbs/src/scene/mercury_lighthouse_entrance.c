@@ -143,9 +143,12 @@ enum MercuryLighthouseEntranceActor {
   ACTOR_LIZARD_MAN = ACTOR_FIRST_PLACED,
   /// Six statues line the way to the doorway: three on its west side (x 88),
   /// then three on its east (x 184).
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_FIRST_STATUE,
   /// The east side's three statues, which the doorway's scenes draw mirrored.
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_FIRST_EAST_STATUE = ACTOR_FIRST_STATUE + 3,
+  /// ★ Named from the game: "used Ply." (MsgMercuryDidThat)
   ACTOR_PLY_TARGET = ACTOR_FIRST_PLACED + 8
 };
 

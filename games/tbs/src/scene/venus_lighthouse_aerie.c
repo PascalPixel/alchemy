@@ -171,12 +171,6 @@ enum VenusLighthouseAerieTrigger {
   TRIGGER_FLOOR_BY_PLATFORMS = 11
 };
 
-/// Isaac's animations for a jump, as his sprite (spr_000.png) draws them.
-enum {
-  ANIM_LEADER_SPRING = 6, ///< leans back for a moment before a jump
-  ANIM_LEADER_LEAP = 7    ///< in mid-stride, leaning forward
-};
-
 /// A child value that makes an actor blink rather than set its colour mode
 /// (Engine_ActorSetChildValue).
 enum { CHILD_VALUE_BLINK = 0x100 };
@@ -512,7 +506,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, 516, 121);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
   leader->x.fixed = PIXELS(516);
   leader->y.fixed = PIXELS(8);

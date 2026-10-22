@@ -319,13 +319,6 @@ enum WorldMapTrigger {
 /// Ship off course to the island.
 enum { ROWING_BALANCE_OFF_COURSE = 11 };
 
-/// Isaac's animations the map plays beyond enum ActorAnimation, as his sprite
-/// (spr_000.png) draws them.
-enum {
-  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
-  ANIM_LEADER_HOLD_UP = 28    ///< both arms raised, holding something up
-};
-
 /// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge has fallen.
 enum { WORLD_MAP_BRIDGE_ANIM_BROKEN = 2 };
 
@@ -2081,7 +2074,7 @@ static void Event_UseBlackOrb(void) {
   WorldMap_BeginEvent();
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_HOLD_UP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   // Present the orb icon before its sparks and the ship's response.
   orb = Object_Create(SPRITE_BLANK, leader->x.fixed + PIXELS(2), PIXELS(38),
                       leader->z.fixed);

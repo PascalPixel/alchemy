@@ -49,8 +49,6 @@
 /// - XXX: what TunnelRuinsGreatStatue's fifteenth actor is, in sprite 0x114 at
 ///   (232, 248), drawn at three fifths of its size with no collision and named
 ///   by no event; a render of its room would show it.
-/// - XXX: what the leader's animations 6 and 7 show as it hops a gap; a render
-///   of the party's sprite animations would settle it.
 /// - XXX (picture): the balance platforms taken apart, each carved stone's
 ///   weight beside the heights gTunnelRuins_BalanceHeights gives the two
 ///   platforms.
@@ -259,10 +257,10 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   if (FieldObject_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(actor, target) == 0) {
     EV_BEGIN();
-    Object_SetMode(actor, 6);
+    Object_SetMode(actor, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(actor, 7);
+    Object_SetMode(actor, ANIM_LEADER_LEAP);
 
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);
@@ -273,7 +271,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
                               TunnelRuins_GetLandingPixel(target->x),
                               TunnelRuins_GetLandingPixel(target->z));
-    Object_SetMode(actor, 6);
+    Object_SetMode(actor, ANIM_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(actor, 1);
     Engine_TaskWait(6);
 
@@ -454,7 +452,7 @@ static void Event_HopDownStep(void) {
   u32 i;
 
   EV_BEGIN();
-  Object_SetMode(leader, 6);
+  Object_SetMode(leader, ANIM_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
   Object_SetMode(leader, 1);
   Engine_ActorSetSpriteFlags(leader, 0);

@@ -484,7 +484,7 @@ static void Event_PushPipeworksPillar(void) {
   actor = Object_GetById(PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
   Engine_EventBegin();
-  Engine_ActorSetAnimation(leaderId, 8);
+  Engine_ActorSetAnimation(leaderId, ANIM_PUSH);
   Engine_EventWait(6);
   actor->speed = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
@@ -640,7 +640,7 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
   } else {
     Engine_ActorSetAnimation(OPPONENT, 8);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);
   Camera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);

@@ -31,9 +31,6 @@
 /// - XXX: what game flag 0x100, set as the scene ends, marks; nothing else sets
 ///   or reads it by number, so a read of its byte or of the flag range would
 ///   settle it.
-/// - XXX: what the leader's animation 28, played as Isaac holds up the Mars
-///   Star, is in the leader's sprite; its sprite sheet's animation table would
-///   settle it.
 /// - XXX (picture): what ACTOR_RISING_EFFECT, a blank actor scaled with each
 ///   departing actor, draws; a render of Alex rising away would show it.
 /// - XXX: MUS_017, MUS_023, MUS_063 and SE_107, SE_141, SE_144, SE_145,
@@ -1306,9 +1303,9 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     Engine_ItemLoadIcon(ITEM_MARS_STAR);
     Engine_VramLoad(starSprite->slot, 128, iconPixels + 0x400);
     Engine_HeapRelease(17);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
     Engine_ItemShowPicture(star, 3);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   for (frame = 0; frame < 24; frame++) {

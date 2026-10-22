@@ -442,15 +442,6 @@ enum VenusTrack {
 #define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
-/// Isaac's animations the lighthouse plays beyond enum ActorAnimation, as his
-/// sprite (spr_000.png) draws them.
-enum {
-  ANIM_LEADER_SPRING = 6,    ///< leans back for a moment before a jump
-  ANIM_LEADER_LEAP = 7,      ///< in mid-stride, leaning forward
-  ANIM_LEADER_PUSH = 8,      ///< leaning into a push
-  ANIM_LEADER_LEAN_BACK = 22 ///< leaning back, his head thrown back
-};
-
 static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
@@ -515,7 +506,7 @@ enum {
 #include "common/object_findslot.h"
 
 /// Pushing a pillar: the pillar ahead of the leader moves one cell on with him,
-/// leaning into it (ANIM_LEADER_PUSH), when the cell beyond is free, nothing
+/// leaning into it (ANIM_PUSH), when the cell beyond is free, nothing
 /// stands on the pillar, and it is no statue (SW_VENUS_IMMOVABLE).
 static void VenusLighthouse_PushAdjacentPillar(void) {
   struct FieldPosition targetPosition;
@@ -569,7 +560,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
     return;
 
   // Move the pillar and leader together, then restore their standing state.
-  Object_SetMode(leader, ANIM_LEADER_PUSH);
+  Object_SetMode(leader, ANIM_PUSH);
   moveRate = PIXELS(1) / 5;
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_185);

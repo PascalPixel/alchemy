@@ -54,9 +54,6 @@
 /// - XXX: why Xian places three crates as actors (ACTOR_FIRST_CRATE on), in
 ///   palette 15 and drawn under the others, where the map could draw them; a
 ///   render of the village with them hidden would show what they cover.
-/// - XXX: what the leader's object modes 6 and 7 show as he jumps over the
-///   spilled water (Xian_JumpOverSpilledWater); the frames they pick in the
-///   party's sprite sheets would settle their names.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -640,10 +637,10 @@ static void Xian_JumpOverSpilledWater(void) {
                                landing);
     if (FieldObject_CheckMovementCollision(leader, landing) == 0) {
       Engine_EventBegin();
-      Object_SetMode(leader, 6);
+      Object_SetMode(leader, ANIM_LEADER_SPRING);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
-      Object_SetMode(leader, 7);
+      Object_SetMode(leader, ANIM_LEADER_LEAP);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -651,7 +648,7 @@ static void Xian_JumpOverSpilledWater(void) {
       Engine_ActorSetSpriteFlags(leader, 0);
       Engine_ObjectMotionSetPositionAndCommit(
           ACTOR_PARTY_LEADER, landing->x >> 16, landing->z >> 16);
-      Object_SetMode(leader, 6);
+      Object_SetMode(leader, ANIM_LEADER_SPRING);
       Engine_ActorSetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;
       Engine_EventEnd();

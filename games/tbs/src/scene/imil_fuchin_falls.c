@@ -77,9 +77,6 @@
 /// - XXX: what the log sounds SE_241 and SE_289, the dust's SE_136 and the
 ///   eye's SE_182 are; a recording of a log push and of the eye being set
 ///   would let them be named in songs.h.
-/// - XXX: what the leader's animations 6 and 7 in ImilFuchinFalls_HopBy show
-///   (the hop's crouch and its flight); the leader sprite's sheet would
-///   settle it.
 /// - XXX (picture): the log rooms' rebuild, each log's track cells rewritten
 ///   as its place flags change, drawn over the room's collision map.
 
@@ -1484,9 +1481,9 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, dx, dz);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 7);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Engine_EventEnd();
 }
 

@@ -879,7 +879,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
   } else {
     Engine_ActorSetAnimation(OPPONENT, 8);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);
   Camera_MoveTo(PIXELS(104), 0, PIXELS(192), 0);
@@ -1179,7 +1179,7 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
       Engine_EventWait(3);
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       actor->velocityY = 0x40000;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
       Engine_ActorSetAttachedEffect(
           ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Engine_EventWait(30);

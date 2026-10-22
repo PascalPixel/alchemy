@@ -59,9 +59,6 @@
 /// - XXX: why the third area places two crates (SPRITE_CRATE's sheet, under
 ///   the actors) at the river on some entrances; a render of the river with and
 ///   without them would show what they cover.
-/// - XXX: what the leader's object modes 6 and 7 show in the jumps across the
-///   logs (MogallForest_TryJumpLeaderTo); the frames they pick in the party's
-///   sprite sheets would settle their names.
 
 #include "script.h"
 #include "game_state.h"
@@ -329,10 +326,10 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     s32 jumpMotionFlags;
 
     Engine_EventBegin();
-    Object_SetMode(leader, 6);
+    Object_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(leader, 7);
+    Object_SetMode(leader, ANIM_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -342,7 +339,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     Engine_ActorSetSpriteFlags(leader, 0);
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)position->x >> 16),
                               (s16)((u32)position->z >> 16));
-    Object_SetMode(leader, 6);
+    Object_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     Engine_EventEnd();

@@ -302,9 +302,6 @@ enum {
 #define SEARCH_CHEST_FACING(facing)                                            \
   (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
 
-/// The leader's jump animations.
-enum { ANIM_LEADER_JUMP = 22, ANIM_LEADER_LEAP = 7 };
-
 /// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
 enum { PUDDLE_ANIM_FROZEN = 5 };
 
@@ -463,7 +460,7 @@ static void AltinPeak_RideCart(s32 log) {
   logActor = Object_GetById(ACTOR_CART);
   Field_EndBusyAndReveal();
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_JUMP);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   Engine_EventWait(10);
   Engine_AudioPlayCue(SE_JUMP);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(16) / 5, PIXELS(8) / 5);
@@ -999,7 +996,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 792, 140);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);

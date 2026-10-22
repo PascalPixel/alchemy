@@ -48,9 +48,6 @@
 ///   settle it.
 /// - XXX: what SE_141, SE_189 and SE_188, as the stump teeters, falls and the
 ///   east pillar sinks, sound like; a recording of the room would name them.
-/// - XXX: the leader's animations 6 and 7 in the patch-0 Event_JumpGapWest
-///   (crouch and jump, by their use); a render of the party's sprite
-///   animations would name them in field_event.h's ActorAnimation.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"
@@ -508,10 +505,10 @@ static void Event_JumpGapWest(void) {
   destination->z = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
     EV_BEGIN();
-    Object_SetMode(leader, 6);
+    Object_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(leader, 7);
+    Object_SetMode(leader, ANIM_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -520,7 +517,7 @@ static void Event_JumpGapWest(void) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
                               *(s16 *)((u8 *)destination + 2),
                               *(s16 *)((u8 *)destination + 10));
-    Object_SetMode(leader, 6);
+    Object_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
     EV_END();

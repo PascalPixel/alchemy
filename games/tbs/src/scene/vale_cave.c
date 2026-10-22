@@ -657,7 +657,7 @@ static void Event_PushLogOffLedge(void) {
   Engine_EventBegin();
   Engine_EventWait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Engine_EventWait(15);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Engine_EventWait(4);

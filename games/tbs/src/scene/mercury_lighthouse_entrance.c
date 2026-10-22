@@ -75,8 +75,6 @@
 ///   SE_204 and SE_188, the passages' arrival SE_170); recordings of the
 ///   Lizard Man scene, Ply at the pool and the drop would let songs.h name
 ///   them.
-/// - XXX: what the leader's animation 22 shows as he lands from the hole
-///   above; the leader sprite's sheet would settle it.
 /// - XXX (no evidence): what the two unused six-statue entrances
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH and _MIDDLE) were
 ///   for; no exit or code leads to them, so nothing in the ROM shows them in
@@ -518,7 +516,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Engine_AudioPlayCue(SE_188);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();

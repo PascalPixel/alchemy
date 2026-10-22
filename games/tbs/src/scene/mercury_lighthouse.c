@@ -2846,9 +2846,9 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_EventWait(30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 704, 584);
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 7);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Actor_Get(ACTOR_PARTY_LEADER)->speed = PIXELS(3);
   Actor_Get(ACTOR_PARTY_LEADER)->acceleration = PIXELS(2);
   Engine_AudioPlayCue(SE_JUMP);
@@ -2858,7 +2858,7 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0x4000;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Engine_EventWait(6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
   Engine_AudioPlayCue(SE_223);

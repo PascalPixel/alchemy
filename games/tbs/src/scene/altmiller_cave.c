@@ -48,8 +48,6 @@
 ///   (mask 0x1d1d and active 0x3f by steps, 0x3f3f and 31 otherwise), and
 ///   DisplayTransition_InitializeBattleEffectState's mode 0x4d; the window
 ///   modes of DisplayTransition_UpdateScanlineTable would settle them.
-/// - XXX: what the leader's animations 6 and 7 show as it hops over the
-///   puddle; a render of the party's sprite animations would settle it.
 /// - XXX: struct LightWheel's unk04, which nothing in the overlay reads; a
 ///   watch on the wheel while it spins would settle whether anything does.
 /// - XXX (picture): AltmillerCaveEntrance's darkness taken apart, BG1's blend
@@ -576,10 +574,10 @@ static void AltmillerCave_HopSelectedActor(void) {
   }
   if (FieldObject_CheckMovementCollision(actor, &destination.position) == 0) {
     Engine_EventBegin();
-    Object_SetMode(actor, 6);
+    Object_SetMode(actor, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(actor, 7);
+    Object_SetMode(actor, ANIM_LEADER_LEAP);
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
@@ -587,7 +585,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ObjectMotionSetPositionAndCommit(
         ACTOR_PARTY_LEADER, components[0].part.pixel, components[2].part.pixel);
-    Object_SetMode(actor, 6);
+    Object_SetMode(actor, ANIM_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(actor, 1);
     actor->motionFlags = motionFlags;
     Engine_EventEnd();

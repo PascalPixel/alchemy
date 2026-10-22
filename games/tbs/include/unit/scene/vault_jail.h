@@ -15,11 +15,11 @@ const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern const struct SceneEntrance gJailEntrances[];
-extern const u32 gJailExits[];
-extern const struct ScenePlacement gJailThiefPlacements[];
-extern const struct ScenePlacement gJailPrisonerPlacements[];
-extern const struct SceneEvent gJailThiefEvents[];
-extern const struct SceneEvent gJailPrisonerEvents[];
+extern const struct SceneEntrance gVaultJail_Entrances[];
+extern const u32 gVaultJail_Exits[];
+extern const struct ScenePlacement gVaultJail_ThiefPlacements[];
+extern const struct ScenePlacement gVaultJail_PrisonerPlacements[];
+extern const struct SceneEvent gVaultJail_ThiefEvents[];
+extern const struct SceneEvent gVaultJail_PrisonerEvents[];
 
 #endif

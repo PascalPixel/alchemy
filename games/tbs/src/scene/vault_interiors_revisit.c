@@ -1,55 +1,46 @@
 /// @file
-/// Vault's houses, shops and inn (SceneId_VaultInteriorsRevisit; the
-/// area names call it Vault) as the party finds them once it has reached
-/// Kalay. They replace the first visit's interiors (vault_interiors.c) as
-/// Vault's revisit scene (vault_revisit.c) replaces the town: each of its six
-/// house doors, VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST and the
-/// rest, leads to the entrance here named for the same door, and each room
-/// leads back out through it.
+/// Vault (SceneId_VaultInteriorsRevisit): the town's houses, shops and inn once
+/// the party has reached Kalay. They replace the first visit's interiors
+/// (vault_interiors.c) as SceneId_VaultRevisit (vault_revisit.c) replaces the
+/// town: each of its six house doors leads to the entrance here named for the
+/// same door, and each room leads back out through it.
 ///
-/// The thieves the party caught have broken out of jail, and the talk is of
-/// them and of Colosso, the festival about to begin in Tolbi: a villager heard
-/// the prisoners say they wanted to break out before it began. The rooms, by
-/// entrance:
-/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the house of a man
-///   whose precious stone, he says, a cat ate; his wife thought she saw the
-///   cat paw it, and does not believe him. Arriving here sets him on the floor
-///   and copies a 4-by-3 block of cells from (0, 120) to (8, 67) (XXX: what
-///   they show is not known).
-/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a boy
-///   who wonders whether the thieves were from Lunpa at all, since Dodonpa's
-///   henchmen never attacked.
+/// The thieves have broken out of jail, and the talk is of them and of
+/// Colosso, the festival about to begin in Tolbi. The rooms, by entrance:
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
+///   house: he says a cat ate his precious stone, and his wife does not
+///   believe him. Arriving here sets him on the floor and copies a block of
+///   cells into the room.
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
+///   doubts the thieves were from Lunpa.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and
-///   VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS, the inn: the innkeeper
-///   behind the counter, and the girl at the inn, as the Bone's description
-///   calls her, who offers Bones left over from dinner. A Bone also lies on the
-///   floor beside her. Trigger 8 leads to the inn's upstairs room
-///   (VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_FROM_INN), where a cook works, and
-///   trigger 7 back.
-/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_EAST, the item shop, with a
-///   couple who talk of Colosso.
+///   VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS, the inn, where the girl at
+///   the inn offers Bones and a Bone lies on the floor beside her; its stairs
+///   lead to the upstairs room, where a cook works.
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_EAST, the item shop.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTH, the weapon and armor
 ///   shops.
-/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house.
-///   The mayor welcomes Isaac back and tells him the thieves have escaped
-///   (FLAG_WELCOMED_BACK, a place flag, and
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house,
+///   where the mayor welcomes Isaac back and warns that the thieves have
+///   escaped (FLAG_WELCOMED_BACK, a place flag, and
 ///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES); a Mind Read on him before that
-///   plays the welcome first. His wife says the family urn the thieves stole is
-///   on display.
+///   plays the welcome first.
 ///
 /// The Bones are how the party gets the dog in Vault to show its hidden
 /// passage. The girl's offer gives one Bone each time it is accepted
 /// (FLAG_VAULT_BONE_RECEIVED, shared with vault_interiors.c, changes only her
-/// words), and searching the floor Bone (search trigger 41, Vault_FindBone)
-/// gives another. While the leader stands beside the floor Bone,
-/// Vault_UpdateBoneProximityFlag sets FLAG_SCENE_TEMP_50, which disables her
-/// talk row, so that the A button there searches the Bone instead of talking
-/// to her. The shopkeepers open their shops only when spoken to across the
-/// counter, facing north, and otherwise only talk. The placements' condition
-/// 0 is replaced as the scene loads with whether each actor stands inside the
-/// room's view bounds, so only the people of the room entered appear. A jar,
+/// words), and searching the floor Bone (VAULT_INTERIORS_CELL_INN_BARREL,
+/// Vault_FindBone) gives another. While the leader stands beside the floor
+/// Bone, Vault_UpdateBoneProximityFlag sets FLAG_SCENE_TEMP_50, which disables
+/// her talk row, so that the A button there searches instead of talking. The
+/// shopkeepers open their shops only when spoken to across the counter. A jar,
 /// two barrels and a wooden box keep the first visit's flags, so what the
-/// party took then stays taken, and two books can be read.
+/// party took then stays taken, and two bookcases can be read.
+///
+/// Open questions:
+/// - XXX: what the 4-by-3 block of cells copied from (0, 120) to (8, 67) on
+///   arriving at the gem owner's house shows; a render of the room before and
+///   after the copy would settle it.
 
 #include "game_state.h"
 #include "unit/scene/vault_interiors_revisit.h"
@@ -155,7 +146,7 @@ enum {
 /// Set once the mayor has told Isaac the thieves escaped from jail.
 /// ★ Named from the game: "You've come back to Vault!"
 /// (MsgVaultIsaacYouveComeBackVault)
-enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
+enum { FLAG_WELCOMED_BACK = FLAG_PLACE_TEMP_00 };
 
 // Shared scene routines stay in their linked order.
 #include "common/vault_spotflag.h"

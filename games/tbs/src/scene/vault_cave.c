@@ -374,7 +374,7 @@ static void VaultCave_PushPillarAhead(void) {
   if (FieldObject_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
-  Object_SetMode(leader, 8);
+  Object_SetMode(leader, ANIM_PUSH);
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_238);
   pillar->speed = 0x3333;
@@ -393,7 +393,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->velocityZ = 0;
   leader->targetX = ACTOR_NO_TARGET;
   leader->targetZ = ACTOR_NO_TARGET;
-  Object_SetMode(leader, 1);
+  Object_SetMode(leader, ANIM_STAND);
 }
 
 /// Whirlwind blows the ivy away.

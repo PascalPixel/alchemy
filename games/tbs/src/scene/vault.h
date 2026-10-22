@@ -29,6 +29,12 @@ enum VaultCell {
   /// Before the north gate's exit (VAULT_TO_WORLD_MAP_NORTH).
   VAULT_CELL_NORTH_GATE = 21,
   VAULT_CELL_BELL = 30,
+  /// The hidden passage down into Vault Cave, which Reveal shows
+  /// (VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE).
+  VAULT_CELL_CAVE_PASSAGE = 40,
+  /// The cave mouth in the town's northeast cliff
+  /// (VAULT_REVISIT_TO_VAULT_CAVE_MOUTH).
+  VAULT_CELL_CAVE_MOUTH = 41,
   VAULT_CELL_WELL = 90,
   VAULT_CELL_WOODEN_BOX = 101
 };

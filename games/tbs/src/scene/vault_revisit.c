@@ -1,52 +1,42 @@
 /// @file
-/// Vault (SceneId_VaultRevisit), the town as the party finds it once it has
-/// reached Kalay, on the same map as Vault's first scene (vault.c). The world
-/// map still leads into that first scene, but once FLAG_REACHED_KALAY is set
-/// (entering Kalay sets it) its setup sends the party straight on here by its
-/// VAULT_TO_VAULT_REVISIT, to VAULT_REVISIT_FROM_VAULT at the town's south edge
-/// whichever side it came from; Vault Sanctum, Vault Cave and the houses
-/// (vault_interiors_revisit.c) lead back here directly. This copy of the town
-/// replaces the first for the rest of the game.
+/// Vault (SceneId_VaultRevisit), the town once the party has reached Kalay, on
+/// the same map as Vault's first scene (vault.c). The world map still leads
+/// into the first scene, but once FLAG_REACHED_KALAY is set its setup sends
+/// the party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
+/// Cave, the jail and the houses (vault_interiors_revisit.c) lead back here
+/// directly. This scene replaces the first for the rest of the game.
 ///
-/// Much has changed since the party left. The three thieves it caught here,
-/// who had stolen Hammet's Shaman's Rod, have broken out of jail; the bridge
-/// to Kalay has been fixed, warriors from Kalay have come asking after Hammet,
-/// who went to Lunpa, and a woman says Lunpa's outlaws have become no
-/// better than thieves since Dodonpa took over. Most townspeople say this in
-/// plain message rows. Four speak through event functions that remember who
-/// has spoken in place flags (FLAG_SCENE_TEMP_00 + 0x100 to + 0x108, which
-/// last until the party leaves Vault's group of scenes), so that a Mind Read
-/// on one not yet spoken to plays the conversation first: the welcoming
-/// young man recognizes "the warriors who captured the thieves", the old man
-/// who was talking with the mayor praises the party's strength, the strongman
-/// on watch asks whether it has checked the jail (a yes and a no get different
-/// replies), and the boy round the well greets the party and
-/// Ivan. The praise also sets FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the
-/// mayor's welcome indoors does.
+/// The thieves the party caught have broken out of jail, and most townspeople
+/// say so, or speak of Hammet and Lunpa, in plain message rows. Four speak
+/// through event functions that remember who has spoken in place flags
+/// (FLAG_WARRIOR_GUY_GREETED to FLAG_ASKED_ABOUT_JAIL), so that a Mind Read on
+/// one not yet spoken to plays the conversation first. The old man's praise
+/// also sets FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the mayor's welcome
+/// indoors does.
 ///
-/// Two secrets wait here. Searching the bell rings it, and a ring while
-/// FLAG_VAULT_DJINNI_CALLED_BY_BELL is clear calls Sap, a Venus Djinni, out of
-/// hiding to stand by the bell and sets the flag; spoken to, Sap joins the
-/// party. Coming in from the world map clears the call, so Sap hides again
-/// until it has joined. The dog, given a Bone (the girl at the inn hands them
-/// out), runs to a spot and jumps there three times
-/// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c), and its thoughts then
-/// hint at a passage underground: Reveal shows the passage at that spot, and
-/// its trigger 40 leads down into Vault Cave
-/// (VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE). Trigger 41 is a second way into Vault
-/// Cave (VAULT_REVISIT_TO_VAULT_CAVE_MOUTH). A wooden box holds a Nut, and the
-/// well rumbles with water.
+/// Searching the bell rings it, and a ring while
+/// FLAG_VAULT_DJINNI_CALLED_BY_BELL is clear calls Sap, a Venus Djinni, out to
+/// stand by the bell; spoken to, Sap joins the party. Coming in by a gate
+/// clears the call, so Sap hides again until it has joined. The dog, given a
+/// Bone, runs to a spot and jumps there three times
+/// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c); Reveal then shows the
+/// hidden passage at that spot, whose cell (VAULT_CELL_CAVE_PASSAGE) leads
+/// down into Vault Cave, and the cave mouth in the northeast cliff
+/// (VAULT_CELL_CAVE_MOUTH) is a second way in. A wooden box holds a Nut, and
+/// the well rumbles with water. The cells the events answer are enum
+/// VaultCell (vault.h); the jail door brings the party in by
+/// VAULT_JAIL_FROM_VAULT_REVISIT, where a lone prisoner sits in the thieves'
+/// place.
 ///
-/// The town's other exits lead to the world map
-/// (VAULT_REVISIT_TO_WORLD_MAP_SOUTH and VAULT_REVISIT_TO_WORLD_MAP_NORTH),
-/// through six doors into the houses, shops and inn
-/// (SceneId_VaultInteriorsRevisit,
-/// VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST to
-/// VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTHWEST), into Vault Sanctum
-/// (VAULT_REVISIT_TO_SANCTUM) and into the jail (VAULT_REVISIT_TO_VAULT_JAIL,
-/// arriving at VAULT_JAIL_FROM_VAULT_REVISIT, where a lone prisoner sits in
-/// the thieves' place). Touch triggers 1 and 2 swap the collision of a
-/// 4-by-2 block of cells (common/vault_toggle.h), as in vault.c.
+/// Open questions:
+/// - XXX: what configured object 223, which Scene_Initialize creates at
+///   (128, 420), is; a render of the scene with the object outlined would
+///   settle it.
+/// - XXX: what the 3-by-3 block of cells Scene_Initialize copies from
+///   (45, 41) to (8, 45) shows, which vault.c does not copy; a render of the
+///   map before and after the copy would settle it.
+/// - XXX: SE_100, the bell's sound, is also the shop's repair sound
+///   (shop/repair.c); a recording of both would settle its name.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -147,19 +137,19 @@ enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 enum {
   /// ★ Named from the game: "Hey, it's that warrior guy!"
   /// (MsgVaultWarriorGuy)
-  FLAG_WARRIOR_GUY_GREETED = FLAG_SCENE_TEMP_00 + 0x100,
+  FLAG_WARRIOR_GUY_GREETED = FLAG_PLACE_TEMP_00,
   /// ★ Named from the game: "You're the warriors who captured the thieves"
   /// (MsgVaultWarriorsWhoCaptured)
-  FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_SCENE_TEMP_00 + 0x105,
+  FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_PLACE_TEMP_05,
   /// ★ Named from the game: "You're all really strong"
   /// (MsgVaultTalkingMayorStrong)
-  FLAG_PARTY_PRAISED = FLAG_SCENE_TEMP_00 + 0x106,
+  FLAG_PARTY_PRAISED = FLAG_PLACE_TEMP_06,
   /// ★ Named from the game: "I'm so glad you came back to Vault!"
   /// (MsgVaultWarriorGuy)
-  FLAG_BOY_ROUND_THE_WELL_SPOKE = FLAG_SCENE_TEMP_00 + 0x107,
+  FLAG_BOY_ROUND_THE_WELL_SPOKE = FLAG_PLACE_TEMP_07,
   /// ★ Named from the game: "did you guys check out the jail?"
   /// (MsgVaultGuysCheckJail)
-  FLAG_ASKED_ABOUT_JAIL = FLAG_SCENE_TEMP_00 + 0x108
+  FLAG_ASKED_ABOUT_JAIL = FLAG_PLACE_TEMP_08
 };
 
 // Shared effect and proximity routines precede the scene's entry points.
@@ -625,7 +615,7 @@ static void Event_TalkToDog(void) {
   Engine_ActorFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(2);
   Engine_EventShowMessage(ACTOR_VAULT_DOG, 0);
-  Engine_ActorSetAnimation(ACTOR_VAULT_DOG, 1);
+  Engine_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
 
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
@@ -657,13 +647,14 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 }
 
 /// Sets up Vault as the party finds it after reaching Kalay.
-/// On arrival it restores the collision block of touch triggers 1 and 2,
+/// On arrival it restores the passage's collision (common/vault_toggle.h),
 /// creates configured object 223 at (128, 420) and copies a 3-by-3 block of
-/// cells from (45, 41) to (8, 45), which vault.c does not (XXX: what the copy
-/// shows is not known), and hooks the two children round the well to
-/// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
-/// shown it. Coming in from the world map (entrances 0 to 2) before Sap has
-/// joined clears FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again;
+/// cells from (45, 41) to (8, 45), which vault.c does not (both open
+/// questions in the file's opening comment), and hooks the two children round
+/// the well to Vault_UpdateWalkingVillager. The dog waits at the hidden
+/// passage once it has shown it. Coming in by a gate (ENTRANCE_DEFAULT to
+/// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
+/// clears FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again;
 /// while it is called and has not joined, it stands by the bell. Coming out of
 /// Vault Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME,
 /// and coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
@@ -703,7 +694,7 @@ s32 Scene_Initialize(void) {
   // Restore the dog's clue position and the bell's current Djinni position.
   if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
-  if (gGameState.entrance <= 2 &&
+  if (gGameState.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
       !Engine_GameFlagIsSet(FLAG_DJINNI_0 + DJINNI_SAP) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
@@ -790,10 +781,12 @@ s32 gVaultRevisit_GirlRoundTheWellScript[] = {
 };
 
 struct SceneEntrance gVaultRevisit_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VAULT_REVISIT_NORTH_UNUSED, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTHEAST, CONDITION_ALWAYS,
      408, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTH, CONDITION_ALWAYS, 312, 0,
@@ -915,8 +908,8 @@ u16 gVaultRevisit_JailDoorCells[] = {
 struct SceneEvent gVaultRevisit_Events[] = {
     { EVENT_EXIT, 20, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
     { EVENT_EXIT, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
-    { EVENT_EXIT, 40, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
-    { EVENT_EXIT, 41, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
+    { EVENT_EXIT, VAULT_CELL_CAVE_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
+    { EVENT_EXIT, VAULT_CELL_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
     { EVENT_TOUCH, VAULT_CELL_PASSAGE_ALTERNATE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
     { EVENT_TOUCH, VAULT_CELL_PASSAGE_USUAL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },

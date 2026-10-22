@@ -1,32 +1,28 @@
+
 /// @file
-/// Vault's jail (SceneId_VaultJail), one map of two rooms that the area
-/// names tell apart by entrance. The entrance also picks the tables: the
-/// thieves' for VAULT_JAIL_FROM_VAULT and VAULT_JAIL_FROM_LUNPA, the
-/// prisoner's for VAULT_JAIL_FROM_VAULT_REVISIT.
+/// Vault's jail (SceneId_VaultJail), one map of two rooms whose area names
+/// differ by entrance. The entrance also picks the tables: the thieves' for
+/// VAULT_JAIL_FROM_VAULT and VAULT_JAIL_FROM_LUNPA, the prisoner's for
+/// VAULT_JAIL_FROM_VAULT_REVISIT.
 ///
 /// - Vault (VAULT_JAIL_FROM_VAULT and VAULT_JAIL_FROM_VAULT_REVISIT), the cell
-///   behind Vault's jail door. In the inn's loft the party beats the three
-///   thieves who stole Hammet's Shaman's Rod and the town's treasures during
-///   the eruption, and the mayor has them locked up "for a long, long time"
-///   (FLAG_VAULT_THIEVES_JAILED, set in vault_interiors.c). From then on,
-///   coming in from Vault (VAULT_JAIL_FROM_VAULT), the party finds the three
-///   behind the bars: their leader, who glares at his two men, tells them to
-///   "Shut yer yaps!" and promises the party will pay, one who wishes they had
-///   escaped to the cave northeast of Goma Range, and one who knew they should
-///   have skipped town sooner. Mind Read hears each one's thoughts. Once the
-///   party has reached Kalay, Vault becomes its revisit scene
-///   (vault_revisit.c), where the villagers say the thieves have broken out.
-///   Its jail door brings the party in by VAULT_JAIL_FROM_VAULT_REVISIT, which
-///   places a lone prisoner instead, jailed for hitting somebody, with his own
-///   talk and Mind Read and a plain exit back to that Vault.
+///   behind Vault's jail door. Once the party has beaten the three thieves in
+///   the inn's loft (FLAG_VAULT_THIEVES_JAILED, vault_interiors.c), coming in
+///   from Vault finds them behind the bars, each with his own talk and Mind
+///   Read. Once Vault has become its later scene (vault_revisit.c), whose
+///   villagers say the thieves have broken out, its jail door comes in by
+///   VAULT_JAIL_FROM_VAULT_REVISIT and finds a lone prisoner instead.
 /// - Lunpa (VAULT_JAIL_FROM_LUNPA), the map's other room, which Lunpa's hidden
-///   passage reaches (lunpa.c). Its six chests hold a Water of Life, a Smoke
-///   Bomb, a Lucky Medal, an Antidote, 44 coins and an Elixir, each opened
-///   once (FLAG_JAIL_CHEST_*), and TRIGGER_LUNPA_DOOR leads back up into Lunpa
-///   (VAULT_JAIL_TO_LUNPA). Arriving this way clears FLAG_SHOW_LOCATION_NAME,
-///   so no place name is shown. The room uses the thieves' tables, so its
-///   chests and its exit sit in the same event table as the thieves' talk and
-///   the Vault door.
+///   passage reaches (lunpa.c). Its six chests are each opened once
+///   (FLAG_JAIL_CHEST_*), TRIGGER_LUNPA_DOOR leads back up into Lunpa, and
+///   arriving this way clears FLAG_SHOW_LOCATION_NAME, so no place name is
+///   shown. The room uses the thieves' tables, so its chests and exit sit in
+///   the same event table as the thieves' talk and the Vault door.
+///
+/// Open questions:
+/// - XXX (no evidence): why arriving from Lunpa hides the place name, which
+///   gScene_AreaNameRules gives as "Lunpa" for that entrance; the code shows
+///   only that it does.
 
 #include "game_state.h"
 #include "unit/scene/vault_jail.h"
@@ -62,8 +58,8 @@ enum JailTrigger {
 };
 
 /// The placed actors, numbering the rows of the table Scene_GetPlacements
-/// returns: the three thieves of gJailThiefPlacements, or the prisoner of
-/// gJailPrisonerPlacements in the same first slot.
+/// returns: the three thieves of gVaultJail_ThiefPlacements, or the prisoner of
+/// gVaultJail_PrisonerPlacements in the same first slot.
 enum JailActor {
   /// The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of the
   /// cell.
@@ -84,17 +80,22 @@ enum JailActor {
   ACTOR_PRISONER = ACTOR_FIRST_PLACED
 };
 
-enum { CELL_COLLISION_FLAGS = 0x14 };
+/// The jail's occupants count as nearer than they stand for talk and
+/// Psynergy targets (Field_FindNearbyTalkTarget scales their distance by
+/// 10/13), so the party reaches them across the bars.
+enum { JAIL_REACH_ACROSS_BARS = ACTOR_NEAR_TALK | ACTOR_NEAR_PSYNERGY };
 
 /// Returns the entrances from Vault, from Lunpa and from Vault's revisit scene.
-const struct SceneEntrance *Scene_GetEntrances(void) { return gJailEntrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gVaultJail_Entrances;
+}
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 /// Returns the exits to Vault, to Vault's revisit scene and to Lunpa, each to
 /// the entrance that scene names for the jail (VAULT_FROM_VAULT_JAIL,
 /// VAULT_REVISIT_FROM_VAULT_JAIL and LUNPA_FROM_VAULT_JAIL).
-const u32 *Scene_GetExits(void) { return gJailExits; }
+const u32 *Scene_GetExits(void) { return gVaultJail_Exits; }
 
 /// Places the three jailed thieves (each only once FLAG_VAULT_THIEVES_JAILED
 /// is set), or, entered from Vault's revisit scene
@@ -102,9 +103,9 @@ const u32 *Scene_GetExits(void) { return gJailExits; }
 /// prisoner.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.entrance == VAULT_JAIL_FROM_VAULT_REVISIT) {
-    return gJailPrisonerPlacements;
+    return gVaultJail_PrisonerPlacements;
   }
-  return gJailThiefPlacements;
+  return gVaultJail_ThiefPlacements;
 }
 
 /// Returns the thieves' events, which also hold the Lunpa room's chests and
@@ -112,9 +113,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// matching Scene_GetPlacements.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.entrance == VAULT_JAIL_FROM_VAULT_REVISIT) {
-    return gJailPrisonerEvents;
+    return gVaultJail_PrisonerEvents;
   }
-  return gJailThiefEvents;
+  return gVaultJail_ThiefEvents;
 }
 
 /// In Vault's jail, the thieves' leader glares at each of his men and snaps
@@ -221,42 +222,44 @@ static void Event_LeaveForVault(void) {
   Engine_EventRequestExit(VAULT_JAIL_TO_VAULT);
 }
 
-/// Opens the scene through a window transition and makes the jail's occupants
-/// solid.
+/// Opens the scene through a window transition and lets the party reach the
+/// jail's occupants across the bars.
 ///
 /// Called by the engine once the actors are placed. Coming in through Lunpa's
 /// hidden passage (VAULT_JAIL_FROM_LUNPA) clears FLAG_SHOW_LOCATION_NAME, so no
-/// place name is shown; otherwise it adds CELL_COLLISION_FLAGS to the prisoner
-/// or to the three thieves.
+/// place name is shown; otherwise it adds JAIL_REACH_ACROSS_BARS to the
+/// prisoner or to the three thieves.
 s32 Scene_Initialize(void) {
   s16 entrance;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   entrance = gGameState.entrance;
 
   if (entrance == VAULT_JAIL_FROM_LUNPA) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   } else if (entrance == VAULT_JAIL_FROM_VAULT_REVISIT) {
-    Object_GetById(ACTOR_PRISONER)->collisionFlags |= CELL_COLLISION_FLAGS;
+    Object_GetById(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
   } else {
-    Object_GetById(ACTOR_THIEF_LEADER)->collisionFlags |= CELL_COLLISION_FLAGS;
-    Object_GetById(ACTOR_LEFT_THIEF)->collisionFlags |= CELL_COLLISION_FLAGS;
-    Object_GetById(ACTOR_RIGHT_THIEF)->collisionFlags |= CELL_COLLISION_FLAGS;
+    Object_GetById(ACTOR_THIEF_LEADER)->collisionFlags |=
+        JAIL_REACH_ACROSS_BARS;
+    Object_GetById(ACTOR_LEFT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+    Object_GetById(ACTOR_RIGHT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
   }
 
   return 0;
 }
 
 // clang-format off
-const struct SceneEntrance gJailEntrances[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+const struct SceneEntrance gVaultJail_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VAULT_JAIL_FROM_VAULT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
     { VAULT_JAIL_FROM_LUNPA, CONDITION_ALWAYS, 544, 0, 280, FACING_NORTH, 0, 440, 48, 680, 312, 0 },
     { VAULT_JAIL_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
     { SCENE_TABLE_END },
 };
 
-const u32 gJailExits[] = {
+const u32 gVaultJail_Exits[] = {
     SCENE_EXITS(VaultJail),
     SCENE_EXIT(VAULT_JAIL_TO_VAULT, Vault, VAULT_FROM_VAULT_JAIL),
     SCENE_EXIT(VAULT_JAIL_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_JAIL),
@@ -264,7 +267,7 @@ const u32 gJailExits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ScenePlacement gJailThiefPlacements[] = {
+const struct ScenePlacement gVaultJail_ThiefPlacements[] = {
     { SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
@@ -274,13 +277,13 @@ const struct ScenePlacement gJailThiefPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ScenePlacement gJailPrisonerPlacements[] = {
+const struct ScenePlacement gVaultJail_PrisonerPlacements[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-const struct SceneEvent gJailThiefEvents[] = {
+const struct SceneEvent gVaultJail_ThiefEvents[] = {
     { EVENT_TOUCH, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveForVault) },
     { EVENT_EXIT, TRIGGER_LUNPA_DOOR, CONDITION_ALWAYS, VAULT_JAIL_TO_LUNPA },
     { EVENT_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
@@ -310,7 +313,7 @@ const struct SceneEvent gJailThiefEvents[] = {
 };
 // clang-format on
 
-const struct SceneEvent gJailPrisonerEvents[] = {
+const struct SceneEvent gVaultJail_PrisonerEvents[] = {
     {EVENT_EXIT, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS,
      VAULT_JAIL_TO_VAULT_REVISIT},
     {EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,

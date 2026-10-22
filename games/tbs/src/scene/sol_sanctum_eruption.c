@@ -841,7 +841,7 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
 
 /// Ends the Wise One's palette animation and clears its attached effect.
 static inline void SolSanctumEruption_FinishMaterialization(void) {
-  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
   Engine_TaskRemoveCallback(SolSanctumEruption_UpdateWiseOnePalette);
   Engine_TaskWait(1);
   Actor_SetChildValue(ACTOR_WISE_ONE, 0);
@@ -1221,7 +1221,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
   Scene_BeginCutscenePsynergy();
-  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, ANIM_WALK);
+  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     Engine_TaskWait(1);
@@ -1400,7 +1400,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ActorWaitForMove(ACTOR_WISE_ONE);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, ANIM_WALK);
+  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     Engine_TaskWait(1);
@@ -1436,7 +1436,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ObjectMotionSetPositionAndCommit(ACTOR_WISE_ONE, 127, 110);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, ANIM_WALK);
+  Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     Engine_TaskWait(1);

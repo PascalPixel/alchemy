@@ -1,39 +1,45 @@
 /// @file
-/// West Lunpa Cave (SceneId_WestLunpaCave), the cave between Lunpa and the
-/// world map. The party comes in from Lunpa (Lunpa's exit to the cave) at
-/// WEST_LUNPA_CAVE_FROM_LUNPA and from the world map at
-/// WEST_LUNPA_CAVE_FROM_WORLD_MAP; trigger 2 leads back up into Lunpa
-/// (LUNPA_FROM_WEST_LUNPA_CAVE) and trigger 1 out to the world map
-/// (WORLD_MAP_FROM_WEST_LUNPA_CAVE). WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which
-/// no exit names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
+/// West Lunpa Cave (SceneId_WestLunpaCave, area name West Lunpa Cave), the
+/// cave between Lunpa and the world map, with a gate across it, where the
+/// party meets Bunza on the way out of Lunpa with Hammet.
 ///
-/// A gate blocks the cave. Its puzzle runs on scene flags, which last until the
-/// party next enters a scene other than by returning from a battle, and which
-/// Scene_Initialize redraws: the lowering switch (search trigger 3) brings the
-/// gate down (FLAG_SCENE_TEMP_01) and the raising switch (search trigger 4)
-/// lifts it (FLAG_SCENE_TEMP_02), each doing nothing while the gate already
-/// stands where it would put it, or while the frozen puddle under it props it
-/// open (FLAG_SCENE_TEMP_00). Frost on that puddle freezes it into a pillar,
-/// and a gate that was not up rises onto it with the puzzle-solved tune. Frost
-/// also freezes a puddle to the south into a pillar that can be climbed
-/// (FLAG_SCENE_TEMP_04, which changes one cell's collision) and one to the
-/// north (FLAG_SCENE_TEMP_03). A fourth puddle actor stands at (0, 0, 0),
-/// outside the cave's camera bounds.
+/// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
+/// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA); TRIGGER_WORLD_MAP_PASSAGE and
+/// TRIGGER_LUNPA_PASSAGE lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED,
+/// which no exit names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter
+/// camera.
 ///
-/// The cave's scripted scene follows the rescue of Hammet, the lord of Kalay,
-/// whom Dodonpa's thieves held in Lunpa Fortress. Once Dodonpa's father Donpa
-/// has judged Dodonpa and let the party leave with Hammet
-/// (FLAG_DODONPA_LOCKED_UP, set in lunpa_fortress.c), stepping onto trigger
-/// 10 the first time (FLAG_LUNPA_CAVE_REUNION_SEEN) brings out a man who hid
-/// behind a rock when the gate moved. Hammet calls out and names him, Bunza, a
-/// Kalay merchant, and Bunza knows Hammet's voice; he had come to sell to
-/// Lunpa's villagers though he despised Dodonpa. Bunza has a wagon nearby and
-/// offers to take everyone back to Kalay before Dodonpa's henchmen find Hammet
-/// again, and the party's yes-or-no answers (WagonChoice_Run) decide whether it
-/// rides. Riding, all set off for Kalay and Hammet's wife, Lady Layana, by
-/// WEST_LUNPA_CAVE_BY_WAGON to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where
-/// world_map.c plays the wagon's departure. Staying, Ivan goes on with his
-/// friends, Hammet and Bunza leave alone, and FLAG_BUNZAS_WAGON_LEFT is set.
+/// The gate puzzle runs on scene flags, which Scene_Initialize redraws: the
+/// lowering switch brings the gate down and the raising switch lifts it, each
+/// doing nothing while the gate already stands where it would put it or while
+/// the gate's puddle, frozen by Frost into a pillar, props it open. Freezing
+/// that puddle with the gate down raises it onto the pillar with the
+/// puzzle-solved tune. Frost also freezes a puddle to the south into a pillar
+/// that can be climbed, and one to the north. Its scene flags:
+///
+/// - FLAG_SCENE_TEMP_00: the gate's puddle is frozen, propping the gate open.
+/// - FLAG_SCENE_TEMP_01: the lowering switch has lowered the gate.
+/// - FLAG_SCENE_TEMP_02: the gate is raised.
+/// - FLAG_SCENE_TEMP_03: the north puddle is frozen.
+/// - FLAG_SCENE_TEMP_04: the south puddle is frozen into a pillar, which
+///   changes one cell's collision.
+///
+/// Once Donpa has let the party leave Lunpa Fortress with Hammet
+/// (FLAG_DODONPA_LOCKED_UP), stepping onto TRIGGER_BUNZA_HIDING_PLACE the
+/// first time (FLAG_LUNPA_CAVE_REUNION_SEEN) plays the reunion: Bunza, a Kalay
+/// merchant, comes out from behind a rock (Event_HammetFindsBunza), they talk
+/// (Reunion_Converse), and the party's answers decide whether it rides home in
+/// Bunza's wagon (WagonChoice_Run). Riding leaves by WEST_LUNPA_CAVE_BY_WAGON
+/// to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c plays the departure;
+/// staying, Hammet and Bunza leave alone. Either way FLAG_BUNZAS_WAGON_LEFT
+/// is set, on the world map or here.
+///
+/// Unused: a fourth puddle stands at the map's origin, outside the cave's
+/// camera bounds, so Frost can never reach it (Event_UnusedFreezePuddle).
+///
+/// Open questions:
+/// - XXX: whether WagonChoice_Run's gotos only force a layout; rewriting its
+///   questions as loops and comparing the bytes would settle it.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -43,6 +49,7 @@
 #include "unit/object/psynergy_effects.h"
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
+#include "fixed_math.h"
 
 static void Reunion_Converse(void);
 static void WagonChoice_Run(void);
@@ -83,18 +90,19 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Routes switches, Frost targets and the reunion trigger to their handlers.
 const struct SceneEvent *Scene_GetEvents(void) { return gCaveEvents; }
 
-/// Frost on the puddle placed at (0, 0, 0), outside the cave's camera bounds:
-/// it freezes, and no flag remembers it.
-static void Event_FreezeHiddenPuddle(void) {
+/// Unused: Frost can never target the puddle placed at (0, 0, 0), outside the
+/// cave's camera bounds. It would freeze, and no flag would remember it.
+static void Event_UnusedFreezePuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_HIDDEN_PUDDLE);
+  puddle = Object_GetById(ACTOR_UNUSED_PUDDLE);
   if (puddle != NULL) {
     Engine_ActorSetSpriteFlags(puddle, 0);
   }
 }
 
-/// Frost on the south puddle: it rises as an ice pillar the party can climb.
+/// In West Lunpa Cave, Frost on the south puddle: it rises as an ice pillar the
+/// party can climb.
 static void Event_FreezeSouthPuddle(void) {
   struct FieldActor *puddle;
 
@@ -131,8 +139,9 @@ static void Gate_DrawPropped(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-/// Frost on the puddle under the gate: its pillar props the gate open, and if
-/// the gate was down the player sees it rise and hears the puzzle solved.
+/// In West Lunpa Cave, Frost on the puddle under the gate: its pillar props the
+/// gate open, and if the gate was down the player sees it rise and hears the
+/// puzzle solved.
 static void Event_FreezeGatePuddle(void) {
   struct FieldActor *pillar;
 
@@ -150,7 +159,8 @@ static void Event_FreezeGatePuddle(void) {
   }
 }
 
-/// Frost on the north puddle: its pillar stays frozen when the party returns.
+/// In West Lunpa Cave, Frost on the north puddle: its pillar stays frozen when
+/// the party returns.
 static void Event_FreezeNorthPuddle(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
 }
@@ -180,9 +190,9 @@ static void Gate_Lower(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
-/// Searching the lowering switch: the hero flips it and the gate comes down,
-/// unless it is down already or a frozen pillar props it open. "flipped the
-/// switch."
+/// In West Lunpa Cave, searching the lowering switch: the leader flips it and
+/// the gate comes down, unless it is down already or a frozen pillar props it
+/// open. "flipped the switch."
 static void Event_FlipLoweringSwitch(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
@@ -210,8 +220,9 @@ static void Gate_Raise(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-/// Searching the raising switch: the hero flips it and the gate goes up, unless
-/// it is up already or propped open. "flipped the switch."
+/// In West Lunpa Cave, searching the raising switch: the leader flips it and
+/// the gate goes up, unless it is up already or propped open. "flipped the
+/// switch."
 static void Event_FlipRaisingSwitch(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) == 0) {
@@ -224,14 +235,15 @@ static void Event_FlipRaisingSwitch(void) {
   }
 }
 
-/// Hammet finds Bunza hiding behind a rock. It plays on stepping onto trigger
-/// 10, by the rock Bunza hides behind, after Donpa has let the party leave the
-/// fortress with Hammet (FLAG_DODONPA_LOCKED_UP). Bunza steps out, the party
-/// and Hammet gather behind the leader, Garet and Mia think they saw someone,
-/// and Ivan asks whether Dodonpa's henchmen have found them (a yes: Garet will
-/// fight; a no: Garet wonders what else it could be). Hammet calls out and
-/// names Bunza, Bunza knows Hammet's voice, and the reunion and the wagon talk
-/// follow. Sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
+/// In West Lunpa Cave, Hammet finds Bunza hiding behind a rock. It plays on
+/// stepping onto trigger 10, by the rock Bunza hides behind, after Donpa has
+/// let the party leave the fortress with Hammet (FLAG_DODONPA_LOCKED_UP). Bunza
+/// steps out, the party and Hammet gather behind the leader, Garet and Mia
+/// think they saw someone, and Ivan asks whether Dodonpa's henchmen have found
+/// them (a yes: Garet will fight; a no: Garet wonders what else it could be).
+/// Hammet calls out and names Bunza, Bunza knows Hammet's voice, and the
+/// reunion and the wagon talk follow. Sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it
+/// plays once.
 static void Event_HammetFindsBunza(void) {
   struct FieldActor *leader;
   s32 sighting;
@@ -242,20 +254,20 @@ static void Event_HammetFindsBunza(void) {
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     Engine_EventBegin();
     Actor_SetPosition(ACTOR_BUNZA, PIXELS(144), PIXELS(400));
-    Actor_SetSpeed(ACTOR_BUNZA, 0x18000, 0xc000);
+    Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
     Actor_WalkTo(ACTOR_BUNZA, 184, 400);
     Engine_ActorWaitForMove(ACTOR_BUNZA);
     Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(30);
-    Camera_SetSpeed(0x8000, 0x1000);
+    Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
     Camera_MoveTo(PIXELS(192), -1, PIXELS(432), 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
       Actor_SetPosition(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_HAMMET, 0x14ccc, 0xa666);
+    Actor_SetSpeed(ACTOR_HAMMET, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(ACTOR_HAMMET, 168, 464);
     Engine_ActorWaitForMove(ACTOR_HAMMET);
     Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH, 0);
@@ -263,7 +275,7 @@ static void Event_HammetFindsBunza(void) {
     if (leader != NULL) {
       Actor_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(IVAN, 0x14ccc, 0xa666);
+    Actor_SetSpeed(IVAN, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(IVAN, 152, 488);
     Engine_ActorWaitForMove(IVAN);
     Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -271,7 +283,7 @@ static void Event_HammetFindsBunza(void) {
     if (leader != NULL) {
       Actor_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(MIA, 0x14ccc, 0xa666);
+    Actor_SetSpeed(MIA, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(MIA, 168, 488);
     Engine_ActorWaitForMove(MIA);
     Actor_FaceDirection(MIA, FACING_NORTH, 0);
@@ -279,7 +291,7 @@ static void Event_HammetFindsBunza(void) {
     if (leader != NULL) {
       Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(GARET, 0x14ccc, 0xa666);
+    Actor_SetSpeed(GARET, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(GARET, 184, 488);
     Engine_ActorWaitForMove(GARET);
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -334,7 +346,7 @@ static void Event_HammetFindsBunza(void) {
     Event_ShowMessage(ACTOR_BUNZA, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
     Engine_EventWait(80);
-    Actor_SetSpeed(ACTOR_BUNZA, 0x6666, 0x3333);
+    Actor_SetSpeed(ACTOR_BUNZA, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_WalkBy(ACTOR_BUNZA, -13, 0);
     Engine_ActorWaitForMove(ACTOR_BUNZA);
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
@@ -545,7 +557,7 @@ static void Reunion_Converse(void) {
   // Bunza checks the passage, worries about pursuit and proposes his wagon.
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
   Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_SetSpeed(ACTOR_BUNZA, 0x18000, 0xc000);
+  Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkTo(ACTOR_BUNZA, 144, 528);
   Engine_ActorWaitForMove(ACTOR_BUNZA);
   Actor_WalkTo(ACTOR_BUNZA, 168, 560);
@@ -993,11 +1005,11 @@ s32 Scene_Initialize(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_WestLunpaCave) {
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_HIDDEN_PUDDLE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_UNUSED_PUDDLE), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOUTH_PUDDLE), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_GATE_PUDDLE), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_NORTH_PUDDLE), 0);
-    Object_GetById(ACTOR_NORTH_PUDDLE)->scaleY = 0xf333;
+    Object_GetById(ACTOR_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
       Gate_Lower();
     }
@@ -1068,8 +1080,8 @@ const struct SceneEvent gCaveEvents[] = {
       EVENT_SCRIPT(Event_FlipLoweringSwitch) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(Event_FlipRaisingSwitch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_HIDDEN_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_FreezeHiddenPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_UNUSED_PUDDLE, CONDITION_ALWAYS,
+      EVENT_SCRIPT(Event_UnusedFreezePuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTH_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(Event_FreezeSouthPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GATE_PUDDLE, CONDITION_ALWAYS,

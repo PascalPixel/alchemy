@@ -378,8 +378,8 @@
 #define SE_164 164
 /// A scene transition effect.
 #define SE_SCENE_TRANSITION 167
-/// The ambient sound a scene queues in Lama Temple and Xian
-/// (FieldFx_SetQueuedSoundAndPlay).
+/// The ambient sound a scene queues in Lama Temple, Xian and the Manticore's
+/// part of Lamakan Desert (FieldFx_SetQueuedSoundAndPlay).
 #define SE_169 169
 /// The ambient sound a scene queues (FieldFx_SetQueuedSoundAndPlay) with the
 /// ground particles and Altin's water-spitting beasts, and in Fuchin Temple,

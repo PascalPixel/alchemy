@@ -248,7 +248,11 @@ enum ValeActor {
   /// ★ Named from what the player sees: a short plank of yellow wood
   /// (spr_206.png)
   ACTOR_FIRST_BOARD,
+  /// ★ Named from what the player sees: a short plank of yellow wood
+  /// (spr_206.png)
   ACTOR_SECOND_BOARD,
+  /// ★ Named from what the player sees: a short plank of yellow wood
+  /// (spr_206.png)
   ACTOR_THIRD_BOARD,
   /// ★ Named from the game: "Nut" (MsgItemName), the item Catch takes
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
@@ -329,7 +333,11 @@ enum ValeOpeningActor {
   /// ★ Named from what the player sees: a short plank of yellow wood
   /// (spr_206.png)
   ACTOR_OPENING_FIRST_BOARD,
+  /// ★ Named from what the player sees: a short plank of yellow wood
+  /// (spr_206.png)
   ACTOR_OPENING_SECOND_BOARD,
+  /// ★ Named from what the player sees: a short plank of yellow wood
+  /// (spr_206.png)
   ACTOR_OPENING_THIRD_BOARD,
   /// Sprite 0xd7, the hand of Move (psynergy_effects/catch.c): it pushes the
   /// pillar for Garet, shedding sparkles.

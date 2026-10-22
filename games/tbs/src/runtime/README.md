@@ -9,6 +9,428 @@ cache, the 3D transform, saving and the link cable. Code everywhere else lets
 time pass through one function, `WaitFrames`. The memory map it works in, and
 the resident IWRAM code it installs, are in [System](../system/README.md).
 
+## Start-up
+
+Start-up takes the console from the cartridge header to the first scene, and
+never returns.
+
+```mermaid
+flowchart TD
+    header["Cartridge header"] --> entry["System_Entry (system/entry.s):<br/>IRQ and system stacks"]
+    entry --> init["System_Initialize"]
+    init --> clear["stop HBlank DMA, wait states,<br/>clear IWRAM up to Ram_IwramHeapEnd"]
+    clear --> heap["Runtime_InitializeHeap"]
+    heap --> iwram["Runtime_InstallIwramAndIrqs:<br/>resident runtime and dispatcher"]
+    iwram --> rest["build stamp, window graphics,<br/>System_VBlankHandler, soft-reset keys,<br/>sound driver, VRAM cache, task table"]
+    rest --> wait["wait ten frames"]
+    wait --> run["Game_RunFar: one scene after another"]
+```
+
+The cartridge header jumps to `System_Entry`
+(`games/tbs/src/system/entry.s`), which sets the IRQ and system stacks at the
+top of IWRAM and calls `System_Initialize` (`runtime/system.c`). That
+function stops any HBlank DMA left running, sets the cartridge wait states and
+clears IWRAM up to `Ram_IwramHeapEnd`, leaving the stacks above it alone. It
+empties the heap (`Runtime_InitializeHeap`), copies the resident runtime into
+IWRAM and points the interrupt vector at its dispatcher
+(`Runtime_InstallIwramAndIrqs`), copies the build stamp and loads the window
+graphics. It then installs `System_VBlankHandler`, arms the soft-reset keys,
+starts the sound driver, resets the sprite VRAM cache and the task table,
+waits ten frames and calls `Game_RunFar`. The German, French, Spanish and
+Italian editions (`TBS_PATCH_2`) also install `IwramHalt` for the
+cartridge-removed interrupt.
+
+Neither function returns. `Game_Run` (`games/tbs/src/object/object/scene.c`)
+runs one scene after another, starting at the title, and before each one it
+resets the task table, removes the HBlank and VCount handlers, empties the heap
+and resets the VRAM cache.
+
+## The frame loop
+
+`WaitFrames(n)` lets `n` frames pass: it runs the main-loop tasks, builds the
+sprite list and halts until the VBlank handler has put the frame on screen.
+
+```mermaid
+sequenceDiagram
+    participant W as WaitFrames (frame loop)
+    participant S as Scheduler
+    participant V as System_VBlankHandler
+    W->>S: Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)
+    W->>W: Render_BuildOamList into HEAP_SLOT_FRAME_SCRATCH,<br/>set gFrameRenderPending
+    W->>W: halt (swi 2)
+    V->>V: link payloads, music fades, screen fade
+    V->>V: if gFrameRenderPending: OAM, gBgScroll,<br/>queued writes; clear the flag
+    V->>V: gVBlankHook once
+    V->>S: Scheduler_RunPass(SCHEDULER_KEY_VBLANK)
+    V->>V: keypad, gVBlankDone, sound mix
+    V-->>W: halt ends
+    W->>W: release scratch, reset depth slots,<br/>key repeat, sleep or reset
+```
+
+`WaitFrames(n)` (`runtime/frame.c`) runs `n` frames and returns. If the
+caller's stack has grown below `Ram_FrameWaitStackTop`, the stack is first
+moved ([below](#the-stack-switch-in-waitframes)). Each frame then:
+
+1. runs the main-loop tasks (`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`);
+2. allocates `HEAP_SLOT_FRAME_SCRATCH` (1 KB), builds the OAM list in it from
+   the depth slots (`Render_BuildOamList`) and sets `gFrameRenderPending`;
+3. measures CPU load for the debug display when it is on, and counts the
+   frames toward sleep;
+4. halts the CPU until the VBlank handler has run (`swi 2`, the BIOS's Halt);
+5. releases the scratch block, resets the depth slots, counts the frame and
+   updates key repeat (`Input_UpdateKeyRepeatAndDirection`);
+6. sleeps, or restarts the game, if either was requested.
+
+VBlank interrupts the halt. `System_VBlankHandler`, reached through the IWRAM
+dispatcher and `gIrqHandlers`, stops any HBlank DMA, trades the link payloads
+and steps the music's fades and the screen fade. Only if
+`gFrameRenderPending` is set does it copy the frame's OAM list (when
+`gOamCopyEnabled`), the four BG scroll registers from `gBgScroll` and the
+queued register writes to the hardware, and clear the flag. It then runs and
+clears the one-shot `gVBlankHook`, runs the VBlank tasks
+(`SCHEDULER_KEY_VBLANK`), reads the keypad, counts the frame, sets
+`gVBlankDone` and mixes the next sound buffer.
+
+The order has consequences for the code that runs in a frame:
+
+- Tasks never write sprite or scroll registers directly. They write RAM, and
+  VBlank commits a whole frame at once. A frame whose work does not finish
+  before VBlank (a lag frame) is not committed, so the screen keeps the
+  previous frame's sprites, scroll and register writes together.
+- Sprites must be placed by main-loop tasks, or by the waiting code before it
+  calls `WaitFrames`; the OAM list is built right after the main pass, so a
+  VBlank task's sprites show a frame later.
+- The keys are read in VBlank and turned into repeats after the halt, so code
+  sees them at the start of its next frame.
+
+XXX: likely the display writes come first so that they land inside the
+vertical blank, and the mixer last because it is long and need only finish
+within the frame; the bytes don't say so.
+
+The OAM list is built from the depth slots (`gRenderSlotHeads`), lists that
+code links sprites into during the frame, walked in order; the picture at the
+top of this page outlines one frame's entries.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | the pass `WaitFrames` runs each frame |
+| `SCHEDULER_KEY_VBLANK` | `0x480` | the pass the VBlank handler runs |
+| `HEAP_SLOT_FRAME_SCRATCH` | 52 | the heap slot the frame's OAM list is built in |
+| `RENDER_DEPTH_SLOT_COUNT` | 256 | depth slots a sprite is linked into |
+| `OBJ_AFFINE_MATRIX_COUNT` | 32 | the OAM's rotation-scaling matrices a frame |
+| `CPU_LOAD_PEAK_FRAMES` | 30 | frames the debug display holds a CPU load peak |
+
+### Input, soft reset and sleep
+
+Key repeat, the soft-reset combination and sleep are all handled by the frame
+loop between frames.
+
+A held key first repeats after `INPUT_KEY_REPEAT_FIRST` frames and then
+every `INPUT_KEY_REPEAT_NEXT`. `gKeysRepeatDirected` is the repeat with at
+most one D-pad direction: of several held directions it keeps the one added
+last, and with all four it keeps none.
+
+A, B, Select and Start pressed together raise the keypad interrupt;
+`Input_HandleKeyInterrupt` sets `gResetRequested`, and the frame loop jumps to
+`Cart_Restart`, the cartridge entry. In debug mode (`gDebugMode`), holding
+Start and Select pauses the loop; A, B, Select or the D-pad then advance one
+frame and Start resumes.
+
+Holding only L and R for `SLEEP_COMBO_FRAMES`, or touching no key for
+`SLEEP_IDLE_FRAMES` while `gIdleSleepEnabled` is set, requests sleep. The loop
+turns the screen white for `SLEEP_WHITE_FRAMES`, stops the CPU (`swi 3`, the
+BIOS's Stop) with the keypad set to wake on L and R, then restores the display
+and waits `SLEEP_WAKE_FRAMES`. Nothing sleeps while `gSleepDisabled` is set.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `INPUT_KEY_REPEAT_FIRST` | 19 | frames a key is held before its first repeat |
+| `INPUT_KEY_REPEAT_NEXT` | 6 | frames between later repeats |
+| `SLEEP_COMBO_FRAMES` | `3 * 60` | three seconds holding only L and R |
+| `SLEEP_IDLE_FRAMES` | `3 * 60 * 60` | three minutes with no key held |
+| `SLEEP_WHITE_FRAMES` | 60 | the white screen shown before the Stop |
+| `SLEEP_WAKE_FRAMES` | 10 | frames waited after waking, screen restored |
+
+## The stack switch in `WaitFrames`
+
+`WaitFrames` moves a deep caller's stack out of the way, so the frame loop,
+its tasks and the VBlank work always start with the same room.
+
+```mermaid
+block-beta
+    columns 1
+    top["top of IWRAM: IRQ and system stacks"]
+    frame["Ram_FrameWaitStackTop (0x03007a00):<br/>where WaitFrames runs its frames"]
+    room["512 bytes for the frame loop, tasks and VBlank work"]
+    heapend["Ram_IwramHeapEnd (0x03007800)"]
+    heap["IWRAM heap, growing up from gIwramHeap"]
+```
+
+The system stack runs from the top of IWRAM down to the end of the IWRAM heap,
+1,792 bytes. Interrupts use it too: the dispatcher, `IwramIrqMain`
+(`system/runtime.s`), switches to system mode before calling a handler, so the
+VBlank handler, the VBlank tasks and the sound mixer run below whatever they
+interrupted.
+
+When the caller's stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes
+above the heap's end, `WaitFrames` copies everything from the stack pointer up
+to that top into `gSavedStack` in EWRAM by DMA, sets the stack pointer to the
+top and runs its frames there; on return it copies the stack back and
+restores the pointer. The frame loop, the main-loop tasks and the VBlank work
+therefore always start with 512 bytes above the heap, however deep the code
+that waits.
+
+`WaitFrames` must not be called from inside a task: the nested call would find
+its stack below the top again and overwrite `gSavedStack` and
+`gSavedStackSize`, which still hold the outer caller's frames. `WaitFrames`
+itself doesn't check, but it sets `gSchedulerStatus` while it runs the
+main-loop tasks, and code a task may reach tests it before waiting
+(`BattleObj_SpawnObjectsForList`). No task waits
+([Evidence and open questions](#evidence-and-open-questions)).
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `Ram_FrameWaitStackTop` | `0x03007a00` | the stack pointer `WaitFrames` runs its frames from |
+| `Ram_IwramHeapEnd` | `0x03007800` | the end of the IWRAM heap and the bottom of the stack |
+| `gSavedStack` | 3,152 bytes | where a deep caller's stack waits, in EWRAM |
+
+## The heap
+
+The heap hands out blocks that last until the code that took them releases
+them, from two pools that each grow like a stack.
+
+```mermaid
+block-beta
+    columns 2
+    iw["IWRAM pool: gIwramHeap up to Ram_IwramHeapEnd"]:1
+    ew["EWRAM pool: gEwramHeap up to the end of EWRAM"]:1
+    iwb["blocks, oldest first, then the next free address"]:1
+    ewb["blocks, oldest first, then the next free address"]:1
+    slots["gWorkSlot: the two next-free addresses, then 62 named slots (enum HeapSlot)"]:2
+```
+
+The heap hands out memory from two pools, one in IWRAM from `gIwramHeap` up to
+`Ram_IwramHeapEnd` and one in EWRAM from `gEwramHeap` up to the end of EWRAM.
+Each pool is a bump allocator: a block starts at the pool's next free address,
+which moves up past it. The two next-free addresses are the first two words of
+`gWorkSlot` (`union HeapState`, `games/tbs/include/heap_state.h`), and the
+other 62 words are the named slots. `Runtime_AllocateHeapBlock` and `MemAlloc`
+take IWRAM first and fall back to EWRAM; `Runtime_AllocateBlock` and
+`Runtime_BumpAllocateAlternatePool` take EWRAM first. Sizes are rounded up to
+words, a block may not end exactly at its pool's end, and an allocation that
+fits in neither pool returns `NULL`. Blocks are not cleared.
+
+Nothing is freed one block at a time. `Runtime_ReleaseHeapBlock(slot)` clears
+the slot and sets its pool's next free address back to the block's start;
+`MemFree(p)` does the same with `p` (both in `system/heapfree.s`). The pool is
+chosen from the address with no comparison: `(address >> 22) & 4` is 0 for an
+EWRAM address and 4 for an IWRAM one, the byte offsets of the two next-free
+words. Releasing a block therefore releases every later block in the same
+pool, and the rule is that blocks are released in the reverse of the order
+they were taken, pool by pool. A block released out of order does not fail at
+once: the later blocks stay in their slots, pointing at memory the next
+allocation hands out again. `Game_Run` empties both pools and clears every
+slot before each scene, so no block outlives the scene, battle or minigame
+that took it.
+
+That rule is why an effect's transfer callback has to be removed before its
+heap blocks are released, and why `RamCode_Load` copies of code are freed
+right after use. A slot that already has a block is returned whatever size is
+asked for, so `Runtime_AllocateHeapBlock` also means "get".
+
+The frame's scratch block is taken after the main-loop tasks have run and
+released after the VBlank that copied it to OAM. For that frame it is the top
+of its pool, so anything the VBlank work allocates from the same pool in
+between is released with it.
+
+| Name | Pool first | Meaning |
+| --- | --- | --- |
+| `Runtime_AllocateHeapBlock` | IWRAM | takes, or returns the block already in, a named slot |
+| `Runtime_AllocateBlock` | EWRAM | the same, EWRAM first |
+| `MemAlloc` | IWRAM | takes a block with no slot, for short-lived buffers |
+| `Runtime_BumpAllocateAlternatePool` | EWRAM | the same, EWRAM first |
+| `Runtime_ReleaseHeapBlock(slot)` | | releases a slot's block and every later block in its pool |
+| `MemFree(p)` | | releases `p` and every later block in its pool |
+
+## The task scheduler
+
+The scheduler runs each task once a frame, or once a VBlank, in an order the
+task chose when it was added.
+
+The task table holds `SCHEDULER_TBS_TASK_COUNT` tasks, each a routine, an
+order halfword and flags. The order's high byte picks the pass that runs the
+task (`SCHEDULER_KEY_MAIN_LOOP` for the frame loop, `SCHEDULER_KEY_VBLANK` for
+VBlank) and its low byte ranks it within the pass. Every add re-sorts the
+table by order, highest first, comparing orders as signed halfwords
+(`Scheduler_SortTasks`), and `Scheduler_RunPass` runs, in table order, every
+task whose high byte equals the pass's.
+
+The sort stops one pass short, so the tasks in the first two slots can stay
+out of order (`// BUG:` in the code). It swaps only on strictly greater, so
+tasks of equal order keep their table order, which depends on the free slot
+each was given; code that needs an order gives its tasks different orders.
+
+A task is suspended by setting bit 0 of its order's high byte
+(`Scheduler_SuspendTasks`), which no pass matches, and resumed by clearing it,
+so it keeps its rank. An empty slot's order is `SCHEDULER_KEY_EMPTY` and a
+removed task's `SCHEDULER_KEY_REMOVED`; both high bytes are odd, and as signed
+halfwords a removed slot sorts first and an empty one last.
+`Scheduler_SuspendOverlayTasks` suspends the tasks whose routine is in EWRAM,
+where overlays run, except those whose flag bit 0 is set; the link lobby and
+the Colosso scenes set it (`Scheduler_SetTaskFlags`) for tasks that must keep
+running under a menu.
+
+Adding, removing, suspending and resuming disable interrupts, because the
+VBlank pass reads the same table. A pass walks the table by index without a
+lock, so a task that adds another during a pass re-sorts the table under it,
+which can shift the tasks after it by one. XXX: whether the game ever does
+this isn't known.
+
+The code is `runtime/scheduler.c`, its names in
+`games/tbs/include/system/callback_scheduler.h`.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `SCHEDULER_TBS_TASK_COUNT` | 20 | tasks in the table |
+| `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | order of a main-loop task (high byte `0x0c`) |
+| `SCHEDULER_KEY_VBLANK` | `0x480` | order of a VBlank task (high byte `0x04`) |
+| `SCHEDULER_KEY_REMOVED` | `0x7fff` | a removed task's order; sorts first |
+| `SCHEDULER_KEY_EMPTY` | `0xffff` | an empty slot's order; sorts last |
+
+## The register write queue
+
+The queue holds register writes and DMAs until the VBlank handler carries
+them out for a finished frame.
+
+The queue (`gIoWriteQueue`, `io_write_queue.h`) holds up to 32 entries, each a
+value, an address and a control word; a write to a full queue is dropped, and
+a frame that is not finished keeps its writes for the next. Bits 16 and 17 of
+the control word are the width (`IO_WRITE_8`, `IO_WRITE_16`, `IO_WRITE_32`;
+none means the entry is a DMA whose three words go to DMA3) and bits 18 and 19
+the operation (`IO_WRITE_SET` ORs the value in, `IO_WRITE_CLEAR` clears its
+bits, neither stores it). The `IoWriteQueue_Store`, `SetBits` and `ClearBits`
+writers each add one entry.
+
+`IoWriteQueue_FlushPending` copies `Resource_ExecuteTransfer`
+(`system/resource/decode_01.s`), the ARM routine that carries the entries out,
+onto the stack, which is in IWRAM, and runs it there. XXX: why the stack
+rather than a heap block isn't known; a block allocated inside the interrupt
+would sit above the frame's scratch block and be released with it.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `IO_WRITE_8` | `1 << 16` | writes a byte |
+| `IO_WRITE_16` | `2 << 16` | writes a halfword |
+| `IO_WRITE_32` | `3 << 16` | writes a word |
+| `IO_WRITE_SET` | `4 << 16` | ORs the value into the register |
+| `IO_WRITE_CLEAR` | `8 << 16` | clears the value's bits in the register |
+
+## Saving
+
+Saving writes each record to a fresh flash sector before it invalidates the
+old copy, so a power loss never loses a save.
+
+```mermaid
+sequenceDiagram
+    participant S as SaveState_WriteRecord
+    participant F as Flash
+    S->>F: write the new copy, sequence + 1, to a random free sector
+    S->>F: invalidate the old copy
+    Note over S,F: a power loss between the two leaves two good copies;<br/>SaveState_InitializeWorkspace keeps the higher sequence
+```
+
+The cartridge's flash has 16 sectors of 4 KB, each holding one record: a
+16-byte header (signature, record id, a checksum and a sequence number) and a
+payload of 4,080 bytes, of which the checksum covers the first 4,072. A save
+file is records `n` and `n + 3`, for the three files of the file select
+screen.
+
+A save never writes over the copy it replaces. `SaveState_WriteRecord` writes
+the new copy, numbered one past the record's highest sequence, into a free
+sector picked at random, and only then invalidates the old copy. A power loss
+between the two leaves two good copies, and the scan that starts every save,
+load, copy or delete (`SaveState_InitializeWorkspace`) keeps the one with the
+higher sequence. The last free sector is kept for a record that already has a
+copy, so replacing a save always has room. When the sequence passes
+`SAVE_SEQUENCE_LIMIT`, the record is written again with sequence 1 into the
+old copy's sector, and the high-numbered copy is invalidated only after that
+write has been verified.
+
+The code is `runtime/save.c`; its workspace is the heap slot `HEAP_SLOT_SAVE`,
+taken for the length of one save screen operation.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `SAVE_SECTOR_COUNT` | 16 | flash sectors scanned |
+| `SAVE_RECORD_NONE` | 16 | the record id of a free or invalidated sector |
+| `SAVE_FILE_COUNT` | 3 | save files; file `n` is records `n` and `n + 3` |
+| `SAVE_SEQUENCE_LIMIT` | 65,000 | the highest sequence a write keeps |
+| `SAVE_CHECKSUM_BYTES` | `0xfe8` | payload bytes the checksum covers |
+| `SAVE_FLASH_TIMER` | 2 | the hardware timer handed to the flash library |
+| `SAVE_FLASH_IDENTIFY_ATTEMPTS` | 8 | tries to identify the flash chip, a frame apart |
+
+## The link cable
+
+Two linked consoles trade a fixed payload every VBlank, and bulk data rides on
+it in numbered blocks that are sent again when lost.
+
+While the link is up, the VBlank handler trades a 24-byte payload with the
+partner (`SerialRuntime_ExchangePayloads`) in multiplayer mode, the parent
+console clocking the transfer from timer 3 a halfword at a time. Bulk data
+rides on the exchange in 20-byte blocks, one each way per VBlank
+(`SerialRuntime_StepBlockTransfer`). The receiver acknowledges each block's
+sequence number, and a sender that sees an acknowledgement behind its own
+count rewinds and sends the missed blocks again, so a send's source must stay
+unchanged until the send is over. A send's size falls by 20 a block and the
+send ends only at exactly 0, so the size must be a multiple of 20. Link
+battles, the Battle Arena's lobby and the file select screen's transfer use
+it.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `SERIAL_PAYLOAD_BYTES` | 24 | one console's payload each frame |
+| `SERIAL_BLOCK_BYTES` | 20 | bulk data carried in each payload |
+| `SERIAL_PACKET_HALFWORDS` | 14 | halfwords in one packet on the wire |
+| `SERIAL_IDLE_HALFWORD` | `0xfefe` | sent and seen between packets |
+| `SERIAL_TIMER_RELOAD` | `0xc963` | timer 3's reload, which clocks the parent's transfer |
+
+## Design
+
+The game is written as ordinary functions that run until they are done. A
+battle effect, a cutscene or a menu screen is a function with its own loop,
+and when time has to pass it calls `WaitFrames` and carries on from the same
+place. Nothing returns to a main loop between frames. Work that must continue
+while such a function waits is a task, which `WaitFrames` runs however deep
+the waiting function is: window animation, the battle's event playback
+(`BattleEvent_Playback`) and a scene's callbacks are tasks. Most of the
+runtime's shape follows from that choice: the stack switch keeps the stack
+bounded however deep the caller, the scheduler gives tasks a known order, and
+the heap's slots let a task's blocks outlive the call that took them.
+
+The second choice is that a frame's changes reach the hardware together. Code
+writes RAM copies (the depth slots, `gBgScroll`, the write queue) and the
+VBlank handler commits them only for a finished frame, so a lag frame shows
+the previous picture whole rather than a mixture of two.
+
+Saving trades flash space for safety: two sectors per record are in use only
+while a write is in progress, and the random choice of sector spreads writes
+across the chip. XXX: likely the random choice is meant to spread wear,
+because nothing else in the code needs it; the bytes don't say so.
+
+## Limits
+
+- 62 heap slots; the IWRAM heap ends at `Ram_IwramHeapEnd` and the EWRAM heap
+  at the end of EWRAM.
+- 20 scheduled tasks at a time.
+- 32 queued register writes a frame.
+- 96 sprite VRAM cache entries over 512 blocks of 64 bytes, and at most 8 KB
+  (128 blocks, a quarter of sprite VRAM) for one entry.
+- 256 depth slots and 32 affine matrices a frame; once all 32 are taken,
+  `AffineMatrix_BuildForEffect` returns 0 and the sprite uses whatever matrix
+  0 holds.
+- 512 bytes of stack for the frame loop, its tasks and the VBlank work.
+- 16 flash sectors for the three save files' six records.
+
 ## Files
 
 | File | What it holds |
@@ -100,266 +522,6 @@ names ending in `Far`, so renaming one touches other folders too.
 
 [Matching](../MATCHING.md) explains the odd spellings and the comment markers.
 
-## Start-up
-
-The cartridge header jumps to `System_Entry`
-(`games/tbs/src/system/entry.s`), which sets the IRQ and system stacks at the
-top of IWRAM and calls `System_Initialize` (`runtime/system.c`). That
-function stops any HBlank DMA left running, sets the cartridge wait states and
-clears IWRAM up to `Ram_IwramHeapEnd`, leaving the stacks above it alone. It
-empties the heap (`Runtime_InitializeHeap`), copies the resident runtime into
-IWRAM and points the interrupt vector at its dispatcher
-(`Runtime_InstallIwramAndIrqs`), copies the build stamp and loads the window
-graphics. It then installs `System_VBlankHandler`, arms the soft-reset keys,
-starts the sound driver, resets the sprite VRAM cache and the task table,
-waits ten frames and calls `Game_RunFar`. The German, French, Spanish and
-Italian editions (`TBS_PATCH_2`) also install `IwramHalt` for the
-cartridge-removed interrupt.
-
-Neither function returns. `Game_Run` (`games/tbs/src/object/object/scene.c`)
-runs one scene after another, starting at the title, and before each one it
-resets the task table, removes the HBlank and VCount handlers, empties the heap
-and resets the VRAM cache.
-
-## The frame loop
-
-`WaitFrames(n)` (`runtime/frame.c`) runs `n` frames and returns. If the
-caller's stack has grown below `Ram_FrameWaitStackTop`, the stack is first
-moved (see below). Each frame then:
-
-1. runs the main-loop tasks (`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`);
-2. allocates `HEAP_SLOT_FRAME_SCRATCH` (1 KB), builds the OAM list in it from
-   the depth slots (`Render_BuildOamList`) and sets `gFrameRenderPending`;
-3. measures CPU load for the debug display when it is on, and counts the
-   frames toward sleep;
-4. halts the CPU until the VBlank handler has run (`swi 2`, the BIOS's Halt);
-5. releases the scratch block, resets the depth slots, counts the frame and
-   updates key repeat (`Input_UpdateKeyRepeatAndDirection`);
-6. sleeps, or restarts the game, if either was requested.
-
-VBlank interrupts the halt. `System_VBlankHandler`, reached through the IWRAM
-dispatcher and `gIrqHandlers`, stops any HBlank DMA, trades the link payloads
-and steps the music's fades and the screen fade. Only if
-`gFrameRenderPending` is set does it copy the frame's OAM list (when
-`gOamCopyEnabled`), the four BG scroll registers from `gBgScroll` and the
-queued register writes to the hardware, and clear the flag. It then runs and
-clears the one-shot `gVBlankHook`, runs the VBlank tasks
-(`SCHEDULER_KEY_VBLANK`), reads the keypad, counts the frame, sets
-`gVBlankDone` and mixes the next sound buffer.
-
-The order has consequences for the code that runs in a frame:
-
-- Tasks never write sprite or scroll registers directly. They write RAM, and
-  VBlank commits a whole frame at once. A frame whose work does not finish
-  before VBlank (a lag frame) is not committed, so the screen keeps the
-  previous frame's sprites, scroll and register writes together.
-- Sprites must be placed by main-loop tasks, or by the waiting code before it
-  calls `WaitFrames`; the OAM list is built right after the main pass, so a
-  VBlank task's sprites show a frame later.
-- The keys are read in VBlank and turned into repeats after the halt, so code
-  sees them at the start of its next frame.
-
-XXX: likely the display writes come first so that they land inside the
-vertical blank, and the mixer last because it is long and need only finish
-within the frame; the bytes don't say so.
-
-### Input, soft reset and sleep
-
-A held key first repeats after `INPUT_KEY_REPEAT_FIRST` (19) frames and then
-every `INPUT_KEY_REPEAT_NEXT` (6). `gKeysRepeatDirected` is the repeat with at
-most one D-pad direction: of several held directions it keeps the one added
-last, and with all four it keeps none.
-
-A, B, Select and Start pressed together raise the keypad interrupt;
-`Input_HandleKeyInterrupt` sets `gResetRequested`, and the frame loop jumps to
-`Cart_Restart`, the cartridge entry. In debug mode (`gDebugMode`), holding
-Start and Select pauses the loop; A, B, Select or the D-pad then advance one
-frame and Start resumes.
-
-Holding only L and R for `SLEEP_COMBO_FRAMES` (three seconds), or touching no
-key for `SLEEP_IDLE_FRAMES` (three minutes) while `gIdleSleepEnabled` is set,
-requests sleep. The loop turns the screen white for `SLEEP_WHITE_FRAMES`,
-stops the CPU (`swi 3`, the BIOS's Stop) with the keypad set to wake on L and
-R, then restores the display and waits `SLEEP_WAKE_FRAMES`. Nothing sleeps
-while `gSleepDisabled` is set.
-
-## The stack switch in `WaitFrames`
-
-The system stack runs from the top of IWRAM down to the end of the IWRAM heap,
-1,792 bytes. Interrupts use it too: the dispatcher, `IwramIrqMain`
-(`system/runtime.s`), switches to system mode before calling a handler, so the
-VBlank handler, the VBlank tasks and the sound mixer run below whatever they
-interrupted.
-
-When the caller's stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes
-above the heap's end, `WaitFrames` copies everything from the stack pointer up
-to that top into `gSavedStack` in EWRAM by DMA, sets the stack pointer to the
-top and runs its frames there; on return it copies the stack back and
-restores the pointer. The frame loop, the main-loop tasks and the VBlank work
-therefore always start with 512 bytes above the heap, however deep the code
-that waits.
-
-`WaitFrames` must not be called from inside a task: the nested call would find
-its stack below the top again and overwrite `gSavedStack` and
-`gSavedStackSize`, which still hold the outer caller's frames. `WaitFrames`
-itself doesn't check, but it sets `gSchedulerStatus` while it runs the
-main-loop tasks, and code a task may reach tests it before waiting
-(`BattleObj_SpawnObjectsForList`). No task waits (below).
-
-## The heap
-
-The heap hands out memory from two pools, one in IWRAM from `gIwramHeap` up to
-`Ram_IwramHeapEnd` and one in EWRAM from `gEwramHeap` up to the end of EWRAM.
-Each pool is a bump allocator: a block starts at the pool's next free address,
-which moves up past it. The two next-free addresses are the first two words of
-`gWorkSlot` (`union HeapState`, `games/tbs/include/heap_state.h`), and the
-other 62 words are the named slots. `Runtime_AllocateHeapBlock` and `MemAlloc`
-take IWRAM first and fall back to EWRAM; `Runtime_AllocateBlock` and
-`Runtime_BumpAllocateAlternatePool` take EWRAM first. Sizes are rounded up to
-words, a block may not end exactly at its pool's end, and an allocation that
-fits in neither pool returns `NULL`. Blocks are not cleared.
-
-Nothing is freed one block at a time. `Runtime_ReleaseHeapBlock(slot)` clears
-the slot and sets its pool's next free address back to the block's start;
-`MemFree(p)` does the same with `p` (both in `system/heapfree.s`). The pool is
-chosen from the address with no comparison: `(address >> 22) & 4` is 0 for an
-EWRAM address and 4 for an IWRAM one, the byte offsets of the two next-free
-words. Releasing a block therefore releases every later block in the same
-pool, and the rule is that blocks are released in the reverse of the order
-they were taken, pool by pool. A block released out of order does not fail at
-once: the later blocks stay in their slots, pointing at memory the next
-allocation hands out again. `Game_Run` empties both pools and clears every
-slot before each scene, so no block outlives the scene, battle or minigame
-that took it.
-
-That rule is why an effect's transfer callback has to be removed before its
-heap blocks are released, and why `RamCode_Load` copies of code are freed
-right after use. A slot that already has a block is returned whatever size is
-asked for, so `Runtime_AllocateHeapBlock` also means "get".
-
-The frame's scratch block is taken after the main-loop tasks have run and
-released after the VBlank that copied it to OAM. For that frame it is the top
-of its pool, so anything the VBlank work allocates from the same pool in
-between is released with it.
-
-## The task scheduler
-
-The task table holds 20 tasks (`SCHEDULER_TBS_TASK_COUNT`), each a routine, an
-order halfword and flags. The order's high byte picks the pass that runs the
-task (`SCHEDULER_KEY_MAIN_LOOP` for the frame loop, `SCHEDULER_KEY_VBLANK` for
-VBlank) and its low byte ranks it within the pass. Every add re-sorts the
-table by order, highest first, comparing orders as signed halfwords
-(`Scheduler_SortTasks`), and `Scheduler_RunPass` runs, in table order, every
-task whose high byte equals the pass's.
-
-The sort stops one pass short, so the tasks in the first two slots can stay
-out of order (`// BUG:` in the code). It swaps only on strictly greater, so
-tasks of equal order keep their table order, which depends on the free slot
-each was given; code that needs an order gives its tasks different orders.
-
-A task is suspended by setting bit 0 of its order's high byte
-(`Scheduler_SuspendTasks`), which no pass matches, and resumed by clearing it,
-so it keeps its rank. An empty slot's order is `SCHEDULER_KEY_EMPTY` and a
-removed task's `SCHEDULER_KEY_REMOVED`; both high bytes are odd, and as signed
-halfwords a removed slot sorts first and an empty one last.
-`Scheduler_SuspendOverlayTasks` suspends the tasks whose routine is in EWRAM,
-where overlays run, except those whose flag bit 0 is set; the link lobby and
-the Colosso scenes set it (`Scheduler_SetTaskFlags`) for tasks that must keep
-running under a menu.
-
-Adding, removing, suspending and resuming disable interrupts, because the
-VBlank pass reads the same table. A pass walks the table by index without a
-lock, so a task that adds another during a pass re-sorts the table under it,
-which can shift the tasks after it by one. XXX: whether the game ever does
-this isn't known.
-
-## The register write queue
-
-The queue (`gIoWriteQueue`, `io_write_queue.h`) holds up to 32 entries, each a
-value, an address and a control word; a write to a full queue is dropped, and
-a frame that is not finished keeps its writes for the next. Bits 16 and 17 of
-the control word are the width (`IO_WRITE_8`, `IO_WRITE_16`, `IO_WRITE_32`;
-none means the entry is a DMA whose three words go to DMA3) and bits 18 and 19
-the operation (`IO_WRITE_SET` ORs the value in, `IO_WRITE_CLEAR` clears its
-bits, neither stores it). The `IoWriteQueue_Store`, `SetBits` and `ClearBits`
-writers each add one entry.
-
-`IoWriteQueue_FlushPending` copies `Resource_ExecuteTransfer`
-(`system/resource/decode_01.s`), the ARM routine that carries the entries out,
-onto the stack, which is in IWRAM, and runs it there. XXX: why the stack
-rather than a heap block isn't known; a block allocated inside the interrupt
-would sit above the frame's scratch block and be released with it.
-
-## Saving
-
-The cartridge's flash has 16 sectors of 4 KB, each holding one record: a
-16-byte header (signature, record id, a checksum and a sequence number) and a
-payload of 4,080 bytes, of which the checksum covers the first 4,072. A save
-file is records `n` and `n + 3`, for the three files of the file select
-screen.
-
-A save never writes over the copy it replaces. `SaveState_WriteRecord` writes
-the new copy, numbered one past the record's highest sequence, into a free
-sector picked at random, and only then invalidates the old copy. A power loss
-between the two leaves two good copies, and the scan that starts every save,
-load, copy or delete (`SaveState_InitializeWorkspace`) keeps the one with the
-higher sequence. The last free sector is kept for a record that already has a
-copy, so replacing a save always has room. When the sequence passes
-`SAVE_SEQUENCE_LIMIT` (65,000), the record is written again with sequence 1
-into the old copy's sector, and the high-numbered copy is invalidated only
-after that write has been verified.
-
-## The link cable
-
-While the link is up, the VBlank handler trades a 24-byte payload with the
-partner (`SerialRuntime_ExchangePayloads`) in multiplayer mode, the parent
-console clocking the transfer from timer 3 a halfword at a time. Bulk data
-rides on the exchange in 20-byte blocks, one each way per VBlank
-(`SerialRuntime_StepBlockTransfer`). The receiver acknowledges each block's
-sequence number, and a sender that sees an acknowledgement behind its own
-count rewinds and sends the missed blocks again, so a send's source must stay
-unchanged until the send is over. A send's size falls by 20 a block and the
-send ends only at exactly 0, so the size must be a multiple of 20. Link
-battles, the Battle Arena's lobby and the file select screen's transfer use
-it.
-
-## Design
-
-The game is written as ordinary functions that run until they are done. A
-battle effect, a cutscene or a menu screen is a function with its own loop,
-and when time has to pass it calls `WaitFrames` and carries on from the same
-place. Nothing returns to a main loop between frames. Work that must continue
-while such a function waits is a task, which `WaitFrames` runs however deep
-the waiting function is: window animation, the battle's event playback
-(`BattleEvent_Playback`) and a scene's callbacks are tasks. Most of the
-runtime's shape follows from that choice: the stack switch keeps the stack
-bounded however deep the caller, the scheduler gives tasks a known order, and
-the heap's slots let a task's blocks outlive the call that took them.
-
-The second choice is that a frame's changes reach the hardware together. Code
-writes RAM copies (the depth slots, `gBgScroll`, the write queue) and the
-VBlank handler commits them only for a finished frame, so a lag frame shows
-the previous picture whole rather than a mixture of two.
-
-Saving trades flash space for safety: two sectors per record are in use only
-while a write is in progress, and the random choice of sector spreads writes
-across the chip. XXX: likely the random choice is meant to spread wear,
-because nothing else in the code needs it; the bytes don't say so.
-
-## Limits
-
-- 62 heap slots; the IWRAM heap ends at `Ram_IwramHeapEnd` and the EWRAM heap
-  at the end of EWRAM.
-- 20 scheduled tasks at a time.
-- 32 queued register writes a frame.
-- 96 sprite VRAM cache entries over 512 blocks of 64 bytes, and at most 8 KB
-  (128 blocks, a quarter of sprite VRAM) for one entry.
-- 256 depth slots and 32 affine matrices a frame; once all 32 are taken,
-  `AffineMatrix_BuildForEffect` returns 0 and the sprite uses whatever matrix
-  0 holds.
-- 512 bytes of stack for the frame loop, its tasks and the VBlank work.
-- 16 flash sectors for the three save files' six records.
-
 ## Evidence and open questions
 
 The names come from what the code does: `WaitFrames` from its loop,
@@ -387,3 +549,9 @@ the unused `DebugMenu_ScheduleSceneSelector` would schedule as a task.
   (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both
   games, nothing calls them, and each is reached only through a bare veneer,
   so no code shows what they were to do.
+- XXX (picture): the task scheduler's table through one frame, each task's
+  order and the pass that runs it.
+- XXX (picture): the register write queue filling during a frame and emptying
+  at VBlank.
+- XXX (picture): the link cable's blocks and acknowledgements trading between
+  two consoles.

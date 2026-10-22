@@ -29,9 +29,15 @@
 /// return after a battle finds the room as it was. Ten lights float about the
 /// room (SolSanctum_StartFloatingLights), and Retreat does not work here.
 ///
-/// Open questions:
-/// - XXX (picture): what ACTOR_RISING_EFFECT, a blank actor scaled with Isaac
-///   as he rises into the room, draws; a render of the arrival would show it.
+/// Whoever arrives on the platform appears 40 pixels above it at a tenth of
+/// his size, grows to full size and floats down onto it, over a shadow that
+/// grows with him
+/// (ACTOR_PLATFORM_SHADOW;
+/// https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif:
+/// Isaac's arrival, the platform's actor boxed on the screen, beside the
+/// sprites and the sprites without it, where the shadow is gone).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -92,9 +98,16 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void);
 /// gSolSanctumElementalStarRoom_Placements; Garet and Jenna, placed first,
 /// keep their own slots.
 enum StarRoomActor {
-  /// A blank actor whose scale SolSanctumElementalStarRoom_EnterStarRoom grows
-  /// with Isaac's as he rises into the room (an open question above).
-  ACTOR_RISING_EFFECT = ACTOR_FIRST_PLACED,
+  /// The shadow on the arrival platform under whoever appears there: a blank
+  /// actor, whose sprite draws only its shadow, set at (471, 290) and grown
+  /// from a tenth of its size with the arriving actor, whose own shadow is
+  /// turned off while he floats above the platform (Isaac and Kraden in
+  /// SolSanctumElementalStarRoom_EnterStarRoom, Felix in
+  /// SolSanctumElementalStarRoom_DemandElementalStars).
+  /// ★ Named from what the player sees: the shadow that grows on the platform
+  /// as Isaac comes in
+  /// (https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif)
+  ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
   /// ★ Named from the game: "But, Saturos, there's still a chance they might
@@ -529,7 +542,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   u8 *motionFlags;
   u8 *spriteFlags;
   struct FieldActor *felix;
-  struct FieldActor *glow;
+  struct FieldActor *shadow;
   s32 i;
   u8 zero;
 
@@ -558,14 +571,14 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   felix = Object_GetById(ACTOR_FELIX_MASKED);
-  glow = Object_GetById(ACTOR_RISING_EFFECT);
+  shadow = Object_GetById(ACTOR_PLATFORM_SHADOW);
   spriteFlags = &felix->sprite->flags;
   zero = 0;
   *spriteFlags = zero;
   felix->scaleX = Q16_ONE / 10;
   felix->scaleY = Q16_ONE / 10;
-  glow->scaleX = Q16_ONE / 10;
-  glow->scaleY = Q16_ONE / 10;
+  shadow->scaleX = Q16_ONE / 10;
+  shadow->scaleY = Q16_ONE / 10;
   Actor_SetChildValue(ACTOR_FELIX_MASKED, 0x100);
   Actor_SetPosition(ACTOR_FELIX_MASKED, PIXELS(471), PIXELS(290));
   motionFlags = &felix->motionFlags;
@@ -582,15 +595,15 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetPosition(ACTOR_RISING_EFFECT, PIXELS(471), PIXELS(290));
+  Engine_ActorSetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_FELIX_MASKED, 2);
   for (i = 0; i != 90; i++) {
     felix->y.fixed -= PIXELS(1) / 10;
     felix->scaleX += Q16_ONE / 100;
     felix->scaleY += Q16_ONE / 100;
-    glow->scaleX += Q16_ONE / 100;
-    glow->scaleY += Q16_ONE / 100;
+    shadow->scaleX += Q16_ONE / 100;
+    shadow->scaleY += Q16_ONE / 100;
     Engine_EventWait(1);
   }
   *motionFlags = 5;
@@ -602,7 +615,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(30);
   *spriteFlags = 1;
-  Engine_ActorSetPosition(ACTOR_RISING_EFFECT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Engine_ActorSetSpritePriority(ACTOR_FELIX_MASKED, 1);
   {
     u8 *flags = &Object_GetById(ACTOR_FELIX_MASKED)->priorityFlags;
@@ -1405,7 +1418,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u8 *leaderSprite;
   u8 *kradenSprite;
   struct FieldActor *rising;
-  struct FieldActor *glow;
+  struct FieldActor *shadow;
   struct FieldActor *leader;
   u8 *kradenSteeringFlags;
   s32 kradenSpeaker;
@@ -1418,10 +1431,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Camera_MoveTo(PIXELS(471), -1, PIXELS(261), 0);
   Engine_CameraWaitForMove();
   Engine_MapRedraw();
-  // Materialize Isaac above the arrival platform with the expanding glow.
-  glow = Actor_Get(ACTOR_RISING_EFFECT);
-  glow->scaleX = Q16_ONE / 10;
-  glow->scaleY = Q16_ONE / 10;
+  // Materialize Isaac above the arrival platform with the expanding shadow.
+  shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
+  shadow->scaleX = Q16_ONE / 10;
+  shadow->scaleY = Q16_ONE / 10;
   rising = Actor_Get(ACTOR_PARTY_LEADER);
   leaderSprite = &rising->sprite->flags;
   *leaderSprite = 0;
@@ -1438,15 +1451,15 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetPosition(ACTOR_RISING_EFFECT, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   for (i = 0; i != 90; i++) {
     rising->y.fixed += -PIXELS(1) / 10;
     rising->scaleX += Q16_ONE / 100;
     rising->scaleY += Q16_ONE / 100;
-    glow->scaleX += Q16_ONE / 100;
-    glow->scaleY += Q16_ONE / 100;
+    shadow->scaleX += Q16_ONE / 100;
+    shadow->scaleY += Q16_ONE / 100;
     Engine_EventWait(1);
   }
   *leaderMotion = 5;
@@ -1472,7 +1485,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
     *leaderSprite = shown;
   }
-  Engine_ActorSetPosition(ACTOR_RISING_EFFECT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
@@ -1557,8 +1570,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   *kradenSprite = zero;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
-  glow->scaleX = Q16_ONE / 10;
-  glow->scaleY = Q16_ONE / 10;
+  shadow->scaleX = Q16_ONE / 10;
+  shadow->scaleY = Q16_ONE / 10;
   Actor_SetChildValue(ACTOR_KRADEN, 0x100);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(290));
   kradenMotion = &rising->motionFlags;
@@ -1576,15 +1589,15 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_RISING_EFFECT, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_KRADEN, 2);
   for (i = 0; i != 90; i++) {
     rising->y.fixed += -PIXELS(1) / 10;
     rising->scaleX += Q16_ONE / 100;
     rising->scaleY += Q16_ONE / 100;
-    glow->scaleX += Q16_ONE / 100;
-    glow->scaleY += Q16_ONE / 100;
+    shadow->scaleX += Q16_ONE / 100;
+    shadow->scaleY += Q16_ONE / 100;
     Engine_EventWait(1);
   }
   *kradenMotion = 5;
@@ -1607,7 +1620,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
     *kradenSprite = shown;
   }
-  Actor_SetPosition(ACTOR_RISING_EFFECT, 0, 0);
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Engine_EventWait(30);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 306);

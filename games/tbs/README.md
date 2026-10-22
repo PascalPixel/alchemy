@@ -1,28 +1,26 @@
 # ☀️ The Broken Seal
 
-The Broken Seal is one loop, `Game_Run`, that runs one scene at a time. A
-scene is a map and the overlay of code that drives it, and the scene table
-says which of each a scene uses and which place it belongs to. Scenes are
-joined by named entrances and exits, and everything a scene knows about how
-far the story has gone comes from the game flags. The code itself is divided
-by the banks of the main image, with one folder for each large bank.
+![The game runs one scene at a time. The whole game is one loop. At power-on the first scene is the title. Each time round, the game first drops everything the last scene left behind. Then it runs the next scene. A place, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes an exit, and the exit names the next scene. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle is a scene like any other: the place ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
+
+The Broken Seal plays one scene at a time: a room, a town, a dungeon floor,
+the world map, a battle. When the party walks through a door, the game ends
+one scene and starts the next. Each place has code of its own, loaded only
+while the party is there, and a map. Everything a place knows about how far
+the story has gone comes from the game flags, a long list of yes-or-no facts
+saved with the game. The program itself is cut into banks, and the source has
+one folder for each large bank.
 
 ## The main loop
 
-`Game_Run` runs one scene at a time from a clean runtime, for as long as the
-game runs.
+The whole game is one loop that runs one scene, then the next, for as long as
+the game is on.
 
-```mermaid
-flowchart TD
-    start["Game_Run(mode): the first scene,<br/>the title unless in debug mode"] --> clean["stop HBlank DMA, drop the tasks<br/>and handlers, empty the heap"]
-    clean --> kind{{"scene from SCENE_BLANK up?"}}
-    kind -->|"no: a field scene"| field["Scene_ResetFlagsOnEnter, music,<br/>Scene_LoadOverlay, Field_RunScene"]
-    field --> exit["Scene_TakeExit:<br/>the next scene and entrance"]
-    kind -->|"yes: a battle or minigame"| battle["Battle_RunEncounterFar,<br/>RunLuckyDice or RunReelGame"]
-    battle --> back["Scene_ReturnFromBattle:<br/>the scene to go back to"]
-    exit --> clean
-    back --> clean
-```
+Each time round, the game first clears away everything the last scene left
+behind, so nothing one scene set up can leak into the next. Then it runs the
+next scene. A place runs until the party takes an exit, and the exit says
+which scene comes next and where the party arrives. A battle or a minigame is
+a scene too: it runs, and then the game picks the scene to go back to, most
+often the place the battle started from, with everyone where they stood.
 
 `Game_Run`, in [object/scene.c](src/object/object/scene.c), is the game's
 main loop, and it never returns. `System_Initialize` calls it at power-on
@@ -32,10 +30,9 @@ instead, and only while `gDebugMode` is set. The current scene and the
 entrance the party arrives by are `gGameState.scene` and
 `gGameState.entrance`.
 
-Each pass of the loop starts from a clean runtime. It stops the DMA channel
-a scene may have left running for an HBlank effect, drops every task and the
-HBlank and VCount handlers, and empties the heap, so nothing a scene
-allocated survives it. Then it does one of two things:
+Each pass of the loop stops the DMA channel a scene may have left running
+for an HBlank effect, drops every task and the HBlank and VCount handlers,
+and empties the heap. Then it does one of two things:
 
 - A field scene has its flags updated (`Scene_ResetFlagsOnEnter`), its music
   started unless `FLAG_KEEP_MUSIC` or `FLAG_KEEP_MUSIC_HELD` keeps what is
@@ -69,11 +66,15 @@ encounter zones in `encounter.tsv`.
 
 ## Scenes and overlays
 
-A scene is its code, an overlay unpacked over the last scene's, and its map.
+Only one place's code is in memory at a time. When the party enters a place,
+its code is unpacked from the cartridge over the last place's.
 
-A scene's code is an overlay, a compressed resource that `Resource_LoadCode`
-unpacks into `gOverlayArea`, 32 KB of EWRAM, when the scene loads. The next
-scene's overlay is unpacked over it, so only one is ever in memory.
+![One place's code in memory at a time. On the cartridge, each place's code is stored packed, 96 pieces in all, such as Vale's, Vault's, Bilibin's and Goma Cave's. In memory there is one area of 32 KB for a place's code. When the party enters Vault, Vault's code is unpacked into that area, over whatever place's code was there before. Beside it the main program is always loaded; the place's code calls it, and the main program asks it about the place.](https://alchemy.pascalpixel.com/illustrations/front/overlay-swap.svg)
+
+The console has little memory, and most of what a place needs (who is there,
+what they say, its cutscenes) matters nowhere else. So each place's code is
+an overlay: a packed piece of code that `Resource_LoadCode` unpacks into
+`gOverlayArea`, 32 KB of EWRAM, when the scene loads, over the one before.
 
 The field engine knows a scene only through the six stubs at the start of
 its overlay (`struct SceneEntries`): its initialization, and the functions
@@ -89,28 +90,28 @@ and [Engine](engine.md#overlays) the overlay's two tables.
 The other half of a scene is its map: three background layers with the
 actors drawn between them, and a grid of cells under them that says how high
 the ground is, where it can be walked and which cells raise events.
-
-![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+[World](world.md) explains both.
 
 ## The scene table and places
 
-The scene table gives each scene its overlay, its place, its variant and its
-map, and defines its id.
+One table lists every scene the game has, and for each says which code it
+runs, which place it belongs to and which map it shows.
+
+![Each scene's code and place. Four scenes and what the scene table gives each. Bilibin's town, its treasury and the Bilibin Barricade all run on Bilibin's code; Bilibin's houses have code of their own. Bilibin's town, houses and treasury are one place, Bilibin, which chooses their music, the area name shown on arrival and the flags kept while the party is inside. The Bilibin Barricade shares Bilibin's code but is a place of its own. Which code a scene runs and which place it belongs to are chosen separately.](https://alchemy.pascalpixel.com/illustrations/front/scene-parts.svg)
+
+A scene's code says what happens there, and its place, a group of scenes,
+chooses the music, the area name shown on arrival and the flags kept while
+the party stays inside. The two are chosen separately: the Bilibin
+Barricade runs on Bilibin's code but is a place of its own, and Bilibin's
+houses have their own code but are part of Bilibin.
 
 The scene table, `gField_SceneTable` in [field/scenes.s](src/field/scenes.s),
 has a row for each of the 201 scenes, `struct SceneRecord`: the overlay's
 resource, the group, the variant and the map. Each row also defines the
 scene's id, `SceneId_<Place>`, as the row's position, so code names a scene
-by a symbol the linker resolves rather than by a number.
-
-The 201 scenes share 96 overlays, and a shared overlay holds the code and
-tables for all of its scenes (Bilibin, its treasury and the Bilibin
-Barricade are one overlay). The group is the place: the scenes of one place
-share it, and it chooses their music, the area name shown on arrival and the
-flags kept while the party is inside. There are 71 groups. Vale is eight
-scenes in one group, and the World Map is a group of one. A group and an
-overlay are independent: the Bilibin Barricade shares Bilibin's overlay but
-is a place of its own.
+by a symbol the linker resolves rather than by a number. The 201 scenes
+share 96 overlays and 71 groups. Vale is eight scenes in one group, and the
+World Map is a group of one.
 
 The variant marks towns. A `SCENE_VARIANT_TOWN` scene, a town or one of its
 interiors, restores no PP, recovers no Djinn and does no poison damage as
@@ -126,16 +127,11 @@ the party walks, Retreat is blocked there and Avoid doesn't wear off.
 
 ## Entrances and exits
 
-An exit leads to a scene and an entrance, and the entrance decides where the
-party appears.
+Each way out of a scene leads to another scene and an entrance there, and the
+entrance decides where the party appears. One way out can lead to different
+places at different points in the story.
 
-```mermaid
-flowchart LR
-    kind["the exit's kind,<br/>from Field_RunScene"] --> rows["the scene's rows in<br/>the overlay's exit table"]
-    rows --> match{{"kind matches, and for<br/>SCENE_EXIT_IF its flag is clear?"}}
-    match -->|"no: the next row"| rows
-    match -->|yes| next["gGameState.scene<br/>and gGameState.entrance"]
-```
+![One way out, three destinations. The way down from Sol Sanctum's entrance has three rows in the exit table, read from the top. The first leads to Vale, and is taken until the sanctum erupts. The second leads to Vale during the eruption, and is taken until the party leaves Vale. The third leads to Vale, always. The first row whose condition still holds is taken, so the same path leads to Vale, then to Vale erupting, then to Vale again for the rest of the game.](https://alchemy.pascalpixel.com/illustrations/front/exits.svg)
 
 [scene_links.h](include/scene_links.h) names every way between scenes. Each
 scene's entrances are named by where the party arrives from
@@ -146,43 +142,44 @@ An exit row, `SCENE_EXIT(exit, scene, entrance)`, maps an exit kind to a
 scene and an entrance. `Scene_TakeExit` looks up the current scene's rows in
 the overlay's exit table and takes the first one whose kind matches; a row
 written `SCENE_EXIT_IF` is taken only while its flag is clear, and the
-search otherwise goes on to the next row. The entrance then decides where
-the party appears, and a scene's initialization often tests it as well, to
-play the part of a sequence that the previous scene sent the party to.
+search otherwise goes on to the next row. Sol Sanctum's entrance
+(`gSolSanctumEntrance_Exits`) has three rows for `SOL_ENTRANCE_TO_VALE`,
+with `FLAG_SOL_SANCTUM_ERUPTED`, then `FLAG_VALE_PARTY_LEFT`, then no flag.
+The entrance then decides where the party appears, and a scene's
+initialization often tests it as well, to play the part of a sequence that
+the previous scene sent the party to.
 
 ## Game flags
 
-The game flags are the saved bits that record how far the story has gone,
-with two ranges cleared for the scene code.
+The game flags are the long list of yes-or-no facts saved with the game:
+which Djinn the party has, which chests are open, how far the story has
+gone. Two ranges of them are scratch space for scenes, forgotten as the
+party moves on.
+
+![What a place forgets, and when. Scene flags are forgotten every time the party enters a scene, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Place flags are kept while the party moves between the scenes of one place and forgotten when it enters another place: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
 The game flags are 4,096 bits in `gGameFlagBytes`, saved with the game and
 named in [flags.h](include/flags.h): the party and the Djinn first, then the
 system flags the engine shares, then the story flags, and most chest and
-find flags last, each place's in a section of its own. Eight flags starting at a multiple of 8 can
-also be read and written as a byte, which is how counters live among the
-flags.
+find flags last, each place's in a section of its own. Eight flags starting
+at a multiple of 8 can also be read and written as a byte, which is how
+counters live among the flags.
 
-Two ranges are cleared for the scene code, so that a scene never has to
-undo what it changed. `Scene_ResetFlagsOnEnter` clears the scene's own flags
+The two ranges cleared for the scene code mean a scene never has to undo
+what it changed. `Scene_ResetFlagsOnEnter` clears the scene's own flags
 (`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`) on every ordinary entrance, and the
 place's flags (`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) when the party enters
-another group. A scene keeps an opened door in a scene flag, and the door is
-closed again the next time the party comes in; a place flag lasts as long as
-the party stays anywhere in the place.
-`FLAG_KEEP_PARTY_POSITION` keeps both ranges, which is what lets a scene come
-back from a battle unchanged. Entering a group also sets its
-`FLAG_PLACE_VISITED` flag, which puts the place's marker on the world map
-screen.
+another group. `FLAG_KEEP_PARTY_POSITION` keeps both ranges, which is what
+lets a scene come back from a battle unchanged. Entering a group also sets
+its `FLAG_PLACE_VISITED` flag, which puts the place's marker on the world
+map screen.
 
 A scene reads the story flags in three places. Its entry functions choose
 which table to return; its event, placement and exit rows each carry a
 condition, and `Scene_FindEvent` runs the first event row whose kind,
 trigger and condition fit; and its initialization restores what the flags
 say has already happened. Because rows and flags interact this way, some
-code can never run, and its comment opens with `Unused:` and says why:
-`Event_UnusedGaretJoinsIsaac`, in [vale_storm.c](src/scene/vale_storm.c),
-answers a cell the party reaches only after crossing the cells where Garet
-joins, so its first test, `FLAG_VALE_STORM_GARET_JOINED`, always ends it.
+code can never run, and its comment opens with `Unused:` and says why.
 [Unused](unused.md) collects every such case.
 
 | Name | Value | Meaning |
@@ -199,6 +196,12 @@ joins, so its first test, `FLAG_VALE_STORM_GARET_JOINED`, always ends it.
 calls.
 
 ## How scenes depend on the story
+
+The same town looks different at different points in the story: other people
+stand in it and say other things. A scene does this by asking the flags
+which version of itself to be.
+
+![One scene, five moments in the story. Vale's town gate is one scene for the whole game, and each time the party arrives it asks the story which set of events to use, testing in order. Has the party reached Kalay? Then the events after Kalay. Has the party left Vale? Then the events after leaving. Has the party come from the Sanctum? Then the farewell. Is it the stormy night? Then the storm. Otherwise, the events of the day the story begins.](https://alchemy.pascalpixel.com/illustrations/front/vale-gate.svg)
 
 The story is the order the flags are set in, and these scenes show the forms
 that dependence takes, in story order.
@@ -259,12 +262,14 @@ touching one raises the trigger that the event table turns into that place's
 exit. It holds what the party meets on the map itself, three Djinn and a
 storm. And its initialization plays the story's moments between places,
 chosen by the entrance the last scene sent the party to.
-[World](world.md) explains how the tilt is drawn.
+[World](world.md#the-world-map) explains how the tilt is drawn.
 
 ## How the code is organised
 
-The code is divided as the main image is, into banks, with one folder for
-each large bank.
+The program on the cartridge is cut into banks, and the source has one
+folder for each large bank, in the order the cartridge holds them.
+
+![The main program, bank by bank. The main program as it lies on the English cartridge, about 1 MB, drawn to scale from start to end and cut into banks. Each large bank has a folder of the source: runtime (start-up, frames and memory), field (moving and drawing), window (windows, fonts and all the game's text, the largest), game (the rules: stats, items), object (running a place), menu, shop, battle, and effect (battle animations). Five small banks follow. A call from one bank into another goes through a table of jumps at the start of the bank it calls, as the object bank starts a battle.](https://alchemy.pascalpixel.com/illustrations/front/banks.svg)
 
 The main image is the program the processor runs from the cartridge, and
 `main.ld` lays it out in fourteen banks, each at an address fixed per
@@ -275,12 +280,11 @@ with `Battle_RunEncounterFar`. The nine large banks each have a folder, in
 the order the cartridge holds them: `runtime`, `field`, `window`, `game`,
 `object`, `menu`, `shop`, `battle` and `effect`.
 [System](src/system/README.md#why-the-program-is-cut-into-banks) explains
-why the program is cut into banks. The five small banks'
-code sits in the folder it belongs with. `graphics`, `map`, `sound` and
-`system` gather one kind of thing wherever it is linked, and `scene` and
-`debug` hold overlays. [`objects.tsv`](objects.tsv) lists every object in
-link order with the image and bank it goes in, and [Source](src/README.md)
-goes through every folder.
+why the program is cut into banks. The five small banks' code sits in the
+folder it belongs with. `graphics`, `map`, `sound` and `system` gather one
+kind of thing wherever it is linked, and `scene` and `debug` hold overlays.
+[`objects.tsv`](objects.tsv) lists every object in link order with the image
+and bank it goes in, and [Source](src/README.md) goes through every folder.
 
 ## Section pages
 

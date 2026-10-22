@@ -1,49 +1,46 @@
 # Scenes
 
-A scene overlay is the code and tables of one place: who stands where, what
-happens when the party talks to someone, touches a cell, searches, uses an
-item or Psynergy, and the cutscenes the place plays. [Field
-objects](../object/README.md) runs the scene and asks the overlay for these
-through six fixed entry points; the overlay drives the engine back through
+![Six questions a place answers. The field engine knows a place only through six questions it asks the place's own code. When the party arrives it asks, in order: what happens here (the events, kept for the whole visit), where the party arrives (the entrances), who stands where (the placements), and whether anything needs setting up first (the initialization, which can play an arrival cutscene). At every step it asks whether the leader stands in an exit area. As the party leaves it asks where the exit leads. Each answer comes from a function, so a place can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
+
+Everything that makes a place itself is in its own code here: who stands
+where, what each person says, what happens when the party steps on a
+doorstep, searches a jar, or uses an item or Psynergy, and the cutscenes the
+place plays. That code is a scene overlay, loaded when the party arrives and
+replaced when it leaves. [Field objects](../object/README.md) runs the place
+and asks the overlay what to do; the overlay drives the engine back through
 its import table. Each overlay has a generated page of its own, listed in
 [Places](../field/scenes.s) in story order, with its map and its events.
 
 ## The entry table
 
-Six veneers at the start of every overlay are all the engine knows of a scene:
-they return its tables and run its setup.
+The engine knows nothing about any one place. It asks the place's code six
+questions, always the same ones, and the answers are the place.
 
-```mermaid
-sequenceDiagram
-    participant F as Field_RunScene
-    participant E as Overlay's entry table
-    F->>E: Scene_GetEvents (kept for the whole scene)
-    F->>E: Scene_GetEntrances: place the party
-    F->>E: Scene_GetPlacements: create the actors
-    F->>E: Scene_Initialize
-    loop every step
-        F->>E: Scene_GetRegions
-    end
-    F->>E: Scene_GetExits, as the party leaves (Scene_TakeExit)
-```
+When the party arrives, the engine asks what can happen here (the events,
+kept for the whole visit), where the party arrives (the entrances), who
+stands where (the placements), and whether anything needs setting up
+(the initialization). At every step it asks whether the leader is standing
+in an exit area, and as the party leaves, where the exit leads. Each answer
+comes from a function rather than a fixed table, so a place can answer
+differently as the story goes on ([World](../../world.md#scene-entries) gives
+Vault's example), and an overlay that serves several scenes can answer for
+each.
 
-The entries are always in the order of `struct SceneEntries` in
-`field_runtime.h`. Because each is a function, it can choose its table by the
-story flags ([World](../../world.md#scene-entries) gives Vault's example) and,
-in an overlay that serves several scenes, by `gGameState.scene`, as Babi
-Lighthouse's `Scene_GetRegions` does. Some overlays give the entries names of
-their own (`BabiLighthouse_GetExits`); only the order is fixed.
+The initialization restores what the flags say has happened, starts
+callbacks, or plays an arrival cutscene; it may take an exit at once. It
+skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the party is
+returning to where it stood, as after a battle.
 
-`Field_RunScene` asks for the events first and keeps them for the whole scene,
-then places the party at its entrance, creates the actors, and calls
-`Scene_Initialize`. The initialization restores what the flags say has
-happened, starts callbacks, or plays an arrival cutscene; it may take an exit
-at once. It skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the
-party is returning to where it stood, as after a battle. The exits are read
-only as the party leaves (`Scene_TakeExit`), and the regions at every step.
-
-The table lives in `entry/<place>.s`; `struct SceneEntries` is 48 bytes, a
-veneer word before each function pointer.
+In the code, the six are `struct SceneEntries` in `field_runtime.h`, in a
+fixed order at the start of every overlay, `entry/<place>.s`: 48 bytes, a
+veneer word before each function pointer. `Field_RunScene` calls
+`Scene_GetEvents`, then places the party at its entrance
+(`Scene_ApplyEntrance`), creates the actors from the placements and calls
+`Scene_Initialize`. `Field_ProcessStep` reads the regions at every step, and
+`Scene_TakeExit` reads the exits as the party leaves. An overlay that serves
+several scenes chooses by `gGameState.scene`, as Babi Lighthouse's
+`Scene_GetRegions` does. Some overlays give the entries names of their own
+(`BabiLighthouse_GetExits`); only the order is fixed.
 
 | Entry, as Vault names it | Offset in `struct SceneEntries` | Returns or does |
 | --- | --- | --- |
@@ -56,8 +53,8 @@ veneer word before each function pointer.
 
 ## The tables
 
-Five tables, returned by the entries, say where the party arrives and leaves,
-who stands where, and what answers each action.
+The answers are tables: where the party can arrive and leave, who stands
+where, and what answers each thing the player does.
 
 - **Entrances** (`struct SceneEntrance`): for each entrance number, a flag
   that must be set (or -1), a position, a facing and the camera's limits.
@@ -69,17 +66,63 @@ who stands where, and what answers each action.
 - **Placements** (`struct ScenePlacement`): a sprite, a condition, a behaviour
   (an `enum ActorBehavior` such as `ACTOR_STAND` or `ACTOR_WANDER`, or an
   object script), a position, a facing and how the actor turns when spoken to.
-  The rows whose condition holds become actors from `ACTOR_FIRST_PLACED` on, in
-  order. A condition of 0 is no flag: `Scene_AssignViewFlags` replaces it with
-  whether the actor lies within the view.
 - **Regions** (`struct SceneRegion`): boxes in which the leader takes an exit
   kind, each with a condition. Most scenes have none.
 - **Events** (`struct SceneEvent`): a control word (the kind and its detail), a
   trigger, a condition and a value, ended by `SCENE_EVENTS_END`.
 
-In Vale, where Garet's sister stands, the leader is actor 0 and the actors
-the placement rows made are numbered from `ACTOR_FIRST_PLACED`, in the order
-their rows' conditions held; the picture at the top of this page labels them.
+### Who stands where
+
+Each row of a place's placement table puts one person or thing on the map,
+and each row owns an actor slot of its own, whether or not it appears.
+
+![Every placement row owns an actor slot. The placement table of Mercury Lighthouse's upper floor, row by row, and the actor slot each row fills before and after the blue statue falls from its ledge. The party's eight slots come first. The first row, the statue fallen to the floor below, appears only once it has fallen; the second, the statue on its ledge, only until then. The rows after them, two pipe sections, three pipe ends and six stone statues, always appear. A row whose condition fails leaves its slot empty rather than handing it to the next row, so every actor keeps the same slot whatever the story has done, and the pipes are always the third and fourth placed actors.](https://alchemy.pascalpixel.com/illustrations/scene/placements.svg)
+
+A row can carry a condition, a story flag that must be set or clear, and a
+row whose condition fails puts nobody on the map. Its slot stays empty
+rather than going to the next row, so every actor keeps one number all game
+and the scene's code can name it once: on Mercury Lighthouse's upper floor
+the blue statue has one row for its place on the ledge and another for where
+it lands after it falls, and only one of the two appears.
+
+The party takes slots 0 to 7, the leader the one the player moves
+(`ACTOR_PARTY_LEADER`), and the table's rows take the slots from
+`ACTOR_FIRST_PLACED` in order: actor `ACTOR_FIRST_PLACED + n` is always row n
+(`Event_SpawnObjectTable`). A row whose sprite is one of the party's
+characters (sprites 0 to 7) takes that character's own slot instead. A
+condition of 0 is no flag: `Scene_AssignViewFlags` replaces it with whether
+the actor lies within the view. Each scene names its actors in an enum in
+row order (`ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED`).
+
+### Which events a cell starts
+
+Some spots on a map do something when the leader reaches them: a doorstep
+leads into a house when the leader walks into it, the edge of a village
+leads on to the next scene, a ladder climbs to a roof, and a chest or a
+bookcase answers the A button. The map marks each spot by the collision code
+of its cell, and the scene's event table says what that code does. The same
+code means different things in different places.
+
+On the screen of Vale below, on the day the story begins, each door is a
+touch row rather than an exit row: walking north into the doorstep runs a
+script, `Event_EnterIsaacsHouse` for Isaac's house, that opens the door,
+walks the leader in and only then asks for the exit, and that can refuse
+instead, as Dora does once the party has left Vale. Touch rows also climb the
+ladder beside Isaac's house (`Event_ClimbLadderOntoRoof` up,
+`Event_ClimbDownFromRoof` down) and put the upper path's cells
+back when the leader steps off it (`Event_ClearPathCellOverride`). Three
+cells of the path at the top carry a code no row answers.
+
+![A screen of Vale on the day the story begins, drawn from its map at twice the GBA's size, with each cell that carries one of the scene's own codes tinted and joined by a line to a label beside the picture saying what it does: in magenta, for touch rows, a door into a house and the door into Isaac's house (walk north into them), the ladder up onto the roof of Isaac's house (walk north into it) and down from the roof (walk south into it), and the cell where stepping off the upper path changes its cells back; in grey, three cells on the path at the top labelled no event. A key under it says what each colour stands for.](https://alchemy.pascalpixel.com/guides/scene/event-cells.png)
+
+Stepping on or walking into a cell runs the first touch row whose trigger is
+its code and whose condition holds, or failing one the first such exit row
+(`Scene_RunTouchOrExit`); pressing A facing it runs the first such search
+row. A code with no row does nothing. The scene's own codes are
+`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`; the codes above them mean
+the same on every map ([Maps](../map/README.md#cells)).
+
+### What an event row says
 
 An event's kind says what starts it and what its trigger is:
 
@@ -93,31 +136,6 @@ An event's kind says what starts it and what its trigger is:
 | `USE_ITEM(item)`, `USE_ITEM_ON_ACTOR(item)` | using an item | the cell's code or the actor's number |
 | `PSYNERGY_ON_ACTOR(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an actor, or anywhere | the actor's number, or 0 |
 | `EVENT_RAISED` | the scene's code raising a value | the value |
-
-Some spots on a map do something when the leader reaches them: a doorstep
-leads into a house when the leader walks into it, the edge of a village
-leads on to the next scene, a ladder climbs to a roof, and a chest or a
-bookcase answers the A button. The map marks each spot by the collision code
-of its cell, and the scene's event table says what that code does. Stepping
-on or walking into a cell runs the first touch row whose trigger is its code
-and whose condition holds, or failing one the first such exit row
-(`Scene_RunTouchOrExit`); pressing A facing it runs the first such search
-row. A code with no row does nothing. The scene's own codes are
-`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`, so the same code means
-different things in different scenes; the codes above them mean the same on
-every map ([Maps](../map/README.md#cells)).
-
-On the screen of Vale below, on the day the story begins, each door is a
-touch row rather than an exit row: walking north into the doorstep runs a
-script, `Event_EnterIsaacsHouse` for Isaac's house, that opens the door,
-walks the leader in and only then asks for the exit, and that can refuse
-instead, as Dora does once the party has left Vale. Touch rows also climb the
-ladder beside Isaac's house (`Event_ClimbLadderOntoRoof` up,
-`Event_ClimbDownFromRoof` down) and put the upper path's cells
-back when the leader steps off it (`Event_ClearPathCellOverride`). Three
-cells of the path at the top carry a code no row answers.
-
-![A screen of Vale on the day the story begins, drawn from its map at twice the GBA's size, with each cell that carries one of the scene's own codes tinted and joined by a line to a label beside the picture saying what it does: in magenta, for touch rows, a door into a house and the door into Isaac's house (walk north into them), the ladder up onto the roof of Isaac's house (walk north into it) and down from the roof (walk south into it), and the cell where stepping off the upper path changes its cells back; in grey, three cells on the path at the top labelled no event. A key under it says what each colour stands for.](https://alchemy.pascalpixel.com/guides/scene/event-cells.png)
 
 A Psynergy event's phase (`enum PsynergyPhase`) says when it runs around the
 effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
@@ -141,7 +159,7 @@ The formats are in `games/tbs/include/field_scene.h`, the door names in
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `ACTOR_PARTY_LEADER` | 0 | the actor the player moves |
-| `ACTOR_FIRST_PLACED` | 8 | the first actor a placement row makes |
+| `ACTOR_FIRST_PLACED` | 8 | the slot of a placement table's first row |
 | `CONDITION_ALWAYS` | -1 | a row that always holds |
 | `CONDITION_IN_VIEW` | 0 | a placement shown only while within the view (`Scene_AssignViewFlags`) |
 | `CONDITION_FLAG_SET` | `0x1000` | with a flag (`IF_FLAG_SET`): the flag must be set, not clear |
@@ -164,23 +182,20 @@ The formats are in `games/tbs/include/field_scene.h`, the door names in
 
 ## How an event is chosen
 
-`Scene_FindEvent` answers an action with the first event row that fits it, so
-a scene orders its rows from the latest story state to the default.
+When the player talks to someone, the game reads the place's event table
+from the top and runs the first row that fits. That one rule is how a person
+says something new as the story moves on.
 
-```mermaid
-flowchart TD
-    action["An action: talk, touch, search,<br/>item, Psynergy or a raised value"] --> row["Next row of the event table"]
-    row --> fits{{"Kind and trigger fit?"}}
-    fits -->|no| row
-    fits -->|yes| named{{"A search on a named target<br/>that finds no mimic?"}}
-    named -->|yes| take["Take it; Field_SearchTile<br/>tests the condition afterwards"]
-    named -->|no| cond{{"Condition holds?"}}
-    cond -->|no| row
-    cond -->|yes| run["Take it"]
-```
+![The first row that fits answers. Four talk rows from Vault's houses once the party is back from Kalay, in table order. The mayor's first row holds until he has welcomed Isaac back, and it runs the first time the player talks to him. His second row holds always, and it answers the later talks on that visit: he warns of the thieves' revenge. The cook's first row holds always and answers every talk with "We don't get a lot of travelers in winter." The cook's second row, in which he would offer his leftover bones, is never reached, because the row above it always fits first.](https://alchemy.pascalpixel.com/illustrations/scene/first-row.svg)
 
-A row below one for the same actor or cell with no condition is never
-reached. A search on a named target (everything but `SEARCH_UNNAMED`) is
+A place lists its rows from the latest point in the story down to the
+default. In Vault's houses after Kalay, the mayor has a row that holds until
+he has welcomed Isaac back, and below it one that always holds: the first
+talk welcomes Isaac, and every later one warns of the thieves. A row behind
+one that always fits is never reached, as the cook's second row shows.
+
+`Scene_FindEvent` returns the first row whose kind, trigger and condition
+fit. A search on a named target (everything but `SEARCH_UNNAMED`) is
 returned whatever its condition, unless it finds a mimic, and
 `Field_SearchTile` tests the condition afterwards, so that an opened chest
 still says it is empty. Rows these rules make unreachable keep a
@@ -194,10 +209,20 @@ such case.
 
 ## Scripts
 
+A cutscene is written as a list of what happens, one step to a line, and the
+game plays it from top to bottom while the party waits.
+
+![A cutscene runs from top to bottom. The script a woman in Vale runs when Isaac talks to her after Kalay, one step to a line with how long each step holds the scene. The player loses control. The view starts to shake, and the script waits ten frames. The shake is set to die away. She says "Aghh! I felt another one!", which holds until the player answers it and then twenty frames more. She turns to face Isaac and the scene holds twenty frames. She says the next line, which holds until the player answers it. Then the player has control again.](https://alchemy.pascalpixel.com/illustrations/scene/script-steps.svg)
+
+A step that takes time, such as a wait, a line of dialogue or someone
+walking somewhere, waits inside itself, so the next line starts only when it
+is done, and the walk resumes only after the last line. Steps that take no
+time, such as starting the shake, follow each other within one frame.
+Whatever has to keep moving during a cutscene, like a villager walking past,
+runs on its own as an object script, a callback or an update hook.
+
 A function an event names is a script: straight-line code written in the
 commands of `event.h` over the engine calls of `field_event.h`.
-
-![Isaac talks to a villager in Vale after the party has reached Kalay, and beside the screen the body of `Event_ReactToAnotherTremor` is listed a statement to a line, the one running highlighted and each finished one marked with the frames it took: `Engine_EventStart`, both `Map_SetShake` calls and `Engine_EventSetMessage` take none, `Engine_TaskWait(10)` 10 frames, `Event_ShowMessageAndWait` 74 while `Aghh! I felt another one!` is typed out and answered, `Actor_FaceActor` 20 as she turns to him, and `Event_ShowMessage` 60 for her second page, before `Engine_EventEnd`.](https://alchemy.pascalpixel.com/guides/scene/scene-script.gif)
 
 ```c
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
@@ -221,12 +246,8 @@ camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
 move, turn and animate actors by number (`OBJECT_MODE` takes an `enum
 ActorAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
-game flags, and `SE(n)` plays a sound from `songs.h`.
-
-The script runs to its end before the scene loop looks at anything else, so a
-cutscene is straight-line code: each command that takes time waits inside
-itself. What must move meanwhile runs as object scripts, callbacks (added with
-`FieldScheduler_AddCallback` at `TASK_PRIORITY_SCENE`) or update hooks.
+game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
+`FieldScheduler_AddCallback` at `TASK_PRIORITY_SCENE`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -234,17 +255,24 @@ itself. What must move meanwhile runs as object scripts, callbacks (added with
 
 ## State that cleans itself up
 
-A scene never undoes what it changed: the engine clears the scene's and the
-place's temporary flags for it as the party enters.
+A scene never undoes what it changed. Instead the game keeps two sets of
+flags for scenes to use, and forgets them for it as the party moves on.
+
+![What a place forgets, and when. Scene flags are forgotten every time the party enters a scene, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Place flags are kept while the party moves between the scenes of one place and forgotten when it enters another place: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
+
+Scene flags last until the party next enters a scene, so a scene keeps a
+pushed stone pillar or an opened door in one and finds it back in place next
+time. Place flags last while the party stays anywhere in the place, so they
+hold what must survive moving between its rooms, as Fuchin Falls Cave keeps
+where its logs float. Coming back from a battle forgets neither.
 
 `Scene_ResetFlagsOnEnter` clears the scene's 256 flags on every ordinary
 entrance and the place's 256 when the party enters another group ([the front
-page](../../README.md#game-flags) explains the ranges). So a scene keeps a
-pushed stone pillar or an opened door in a `FLAG_SCENE_TEMP_xx` flag and finds
-it back in place next time, and keeps what must survive moving between the
-place's scenes in a `FLAG_PLACE_TEMP_xx` flag, as Fuchin Falls Cave keeps
-where its logs float. Because the numbers are reused everywhere, each scene
-says near its top (or beside a single use) what it keeps in them.
+page](../../README.md#game-flags) explains the ranges). Because the numbers
+are reused everywhere, each scene says near its top (or beside a single use)
+what it keeps in them, and names those it gives a meaning in its own file
+(`FLAG_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40` in Crossbone Isle,
+`FLAG_WELCOMED_BACK = FLAG_PLACE_TEMP_00` in Vault's houses).
 
 The flags are in `games/tbs/include/flags.h`.
 
@@ -255,13 +283,16 @@ The flags are in `games/tbs/include/flags.h`.
 
 ## Code shared between overlays
 
-Code several overlays need is written once in `common/` and compiled into
-each of them, because an overlay can call only the main image.
+Two places that need the same piece of code each carry their own copy of
+it, because a place's code can call only the main program, never another
+place's.
 
-Only one overlay is loaded at a time and it can call only the main image, so
-the ROM holds a copy of the same functions in each, alike but for the
-addresses they hold (their calls into the overlay's import table and their
-pointers to its data). Each scene
+![Code two places share is copied into both. Two overlays side by side: Vault's town and Vault's houses. Each holds its own code, and each also holds a copy of the same two pieces: showing a villager's thought read with Mind Read, and Ivan handing back Isaac's Djinni before he leaves the party. Below them is the main program, which is always loaded and which both call. Only one place's code is loaded at a time, and it can call only the main program, so shared code is written once and copied in.](https://alchemy.pascalpixel.com/illustrations/scene/shared-code.svg)
+
+Only one overlay is loaded at a time, so the code several places need is
+written once in `common/` and compiled into each of them. The ROM holds a
+copy in each overlay, alike but for the addresses they hold (their calls
+into the overlay's import table and their pointers to its data). Each scene
 includes the header at the point its bytes take in that overlay. A header in
 `common/` is code, not declarations: including it twice in one scene would
 place it twice.
@@ -404,6 +435,3 @@ animations, named in `enum ActorAnimation` from Isaac's sprite
 seen side-on to full size facing the player, and a leaving turns from his
 back to side-on as he shrinks and is then hidden. The alternate pair, which
 goes with `SE_STAIRS_DOWN`, has its own drawings of the same turns.
-- XXX (picture): who stands where: a place's placement table filling the actor slots, labelled by who each actor is.
-- XXX (picture): scene and place flags, as an illustration of when each kind is cleared.
-- XXX (picture): code shared between places, as two places' code with the same blocks copied into both.

@@ -47,12 +47,10 @@
 /// warns of monsters and wonders at its treasures.
 ///
 /// Open questions:
-/// - XXX: whether ACTOR_LANDING_SPOT is the landing monster's shadow; a
-///   recording of TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK would settle it.
-/// - XXX: what MUS_029 and SE_147 sound like; hearing them in these cutscenes
-///   would name them in songs.h.
-/// - XXX: what the eight words after gTolbiShipMast_BirdDeparture6's end are;
-///   a reader of them in another object would settle it.
+/// - XXX (no evidence): what the eight words after
+///   gTolbiShipMast_BirdDeparture6's SC_END were; nothing reads them, since the
+///   script stops at SC_END and only this overlay can name its data (O3), and
+///   as sixteen halfwords they form no table any code here indexes.
 
 #include "script.h"
 #include "game_state.h"
@@ -161,11 +159,11 @@ enum TolbiShipMastEnsembleActor {
   /// (gTolbiShipInteriors_ThirdAttackMonsters); it drops in beside the lookout.
   /// ★ Named from what the player sees: a blue winged monster (its render)
   ACTOR_LANDING_MONSTER,
-  /// The sprite kolima_forest_tree.c and vale_storm.c place as an invisible
-  /// actor. It grows from a tenth of its size where ACTOR_LANDING_MONSTER
-  /// drops, then follows it away. XXX: likely the monster's shadow, because it
-  /// grows before the monster falls onto it.
-  ACTOR_LANDING_SPOT
+  /// The landing monster's shadow: a blank sprite (SPRITE_BLANK) draws only
+  /// its shadow, which grows from a tenth of its size where
+  /// ACTOR_LANDING_MONSTER drops, then follows the monster away
+  /// (tolbi_ship_deck.c's SEA_FALLING_MONSTER_SHADOW does the same).
+  ACTOR_LANDING_MONSTER_SHADOW
 };
 
 /// The mast's touch and search cells.
@@ -743,20 +741,20 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetPosition(ACTOR_FIRST_BIRD + 5, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_BIRD + 6, 0, 0);
   Engine_EventWait(100);
-  // ACTOR_LANDING_SPOT grows where the monster will land, then
+  // ACTOR_LANDING_MONSTER_SHADOW grows where the monster will land, then
   // ACTOR_LANDING_MONSTER drops onto it.
-  actor = Object_GetById(ACTOR_LANDING_SPOT);
+  actor = Object_GetById(ACTOR_LANDING_MONSTER_SHADOW);
   actor->scaleX = Q16_ONE / 10;
   actor->scaleY = Q16_ONE / 10;
-  Actor_SetPosition(ACTOR_LANDING_SPOT, PIXELS(172), PIXELS(340));
+  Actor_SetPosition(ACTOR_LANDING_MONSTER_SHADOW, PIXELS(172), PIXELS(340));
   Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
   Engine_ActorRunRepeatedMotion(ACTOR_LOOKOUT, 1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 0);
   Event_PlayCue(MUS_029);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
-  // ACTOR_LANDING_SPOT grows for 32 frames before ACTOR_LANDING_MONSTER is
-  // placed above it.
+  // ACTOR_LANDING_MONSTER_SHADOW grows for 32 frames before
+  // ACTOR_LANDING_MONSTER is placed above it.
   for (frame = 0; frame < 32; frame++) {
     actor->scaleX += Q16_ONE / 20;
     actor->scaleY += Q16_ONE / 20;
@@ -791,7 +789,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Event_PlayCue(SE_HIGH_JUMP);
   actor->velocityY = PIXELS(8);
   Actor_SetDestination(ACTOR_LANDING_MONSTER, 132, 360);
-  Actor_SetDestination(ACTOR_LANDING_SPOT, 132, 360);
+  Actor_SetDestination(ACTOR_LANDING_MONSTER_SHADOW, 132, 360);
   Engine_EventWait(40);
   Actor_SetPosition(ACTOR_LANDING_MONSTER, 0, 0);
   actor = Object_GetById(ACTOR_LOOKOUT);

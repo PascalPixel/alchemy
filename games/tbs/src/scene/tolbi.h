@@ -141,11 +141,6 @@ enum TolbiMapObject {
   TOLBI_HIDDEN_CHEST = 102,
 };
 
-/// A word of the event work, at offset 0x1f4, that is set to the poster
-/// before the yes/no choice under the "Missing Person" window. What reads it
-/// is not yet traced.
-#define EVENT_WORK_1F4 (*(s32 *)((u8 *)gEventWork + 0x1f4))
-
 /// The running children keep these flags in FieldActor.timer, their scene
 /// scratch halfword. Bits: 1 talking | 0 chases the younger sister.
 enum {

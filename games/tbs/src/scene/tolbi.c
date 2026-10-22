@@ -46,11 +46,6 @@
 /// out onto the world map.
 ///
 /// Open questions:
-/// - XXX: what reads the event work's word at 0x1f4 (EVENT_WORK_1F4), which
-///   Tolbi_MeetSearchingSoldiers sets to the poster before the yes/no choice
-///   under the "Missing Person" window; tracing the window's side object
-///   (UiWindow_CreateWithSideObject) would settle it and give the field its
-///   name in struct EventWork.
 /// - XXX (no evidence): whether the four messages after
 ///   MsgTolbiSpringOhThereAreAlwaysScalpersAt (`The finals are about to
 ///   start.` and the rest) were the festival family's finals-day lines; no
@@ -596,12 +591,13 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Engine_EventWait(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
-  // window showing the poster.
+  // window showing Babi's portrait. The poster, placed with Babi's sprite,
+  // becomes the speaker so that answering closes that portrait window.
   Event_OpenMessage(TOLBI_SOLDIER_A, 0);
   Engine_EventWait(25);
-  UiWindow_CreateWithSideObject(52, 0, 12, 7);
+  UiWindow_CreateWithSideObject(SPRITE_BABI, 0, 12, 7);
   UiText_OpenMessageWindow((firstMsg + 3), 11, 12, 2);
-  EVENT_WORK_1F4 = TOLBI_MISSING_PERSON_POSTER;
+  gEventWork->speaker = TOLBI_MISSING_PERSON_POSTER;
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     Engine_EventWait(20);

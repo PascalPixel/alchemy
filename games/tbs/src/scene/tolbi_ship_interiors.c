@@ -93,12 +93,7 @@
 /// their own placements.
 ///
 /// Open questions:
-/// - XXX: what MUS_017, MUS_028, MUS_063, SE_181, SE_188 and SE_214 sound
-///   like; hearing each where these cutscenes play it would name it in
-///   songs.h.
-/// - XXX (picture): the rowing deck's seats: the eight oarsmen two by two,
-///   the four seats the chosen passengers take, and the oar beside each,
-///   labelled by seat.
+/// - None.
 
 #include "script.h"
 #include "flags.h"
@@ -304,7 +299,8 @@ enum TolbiShipRowingDeckActor {
   ROWING_DRUMMER,
   /// The eight oarsmen, men in red bandanas (SPRITE_MAN_IN_RED_BANDANA), a seat
   /// each, two by two from the north, the west seat
-  /// first; the passengers chosen take the first four seats.
+  /// first; the passengers chosen take the first four seats
+  /// (https://alchemy.pascalpixel.com/places/tolbi-ship-interiors/rowing-deck-seats.png).
   ROWING_FIRST_OARSMAN,
   /// The nine passengers in the order of enum TolbiShipPassenger.
   ROWING_FIRST_PASSENGER = ROWING_FIRST_OARSMAN + 8,

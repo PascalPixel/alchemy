@@ -4923,6 +4923,8 @@ enum {
   SUHALLA_FROM_HOUSE_WEST = 3,
   SUHALLA_FROM_HOUSE_NORTHEAST = 4,
   SUHALLA_FROM_HOUSE_EAST = 5,
+  /// In the table at (120, 272), facing east, but led to by no exit.
+  SUHALLA_SIXTH_UNUSED = 6,
   SUHALLA_FROM_WORLD_MAP = 10,
   /// In no table row and led to by no exit: arriving by it sets
   /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held. XXX:

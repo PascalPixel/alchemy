@@ -25,9 +25,14 @@
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near
 ///   makes Kite hop away (Event_KiteRunsOff) and then run behind a ledge
 ///   (Event_KiteRunsBehindLedge, setting FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
-///   from then on twelve trigger cells send it to the matching point on the
-///   ledge's far side as the leader walks round (Event_KiteKeepsAway), so it
-///   cannot be reached until Halt stops it. A stopped Kite can be talked to and
+///   from then on twelve trigger codes, 45 to 56 on the 23 cells round the
+///   ledge, each send it to its point of gValeCave_WalkTargets on the ledge's
+///   far side as the leader walks round (Event_KiteKeepsAway), so it cannot be
+///   reached until Halt stops it
+///   (https://alchemy.pascalpixel.com/places/vale-cave-kite/kite-ledge.gif:
+///   the leader walking the ring, twice the size, the trigger cells outlined
+///   and numbered from 0 by code, the walk targets drawn with the same
+///   numbers, and Kite boxed). A stopped Kite can be talked to and
 ///   joins the party (Event_TalkToKite), setting FLAG_KITE, which removes it
 ///   from the placements. The room's chests hold the Halt Gem, which gives
 ///   Halt, and a Nut. In the holes' part (VALE_CAVE_KITE_SOUTH_FROM_WEST to
@@ -57,8 +62,6 @@
 ///   target (ACTOR_NOT_TARGETED); Vault creates the same kind of object on its
 ///   well (vault_revisit.c), and nothing in the ROM says what they were meant
 ///   to show.
-/// - XXX (picture): Kite keeping to the far side of its ledge, its twelve
-///   trigger cells and the points of gValeCave_WalkTargets drawn on the map.
 
 #include "game_state.h"
 #include "djinn_ids.h"

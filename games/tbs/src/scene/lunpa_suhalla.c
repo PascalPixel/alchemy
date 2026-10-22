@@ -1,31 +1,42 @@
 /// @file
-/// The buildings of Lunpa (SceneId_LunpaSuhalla), one scene whose area name
-/// follows the door the party comes in by: Lunpa for the homes, the shops and
-/// the inn (ROOM_FIRST_HOME to ROOM_INN, ROOM_STOREROOM and ROOM_NINTH), Lunpa
-/// Temple (ROOM_TEMPLE and ROOM_TEMPLE_SECOND_ENTRANCE) and Gate to Suhalla
-/// (ROOM_GATE_TO_SUHALLA).
+/// The buildings of Lunpa and the house at Suhalla Gate: one scene
+/// (SceneId_LunpaSuhalla) whose rooms are told apart by the entrance the party
+/// comes in by, and whose area name follows it:
 ///
-/// - Lunpa, the homes, the weapon and armor shop, the item shop and the inn,
-///   entered by the town's doors (lunpa.c); their exits, ROOM_FIRST_HOME to
-///   ROOM_STOREROOM, lead back out, the temple's included. While Dodonpa keeps
-///   the town sealed (FLAG_DODONPA_LOCKED_UP clear, gInteriorSealedEvents),
-///   the merchants cannot buy or sell, the innkeeper has no guests, and the
-///   villagers talk of Lunpa, the noble thief lost in the great flood while
-///   traveling with Babi, of Donpa and of Dodonpa. The inn's chef has been
-///   taking meals into the fortress since the caravan was captured: talking
-///   to him or reading his mind tells the party of the prisoner he takes
-///   meals to, Hammet (FLAG_LUNPA_HEARD_OF_PRISONER). Once Donpa has judged
-///   Dodonpa in Lunpa Fortress (gInteriorReopenedEvents), across their
-///   counters the merchants sell and the innkeeper rents rooms, and the inn
-///   makes ready for Donpa's guests. A wooden box and a barrel hold a Lucky
-///   Medal and a Vial, and the chef's ovens hold Thieves' Stew and Thieves'
-///   Cookies.
-/// - Lunpa Temple, whose Healer offers the Sanctum's services across the
-///   counter and otherwise talks of Dodonpa.
-/// - Gate to Suhalla, the house beside Suhalla Gate (suhalla_gate.c), entered
-///   from there and left by ROOM_GATE_TO_SUHALLA. A traveling Healer offers
-///   the same services (gGateToSuhallaEvents), and Scene_Initialize makes it
-///   the place a defeated party wakes.
+/// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
+///   and the crate room, entered by the town's doors (lunpa.c) at
+///   ROOM_FIRST_HOME to ROOM_INN and ROOM_CRATE_ROOM.
+/// - Lunpa Temple: ROOM_TEMPLE from the town, and ROOM_TEMPLE_SECOND_ENTRANCE,
+///   where a party defeated in Lunpa wakes.
+/// - Gate to Suhalla: the house beside Suhalla Gate (suhalla_gate.c), entered
+///   at ROOM_GATE_TO_SUHALLA, where a traveling Healer offers the Sanctum's
+///   services.
+///
+/// A room's entrance number is also its exit kind and the trigger of its door
+/// (ROOM_DOOR), so each door leads back out the way the party came in.
+/// Scene_GetEvents gives the house at Suhalla Gate its own table, and Lunpa's
+/// rooms the sealed town's (gInteriorSealedEvents) until Donpa's judgment
+/// sets FLAG_DODONPA_LOCKED_UP, then the reopened town's
+/// (gInteriorReopenedEvents). While the town is sealed the merchants neither
+/// buy nor sell and the innkeeper offers only his home; talking to the inn's
+/// chef or reading his mind tells of the prisoner he takes meals to
+/// (FLAG_LUNPA_HEARD_OF_PRISONER). Once it reopens, the shops, the inn and the
+/// temple serve across their counters.
+///
+/// A merchant or Healer serves only a leader who faces north across the
+/// counter (FACING_IS_NORTH); otherwise they talk. The counters are blank
+/// actors in front of the merchants (ACTOR_WEAPON_COUNTER and the others),
+/// so talking across one reaches the merchant's event. Entering by
+/// ROOM_GATE_TO_SUHALLA makes the house the place a defeated party wakes and
+/// hides the location name.
+///
+/// Open questions:
+/// - XXX: whether Event_TalkToTravelingHealer opening the Sanctum for
+///   ACTOR_HEALER, the temple's Healer, rather than ACTOR_TRAVELING_HEALER is
+///   a slip; a recording of the Sanctum at Suhalla Gate would show which actor
+///   its window points at.
+/// - XXX: what ROOM_NINTH_UNUSED was, an entrance no exit leads to beside the
+///   house at Suhalla Gate; a render of its camera box would show the room.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -59,8 +70,8 @@ const struct SceneEntrance gInteriorEntrances[] = {
     { ROOM_ITEM_SHOP, CONDITION_ALWAYS, 704, 0, 584, FACING_NORTH, 0, 576, 352, 816, 608, 0 },
     { ROOM_INN, CONDITION_ALWAYS, 288, 0, 840, FACING_NORTH, 0, 40, 656, 368, 944, 0 },
     { ROOM_TEMPLE, CONDITION_ALWAYS, 688, 0, 280, FACING_NORTH, 0, 568, 32, 808, 304, 0 },
-    { ROOM_STOREROOM, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
-    { ROOM_NINTH, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
+    { ROOM_CRATE_ROOM, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
+    { ROOM_NINTH_UNUSED, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
     { ROOM_GATE_TO_SUHALLA, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
     { ROOM_TEMPLE_SECOND_ENTRANCE, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
     { SCENE_TABLE_END },
@@ -75,7 +86,7 @@ const u32 gInteriorExits[] = {
     SCENE_EXIT(ROOM_ITEM_SHOP, Lunpa, LUNPA_FROM_ITEM_SHOP),
     SCENE_EXIT(ROOM_INN, Lunpa, LUNPA_FROM_INN),
     SCENE_EXIT(ROOM_TEMPLE, Lunpa, LUNPA_FROM_TEMPLE),
-    SCENE_EXIT(ROOM_STOREROOM, Lunpa, LUNPA_FROM_CRATE_ROOM),
+    SCENE_EXIT(ROOM_CRATE_ROOM, Lunpa, LUNPA_FROM_CRATE_ROOM),
     SCENE_EXIT(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA),
     SCENE_EXITS_END,
 };
@@ -128,7 +139,7 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     ROOM_DOOR(ROOM_ITEM_SHOP),
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
-    ROOM_DOOR(ROOM_STOREROOM),
+    ROOM_DOOR(ROOM_CRATE_ROOM),
     { EVENT_TALK, ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeASealed) },
     { EVENT_TALK, ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBSealed) },
     { EVENT_TALK, ACTOR_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeASealed) },
@@ -197,7 +208,7 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     ROOM_DOOR(ROOM_ITEM_SHOP),
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
-    ROOM_DOOR(ROOM_STOREROOM),
+    ROOM_DOOR(ROOM_CRATE_ROOM),
     { EVENT_TALK, ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeAReopened) },
     { EVENT_TALK, ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBReopened) },
     { EVENT_TALK, ACTOR_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeAReopened) },
@@ -496,6 +507,8 @@ static void Event_TalkToTravelingHealer(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
+    // XXX: the temple's Healer, not the traveling one; the file's open
+    // questions ask whether this is a slip.
     Engine_SanctumOpen(ACTOR_HEALER);
   } else {
     Engine_EventSetMessage(MsgLunpaTravelingPriest);

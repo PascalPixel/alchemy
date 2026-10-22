@@ -7,10 +7,12 @@
 /// range. These headers declare ordinary functions; the ordered assembly tables
 /// in src/system/far_call own the entry names and the routines they jump to.
 /// For example, UiText_DrawNumberAtOffsetFar is the window bank's entry for
-/// UiText_DrawNumberAtOffset. Overlays bind their imported names to these
-/// entries in src/system/overlay.inc, using the same 8-byte jump mechanism.
-/// A file with a local declaration defines `OWN_<name>` before including this
-/// header to keep that declaration in scope.
+/// UiText_DrawNumberAtOffset. Each bank's header, farcall/window.h and the
+/// rest, is in its table's order, and the table is the far_call file of the
+/// same name in capitals (WINDOW.S). Overlays bind their imported names to
+/// these entries in src/system/overlay.inc, using the same 8-byte jump
+/// mechanism. A file with a local declaration defines `OWN_<name>` before
+/// including this header to keep that declaration in scope.
 
 #include "callback_scheduler.h"
 #include "effect_slot.h"

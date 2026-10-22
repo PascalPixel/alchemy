@@ -12,6 +12,8 @@
 /// The scene's name, Cliff, is ours, for what sets the map apart: a rock cliff
 /// runs across its north side above the river and the logs
 /// (places/kolima-forest-cliff_cursed/map-0.png).
+///
+/// Open questions: none.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"

@@ -65,6 +65,8 @@
 /// and its pieces in the crash SPRITE_ROCK again, scaled down
 /// (AltinPeak_SpawnDebris); the beasts' spray is SPRITE_DUST_PUFF recoloured,
 /// as in Altin.
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "version.h"

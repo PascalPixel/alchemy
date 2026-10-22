@@ -30,6 +30,8 @@
 /// Tunnel (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL), other cells are copied in and
 /// it is a storeroom of crates and sacks with the ladder down in its floor, and
 /// the family is put out of sight (places/kolima-interiors_cursed/map-8.png).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "flags.h"

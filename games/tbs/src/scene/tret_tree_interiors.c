@@ -54,6 +54,8 @@
 /// ends; casting Reveal stops it), and scales the first map layer to the room.
 /// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
 /// (search events 100 to 102).
+///
+/// Open questions: none.
 
 #include "battle_effect_runtime.h"
 #include "version.h"

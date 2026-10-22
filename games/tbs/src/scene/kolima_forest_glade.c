@@ -14,6 +14,8 @@
 /// The scene's name, Glade, is ours, for what sets the map apart: open grass
 /// and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
+///
+/// Open questions: none.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"

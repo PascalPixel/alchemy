@@ -29,6 +29,8 @@
 /// FLAG_SCENE_TEMP_00: the log is in the river. Like every scene flag it is
 /// cleared when the party next comes in, so the log is back on the bank, but a
 /// battle keeps it.
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "flags.h"

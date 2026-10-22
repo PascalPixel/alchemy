@@ -50,6 +50,8 @@
 /// only within one visit (scene flags): Reveal shows a hidden path, Frost
 /// freezes a puddle into a pillar the party can climb, and Growth grows a
 /// sprout into a vine; a chest holds Power Bread.
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "game_state.h"

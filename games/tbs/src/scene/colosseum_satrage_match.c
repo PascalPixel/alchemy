@@ -50,6 +50,8 @@
 /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/lifts.gif:
 /// two cycles, the copied cells outlined with their codes and the phase and
 /// timer written above).
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "game_state.h"

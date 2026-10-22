@@ -82,6 +82,8 @@
 /// stepping up to them (touch 13) plays Event_JillGivesHardNut, which gives
 /// the leader a Hard Nut (FLAG_BILIBIN_JILL_GIFT_RECEIVED); from then on the
 /// three turn to watch him.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "djinn_ids.h"

@@ -55,6 +55,8 @@
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-lady-statues/balance.png:
 /// the balance as each entrance sets it up, each platform labelled with its
 /// weight and height in pixels and each stone with its letter).
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "version.h"

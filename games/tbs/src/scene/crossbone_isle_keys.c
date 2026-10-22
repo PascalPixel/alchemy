@@ -31,6 +31,8 @@
 ///   last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to _LAST_ESCAPE); there
 ///   it runs to whichever spot the leader steps toward unless Halt holds it.
 ///   Talked to while Halt holds it, Bane joins the party.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "djinn_ids.h"

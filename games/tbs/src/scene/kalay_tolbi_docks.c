@@ -58,6 +58,8 @@
 /// Only the debug menus' scene selector, which warps to any scene and
 /// entrance by number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO, which
 /// sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "djinn_ids.h"

@@ -57,6 +57,8 @@
 /// Scene_Initialize restores each scene as its flags say: the ivy and plants on
 /// the island, the sliding logs' footprints, the corridor's sunk pillars and
 /// the chests the mimics leave.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "version.h"

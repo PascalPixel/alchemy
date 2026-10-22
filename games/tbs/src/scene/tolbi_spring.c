@@ -38,6 +38,8 @@
 ///   those distances and labelled with what a coin wins in each). The spring
 ///   opens to show the prize as it is given. In the editions before
 ///   TBS_PATCH_1 the coin and medal counts show an `=` after each number.
+///
+/// Open questions: none.
 
 #include "keystate.h"
 #include "unit/scene/tolbi_spring.h"

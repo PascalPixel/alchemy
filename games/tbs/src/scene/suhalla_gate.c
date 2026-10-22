@@ -38,6 +38,8 @@
 /// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's
 /// Psynergy Stone is kept in a place flag (FLAG_PLACE_TEMP_50), so it is back
 /// whenever the party returns from another place.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "version.h"

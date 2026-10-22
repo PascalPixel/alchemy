@@ -26,6 +26,8 @@
 /// foot of the cliff on the grounds' south edge, which the earlier editions
 /// show bare (renders of tbs-en and tbs-fr); no exit or event answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "scene_ids.h"

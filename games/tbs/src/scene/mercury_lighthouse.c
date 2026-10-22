@@ -80,6 +80,8 @@
 ///   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR), the fountain
 ///   flows, people come to drink from it, and an Empty Bottle used at it
 ///   becomes Hermes' Water, once a visit (FLAG_HERMES_WATER_TAKEN).
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "game_state.h"

@@ -27,6 +27,8 @@
 ///   river. It has no actors and only its two exits: back south into
 ///   SceneId_GomaCaveStream and out onto the world map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
+///
+/// Open questions: none.
 #include "game_state.h"
 #include "unit/scene/goma_cave_waterway.h"
 #include "unit/scene/common/effect_spawn.h"

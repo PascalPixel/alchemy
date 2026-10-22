@@ -26,6 +26,8 @@
 /// - Kalay Sanctum (SceneId_KalaySanctum), whose healer offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "scene_ids.h"

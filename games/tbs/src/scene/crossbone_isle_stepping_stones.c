@@ -31,6 +31,8 @@
 ///
 /// The other three side rooms are in crossbone_isle_keys.c, and the
 /// ninth floor's in crossbone_isle.c.
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "game_state.h"

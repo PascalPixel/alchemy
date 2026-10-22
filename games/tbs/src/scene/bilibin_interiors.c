@@ -34,6 +34,8 @@
 /// grid_metatile.tsv). Taken from that cell, his priority would put him behind
 /// the middle layer (`BG2`, priority 2 in this map); the fixed priority 2
 /// draws him in front of it, as the other diners are.
+///
+/// Open questions: none.
 
 #include "unit/scene/bilibin_interiors.h"
 #include "flags.h"

@@ -31,6 +31,8 @@
 /// Two barrels hold an Elixir and a Smoke Bomb, a wardrobe a silk negligee
 /// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
 /// portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "scene_ids.h"

@@ -40,6 +40,8 @@
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
+///
+/// Open questions: none.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"

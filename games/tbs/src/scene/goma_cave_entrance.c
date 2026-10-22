@@ -29,6 +29,8 @@
 /// that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma
 /// Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// world map.
+///
+/// Open questions: none.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"

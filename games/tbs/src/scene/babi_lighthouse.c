@@ -45,6 +45,8 @@
 /// through the open door shuts it behind the party
 /// (BabiLighthouse_CloseTruthDoor, FLAG_BEYOND_DOOR), and beyond it lies the
 /// Tunnel Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "version.h"

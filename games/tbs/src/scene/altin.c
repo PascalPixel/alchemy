@@ -43,6 +43,8 @@
 /// until the water has drained. Each merchant opens across the counter once the
 /// shop has dried, and a cook from Xian paces between his pots
 /// (gAltinHouses_CookScript).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "version.h"

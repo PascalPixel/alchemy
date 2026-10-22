@@ -54,6 +54,8 @@
 /// light. A wrong rock puts the lights away. The third match bursts the wall
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "version.h"

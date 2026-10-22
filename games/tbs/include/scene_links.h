@@ -4466,10 +4466,10 @@ enum {
 enum {
   KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
   KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
-  KALAY_TUNNEL_PASSAGE_CORRIDOR_FROM_NORTHEAST_ROOM =
+  KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM =
       3, ///< ★ Named from what the player sees: the long brick corridor beside
          ///< the water channel (its render)
-  KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_CORRIDOR =
+  KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_LONG_PATH =
       4, ///< ★ Named from what the player sees: the small room with two
          ///< stairways, apart from the corridor, where the cave comes in (its
          ///< render)
@@ -4479,11 +4479,11 @@ enum {
 enum {
   KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
   KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
-  KALAY_TUNNEL_PASSAGE_CORRIDOR_TO_NORTHEAST_ROOM =
+  KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM =
       3, ///< ★ Named from what the player sees: the small room with two
          ///< stairways, apart from the corridor, where the cave comes in (its
          ///< render)
-  KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_CORRIDOR =
+  KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH =
       4, ///< ★ Named from what the player sees: the long brick corridor beside
          ///< the water channel (its render)
   KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE = 5,

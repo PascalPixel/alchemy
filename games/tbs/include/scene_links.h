@@ -3911,39 +3911,39 @@ enum {
 /// SceneId_BabiPalace's entrances.
 enum {
   BABI_PALACE_FROM_BABI_PALACE_ENTRANCE = 1,
-  BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_WEST =
+  BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST =
       2, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_EAST =
+  BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_EAST =
       3, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_STATUE_HALL_FROM_WEST_STAIRWELL =
+  BABI_PALACE_STATUE_ROOM_FROM_WEST_STEPS =
       4, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_STATUE_HALL_FROM_EAST_STAIRWELL =
+  BABI_PALACE_STATUE_ROOM_FROM_EAST_STEPS =
       5, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_WEST =
+  BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_WEST =
       6, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_EAST =
+  BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_EAST =
       7, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_WEST =
+  BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST =
       8, ///< ★ Named from the game: "in this big bedroom"
          ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
-  BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_EAST =
+  BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_EAST =
       9, ///< ★ Named from the game: "in this big bedroom"
          ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
-  BABI_PALACE_SCHOLARS_LANDING_FROM_CENTRAL_HALL =
+  BABI_PALACE_SCHOLARS_LANDING_FROM_CARPET_ROOM =
       10, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads to the scholars' room (its render)
   BABI_PALACE_FROM_VALE_INTERIORS_INN = 11,
-  BABI_PALACE_TUNNEL_LANDING_FROM_CENTRAL_HALL =
+  BABI_PALACE_TUNNEL_LANDING_FROM_CARPET_ROOM =
       12, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads into the Colosseum Tunnel (its render)
   BABI_PALACE_FROM_COLOSSEUM_TUNNEL = 13,
-  BABI_PALACE_BEDROOM_LANDING_FROM_THRONE_ROOM =
+  BABI_PALACE_BEDROOM_LANDING_FROM_MEETING_ROOM =
       16, ///< ★ Named from what the player sees: the small room of stairs and a
           ///< door outside Babi's bedroom (its render)
   BABI_PALACE_BEDROOM_LANDING_FROM_BABIS_BEDROOM =
@@ -3952,67 +3952,67 @@ enum {
   BABI_PALACE_BABIS_BEDROOM_FROM_BEDROOM_LANDING =
       18, ///< ★ Named from the game: "Lord Babi didn't use his bed"
           ///< (MsgBabiPalaceItLooksLikeLordBabiDidnt)
-  BABI_PALACE_WEST_STAIRWELL_FROM_STATUE_HALL =
+  BABI_PALACE_WEST_STEPS_FROM_STATUE_ROOM =
       20, ///< ★ Named from what the player sees: the small room that is only a
           ///< staircase, off the statue hall's west side (its render)
-  BABI_PALACE_WEST_STAIRWELL_FROM_WEST_OCTAGONAL_ROOM =
+  BABI_PALACE_WEST_STEPS_FROM_WEST_ROUND_ROOM =
       21, ///< ★ Named from what the player sees: the small room that is only a
           ///< staircase, off the statue hall's west side (its render)
-  BABI_PALACE_EAST_STAIRWELL_FROM_STATUE_HALL =
+  BABI_PALACE_EAST_STEPS_FROM_STATUE_ROOM =
       22, ///< ★ Named from what the player sees: the small room that is only a
           ///< staircase, off the statue hall's east side (its render)
-  BABI_PALACE_EAST_STAIRWELL_FROM_EAST_OCTAGONAL_ROOM =
+  BABI_PALACE_EAST_STEPS_FROM_EAST_ROUND_ROOM =
       23, ///< ★ Named from what the player sees: the small room that is only a
           ///< staircase, off the statue hall's east side (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_WEST =
+  BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_WEST =
       24, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_EAST =
+  BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_EAST =
       25, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_SCHOLARS_LANDING =
+  BABI_PALACE_CARPET_ROOM_FROM_SCHOLARS_LANDING =
       26, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_TUNNEL_LANDING =
+  BABI_PALACE_CARPET_ROOM_FROM_TUNNEL_LANDING =
       27, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_NORTH_OCTAGONAL_ROOM =
+  BABI_PALACE_CARPET_ROOM_FROM_NORTH_ROUND_ROOM =
       28, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_SHEBAS_LANDING =
+  BABI_PALACE_CARPET_ROOM_FROM_SHEBAS_LANDING =
       29, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_STOVE_ROOM =
+  BABI_PALACE_CARPET_ROOM_FROM_OVEN_ROOM =
       30, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_SOLDIERS_ROOM =
+  BABI_PALACE_CARPET_ROOM_FROM_SOLDIERS_ROOM =
       31, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_CENTRAL_HALL_FROM_THRONE_ROOM =
+  BABI_PALACE_CARPET_ROOM_FROM_MEETING_ROOM =
       32, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL =
+  BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM =
       33, ///< ★ Named from what the player sees: the room with Babi's green
           ///< throne, where he meets the party after Colosso (its render)
-  BABI_PALACE_THRONE_ROOM_FROM_BEDROOM_LANDING =
+  BABI_PALACE_MEETING_ROOM_FROM_BEDROOM_LANDING =
       34, ///< ★ Named from what the player sees: the room with Babi's green
           ///< throne, where he meets the party after Colosso (its render)
-  BABI_PALACE_STOVE_ROOM_FROM_CENTRAL_HALL =
+  BABI_PALACE_OVEN_ROOM_FROM_CARPET_ROOM =
       35, ///< ★ Named from what the player sees: the room with a table and a
           ///< lit stone stove (its render)
-  BABI_PALACE_SOLDIERS_ROOM_FROM_CENTRAL_HALL =
+  BABI_PALACE_SOLDIERS_ROOM_FROM_CARPET_ROOM =
       36, ///< ★ Named from what the player sees: the room where four of Babi's
           ///< soldiers stand by a table and a bed (its render)
-  BABI_PALACE_WEST_OCTAGONAL_ROOM_FROM_WEST_STAIRWELL =
+  BABI_PALACE_WEST_ROUND_ROOM_FROM_WEST_STEPS =
       40, ///< ★ Named from what the player sees: the small eight-sided room up
           ///< the west staircase, with two jars (its render)
-  BABI_PALACE_EAST_OCTAGONAL_ROOM_FROM_EAST_STAIRWELL =
+  BABI_PALACE_EAST_ROUND_ROOM_FROM_EAST_STEPS =
       41, ///< ★ Named from what the player sees: the small eight-sided room up
           ///< the east staircase (its render)
-  BABI_PALACE_NORTH_OCTAGONAL_ROOM_FROM_CENTRAL_HALL =
+  BABI_PALACE_NORTH_ROUND_ROOM_FROM_CARPET_ROOM =
       42, ///< ★ Named from what the player sees: the small eight-sided room up
           ///< the central hall's far west stairs (its render)
-  BABI_PALACE_SHEBAS_LANDING_FROM_CENTRAL_HALL =
+  BABI_PALACE_SHEBAS_LANDING_FROM_CARPET_ROOM =
       43, ///< ★ Named from what the player sees: the small room of stairs and a
           ///< door outside Sheba's room (its render)
   BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM =
@@ -4033,39 +4033,39 @@ enum {
 /// SceneId_BabiPalace's exits.
 enum {
   BABI_PALACE_TO_BABI_PALACE_ENTRANCE = 1,
-  BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_WEST =
+  BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST =
       2, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
          ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_EAST =
+  BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST =
       3, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
          ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_STATUE_HALL_TO_WEST_STAIRWELL =
+  BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS =
       4, ///< ★ Named from what the player sees: the small room that is only a
          ///< staircase, off the statue hall's west side (its render)
-  BABI_PALACE_STATUE_HALL_TO_EAST_STAIRWELL =
+  BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS =
       5, ///< ★ Named from what the player sees: the small room that is only a
          ///< staircase, off the statue hall's east side (its render)
-  BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_WEST =
+  BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST =
       6, ///< ★ Named from the game: "in this big bedroom"
          ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
-  BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_EAST =
+  BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST =
       7, ///< ★ Named from the game: "in this big bedroom"
          ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
-  BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_WEST =
+  BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST =
       8, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_EAST =
+  BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST =
       9, ///< ★ Named from what the player sees: the hall entered from outside,
          ///< with a winged statue in its middle (its render)
-  BABI_PALACE_SCHOLARS_LANDING_TO_CENTRAL_HALL =
+  BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM =
       10, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
   BABI_PALACE_TO_VALE_INTERIORS_INN = 11,
-  BABI_PALACE_TUNNEL_LANDING_TO_CENTRAL_HALL =
+  BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM =
       12, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
   BABI_PALACE_TO_COLOSSEUM_TUNNEL = 13,
-  BABI_PALACE_BEDROOM_LANDING_TO_THRONE_ROOM =
+  BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM =
       16, ///< ★ Named from what the player sees: the room with Babi's green
           ///< throne, where he meets the party after Colosso (its render)
   BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM =
@@ -4074,67 +4074,67 @@ enum {
   BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING =
       18, ///< ★ Named from what the player sees: the small room of stairs and a
           ///< door outside Babi's bedroom (its render)
-  BABI_PALACE_WEST_STAIRWELL_TO_STATUE_HALL =
+  BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM =
       20, ///< ★ Named from what the player sees: the hall entered from outside,
           ///< with a winged statue in its middle (its render)
-  BABI_PALACE_WEST_STAIRWELL_TO_WEST_OCTAGONAL_ROOM =
+  BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM =
       21, ///< ★ Named from what the player sees: the small eight-sided room up
           ///< the west staircase, with two jars (its render)
-  BABI_PALACE_EAST_STAIRWELL_TO_STATUE_HALL =
+  BABI_PALACE_EAST_STEPS_TO_STATUE_ROOM =
       22, ///< ★ Named from what the player sees: the hall entered from outside,
           ///< with a winged statue in its middle (its render)
-  BABI_PALACE_EAST_STAIRWELL_TO_EAST_OCTAGONAL_ROOM =
+  BABI_PALACE_EAST_STEPS_TO_EAST_ROUND_ROOM =
       23, ///< ★ Named from what the player sees: the small eight-sided room up
           ///< the east staircase (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_WEST =
+  BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_WEST =
       24, ///< ★ Named from what the player sees: the hall entered from outside,
           ///< with a winged statue in its middle (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_EAST =
+  BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_EAST =
       25, ///< ★ Named from what the player sees: the hall entered from outside,
           ///< with a winged statue in its middle (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_SCHOLARS_LANDING =
+  BABI_PALACE_CARPET_ROOM_TO_SCHOLARS_LANDING =
       26, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads to the scholars' room (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_TUNNEL_LANDING =
+  BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING =
       27, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads into the Colosseum Tunnel (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_NORTH_OCTAGONAL_ROOM =
+  BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM =
       28, ///< ★ Named from what the player sees: the small eight-sided room up
           ///< the central hall's far west stairs (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_SHEBAS_LANDING =
+  BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING =
       29, ///< ★ Named from what the player sees: the small room of stairs and a
           ///< door outside Sheba's room (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_STOVE_ROOM =
+  BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM =
       30, ///< ★ Named from what the player sees: the room with a table and a
           ///< lit stone stove (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_SOLDIERS_ROOM =
+  BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM =
       31, ///< ★ Named from what the player sees: the room where four of Babi's
           ///< soldiers stand by a table and a bed (its render)
-  BABI_PALACE_CENTRAL_HALL_TO_THRONE_ROOM =
+  BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM =
       32, ///< ★ Named from what the player sees: the room with Babi's green
           ///< throne, where he meets the party after Colosso (its render)
-  BABI_PALACE_THRONE_ROOM_TO_CENTRAL_HALL =
+  BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM =
       33, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_THRONE_ROOM_TO_BEDROOM_LANDING =
+  BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING =
       34, ///< ★ Named from what the player sees: the small room of stairs and a
           ///< door outside Babi's bedroom (its render)
-  BABI_PALACE_STOVE_ROOM_TO_CENTRAL_HALL =
+  BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM =
       35, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_SOLDIERS_ROOM_TO_CENTRAL_HALL =
+  BABI_PALACE_SOLDIERS_ROOM_TO_CARPET_ROOM =
       36, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_WEST_OCTAGONAL_ROOM_TO_WEST_STAIRWELL =
+  BABI_PALACE_WEST_ROUND_ROOM_TO_WEST_STEPS =
       40, ///< ★ Named from what the player sees: the small room that is only a
           ///< staircase, off the statue hall's west side (its render)
-  BABI_PALACE_EAST_OCTAGONAL_ROOM_TO_EAST_STAIRWELL =
+  BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS =
       41, ///< ★ Named from what the player sees: the small room that is only a
           ///< staircase, off the statue hall's east side (its render)
-  BABI_PALACE_NORTH_OCTAGONAL_ROOM_TO_CENTRAL_HALL =
+  BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM =
       42, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL =
+  BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM =
       43, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
   BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM =

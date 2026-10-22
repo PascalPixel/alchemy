@@ -1,89 +1,119 @@
 # Engine
 
-Under everything the player sees is code they never see directly: what
-starts the game when the console is switched on, keeps time one frame at a
-time, reads the buttons, hands out memory, plays the music and loads each
-place's code from the cartridge. The field, the battles and the menus are all
-built on it.
+The engine is the code the field, the battles and the menus are built on:
+start-up, the frame loop and its tasks, the banked layout of the main image,
+the overlays that hold each place's code, and the sound driver's cues. Each
+part has a folder guide, linked from its section below.
 
-## What happens at power-on?
+## Start-up
 
-![The game from power-on: the Nintendo logo, the Camelot logo with its castle, and the Golden Sun logo](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
+The cartridge header jumps to `System_Entry` (`src/system/entry.s`), which
+sets up the interrupt and system stacks at the top of IWRAM and calls
+`System_Initialize`. That function clears IWRAM below the stacks, empties the
+heap, copies the resident runtime into IWRAM and points the interrupt vector
+at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
+resets the task table, waits ten frames and calls `Game_RunFar`.
 
-The cartridge's header jumps to `System_Entry`, which sets up the stacks and
-calls `System_Initialize`. That clears the console's fast internal RAM,
-copies the game's most time-critical routines into it, installs the interrupt
-handlers, starts the sound driver, waits ten frames and starts the game.
+Neither function returns. `Game_Run` loads one scene after another for as
+long as the game runs, starting with the title. A soft reset (A, B, Select
+and Start held together) sets `gResetRequested`, and the frame loop restarts
+the game from the cartridge's entry point. [Runtime](src/runtime/README.md)
+goes through start-up step by step. The title's intro, with the Nintendo and
+Camelot logos before it, is code in [Graphics](src/graphics/README.md), beside
+the handwritten decoders that unpack tiles and animation frames for the rest
+of the game.
 
-It never returns. The game doesn't have a main loop that calls everything
-else once a frame. `Game_Run` goes from scene to scene for as long
-as the console is on, and the first scene is the title, which shows the
-Nintendo and Camelot logos. When there's a save file, the intro from
-[the front page](README.md) plays next; with none, as here, the file select
-screen brings up the Golden Sun logo and goes straight to naming the hero.
-[Runtime](src/runtime/README.md) follows the whole boot, and
-[Graphics](src/graphics/README.md) how the logos and the intro are drawn.
+## Waiting and tasks
 
-## How does time pass?
+There is no main loop that calls each part of the game once a frame. A menu
+screen, a cutscene or a battle effect is an ordinary function with a loop of
+its own, and when time has to pass it calls `WaitFrames(n)` and continues
+after `n` frames. Each frame, `WaitFrames` runs the main-loop tasks
+(`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the sprite list
+(`Render_BuildOamList`) and halts the CPU until VBlank. The VBlank handler
+then copies the sprite list and scroll registers to the hardware, carries out
+the queued register writes and runs the VBlank tasks.
 
-Every part of the game is written as ordinary functions that run until
-they're done. A menu screen, a cutscene or a battle effect is a function with
-a loop of its own, and when time has to pass it calls `WaitFrames` and
-carries on from the same place once the frames are over. Inside, `WaitFrames`
-runs the game's tasks and waits for the screen to finish drawing, and in the
-short pause before the next frame its sprites and scroll positions are
-copied to the hardware.
+![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
 
-Anything that has to keep moving while such a function waits is a task: a
-small routine the scheduler runs every frame, however deep the waiting
-function is. The windows zooming open, the damage appearing during a battle
-effect and the watch for Start in the menus are all tasks. The choice has a
-cost. Every waiting function keeps its calls on the stack, and the game
-keeps that in less than two kilobytes of fast RAM, so `WaitFrames` moves a deep
-caller's stack aside before it runs the frame, and puts it back afterwards.
-That way the tasks always start from the same place, with the same room.
+Work that has to continue while a function waits is a task: a routine added
+with `Scheduler_AddOrUpdateCallback`, which the scheduler runs every frame
+however deep in its calls the waiting function is. Window animation, battle
+event playback (`BattleEvent_Playback`) and a scene's callbacks are tasks.
 
-![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+This design puts a bound on the stack. The system stack is 1,792 bytes of
+IWRAM, and the interrupt handlers and the sound mixer run on it too. A
+function waiting from deep in its own calls would leave the tasks too little
+room, so when the stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes
+above the heap's end, `WaitFrames` copies everything from the stack
+pointer up to that top into `gSavedStack` in EWRAM, runs its frames from the
+top and copies the stack back on return. Tasks therefore always start with the same 512 bytes. It also
+means a task must not call `WaitFrames`: the nested call would overwrite the
+outer caller's saved stack. XXX: nothing guards against this, and whether any
+task does it isn't known.
 
-## Why is the program cut into banks?
+## Banks and far calls
 
-The code the console runs straight from the cartridge is cut into banks, one
-for the runtime, one for the field, one for the windows and so on, each
-starting at an address of its own with empty space after it. A bank calls a
-function in another bank through a table of jumps at the start of that bank,
-never at the function's own address. That isn't about distance, since a call
-can reach the whole program. It's what lets a bank grow or shrink inside its
-space without moving any address another bank relies on.
+`main.ld` places the main image's code in banks (`runtime`, `field`,
+`window`, `game` and the rest), each at an address fixed per edition, with
+unused space after it. Each bank begins with a far-call table of 8-byte
+jumps, one for each function another bank calls, and a caller in another bank
+always calls the table entry (`WaitFramesFar` for `WaitFrames`), never the
+function's own address.
 
-The places the party walks around in aren't in that program at all. Each town
-and dungeon is an overlay: its code, compressed in the cartridge, unpacked
-into the same 32 KB of RAM when its scene loads. An overlay reaches the main
-program through its import table, which lists the jumps it needs in a fixed
-order, and the main program reaches the overlay through six entries at its
-start. Those two tables are the only places they meet.
-[System](src/system/README.md) has the memory map, the banks and the
-overlays.
+Distance isn't the reason: a Thumb `bl` reaches 4 MB either way, and the main
+image is a little over 1.5 MB. The tables let a bank change size within its
+space without moving any address another bank depends on. XXX: likely Camelot
+linked each bank on its own against the others' tables, because fixed starts
+and tables are what that would need; the ROM shows only the result.
+[System](src/system/README.md) has the memory map and the per-edition bank
+addresses.
 
-![Isaac walks from Vale into the Sanctum while, beside the screen, the 32 KB the overlays are unpacked into is drawn a grey pixel to a byte: Vale's code and tables fill it, and as the screen fades the Sanctum's overlay is unpacked over them in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
+## Overlays
 
-## What does a sound number mean?
+Each place's code is an overlay: a compressed resource unpacked into
+`gOverlayArea`, 32 KB of EWRAM, when its scene loads. There are 96 of them,
+listed in the scene table (`src/field/scenes.s`). Only one is loaded at a
+time, so overlays never call each other, and code several scenes need is
+copied into each of them (`src/scene/common/`).
 
-The game asks for every sound by number, from the battle music to the menu
-cursor's click, and where the number falls decides what kind of sound it is:
-music, a fanfare or a sound effect. A fanfare, like the jingle when a chest
-opens, doesn't stop the music. It turns the music down to nothing, plays over
-it, and once it has finished, the music fades back in where it would have
-been, so the code that opened the chest never has to know. Every sound is
-played by Nintendo's MusicPlayer2000, the driver the game links.
-[Sound](src/sound/README.md) explains the cues, how a fanfare gets back to
-the music, and the driver's lock.
+An overlay and the main image meet at two tables, each in a fixed order:
 
-## What's left of the developers' tools?
+- The entry table (`scene/entry/<place>.s`) opens the overlay with six stubs
+  the field code calls through `struct SceneEntries`: the scene's start-up
+  and the functions that return its entrances, exits, placements, events and
+  exit regions.
+- The import table (`scene/import/<place>.s`) holds the main-image functions
+  the overlay calls. EWRAM is out of `bl` range of the ROM, so each call goes
+  through a stub holding the address of the function's far-call entry, never
+  the function itself; an overlay therefore depends only on positions in the
+  far-call tables.
 
-The finished game still holds three test rooms: one that hands out Djinn, one
-for levels and for browsing items, icons and letters, and one full of shop and
-message tests. Each is an ordinary scene, built like any town, so they're
-also the shortest way to see how a scene is put together.
+![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
+
+[System](src/system/README.md) describes both tables and how
+`Resource_LoadCode` restores the overlay's branches as it unpacks it.
+
+## Sound cues
+
+`AudioCommand_Play(id)` takes a cue number, and the number's range decides
+what it plays: below 80 it is music; from 80 to 99 (`AUDIO_JINGLE_FIRST`) a
+fanfare; from 100 (`AUDIO_SONG_FIRST`) an entry of the song table, played on
+the player its row names, which is how sound effects play. Cues 17, 18 and
+289 are controls rather than sounds.
+
+A fanfare doesn't stop the music. The music's volume drops to 0 while it keeps
+playing, the fanfare plays on player 0, and once that player stops the music
+fades back in over 64 frames, so the code that asked for the fanfare doesn't
+have to track it. The driver is Nintendo's MusicPlayer2000.
+[Sound](src/sound/README.md) covers the players, the fanfare's return and the
+driver's lock.
+
+## Debug rooms
+
+The ROM keeps three test scenes: a room that hands out Djinn, a room for
+levels and for browsing items, icons and letters, and a room of shop and
+message tests. Only the debug scene selector reaches them, and only while
+`gDebugMode` is set. Each is an ordinary scene overlay, so they're the
+smallest complete examples of how a scene is built.
 [Debug rooms](src/debug/README.md) goes through them.
-
-![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)

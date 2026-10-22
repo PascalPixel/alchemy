@@ -16,7 +16,7 @@ const struct SceneEvent *Imil_GetEvents(void);
 s32 Imil_Initialize(void);
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
-extern s32 gImil_ColdVillagerScript[];
+extern s32 gImil_FreezingYoungManScript[];
 extern s32 gImil_ShiverScript[];
 extern s32 gImil_OldWomanHurryScript[];
 extern s32 gImil_LeaderStepAsideScript[];

@@ -106,6 +106,7 @@
 #include "fixed_math.h"
 #include "object_effect.h"
 #include "palbuf.h"
+#include "io_reg.h"
 #include "flags.h"
 #include "songs.h"
 #include "item_ids.h"
@@ -1397,7 +1398,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
         gEventWork->startTransition =
             SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         ColorBuffer_ApplySource(0x203108, 1);
-        ColorBuffer_ApplyTarget(0x203108, 1);
+        ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
         Engine_ColorBufferInterpolate(1);
         Engine_TaskWait(1);
       }

@@ -182,7 +182,7 @@ void Func_0812561c(struct BattlePlan *plan) {
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     BattleEventRuntime_Reset();
     poison = &unit->poison;
     if (*poison != 0) {
@@ -211,7 +211,7 @@ void Func_0812561c(struct BattlePlan *plan) {
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     BattleEventRuntime_Reset();
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
@@ -227,7 +227,7 @@ void Func_0812561c(struct BattlePlan *plan) {
         BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
   }
   if (BattleObject_Get(unitId)->object != 0)
     Unit_CalculateFar(unitId);

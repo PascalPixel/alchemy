@@ -138,7 +138,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
     } else {
       BattleEvent_Push(4, (u32)&MsgCastLacksPp);
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     Func_0812756c();
   } else {
     if (((s32 *)plan)[25] == 0)

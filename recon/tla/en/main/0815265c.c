@@ -11,7 +11,7 @@
 // how many shots and where they aim; modes 5 and 23 draw one big picture at
 // the user instead, mode 10 also draws motes into the user, mode 24 adds
 // glints around the targets, and modes 11, 14 and 18 hand over to
-// SummonFx_RunCanvasEffect at the end. Resources not yet named in
+// SummonEffect_RunCanvasEffect at the end. Resources not yet named in
 // directory.s, by row and asset: 0x151 BattleEffect_MarsDjinnSmallSheet,
 // 0x157 BattleEffect_VenusDjinnSmallSheet, 0x11c
 // BattleEffect_VioletLightningSheetA, 0xd7 Resource_Data0D7, 0x14d
@@ -73,8 +73,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
-void SummonFx_RunCanvasMode1(struct BattleEffectArgument *effect);
-void SummonFx_RunCanvasMode3(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *effect);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
@@ -762,9 +762,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     effect->prelude = 0;
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     if (mode == 14)
-      SummonFx_RunCanvasMode1(effect);
+      SummonEffect_RunCanvasMode1(effect);
     else
-      SummonFx_RunCanvasMode3(effect);
+      SummonEffect_RunCanvasMode3(effect);
   } else {
     BattleEffect_EndCanvasLayer();
   }

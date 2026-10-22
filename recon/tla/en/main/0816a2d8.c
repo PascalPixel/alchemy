@@ -9,7 +9,7 @@
 // - six picture sets, with variant 4's colours rotated in the BG palette;
 // - variant 5, a 120 x 60 picture drawn twice, its lower half mirrored
 // through the second blitter;
-// - variant 3 hands the canvas to SummonFx_RunCanvasMode2 instead of
+// - variant 3 hands the canvas to SummonEffect_RunCanvasMode2 instead of
 // closing it, and variant 4 animates the user instead of moving it;
 // - a blend of 16/16 (BLDCNT cleared but for variants 3 to 5);
 // - two blitters, flipped by side, where ☀️ builds one copy blitter.
@@ -83,7 +83,7 @@ void Func_08118088(s32 actor,
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
-void SummonFx_RunCanvasMode2(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *effect);
 void Audio_PlayCue(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 s32 ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
@@ -256,7 +256,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    SummonFx_RunCanvasMode2(effect);
+    SummonEffect_RunCanvasMode2(effect);
   } else {
     if (variant == 4)
       ObjectDispatch_SetAnimationSpeedFar(

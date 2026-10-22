@@ -287,7 +287,7 @@ Func_0811edb0:
 	movs r6, #8
 	ldrsh r1, [r3, r6]
 	bl Inventory_BreakFar
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 	b .L_0811f012
 .L_0811eff4:
 	cmp r3, #4

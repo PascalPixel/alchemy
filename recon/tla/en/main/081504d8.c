@@ -1,4 +1,4 @@
-// Near miss of SummonFx_RunCanvasEffect, the body behind the four wrappers of
+// Near miss of SummonEffect_RunCanvasEffect, the body behind the four wrappers of
 // summon_canvas_modes.c.
 
 // Twin: The Broken Seal's BattleEffect_RunStatReduction (effect.c), call for
@@ -79,7 +79,7 @@ extern u8 Data_08197500[];  // gStatChange_ShardHeights
 // scatter with random headings toward the user's side. Frame loop: a
 // target's picture plays for 24 frames; at frame 24 a chime sounds and the
 // shards fly for 36 frames, one shade darker every four frames.
-void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
+void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

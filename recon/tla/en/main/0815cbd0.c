@@ -14,7 +14,7 @@
 // its own transparent blitter, built and released around the draw.
 // Teardown: the callback is removed, both canvases are cleared, the
 // prelude is cleared, the palette fade is removed, and
-// SummonFx_RunCanvasMode1 takes over (the canvas layer stays open).
+// SummonEffect_RunCanvasMode1 takes over (the canvas layer stays open).
 
 // Port of The Broken Seal's BattleEffect_RunSpiderWeb (kind 345 there too),
 // reworked in The Lost Age: the middle comes from Func_0815e22c, the
@@ -88,7 +88,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void SummonFx_RunCanvasMode1(void *action);
+void SummonEffect_RunCanvasMode1(void *action);
 
 void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition middle;
@@ -169,5 +169,5 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   Iwram_ClearWords(canvas, 0x3c00);
   effect->prelude = 0;
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  SummonFx_RunCanvasMode1(effect);
+  SummonEffect_RunCanvasMode1(effect);
 }

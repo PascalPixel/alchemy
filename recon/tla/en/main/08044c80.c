@@ -22,7 +22,7 @@ extern u8 MsgPairJoinedParty[];
 struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Party_LookupCharacterValueByFlag32(s32);
-s32 Localization_LookupEntryId(s32);
+s32 UiText_GetSpeakerPortrait(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
@@ -56,7 +56,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     work->dirty = 1;
 
     UiGlyph_LoadEntryWithPalette(
-        Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)),
+        UiText_GetSpeakerPortrait(Party_LookupCharacterValueByFlag32(first)),
         0, &handle1, &palette, 14, zero);
     p = entry1;
     *p++ = zero;
@@ -65,7 +65,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     entry2 = sprite2;
     UiGlyph_LoadEntryWithPalette(
-        Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(second)),
+        UiText_GetSpeakerPortrait(Party_LookupCharacterValueByFlag32(second)),
         0, &handle2, &palette, 15, zero);
     p = entry2;
     *p++ = zero;

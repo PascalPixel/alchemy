@@ -27,6 +27,15 @@ Functions not yet matched are drafts under `recon/tla/en/main`, by address.
 Some files are still named by address (`character/add5c.c`,
 `character/d00c6604.s`). `make progress` gives the counts.
 
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`Battle_`, `BattleAction_`, `BattleEffect_`, `BattleSpoils_`, `Character_`,
+`Class_`, `Djinn_`, `DjinnRecovery_`, `Enemy_`, `Equipment_`, `Event_`,
+`GameFlag_`, `Item_`, `ItemCounter_`, `LinkBattle_`, `Object_`, `Owner_`,
+`Party_`, `PartyInventory_`, `Runtime_`, `Summon_`, `SummonDefinition_` and
+`Unit_`. Only `FlagBits_`, testing a flag's bits, is The Lost Age's own so far.
+
 ## Evidence and open questions
 
 - XXX: what `item/encode_banked_id.c` encodes, and whether ⚓️'s item ids are

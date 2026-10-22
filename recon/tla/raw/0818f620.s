@@ -986,7 +986,7 @@ Func_0818f620:
 	ldr r0, .L_0818fdf4
 	bl Scheduler_RemoveCallback
 	ldr r0, [sp, #60]
-	bl SummonFx_RunCanvasMode1
+	bl SummonEffect_RunCanvasMode1
 	b .L_0818feee
 .L_0818fdd6:
 	ldr r7, [sp, #56]

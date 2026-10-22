@@ -69,16 +69,16 @@ gData_081974ad:
 gData_081974bc:
 	.2byte 0, 55, 121, 221, 298, 368, 452, 673
 	.2byte 862, 1090, 1342, 1631, 1917, 2157, 2413, 2623
-@ The Broken Seal's gStatChange_ShardCells; read by SummonFx_RunCanvasEffect and Func_0818ad40
+@ The Broken Seal's gStatChange_ShardCells; read by SummonEffect_RunCanvasEffect and Func_0818ad40
 	.global Data_081974dc
 Data_081974dc:
 	.2byte 0, 120, 180, 258, 298, 352, 408, 471
 	.2byte 567, 607, 631, 661
-@ The Broken Seal's gStatChange_ShardWidths; read by SummonFx_RunCanvasEffect and Func_0818ad40
+@ The Broken Seal's gStatChange_ShardWidths; read by SummonEffect_RunCanvasEffect and Func_0818ad40
 	.global Data_081974f4
 Data_081974f4:
 	.byte 10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7
-@ The Broken Seal's gStatChange_ShardHeights; read by SummonFx_RunCanvasEffect and Func_0818ad40
+@ The Broken Seal's gStatChange_ShardHeights; read by SummonEffect_RunCanvasEffect and Func_0818ad40
 	.global Data_08197500
 Data_08197500:
 	.byte 12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5
@@ -560,11 +560,11 @@ gData_08197aa0:
 	.4byte BattleEffect_RunCurePoison          @ 24
 	.4byte BattleEffect_RunRevive              @ 25
 	.4byte BattleEffect_RunImpact              @ 26
-	.4byte SummonFx_RunCanvasMode3         @ 27
+	.4byte SummonEffect_RunCanvasMode3         @ 27
 	.4byte BattleEffect_RunGuard               @ 28
-	.4byte SummonFx_RunCanvasMode1         @ 29
+	.4byte SummonEffect_RunCanvasMode1         @ 29
 	.4byte BattleEffect_RunWard                @ 30
-	.4byte SummonFx_RunCanvasMode2         @ 31
+	.4byte SummonEffect_RunCanvasMode2         @ 31
 	.4byte BattleEffect_RunTaint               @ 32
 	.4byte BattleEffect_RunDelude              @ 33
 	.4byte BattleEffect_RunOrbitingSpirals     @ 34
@@ -580,7 +580,7 @@ gData_08197aa0:
 	.4byte BattleEffect_RunWish                @ 44
 	.4byte BattleEffect_RunWish                @ 45
 	.4byte BattleEffect_RunImpact              @ 46
-	.4byte SummonFx_RunCanvasMode1         @ 47
+	.4byte SummonEffect_RunCanvasMode1         @ 47
 	.4byte 0                               @ 48
 	.4byte BattleEffect_RunDragonCloud         @ 49
 	.4byte BattleEffect_RunDemonNight          @ 50

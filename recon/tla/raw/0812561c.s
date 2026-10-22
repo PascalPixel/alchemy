@@ -386,7 +386,7 @@ Func_0812561c:
 	mov r1, r8
 	bl BattleEvent_Push
 .L_08125924:
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 	bl BattleEventRuntime_Reset
 	ldr r2, [sp, #8]
 	movs r3, #50
@@ -474,7 +474,7 @@ Func_0812561c:
 	mov r1, r8
 	bl BattleEvent_Push
 .L_081259e4:
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 	bl BattleEventRuntime_Reset
 	ldr r2, [sp, #8]
 	movs r3, #66
@@ -527,7 +527,7 @@ Func_0812561c:
 	movs r0, #4
 	bl BattleEvent_Push
 .L_08125a60:
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 .L_08125a64:
 	mov r0, r8
 	bl BattleObject_Get

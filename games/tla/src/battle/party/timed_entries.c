@@ -65,7 +65,7 @@ s32 sub_08124af8(s32 id) {
       unit->hp = hp;
       Unit_UpdateRatiosFar(id);
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     if (--unit->refrain == 0)
       return 1;
   }

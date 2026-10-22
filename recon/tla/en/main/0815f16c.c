@@ -238,9 +238,9 @@ void BattleEffect_FetchRectangleBlitters(s32, struct DrawFuncs *);
 void BattleEffect_RunSparkGroups(struct SummonAction *, s32);
 void BattleEffect_RunMysticFlame(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
-void SummonFx_RunCanvasMode3(struct SummonAction *);
-void SummonFx_RunCanvasMode1(struct SummonAction *);
-void SummonFx_RunCanvasMode2(struct SummonAction *);
+void SummonEffect_RunCanvasMode3(struct SummonAction *);
+void SummonEffect_RunCanvasMode1(struct SummonAction *);
+void SummonEffect_RunCanvasMode2(struct SummonAction *);
 void Func_08152475(void);
 void BattleEffect_RunProjectileVolley(struct SummonAction *, s32);
 s32 Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -2290,11 +2290,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
-      SummonFx_RunCanvasMode1(action);
+      SummonEffect_RunCanvasMode1(action);
     else if (kind == 9 || kind == 67)
-      SummonFx_RunCanvasMode2(action);
+      SummonEffect_RunCanvasMode2(action);
     else if (kind == 11)
-      SummonFx_RunCanvasMode3(action);
+      SummonEffect_RunCanvasMode3(action);
     return;
   }
   if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||

@@ -2551,11 +2551,11 @@ BattleEffect_RunProjectileVolleyB:
 	cmp r6, #14
 	bne .L_0815399e
 	ldr r0, [sp, #84]
-	bl SummonFx_RunCanvasMode1
+	bl SummonEffect_RunCanvasMode1
 	b .L_081539aa
 .L_0815399e:
 	ldr r0, [sp, #84]
-	bl SummonFx_RunCanvasMode3
+	bl SummonEffect_RunCanvasMode3
 	b .L_081539aa
 .L_081539a6:
 	bl BattleEffect_EndCanvasLayer

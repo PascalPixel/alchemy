@@ -147,7 +147,7 @@ BattleEvent_Playback:
 	adds r3, #64
 	ldr r1, [r7, r3]
 	adds r0, r7, #0
-	bl BattleEv_GrantDjinnBonus
+	bl BattleEvent_GrantDjinnBonus
 	b .L_08122ff0
 .L_08122e42:
 	lsls r3, r6, #2

@@ -30,7 +30,7 @@ STATIC_ASSERT(offsetof(struct BattleEventQueue, targetIndex) == 0x140);
 STATIC_ASSERT(offsetof(struct BattleEventQueue, count) == 0x144);
 
 /// The battle events BattleEvent_Push queues, each with one operand, for
-/// BattleEvent_Playback (or BattleEv_DispatchQueued) to play in order. The
+/// BattleEvent_Playback (or BattleEvent_DispatchQueued) to play in order. The
 /// names, numbers and messages build what the player reads: the arguments
 /// first, then the message that shows them.
 enum BattleEventOpcode {
@@ -54,6 +54,6 @@ enum BattleEventOpcode {
 s32 BattleActor_DestroyTemporaryObject(s32 unitId);
 
 void BattleEvent_Push(u32 opcode, u32 operand);
-u32 BattleEv_DispatchQueued(void);
+u32 BattleEvent_DispatchQueued(void);
 
 #endif

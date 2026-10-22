@@ -81,7 +81,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
-void SummonFx_RunCanvasMode1(void *effect);
+void SummonEffect_RunCanvasMode1(void *effect);
 void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken Seal's
@@ -265,7 +265,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     ClearWords((void *)0x06004000, 0x3c00);
     ClearWords(canvas, 0x3c00);
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    SummonFx_RunCanvasMode1(effect);
+    SummonEffect_RunCanvasMode1(effect);
   } else {
     BattleEffect_EndCanvasLayer();
   }

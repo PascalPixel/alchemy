@@ -284,7 +284,7 @@ Func_0811ea0c:
 	ldr r1, .L_0811eda8
 	movs r0, #4
 	bl BattleEvent_Push
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 	mov r2, r8
 	movs r1, #36
 	ldrsh r0, [r2, r1]

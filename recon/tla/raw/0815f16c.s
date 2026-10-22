@@ -8964,7 +8964,7 @@ Func_0815f16c:
 	bne .L_08163848
 .L_08163840:
 	ldr r0, [sp, #128]
-	bl SummonFx_RunCanvasMode1
+	bl SummonEffect_RunCanvasMode1
 	b .L_081638ac
 .L_08163848:
 	ldr r1, [sp, #124]
@@ -8974,14 +8974,14 @@ Func_0815f16c:
 	bne .L_0816385a
 .L_08163852:
 	ldr r0, [sp, #128]
-	bl SummonFx_RunCanvasMode2
+	bl SummonEffect_RunCanvasMode2
 	b .L_081638ac
 .L_0816385a:
 	ldr r2, [sp, #124]
 	cmp r2, #11
 	bne .L_081638ac
 	ldr r0, [sp, #128]
-	bl SummonFx_RunCanvasMode3
+	bl SummonEffect_RunCanvasMode3
 	b .L_081638ac
 .L_08163868:
 	ldr r3, [sp, #52]

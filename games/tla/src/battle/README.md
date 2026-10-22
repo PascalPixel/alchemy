@@ -30,6 +30,32 @@ address, each with its remaining difference in its header. An edition whose
 bytes differ from English stays on its scaffold under `recon/tla/<lang>`.
 `make progress` gives the counts.
 
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`Battle_`, `BattleAction_`, `BattleCamera_`, `BattleClass_`, `BattleEffect_`,
+`BattleEnemy_`, `BattleEscape_`, `BattleEvent_`, `BattleFormation_`,
+`BattleMotion_`, `BattleObject_`, `BattleParty_`, `BattlePlacement_`,
+`BattlePresentation_`, `BattleQueue_`, `BattleStatusIcon_`, `BattleUnit_`,
+`Ability_`, `Camera_`, `ColorBuffer_`, `Display_`, `Djinn_`, `DjinnRecovery_`,
+`EffectSlot_`, `Encounter_`, `Enemy_`, `Event_`, `FadeOverlay_`,
+`FieldEffect_`, `FieldEvent_`, `Field_`, `Graphics_`, `Marker_`, `Motion_`,
+`Object_`, `ObjectGroup_`, `ObjectMotion_`, `Palette_`, `Party_`, `RamCode_`,
+`Render_`, `Resource_`, `Scene_`, `Summon_`, `SummonSlot_`, `Tile_` and `Ui_`.
+Those only The Lost Age's code has so far:
+
+| Prefix | What it acts on |
+| --- | --- |
+| `BattleActor_` | taking a unit out of the formations and the planned actions |
+| `BattleEventRuntime_` | starting and scheduling a battle phase |
+| `BattlePalette_` | stopping a palette blend and freeing its buffer |
+| `BattlePres_` | the effects' word fills and pending tile transfers, under an older spelling of `BattlePresentation_` |
+| `EffectRuntime_`, `EffectSprite_` | the rising-object sequence, and a sprite drawn at a world position |
+| `SummonEffect_` | the summons' canvas modes |
+| `FlagEntries_` | the table of flag entries, 20 bytes each and ended by a zero flag |
+| `Tutorial_` | the message a Djinni's gift shows |
+| `ViewMove_` | saving and restoring the sprites near the scene's main object |
+
 ## Evidence and open questions
 
 - XXX: which of these files belong to one original object, and so where the

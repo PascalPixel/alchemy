@@ -159,7 +159,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
       BattleEvent_Push(2, unit->inventory[selection->parameter]);
       BattleEvent_Push(4, (u32)&MsgItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
-      BattleEv_DispatchQueued();
+      BattleEvent_DispatchQueued();
     }
   } else if (itemDefinition->useType == 4) {
     if ((inventoryEntry & 0x1ff) == 184)

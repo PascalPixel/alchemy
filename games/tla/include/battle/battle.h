@@ -159,7 +159,7 @@ void Unit_CalculateFar(s32);
 s32 Party_CountActiveOwnersFar(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
-void SummonFx_RunCanvasEffect(void *action, s32 mode);
+void SummonEffect_RunCanvasEffect(void *action, s32 mode);
 struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void UiText_DrawQuantity(s32, s32);

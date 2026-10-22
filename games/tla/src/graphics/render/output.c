@@ -13,7 +13,7 @@
 #include "resource.h"
 #include "window.h"
 
-s32 Localization_LookupEntryId(s32 key);
+s32 UiText_GetSpeakerPortrait(s32 key);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 
@@ -47,7 +47,7 @@ struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side,
   s32 id;
   s32 slot;
 
-  id = Localization_LookupEntryId(objectKind);
+  id = UiText_GetSpeakerPortrait(objectKind);
   if (id == -1)
     return object;
 

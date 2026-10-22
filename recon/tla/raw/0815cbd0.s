@@ -245,7 +245,7 @@ BattleEffect_RunSpiderWeb:
 	ldr r0, .L_0815cde4
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl SummonFx_RunCanvasMode1
+	bl SummonEffect_RunCanvasMode1
 	add sp, #20
 	pop {r3, r5, r6, r7}
 	mov r8, r3

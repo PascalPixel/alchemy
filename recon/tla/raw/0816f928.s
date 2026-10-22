@@ -414,7 +414,7 @@ BattleEffect_RunHurricane:
 	adds r0, r6, #0
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl SummonFx_RunCanvasMode3
+	bl SummonEffect_RunCanvasMode3
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3

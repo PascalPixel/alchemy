@@ -22,7 +22,7 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   } else {
     for (i = 0; i < plan->targetCount; i++) {
       BattleTarget_Execute(plan, i);
-      BattleEv_DispatchQueued();
+      BattleEvent_DispatchQueued();
     }
   }
   WaitFrames(1);

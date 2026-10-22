@@ -10,7 +10,7 @@
 // palettes unpacked by Resource_LoadAndDecompress; the pair from
 // BattleEffect_FetchRectangleBlitters; modes 4 and 7 clear the canvas each frame
 // with blending off; modes 3 and 5 clear both canvases and run a summon canvas
-// effect (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
+// effect (SummonEffect_RunCanvasMode1 or 3) in place of the canvas teardown.
 
 // Left: the calls, their order, the loops and the tables are the native's;
 // the allocation is not. The native frame is 100 bytes, this one 108: the
@@ -61,8 +61,8 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void SummonFx_RunCanvasMode1(void *action);
-void SummonFx_RunCanvasMode3(void *action);
+void SummonEffect_RunCanvasMode1(void *action);
+void SummonEffect_RunCanvasMode3(void *action);
 void Audio_PlayCue(s32 cue);
 
 extern char ResourceId_GoldShellSheet;
@@ -311,9 +311,9 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     Iwram_ClearWords(canvas, 0x3c00);
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     if (mode == 3)
-      SummonFx_RunCanvasMode1(effect);
+      SummonEffect_RunCanvasMode1(effect);
     else
-      SummonFx_RunCanvasMode3(effect);
+      SummonEffect_RunCanvasMode3(effect);
   } else {
     BattleEffect_EndCanvasLayer();
   }

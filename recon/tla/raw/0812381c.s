@@ -123,7 +123,7 @@ Func_0812381c:
 .L_0812390c:
 	cmp r5, #255
 	bne .L_081238d0
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 	bl .L_0812417c
 .L_08123918:
 	bl UiWork_ClearValueNameTablesFar

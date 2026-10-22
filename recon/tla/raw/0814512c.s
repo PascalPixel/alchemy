@@ -797,11 +797,11 @@ Func_0814512c:
 	cmp r3, #3
 	bne .L_08145742
 	ldr r0, [sp, #52]
-	bl SummonFx_RunCanvasMode1
+	bl SummonEffect_RunCanvasMode1
 	b .L_0814574e
 .L_08145742:
 	ldr r0, [sp, #52]
-	bl SummonFx_RunCanvasMode3
+	bl SummonEffect_RunCanvasMode3
 	b .L_0814574e
 .L_0814574a:
 	bl BattleEffect_EndCanvasLayer

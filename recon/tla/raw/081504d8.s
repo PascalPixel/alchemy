@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global SummonFx_RunCanvasEffect
+	.global SummonEffect_RunCanvasEffect
 	.thumb_func
-SummonFx_RunCanvasEffect:
+SummonEffect_RunCanvasEffect:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

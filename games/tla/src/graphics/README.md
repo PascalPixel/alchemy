@@ -28,6 +28,20 @@ page says only what differs here.
 Functions not yet matched are drafts under `recon/tla/en/main`, by address.
 `make progress` gives the counts.
 
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`Ability_`, `AffineMatrix_`, `Battle_`, `BattleEffect_`, `BattleLayout_`,
+`DisplayBlend_`, `DisplayScroll_`, `DisplayTransition_`, `Fade_`, `Graphics_`,
+`GraphicsPalette_`, `Item_`, `Link_`, `Map_`, `Memory_`, `Menu_`,
+`ObjectSystem_`, `PaletteFade_`, `PaletteQueue_`, `Projection_`, `Render_`,
+`RenderOutput_`, `RenderResource_`, `Resource_`, `Runtime_`, `SceneTransform_`,
+`Scheduler_`, `StatusMenu_`, `Text_`, `Tile_`, `Title_`, `Transform_`, `Ui_`,
+`UiGlyph_`, `UiIcon_`, `UiMessage_`, `UiText_`, `UiTextResource_`,
+`UiTimedNotice_`, `UiWindow_` and `UiWork_`. Only `AnimationObject_`, taking a
+free animation entry (here and in `battle/effect`), is The Lost Age's own so
+far.
+
 ## Evidence and open questions
 
 - XXX: where ⚓️'s window object begins and ends, and so whether `window/`

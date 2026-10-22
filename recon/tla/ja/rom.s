@@ -4062,8 +4062,8 @@ Func_0814fab8:
 	.section .rom.001504d6, "ax"
 	.incbin "baserom.gba", 0x001504d6, 0x00000002
 	.section .rom.001504d8, "ax"
-	.global SummonFx_RunCanvasEffect
-SummonFx_RunCanvasEffect:
+	.global SummonEffect_RunCanvasEffect
+SummonEffect_RunCanvasEffect:
 	.incbin "baserom.gba", 0x001504d8, 0x000004dc
 	.global BattleEffect_RunFlare
 	.type BattleEffect_RunFlare, %function

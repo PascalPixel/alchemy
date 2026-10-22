@@ -529,7 +529,7 @@ Func_0813cb34:
 	ldr r0, .L_0813cf7c
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl SummonFx_RunCanvasMode1
+	bl SummonEffect_RunCanvasMode1
 	b .L_0813cf60
 .L_0813cf5c:
 	bl BattleEffect_EndCanvasLayer

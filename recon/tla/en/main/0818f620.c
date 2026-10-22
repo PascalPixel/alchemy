@@ -62,7 +62,7 @@ void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
-void SummonFx_RunCanvasMode1(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 
@@ -82,7 +82,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
 // it) hits the target; at the hit the targets flash and recoil, sixteen
 // flames rise and 47 sparks scatter. Modes:
 //   0  (BattleEffect_RunCanvasMode0): 78 frames, the glow at the target; the
-//      hit at frame 54, then the canvas is cleared and SummonFx_RunCanvasMode1
+//      hit at frame 54, then the canvas is cleared and SummonEffect_RunCanvasMode1
 //      runs on;
 //   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
 //      half-speed sparks, hit at 32, no flames;
@@ -348,7 +348,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    SummonFx_RunCanvasMode1(effect);
+    SummonEffect_RunCanvasMode1(effect);
   } else if (mode == 3) {
     BattleEffect_EndCanvasLayer();
   } else {

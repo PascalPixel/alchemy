@@ -2,7 +2,7 @@
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleEffect_RunJupiter 0.513, call order
 // BattleEffect_RunPlasma 0.600). It ends without closing the canvas
-// layer: it clears the canvas and hands it to SummonFx_RunCanvasEffect
+// layer: it clears the canvas and hands it to SummonEffect_RunCanvasEffect
 // mode 3.
 
 // Listing 376 instructions, draft 374, differ 218.
@@ -70,7 +70,7 @@ void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void SummonFx_RunCanvasMode3(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *effect);
 void Audio_PlayCue(s32 cue);
 
 // Hurricane: driving rain slants down over the target, each drop bursting
@@ -215,5 +215,5 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   Iwram_ClearWords(canvas, 0x3c00);
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  SummonFx_RunCanvasMode3(effect);
+  SummonEffect_RunCanvasMode3(effect);
 }

@@ -261,7 +261,7 @@ Func_0811f088:
 	movs r0, #4
 	bl BattleEvent_Push
 .L_0811f276:
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 	bl Func_0812756c
 	b .L_0811f306
 .L_0811f280:

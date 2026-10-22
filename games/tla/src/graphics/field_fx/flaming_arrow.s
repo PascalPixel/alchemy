@@ -1,4 +1,4 @@
 	.section .rodata
-	.global FieldFx_FlamingArrow
-FieldFx_FlamingArrow:
+	.global FieldEffect_FlamingArrow
+FieldEffect_FlamingArrow:
 	.incbin "games/tla/src/graphics/field_fx/flaming_arrow.8bpp.lz"

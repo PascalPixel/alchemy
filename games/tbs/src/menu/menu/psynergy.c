@@ -318,7 +318,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
   action = BattleActGet(OWNER_ACTION_ID_MASK &
                         ((struct PsynergyMenuState *)gMenuWork)->paneAction[0]);
-  if (FieldFx_HasMatchingEvent5Far(action->type0c) != 0) {
+  if (FieldEffect_HasMatchingEvent5Far(action->type0c) != 0) {
     return 0;
   }
   classification = 2;

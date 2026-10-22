@@ -25,9 +25,9 @@ void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
 // The scheduler calls void(void). Plain void changes the native return from
 // pop {r1}; bx r1 to pop {r0}; bx r0 (two instructions in tbs-en).
 #ifdef UBFIX
-void FieldFx_StepRatioTransition(void) {
+void FieldEffect_StepRatioTransition(void) {
 #else
-s32 FieldFx_StepRatioTransition(void) {
+s32 FieldEffect_StepRatioTransition(void) {
 #endif
   struct PerspectiveWork *work;
   s16 *frames;
@@ -57,18 +57,19 @@ s32 FieldFx_StepRatioTransition(void) {
   if (*step == *frames) {
     *frames = 0;
 #ifdef UBFIX
-    Scheduler_RemoveCallback(FieldFx_StepRatioTransition);
+    Scheduler_RemoveCallback(FieldEffect_StepRatioTransition);
 #else
-    Scheduler_RemoveCallback((SchedulerCallback)FieldFx_StepRatioTransition);
+    Scheduler_RemoveCallback(
+        (SchedulerCallback)FieldEffect_StepRatioTransition);
 #endif
   }
 }
 
 /// Starts a zoom to zoom (16.16) over frames frames, on the world map only. The
 /// perspective work keeps the inverse, which scales the view's distance
-/// (farPlane times it, FieldFx_StepRatioTransition): a zoom of 2 halves the
+/// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
 /// distance. Event_WaitForZoomTransition waits for it.
-void FieldFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
+void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct PerspectiveWork *work = gMapWork[0];
   s32 inverse;
 
@@ -86,10 +87,10 @@ void FieldFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   // 0xc94: a main-loop callback (high byte 0xc, as SCHEDULER_KEY_MAIN_LOOP)
   // at priority 0x94.
 #ifdef UBFIX
-  Scheduler_AddOrUpdateCallback(FieldFx_StepRatioTransition, 0xc94);
+  Scheduler_AddOrUpdateCallback(FieldEffect_StepRatioTransition, 0xc94);
 #else
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)FieldFx_StepRatioTransition,
-                                0xc94);
+  Scheduler_AddOrUpdateCallback(
+      (SchedulerCallback)FieldEffect_StepRatioTransition, 0xc94);
 #endif
 }
 
@@ -118,9 +119,9 @@ void Event_WaitForZoomTransition(void) {
 // The hook consumer ignores the result. Plain void removes the native zero
 // result and changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+void FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #else
-s32 FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
   struct FieldActor *obj = self;
@@ -150,9 +151,9 @@ s32 FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 /// bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_110); with
 /// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the actor's.
 /// The bubble rides the actor and frees itself after 46 frames
-/// (gFieldFx_LinkedObjectScript: 16 frames of squash and stretch, then 30),
+/// (gFieldEffect_LinkedObjectScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
-void FieldFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
+void FieldEffect_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   struct FieldActor *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
@@ -168,17 +169,17 @@ void FieldFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
       struct AnimationObject *sprite;
 
       ObjectDispatch_InitializeFar((struct DispatchObject *)bubble,
-                                   gFieldFx_LinkedObjectScript);
+                                   gFieldEffect_LinkedObjectScript);
       ObjectDispatch_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->work = actor;
       sprite = bubble->sprite;
 #ifdef UBFIX
-      bubble->update = FieldFx_CopyLinkedObjectPosition;
+      bubble->update = FieldEffect_CopyLinkedObjectPosition;
 #else
       bubble->update =
-          (void (*)(union FieldObject *))FieldFx_CopyLinkedObjectPosition;
+          (void (*)(union FieldObject *))FieldEffect_CopyLinkedObjectPosition;
 #endif
       sprite->flags = 0;
       bubble->linkedObject = target;
@@ -218,7 +219,7 @@ void FieldFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 /// nothing while the actor has one, and ATTACHED_EFFECT_REMOVE releases
 /// whatever it is; a one-off is never recorded there. The leader's step runs
 /// all three for hazard ground (object/step.c).
-void FieldFx_ConfigureLinkedObject(s32 actor, s32 flags) {
+void FieldEffect_ConfigureLinkedObject(s32 actor, s32 flags) {
   struct FieldActor *object = ObjectTable_Get(actor);
   struct FieldActor *effect;
   struct AnimationObject *visual;
@@ -266,10 +267,10 @@ void FieldFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   effect->work = actor;
   effect->motionFlags = 0;
 #ifdef UBFIX
-  effect->update = FieldFx_CopyLinkedObjectPosition;
+  effect->update = FieldEffect_CopyLinkedObjectPosition;
 #else
   effect->update =
-      (void (*)(union FieldObject *))FieldFx_CopyLinkedObjectPosition;
+      (void (*)(union FieldObject *))FieldEffect_CopyLinkedObjectPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;

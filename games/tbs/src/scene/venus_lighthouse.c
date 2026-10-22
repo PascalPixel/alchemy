@@ -589,7 +589,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Engine_ObjectSetPosition(leader, targetPosition.x, targetPosition.y,
                            targetPosition.z);
   FieldObject_WaitForMove(pillar);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   pillar->x.fixed = targetPosition.x;
   pillar->z.fixed = targetPosition.z;
   pillar->velocityX = transitionBusy;
@@ -705,7 +705,7 @@ static s32 VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
         actor->y.fixed + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
     riseSpeed = Math_Divide(
         (((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
-    FieldFx_Spawn(
+    FieldEffect_Spawn(
         particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
         EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
         &options);
@@ -748,19 +748,19 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
   fallSpeed = ((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
   framePhase = gFrameCount & 15;
 
-  FieldFx_Spawn(actor->x.fixed +
-                    VENUS_LIGHTHOUSE_FIXED_OFFSET(8 - framePhase, 16),
-                actor->y.fixed + PIXELS(26), actor->z.fixed, 0, -fallSpeed, 0,
-                EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
+  FieldEffect_Spawn(actor->x.fixed +
+                        VENUS_LIGHTHOUSE_FIXED_OFFSET(8 - framePhase, 16),
+                    actor->y.fixed + PIXELS(26), actor->z.fixed, 0, -fallSpeed,
+                    0, EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
 
   framePhase = gFrameCount & 15;
   if (framePhase == 0) {
     options.startScaleX = Q16_ONE / 2;
     options.startScaleY = Q16_ONE / 2;
-    FieldFx_Spawn(actor->x.fixed +
-                      ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
-                  actor->y.fixed, actor->z.fixed, 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
+    FieldEffect_Spawn(actor->x.fixed +
+                          ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
+                      actor->y.fixed, actor->z.fixed, 0, 0, 0,
+                      EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
   }
 #ifdef UBFIX
 
@@ -832,7 +832,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->update = 0;
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
     Engine_EventEnd();
   }
 }
@@ -878,7 +878,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(24);
   options.palette = 7;
-  options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
+  options.update = (void (*)(union FieldObject *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
@@ -888,11 +888,11 @@ static void VenusLighthouse_LandWithRadialDust(void) {
     angle = particleIndex << 12;
     SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
     velocity[0] += velocity[0] / 2;
-    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                  velocity[0], velocity[1], velocity[2],
-                  EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE |
-                      EFFECT_USE_UPDATE | 1,
-                  &options);
+    FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_UPDATE | 1,
+                      &options);
   }
   Event_PlayCue(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -903,7 +903,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Engine_MapRenderWaitForValues();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   leader->gravity = PIXELS(1);
   leader->bounce = PIXELS(1) / 4;
   Engine_EventEnd();
@@ -951,11 +951,11 @@ static s32 VenusLighthouse_TrailLight(union FieldObject *fieldObject) {
   velocityX = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
   random = Engine_RandomNext();
   velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
-  FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - PIXELS(1),
-                velocityX, velocityY, velocityZ,
-                EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
-                    EFFECT_USE_TYPE | 1,
-                &options);
+  FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - PIXELS(1),
+                    velocityX, velocityY, velocityZ,
+                    EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_TYPE | 1,
+                    &options);
 #ifdef UBFIX
   return;
 #else
@@ -1811,7 +1811,7 @@ static void Event_StepOnWallSwitch(void) {
         options.startScaleY =
             ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
         options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-        FieldFx_Spawn(
+        FieldEffect_Spawn(
             dustX, 0, PIXELS(528), 0, -(((gFrameCount & 1) * 3) << 16), 0,
             EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
             &options);
@@ -2179,7 +2179,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
                            pillar->z.fixed);
   Engine_ActorWaitForMove(pillarId);
   Engine_AudioPlayCue(SE_188);
-  FieldFx_SpawnNineRadialEffects(pillarId);
+  FieldEffect_SpawnNineRadialEffects(pillarId);
   Engine_EventWait(30);
 }
 
@@ -2364,7 +2364,7 @@ static void Event_StepOnWestWallSwitch(void) {
           options.startScaleY =
               ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
           options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-          FieldFx_Spawn(
+          FieldEffect_Spawn(
               dustX, 0, PIXELS(288), 0, -(((gFrameCount & 1) * 3) << 16), 0,
               EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
               &options);
@@ -2437,7 +2437,7 @@ static void Event_StepOnEastWallSwitch(void) {
           options.startScaleY =
               ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
           options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-          FieldFx_Spawn(
+          FieldEffect_Spawn(
               dustX, 0, PIXELS(288), 0, -(((gFrameCount & 1) * 3) << 16), 0,
               EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
               &options);
@@ -2812,7 +2812,7 @@ s32 VenusLighthouse_Initialize(void) {
       VenusLighthouse_AnimatePairedTileWaves();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         VenusLighthouse_LandWithRadialDust();
       break;
@@ -2832,7 +2832,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_FROM_LADDERS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST:
-      FieldFx_StartFadeOverlay(0);
+      FieldEffect_StartFadeOverlay(0);
       Engine_TaskWait(2);
       actor = Object_GetById(ACTOR_FIRST_DEPTH_PILLAR);
       actor->motionFlags = 0;
@@ -2850,8 +2850,8 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
-      FieldFx_StartFadeOverlay(0);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_StartFadeOverlay(0);
       Engine_TaskWait(2);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
@@ -2867,7 +2867,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouseSecondFloor) {
@@ -2875,11 +2875,11 @@ s32 VenusLighthouse_Initialize(void) {
     switch (gGameState.entrance) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR:
-      FieldFx_StartFadeOverlay(0);
+      FieldEffect_StartFadeOverlay(0);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT:
@@ -2921,7 +2921,7 @@ s32 VenusLighthouse_Initialize(void) {
       // fall through
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       DisplayBlend_SuspendScript();
       {
         s32 zero = 0;
@@ -2948,7 +2948,7 @@ s32 VenusLighthouse_Initialize(void) {
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouseThirdFloor) {
@@ -2964,7 +2964,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         Map_CopyCells(53, 12, 3, 13, 26, 12);
         Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
@@ -2993,7 +2993,7 @@ s32 VenusLighthouse_Initialize(void) {
        * does not cross-jump with the second floor's same call; as a call by
        * its void prototype, 2 of 1431 instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
@@ -3052,7 +3052,7 @@ s32 VenusLighthouse_Initialize(void) {
       Event_MoveSwitchPillar();
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouseFourthFloor) {
@@ -3118,7 +3118,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST:
-      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldEffect_SetQueuedSoundAndPlay(SE_170);
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
@@ -3144,7 +3144,7 @@ s32 VenusLighthouse_Initialize(void) {
       DisplayBlend_SuspendScript();
       Io_Write16(0, &REG_BLDCNT);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
-        FieldFx_SetQueuedSoundAndPlay(SE_170);
+        FieldEffect_SetQueuedSoundAndPlay(SE_170);
         Map_CopyCellsTo(36, 81, 32, 81, 3, 2);
         Map_CopyCellsTo(36, 83, 36, 81, 3, 2);
         Map_CopyCellAttributes(36, 17, 3, 1, 32, 17);
@@ -3307,7 +3307,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
     options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
     particleX = actor->x.fixed +
                 (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
-    FieldFx_Spawn(
+    FieldEffect_Spawn(
         particleX, actor->y.fixed, actor->z.fixed,
         (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) *
             direction->x,
@@ -3390,7 +3390,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  FieldFx_SetQueuedSoundAndPlay(SE_170);
+  FieldEffect_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -3401,10 +3401,10 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     Rubble_SetScaleAndSpin(&options);
     for (;;) {
       for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
-        FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) +
-                          0x3600000,
-                      0, 0x300000 + row * 0x100000 + particleIndex * 0x40000, 0,
-                      0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+        FieldEffect_Spawn(
+            (((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3600000, 0,
+            0x300000 + row * 0x100000 + particleIndex * 0x40000, 0, 0, 0,
+            EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
       }
       Engine_TaskWait(3);
       if (row != 3 || extraBursts >= 3) {
@@ -3421,9 +3421,10 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   for (row = 0; row < 10; row++) {
     Rubble_SetScaleAndSpin(&options);
     for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
-      FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3000000,
-                    0, 0x300000 + row * 0x100000 + particleIndex * 0x40000, 0,
-                    0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+      FieldEffect_Spawn(
+          (((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3000000, 0,
+          0x300000 + row * 0x100000 + particleIndex * 0x40000, 0, 0, 0,
+          EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
     Engine_TaskWait(3);
     Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
@@ -3444,15 +3445,15 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
   if ((gFrameCount & 3) == 0) {
     if (((u32)(Engine_RandomNext() << 1) >> 16) != 0) {
-      FieldFx_Spawn(
+      FieldEffect_Spawn(
           (x + (((u32)(Engine_RandomNext() << 1) >> 16) << 4)) << 16, 0,
           z << 19, 0, 0,
           (s32)((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000) / 10,
           EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     } else {
-      FieldFx_Spawn((x + ((u32)(Engine_RandomNext() * 17) >> 16)) << 16, 0,
-                    (x << 19) - 0x40000, 0, 0, 0,
-                    EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+      FieldEffect_Spawn((x + ((u32)(Engine_RandomNext() * 17) >> 16)) << 16, 0,
+                        (x << 19) - 0x40000, 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
   }
 }
@@ -3483,7 +3484,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  FieldFx_SetQueuedSoundAndPlay(SE_170);
+  FieldEffect_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -3501,9 +3502,10 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
     particleZ = 0xc00000;
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x1a00000,
-                    0, particleZ, 0, zero, zero,
-                    EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, effectOptions);
+      FieldEffect_Spawn(
+          (((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x1a00000, 0,
+          particleZ, 0, zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
+          effectOptions);
       particleZ += 0x40000;
     }
     Engine_TaskWait(3);
@@ -3548,7 +3550,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  FieldFx_SetQueuedSoundAndPlay(SE_170);
+  FieldEffect_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -3566,9 +3568,10 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     particleZ = 0xc00000;
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x2200000,
-                    0, particleZ, 0, zero, zero,
-                    EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, effectOptions);
+      FieldEffect_Spawn(
+          (((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x2200000, 0,
+          particleZ, 0, zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
+          effectOptions);
       particleZ += 0x40000;
     }
     Engine_TaskWait(3);
@@ -3622,10 +3625,10 @@ static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
     particleZ =
         actor->z.fixed + ((((u32)(Engine_RandomNext() * 49) >> 16) - 24) << 16);
     riseSpeed = (((u32)(Engine_RandomNext() * 4) >> 16) << 15) + 0x8000;
-    FieldFx_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
-                  EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
-                      EFFECT_USE_SCRIPT,
-                  effectOptions);
+    FieldEffect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
+                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
+                      effectOptions);
   }
 #ifdef UBFIX
   return;

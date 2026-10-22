@@ -207,8 +207,9 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
   params.startScaleX = 0xcccc;
   params.startScaleY = 0xcccc;
   params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-  FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
-                EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+  FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase,
+                    phase, EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1,
+                    &params);
 #ifdef UBFIX
   return;
 #else
@@ -624,10 +625,10 @@ static void LamakanDesert_BatheInOasis(void) {
     options.startScaleY = 0xcccc;
     options.targetScaleX = 0x10000;
     options.targetScaleY = 0x13333;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
-                  EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                      EFFECT_SCALE_TO_TARGET,
-                  &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
+                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                          EFFECT_SCALE_TO_TARGET,
+                      &options);
   }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
@@ -659,7 +660,7 @@ static void LamakanDesert_BatheInOasis(void) {
     puff.startScaleY = 0xcccc;
     puff.targetScaleX = 0x8000;
     puff.targetScaleY = 0x13333;
-    FieldFx_Spawn(
+    FieldEffect_Spawn(
         actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
@@ -706,8 +707,8 @@ static void HeatGauge_CountStep(void) {
     } else {
       z = actor->z.fixed;
     }
-    FieldFx_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0,
-                  EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+    FieldEffect_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
   } else {
     phase = gFrameCount & 7;
     if (phase != 0) {
@@ -718,9 +719,9 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = 0xcccc;
     params.startScaleY = 0xcccc;
     params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed, 0,
-                  ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase,
-                  EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed,
+                      0, ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
   }
 }
 
@@ -835,9 +836,9 @@ static void LamakanDesert_SlideDownDune(void) {
     params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
     x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) -
         0x60000;
-    FieldFx_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                  ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
-                  EFFECT_USE_SPIN, &params);
+    FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
+                      ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
+                      EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
     // Let the fall complete before returning to ordinary field movement.
@@ -986,7 +987,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       Map_CopyCells(43, 56, 4, 2, 116, 126);
     } else if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
       v5 = 124;
-      FieldFx_SetQueuedSoundAndPlay(SE_169);
+      FieldEffect_SetQueuedSoundAndPlay(SE_169);
       Map_CopyCells(8, 14, 4, 4, 64, v5);
       Map_CopyCells(6, 18, 4, 4, 68, v5);
       Map_CopyCells(10, 21, 4, 4, 72, v5);

@@ -36,8 +36,8 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_CameraMoveToActor, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.FieldFx_LastLightning, 1
-	.set import.FieldFx_StartBufferBlend, 1
+	.set import.FieldEffect_LastLightning, 1
+	.set import.FieldEffect_StartBufferBlend, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_AudioPlayCue, 1

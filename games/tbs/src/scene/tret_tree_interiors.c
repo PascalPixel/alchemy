@@ -1095,7 +1095,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;
   particleOptions->palette = 7;
-  particleOptions->update = FieldFx_AdvanceMotion;
+  particleOptions->update = FieldEffect_AdvanceMotion;
   particleOptions->startScaleX = 0xcccc;
   particleOptions->startScaleY = 0xcccc;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
@@ -1107,11 +1107,11 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
     particleVelocity->z = velocityZ;
     velocityX += velocityX / 2;
     particleVelocity->x = velocityX;
-    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocityX,
-                  particleVelocity->y, velocityZ,
-                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                      EFFECT_USE_PALETTE | 1,
-                  particleOptions);
+    FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                      velocityX, particleVelocity->y, velocityZ,
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
+                      particleOptions);
   }
   SE(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,

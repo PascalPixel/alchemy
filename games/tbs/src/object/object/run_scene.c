@@ -105,7 +105,7 @@ s32 Field_RunScene(s32 entrance) {
     gGameState.pausedObject = -1;
     gGameState.cloaked = 0;
   }
-  FieldFx_ResumeCloakCheck();
+  FieldEffect_ResumeCloakCheck();
   work->queuedSound = -1;
   gOverlayArea.initialize();
 
@@ -209,7 +209,7 @@ s32 Field_RunScene(s32 entrance) {
             Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
           } else if (work->event == FIELD_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
-            FieldFx_RunVisibilityTransition();
+            FieldEffect_RunVisibilityTransition();
           } else {
             Scene_RunRaisedEvent(work->event);
           }

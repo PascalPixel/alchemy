@@ -599,7 +599,7 @@ static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
 static void Kolima_FinishReadingThoughts(void) {
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
-  FieldFx_End();
+  FieldEffect_End();
 }
 
 /// Gives the four companions the same nod, waiting on the final actor.
@@ -1967,7 +1967,7 @@ struct SceneEvent gKolimaBridgeEvents[] = {
 // clang-format on
 
 s32 gKolima_Object26Script[] = {
-    SC_CALL(FieldFx_StretchUntilArrived),
+    SC_CALL(FieldEffect_StretchUntilArrived),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

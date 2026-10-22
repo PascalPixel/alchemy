@@ -70,10 +70,10 @@
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.FieldFx_StartLightning, 1
-	.set import.FieldFx_StopLightning, 1
-	.set import.FieldFx_LastLightning, 1
-	.set import.FieldFx_ResumeLightning, 1
+	.set import.FieldEffect_StartLightning, 1
+	.set import.FieldEffect_StopLightning, 1
+	.set import.FieldEffect_LastLightning, 1
+	.set import.FieldEffect_ResumeLightning, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
@@ -81,7 +81,7 @@
 	.set import.Engine_PsynergyBegin, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
-	.set import.FieldFx_End, 1
+	.set import.FieldEffect_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Engine_InnOpen, 1
 	.set import.Engine_AudioPlayCue, 1

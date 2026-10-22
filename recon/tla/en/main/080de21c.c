@@ -1,11 +1,11 @@
 // Near miss, differ 32 of 364 (2026-10-15): ⚓️'s form of ☀️'s
-// FieldFx_RunForce. Every instruction and register is the native's; the
+// FieldEffect_RunForce. Every instruction and register is the native's; the
 // 32 differ only in order: in the five position copies the next field's
 // load and the offset constant's build are swapped, the native builds the
 // growth loop's two limits after it loads the scale, and the copy loop's
 // start (sp + 24) and the last loop's r7 are set at other places.
-// effect04_entry.c's FieldFx_RunForceOnTarget declares it taking the effect argument.
-// Belongs between FieldFx_RunForceOnTarget and update_orbiting_particle_main.c's
+// effect04_entry.c's FieldEffect_RunForceOnTarget declares it taking the effect argument.
+// Belongs between FieldEffect_RunForceOnTarget and update_orbiting_particle_main.c's
 // BattleEffect_UpdateOrbitingParticleMain.
 #include "types.h"
 #include "system.h"

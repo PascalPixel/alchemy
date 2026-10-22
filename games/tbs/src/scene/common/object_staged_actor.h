@@ -133,7 +133,7 @@ UNUSED static void StagedActor_AdvancePair(void) {
   lead->acceleration = rate;
   Engine_ObjectSetPosition(lead, dst.x, dst.y, dst.z);
   FieldObject_WaitForMove(next);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   next->x.fixed = dst.x;
   next->z.fixed = dst.z;
   next->velocityX = 0;
@@ -559,7 +559,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
                                            originalPosition.z, horizontalExtent,
                                            verticalExtent, 0);
   }
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
 }
 
 /// Block large thing id's cells (collision 255) where it stands, through the

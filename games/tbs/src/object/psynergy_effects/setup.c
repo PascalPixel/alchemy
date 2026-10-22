@@ -5,20 +5,20 @@
 #include "../psynergy_effects_internal.h"
 
 /// Scheduler callback: updates the 24 effect slots.
-void FieldFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
+void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateSceneSlots(); }
 
 /// Prepares the work of the Psynergy effect for ability (HEAP_SLOT_FX) and
 /// loads its spark tiles. Called again while an effect resolves, it only
 /// switches the ability.
 ///
 /// Field_UsePsynergy and the item uses (object/items.c) call it before an
-/// effect and FieldFx_End after it, which releases the
+/// effect and FieldEffect_End after it, which releases the
 /// work, the spark tiles' resource entry and the scheduler callback started
 /// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
-/// The caster is the leader, with no target until FieldFx_SetupObjectPair
+/// The caster is the leader, with no target until FieldEffect_SetupObjectPair
 /// names one.
-void FieldFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
+void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
   struct MapScrollWork *map = *(gWorkSlot + 8);
   struct FieldFxScene *work;
@@ -50,15 +50,15 @@ void FieldFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work->lit = 1;
   if (gGameState.map == (s32)&SceneId_MercuryLighthouseMiddle)
     work->lit = 1;
-  FieldFx_SetupObjectPair(gGameState.selectedActor, -1);
+  FieldEffect_SetupObjectPair(gGameState.selectedActor, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
-  // here) until FieldFx_End lets it run again.
+  // here) until FieldEffect_End lets it run again.
   if (work->fieldKind != FIELD_KIND_REVEAL)
     ev->effectTimerRunning = running;
   work->tileSlot = Resource_FindFreeEntry();
-  VramCache_Load((s16)work->tileSlot, 256, gFieldFx_SparkTiles);
+  VramCache_Load((s16)work->tileSlot, 256, gFieldEffect_SparkTiles);
   // 0xc80 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
-  Scheduler_AddOrUpdateCallback(FieldFx_UpdateAllEffectSlots, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateAllEffectSlots, 0xc80);
 }
 
 /// Records the caster and the target of an effect. With no target, the effect
@@ -66,7 +66,7 @@ void FieldFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
 /// quarter turn). work->angle becomes that facing, the way the effects aim.
 /// A target's update hook, script and first sprite's param are saved, for
 /// the effects that take it over to restore.
-void FieldFx_SetupObjectPair(s32 userId, s32 targetId) {
+void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
   s32 dir;
@@ -105,7 +105,7 @@ void FieldFx_SetupObjectPair(s32 userId, s32 targetId) {
 
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
-void FieldFx_StopCasterHook(void) {
+void FieldEffect_StopCasterHook(void) {
   struct FieldFxScene *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
 
@@ -122,7 +122,7 @@ void FieldFx_StopCasterHook(void) {
 /// swelling arcs to end, stops the slot callback, releases the effect's
 /// tiles, restores the map's shake, plays the queued sound and releases the
 /// effect's work.
-void FieldFx_End(void) {
+void FieldEffect_End(void) {
 #ifndef UBFIX
   struct FieldFxScene **sceneCell;
 #endif
@@ -147,7 +147,7 @@ void FieldFx_End(void) {
   for (remaining = 0; remaining < 24; remaining++) {
     sceneObject = &scene->slots[remaining];
     if (sceneObject->active != 0)
-      FieldFx_ClearOwnedSlot(sceneObject);
+      FieldEffect_ClearOwnedSlot(sceneObject);
   }
 
   // While Field_UsePsynergy resolves an effect (resolvingAction), a cleanup
@@ -155,9 +155,9 @@ void FieldFx_End(void) {
   if (runtime->resolvingAction == 0) {
     s32 waited = 0;
     void (*firstActiveUpdate)(union FieldObject *) =
-        FieldFx_UpdateScaledArcObjectB;
+        FieldEffect_UpdateScaledArcObjectB;
     void (*secondActiveUpdate)(union FieldObject *) =
-        FieldFx_UpdateScaledArcObjectA;
+        FieldEffect_UpdateScaledArcObjectA;
     s32 active;
 
     do {
@@ -183,14 +183,14 @@ void FieldFx_End(void) {
     } while (active != 0 && waited <= 29);
 
     runtime->castStarted = 0;
-    Scheduler_RemoveCallback(FieldFx_UpdateAllEffectSlots);
+    Scheduler_RemoveCallback(FieldEffect_UpdateAllEffectSlots);
     Resource_ResetEntry((s16)scene->tileSlot);
     map->shakeX = scene->savedShakeX;
     map->shakeY = scene->savedShakeY;
     map->shakeDecay = scene->savedShakeDecay;
     if (scene->fieldKind != FIELD_KIND_REVEAL)
       runtime->effectTimerRunning = 1;
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
     Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
   }
 }
@@ -200,7 +200,7 @@ void FieldFx_End(void) {
 /// it is quiet, the ability's name is shown while every other object stands
 /// still. With flag 0x140 the caster's colours keep cycling and it
 /// takes pose 21; otherwise the caster's hook stops. Sets the field work's
-/// castStarted, which FieldFx_End clears. Called by
+/// castStarted, which FieldEffect_End clears. Called by
 /// Field_UsePsynergy and Goma Cave Entrance once the effect's caster and
 /// target are set up.
 void EventObject_Initialize(void) {
@@ -222,7 +222,7 @@ void EventObject_Initialize(void) {
   SET_VELOCITY(caster, 0, 0, 0);
   if (scene->visible != 0) {
     AudioCommand_PlayFar(SE_212);
-    caster->update = FieldFx_FlickerObjectAndTick;
+    caster->update = FieldEffect_FlickerObjectAndTick;
   }
   if (scene->active != 0) {
     ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 1, 0);
@@ -240,20 +240,20 @@ void EventObject_Initialize(void) {
   }
   if (GameFlag_TestFar(0x140) != 0) {
     if (scene->visible != 0) {
-      caster->update = FieldFx_CycleObjectValueByCounter;
+      caster->update = FieldEffect_CycleObjectValueByCounter;
     }
     ObjectDispatch_SelectAnimationFar(caster, 0x15);
   } else {
-    FieldFx_StopCasterHook();
+    FieldEffect_StopCasterHook();
   }
   ((struct FieldWork *)renderState)->castStarted = 1;
 }
 
 /// Saves the palettes for the effect and fades them toward one of the eight
-/// effect colours (gFieldFx_TargetColors), picked by the frame counter or
+/// effect colours (gFieldEffect_TargetColors), picked by the frame counter or
 /// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
-/// effects open with it, and FieldFx_FadeFromEffectColor fades back.
-void FieldFx_FadeToEffectColor(void) {
+/// effects open with it, and FieldEffect_FadeFromEffectColor fades back.
+void FieldEffect_FadeToEffectColor(void) {
   u8 *scene;
   struct ColorBuffer *work;
   s32 no;
@@ -292,14 +292,14 @@ void FieldFx_FadeToEffectColor(void) {
     no = 6;
   if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(7)))
     no = 7;
-  ColorBuffer_SetTarget(gFieldFx_TargetColors[no], 1);
+  ColorBuffer_SetTarget(gFieldEffect_TargetColors[no], 1);
   ColorBuffer_StartInterpolation(8);
 }
 
 /// Fades the palettes back from an effect's colours to the saved ones over 8
 /// frames; while Reveal is active the BG half fades to Reveal's grey
 /// instead (PALETTE_TRANSFORM_GREY, 0x10001).
-void FieldFx_FadeFromEffectColor(void) {
+void FieldEffect_FadeFromEffectColor(void) {
   s32 savedPalettes;
   u8 *field;
 

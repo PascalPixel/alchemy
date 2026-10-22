@@ -702,7 +702,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    FieldFx_SetQueuedSoundAndPlay(SE_141);
+    FieldEffect_SetQueuedSoundAndPlay(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
   }

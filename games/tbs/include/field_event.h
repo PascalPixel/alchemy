@@ -221,10 +221,10 @@ void Engine_ActorStartRepeatedMotion(s32 actor, s32 repeats);
 /// it to end (Motion_SetVarCbAndRefresh).
 void Engine_ActorRunRepeatedMotion(s32 actor, s32 repeats);
 /// Shows an emote bubble over an actor, which frees itself after 46 frames,
-/// then waits frames (FieldFx_SpawnLinked). See EMOTE_IN_FRONT.
+/// then waits frames (FieldEffect_SpawnLinked). See EMOTE_IN_FRONT.
 void Engine_ActorShowEmote(s32 actor, s32 emote, s32 frames);
 /// Attaches, removes or plays once the effect object that rides an actor, by
-/// enum AttachedEffectFlag (FieldFx_ConfigureLinkedObject).
+/// enum AttachedEffectFlag (FieldEffect_ConfigureLinkedObject).
 void Engine_ActorSetAttachedEffect(s32 actor, s32 effect);
 /// Fixes an actor's sprite priority, which then no longer follows its depth
 /// (ObjectMotion_SetActionVariant).
@@ -340,7 +340,7 @@ void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 /// (Ui_PrepareTransferForItem).
 void Engine_ItemLoadIcon(s32 item);
 /// Shows an item's picture above the leader for 80 frames
-/// (FieldFx_StartEffectObject22). Bit 0 of height adds sparkles and bit 1
+/// (FieldEffect_StartEffectObject22). Bit 0 of height adds sparkles and bit 1
 /// raises it as a found item.
 void Engine_ItemShowFound(s32 item, s32 height);
 /// Gives an item to the first party member with room and says so, letting the
@@ -360,10 +360,10 @@ void Engine_ActorWalkByAndWait(s32 actor, s32 dx, s32 dz);
 /// (Field_TryJumpForward). Returns 0 after a jump and -1 when it can't jump.
 s32 Engine_LeaderCheckAhead(void);
 /// Prepares the work and spark tiles of a field Psynergy effect for ability
-/// (FieldFx_LoadActionEffectResources).
+/// (FieldEffect_LoadActionEffectResources).
 void Engine_PsynergyBegin(s32 ability, s32 flags);
 /// Records an effect's caster and target; with no target the effect plays 16
-/// pixels in front of the caster (FieldFx_SetupObjectPair).
+/// pixels in front of the caster (FieldEffect_SetupObjectPair).
 void Engine_PsynergySetTarget(s32 caster, s32 target);
 /// Puts the caster in its casting pose and, unless the effect is silent or
 /// quiet, flashes it and shows the ability's name (EventObject_Initialize).
@@ -372,10 +372,10 @@ void Engine_PsynergyRaiseHands(void);
 /// (Field_DispatchTypeHandler).
 void Engine_PsynergyPlayEffect(s32 effect);
 /// Stops the caster's per-frame hook, restores its colours and waits a frame
-/// (FieldFx_StopCasterHook).
+/// (FieldEffect_StopCasterHook).
 void Engine_PsynergyLowerHands(void);
 /// Stops the wave effect: the caster's colours and the palettes come back and
-/// its work is released (FieldFx_FinishSceneAndReleaseHeapBlock).
+/// its work is released (FieldEffect_FinishSceneAndReleaseHeapBlock).
 void Engine_PsynergyCancel(void);
 /// Shows the current message as Engine_EventShowMessage does, then waits frames
 /// (FieldEvent_ShowMessageThenWait).

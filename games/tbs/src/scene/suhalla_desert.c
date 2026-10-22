@@ -568,8 +568,8 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
     options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, sparkFrame,
-                  sparkFrame, 0x880001, &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
+                      sparkFrame, sparkFrame, 0x880001, &options);
   }
   return 1;
 }
@@ -588,7 +588,7 @@ static void Event_StormGivesChase(void) {
 /// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader:
 /// sets the Psynergy effect's child option, so that Douse's orb rises to 80
 /// pixels above the storm rather than 32 and rains on it from above
-/// (FieldFx_RunDouse).
+/// (FieldEffect_RunDouse).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
   ((struct FieldFxScene *)state)->childOption = 1;

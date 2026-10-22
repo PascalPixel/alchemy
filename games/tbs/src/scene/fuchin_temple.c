@@ -369,14 +369,14 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   Engine_AudioPlayCue(SE_132);
   // Three white puffs, with only the colour option set.
   options.palette = SPRITE_COLOR_WHITE;
-  FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0x8000,
-                0, 0, EFFECT_USE_PALETTE, &options);
-  FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0, 0,
-                0, EFFECT_USE_PALETTE, &options);
-  FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
-                -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
+                    0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0,
+                    0, 0, EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
+                    -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
   WAIT(30);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Map_CopyCellAttributes(10, 24, 1, 1, 10, 22);
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_GROTTO_OPENED);
   EV_END();
@@ -635,12 +635,12 @@ static void FuchinTemple_ToppleTreeWest(void) {
 
   Engine_AudioPlayCue(SE_TOPPLE);
 
-  FieldFx_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0xffffcccd, 0x6666, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
-                0xffff3334, 0x4ccc, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0xffff0000, 0x3333, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0xffffcccd, 0x6666, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
+                    0xffff3334, 0x4ccc, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0xffff0000, 0x3333, 0, 0, 0);
 }
 
 /// Rotates the training tree through the opposite arc and reverses its
@@ -662,12 +662,12 @@ static void FuchinTemple_ToppleTreeEast(void) {
   tree->targetY = 0x120000;
   tree->scaleX = 0xffff3334;
   Engine_AudioPlayCue(SE_TOPPLE);
-  FieldFx_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0x10000, 0x3333, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000, 0xcccc,
-                0x4ccc, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0x3333, 0x6666, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0x10000, 0x3333, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
+                    0xcccc, 0x4ccc, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0x3333, 0x6666, 0, 0, 0);
 }
 
 /// Slides the training tree north in four steps, then scatters particles.
@@ -686,14 +686,16 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   rotation = 0;
   tree->sprite->rotation = rotation;
   Engine_AudioPlayCue(SE_TOPPLE);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
-                0xffff3334, 0, 0xffffcccd, 0, 0);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
-                0x0000cccc, 0, 0xffffcccd, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0xfffa0000, tree->y.fixed,
-                tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + (192 << 11), tree->y.fixed,
-                tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
+                    0xffff3334, 0, 0xffffcccd, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
+                    0x0000cccc, 0, 0xffffcccd, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0xfffa0000, tree->y.fixed,
+                    tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0,
+                    0);
+  FieldEffect_Spawn(tree->x.fixed + (192 << 11), tree->y.fixed,
+                    tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0,
+                    0);
 }
 
 /// Slides the training tree south in four steps before the final displacement.
@@ -719,15 +721,15 @@ static void FuchinTemple_ToppleTreeSouth(void) {
   tree->targetZ = ACTOR_NO_TARGET;
   Engine_AudioPlayCue(SE_TOPPLE);
 
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000, -0xcccc,
-                0, 0x3333, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000,
+                    -0xcccc, 0, 0x3333, 0, 0);
   particleSpeed = 0x3333;
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000, 0xcccc,
-                0, particleSpeed, 0, 0);
-  FieldFx_Spawn(tree->x.fixed - 0x60000, tree->y.fixed, tree->z.fixed - 0x80000,
-                particleSpeed, 0, 0x10000, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0x60000, tree->y.fixed, tree->z.fixed - 0x80000,
-                particleSpeed, 0, 0x10000, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000,
+                    0xcccc, 0, particleSpeed, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - 0x60000, tree->y.fixed,
+                    tree->z.fixed - 0x80000, particleSpeed, 0, 0x10000, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0x60000, tree->y.fixed,
+                    tree->z.fixed - 0x80000, particleSpeed, 0, 0x10000, 0, 0);
 }
 
 /// Routes the student around the tree according to the leader's facing.
@@ -1551,9 +1553,10 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
 
   fallSpeed = ((u32)(Engine_RandomNext() * 8) >> 16) * 13107;
 
-  FieldFx_Spawn(leader->x.fixed + ((8 - (gFrameCount & 15)) << 16),
-                leader->y.fixed + (192 << 13), leader->z.fixed, 0, -fallSpeed,
-                0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(leader->x.fixed + ((8 - (gFrameCount & 15)) << 16),
+                    leader->y.fixed + (192 << 13), leader->z.fixed, 0,
+                    -fallSpeed, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                    &options);
 
   if ((gFrameCount & 1) != 0)
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -2396,7 +2399,7 @@ s32 Scene_Initialize(void) {
       }
     }
   } else {
-    FieldFx_SetQueuedSoundAndPlay(SE_170);
+    FieldEffect_SetQueuedSoundAndPlay(SE_170);
     Object_GetById(ACTOR_FALLS_MONK)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
     if (gGameState.entrance ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
@@ -2453,11 +2456,11 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
     if (shotIndex & 1) {
       Engine_AudioPlayCue(SE_130);
     }
-    FieldFx_Spawn(nyunpa->x.fixed, nyunpa->y.fixed,
-                  nyunpa->z.fixed + 0xffe80000, 0, 0x9999, 0,
-                  EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_SCALE_TO_TARGET |
-                      EFFECT_USE_PRIORITY | 1,
-                  &options);
+    FieldEffect_Spawn(nyunpa->x.fixed, nyunpa->y.fixed,
+                      nyunpa->z.fixed + 0xffe80000, 0, 0x9999, 0,
+                      EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                          EFFECT_SCALE_TO_TARGET | EFFECT_USE_PRIORITY | 1,
+                      &options);
   }
   WAIT(60);
 }
@@ -2510,9 +2513,9 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     particleY = hama->y.fixed +
                 ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
     riseSpeed = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + (128 << 8);
-    FieldFx_Spawn(particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
-                  EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                  &options);
+    FieldEffect_Spawn(
+        particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
+        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
     Engine_TaskWait(2);
   }
   Engine_AudioPlayCue(SE_220);

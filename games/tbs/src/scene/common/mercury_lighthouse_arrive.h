@@ -46,7 +46,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
     actor->motionFlags = 3;
     actor->update = NULL;
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
     Engine_EventEnd();
   }
 }

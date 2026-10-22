@@ -20,10 +20,10 @@
 /// the scene's one exit takes the party into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
 /// One's quest (Sanctum_RequestQuestAcceptance). The tremors are Map_SetShake
-/// calls, each with a flash (FieldFx_LastLightning) and SE_145, over a burst
-/// of red flashes on the warm colours (FieldFx_StartBufferBlend). The scene
-/// sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's
-/// entrance scene does (sol_sanctum_entrance.c).
+/// calls, each with a flash (FieldEffect_LastLightning) and SE_145, over a
+/// burst of red flashes on the warm colours (FieldEffect_StartBufferBlend). The
+/// scene sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol
+/// Sanctum's entrance scene does (sol_sanctum_entrance.c).
 ///
 /// Open questions:
 /// - None.
@@ -153,8 +153,8 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
-  FieldFx_StartBufferBlend(PALETTE_TRANSFORM_WARM, PALETTE_TRANSFORM_RED);
-  FieldFx_LastLightning();
+  FieldEffect_StartBufferBlend(PALETTE_TRANSFORM_WARM, PALETTE_TRANSFORM_RED);
+  FieldEffect_LastLightning();
   Engine_TaskWait(60);
   Camera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);
   Engine_CameraWaitForMove();
@@ -169,14 +169,14 @@ static void Event_ReturnFromMtAleph(void) {
   Camera_MoveTo(PIXELS(256), -1, PIXELS(500), 1);
   Engine_EventWait(20);
   Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Event_PlayCue(SE_145);
   Engine_EventWait(30);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Event_PlayCue(SE_145);
   Engine_CameraWaitForMove();
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Event_PlayCue(SE_145);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
@@ -221,7 +221,7 @@ static void Event_ReturnFromMtAleph(void) {
   Event_ShowMessage(ACTOR_DORA, 0);
   Engine_EventWait(60);
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Event_PlayCue(SE_145);
   Engine_EventWait(60);
   Engine_ActorFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
@@ -469,7 +469,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Event_PlayCue(SE_145);
   Engine_EventWait(30);
   work = gEventWork;

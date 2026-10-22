@@ -21,6 +21,6 @@
 	.set import.Engine_ActorSetAnimation, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

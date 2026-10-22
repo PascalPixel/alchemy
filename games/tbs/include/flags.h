@@ -93,8 +93,8 @@
 /// clears it when the after event has trigger bit 0x400 and plays its own; the
 /// before event's script may clear it too.
 #define FLAG_PSYNERGY_EFFECT 0x140
-/// Aim the effect at the actor ahead (FieldFx_DispatchRequestKind) rather
-/// than run the kind's untargeted body (FieldFx_Run, where Halt still stops
+/// Aim the effect at the actor ahead (FieldEffect_DispatchRequestKind) rather
+/// than run the kind's untargeted body (FieldEffect_Run, where Halt still stops
 /// the nearest actor when it has a talk event, and Force and Reveal run their
 /// PSYNERGY_PHASE_EFFECT_ACTS event). Field_UsePsynergy keeps it set only when
 /// a scene event applies to what the leader faces.
@@ -143,8 +143,8 @@
 /// normal play; a reader outside the debug keys would say otherwise.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// Set, the highest of these picks the tint a field Psynergy effect fades
-/// toward, gFieldFx_TargetColors[n], in place of the frame counter's pick
-/// (FieldFx_FadeToEffectColor).
+/// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
+/// (FieldEffect_FadeToEffectColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// In debug mode, each step beeps (SE_135) while fewer than 136 of the 512
 /// resource blocks are free.

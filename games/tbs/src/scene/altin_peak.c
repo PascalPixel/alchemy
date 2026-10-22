@@ -483,7 +483,7 @@ static void AltinPeak_RideCart(s32 log) {
   Engine_AudioPlayCue(SE_159);
   AltinPeak_RollCart(log, 0);
   Engine_TaskWait(20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
 }
 
 /// The party fights the first water beast. Talking to (or reading the mind of)
@@ -802,7 +802,7 @@ static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
   Engine_AudioPlayCue(SE_125);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   Engine_TaskWait(20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -826,7 +826,7 @@ static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
   Engine_AudioPlayCue(SE_125);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   Engine_TaskWait(20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -845,7 +845,7 @@ static void AltinPeak_FlipPoolRoomSwitch(void) {
     GameFlag_Set(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH);
   }
   Engine_TaskWait(20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -864,7 +864,7 @@ static void AltinPeak_FlipSpritzRoomSwitch(void) {
     GameFlag_Set(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH);
   }
   Engine_TaskWait(20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -1976,7 +1976,7 @@ static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
   SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
   gAltinPeak_SprayDirection = facing;
 
-  FieldFx_SetQueuedSoundAndPlay(SE_170);
+  FieldEffect_SetQueuedSoundAndPlay(SE_170);
   FieldScheduler_AddCallback(AltinPeak_SpawnSpray, TASK_PRIORITY_SCENE);
 }
 
@@ -2042,7 +2042,7 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
   Engine_PsynergyLowerHands();
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
-  FieldFx_End();
+  FieldEffect_End();
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 }

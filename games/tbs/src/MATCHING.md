@@ -277,10 +277,10 @@ each keeps its spelling until it is.
   `WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER)` (`TretPalette_UpdateSceneTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
   `*(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER)`
-  (`FieldFx_FadeToEffectColor`). It's also reached from a
+  (`FieldEffect_FadeToEffectColor`). It's also reached from a
   neighbouring slot, as in Menus below: as
   `gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND]`
-  (`FieldFx_UpdateLightning`), or as
+  (`FieldEffect_UpdateLightning`), or as
   `workCells[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_EVENT]` through
   `(u32 *)&gEventWork` (`Shop_SaveAndTintFieldPalette`), which is undefined
   behaviour with `gPaletteBufferWork` behind `UBFIX`.

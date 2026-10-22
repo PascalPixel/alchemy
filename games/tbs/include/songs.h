@@ -421,15 +421,15 @@
 /// A scene transition effect.
 #define SE_SCENE_TRANSITION 167
 /// The ambient sound a scene queues in Lama Temple, Xian and the Manticore's
-/// part of Lamakan Desert (FieldFx_SetQueuedSoundAndPlay).
+/// part of Lamakan Desert (FieldEffect_SetQueuedSoundAndPlay).
 #define SE_169 169
-/// The ambient sound a scene queues (FieldFx_SetQueuedSoundAndPlay) with the
-/// ground particles and Altin's water-spitting beasts, and in Fuchin Temple,
-/// Vale, Kalay's tunnel, Mercury and Venus Lighthouse and the Goma Cave
+/// The ambient sound a scene queues (FieldEffect_SetQueuedSoundAndPlay) with
+/// the ground particles and Altin's water-spitting beasts, and in Fuchin
+/// Temple, Vale, Kalay's tunnel, Mercury and Venus Lighthouse and the Goma Cave
 /// entrance.
 #define SE_170 170
-/// Thunder: lightning on the field (FieldFx_UpdateLightning), the flash in Sol
-/// Sanctum's Luna room as the scene opens on Kraden, the flash of a Lucky
+/// Thunder: lightning on the field (FieldEffect_UpdateLightning), the flash in
+/// Sol Sanctum's Luna room as the scene opens on Kraden, the flash of a Lucky
 /// Wheels win, and the Jupiter battle effect.
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
@@ -623,8 +623,8 @@
 /// ★ Named from what the player sees: a Colosso warrior appearing (its render)
 #define SE_COLOSSO_WARRIOR_APPEAR 252
 /// The first voice blip of a message: an actor's voice is 0x100 plus its
-/// sprite's value (FieldFx_GetResourceId), and every few letters typed play it
-/// plus the letter code's low two bits (UiWork_StepChannelScript).
+/// sprite's value (FieldEffect_GetResourceId), and every few letters typed play
+/// it plus the letter code's low two bits (UiWork_StepChannelScript).
 #define SE_256 256
 #define SE_257 257 ///< voice blip
 #define SE_258 258 ///< voice blip
@@ -663,7 +663,7 @@
 #define SE_STOP_SLOT3 288
 /// An effect pair spawned in the eruption at Sol Sanctum.
 #define SE_292 292
-/// Played before each queued scene sound (FieldFx_SetQueuedSoundAndPlay).
+/// Played before each queued scene sound (FieldEffect_SetQueuedSoundAndPlay).
 #define SE_298 298
 /// Tolbi Spring: 50 frames into a toss.
 #define SE_300 300

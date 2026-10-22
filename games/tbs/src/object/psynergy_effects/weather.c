@@ -5,14 +5,14 @@
 #include "../psynergy_effects_internal.h"
 
 /// Scheduler callback: animates the ground particles. Each plays a 16-frame
-/// animation (gFieldFx_GroundParticleFrames, 5 halfwords a frame: x and y
+/// animation (gFieldEffect_GroundParticleFrames, 5 halfwords a frame: x and y
 /// offsets, tile, shape and size) on a random spot of ground within 128 pixels
 /// of the leader, then starts again elsewhere. The timer counts down, so the
 /// rows play from the last: each comes down slantwise onto its spot and stays
 /// there for its last seven frames. They freeze while FLAG_WEATHER_HELD is set.
 /// Vale runs them with the lightning while FLAG_VALE_STORM is set
 /// (vale_gate.c).
-void FieldFx_UpdateGroundParticles(void) {
+void FieldEffect_UpdateGroundParticles(void) {
   struct MapScrollWork *view = gMapWork[0];
   struct GroundParticleWork *work = gMapWork[21];
   s32 *camera = &view->viewX;
@@ -32,7 +32,7 @@ void FieldFx_UpdateGroundParticles(void) {
     // frame should be held is not established, so keep the original timing.
     if (GameFlag_TestFar(FLAG_WEATHER_HELD))
       particle->timer++;
-    frame = &gFieldFx_GroundParticleFrames[5 * particle->timer];
+    frame = &gFieldEffect_GroundParticleFrames[5 * particle->timer];
     x = (particle->posX - cameraX) / 0x10000 + *frame++;
     y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
     if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
@@ -68,7 +68,7 @@ void FieldFx_UpdateGroundParticles(void) {
 /// thunderclap (louder with loud set) and sets the timer to 51 to 549 frames
 /// for the next. FLAG_WEATHER_HELD holds the next burst back, and a timer below
 /// 0 stops the lightning.
-void FieldFx_UpdateLightning(void) {
+void FieldEffect_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
   struct ColorBuffer *target =
       gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND];
@@ -112,13 +112,13 @@ void FieldFx_UpdateLightning(void) {
   }
 }
 
-/// Starts the ground particles (FieldFx_UpdateGroundParticles) with SE_170:
+/// Starts the ground particles (FieldEffect_UpdateGroundParticles) with SE_170:
 /// loads their tiles and puts 32 of them under the leader with staggered
 /// timers, drawn semi-transparent. Their work is HEAP_SLOT_GROUND_PARTICLES,
 /// which the motes and sparkles also take. SE_170 is queued
-/// (FieldFx_SetQueuedSoundAndPlay), so it plays again wherever the queued
+/// (FieldEffect_SetQueuedSoundAndPlay), so it plays again wherever the queued
 /// sound is replayed, as after a Psynergy effect.
-void FieldFx_StartGroundParticles(void) {
+void FieldEffect_StartGroundParticles(void) {
   struct GroundParticleWork *work;
   s32 *leader;
   struct GroundParticle *particle;
@@ -131,12 +131,12 @@ void FieldFx_StartGroundParticles(void) {
   work = Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES,
                                sizeof(struct GroundParticleWork));
   leader = ((struct MapScrollWork *)gMapWork[0])->origin;
-  FieldFx_SetQueuedSoundAndPlay(SE_170);
+  FieldEffect_SetQueuedSoundAndPlay(SE_170);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
   words = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLz(gFieldFx_GroundParticleTiles, words);
+  Resource_DecodeByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
@@ -160,7 +160,7 @@ void FieldFx_StartGroundParticles(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateGroundParticles, 0xc80);
 }
 
 /// A particle's first word, seen as a value or a link.
@@ -262,7 +262,7 @@ void FieldMotes_Start(void) {
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLz(gFieldFx_MoteTiles, tiles);
+  Resource_DecodeByteLz(gFieldEffect_MoteTiles, tiles);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
@@ -295,11 +295,11 @@ void FieldMotes_Start(void) {
 /// Scheduler callback: the sparkles. Now and then (1 frame in 256) a sparkle
 /// appears on the ground within 128 pixels of the leader, and up to three more
 /// follow on the same spot, each 4 frames shorter. Each plays
-/// gFieldFx_SparkleFrames from the row its timer starts at down to row 0,
+/// gFieldEffect_SparkleFrames from the row its timer starts at down to row 0,
 /// coming down onto the spot, flipping every other frame. No new bursts start
 /// while the work's stopped is set; FLAG_WEATHER_HELD freezes them. Sol
 /// Sanctum's eruption scene starts them (sol_sanctum_eruption.c).
-void FieldFx_UpdateSparkles(void) {
+void FieldEffect_UpdateSparkles(void) {
   struct GroundParticleWork *work;
   u32 spawned;
   u32 i;
@@ -337,7 +337,7 @@ void FieldFx_UpdateSparkles(void) {
       cameraZ = camera[1];
       if (GameFlag_TestFar(FLAG_WEATHER_HELD) != 0)
         sparkle->timer++;
-      frame = (const u16 *)&gFieldFx_SparkleFrames[sparkle->timer >> 1];
+      frame = (const u16 *)&gFieldEffect_SparkleFrames[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
       x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
@@ -399,9 +399,9 @@ void FieldFx_UpdateSparkles(void) {
   } while (i < FIELD_WEATHER_PARTICLE_COUNT);
 }
 
-/// Starts the sparkles (FieldFx_UpdateSparkles): loads their tiles and
+/// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
 /// clears the 32 sparkles.
-void FieldFx_InitSparkles(void) {
+void FieldEffect_InitSparkles(void) {
   u32 size = 0x410;
   struct GroundParticleWork *work =
       Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES, size);
@@ -416,7 +416,7 @@ void FieldFx_InitSparkles(void) {
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLz(gFieldFx_SparkleTiles, tiles);
+  Resource_DecodeByteLz(gFieldEffect_SparkleTiles, tiles);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x200, tiles);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
@@ -447,15 +447,15 @@ void FieldFx_InitSparkles(void) {
     i++;
     sparkle++;
   } while (i < FIELD_WEATHER_PARTICLE_COUNT);
-  Scheduler_AddOrUpdateCallback(FieldFx_UpdateSparkles, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
 }
 
-/// Starts the storm's lightning (FieldFx_UpdateLightning): builds the dark
+/// Starts the storm's lightning (FieldEffect_UpdateLightning): builds the dark
 /// (0x10003, PALETTE_TRANSFORM_WARM) and lit (0x10005, PALETTE_TRANSFORM_PALE)
 /// BG colours and their 12-step fade, and arms the first burst to end in 600
 /// frames, repeating. The work is heap block HEAP_SLOT_FIELD_BLEND, which the
 /// other lightning calls look up again. Vale's storm scenes call it.
-void FieldFx_StartLightning(void) {
+void FieldEffect_StartLightning(void) {
   struct FieldBlendWork *work;
   struct ColorBuffer *buffers;
 
@@ -469,11 +469,11 @@ void FieldFx_StartLightning(void) {
   ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
-  Scheduler_AddOrUpdateCallback(FieldFx_UpdateLightning, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateLightning, 0xc80);
 }
 
 /// Stops the lightning: no flash for 0x7fff frames, and none after.
-void FieldFx_StopLightning(void) {
+void FieldEffect_StopLightning(void) {
   struct FieldBlendWork *state = Runtime_AllocateBlock(
       HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 0x7FFF;
@@ -481,9 +481,9 @@ void FieldFx_StopLightning(void) {
 }
 
 /// One last burst of lightning, its first flash two frames from now (timer
-/// 12; FieldFx_UpdateLightning flashes at 11), then no more. Vale's storm and
-/// eruption scenes call it.
-void FieldFx_LastLightning(void) {
+/// 12; FieldEffect_UpdateLightning flashes at 11), then no more. Vale's storm
+/// and eruption scenes call it.
+void FieldEffect_LastLightning(void) {
   struct FieldBlendWork *state = Runtime_AllocateBlock(
       HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 12;
@@ -492,7 +492,7 @@ void FieldFx_LastLightning(void) {
 
 /// Restarts the lightning: the next burst ends in 128 frames, its first flash
 /// 118 frames from now, and bursts repeat.
-void FieldFx_ResumeLightning(void) {
+void FieldEffect_ResumeLightning(void) {
   struct FieldBlendWork *state = Runtime_AllocateBlock(
       HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 128;
@@ -504,7 +504,7 @@ void FieldFx_ResumeLightning(void) {
 /// modes) on the BG colours, ending 120 frames from now, and no more after.
 /// Vale's eruption calls it with the warm and red transforms
 /// (vale_eruption.c).
-void FieldFx_StartBufferBlend(s32 from, s32 to) {
+void FieldEffect_StartBufferBlend(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct ColorBuffer *buffers;
   s16 *target;
@@ -520,5 +520,5 @@ void FieldFx_StartBufferBlend(s32 from, s32 to) {
   ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
-  Scheduler_AddOrUpdateCallback(FieldFx_UpdateLightning, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateLightning, 0xc80);
 }

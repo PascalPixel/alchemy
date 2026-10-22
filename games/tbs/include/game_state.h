@@ -113,7 +113,7 @@ struct GameState {
   u8 paletteGlow[2];  ///< window hue (0 to 23), brightness (0 to 14)
   u8 unk207[3];       ///< not named by TBS code
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
-  /// sound as their message types (FieldFx_GetResourceId).
+  /// sound as their message types (FieldEffect_GetResourceId).
   u8 speech;
   u8 unk20b;       ///< 1 on a new game; not read by name in TBS
   u8 messageSpeed; ///< 0 to 2; 1 on a new game

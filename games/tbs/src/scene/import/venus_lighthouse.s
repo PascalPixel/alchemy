@@ -74,7 +74,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.FieldFx_StartFadeOverlay, 1
+	.set import.FieldEffect_StartFadeOverlay, 1
 	.ifdef TBS_EDITION_ES
 	.set import.Field_EndBusyAndReveal, 1
 	.endif
@@ -85,7 +85,7 @@
 	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.set import.Engine_ActorWalkByAndWait, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

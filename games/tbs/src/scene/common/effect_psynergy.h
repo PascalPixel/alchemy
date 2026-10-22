@@ -13,4 +13,4 @@ void Scene_BeginCutscenePsynergy(void) {
 }
 
 /// Ends the cutscene's Psynergy and releases its effect work.
-void Scene_EndCutscenePsynergy(void) { FieldFx_End(); }
+void Scene_EndCutscenePsynergy(void) { FieldEffect_End(); }

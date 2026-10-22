@@ -21,7 +21,7 @@ s32 Func_080dbca8(s32 x, s32 z, s32 layer);
 
 /// Scheduler callback of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
-void FieldFx_CheckCloakTile(void) {
+void FieldEffect_CheckCloakTile(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct OwnerObject *owner =
       ObjectTable_Get(EventRuntime_GetControlledOwner());

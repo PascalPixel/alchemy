@@ -1394,7 +1394,7 @@ struct SceneEvent gKolimaForestEntrance_Events[] = {
 };
 
 s32 gKolimaForestEntrance_SparkleScript[] = {
-    SC_CALL(FieldFx_StretchUntilArrived),
+    SC_CALL(FieldEffect_StretchUntilArrived),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

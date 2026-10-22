@@ -17,7 +17,7 @@ struct BattleFxScene {
   void *volatile mainObject;
 };
 
-void FieldFx_RunMove(void) {
+void FieldEffect_RunMove(void) {
   /* FAKEMATCH: an unused 12-byte local explains the native 12-byte frame. */
   s32 work[3];
   struct BattleFxScene *scene;

@@ -1,6 +1,6 @@
 	.section .rodata
 @ The pulse scales, the rope, vine and chain sprites and the particle
-@ scripts after gFieldFx_SparkleFrames, in the order of The Broken Seal's
+@ scripts after gFieldEffect_SparkleFrames, in the order of The Broken Seal's
 @ object/fxdata.c, which has no sprites here. Object scripts are words in
 @ this game's command numbers: 0x00 wait, 0x01 sync, 0x06 face the link,
 @ 0x0d loop, 0x16 set, 0x26 free, 0x27 argument.

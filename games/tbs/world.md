@@ -329,7 +329,7 @@ Choosing it from the menu or a shortcut key raises the `psynergy` request, and
 scene's Psynergy events for what the leader faces. It runs the
 `PSYNERGY_PHASE_BEFORE_CAST` event, plays the effect for the ability's field
 kind (`enum FieldKind`, from the `type` column of `src/game/actions.tsv`)
-through `FieldFx_Run`, or `FieldFx_DispatchRequestKind` when an event names
+through `FieldEffect_Run`, or `FieldEffect_DispatchRequestKind` when an event names
 the target, then runs the `PSYNERGY_PHASE_AFTER_CAST` event.
 
 Whether a stone pillar slides under Move is decided by the scene's event, not

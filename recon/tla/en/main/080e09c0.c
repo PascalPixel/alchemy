@@ -6,8 +6,8 @@
 // first and the event takes r0, which moves the registers of the opening and
 // the object copies after it. The sprite flags in the order priority,
 // palette, palette256 measure best (66-96 otherwise). The two resources are
-// 0x1ea and 0x1eb in directory.s (FieldFx_SparkleFade,
-// FieldFx_StarSparkleFade), still unnamed there.
+// 0x1ea and 0x1eb in directory.s (FieldEffect_SparkleFade,
+// FieldEffect_StarSparkleFade), still unnamed there.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

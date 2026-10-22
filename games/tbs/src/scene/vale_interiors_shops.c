@@ -331,7 +331,7 @@ static void Event_WorryAboutTravelersHealth(void) {
 /// closes, stopping the lightning first on the stormy night.
 static void ValeInteriorsShops_RequestWindowExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
-    FieldFx_StopLightning();
+    FieldEffect_StopLightning();
   Engine_AudioPlayCue(SE_MAP_EXIT);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -427,14 +427,14 @@ s32 ValeInteriorsShops_Initialize(void) {
     Engine_ActorSetPosition(ACTOR_ITEM_MERCHANT, 0, 0);
     Engine_ActorSetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
     Engine_ActorSetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
-    FieldFx_StartLightning();
+    FieldEffect_StartLightning();
     (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_SceneMapStateOffset))
         ->loud = 1;
-    FieldFx_LastLightning();
+    FieldEffect_LastLightning();
     Engine_TaskWait(30);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    FieldFx_ResumeLightning();
+    FieldEffect_ResumeLightning();
   }
   // The returning party gets the household reunion only on its first visit.
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {

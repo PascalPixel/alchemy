@@ -238,7 +238,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     } while (pick >= 0);
   }
   sum = entry->enemies[i];
-  FieldFx_SelectBattleCue(zone, i);
+  FieldEffect_SelectBattleCue(zone, i);
   return sum;
 }
 
@@ -357,7 +357,7 @@ extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *rule = gScene_AreaNameRules;
   s32 name = 0;
-  s32 group = FieldFx_GetResourceGroup(scene);
+  s32 group = FieldEffect_GetResourceGroup(scene);
 
   while (rule->id != -1) {
     if (rule->useSceneId) {
@@ -468,7 +468,7 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
 /// Encounter_SelectEnemyGroup for a random battle, by the battle requests
 /// (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle with
 /// zone 0) and by the scene event runner (events.c).
-void FieldFx_SelectBattleCue(s32 zone, s32 slot) {
+void FieldEffect_SelectBattleCue(s32 zone, s32 slot) {
   u16 key = (zone << 4) + slot;
   const u16 *table = gEncounter_BattleMusic;
   // Encounter keys have bit 15 clear. battle_cue.c starts with a nonzero

@@ -5,7 +5,7 @@
 // fixes it but reorders the opening, 18; a one-pass block 14), the search
 // counter's save among the position stores, and the glow's store and the
 // motion flags pointer's copy after the scale's address. The resource is
-// directory entry 0x1da, FieldFx_RingOrb: adoption names it RingOrb in
+// directory entry 0x1da, FieldEffect_RingOrb: adoption names it RingOrb in
 // system/resource/directory.s. The object search has a counter of its own, as
 // the ROM keeps it in r4 and saves it around the call (one i for every loop
 // takes r5, 38 -> 20); the slot is stored before the tile (46 -> 38), the

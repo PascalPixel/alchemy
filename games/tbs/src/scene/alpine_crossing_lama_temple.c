@@ -416,7 +416,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gLamaTemple_DoorCloseCells, DOOR_X, DOOR_Y);
   Engine_EventWait(60);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
 
   // Garet asks whether the leader means to leave Hama's words unasked.
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -911,7 +911,7 @@ s32 Scene_Initialize(void) {
     // Lama Temple: the temple's queued sound (SE_169) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
-    FieldFx_SetQueuedSoundAndPlay(SE_169);
+    FieldEffect_SetQueuedSoundAndPlay(SE_169);
     Engine_ActorSetAnimation(ACTOR_MEDITATING_MONK, ANIM_MONK_MEDITATE);
     Engine_ActorSetAnimation(ACTOR_MONK_SENSING_ANXIETY, ANIM_MONK_MEDITATE);
     Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIM_MOSSY);

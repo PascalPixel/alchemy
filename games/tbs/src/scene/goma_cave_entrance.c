@@ -88,7 +88,7 @@ enum GomaCaveEntranceActor {
   ACTOR_SUNKEN_STUMP,
   /// Unused: two Move hands and a third stump, placed at the map's origin
   /// outside the camera's bounds. Nothing in the overlay addresses them, and
-  /// Move spawns its own hand (FieldFx_StartItemBreak), so the player never
+  /// Move spawns its own hand (FieldEffect_StartItemBreak), so the player never
   /// sees them.
   /// ★ Named from what the player sees: a large open hand, spr_215.png (its
   /// render)
@@ -196,7 +196,7 @@ static void Event_PushWestPillar(void) {
   WAIT(20);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_MoveWestPillar();
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   EV_END();
 }
 
@@ -226,7 +226,7 @@ s32 Scene_Initialize(void) {
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   WAIT(10);
-  FieldFx_SetQueuedSoundAndPlay(SE_170);
+  FieldEffect_SetQueuedSoundAndPlay(SE_170);
   OBJ_MODE(ACTOR_SUNKEN_STUMP, STUMP_ANIM_SINK);
   Object_GetById(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
@@ -281,7 +281,7 @@ static void Event_IvanRejoins(void) {
   struct FieldActor *leader;
 
 #if TBS_PATCH_1
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
 #endif
   EV_BEGIN();
   WAIT(30);
@@ -372,7 +372,7 @@ static void Event_IvanRejoins(void) {
     OBJ_MODE(IVAN, ANIM_STAND);
     WAIT(20);
 #if TBS_PATCH_1
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
 #endif
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -511,13 +511,13 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   u8 flags;
 
   effectWork = gEffectWork;
-  FieldFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
-  FieldFx_SetupObjectPair(IVAN, ACTOR_STUMP_IVY);
+  FieldEffect_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
+  FieldEffect_SetupObjectPair(IVAN, ACTOR_STUMP_IVY);
   flags = (u8)effectWork->messageMode | POSITIONED_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   EventObject_Initialize();
   Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
-  FieldFx_StopCasterHook();
+  FieldEffect_StopCasterHook();
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
@@ -569,8 +569,8 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
     SET_POSITION(v, Engine_MathCos(i << 12), 0, Engine_MathSin(i << 12));
     v->x -= v->x / 4;
     v->z -= v->z / 2;
-    FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, v->x, v->y,
-                  v->z, 0, NULL);
+    FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, v->x,
+                      v->y, v->z, 0, NULL);
   }
   stump->velocityY = PIXELS(5);
   Engine_ActorSetDestination(stumpId, 139, 196);
@@ -590,7 +590,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   p->startScaleY = 4 * Q16_ONE / 5;
   p->targetScaleX = 3 * Q16_ONE / 2;
   p->targetScaleY = 6 * Q16_ONE / 5;
-  FieldFx_Spawn(
+  FieldEffect_Spawn(
       stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, p);
   Engine_AudioPlayCue(SE_CAST);

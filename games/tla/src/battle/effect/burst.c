@@ -100,7 +100,7 @@ void Func_080dda30(s32 unused) {
 }
 #endif
 
-void FieldFx_RunGrowth(void) {
+void FieldEffect_RunGrowth(void) {
   u8 *state = Ram_HeapSlots->effectWork;
   struct BurstParticleVector position;
   struct BurstParticleVector *p;

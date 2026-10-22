@@ -401,7 +401,7 @@ static void Event_AskWhetherMaskedManWasFelix(void) {
 /// Called by the exit events below.
 static void ValeInteriorsInn_CloseScreenAndExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    FieldFx_StopLightning();
+    FieldEffect_StopLightning();
   }
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -556,14 +556,14 @@ s32 ValeInteriorsInn_Initialize(void) {
             ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
                 SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-              FieldFx_StartLightning();
+              FieldEffect_StartLightning();
               ((struct FieldBlendWork *)WORK_SLOT(HEAP_SLOT_FIELD_BLEND))
                   ->loud = 1;
-              FieldFx_LastLightning();
+              FieldEffect_LastLightning();
               Engine_TaskWait(30);
               Engine_EventOpenScreen();
               Engine_EventWaitForScreen();
-              FieldFx_ResumeLightning();
+              FieldEffect_ResumeLightning();
             } else {
               Engine_MapRedraw();
               Engine_TaskWait(1);
@@ -643,14 +643,14 @@ static void Event_DoraWakesIsaac(void) {
   (*eventSlot)->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   (*eventSlot)->transitionFrames = 64;
-  FieldFx_StartLightning();
+  FieldEffect_StartLightning();
   (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_SceneMapStateOffset))
       ->loud = 1;
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Engine_TaskWait(30);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  FieldFx_ResumeLightning();
+  FieldEffect_ResumeLightning();
   // "The Mt. Aleph Boulder is going to fall!" "Come on, Isaac. We have to go
   // now!"
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
@@ -797,9 +797,9 @@ static void Event_HurryToThePlaza(void) {
   DisplayBlend_SuspendScript();
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
-  FieldFx_StartLightning();
+  FieldEffect_StartLightning();
   ((struct FieldBlendWork *)WORK_SLOT(HEAP_SLOT_FIELD_BLEND))->loud = 1;
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Engine_TaskWait(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).
   Engine_CameraFollowActor(ACTOR_DORA, 1);
@@ -1254,7 +1254,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
     struct FieldActor *effectActor = pair[0];
     struct AnimationObject *effectSprite = effectActor->sprite;
 
-    effectActor->update = FieldFx_AnimateVerticalNegative;
+    effectActor->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
@@ -1262,7 +1262,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
     struct AnimationObject *effectSprite = effectActor->sprite;
 
     effectSprite->image.priority = 2;
-    effectActor->update = FieldFx_AnimateVerticalPositive;
+    effectActor->update = FieldEffect_AnimateVerticalPositive;
     effectActor->priorityFlags = 2;
   }
 }
@@ -1290,7 +1290,7 @@ static void ValeInteriorsInn_DemonstrateCatch(void) {
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  FieldFx_End();
+  FieldEffect_End();
 }
 
 s32 gValeInteriorsInn_LeaveHouseScript[] = {

@@ -51,7 +51,7 @@
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_ActorLookup, 1
-	.set import.FieldFx_StartFadeOverlay, 1
+	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Djinn_JoinParty, 1

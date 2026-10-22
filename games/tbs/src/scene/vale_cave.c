@@ -324,8 +324,9 @@ ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
     s32 particleX = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + baseX;
     s32 particleZ = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + baseZ;
 
-    FieldFx_Spawn(particleX, 0, particleZ, 0, 0, 0,
-                  EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, particleOptions);
+    FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                      particleOptions);
     Object_GetById(actorId)->y.fixed -= PIXELS(1) / 2;
     Engine_EventWait(1);
   }
@@ -957,10 +958,10 @@ static void Event_TouchRidingLog(void) {
   Engine_ActorSetAnimation(ACTOR_RIDING_LOG, 2);
 }
 
-// The lifetimes FieldFx_Spawn gives its effects through gEffectScripts: an
-// effect waits 23, 45 or 127 frames, then is put away and freed. FieldFx_Spawn
-// divides a change of scale by the loop count in each one's fourth word, so
-// that the effect reaches its scale as its time runs out.
+// The lifetimes FieldEffect_Spawn gives its effects through gEffectScripts: an
+// effect waits 23, 45 or 127 frames, then is put away and freed.
+// FieldEffect_Spawn divides a change of scale by the loop count in each one's
+// fourth word, so that the effect reaches its scale as its time runs out.
 
 s32 gValeCave_ShortEffectScript[] = {
     SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),

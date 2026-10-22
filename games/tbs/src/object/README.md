@@ -128,7 +128,7 @@ set, on zone 0, while Cloak is active, or on a zone with rate 0. Otherwise:
    is added to `gGameState.encounterSteps`. A battle starts when that reaches
    `work->encounterThreshold`, 16 in 16.16 fixed point.
 4. One of the zone's eight enemy groups is drawn by weight, and
-   `FieldFx_SelectBattleCue` picks the music.
+   `FieldEffect_SelectBattleCue` picks the music.
 
 There is also no battle while flag 5 (`FLAG_IN_PARTY` for Jenna) is set and her
 experience is above 130. Jenna is in the party only from Vale to the Sol
@@ -200,7 +200,7 @@ sequenceDiagram
     U->>U: refuse, or pay the PP
     U->>S: look up the events for what the leader faces
     U->>S: run PSYNERGY_PHASE_BEFORE_CAST
-    U->>E: FieldFx_Run, or FieldFx_DispatchRequestKind on a target
+    U->>E: FieldEffect_Run, or FieldEffect_DispatchRequestKind on a target
     U->>S: run PSYNERGY_PHASE_AFTER_CAST
 ```
 
@@ -223,7 +223,7 @@ the effect aim at a target, and the effects that act on one (Force, Frost,
 Reveal) find it themselves.
 
 [`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs the field
-kind's effect: `FieldFx_Run` with no target, `FieldFx_DispatchRequestKind`
+kind's effect: `FieldEffect_Run` with no target, `FieldEffect_DispatchRequestKind`
 with one. The second clears `scene->enabled` first, which is how the runners
 both share (Force, Frost, Ply, Whirlwind, Catch) tell that a scene event, not
 the effect, decides what happens to the target: a stone pillar moves under
@@ -239,7 +239,7 @@ effects](../effect/README.md) do:
 Halt is dispatched in `dispatch.c` itself: only one actor is held at a time
 (`gGameState.pausedObject`), so casting it again frees the one held before.
 Mind Read is the one effect that stays up through the after event, since the
-after event is the conversation it reads; `FieldFx_ClearChildValueOnMismatch`
+after event is the conversation it reads; `FieldEffect_ClearChildValueOnMismatch`
 ends it.
 
 The field kind is the `type` column of `games/tbs/src/game/actions.tsv`,
@@ -285,7 +285,7 @@ every place the party has visited, and L zooms the moving view out.
 ![On the world map, R brings up the still picture of the whole world, a hand on the party's place beside a `Present location` window; the hand moves right and up across the map, sits back on the party's place while L is held, and A closes the picture.](https://alchemy.pascalpixel.com/guides/object/world-map-picture.gif)
 
 On the world map, L and R don't use their shortcuts. L raises
-`FIELD_EVENT_WORLD_MAP_ZOOM`, and `FieldFx_RunVisibilityTransition` sets the
+`FIELD_EVENT_WORLD_MAP_ZOOM`, and `FieldEffect_RunVisibilityTransition` sets the
 view 1.6 times as far while L is held. R raises `FIELD_EVENT_WORLD_MAP_PICTURE`,
 and `Map_ShowWorldMap` shows a still picture of the whole world with a marker
 on every place the party has visited. A cursor moves with the d-pad, faster the
@@ -415,7 +415,7 @@ Prototypes are in `games/tbs/include/unit/object/`.
 | `DisplayTransition_` | the window transitions and dissolves between scenes |
 | `WorldMap_` | starting and ending an event or menu on the world map |
 | `EffectSlot_` | effect slots |
-| `FieldFx_` | field effects: a field kind's runner is named for its Psynergy (`FieldFx_RunCatch`), and the small effects scenes spawn go through `FieldFx_Spawn` |
+| `FieldEffect_` | field effects: a field kind's runner is named for its Psynergy (`FieldEffect_RunCatch`), and the small effects scenes spawn go through `FieldEffect_Spawn` |
 | `ColorBuffer_` | the colour buffer, which moves the palettes toward target colours |
 | `ReelGame_`, `LzPack_` | the slot machine, and the packer beside it |
 

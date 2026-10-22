@@ -1,5 +1,5 @@
 	.section .rodata
-	.global FieldFx_Runes
-FieldFx_Runes:
+	.global FieldEffect_Runes
+FieldEffect_Runes:
 	.incbin "games/tla/src/graphics/field_fx/runes.8bpp.lz"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes

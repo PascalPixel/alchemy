@@ -1289,7 +1289,7 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
     struct FieldActor *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
-    effect->update = FieldFx_AnimateVerticalNegative;
+    effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = parent->sprite->image.priority;
   }
   {
@@ -1297,7 +1297,7 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = parent->sprite->image.priority;
-    effect->update = FieldFx_AnimateVerticalPositive;
+    effect->update = FieldEffect_AnimateVerticalPositive;
     effect->priorityFlags = 2;
   }
 }
@@ -1823,11 +1823,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   menardiBurst.startScaleY = Q16_ONE;
   for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
     VenusLighthouseAerie_AimBurst(velocity, sceneStep << 12);
-    FieldFx_Spawn(menardi->x.fixed, menardi->y.fixed, menardi->z.fixed,
-                  velocity[0], velocity[1], velocity[2],
-                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                      EFFECT_USE_PALETTE,
-                  &menardiBurst);
+    FieldEffect_Spawn(menardi->x.fixed, menardi->y.fixed, menardi->z.fixed,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE,
+                      &menardiBurst);
   }
   Event_PlayCue(SE_212);
   Task_Wait(6);
@@ -1839,11 +1839,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   saturosBurst.startScaleY = Q16_ONE;
   for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
     VenusLighthouseAerie_AimBurst(velocity, sceneStep << 12);
-    FieldFx_Spawn(saturos->x.fixed, saturos->y.fixed, saturos->z.fixed,
-                  velocity[0], velocity[1], velocity[2],
-                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                      EFFECT_USE_PALETTE,
-                  &saturosBurst);
+    FieldEffect_Spawn(saturos->x.fixed, saturos->y.fixed, saturos->z.fixed,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE,
+                      &saturosBurst);
   }
   Event_PlayCue(SE_212);
   Actor_Jump(IVAN, 6, 20);

@@ -21,17 +21,17 @@ void BattleEffect_DispatchRequestKind(void);
 void BattleEffect_ClearChildValueOnMismatch(void);
 void FieldEvent_RunTypeHandler(void);
 
-void FieldFx_RunMove(void);
+void FieldEffect_RunMove(void);
 void Func_080ddea8(void);
 void Func_080df6f4(void);
 void Func_080de21c(void);
-void FieldFx_RunDouse(void);
-void FieldFx_RunWhirlwind(void);
-void FieldFx_RunFrost(void);
-void FieldFx_RunPly(void);
-void FieldFx_RunGrowth(void);
+void FieldEffect_RunDouse(void);
+void FieldEffect_RunWhirlwind(void);
+void FieldEffect_RunFrost(void);
+void FieldEffect_RunPly(void);
+void FieldEffect_RunGrowth(void);
 void Func_080e03cc(void);
-void FieldFx_RunRetreat(void);
+void FieldEffect_RunRetreat(void);
 void BattleEffect_RunEffect16(void);
 void Func_080decb8(void);
 void Func_080dd820(void);
@@ -62,12 +62,12 @@ void Func_080dc978(s32 sourceId, s32 targetId);
 void Func_080dd054(s32 targetId);
 void Func_080ddda0(s32 targetId);
 void Func_080df1fc(s32 targetId);
-void FieldFx_RunForceOnTarget(s32 targetId);
-void FieldFx_RunDouseOnTarget(s32 targetId);
-void FieldFx_RunFrostOnTarget(s32 targetId);
+void FieldEffect_RunForceOnTarget(s32 targetId);
+void FieldEffect_RunDouseOnTarget(s32 targetId);
+void FieldEffect_RunFrostOnTarget(s32 targetId);
 void Func_080dda30(s32 targetId);
-void FieldFx_RunPlyOnTarget(s32 targetId);
-void FieldFx_RunWhirlwindOnTarget(s32 targetId);
+void FieldEffect_RunPlyOnTarget(s32 targetId);
+void FieldEffect_RunWhirlwindOnTarget(s32 targetId);
 void BattleEffect_CallEffect13(s32 targetId);
 void Func_080e0978(s32 targetId);
 void BattleEffect_CallEffect23(s32 targetId);
@@ -114,7 +114,7 @@ void BattleEffect_Run(void) {
   s32 objectId;
 
   if (animation == FIELD_FX_PUSH)
-    FieldFx_RunMove();
+    FieldEffect_RunMove();
   else if (animation == 7)
     Func_080ddea8();
   else if (animation == 11)
@@ -122,19 +122,19 @@ void BattleEffect_Run(void) {
   else if (animation == 4)
     Func_080de21c();
   else if (animation == 5)
-    FieldFx_RunDouse();
+    FieldEffect_RunDouse();
   else if (animation == 14)
-    FieldFx_RunWhirlwind();
+    FieldEffect_RunWhirlwind();
   else if (animation == 6)
-    FieldFx_RunFrost();
+    FieldEffect_RunFrost();
   else if (animation == 3)
-    FieldFx_RunPly();
+    FieldEffect_RunPly();
   else if (animation == 12)
-    FieldFx_RunGrowth();
+    FieldEffect_RunGrowth();
   else if (animation == 13)
     Func_080e03cc();
   else if (animation == 15)
-    FieldFx_RunRetreat();
+    FieldEffect_RunRetreat();
   else if (animation == 16)
     BattleEffect_RunEffect16();
   else if (animation == 10)
@@ -220,17 +220,17 @@ void BattleEffect_DispatchRequestKind(void) {
   else if (animation == 11)
     Func_080df1fc(targetId);
   else if (animation == 4)
-    FieldFx_RunForceOnTarget(targetId);
+    FieldEffect_RunForceOnTarget(targetId);
   else if (animation == 5)
-    FieldFx_RunDouseOnTarget(targetId);
+    FieldEffect_RunDouseOnTarget(targetId);
   else if (animation == 6)
-    FieldFx_RunFrostOnTarget(targetId);
+    FieldEffect_RunFrostOnTarget(targetId);
   else if (animation == 12)
     Func_080dda30(targetId);
   else if (animation == 3)
-    FieldFx_RunPlyOnTarget(targetId);
+    FieldEffect_RunPlyOnTarget(targetId);
   else if (animation == 14)
-    FieldFx_RunWhirlwindOnTarget(targetId);
+    FieldEffect_RunWhirlwindOnTarget(targetId);
   else if (animation == 13)
     BattleEffect_CallEffect13(targetId);
   else if (animation == 16)
@@ -240,7 +240,7 @@ void BattleEffect_DispatchRequestKind(void) {
   else if (animation == 10)
     Func_080decb8();
   else if (animation == 15)
-    FieldFx_RunRetreat();
+    FieldEffect_RunRetreat();
   else if (animation == 8)
     Func_080dd820();
   else if (animation == 23)

@@ -65,16 +65,16 @@
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Event_SetNextDestination, 1
 	.set import.Event_SetDefeatDestination, 1
-	.set import.FieldFx_StartGroundParticles, 1
-	.set import.FieldFx_StartLightning, 1
-	.set import.FieldFx_StopLightning, 1
-	.set import.FieldFx_LastLightning, 1
-	.set import.FieldFx_ResumeLightning, 1
+	.set import.FieldEffect_StartGroundParticles, 1
+	.set import.FieldEffect_StartLightning, 1
+	.set import.FieldEffect_StopLightning, 1
+	.set import.FieldEffect_LastLightning, 1
+	.set import.FieldEffect_ResumeLightning, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_PsynergyBegin, 1
-	.set import.FieldFx_End, 1
+	.set import.FieldEffect_End, 1
 	.set import.Party_AddPp, 1
 	.set import.Object_LinkObjectAndSetCallback, 1
 	.set import.Engine_AudioPlayCue, 1

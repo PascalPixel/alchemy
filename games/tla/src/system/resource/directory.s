@@ -483,37 +483,37 @@ Resource_DirectoryTable:
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons
 	resource , Ui_Flags
-	resource , FieldFx_GlowDisc
-	resource , FieldFx_RingOrb
-	resource , FieldFx_RingArcs
-	resource , FieldFx_RedFlameBurst
-	resource , FieldFx_VioletFlameBurst
-	resource , FieldFx_YellowFlameBurst
-	resource , FieldFx_BlueFlameBurst
-	resource , FieldFx_Leaves
-	resource DustPuffA, FieldFx_DustPuffA
-	resource , FieldFx_DustPuffB
+	resource , FieldEffect_GlowDisc
+	resource , FieldEffect_RingOrb
+	resource , FieldEffect_RingArcs
+	resource , FieldEffect_RedFlameBurst
+	resource , FieldEffect_VioletFlameBurst
+	resource , FieldEffect_YellowFlameBurst
+	resource , FieldEffect_BlueFlameBurst
+	resource , FieldEffect_Leaves
+	resource DustPuffA, FieldEffect_DustPuffA
+	resource , FieldEffect_DustPuffB
 	resource , Resource_Data1E3
-	resource , FieldFx_GoldStar
-	resource , FieldFx_GoldCrystal
-	resource , FieldFx_FlamingArrow
-	resource , FieldFx_BowDraw
-	resource , FieldFx_Explosion
+	resource , FieldEffect_GoldStar
+	resource , FieldEffect_GoldCrystal
+	resource , FieldEffect_FlamingArrow
+	resource , FieldEffect_BowDraw
+	resource , FieldEffect_Explosion
 	resource , Resource_Data1E9
-	resource , FieldFx_SparkleFade
-	resource , FieldFx_StarSparkleFade
-	resource , FieldFx_WhitePuff
+	resource , FieldEffect_SparkleFade
+	resource , FieldEffect_StarSparkleFade
+	resource , FieldEffect_WhitePuff
 	resource , Resource_Data1ED
 	resource , Resource_Data1EE
-	resource , FieldFx_ColouredOrbs
-	resource FallingRock, FieldFx_FallingRock
-	resource , FieldFx_WaterSplash
-	resource , FieldFx_IceShard
-	resource , FieldFx_WhiteSparkle
-	resource , FieldFx_Runes
-	resource , FieldFx_Pebbles
-	resource , FieldFx_GoldenTrident
-	resource , FieldFx_FireColumn
+	resource , FieldEffect_ColouredOrbs
+	resource FallingRock, FieldEffect_FallingRock
+	resource , FieldEffect_WaterSplash
+	resource , FieldEffect_IceShard
+	resource , FieldEffect_WhiteSparkle
+	resource , FieldEffect_Runes
+	resource , FieldEffect_Pebbles
+	resource , FieldEffect_GoldenTrident
+	resource , FieldEffect_FireColumn
 	resource , Field_GreenPanel
 	resource , Resource_Data1F9
 	resource UiIconTiles, Resource_Data1FA

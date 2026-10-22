@@ -1,5 +1,5 @@
 	.section .rodata
-	.global FieldFx_BowDraw
-FieldFx_BowDraw:
+	.global FieldEffect_BowDraw
+FieldEffect_BowDraw:
 	.incbin "games/tla/src/graphics/field_fx/bow_draw.8bpp.lz"
-	.byte 0x68, 0xea	@ PACKER: left in the buffer by FieldFx_DustPuffB+0x196
+	.byte 0x68, 0xea	@ PACKER: left in the buffer by FieldEffect_DustPuffB+0x196

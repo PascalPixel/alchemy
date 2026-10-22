@@ -25,7 +25,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
-  FieldFx_SelectBattleCue(zone, slot);
+  FieldEffect_SelectBattleCue(zone, slot);
 }
 
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
@@ -59,7 +59,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   }
   // Key 0 is no listed encounter, so every Djinni battle takes the music
   // list's last song (battle_cue.c).
-  FieldFx_SelectBattleCue(0, 0);
+  FieldEffect_SelectBattleCue(0, 0);
 }
 
 /// Sets the scene and entrance that the field goes to next
@@ -91,11 +91,11 @@ void Event_RequestDestination(u16 scene, u16 entrance) {
 }
 
 /// Plays SE_298, then soundId (AUDIO_CUE_FADE_SLOT3 for -1), and remembers
-/// soundId for FieldFx_PlayQueuedSound in the field work's queuedSound;
+/// soundId for FieldEffect_PlayQueuedSound in the field work's queuedSound;
 /// -1 is remembered as none, so it plays AUDIO_CUE_FADE_SLOT3 now and nothing
 /// later. About 30 scenes reach it through the far alias, and the ground
 /// particles (weather.c) queue SE_170 with it.
-void FieldFx_SetQueuedSoundAndPlay(s32 soundId) {
+void FieldEffect_SetQueuedSoundAndPlay(s32 soundId) {
   ((struct FieldWork *)gEventWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
     soundId = AUDIO_CUE_FADE_SLOT3;
@@ -104,10 +104,10 @@ void FieldFx_SetQueuedSoundAndPlay(s32 soundId) {
   AudioCommand_PlayFar(soundId);
 }
 
-/// Plays the sound FieldFx_SetQueuedSoundAndPlay remembered, if any. Called
+/// Plays the sound FieldEffect_SetQueuedSoundAndPlay remembered, if any. Called
 /// by scenes, by the event runner (object/events.c), by setup.c and by an
 /// actor's landing (actor_commands.c).
-void FieldFx_PlayQueuedSound(void) {
+void FieldEffect_PlayQueuedSound(void) {
   s16 soundId = ((struct FieldWork *)gEventWork)->queuedSound;
 
   if (soundId != -1)

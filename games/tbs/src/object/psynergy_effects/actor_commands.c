@@ -475,11 +475,11 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 count) {
   Object_RefreshSelectorById(objectId);
 }
 
-/// Moves a dust puff of FieldFx_SpawnBurstParticle: it drifts with its x and
-/// z velocity (kept in speed and acceleration), which drag slows by 1/18 and
-/// 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
+/// Moves a dust puff of FieldEffect_SpawnBurstParticle: it drifts with its x
+/// and z velocity (kept in speed and acceleration), which drag slows by 1/18
+/// and 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
 /// puff's update hook.
-void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
+void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 velocityX;
   s32 x;
@@ -511,7 +511,7 @@ void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 /// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
 /// one of two animations. A nonzero param is given to its sprite parts
 /// (ObjectGroup_SetChildValue). Only Actor_JumpDownLedge calls it.
-void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
+void FieldEffect_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   struct FieldActor *object;
   struct AnimationObject *child;
   s32 speed;
@@ -523,13 +523,15 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     switch (Random16() & 1) {
     case 1:
       ObjectDispatch_SelectAnimationFar(object, 2);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (const s32 *)gFieldFx_BurstParticleScriptA);
+      ObjectDispatch_InitializeFar(
+          (struct DispatchObject *)object,
+          (const s32 *)gFieldEffect_BurstParticleScriptA);
       break;
     default:
       ObjectDispatch_SelectAnimationFar(object, 1);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (const s32 *)gFieldFx_BurstParticleScriptB);
+      ObjectDispatch_InitializeFar(
+          (struct DispatchObject *)object,
+          (const s32 *)gFieldEffect_BurstParticleScriptB);
       break;
     }
 
@@ -545,7 +547,7 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     speed <<= 1;
     object->speed = 0x1999 * speed;
     object->timer = 0;
-    object->update = FieldFx_UpdateParticleLinearMotion;
+    object->update = FieldEffect_UpdateParticleLinearMotion;
     child->flags = 0;
     child->image.priority = source->sprite->image.priority;
   }
@@ -557,7 +559,7 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
 /// FACING_SOUTH) while sinking 28 pixels with a dust puff every other frame
 /// (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands. The landing plays the queued sound
-/// (FieldFx_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
+/// (FieldEffect_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
 /// (MAP_CELL_LEDGE) with pose 6 and param 0, and by seven scenes through
 /// FieldActor_JumpDownLedge; Mercury Lighthouse passes -1.
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
@@ -598,7 +600,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
       object->targetY = nextY;
       WaitFrames(1);
       if ((param != -1) && (pose & 1)) {
-        FieldFx_SpawnBurstParticle((struct FieldActor *)object, param);
+        FieldEffect_SpawnBurstParticle((struct FieldActor *)object, param);
       }
       pose++;
     } while ((u32)pose <= 0xD);
@@ -614,7 +616,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
       WaitFrames(1);
     }
     WaitFrames(2);
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
   }
 }
 
@@ -787,8 +789,8 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
 
 /// Sets the param byte of every animated part of an actor's sprite. Scenes set
 /// 0 or 15, and alternate the two to make an actor flash. Marks the sprite
-/// dirty. Called by ObjectGroup_ConfigureChildValue, FieldFx_SpawnBurstParticle
-/// and about 40 scene script sites.
+/// dirty. Called by ObjectGroup_ConfigureChildValue,
+/// FieldEffect_SpawnBurstParticle and about 40 scene script sites.
 void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param) {
   struct DispatchObject *object = (struct DispatchObject *)actor;
 

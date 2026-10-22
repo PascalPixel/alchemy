@@ -194,8 +194,8 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
     dir.z = Trig_Sin(i << 12);
     dir.x -= dir.x / 4;
     dir.z -= dir.z / 2;
-    FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x, dir.y,
-                  dir.z, 0, NULL);
+    FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
+                      dir.y, dir.z, 0, NULL);
   }
   stump->velocityY = PIXELS(5);
   Actor_SetDestination(stumpId, 346, 292);
@@ -214,10 +214,10 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
   options.startScaleY = 4 * Q16_ONE / 5;
   options.targetScaleX = 3 * Q16_ONE / 2;
   options.targetScaleY = 6 * Q16_ONE / 5;
-  FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
-                EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                    EFFECT_SCALE_TO_TARGET,
-                &options);
+  FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_SCALE_TO_TARGET,
+                    &options);
   Engine_AudioPlayCue(SE_CAST);
   OBJ_MODE(stumpId, STUMP_ANIM_SPLASH);
   Map_WaitForShakeToSettle();

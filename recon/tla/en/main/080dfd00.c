@@ -1,5 +1,5 @@
 // Draft, differ 125 of 334 (2026-10-15), The Broken Seal's
-// FieldFx_RunWhirlwind (shape 0.64, structure 0.73). ⚓️ keeps ☀️'s carried orb and
+// FieldEffect_RunWhirlwind (shape 0.64, structure 0.73). ⚓️ keeps ☀️'s carried orb and
 // its orbiting motes, and adds two kinds of target, told apart by the target's
 // first animation (372 and 373): for both the orb shrinks away at once, for 372
 // with motes that wander off round it, and the target is then handed to
@@ -78,7 +78,7 @@ enum OrbKind {
 
 // Animation 14: carry an orb from the caster to the scene's position over
 // ten frames, growing it from a quarter size, then play out the kind.
-void FieldFx_RunWhirlwind(void) {
+void FieldEffect_RunWhirlwind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *target = scene->child;
   struct ObjectRuntime *caster = scene->mainObject;

@@ -1,7 +1,7 @@
 	.section .rodata
 @ {x, y} screen offsets of a ground particle, in pixels, indexed by its
 @ remaining frame count; read by Func_080d6674 (The Broken Seal's
-@ FieldFx_UpdateGroundParticles), which has no such table.
+@ FieldEffect_UpdateGroundParticles), which has no such table.
 	.global Data_080f0b50
 Data_080f0b50:
 	.2byte -32, -16

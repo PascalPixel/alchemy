@@ -55,7 +55,7 @@ void BattleEffect_AdvanceAngleWithRamp(struct SpinObject *object);
 void BattleEffect_UpdateDescendingObject(struct SpinObject *obj);
 void Func_080e0cec(struct EffectSlot *slot);
 
-void FieldFx_RunRetreat(void) {
+void FieldEffect_RunRetreat(void) {
   struct SpinScene *scene = Ram_HeapSlots->effectWork;
   struct SpinObject *obj = scene->mainObject;
   struct SpinVector pos;

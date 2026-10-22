@@ -80,11 +80,11 @@
 	.set import.Engine_PsynergyBegin, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
-	.set import.FieldFx_End, 1
+	.set import.FieldEffect_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

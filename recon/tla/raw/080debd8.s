@@ -86,6 +86,6 @@ Func_080debd8:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_080dec84:
-	.4byte FieldFx_CheckCloakTile
+	.4byte FieldEffect_CheckCloakTile
 .L_080dec88:
 	.4byte gPartyState

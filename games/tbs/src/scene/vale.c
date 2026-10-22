@@ -1607,7 +1607,7 @@ s32 Vale_Initialize(void) {
       }
     }
 #endif
-    FieldFx_SetQueuedSoundAndPlay(SE_170);
+    FieldEffect_SetQueuedSoundAndPlay(SE_170);
     Engine_MapRedraw();
     Engine_TaskWait(1);
   }

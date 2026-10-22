@@ -49,7 +49,7 @@
 	.set import.Engine_EventRequestExit, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_InnOpen, 1
 	.set import.Engine_AudioPlayCue, 1

@@ -65,7 +65,7 @@ s32 Field_CountRequests(void) {
 /// Returns the collision code of the map cell 16 pixels ahead of the party
 /// leader (a world map block on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and FieldFx_FindMatchingEvent (items.c),
+/// Called by Field_FindItemEvent and FieldEffect_FindMatchingEvent (items.c),
 /// which match an item or Psynergy event to the tile the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
@@ -328,11 +328,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
-      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                  ATTACHED_EFFECT_ATTACH);
+      FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ATTACH);
     if (gGameState.hazardSteps == gGameState.hazardLimit)
-      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                  ATTACHED_EFFECT_REMOVE);
+      FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_REMOVE);
   }
   if (gGameState.hazardSteps >= gGameState.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
@@ -350,8 +350,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     work->fallenCount = 0;
     work->survivorCount = 0;
     leader->velocityY = 0x40000;
-    FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                ATTACHED_EFFECT_ONCE);
+    FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
       unitVitals = UnitGetFar(gGameState.activeOwners[i]);

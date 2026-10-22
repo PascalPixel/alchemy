@@ -2226,7 +2226,7 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
     }
   } else if (currentPhase == 2) {
     if (EffectSlot_HasPendingTarget(fragment) == 0)
-      FieldFx_ClearOwnedSlot(fragment);
+      FieldEffect_ClearOwnedSlot(fragment);
   }
 }
 
@@ -2238,7 +2238,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   struct EffectSlot *fragment;
   s32 fragmentIndex;
 
-  FieldFx_InitializeSlots();
+  FieldEffect_InitializeSlots();
   work = (struct FieldFxScene *)gEffectWork;
   Shop_SaveAndTintFieldPalette(0x202108);
   position.x = PIXELS(504);
@@ -2281,7 +2281,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   }
   Engine_MapWaitWorkValuesBelow256();
   Shop_RestoreFieldPalette();
-  FieldFx_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.

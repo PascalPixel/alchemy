@@ -202,14 +202,14 @@ static void Xian_SpawnTrainingParticles(void) {
     config.palette = 9;
     config.type = 169;
     config.script = gXian_TrainingParticleScript;
-    FieldFx_Spawn(*(s32 *)(studentActor + offsetof(struct FieldActor, x)),
-                  *(s32 *)(studentActor + offsetof(struct FieldActor, y)),
-                  *(s32 *)(studentActor + offsetof(struct FieldActor, z)) -
-                      PIXELS(1),
-                  0, -PIXELS(1), -PIXELS(1),
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | EFFECT_USE_TYPE |
-                      EFFECT_USE_SCRIPT,
-                  &config);
+    FieldEffect_Spawn(*(s32 *)(studentActor + offsetof(struct FieldActor, x)),
+                      *(s32 *)(studentActor + offsetof(struct FieldActor, y)),
+                      *(s32 *)(studentActor + offsetof(struct FieldActor, z)) -
+                          PIXELS(1),
+                      0, -PIXELS(1), -PIXELS(1),
+                      EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
+                          EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
+                      &config);
   }
 }
 
@@ -444,7 +444,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Engine_EventWait(70);
   Engine_EventSetMessage(MsgXianDoingMadeMeSpillMy);
   Event_ShowMessageAndWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20) > 13) {
     leaderMustStepAside = 1;
@@ -541,10 +541,10 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
-    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
-    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     Engine_AudioPlayCue(SE_132);
     particleCallback = Xian_SpawnTrainingParticles;
     Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
@@ -560,29 +560,29 @@ static void Xian_TalkToKungFuStudent(void) {
     effectParams.type = 0x11b;
     effectParams.script = gXian_TreeImpactScript;
     effectParams.rotation = 0x4000;
-    FieldFx_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
-                      EFFECT_USE_ROTATION,
-                  &effectParams);
+    FieldEffect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
+                      EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
+                          EFFECT_USE_SCRIPT | EFFECT_USE_ROTATION,
+                      &effectParams);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Engine_ActorWaitForMove(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
     Engine_TaskRemoveCallback((void (*)(void))particleCallback);
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0, EFFECT_USE_PRIORITY | 1,
-                  0);
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     reboundVelocity = -0x8000;
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
     Engine_AudioPlayCue(SE_124);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     Engine_TaskRemoveCallback(Xian_RotateTrainingTree);
     Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Object_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
@@ -593,7 +593,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
     Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
     Engine_EventEnd();
   }
 }
@@ -721,12 +721,12 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   FieldScheduler_AddCallback(rotationCallback, TASK_PRIORITY_SCENE);
   Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
   Engine_AudioPlayCue(SE_124);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
-                EFFECT_USE_PRIORITY | 1, 0);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
-                EFFECT_USE_PRIORITY | 1, 0);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
-                EFFECT_USE_PRIORITY | 1, 0);
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+                    EFFECT_USE_PRIORITY | 1, 0);
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+                    EFFECT_USE_PRIORITY | 1, 0);
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+                    EFFECT_USE_PRIORITY | 1, 0);
   Engine_TaskRemoveCallback(rotationCallback);
   Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Engine_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
@@ -740,7 +740,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   }
   Engine_EventShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -797,7 +797,7 @@ s32 Xian_Initialize(void) {
   u32 crateIndex;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  FieldFx_SetQueuedSoundAndPlay(SE_169);
+  FieldEffect_SetQueuedSoundAndPlay(SE_169);
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
   // (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name is not shown.
   if (gGameState.entrance >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) {

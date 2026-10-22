@@ -104,7 +104,7 @@ enum EncounterZoneId {
 
 void Scene_TakeExit(s32 exitKind);
 void Scene_ReturnFromBattle(s32 result);
-s32 FieldFx_GetResourceGroup(s32 scene);
+s32 FieldEffect_GetResourceGroup(s32 scene);
 void Game_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
@@ -122,18 +122,18 @@ void Scene_SetDefeatReturnPoint(void);
 s16 Event_GetSpecialValue(void);
 void Battle_SelectSceneBackdrop(void);
 void Battle_SelectTerrainBackdrop(s32 behavior);
-// Matching builds call FieldFx_SelectBattleCue without a prototype, as in
+// Matching builds call FieldEffect_SelectBattleCue without a prototype, as in
 // object.c above its definition: in one file its definition
 // would come before Field_RequestDjinnBattle and
 // Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
 // (2 of 52 instructions in tbs-en). Split evidence for object|psynergy_effects.
 #ifdef UBFIX
-void FieldFx_SelectBattleCue(s32 zone, s32 slot);
+void FieldEffect_SelectBattleCue(s32 zone, s32 slot);
 #endif
-void FieldFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
-void FieldFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
-void FieldFx_RunLift(void);
-void FieldFx_RunCarry(void);
+void FieldEffect_ShrinkObjectAndDestroySlow(union FieldObject *object);
+void FieldEffect_ShrinkObjectAndDestroyFast(union FieldObject *object);
+void FieldEffect_RunLift(void);
+void FieldEffect_RunCarry(void);
 
 /// One of the scene's events (the same 12 bytes as struct SceneEvent).
 struct EffectDescriptor {
@@ -196,16 +196,17 @@ s32 Field_SearchTile(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
-s32 FieldFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId);
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target,
+                                               s32 itemId);
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette);
 void Field_EndBusyAndReveal(void);
 s32 Field_FindItemEvent(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
-void *FieldFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target);
+void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target);
 s32 Field_RunPsynergyEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
-s32 FieldFx_HasMatchingEvent5(s32 group);
-u32 FieldFx_HasTrigger(u16 item);
+s32 FieldEffect_HasMatchingEvent5(s32 group);
+u32 FieldEffect_HasTrigger(u16 item);
 
 void ObjectMotion_SnapToTerrain(void *object);
 void Field_PlaceMapMarkers(void);
@@ -221,17 +222,17 @@ void Marker_SetActorPosition(s32 id, s32 x, s32 z);
 
 void Marker_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
-struct EffectObj *FieldFx_StartRandomParticleEmitter(s32 actor, s32 item);
+struct EffectObj *FieldEffect_StartRandomParticleEmitter(s32 actor, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
-void FieldFx_StartEffectObject22(s32 item, s32 flags);
-void FieldFx_ClearRandomParticles(void);
+void FieldEffect_StartEffectObject22(s32 item, s32 flags);
+void FieldEffect_ClearRandomParticles(void);
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject);
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter);
-void FieldFx_SpawnNearbyMarkers(void);
+void FieldEffect_SpawnNearbyMarkers(void);
 
-void FieldFx_StartWindowHBlankDma(void);
+void FieldEffect_StartWindowHBlankDma(void);
 void DisplayTransition_UpdateScanlineTable(void);
 void DisplayTransition_InitializeBattleEffectState(s32 mode);
 void DisplayTransition_SuspendCallbacks(void);
@@ -250,8 +251,8 @@ void ColorBuffer_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames);
 void ColorBuffer_Update(void);
 // UB: psynergy_effects.c calls ColorBuffer_Build with no declaration in
 // scope, as a function returning int. With its prototype in scope (as in one
-// file with its definition) FieldFx_StartLightning and
-// FieldFx_StartBufferBlend change, 6 of 67 and 6 of 74 instructions in
+// file with its definition) FieldEffect_StartLightning and
+// FieldEffect_StartBufferBlend change, 6 of 67 and 6 of 74 instructions in
 // tbs-en, and even a declaration without a prototype moves two instructions
 // in tbs-ja: evidence that object.c and psynergy_effects.c were separate
 // files. UBFIX declares it.
@@ -267,12 +268,12 @@ void ColorBuffer_StartInterpolation(s32 frames);
 s32 ColorBuffer_ClampChannel(s32 value);
 s32 ColorBuffer_ClampShiftedChannel(s32 value);
 void FadeOverlay_DrawMarks(void);
-void FieldFx_StartFadeOverlay(void *object);
+void FieldEffect_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);
 void FadeOverlay_Resume(void);
-struct FieldFxDefinition *FieldFx_FindDefinition(u32 id);
-s32 FieldFx_GetAnimationValue(s32 id);
-s32 FieldFx_GetResourceId(u32 id);
-s32 FieldFx_GetFlags(s32 id);
+struct FieldFxDefinition *FieldEffect_FindDefinition(u32 id);
+s32 FieldEffect_GetAnimationValue(s32 id);
+s32 FieldEffect_GetResourceId(u32 id);
+s32 FieldEffect_GetFlags(s32 id);
 
 #endif

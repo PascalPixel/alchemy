@@ -8,7 +8,7 @@
 /// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
 /// it follows, 9 pixels in front of it and up to 5 pixels further while
 /// small.
-void FieldFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
+void FieldEffect_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   // A shared inline kernel with a constant inversion argument changes both
   // arc updates from 0x58 to 0x5c bytes in the forced native English build.
   struct FieldActor *arc = (struct FieldActor *)fieldObject;
@@ -20,7 +20,7 @@ void FieldFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   frame = ++arc->timer;
   if (frame > 31) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
-                                 gFieldFx_CommonParticleScript);
+                                 gFieldEffect_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -33,7 +33,7 @@ void FieldFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 /// object and up to 5 pixels nearer while small.
-void FieldFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
+void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   struct FieldActor *arc = (struct FieldActor *)fieldObject;
   struct FieldActor *anchor;
   s32 frame;
@@ -43,7 +43,7 @@ void FieldFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   frame = ++arc->timer;
   if (frame > 31) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
-                                 gFieldFx_CommonParticleScript);
+                                 gFieldEffect_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -90,9 +90,9 @@ struct ArcSprite {
 /// down); they follow it for 32 frames, then free themselves. They draw
 /// with the effect's spark tiles, so they need the effect's work; the
 /// casting hooks below spawn them every 16 frames, and
-/// FieldFx_End waits for the last to end (at most 30
+/// FieldEffect_End waits for the last to end (at most 30
 /// frames).
-void FieldFx_SpawnScaledArcObjects(struct FieldActor *linked) {
+void FieldEffect_SpawnScaledArcObjects(struct FieldActor *linked) {
   struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *source = scene->mainObject;
   struct FieldActor *arcs[2];
@@ -129,9 +129,9 @@ void FieldFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   // Arc B in front of everything, arc A at the caster's priority.
   // BUG: allocation failures above leave a missing arc or sprite here.
   // The original does not define a partial-pair recovery path.
-  arcs[0]->update = FieldFx_UpdateScaledArcObjectB;
+  arcs[0]->update = FieldEffect_UpdateScaledArcObjectB;
   arcs[0]->sprite->image.priority = 0;
-  arcs[1]->update = FieldFx_UpdateScaledArcObjectA;
+  arcs[1]->update = FieldEffect_UpdateScaledArcObjectA;
   arcs[1]->sprite->image.priority = source->sprite->image.priority;
   arcs[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
@@ -139,7 +139,7 @@ void FieldFx_SpawnScaledArcObjects(struct FieldActor *linked) {
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. EventObject_Initialize
 /// gives it to the caster as a cast starts with a flash (scene->visible).
-void FieldFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
+void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)actor,
@@ -149,7 +149,7 @@ void FieldFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
                                   SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
-    FieldFx_SpawnScaledArcObjects(actor);
+    FieldEffect_SpawnScaledArcObjects(actor);
   }
 }
 
@@ -157,7 +157,7 @@ void FieldFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// EventObject_Initialize gives it to the caster in place of the flicker
 /// while flag 0x140 is set.
-void FieldFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
+void FieldEffect_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
@@ -165,6 +165,6 @@ void FieldFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)actor, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
-    FieldFx_SpawnScaledArcObjects(actor);
+    FieldEffect_SpawnScaledArcObjects(actor);
   }
 }

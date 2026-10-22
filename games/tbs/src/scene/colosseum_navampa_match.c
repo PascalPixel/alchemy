@@ -754,7 +754,7 @@ static void Event_ForceSidewalkBlock(void) {
 /// Halt on the Wall Wedge's operator: the pistons stop at their next open
 /// pattern (FLAG_WALL_WEDGE_HALTED).
 static void Event_HaltWall(void) {
-  FieldFx_PauseObject(WALL_OPERATOR);
+  FieldEffect_PauseObject(WALL_OPERATOR);
   Engine_GameFlagSet(FLAG_WALL_WEDGE_HALTED);
   Engine_TaskWait(10);
   while (gColossoSceneTaskStatus != 1 && gColossoSceneTaskStatus != 3)
@@ -1045,7 +1045,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
       Map_CopyCellAttributes(74, 12, 1, 1, i * 2 - 3, 11);
     }
     Engine_ActorSetAnimation(WALL_OPERATOR, 10);
-    FieldFx_PauseObject(WALL_OPERATOR);
+    FieldEffect_PauseObject(WALL_OPERATOR);
   } else {
     for (i = FIRST_PISTON; i <= LAST_PISTON; i++) {
       actor = Object_GetById(i);

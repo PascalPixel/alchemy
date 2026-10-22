@@ -283,7 +283,7 @@ Field_RunScene:
 .L_080cbb6c:
 	.4byte gMapCellBuffer
 .L_080cbb70:
-	bl FieldFx_ResumeCloakCheck
+	bl FieldEffect_ResumeCloakCheck
 	movs r1, #240
 	lsls r1, r1, #1
 	adds r3, r6, r1

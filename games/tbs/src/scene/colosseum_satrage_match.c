@@ -806,7 +806,7 @@ static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
 /// Halt on the shifting floor's lift operator: the lifts stop and leave a
 /// crossing (FLAG_LIFTS_HALTED).
 static void Event_HaltLifts(void) {
-  FieldFx_PauseObject(LIFT_OPERATOR);
+  FieldEffect_PauseObject(LIFT_OPERATOR);
   Engine_GameFlagSet(FLAG_LIFTS_HALTED);
 
   if (gColosseumSatrageMatch_LiftPhase != 0) {
@@ -1029,7 +1029,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       Map_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
     Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
-    FieldFx_PauseObject(LIFT_OPERATOR);
+    FieldEffect_PauseObject(LIFT_OPERATOR);
   } else {
     for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
          liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {

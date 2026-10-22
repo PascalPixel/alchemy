@@ -75,7 +75,7 @@
 	.set import.Engine_PsynergyBegin, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
-	.set import.FieldFx_End, 1
+	.set import.FieldEffect_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_SanctumOpen, 1

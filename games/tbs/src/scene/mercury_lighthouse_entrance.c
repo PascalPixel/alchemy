@@ -333,10 +333,10 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       speedRoll = ((u32)(Engine_RandomNext() << 2) >> 16);
       velocityY =
           Math_Divide((((speedRoll << 4) - speedRoll) << 16) + 0x3c0000, 100);
-      FieldFx_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
-                    EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
-                        1,
-                    effectData);
+      FieldEffect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
+                        EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
+                            EFFECT_USE_SCRIPT | 1,
+                        effectData);
       Engine_EventWait(4);
       sparkIndex++;
     } while ((u32)sparkIndex <= 14);
@@ -439,7 +439,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gGameState.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
-  FieldFx_StartFadeOverlay(0);
+  FieldEffect_StartFadeOverlay(0);
   if (GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_SCENE);
@@ -516,8 +516,9 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
       velocity[0] -= velocity[0] / 4;
       velocity[2] -= velocity[2] / 2;
-      FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0],
-                    velocity[1], velocity[2], EFFECT_USE_PALETTE | 1, &options);
+      FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                        velocity[0], velocity[1], velocity[2],
+                        EFFECT_USE_PALETTE | 1, &options);
     }
     Engine_AudioPlayCue(SE_188);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -550,7 +551,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // All four arrivals play the same sound.
     // Fall through.
   case MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_FOUNTAINS:
-    FieldFx_SetQueuedSoundAndPlay(SE_170);
+    FieldEffect_SetQueuedSoundAndPlay(SE_170);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);

@@ -48,7 +48,7 @@ struct FieldEffect {
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
-  /// FieldFx_UpdateMotionScaleAndSpin, or options.update.
+  /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
   void (*update)(union FieldObject *object);
 };
 
@@ -117,8 +117,8 @@ struct EffectOptions {
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);
 STATIC_ASSERT(offsetof(struct EffectOptions, update) == 0x24);
 
-void FieldFx_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                           s32 velocityZ, u32 flags,
-                           const struct EffectOptions *options);
+void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
+                               s32 velocityY, s32 velocityZ, u32 flags,
+                               const struct EffectOptions *options);
 
 #endif

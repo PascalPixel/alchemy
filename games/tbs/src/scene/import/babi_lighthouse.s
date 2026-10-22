@@ -66,6 +66,6 @@
 	.set import.Motion_LaunchFromFocusedObject, 1
 	.set import.Engine_ActorWalkBy, 1
 	.set import.Engine_ActorWalkByAndWait, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

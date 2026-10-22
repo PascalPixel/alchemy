@@ -1546,27 +1546,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x = left->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    left->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        -PIXELS(16),
-                    left->z.fixed, 0, PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        left->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            -PIXELS(16),
+                        left->z.fixed, 0, PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    right->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        -PIXELS(16),
-                    right->z.fixed, 0, PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        right->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            -PIXELS(16),
+                        right->z.fixed, 0, PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     }
   }
   Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
@@ -1601,27 +1601,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       x = left->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    left->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        PIXELS(32),
-                    left->z.fixed, 0, -PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        left->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            PIXELS(32),
+                        left->z.fixed, 0, -PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    right->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        PIXELS(32),
-                    right->z.fixed, 0, -PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        right->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            PIXELS(32),
+                        right->z.fixed, 0, -PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     }
     if (i == 20) {
       Actor_SetChildValue(ACTOR_SATUROS, 0x100);
@@ -1748,7 +1748,7 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  FieldFx_End();
+  FieldEffect_End();
 }
 
 /// A beacon spark's update: it swings round the beacon it is linked to, its

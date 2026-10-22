@@ -981,8 +981,8 @@ s32 ValeGate_Initialize(void) {
     Engine_TaskWait(1);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-      FieldFx_StartGroundParticles();
-      FieldFx_StartLightning();
+      FieldEffect_StartGroundParticles();
+      FieldEffect_StartLightning();
       Map_CopyCellAttributes(21, 38, 1, 1, 18, 41);
       flag = Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
       if (flag != 0) {
@@ -1045,7 +1045,7 @@ s32 ValeGate_Initialize(void) {
           if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            FieldFx_ResumeLightning();
+            FieldEffect_ResumeLightning();
           }
         }
       }
@@ -1260,7 +1260,7 @@ static void Event_MeetSurvivingTravelers(void) {
   Event_PrepareObjectAndApplyValue(1, 0);
   Engine_EventOpenScreen();
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-  FieldFx_ResumeLightning();
+  FieldEffect_ResumeLightning();
   Engine_ActorSetPosition(ACTOR_FIRST_TRAVELER, PIXELS(105), PIXELS(267));
   Engine_TaskWait(1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1475,7 +1475,7 @@ static void Event_TravelersLeaveAfterBattle(void) {
     work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
   Engine_EventOpenScreen();
-  FieldFx_ResumeLightning();
+  FieldEffect_ResumeLightning();
   Engine_EventWaitForScreen();
   Engine_EventWait(80);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -1504,14 +1504,14 @@ static void Event_TravelersLeaveAfterBattle(void) {
   Engine_EventWait(40);
   // Three last flashes of lightning, then the storm ends and the screen
   // fades slowly out.
-  FieldFx_StopLightning();
-  FieldFx_LastLightning();
+  FieldEffect_StopLightning();
+  FieldEffect_LastLightning();
   Engine_TaskWait(20);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Engine_TaskWait(60);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Engine_TaskWait(20);
-  FieldFx_StopLightning();
+  FieldEffect_StopLightning();
   Engine_EventWait(40);
   gEventWork->transitionFrames = 120;
   Engine_EventCloseScreen();
@@ -2021,7 +2021,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
     struct FieldActor *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
-    effect->update = FieldFx_AnimateVerticalNegative;
+    effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
@@ -2029,7 +2029,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 2;
-    effect->update = FieldFx_AnimateVerticalPositive;
+    effect->update = FieldEffect_AnimateVerticalPositive;
     effect->priorityFlags = 2;
   }
 }

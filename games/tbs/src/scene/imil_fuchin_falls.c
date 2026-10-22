@@ -1400,11 +1400,11 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     switch (gGameState.entrance) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
-      FieldFx_StartFadeOverlay(0);
+      FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
       break;
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
-      FieldFx_StartFadeOverlay(0);
+      FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
       value = *(s32 *)(gWorkSlot + 36);
       ((struct FadeOverlayWork *)value)->actor = NULL;

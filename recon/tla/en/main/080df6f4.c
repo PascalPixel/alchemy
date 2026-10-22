@@ -1,4 +1,4 @@
-// Near miss, differ 4 of 130 (2026-10-15): ☀️'s FieldFx_RunCarry (the
+// Near miss, differ 4 of 130 (2026-10-15): ☀️'s FieldEffect_RunCarry (the
 // item-break macro around BattleEffect_SpawnItemBreakMode1), the same body as draft
 // 080ddea8 and the same two pairs in the fragment loop. Replaces the earlier
 // draft at differ 95.

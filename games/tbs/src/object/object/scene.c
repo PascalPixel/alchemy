@@ -156,7 +156,7 @@ void Scene_ReturnFromBattle(s32 result) {
 /// Returns the group scene belongs to. The scenes of one place share a group,
 /// which selects their music, area name and the flags kept while inside it.
 /// Called by Scene_ResolveInteractionResult.
-s32 FieldFx_GetResourceGroup(s32 scene) {
+s32 FieldEffect_GetResourceGroup(s32 scene) {
   return gField_SceneTable[scene].group;
 }
 

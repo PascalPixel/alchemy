@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global FieldFx_RunDouse
+	.global FieldEffect_RunDouse
 	.thumb_func
-FieldFx_RunDouse:
+FieldEffect_RunDouse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

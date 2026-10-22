@@ -255,7 +255,7 @@ place it twice.
 | `kolima_*.h` | Kolima Forest's scenes | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
 | `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
 | `vale.h`, `world_map_linked_effects.h` | Vale's gate and storm; Vale and the world map | the storm's door exits; the particles around a glowing actor |
-| `effect_*.h` | many | `FieldFx_Spawn` and the small effects it places, cutscene Psynergy |
+| `effect_*.h` | many | `FieldEffect_Spawn` and the small effects it places, cutscene Psynergy |
 | `object_*.h` | many | actors: staged actors, lookups by cell and distance, turning and waiting |
 | `map_panel.h`, `scroll_initialize_hblank_dma.h` | Crossbone Isle's stepping stones and Kolima Forest's floodgate; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
 
@@ -342,7 +342,7 @@ A scene's functions take its place's name (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees; most functions an
 event table names are `Event_` instead. Shared helpers take their family's
 prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedActor_`, and
-`FieldFx_` for the field effects). Some keep older descriptive names
+`FieldEffect_` for the field effects). Some keep older descriptive names
 (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the scenes that call
 them are humanized. The spellings some sites keep to match (fields reached
 through `offsetof`, another struct's view of an actor, update hooks returning

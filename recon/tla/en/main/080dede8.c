@@ -1,11 +1,11 @@
-// Near miss, differ 206 of 409 (2026-10-15): ⚓️'s FieldFx_RunDouse, the
+// Near miss, differ 206 of 409 (2026-10-15): ⚓️'s FieldEffect_RunDouse, the
 // form of ☀️'s: an orb grows from the target to the effect's point over
 // eleven frames, sheds falling motes (10 or 24) or drifting ones (10 or
 // 30), and shrinks back. The native's frame is 52 bytes, this one 56 (one
 // more spill slot, 411 instructions against 409); the work and the anchor
 // take each other's registers (the native keeps the work in r8 and the
 // anchor in sl), and the order follows from there. Belongs between
-// fall.c's FieldFx_RunDouseOnTarget and particles.c's BattleEffect_SpawnFallingParticles.
+// fall.c's FieldEffect_RunDouseOnTarget and particles.c's BattleEffect_SpawnFallingParticles.
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
@@ -60,7 +60,7 @@ static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
 }
 
-void FieldFx_RunDouse(void) {
+void FieldEffect_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;
   struct EffectVector end;

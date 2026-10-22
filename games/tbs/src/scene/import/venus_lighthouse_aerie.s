@@ -89,7 +89,7 @@
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_PsynergyBegin, 1
-	.set import.FieldFx_End, 1
+	.set import.FieldEffect_End, 1
 	.set import.ObjectTable_Snapshot, 1
 	.set import.Engine_ActorsRefresh, 1
 	.set import.Engine_AudioPlayCue, 1

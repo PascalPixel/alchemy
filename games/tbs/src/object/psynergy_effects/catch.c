@@ -4,12 +4,12 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Runs Catch cast on a target, through FieldFx_RunCatch.
+/// Runs Catch cast on a target, through FieldEffect_RunCatch.
 ///
 /// Abilities: Catch (FIELD_KIND_CATCH).
 ///
-/// Called by FieldFx_DispatchRequestKind; the target is ignored.
-void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
+/// Called by FieldEffect_DispatchRequestKind; the target is ignored.
+void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 
 /// Carries object 215 from 16 pixels above the caster to the goal in 10 steps,
 /// growing from a quarter to full size, presses down 20 pixels moving child to
@@ -20,9 +20,9 @@ void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
 /// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
 /// of the caster with scene->enabled (no scene event named the target),
 /// otherwise the effect's position, 32 pixels up in both cases. Called by
-/// FieldFx_Run and FieldFx_RunCatchOnTarget. Moves the effect scene's child
-/// to (-9, -9) when there is one, and releases object 215 at the end.
-void FieldFx_RunCatch(void) {
+/// FieldEffect_Run and FieldEffect_RunCatchOnTarget. Moves the effect scene's
+/// child to (-9, -9) when there is one, and releases object 215 at the end.
+void FieldEffect_RunCatch(void) {
   struct FieldFxScene *scene = gEffectWork;
   struct MotionObject *actor = scene->mainObject;
   struct MotionObject *child = scene->child;
@@ -53,7 +53,7 @@ void FieldFx_RunCatch(void) {
   object = (struct MotionObject *)Object_Spawn(215, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
-  FieldFx_FadeToEffectColor();
+  FieldEffect_FadeToEffectColor();
   AudioCommand_PlayFar(SE_ITEM_BREAK);
   object->angle = actor->angle;
   object->speedLimit = 0x14ccc;
@@ -71,7 +71,7 @@ void FieldFx_RunCatch(void) {
     SET_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
                  origin.y + (target.y - origin.y) * step / 10,
                  origin.z + (target.z - origin.z) * step / 10);
-    scale = FieldFx_Interpolate(0x10000, 0x4000, step);
+    scale = FieldEffect_Interpolate(0x10000, 0x4000, step);
     object->scaleX = scale;
     object->scaleY = scale;
     WaitFrames(1);
@@ -111,12 +111,12 @@ void FieldFx_RunCatch(void) {
     SET_POSITION(object, target.x + (origin.x - target.x) * step / 10,
                  target.y + (origin.y - target.y) * step / 10,
                  target.z + (origin.z - target.z) * step / 10);
-    scale = FieldFx_Interpolate(0x4000, 0x10000, step);
+    scale = FieldEffect_Interpolate(0x4000, 0x10000, step);
     object->scaleX = scale;
     object->scaleY = scale;
     WaitFrames(1);
     step++;
   } while (step < steps);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
-  FieldFx_FadeFromEffectColor();
+  FieldEffect_FadeFromEffectColor();
 }

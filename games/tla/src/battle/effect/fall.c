@@ -46,4 +46,4 @@ void BattleEffect_UpdateDriftingFallObject(struct ObjectRuntime *object) {
   }
 }
 
-void FieldFx_RunDouseOnTarget(void) { FieldFx_RunDouse(); }
+void FieldEffect_RunDouseOnTarget(void) { FieldEffect_RunDouse(); }

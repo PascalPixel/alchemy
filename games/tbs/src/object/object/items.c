@@ -12,7 +12,7 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 /// the leader faces, or 0 (item 0 matches any item). The event's trigger names
 /// an actor (EVENT_ITEM_ON_ACTOR) or a tile code, and may also require the
 /// leader to face within 0x17ff (about 34 degrees) of a direction. Called by
-/// Field_UseItem, and by FieldFx_HasTrigger (psynergy.c) to test whether an
+/// Field_UseItem, and by FieldEffect_HasTrigger (psynergy.c) to test whether an
 /// item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -175,17 +175,17 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
       // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
-      FieldFx_LoadActionEffectResources(actionId, 0);
+      FieldEffect_LoadActionEffectResources(actionId, 0);
 #else
       /* FAKEMATCH(wrapper): called through a cast to the s32 function the
        * bytes show, which loads the action id before the 0; as a call by its
        * void prototype, 2 of 253 instructions differ in tbs-en. */
-      ((s32 (*)(s32, s32))FieldFx_LoadActionEffectResources)(actionId, 0);
+      ((s32 (*)(s32, s32))FieldEffect_LoadActionEffectResources)(actionId, 0);
 #endif
       work->resolvingAction = 1;
-      FieldFx_Run();
+      FieldEffect_Run();
       work->resolvingAction = 0;
-      FieldFx_End();
+      FieldEffect_End();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
         GameFlag_SetBitFar(FLAG_ITEM_USED_UP);
@@ -207,7 +207,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// tile code. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
-void *FieldFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
+void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = work->events;
   s32 facing =
@@ -268,16 +268,16 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   group = BattleActGet(abilityId)->type0c;
   // The leader is looked up and the result is not used.
   ObjectTable_Get(gGameState.selectedActor);
-  beforeEvent = FieldFx_FindMatchingEvent(
+  beforeEvent = FieldEffect_FindMatchingEvent(
       PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_END), group, &target);
-  afterEvent = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_AFTER_END),
-                                         group, &target);
-  FieldFx_LoadActionEffectResources(abilityId, 0);
-  FieldFx_SetupObjectPair(gGameState.selectedActor, target);
+  afterEvent = FieldEffect_FindMatchingEvent(
+      PSYNERGY_EV(PSYNERGY_PHASE_AFTER_END), group, &target);
+  FieldEffect_LoadActionEffectResources(abilityId, 0);
+  FieldEffect_SetupObjectPair(gGameState.selectedActor, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldEvent_RunTypeHandler();
-  FieldFx_StopCasterHook();
+  FieldEffect_StopCasterHook();
   Field_RunEventAction(afterEvent, userId, target);
-  FieldFx_End();
+  FieldEffect_End();
   return 0;
 }

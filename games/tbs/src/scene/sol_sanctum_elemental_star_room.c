@@ -2244,14 +2244,14 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
       x = alex->x.fixed;
       x += xOffset;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    alex->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        PIXELS(32),
-                    alex->z.fixed, 0, -PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        alex->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            PIXELS(32),
+                        alex->z.fixed, 0, -PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     }
     if (frame == 20)
       Engine_ActorSetChildValue(ACTOR_ALEX, 0x100);

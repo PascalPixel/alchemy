@@ -515,8 +515,9 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     drawY = Engine_RandomNext();
     velocityY = Math_Divide(
         (((u32)((drawY << 2) + drawY) >> 16) << 16) + PIXELS(3), 10);
-    FieldFx_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
-                  EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
+    FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
+                      settings);
   }
 }
 
@@ -1316,11 +1317,11 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   draw = Engine_RandomNext();
   velocityY = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(5));
 
-  FieldFx_Spawn(PIXELS(324), PIXELS(48), PIXELS(228), velocityX, velocityY, 0,
-                EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |
-                    EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
-                    EFFECT_USE_PALETTE,
-                settings);
+  FieldEffect_Spawn(
+      PIXELS(324), PIXELS(48), PIXELS(228), velocityX, velocityY, 0,
+      EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE |
+          EFFECT_SCALE_TO_TARGET | EFFECT_USE_PALETTE,
+      settings);
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -1361,8 +1362,8 @@ CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
   scale = Math_Divide(
       (((u32)Engine_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
 
-  FieldFx_Spawn(x, y, z, 0, scale, phase,
-                EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
+  FieldEffect_Spawn(x, y, z, 0, scale, phase,
+                    EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
 #ifdef UBFIX
   return;
 #else
@@ -1607,7 +1608,7 @@ s32 Scene_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Object_GetById(ACTOR_PARTY_LEADER)->riseCounter = 1;
     }
-    FieldFx_StartFadeOverlay(0);
+    FieldEffect_StartFadeOverlay(0);
     if (Object_GetById(ACTOR_PARTY_LEADER)->riseCounter == 0) {
       Event_StopRising();
     }

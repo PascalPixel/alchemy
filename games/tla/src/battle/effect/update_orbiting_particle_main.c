@@ -104,7 +104,7 @@ struct OrbitingParticleChild {
   u8 flags;
 };
 
-void FieldFx_RunFrostOnTarget(void) {
+void FieldEffect_RunFrostOnTarget(void) {
   struct BattleFxScene *state = Ram_HeapSlots->effectWork;
   struct OrbitingParticleChild *child = state->child;
 
@@ -113,7 +113,7 @@ void FieldFx_RunFrostOnTarget(void) {
       state->enabled = 1;
     }
     child->flags |= 2;
-    FieldFx_RunFrost();
+    FieldEffect_RunFrost();
   }
 }
 
@@ -122,7 +122,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 /// Sixteen particles, one every three frames, orbit points scattered 2 to 6
 /// pixels around the effect; the target then flashes eight times, takes the
 /// orbiting particles' main update and runs its pending event.
-void FieldFx_RunFrost(void) {
+void FieldEffect_RunFrost(void) {
   struct OrbitingParticleVector pos;
   struct OrbitingParticleVector *p;
   struct BattleFxScene *scene;

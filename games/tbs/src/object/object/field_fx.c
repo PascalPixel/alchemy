@@ -91,7 +91,7 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
   // both emitters, without changing their sizes.
   if (obj != 0) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gFieldFx_ParticleScript);
+                                 gFieldEffect_ParticleScript);
     ObjectDispatch_SelectAnimationFar(obj, 0);
     ((struct AnimationObject *)obj->animation)->image.priority = 1;
   }
@@ -99,8 +99,8 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
 
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
 /// within 16 pixels of it. Installed as the picture's updateHook by
-/// FieldFx_StartRandomParticleEmitter, ItemDisplay_ShowPicture
-/// and FieldFx_StartEffectObject22.
+/// FieldEffect_StartRandomParticleEmitter, ItemDisplay_ShowPicture
+/// and FieldEffect_StartEffectObject22.
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *emitter = (struct ObjectRuntime *)fieldObject;
   union PolarOffsetPosition position;
@@ -136,8 +136,8 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 /// through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded into
 /// VRAM. The caller owns the picture: Field_SearchTile releases it once the
 /// find is told. Called by Field_SearchTile for coins and items found, and by
-/// FieldFx_PlayCueAndStartEmitterOnTarget.
-struct EffectObj *FieldFx_StartRandomParticleEmitter(s32 actor, s32 item) {
+/// FieldEffect_PlayCueAndStartEmitterOnTarget.
+struct EffectObj *FieldEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   struct EffectObj *picture;
 
   s32 work = (s32)gEventWork;
@@ -171,7 +171,7 @@ struct EffectObj *FieldFx_StartRandomParticleEmitter(s32 actor, s32 item) {
         if (effect->updateHook == RevealMarker_EmitSparkles) {
           ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
         }
-        if (effect->scriptWord == (s32)gFieldFx_ParticleScript) {
+        if (effect->scriptWord == (s32)gFieldEffect_ParticleScript) {
           ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
         }
       }
@@ -187,7 +187,7 @@ struct EffectObj *FieldFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     return 0;
 
   ObjectDispatch_InitializeFar((struct DispatchObject *)picture,
-                               gFieldFx_ParticleEmitterScript);
+                               gFieldEffect_ParticleEmitterScript);
   {
     struct AnimationObject *sprite = picture->animation;
     void *iconBuffer;
@@ -228,7 +228,7 @@ void Object_DestroyIfPresent(void *object) {
 /// Raises a found item's picture to 36 pixels above the party leader, who
 /// holds it up (animation 28) facing the screen. Called by Field_SearchTile for
 /// what a search finds, by ItemDisplay_ShowPicture and by
-/// FieldFx_StartEffectObject22.
+/// FieldEffect_StartEffectObject22.
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   struct ObjectRuntime *leader;
 
@@ -245,7 +245,7 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   WaitFrames(3);
   ObjectDispatch_SelectAnimationFar(leader, 28);
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                               gFieldFx_RisingPulseScript);
+                               gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
   leader->angle = 0x4000;
 }
@@ -261,7 +261,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     leader = ObjectTable_Get(gGameState.selectedActor);
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-      ObjectDispatch_InitializeFar(object, gFieldFx_ParticleEmitterScript);
+      ObjectDispatch_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
       ((struct EffectObj *)object)->velocityY = 0x20000;
       ((struct EffectObj *)object)->gravity = 0x4000;
       ((struct EffectObj *)object)->updateHook = ItemDisplay_EmitSparkles;
@@ -285,7 +285,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// call it as Engine_ItemShowFound (41 of them). When no object is free, heap
 /// block 17, taken for the icon, is not released (the scene change's heap
 /// reset frees it).
-void FieldFx_StartEffectObject22(s32 item, s32 flags) {
+void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
   struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
   void *iconBuffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct EffectObj *object = (struct EffectObj *)Object_CreateFar(
@@ -331,14 +331,14 @@ void FieldFx_StartEffectObject22(s32 item, s32 flags) {
 /// While Reveal is active, destroys all its sparkles, leaving its marks. Called
 /// by the field menu (Menu_RunTopSelection, window/selection.c) each time
 /// Menu_SelectTopEntry returns, a cancel included, while Reveal is active.
-void FieldFx_ClearRandomParticles(void) {
+void FieldEffect_ClearRandomParticles(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     struct EffectObj *effect = EFFECT_OBJECT_POOL;
     s32 remainingActors = EFFECT_OBJECT_COUNT - 1;
 
     do {
       if (effect->scriptWord != 0) {
-        if (effect->scriptWord == (s32)gFieldFx_ParticleScript)
+        if (effect->scriptWord == (s32)gFieldEffect_ParticleScript)
           ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
       }
       remainingActors--;
@@ -351,7 +351,7 @@ void FieldFx_ClearRandomParticles(void) {
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it. Installed as the marker's updateHook by
-/// FieldFx_SpawnNearbyMarkers.
+/// FieldEffect_SpawnNearbyMarkers.
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   const struct FieldActor *source = (const struct FieldActor *)fieldObject;
   union PolarOffsetPosition position;
@@ -376,7 +376,7 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
 }
 
 /// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object
-/// script (gFieldFx_MarkerParticleScript) through SC_CALL: the marker stays
+/// script (gFieldEffect_MarkerParticleScript) through SC_CALL: the marker stays
 /// while it returns 1 and frees itself once it returns 0.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s16 revealState;
@@ -395,9 +395,9 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 /// and 5 up or down of the leader: map places 100 to 239 with no marker actor,
 /// whose search event (EVENT_SEARCH) gives an item, coins, a Psynergy Stone
 /// or a mimic and whose flag is not yet set. Each mark is an object of sprite
-/// 22 running gFieldFx_MarkerParticleScript. Called by Reveal's effect
+/// 22 running gFieldEffect_MarkerParticleScript. Called by Reveal's effect
 /// (psynergy_effects/reveal.c).
-void FieldFx_SpawnNearbyMarkers(void) {
+void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct ObjectRuntime *actor;
   const struct SceneEvent *entry;
@@ -451,7 +451,7 @@ void FieldFx_SpawnNearbyMarkers(void) {
                   22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
               if (actor != 0) {
                 ObjectDispatch_InitializeFar((struct DispatchObject *)actor,
-                                             gFieldFx_MarkerParticleScript);
+                                             gFieldEffect_MarkerParticleScript);
                 ObjectDispatch_SetSingleChildFlagsFar(
                     (struct DispatchObject *)actor, 0);
                 ((struct EffectObj *)actor)->updateHook =

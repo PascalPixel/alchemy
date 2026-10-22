@@ -506,7 +506,7 @@ static void Event_LeaveToValeInteriorsInnEast(void) {
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
 s32 ValeStorm_Initialize(void) {
-  FieldFx_SetQueuedSoundAndPlay(SE_170);
+  FieldEffect_SetQueuedSoundAndPlay(SE_170);
   Engine_ActorSetPosition(ACTOR_FELIX, 0, 0);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_SCENE_TEMP_05);
@@ -665,8 +665,8 @@ s32 ValeStorm_Initialize(void) {
   // The lightning starts at once, except before Dora and Kyle's scene.
   if (gGameState.entrance != VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA ||
       Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
-    FieldFx_StartGroundParticles();
-    FieldFx_StartLightning();
+    FieldEffect_StartGroundParticles();
+    FieldEffect_StartLightning();
   }
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_10) != 0) {
     Event_SetPathCellOverride();
@@ -717,7 +717,7 @@ s32 ValeStorm_Initialize(void) {
   gEventWork->transitionFrames = 24;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  FieldFx_ResumeLightning();
+  FieldEffect_ResumeLightning();
   return 0;
 }
 
@@ -733,9 +733,9 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
   Engine_EventBegin();
-  FieldFx_StartGroundParticles();
-  FieldFx_StartLightning();
-  FieldFx_LastLightning();
+  FieldEffect_StartGroundParticles();
+  FieldEffect_StartLightning();
+  FieldEffect_LastLightning();
   Engine_TaskWait(60);
   // The camera looks down on the door of Isaac's house; Kyle waits outside.
   Camera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
@@ -746,7 +746,7 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  FieldFx_ResumeLightning();
+  FieldEffect_ResumeLightning();
   // Dora and Isaac come out of the door.
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_IsaacsDoorOpens, 50, 44);
@@ -757,7 +757,7 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   Actor_SetSpeed(ACTOR_KYLE, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetPosition(ACTOR_DORA, PIXELS(342), PIXELS(890));
   Actor_WalkToAndWait(ACTOR_DORA, 342, 905);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Actor_WalkTo(ACTOR_DORA, 296, 905);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(342), PIXELS(890));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 342, 890);
@@ -877,7 +877,7 @@ static void Event_FirstRockFalls(void) {
       Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
-      FieldFx_PlayQueuedSound();
+      FieldEffect_PlayQueuedSound();
       Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
     }
     // The rock now blocks the path.
@@ -952,7 +952,7 @@ static void Event_SecondRockFalls(void) {
       Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
-      FieldFx_PlayQueuedSound();
+      FieldEffect_PlayQueuedSound();
       Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
     }
     ValeStorm_ApplySecondRockCollision();
@@ -1026,7 +1026,7 @@ static void Event_ThirdRockFalls(void) {
       Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
-      FieldFx_PlayQueuedSound();
+      FieldEffect_PlayQueuedSound();
       GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_FELL);
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, priority);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -1097,7 +1097,7 @@ static void Event_FourthRockFalls(void) {
       Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
-      FieldFx_PlayQueuedSound();
+      FieldEffect_PlayQueuedSound();
       Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
     }
     ValeStorm_ApplyFourthRockCollision();
@@ -1151,7 +1151,7 @@ static void ValeStorm_BumpIntoShovingMan(void) {
   Engine_ActorSetAnimation(ACTOR_SHOVING_MAN, ANIM_STAND);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SHOVING_MAN, 0);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_ShowEmote(ACTOR_SHOVING_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -1564,7 +1564,7 @@ static void Event_WatchBoulderFall(void) {
     Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
     Camera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
     Engine_CameraWaitForMove();
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
     Actor_SetAttachedEffect(ACTOR_GARET,
@@ -1735,7 +1735,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Engine_EventWait(10);
   Engine_ActorSetPosition(ACTOR_FELIX, 0, 0);
   Engine_EventWait(60);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
   {
     struct FieldActor *actor;
@@ -1791,7 +1791,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Engine_EventWait(6);
   Engine_ActorSetAnimation(ACTOR_FELIX, ANIM_FELIX_CLING);
   Engine_EventWait(20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventWait(20);
   Engine_CameraSetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   Engine_CameraMoveTo(PIXELS(216), -1, PIXELS(1232), 1);
@@ -1927,7 +1927,7 @@ static void ValeStorm_DoraGoesForHelp(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 149, 1175);
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_WalkToAndWait(ACTOR_JENNAS_MOTHER, 250, 1214);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -1952,12 +1952,12 @@ static void ValeStorm_DoraGoesForHelp(void) {
   Event_PlayCue(SE_159);
   Map_AnimateCells(gValeStorm_GrandparentsDoorCloses, 38, 72);
   Engine_EventWait(30);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Camera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
   Engine_EventWait(20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Actor_SetActionScript(ACTOR_DORA, gValeStorm_DoraComesOutOfRiversideHouse);
   Engine_EventWait(20);
   Actor_SetActionScript(ACTOR_JENNA, gValeStorm_JennaComesOutOfRiversideHouse);
@@ -1965,7 +1965,7 @@ static void ValeStorm_DoraGoesForHelp(void) {
   Event_PlayCue(SE_159);
   Map_AnimateCells(gValeStorm_IsaacsDoorCloses, 35, 73);
   Object_RefreshSelectorById(ACTOR_JENNA);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventWait(40);
   northMessage = MsgValeGoLookNorth;
   Engine_EventSetMessage(northMessage);
@@ -2256,11 +2256,11 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Actor_SetActionScript(ACTOR_EXHAUSTED_STRONGMAN, entryActions);
   Event_Wait(10);
   Actor_SetActionScript(ACTOR_JENNA, entryActions);
-  FieldFx_LastLightning();
+  FieldEffect_LastLightning();
   Event_Wait(10);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, entryActions);
   Event_Wait(10);
-  FieldFx_StopLightning();
+  FieldEffect_StopLightning();
   Actor_SetActionScript(ACTOR_GARET, entryActions);
   Event_Wait(128);
   Event_ClearPathCellOverride();
@@ -2326,7 +2326,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ValeStorm_PlayImpactBeat(PIXELS(3), 40);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);
-  FieldFx_StopLightning();
+  FieldEffect_StopLightning();
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(1);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -2566,10 +2566,10 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
   Engine_ColorBufferInterpolate(80);
   Event_Wait(60);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Event_Wait(60);
   Party_RemoveOwnerRestored(1);
-  FieldFx_ResumeLightning();
+  FieldEffect_ResumeLightning();
 }
 
 /// A lightning flash that freezes the picture: holds the rain
@@ -2936,7 +2936,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
     struct FieldActor *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
-    effect->update = FieldFx_AnimateVerticalNegative;
+    effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = parent->sprite->image.priority;
   }
   {
@@ -2944,7 +2944,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = parent->sprite->image.priority;
-    effect->update = FieldFx_AnimateVerticalPositive;
+    effect->update = FieldEffect_AnimateVerticalPositive;
     effect->priorityFlags = 2;
   }
 }

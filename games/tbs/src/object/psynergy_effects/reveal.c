@@ -33,10 +33,10 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 /// Scheduler callback of the timed effect (FIELD_KIND_REVEAL): asks for it to
 /// end once the leader is 60 pixels from its centre or its time has run out.
 /// The centre and the time are in the event work from 0xcb8 on
-/// (FieldFx_RunReveal). The time counts only while effectTimerRunning is
+/// (FieldEffect_RunReveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
 /// ResetSceneTransitionEffect removes it.
-void FieldFx_WatchLeaderDistance(void) {
+void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
   s16 *timer;
@@ -75,9 +75,9 @@ void FieldFx_WatchLeaderDistance(void) {
 /// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
-/// (FieldFx_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
-/// Called by FieldFx_Run and FieldFx_DispatchRequestKind.
-void FieldFx_RunReveal(void) {
+/// (FieldEffect_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
+/// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
+void FieldEffect_RunReveal(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;
   struct FieldActor *target;
@@ -102,8 +102,8 @@ void FieldFx_RunReveal(void) {
   field->revealActive = 0;
 #endif
   WaitFrames(1);
-  event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                    FIELD_KIND_REVEAL, &eventTarget);
+  event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                        FIELD_KIND_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   AudioCommand_PlayFar(SE_131);
@@ -115,14 +115,14 @@ void FieldFx_RunReveal(void) {
   field->revealCenterY = transition->centreY / 0x10000;
   field->revealFrames = 600;
   field->effectTimerRunning = 1;
-  FieldFx_SpawnNearbyMarkers();
+  FieldEffect_SpawnNearbyMarkers();
   frame = 0;
   do {
     WaitFrames(1);
     transition->value = frame;
     frame++;
   } while (frame <= 18);
-  Scheduler_AddOrUpdateCallback(FieldFx_WatchLeaderDistance, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
@@ -150,7 +150,7 @@ void ResetSceneTransitionEffect(void) {
 
   if (state->revealActive != 0) {
     AudioCommand_PlayFar(SE_SCENE_TRANSITION);
-    Scheduler_RemoveCallback(FieldFx_WatchLeaderDistance);
+    Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
     zero = 0;
     state->revealActive = zero;
@@ -164,7 +164,8 @@ void ResetSceneTransitionEffect(void) {
     ColorBuffer_StartInterpolation(30);
     WaitFrames(1);
 
-    event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
+    event =
+        FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
                                       FIELD_KIND_REVEAL, &eventTarget);
     if (event != NULL)
       Field_RunEventAction(event, gGameState.selectedActor, eventTarget);

@@ -223,7 +223,7 @@ s32 Scene_TalkToActor(s32 id) {
       // A function talk event is not run for a stopped actor: it says one of
       // two lines picked at random from the pair its definition flags choose.
       if (event->result >= 0x10000) {
-        s32 definitionFlags = FieldFx_GetFlags(id);
+        s32 definitionFlags = FieldEffect_GetFlags(id);
         u32 random = Random16();
         s32 message =
             MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
@@ -295,7 +295,7 @@ s32 Scene_TalkToActor(s32 id) {
 finish:
   // Both a normal event and the paused actor's fallback line release the pause.
   if (actorPaused) {
-    FieldFx_ResumeObject(gGameState.pausedObject);
+    FieldEffect_ResumeObject(gGameState.pausedObject);
     gGameState.pausedObject = -1;
   }
   return result;
@@ -554,14 +554,15 @@ s32 Field_SearchTile(s32 tile) {
               work->battle = Encounter_GetEnemyGroupAtSlot(ENCOUNTER_ZONE_MIMIC,
                                                            (u16)event->value);
               Battle_SetStart(BATTLE_START_NO_ESCAPE);
-              FieldFx_SelectBattleCue(ENCOUNTER_ZONE_MIMIC, (u16)event->value);
+              FieldEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMIC,
+                                          (u16)event->value);
               AudioCommand_PlayFar(gGameState.sceneCue);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
               void *object;
 
-              object = FieldFx_StartRandomParticleEmitter(
+              object = FieldEffect_StartRandomParticleEmitter(
                   gGameState.selectedActor, 0);
               WaitFrames(30);
               if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
@@ -579,7 +580,7 @@ s32 Field_SearchTile(s32 tile) {
               void *object;
               s32 recipient;
 
-              object = FieldFx_StartRandomParticleEmitter(
+              object = FieldEffect_StartRandomParticleEmitter(
                   gGameState.selectedActor, event->value & 0xfff);
               WaitFrames(30);
               recipient = PartyInventory_AddFar((u16)event->value);
@@ -620,7 +621,7 @@ s32 Field_SearchTile(s32 tile) {
                                                  1);
         }
         FieldEvent_End();
-        FieldFx_PlayQueuedSound();
+        FieldEffect_PlayQueuedSound();
       }
     } else {
       UiText_ShowPositionedMessageAndWaitFar(MsgCheckedGround, 1);

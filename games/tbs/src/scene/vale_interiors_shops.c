@@ -23,7 +23,7 @@
 ///   Kraden's visitors and of Vale's law that keeps Psynergy secret from
 ///   outsiders, and the jars and the barrel hold coins, an Antidote and a
 ///   Smoke Bomb, each found once.
-/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE), Jenna having been
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Jenna having been
 ///   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
 ///   VALE_INTERIORS_SHOPS_FROM_VALE_NORTH), the villagers talk of the quest and
 ///   of Felix, and the item merchant gives Isaac a Herb as a farewell gift
@@ -207,14 +207,14 @@ const u32 *ValeInteriorsShops_GetExits(void) {
 }
 
 /// Selects the placements for the day the story begins, after the party has
-/// left Vale (FLAG_PARTY_LEFT_VALE), or after Kalay (FLAG_REACHED_KALAY), and
+/// left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay (FLAG_REACHED_KALAY), and
 /// marks which of their actors are in view.
 const struct ScenePlacement *ValeInteriorsShops_GetPlacements(void) {
   struct ScenePlacement *table;
 
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
     table = gValeInteriorsShops_PlacementsAfterKalay;
-  } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT)) {
     table = gValeInteriorsShops_PlacementsAfterLeaving;
   } else {
     table = gValeInteriorsShops_Placements;
@@ -231,7 +231,7 @@ const struct SceneEvent *ValeInteriorsShops_GetEvents(void) {
     return gValeInteriorsShops_StormEvents;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     return gValeInteriorsShops_EventsAfterKalay;
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gValeInteriorsShops_EventsAfterLeaving;
   return gValeInteriorsShops_Events;
 }
@@ -447,7 +447,7 @@ s32 ValeInteriorsShops_Initialize(void) {
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
   if (gGameState.entrance == VALE_INTERIORS_SHOPS_FROM_VALE_NORTH) {
-    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
       Engine_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454),
                               PIXELS(150));
       actor = Object_GetById(ACTOR_JENNAS_GRANDMOTHER);
@@ -481,7 +481,7 @@ static void Event_TalkToWeaponMerchant(void) {
     Engine_EventSetMessage(MsgValeYouCameBack);
     Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
       Engine_EventSetMessage(MsgValeValeFeelsEmpty);
     } else {
       Engine_EventSetMessage(MsgValeGoodWeaponsDrawOutStrength);
@@ -507,7 +507,7 @@ static void Event_TalkToArmorMerchant(void) {
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       Engine_EventSetMessage(MsgValeTheRumorWasTrue);
     } else {
-      if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         Engine_EventSetMessage(MsgValeImNotSadJustGo);
       } else {
         Engine_EventSetMessage(MsgValeGoodArmorDrawsOutStrength);
@@ -537,7 +537,7 @@ static void Event_TalkToItemMerchant(void) {
       Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
       Engine_EventEnd();
     } else {
-      if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         ValeInteriorsShops_GiveFarewellHerb();
       } else {
         Engine_EventStart();

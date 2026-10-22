@@ -37,7 +37,7 @@
 ///   Great Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART,
 ///   which skips the account (FLAG_SCENE_TEMP_01), or leave by
 ///   SANCTUM_TO_CLEAR to SceneId_Clear. After the party has left Vale
-///   (FLAG_PARTY_LEFT_VALE), and again after it has reached Kalay
+///   (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay
 ///   (FLAG_REACHED_KALAY), the three talk of what the eruption and the Wise One
 ///   changed.
 /// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_VAULT_INTERIORS). Its
@@ -248,7 +248,7 @@ const struct ScenePlacement *Sanctum_GetPlacements(void) {
 
 /// Chooses the events by entrance, and in Vale Sanctum before and after the
 /// quest by story flag: gSanctum_ValeEvents before the party has left Vale,
-/// gSanctum_ValeEventsAfterLeaving once it has (FLAG_PARTY_LEFT_VALE) and
+/// gSanctum_ValeEventsAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
 /// gSanctum_ValeEventsAfterKalay once it has reached Kalay
 /// (FLAG_REACHED_KALAY); gSanctum_QuestEvents for the quest's visits
 /// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
@@ -277,7 +277,7 @@ const struct SceneEvent *Sanctum_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gSanctum_ValeEventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     return gSanctum_ValeEventsAfterLeaving;
   }
   return gSanctum_ValeEvents;
@@ -2078,7 +2078,7 @@ static void Event_TalkToHealer(void) {
   Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     Engine_EventSetMessage(MsgSanctumPathSolSanctumStillClosed);
-  else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     Engine_EventSetMessage(MsgSanctumMyControlOverPsynergyHas);
   else
     Engine_EventSetMessage(MsgSanctumWieldersPsynergyCalledAdeptsAdepts);

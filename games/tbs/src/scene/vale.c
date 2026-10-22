@@ -3,7 +3,7 @@
 /// Isaac's house, the houses of Garet's family and of Jenna's grandparents,
 /// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
 /// placements and events come in three sets, chosen by the story flags: before
-/// the party leaves Vale, after it has left (FLAG_PARTY_LEFT_VALE) and back
+/// the party leaves Vale, after it has left (FLAG_VALE_PARTY_LEFT) and back
 /// from Kalay (FLAG_REACHED_KALAY); VALE_FROM_TITLE has a set of its own. In
 /// story order:
 ///
@@ -31,7 +31,7 @@
 ///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
 ///   cottage, Garet's sister scolds him, and Dora says Isaac can fix the hole
 ///   later.
-/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE): Dora will not open
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): Dora will not open
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
 ///   away."), and the villagers speak of the tremors and of Kraden, who has
 ///   not come back.
@@ -376,7 +376,7 @@ const struct ScenePlacement *Vale_GetPlacements(void) {
     return gVale_RepairPlacements;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     return gVale_PlacementsAfterKalay;
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_PlacementsAfterLeaving;
   return gVale_Placements;
 }
@@ -406,7 +406,7 @@ static void Event_CatchNutAfterKalay(void) {
 const struct SceneEvent *Vale_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     return gVale_EventsAfterKalay;
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_EventsAfterLeaving;
   return gVale_Events;
 }
@@ -415,7 +415,7 @@ const struct SceneEvent *Vale_GetEvents(void) {
 /// before the party leaves, and speaks of the tremors after.
 static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_EventSetMessage(MsgValeTheGroundStillShakes);
     Engine_EventShowMessage(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   } else {
@@ -433,7 +433,7 @@ static void Event_TalkAboutTheMayorAndTremors(void) {
 static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_EventSetMessage(MsgValeKradenHasntComeBack);
     Engine_EventShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else if (Engine_GameFlagIsSet(flag) == 0) {
@@ -607,7 +607,7 @@ static void Event_EnterValeInteriorsShops(void) {
 /// and before Kalay, Dora will not open. "My Isaac would keep his promise...
 /// Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
 static void Event_EnterIsaacsHouse(void) {
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0 &&
       Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
     Engine_EventStart();
     Engine_EventSetMessage(MsgValeYouCantBeIsaac);
@@ -1539,7 +1539,7 @@ s32 Vale_Initialize(void) {
 #else
     if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
 #endif
-      if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE)) {
+      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT)) {
         actor = Object_GetById(ACTOR_DORA);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_DORA), 0);
         actor->scaleX = 0x28f;
@@ -1550,7 +1550,7 @@ s32 Vale_Initialize(void) {
         Engine_ActorSetPosition(ACTOR_FIRST_PUPPY + 1, 0, 0);
         Engine_ActorSetPosition(ACTOR_FIRST_PUPPY + 2, 0, 0);
       }
-      set = Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE);
+      set = Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT);
       if (set == 0) {
         if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
           if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH)) {

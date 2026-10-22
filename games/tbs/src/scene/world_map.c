@@ -33,7 +33,7 @@
 /// And it plays the story's moments on the map, each run by
 /// WorldMap_Initialize for the entrance another scene sends the party to. In
 /// story order:
-/// - Leaving Vale (WORLD_MAP_FROM_VALE_GATE) sets FLAG_PARTY_LEFT_VALE the
+/// - Leaving Vale (WORLD_MAP_FROM_VALE_GATE) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
 /// - Flint, the first Djinni, circles his spot until the party walks up to
 ///   him (Event_MeetFlint); he joins, teaches how Djinn are set and put on
@@ -839,7 +839,7 @@ static void Event_ReturnToTolbiShip(void) {
 /// flat with and without the swap). The arrivals by Crossbone
 /// Isle and from the Suhalla Desert's storm resume the time in the air a storm
 /// left (FLAG_SCENE_TEMP_F8). WORLD_MAP_FROM_DEBUG turns encounters off, and
-/// leaving Vale the first time sets FLAG_PARTY_LEFT_VALE and flag 0x85c,
+/// leaving Vale the first time sets FLAG_VALE_PARTY_LEFT and flag 0x85c,
 /// which nothing reads.
 s32 WorldMap_Initialize(void) {
   struct GameState *state = &gGameState;
@@ -877,8 +877,8 @@ s32 WorldMap_Initialize(void) {
     // Each special entrance resumes its travel or story sequence.
     switch (*entrance) {
     case WORLD_MAP_FROM_VALE_GATE:
-      if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) == 0) {
-        Engine_GameFlagSet(FLAG_PARTY_LEFT_VALE);
+      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) == 0) {
+        Engine_GameFlagSet(FLAG_VALE_PARTY_LEFT);
         Engine_GameFlagSet(0x85c);
       }
       break;

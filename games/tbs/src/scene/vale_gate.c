@@ -35,7 +35,7 @@
 ///   seeing them off at the town gate: Garet's sister gives a Herb, and his
 ///   brother the Catch Beads that Aunty Dora sent, for Dora herself does not
 ///   come. VALE_GATE_TO_WORLD_MAP leads out to the world map.
-/// - After the party has left (FLAG_PARTY_LEFT_VALE), the villagers point the
+/// - After the party has left (FLAG_VALE_PARTY_LEFT), the villagers point the
 ///   way to Vault and talk of the eruption, whose sparkles they take for
 ///   crushed Psynergy Stones; a large Psynergy Stone has fallen on the hut,
 ///   whose roof ValeGate_Initialize redraws. Only now does the town gate lead
@@ -497,7 +497,7 @@ const struct SceneEvent *ValeGate_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeGate_EventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeGate_EventsAfterLeaving;
   }
   if (gGameState.entrance == VALE_GATE_FROM_SANCTUM) {
@@ -564,7 +564,7 @@ static void Event_DemonstratePsynergy(void) {
   s32 *origin;
 
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     message = MsgValeArentWorriedCrossing;
     Engine_EventSetMessage(message);
     // "...with just the two of you?", three or four: the flag numbered for a
@@ -647,7 +647,7 @@ static void Event_AskAboutJourney(void) {
       work->message++;
       Engine_EventAskYesNo(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     }
-  } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_EventSetMessage(MsgValeYouSawTheWiseOne);
     Engine_EventAskYesNo(ACTOR_CURIOUS_OLD_MAN, 0);
   } else {
@@ -663,7 +663,7 @@ static void Event_AskAboutJourney(void) {
 ///
 /// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale; in a
 /// play-through ValeGate_Initialize has hidden him by then (a BUG), so only
-/// the debug menus, setting FLAG_PARTY_LEFT_VALE without the prologue's flags,
+/// the debug menus, setting FLAG_VALE_PARTY_LEFT without the prologue's flags,
 /// reach it.
 static void Event_TalkAboutFallenStone(void) {
   Engine_EventStart();
@@ -895,11 +895,11 @@ static void Event_LeaveThroughWestPassage(void) {
 /// begun its journey.
 ///
 /// Reached by stepping on cell code 8; takes VALE_GATE_TO_WORLD_MAP once
-/// FLAG_PARTY_LEFT_VALE is set, else does nothing. The farewell
+/// FLAG_VALE_PARTY_LEFT is set, else does nothing. The farewell
 /// (Event_DepartForQuest) shows the villagers gathered at the gate and leaves
 /// by the same exit.
 static void Event_LeaveThroughTownGate(void) {
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_AudioPlayCue(SE_MAP_EXIT);
     Vale_RequestBackdropExit(VALE_GATE_TO_WORLD_MAP);
   }
@@ -994,7 +994,7 @@ s32 ValeGate_Initialize(void) {
                                          gValeGate_FaceTargetActions);
       }
     } else {
-      if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         Actor_SetPosition(ACTOR_SECOND_CHILD, PIXELS(180), PIXELS(568));
         Map_CopyCellsTo(92, 2, 80, 5, 2, 2);
         Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
@@ -1016,7 +1016,7 @@ s32 ValeGate_Initialize(void) {
         actor->scaleY = 3 * Q16_ONE / 5;
         Engine_ActorSetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, 5);
       } else {
-        if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
           Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, PIXELS(331), PIXELS(249));
           actor = Object_GetById(ACTOR_FALLEN_STONE_SPOT);
           Engine_ActorSetSpriteFlags(actor, 0);
@@ -2132,7 +2132,7 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_ERUPTED);
   Engine_GameFlagSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
-  Engine_GameFlagSet(FLAG_PARTY_LEFT_VALE);
+  Engine_GameFlagSet(FLAG_VALE_PARTY_LEFT);
   Engine_GameFlagSet(FLAG_VALE_FAREWELL_HERB_RECEIVED);
   Engine_GameFlagSet(FLAG_GARET_CAME_HOME);
   Engine_GameFlagSet(FLAG_REACHED_KALAY);

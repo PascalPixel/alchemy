@@ -22,7 +22,7 @@
 ///   VALE_INTERIORS_INN_TO_VALE leads into the storm (ValeStorm) instead of
 ///   Vale (gValeInteriorsInn_StormExits). Kyle dies that night, as the village
 ///   says later.
-/// - Vale before the party leaves (FLAG_PARTY_LEFT_VALE clear): from Kraden's
+/// - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
 ///   cottage (ValeKraden's VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG) the
 ///   party arrives at VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, inside
 ///   it, where the Mythril Bag rises and wobbles before Kraden as he prepares
@@ -33,7 +33,7 @@
 ///   with me?" and sends Isaac off whatever he answers; at the inn the talk is
 ///   of three strange travellers staying there, one of them masked, and the
 ///   innkeeper offers a room.
-/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE): the villagers talk
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): the villagers talk
 ///   of the eruption and of Jenna, whom the visitors kidnapped, and one asks
 ///   whether the masked man was Felix, Jenna's brother, and whether Jenna can
 ///   be trusted.
@@ -302,7 +302,7 @@ const struct ScenePlacement *ValeInteriorsInn_GetPlacements(void) {
     return gValeInteriorsInn_ScholarsPlacements;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     table = gValeInteriorsInn_PlacementsAfterKalay;
-  else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     table = gValeInteriorsInn_PlacementsAfterLeaving;
   else
     table = gValeInteriorsInn_Placements;
@@ -344,7 +344,7 @@ const struct SceneEvent *ValeInteriorsInn_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeInteriorsInn_EventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeInteriorsInn_EventsAfterLeaving;
   }
   return gValeInteriorsInn_Events;
@@ -914,7 +914,7 @@ static void Event_TalkToInnkeeper(void) {
       Event_AskYesNo(ACTOR_INNKEEPER, 0);
       Actor_FaceDirection(ACTOR_INNKEEPER, FACING_WEST + FACING_STEP, 10);
     } else {
-      if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         Engine_EventSetMessage(MsgValeTheVisitorsCausedTheEruption);
       } else {
         Engine_EventSetMessage(MsgValeTheThreeTravelersSeemOdd);

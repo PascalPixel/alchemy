@@ -47,7 +47,7 @@
 ///   (Event_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from then on he and the
 ///   strangers are gone. A small boy at the fence hears growls beyond it, and a
 ///   jar holds an Elixir.
-/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE) the child means to
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT) the child means to
 ///   climb the fence one day, and after Kalay (FLAG_REACHED_KALAY) a woman with
 ///   fair hair visits the empty cottage, missing Kraden.
 ///
@@ -204,7 +204,7 @@ static void Event_TalkToBoyByTheFence(void) {
   s32 message;
 
   Engine_EventStart();
-  if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_EventSetMessage(MsgValeIllClimbTheFenceSomeday);
     Event_ShowMessage(ACTOR_BOY_BY_THE_FENCE, 0);
   } else {

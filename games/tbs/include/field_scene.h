@@ -54,7 +54,7 @@ enum {
 /// changes cell collision and stops sending its way down to
 /// SceneId_ValeEruption.
 /// ★ Named from its area name: Vale
-enum { FLAG_PARTY_LEFT_VALE = 0x815 };
+enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 
 /// A scene entrance: where and facing which way the party arrives, and the
 /// camera's bounds there (-1 for none).

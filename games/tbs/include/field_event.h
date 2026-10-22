@@ -58,6 +58,9 @@ enum ActorAnimation {
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
   ANIM_PUSH = 8,
+  /// ANIM_STAND's idle with more glances to each side, as when a whirlwind
+  /// catches the leader.
+  ANIM_LEADER_LOOK_AROUND = 9,
   ANIM_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
   ANIM_LEADER_CLING = 12,      ///< still on a wall, seen from behind
   ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east

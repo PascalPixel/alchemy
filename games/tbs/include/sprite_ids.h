@@ -635,6 +635,24 @@ enum SpriteId {
   /// ★ Named from what the player sees: a grey gatehouse between green walls
   /// (spr_279.png)
   SPRITE_WORLD_MAP_GATEHOUSE = 0x117,
+  /// One of the two kinds of obstacle that move in Tolbi Spring while a token
+  /// flies over it.
+  /// ★ Named from what the player sees: a red crab (spr_396.png)
+  SPRITE_CRAB = 0x18c,
+  /// The other kind of Tolbi Spring obstacle.
+  /// ★ Named from what the player sees: a green turtle with an orange shell
+  /// (spr_397.png)
+  SPRITE_TURTLE = 0x18d,
+  /// The coin tossed into Tolbi Spring, spinning, with its shadow and its
+  /// sparkle when it settles; the toss draws it when the player tosses a coin.
+  /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
+  /// it." (MsgTolbiFaceAwayTolbi)
+  SPRITE_SPRING_COIN = 0x18e,
+  /// The Lucky Medal tossed into Tolbi Spring, drawn as SPRITE_SPRING_COIN in
+  /// gold.
+  /// ★ Named from the game: "If you toss a Lucky Medal"
+  /// (MsgTolbiTossLuckyMedal)
+  SPRITE_SPRING_LUCKY_MEDAL = 0x18f,
   /// ★ Named from what the player sees: the wreck of a ship lying in the water
   /// (spr_501.png)
   SPRITE_SHIPWRECK = 0x1f5,
@@ -659,6 +677,13 @@ enum PuddleAnimation {
   PUDDLE_ANIM_LOW_ICE = 3, ///< held at the second step of freezing
   PUDDLE_ANIM_PILLAR = 5,  ///< the ice pillar, still
   PUDDLE_ANIM_MELT = 6     ///< sinks from the pillar back into a puddle
+};
+
+/// SPRITE_BABI's animations that scenes set by number (spr_052.tsv).
+enum BabiAnimation {
+  /// Lying in bed, only his head on the pillow showing, its two frames
+  /// alternating.
+  BABI_ANIM_IN_BED = 5
 };
 
 #endif

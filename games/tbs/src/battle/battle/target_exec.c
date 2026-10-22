@@ -1314,9 +1314,6 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
 }
 
-/// The ability Psy Drain, Psynergy that costs no PP.
-#define ABILITY_PSY_DRAIN 126
-
 /// Returns 1 for an ability that costs PP, and for Psy Drain, which costs
 /// none.
 /// Called by BattleCommand_BuildPlan (a cast's staging) and

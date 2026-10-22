@@ -166,9 +166,12 @@ enum ActorTalkFacing {
 #define PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
 
 /// Actor ids: 0 to 7 the party's characters, the placed actors from 8.
-enum { ACTOR_PARTY_LEADER = 0, ACTOR_FIRST_PLACED = 8 };
-/// The last of the 66 actor slots, as scenes loop over every placed actor.
-enum { ACTOR_LAST_SLOT = 65 };
+enum ActorSlot {
+  ACTOR_PARTY_LEADER = 0,
+  ACTOR_FIRST_PLACED = 8,
+  /// The last of the 66 actor slots, as scenes loop over every placed actor.
+  ACTOR_LAST_SLOT = 65
+};
 
 /// Whole pixels as 16.16 fixed point.
 #define PIXELS(value) ((value) << 16)

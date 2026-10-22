@@ -13,6 +13,7 @@ enum AbilityId {
   ABILITY_DOUSE = 0x21,
   ABILITY_WHIRLWIND = 0x4e,
   ABILITY_PLY = 0x5d,
+  ABILITY_PSY_DRAIN = 0x7e, ///< Psynergy that costs no PP
   ABILITY_MOVE = 0x8c,
   ABILITY_MIND_READ = 0x8d,
   ABILITY_FORCE = 0x8e,

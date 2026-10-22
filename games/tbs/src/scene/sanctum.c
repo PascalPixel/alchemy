@@ -150,7 +150,10 @@ enum SanctumActor {
   /// ★ Named from the game: "It must be the Wise One, guardian of the Elemental
   /// Stars." (MsgSanctumWeHadIdeaTrueSanctum)
   ACTOR_WISE_ONE,
-  ACTOR_HEALER_AFTERIMAGE, ///< a copy of the Great Healer for its afterimages
+  /// A copy of the Great Healer for its afterimages.
+  /// ★ Named from what the player sees: a red-tinted copy of the Great Healer
+  /// beside him while his Psynergy shows, healer-afterimages.gif (its render)
+  ACTOR_HEALER_AFTERIMAGE,
   // Vault Sanctum and Bilibin Sanctum (gSanctum_VaultBilibinPlacements).
   /// The other person of the Sanctum, in the western healer's sprite (a man
   /// with long brown hair and a beard in a long robe), who wanders, and who

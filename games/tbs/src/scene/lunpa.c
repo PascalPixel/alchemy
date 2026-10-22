@@ -511,7 +511,7 @@ static void Event_EnterDoor(void) {
   fieldWork = (struct FieldWork *)gEventWork;
   Engine_EventBegin();
   // Freeze placed actors before opening the selected door and crossing it.
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_PLACED; actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
     placedActor = Actor_Get(actorId);
     if (placedActor != NULL) {
       placedActor->motionFlags = 0;

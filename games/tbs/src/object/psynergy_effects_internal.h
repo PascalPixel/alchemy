@@ -103,7 +103,7 @@
 /// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
 /// battle's event is 300 plus the Djinni's number (element * 20 + index),
 /// with DJINN_NO_HOP (0x800) beside it.
-#define DJINNI_0 300
+#define DJINNI_EVENT_0 300
 
 /// A FieldActor seen with its position as one vector, to pass it whole. The
 /// gaps are FieldActor fields this view does not use.

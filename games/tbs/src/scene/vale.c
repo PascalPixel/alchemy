@@ -243,14 +243,14 @@ enum ValeActor {
   ACTOR_MAN_GUARDING_MT_ALEPH,
   /// The boards on the roof, sprite 0xce, which Isaac moves into place with
   /// Psynergy at the roof's end (Event_RoofMended).
-  /// ★ Named from what the player sees: a short plank of yellow wood
-  /// (spr_206.png)
+  /// ★ Named from what the player sees: a short plank of yellow wood,
+  /// spr_206.png (its render)
   ACTOR_FIRST_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood
-  /// (spr_206.png)
+  /// ★ Named from what the player sees: a short plank of yellow wood,
+  /// spr_206.png (its render)
   ACTOR_SECOND_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood
-  /// (spr_206.png)
+  /// ★ Named from what the player sees: a short plank of yellow wood,
+  /// spr_206.png (its render)
   ACTOR_THIRD_BOARD,
   /// ★ Named from the game: "Nut" (MsgItemName), the item Catch takes
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
@@ -283,8 +283,8 @@ enum ValeAfterKalayActor {
   /// (gVale_UnusedWaterGrows). The row after them places the woman with fair
   /// hair of ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing
   /// names her.
-  /// ★ Named from what the player sees: a spout of white water spraying up
-  /// (spr_214.png)
+  /// ★ Named from what the player sees: a spout of white water spraying up,
+  /// spr_214.png (its render)
   ACTOR_FIRST_WATER,
   /// An old woman: "Mt. Aleph's eruption was so powerful, it caused the
   /// continent to crack!"
@@ -328,18 +328,19 @@ enum ValeOpeningActor {
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_OPENING_DORA, ///< calls up to Isaac on the roof
   /// The boards on the roof, as ACTOR_FIRST_BOARD.
-  /// ★ Named from what the player sees: a short plank of yellow wood
-  /// (spr_206.png)
+  /// ★ Named from what the player sees: a short plank of yellow wood,
+  /// spr_206.png (its render)
   ACTOR_OPENING_FIRST_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood
-  /// (spr_206.png)
+  /// ★ Named from what the player sees: a short plank of yellow wood,
+  /// spr_206.png (its render)
   ACTOR_OPENING_SECOND_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood
-  /// (spr_206.png)
+  /// ★ Named from what the player sees: a short plank of yellow wood,
+  /// spr_206.png (its render)
   ACTOR_OPENING_THIRD_BOARD,
   /// Sprite 0xd7, the hand of Move (psynergy_effects/catch.c): it pushes the
   /// pillar for Garet, shedding sparkles.
-  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  /// ★ Named from what the player sees: a large open hand,
+  /// spr_215.png (its render)
   ACTOR_OPENING_MOVE_HAND
 };
 

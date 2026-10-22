@@ -277,8 +277,8 @@ enum ValeGateStormActor {
   /// already block, and nothing moves it, so the shadow stays on the ground as
   /// the boy lifts the rock (render probe vale-gate: the sprites with it and
   /// without it).
-  /// ★ Named from what the player sees: the shadow under the floating rock
-  /// (render probe vale-gate)
+  /// ★ Named from what the player sees: the shadow under the floating rock,
+  /// render probe vale-gate (its render)
   ACTOR_STORM_SMALL_ROCK_SHADOW,
   /// Rested at the Psynergy Stone, the strongman vale_storm.c calls
   /// ACTOR_EXHAUSTED_STRONGMAN. "Great! I'm all charged up!"

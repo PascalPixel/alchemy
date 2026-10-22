@@ -142,6 +142,8 @@ enum GondowanCaveActor {
   /// west wall, so the boulder blocks the passage until Lift takes both away
   /// (https://alchemy.pascalpixel.com/places/gondowan-cave/map-4.png shows
   /// the gap).
+  /// ★ Named from what the player sees: the open-looking gap between the
+  /// boulder and the passage's west wall, map-4.png (its render)
   ACTOR_BOULDER_GAP
 };
 

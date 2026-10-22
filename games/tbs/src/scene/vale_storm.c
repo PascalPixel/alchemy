@@ -102,8 +102,8 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y);
 static void ValeStorm_DoraGoesForHelp(void);
 static void ValeStorm_ShowBoulderSweepingDownriver(void);
 static void ValeStorm_FlashLightning(void);
-static void ValeStorm_UpdatePulsingGlow(void);
-static void ValeStorm_FlickerGlowOffset(void);
+static void ValeStorm_UpdateBoulderShadow(void);
+static void ValeStorm_FlickerBoulderShadow(void);
 static void ValeStorm_GaretFollowsIsaac(void);
 static void ValeStorm_RebuildRiverbank(void);
 static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor);
@@ -157,9 +157,13 @@ enum StormNightActor {
   ACTOR_JENNAS_MOTHER,
   /// ★ Named from the game: "Oh no! My brother!" (MsgValeNoBrother)
   ACTOR_JENNA,
-  /// A glow drawn round the Boulder as it comes down the river, swelling and
-  /// shrinking with its path (ValeStorm_UpdatePulsingGlow).
-  ACTOR_BOULDER_GLOW,
+  /// The Boulder's shadow (sprite 0x120, a black blob), drawn on alternate
+  /// frames under the Boulder as it comes down the river, swelling and
+  /// shrinking with its bounds (ValeStorm_UpdateBoulderShadow), and twice its
+  /// size during the frozen flashes (ValeStorm_FlickerBoulderShadow).
+  /// ★ Named from what the player sees: a flickering black shadow under the
+  /// Boulder, Event_BoulderSweepsThemAway.gif (its render)
+  ACTOR_BOULDER_SHADOW,
   // The elders holding back the Boulder with their Psynergy ("Go aid the
   // elders!", vale_gate.c), from gValeStorm_BoulderWatchers, which
   // Event_WatchBoulderFall places after the scene's own actors and removes.
@@ -2238,7 +2242,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   const s32 *departureActions;
 
   actor = Actor_Get(ACTOR_BOULDER);
-  groupActor = Actor_Get(ACTOR_BOULDER_GLOW);
+  groupActor = Actor_Get(ACTOR_BOULDER_SHADOW);
   actorVisual = actor->sprite;
   groupVisual = groupActor->sprite;
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -2331,11 +2335,11 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(40);
   Task_Wait(40);
-  // Stage the boulder and its glow for the downriver camera shot.
+  // Stage the boulder and its shadow for the downriver camera shot.
   Actor_SetChildValue(ACTOR_BOULDER, 0);
   currentActor = Actor_Get(ACTOR_BOULDER);
   Actor_SetSpriteFlags(currentActor, 0);
-  currentActor = Actor_Get(ACTOR_BOULDER_GLOW);
+  currentActor = Actor_Get(ACTOR_BOULDER_SHADOW);
   Actor_SetSpriteFlags(currentActor, 0);
   groupActor->scaleX = 0xcccc;
   groupActor->scaleY = 0xcccc;
@@ -2366,7 +2370,8 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Engine_ColorBufferInterpolate(30);
   Task_Wait(30);
   // Follow the boulder script until its eighth movement phase.
-  FieldScheduler_AddCallback(ValeStorm_UpdatePulsingGlow, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(ValeStorm_UpdateBoulderShadow,
+                             TASK_PRIORITY_SCENE);
   Actor_SetActionScript(ACTOR_BOULDER, gValeStorm_BoulderRollsDownriver);
   Camera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
   Camera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
@@ -2390,7 +2395,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   currentActor->velocityY = resetValue;
   currentActor = Camera_GetEventObject();
   currentActor->velocityZ = resetValue;
-  Scheduler_RemoveCallback(ValeStorm_UpdatePulsingGlow);
+  Scheduler_RemoveCallback(ValeStorm_UpdateBoulderShadow);
   Actor_Stop(ACTOR_BOULDER);
   Task_Wait(1);
   Actor_SetAnimation(ACTOR_BOULDER, ANIM_STILL);
@@ -2429,12 +2434,13 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   ValeStorm_FlashLightning();
-  Actor_SetPosition(ACTOR_BOULDER_GLOW, PIXELS(218), PIXELS(1176));
+  Actor_SetPosition(ACTOR_BOULDER_SHADOW, PIXELS(218), PIXELS(1176));
   Camera_MoveTo(PIXELS(210), 0, PIXELS(1196), 0);
   Engine_MapRedraw();
   groupActor->scaleX = 2 * Q16_ONE;
   groupActor->scaleY = 2 * Q16_ONE;
-  FieldScheduler_AddCallback(ValeStorm_FlickerGlowOffset, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(ValeStorm_FlickerBoulderShadow,
+                             TASK_PRIORITY_SCENE);
   Actor_Stop(ACTOR_KYLE);
   Actor_Stop(ACTOR_JENNAS_FATHER);
   Actor_Stop(ACTOR_JENNAS_MOTHER);
@@ -2463,7 +2469,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   groupActor->facing = FACING_NORTHWEST + FACING_STEP;
   groupVisual->image.priority = 0;
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
-  groupActor = Actor_Get(ACTOR_BOULDER_GLOW);
+  groupActor = Actor_Get(ACTOR_BOULDER_SHADOW);
   groupVisual = groupActor->sprite;
   ValeStorm_FlashLightning();
   actor->y.fixed = PIXELS(48);
@@ -2473,7 +2479,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   groupVisual->image.priority = 1;
-  Actor_SetPosition(ACTOR_BOULDER_GLOW, PIXELS(214), PIXELS(1216));
+  Actor_SetPosition(ACTOR_BOULDER_SHADOW, PIXELS(214), PIXELS(1216));
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_NORTH, 20);
   GameFlag_Set(FLAG_WEATHER_HELD);
@@ -2492,7 +2498,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Engine_ColorBufferInterpolate(80);
   Event_Wait(80);
   Event_Wait(100);
-  Scheduler_RemoveCallback(ValeStorm_FlickerGlowOffset);
+  Scheduler_RemoveCallback(ValeStorm_FlickerBoulderShadow);
   groupVisual->scale = groupActor->scaleX;
   GameFlag_Clear(FLAG_WEATHER_HELD);
   Map_ClearLayerEntryFlag(0);
@@ -2552,7 +2558,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_JENNAS_FATHER, 0, 0);
   Actor_SetPosition(ACTOR_JENNAS_MOTHER, 0, 0);
   Actor_SetPosition(ACTOR_FELIX, 0, 0);
-  Actor_SetPosition(ACTOR_BOULDER_GLOW, 0, 0);
+  Actor_SetPosition(ACTOR_BOULDER_SHADOW, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_ROCK + 6, PIXELS(144), PIXELS(1070));
   Actor_SetPosition(ACTOR_FIRST_ROCK + 7, PIXELS(276), PIXELS(1270));
   Task_Wait(60);
@@ -2595,19 +2601,19 @@ static void ValeStorm_FlashLightning(void) {
   Map_ClearLayerEntryFlag(5);
 }
 
-/// The callback that keeps ACTOR_BOULDER_GLOW on the Boulder as it comes down
-/// the river: the glow swells or shrinks by the step of
+/// The callback that keeps ACTOR_BOULDER_SHADOW on the Boulder as it comes down
+/// the river: the shadow swells or shrinks by the step of
 /// gValeStorm_BoulderRollsDownriver the Boulder is on (its work value), shows
 /// on odd frames only, and the map shakes as the step's timer counts down.
-static void ValeStorm_UpdatePulsingGlow(void) {
+static void ValeStorm_UpdateBoulderShadow(void) {
   struct FieldActor *source;
-  struct FieldActor *glow;
+  struct FieldActor *shadow;
   struct AnimationObject *sprite;
   s16 *timer;
 
   source = Object_GetById(ACTOR_BOULDER);
-  glow = Object_GetById(ACTOR_BOULDER_GLOW);
-  sprite = glow->sprite;
+  shadow = Object_GetById(ACTOR_BOULDER_SHADOW);
+  sprite = shadow->sprite;
   timer = &source->timer;
   if (*timer != 0) {
     if (*timer == 60) {
@@ -2624,20 +2630,20 @@ static void ValeStorm_UpdatePulsingGlow(void) {
     }
     (*timer)--;
   }
-  glow->x.fixed = source->x.fixed;
-  glow->z.fixed = source->z.fixed;
-  glow->targetX = glow->x.fixed;
+  shadow->x.fixed = source->x.fixed;
+  shadow->z.fixed = source->z.fixed;
+  shadow->targetX = shadow->x.fixed;
   sprite->offsetY = 10;
   if (gFrameCount & 1) {
     switch ((s16)source->work) {
     case 1:
     case 5:
-      glow->scaleX += 0xa3d;
-      glow->scaleY += 0xa3d;
+      shadow->scaleX += 0xa3d;
+      shadow->scaleY += 0xa3d;
       break;
     case 4:
-      glow->scaleX += 0x51e;
-      glow->scaleY += 0x51e;
+      shadow->scaleX += 0x51e;
+      shadow->scaleY += 0x51e;
       break;
     case 2:
     case 3:
@@ -2645,20 +2651,20 @@ static void ValeStorm_UpdatePulsingGlow(void) {
     case 7:
     case 8:
     case 9:
-      glow->scaleX += -0x7ae;
-      glow->scaleY += -0x7ae;
+      shadow->scaleX += -0x7ae;
+      shadow->scaleY += -0x7ae;
       break;
     }
-    sprite->scale = glow->scaleX;
+    sprite->scale = shadow->scaleX;
   } else {
     sprite->scale = 0;
   }
 }
 
-/// The callback that moves ACTOR_BOULDER_GLOW between two heights on
+/// The callback that moves ACTOR_BOULDER_SHADOW between two heights on
 /// alternate frames, during the frozen flashes.
-static void ValeStorm_FlickerGlowOffset(void) {
-  struct FieldActor *actor = Object_GetById(ACTOR_BOULDER_GLOW);
+static void ValeStorm_FlickerBoulderShadow(void) {
+  struct FieldActor *actor = Object_GetById(ACTOR_BOULDER_SHADOW);
   u32 frame = gFrameCount;
   struct AnimationObject *sprite = actor->sprite;
 
@@ -3201,7 +3207,7 @@ s32 gValeStorm_SquashAndStretchScript[] = {
 };
 
 /// The Boulder bounds down the river in nine steps. Each sets its step in
-/// SW_WORK, which ValeStorm_UpdatePulsingGlow reads and
+/// SW_WORK, which ValeStorm_UpdateBoulderShadow reads and
 /// ValeStorm_ShowBoulderSweepingDownriver waits on, and two of its landings
 /// start a shake countdown in SW_TIMER.
 s32 gValeStorm_BoulderRollsDownriver[] = {

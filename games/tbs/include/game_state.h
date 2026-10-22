@@ -155,8 +155,8 @@ struct GameState {
   s16 hazardDamage;
   s16 hazardSteps; ///< reset on entering a new scene group
   ///@}
-  /// The Djinni battle pending (DJINNI_0 plus its number, flags in bits 15 to
-  /// 11), resolved on returning to the field.
+  /// The Djinni battle pending (DJINNI_EVENT_0 plus its number, flags in bits
+  /// 15 to 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
   s16 sceneChangeReason; ///< the last battle's result; -1 for a defeat
   s32 encounterSteps;    ///< the encounter count, reset with a new group

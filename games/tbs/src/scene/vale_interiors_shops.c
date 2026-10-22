@@ -152,7 +152,8 @@ enum ValeInteriorsShopsActor {
   /// (MsgValeGoodArmorDrawsOutStrength)
   ACTOR_ARMOR_MERCHANT,
   /// Three letters Z that drift up from Garet's grandfather as he sleeps.
-  /// ★ Named from what the player sees: a white letter Z (spr_280.png)
+  /// ★ Named from what the player sees: a white letter Z,
+  /// spr_280.png (its render)
   ACTOR_FIRST_SLEEP_Z
 };
 

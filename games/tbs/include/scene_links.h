@@ -4568,112 +4568,112 @@ enum {
 /// SceneId_LunpaFortressGroundFloor's entrances.
 enum {
   LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES = 1,
-  LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_PASSAGE =
       2, ///< ★ Named from what the player sees: the small room just inside the
          ///< fortress door (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_ENTRANCE =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_ENTRANCE =
       3, ///< ★ Named from what the player sees: the long winding hall kept by
          ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTH_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTH_PASSAGE =
       4, ///< ★ Named from what the player sees: the long winding hall kept by
          ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_DINING_ROOM =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_FEAST_ROOM =
       5, ///< ★ Named from what the player sees: the long winding hall kept by
          ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTHEAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTHEAST_PASSAGE =
       6, ///< ★ Named from what the player sees: the long winding hall kept by
          ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_EAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_EAST_PASSAGE =
       7, ///< ★ Named from what the player sees: the long winding hall kept by
          ///< the entrance guard and two sentries (its render)
   LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTH_HALL_FROM_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTH_PASSAGE_FROM_MAIN_PASSAGE =
       9, ///< ★ Named from what the player sees: the hall at the top of the map
          ///< with a cell door, the stairs up and the way down to the cave (its
          ///< render)
   LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
   LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_CAVE = 11,
-  LUNPA_FORTRESS_GROUND_FLOOR_DINING_ROOM_FROM_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE =
       12, ///< ★ Named from the game: "Whee! Thanks to Hammet we can enjoy food
           ///< and drink all day long!" (MsgLunpaHammetBuysDrink)
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_MAIN_PASSAGE =
       13, ///< ★ Named from what the player sees: the winding hall in the top
           ///< right of the map, with one guard (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_EAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_EAST_PASSAGE =
       14, ///< ★ Named from what the player sees: the winding hall in the top
           ///< right of the map, with one guard (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_STOREROOM =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_BARREL_ROOM =
       15, ///< ★ Named from what the player sees: the winding hall in the top
           ///< right of the map, with one guard (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_MAIN_PASSAGE =
       16, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard and a cell door (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_NORTHEAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_NORTHEAST_PASSAGE =
       17, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard and a cell door (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_TREASURE_ROOM =
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM =
       18, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard and a cell door (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_STOREROOM_FROM_NORTHEAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_FROM_NORTHEAST_PASSAGE =
       19, ///< ★ Named from what the player sees: a small room of barrels where
           ///< a startled resident hides (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_FROM_EAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_FROM_EAST_PASSAGE =
       20, ///< ★ Named from what the player sees: the room of four chests (its
           ///< render)
 };
 /// SceneId_LunpaFortressGroundFloor's exits.
 enum {
   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES = 1,
-  LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_TO_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_TO_MAIN_PASSAGE =
       2, ///< ★ Named from what the player sees: the long winding hall kept by
          ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_ENTRANCE =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_ENTRANCE =
       3, ///< ★ Named from what the player sees: the small room just inside the
          ///< fortress door (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_NORTH_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_NORTH_PASSAGE =
       4, ///< ★ Named from what the player sees: the hall at the top of the map
          ///< with a cell door, the stairs up and the way down to the cave (its
          ///< render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_DINING_ROOM =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_FEAST_ROOM =
       5, ///< ★ Named from the game: "Whee! Thanks to Hammet we can enjoy food
          ///< and drink all day long!" (MsgLunpaHammetBuysDrink)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_NORTHEAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_NORTHEAST_PASSAGE =
       6, ///< ★ Named from what the player sees: the winding hall in the top
          ///< right of the map, with one guard (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_EAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_EAST_PASSAGE =
       7, ///< ★ Named from what the player sees: the hall on the right of the
          ///< map with a patrolling guard and a cell door (its render)
   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTH_HALL_TO_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTH_PASSAGE_TO_MAIN_PASSAGE =
       9, ///< ★ Named from what the player sees: the long winding hall kept by
          ///< the entrance guard and two sentries (its render)
   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE = 11,
-  LUNPA_FORTRESS_GROUND_FLOOR_DINING_ROOM_TO_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_TO_MAIN_PASSAGE =
       12, ///< ★ Named from what the player sees: the long winding hall kept by
           ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_MAIN_PASSAGE =
       13, ///< ★ Named from what the player sees: the long winding hall kept by
           ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_EAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_EAST_PASSAGE =
       14, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard and a cell door (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_STOREROOM =
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_BARREL_ROOM =
       15, ///< ★ Named from what the player sees: a small room of barrels where
           ///< a startled resident hides (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_TO_MAIN_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_MAIN_PASSAGE =
       16, ///< ★ Named from what the player sees: the long winding hall kept by
           ///< the entrance guard and two sentries (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_TO_NORTHEAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_NORTHEAST_PASSAGE =
       17, ///< ★ Named from what the player sees: the winding hall in the top
           ///< right of the map, with one guard (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_TO_TREASURE_ROOM =
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_TREASURE_ROOM =
       18, ///< ★ Named from what the player sees: the room of four chests (its
           ///< render)
-  LUNPA_FORTRESS_GROUND_FLOOR_STOREROOM_TO_NORTHEAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_TO_NORTHEAST_PASSAGE =
       19, ///< ★ Named from what the player sees: the winding hall in the top
           ///< right of the map, with one guard (its render)
-  LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_HALL =
+  LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_PASSAGE =
       20, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard and a cell door (its render)
 };
@@ -4681,63 +4681,63 @@ enum {
 /// SceneId_LunpaFortressUpperFloor's entrances.
 enum {
   LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
-  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_NORTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_NORTH_PASSAGE =
       2, ///< ★ Named from what the player sees: the tall hall on the left of
          ///< the map where two guards patrol (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_CENTRAL_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE =
       3, ///< ★ Named from what the player sees: the tall hall on the left of
          ///< the map where two guards patrol (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_WEST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_WEST_PASSAGE =
       4, ///< ★ Named from what the player sees: the empty winding hall at the
          ///< top of the map (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_GUARD_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_GUARD_ROOM =
       5, ///< ★ Named from what the player sees: the empty winding hall at the
          ///< top of the map (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_WOMENS_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_WOMENS_ROOM =
       6, ///< ★ Named from what the player sees: the empty winding hall at the
          ///< top of the map (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_WEST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_WEST_PASSAGE =
       7, ///< ★ Named from what the player sees: the hall in the middle of the
          ///< map, one guard under three arches (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_FAMILY_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_FAMILY_ROOM =
       8, ///< ★ Named from what the player sees: the hall in the middle of the
          ///< map, one guard under three arches (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_CELL_KEY_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_CELL_KEY_ROOM =
       9, ///< ★ Named from what the player sees: the hall in the middle of the
          ///< map, one guard under three arches (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_CENTRAL_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_MIDDLE_PASSAGE =
       10, ///< ★ Named from what the player sees: the bedroom of Dodonpa's wife
           ///< and children (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_PASSAGE =
       11, ///< ★ Named from what the player sees: the room where three guards
           ///< stand together and fight together (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_PASSAGE =
       12, ///< ★ Named from what the player sees: the room where three guards
           ///< stand together and fight together (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_PASSAGE =
       13, ///< ★ Named from the game: "Nearly all of these women were brought
           ///< here against their will" (MsgLunpaWomenWantHome)
-  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_CENTRAL_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_MIDDLE_PASSAGE =
       14, ///< ★ Named from the game: "Cell Key" (MsgItemName)
-  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_EAST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_EAST_PASSAGE =
       15, ///< ★ Named from the game: "Cell Key" (MsgItemName)
   LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
-  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_GUARD_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_GUARD_ROOM =
       17, ///< ★ Named from what the player sees: the winding hall at the bottom
           ///< of the map, with one guard (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_DONPAS_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_DONPAS_ROOM =
       18, ///< ★ Named from what the player sees: the winding hall at the bottom
           ///< of the map, with one guard (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_EAST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_EAST_PASSAGE =
       19, ///< ★ Named from what the player sees: the winding hall at the bottom
           ///< of the map, with one guard (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_PASSAGE =
       20, ///< ★ Named from the game: "Who is disrupting my sleep???"
           ///< (MsgLunpaWhoDisruptingSleep)
-  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_CELL_KEY_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_CELL_KEY_ROOM =
       21, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_SOUTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_SOUTH_PASSAGE =
       22, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard (its render)
   LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM =
@@ -4745,7 +4745,7 @@ enum {
   LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM =
       24, ///< ★ Named from the game: "Who is disrupting my sleep???"
           ///< (MsgLunpaWhoDisruptingSleep)
-  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_UNUSED =
+  LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_UNUSED =
       30, ///< no exit or event leads here
   /// Where the party comes back after the battle with the three guards in the
   /// guard room.
@@ -4754,63 +4754,63 @@ enum {
 /// SceneId_LunpaFortressUpperFloor's exits.
 enum {
   LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
-  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_TO_NORTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_NORTH_PASSAGE =
       2, ///< ★ Named from what the player sees: the empty winding hall at the
          ///< top of the map (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_TO_CENTRAL_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_MIDDLE_PASSAGE =
       3, ///< ★ Named from what the player sees: the hall in the middle of the
          ///< map, one guard under three arches (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_TO_WEST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_WEST_PASSAGE =
       4, ///< ★ Named from what the player sees: the tall hall on the left of
          ///< the map where two guards patrol (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_TO_GUARD_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_GUARD_ROOM =
       5, ///< ★ Named from what the player sees: the room where three guards
          ///< stand together and fight together (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_TO_WOMENS_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_WOMENS_ROOM =
       6, ///< ★ Named from the game: "Nearly all of these women were brought
          ///< here against their will" (MsgLunpaWomenWantHome)
-  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_TO_WEST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_WEST_PASSAGE =
       7, ///< ★ Named from what the player sees: the tall hall on the left of
          ///< the map where two guards patrol (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_TO_FAMILY_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_FAMILY_ROOM =
       8, ///< ★ Named from what the player sees: the bedroom of Dodonpa's wife
          ///< and children (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_TO_CELL_KEY_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_CELL_KEY_ROOM =
       9, ///< ★ Named from the game: "Cell Key" (MsgItemName)
-  LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_TO_CENTRAL_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_TO_MIDDLE_PASSAGE =
       10, ///< ★ Named from what the player sees: the hall in the middle of the
           ///< map, one guard under three arches (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_NORTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_NORTH_PASSAGE =
       11, ///< ★ Named from what the player sees: the empty winding hall at the
           ///< top of the map (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_SOUTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_SOUTH_PASSAGE =
       12, ///< ★ Named from what the player sees: the winding hall at the bottom
           ///< of the map, with one guard (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_TO_NORTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_TO_NORTH_PASSAGE =
       13, ///< ★ Named from what the player sees: the empty winding hall at the
           ///< top of the map (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_CENTRAL_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_MIDDLE_PASSAGE =
       14, ///< ★ Named from what the player sees: the hall in the middle of the
           ///< map, one guard under three arches (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_EAST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_EAST_PASSAGE =
       15, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard (its render)
   LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
-  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_GUARD_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_GUARD_ROOM =
       17, ///< ★ Named from what the player sees: the room where three guards
           ///< stand together and fight together (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_DONPAS_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_DONPAS_ROOM =
       18, ///< ★ Named from the game: "Who is disrupting my sleep???"
           ///< (MsgLunpaWhoDisruptingSleep)
-  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_EAST_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_EAST_PASSAGE =
       19, ///< ★ Named from what the player sees: the hall on the right of the
           ///< map with a patrolling guard (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_SOUTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_SOUTH_PASSAGE =
       20, ///< ★ Named from what the player sees: the winding hall at the bottom
           ///< of the map, with one guard (its render)
-  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_TO_CELL_KEY_ROOM =
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_TO_CELL_KEY_ROOM =
       21, ///< ★ Named from the game: "Cell Key" (MsgItemName)
-  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_TO_SOUTH_HALL =
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_TO_SOUTH_PASSAGE =
       22, ///< ★ Named from what the player sees: the winding hall at the bottom
           ///< of the map, with one guard (its render)
   LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_TO_DONPAS_ROOM =
@@ -4823,10 +4823,10 @@ enum {
 /// SceneId_LunpaFortressCave's entrances.
 enum {
   LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
-  LUNPA_FORTRESS_CAVE_ENTRANCE_FROM_POOL =
+  LUNPA_FORTRESS_CAVE_ENTRANCE_FROM_LAKE =
       2, ///< ★ Named from what the player sees: the small cave at the foot of
          ///< the stairs from the fortress (its render)
-  LUNPA_FORTRESS_CAVE_POOL_FROM_ENTRANCE =
+  LUNPA_FORTRESS_CAVE_LAKE_FROM_ENTRANCE =
       3, ///< ★ Named from what the player sees: the big cave round an
          ///< underground pool (its render)
   LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,
@@ -4836,10 +4836,10 @@ enum {
 /// SceneId_LunpaFortressCave's exits.
 enum {
   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR = 1,
-  LUNPA_FORTRESS_CAVE_ENTRANCE_TO_POOL =
+  LUNPA_FORTRESS_CAVE_ENTRANCE_TO_LAKE =
       2, ///< ★ Named from what the player sees: the big cave round an
          ///< underground pool (its render)
-  LUNPA_FORTRESS_CAVE_POOL_TO_ENTRANCE =
+  LUNPA_FORTRESS_CAVE_LAKE_TO_ENTRANCE =
       3, ///< ★ Named from what the player sees: the small cave at the foot of
          ///< the stairs from the fortress (its render)
   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,

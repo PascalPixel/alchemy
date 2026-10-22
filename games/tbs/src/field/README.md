@@ -13,92 +13,30 @@ runs a field scene on the engine, each place's overlay in
 holds the map data the engine loads. [World](../../world.md) gives the layer
 as a whole.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `field.c` | the field object: a guide comment, then `field_internal.h` and the 14 parts under `field/` in ROM order |
-| `field_internal.h` | the parts' includes, and the names more than one part uses; it places no bytes |
-| `field/*.c` | the 14 parts, each one family of functions; `head -3 field/*.c` prints what each holds |
-| `update.c` | `Object_UpdateAll`, an ARM copy of the object update for the first eight objects, which only the unused `Object_RunUpdateAllFromHeap` would run |
-| `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's scanline table into `BG2`'s affine values |
-| `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gScriptObject_CommandTable`, and the handlers of the work values |
-| `facing.c` | the facing tables and the small tables the parts read: the order a sprite's tiles dissolve in, the fixed camera's matrix, the wave a floating object bobs on, the idle script, the direction pad's headings, the footprint and dust scripts, and the world map camera's lean for each pad direction |
-| `curve_data.c`, `mapdata.c` | the ground height tables, `gMap_TerrainHeightFunctions`, the world map's terrain behaviour table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
-| `world_map_resources.c` | `gWorldMap_GraphicsResources`, the world map's two graphics sets |
-| `griddata.c` | the scale the debug sprite viewer draws at |
-| `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
-| `layered.tsv` | `gMap_LayeredScenes`: each layered map's header, palette, three tile sheets and layer data, as resource numbers counted from `ResourceId_Map001` |
-| `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
-| `scenes.s` | `gField_SceneTable`: each scene's overlay, place group, variant (town or field) and map; each row also defines the scene's `SceneId_` |
-| `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../object/scripts.s) places |
-
-The headers are in `games/tbs/include/unit/field/`, one for each C file but
-`world_map_resources.c`, whose table `field.h` declares. Link order is in
-`games/tbs/objects.tsv`.
-
-`field.c` is one object in the ROM; the parts are our cut of it, made where
-one family of functions ends and the next begins. They are compiled only
-through `field.c`, and each also includes `field_internal.h` so that it reads
-on its own.
-
-## Words and local names
-
-- A **field object** is one of the 64 slots of `gObjectSlots`, 112 bytes
-  each. The party, the people and things a scene places, the camera and the
-  footprints are all field objects. A slot with no script is free.
-- A **sprite** is one of the 64 `struct AnimationObject`s: an image and a
-  shadow, two entries of OAM (the hardware's sprite list), and up to four
-  animation **layers** (`struct AnimationEntry`) composed into one picture.
-- An **object script** is a list of 32-bit words: `SC_` commands of
-  [`objcmd.h`](../../include/objcmd.h) and their operands. An **animation
-  script** is a list of byte pairs that a sprite layer plays.
-- A **work value** (`SW_`) is a field of the object as `SC_SET`, `SC_ADD` and
-  `SC_CMP` number it.
-- A **cell** is one 16 by 16 pixel square of a layered map, and a map
-  **layer** one of its three backgrounds; [Maps](../map/README.md) defines
-  both. A map's layers have nothing to do with a sprite's.
-- Positions are 16.16 fixed-point pixels: x across the map, y up, z down the
-  map. Angles are 16-bit fractions of a turn (`FACING_EAST` is 0,
-  `FACING_SOUTH` a quarter turn).
-
-In the code, `object` and `interpreter` are the object a command runs on,
-`sprite` and `layer` a sprite and one of its layers, `work` or `mapWork` the
-map work (`gMapWork[0]`), and `perspective` the world map's.
-
-Because the parts compile as one file, a part's own types, macros and static
-helpers carry its family's name (`ObjectCamera`, `LayeredScene`, `WorldMap`),
-and a part undefines its macros at its end.
-[Matching](../MATCHING.md) lists the sites that keep an unusual spelling.
-
-## Function prefixes
-
-| Prefix | What it covers |
-| --- | --- |
-| `Sprite_`, `Render_` | drawing sprites |
-| `Animation_`, `AnimationObjects_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
-| `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
-| `Script_` | object script commands |
-| `Field_` | the configured keys |
-| `Map_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
-| `WorldMap_` | the world map |
-| `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `GetMapCellCollision`, `SetMapCellCollision` and `CheckMapPositionCellOccupied` ask the same of a layered map |
-| `MapAnimation_`, `DisplayBlend_`, `PaletteQueue_` | tile animation, the blend script and palette cycles |
-| `Curve_` | ground height functions |
-| `Ui_` | the debug sprite viewer |
-| `LuckyDice_` | the Lucky Dice minigame |
-
-A few functions take the prefix of the one thing they act on
-(`Resource_DecompressLz`, `Camera_FollowLeaderInBounds`). Names other
-folders or The Lost Age's copy also use change only in a rename across all of
-them.
-
 ## Object scripts
 
-Every object in use runs a script, even if only the idle one. The camera, an
-actor wandering near its home and a footprint waiting to disappear are
-scripts, and so is the leader: the player's control is a script command run
-once a frame.
+Every field object in use runs a script of 32-bit command words once a
+frame, even if only the idle one, and that is how the camera, the actors and
+the player's control all act.
+
+```mermaid
+flowchart TD
+    start["Object_UpdateAllThumb:<br/>the next object with a script"] --> hook["call its hook, if it has one"]
+    hook --> paused{"paused?"}
+    paused -->|yes| next["next object"]
+    paused -->|no| wait{"wait is not zero?"}
+    wait -->|yes| count["count the wait down"] --> move
+    wait -->|no| word{"command word above 63?"}
+    word -->|yes| skip["step over it: a label"] --> word
+    word -->|no| run["run gScriptObject_CommandTable[word]"]
+    run -->|returns 1| word
+    run -->|returns 0| move["move the object, unless frozen"]
+    move --> next
+```
+
+The camera, an actor wandering near its home and a footprint waiting to
+disappear are scripts, and so is the leader: the player's control is a
+script command run once a frame.
 
 `Object_UpdateAllThumb` (`field/object_motion.c`) runs the scripts. For each
 object with a script it first calls the object's hook, if it has one, even
@@ -144,7 +82,35 @@ flight in 3D towards its target, following the terrain, floating, and solid
 objects refusing to overlap. In a battle, `Object_UpdateAllMotion` replaces
 it; it moves the first 14 objects and runs no scripts.
 
+The objects are the 64 slots of `gObjectSlots`, 112 bytes each, in the heap
+block `HEAP_SLOT_OBJECT_POOL`; the commands are the macros of
+[`objcmd.h`](../../include/objcmd.h), and the handlers are the rows of
+`gScriptObject_CommandTable` (`object_script.c`).
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `FIELD_OBJECT_COUNT` | 64 | field objects, the slots of `gObjectSlots` |
+| `SC_WAIT(n)` | `0x00`, n | end the frame and wait n frames |
+| `SC_SYNC` | `0x01` | wait until the object reaches its target |
+| `SC_LOOP(n, to)` | `0x0c`, n, to | jump to label `to` n - 1 times, so what lies between runs n times |
+| `SC_END` | `0x10` | return to `gScript_MainScript` and idle |
+| `SC_PLAYER` | `0x18` | the player's control on a layered map |
+| `SC_KEYS` | `0x19` | move 8 pixels a step by the direction pad |
+| `SC_WORLD` | `0x1a` | the player's control on the world map |
+| `SC_FREE` | `0x1b` | free the object's slot |
+| `SC_KEY_COUNT` | `0x23` | check the configured keys; the last command |
+| `SC_LABEL(n)` | `0x80000000 \| n << 16` | a label: a word the update steps over |
+| `SC_TO(n)` | `0xc0000000 \| n << 16` | a jump's operand naming label n |
+| `SC_TOP` | 0 | the script's start |
+| `SC_FOREVER` | `0xffff` | an `SC_LOOP` count that never runs out |
+
 ## Sprites and their animation
+
+A sprite is an image composed from up to four layers, each playing its own
+animation script, and redrawn into video memory whenever one of their frames
+changes.
+
+![Isaac attacking in a battle, the screen on the left and his sprite taken apart on the right. Its three layers are each composed alone: `entries[0]`, sprite 300, his body; `entries[1]`, sprite 320, his sword; and `entries[2]`, sprite 510, a dark ellipse along the bottom of its 64 by 64 picture. Beside them is the buffer composed from all three, read back from video memory: the ellipse under his feet, the body over it and the sword over the body. As he winds up, swings and lands, the body's and the sword's frame numbers change together, from 1 to 5 standing, then 13, 15 and 17 for the swing, 7 and 9 as he lands, while the ellipse stays at frame 0.](https://alchemy.pascalpixel.com/guides/field/sprite-layers.gif)
 
 Each layer of a sprite plays an animation script of byte pairs. A first byte
 below `ANIM_CMD_END` (239) is a frame to show and the second byte how long.
@@ -166,8 +132,6 @@ pixels through a 256-byte table: one of the five
 The first remap table also recolours the command icons
 (`Runtime_RemapBytesByTable`).
 
-![Isaac attacking in a battle, the screen on the left and his sprite taken apart on the right. Its three layers are each composed alone: `entries[0]`, sprite 300, his body; `entries[1]`, sprite 320, his sword; and `entries[2]`, sprite 510, a dark ellipse along the bottom of its 64 by 64 picture. Beside them is the buffer composed from all three, read back from video memory: the ellipse under his feet, the body over it and the sword over the body. As he winds up, swings and lands, the body's and the sword's frame numbers change together, from 1 to 5 standing, then 13, 15 and 17 for the swing, 7 and 9 as he lands, while the ellipse stays at frame 0.](https://alchemy.pascalpixel.com/guides/field/sprite-layers.gif)
-
 A battle unit's sprite shows how layers combine. `BattleObj_SpawnObjectsForList`
 (`../battle/battle/objects.c`) gives Isaac's sprite three layers: his body
 (`BattleObj.resource`) and his weapon (`BattleObj.overlay`) at priority 1, and
@@ -181,7 +145,41 @@ Isaac's sprite, the other layers' priority is raised past 3 and every layer's
 `step` set to 0, so the scripts stand still while it composes, and the buffer
 is read back from video memory before the machine is put back as it was.
 
+A sprite is a `struct AnimationObject`, and each of its layers a
+`struct AnimationEntry`; the colour tables are `gResourceSlot_ConversionTables`
+and `gRuntime_ByteRemapTable` (`remap0.tsv` to `remap3.tsv`).
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `ANIMATION_OBJECT_COUNT` | 64 | sprites, and the layer records they share |
+| `ANIMATION_LAYER_COUNT` | 4 | layers a sprite composes, `AnimationObject.entries` |
+| `ANIMATION_NORMAL_STEP` | 16 | sixteenths of a frame off a layer's timer each frame: normal speed |
+| `ANIM_CMD_END` | 239 | blank the layer and stop its script |
+| `ANIM_CMD_SET_KIND` | 240 | use facing table `arg` |
+| `ANIM_CMD_HOLD` | 241 | stay on this command and frame for good |
+| `ANIM_CMD_WAIT` | 245 | keep the current frame `arg` frames longer |
+| `ANIM_CMD_JUMP` | 253 | continue at script position `arg` |
+| `ANIM_CMD_PLAY` | 254 | switch to animation `arg` |
+| `ANIM_CMD_BLANK` | 255 | show nothing for `arg` |
+
 ## Cameras and the frame
+
+The object system runs as two tasks, the object update and a camera, and
+the camera places every object's sprite on the screen once the objects have
+moved.
+
+```mermaid
+sequenceDiagram
+    participant W as WaitFrames
+    participant S as Scheduler_RunPass
+    participant U as Object update (order 0xc8a)
+    participant C as Camera (order 0xc80)
+    participant R as Render_BuildOamList
+    W->>S: once a frame
+    S->>U: run the scripts and move the objects
+    S->>C: place each sprite, queued by depth
+    W->>R: build the sprite list from the queue
+```
 
 `ObjectSystem_Initialize` sets the engine up for one mode and schedules two
 tasks: the object update at order 0xc8a and a camera at 0xc80. The scheduler
@@ -189,9 +187,9 @@ runs higher orders first, so objects move before the camera places them.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
-| `MODE_LAYERED_MAP` | the field scene runner (`object/object/run_scene.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
-| `MODE_WORLD_MAP` | the field scene runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
-| `MODE_BATTLE` | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
+| `MODE_LAYERED_MAP` (2) | the field scene runner (`object/object/run_scene.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
+| `MODE_WORLD_MAP` (3) | the field scene runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
+| `MODE_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
 
 The camera places each object's sprite and queues it by depth; the frame's
 sprite list is built from that queue. The battle effects, the Psynergy
@@ -201,6 +199,10 @@ or debug menu is open, `ObjectSystemWork.suspended` is set, so sprites that
 are not held are not drawn and give up their video memory.
 
 ## Player control
+
+The player moves the leader through one of the engine's scripts, which sets
+the leader's speed from the keys and probes the ground ahead before each
+step.
 
 When the scene loop gives control back to the player, it starts one of the
 engine's scripts on the leader: `SC_PLAYER` on a layered map, `SC_WORLD` on
@@ -234,7 +236,44 @@ R raises `FIELD_EVENT_WORLD_MAP_PICTURE`, which opens [the world map
 screen](../object/README.md#the-world-map-screen), and L
 `FIELD_EVENT_WORLD_MAP_ZOOM`, which zooms the view out.
 
+Speeds are 16.16 fixed-point pixels a frame.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame |
+| `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash key held |
+| `FIELD_ACCELERATION` | `0x4000` | a quarter pixel a frame faster each frame |
+| `FIELD_FAST_WALK_SPEED` | `0x40000` | 4 pixels a frame, B held with `FLAG_FAST_WALK` |
+| `FIELD_FAST_WALK_ACCELERATION` | `0x10000` | 1 pixel a frame faster each frame |
+| `WORLD_MAP_WALK_SPEED` | `0x8000` | half a pixel a frame |
+| `WORLD_MAP_RUN_SPEED` | `0x10000` | 1 pixel a frame, with a dash key held |
+| `WORLD_MAP_ACCELERATION` | `0x4000` | a quarter pixel a frame faster each frame, walking |
+| `WORLD_MAP_RUN_ACCELERATION` | `0x14000` | 1.25 pixels a frame faster each frame, running |
+| `WORLD_MAP_FAST_SPEED` | `0x40000` | 4 pixels a frame, while L repeats |
+| `WORLD_MAP_PROBE_RADIUS` | `0x80000`, `0x70000` | 8 pixels in Japanese, 7 from English on |
+| `FIELD_EVENT_WORLD_MAP_PICTURE` | -888 | R on the world map: the world map screen |
+| `FIELD_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: zoom the view out |
+
 ## The ground under an object
+
+The engine answers how high the ground is at a point, and whether an object
+may step there, from the cell under the point in the map layer the object
+follows.
+
+```mermaid
+flowchart TD
+    probe["Map_CheckObjectStep(object, point)"] --> map{"a map loaded?"}
+    map -->|no| open["MAP_STEP_OPEN"]
+    map -->|yes| cell["the cell under the point,<br/>in the layer terrainId names"]
+    cell --> wall{"MAP_CELL_WALL?"}
+    wall -->|yes| w["MAP_STEP_WALL"]
+    wall -->|no| height["the shape's height function<br/>gives the ground there"]
+    height --> high{"more than 8 pixels up?"}
+    high -->|yes| h["MAP_STEP_TOO_HIGH"]
+    high -->|no| low{"more than 12 pixels down?"}
+    low -->|yes| l["MAP_STEP_TOO_LOW"]
+    low -->|no| open
+```
 
 An object's `terrainId` names the map layer whose ground it follows. Code
 that asks about the ground at a point reads the cell there in that layer's
@@ -244,14 +283,31 @@ pick one of `TERRAIN_KIND_COUNT` (16) functions in
 samples (`Map_GetTerrainHeight`). Walls and heights can therefore differ
 from one layer to the next.
 
-`Map_CheckObjectStep` decides each probe: `MAP_STEP_WALL` for a
-`MAP_CELL_WALL` cell, `MAP_STEP_TOO_HIGH` for ground more than 8 pixels above
-the object's, `MAP_STEP_TOO_LOW` for ground more than 12 pixels below, and
-`MAP_STEP_OPEN` otherwise. On the world map, `CheckWorldMapWalkable` asks
-`GetWorldMapCollision` instead, which reads a 4-bit collision value from the
-world map's upper collision layer where it has one, else the lower.
+`Map_CheckObjectStep` (`field/terrain.c`) decides each probe:
+`MAP_STEP_WALL` for a `MAP_CELL_WALL` cell, `MAP_STEP_TOO_HIGH` for ground
+more than 8 pixels above the object's, `MAP_STEP_TOO_LOW` for ground more
+than 12 pixels below, and `MAP_STEP_OPEN` otherwise. On the world map,
+`CheckWorldMapWalkable` asks `GetWorldMapCollision` instead, which reads a
+4-bit collision value from the world map's upper collision layer where it
+has one, else the lower.
+
+The height functions are `gMap_TerrainHeightFunctions` (`curve_data.c`); the
+cells and their shapes are the map's, as [Maps](../map/README.md#cells)
+describes.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `TERRAIN_KIND_COUNT` | 16 | ground height functions a shape can pick |
+| `MAP_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
+| `MAP_STEP_OPEN` | 0 | the object can step there |
+| `MAP_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
+| `MAP_STEP_WALL` | 2 | the cell there is a wall (`MAP_CELL_WALL`) |
 
 ## Layered maps on screen
+
+A town or dungeon is drawn as three map layers on three backgrounds, whose
+hardware priorities put each layer in front of or behind the actors; the
+picture at the top of this page takes Vale apart into them.
 
 `Map_LoadLayeredScene` loads a map from its row of `gMap_LayeredScenes`;
 [Maps](../map/README.md) describes the data and where each part is decoded.
@@ -283,30 +339,41 @@ map; [Maps](../map/README.md#tile-animation-and-blend-scripts) gives their
 format. Only `PaletteQueue_Start` schedules palette cycles, and nothing calls
 it, so no palette cycle runs in the game.
 
+The maps are the rows of `gMap_LayeredScenes` (`layered.tsv`).
+
+| Name | Value | Background | Meaning |
+| --- | --- | --- | --- |
+| `MAP_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
+| `MAP_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
+| `MAP_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
+
 ## The world map view
 
-The world map is a flat map that the display tilts into perspective. `BG2` and
-`BG3` are affine backgrounds, which the hardware scales and rotates as it
-draws, and the field gives every scanline its own scale, so a line higher on
-the screen covers more of the map than a line lower down.
+The world map is a flat map that the display tilts into perspective by
+giving every scanline of an affine background its own scale.
+
+![The world map's screen above the ground as video memory holds it, laid flat: as the party walks south from Vale and then holds L to zoom out, a lit trapezoid on the flat ground shows every pixel some screen line reads, wider at the top of the screen than at the bottom, with five lines picked out in the same colours on both. Zoomed out, the lines spread apart and leave rows of the ground unread between them.](https://alchemy.pascalpixel.com/guides/field/world-map-footprint.gif)
+
+![The world map as the party first leaves Vale, at twice the GBA's size, beside each scanline's width scale drawn as a bar on its own line: the scale falls steadily from 0.61 on the top line to 0.44 on the bottom one, so a line near the top covers more of the map](https://alchemy.pascalpixel.com/guides/field/world-map-scanlines.png)
+
+`BG2` and `BG3` are affine backgrounds, which the hardware scales and rotates
+as it draws, and the field gives every scanline its own scale, so a line
+higher on the screen covers more of the map than a line lower down.
 
 `WorldMap_BuildScanlineTable` gives each screen line a width scale and a
 ground distance, or zeros for a line above the horizon. It runs when the world
 map is set up and again only if the camera's pitch changes, which nothing in
-the game does, and at that one pitch every line meets the ground. Each frame `Transform_UpdateVertices`, an ARM routine run from RAM, turns
-them into a page of affine values. `MapAnimation_ApplyAffineFrame` sets the
-first line's values and starts a DMA that runs in each HBlank, the pause after
-a scanline is drawn, to feed the next line its own. There are two pages, and
-alternate frames use them.
+the game does, and at that one pitch every line meets the ground. Each frame
+`Transform_UpdateVertices`, an ARM routine run from RAM, turns them into a
+page of affine values. `MapAnimation_ApplyAffineFrame` sets the first line's
+values and starts a DMA that runs in each HBlank, the pause after a scanline
+is drawn, to feed the next line its own. There are two pages, and alternate
+frames use them.
 
 Each screen line reads one straight row of the flat ground, and its affine
 values set how wide that row is and where it lies. Together the 160 lines
 sample a trapezoid around the party; when the player holds L to zoom out, the
 lines spread so far apart that some rows of the ground are never drawn.
-
-![The world map's screen above the ground as video memory holds it, laid flat: as the party walks south from Vale and then holds L to zoom out, a lit trapezoid on the flat ground shows every pixel some screen line reads, wider at the top of the screen than at the bottom, with five lines picked out in the same colours on both. Zoomed out, the lines spread apart and leave rows of the ground unread between them.](https://alchemy.pascalpixel.com/guides/field/world-map-footprint.gif)
-
-![The world map as the party first leaves Vale, at twice the GBA's size, beside each scanline's width scale drawn as a bar on its own line: the scale falls steadily from 0.61 on the top line to 0.44 on the bottom one, so a line near the top covers more of the map](https://alchemy.pascalpixel.com/guides/field/world-map-scanlines.png)
 
 The ground is unpacked a square at a time around the party
 (`Map_UpdateCurrentTileBlock`), and `Map_PreloadCurrentTileBlock` loads at
@@ -321,6 +388,14 @@ an ARM routine run from RAM (through `TileMap_DrawRowsFromRam`), and switches
 the display to `DISPCNT_MODE_0`, in which no background is affine.
 `Map_LoadAreaGraphics` reloads the area's palette and tiles afterwards and
 returns to the moving view.
+
+The world map's graphics sets are `gWorldMap_GraphicsResources`
+(`world_map_resources.c`); its own data is described in
+[Maps](../map/README.md#the-world-maps-data).
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `WORLD_MAP_REGION_SNOWFIELD` | 21 | the region whose ground takes the world map's second graphics set |
 
 ## Design
 
@@ -395,6 +470,86 @@ guide](../../../tla/src/field/README.md), as differences from this one.
   as `SC_END`. A label must lie within the first 1,024 words of its script.
 - A step can climb 8 pixels and drop 12.
 
+## Files
+
+| File | What it holds |
+| --- | --- |
+| `field.c` | the field object: a guide comment, then `field_internal.h` and the 14 parts under `field/` in ROM order |
+| `field_internal.h` | the parts' includes, and the names more than one part uses; it places no bytes |
+| `field/*.c` | the 14 parts, each one family of functions; `head -3 field/*.c` prints what each holds |
+| `update.c` | `Object_UpdateAll`, an ARM copy of the object update for the first eight objects, which only the unused `Object_RunUpdateAllFromHeap` would run |
+| `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's scanline table into `BG2`'s affine values |
+| `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gScriptObject_CommandTable`, and the handlers of the work values |
+| `facing.c` | the facing tables and the small tables the parts read: the order a sprite's tiles dissolve in, the fixed camera's matrix, the wave a floating object bobs on, the idle script, the direction pad's headings, the footprint and dust scripts, and the world map camera's lean for each pad direction |
+| `curve_data.c`, `mapdata.c` | the ground height tables, `gMap_TerrainHeightFunctions`, the world map's terrain behaviour table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
+| `world_map_resources.c` | `gWorldMap_GraphicsResources`, the world map's two graphics sets |
+| `griddata.c` | the scale the debug sprite viewer draws at |
+| `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
+| `layered.tsv` | `gMap_LayeredScenes`: each layered map's header, palette, three tile sheets and layer data, as resource numbers counted from `ResourceId_Map001` |
+| `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
+| `scenes.s` | `gField_SceneTable`: each scene's overlay, place group, variant (town or field) and map; each row also defines the scene's `SceneId_` |
+| `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../object/scripts.s) places |
+
+The headers are in `games/tbs/include/unit/field/`, one for each C file but
+`world_map_resources.c`, whose table `field.h` declares. Link order is in
+`games/tbs/objects.tsv`.
+
+`field.c` is one object in the ROM; the parts are our cut of it, made where
+one family of functions ends and the next begins. They are compiled only
+through `field.c`, and each also includes `field_internal.h` so that it reads
+on its own.
+
+## Words used here
+
+- A **field object** is one of the 64 slots of `gObjectSlots`, 112 bytes
+  each. The party, the people and things a scene places, the camera and the
+  footprints are all field objects. A slot with no script is free.
+- A **sprite** is one of the 64 `struct AnimationObject`s: an image and a
+  shadow, two entries of OAM (the hardware's sprite list), and up to four
+  animation **layers** (`struct AnimationEntry`) composed into one picture.
+- An **object script** is a list of 32-bit words: `SC_` commands of
+  [`objcmd.h`](../../include/objcmd.h) and their operands. An **animation
+  script** is a list of byte pairs that a sprite layer plays.
+- A **work value** (`SW_`) is a field of the object as `SC_SET`, `SC_ADD` and
+  `SC_CMP` number it.
+- A **cell** is one 16 by 16 pixel square of a layered map, and a map
+  **layer** one of its three backgrounds; [Maps](../map/README.md) defines
+  both. A map's layers have nothing to do with a sprite's.
+- Positions are 16.16 fixed-point pixels: x across the map, y up, z down the
+  map. Angles are 16-bit fractions of a turn (`FACING_EAST` is 0,
+  `FACING_SOUTH` a quarter turn).
+
+In the code, `object` and `interpreter` are the object a command runs on,
+`sprite` and `layer` a sprite and one of its layers, `work` or `mapWork` the
+map work (`gMapWork[0]`), and `perspective` the world map's.
+
+Because the parts compile as one file, a part's own types, macros and static
+helpers carry its family's name (`ObjectCamera`, `LayeredScene`, `WorldMap`),
+and a part undefines its macros at its end.
+[Matching](../MATCHING.md) lists the sites that keep an unusual spelling.
+
+## Function prefixes
+
+| Prefix | What it covers |
+| --- | --- |
+| `Sprite_`, `Render_` | drawing sprites |
+| `Animation_`, `AnimationObjects_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
+| `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
+| `Script_` | object script commands |
+| `Field_` | the configured keys |
+| `Map_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
+| `WorldMap_` | the world map |
+| `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `GetMapCellCollision`, `SetMapCellCollision` and `CheckMapPositionCellOccupied` ask the same of a layered map |
+| `MapAnimation_`, `DisplayBlend_`, `PaletteQueue_` | tile animation, the blend script and palette cycles |
+| `Curve_` | ground height functions |
+| `Ui_` | the debug sprite viewer |
+| `LuckyDice_` | the Lucky Dice minigame |
+
+A few functions take the prefix of the one thing they act on
+(`Resource_DecompressLz`, `Camera_FollowLeaderInBounds`). Names other
+folders or The Lost Age's copy also use change only in a rename across all of
+them.
+
 ## Evidence and open questions
 
 The command names (`SC_WAIT`, `SC_SYNC` and the rest) are the macros of
@@ -416,3 +571,5 @@ have none: the leader on the world map has a second layer,
 control gives it priority 1. The take-apart picture of a sprite's layers is
 therefore of a battle unit, whose sprite is the same `struct AnimationObject`
 composed by the same `Sprite_ComposeAnimationFrame`.
+
+- XXX (picture): player control, the leader's probes for a step drawn over the map as a leader slides along a wall

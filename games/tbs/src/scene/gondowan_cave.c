@@ -33,18 +33,27 @@
 /// are kept in story flags, so the cave stays solved and Scene_Initialize
 /// puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has leapt in,
 /// and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has gone in past
-/// column 42, shown from then on by ACTOR_DROPPED_PILLAR. Arriving by
-/// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST always gives cell (107, 17) the
-/// attributes it takes when the pillar drops.
+/// column 42, shown from then on by ACTOR_DROPPED_PILLAR.
+///
+/// Cell (107, 17) of the map's cell grid is cell (43, 17) of map layer 2,
+/// whose window starts 64 columns in: the crevice east of the pillar,
+/// where it drops. The map loads that cell with ground 6, as the two cells
+/// west of it; copying (108, 17) over it gives it ground 0, as its east
+/// neighbour. The drop makes that copy, and so does every arrival by
+/// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, solved or not. Nothing the player sees
+/// depends on it: in tbs-en the screen is the same either way, the leader
+/// jumps the crevice at row 17 (touch cells 10 and 11) from either side
+/// either way, and the pillar settles at the same height in each of columns
+/// 41 to 44 either way.
 ///
 /// Open questions:
 /// - XXX (no evidence): what flags 0x9a3, 0x9a4 and 0x9a6 hold;
 ///   Event_LeaveToWorldMapEast rearranges them only with FLAG_SCENE_TEMP_04
 ///   set, which nothing in the game sets, and no other code reads them.
-/// - XXX: why arriving from the world map's east side fills the pillar's cell;
-///   likely so that a party coming in from the east is never cut off, because
-///   it is the cell the dropped pillar fills. A recording of that arrival with
-///   the puzzle unsolved would settle it.
+/// - XXX (no evidence): why arriving from the world map's east side makes the
+///   drop's cell change; the change has no effect that play shows (the
+///   screen, the leader's jumps and the pillar's height are the same either
+///   way), so neither the ROM nor a render can show what it was for.
 
 #include "game_state.h"
 #include "global_cells.h"

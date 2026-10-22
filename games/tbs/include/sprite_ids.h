@@ -32,6 +32,26 @@ enum SpriteId {
   /// night, and the Boulder of Mt. Aleph drawn at twice its size.
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   SPRITE_ROCK = 0xc8,
+  /// The ivy Whirlwind blows away, as in Vault Cave and Goma Cave.
+  /// ★ Named from what the player sees: a clump of leafy green ivy (its sprite
+  /// sheet, spr_248.png)
+  SPRITE_IVY = 0xf8,
+  /// The lights that float about the Elemental Star Room.
+  /// ★ Named from what the player sees: a small glowing blue-green light (its
+  /// sprite sheet, spr_287.png)
+  SPRITE_FLOATING_LIGHT = 0x11f,
+  /// The statues of Sol Sanctum's statue room and Luna and Sol rooms.
+  /// ★ Named from what the player sees: a winged statue holding a blue orb
+  /// (its sprite sheet, spr_201.png)
+  SPRITE_WINGED_STATUE = 0xc9,
+  /// The centre statue of Sol Sanctum's statue room.
+  /// ★ Named from what the player sees: a winged statue bearing a sun disc on
+  /// its head (its sprite sheet, spr_202.png)
+  SPRITE_SUN_DISC_STATUE = 0xca,
+  /// The centre statue once it has sunk into the floor, only its disc showing.
+  /// ★ Named from what the player sees: a round sun disc lying flat (its
+  /// sprite sheet, spr_204.png)
+  SPRITE_SUN_DISC = 0xcc,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
   /// as Sol Sanctum's statues stand on its seals (its render)
   SPRITE_STONE_STATUE = 0xcb,

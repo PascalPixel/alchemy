@@ -1,18 +1,17 @@
 /// @file
-/// Sol Sanctum (SceneId_SolSanctumPsynergyStone), a room that holds a Psynergy
-/// Stone.
+/// Sol Sanctum (SceneId_SolSanctumPsynergyStone), a room off the statue room
+/// (SceneId_SolSanctumStatue) that holds a Psynergy Stone.
 ///
-/// It opens off the room of the statue puzzle (SceneId_SolSanctumStatue), whose
-/// SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE leads here
-/// (SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE); this room's only exit,
-/// SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
-/// (SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE). Searching in it finds
-/// the Psynergy Stone, which restores all PP. The stone is kept by a place flag
-/// (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN, 0x350) rather than a story flag:
-/// Scene_ResetFlagsOnEnter clears it whenever the party enters another place
-/// group, so the stone is back on every new visit to the sanctum. The room
-/// places no actors. Retreat does not work here, and once Mt. Aleph has erupted
-/// the room rumbles and shakes gently, as the rest of the sanctum does.
+/// Its one exit, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
+/// to the statue room, and it places nobody. Searching in it finds the
+/// Psynergy Stone, which restores all PP. The stone is kept by a place flag
+/// (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than a story flag, so
+/// Scene_ResetFlagsOnEnter puts it back whenever the party enters another
+/// place group. Retreat does not work here, and once Mt. Aleph has erupted the
+/// room rumbles and shakes, as the rest of the sanctum does.
+///
+/// Open questions:
+/// - None.
 
 #include "unit/scene/sol_sanctum_psynergy_stone.h"
 #include "battle.h"

@@ -6,7 +6,9 @@
 #include "field_scene.h"
 
 enum CollapseActor {
-  ACTOR_TELEPORT_GLOW = ACTOR_FIRST_PLACED,
+  /// A blank actor whose scale SolSanctumEruption_RaiseAndShrinkActor shrinks
+  /// with Alex's as he rises away (an open question in sol_sanctum_eruption.c).
+  ACTOR_RISING_EFFECT = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
   /// ★ Named from the game: "But, Saturos, there's still a chance they might

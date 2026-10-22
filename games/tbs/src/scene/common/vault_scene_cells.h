@@ -30,7 +30,8 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
                   VAULT_DOOR_HALF_SIZE);
 }
 
-/// Walking north into cell code 11 opens the doorway to the Sanctum.
+/// Walking north into VAULT_CELL_SANCTUM_DOORWAY opens the doorway to the
+/// Sanctum.
 /// The leader passes behind the doorframe through the exit.
 static void Vault_OpenDoorwayAndEnter(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);

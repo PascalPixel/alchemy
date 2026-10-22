@@ -1016,7 +1016,7 @@ static void Event_MeetIvan(void) {
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac steps up in front of Ivan and Garet comes out beside him.
-  Event_PlayCue(MUS_019);
+  Event_PlayCue(MUS_SILENCE);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 408);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_SetPosition(GARET, PIXELS(384), PIXELS(408));

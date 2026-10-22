@@ -54,7 +54,7 @@
 /// not a song: keeps the music (AUDIO_CUE_KEEP_BGM)
 #define MUS_018 18
 /// a song with no tracks: silence
-#define MUS_019 19
+#define MUS_SILENCE 19
 /// Field music of Sol Sanctum.
 #define MUS_020 20
 /// Field music of Kolima Forest, Mogall Forest, and of the Tret Tree once

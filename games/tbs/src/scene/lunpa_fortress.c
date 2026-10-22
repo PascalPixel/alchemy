@@ -1808,7 +1808,7 @@ static void Event_FindHammet(void) {
     MESSAGE_PUT(TOADONPA_HAMMET, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
     OBJ_POS_SET(TOADONPA_DODONPA, 456, 320);
-    SE(MUS_019);
+    SE(MUS_SILENCE);
     MESSAGE_SET(messageBase + 8);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
     OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
@@ -2302,11 +2302,11 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_POS_SET(TOADONPA_DONPA, 456, 304);
   OBJ_SPEED(TOADONPA_DONPA, 0x8000, 0x4000);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    SE(MUS_019);
+    SE(MUS_SILENCE);
     MESSAGE_SET((punishmentMessage + 22));
     MESSAGE_PUT(TOADONPA_DONPA, 0);
   } else {
-    SE(MUS_019);
+    SE(MUS_SILENCE);
     MESSAGE_SET((punishmentMessage + 23));
     MESSAGE_PUT(TOADONPA_DONPA, 0);
   }

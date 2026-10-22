@@ -1617,7 +1617,7 @@ static void Fuchin_LightDragonWithEye(void) {
   u32 pass;
 
   // Flash the room as the eye opens the dragon's path.
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   Engine_AudioPlayCue(SE_182);
   Engine_EventBegin();
   Field_EndBusyAndReveal();

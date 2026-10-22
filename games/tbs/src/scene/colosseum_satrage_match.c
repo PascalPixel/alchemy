@@ -1534,7 +1534,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
   Engine_AudioPlayCue(SE_289);
   Engine_EventCloseScreen();

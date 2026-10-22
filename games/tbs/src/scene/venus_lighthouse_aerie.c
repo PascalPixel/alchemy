@@ -1050,7 +1050,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Actor_WalkToAndWait(SHEBA, 260, 186);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(SHEBA, 276, 192);
-  Event_PlayCue(MUS_019);
+  Event_PlayCue(MUS_SILENCE);
   object = Object_GetById(ACTOR_MENARDI);
   object->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
@@ -2309,7 +2309,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   struct FieldActor *upper;
   struct FieldActor *actor;
 
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   Engine_AudioPlayCue(SE_288);
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);

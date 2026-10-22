@@ -201,18 +201,18 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     s32 i;
 
     resistance = target->baseElement[element].resistance;
-    for (i = 0; i < NUM_ELEMENTS; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       if (resistance < target->baseElement[i].resistance)
         break;
     }
-    if (i == NUM_ELEMENTS)
+    if (i == ELEMENT_COUNT)
       affinity = -1;
 
-    for (i = 0; i < NUM_ELEMENTS; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       if (resistance > target->baseElement[i].resistance)
         break;
     }
-    if (i == NUM_ELEMENTS)
+    if (i == ELEMENT_COUNT)
       affinity = 1;
   }
 

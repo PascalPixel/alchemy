@@ -41,7 +41,7 @@ enum Element {
   ELEMENT_MARS,
   ELEMENT_JUPITER,
   ELEMENT_NONE,
-  NUM_ELEMENTS = ELEMENT_NONE
+  ELEMENT_COUNT = ELEMENT_NONE
 };
 
 /// BattleAct.range of an ability that reaches every unit on the side, each
@@ -270,7 +270,7 @@ struct BattleUnit {
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
   /// (Unit_CalcBaseElements).
-  struct BattleElementStats baseElement[NUM_ELEMENTS];
+  struct BattleElementStats baseElement[ELEMENT_COUNT];
   s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
   s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
   s16 hp;    ///< current HP, 0 when downed
@@ -290,7 +290,7 @@ struct BattleUnit {
   u8 unk046[2]; ///< Not named by any TBS code.
   /// Power and resistance in each element, 0 to 200, after equipment, a
   /// summon's boost and Resistance stages (UnitCalc).
-  struct BattleElementStats element[NUM_ELEMENTS];
+  struct BattleElementStats element[ELEMENT_COUNT];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's (Unit_RefreshPsynergy). An empty entry is 0.
   struct OwnerActionSlot actionSlots[32];
@@ -299,14 +299,14 @@ struct BattleUnit {
   u16 inventory[15];
   u8 unk0f6[2]; ///< Not named by any TBS code.
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
-  u32 djinnAvailable[NUM_ELEMENTS];
+  u32 djinnAvailable[ELEMENT_COUNT];
   /// The Djinn set, one bit per Djinni; only these add their stat bonuses.
-  u32 djinnActive[NUM_ELEMENTS];
-  u8 djinnOwnedCounts[NUM_ELEMENTS];  ///< the Djinn held in each element, at
-                                      ///< most 10
-  u8 djinnActiveCounts[NUM_ELEMENTS]; ///< the Djinn set in each element; the
-                                      ///< class's element levels are read from
-                                      ///< these
+  u32 djinnActive[ELEMENT_COUNT];
+  u8 djinnOwnedCounts[ELEMENT_COUNT];  ///< the Djinn held in each element, at
+                                       ///< most 10
+  u8 djinnActiveCounts[ELEMENT_COUNT]; ///< the Djinn set in each element; the
+                                       ///< class's element levels are read from
+                                       ///< these
   /// Copied from the enemy's definition, where it is 0 in every row. During
   /// a battle the enemy's action choice keeps its place in its action list
   /// here (BattleCommand_SelectAutomatic).
@@ -329,7 +329,7 @@ struct BattleUnit {
   /// rises to that many (BattleUnit_ProcessTurnEnd), and n adds
   /// (n * n + n) * 5 power (UnitCalc). Cleared at the battle's start, on
   /// going down and by Break.
-  s8 elementLevels[NUM_ELEMENTS];
+  s8 elementLevels[ELEMENT_COUNT];
   /// The curse: RestraintFlag bits. UnitCalc rebuilds RESTRAINT_BOUND and
   /// RESTRAINT_CURSED_ITEM from the equipment. A bound unit loses one action in
   /// four, except Defend (BattleCommand_BuildPlan); any bit set shows the curse

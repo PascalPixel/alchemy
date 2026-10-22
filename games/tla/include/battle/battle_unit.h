@@ -38,7 +38,7 @@ enum Element {
   ELEMENT_MARS,
   ELEMENT_JUPITER,
   ELEMENT_NONE,
-  NUM_ELEMENTS = ELEMENT_NONE
+  ELEMENT_COUNT = ELEMENT_NONE
 };
 
 /// BattleAct.range of an ability that reaches every unit on the side, each

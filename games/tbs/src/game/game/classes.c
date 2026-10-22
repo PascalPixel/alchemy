@@ -39,7 +39,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 
     i = 0;
     cursor = output;
-    for (; i < NUM_ELEMENTS; i++)
+    for (; i < ELEMENT_COUNT; i++)
       *cursor++ = gEnemy_ElementPresetTable[index].digits[i] * 10;
   } else {
     cursor = output;
@@ -54,7 +54,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     }
 
     if (record <= 7) {
-      for (i = 0; i < NUM_ELEMENTS; i++) {
+      for (i = 0; i < ELEMENT_COUNT; i++) {
         *output += Character_GetDefinition(record)->elementBonus[i];
         output++;
       }
@@ -74,7 +74,7 @@ s32 Unit_GetElementLevel(s32 owner, s32 element) {
   s32 elementLevels[4];
   s32 result = 0;
 
-  if (element < NUM_ELEMENTS) {
+  if (element < ELEMENT_COUNT) {
     Unit_GetElementLevels(unit->classId, (u8 *)unit->djinnAvailable,
                           elementLevels);
     result = elementLevels[element] / 10;
@@ -138,7 +138,7 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
   }
 
   Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
-  for (i = 0; i < NUM_ELEMENTS; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     s32 value;
     s32 ones;
     s32 tens;
@@ -193,7 +193,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
     return result;
   best = result;
   primary = result;
-  for (i = 0; i < NUM_ELEMENTS; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     if (best < levels[i]) {
       best = levels[i];
       primary = i;
@@ -201,7 +201,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   }
   j = -1;
   best = -1;
-  for (i = 0; i < NUM_ELEMENTS; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     if (i != primary && best < levels[i]) {
       best = levels[i];
       j = i;
@@ -215,7 +215,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   for (i = 202; i >= 0; i--) {
     if (gClass_DefinitionTable[i].series != series)
       continue;
-    for (j = 0; j < NUM_ELEMENTS; j++) {
+    for (j = 0; j < ELEMENT_COUNT; j++) {
       if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
         break;
     }

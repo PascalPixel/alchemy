@@ -23,7 +23,7 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
   s32 element;
 
   unit = UnitGetFar(unitId);
-  for (element = NUM_ELEMENTS - 1; element >= 0; element--)
+  for (element = ELEMENT_COUNT - 1; element >= 0; element--)
     unit->elementLevels[element] = 0;
 
   unit->poison = 0;

@@ -2230,7 +2230,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
       UiWindow_SetTilemapEntryFar(
           window,
           (u8)((def->effects[i].kind - ITEM_EFFECT_ADD_VENUS_POWER) %
-               NUM_ELEMENTS) +
+               ELEMENT_COUNT) +
               1,
           0, row, 2);
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,

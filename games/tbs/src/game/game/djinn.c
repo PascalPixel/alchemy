@@ -11,7 +11,7 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 
   entry = 0;
-  if ((group < NUM_ELEMENTS) && (index < DJINN_PER_ELEMENT)) {
+  if ((group < ELEMENT_COUNT) && (index < DJINN_PER_ELEMENT)) {
     entry = (group * DJINN_PER_ELEMENT) + index;
   }
   return &gDjinn_DefinitionTable[entry];
@@ -40,7 +40,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
     if (unit->djinnOwnedCounts[element] <= 9) {
       s32 ownedDjinn = 0;
 
-      for (elementIndex = 0; elementIndex < NUM_ELEMENTS; elementIndex++)
+      for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++)
         ownedDjinn += unit->djinnOwnedCounts[elementIndex];
       if (fewestDjinn > ownedDjinn) {
         fewestDjinn = ownedDjinn;

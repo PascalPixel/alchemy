@@ -357,7 +357,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   RenderOutput_RedrawSavedRectFar(window);
   UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
   UiText_DrawResourceFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-  for (element = 0; element < NUM_ELEMENTS; element++) {
+  for (element = 0; element < ELEMENT_COUNT; element++) {
     for (djinn = 0; djinn < 7; djinn++) {
       s32 id = element * DJINN_PER_ELEMENT + djinn;
 

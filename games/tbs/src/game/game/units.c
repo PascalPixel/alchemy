@@ -172,7 +172,7 @@ void UnitCalc(s32 owner) {
   stats->turns = unit->baseActionCount & 15;
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
-  for (index = 0; index < NUM_ELEMENTS; index++) {
+  for (index = 0; index < ELEMENT_COUNT; index++) {
     stats->element[index][0] = unit->baseElement[index].power;
     stats->element[index][1] = unit->baseElement[index].resistance;
   }
@@ -284,7 +284,7 @@ void UnitCalc(s32 owner) {
       unit->restraint &= ~(RESTRAINT_REMOVABLE | RESTRAINT_BOUND);
 
     // Only set Djinn contribute their stat bonuses.
-    for (elementIndex = 0; elementIndex < NUM_ELEMENTS; elementIndex++) {
+    for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
       u32 activeDjinn = unit->djinnActive[elementIndex];
 
       for (index = 0; index < DJINN_PER_ELEMENT; index++) {
@@ -363,12 +363,12 @@ void UnitCalc(s32 owner) {
   stats->atk = stats->atk * (unit->attackStage + 8) / 8;
   stats->def = stats->def * (unit->defenseStage + 8) / 8;
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
-  for (index = 0; index < NUM_ELEMENTS; index++)
+  for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index][0] +=
         (unit->elementLevels[index] * unit->elementLevels[index] +
          unit->elementLevels[index]) *
         5;
-  for (index = 0; index < NUM_ELEMENTS; index++)
+  for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index][1] += unit->resistanceStage * 20;
 
   if (unit->classIndex != CLASS_INDEX_ENEMY) {
@@ -402,7 +402,7 @@ void UnitCalc(s32 owner) {
   CLAMP(stats->turns, 0, 2);
   CLAMP(stats->hpRegen, 0, 10000);
   CLAMP(stats->ppRegen, 0, 200);
-  for (index = 0; index < NUM_ELEMENTS; index++) {
+  for (index = 0; index < ELEMENT_COUNT; index++) {
     CLAMP(stats->element[index][0], 0, 200);
     CLAMP(stats->element[index][1], 0, 200);
   }
@@ -414,7 +414,7 @@ void UnitCalc(s32 owner) {
   unit->actionEntryCount = stats->turns;
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
-  for (index = 0; index < NUM_ELEMENTS; index++) {
+  for (index = 0; index < ELEMENT_COUNT; index++) {
     unit->element[index].power = stats->element[index][0];
     unit->element[index].resistance = stats->element[index][1];
   }

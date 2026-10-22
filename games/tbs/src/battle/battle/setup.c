@@ -216,8 +216,8 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit = UnitGetFar(owners[i]);
 
       // The four element levels, cleared from the last.
-      level = (u8 *)&unit->elementLevels[NUM_ELEMENTS - 1];
-      remaining = NUM_ELEMENTS - 1;
+      level = (u8 *)&unit->elementLevels[ELEMENT_COUNT - 1];
+      remaining = ELEMENT_COUNT - 1;
       do {
         remaining--;
         *level-- = 0;
@@ -275,7 +275,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
   // Owners 0 to 7 use the party's list, any other the opponent's.
   for (i = 0; i < count; i++) {
     owner = owners[i];
-    for (element = 0; element < NUM_ELEMENTS; element++) {
+    for (element = 0; element < ELEMENT_COUNT; element++) {
       for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
         if (Djinn_IsReadyFar(owner, element, djinni) != 0) {
           struct DjinnRecoveryList *list =
@@ -330,7 +330,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 }
 
 /// The summon ids the mask covers, one bit each.
-#define NUM_SUMMONS 32
+#define SUMMON_COUNT 32
 
 /// Works out which summons the party can call: one whose Djinn requirement
 /// of every element is met by the Djinn the party holds of that element
@@ -345,7 +345,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 /// only while a Djinni is on standby. Writes the party recovery table's
 /// availableMask.
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
-  u8 totals[NUM_ELEMENTS];
+  u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];
   s32 partySize;
   s32 element;
@@ -368,7 +368,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
       }
     }
     element++;
-  } while (element < NUM_ELEMENTS);
+  } while (element < ELEMENT_COUNT);
 
   // element walks the summon ids here. The inner loop stops at the first
   // element whose requirement is not met.
@@ -386,18 +386,18 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
 
         do {
           elementsMet++;
-          if (elementsMet >= NUM_ELEMENTS)
+          if (elementsMet >= ELEMENT_COUNT)
             break;
           total++;
           required++;
         } while (*total >= *required);
       }
 
-      if (elementsMet == NUM_ELEMENTS)
+      if (elementsMet == ELEMENT_COUNT)
         availableMask |= 1u << element;
     }
     element++;
-  } while (element < NUM_SUMMONS);
+  } while (element < SUMMON_COUNT);
 
   {
     struct BattleSummonState *state =

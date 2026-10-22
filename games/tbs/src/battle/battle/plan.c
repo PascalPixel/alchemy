@@ -59,7 +59,7 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
       &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
            ->list;
   if (counts != 0)
-    for (unitOrElementIndex = NUM_ELEMENTS - 1; unitOrElementIndex >= 0;
+    for (unitOrElementIndex = ELEMENT_COUNT - 1; unitOrElementIndex >= 0;
          unitOrElementIndex--)
       counts[unitOrElementIndex] = 0;
   recoveryIndex = 0;
@@ -557,7 +557,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     const struct SummonDefinition *summon;
     struct DjinnRecoveryList *list;
     s32 side;
-    u8 counts[NUM_ELEMENTS];
+    u8 counts[ELEMENT_COUNT];
     /* FAKEMATCH(dead): an unused array for the frame's 8 bytes below counts;
      * without it, 34 of 1393 instructions differ in tbs-en. */
     UNUSED u8 unused[8];
@@ -574,13 +574,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     list =
         &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
     for (index = 0;
-         index < NUM_ELEMENTS && counts[index] >= summon->djinnRequired[index];
+         index < ELEMENT_COUNT && counts[index] >= summon->djinnRequired[index];
          index++)
       counts[index] = summon->djinnRequired[index];
     abilityId = summon->nameMessageId;
     if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
       return PLAN_REPORTED;
-    if (index != NUM_ELEMENTS) {
+    if (index != ELEMENT_COUNT) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgSummonLacksDjinn);

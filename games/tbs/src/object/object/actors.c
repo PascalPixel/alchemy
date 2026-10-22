@@ -6,7 +6,7 @@
 
 enum {
   /// 20 flags per element: the Djinn's caught flags are 48 to 127.
-  ACTOR_DJINNI_FLAG_COUNT = NUM_ELEMENTS * 20,
+  ACTOR_DJINNI_FLAG_COUNT = ELEMENT_COUNT * 20,
   /// The tunic's child part, drawn over a child sprite while
   /// FLAG_ISAAC_WEARS_TUNIC is set.
   ACTOR_TUNIC_ANIMATION = 226,

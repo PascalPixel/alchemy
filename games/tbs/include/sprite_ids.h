@@ -92,6 +92,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH = 0xf6,
+  /// A fire burning on the ground, which Douse puts out.
+  /// ★ Named from what the player sees: a flickering flame (spr_247.png)
+  SPRITE_FIRE = 0xf7,
   /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
@@ -450,6 +453,16 @@ enum StumpAnimation {
   /// Sinks until only its cut top shows, level with the ground or the water.
   STUMP_ANIM_SINK = 2,
   STUMP_ANIM_SPLASH = 3 ///< drops into water with a splash
+};
+
+/// SPRITE_PUDDLE's animations (spr_227.tsv): the puddle, the ice pillar Frost
+/// makes of it, and the steps between.
+enum PuddleAnimation {
+  PUDDLE_ANIM_PUDDLE = 1,
+  PUDDLE_ANIM_FREEZE = 2,  ///< rises from the puddle into an ice pillar
+  PUDDLE_ANIM_LOW_ICE = 3, ///< held at the second step of freezing
+  PUDDLE_ANIM_PILLAR = 5,  ///< the ice pillar, still
+  PUDDLE_ANIM_MELT = 6     ///< sinks from the pillar back into a puddle
 };
 
 #endif

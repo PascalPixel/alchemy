@@ -2019,11 +2019,11 @@ enum {
 
 /// SceneId_FuchinFallsCaveDragonsEye's entrances.
 enum {
-  FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_FROM_LOGS =
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS =
       1, ///< ★ Named from what the player sees: the round chamber where the
          ///< Dragon's Eye sits on its pedestal (its render)
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
-  FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_FROM_PEDESTAL =
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_FROM_CHAMBER =
       3, ///< ★ Named from what the player sees: the pool crossed on floating
          ///< logs before the eye's chamber (its render)
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
@@ -2031,11 +2031,11 @@ enum {
 };
 /// SceneId_FuchinFallsCaveDragonsEye's exits.
 enum {
-  FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_TO_LOGS =
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_TO_LOGS =
       1, ///< ★ Named from what the player sees: the pool crossed on floating
          ///< logs before the eye's chamber (its render)
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
-  FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_PEDESTAL =
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_CHAMBER =
       3, ///< ★ Named from what the player sees: the round chamber where the
          ///< Dragon's Eye sits on its pedestal (its render)
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 4,

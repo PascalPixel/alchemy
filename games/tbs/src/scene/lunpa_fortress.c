@@ -1955,7 +1955,7 @@ static void Event_FindHammet(void) {
     Actor_SetDestinationOffset(TOADONPA_DODONPA, 8, -8);
     OBJ_FACE(TOADONPA_DODONPA, TOADONPA_BOSS, 0);
     LunpaFortress_ActivateLeverTrap();
-    SE(MUS_052);
+    SE(MUS_BOSS_BATTLE);
     MESSAGE_SET(messageBase + 23);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
     WAIT(60);

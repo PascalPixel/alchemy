@@ -157,7 +157,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     }
   } else {
     AudioCommand_PlayFar(MUS_051);
-    AudioCommand_PlayFar(MUS_076);
+    AudioCommand_PlayFar(MUS_COLOSSO_BATTLE);
   }
 
   // The units, the windows and the background.

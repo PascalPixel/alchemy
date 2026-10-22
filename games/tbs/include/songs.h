@@ -107,18 +107,29 @@
 #define MUS_VENUS_LIGHTHOUSE 43
 /// The music of every battle gEncounter_BattleMusic lists no other song for.
 #define MUS_BATTLE 50
-/// Battle music gEncounter_BattleMusic gives some encounters;
-/// Battle_RunEncounter plays it, then MUS_076, for a battle with no cue of its
-/// own.
+/// Battle music gEncounter_BattleMusic gives the Mystery Man and Mystery Woman
+/// who catch Isaac at Vale Gate (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
+/// and Saturos at Mercury Lighthouse's aerie
+/// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); Battle_RunEncounter plays
+/// it, then MUS_COLOSSO_BATTLE, for a battle with no cue of its own.
 #define MUS_051 51
-/// Battle music gEncounter_BattleMusic gives some encounters; it also plays as
-/// the party finds Hammet in the Lunpa Fortress.
-#define MUS_052 52
-/// Battle music gEncounter_BattleMusic gives some encounters.
+/// Battle music gEncounter_BattleMusic gives the guardians and bosses: Tret,
+/// the Killer Ape, the Hydros Statue, the Manticore, the Kraken, Toadonpa, the
+/// Storm and Tempest Lizards, and the monsters guarding Crossbone Isle's
+/// floors; it also plays as Dodonpa pulls the lever that springs the trap in
+/// the Lunpa Fortress.
+/// ★ Named from what the player sees: the battles with Tret, the Kraken and
+/// the Manticore (its render)
+#define MUS_BOSS_BATTLE 52
+/// Battle music gEncounter_BattleMusic gives Saturos and Menardi's first battle
+/// at Venus Lighthouse's aerie (ENCOUNTER_ZONE_SCRIPTED, slot 1) and Deadbeard
+/// (ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, slot 5).
 #define MUS_053 53
-/// Battle music gEncounter_BattleMusic gives some encounters; it also plays as
-/// Saturos and Menardi combine at Venus Lighthouse's aerie.
-#define MUS_054 54
+/// Battle music of the Fusion Dragon, the aerie's second battle
+/// (ENCOUNTER_ZONE_SCRIPTED, slot 0); it also plays as Saturos and Menardi
+/// fuse at Venus Lighthouse's aerie.
+/// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
+#define MUS_FUSION_DRAGON_BATTLE 54
 /// Played after a link battle's own cue (Battle_RunEncounter), and as the
 /// boulder chases the party down Altin Peak.
 #define MUS_055 55
@@ -168,10 +179,12 @@
 /// ★ Named from what the player sees: the Golden Sun logo after the ending's
 /// last scene (its render)
 #define MUS_ENDING_LOGO 75
-/// Battle music gEncounter_BattleMusic gives some encounters;
-/// Battle_RunEncounter plays it after MUS_051 for a battle with no cue of its
-/// own.
-#define MUS_076 76
+/// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
+/// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_RunEncounter plays it after
+/// MUS_051 for a battle with no cue of its own.
+/// ★ Named from what the player sees: the battle that ends a Colosso match
+/// (its render)
+#define MUS_COLOSSO_BATTLE 76
 /// The fanfare as a puzzle is solved: Altmiller Cave's rock turned, the
 /// Lemurian ship raised, the Vault Cave switches, and the West Lunpa Cave gate
 /// frozen open.
@@ -436,7 +449,8 @@
 /// raised at a turn's end, a Djinni put on standby in the Djinn menu, and an
 /// item given by the debug item browser.
 #define SE_175 175
-/// Kolima's bridge collapsing.
+/// The villager at Kolima's post jumping to it, as the drawbridge is lowered
+/// (Kolima_LowerBridge).
 #define SE_176 176
 /// The Tunnel Ruins' balance settling, and Venus Lighthouse's floating pillars
 /// lowering.
@@ -477,7 +491,8 @@
 #define SE_190 190
 /// The Wise One's quest asked in the Sanctum.
 #define SE_196 196
-/// Kolima's bridge collapsing, after SE_176.
+/// The villager reaching Kolima's post, after SE_176, before the drawbridge
+/// comes down.
 #define SE_198 198
 /// The curse's sparkles at Kolima and Kolima Forest, Tret rejecting the party,
 /// and Sol Sanctum's statue opening its central hole.
@@ -675,8 +690,9 @@
 /// ★ Named from what the player sees: a Lucky Wheels reel stopping (its
 /// render)
 #define SE_LUCKY_WHEELS_STOP 307
-/// Plays as the Wise One appears: in the Sanctum, in the eruption, at Venus
-/// Lighthouse and its aerie.
+/// Plays on player 3 as the Wise One appears in the Sanctum, as the eruption's
+/// materialization tint fades in, and as the leader rises on Venus Lighthouse's
+/// platforms.
 #define SE_308 308
 /// The Venus Star bouncing three times as Saturos throws it into the beacon at
 /// Venus Lighthouse's aerie.

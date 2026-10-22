@@ -1847,7 +1847,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   }
   Event_PlayCue(SE_212);
   Actor_Jump(IVAN, 6, 20);
-  Event_PlayCue(MUS_054);
+  Event_PlayCue(MUS_FUSION_DRAGON_BATTLE);
   VenusLighthouseAerie_ShowMessage(IVAN);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);

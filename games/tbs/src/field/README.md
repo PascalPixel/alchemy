@@ -283,6 +283,8 @@ first line's values and starts a DMA that runs in each HBlank, the pause after
 a scanline is drawn, to feed the next line its own. There are two pages, and
 alternate frames use them.
 
+![The world map as the party first leaves Vale, at twice the GBA's size, beside each scanline's width scale drawn as a bar on its own line: the scale falls steadily from 0.61 on the top line to 0.44 on the bottom one, so a line near the top covers more of the map](https://alchemy.pascalpixel.com/guides/field/world-map-scanlines.png)
+
 The ground is unpacked a square at a time around the party
 (`Map_UpdateCurrentTileBlock`), and `Map_PreloadCurrentTileBlock` loads at
 most one missing square a frame as the party walks. `WorldMap_LoadGraphics`
@@ -384,6 +386,12 @@ command is `SC_KEY_COUNT` (`0x23`), and no script holds a bare word from
 `0x24` to 63, so neither the eleven entries that act as `SC_END` nor the words
 past the table are ever called.
 
-- XXX (picture): no picture yet takes a sprite apart into its four animation layers and the
-  composed buffer, or shows the world map's scanline table as the scale of
-  each line; renders of both belong beside their sections here.
+- XXX (picture): no picture yet takes a sprite apart into its animation layers and the
+  composed buffer. The field scenes sampled for one (Vale, Bilibin's item
+  shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map) have no
+  actor with a second layer but the leader on the world map, whose second
+  layer is `SPRITE_BLANK_32` and draws nothing even in a forest, where the
+  player control gives it priority 1. A search of the code's other layer
+  writes (`battle/battle/staging.c` reads `entries[1]`, Altin Peak and the
+  Psynergy effects' context clear one) for a sprite whose layers both draw
+  would find what to render.

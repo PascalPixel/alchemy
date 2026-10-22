@@ -57,12 +57,12 @@ Func_080c8888:
 	.thumb_func
 Func_080c8890:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_FillOverlayTiles
+	overlay_veneer BattleEffect_FillOverlayTiles
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_FillOverlayTiles
+	overlay_veneer BattleEffect_FillOverlayTiles
 	.else
-	overlay_veneer BattleFx_DropObjectAtAnchor
+	overlay_veneer BattleEffect_DropObjectAtAnchor
 	.endif
 	.endif
 	.global Func_080c8898
@@ -73,12 +73,12 @@ Func_080c8898:
 	.thumb_func
 Func_080c88a0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_DrawSpriteAtWorldPosition
+	overlay_veneer BattleEffect_DrawSpriteAtWorldPosition
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_DrawSpriteAtWorldPosition
+	overlay_veneer BattleEffect_DrawSpriteAtWorldPosition
 	.else
-	overlay_veneer BattleFx_FillOverlayTiles
+	overlay_veneer BattleEffect_FillOverlayTiles
 	.endif
 	.endif
 	.global Func_080c88a8
@@ -94,7 +94,7 @@ Func_080c88b0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer ObjectGroup_ApplyRandomChildValues
 	.else
-	overlay_veneer BattleFx_DrawSpriteAtWorldPosition
+	overlay_veneer BattleEffect_DrawSpriteAtWorldPosition
 	.endif
 	.endif
 	.global Func_080c88b8
@@ -103,12 +103,12 @@ Func_080c88b8:
 	ldr r4, [pc, #0]
 	bx r4
 	.ifdef TLA_EDITION_ES
-	.global BattleFx_DecodeFrameTranslationBase
-BattleFx_DecodeFrameTranslationBase:
+	.global BattleEffect_DecodeFrameTranslationBase
+BattleEffect_DecodeFrameTranslationBase:
 	.endif
 	.ifdef TLA_EDITION_IT
-	.global BattleFx_DecodeFrameTranslationBase
-BattleFx_DecodeFrameTranslationBase:
+	.global BattleEffect_DecodeFrameTranslationBase
+BattleEffect_DecodeFrameTranslationBase:
 	.endif
 	.4byte Func_080d1e18
 	.global ObjectGroup_ApplyRandomChildValuesFar

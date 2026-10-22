@@ -17,10 +17,10 @@ EventRuntime_ResolveAllPendingActionsFar:
 	.thumb_func
 EventRuntime_ResolvePendingActionsFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlock
+	overlay_veneer BattleEffect_FinishSceneAndReleaseHeapBlock
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlock
+	overlay_veneer BattleEffect_FinishSceneAndReleaseHeapBlock
 .else
 	overlay_veneer EventRuntime_ResolvePendingActions
 .endif
@@ -46,17 +46,17 @@ Func_080c84f0:
 .ifdef TLA_EDITION_IT
 	overlay_veneer Func_080dcadc
 .else
-	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlock
+	overlay_veneer BattleEffect_FinishSceneAndReleaseHeapBlock
 .endif
 .endif
 	.global Func_080c84f8
 	.thumb_func
 Func_080c84f8:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_HasMatchingEvent5
+	overlay_veneer BattleEffect_HasMatchingEvent5
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_HasMatchingEvent5
+	overlay_veneer BattleEffect_HasMatchingEvent5
 .else
 	overlay_veneer Ui_FillBank15PaletteGrey
 .endif
@@ -65,10 +65,10 @@ Func_080c84f8:
 	.thumb_func
 Func_080c8500:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_HasTrigger
+	overlay_veneer BattleEffect_HasTrigger
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_HasTrigger
+	overlay_veneer BattleEffect_HasTrigger
 .else
 	overlay_veneer Func_080dcadc
 .endif

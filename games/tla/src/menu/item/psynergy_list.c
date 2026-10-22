@@ -11,7 +11,7 @@ struct PsynergyMenuState {
 
 extern char MsgPsynergyMenuEmpty[];
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(void *owner, u16 *out, s32 mode);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -26,7 +26,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   void *owner;
 
   menu = Ram_HeapSlots->menuRuntime;
-  owner = UnitGet(ownerId);
+  owner = Unit_Get(ownerId);
   psynergies = menu->psynergies;
   menu->psynergyCount = Func_080fd6f0(owner, psynergies, 2);
   RenderOutput_RedrawSavedRectFar(menu->psynergyWindow);

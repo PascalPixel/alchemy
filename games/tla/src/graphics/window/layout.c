@@ -119,6 +119,6 @@ void UiWindow_CreateWithLayoutBounds(s32 flags) {
   UiWindow_BuildLayoutBounds(flags);
   window->handle = UiWindow_Create(window->left, window->top, window->right,
                                    window->height, 6);
-  PartyStatusDraw(flags);
+  PartyStatus_Draw(flags);
   tiles[6] = zero;
 }

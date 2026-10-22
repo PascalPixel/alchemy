@@ -98,7 +98,7 @@ s32 Shop_SelectSell(s32 unitId) {
   s32 x;
 
   shop = gMenuWork;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   priceWindow =
       UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, UI_WINDOW_INSTANT);
@@ -178,7 +178,7 @@ s32 Shop_SelectSell(s32 unitId) {
     if (result != 0)
       break;
 
-    quantity = Shop_SelectSellNum(unitId, slot);
+    quantity = Shop_SelectSellCount(unitId, slot);
     if (quantity != -1)
       Shop_SellItem(unitId, slot, quantity);
     UiMessage_ShowAndWait(MsgSellAnythingElse);
@@ -200,7 +200,7 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   s32 slot;
   struct RenderOutput *icon;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   x = 8;
   y = 0;
   if (window != 0) {
@@ -234,7 +234,7 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
 /// Asks how many to sell when the item is a stack of more than one, and
 /// returns the count (1 otherwise, -1 when cancelled), putting the cursor
 /// back after. Called by Shop_SelectSell.
-s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
+s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
   s16 savedY;
@@ -246,7 +246,7 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   struct BattleUnit *unit;
 
   shop = gMenuWork;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
   unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
@@ -278,7 +278,7 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
 /// it, and the shops of its type may sell it again.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   u8 rare = item->flags & ITEM_RARE;
@@ -293,13 +293,13 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   }
   total = Shop_SalePrice(unit->inventory[slot]) * count;
   if (total == 0) {
-    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
     UiMessage_ShowAndRestoreState(MsgWeDoNotBuy);
     return;
   }
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
       (item->flags & ITEM_CANNOT_UNEQUIP)) {
-    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
     UiMessage_ShowAndRestoreState(MsgCannotSellEquipped);
     return;
   }
@@ -313,8 +313,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     message = MsgRareSellOffer;
   else
     message = MsgSellOffer;
-  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
-  UiWork_PushValueSlotFar(total, MSG_ARG_NUMBER);
+  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  UiWork_PushValueSlotFar(total, MESSAGE_ARGUMENT_NUMBER);
   UiMessage_ShowAndRestoreState(message);
   if (UiMessage_ShowChoice(0) != 0) {
     if (rare || sellingReplacedItem)

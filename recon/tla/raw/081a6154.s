@@ -148,7 +148,7 @@ Func_081a6154:
 	bge .L_081a624e
 	cmp r6, #0
 	bne .L_081a6274
-	bl PaletteFade_Init
+	bl PaletteFade_Initialize
 	b .L_081a6274
 .L_081a6264:
 	.4byte 0x00001e05

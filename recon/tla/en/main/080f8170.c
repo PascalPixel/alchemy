@@ -41,17 +41,17 @@ enum StatusPanelKind {
 extern char MsgClassName, MsgExpLabel, MsgPanelStatLabel, MsgAbilityNothing;
 extern char Msg04359, Msg04360, Msg04361, Msg04362;
 extern char Msg04176, Msg04177, Msg04178;
-#define MSG_CLASS_NAME ((s32)&MsgClassName)
-#define MSG_EXP_LABEL ((s32)&MsgExpLabel)
-#define MSG_PANEL_STAT_LABEL ((s32)&MsgPanelStatLabel)
-#define MSG_ABILITY_NAME ((s32)&MsgAbilityNothing)
-#define MSG_POISON_LABEL ((s32)&Msg04359)
-#define MSG_VENOM_LABEL ((s32)&Msg04360)
-#define MSG_CURSE_LABEL ((s32)&Msg04361)
-#define MSG_HAUNT_LABEL ((s32)&Msg04362)
-#define MSG_CANNOT_EQUIP ((s32)&Msg04176)
-#define MSG_WILL_LEARN ((s32)&Msg04177)
-#define MSG_LEARNED ((s32)&Msg04178)
+#define MESSAGE_CLASS_NAME ((s32)&MsgClassName)
+#define MESSAGE_EXP_LABEL ((s32)&MsgExpLabel)
+#define MESSAGE_PANEL_STAT_LABEL ((s32)&MsgPanelStatLabel)
+#define MESSAGE_ABILITY_NAME ((s32)&MsgAbilityNothing)
+#define MESSAGE_POISON_LABEL ((s32)&Msg04359)
+#define MESSAGE_VENOM_LABEL ((s32)&Msg04360)
+#define MESSAGE_CURSE_LABEL ((s32)&Msg04361)
+#define MESSAGE_HAUNT_LABEL ((s32)&Msg04362)
+#define MESSAGE_CANNOT_EQUIP ((s32)&Msg04176)
+#define MESSAGE_WILL_LEARN ((s32)&Msg04177)
+#define MESSAGE_LEARNED ((s32)&Msg04178)
 
 struct InventoryMenuState {
   u8 unk000[0x28];
@@ -64,7 +64,7 @@ struct InventoryMenuState {
 
 extern const u8 gUi_LvString[];
 
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 s32 UiWindow_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 mode);
 void WaitFrames(s32 frames);
@@ -84,7 +84,7 @@ void *MemAlloc(s32 size);
 void MemFree(void *block);
 void Unit_UpdateClassFar(s32 owner);
 void Inventory_EquipFar(s32 owner, s32 slot);
-void UnitCalcFar(s32 owner);
+void Unit_CalculateFar(s32 owner);
 void UiWindow_SetTilemapEntryFar(struct RenderInput *window, s32 entry, s32 x,
                                  s32 y, s32 mode);
 void UiText_DrawStatComparison(struct BattleUnit *unit,
@@ -106,7 +106,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
 
   created = 0;
   state = (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   item = unit->inventory[slot];
   def = Item_Get(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
@@ -123,22 +123,22 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     CharacterMenu_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
     if (ailments[1]) {
-      UiText_DrawCharacterAtOffsetFar(MSG_POISON_LABEL, window, 32,
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_POISON_LABEL, window, 32,
                                       ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[2]) {
-      UiText_DrawCharacterAtOffsetFar(MSG_VENOM_LABEL, window, 32,
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_VENOM_LABEL, window, 32,
                                       ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[3]) {
-      UiText_DrawCharacterAtOffsetFar(MSG_CURSE_LABEL, window, 32,
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_CURSE_LABEL, window, 32,
                                       ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[4]) {
-      UiText_DrawCharacterAtOffsetFar(MSG_HAUNT_LABEL, window, 32,
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_HAUNT_LABEL, window, 32,
                                       ailmentRows * 8 + 8);
       ailmentRows++;
     }
@@ -169,10 +169,10 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     if (state->equipPreview)
       goto experience;
   classChange:
-    value = unit->classIndex + MSG_CLASS_NAME;
+    value = unit->classIndex + MESSAGE_CLASS_NAME;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     if (!Item_CanOwnerEquip(owner, item)) {
-      UiText_DrawCharacterAtOffsetFar(MSG_CANNOT_EQUIP, window, 16, 48);
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window, 16, 48);
       break;
     }
     backup = MemAlloc(sizeof(struct BattleUnit));
@@ -183,31 +183,31 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     } else {
       Inventory_EquipFar(owner, slot);
     }
-    UnitCalcFar(owner);
+    Unit_CalculateFar(owner);
     UiWindow_SetTilemapEntryFar(window, 0xf12a, 3, 5, 0);
-    value = unit->classIndex + MSG_CLASS_NAME;
+    value = unit->classIndex + MESSAGE_CLASS_NAME;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 48);
     Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
     MemFree(backup);
     break;
   case STATUS_PANEL_EXPERIENCE:
   experience:
-    value = unit->classIndex + MSG_CLASS_NAME;
+    value = unit->classIndex + MESSAGE_CLASS_NAME;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
     value = unit->experience;
-    UiText_DrawCharacterAtOffsetFar(MSG_EXP_LABEL, window, 0, 64);
+    UiText_DrawCharacterAtOffsetFar(MESSAGE_EXP_LABEL, window, 0, 64);
     UiText_DrawNumberInWindowFar(value, 8, window, 24, 72);
     break;
   case STATUS_PANEL_CLASS:
-    value = unit->classIndex + MSG_CLASS_NAME;
+    value = unit->classIndex + MESSAGE_CLASS_NAME;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
     break;
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1:
     if (!Item_CanOwnerEquip(owner, item)) {
-      UiText_DrawCharacterAtOffsetFar(MSG_CANNOT_EQUIP, window, 0, 48);
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window, 0, 48);
       break;
     }
     backup = MemAlloc(sizeof(struct BattleUnit));
@@ -216,7 +216,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);
-    UnitCalcFar(owner);
+    Unit_CalculateFar(owner);
     UiText_DrawStatComparison(unit, backup, window);
     Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
     MemFree(backup);
@@ -234,18 +234,18 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       }
     }
     if (known) {
-      UiText_DrawCharacterAtOffsetFar(psynergy + MSG_ABILITY_NAME, window, 0,
+      UiText_DrawCharacterAtOffsetFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
                                       48);
-      UiText_DrawCharacterAtOffsetFar(MSG_LEARNED, window, 0, 56);
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_LEARNED, window, 0, 56);
     } else {
-      UiText_DrawCharacterAtOffsetFar(psynergy + MSG_ABILITY_NAME, window, 0,
+      UiText_DrawCharacterAtOffsetFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
                                       48);
-      UiText_DrawCharacterAtOffsetFar(MSG_WILL_LEARN, window, 0, 56);
+      UiText_DrawCharacterAtOffsetFar(MESSAGE_WILL_LEARN, window, 0, 56);
     }
     break;
   }
   case STATUS_PANEL_STATS: {
-    s32 labels = MSG_PANEL_STAT_LABEL;
+    s32 labels = MESSAGE_PANEL_STAT_LABEL;
 
     UiText_DrawCharacterAtOffsetFar(labels, window, 0, 40); // Attack
     value = unit->atk;

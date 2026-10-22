@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunJudgment, decompiled from the listing: differ 2553 of
+// Draft of BattleEffect_RunJudgment, decompiled from the listing: differ 2553 of
 // 2680 (draft 2655), the same 172 calls and control flow; allocation differs.
 // 2026-10-19: the native's arrays, from the top of its 188-byte frame:
 // anchor (sp 176), pos (164), the swords' placement (148), the falling
@@ -34,12 +34,12 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(
-    void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -57,19 +57,19 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
-void BattleFx_SelectLivingTargets(
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -85,12 +85,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -123,7 +123,7 @@ struct JudgmentObject {
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCells
+extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const s32 Data_08196e74[2];
 extern const u8 Data_08198ab4[];
 extern const u8 Data_08198ace[];
@@ -155,7 +155,7 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
 // then the sigil's beam strikes and the ground erupts in a ring of
 // shockwaves and debris.
-void BattleFx_RunJudgment(void) {
+void BattleEffect_RunJudgment(void) {
   struct BattleEffectArgument *effect;
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -187,7 +187,7 @@ void BattleFx_RunJudgment(void) {
   s32 cx, cy, squash, rings, ring, shift;
 
   effect = Ram_HeapSlots->battleWork;
-  BattleFx_BeginCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(0x2000);
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   transition = Ram_HeapSlots->transitionWork;
@@ -196,12 +196,12 @@ void BattleFx_RunJudgment(void) {
   Func_0813ba50();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
-  BattleFx_LoadBlitter(SLOT_BLITTER, 3);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Func_08163c2c(0, 0);
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
   BattleBackground_LoadFar(1, 0x45, 0);
 
   pal = Resource_GetTableEntry(0xa8);
@@ -420,11 +420,11 @@ void BattleFx_RunJudgment(void) {
     if (frame > 143) {
       s32 y = frame * 16 - 2272;
 
-      BattleFx_LoadBlitter(SLOT_ALT, 3);
+      BattleEffect_LoadBlitter(SLOT_ALT, 3);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, 36, y, 24,
                                                64);
       Runtime_ReleaseHeapBlock(SLOT_ALT);
-      BattleFx_LoadBlitter(SLOT_ALT, 7);
+      BattleEffect_LoadBlitter(SLOT_ALT, 7);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, 60, y, 24,
                                                64);
       Runtime_ReleaseHeapBlock(SLOT_ALT);
@@ -487,7 +487,7 @@ void BattleFx_RunJudgment(void) {
     }
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  BattleFx_LoadBlitter(SLOT_BLITTER, 19);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress(0x126, work->sheet + 0x4000, 1, 1);
   cells = sprites;
@@ -648,19 +648,19 @@ void BattleFx_RunJudgment(void) {
       if ((frame & 7) > 3) {
         cells = work->sheet + 0x4240;
       }
-      BattleFx_LoadBlitter(SLOT_ALT, 19);
+      BattleEffect_LoadBlitter(SLOT_ALT, 19);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 36, top - 24, 24,
                                                24);
       Runtime_ReleaseHeapBlock(SLOT_ALT);
-      BattleFx_LoadBlitter(SLOT_ALT, 23);
+      BattleEffect_LoadBlitter(SLOT_ALT, 23);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 59, top - 24, 24,
                                                24);
       Runtime_ReleaseHeapBlock(SLOT_ALT);
-      BattleFx_LoadBlitter(SLOT_ALT, 27);
+      BattleEffect_LoadBlitter(SLOT_ALT, 27);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 36, top - 1, 24,
                                                24);
       Runtime_ReleaseHeapBlock(SLOT_ALT);
-      BattleFx_LoadBlitter(SLOT_ALT, 31);
+      BattleEffect_LoadBlitter(SLOT_ALT, 31);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 59, top - 1, 24,
                                                24);
       Runtime_ReleaseHeapBlock(SLOT_ALT);
@@ -810,7 +810,7 @@ void BattleFx_RunJudgment(void) {
       }
     }
 
-    BattleFx_LoadBlitter(SLOT_ALT, 3);
+    BattleEffect_LoadBlitter(SLOT_ALT, 3);
     draw = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     if (frame > 85) {
       draw(canvas, work->sheet, 0, 0, 120, 120);
@@ -893,7 +893,7 @@ void BattleFx_RunJudgment(void) {
   for (i = 0; i < 16; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

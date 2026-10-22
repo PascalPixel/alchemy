@@ -20,7 +20,7 @@ Func_080c977c:
 	lsls r4, r4, #2
 	adds r3, r1, r4
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r6, r0, #0
 	movs r5, #56
 	ldrsh r3, [r6, r5]

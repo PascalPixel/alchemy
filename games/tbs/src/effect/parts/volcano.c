@@ -24,7 +24,7 @@
 /// and keeps spitting more, and each eruption knocks the targets back.
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
-/// Storm (BATTLE_FX_VOLCANO).
+/// Storm (BATTLE_EFFECT_VOLCANO).
 ///
 /// The battle shows the damage on frame 16. Volcano and Lava Shower are red,
 /// Pyroclasm and Magma Storm orange, and those two also swing the camera round
@@ -36,7 +36,7 @@
 /// background colours (Eruption and Molten Bath keep the fire pillar sheet's),
 /// turns the camera's yaw (the strongest variant) and sets work->shakeFrames
 /// at each eruption.
-void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -55,7 +55,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
@@ -215,8 +215,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef VOLCANO_FRAMES

@@ -21,7 +21,7 @@
 ///   back with the Orb, Scene_Initialize plays his lesson on Ki
 ///   (FuchinTemple_NyunpaTeachesKi, FLAG_NYUNPA_TAUGHT_FORCE). Once Mogall
 ///   Forest has set FLAG_NYUNPA_ENLIGHTENED he sits withered
-///   (ANIM_NYUNPA_WITHERED) and Mind Read hears his last wish.
+///   (ANIMATION_NYUNPA_WITHERED) and Mind Read hears his last wish.
 /// - Xian (FuchinTempleInteriors, by FUCHIN_TEMPLE_INTERIORS_FROM_XIAN and
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE), Master Feh's kung fu school; the
 ///   area-name rules give the name Xian only at
@@ -201,21 +201,21 @@ enum HamasRoomActor {
 /// Animations of these scenes' own sprites beyond enum ActorAnimation.
 enum {
   /// Seated cross-legged with his eyes shut (spr_051.png's frame 33).
-  ANIM_NYUNPA_MEDITATE = 5,
+  ANIMATION_NYUNPA_MEDITATE = 5,
   /// Seated as he meditated, shrunken and darkened, once he has died
   /// enlightened (spr_051.png's frame 34).
-  ANIM_NYUNPA_WITHERED = 6,
+  ANIMATION_NYUNPA_WITHERED = 6,
   /// A drill of kicks, a knee raised, a kick and a leaping kick, from a
   /// fighting stance (spr_130.tsv).
-  ANIM_STUDENT_KICKS = 5,
+  ANIMATION_STUDENT_KICKS = 5,
   /// A drill of quick punches with one kick among them (spr_131.tsv).
-  ANIM_STUDENT_PUNCHES = 5
+  ANIMATION_STUDENT_PUNCHES = 5
 };
 
 static void FuchinTemple_FeizhiLeavesForHsu(void);
 static void FuchinTemple_FehSeesChi(void);
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ);
-static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target);
+static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target);
 static void FuchinTemple_FinishMindReadDemonstration(void);
 static void FuchinTemple_SpawnNyunpasParticles(void);
 static void FuchinTemple_AnimateRevealLesson(void);
@@ -296,7 +296,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Kolima now?") and is remembered; no means the party came through the forest.
 /// Later talks go on to the tale of the forest.
 static void Event_YoungManFromKolimaAsksAboutBridge(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianHowDidGetHereBridge);
   if (FLAG_CHECK(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
     gEventWork->message += 4;
@@ -318,7 +318,7 @@ static void Event_YoungManFromKolimaAsksAboutBridge(void) {
 /// world's concerns. Is he watching over us?"
 static void Event_BoyMonkSpeaksOfNyunpa(void) {
 
-  EV_BEGIN();
+  EV_START();
   if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED) != 0) {
     MESSAGE_SET(MsgXianNowHeTrulyBeyondWorlds);
     Engine_EventAskYesNo(ACTOR_ADMIRING_BOY_MONK, 0);
@@ -349,7 +349,7 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   struct EffectOptions options;
 
   monk = Object_GetById(ACTOR_FALLS_MONK);
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianAlreadyHeardTest);
   Engine_EventShowMessageAndWait(ACTOR_FALLS_MONK, 0, 20);
   // The monk leaps aside and lands in a puff of dust.
@@ -360,7 +360,7 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   movingMonk->velocityY = 0x140000;
   movingMonk = Object_GetById(ACTOR_FALLS_MONK);
   movingMonk->gravity = 0x40000;
-  OBJ_SPEED(ACTOR_FALLS_MONK, PIXELS(3), 3 * PIXELS(1) / 2);
+  OBJECT_SPEED(ACTOR_FALLS_MONK, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(ACTOR_FALLS_MONK, 152, 392);
   Engine_ActorWaitForMove(ACTOR_FALLS_MONK);
   movingMonk = Object_GetById(ACTOR_FALLS_MONK);
@@ -369,14 +369,14 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   Engine_AudioPlayCue(SE_132);
   // Three white puffs, with only the colour option set.
   options.palette = SPRITE_COLOR_WHITE;
-  FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0x8000,
-                0, 0, EFFECT_USE_PALETTE, &options);
-  FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0, 0,
-                0, EFFECT_USE_PALETTE, &options);
-  FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
-                -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
+                    0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0,
+                    0, 0, EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
+                    -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
   WAIT(30);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Map_CopyCellAttributes(10, 24, 1, 1, 10, 22);
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_GROTTO_OPENED);
   EV_END();
@@ -387,23 +387,23 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
 /// way back is open again. "Young master, did you complete the test?" Then
 /// "Master Nyunpa is waiting for you... Proceed to the temple."
 static void Event_MonkAsksWhetherTestIsDone(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);
-  OBJ_FACE(ACTOR_FALLS_MONK, ACTOR_PARTY_LEADER, 0);
+  OBJECT_FACE(ACTOR_FALLS_MONK, ACTOR_PARTY_LEADER, 0);
   WAIT(10);
   MESSAGE_SET(MsgXianYoungMasterDidCompleteTest);
   Engine_ActorRunRepeatedMotion(ACTOR_FALLS_MONK, 2);
   WAIT(20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_WEST, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Engine_EventAskYesNo(ACTOR_FALLS_MONK, 0);
   WAIT(10);
-  OBJ_EMOTE(ACTOR_FALLS_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  OBJ_DIR(ACTOR_FALLS_MONK, FACING_NORTH + FACING_STEP, 20);
+  OBJECT_EMOTE(ACTOR_FALLS_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
+  OBJECT_DIR(ACTOR_FALLS_MONK, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FALLS_MONK, 2);
   WAIT(20);
   Engine_EventShowMessageAndWait(ACTOR_FALLS_MONK, 0, 20);
   Engine_ActorFaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FALLS_MONK, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FALLS_MONK, ANIMATION_NOD);
   WAIT(20);
   Engine_EventShowMessageAndWait(ACTOR_FALLS_MONK, 0, 20);
   Map_CopyCellAttributes(10, 26, 1, 1, 10, 24);
@@ -421,35 +421,35 @@ static void Event_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
   struct FieldActor *nyunpa;
 
-  EV_BEGIN();
+  EV_START();
   // Revisit an earlier refusal, or introduce the offer through Mind Read.
   alreadyDeclinedTrial = FLAG_CHECK(FLAG_NYUNPA_TEST_DECLINED);
   if (alreadyDeclinedTrial != 0) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 504);
     WAIT(5);
-    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+    OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Object_GetById(ACTOR_NYUNPA)->paused = 0;
     SE(SE_JUMP);
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = 0x80000;
-    OBJ_MODE(ACTOR_NYUNPA, ANIM_STAND);
+    OBJECT_MODE(ACTOR_NYUNPA, ANIMATION_STAND);
     WAIT(30);
     MESSAGE_SET(MsgXianMustSurviveTestGrottoBefore);
   } else {
     MESSAGE_SET(MsgXianMmmmWhoWhoSpeaksMy);
-    FuchinTemple_BeginMindReadDemonstration(ACTOR_PARTY_LEADER, ACTOR_NYUNPA);
+    FuchinTemple_StartMindReadDemonstration(ACTOR_PARTY_LEADER, ACTOR_NYUNPA);
     WAIT(30);
     Event_ShowMessage(ACTOR_NYUNPA, 0);
     FuchinTemple_FinishMindReadDemonstration();
     WAIT(20);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 504);
     WAIT(5);
-    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+    OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     SE(SE_JUMP);
     Object_GetById(ACTOR_NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = 0x80000;
-    OBJ_MODE(ACTOR_NYUNPA, ANIM_STAND);
+    OBJECT_MODE(ACTOR_NYUNPA, ANIMATION_STAND);
     WAIT(30);
     Event_OpenMessage(ACTOR_NYUNPA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
@@ -457,26 +457,26 @@ static void Event_NyunpaOffersTest(void) {
       WAIT(20);
       Event_ShowMessage(ACTOR_NYUNPA, 0);
       WAIT(20);
-      FuchinTemple_BeginMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
+      FuchinTemple_StartMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
       WAIT(30);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       WAIT(50);
       FuchinTemple_FinishMindReadDemonstration();
       WAIT(30);
-      Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
       Event_ShowMessage(ACTOR_NYUNPA, 0);
     } else {
       gEventWork->message += 2;
       Event_ShowMessage(ACTOR_NYUNPA, 0);
     }
-    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
     WAIT(30);
-    OBJ_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    OBJECT_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     MESSAGE_SET(MsgXianFollowThemDoNot);
     Event_OpenMessage(ACTOR_NYUNPA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-      OBJ_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-      FuchinTemple_BeginMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
+      OBJECT_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+      FuchinTemple_StartMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
       WAIT(30);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       WAIT(50);
@@ -487,25 +487,25 @@ static void Event_NyunpaOffersTest(void) {
     } else {
       gEventWork->message += 1;
       WAIT(20);
-      Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
       WAIT(20);
       Event_ShowMessage(ACTOR_NYUNPA, 0);
     }
     WAIT(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_SHAKE_HEAD);
     WAIT(20);
     Event_ShowMessage(ACTOR_NYUNPA, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     WAIT(20);
     Event_ShowMessage(ACTOR_NYUNPA, 0);
     WAIT(20);
-    OBJ_DIR(ACTOR_NYUNPA, FACING_NORTH, 20);
-    OBJ_SPEED(ACTOR_NYUNPA, 3 * PIXELS(1) / 10, 3 * PIXELS(1) / 20);
+    OBJECT_DIR(ACTOR_NYUNPA, FACING_NORTH, 20);
+    OBJECT_SPEED(ACTOR_NYUNPA, 3 * PIXELS(1) / 10, 3 * PIXELS(1) / 20);
     Actor_WalkToAndWait(ACTOR_NYUNPA, 168, 464);
     WAIT(60);
-    OBJ_DIR(ACTOR_NYUNPA, FACING_SOUTH, 40);
+    OBJECT_DIR(ACTOR_NYUNPA, FACING_SOUTH, 40);
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 10);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_WalkToAndWait(ACTOR_NYUNPA, 168, 472);
   }
   Event_OpenMessage(ACTOR_NYUNPA, 0);
@@ -518,7 +518,7 @@ static void Event_NyunpaOffersTest(void) {
     // glows as he calls to the monk.
     MESSAGE_SET(MsgXianDoNotWorryWillPermitted);
     WAIT(30);
-    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
     WAIT(20);
     Camera_SetSpeed(0x8000, 0x1000);
     Engine_CameraMoveToActor(ACTOR_NYUNPA, 1);
@@ -541,7 +541,7 @@ static void Event_NyunpaOffersTest(void) {
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 10);
     FLAG_SET(FLAG_NYUNPA_TEST_ACCEPTED);
   }
-  OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
+  OBJECT_MODE(ACTOR_NYUNPA, ANIMATION_NYUNPA_MEDITATE);
   EV_END();
 }
 
@@ -549,7 +549,7 @@ static void Event_NyunpaOffersTest(void) {
 /// notices.
 /// "You enjoy reading the minds of others, do you not?"
 static void Event_NyunpaFeelsMindRead(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianEnjoyReadingMindsOthersDo);
   Engine_EventAskYesNo(ACTOR_NYUNPA, 0);
   EV_END();
@@ -559,7 +559,7 @@ static void Event_NyunpaFeelsMindRead(void) {
 /// (ACTOR_WELCOMING_STUDENT): the student asks whether the party came to watch.
 /// "This is Master Feh's school... You came to watch?"
 static void Event_StudentWelcomesToSchool(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianMasterFehsSchoolCameWatch);
   Engine_EventAskYesNo(ACTOR_WELCOMING_STUDENT, 0);
   EV_END();
@@ -568,7 +568,7 @@ static void Event_StudentWelcomesToSchool(void) {
 /// Talking to the student who practices jumping in Master Feh's school in Xian:
 /// he lands, talks about jumping (or Lama Temple, or Hsu), then jumps on.
 static void Event_TalkToJumpingStudent(void) {
-  EV_BEGIN();
+  EV_START();
 
   Object_GetById(ACTOR_JUMPING_STUDENT)->paused = 0;
 
@@ -584,7 +584,7 @@ static void Event_TalkToJumpingStudent(void) {
 
   Object_GetById(ACTOR_JUMPING_STUDENT)->paused = 1;
 
-  OBJ_FACE(ACTOR_JUMPING_STUDENT, ACTOR_PARTY_LEADER, 0);
+  OBJECT_FACE(ACTOR_JUMPING_STUDENT, ACTOR_PARTY_LEADER, 0);
 
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0) {
     MESSAGE_SET(MsgXianHsuDidNotPracticeJumping);
@@ -610,7 +610,7 @@ static void Event_TalkToJumpingStudent(void) {
 /// Master Feh. "Master Feh is very busy. Do you still wish to see him?" Yes: if
 /// the tree falls to Chi from the line, he will take the party to Feh.
 static void Event_StudentAsksAboutFeh(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianMasterFehVeryBusyDo);
   Engine_EventAskYesNo(ACTOR_TREE_STUDENT, 0);
   EV_END();
@@ -635,12 +635,12 @@ static void FuchinTemple_ToppleTreeWest(void) {
 
   Engine_AudioPlayCue(SE_TOPPLE);
 
-  FieldFx_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0xffffcccd, 0x6666, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
-                0xffff3334, 0x4ccc, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0xffff0000, 0x3333, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0xffffcccd, 0x6666, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
+                    0xffff3334, 0x4ccc, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0xffff0000, 0x3333, 0, 0, 0);
 }
 
 /// Rotates the training tree through the opposite arc and reverses its
@@ -662,12 +662,12 @@ static void FuchinTemple_ToppleTreeEast(void) {
   tree->targetY = 0x120000;
   tree->scaleX = 0xffff3334;
   Engine_AudioPlayCue(SE_TOPPLE);
-  FieldFx_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0x10000, 0x3333, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000, 0xcccc,
-                0x4ccc, 0, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed, tree->z.fixed + 0x80000,
-                0x3333, 0x6666, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0x10000, 0x3333, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
+                    0xcccc, 0x4ccc, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed,
+                    tree->z.fixed + 0x80000, 0x3333, 0x6666, 0, 0, 0);
 }
 
 /// Slides the training tree north in four steps, then scatters particles.
@@ -686,14 +686,16 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   rotation = 0;
   tree->sprite->rotation = rotation;
   Engine_AudioPlayCue(SE_TOPPLE);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
-                0xffff3334, 0, 0xffffcccd, 0, 0);
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
-                0x0000cccc, 0, 0xffffcccd, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0xfffa0000, tree->y.fixed,
-                tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + (192 << 11), tree->y.fixed,
-                tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
+                    0xffff3334, 0, 0xffffcccd, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
+                    0x0000cccc, 0, 0xffffcccd, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0xfffa0000, tree->y.fixed,
+                    tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0,
+                    0);
+  FieldEffect_Spawn(tree->x.fixed + (192 << 11), tree->y.fixed,
+                    tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0,
+                    0);
 }
 
 /// Slides the training tree south in four steps before the final displacement.
@@ -719,15 +721,15 @@ static void FuchinTemple_ToppleTreeSouth(void) {
   tree->targetZ = ACTOR_NO_TARGET;
   Engine_AudioPlayCue(SE_TOPPLE);
 
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000, -0xcccc,
-                0, 0x3333, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000,
+                    -0xcccc, 0, 0x3333, 0, 0);
   particleSpeed = 0x3333;
-  FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000, 0xcccc,
-                0, particleSpeed, 0, 0);
-  FieldFx_Spawn(tree->x.fixed - 0x60000, tree->y.fixed, tree->z.fixed - 0x80000,
-                particleSpeed, 0, 0x10000, 0, 0);
-  FieldFx_Spawn(tree->x.fixed + 0x60000, tree->y.fixed, tree->z.fixed - 0x80000,
-                particleSpeed, 0, 0x10000, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000,
+                    0xcccc, 0, particleSpeed, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - 0x60000, tree->y.fixed,
+                    tree->z.fixed - 0x80000, particleSpeed, 0, 0x10000, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + 0x60000, tree->y.fixed,
+                    tree->z.fixed - 0x80000, particleSpeed, 0, 0x10000, 0, 0);
 }
 
 /// Routes the student around the tree according to the leader's facing.
@@ -740,17 +742,17 @@ static void FuchinTemple_StudentWalksAroundTree(void) {
   if (((leaderFacing - FACING_SOUTHEAST) << 16) <= 0x3fff0000) {
     Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
     Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 224, 168);
-    OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
+    OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
   } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= quadrantLimit) {
     Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
-    OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTH + FACING_STEP, 20);
+    OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_SOUTH + FACING_STEP, 20);
   } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= quadrantLimit) {
     Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
     Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 224, 172);
-    OBJ_DIR(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
+    OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
   } else {
     Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
-    OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
+    OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
   }
 }
 
@@ -769,21 +771,21 @@ enum FuchinTempleChiRule {
 static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   s32 rulesMessage;
 
-  OBJ_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   WAIT(60);
   rulesMessage = MsgXianCannotPushHands;
   MESSAGE_SET(rulesMessage);
   if (mode == FUCHIN_TEMPLE_CHI_NOT_FROM_LINE) {
     MESSAGE_SET(rulesMessage - 1);
-    OBJ_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    OBJECT_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Engine_EventShowMessageAndWait(ACTOR_TREE_STUDENT, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
     MESSAGE_SET(MsgXianWarriorsCannotUse);
     Engine_EventShowMessageAndWait(ACTOR_TREE_STUDENT, 0, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_TREE_STUDENT, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_TREE_STUDENT, ANIMATION_SHAKE_HEAD);
     WAIT(20);
     Engine_EventShowMessageAndWait(ACTOR_TREE_STUDENT, 0, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_TREE_STUDENT, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_TREE_STUDENT, ANIMATION_NOD);
     WAIT(20);
   }
   if (mode == FUCHIN_TEMPLE_CHI_SEEN_BEFORE) {
@@ -795,7 +797,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   // Restore the tree and let the student return to the demonstration spot.
   FuchinTemple_StudentWalksAroundTree();
   Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  OBJ_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
   Engine_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
   Object_GetById(ACTOR_TRAINING_TREE)->y.fixed = 0xc0000;
   Object_GetById(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
@@ -804,7 +806,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   Engine_AudioPlayCue(SE_124);
   WAIT(40);
   Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
-  OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 30);
+  OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 30);
 }
 
 /// The students see the tree fall, Feh doubts it came from the line, and the
@@ -812,36 +814,36 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
 static void FuchinTemple_StudentsSeeTreeFall(void) {
   struct FieldActor *tree;
 
-  OBJ_FACE(ACTOR_PROUD_STUDENT, ACTOR_TRAINING_TREE, 0);
-  OBJ_FACE(ACTOR_WATCHING_STUDENT, ACTOR_TRAINING_TREE, 0);
-  OBJ_FACE(ACTOR_TREE_STUDENT, ACTOR_TRAINING_TREE, 0);
-  OBJ_FACE(ACTOR_MESSENGER_STUDENT, ACTOR_TRAINING_TREE, 0);
-  OBJ_FACE(ACTOR_FEH, ACTOR_TRAINING_TREE, 0);
+  OBJECT_FACE(ACTOR_PROUD_STUDENT, ACTOR_TRAINING_TREE, 0);
+  OBJECT_FACE(ACTOR_WATCHING_STUDENT, ACTOR_TRAINING_TREE, 0);
+  OBJECT_FACE(ACTOR_TREE_STUDENT, ACTOR_TRAINING_TREE, 0);
+  OBJECT_FACE(ACTOR_MESSENGER_STUDENT, ACTOR_TRAINING_TREE, 0);
+  OBJECT_FACE(ACTOR_FEH, ACTOR_TRAINING_TREE, 0);
   WAIT(20);
   Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   WAIT(20);
   MESSAGE_SET(MsgXianLookTreeFell);
   Engine_EventShowMessageAndWait(ACTOR_TREE_STUDENT, 0, 20);
   Engine_EventShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  OBJ_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  OBJ_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  OBJECT_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_EventShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Engine_EventShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_EventShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Engine_ActorFaceEachOther(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_TREE_STUDENT, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_TREE_STUDENT, ANIMATION_NOD);
   WAIT(20);
   // Reset the tree after the group has reacted to the demonstration.
-  OBJ_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   FuchinTemple_StudentWalksAroundTree();
   Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  OBJ_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
   Engine_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
   tree = Object_GetById(ACTOR_TRAINING_TREE);
   tree->y.fixed = 0xc0000;
@@ -859,14 +861,14 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Engine_AudioPlayCue(SE_124);
   WAIT(40);
   Engine_ActorWalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
-  OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
+  OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
   Engine_GameFlagSet(FLAG_FEH_SCHOOL_SAW_TREE_FALL);
 }
 
 /// Move on the training tree in Master Feh's school in Xian: it topples, and
 /// the students react; it does not count as Chi.
 static void Event_MoveTree(void) {
-  EV_BEGIN();
+  EV_START();
 
   if (Object_GetById(ACTOR_PARTY_LEADER)->facing > FACING_SOUTH &&
       Object_GetById(ACTOR_PARTY_LEADER)->facing < FACING_NORTH) {
@@ -890,8 +892,8 @@ static void Event_PushTreeByHand(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u16 facing;
 
-  EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  EV_START();
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   WAIT(20);
 
   facing = leader->facing;
@@ -906,7 +908,7 @@ static void Event_PushTreeByHand(void) {
     FuchinTemple_ToppleTreeEast();
   }
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_PUSHED_BY_HAND);
   EV_END();
 }
@@ -919,7 +921,7 @@ static void Event_ForceTree(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u16 facing;
 
-  EV_BEGIN();
+  EV_START();
 
   facing = leader->facing;
   if ((u16)(facing - FACING_SOUTHEAST) <= 0x3fff) {
@@ -970,9 +972,9 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_PARTY_LEADER, 0);
   WAIT(20);
-  OBJ_EMOTE(ACTOR_PROUD_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJ_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJ_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(ACTOR_PROUD_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   WAIT(60);
   MESSAGE_SET(MsgXianDidDoWarrior);
   Event_ShowMessageAndWait(ACTOR_PROUD_STUDENT, 0, 20);
@@ -988,16 +990,16 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   WAIT(50);
   // Bring the observers out through the school door.
   Engine_CameraFollowActor(ACTOR_MESSENGER_STUDENT, 1);
-  OBJ_SPEED(ACTOR_MESSENGER_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_MESSENGER_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 176, 248);
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 308, 248);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  OBJ_DIR(ACTOR_MESSENGER_STUDENT, FACING_NORTH, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  OBJECT_DIR(ACTOR_MESSENGER_STUDENT, FACING_NORTH, 20);
   SE(SE_DOOR_OPEN);
   Map_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
   Engine_ActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   WAIT(20);
-  OBJ_SPEED(ACTOR_MESSENGER_STUDENT, 3 * PIXELS(1) / 2, 3 * PIXELS(1) / 4);
+  OBJECT_SPEED(ACTOR_MESSENGER_STUDENT, 3 * PIXELS(1) / 2, 3 * PIXELS(1) / 4);
   actor = Object_GetById(ACTOR_MESSENGER_STUDENT);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 308, 272);
@@ -1006,7 +1008,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 
   actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 50);
-  OBJ_POS_SET(ACTOR_FEIZHI, 304, 216);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI, 304, 216);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 304, 248);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1026,12 +1028,12 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_WATCHING_STUDENT, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
-  OBJ_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  OBJ_POS_SET(ACTOR_FEH, 304, 216);
-  OBJ_WALK(ACTOR_FEH, 304, 248);
-  OBJ_WALK(ACTOR_FEIZHI, 280, 264);
+  OBJECT_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  OBJECT_POSITION_SET(ACTOR_FEH, 304, 216);
+  OBJECT_WALK(ACTOR_FEH, 304, 248);
+  OBJECT_WALK(ACTOR_FEIZHI, 280, 264);
   Engine_ActorWaitForMove(ACTOR_FEH);
-  OBJ_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 0);
+  OBJECT_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 0);
   Engine_ActorWaitForMove(ACTOR_FEIZHI);
   SE(SE_159);
   Map_AnimateCells(gFuchinTemple_FehsDoorCloses, 78, 13);
@@ -1048,67 +1050,67 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   WAIT(10);
   Engine_ActorRunRepeatedMotion(ACTOR_FEIZHI, 2);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIMATION_NOD);
   WAIT(20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 1);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_DIR(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  OBJ_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIMATION_NOD);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEIZHI, 2);
   WAIT(20);
-  OBJ_DIR(ACTOR_FEIZHI, FACING_EAST, 20);
+  OBJECT_DIR(ACTOR_FEIZHI, FACING_EAST, 20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  OBJ_DIR(ACTOR_MESSENGER_STUDENT, FACING_WEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
+  OBJECT_DIR(ACTOR_MESSENGER_STUDENT, FACING_WEST, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIMATION_NOD);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  OBJ_DIR(ACTOR_FEIZHI, FACING_WEST, 20);
+  OBJECT_DIR(ACTOR_FEIZHI, FACING_WEST, 20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WELCOMING_STUDENT, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_WELCOMING_STUDENT, 0, 20);
-  OBJ_DIR(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEIZHI, 1);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  OBJ_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
   WAIT(20);
-  OBJ_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  OBJECT_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
-  OBJ_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 2);
@@ -1117,8 +1119,8 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_FEIZHI, 2);
   WAIT(10);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 256, 280);
-  OBJ_DIR(ACTOR_FEIZHI, FACING_SOUTH, 20);
-  OBJ_POS_SET(ACTOR_FEIZHI, 0, 0);
+  OBJECT_DIR(ACTOR_FEIZHI, FACING_SOUTH, 20);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI, 0, 0);
   Engine_ActorDestroy(ACTOR_FEIZHI);
   WAIT(30);
   Engine_ActorRunRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
@@ -1135,22 +1137,22 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_FaceActor(ACTOR_FEH, ACTOR_MESSENGER_STUDENT, 0);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_SPEED(ACTOR_FEH, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_FEH, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_FEH, 256, 248);
-  OBJ_DIR(ACTOR_FEH, FACING_NORTH, 20);
+  OBJECT_DIR(ACTOR_FEH, FACING_NORTH, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_FEH, 1);
-  OBJ_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_WalkToAndWait(ACTOR_FEH, 240, 184);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 2);
   WAIT(20);
-  OBJ_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
-  OBJ_POS_SET(ACTOR_TRAINING_TREE_TARGET, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE_TARGET, 232, 168);
   // Restore the tree before leaving the group ready for another demonstration.
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->y.fixed = 0xc0000;
@@ -1167,9 +1169,9 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   }
   SE(SE_124);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 256, 240);
-  OBJ_DIR(ACTOR_MESSENGER_STUDENT, FACING_NORTHWEST + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_MESSENGER_STUDENT, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 1);
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_PARTY_LEADER, 0);
@@ -1182,9 +1184,9 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_PARTY_LEADER, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 2);
   WAIT(20);
-  OBJ_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
   Actor_WalkToAndWait(ACTOR_FEH, 248, 208);
-  OBJ_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
   Event_OpenMessage(ACTOR_FEH, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 1);
@@ -1194,30 +1196,30 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   } else {
     Event_SkipMessages(1);
     WAIT(20);
-    OBJ_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    OBJ_DIR(ACTOR_FEH, FACING_SOUTH, 20);
+    OBJECT_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    OBJECT_DIR(ACTOR_FEH, FACING_SOUTH, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
     WAIT(20);
     Event_OpenMessage(ACTOR_MESSENGER_STUDENT, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-      Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIMATION_NOD);
       WAIT(20);
-      OBJ_DIR(ACTOR_FEH, FACING_NORTHWEST + FACING_STEP, 20);
+      OBJECT_DIR(ACTOR_FEH, FACING_NORTHWEST + FACING_STEP, 20);
       Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
       FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI);
     } else {
       Event_SkipMessages(1);
       WAIT(20);
-      Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
       WAIT(20);
       Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
       FLAG_SET(FLAG_FEH_CHI_DEMONSTRATION_DECLINED);
     }
   }
-  OBJ_DIR(ACTOR_KICKING_STUDENT, FACING_WEST, 0);
-  OBJ_DIR(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
-  OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+  OBJECT_DIR(ACTOR_KICKING_STUDENT, FACING_WEST, 0);
+  OBJECT_DIR(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
+  OBJECT_MODE(ACTOR_KICKING_STUDENT, ANIMATION_STUDENT_KICKS);
+  OBJECT_MODE(ACTOR_PUNCHING_STUDENT, ANIMATION_STUDENT_PUNCHES);
   Actor_SetActionScript(ACTOR_JUMPING_STUDENT,
                         gFuchinTemple_JumpingStudentScript);
 }
@@ -1227,7 +1229,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 /// "Warrior, will you show me your Chi?"
 static void Event_FehAsksToSeeChi(void) {
 
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianWarriorWillShowMeYour);
   MESSAGE_OPEN(ACTOR_FEH, 0);
 
@@ -1260,15 +1262,15 @@ static void FuchinTemple_FehSeesChi(void) {
   actor->update = 0;
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
   actor->update = 0;
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
+  OBJECT_MODE(ACTOR_PUNCHING_STUDENT, ANIMATION_STAND);
   Camera_SetSpeed(0x8000, 0x1000);
   Camera_MoveTo(PIXELS(232), -1, PIXELS(200), 1);
   Engine_CameraWaitForMove();
   // Continue the Chi discussion with the students gathered around the tree.
   MESSAGE_SET(MsgXianYaTreeFell);
-  OBJ_SPEED(ACTOR_KICKING_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJ_SPEED(ACTOR_JUMPING_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJ_WALK(ACTOR_KICKING_STUDENT, 152, 200);
+  OBJECT_SPEED(ACTOR_KICKING_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_JUMPING_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_WALK(ACTOR_KICKING_STUDENT, 152, 200);
   Actor_WalkToAndWait(ACTOR_JUMPING_STUDENT, 144, 248);
   Engine_ActorWaitForMove(ACTOR_KICKING_STUDENT);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_TRAINING_TREE, 0);
@@ -1278,9 +1280,9 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_FaceActor(ACTOR_FEH, ACTOR_TRAINING_TREE, 0);
-  OBJ_SPEED(ACTOR_KICKING_STUDENT, 3 * PIXELS(1) / 2, 3 * PIXELS(1) / 4);
-  OBJ_SPEED(ACTOR_JUMPING_STUDENT, PIXELS(2), PIXELS(1));
-  OBJ_WALK(ACTOR_KICKING_STUDENT, 152, 200);
+  OBJECT_SPEED(ACTOR_KICKING_STUDENT, 3 * PIXELS(1) / 2, 3 * PIXELS(1) / 4);
+  OBJECT_SPEED(ACTOR_JUMPING_STUDENT, PIXELS(2), PIXELS(1));
+  OBJECT_WALK(ACTOR_KICKING_STUDENT, 152, 200);
   Actor_WalkToAndWait(ACTOR_JUMPING_STUDENT, 144, 248);
   Actor_FaceActor(ACTOR_JUMPING_STUDENT, ACTOR_TRAINING_TREE, 0);
   Engine_ActorWaitForMove(ACTOR_KICKING_STUDENT);
@@ -1290,31 +1292,31 @@ static void FuchinTemple_FehSeesChi(void) {
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 40);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEH, 0);
-  OBJ_DIR(ACTOR_PUNCHING_STUDENT, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJECT_DIR(ACTOR_PUNCHING_STUDENT, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceActor(ACTOR_JUMPING_STUDENT, ACTOR_FEH, 0);
-  OBJ_DIR(ACTOR_PROUD_STUDENT, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJECT_DIR(ACTOR_PROUD_STUDENT, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceActor(ACTOR_WATCHING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_FEH, 0);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  OBJ_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  OBJ_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  OBJECT_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  OBJ_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  OBJ_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 176);
-  OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_TREE_STUDENT, 0, 20);
-  OBJ_DIR(ACTOR_FEH, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+  OBJECT_DIR(ACTOR_FEH, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
@@ -1328,38 +1330,38 @@ static void FuchinTemple_FehSeesChi(void) {
   WAIT(40);
   Engine_ActorRunRepeatedMotion(ACTOR_PROUD_STUDENT, 2);
   Event_ShowMessageAndWait(ACTOR_PROUD_STUDENT, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
-  OBJ_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
+  OBJECT_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(ACTOR_FEH, 0);
-  OBJ_EMOTE(ACTOR_WELCOMING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_WELCOMING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(5);
-  OBJ_EMOTE(ACTOR_KICKING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_KICKING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(5);
-  OBJ_EMOTE(ACTOR_PUNCHING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_PUNCHING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(5);
-  OBJ_EMOTE(ACTOR_JUMPING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_JUMPING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(5);
-  OBJ_EMOTE(ACTOR_PROUD_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_PROUD_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(5);
-  OBJ_EMOTE(ACTOR_WATCHING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_WATCHING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(5);
-  OBJ_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(5);
-  OBJ_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(60);
   Engine_ActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_FEH, ACTOR_TREE_STUDENT, 0);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 40);
   Engine_ActorFaceEachOther(ACTOR_PUNCHING_STUDENT, ACTOR_KICKING_STUDENT, 0);
@@ -1376,65 +1378,65 @@ static void FuchinTemple_FehSeesChi(void) {
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 2);
   WAIT(20);
-  OBJ_MODE(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_JUMPING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_PROUD_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_WATCHING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_TREE_STUDENT, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
+  OBJECT_MODE(ACTOR_WELCOMING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_KICKING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_PUNCHING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_JUMPING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_PROUD_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_WATCHING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_TREE_STUDENT, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIMATION_NOD);
   WAIT(20);
-  OBJ_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(ACTOR_FEH, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_JUMPING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_PROUD_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_WATCHING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_TREE_STUDENT, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_WELCOMING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_KICKING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_PUNCHING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_JUMPING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_PROUD_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_WATCHING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_TREE_STUDENT, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIMATION_NOD);
   WAIT(20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 2);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEH, ANIMATION_NOD);
   WAIT(20);
-  OBJ_DIR(ACTOR_FEH, FACING_WEST, 20);
+  OBJECT_DIR(ACTOR_FEH, FACING_WEST, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 2);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEH, 0, 20);
-  OBJ_MODE(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_JUMPING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_PROUD_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_WATCHING_STUDENT, ANIM_NOD);
-  OBJ_MODE(ACTOR_TREE_STUDENT, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
+  OBJECT_MODE(ACTOR_WELCOMING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_KICKING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_PUNCHING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_JUMPING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_PROUD_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_WATCHING_STUDENT, ANIMATION_NOD);
+  OBJECT_MODE(ACTOR_TREE_STUDENT, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIMATION_NOD);
   WAIT(20);
-  OBJ_WALK(ACTOR_KICKING_STUDENT, 120, 200);
-  OBJ_WALK(ACTOR_JUMPING_STUDENT, 120, 248);
+  OBJECT_WALK(ACTOR_KICKING_STUDENT, 120, 200);
+  OBJECT_WALK(ACTOR_JUMPING_STUDENT, 120, 248);
   Engine_ActorWaitForMove(ACTOR_KICKING_STUDENT);
-  OBJ_DIR(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
-  OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+  OBJECT_DIR(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
+  OBJECT_MODE(ACTOR_KICKING_STUDENT, ANIMATION_STUDENT_KICKS);
+  OBJECT_MODE(ACTOR_PUNCHING_STUDENT, ANIMATION_STUDENT_PUNCHES);
   Engine_ActorWaitForMove(ACTOR_JUMPING_STUDENT);
   Actor_SetActionScript(ACTOR_JUMPING_STUDENT,
                         gFuchinTemple_JumpingStudentScript);
-  OBJ_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 168);
-  OBJ_DIR(ACTOR_TREE_STUDENT, FACING_NORTH, 20);
+  OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  OBJ_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->y.fixed = 0xc0000;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
@@ -1449,7 +1451,7 @@ static void FuchinTemple_FehSeesChi(void) {
   SE(SE_124);
   WAIT(40);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
-  OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
+  OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
   GameFlag_Clear(FLAG_FEH_WAITS_TO_SEE_CHI);
   FLAG_SET(FLAG_FEH_SAW_KI);
 }
@@ -1458,7 +1460,7 @@ static void FuchinTemple_FehSeesChi(void) {
 /// once Hsu is known to be trapped: the student asks about the flood. "Water
 /// monsters flooded Altin. Did you defeat them, warrior?"
 static void Event_StudentAsksAboutAltin(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianWaterMonstersFloodedAltinDid);
   Engine_EventAskYesNo(ACTOR_PUNCHING_STUDENT, 0);
   EV_END();
@@ -1469,7 +1471,7 @@ static void Event_StudentAsksAboutAltin(void) {
 /// opens and Isaac walks through (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). "It is
 /// locked."
 static void Event_OpenLockedDoor(void) {
-  EV_BEGIN();
+  EV_START();
   if (FLAG_CHECK(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
       FLAG_CHECK(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
     Engine_MessageShowCentered(MsgXianItIsLocked, 1);
@@ -1477,9 +1479,9 @@ static void Event_OpenLockedDoor(void) {
   } else {
     SE(SE_DOOR_OPEN);
     Map_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
-    OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+    OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 306, 248);
-    OBJ_WALK(ACTOR_PARTY_LEADER, 304, 216);
+    OBJECT_WALK(ACTOR_PARTY_LEADER, 304, 216);
     WAIT(20);
     Engine_EventRequestExit(FUCHIN_TEMPLE_INTERIORS_TO_HOUSE);
     EV_END();
@@ -1495,7 +1497,7 @@ static void Event_TalkToHealer(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   facing = leader->facing;
-  EV_BEGIN();
+  EV_START();
 
   if (FACING_IS_NORTH(facing)) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1511,7 +1513,7 @@ static void Event_TalkToHealer(void) {
 /// entrusts the world to Isaac. "Isaac... Is that you...? I am... counting on
 /// you... to bring peace... to the world..."
 static void Event_ReadNyunpasLastWish(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorRunRepeatedMotion(ACTOR_NYUNPA, 2);
   MESSAGE_SET(MsgXianIsaacAmCountingOnBring);
   MESSAGE_PUT(ACTOR_NYUNPA, 0);
@@ -1551,9 +1553,10 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
 
   fallSpeed = ((u32)(Engine_RandomNext() * 8) >> 16) * 13107;
 
-  FieldFx_Spawn(leader->x.fixed + ((8 - (gFrameCount & 15)) << 16),
-                leader->y.fixed + (192 << 13), leader->z.fixed, 0, -fallSpeed,
-                0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(leader->x.fixed + ((8 - (gFrameCount & 15)) << 16),
+                    leader->y.fixed + (192 << 13), leader->z.fixed, 0,
+                    -fallSpeed, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                    &options);
 
   if ((gFrameCount & 1) != 0)
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1579,13 +1582,13 @@ static UNUSED void FuchinTemple_HopLeaderWest(void) {
 /// Unused: hops the leader by a pixel offset, waiting for the movement to
 /// finish; only the three unused hops above call it.
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
-  EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
+  EV_START();
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, offsetZ);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAP);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_LEADER_SPRING);
   EV_END();
 }
 
@@ -1596,7 +1599,7 @@ static void Event_EnterWaterfallGrotto(void) {
   struct FieldActor *leader;
   SchedulerCallback particleTask;
 
-  EV_BEGIN();
+  EV_START();
   // Keep the entry effect alive until the leader has moved into the fade.
   particleTask = FuchinTemple_SpawnGrottoEntryParticle;
   FieldScheduler_AddCallback(particleTask, TASK_PRIORITY_SCENE);
@@ -1604,7 +1607,7 @@ static void Event_EnterWaterfallGrotto(void) {
   gEventWork->transitionFrames = 60;
   Engine_EventCloseScreen();
   Engine_AudioPlayCue(SE_CAST);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_WALK);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1627,13 +1630,13 @@ static void Event_LeaveTemple(void) {
 /// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
 /// trigger 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void Event_EnterTemple(void) {
-  EV_BEGIN();
+  EV_START();
   SE(SE_188);
   Map_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_WALK);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   WAIT(16);
   Engine_EventRequestExit(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS);
@@ -1648,9 +1651,9 @@ static void Event_EnterTemple(void) {
 static void FuchinTemple_NyunpaTeachesKi(void) {
   struct FieldActor *nyunpa;
 
-  EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJ_WALK(ACTOR_PARTY_LEADER, 168, 504);
+  EV_START();
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_WALK(ACTOR_PARTY_LEADER, 168, 504);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1664,21 +1667,21 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   SE(SE_JUMP);
   nyunpa = Actor_Get(ACTOR_NYUNPA);
   nyunpa->velocityY = 0x80000;
-  OBJ_MODE(ACTOR_NYUNPA, ANIM_STAND);
+  OBJECT_MODE(ACTOR_NYUNPA, ANIMATION_STAND);
   // Praise the completed test before answering the follow-up questions.
   MESSAGE_SET(MsgXianExcellentIsaac);
   Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
   Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     WAIT(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
     WAIT(20);
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
     gEventWork->message += 2;
@@ -1688,7 +1691,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     WAIT(20);
     gEventWork->message++;
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
     WAIT(20);
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
   }
@@ -1696,11 +1699,11 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_NYUNPA, 2);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     WAIT(10);
-    OBJ_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    OBJECT_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     MESSAGE_SET(MsgXianCanReadMindsKnowCurious);
     Event_OpenMessage(ACTOR_NYUNPA, 0);
     do {
@@ -1708,7 +1711,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
         break;
       }
       WAIT(10);
-      OBJ_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      OBJECT_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       MESSAGE_SET(MsgXianDontTryHard);
       Event_OpenMessage(ACTOR_NYUNPA, 0);
     } while (1);
@@ -1716,12 +1719,12 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   // Explain why hidden monsters make the new ability useful.
   MESSAGE_SET(MsgXianMonstersWaitInHidingWould);
   WAIT(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
   WAIT(20);
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     WAIT(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     WAIT(20);
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
     gEventWork->message++;
@@ -1731,17 +1734,17 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     gEventWork->message++;
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
   }
-  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_NYUNPA, 2);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIMATION_NOD);
   WAIT(20);
-  OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
+  OBJECT_MODE(ACTOR_NYUNPA, ANIMATION_NYUNPA_MEDITATE);
   FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE);
   EV_END();
 }
@@ -1756,28 +1759,28 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
 static void FuchinTemple_RunHamasRevealLesson(void) {
   struct FieldActor *leader;
 
-  EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
-  OBJ_WALK(ACTOR_PARTY_LEADER, 472, 536);
+  EV_START();
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
+  OBJECT_WALK(ACTOR_PARTY_LEADER, 472, 536);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_EAST, 20);
+  OBJECT_DIR(ACTOR_HAMAS_BOY_MONK, FACING_EAST, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_HAMAS_BOY_MONK, 2);
   WAIT(20);
   MESSAGE_SET(MsgXianMasterHamaMeditatingPleaseExtremely);
   Event_ShowMessageAndWait(ACTOR_HAMAS_BOY_MONK, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_WEST, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(30);
-  OBJ_DIR(ACTOR_HAMA, FACING_SOUTH, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  OBJECT_DIR(ACTOR_HAMA, FACING_SOUTH, 30);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   WAIT(20);
-  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 0);
+  OBJECT_DIR(ACTOR_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 0);
   // Bring the other party members out from the leader for the lesson.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -1791,55 +1794,55 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   if (leader != 0) {
     Actor_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
   }
-  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJ_SPEED(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJ_SPEED(IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJ_SPEED(MIA, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJ_WALK(ACTOR_PARTY_LEADER, 464, 504);
-  OBJ_WALK(IVAN, 480, 504);
-  OBJ_WALK(GARET, 496, 496);
-  OBJ_WALK(MIA, 448, 496);
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(MIA, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_WALK(ACTOR_PARTY_LEADER, 464, 504);
+  OBJECT_WALK(IVAN, 480, 504);
+  OBJECT_WALK(GARET, 496, 496);
+  OBJECT_WALK(MIA, 448, 496);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorWaitForMove(IVAN);
   Engine_ActorWaitForMove(MIA);
-  OBJ_DIR(MIA, FACING_NORTHEAST, 0);
+  OBJECT_DIR(MIA, FACING_NORTHEAST, 0);
   Engine_ActorWaitForMove(GARET);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 0);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 0);
   WAIT(20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  OBJ_DIR(GARET, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_DIR(GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(GARET, 0);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 20);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 20);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
-  OBJ_DIR(ACTOR_HAMA, FACING_SOUTHEAST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
+  OBJECT_DIR(ACTOR_HAMA, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
-  OBJ_DIR(MIA, FACING_SOUTHEAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  OBJECT_DIR(GARET, FACING_SOUTHWEST, 0);
+  OBJECT_DIR(MIA, FACING_SOUTHEAST, 0);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Actor_SetAttachedEffect(IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   WAIT(60);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 0);
-  OBJ_DIR(MIA, FACING_NORTHEAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 0);
+  OBJECT_DIR(MIA, FACING_NORTHEAST, 0);
   WAIT(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -1847,27 +1850,27 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 50);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  OBJ_DIR(IVAN, FACING_NORTH, 30);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(IVAN, FACING_NORTH, 30);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  OBJ_DIR(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+  OBJECT_DIR(GARET, FACING_SOUTHWEST, 0);
   WAIT(30);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Actor_FaceActor(ACTOR_HAMA, IVAN, 0);
   WAIT(10);
@@ -1875,41 +1878,41 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
   Actor_FaceActor(GARET, IVAN, 0);
   Actor_FaceActor(MIA, IVAN, 0);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   WAIT(20);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   WAIT(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_HAMA, GARET, 0);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Actor_FaceActor(ACTOR_HAMA, GARET, 0);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 0);
-  OBJ_DIR(MIA, FACING_NORTHEAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 0);
+  OBJECT_DIR(MIA, FACING_NORTHEAST, 0);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   WAIT(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   WAIT(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  OBJ_DIR(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  OBJECT_DIR(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1917,32 +1920,32 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_HAMA, 2);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_MODE(GARET, ANIMATION_NOD);
+  OBJECT_MODE(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   WAIT(60);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_HAMA, 1);
   WAIT(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
@@ -1951,37 +1954,37 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Engine_ActorStartRepeatedMotion(IVAN, 1);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  OBJ_DIR(GARET, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_DIR(GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(GARET, 0);
   WAIT(20);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   WAIT(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 20);
-  OBJ_DIR(ACTOR_HAMA, FACING_NORTH, 20);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 20);
+  OBJECT_DIR(ACTOR_HAMA, FACING_NORTH, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_MODE(GARET, ANIMATION_NOD);
+  OBJECT_MODE(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
-  OBJ_DIR(ACTOR_HAMA, FACING_SOUTH, 20);
+  OBJECT_DIR(ACTOR_HAMA, FACING_SOUTH, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
@@ -1994,13 +1997,13 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   WAIT(60);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  OBJ_DIR(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   WAIT(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
@@ -2008,124 +2011,125 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceActor(IVAN, GARET, 0);
   Actor_FaceActor(MIA, GARET, 0);
   WAIT(20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_MODE(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(60);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  OBJ_DIR(IVAN, FACING_NORTH, 0);
-  OBJ_DIR(MIA, FACING_NORTH + FACING_STEP, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(IVAN, FACING_NORTH, 0);
+  OBJECT_DIR(MIA, FACING_NORTH + FACING_STEP, 0);
   WAIT(20);
   Event_AskYesNo(ACTOR_HAMA, 0);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   WAIT(60);
-  OBJ_DIR(GARET, FACING_SOUTHWEST, 20);
+  OBJECT_DIR(GARET, FACING_SOUTHWEST, 20);
   Event_AskYesNo(GARET, 0);
   WAIT(20);
-  OBJ_DIR(MIA, FACING_SOUTHEAST, 20);
+  OBJECT_DIR(MIA, FACING_SOUTHEAST, 20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 0);
-  OBJ_DIR(MIA, FACING_NORTHEAST, 30);
-  OBJ_DIR(ACTOR_HAMA, FACING_EAST, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 0);
+  OBJECT_DIR(MIA, FACING_NORTHEAST, 30);
+  OBJECT_DIR(ACTOR_HAMA, FACING_EAST, 20);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  OBJ_DIR(ACTOR_HAMA, FACING_NORTH, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  OBJECT_DIR(ACTOR_HAMA, FACING_NORTH, 20);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_MODE(GARET, ANIMATION_NOD);
+  OBJECT_MODE(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
   Engine_ActorRunRepeatedMotion(ACTOR_HAMA, 1);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
-  OBJ_DIR(IVAN, FACING_WEST, 0);
-  OBJ_DIR(MIA, FACING_SOUTHEAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  OBJECT_DIR(GARET, FACING_SOUTHWEST, 0);
+  OBJECT_DIR(IVAN, FACING_WEST, 0);
+  OBJECT_DIR(MIA, FACING_SOUTHEAST, 0);
   WAIT(60);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 0);
-  OBJ_DIR(IVAN, FACING_NORTH, 0);
-  OBJ_DIR(MIA, FACING_NORTHEAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 0);
+  OBJECT_DIR(IVAN, FACING_NORTH, 0);
+  OBJECT_DIR(MIA, FACING_NORTHEAST, 0);
   WAIT(30);
-  OBJ_DIR(ACTOR_HAMA, FACING_SOUTH, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  OBJECT_DIR(ACTOR_HAMA, FACING_SOUTH, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   // Interrupt the discussion with the arrival from the southern path.
-  OBJ_POS_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJ_EMOTE(ACTOR_HAMAS_BOY_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(ACTOR_HAMAS_BOY_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   WAIT(60);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  OBJ_DIR(GARET, FACING_SOUTH, 0);
-  OBJ_DIR(IVAN, FACING_SOUTH, 0);
-  OBJ_DIR(MIA, FACING_SOUTH, 0);
-  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_EAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  OBJECT_DIR(GARET, FACING_SOUTH, 0);
+  OBJECT_DIR(IVAN, FACING_SOUTH, 0);
+  OBJECT_DIR(MIA, FACING_SOUTH, 0);
+  OBJECT_DIR(ACTOR_HAMAS_BOY_MONK, FACING_EAST, 0);
   WAIT(30);
-  OBJ_SPEED(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5,
+               2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 536);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_DIR(IVAN, FACING_NORTH, 40);
+  OBJECT_DIR(IVAN, FACING_NORTH, 40);
   Actor_WalkToAndWait(IVAN, 488, 512);
   WAIT(10);
-  OBJ_DIR(IVAN, FACING_SOUTHWEST, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 30);
+  OBJECT_DIR(IVAN, FACING_SOUTHWEST, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 512);
   WAIT(10);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 2);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 2);
   Actor_SetAttachedEffect(ACTOR_FEIZHI_IN_LAMA_TEMPLE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   WAIT(60);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(ACTOR_FEIZHI_IN_LAMA_TEMPLE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-            60);
+  OBJECT_EMOTE(ACTOR_FEIZHI_IN_LAMA_TEMPLE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+               60);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_HAMA, 1);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  OBJ_DIR(GARET, FACING_NORTHWEST, 0);
-  OBJ_DIR(IVAN, FACING_NORTHWEST, 0);
-  OBJ_DIR(MIA, FACING_NORTHEAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+  OBJECT_DIR(GARET, FACING_NORTHWEST, 0);
+  OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
+  OBJECT_DIR(MIA, FACING_NORTHEAST, 0);
   WAIT(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   // BUG: ACTOR_FEIZHI is Feizhi's number in the school's table. Hama's room
   // places no actor at that number, so Feizhi does not bounce before she
@@ -2137,60 +2141,61 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
 #endif
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(2);
-  OBJ_MODE(IVAN, ANIM_NOD);
+  OBJECT_MODE(IVAN, ANIMATION_NOD);
   WAIT(1);
-  OBJ_MODE(MIA, ANIM_NOD);
+  OBJECT_MODE(MIA, ANIMATION_NOD);
   WAIT(5);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_PARTY_LEADER, 0);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_SPEED(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5,
+               2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 504);
   WAIT(20);
   Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 1);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0);
-  OBJ_SPEED(ACTOR_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
-  OBJ_DIR(IVAN, FACING_SOUTHWEST, 0);
-  OBJ_DIR(MIA, FACING_SOUTHEAST, 0);
+  OBJECT_SPEED(ACTOR_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  OBJECT_DIR(GARET, FACING_SOUTHWEST, 0);
+  OBJECT_DIR(IVAN, FACING_SOUTHWEST, 0);
+  OBJECT_DIR(MIA, FACING_SOUTHEAST, 0);
   Engine_ActorWaitForMove(ACTOR_HAMA);
   WAIT(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_WALK(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 568);
+  OBJECT_WALK(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 568);
   Actor_WalkToAndWait(ACTOR_HAMA, 472, 536);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_ActorWaitForMove(ACTOR_FEIZHI_IN_LAMA_TEMPLE);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_HAMA, 2);
-  OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  OBJ_DIR(ACTOR_FEIZHI_IN_LAMA_TEMPLE, FACING_NORTH + FACING_STEP, 0);
-  OBJ_DIR(ACTOR_HAMA, FACING_NORTH + FACING_STEP, 20);
+  OBJECT_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_DIR(ACTOR_FEIZHI_IN_LAMA_TEMPLE, FACING_NORTH + FACING_STEP, 0);
+  OBJECT_DIR(ACTOR_HAMA, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Actor_WalkToAndWait(ACTOR_HAMA, 472, 512);
-  OBJ_DIR(ACTOR_HAMA, FACING_EAST, 0);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  OBJ_DIR(IVAN, FACING_WEST, 0);
-  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  OBJECT_DIR(ACTOR_HAMA, FACING_EAST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  OBJECT_DIR(IVAN, FACING_WEST, 0);
+  OBJECT_DIR(ACTOR_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   WAIT(20);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 448, 512);
@@ -2206,111 +2211,111 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   WAIT(60);
   Party_LearnAbility(IVAN, ABILITY_REVEAL);
   // Let Hama and her monk leave, then gather the party into the leader.
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_MODE(GARET, ANIMATION_NOD);
+  OBJECT_MODE(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
-  OBJ_DIR(IVAN, FACING_SOUTHWEST, 0);
-  OBJ_DIR(MIA, FACING_SOUTHEAST, 0);
-  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  OBJECT_DIR(GARET, FACING_SOUTHWEST, 0);
+  OBJECT_DIR(IVAN, FACING_SOUTHWEST, 0);
+  OBJECT_DIR(MIA, FACING_SOUTHEAST, 0);
+  OBJECT_DIR(ACTOR_HAMAS_BOY_MONK, FACING_SOUTHEAST + FACING_STEP, 0);
   WAIT(20);
   Actor_WalkToAndWait(ACTOR_HAMA, 472, 552);
   Engine_ActorRunRepeatedMotion(ACTOR_HAMA, 2);
   WAIT(20);
-  OBJ_DIR(ACTOR_HAMA, FACING_NORTH + FACING_STEP, 20);
+  OBJECT_DIR(ACTOR_HAMA, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIMATION_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_SPEED(ACTOR_HAMA, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(ACTOR_HAMA, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_HAMA, 480, 540);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  OBJ_SPEED(ACTOR_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJ_SPEED(ACTOR_HAMAS_BOY_MONK, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJ_WALK(ACTOR_HAMA, 472, 608);
-  OBJ_WALK(ACTOR_HAMAS_BOY_MONK, 472, 544);
+  OBJECT_SPEED(ACTOR_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_HAMAS_BOY_MONK, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_WALK(ACTOR_HAMA, 472, 608);
+  OBJECT_WALK(ACTOR_HAMAS_BOY_MONK, 472, 544);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   Engine_ActorWaitForMove(ACTOR_HAMAS_BOY_MONK);
-  OBJ_WALK(ACTOR_HAMAS_BOY_MONK, 472, 608);
-  OBJ_POS_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 0);
+  OBJECT_WALK(ACTOR_HAMAS_BOY_MONK, 472, 608);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 0);
   Engine_ActorWaitForMove(ACTOR_HAMA);
-  OBJ_POS_SET(ACTOR_HAMA, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_HAMA, 0, 0);
   Engine_ActorWaitForMove(ACTOR_HAMAS_BOY_MONK);
-  OBJ_POS_SET(ACTOR_HAMAS_BOY_MONK, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_HAMAS_BOY_MONK, 0, 0);
   Actor_WalkToAndWait(IVAN, 488, 520);
-  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   WAIT(20);
-  OBJ_DIR(MIA, FACING_SOUTHEAST, 20);
+  OBJECT_DIR(MIA, FACING_SOUTHEAST, 20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  OBJ_DIR(IVAN, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  OBJECT_DIR(IVAN, FACING_NORTHWEST, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorRunRepeatedMotion(GARET, 1);
-  OBJ_DIR(GARET, FACING_SOUTHWEST, 20);
+  OBJECT_DIR(GARET, FACING_SOUTHWEST, 20);
   Event_AskYesNo(GARET, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(20);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   WAIT(20);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  OBJ_DIR(GARET, FACING_WEST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(GARET, FACING_WEST, 0);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_OpenMessage(MIA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     WAIT(20);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     WAIT(20);
     Event_ShowMessageAndWait(GARET, 0, 20);
     gEventWork->message++;
   } else {
     WAIT(20);
     gEventWork->message++;
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     WAIT(20);
     Event_ShowMessageAndWait(MIA, 0, 20);
   }
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
-  OBJ_WALK(GARET, 448, 512);
+  OBJECT_WALK(GARET, 448, 512);
   Actor_WalkToAndWait(MIA, 448, 512);
-  OBJ_POS_SET(MIA, 0, 0);
+  OBJECT_POSITION_SET(MIA, 0, 0);
   Engine_ActorWaitForMove(GARET);
-  OBJ_POS_SET(GARET, 0, 0);
+  OBJECT_POSITION_SET(GARET, 0, 0);
   WAIT(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 20);
   WAIT(30);
   Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Actor_SetAttachedEffect(IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   WAIT(60);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Actor_WalkToAndWait(IVAN, 448, 512);
-  OBJ_POS_SET(IVAN, 0, 0);
+  OBJECT_POSITION_SET(IVAN, 0, 0);
   EV_END();
   FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED);
 }
@@ -2330,9 +2335,9 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance ==
         FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED)) {
-        OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_WITHERED);
+        OBJECT_MODE(ACTOR_NYUNPA, ANIMATION_NYUNPA_WITHERED);
       } else {
-        OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
+        OBJECT_MODE(ACTOR_NYUNPA, ANIMATION_NYUNPA_MEDITATE);
         if (Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
             !Engine_GameFlagIsSet(FLAG_NYUNPA_TAUGHT_FORCE) &&
             !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -2383,8 +2388,8 @@ s32 Scene_Initialize(void) {
       // is the same with and without it; drawn plain, it covers the door.
       OverlayObject_PrepareObject(PIXELS(304), PIXELS(24), PIXELS(224),
                                   SPRITE_CRATE);
-      OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-      OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+      OBJECT_MODE(ACTOR_KICKING_STUDENT, ANIMATION_STUDENT_KICKS);
+      OBJECT_MODE(ACTOR_PUNCHING_STUDENT, ANIMATION_STUDENT_PUNCHES);
     } else if (gGameState.entrance ==
                FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
@@ -2396,7 +2401,7 @@ s32 Scene_Initialize(void) {
       }
     }
   } else {
-    FieldFx_SetQueuedSoundAndPlay(SE_170);
+    FieldEffect_SetQueuedSoundAndPlay(SE_170);
     Object_GetById(ACTOR_FALLS_MONK)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
     if (gGameState.entrance ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
@@ -2405,7 +2410,7 @@ s32 Scene_Initialize(void) {
       Map_CopyCellAttributes(10, 84, 1, 1, 10, 24);
     }
     if (Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_GROTTO_OPENED)) {
-      OBJ_POS_SET(ACTOR_FALLS_MONK, 152, 392);
+      OBJECT_POSITION_SET(ACTOR_FALLS_MONK, 152, 392);
       Engine_ActorFaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 0);
       Map_CopyCellAttributes(10, 26, 1, 1, 10, 22);
     }
@@ -2416,11 +2421,11 @@ s32 Scene_Initialize(void) {
 /// Starts Mind Read from caster on target as part of a cutscene, without the
 /// window that announces its name. Nyunpa's Mind Read events carry
 /// PSYNERGY_SCRIPT_PLAYS_EFFECT, so the field plays nothing of its own.
-static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target) {
+static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
   struct FieldFxScene *effect;
 
   Engine_GameFlagSet(FLAG_PSYNERGY_EFFECT);
-  Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
+  Engine_PsynergyStart(ABILITY_MIND_READ, 1);
   effect = gEffectWork;
   Engine_PsynergySetTarget(caster, target);
   effect->active = 0;
@@ -2431,7 +2436,7 @@ static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target) {
 
 /// Finishes the demonstration's effect and lowers the caster's hands.
 static void FuchinTemple_FinishMindReadDemonstration(void) {
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_PsynergyPlayEffect(PSYNERGY_STEP_FINISH);
   Engine_PsynergyLowerHands();
 }
@@ -2453,11 +2458,11 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
     if (shotIndex & 1) {
       Engine_AudioPlayCue(SE_130);
     }
-    FieldFx_Spawn(nyunpa->x.fixed, nyunpa->y.fixed,
-                  nyunpa->z.fixed + 0xffe80000, 0, 0x9999, 0,
-                  EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_SCALE_TO_TARGET |
-                      EFFECT_USE_PRIORITY | 1,
-                  &options);
+    FieldEffect_Spawn(nyunpa->x.fixed, nyunpa->y.fixed,
+                      nyunpa->z.fixed + 0xffe80000, 0, 0x9999, 0,
+                      EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                          EFFECT_SCALE_TO_TARGET | EFFECT_USE_PRIORITY | 1,
+                      &options);
   }
   WAIT(60);
 }
@@ -2510,9 +2515,9 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     particleY = hama->y.fixed +
                 ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
     riseSpeed = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + (128 << 8);
-    FieldFx_Spawn(particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
-                  EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                  &options);
+    FieldEffect_Spawn(
+        particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
+        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
     Engine_TaskWait(2);
   }
   Engine_AudioPlayCue(SE_220);
@@ -2528,18 +2533,18 @@ static void FuchinTemple_AnimateRevealLesson(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
@@ -2873,7 +2878,7 @@ s32 gFuchinTemple_ShotScript[] = {
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(44),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };

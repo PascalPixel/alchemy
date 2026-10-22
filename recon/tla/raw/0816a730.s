@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Undead Sword (kind 320).
-	.global BattleFx_RunUndeadSword
+	.global BattleEffect_RunUndeadSword
 	.thumb_func
-BattleFx_RunUndeadSword:
+BattleEffect_RunUndeadSword:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -21,7 +21,7 @@ BattleFx_RunUndeadSword:
 	movs r0, #0
 	mov r10, r2
 	ldr r5, [r3, #100]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816a794
 	movs r2, #128
 	lsls r2, r2, #19
@@ -248,7 +248,7 @@ BattleFx_RunUndeadSword:
 	ldr r4, [sp, #20]
 	ldr r1, [sp, #12]
 	ldr r0, [r4, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r2, #0
 	mov r8, r2
 	mov r5, r10
@@ -297,7 +297,7 @@ BattleFx_RunUndeadSword:
 	str r3, [r5, #24]
 	movs r1, #62
 	ldr r2, .L_0816aa04
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_0816a988:
 	movs r4, #1
 	add r8, r4
@@ -342,7 +342,7 @@ BattleFx_RunUndeadSword:
 .L_0816a9e0:
 	ldr r0, .L_0816a9f8
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #44
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -351,7 +351,7 @@ BattleFx_RunUndeadSword:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816a9f8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816a9fc:
 	.4byte gData_08198afc
 .L_0816aa00:

@@ -425,8 +425,8 @@ void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y,
 void BattlePresentation_SetupTransitionAtPairMidpoint(s32 firstUnitId,
                                                       s32 secondUnitId,
                                                       s32 zoom) {
-  struct MotionObject *firstObject = BattleObjGet(firstUnitId)->object;
-  struct MotionObject *secondObject = BattleObjGet(secondUnitId)->object;
+  struct MotionObject *firstObject = BattleObject_Get(firstUnitId)->object;
+  struct MotionObject *secondObject = BattleObject_Get(secondUnitId)->object;
   s32 firstX = firstObject->x;
   s32 secondX = secondObject->x;
   s32 firstZ = firstObject->z;
@@ -533,7 +533,7 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
 /// storm (BattlePresentation_RunEntryTransition), by the staging (staging.c)
 /// and by auto battle (auto_battle.c).
 void BattlePresentation_SetActorRecordMode(s32 actorId, s32 mode) {
-  struct BattleObj *slot = BattleObjGet(actorId);
+  struct BattleObj *slot = BattleObject_Get(actorId);
   struct MotionObject *object;
   struct AnimationObject *record;
   struct AnimationObject **records;

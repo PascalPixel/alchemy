@@ -1,12 +1,12 @@
 // Near miss, differ 104 of 503 (effect kind 8, the falling crystals).
 
-// ☀️ twin: BattleFx_RunPrism (games/tbs/src/effect/effect.c),
+// ☀️ twin: BattleEffect_RunPrism (games/tbs/src/effect/effect.c),
 // shape 0.800, structure 0.979. ⚓️'s changes: the counts table
 // Data_081979b7 holds three bytes for each variant (crystals, frames and the
 // frame that begins phase 134, where ☀️ begins it 80 frames before the
 // end); the boulder sheet is unpacked into the work before the crystal
 // sheet; the shard offsets gData_08197834 are words; the camera is
-// Ram_HeapSlots->cameraWork; BattleFx_FetchRectangleBlitters fetches the
+// Ram_HeapSlots->cameraWork; BattleEffect_FetchRectangleBlitters fetches the
 // blitter pair.
 
 // Same frame and instruction count. What is left: the loop counters i and j
@@ -55,24 +55,24 @@ extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
 extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
 extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);         // ☀️ BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);         // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);         // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);         // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);    // ☀️ BattleEvent_BeginPhaseFar
-void BattleFx_FetchRectangleBlitters(
+void Func_081180e8(s32 phase);    // ☀️ BattleEvent_StartPhaseFar
+void BattleEffect_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Audio_PlayCue(s32 cue);
 
 // Crystals fall one after another, eight frames apart, onto the targets'
 // ground and shatter into sixteen spinning shards each; the screen darkens
 // over the last eight frames.
-void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -90,14 +90,14 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   shards = (struct EffectStep *)Ram_MapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
-  BattleFx_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
@@ -155,7 +155,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
                          HI(shard->x) - gData_0819781a[cell] / 2,
                          HI(shard->y) - gData_08197826[cell] / 2,
                          gData_0819781a[cell], gData_08197826[cell]);
-            BattleFxKernels_IntegrateVector2(shard, 64, 0x2000);
+            BattleEffectKernels_IntegrateVector2(shard, 64, 0x2000);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
@@ -163,7 +163,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
         } else if (frame >= cry->variant) {
           // A falling crystal (32x64), until it reaches the ground.
           draw[i & 1](canvas, work->sheet, HI(cry->x) - 16, HI(cry->y), 32, 64);
-          BattleFxKernels_IntegrateVector2(cry, 64, 0x10000);
+          BattleEffectKernels_IntegrateVector2(cry, 64, 0x10000);
           if (cry->y > GROUND_Y) {
             cry->z = SHATTERED;
             cry->y = GROUND_Y;
@@ -196,8 +196,8 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

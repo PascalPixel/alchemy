@@ -1,6 +1,6 @@
-// Draft of BattleFx_RunRadiantFire, effect kind 110 (Radiant Fire), written from the
+// Draft of BattleEffect_RunRadiantFire, effect kind 110 (Radiant Fire), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunUndeadSword 0.525, call order BattleFx_RunBreak
+// BattleEffect_RunUndeadSword 0.525, call order BattleEffect_RunBreak
 // 0.551); the textured square goes through the ARM polygon kernels as in
 // the summons (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList).
 
@@ -71,17 +71,17 @@ extern const u16 gData_08199364[]; // a textured square
 extern const u16 Data_081991e0[];  // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_BuildBlitter, packed
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
-void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
+void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void Func_0815b434(void *map, s32 size, s32 scale); // a shaded disc
 void Func_0818caa8(void *picture, s32 x, s32 y, s32 size);
 void Render_ResetTransformState(void);
@@ -108,7 +108,7 @@ void Audio_PlayCue(s32 cue);
 // Frame loop (66 frames): at frame 0 the bursts are placed at random
 // around the target and the user closes in; from frame 8 burst i lands at
 // frame 16 + 4i and burns for 24 frames.
-void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -127,16 +127,16 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_LoadBlitter(104, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(104, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x1000, 0,
                              0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
@@ -182,7 +182,7 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 0)
-      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
+      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
 
     // Frame 8: the canvas flashes white and the target is struck.
     if (frame == 8) {
@@ -253,7 +253,7 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

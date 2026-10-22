@@ -1,6 +1,6 @@
 // Near miss, differ 40 of 380.
 
-// Twin: The Broken Seal's BattleFx_RunElementBurst, reached from the
+// Twin: The Broken Seal's BattleEffect_RunElementBurst, reached from the
 // scenes through the far-call table (table_47.s). Like 0813e3d0 it sets up
 // its own heap blocks, stores work->effect and marks the work active
 // itself, and reads the actors from the argument. The corner sparks' four
@@ -59,7 +59,7 @@ extern u8 Data_081976da[];
 extern s8 Data_081976d2[];
 extern s8 Data_081976d6[];
 
-// The mote's cell for each size from 1 to 6 (gBattleFx_FlareCells).
+// The mote's cell for each size from 1 to 6 (gBattleEffect_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_CyanSparkSheet;
@@ -69,12 +69,12 @@ extern char ResourceId_IceTileSheet;
 extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+void BattleEffect_StartCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleFx_BuildBlitter
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);      // the canvas transfer callback
+                   s32 mode); // BattleEffect_BuildBlitter
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);      // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -110,7 +110,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   sheet = Runtime_AllocateHeapBlock(SLOT_BATTLE_SHEET, 0x60e);
   work->framesSinceTransfer = 1;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = 0x100c;
@@ -150,8 +150,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Audio_PlayCue(140);
 
@@ -210,8 +210,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);

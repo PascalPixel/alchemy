@@ -140,7 +140,7 @@ Func_080fb410:
 	lsls r0, r0, #1
 	adds r0, #255
 	ands r0, r3
-	bl BattleFx_HasTriggerFar
+	bl BattleEffect_HasTriggerFar
 	cmp r0, #0
 	beq .L_080fb522
 	movs r3, #1

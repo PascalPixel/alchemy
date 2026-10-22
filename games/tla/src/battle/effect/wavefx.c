@@ -7,18 +7,18 @@
 
 struct ObjectRuntime;
 struct ObjectRuntime *Object_GetById(s32 id);
-void BattleFx_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
+void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080dcadc(void);
 void Func_080dcb44(void);
 
-void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
+void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
   u8 *work = Ram_HeapSlots->unk4c[3];
 
   Func_080dcadc();
   Scheduler_RemoveCallback((SchedulerCallback)Func_080dcb44);
-  BattleFx_ApplyFlickerValue(Object_GetById(*(u16 *)(work + 0x290)), 1);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_ApplyFlickerValue(Object_GetById(*(u16 *)(work + 0x290)), 1);
+  BattleEffect_PrepareBufferInterpolation();
   Runtime_ReleaseHeapBlock(WAVE_FX_SLOT);
 }
 
@@ -26,7 +26,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
   (*(volatile u16 *)(0x05000000 + ((bank) * 16 + (color)) * 2))
 #define GREY28 0x739c
 
-void BattleFx_ArmBg0HBlankDma(void);
+void BattleEffect_ArmBg0HBlankDma(void);
 
 /// Gray BG palette 15 colors 1 and 3-12, then start scanline scrolling.
 void Ui_FillBank15PaletteGrey(void) {
@@ -55,5 +55,5 @@ void Ui_FillBank15PaletteGrey(void) {
   *p = GREY28;
   p += 1;
   *p = GREY28;
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_ArmBg0HBlankDma, 0xc6c);
+  Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleEffect_ArmBg0HBlankDma, 0xc6c);
 }

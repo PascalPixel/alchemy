@@ -17,7 +17,7 @@
 
 s32 Object_GetById(u32);
 
-s32 BattleFx_FindNearestObject(s32 self, s32 effect) {
+s32 BattleEffect_FindNearestObject(s32 self, s32 effect) {
   s32 nearest = 9999;
   s32 found = -1;
   s32 i;
@@ -35,7 +35,7 @@ s32 BattleFx_FindNearestObject(s32 self, s32 effect) {
   return found;
 }
 
-s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode) {
+s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode) {
   s32 object;
   s32 result;
 
@@ -45,7 +45,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode) {
     Audio_PlayCue(0x7C);
     Object_SetMode(object, 4);
     WaitFrames(0xC);
-    result = BattleFx_StartRandomParticleEmitter(effect, mode);
+    result = BattleEffect_StartRandomParticleEmitter(effect, mode);
   }
   return result;
 }

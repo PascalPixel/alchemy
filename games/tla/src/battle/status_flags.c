@@ -21,7 +21,7 @@ struct TlaBattleObj {
   u8 visible;
 };
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 
 /// Builds a battle object's status icon flags from its unit: poison
 /// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
@@ -31,7 +31,7 @@ void BattleUnit_BuildStatusFlags(s32 id, struct TlaBattleObj *output) {
   u32 flags = 0;
 
   if (output->visible == 0) {
-    struct BattleUnit *state = UnitGet(id);
+    struct BattleUnit *state = Unit_Get(id);
     s8 mode = state->poison;
 
     if (mode == 1)

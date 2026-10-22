@@ -1,7 +1,7 @@
-// Draft of BattleFx_RunPlumeEdge, effect kind 85 (Plume Edge), written from the
+// Draft of BattleEffect_RunPlumeEdge, effect kind 85 (Plume Edge), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunImpactBurst 0.566, call order BattleFx_RunJupiter
-// 0.677); the pillar's two-piece scroll is BattleFx_RunNereid'.
+// BattleEffect_RunImpactBurst 0.566, call order BattleEffect_RunJupiter
+// 0.677); the pillar's two-piece scroll is BattleEffect_RunNereid'.
 
 // Listing 467 instructions, draft 467, differ 36.
 // Left: order rows only. The native moves the work pointer to r9 before
@@ -21,7 +21,7 @@
 // the cell table through a local pointer before the spark loop       51
 // the spark loop stepped by pointer (step++): loop.c then hoists
 // the cell table into r10 as the native does                       36
-// HI through an inline helper (BattleFx_RunStoneJustice's device)               135
+// HI through an inline helper (BattleEffect_RunStoneJustice's device)               135
 // alchemy permute 8 minutes, 2 jobs: 25 only with a forced
 // temporary for the FlashBurstSheet id taken before the pillar
 // load, 33 with an unsigned char picture index (a false type);
@@ -57,22 +57,22 @@ extern char ResourceId_FlashBurstSheet;
 extern u16 gData_08197410[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
-void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
+void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
 void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Audio_PlayCue(s32 cue);
 
@@ -85,7 +85,7 @@ void Audio_PlayCue(s32 cue);
 // sheet and the light palette over the background's.
 // Frame loop (80 frames): the fan of 64 flashes at frame 0, the user's dash
 // at frames 18 and 21, the spark burst at frame 32, then the sparks fall.
-void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -100,12 +100,12 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
@@ -172,7 +172,7 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
     if (frame >= 0 && frame < 24)
       target->y += 2 << 16;
     if (frame == 18)
-      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
+      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
     if (frame == 21)
       BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 12,
                                      8 << 16);
@@ -187,7 +187,7 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
         if (size < 2)
           size = 2;
         step->variant--;
-        BattleFxKernels_IntegrateVector2(step, 60, 0x2000);
+        BattleEffectKernels_IntegrateVector2(step, 60, 0x2000);
         draw[0](canvas, sheet + gData_08197410[size - 1],
                 HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
       }
@@ -201,7 +201,7 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
       if (step->variant >= 0 && step->variant < 18) {
         s32 picture = step->variant / 3;
 
-        BattleFxKernels_IntegrateVector2(step, 60, -0x2000);
+        BattleEffectKernels_IntegrateVector2(step, 60, -0x2000);
         draw[0](canvas, work->sheet + 0x2000 + picture * 0x800,
                 HI(step->x) - 16, HI(step->y) - 32, 32, 64);
       }
@@ -225,6 +225,6 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(104);
   Runtime_ReleaseHeapBlock(188);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

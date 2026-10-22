@@ -4,7 +4,7 @@
 void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Human Hunt (kind 437).
-DEFINE_EFFECT_KIND(BattleFx_RunHumanHunt, Func_0818c7b8, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, Func_0818c7b8, 0)
 
 /// Abilities: Echo Cut (kind 390).
-DEFINE_EFFECT_KIND(BattleFx_RunEchoCut, Func_0818c7b8, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, Func_0818c7b8, 1)

@@ -40,7 +40,7 @@ extern u8 gMapCellBuffer[];
 
 struct VenusActor *Engine_ActorGet(s32 id);
 s32 Engine_PartyGetLeaderActor(void);
-void Engine_EventBegin(void);
+void Engine_EventStart(void);
 void Engine_EventEnd(void);
 void Engine_EventResolvePendingActions(s32 skip);
 void Engine_EventWait(s32 frames);
@@ -86,7 +86,7 @@ void Func_020006ac(void) {
   struct VenusActor *actor = Engine_ActorGet(leader);
   s32 z;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   ObjectMotion_EnableActionAndSetCallback(leader, gData_02001dd8);
   Object_RefreshSelectorById(leader);
@@ -144,7 +144,7 @@ void Func_0200078c(void) {
     leader->terrainHeight = 0;
     leader->y = 0;
   } else if (!Venus_FlagCheck(0x201)) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     Engine_EventWait(5);
     Venus_CopyCells(52, 50, 42, 49, 1, 1);

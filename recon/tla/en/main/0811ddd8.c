@@ -9,7 +9,7 @@
 #include "battle_type.h"
 #include "battle_display.h"
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 u32 BattleParty_IsUnitListed(u32 id);
 
 void BattlePres_BuildTargetList(struct BattlePlan *plan,
@@ -38,7 +38,7 @@ void BattlePres_BuildTargetList(struct BattlePlan *plan,
     outputTarget = effect->actors;
     do {
       if (BattleParty_IsUnitListed(*inputTarget) &&
-          (UnitGet(*inputTarget)->hp != 0 ||
+          (Unit_Get(*inputTarget)->hp != 0 ||
            (plan->presentationFlags & 0x10000))) {
         *outputTarget++ = *inputTarget;
         livingTargets++;

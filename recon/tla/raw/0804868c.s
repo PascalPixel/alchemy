@@ -66,7 +66,7 @@ Func_0804868c:
 	mov r10, r2
 	str r3, [sp, #36]
 	ldr r0, [sp, #76]
-	bl UnitGet
+	bl Unit_Get
 	adds r0, #248
 	movs r7, #0
 	mov r8, r0

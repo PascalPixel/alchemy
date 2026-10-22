@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 44 (ported from The Broken Seal's
-// BattleFx_SetSpecialFromTable, with ⚓️'s dragon hall check after the
+// BattleEffect_SetSpecialFromTable, with ⚓️'s dragon hall check after the
 // loop): the native loads the table (ldr r0) between the two halves of
 // the scene offset (movs r2, #240 / lsls r2, r2, #1); this draft loads it
 // after them. sched2 ranks the two at equal priority and the shift has more

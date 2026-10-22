@@ -7,7 +7,7 @@
 // otherwise (differ 42).
 #include "inventory.h"
 
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 
 static inline void Inventory_CompactSlots(s16 *inventory) {
   s32 usedSlots = 0;
@@ -22,10 +22,10 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 }
 
 s32 Func_080af0e4(s32 owner, s32 slot) {
-  struct OwnerInventoryState *unit = UnitGet(owner);
+  struct OwnerInventoryState *unit = Unit_Get(owner);
 
   unit->inventory[slot] = 0;
   Inventory_CompactSlots((s16 *)unit->inventory);
-  UnitCalc(owner);
+  Unit_Calculate(owner);
   return 2;
 }

@@ -26,8 +26,8 @@ void BattleMotion_SetupEscapeObject(s32 objectId);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 void BattleActor_RemoveFromLists(s32 unitId);
-void BattleObj_MarkForRelease(s32 objectId);
-struct BattleUnit *UnitGet(s32 id);
+void BattleObject_MarkForRelease(s32 objectId);
+struct BattleUnit *Unit_Get(s32 id);
 
 s32 Func_0811de78(struct BattlePlan *plan) {
   /* FAKEMATCH: as in The Broken Seal, the halfword initialization preserves the
@@ -61,7 +61,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
       s32 index = BattleParty_ListLivingUnits(1, (u16 *)unitIds) - 1;
 
       while (index != -1) {
-        struct BattleUnit *unit = UnitGet(unitIds[index]);
+        struct BattleUnit *unit = Unit_Get(unitIds[index]);
 
         if (unit->stun == 0 && unit->sleep == 0) {
           BattleMotion_SetupEscapeObject(unitIds[index]);
@@ -79,7 +79,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
     BattleMotion_SetupEscapeObject(event[0]);
     WaitFrames(8);
     BattleActor_RemoveFromLists(plan->actorId);
-    BattleObj_MarkForRelease(plan->actorId);
+    BattleObject_MarkForRelease(plan->actorId);
   } else {
     UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
     BattlePresentation_WaitForAdvance();

@@ -16,7 +16,7 @@ struct InnUnit {
   s16 hp;
 };
 
-struct InnUnit *UnitGet(s32 unitId);
+struct InnUnit *Unit_Get(s32 unitId);
 void Func_08108148(void);
 void Func_0810824c(void);
 
@@ -42,7 +42,7 @@ s32 Inn_RoomPrice(s32 innId) {
   guestCount = 0;
   pricePerGuest = gData_0810cf2c[innId];
   for (memberIndex = 0; memberIndex < inn->partyMemberCount; memberIndex++) {
-    if (UnitGet(inn->partyMemberIds[memberIndex])->hp != 0)
+    if (Unit_Get(inn->partyMemberIds[memberIndex])->hp != 0)
       guestCount++;
   }
   return pricePerGuest * guestCount;

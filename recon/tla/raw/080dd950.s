@@ -36,20 +36,20 @@ Func_080dd950:
 	strh r2, [r3]
 	movs r0, #0
 	lsls r5, r5, #9
-	bl BattleFx_RunBusyWaitDelay
+	bl BattleEffect_RunBusyWaitDelay
 	movs r1, #1
 	adds r0, r5, #0
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r0, #1
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 	movs r0, #0
 	movs r1, #0
-	bl BattleFx_ApplyColorToSourceBuffer
+	bl BattleEffect_ApplyColorToSourceBuffer
 	movs r1, #0
 	adds r0, r5, #0
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r0, #30
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #8

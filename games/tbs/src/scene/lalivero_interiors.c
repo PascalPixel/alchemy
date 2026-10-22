@@ -189,7 +189,7 @@ enum LaliveroInteriorsActor {
 
 /// The napping worker's pose, from his sprite's animation table
 /// (graphics/sprite/spr_114.tsv): one frame held, lying asleep on his side.
-enum { ANIM_WORKER_LIE_ASLEEP = 6 };
+enum { ANIMATION_WORKER_LIE_ASLEEP = 6 };
 
 /// The place flag FLAG_PLACE_TEMP_00, which lasts until the party enters
 /// another place: the inn worker has apologized.
@@ -331,7 +331,7 @@ static void Event_TalkToInnWorker(void) {
 
   side = Leader_GetSide();
   GameFlag_Set(FLAG_INN_WORKER_APOLOGIZED);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_FieldEndBusyAndReveal();
   Engine_EventSetMessage(MsgLaliveroImSorry);
   Engine_EventWait(50);
@@ -339,7 +339,7 @@ static void Event_TalkToInnWorker(void) {
   Actor_FaceActor(ACTOR_INN_WORKER, ACTOR_PARTY_LEADER, 20);
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_INN_WORKER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_INN_WORKER, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Engine_EventWait(10);
@@ -347,7 +347,7 @@ static void Event_TalkToInnWorker(void) {
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_INN_WORKER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_INN_WORKER, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   if ((u16)side == FACING_WEST) {
@@ -364,7 +364,7 @@ static void Event_TalkToInnWorker(void) {
 static void Event_IodemCallsOut(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_FieldEndBusyAndReveal();
   Engine_EventWait(10);
   Engine_CameraMoveTo(PIXELS(120), -1, PIXELS(96), 1);
@@ -375,7 +375,7 @@ static void Event_IodemCallsOut(void) {
   Engine_EventWait(10);
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventEnd();
 }
@@ -422,7 +422,7 @@ const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
 static void Event_ReportToFaran(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Party_RestoreHpPp(1);
   // The party walks in to Faran and Iodem, and the others step out.
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(96), PIXELS(184));
@@ -454,7 +454,7 @@ static void Event_ReportToFaran(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
@@ -465,7 +465,7 @@ static void Event_ReportToFaran(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
@@ -489,7 +489,7 @@ static void Event_ReportToFaran(void) {
     Engine_EventWait(20);
     Engine_EventShowMessage(GARET, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventShowMessage(MIA, 0);
     Engine_EventWait(10);
@@ -505,18 +505,18 @@ static void Event_ReportToFaran(void) {
     Engine_EventWait(20);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_EventWait(30);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Engine_EventWait(20);
     Engine_EventShowMessage(GARET, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventShowMessage(MIA, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_EventWait(30);
     Engine_EventShowMessage(IVAN, 0);
     Engine_EventWait(10);
@@ -535,7 +535,7 @@ static void Event_ReportToFaran(void) {
     Engine_ActorFaceDirection(IVAN, FACING_NORTH, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
     Engine_EventWait(30);
     Engine_EventShowMessage(ACTOR_FARAN, 0);
     (gEventWork->message)++;
@@ -546,7 +546,7 @@ static void Event_ReportToFaran(void) {
     Engine_ActorFaceDirection(IVAN, FACING_NORTH, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     (gEventWork->message)++;
     Event_ShowMessage(ACTOR_FARAN, 0);
@@ -570,7 +570,7 @@ static void Event_ReportToFaran(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(50);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
@@ -591,7 +591,7 @@ static void Event_ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
@@ -623,7 +623,7 @@ static void Event_ReportToFaran(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
@@ -647,7 +647,7 @@ static void Event_ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
@@ -670,11 +670,11 @@ static void Event_ReportToFaran(void) {
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Engine_ActorFaceDirection(IVAN, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
@@ -685,14 +685,14 @@ static void Event_ReportToFaran(void) {
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
@@ -703,11 +703,11 @@ static void Event_ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(20);
@@ -715,17 +715,17 @@ static void Event_ReportToFaran(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_ActorFaceDirection(IVAN, FACING_NORTHWEST, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   // The others walk back into the leader.
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
   Actor_SetSpeed(MIA, 0x13333, 0x9999);
   Actor_SetSpeed(IVAN, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ActorSetDestination(GARET, leader->x.part.pixel,
@@ -733,14 +733,14 @@ static void Event_ReportToFaran(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ActorSetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(MIA);
   Actor_SetPosition(MIA, 0, 0);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ActorSetDestination(IVAN, leader->x.part.pixel,
@@ -773,7 +773,7 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
 
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -797,17 +797,17 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(30);
 
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
 
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(10);
 
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(10);
@@ -847,7 +847,7 @@ s32 Scene_Initialize(void) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
-    Engine_ActorSetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
+    Engine_ActorSetAnimation(ACTOR_NAPPING_WORKER, ANIMATION_WORKER_LIE_ASLEEP);
     entrance = gGameState.entrance;
     if (entrance == LALIVERO_SHOPS_SANCTUM) {
       gGameState.savedScene = scene;

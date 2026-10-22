@@ -22,7 +22,7 @@ Func_02000d4c:
 	bl ObjectTable_ReadActiveValue
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl BattleFx_GetResourceId
+	bl BattleEffect_GetResourceId
 	movs r2, #226
 	lsls r2, r2, #1
 	adds r1, r7, r2
@@ -54,7 +54,7 @@ Func_02000d4c:
 	beq .L_02008da8
 .L_02008db6:
 	adds r0, r5, #0
-	bl BattleFx_GetResourceId
+	bl BattleEffect_GetResourceId
 	movs r2, #226
 	lsls r2, r2, #1
 	adds r1, r7, r2

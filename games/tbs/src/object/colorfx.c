@@ -894,7 +894,7 @@ void ReelGame_RunFrame(void) {
 
 /// Sets up the bouncing title letters of a win, the brightness wave of the
 /// screen's lines and the betting window, and starts at betting.
-void ReelGame_InitTitle(void) {
+void ReelGame_InitializeTitle(void) {
   struct ReelWork *state;
   struct BattleEffectWork *work;
   struct EffectStep *letter;
@@ -1083,7 +1083,7 @@ void ReelGame_Run(void) {
     Resource_DecodeType01(entry, tiles);
     Dma_Set(tiles, (void *)REEL_JACKPOT_TILES, REEL_JACKPOT_COPY, REG_DMA3);
     UiWork_InitializeWithResourceCountersFar();
-    ReelGame_InitTitle();
+    ReelGame_InitializeTitle();
 
     for (i = 0; i != 5; i++) {
       struct Reel *reel = &state->reels[i];
@@ -1115,9 +1115,9 @@ void ReelGame_Run(void) {
       }
     }
 
-    BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER, 8, 7, 3, 2);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER, 8, 7, 3, 2);
     draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-    BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 8, 7, 3, 3);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 8, 7, 3, 3);
     draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     Iwram_FillWords(canvas, size, 0);
     Dma_Set(canvas, (void *)REEL_CANVAS_TILES,

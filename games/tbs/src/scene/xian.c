@@ -202,14 +202,14 @@ static void Xian_SpawnTrainingParticles(void) {
     config.palette = 9;
     config.type = 169;
     config.script = gXian_TrainingParticleScript;
-    FieldFx_Spawn(*(s32 *)(studentActor + offsetof(struct FieldActor, x)),
-                  *(s32 *)(studentActor + offsetof(struct FieldActor, y)),
-                  *(s32 *)(studentActor + offsetof(struct FieldActor, z)) -
-                      PIXELS(1),
-                  0, -PIXELS(1), -PIXELS(1),
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | EFFECT_USE_TYPE |
-                      EFFECT_USE_SCRIPT,
-                  &config);
+    FieldEffect_Spawn(*(s32 *)(studentActor + offsetof(struct FieldActor, x)),
+                      *(s32 *)(studentActor + offsetof(struct FieldActor, y)),
+                      *(s32 *)(studentActor + offsetof(struct FieldActor, z)) -
+                          PIXELS(1),
+                      0, -PIXELS(1), -PIXELS(1),
+                      EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
+                          EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
+                      &config);
   }
 }
 
@@ -325,7 +325,7 @@ const struct ScenePlacement *Xian_GetPlacements(void) {
 /// Hsu. "Young warriors, very gallant! You came through Mogall Forest?" A yes
 /// earns respect; a no is a lie, since Silk Road from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianYoungWarriorsVeryGallantCame);
   Engine_EventAskYesNo(ACTOR_WOMAN_ON_YOUNG_WARRIORS, 0);
   Engine_EventEnd();
@@ -350,7 +350,7 @@ static void Xian_TalkToWaterCarrier(void) {
   s32 scaleX;
 
   puddle = Object_GetById(ACTOR_SPILLED_WATER);
-  Engine_EventBegin();
+  Engine_EventStart();
   leaderMustStepAside = 0;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = NULL;
@@ -406,7 +406,7 @@ static void Xian_TalkToWaterCarrier(void) {
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetZ = ACTOR_NO_TARGET;
   Actor_SetBuiltinAction(ACTOR_WOMAN_CARRYING_WATER, ACTOR_ACTION_IDLE);
-  Engine_ActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIMATION_STAND);
   Engine_ActorRunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(10);
   Event_PlayCue(SE_228);
@@ -444,7 +444,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Engine_EventWait(70);
   Engine_EventSetMessage(MsgXianDoingMadeMeSpillMy);
   Event_ShowMessageAndWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20) > 13) {
     leaderMustStepAside = 1;
@@ -454,10 +454,10 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
     Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   }
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0xcccc, 0x6666);
   carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
@@ -486,7 +486,7 @@ static void Xian_FreezeSpilledWater(void) {
   s32 stationaryMotionFlags;
   s32 puddleX;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Object_GetById(ACTOR_SPILLED_WATER)->priorityFlags &=
       ~ACTOR_PRIORITY_UNDERFOOT;
   stationaryMotionFlags = 0;
@@ -512,7 +512,7 @@ static void Xian_TalkToKungFuStudent(void) {
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   demonstrationSeen = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02);
   if (demonstrationSeen != 0) {
     Engine_ActorFaceActor(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
@@ -532,7 +532,7 @@ static void Xian_TalkToKungFuStudent(void) {
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     FieldVector_AddPolarOffset(-PIXELS(8), leader->facing,
                                (struct FieldPosition *)stepBackOffset);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
     Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER,
                                      stepBackOffset[0] / 0x10000,
                                      stepBackOffset[2] / 0x10000);
@@ -541,10 +541,10 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
-    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
-    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     Engine_AudioPlayCue(SE_132);
     particleCallback = Xian_SpawnTrainingParticles;
     Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
@@ -560,29 +560,29 @@ static void Xian_TalkToKungFuStudent(void) {
     effectParams.type = 0x11b;
     effectParams.script = gXian_TreeImpactScript;
     effectParams.rotation = 0x4000;
-    FieldFx_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
-                      EFFECT_USE_ROTATION,
-                  &effectParams);
+    FieldEffect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
+                      EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
+                          EFFECT_USE_SCRIPT | EFFECT_USE_ROTATION,
+                      &effectParams);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Engine_ActorWaitForMove(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
     Engine_TaskRemoveCallback((void (*)(void))particleCallback);
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0, EFFECT_USE_PRIORITY | 1,
-                  0);
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     reboundVelocity = -0x8000;
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
     Engine_AudioPlayCue(SE_124);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
-                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+                      EFFECT_USE_PRIORITY | 1, 0);
     Engine_TaskRemoveCallback(Xian_RotateTrainingTree);
     Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Object_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
@@ -593,7 +593,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
     Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
     Engine_EventEnd();
   }
 }
@@ -604,7 +604,7 @@ static void Xian_TalkToKungFuStudent(void) {
 /// yes: she hopes they will go west; a no: very few warriors would call
 /// themselves weak.
 static void Xian_TalkToFeizhi(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianWarriorsFromSchoolStrongWarriors);
   Engine_EventAskYesNo(ACTOR_FEIZHI, 0);
   Engine_EventEnd();
@@ -628,11 +628,11 @@ static void Xian_JumpOverSpilledWater(void) {
     FieldVector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
                                landing);
     if (FieldObject_CheckMovementCollision(leader, landing) == 0) {
-      Engine_EventBegin();
-      Object_SetMode(leader, ANIM_LEADER_SPRING);
+      Engine_EventStart();
+      Object_SetMode(leader, ANIMATION_LEADER_SPRING);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
-      Object_SetMode(leader, ANIM_LEADER_LEAP);
+      Object_SetMode(leader, ANIMATION_LEADER_LEAP);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -640,7 +640,7 @@ static void Xian_JumpOverSpilledWater(void) {
       Engine_ActorSetSpriteFlags(leader, 0);
       Engine_ObjectMotionSetPositionAndCommit(
           ACTOR_PARTY_LEADER, landing->x >> 16, landing->z >> 16);
-      Object_SetMode(leader, ANIM_LEADER_SPRING);
+      Object_SetMode(leader, ANIMATION_LEADER_SPRING);
       Engine_ActorSetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;
       Engine_EventEnd();
@@ -654,7 +654,7 @@ static void Xian_WalkThroughExit(s32 exitId) {
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   if (exitId == XIAN_TO_SANCTUM) {
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
@@ -670,7 +670,7 @@ static void Xian_WalkThroughExit(s32 exitId) {
 static void Xian_OpenDoorAndLeave(void) {
   struct EventWork *event = gEventWork;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   switch (event->touchedTrigger) {
   case XIAN_TO_HOUSE:
@@ -715,18 +715,18 @@ static void Xian_OpenDoorAndLeave(void) {
 static void Xian_StrikeTrainingTreeWithForce(void) {
   SchedulerCallback rotationCallback;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetActionScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
   rotationCallback = Xian_RotateTrainingTree;
   FieldScheduler_AddCallback(rotationCallback, TASK_PRIORITY_SCENE);
   Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
   Engine_AudioPlayCue(SE_124);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
-                EFFECT_USE_PRIORITY | 1, 0);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
-                EFFECT_USE_PRIORITY | 1, 0);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
-                EFFECT_USE_PRIORITY | 1, 0);
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+                    EFFECT_USE_PRIORITY | 1, 0);
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+                    EFFECT_USE_PRIORITY | 1, 0);
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+                    EFFECT_USE_PRIORITY | 1, 0);
   Engine_TaskRemoveCallback(rotationCallback);
   Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Engine_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
@@ -740,7 +740,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   }
   Engine_EventShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
-  FieldFx_PlayQueuedSound();
+  FieldEffect_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -750,7 +750,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
 static void Xian_MoveAsideForWaterCarrier(void) {
   struct FieldActor *carrier;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetBuiltinAction(ACTOR_WOMAN_CARRYING_WATER, ACTOR_ACTION_IDLE);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = 0;
@@ -797,7 +797,7 @@ s32 Xian_Initialize(void) {
   u32 crateIndex;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  FieldFx_SetQueuedSoundAndPlay(SE_169);
+  FieldEffect_SetQueuedSoundAndPlay(SE_169);
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
   // (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name is not shown.
   if (gGameState.entrance >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) {
@@ -865,18 +865,18 @@ s32 Xian_Initialize(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
@@ -934,17 +934,13 @@ s32 gXian_TrainingTreeJump[] = {
 
 /// The effect at the tree's foot when the student strikes it: 18 frames.
 s32 gXian_TreeImpactScript[] = {
-    SC_WAIT(18), SC_WAIT(1), SC_POS(0, 0, 0), SC_WAIT(1), SC_FREE,
+    SC_WAIT(18), SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE,
 };
 
 /// Each particle beside the leaping student, facing west: 16 frames.
 s32 gXian_TrainingParticleScript[] = {
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(16),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_SET(SW_FACING, FACING_WEST), SC_WAIT(16), SC_WAIT(1),
+    SC_POSITION(0, 0, 0),           SC_WAIT(1),  SC_FREE,
 };
 
 /// The doors' opening frames, copied from map cells.

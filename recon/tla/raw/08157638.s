@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Mercury (kind 281).
-	.global BattleFx_RunMercury
+	.global BattleEffect_RunMercury
 	.thumb_func
-BattleFx_RunMercury:
+BattleEffect_RunMercury:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,13 +22,13 @@ BattleFx_RunMercury:
 	ldr r3, [r3, #100]
 	movs r0, #0
 	str r3, [sp, #20]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r2, sp
 	adds r2, #32
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #16]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r0, .L_081579b0
 	ldr r1, [sp, #20]
 	movs r2, #0
@@ -390,7 +390,7 @@ BattleFx_RunMercury:
 	adds r0, r5, #0
 	movs r1, #62
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -427,7 +427,7 @@ BattleFx_RunMercury:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -445,7 +445,7 @@ BattleFx_RunMercury:
 .L_081579bc:
 	.4byte 0x00000130
 .L_081579c0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081579c4:
 	.4byte Data_02010018
 .L_081579c8:

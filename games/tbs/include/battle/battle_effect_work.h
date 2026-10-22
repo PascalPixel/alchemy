@@ -24,7 +24,7 @@ struct BattleCanvasOrigin {
 STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
 STATIC_ASSERT(offsetof(struct BattleCanvasOrigin, y) == 0x04);
 
-/// How BattleFx_ProcessPendingGraphicsTransfer moves the effect's
+/// How BattleEffect_ProcessPendingGraphicsTransfer moves the effect's
 /// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
 /// pixels are indices into a palette ramp, so scaling them fades a trail.
 /// For the clear, darken and brighten modes transferValue is a word, a fill or
@@ -101,7 +101,7 @@ struct BattleEffectWork {
   ///@}
   u16 padding; ///< aligns bg2x; never read or written
   /// BG2's reference point, written to BG2X and BG2Y by
-  /// Display_ApplyBg2Reference and BattleFx_AdvanceBg2OnInterval.
+  /// Display_ApplyBg2Reference and BattleEffect_AdvanceBg2OnInterval.
   ///@{
   s32 bg2x;
   s32 bg2y;

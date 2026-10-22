@@ -5,12 +5,13 @@
 #include "types.h"
 
 struct BattleEffectArgument;
-void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode);
-void BattleFx_RunMeteor(struct BattleEffectArgument *effect);
-void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect);
-void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
-                                  s32 mode);
-void BattleFx_RunCybele(struct BattleEffectArgument *effect);
+void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
+                                     s32 mode);
+void BattleEffect_RunMeteor(struct BattleEffectArgument *effect);
+void BattleEffect_RunOuterSpace(struct BattleEffectArgument *effect);
+void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
+                                      s32 mode);
+void BattleEffect_RunCybele(struct BattleEffectArgument *effect);
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 
@@ -30,8 +31,8 @@ enum {
   COMPOSITE_MAX,
   COMPOSITE_ADDITIVE
 };
-s32 BattleFx_BuildBlitter(s32 slot, s32 width_shift, s32 height_shift,
-                          s32 flags, u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 width_shift, s32 height_shift,
+                              s32 flags, u32 mode);
 
 typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,
                                          s32 x, s32 y, s32 width, s32 height);

@@ -5,15 +5,15 @@
 /// to recover and the summon flags, or an enemy record read as one for the
 /// enemy side.
 void *Djinn_GetRecoveryTableFar(s32 arg0);
-#ifndef OWN_UnitGetFar
+#ifndef OWN_Unit_GetFar
 /// Returns the unit record of a playable character or of an enemy in the
 /// current battle, or NULL for anything else; nearly every bank reads units
 /// this way.
-struct BattleUnit *UnitGetFar(u32 owner);
+struct BattleUnit *Unit_GetFar(u32 owner);
 #endif
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,
 /// class and battle stat levels, keeping its HP and PP at the same fraction.
-void UnitCalcFar(s32 owner);
+void Unit_CalculateFar(s32 owner);
 /// Returns an item's definition; an inventory entry may be passed, and its
 /// equipped and quantity bits are ignored.
 struct ItemDefinition *Item_GetDirectFar(s32 item);
@@ -52,7 +52,7 @@ s32 Inventory_RepairFar(s32 owner, s32 slot);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *inv, s32 type);
 /// Returns the definition of an ability by its low 14 bits, the first for an id
 /// past the table (BattleAction_GetDirect); every bank reads abilities so.
-struct BattleAct *BattleActGet(s32 actionId);
+struct BattleAct *BattleAction_Get(s32 actionId);
 /// Teaches a character an action for good and rebuilds its list, returning the
 /// action's place there, or -1 when the list is full.
 s32 Unit_LearnPsynergyFar();
@@ -61,7 +61,7 @@ s32 Unit_LearnPsynergyFar();
 s32 Unit_KnowsActionFar(s32 owner, s32 value);
 /// Clears the game state and sets a new game's defaults: Isaac alone in the
 /// party, the standard buttons, the message speed and the play time clock.
-void GameState_InitDefaultsFar(void);
+void GameState_InitializeDefaultsFar(void);
 /// Levels a character up once if its experience reaches the next level, and
 /// returns `value` filled with the gains, or NULL; the spoils call it per level
 /// reached.
@@ -87,14 +87,14 @@ s32 Unit_AddHpFar(s32 owner, s32 delta);
 /// gauges and returns the new PP.
 s16 Unit_AddPpFar(s32 owner, s32 delta);
 /// Recomputes the unit's HP and PP gauges from its current HP and PP, after
-/// something writes them directly, so UnitCalc keeps the same fractions.
-void UnitRatioFar(s32 owner_id);
+/// something writes them directly, so Unit_Calculate keeps the same fractions.
+void Unit_UpdateRatiosFar(s32 owner_id);
 /// Sets the unit's HP, kept between 0 and its maximum, and updates its gauges.
 void Unit_SetHpFar(struct BattleUnit *unit, s32 hp);
 /// Fills an enemy battle unit from an enemy's definition: stats, name with its
 /// suffix letter, items, rewards and elements. Returns 0 for an id out of
 /// range, 1 otherwise.
-s32 BattleUnitSetFar(s32 unitId, s32 enemyId, s32 suffix);
+s32 BattleUnit_SetFar(s32 unitId, s32 enemyId, s32 suffix);
 /// Returns the size of the party, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountActiveOwnersFar(void);
 /// Adds a character to the end of the party when one joins, setting its flag,
@@ -115,23 +115,23 @@ s32 Item_GetEquippedElementFar(s32 id);
 /// Rolls whether an ability's effect takes hold on a target, from the base
 /// rate, the element levels, luck and weakness, scaled by `success_scale`
 /// percent (Battle_RollEffectSuccess).
-s32 BattleHitCheck(s32 caster, s32 target, s32 resistance_category,
-                   s32 effect_id, s32 success_scale);
+s32 Battle_RollEffectSuccessFar(s32 caster, s32 target, s32 resistance_category,
+                                s32 effect_id, s32 success_scale);
 /// Returns an attack's damage: attack less defense, plus twice the added power,
-/// scaled by the element difference and halved (Battle_CalcAttackDamage).
-s32 BattleAtkCalc(s32 atk, s32 def, s32 add, s32 bonus);
+/// scaled by the element difference and halved (Battle_CalculateAttackDamage).
+s32 Battle_CalculateAttackDamageFar(s32 atk, s32 def, s32 add, s32 bonus);
 /// Returns the power of Psynergy damage, scaled by the element difference and
-/// a multiplier where 256 is 1x (Battle_CalcPsynergyPower).
-s32 BattlePowerCalc(s32 power, s32 bonus, s32 rate);
+/// a multiplier where 256 is 1x (Battle_CalculatePsynergyPower).
+s32 Battle_CalculatePsynergyPowerFar(s32 power, s32 bonus, s32 rate);
 /// Returns the HP healed, scaled by the healer's power in the element and a
-/// multiplier where 256 is 1x (Battle_CalcRecovery); battle and the menu heal
-/// with it.
-s32 BattleRecoveryCalc(s32 power, s32 element, s32 rate);
+/// multiplier where 256 is 1x (Battle_CalculateRecovery); battle and the menu
+/// heal with it.
+s32 Battle_CalculateRecoveryFar(s32 power, s32 element, s32 rate);
 /// Returns an enemy's definition, the first row for an id past the table.
 const u8 *Enemy_GetDefinitionFar(s32 selector);
 /// Returns the battle's next random number, from its own seed, which link
 /// battles exchange before resolving a round.
-s32 BattleRandomFar(void);
+s32 Battle_RandomFar(void);
 /// Gives a unit a Djinni, returning -1 when it has it already or holds ten of
 /// that element.
 s32 Djinn_AddToOwnerFar(s32 owner, s32 index, s32 bit);
@@ -201,7 +201,7 @@ void Party_RestoreHpPpFar(s32 arg0);
 void Party_RestorePpOfLitElementsFar(void);
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna in their childhood
 /// classes, as a new game starts the prologue.
-void Party_BeginChildhoodFar(void);
+void Party_StartChildhoodFar(void);
 /// Sets the party up for Vale three years after the prologue: the Short Sword,
 /// Move, Retreat and Mind Read taught, and 300 coins.
 void Party_EndChildhoodFar(void);

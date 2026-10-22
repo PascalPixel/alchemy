@@ -5,7 +5,7 @@
 #include "../psynergy_effects_internal.h"
 
 /// Returns an actor, or NULL if it does not exist. Scene scripts reach it
-/// through Actor_Get and OBJ_GET; it is the far-callable form of
+/// through Actor_Get and OBJECT_GET; it is the far-callable form of
 /// ObjectTable_Get that the other banks use.
 struct FieldActor *Object_GetById(s32 actor) {
   struct FieldActor *object = ObjectTable_Get(actor);
@@ -17,7 +17,7 @@ struct FieldActor *Object_GetById(s32 actor) {
 
 /// The event command "set actor speed": its top speed and acceleration, 16.16
 /// pixels per frame. Writes the actor's speedLimit and acceleration. Scene
-/// scripts reach it as Engine_ActorSetSpeed (OBJ_SPEED, Actor_SetSpeed).
+/// scripts reach it as Engine_ActorSetSpeed (OBJECT_SPEED, Actor_SetSpeed).
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -128,8 +128,8 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
 }
 
 /// The event command "walk actor to": the actor walks (animation 2) toward
-/// (x, z), in pixels. Scene scripts reach it as Engine_ActorWalkTo (OBJ_WALK,
-/// Actor_WalkTo); the link lobby calls it too.
+/// (x, z), in pixels. Scene scripts reach it as Engine_ActorWalkTo
+/// (OBJECT_WALK, Actor_WalkTo); the link lobby calls it too.
 void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -279,8 +279,9 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 /// The event command "set actor position": puts the actor at (x, z), 16.16
 /// pixels, at rest. An actor that follows the ground (ACTOR_FOLLOWS_TERRAIN)
 /// keeps its height above the terrain at the new place. Clears its velocity and
-/// targets. Scene scripts reach it as Engine_ActorSetPosition (OBJ_POS_SET,
-/// Actor_SetPosition); Motion_LaunchFromFocusedObject calls it too.
+/// targets. Scene scripts reach it as Engine_ActorSetPosition
+/// (OBJECT_POSITION_SET, Actor_SetPosition); Motion_LaunchFromFocusedObject
+/// calls it too.
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object;
   s32 terrainHeight;
@@ -362,7 +363,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
 
 /// The event command "set actor animation" (1 stands, 2 walks, 3 nods, 4 shakes
 /// the head and so on). Scene scripts reach it as Engine_ActorSetAnimation
-/// (OBJ_MODE, Actor_SetAnimation); Event_AskYesNoWithActorAnimation and
+/// (OBJECT_MODE, Actor_SetAnimation); Event_AskYesNoWithActorAnimation and
 /// Motion_SetModeAndWaitAnimation call it too.
 void Object_SetModeById(u32 objectId, s32 animation) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -372,7 +373,7 @@ void Object_SetModeById(u32 objectId, s32 animation) {
 }
 
 /// Sets the animation timer steps of each of an actor's sprites
-/// (AnimationObjects_SetActiveTimerSteps). Called by the Tolbi ship and
+/// (AnimationObject_SetActiveTimerSteps). Called by the Tolbi ship and
 /// Lamakan Desert scene scripts.
 void Object_SetActionById(u32 objectId, s32 steps) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -475,11 +476,11 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 count) {
   Object_RefreshSelectorById(objectId);
 }
 
-/// Moves a dust puff of FieldFx_SpawnBurstParticle: it drifts with its x and
-/// z velocity (kept in speed and acceleration), which drag slows by 1/18 and
-/// 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
+/// Moves a dust puff of FieldEffect_SpawnBurstParticle: it drifts with its x
+/// and z velocity (kept in speed and acceleration), which drag slows by 1/18
+/// and 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
 /// puff's update hook.
-void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
+void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 velocityX;
   s32 x;
@@ -511,7 +512,7 @@ void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 /// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
 /// one of two animations. A nonzero param is given to its sprite parts
 /// (ObjectGroup_SetChildValue). Only Actor_JumpDownLedge calls it.
-void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
+void FieldEffect_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   struct FieldActor *object;
   struct AnimationObject *child;
   s32 speed;
@@ -523,13 +524,15 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     switch (Random16() & 1) {
     case 1:
       ObjectDispatch_SelectAnimationFar(object, 2);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (const s32 *)gFieldFx_BurstParticleScriptA);
+      ObjectDispatch_InitializeFar(
+          (struct DispatchObject *)object,
+          (const s32 *)gFieldEffect_BurstParticleScriptA);
       break;
     default:
       ObjectDispatch_SelectAnimationFar(object, 1);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (const s32 *)gFieldFx_BurstParticleScriptB);
+      ObjectDispatch_InitializeFar(
+          (struct DispatchObject *)object,
+          (const s32 *)gFieldEffect_BurstParticleScriptB);
       break;
     }
 
@@ -545,7 +548,7 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     speed <<= 1;
     object->speed = 0x1999 * speed;
     object->timer = 0;
-    object->update = FieldFx_UpdateParticleLinearMotion;
+    object->update = FieldEffect_UpdateParticleLinearMotion;
     child->flags = 0;
     child->image.priority = source->sprite->image.priority;
   }
@@ -557,7 +560,7 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
 /// FACING_SOUTH) while sinking 28 pixels with a dust puff every other frame
 /// (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands. The landing plays the queued sound
-/// (FieldFx_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
+/// (FieldEffect_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
 /// (MAP_CELL_LEDGE) with pose 6 and param 0, and by seven scenes through
 /// FieldActor_JumpDownLedge; Mercury Lighthouse passes -1.
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
@@ -598,7 +601,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
       object->targetY = nextY;
       WaitFrames(1);
       if ((param != -1) && (pose & 1)) {
-        FieldFx_SpawnBurstParticle((struct FieldActor *)object, param);
+        FieldEffect_SpawnBurstParticle((struct FieldActor *)object, param);
       }
       pose++;
     } while ((u32)pose <= 0xD);
@@ -614,14 +617,14 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
       WaitFrames(1);
     }
     WaitFrames(2);
-    FieldFx_PlayQueuedSound();
+    FieldEffect_PlayQueuedSound();
   }
 }
 
 /// The event command "actor face actor": turns the first actor at once to face
 /// the second, then waits wait frames. Writes the first actor's angle. Scene
-/// scripts reach it as Engine_ActorFaceActor (OBJ_FACE, Actor_FaceActor); the
-/// link lobby calls it too.
+/// scripts reach it as Engine_ActorFaceActor (OBJECT_FACE, Actor_FaceActor);
+/// the link lobby calls it too.
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   struct ObjectRuntime *first;
   struct ObjectRuntime *second;
@@ -787,8 +790,8 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
 
 /// Sets the param byte of every animated part of an actor's sprite. Scenes set
 /// 0 or 15, and alternate the two to make an actor flash. Marks the sprite
-/// dirty. Called by ObjectGroup_ConfigureChildValue, FieldFx_SpawnBurstParticle
-/// and about 40 scene script sites.
+/// dirty. Called by ObjectGroup_ConfigureChildValue,
+/// FieldEffect_SpawnBurstParticle and about 40 scene script sites.
 void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param) {
   struct DispatchObject *object = (struct DispatchObject *)actor;
 
@@ -875,7 +878,7 @@ void Object_ResetTargetAndSetMode1(u32 objectId) {
 /// The event command "actor face direction": the actor turns toward angle
 /// (0x10000 a full turn; ObjectMotion_StepAngle), then the event waits wait
 /// frames. Writes the angle to the actor's action. Scene scripts reach it as
-/// Engine_ActorFaceDirection (OBJ_DIR, Actor_FaceDirection); the Djinni,
+/// Engine_ActorFaceDirection (OBJECT_DIR, Actor_FaceDirection); the Djinni,
 /// Retreat and climbing events and Actor_JumpDownLedge call it too.
 void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);

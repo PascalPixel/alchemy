@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Plume Edge (kind 85).
-	.global BattleFx_RunPlumeEdge
+	.global BattleEffect_RunPlumeEdge
 	.thumb_func
-BattleFx_RunPlumeEdge:
+BattleEffect_RunPlumeEdge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunPlumeEdge:
 	ldr r3, [r3, #100]
 	movs r0, #0
 	str r3, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816aa70
 	movs r2, #128
 	lsls r2, r2, #19
@@ -30,7 +30,7 @@ BattleFx_RunPlumeEdge:
 	add r1, sp, #36
 	strh r3, [r2]
 	movs r0, #0
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r9
@@ -55,7 +55,7 @@ BattleFx_RunPlumeEdge:
 .L_0816aa70:
 	.4byte 0x00001010
 .L_0816aa74:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816aa78:
 	movs r1, #156
 	ldr r0, [r0]
@@ -307,7 +307,7 @@ BattleFx_RunPlumeEdge:
 	ldrsh r1, [r3, r4]
 	movs r2, #8
 	movs r3, #80
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 .L_0816ac8a:
 	ldr r0, [sp, #28]
 	cmp r0, #21
@@ -344,7 +344,7 @@ BattleFx_RunPlumeEdge:
 	adds r0, r7, #0
 	movs r1, #60
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	lsls r0, r5, #1
 	subs r3, r0, #2
 	mov r2, r10
@@ -389,7 +389,7 @@ BattleFx_RunPlumeEdge:
 	adds r5, r0, #0
 	ldr r2, .L_0816ae38
 	adds r0, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	lsls r5, r5, #11
 	movs r3, #156
 	lsls r3, r3, #6
@@ -485,7 +485,7 @@ BattleFx_RunPlumeEdge:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816ae3c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -523,4 +523,4 @@ BattleFx_RunPlumeEdge:
 .L_0816ae38:
 	.4byte 0xffffe000
 .L_0816ae3c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

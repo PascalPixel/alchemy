@@ -29,7 +29,7 @@ struct ShopUnit {
 extern u8 Msg04864[], Msg04865[], Msg04866[], Msg04867[], Msg04868[];
 extern u8 Msg04869[], Msg04870[];
 
-struct ShopUnit *UnitGet(s32 unitId);
+struct ShopUnit *Unit_Get(s32 unitId);
 s32 Forge_GetMaterialChance(s32 item);
 s32 Forge_RollResult(s32 item);
 void Forge_SetItem(s32 item);
@@ -41,7 +41,7 @@ void Shop_DrawItemCount(void *window, s32 unitId);
 
 s32 Forge_OfferItem(s32 unitId, s32 slot) {
   register struct ShopRuntime *shop asm("r9") = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = UnitGet(unitId);
+  struct ShopUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
   s32 item;
   s32 chance;

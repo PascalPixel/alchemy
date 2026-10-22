@@ -100,10 +100,10 @@ u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 
 /// Raises one owner's level by amount, then recalculates that unit.
 static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
-  struct BattleUnit *unit = UnitGet(ownerId);
+  struct BattleUnit *unit = Unit_Get(ownerId);
 
   Unit_LevelUpTo(ownerId, unit->level + amount);
-  UnitCalc(ownerId);
+  Unit_Calculate(ownerId);
 }
 
 /// Applies the level change to the owners returned by the active-party service
@@ -135,7 +135,7 @@ static void ItemLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = UnitGet(gGameState.selectedActor);
+  unit = Unit_Get(gGameState.selectedActor);
   window = UiWindow_Create(0, 0, 30, 9, 2);
 
   messageId = MsgDebugRaiseEveryonesLevel;
@@ -173,10 +173,10 @@ static void ItemLevel_RunLevelEditor(void) {
       Engine_TaskWait(1);
       UiWork_Finalize(window, 1);
 
-      UnitCalc(ISAAC);
-      UnitCalc(GARET);
-      UnitCalc(MIA);
-      UnitCalc(IVAN);
+      Unit_Calculate(ISAAC);
+      Unit_Calculate(GARET);
+      Unit_Calculate(MIA);
+      Unit_Calculate(IVAN);
       return;
     }
 
@@ -468,14 +468,14 @@ s32 FieldScene_RunEntrySetup(void) {
 
 #if !TBS_PATCH_1
 /// Runs the Japanese animation test, then moves ACTOR_LEVEL_EDITOR to its test
-/// position. Force cast at ACTOR_GLYPH_BROWSER: it takes ANIM_WALK and
-/// ACTOR_LEVEL_EDITOR ANIM_SHAKE_HEAD; once
+/// position. Force cast at ACTOR_GLYPH_BROWSER: it takes ANIMATION_WALK and
+/// ACTOR_LEVEL_EDITOR ANIMATION_SHAKE_HEAD; once
 /// ACTOR_GLYPH_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
 /// (312, 416).
 static void ItemLevel_RunMotionTest(void) {
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_GLYPH_BROWSER, ANIM_WALK);
-  Engine_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
+  Engine_EventStart();
+  Engine_ActorSetAnimation(ACTOR_GLYPH_BROWSER, ANIMATION_WALK);
+  Engine_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIMATION_SHAKE_HEAD);
   ObjectMotion_WaitForAnimationChange(ACTOR_GLYPH_BROWSER);
   Actor_SetPosition(ACTOR_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
   Engine_EventEnd();

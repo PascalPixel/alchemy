@@ -9,18 +9,18 @@
 /// A fiery disc fades in, its rings running outward while every scanline
 /// ripples, then fades out.
 ///
-/// Abilities: Torch (BATTLE_FX_TORCH).
+/// Abilities: Torch (BATTLE_EFFECT_TORCH).
 ///
 /// The disc is a mirrored radial picture whose pixels hold their distance from
 /// the middle, so rotating the palette moves the rings. It follows a Mars
 /// Djinni's entrance over the user, fades in over the first 9 frames, ripples
 /// throughout as BG2's x reference is fed line by line
-/// (BattleFx_ArmBg2AffineHBlankDma), and fades out over the last 7.
+/// (BattleEffect_ArmBg2AffineHBlankDma), and fades out over the last 7.
 ///
 /// Opens the canvas layer for the entrance and closes it at the end. Writes
 /// background colours 1 to 63 and keeps their working copy in the first 128
 /// bytes of Ram_MapCellBuffer; schedules and removes the HBlank DMA callback.
-void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   void **slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -48,17 +48,17 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   slots = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(BGCNT_WRAP);
+  BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   // The Mars Djinni's long entrance, 84 frames, over the user.
-  BattleFx_RunDjinniEntrance(effect, ELEMENT_MARS + DJINNI_ENTRANCE_LONG,
-                             work->effect->side, DJINNI_ANCHOR_OVER_USER,
-                             &screenX, &screenY);
+  BattleEffect_RunDjinniEntrance(effect, ELEMENT_MARS + DJINNI_ENTRANCE_LONG,
+                                 work->effect->side, DJINNI_ANCHOR_OVER_USER,
+                                 &screenX, &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   // Invisible until the fade-in; the canvas is shown 1.5 times its width.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
-  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Fill the 128x128 sheet with each pixel's distance from the middle,
@@ -116,7 +116,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
 
   draw[0](canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
 
   // Fade the radial picture in (frames 0 to 8), ripple each scanline, then
@@ -157,28 +157,28 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_FINISH_CANVAS();
 }
 
-/// Shows the long Jupiter Djinni prelude (BattleFx_RunDjinniEntrance with
+/// Shows the long Jupiter Djinni prelude (BattleEffect_RunDjinniEntrance with
 /// DJINNI_ENTRANCE_LONG, 84 frames instead of 64) over the first
 /// target, mirrored from the usual side; the Djinni's entrance is the whole
 /// effect.
 ///
-/// Abilities: Kite (BATTLE_FX_KITE).
-void BattleFx_RunKite(struct BattleEffectArgument *effect) {
+/// Abilities: Kite (BATTLE_EFFECT_KITE).
+void BattleEffect_RunKite(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   s32 originX;
   s32 originY;
 
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
-  BattleFx_RunDjinniEntrance(effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
-                             work->effect->side ^ 1, DJINNI_ANCHOR_OVER_TARGET,
-                             &originX, &originY);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_StartCanvasLayer(0);
+  BattleEffect_RunDjinniEntrance(effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
+                                 work->effect->side ^ 1,
+                                 DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef TORCH_FRAMES

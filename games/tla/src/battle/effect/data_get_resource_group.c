@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 
-s8 BattleFx_GetResourceGroup(s32 effectIndex) {
+s8 BattleEffect_GetResourceGroup(s32 effectIndex) {
   return gField_SceneTable[effectIndex].group;
 }
 

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_StartRandomParticleEmitter
+	.global BattleEffect_StartRandomParticleEmitter
 	.thumb_func
-BattleFx_StartRandomParticleEmitter:
+BattleEffect_StartRandomParticleEmitter:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -181,9 +181,9 @@ BattleFx_StartRandomParticleEmitter:
 .L_080cf2e4:
 	.4byte 0xfff00000
 .L_080cf2e8:
-	.4byte BattleFx_SpawnRandomParticleAtPosition
+	.4byte BattleEffect_SpawnRandomParticleAtPosition
 .L_080cf2ec:
-	.4byte gBattleFx_ParticleScript
+	.4byte gBattleEffect_ParticleScript
 .L_080cf2f0:
 	.4byte gData_080effd8
 .L_080cf2f4:

@@ -46,11 +46,11 @@ Func_080dd054:
 	ldr r1, .L_080dd424
 	bl ObjectDispatch_InitializeFar
 	mov r0, r11
-	bl BattleFx_StartItemBreak
+	bl BattleEffect_StartItemBreak
 	mov r9, r0
 	cmp r0, #0
 	bne .L_080dd0bc
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	b .L_080dd414
 .L_080dd0bc:
 	ldr r4, [sp, #40]
@@ -89,7 +89,7 @@ Func_080dd054:
 	mov r0, r9
 	bl Object_SetPosition
 	mov r0, r9
-	bl BattleFx_SnapScaleToFull
+	bl BattleEffect_SnapScaleToFull
 	movs r3, #128
 	mov r4, r9
 	lsls r3, r3, #11
@@ -381,7 +381,7 @@ Func_080dd054:
 	ldr r0, .L_080dd438
 .L_080dd370:
 	ldr r0, [r0]
-	bl BattleFx_GetCycledTableWord
+	bl BattleEffect_GetCycledTableWord
 	ldr r1, [sp, #40]
 	lsls r0, r0, #16
 	ldr r5, [r1, #36]
@@ -453,7 +453,7 @@ Func_080dd054:
 	orrs r3, r2
 	strb r3, [r0]
 .L_080dd40a:
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	mov r0, r9
 	bl UpdateRisingParticleBurst
 .L_080dd414:

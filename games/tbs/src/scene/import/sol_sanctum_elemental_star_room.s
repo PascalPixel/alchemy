@@ -29,7 +29,7 @@
 	.set import.UiWork_PushValueSlot, 1
 	.set import.UiText_ShowCenteredMessage, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Inventory_AddItem, 1
 	.set import.PartyInventory_Add, 1
 	.set import.Inventory_Find, 1
@@ -41,7 +41,7 @@
 	.set import.Inventory_Discard, 1
 	.set import.PartyInventory_Discard, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Party_RemoveOwnerRestored, 1
 	.set import.Engine_EventChooseYesNo, 1

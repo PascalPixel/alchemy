@@ -1,5 +1,5 @@
 	.section .rodata
-@ A copy of The Broken Seal's gBattleFx_CyclePatternWords
+@ A copy of The Broken Seal's gBattleEffect_CyclePatternWords
 	.global Data_080f0890
 Data_080f0890:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xffff, 0xffff, 0xc000

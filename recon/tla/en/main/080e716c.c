@@ -2,14 +2,14 @@
 // or spawned (kind 489), takes a random item id from gData_080f0fc0's
 // sixteen (0x8001 when PartyInventory_FindRoomFar finds no room) or, past
 // 0xc000 of the roll, a 0x8000-flagged value scaled by the unit's level,
-// and is handed to BattleFx_DropObjectAtAnchor. One pair: the native loads
+// and is handed to BattleEffect_DropObjectAtAnchor. One pair: the native loads
 // gPartyState's address before it saves the event work in r8 (ldr r3,
 // =gPartyState; mov r8, r2); this does it the other way. Measured: without the
 // empty asm barrier before the anchor's load, differ 4; on 2026-10-19 the party
 // state through a pointer behind an asm taking it with the event work as
 // "+h" (2) or "+l" (26), an asm reading the event work after its load (66),
 // and permute 4 min found nothing better. Belongs between
-// anchor_drop.c's BattleFx_DropObjectAtAnchor and Func_080e7238.
+// anchor_drop.c's BattleEffect_DropObjectAtAnchor and Func_080e7238.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -29,10 +29,10 @@ struct DropEvent {
 
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 PartyInventory_FindRoomFar(s32 item);
 void Func_080d3b28(s32 id, s32 item);
-void BattleFx_DropObjectAtAnchor(s32 id);
+void BattleEffect_DropObjectAtAnchor(s32 id);
 u32 Random16(void);
 extern const u16 gData_080f0fc0[];
 
@@ -48,7 +48,7 @@ void Func_080e716c(void) {
   asm("");
   anchor = work->anchor;
   event = Ram_HeapSlots->eventWork;
-  unit = UnitGet(gPartyState.currentOwner);
+  unit = Unit_Get(gPartyState.currentOwner);
 
   object = Object_GetById(id);
   if (object == NULL) {
@@ -69,5 +69,5 @@ void Func_080e716c(void) {
   object->z = anchor->z;
   Func_080d3b28(id, item);
   ((struct DropEvent *)event)->item = item;
-  BattleFx_DropObjectAtAnchor(id);
+  BattleEffect_DropObjectAtAnchor(id);
 }

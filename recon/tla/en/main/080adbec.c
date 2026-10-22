@@ -21,7 +21,7 @@ void GameFlag_RefreshLureCap(void) {
     struct OwnerInventoryState *unit;
     s32 inventorySlot;
 
-    unit = UnitGet(gPartyState.activeOwners[partyIndex]);
+    unit = Unit_Get(gPartyState.activeOwners[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct ItemEffect *effect;

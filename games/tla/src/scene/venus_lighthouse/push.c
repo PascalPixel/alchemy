@@ -9,7 +9,7 @@ void SceneState_RunActor13AtColumn42Setup(void) {
   s32 b;
 
   obj = Engine_ActorGet(10);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
     Engine_EventWait(30);
@@ -27,7 +27,7 @@ void SceneState_RunActor13AtColumn42Setup(void) {
 }
 
 void VenusLighthouse_ReadRelief(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
   Engine_MessageShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
@@ -35,7 +35,7 @@ void VenusLighthouse_ReadRelief(void) {
 }
 
 void VenusLighthouse_ReadTrueHeart(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
   Engine_MessageShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);

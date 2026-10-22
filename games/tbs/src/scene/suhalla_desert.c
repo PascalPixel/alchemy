@@ -266,10 +266,10 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   Actor_Get(stormIdCopy);
   captureActive = GameFlag_IsSet(FLAG_SCENE_TEMP_0F);
   if (captureActive == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetAttachedEffect(selectedActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Engine_ActorSetAnimation(selectedActorId, ANIM_LEADER_LOOK_AROUND);
+    Engine_ActorSetAnimation(selectedActorId, ANIMATION_LEADER_LOOK_AROUND);
     storm = Object_GetById(stormIdCopy);
     if (storm != 0) {
       Actor_SetDestination(selectedActorId, storm->x.part.pixel,
@@ -352,7 +352,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   appearanceRestored = Engine_GameFlagIsSet(FLAG_STORMS_RISEN);
   leaderX = selectedActor->x.part.pixel;
   leaderZ = selectedActor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_SANDSTORM);
   // Grow over 16 frames and, the first time, fade the haze in with it.
   frame = 0;
@@ -393,7 +393,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
                               (leaderZ - 40));
     Engine_EventWait(1);
     Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_STAND);
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Engine_EventSetMessage(MsgSuhallaSandstorm);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
@@ -407,10 +407,10 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
-    Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
       Engine_ActorSetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -470,7 +470,7 @@ static void Event_IodemAsksWhetherToPressOn(void) {
       GameFlag_IsSet(0x1b7) == 0 &&
       GameFlag_IsSet(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA);
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgSuhallaNowhereFound);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -487,7 +487,7 @@ static void Event_IodemAsksWhetherToPressOn(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 444, 1240);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -500,13 +500,13 @@ static void Event_IodemAsksWhetherToPressOn(void) {
     Engine_EventWait(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_WalkToAndWait(ACTOR_IODEM, 440, 1256);
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -568,8 +568,8 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
     options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, sparkFrame,
-                  sparkFrame, 0x880001, &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
+                      sparkFrame, sparkFrame, 0x880001, &options);
   }
   return 1;
 }
@@ -588,7 +588,7 @@ static void Event_StormGivesChase(void) {
 /// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader:
 /// sets the Psynergy effect's child option, so that Douse's orb rises to 80
 /// pixels above the storm rather than 32 and rains on it from above
-/// (FieldFx_RunDouse).
+/// (FieldEffect_RunDouse).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
   ((struct FieldFxScene *)state)->childOption = 1;
@@ -648,7 +648,7 @@ static void Event_StormCarriesPartyAway(void) {
   stormId = FieldGameFlag_GetByte(FLAG_SCENE_TEMP_18);
   selectedActor = Object_GetById(gGameState.selectedActor);
   storm = Object_GetById(stormId);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_AudioPlayCue(SE_219);
   // BUG: the native passes an actor id where the sprite helper needs a pointer.
@@ -899,18 +899,18 @@ static void SuhallaDesert_SetUpSecondSceneStorms(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {

@@ -39,8 +39,8 @@ gData_080f0074:
 	.4byte 65536, 22, 10, 65536
 	.4byte 0, 2, 0, 50
 	.4byte 13, 65535, 0, 17
-	.global gBattleFx_ParticleScript
-gBattleFx_ParticleScript:
+	.global gBattleEffect_ParticleScript
+gBattleEffect_ParticleScript:
 	.4byte 23, 6, -16384, 0
 	.4byte 1, 13, 60, 0
 	.4byte 38

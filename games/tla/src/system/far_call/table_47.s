@@ -10,15 +10,15 @@ Func_08138000:
 	.global Func_08138008
 	.thumb_func
 Func_08138008:
-	overlay_veneer BattleFx_DispatchByIdRange
-	.global BattleFx_RunSceneEffectFar
+	overlay_veneer BattleEffect_DispatchByIdRange
+	.global BattleEffect_RunSceneEffectFar
 	.thumb_func
-BattleFx_RunSceneEffectFar:
-	overlay_veneer BattleFx_RunSceneEffect
+BattleEffect_RunSceneEffectFar:
+	overlay_veneer BattleEffect_RunSceneEffect
 	.global Func_08138018
 	.thumb_func
 Func_08138018:
-	overlay_veneer BattleFx_RunTableEffect
+	overlay_veneer BattleEffect_RunTableEffect
 	.global Func_08138020
 	.thumb_func
 Func_08138020:
@@ -38,11 +38,11 @@ Func_08138038:
 	.global Func_08138040
 	.thumb_func
 Func_08138040:
-	overlay_veneer BattleFx_EndElementStreaks
+	overlay_veneer BattleEffect_EndElementStreaks
 	.global Func_08138048
 	.thumb_func
 Func_08138048:
-	overlay_veneer BattleFx_LoadBlitter
+	overlay_veneer BattleEffect_LoadBlitter
 	.global Func_08138050
 	.thumb_func
 Func_08138050:

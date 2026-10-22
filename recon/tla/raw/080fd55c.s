@@ -81,7 +81,7 @@ Func_080fd55c:
 	bl UiText_DrawCharacterAtOffsetFar
 	ldrh r0, [r6]
 	lsrs r0, r0, #10
-	bl UnitGet
+	bl Unit_Get
 	adds r1, r5, #0
 	movs r2, #80
 	movs r3, #0
@@ -128,7 +128,7 @@ Func_080fd55c:
 	bl UiText_DrawCharacterAtOffsetFar
 	ldrh r0, [r6]
 	lsrs r0, r0, #10
-	bl UnitGet
+	bl Unit_Get
 	adds r1, r5, #0
 	movs r2, #80
 	movs r3, #8

@@ -47,7 +47,7 @@ Func_080fd6f0:
 	ands r0, r2
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrb r3, [r0, #6]
 	ldr r1, [sp, #4]
 	ldr r4, [sp, #0]
@@ -82,7 +82,7 @@ Func_080fd6f0:
 	ands r0, r2
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrb r3, [r0, #6]
 	ldr r1, [sp, #4]
 	ldr r4, [sp, #0]
@@ -124,7 +124,7 @@ Func_080fd6f0:
 	ands r0, r2
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrb r3, [r0, #6]
 	ldr r1, [sp, #4]
 	ldr r4, [sp, #0]

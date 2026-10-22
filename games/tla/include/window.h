@@ -85,6 +85,6 @@ STATIC_ASSERT(offsetof(struct UiRenderWork, names) == 0x116c);
 STATIC_ASSERT(sizeof(struct UiRenderWork) == 0x1190);
 #endif
 
-void UiWork_InitFreeList(void);
+void UiWork_InitializeFreeList(void);
 
 #endif

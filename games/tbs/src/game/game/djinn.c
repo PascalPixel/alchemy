@@ -5,13 +5,13 @@
 #include "../game_internal.h"
 
 /// Returns the definition of Djinni `index` of element `group`; anything out of
-/// range gives DJINNI_FLINT's. Called by UnitCalc for a set Djinni's stat
+/// range gives DJINNI_FLINT's. Called by Unit_Calculate for a set Djinni's stat
 /// bonuses and by Djinn_GetAbilityId.
 const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 
   entry = 0;
-  if ((group < NUM_ELEMENTS) && (index < DJINN_PER_ELEMENT)) {
+  if ((group < ELEMENT_COUNT) && (index < DJINN_PER_ELEMENT)) {
     entry = (group * DJINN_PER_ELEMENT) + index;
   }
   return &gDjinn_DefinitionTable[entry];
@@ -35,12 +35,12 @@ s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
 
   partySize = Party_CountActiveOwners();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    struct BattleUnit *unit = UnitGet(gGameState.activeOwners[partyIndex]);
+    struct BattleUnit *unit = Unit_Get(gGameState.activeOwners[partyIndex]);
 
     if (unit->djinnOwnedCounts[element] <= 9) {
       s32 ownedDjinn = 0;
 
-      for (elementIndex = 0; elementIndex < NUM_ELEMENTS; elementIndex++)
+      for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++)
         ownedDjinn += unit->djinnOwnedCounts[elementIndex];
       if (fewestDjinn > ownedDjinn) {
         fewestDjinn = ownedDjinn;
@@ -64,7 +64,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
 /// Djinn_Transfer, by the scenes where a member joins with Djinn, and by the
 /// debug menus.
 s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
 
   if (unit->djinnOwnedCounts[element] > 9)
     return -1;
@@ -80,7 +80,7 @@ s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinnIndex) {
 /// above 9 is clamped to 10 on the way. Called by the Djinn menu to list what
 /// can be set, and by battle to tell which Djinn can be unleashed.
 s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   struct DjinnRecoveryList *recoveryList;
   s32 entryIndex;
   s32 recoveryTurns;
@@ -116,7 +116,7 @@ s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
 
 /// Returns 1 when the Djinni is set on the unit.
 u32 Djinn_IsActive(s32 owner, s32 element, s32 djinnIndex) {
-  s32 activeBit = UnitGet(owner)->djinnActive[element] & (1 << djinnIndex);
+  s32 activeBit = Unit_Get(owner)->djinnActive[element] & (1 << djinnIndex);
 
   return (u32)(-activeBit | activeBit) >> 31;
 }
@@ -125,7 +125,7 @@ u32 Djinn_IsActive(s32 owner, s32 element, s32 djinnIndex) {
 /// again. Returns 1 when it was set. Called by the Djinn menu, by battle when
 /// a Djinni recovers, and by Djinn_Transfer.
 s32 Djinn_Activate(s32 owner, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 isReady = Djinn_IsReady(owner, element, djinnIndex);
 
   if (isReady != 0) {
@@ -144,7 +144,7 @@ s32 Djinn_Activate(s32 owner, s32 element, s32 djinnIndex) {
 /// when it was set. Called by the Djinn menu, by battle when a Djinni is
 /// unleashed, and by Djinn_Transfer.
 u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   u32 wasActive = Djinn_IsActive(owner, element, djinnIndex);
 
   if (wasActive != 0) {
@@ -207,7 +207,7 @@ u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
 /// has no room or holds it already. Both units' classes are worked out
 /// again when it was set. Called by the Djinn menu's Give and Trade.
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
-  struct BattleUnit *sourceUnit = UnitGet(source);
+  struct BattleUnit *sourceUnit = Unit_Get(source);
   u32 wasActive;
 
   if ((sourceUnit->djinnAvailable[element] & (1 << djinnIndex)) != 0) {
@@ -283,7 +283,7 @@ s32 Party_SumDjinnCounts(s32 element) {
     s32 remainingOwners = partySize;
 
     do {
-      struct BattleUnit *unit = UnitGet(*ownerCursor++);
+      struct BattleUnit *unit = Unit_Get(*ownerCursor++);
 
       if (element == -1) {
         djinnCount += unit->djinnOwnedCounts[0];

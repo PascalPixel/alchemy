@@ -62,10 +62,10 @@ Func_02001b8c:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Animation_SetIndexAndInitObjects
+	.global Animation_SetIndexAndInitializeObjects
 	.thumb_func
-Animation_SetIndexAndInitObjects:
-	overlay_veneer Animation_SetIndexAndInitObjectsFar
+Animation_SetIndexAndInitializeObjects:
+	overlay_veneer Animation_SetIndexAndInitializeObjectsFar
 	.global Func_02001ba4
 	.thumb_func
 Func_02001ba4:
@@ -89,7 +89,7 @@ FieldEvent_WaitFrames:
 	.global Func_02001bcc
 	.thumb_func
 Func_02001bcc:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001bd4
 	.thumb_func
 Func_02001bd4:
@@ -226,10 +226,10 @@ Func_02001cd4:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -382,10 +382,10 @@ Func_02001d4c:
 	.thumb_func
 Func_02001d54:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

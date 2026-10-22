@@ -160,7 +160,7 @@ Func_081039fc:
 	mov r8, r0
 	adds r0, r6, #0
 	str r3, [sp, #64]
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r0, #0
 	ldr r3, .L_08103e54
 	adds r1, r7, #0
@@ -209,7 +209,7 @@ Func_081039fc:
 	bl Djinn_ActivateFar
 .L_08103ba6:
 	adds r0, r6, #0
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r0, sp
 	mov r2, sp
 	adds r0, #120
@@ -240,7 +240,7 @@ Func_081039fc:
 	add r3, r10
 	ldrb r6, [r3]
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #166
 	adds r7, r0, #0
 	adds r1, r7, #0
@@ -269,7 +269,7 @@ Func_081039fc:
 	bl Djinn_ActivateFar
 .L_08103c26:
 	adds r0, r6, #0
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r2, [sp, #52]
 	adds r1, r7, #0
 	str r2, [sp, #0]
@@ -329,7 +329,7 @@ Func_081039fc:
 	adds r0, r6, #0
 	mov r8, r1
 	orrs r5, r3
-	bl UnitGet
+	bl Unit_Get
 	lsrs r5, r5, #31
 	subs r5, r7, r5
 	movs r2, #166
@@ -352,7 +352,7 @@ Func_081039fc:
 	bl Djinn_ActivateFar
 .L_08103cda:
 	adds r0, r6, #0
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r0, r9
 	add r2, sp, #108
 	adds r1, r7, #0

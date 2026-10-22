@@ -13,11 +13,11 @@
 /// its own event.
 void Field_DispatchTypeHandler(s32 kind) {
   if (kind == PSYNERGY_STEP_UNTARGETED)
-    FieldFx_Run();
+    FieldEffect_Run();
   else if (kind == PSYNERGY_STEP_ON_TARGET)
-    FieldFx_DispatchRequestKind();
+    FieldEffect_DispatchRequestKind();
   else if (kind == PSYNERGY_STEP_FINISH)
-    FieldFx_ClearChildValueOnMismatch();
+    FieldEffect_ClearChildValueOnMismatch();
   else if (kind == PSYNERGY_STEP_EXTRA)
     FieldEvent_RunTypeHandler();
 }
@@ -31,7 +31,7 @@ void _call_via_r3(s32, s32);
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
 /// also moves gGameState.pausedObject to the actor it stops.
-void FieldFx_Run(void) {
+void FieldEffect_Run(void) {
   struct FieldFxScene *scene;
   struct FieldWork *runtime;
   s32 kind;
@@ -45,52 +45,52 @@ void FieldFx_Run(void) {
 
   switch (kind) {
   case FIELD_KIND_MOVE:
-    FieldFx_RunMove();
+    FieldEffect_RunMove();
     return;
   case FIELD_KIND_LIFT:
-    FieldFx_RunLift();
+    FieldEffect_RunLift();
     return;
   case FIELD_KIND_CARRY:
-    FieldFx_RunCarry();
+    FieldEffect_RunCarry();
     return;
   case FIELD_KIND_FORCE:
-    FieldFx_RunForce();
+    FieldEffect_RunForce();
     return;
   case FIELD_KIND_DOUSE:
-    FieldFx_RunDouse();
+    FieldEffect_RunDouse();
     return;
   case FIELD_KIND_WHIRLWIND:
-    FieldFx_RunWhirlwind();
+    FieldEffect_RunWhirlwind();
     return;
   case FIELD_KIND_FROST:
-    FieldFx_RunFrost();
+    FieldEffect_RunFrost();
     return;
   case FIELD_KIND_PLY:
-    FieldFx_RunPly();
+    FieldEffect_RunPly();
     return;
   case FIELD_KIND_GROWTH:
-    FieldFx_RunGrowth();
+    FieldEffect_RunGrowth();
     return;
   case FIELD_KIND_CATCH:
-    FieldFx_RunCatch();
+    FieldEffect_RunCatch();
     return;
   case FIELD_KIND_HALT:
     // Free the object stopped before, then stop the nearest one.
     if (gGameState.pausedObject != -1) {
-      FieldFx_ResumeObject(gGameState.pausedObject);
+      FieldEffect_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
     }
 
     nearestTargetId =
         Field_FindNearbyPsynergyTarget(gGameState.selectedActor, kind);
-    nearestTargetId = FieldFx_FilterObjectIdByFlags(nearestTargetId);
+    nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
     if (Scene_FindActorTalkEvent(nearestTargetId) != 0) {
-      FieldFx_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
-      FieldFx_RunHaltOnTarget(nearestTargetId);
-      FieldFx_PauseObject(nearestTargetId);
+      FieldEffect_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
+      FieldEffect_RunHaltOnTarget(nearestTargetId);
+      FieldEffect_PauseObject(nearestTargetId);
       gGameState.pausedObject = nearestTargetId;
     } else {
-      FieldFx_RunHalt();
+      FieldEffect_RunHalt();
     }
     return;
   case FIELD_KIND_MIND_READ:
@@ -100,16 +100,16 @@ void FieldFx_Run(void) {
     RunSceneTransitionEffect(scene->firstObjectId, targetId);
     return;
   case FIELD_KIND_REVEAL:
-    FieldFx_RunReveal();
+    FieldEffect_RunReveal();
     return;
   case FIELD_KIND_CLOAK:
-    FieldFx_StartCloak();
+    FieldEffect_StartCloak();
     return;
   case FIELD_KIND_RETREAT:
-    FieldFx_RunRetreat();
+    FieldEffect_RunRetreat();
     return;
   case FIELD_KIND_AVOID:
-    FieldFx_RunAvoid();
+    FieldEffect_RunAvoid();
     return;
   }
 }
@@ -120,10 +120,10 @@ void FieldFx_Run(void) {
 /// Called by Field_UsePsynergy when a scene event names the target
 /// (FLAG_PSYNERGY_TARGET still set after the before event), and by
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears scene->enabled
-/// first: that is how the runners FieldFx_Run shares (Force, Frost, Ply,
+/// first: that is how the runners FieldEffect_Run shares (Force, Frost, Ply,
 /// Whirlwind, Catch) tell that a scene event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
-void FieldFx_DispatchRequestKind(void) {
+void FieldEffect_DispatchRequestKind(void) {
   struct FieldFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
   s32 kind = scene->fieldKind;
@@ -140,55 +140,55 @@ void FieldFx_DispatchRequestKind(void) {
     break;
   case FIELD_KIND_MOVE:
     // Push the target with the direction keys.
-    FieldFx_SteerPushedTarget(targetId);
+    FieldEffect_SteerPushedTarget(targetId);
     break;
   case FIELD_KIND_LIFT:
-    FieldFx_RunLiftOnTarget(targetId);
+    FieldEffect_RunLiftOnTarget(targetId);
     break;
   case FIELD_KIND_CARRY:
-    FieldFx_SteerLiftedTarget(targetId);
+    FieldEffect_SteerLiftedTarget(targetId);
     break;
   case FIELD_KIND_FORCE:
-    FieldFx_RunForceOnTarget(targetId);
+    FieldEffect_RunForceOnTarget(targetId);
     break;
   case FIELD_KIND_DOUSE:
-    FieldFx_RunDouseOnTarget(targetId);
+    FieldEffect_RunDouseOnTarget(targetId);
     break;
   case FIELD_KIND_FROST:
-    FieldFx_RunFrostOnTarget(targetId);
+    FieldEffect_RunFrostOnTarget(targetId);
     break;
   case FIELD_KIND_GROWTH:
-    FieldFx_RunGrowthOnTarget(targetId);
+    FieldEffect_RunGrowthOnTarget(targetId);
     break;
   case FIELD_KIND_HALT:
     if (gGameState.pausedObject != -1) {
-      FieldFx_ResumeObject(gGameState.pausedObject);
+      FieldEffect_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
     }
-    FieldFx_PauseObject(targetId);
+    FieldEffect_PauseObject(targetId);
     gGameState.pausedObject = targetId;
-    FieldFx_RunHaltOnTarget(targetId);
+    FieldEffect_RunHaltOnTarget(targetId);
     break;
   case FIELD_KIND_PLY:
-    FieldFx_RunPlyOnTarget(targetId);
+    FieldEffect_RunPlyOnTarget(targetId);
     break;
   case FIELD_KIND_WHIRLWIND:
-    FieldFx_RunWhirlwindOnTarget(targetId);
+    FieldEffect_RunWhirlwindOnTarget(targetId);
     break;
   case FIELD_KIND_CATCH:
-    FieldFx_RunCatchOnTarget(targetId);
+    FieldEffect_RunCatchOnTarget(targetId);
     break;
   case FIELD_KIND_REVEAL:
-    FieldFx_RunReveal();
+    FieldEffect_RunReveal();
     break;
   case FIELD_KIND_CLOAK:
-    FieldFx_StartCloak();
+    FieldEffect_StartCloak();
     break;
   case FIELD_KIND_RETREAT:
-    FieldFx_RunRetreat();
+    FieldEffect_RunRetreat();
     break;
   case FIELD_KIND_AVOID:
-    FieldFx_RunAvoid();
+    FieldEffect_RunAvoid();
     break;
   }
 }
@@ -198,11 +198,11 @@ void FieldFx_DispatchRequestKind(void) {
 /// Called by Field_UsePsynergy after the after event, and by
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
-void FieldFx_ClearChildValueOnMismatch(void) {
+void FieldEffect_ClearChildValueOnMismatch(void) {
   struct FieldFxScene *scene = gEffectWork;
 
   if (scene->fieldKind == FIELD_KIND_MIND_READ) {
-    FieldFx_FinishSceneAndReleaseHeapBlock();
+    FieldEffect_FinishSceneAndReleaseHeapBlock();
     if (gGameState.pausedObject != scene->secondObjectId) {
       ((struct ObjectRuntime *)scene->child)->movementState = 0;
     }
@@ -221,7 +221,7 @@ void FieldEvent_RunTypeHandler(void) {
     ResetSceneTransitionEffect();
     return;
   case FIELD_KIND_CLOAK:
-    FieldFx_EndCloak();
+    FieldEffect_EndCloak();
     return;
   case FIELD_KIND_AVOID:
     FieldEvent_ShowStatusMessage();
@@ -246,7 +246,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
     script = ((const struct EffectDescriptor *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
-        FieldEvent_Begin();
+        FieldEvent_Start();
         Event_SetMessageId(((const struct EffectDescriptor *)event)->result);
         FieldEvent_ShowMessageAndWait(target, 0);
         FieldEvent_End();
@@ -255,7 +255,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
       }
     }
     if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0) {
-      FieldEvent_Begin();
+      FieldEvent_Start();
       UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
       FieldEvent_End();
     }
@@ -319,8 +319,8 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
 // From here on objects are passed in each function's own view of them.
 
 /// Counts the free blocks (owner 0xff) of the 512 resource blocks.
-/// FieldFx_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT to
-/// record the blocks already occupied before the effect starts.
+/// FieldEffect_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT
+/// to record the blocks already occupied before the effect starts.
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;
   s32 freeCount = 0;
@@ -412,5 +412,5 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                           value);
     }
     actorId++;
-  } while (actorId <= OBJ_LAST);
+  } while (actorId <= OBJECT_LAST);
 }

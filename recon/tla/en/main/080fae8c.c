@@ -6,7 +6,7 @@
 //
 // Near miss, differ 6 of 217, instruction order only: three times the native
 // issues a load between the halves of a constant (the unit spill after the
-// first UnitGet, and 332 around the copy-back loads); here the halves stay
+// first Unit_Get, and 332 around the copy-back loads); here the halves stay
 // together. As written plainly, slot and the buffer swap r9 and r11 (differ
 // 38); the allocation helper in two of the three cases fixes that (permuter,
 // 2026-10-19; in one or all three cases 38 or 42), and one 332 variable per
@@ -30,7 +30,7 @@ struct PreviewItem {
   u8 type;
 };
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 struct PreviewItem *Item_Get(s32 item);
 void *MemAlloc(s32 size);
 void MemFree(void *buffer);
@@ -45,7 +45,7 @@ static inline void *AllocUnitCopy(void) { return MemAlloc(332); }
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
   struct PreviewMenu *menu = Ram_HeapSlots->menuRuntime;
   s32 style = 0;
-  struct PreviewUnit *unit = UnitGet(owner);
+  struct PreviewUnit *unit = Unit_Get(owner);
   s32 entry = unit->inventory[slot];
   s32 previewSlot;
   void *buffer;
@@ -63,7 +63,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       style |= 9;
       Func_080f8170(menu->statusWindow, target, slot, style);
     } else {
-      unit = UnitGet(target);
+      unit = Unit_Get(target);
       buffer = MemAlloc(332);
       Iwram_CopyWords(buffer, unit, 332);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
@@ -95,7 +95,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       style |= 2;
       Func_080f8170(menu->statusWindow, target, slot, style);
     } else {
-      unit = UnitGet(target);
+      unit = Unit_Get(target);
       buffer = AllocUnitCopy();
       Iwram_CopyWords(buffer, unit, 332);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
@@ -120,7 +120,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       style |= 4;
       Func_080f8170(menu->statusWindow, target, slot, style);
     } else {
-      unit = UnitGet(target);
+      unit = Unit_Get(target);
       buffer = AllocUnitCopy();
       Iwram_CopyWords(buffer, unit, 332);
       previewSlot = Inventory_RemoveFirstUnflagged(target);

@@ -4,7 +4,7 @@
 /// Counts the nonempty slots in the owner's inventory.
 s32 ItemMenu_CountItems(s32 owner_id) {
   s32 count = 0;
-  struct OwnerInventoryState *state = UnitGet(owner_id);
+  struct OwnerInventoryState *state = Unit_Get(owner_id);
   s32 i;
 
   for (i = 0; i < 15; i++) {
@@ -22,7 +22,7 @@ s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item) {
   s32 quantity;
 
   quantity = 0;
-  state = UnitGet(owner);
+  state = Unit_Get(owner);
   i = 0;
   do {
     if (state->inventory[i] != 0 && (state->inventory[i] & 0x1ff) == item) {

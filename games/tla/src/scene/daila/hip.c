@@ -6,7 +6,7 @@
 void Daila_TalkHip(void) {
   s32 msg;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   msg = (s32)MsgDailaHurtHip;
   Engine_EventSetMessage(msg);
@@ -32,7 +32,7 @@ void Func_02000340(s32 keeper) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Engine_ShopOpen(3, keeper);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     Engine_EventSetMessage((s32)MsgDailaTaviRikiHome);
     Engine_EventShowMessage(keeper, 0);

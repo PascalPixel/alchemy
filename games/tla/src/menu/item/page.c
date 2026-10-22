@@ -46,7 +46,7 @@ struct MenuResult {
   s32 selectedIndex;
 };
 
-s32 UnitGet(s32 owner);
+s32 Unit_Get(s32 owner);
 s32 ItemMenu_CountItems(s32 owner);
 
 /// Splits the selected slot owner's items into pages of five rows.
@@ -60,7 +60,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   s32 value;
 
   limit = ItemMenu_CountItems(menu->paneOwner[index]);
-  encoded = UnitGet(menu->paneOwner[index]);
+  encoded = Unit_Get(menu->paneOwner[index]);
   value = menu->selectedIndexByOwner[menu->paneOwner[index]];
   if ((value + 1) > limit) {
     value = limit - 1;

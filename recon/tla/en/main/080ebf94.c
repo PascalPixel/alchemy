@@ -1,5 +1,5 @@
 // First draft of Func_080ebf94: sets up the world map screen, as ☀️'s
-// BattleFx_SetupResourcesAndWindow (games/tbs/src/object/psynergy_effects.c):
+// BattleEffect_SetupResourcesAndWindow (games/tbs/src/object/psynergy_effects.c):
 // the marker tiles and their 128 OAM entries, the cursor at the leader's place
 // (or a fixed spot when flag 284 is set), the screen scroll clamped to the
 // map, and the place-name window. Differ 108 of 192 (draft 188). Left: the

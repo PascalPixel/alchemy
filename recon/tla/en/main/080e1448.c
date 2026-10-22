@@ -4,7 +4,7 @@
 // it, and copies the -33 mask before its AND; the rest is the pool offsets
 // those shift. The group read once into a local measured 36, read at each
 // use 55; &sprites[group][0] and a byte offset measured 15.
-// BattleFx_SpawnScaledArcObjects, ⚓️'s arc effect (heap slot 0xf8,
+// BattleEffect_SpawnScaledArcObjects, ⚓️'s arc effect (heap slot 0xf8,
 // arc_effect.h). Sets up the current group's two 40-byte arc sprites from the
 // effect's tiles (16 by 16, attributes 0x80004000), shown, layer 0 and at the
 // target object's priority, then restarts that group's age, records the
@@ -37,9 +37,9 @@ struct ArcWork {
 
 void Func_080eaf98(struct ArcSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tiles);
-s32 BattleFx_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 
-void BattleFx_SpawnScaledArcObjects(struct ObjectRuntime *target) {
+void BattleEffect_SpawnScaledArcObjects(struct ObjectRuntime *target) {
   struct ArcWork *work = Ram_HeapSlots->block62;
   s32 tiles = gResourceTableEntries[work->resource].offset >> 5;
   s32 group = work->group;
@@ -51,7 +51,7 @@ void BattleFx_SpawnScaledArcObjects(struct ObjectRuntime *target) {
     Func_080eaf98(sprite, 16, 16, 0x80004000, tiles);
     sprite->hidden = 0;
     sprite->layer = 0;
-    sprite->priority = BattleFx_GetObjectPriority(target);
+    sprite->priority = BattleEffect_GetObjectPriority(target);
   }
   /* FAKEMATCH: the age's zero through a temporary, so it is a register
      zero rather than a pool load (differ 36 without) */

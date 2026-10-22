@@ -10,7 +10,7 @@ extern struct BattleFxDefinition gData_080f0308[];
 
 /// Finds the battle effect definition of id among the first 243 entries; when
 /// none matches it returns entry 243.
-struct BattleFxDefinition *BattleFx_FindDefinition(u32 id) {
+struct BattleFxDefinition *BattleEffect_FindDefinition(u32 id) {
   struct BattleFxDefinition *entry = gData_080f0308;
   u32 index = 0;
 
@@ -31,7 +31,7 @@ struct BattleRenderObject {
   u8 kind;
 };
 
-s32 BattleFx_GetAnimationValue(u32 objectId) {
+s32 BattleEffect_GetAnimationValue(u32 objectId) {
   struct BattleRenderObject *object =
       (struct BattleRenderObject *)ObjectTable_Get(objectId);
 

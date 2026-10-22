@@ -6,7 +6,7 @@ struct BattleDisplayFlags {
   s32 marked;
 };
 
-void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
+void BattleEvent_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
 s32 BattleActor_DestroyTemporaryObject(s32 unitId);
 void UiText_DrawQuantity(s32 value, s32 kind);
 void UiText_ShowMessageAndWaitCoreFar(u32 message);
@@ -17,15 +17,15 @@ void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b);
 s32 Func_0812824c(s32 unitId, s32 earned);
 void BattleActor_ResetRuntimeFields(u32 unitId);
 void BattleMotion_ShowDowned(u32 unitId);
-void PartyStatusDrawFar(s32 state);
-struct BattleObj *BattleObjGet(s32 objectId);
+void PartyStatus_DrawFar(s32 state);
+struct BattleObj *BattleObject_Get(s32 objectId);
 void BattleUnit_BuildStatusFlags(u32 unitId, struct BattleObj *slot);
 s32 BattlePres_SetActorModeAndAction(s32 id);
 s32 BattleActor_RemoveFromLists(s32 unitId);
 u32 BattleEventRuntime_Reset(void);
 
 /// Runs the queued battle events in order, then resets the queue.
-u32 BattleEv_DispatchQueued(void) {
+u32 BattleEvent_DispatchQueued(void) {
   struct BattleWork *work;
   struct BattleEventState *runtime;
   struct BattleEventQueue *queue;
@@ -44,7 +44,7 @@ u32 BattleEv_DispatchQueued(void) {
     if (opcode <= 15)
       switch (opcode) {
       case BATTLE_EVENT_DJINN_BONUS:
-        BattleEv_GrantDjinnBonus(runtime, queue->operands[i]);
+        BattleEvent_GrantDjinnBonus(runtime, queue->operands[i]);
         break;
       case BATTLE_EVENT_REMOVE_UNIT:
         BattleActor_DestroyTemporaryObject(queue->operands[i]);
@@ -89,11 +89,11 @@ u32 BattleEv_DispatchQueued(void) {
         BattleMotion_ShowDowned(queue->operands[i]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:
-        PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
+        PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
         break;
       case BATTLE_EVENT_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(queue->operands[i],
-                                    BattleObjGet(queue->operands[i]));
+                                    BattleObject_Get(queue->operands[i]));
         BattlePres_SetActorModeAndAction(queue->operands[i]);
         break;
       case 15:
@@ -104,7 +104,7 @@ u32 BattleEv_DispatchQueued(void) {
   return BattleEventRuntime_Reset();
 }
 
-void BattleEvPush(u32 opcode, u32 operand) {
+void BattleEvent_Push(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
   u32 index = queue->count;
 

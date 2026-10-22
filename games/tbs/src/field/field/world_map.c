@@ -364,7 +364,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
   // BG1's map (screen block 5) is filled with tile 0x7f of palette 15, and
   // screen block 6 numbers a 30 by 20 tile picture from tile 0x1a8, two
-  // tile numbers a word, for the still view WorldMap_BeginStillView shows.
+  // tile numbers a word, for the still view WorldMap_StartStillView shows.
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01a901a8;
@@ -433,7 +433,7 @@ void MapAnimation_ApplyAffineFrame(void) {
   perspective->shownTop = perspective->windowTop;
   perspective->shownBottom = perspective->windowBottom;
   // DISPCNT_MODE_2 (the affine ground) for the load's rows 0 to 159;
-  // DISPCNT_MODE_0 for WorldMap_BeginStillView's 200 and 255, which show the
+  // DISPCNT_MODE_0 for WorldMap_StartStillView's 200 and 255, which show the
   // still view on BG1.
   windowTop = perspective->shownTop;
   mode = 0;
@@ -691,9 +691,9 @@ void Map_PreloadCurrentTileBlock(void) {
 }
 
 /// VBlank: shows BG1 and copies the decoded frame's tiles into VRAM. The
-/// frame is the still view WorldMap_BeginStillView draws: 0x2580 words, 240 by
+/// frame is the still view WorldMap_StartStillView draws: 0x2580 words, 240 by
 /// 160 pixels at a byte each, shown as 256-colour tiles on screen block 6. Set
-/// as gVBlankHook by WorldMap_BeginStillView.
+/// as gVBlankHook by WorldMap_StartStillView.
 void MapAnimation_PresentFrame(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
@@ -705,13 +705,13 @@ void MapAnimation_PresentFrame(void) {
 /// saves BG1's tiles, draws the current affine frame into pixels and hands
 /// the window and VBlank to it.
 ///
-/// Called through WorldMap_BeginStillViewFar by WorldMap_BeginEvent
+/// Called through WorldMap_StartStillViewFar by WorldMap_StartEvent
 /// when a menu or event starts on the world map, and by the world map
 /// scene's lighthouse transition. Sets animationActive, suspends the tile
 /// animations (MapAnimation_Update), copies 8 KB of char block 1 to
 /// gDecodeBuffer, sets the window rows to 200 and 255 (DISPCNT_MODE_0) and sets
 /// gVBlankHook to MapAnimation_PresentFrame. Map_LoadAreaGraphics undoes it.
-void WorldMap_BeginStillView(void) {
+void WorldMap_StartStillView(void) {
   struct MapFrameWork *frameWork = WORK_SLOT(HEAP_SLOT_MAP_FRAME);
   struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
   s32 one = 1;

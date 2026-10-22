@@ -1,4 +1,4 @@
-// Draft of Func_08196404, The Lost Age's BattleFx_BuildBlitter: differ 241
+// Draft of Func_08196404, The Lost Age's BattleEffect_BuildBlitter: differ 241
 // of 597 (tla-en, 2026-10-15; first written in the effects trial of the
 // same day), on The Broken Seal's step list. Blocked under S1 as written:
 // its copy helpers are inline asm, there only to measure the rest, and stay
@@ -32,25 +32,25 @@ struct Words4 {
   u32 w[4];
 };
 
-extern const u32 BattleFx_PatchTemplateCode[];
-extern const u32 BattleFx_Mask[];
+extern const u32 BattleEffect_PatchTemplateCode[];
+extern const u32 BattleEffect_Mask[];
 extern const u16 Data_081973f0[];
-extern const u32 BattleFx_CopyReverse[];
-extern const u32 BattleFx_CopyForward[];
+extern const u32 BattleEffect_CopyReverse[];
+extern const u32 BattleEffect_CopyForward[];
 extern const u32 BattleEffect_Copy8Reverse[];
 extern const u32 BattleEffect_Copy8Forward[];
-extern const u32 BattleFx_TransparentReverse[];
-extern const u32 BattleFx_TransparentForward[];
-extern const u32 BattleFx_Transparent8Reverse[];
-extern const u32 BattleFx_Transparent8Forward[];
-extern const u32 BattleFx_MaxReverse[];
-extern const u32 BattleFx_MaxForward[];
-extern const u32 BattleFx_Max4Reverse[];
-extern const u32 BattleFx_Max4Forward[];
-extern const u32 BattleFx_AdditiveReverse[];
-extern const u32 BattleFx_AdditiveForward[];
-extern const u32 BattleFx_ColorReverse[];
-extern const u32 BattleFx_ColorForward[];
+extern const u32 BattleEffect_TransparentReverse[];
+extern const u32 BattleEffect_TransparentForward[];
+extern const u32 BattleEffect_Transparent8Reverse[];
+extern const u32 BattleEffect_Transparent8Forward[];
+extern const u32 BattleEffect_MaxReverse[];
+extern const u32 BattleEffect_MaxForward[];
+extern const u32 BattleEffect_Max4Reverse[];
+extern const u32 BattleEffect_Max4Forward[];
+extern const u32 BattleEffect_AdditiveReverse[];
+extern const u32 BattleEffect_AdditiveForward[];
+extern const u32 BattleEffect_ColorReverse[];
+extern const u32 BattleEffect_ColorForward[];
 
 #define DMA_COPY_WORDS(n) (0x84000000 | (n))
 #define BRANCH_FIELD(site, target)                                             \
@@ -112,13 +112,13 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   u32 frame[34];
 
   dst = Runtime_AllocateHeapBlock(slot, 436);
-  src = BattleFx_PatchTemplateCode;
+  src = BattleEffect_PatchTemplateCode;
 
   COPY4(src);
   dst += 4;
   src += 4;
   if (mode == 0) {
-    COPY3(BattleFx_Mask);
+    COPY3(BattleEffect_Mask);
     dst += 3;
   }
 
@@ -237,33 +237,33 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   switch (mode) {
   default:
     if ((flags & 4) != 0) {
-      COPY2(BattleFx_CopyReverse);
+      COPY2(BattleEffect_CopyReverse);
     } else {
-      COPY2(BattleFx_CopyForward);
+      COPY2(BattleEffect_CopyForward);
     }
     dst += 2;
     break;
   case 2:
     if ((flags & 4) != 0) {
-      COPY4(BattleFx_TransparentReverse);
+      COPY4(BattleEffect_TransparentReverse);
     } else {
-      COPY4(BattleFx_TransparentForward);
+      COPY4(BattleEffect_TransparentForward);
     }
     dst += 4;
     break;
   case 1:
     if ((flags & 4) != 0) {
-      COPY4(BattleFx_MaxReverse);
+      COPY4(BattleEffect_MaxReverse);
     } else {
-      COPY4(BattleFx_MaxForward);
+      COPY4(BattleEffect_MaxForward);
     }
     dst += 4;
     break;
   case 0:
     if ((flags & 4) != 0) {
-      COPY_DMA(BattleFx_AdditiveReverse, 6);
+      COPY_DMA(BattleEffect_AdditiveReverse, 6);
     } else {
-      COPY_DMA(BattleFx_AdditiveForward, 6);
+      COPY_DMA(BattleEffect_AdditiveForward, 6);
     }
     dst += 6;
     break;
@@ -297,9 +297,9 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     break;
   case 2:
     if ((flags & 4) != 0) {
-      COPY_DMA(BattleFx_Transparent8Reverse, 25);
+      COPY_DMA(BattleEffect_Transparent8Reverse, 25);
     } else {
-      COPY_DMA(BattleFx_Transparent8Forward, 25);
+      COPY_DMA(BattleEffect_Transparent8Forward, 25);
     }
     dst += 25;
     break;
@@ -308,9 +308,9 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     u32 control;
 
     if ((flags & 4) != 0) {
-      part = BattleFx_Max4Reverse;
+      part = BattleEffect_Max4Reverse;
     } else {
-      part = BattleFx_Max4Forward;
+      part = BattleEffect_Max4Forward;
     }
     control = DMA_COPY_WORDS(16);
     Dma_Set(part, dst, control, REG_DMA3);
@@ -324,9 +324,9 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     u32 control;
 
     if ((flags & 4) != 0) {
-      part = BattleFx_ColorReverse;
+      part = BattleEffect_ColorReverse;
     } else {
-      part = BattleFx_ColorForward;
+      part = BattleEffect_ColorForward;
     }
     control = DMA_COPY_WORDS(14);
     Dma_Set(part, dst, control, REG_DMA3);

@@ -18,7 +18,7 @@ struct ChampaEventWork {
 };
 
 s32 ObjectTable_ReadActiveValue(s32 id);
-s32 BattleFx_GetResourceId(s32 object);
+s32 BattleEffect_GetResourceId(s32 object);
 void UiText_OpenMessageWindow(s16 message, s32 x, s32 y, s32 resource);
 void Func_02002a2c(s32 object, s32 a, s32 b, s32 c);
 s32 UiWork_IsComplete(void);
@@ -36,7 +36,7 @@ void Func_02000d4c(
   s32 second = ObjectTable_ReadActiveValue(secondId);
 
   UiText_OpenMessageWindow(work->message++, firstX, firstY,
-                           BattleFx_GetResourceId(first) << 16);
+                           BattleEffect_GetResourceId(first) << 16);
   Func_02002a2c(first, 0, firstA, firstB);
   /* FAKEMATCH: naming the frames as memory keeps them in their stack slot, read
    * at each use as the native does; plain, they take r7 and the event work
@@ -47,7 +47,7 @@ void Func_02000d4c(
       WaitFrames(frames);
   }
   UiText_OpenMessageWindow(work->message++, secondX, secondY,
-                           BattleFx_GetResourceId(second) << 16);
+                           BattleEffect_GetResourceId(second) << 16);
   Func_02002a2c(second, 0, secondA, secondB);
   while (!UiWork_IsComplete())
     WaitFrames(1);

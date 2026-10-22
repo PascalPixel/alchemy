@@ -35,13 +35,13 @@ s32 Func_080db9a8(struct ObjectRuntime *object, s32 kind) {
 }
 
 /// Returns the 2-bit OBJ priority of the object's animation record.
-s32 BattleFx_GetObjectPriority(struct ObjectRuntime *object) {
+s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object) {
   return ((struct DepthPart *)object->animation)->priority;
 }
 
 /// Returns the object's sort depth: from its projected z on the world map
 /// (mode 3), otherwise from its y and z against the map's scroll.
-s32 BattleFx_GetObjectDepth(struct ObjectRuntime *object) {
+s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object) {
   s32 point[3];
   s32 screen[3];
   s32 depth;

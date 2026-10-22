@@ -1,10 +1,10 @@
 // Near miss, differ 60 of 689 (88 without the one device below).
 
-// Summon 2 (BattleFx_RunSceneEffect's case 2). Twin: The Broken Seal's
-// BattleFx_RunNereid, ported call for call. The Lost Age's changes:
+// Summon 2 (BattleEffect_RunSceneEffect's case 2). Twin: The Broken Seal's
+// BattleEffect_RunNereid, ported call for call. The Lost Age's changes:
 // the heap blocks are read canvas, work, sheet; three
 // Resource_LoadAndDecompress loads where The Broken Seal copies a palette
-// and decodes two sheets; BattleFx_FetchRectangleBlitters for the blitter pair;
+// and decodes two sheets; BattleEffect_FetchRectangleBlitters for the blitter pair;
 // formation resource 649 for 380; the callback at 0xc80; and the hit loop reads
 // the effect argument. The resource rows WaterSpraySheet (303) and
 // FirePillarSheetA (326) have no name yet in directory.s.
@@ -44,17 +44,17 @@
 #define HI(v) (((s16 *)&(v))[1])
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void BattleFx_SelectLivingTargets(
+void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 priority); // ..SpawnObjects
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority); // ..SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
 void Audio_PlayCue(s32 cue);
@@ -84,7 +84,7 @@ extern u16 gData_08197410[]; // spark sizes 1 to 10: cell offsets in the sheet
 // back; three columns of fire stream up meanwhile, and every twelve frames
 // the targets flash and jump. After frame 80 the sparks rise away. A or B
 // skips frames 33 to 97.
-void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
+void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   void *canvas;
   struct BattleEffectWork *work;
@@ -97,7 +97,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   // Set up: half-and-half blending, the max and additive blitters, the
   // spray band and the fire column into the work sheet, the sparks into the
   // sheet slot, and the transfer at three quarters.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   /* FAKEMATCH: the one-pass block places the first literal pool after the
    * second Resource_LoadAndDecompress, as the native does; without it the
    * pool lands one load later and every pooled offset after it shifts
@@ -105,7 +105,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   do {
     REG_BLDALPHA = 0x1010;
   } while (0);
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA,
@@ -113,7 +113,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -147,9 +147,9 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       life += sizeof(struct EffectStep) / 4;
     }
     sparks = (struct EffectStep *)Ram_MapCellBuffer;
-    BattleFx_SelectLivingTargets(work->effect);
+    BattleEffect_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleFx_SpawnObjects(FORMATION_SIZE, FORMATION_RESOURCE, 2);
+    BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION_RESOURCE, 2);
 
     for (frame = 0; frame != 124; frame++) {
       if ((gInput.repeat & 3) && frame > 32 && frame <= 97)
@@ -300,12 +300,12 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
     }
 
     // Tear down: the formation bursts where it stands and is released.
-    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     Func_0816467c(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       ResourceObject_ReleaseFar(work->objects[k]);
   }
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

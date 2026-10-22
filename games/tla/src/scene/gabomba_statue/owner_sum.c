@@ -6,7 +6,7 @@
 extern const u8 gData_02005944[];
 extern const u8 gData_02005d7c[];
 struct ObjectRuntime *Object_GetById(s32 id);
-u8 *UnitGet(s32 owner);
+u8 *Unit_Get(s32 owner);
 void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02005724(s32 id, s32 target);
@@ -28,7 +28,7 @@ void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
 void Func_0200582c(s32 index, s32 a, s32 b);
 
 s32 Func_02003604(void) {
-  u8 *state = UnitGet(gPartyState.currentOwner);
+  u8 *state = Unit_Get(gPartyState.currentOwner);
   s32 sum = 0;
   u32 i;
 

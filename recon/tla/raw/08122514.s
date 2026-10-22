@@ -15,7 +15,7 @@ Func_08122514:
 	adds r7, r0, #0
 	movs r1, #0
 	ldrsh r0, [r7, r1]
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #24]
 	movs r2, #1
 	movs r3, #0
@@ -316,7 +316,7 @@ Func_08122514:
 	lsls r3, r2, #31
 	cmp r3, #0
 	bne .L_08122790
-	bl BattleRandomFar
+	bl Battle_RandomFar
 	mov r1, r8
 	ldrb r2, [r1]
 	movs r3, #7
@@ -416,7 +416,7 @@ Func_08122514:
 	b .L_0812283c
 .L_0812282a:
 	ldrh r0, [r5, #40]
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrh r5, [r5, #40]
 	movs r2, #0
 	movs r3, #2
@@ -436,7 +436,7 @@ Func_08122514:
 	b .L_08122b9a
 .L_0812284c:
 	mov r0, r9
-	bl BattleActGet
+	bl BattleAction_Get
 	adds r5, r0, #0
 	ldrb r3, [r5, #3]
 	subs r3, #46
@@ -698,7 +698,7 @@ Func_08122514:
 	bl SummonDefinition_Get
 	ldrh r0, [r0]
 	mov r9, r0
-	bl BattleActGet
+	bl BattleAction_Get
 	adds r5, r0, #0
 .L_08122a92:
 	ldrb r3, [r5, #8]
@@ -798,7 +798,7 @@ Func_08122514:
 	beq .L_08122b46
 	movs r0, #81
 .L_08122b46:
-	bl EnemyCheck
+	bl Enemy_CheckRoom
 	cmp r0, #0
 	beq .L_08122b9a
 	ldrb r2, [r5, #3]
@@ -829,7 +829,7 @@ Func_08122514:
 	lsls r3, r3, #1
 	adds r3, r3, r2
 	ldrh r0, [r1, r3]
-	bl EnemyCheck
+	bl Enemy_CheckRoom
 	cmp r0, #0
 	beq .L_08122b9a
 .L_08122b8c:

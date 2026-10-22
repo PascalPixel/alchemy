@@ -180,7 +180,7 @@ Func_0804b8b8:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PartyStatusDraw
+	bl PartyStatus_Draw
 	bl BattleActor_CommitPlacementFar
 	mov r1, r8
 	movs r3, #255
@@ -235,7 +235,7 @@ Func_0804b8b8:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PartyStatusDraw
+	bl PartyStatus_Draw
 	bl BattleActor_CommitPlacementFar
 	movs r0, #1
 	bl WaitFrames

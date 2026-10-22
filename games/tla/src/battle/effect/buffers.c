@@ -25,7 +25,7 @@ void BattleEffect_InitializeBuffers(void) {
   Dma_Set((void *)0x05000000, buffer, 0x84000070, REG_DMA3);
   Dma_Set((void *)0x05000200, (u8 *)buffer->palette + 0x1c0, 0x84000070,
           REG_DMA3);
-  BattleFx_BuildBuffer(0x10000, buffer, buffer->target, 0);
+  BattleEffect_BuildBuffer(0x10000, buffer, buffer->target, 0);
   Scheduler_AddOrUpdateCallback((s32)BattlePalette_UpdateBlend, 0x48f);
 }
 
@@ -34,23 +34,23 @@ void BattlePalette_StopBlendAndReleaseBuffer(void) {
   Runtime_ReleaseHeapBlock(128);
 }
 
-void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode) {
+void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
-    BattleFx_BuildBuffer(value, buffers, buffers->target, mode);
+    BattleEffect_BuildBuffer(value, buffers, buffers->target, mode);
   }
 }
 
-void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode) {
+void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
-    BattleFx_BuildBuffer(value, buffers, buffers->current, mode);
+    BattleEffect_BuildBuffer(value, buffers, buffers->current, mode);
   }
 }
 
-void BattleFx_SetPrimaryBufferValue(u32 value) {
+void BattleEffect_SetPrimaryBufferValue(u32 value) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {

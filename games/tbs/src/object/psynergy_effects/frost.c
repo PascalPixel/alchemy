@@ -6,7 +6,7 @@
 
 /// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
 /// every 8, otherwise 0, so the target glints.
-void FieldFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
@@ -19,7 +19,7 @@ void FieldFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
 }
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
-void FieldFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 scale;
 
@@ -29,16 +29,17 @@ void FieldFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
     particle->scaleX = scale;
     if (scale <= 0x1000)
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
-                                   gFieldFx_CommonParticleScript);
+                                   gFieldEffect_CommonParticleScript);
   }
 }
 
 /// Both winding directions share the countdown and position update. timer
-/// starts at 60 (FieldFx_RunFrost). The particle circles its target point
+/// starts at 60 (FieldEffect_RunFrost). The particle circles its target point
 /// (targetX to targetZ) at a radius of 2 pixels and an angle of 1/32 turn for
 /// each frame left, so it closes in from 118 pixels.
-static inline void FieldFx_UpdateSpiralParticle(union FieldObject *fieldObject,
-                                                s32 clockwise) {
+static inline void
+FieldEffect_UpdateSpiralParticle(union FieldObject *fieldObject,
+                                 s32 clockwise) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct EffectVector position;
   s16 remainingFrames;
@@ -62,19 +63,19 @@ static inline void FieldFx_UpdateSpiralParticle(union FieldObject *fieldObject,
       particle->y.fixed = position.y;
       particle->z.fixed = position.z;
     } else {
-      particle->update = FieldFx_UpdateOrbitingParticleFade;
+      particle->update = FieldEffect_UpdateOrbitingParticleFade;
     }
   }
 }
 
 /// Spirals anticlockwise at twice the frames left in pixels, then fades.
-void FieldFx_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
-  FieldFx_UpdateSpiralParticle(fieldObject, 0);
+void FieldEffect_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
+  FieldEffect_UpdateSpiralParticle(fieldObject, 0);
 }
 
-/// Per-frame update: as FieldFx_UpdateOrbitingParticleLeft, clockwise.
-void FieldFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
-  FieldFx_UpdateSpiralParticle(fieldObject, 1);
+/// Per-frame update: as FieldEffect_UpdateOrbitingParticleLeft, clockwise.
+void FieldEffect_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
+  FieldEffect_UpdateSpiralParticle(fieldObject, 1);
 }
 
 /// Runs Frost cast on a target.
@@ -83,17 +84,17 @@ void FieldFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
 ///
 /// The target is the actor in scene->child. With childMode the target is left
 /// as it is and only the particles appear.
-void FieldFx_RunFrostOnTarget(s32 unused) {
+void FieldEffect_RunFrostOnTarget(s32 unused) {
   struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->child;
 
   if (target != 0) {
-    // enabled set skips the target's part of FieldFx_RunFrost.
+    // enabled set skips the target's part of FieldEffect_RunFrost.
     if (scene->childMode != 0) {
       scene->enabled = 1;
     }
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    FieldFx_RunFrost();
+    FieldEffect_RunFrost();
   }
 }
 
@@ -103,12 +104,12 @@ void FieldFx_RunFrostOnTarget(s32 unused) {
 /// Abilities: Frost (FIELD_KIND_FROST).
 ///
 /// The target's part runs only when a scene event named the target
-/// (FieldFx_DispatchRequestKind clears enabled) and no scene set
+/// (FieldEffect_DispatchRequestKind clears enabled) and no scene set
 /// childMode: it flashes, takes animation 2 with SE_220 unless childOption
-/// is set, keeps glinting (FieldFx_UpdateOrbitingParticleMain) and runs
-/// the scene's Frost event. Called by FieldFx_Run and
-/// FieldFx_RunFrostOnTarget.
-void FieldFx_RunFrost(void) {
+/// is set, keeps glinting (FieldEffect_UpdateOrbitingParticleMain) and runs
+/// the scene's Frost event. Called by FieldEffect_Run and
+/// FieldEffect_RunFrostOnTarget.
+void FieldEffect_RunFrost(void) {
   s32 eventTarget;
   struct EffectVector pos;
   struct EffectVector *p;
@@ -120,7 +121,7 @@ void FieldFx_RunFrost(void) {
 
   scene = gEffectWork;
   target = scene->child;
-  FieldFx_FadeToEffectColor();
+  FieldEffect_FadeToEffectColor();
   AudioCommand_PlayFar(SE_ICE);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
@@ -137,9 +138,9 @@ void FieldFx_RunFrost(void) {
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
-        particle->update = FieldFx_UpdateOrbitingParticleLeft;
+        particle->update = FieldEffect_UpdateOrbitingParticleLeft;
       else
-        particle->update = FieldFx_UpdateOrbitingParticleRight;
+        particle->update = FieldEffect_UpdateOrbitingParticleRight;
 
       particle->facing = Random16();
       particle->timer = 60;
@@ -183,8 +184,9 @@ void FieldFx_RunFrost(void) {
       ObjectDispatch_SelectAnimationFar(target, 2);
     }
 
-    target->update = FieldFx_UpdateOrbitingParticleMain;
-    event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+    target->update = FieldEffect_UpdateOrbitingParticleMain;
+    event =
+        FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
                                       FIELD_KIND_FROST, &eventTarget);
     if (event != NULL) {
       Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
@@ -192,5 +194,5 @@ void FieldFx_RunFrost(void) {
     WaitFrames(20);
   }
 
-  FieldFx_FadeFromEffectColor();
+  FieldEffect_FadeFromEffectColor();
 }

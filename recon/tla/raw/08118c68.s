@@ -33,7 +33,7 @@ Func_08118c68:
 	adds r3, #88
 	strh r2, [r5, r3]
 	adds r0, r7, #0
-	bl BattleEnemyList
+	bl BattleEnemy_List
 	adds r3, r5, #0
 	adds r3, #66
 	ldrb r3, [r3]

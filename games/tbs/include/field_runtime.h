@@ -88,7 +88,7 @@ enum FieldEventCode {
   /// R on the world map: the picture of the whole world (Map_ShowWorldMap).
   FIELD_EVENT_WORLD_MAP_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held
-  /// (FieldFx_RunVisibilityTransition).
+  /// (FieldEffect_RunVisibilityTransition).
   FIELD_EVENT_WORLD_MAP_ZOOM = -889
 };
 
@@ -146,9 +146,9 @@ struct FieldWork {
   s32 fastForward;      ///< debug: skip timed event waits and actor messages
   u8 unk1d0[8];         ///< not named by TBS code
   s16 message;          ///< the next message, advanced as each window opens
-  u16 unk1da;           ///< set to 0xffff by FieldEvent_Begin; not read by name
-  s16 unk1dc;           ///< set to -1 by FieldEvent_Begin; not read by name
-  s16 unk1de;           ///< set to -1 by FieldEvent_Begin; not read by name
+  u16 unk1da;           ///< set to 0xffff by FieldEvent_Start; not read by name
+  s16 unk1dc;           ///< set to -1 by FieldEvent_Start; not read by name
+  s16 unk1de;           ///< set to -1 by FieldEvent_Start; not read by name
   struct ObjectRuntime *camera; ///< the object the map view follows
   u8 unk1e4[0x10];              ///< not named by TBS code
   s32 speaker;       ///< the actor speaking; the leader at each event
@@ -157,7 +157,7 @@ struct FieldWork {
   /// ObjectTable_ResetForObject builds the leader's two-row placement table
   /// at its start; nothing else names it.
   u8 unk200[0xab6];
-  /// Set while a raised or touch event runs; FieldEvent_Begin then resets the
+  /// Set while a raised or touch event runs; FieldEvent_Start then resets the
   /// effect counter.
   u16 busy;
   s16 revealActive;  ///< nonzero while Reveal is active
@@ -171,7 +171,7 @@ struct FieldWork {
   s16 nameWidth;      ///< width of the name window (0: the default)
   s8 resolvingAction; ///< set while Psynergy takes effect
   s8 castStarted;     ///< set once a cast has been announced
-  s16 queuedSound;    ///< a sound FieldFx_PlayQueuedSound plays; -1 for none
+  s16 queuedSound; ///< a sound FieldEffect_PlayQueuedSound plays; -1 for none
 };
 
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);

@@ -20,8 +20,8 @@ void BattleMotion_FlashHit(s32 id) {
   s32 target;
   s32 remaining;
 
-  UnitGet(id);
-  Object_SetMode(BattleObjGet(id)->object, 5);
+  Unit_Get(id);
+  Object_SetMode(BattleObject_Get(id)->object, 5);
 
   selected = selection;
   remaining = 1;
@@ -30,16 +30,16 @@ void BattleMotion_FlashHit(s32 id) {
     selected[1] = target;
     selected[0] = id;
     BattleLayout_HighlightPartyPanelsFar(selected);
-    BattleMotion_SetRecordChildValues(BattleObjGet(id)->object, 7);
+    BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object, 7);
     WaitFrames(2);
 
     selected[0] = id;
     BattleLayout_HighlightPartyPanelsFar(selected);
-    BattleMotion_SetRecordChildValues(BattleObjGet(id)->object,
+    BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object,
                                       BattleMotion_GetSlotPalette(id));
     WaitFrames(2);
     remaining--;
   } while (remaining >= 0);
 
-  PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
 }

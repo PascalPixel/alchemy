@@ -36,7 +36,7 @@ struct ItemAnimation {
 
 extern char MsgItemBroke;
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 void Func_08138008(struct BattlePresentationWork *work);
@@ -68,7 +68,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   BattlePres_BuildTargetList(plan, &work);
   BattlePres_SetActorModes(0, 0);
   {
-    struct BattleObj *slot = BattleObjGet(work.actor);
+    struct BattleObj *slot = BattleObject_Get(work.actor);
     struct BattleWork *battle;
     u8 *mode;
 
@@ -91,7 +91,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++) {
     struct ItemAnimation *animation = GetMotionRecord(
-        BattleObjGet(work.actors[targetOrFadeIndex])->object, 0);
+        BattleObject_Get(work.actors[targetOrFadeIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
@@ -134,7 +134,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
        targetOrFadeIndex++)
     ObjMotRst(work.actors[targetOrFadeIndex]);
 
-  unit = UnitGet(selection->unitId);
+  unit = Unit_Get(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
   itemDefinition = Item_Get(inventoryEntry);
   if (itemDefinition->useType == 1) {
@@ -155,11 +155,11 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
       }
     }
   } else if (itemDefinition->useType == 2) {
-    if ((BattleRandomFar() & 7) == 0) {
-      BattleEvPush(2, unit->inventory[selection->parameter]);
-      BattleEvPush(4, (u32)&MsgItemBroke);
+    if ((Battle_RandomFar() & 7) == 0) {
+      BattleEvent_Push(2, unit->inventory[selection->parameter]);
+      BattleEvent_Push(4, (u32)&MsgItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
-      BattleEv_DispatchQueued();
+      BattleEvent_DispatchQueued();
     }
   } else if (itemDefinition->useType == 4) {
     if ((inventoryEntry & 0x1ff) == 184)

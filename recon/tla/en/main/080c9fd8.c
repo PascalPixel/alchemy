@@ -28,7 +28,7 @@ struct EncounterWork {
 s32 GameFlag_Test(s32 flag);
 s32 Party_GetAverageLevelFar(void);
 s32 Random16(void);
-void BattleFx_SelectBattleCue(s32 zone, s32 group);
+void BattleEffect_SelectBattleCue(s32 zone, s32 group);
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
 #define ENCOUNTER_STEPS (party->encounterSteps)
@@ -100,6 +100,6 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     } while (pick >= 0);
   }
   sum = entry->enemies[i];
-  BattleFx_SelectBattleCue(zone, i);
+  BattleEffect_SelectBattleCue(zone, i);
   return sum;
 }

@@ -10,10 +10,10 @@ __modsi3:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:
@@ -66,10 +66,10 @@ Func_020006a4:
 	.thumb_func
 Func_020006ac:
 	overlay_veneer Func_08038320
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
+Unit_Calculate:
+	overlay_veneer Unit_CalculateFar
 	.global Func_020006bc
 	.thumb_func
 Func_020006bc:
@@ -93,7 +93,7 @@ PartyInventory_HasSpace:
 	.global Func_020006e4
 	.thumb_func
 Func_020006e4:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_020006ec
 	.thumb_func
 Func_020006ec:

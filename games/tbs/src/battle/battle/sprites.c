@@ -8,13 +8,13 @@
 /// that left) and sets each one's display mode and motion afresh. Called by
 /// Battle_RunEncounter as the battle is set up, by
 /// BattlePresentation_DispatchAction, BattlePresentation_RunUnitTransition,
-/// the auto battle and BattleTargetExec after a call for help, and through
-/// the far stub BattleObjPutFar by BattleFx_RunParticleStreams.
-void BattleObjPut(void) {
+/// the auto battle and BattleTarget_Execute after a call for help, and through
+/// the far stub BattleObject_PutFar by BattleEffect_RunParticleStreams.
+void BattleObject_Put(void) {
   s16 unitIds[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
-  BattleObj_SpawnObjectsForList(unitIds, 1);
+  BattleObject_SpawnObjectsForList(unitIds, 1);
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
@@ -24,13 +24,15 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
   s16 unitIds[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
-  BattleObj_SpawnObjectsForList(unitIds, 0);
+  BattleObject_SpawnObjectsForList(unitIds, 0);
 }
 
 /// Returns the palette of unit id's battle object. Called by
 /// BattleEvent_Playback and BattleMotion_FlashHit, and through its far stub
 /// by the effect dispatcher (effect/parts/dispatch.c).
-s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
+s32 BattleMotion_GetSlotPalette(s32 id) {
+  return BattleObject_Get(id)->palette;
+}
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by
 /// side, a small one (BattleClass_IsSmall) one.
@@ -38,8 +40,8 @@ s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
 
 /// Returns 1 if an enemy of class classId would find room among the enemy
 /// sprite slots: one free slot for a small enemy, two free side by side for
-/// a large one. Called by BattleTargetExec before an enemy calls for help.
-s32 EnemyCheck(s32 classId) {
+/// a large one. Called by BattleTarget_Execute before an enemy calls for help.
+s32 Enemy_CheckRoom(s32 classId) {
   struct BattleWork *battle;
   s32 needsSingleSlot;
   s32 spriteSlot;
@@ -65,12 +67,12 @@ s32 EnemyCheck(s32 classId) {
 /// The slots stay the unit's until BattleMotion_ReleaseObjectSlotByValue
 /// frees them as it leaves the battle. Returns the first slot and the
 /// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
-/// a load fails. Called by BattleObjMake. Writes gBattleWork->spriteSlots
+/// a load fails. Called by BattleObject_Make. Writes gBattleWork->spriteSlots
 /// and the slots' 16 KB sprite buffers at Ram_ActorSpriteSlots.
 s32 SummonSlot_RegisterActorSprites(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 needsSingleSlot = BattleClass_IsSmall(unit->classId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
    * spritePart a copy of its register (mov r4, r10); as an s32 set to 0, 1 of
@@ -137,7 +139,8 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
-/// Called by BattleObj_MarkForRelease. Clears those gBattleWork->spriteSlots.
+/// Called by BattleObject_MarkForRelease. Clears those
+/// gBattleWork->spriteSlots.
 #ifdef UBFIX
 void BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
 #else
@@ -209,14 +212,14 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 /// Returns the weapon sprite a party member's attack shows for the kind of
 /// weapon they have equipped (gBattleUnit_WeaponAnims tables), or 0 for no
 /// weapon, for Felix, or for a unit that is no party member. Called by
-/// BattleObjMake, which keeps it in BattleObj.overlay for
-/// BattleObj_SpawnObjectsForList to add as a layer of the body sprite.
+/// BattleObject_Make, which keeps it in BattleObj.overlay for
+/// BattleObject_SpawnObjectsForList to add as a layer of the body sprite.
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   struct BattleUnit *unit;
   s32 slot;
   s32 weaponSprite;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   slot = Inventory_FindEquippedFar(unitId, EQUIP_WEAPON);
   weaponSprite = 0;
   if (slot >= 0) {

@@ -273,7 +273,7 @@ void UiWork_ResetCounters(void) {
 /// of decoded text from its beginning and starts the per-frame window update
 /// (UiWork_ProcessAll). Called by the field's setup,
 /// UiWork_InitializeWithResourceCounters.
-void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
+void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   struct UiRenderWork *state = UI_WORK;
   s32 priority;
 
@@ -295,7 +295,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
 /// Resets the text style and starts the per-frame window update
 /// (UiWork_ProcessAll), reserving the glyph sprites' tiles first when
 /// loadGlyphTiles is set. Called by the battle's setup, UiWork_Initialize.
-void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles) {
+void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles) {
   struct UiRenderWork *state = UI_WORK;
   s32 priority;
 

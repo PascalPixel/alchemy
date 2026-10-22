@@ -23,7 +23,7 @@
 /// A huge sword drops onto the first target amid charging flashes, dust and
 /// sparks.
 ///
-/// Abilities: Titan Blade (BATTLE_FX_TITAN_BLADE).
+/// Abilities: Titan Blade (BATTLE_EFFECT_TITAN_BLADE).
 ///
 /// Dust rises at the target's feet from frame 28 while a pillar of fire scrolls
 /// over it; the sword drops in, holds, sinks and plunges after frame 60. A ring
@@ -34,8 +34,8 @@
 /// Uses work->particles 0 to 31 for the flashes and PARTICLES for the dust
 /// (0 to 683) and the sparks after it. Opens and closes the canvas layer and
 /// steps background colours 0 to 63 towards two resources' palettes
-/// (BattleFx_StepPaletteToResource), one level a frame.
-void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
+/// (BattleEffect_StepPaletteToResource), one level a frame.
+void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
   void **slots;
   void **slotCursor;
   struct BattleEffectWork *work;
@@ -53,7 +53,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
 
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
@@ -123,10 +123,10 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
     // The palette fades towards the blast colours over frames 25 to 47,
     // then towards the lightning colours from frame 57.
     if (frame >= 25 && frame <= 47) {
-      BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
     if (frame > 56) {
-      BattleFx_StepPaletteToResource((s32)&ResourceId_LightningBoltSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_LightningBoltSheet);
     }
 
     // Shakes of 8 frames from frames 8 and 48, and of 16 from the strike.
@@ -352,7 +352,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;
-              cell = sheet + gBattleFx_MoteCells[size - 1];
+              cell = sheet + gBattleEffect_MoteCells[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;

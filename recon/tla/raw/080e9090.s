@@ -27,7 +27,7 @@ Func_080e9090:
 	bl BattleEffect_InitializeSharedScene
 	movs r1, #0
 	ldr r0, [r5, #16]
-	bl BattleFx_SetObjectTickMode
+	bl BattleEffect_SetObjectTickMode
 	movs r0, #1
 	bl Func_080e89e4
 	bl ViewMove_SaveNearbySprites
@@ -211,7 +211,7 @@ Func_080e9090:
 .L_080e9222:
 	bl Func_080e8c9c
 	bl ViewMove_RestoreNearbySprites
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #32

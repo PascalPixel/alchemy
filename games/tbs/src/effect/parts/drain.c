@@ -9,13 +9,13 @@
 /// Ice shards burst up from each target in turn, 20 frames apart, tinting the
 /// target as they go, and fall away below line 112.
 ///
-/// Abilities: Break (BATTLE_FX_BREAK).
+/// Abilities: Break (BATTLE_EFFECT_BREAK).
 ///
 /// Target n's 128 shards are PARTICLES n * 128 onwards, screen positions on
 /// the half-width canvas in 16.16; a shard's variant counts its frames and is
 /// -1 once it has gone. Loads the ice block palette into the first 64 colours
 /// of the background palette.
-void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -35,7 +35,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
@@ -131,7 +131,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 /// Motes of light burst from each target in turn, 20 frames apart, and are
 /// pulled into the centre of the user's body.
 ///
-/// Abilities: Drain, Psy Drain (BATTLE_FX_DRAIN).
+/// Abilities: Drain, Psy Drain (BATTLE_EFFECT_DRAIN).
 ///
 /// Each target flashes in its damage pose for 42 frames as its motes burst, and
 /// the user glows from frame 40 until 20 frames before the end. Target n's
@@ -141,7 +141,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 ///
 /// effect: the targets; Drain's basic variant takes the ice block palette,
 ///         any stronger one (Psy Drain's) the blast palette.
-void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDrain(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -165,7 +165,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   else
     alternate = 1;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry(alternate == 0

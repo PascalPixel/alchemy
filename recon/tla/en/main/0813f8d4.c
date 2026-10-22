@@ -1,5 +1,5 @@
 // Near miss, differ 12 of 168 (five reordered pairs): The Broken Seal's
-// BattleFx_DrawStreaks, with this game's effect work, Random16's
+// BattleEffect_DrawStreaks, with this game's effect work, Random16's
 // values stored unmasked and Func_080150e4 for the roll. Left are ARM9
 // schedule swaps: the frame counter's load against the work pointer's
 // reload from its stack slot, gMapCellBuffer's pool load before and after

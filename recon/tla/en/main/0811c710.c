@@ -45,7 +45,7 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
   }
   WaitFrames(10);
   Random16();
-  actorRecord = BattleObjGet(actorId)->object;
+  actorRecord = BattleObject_Get(actorId)->object;
 
   if (targetId >= 0 && targetId <= 7) {
     sideCount = BattleParty_ListLivingUnits(2, visibleUnits);
@@ -68,19 +68,19 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     REG_BLDALPHA = (16 - index) | 0x1000;
     WaitFrames(1);
   }
-  PartyStatusDrawFar(9);
+  PartyStatus_DrawFar(9);
 
   if (targetId > 0x7f) {
     u32 count = BattleParty_ListLivingUnits(2, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + 0x80;
-      if (((struct BattleUnit *)UnitGet(unit))->hp > 0)
+      if (((struct BattleUnit *)Unit_Get(unit))->hp > 0)
         visibleUnits[livingCount++] = unit;
     }
   } else {
     u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      if (((struct BattleUnit *)UnitGet(index))->hp > 0)
+      if (((struct BattleUnit *)Unit_Get(index))->hp > 0)
         visibleUnits[livingCount++] = index;
     }
   }
@@ -96,10 +96,10 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     context.side = 1;
   else
     context.side = 0;
-  BattleFx_RunSceneEffectFar((s32 *)&context);
+  BattleEffect_RunSceneEffectFar((s32 *)&context);
 
   WaitFrames(10);
-  BattleObjPut();
+  BattleObject_Put();
   REG_BLDCNT = 0x3f40;
   for (index = 0; index != sideCount; index++)
     BattlePres_SetActorRecordMode(index + sideStart, 1);

@@ -15,7 +15,7 @@ Func_0810b6cc:
 	mov r10, r1
 	mov r9, r3
 	adds r7, r0, #0
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r10
 	lsls r3, r2, #1
 	adds r3, #216

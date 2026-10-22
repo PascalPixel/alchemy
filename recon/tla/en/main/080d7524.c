@@ -22,7 +22,7 @@ struct DjinniSprite {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_End(void);
 void WaitFrames(s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
@@ -54,7 +54,7 @@ void Func_080d7524(s32 djinniId) {
   djinni = Object_GetById(djinniId);
   leader = Object_GetById(gPartyState.currentOwner);
   dir = (leader->angle + 0x2000) & 0xc000;
-  EventRuntime_Begin();
+  EventRuntime_Start();
   WaitFrames(10);
   Audio_PlayCue(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);

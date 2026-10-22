@@ -437,7 +437,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
     s32 action;
 
     action = 9;
-    if (UnitGetFar(gGameState.selectedActor)->hp == 0)
+    if (Unit_GetFar(gGameState.selectedActor)->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {
@@ -505,7 +505,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->flags = collision;
       if (animation != 0) {
-        AnimationObjects_SelectAnimation(animation, 1);
+        AnimationObject_SelectAnimation(animation, 1);
         animation->flags = collision;
         animation->rotation = footprintAngle + 0x4000;
         animation->image.priority = 3;
@@ -513,7 +513,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       // The first footprint after a stop takes animation 2 and restarts the
       // sides; each second one faces a half turn round.
       if (object->footprintSide == 2) {
-        AnimationObjects_SelectAnimation(animation, 2);
+        AnimationObject_SelectAnimation(animation, 2);
         object->footprintSide = collision;
       }
       if (object->footprintSide != 0)
@@ -829,7 +829,7 @@ update_object:
         ripple->flags = collision;
         ripple->terrainId = 1;
         if (rippleSprite != 0) {
-          AnimationObjects_SelectAnimation(rippleSprite, 1);
+          AnimationObject_SelectAnimation(rippleSprite, 1);
           rippleSprite->flags = collision;
           rippleSprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
           rippleSprite->image.priority = 2;

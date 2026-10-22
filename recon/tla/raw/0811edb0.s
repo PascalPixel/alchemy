@@ -37,7 +37,7 @@ Func_0811edb0:
 	movs r0, #0
 	bl BattlePres_SetActorModes
 	ldr r0, [r5, #8]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
@@ -72,7 +72,7 @@ Func_0811edb0:
 	lsls r3, r7, #1
 	adds r3, #36
 	ldrsh r0, [r2, r3]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #0
 	ldr r0, [r0]
 	bl GetMotionRecord
@@ -190,7 +190,7 @@ Func_0811edb0:
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	mov r1, r8
 	movs r7, #8
 	ldrsh r3, [r1, r7]
@@ -265,7 +265,7 @@ Func_0811edb0:
 	lsrs r3, r3, #24
 	cmp r3, #2
 	bne .L_0811eff4
-	bl BattleRandomFar
+	bl Battle_RandomFar
 	movs r3, #7
 	ands r0, r3
 	cmp r0, #0
@@ -277,17 +277,17 @@ Func_0811edb0:
 	lsls r3, r3, #1
 	adds r3, #216
 	ldrh r1, [r6, r3]
-	bl BattleEvPush
+	bl BattleEvent_Push
 	ldr r1, .L_0811f02c
 	movs r0, #4
-	bl BattleEvPush
+	bl BattleEvent_Push
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]
 	movs r6, #8
 	ldrsh r1, [r3, r6]
 	bl Inventory_BreakFar
-	bl BattleEv_DispatchQueued
+	bl BattleEvent_DispatchQueued
 	b .L_0811f012
 .L_0811eff4:
 	cmp r3, #4

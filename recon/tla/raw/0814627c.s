@@ -2,9 +2,9 @@
 	.thumb
 @ Abilities: none; kind 67 is used by no ability. Named for The Broken Seal's
 @ twin.
-	.global BattleFx_RunTriangleStrike
+	.global BattleEffect_RunTriangleStrike
 	.thumb_func
-BattleFx_RunTriangleStrike:
+BattleEffect_RunTriangleStrike:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_RunTriangleStrike:
 	ldr r5, [r3, #100]
 	ldr r3, [r3, #48]
 	str r3, [sp, #52]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081462e4
 	movs r2, #128
 	lsls r2, r2, #19
@@ -137,14 +137,14 @@ BattleFx_RunTriangleStrike:
 	bl Func_081496c8
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #60]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -450,7 +450,7 @@ BattleFx_RunTriangleStrike:
 .L_08146608:
 	ldr r0, .L_08146624
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #132
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -461,7 +461,7 @@ BattleFx_RunTriangleStrike:
 .L_08146620:
 	.4byte 0x04040404
 .L_08146624:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08146628:
 	.4byte 0x01010101
 .L_0814662c:

@@ -70,7 +70,7 @@ struct CursorSprite {
 /* FAKEMATCH(one-pass): the two stores in a once-only block; as the plain stores
  * Battle_CollectPartyCommands and Ui_RunOwnerStatusScreen match with, 4 of 49
  * instructions differ in tbs-en (UiText_DrawCharacter). */
-#define MenuSprite_Init(sprite, shape)                                         \
+#define MenuSprite_Initialize(sprite, shape)                                   \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \

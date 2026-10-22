@@ -3,13 +3,13 @@
 
 /// @file
 /// The scene script layer: the engine services a scene's events call, declared
-/// once (Engine_EventBegin, Engine_ActorJump, Engine_EventSetMessage and the
+/// once (Engine_EventStart, Engine_ActorJump, Engine_EventSetMessage and the
 /// rest), with the constants and small inlines scenes share.
 ///
 /// It is a habit of the whole game written once, as declarations and macros: a
 /// layer, not a compiler-steering device (AGENTS.md S2). The event.h commands
-/// and field_service.h are written over it. A scene's event reads `EV_BEGIN();
-/// Engine_ActorStop(9); OBJ_FACE(9, ACTOR_PARTY_LEADER, 0); EV_END();`.
+/// and field_service.h are written over it. A scene's event reads `EV_START();
+/// Engine_ActorStop(9); OBJECT_FACE(9, ACTOR_PARTY_LEADER, 0); EV_END();`.
 
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -31,7 +31,7 @@
 
 /// 0x78 bytes of EWRAM where scene overlays keep state of their own, such as
 /// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
-/// leaves it alone; GameState_InitDefaults clears it for a new game.
+/// leaves it alone; GameState_InitializeDefaults clears it for a new game.
 extern u8 gSceneState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
@@ -48,57 +48,59 @@ enum { TASK_PRIORITY_SCENE = 3200 };
 /// Animation numbers of an actor's sprite, for Engine_ActorSetAnimation.
 enum ActorAnimation {
   /// Standing still: nearly every sprite's first frame held, without the
-  /// blinks and small gestures of ANIM_STAND.
-  ANIM_STILL = 0,
-  ANIM_STAND = 1,
-  ANIM_WALK = 2,
-  ANIM_NOD = 3,
-  ANIM_SHAKE_HEAD = 4,
+  /// blinks and small gestures of ANIMATION_STAND.
+  ANIMATION_STILL = 0,
+  ANIMATION_STAND = 1,
+  ANIMATION_WALK = 2,
+  ANIMATION_NOD = 3,
+  ANIMATION_SHAKE_HEAD = 4,
   /// Running, leaning forward, four frames a step to the walk's six. This and
   /// the leader's other poses below are as Isaac's sprite (spr_000.png) draws
   /// them.
-  ANIM_LEADER_RUN = 5,
-  ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
-  ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
+  ANIMATION_LEADER_RUN = 5,
+  ANIMATION_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
+  ANIMATION_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
-  ANIM_PUSH = 8,
-  /// ANIM_STAND's idle with more glances to each side, as when a whirlwind
+  ANIMATION_PUSH = 8,
+  /// ANIMATION_STAND's idle with more glances to each side, as when a whirlwind
   /// catches the leader.
-  ANIM_LEADER_LOOK_AROUND = 9,
-  ANIM_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
-  ANIM_LEADER_CLING = 12,      ///< still on a wall, seen from behind
-  ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
-  ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
-  /// One leg forward, braced, held briefly: the frame ANIM_LEADER_LEAP holds
+  ANIMATION_LEADER_LOOK_AROUND = 9,
+  ANIMATION_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
+  ANIMATION_LEADER_CLING = 12,      ///< still on a wall, seen from behind
+  ANIMATION_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
+  ANIMATION_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
+  /// One leg forward, braced, held briefly: the frame ANIMATION_LEADER_LEAP
+  /// holds
   /// and the run starts on, as when he lunges into a fight or pulls someone
   /// from a river.
-  ANIM_LEADER_STRIDE = 16,
+  ANIMATION_LEADER_STRIDE = 16,
   /// Holding out a glowing hand, as the party's sprites cast Psynergy
   /// (spr_000.png, spr_001.png).
-  ANIM_CAST_PSYNERGY = 17,
+  ANIMATION_CAST_PSYNERGY = 17,
   /// Sitting waist-deep in water and splashing, as in a Lamakan Desert oasis.
-  ANIM_LEADER_BATHE = 18,
+  ANIMATION_LEADER_BATHE = 18,
   /// Lying collapsed on the ground; every party member's sheet maps this
   /// number to such a pose (spr_000.png to spr_003.png).
-  ANIM_COLLAPSE = 19,
-  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  ANIMATION_COLLAPSE = 19,
+  ANIMATION_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits (enum ExitStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
   /// seen side-on to full size facing the player, a leaving turns from his
   /// back to side-on as he shrinks and is then hidden. The alternate pair has
   /// its own drawings of the same turns.
   ///@{
-  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
-  ANIM_LEADER_ARRIVE = 24,
-  ANIM_LEADER_LEAVE_ALTERNATE = 25,
-  ANIM_LEADER_LEAVE = 26,
+  ANIMATION_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIMATION_LEADER_ARRIVE = 24,
+  ANIMATION_LEADER_LEAVE_ALTERNATE = 25,
+  ANIMATION_LEADER_LEAVE = 26,
   ///@}
-  /// Spinning round once, then drawn blank (ANIM_CMD_BLANK).
-  ANIM_LEADER_SPIN_AWAY = 27,
-  ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
-  /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost match.
-  ANIM_LEADER_CROUCH = 35
+  /// Spinning round once, then drawn blank (ANIMATION_COMMAND_BLANK).
+  ANIMATION_LEADER_SPIN_AWAY = 27,
+  ANIMATION_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// Held in ANIMATION_LEADER_SPRING's crouch, knees bent, as after a lost
+  /// match.
+  ANIMATION_LEADER_CROUCH = 35
 };
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's
@@ -127,9 +129,9 @@ struct MapCellAnim {
 // Imports of main-image routines. EventRequestExit, ActorSetPosition,
 // ActorSetAnimation and RandomNext have differing argument counts at their
 // call sites, as measured in the bytes, so retain old-style declarations.
-/// Opens an event (FieldEvent_Begin): closes any timed notice, stops the
+/// Opens an event (FieldEvent_Start): closes any timed notice, stops the
 /// leader and makes it the speaker.
-void Engine_EventBegin(void);
+void Engine_EventStart(void);
 /// Closes an event (FieldEvent_End): the camera follows the leader again and
 /// FLAG_LURE_CAP is refreshed.
 void Engine_EventEnd(void);
@@ -192,10 +194,10 @@ void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
 /// Sends an actor (dx, dz) pixels from where it stands
 /// (ObjectMotion_OffsetPositionAndResetMotion).
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-/// Walks an actor toward (x, z), in pixels, in ANIM_WALK
+/// Walks an actor toward (x, z), in pixels, in ANIMATION_WALK
 /// (ObjectMotion_ResetAndSetPositionInMode2).
 void Engine_ActorWalkTo(s32 actor, s32 x, s32 z);
-/// Walks an actor (dx, dz) pixels from where it stands, in ANIM_WALK
+/// Walks an actor (dx, dz) pixels from where it stands, in ANIMATION_WALK
 /// (ObjectMotion_OffsetPositionAndReset).
 void Engine_ActorWalkBy(s32 actor, s32 dx, s32 dz);
 /// Waits for an actor to arrive, 600 frames at most, and stands it still
@@ -221,10 +223,10 @@ void Engine_ActorStartRepeatedMotion(s32 actor, s32 repeats);
 /// it to end (Motion_SetVarCbAndRefresh).
 void Engine_ActorRunRepeatedMotion(s32 actor, s32 repeats);
 /// Shows an emote bubble over an actor, which frees itself after 46 frames,
-/// then waits frames (FieldFx_SpawnLinked). See EMOTE_IN_FRONT.
+/// then waits frames (FieldEffect_SpawnLinked). See EMOTE_IN_FRONT.
 void Engine_ActorShowEmote(s32 actor, s32 emote, s32 frames);
 /// Attaches, removes or plays once the effect object that rides an actor, by
-/// enum AttachedEffectFlag (FieldFx_ConfigureLinkedObject).
+/// enum AttachedEffectFlag (FieldEffect_ConfigureLinkedObject).
 void Engine_ActorSetAttachedEffect(s32 actor, s32 effect);
 /// Fixes an actor's sprite priority, which then no longer follows its depth
 /// (ObjectMotion_SetActionVariant).
@@ -340,7 +342,7 @@ void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 /// (Ui_PrepareTransferForItem).
 void Engine_ItemLoadIcon(s32 item);
 /// Shows an item's picture above the leader for 80 frames
-/// (FieldFx_StartEffectObject22). Bit 0 of height adds sparkles and bit 1
+/// (FieldEffect_StartEffectObject22). Bit 0 of height adds sparkles and bit 1
 /// raises it as a found item.
 void Engine_ItemShowFound(s32 item, s32 height);
 /// Gives an item to the first party member with room and says so, letting the
@@ -360,10 +362,10 @@ void Engine_ActorWalkByAndWait(s32 actor, s32 dx, s32 dz);
 /// (Field_TryJumpForward). Returns 0 after a jump and -1 when it can't jump.
 s32 Engine_LeaderCheckAhead(void);
 /// Prepares the work and spark tiles of a field Psynergy effect for ability
-/// (FieldFx_LoadActionEffectResources).
-void Engine_PsynergyBegin(s32 ability, s32 flags);
+/// (FieldEffect_LoadActionEffectResources).
+void Engine_PsynergyStart(s32 ability, s32 flags);
 /// Records an effect's caster and target; with no target the effect plays 16
-/// pixels in front of the caster (FieldFx_SetupObjectPair).
+/// pixels in front of the caster (FieldEffect_SetupObjectPair).
 void Engine_PsynergySetTarget(s32 caster, s32 target);
 /// Puts the caster in its casting pose and, unless the effect is silent or
 /// quiet, flashes it and shows the ability's name (EventObject_Initialize).
@@ -372,10 +374,10 @@ void Engine_PsynergyRaiseHands(void);
 /// (Field_DispatchTypeHandler).
 void Engine_PsynergyPlayEffect(s32 effect);
 /// Stops the caster's per-frame hook, restores its colours and waits a frame
-/// (FieldFx_StopCasterHook).
+/// (FieldEffect_StopCasterHook).
 void Engine_PsynergyLowerHands(void);
 /// Stops the wave effect: the caster's colours and the palettes come back and
-/// its work is released (FieldFx_FinishSceneAndReleaseHeapBlock).
+/// its work is released (FieldEffect_FinishSceneAndReleaseHeapBlock).
 void Engine_PsynergyCancel(void);
 /// Shows the current message as Engine_EventShowMessage does, then waits frames
 /// (FieldEvent_ShowMessageThenWait).
@@ -440,7 +442,7 @@ void Engine_ColorBufferInterpolate(s32 frames);
 /// for it, giving up after 600 frames (ObjectMotion_SetPositionAndCommit).
 void Engine_ActorMoveToAndWait(s32 actor, s32 x, s32 z);
 /// Walks an actor to (x, z), in pixels, waits for it to arrive and stands it in
-/// ANIM_STAND (ObjectMotion_SetPositionAndReset).
+/// ANIMATION_STAND (ObjectMotion_SetPositionAndReset).
 void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
 /// Throws an actor upward at height pixels per frame with a jump sound, then
 /// waits frames while gravity brings it down (ObjectMotion_Launch).

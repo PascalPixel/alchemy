@@ -43,7 +43,7 @@ Func_0813eb70:
 	adds r3, r1, r5
 	movs r5, #1
 	str r5, [r3]
-	bl BattleFx_ClearActorTimers
+	bl BattleEffect_ClearActorTimers
 	ldr r2, .L_0813ec28
 	mov r7, r8
 	movs r3, #32
@@ -266,14 +266,14 @@ Func_0813eb70:
 	bl Scheduler_AddOrUpdateCallback
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r0, [r5, #104]
 	movs r1, #19
 	str r0, [sp, #32]
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	movs r1, #0
@@ -465,7 +465,7 @@ Func_0813eb70:
 .L_0813ef0c:
 	.4byte 0x0000001f
 .L_0813ef10:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813ef14:
 	.4byte 0xffe00000
 .L_0813ef18:
@@ -975,7 +975,7 @@ Func_0813eb70:
 	adds r0, r5, #0
 	movs r1, #64
 	lsls r2, r2, #7
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_0813f2c0:
 	adds r6, #1
 	adds r5, #28
@@ -1164,7 +1164,7 @@ Func_0813eb70:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_0813f504
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -1270,7 +1270,7 @@ Func_0813eb70:
 .L_0813f504:
 	.4byte 0xfffff000
 .L_0813f508:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813f50c:
 	.4byte gBgScroll
 .L_0813f510:

@@ -10,7 +10,7 @@
 	.set import.Engine_MathSin, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Runtime_AllocateBlock, 1
-	.set import.AnimationObjects_SelectAnimation, 1
+	.set import.AnimationObject_SelectAnimation, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -31,8 +31,8 @@
 	.set import.Engine_MessageShowCentered, 1
 	.set import.UiWork_PushValueSlot, 1
 	.set import.UiText_ShowCenteredMessage, 1
-	.set import.UnitGet, 1
-	.set import.UnitCalc, 1
+	.set import.Unit_Get, 1
+	.set import.Unit_Calculate, 1
 	.set import.Inventory_Find, 1
 	.set import.PartyInventory_FindOwner, 1
 	.set import.Engine_GameFlagIsSet, 1
@@ -41,7 +41,7 @@
 	.set import.Djinn_AddToOwner, 1
 	.set import.Djinn_Activate, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Event_PrepareObjectAndApplyValue, 1
 	.set import.Engine_EventChooseYesNo, 1
@@ -86,14 +86,14 @@
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_ActorLookup, 1
-	.set import.FieldFx_StartFadeOverlay, 1
+	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Engine_PsynergyPlayEffect, 1
-	.set import.Engine_PsynergyBegin, 1
+	.set import.Engine_PsynergyStart, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Engine_ActorWalkByAndWait, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

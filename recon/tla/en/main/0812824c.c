@@ -10,7 +10,7 @@
 // ip, and builds the definition's field addresses (coins, experience, item,
 // drop chance) in r3 and r1 where this draft takes r4 and r0, which shifts
 // the registers of everything after. Kept: the slot as the value of its
-// assignment to the s8 field (differ 165 to 153), BattleRandomFar signed (2
+// assignment to the s8 field (differ 165 to 153), Battle_RandomFar signed (2
 // fewer).
 #include "types.h"
 #include "battle_unit.h"
@@ -45,11 +45,11 @@ struct DefeatBattleWork {
   struct DefeatSpoils spoils;
 };
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct EnemyDefinition *Enemy_GetDefinitionFar(s32 id);
-s32 BattleRandomFar(void);
+s32 Battle_RandomFar(void);
 u32 BattleSpoils_RankItem(u32 value);
 u32 Random16(void);
 s32 Func_08128228(u8 *s);
@@ -99,7 +99,7 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   s32 itemPriority;
   s32 slot;
 
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)
@@ -159,7 +159,7 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
     dropShift -= 2;
   if (dropShift < 0)
     dropShift = 0;
-  if ((0x20000 >> dropShift) > (BattleRandomFar() & 0xffff)) {
+  if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
     for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {

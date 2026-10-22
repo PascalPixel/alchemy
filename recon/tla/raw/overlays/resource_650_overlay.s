@@ -78,7 +78,7 @@ Func_020016d8:
 	mov r6, r9
 	mov r5, r8
 	push {r5, r6}
-	bl Engine_EventBegin
+	bl Engine_EventStart
 	movs r0, #0
 	bl Func_02003310
 	movs r0, #1
@@ -920,7 +920,7 @@ Func_02001ee0:
 	sub sp, #28
 	bl Object_GetById
 	adds r6, r0, #0
-	bl Engine_EventBegin
+	bl Engine_EventStart
 	movs r0, #0
 	bl Func_02003310
 	bl Func_0200161c
@@ -1363,7 +1363,7 @@ Func_02002304:
 	sub sp, #28
 	bl Object_GetById
 	adds r7, r0, #0
-	bl Engine_EventBegin
+	bl Engine_EventStart
 	movs r0, #0
 	bl Func_02003310
 	movs r0, #1

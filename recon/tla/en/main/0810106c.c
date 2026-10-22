@@ -63,7 +63,7 @@ void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_RemoveFar(s32 owner, s32 element, s32 index);
-void UnitCalcFar(s32 unitId);
+void Unit_CalculateFar(s32 unitId);
 void RenderOutput_ClearListFar(s32 window);
 void Func_081019a4(struct DjinnElementList *list);
 
@@ -201,8 +201,8 @@ s32 Func_0810106c(void) {
       Audio_PlayCue(126);
       result = Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                                  menu->pairIndex[0], menu->shownOwner[1]);
-      UnitCalcFar(menu->shownOwner[0]);
-      UnitCalcFar(menu->shownOwner[1]);
+      Unit_CalculateFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[1]);
       menu->cursor->active = 13;
       RenderOutput_ClearListFar(menu->listWindow);
       Func_081019a4(menu->backdrop);
@@ -225,7 +225,7 @@ s32 Func_0810106c(void) {
                           menu->pairIndex[0]);
       result = DjinnRecovery_AddStandbyFar(
           menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
-      UnitCalcFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[0]);
       menu->cursor->active = 13;
       RenderOutput_ClearListFar(menu->listWindow);
       menu->cursor->active = 1;
@@ -246,8 +246,8 @@ s32 Func_0810106c(void) {
                         menu->pairIndex[0], menu->shownOwner[1]);
       result = Djinn_TransferFar(menu->shownOwner[1], menu->pairElement[1],
                                  menu->pairIndex[1], menu->shownOwner[0]);
-      UnitCalcFar(menu->shownOwner[0]);
-      UnitCalcFar(menu->shownOwner[1]);
+      Unit_CalculateFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[1]);
       Func_081019a4(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = 1;
@@ -268,7 +268,7 @@ s32 Func_0810106c(void) {
                         menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
           menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
-      UnitCalcFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[0]);
       menu->cursor->active = 13;
       RenderOutput_ClearListFar(menu->listWindow);
       menu->cursor->active = 1;

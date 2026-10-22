@@ -33,7 +33,8 @@ s32 Djinn_AddToOwnerFar(s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(s32);
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
-void Unit_CalcBaseElements(s32 owner_id, struct BattleElementStats *elements);
+void Unit_CalculateBaseElements(s32 owner_id,
+                                struct BattleElementStats *elements);
 s32 Class_Determine(s32 classId, u32 *djinn, s32 item);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 *output);
 void Unit_RefreshPsynergy(s32);

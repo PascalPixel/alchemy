@@ -40,7 +40,7 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
 }
 
 /// Links all 64 render outputs of the pool into the free list.
-void RenderOutput_InitFreeList(void) {
+void RenderOutput_InitializeFreeList(void) {
   s32 remainingLinks;
   struct UiRenderWork *work;
   struct RenderOutput *out;
@@ -96,10 +96,10 @@ void UiWork_InitializeWithResourceCounters(void) {
 #endif
   // Make the output and palette pools available, then start the updates. The
   // upload's order, 0x480, is SCHEDULER_KEY_VBLANK: it runs in vertical blank.
-  RenderOutput_InitFreeList();
+  RenderOutput_InitializeFreeList();
   UiWork_ClearPortraitSlots();
   Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
-  UiWork_InitCountersWithResourceAndScheduleRefresh();
+  UiWork_InitializeCountersWithResourceAndScheduleRefresh();
 }
 
 /// Sets up the window system for battle, as
@@ -149,9 +149,9 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
 #else
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif
-  RenderOutput_InitFreeList();
+  RenderOutput_InitializeFreeList();
   Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
-  UiWork_InitCountersAndScheduleRefresh(loadGlyphTiles);
+  UiWork_InitializeCountersAndScheduleRefresh(loadGlyphTiles);
   // Tiles 128 to 130 take the lower rows of the bottom frame tiles.
   UiWork_CopyTileTail(UI_TILE_FRAME_BOTTOM_LEFT, 128);
   UiWork_CopyTileTail(UI_TILE_FRAME_BOTTOM, 129);
@@ -491,7 +491,7 @@ void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
 /// Points a list's tail link back at its last output, after the list has been
 /// edited by hand.
 /// Nothing calls it.
-UNUSED void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
+UNUSED void RenderOutput_UpdateListTail(struct RenderOutputList *list) {
   struct RenderOutput *node = list->head;
   struct RenderOutput **tail = &list->head;
 

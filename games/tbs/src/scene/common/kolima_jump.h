@@ -20,7 +20,7 @@ static s32 StagedActor_RunStepEffect(struct FieldPosition *request) {
   s32 ret = FieldObject_CheckMovementCollision(actor, request);
 
   if (ret == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);

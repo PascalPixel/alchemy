@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Serac (kind 254).
-	.global BattleFx_RunSerac
+	.global BattleEffect_RunSerac
 	.thumb_func
-BattleFx_RunSerac:
+BattleEffect_RunSerac:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,12 +26,12 @@ BattleFx_RunSerac:
 	bne .L_0816dc84
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleFx_BeginTiledCanvasFilled
+	bl BattleEffect_StartTiledCanvasFilled
 	b .L_0816dc8c
 .L_0816dc84:
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleFx_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 .L_0816dc8c:
 	ldr r2, [sp, #64]
 	movs r3, #2
@@ -69,7 +69,7 @@ BattleFx_RunSerac:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #48]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r4, [sp, #56]
 	movs r0, #239
 	movs r1, #238
@@ -378,7 +378,7 @@ BattleFx_RunSerac:
 	b .L_0816df80
 	.2byte 0x0000
 .L_0816df34:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816df38:
 	.4byte 0x000000c1
 .L_0816df3c:
@@ -571,7 +571,7 @@ BattleFx_RunSerac:
 	adds r0, r6, #0
 	movs r1, #60
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r1, [sp, #56]
 	ldr r2, [r7]
 	ldr r3, [r7, #4]
@@ -948,7 +948,7 @@ BattleFx_RunSerac:
 	adds r0, r5, #0
 	movs r1, #62
 	lsls r2, r2, #3
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	bl Transform_Push
 	ldr r1, [r5, #4]
 	ldr r2, [r5, #8]
@@ -1208,7 +1208,7 @@ BattleFx_RunSerac:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #160
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1249,4 +1249,4 @@ BattleFx_RunSerac:
 .L_0816e63c:
 	.4byte gCameraSceneParameters
 .L_0816e640:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

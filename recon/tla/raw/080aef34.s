@@ -11,7 +11,7 @@ Inventory_Equip:
 	adds r5, r1, #0
 	mov r8, r0
 	sub sp, #4
-	bl UnitGet
+	bl Unit_Get
 	lsls r5, r5, #1
 	mov r9, r5
 	mov r3, r9
@@ -96,7 +96,7 @@ Inventory_Equip:
 	strh r2, [r7, r3]
 	bl Unit_RefreshPsynergy
 	mov r0, r8
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #0
 	b .L_080aeffc
 	.2byte 0x0000

@@ -2,9 +2,9 @@
 	.thumb
 @ Abilities: Daedalus (scene kind 26), ability 403; the party's summon
 @ Daedalus is ability 402, scene kind 21.
-	.global BattleFx_RunDaedalusAlt
+	.global BattleEffect_RunDaedalusAlt
 	.thumb_func
-BattleFx_RunDaedalusAlt:
+BattleEffect_RunDaedalusAlt:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -30,7 +30,7 @@ BattleFx_RunDaedalusAlt:
 	adds r2, #4
 	strh r3, [r2]
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08180cf8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -41,7 +41,7 @@ BattleFx_RunDaedalusAlt:
 	adds r1, #150
 	movs r2, #3
 	movs r0, #1
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r3, #240
 	lsls r3, r3, #7
 	adds r3, #240
@@ -55,10 +55,10 @@ BattleFx_RunDaedalusAlt:
 .L_08180cf8:
 	.4byte 0x00001010
 .L_08180cfc:
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r5, [r5, #104]
 	movs r1, #224
 	lsls r1, r1, #3
@@ -154,7 +154,7 @@ BattleFx_RunDaedalusAlt:
 	adds r2, r7, #0
 	lsls r3, r3, #12
 	str r7, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r4, [sp, #32]
 	movs r3, #7
 	ldrsh r0, [r5, r4]
@@ -315,7 +315,7 @@ BattleFx_RunDaedalusAlt:
 	adds r0, r5, #0
 	movs r1, #62
 	ldr r2, .L_08180fc8
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -395,7 +395,7 @@ BattleFx_RunDaedalusAlt:
 .L_08180fa0:
 	.4byte 0x0000013e
 .L_08180fa4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08180fa8:
 	.4byte 0xfffffd80
 .L_08180fac:
@@ -636,7 +636,7 @@ BattleFx_RunDaedalusAlt:
 	add r3, r10
 	ldr r0, [r3]
 	bl ResourceObject_ReleaseFar
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -659,4 +659,4 @@ BattleFx_RunDaedalusAlt:
 .L_081811cc:
 	.4byte gData_081991b0
 .L_081811d0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

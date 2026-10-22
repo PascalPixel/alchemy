@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Bind (kind 38); Luff (kind 218).
-	.global BattleFx_RunBind
+	.global BattleEffect_RunBind
 	.thumb_func
-BattleFx_RunBind:
+BattleEffect_RunBind:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunBind:
 	ldr r5, [r3, #100]
 	ldr r3, [r3, #48]
 	str r3, [sp, #56]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r1, [sp, #76]
 	ldr r3, [r1, #28]
 	cmp r3, #1
@@ -179,7 +179,7 @@ BattleFx_RunBind:
 	adds r6, r0, #0
 	ldr r1, [sp, #24]
 	ldr r0, [r2, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r3, [sp, #64]
 	subs r6, #24
 	cmp r3, #32
@@ -224,14 +224,14 @@ BattleFx_RunBind:
 .L_08145fbc:
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
 	movs r0, #188
 	movs r1, #23
 	str r3, [sp, #80]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -543,14 +543,14 @@ BattleFx_RunBind:
 .L_08146244:
 	ldr r0, .L_08146258
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	b .L_0814626c
 .L_08146250:
 	.4byte 0x00000152
 .L_08146254:
 	.4byte 0x04040404
 .L_08146258:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814625c:
 	.4byte 0x01010101
 .L_08146260:

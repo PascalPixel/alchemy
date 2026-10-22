@@ -79,7 +79,7 @@ typedef void (*SoundCommand)(struct SoundPlayer *player,
 /// MusicTrack_Stop: silences the track's notes and empties its list.
 #define SOUND_COMMAND_STOP_TRACK 31
 #define SOUND_COMMAND_FADE 32 ///< MusicPlayer_StepFade: a frame of a fade.
-#define SOUND_COMMAND_CALCULATE_OUTPUT 33 ///< MusicTrack_CalcOutput.
+#define SOUND_COMMAND_CALCULATE_OUTPUT 33 ///< MusicTrack_CalculateOutput.
 /// SoundNote_Detach: unlinks a note from its track's list
 /// (AudioCommand_InvokeSlot34).
 #define SOUND_COMMAND_DETACH_NOTE 34

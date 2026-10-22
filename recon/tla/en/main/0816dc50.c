@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunSerac, decompiled from the listing: differ 1130 of 1101
+// Draft of BattleEffect_RunSerac, decompiled from the listing: differ 1130 of 1101
 // (draft 1093), the same 91 calls and control flow; allocation differs.
 // 2026-10-19: the native frame is 160 bytes (here 176 at first). Its
 // arrays above the arguments' slots take 92 bytes, one 12-byte point
@@ -36,12 +36,12 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(
-    void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -59,19 +59,19 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
-void BattleFx_SelectLivingTargets(
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -87,12 +87,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -141,7 +141,7 @@ extern const u8 Data_081991a4[];
 // first frame) grows up around the target in rings of mist while the
 // camera circles, the caster closes in at frame 56, and at 64 the spire
 // shatters into 64 tumbling shards.
-void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
@@ -170,19 +170,19 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   Func_0813ba50();
   if (effect->side == 0) {
-    BattleFx_BeginTiledCanvasFilled(0x2000);
+    BattleEffect_StartTiledCanvasFilled(0x2000);
   } else {
-    BattleFx_BeginTiledCanvas(0x2000);
+    BattleEffect_StartTiledCanvas(0x2000);
   }
   Func_0815585c(effect, (effect->side << 4) | 0x101, screenA, screenB);
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x100;
-  BattleFx_FetchRectangleBlitters(0, (void **)blitters);
+  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CF, work->sheet + 0x400, 0,
@@ -316,7 +316,7 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
         }
         picture = p->variant / 6;
         Render_ProjectPoint(p, &shard);
-        BattleFxKernels_IntegrateVector3(p, 60, 0x2000);
+        BattleEffectKernels_IntegrateVector3(p, 60, 0x2000);
         blitters[0](canvas, work->sheet + 0x400 + (picture << 10), shard.x - 16,
                     shard.y - 16, 32, 32);
       }
@@ -420,7 +420,7 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
           color = p->variant;
           p->variant -= 2;
           model->shade = (s32)&color;
-          BattleFxKernels_IntegrateVector3(p, 62, 0x400);
+          BattleEffectKernels_IntegrateVector3(p, 62, 0x400);
           Transform_Push();
           Func_08015160(p->x, p->y, p->z);
           SceneTransform_ApplyPitch(angle);
@@ -511,8 +511,8 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

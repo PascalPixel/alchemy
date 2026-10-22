@@ -11,16 +11,17 @@
 /// next begins. Its tables are the .tsv files in this folder, built by the .s
 /// files beside them; README.md gives the words and prefixes. Where to start:
 ///
-///   Units           units.c: UnitGet, UnitCalc, GameState_InitDefaults
-///   Items           inventory.c: Inventory_AddItem, Inventory_Equip,
+///   Units           units.c: Unit_Get, Unit_Calculate,
+///   GameState_InitializeDefaults Items           inventory.c:
+///   Inventory_AddItem, Inventory_Equip,
 ///                   PartyInventory_Add
 ///   Levels          levels.c: Unit_RefreshPsynergy, Unit_LevelUp
 ///   Flags           flags.c: GameFlag_Test, GameFlag_SetBit
-///   Enemies, party  party.c: BattleUnitSet, Party_AddActiveOwner,
+///   Enemies, party  party.c: BattleUnit_Set, Party_AddActiveOwner,
 ///                   Party_AdjustCoins
 ///   Classes         classes.c: Class_Determine, Unit_UpdateClass
 ///   Battle maths    battle_calc.c: Battle_GetElementMultiplier,
-///                   BattleRandom
+///                   Battle_Random
 ///   Djinn           djinn.c: Djinn_AddToOwner, Djinn_Activate
 
 #include "game_internal.h"

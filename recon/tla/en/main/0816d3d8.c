@@ -1,7 +1,7 @@
-// Draft of BattleFx_RunStoneJustice, effect kind 100 (Stone Justice), written from the
+// Draft of BattleEffect_RunStoneJustice, effect kind 100 (Stone Justice), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunSpire 0.502, call order BattleFx_RunPrism
-// 0.680); the shard drawing follows BattleFx_RunSpire, and the
+// BattleEffect_RunSpire 0.502, call order BattleEffect_RunPrism
+// 0.680); the shard drawing follows BattleEffect_RunSpire, and the
 // shard tables are its gSpire_ShardWidths, Heights and Cells.
 
 // Listing 374 instructions, draft 374, differ 14 (2026-10-18).
@@ -25,13 +25,13 @@
 // alchemy permute 8 minutes, 2 jobs (found the helper)                30
 // the BG2PA halfword pinned in a one-pass block (FAKEMATCH)         24
 // the height read where the call uses it (no local)                 18
-// BattleFx_LoadBlitter returning s32, as defined                    16
+// BattleEffect_LoadBlitter returning s32, as defined                    16
 // an empty asm after the REG_BG2X store (FAKEMATCH)                 14
 // the BLDCNT zero pinned as BG2PA's (16), an empty asm after the
 // blitter slot read (22), position pointers before the loop (36),
 // the frame loop as do-while (14), alchemy permute 5 minutes (14)
-// The helper is a device here: BattleFx_RunPlumeEdge goes from 36 to 135 with
-// it, and BattleFx_RunHurricane from 218 to 212.
+// The helper is a device here: BattleEffect_RunPlumeEdge goes from 36 to 135 with
+// it, and BattleEffect_RunHurricane from 218 to 212.
 
 #include "types.h"
 #include "io_reg.h"
@@ -69,20 +69,20 @@ extern u8 gData_081974ad[];
 extern u16 gData_081974bc[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-s32 BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_BuildBlitter, packed
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);          // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);                // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
-void BattleFx_StartActorMotion(s32 actor, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void Object_SetMode(struct MotionObject *object, s32 mode);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Audio_PlayCue(s32 cue);
 
@@ -97,7 +97,7 @@ void Audio_PlayCue(s32 cue);
 // they fly; from frame 64 the background scrolls after them and each
 // boulder turns toward the target; every boulder that reaches the target
 // shakes the screen and knocks the target back.
-void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
+void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -115,7 +115,7 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   {
     /* FAKEMATCH: the native loads the BG2PA halfword from the pool before it
      * starts the register's address; pinned to r3 in a one-pass block it
@@ -129,12 +129,12 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
   }
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  BattleFx_LoadBlitter(104,
+  BattleEffect_LoadBlitter(104,
                 BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   scroll = 0;
   scrollSpeed = 0;
   cueTimer = 0;
@@ -214,7 +214,7 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
           }
         }
       }
-      BattleFxKernels_IntegrateVector2(rock, 60, 0);
+      BattleEffectKernels_IntegrateVector2(rock, 60, 0);
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
         if (effect->side == 0)
@@ -235,7 +235,7 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
         cueTimer = 8;
         Audio_PlayCue(134);
       }
-      BattleFx_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16, 2 << 16,
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16, 2 << 16,
                                 150);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
       work->shakeFrames = 2;
@@ -248,7 +248,7 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
   }
 
   ObjectDispatch_SetAnimationSpeedFar(user, 16);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

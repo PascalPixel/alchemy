@@ -29,12 +29,12 @@
 /// teach. A row whose owner is -1 ends a preset. Read only by
 /// DebugParty_LoadPreset.
 struct DebugPartyEntry {
-  s8 owner;                     ///< the party member, or DEBUG_PRESET_END
-  u8 level;                     ///< the level the member is raised to
-  s8 djinnCounts[NUM_ELEMENTS]; ///< Djinn of each element to give and Set
-  u16 items[4];                 ///< items to add and equip; 0 for none
-  u16 abilities[2];             ///< abilities to teach; 0 for none
-  u16 unused;                   ///< 0 in every row
+  s8 owner;                      ///< the party member, or DEBUG_PRESET_END
+  u8 level;                      ///< the level the member is raised to
+  s8 djinnCounts[ELEMENT_COUNT]; ///< Djinn of each element to give and Set
+  u16 items[4];                  ///< items to add and equip; 0 for none
+  u16 abilities[2];              ///< abilities to teach; 0 for none
+  u16 unused;                    ///< 0 in every row
 };
 
 extern struct DebugPartyEntry gDebug_PartyPresets[];
@@ -53,7 +53,7 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 /// Returns 1 when the table ends before that preset, 0 otherwise.
 s32 DebugParty_LoadPreset(s32 preset) {
   // The next Djinni number of each element to hand out.
-  s32 nextDjinn[NUM_ELEMENTS];
+  s32 nextDjinn[ELEMENT_COUNT];
   struct BattleUnit *member;
   s32 owner;
   s32 notFound;
@@ -71,7 +71,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
   Party_RemoveActiveOwnerFar(JENNA);
 
   currentPreset = 0;
-  for (i = 0; i < NUM_ELEMENTS; i++)
+  for (i = 0; i < ELEMENT_COUNT; i++)
     nextDjinn[i] = 0;
 
   // Presets are runs of rows each ended by a DEBUG_PRESET_END row; skip
@@ -95,8 +95,8 @@ s32 DebugParty_LoadPreset(s32 preset) {
     Unit_LevelUpToFar(owner, gDebug_PartyPresets[row].level);
 
     // Start from no Djinn and no abilities.
-    member = (struct BattleUnit *)UnitGetFar(owner);
-    for (i = 0; i < NUM_ELEMENTS; i++) {
+    member = (struct BattleUnit *)Unit_GetFar(owner);
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       member->djinnOwnedCounts[i] = 0;
       member->djinnActiveCounts[i] = 0;
       member->djinnAvailable[i] = 0;
@@ -112,7 +112,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
     }
 
     // Djinn are numbered across the party, so no two members get the same.
-    for (i = 0; i < NUM_ELEMENTS; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       for (djinnIndex = 0; djinnIndex < gDebug_PartyPresets[row].djinnCounts[i];
            djinnIndex++) {
         Djinn_AddToOwnerFar(owner, i, nextDjinn[i]);
@@ -154,7 +154,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
-  struct BattleUnit *unit = UnitGetFar(0);
+  struct BattleUnit *unit = Unit_GetFar(0);
   s32 i;
   s32 index;
   struct UiWindow *messageWindow;
@@ -261,7 +261,7 @@ void DebugBattle_RunMenu(void) {
   s32 preset;
   s32 loadedPreset;
 
-  GameState_InitDefaultsFar();
+  GameState_InitializeDefaultsFar();
 restart:
   Ui_LoadWindowGraphics();
   DebugText_Clear();
@@ -301,7 +301,7 @@ restart:
           Battle_SetStart(BATTLE_START_DEBUG);
         }
         if (preset != loadedPreset) {
-          GameState_InitDefaultsFar();
+          GameState_InitializeDefaultsFar();
           DebugParty_LoadPreset(preset);
           loadedPreset = preset;
         }
@@ -312,7 +312,7 @@ restart:
       // in Battle_RunEncounter).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetBitFar(FLAG_LINK_BATTLE);
-      UnitCalcFar(0);
+      Unit_CalculateFar(0);
       gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetBitFar(FLAG_DJINN_LESSON);

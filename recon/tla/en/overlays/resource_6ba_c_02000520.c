@@ -32,13 +32,13 @@ void Func_02000520(void) {
   Unit_AddPp(4, -50);
   Unit_AddPp(5, -40);
   Unit_AddPp(6, -35);
-  unit = UnitGet(4);
+  unit = Unit_Get(4);
   unit[0x131] = 1;
   unit[0x140] = 1;
-  unit = UnitGet(5);
+  unit = Unit_Get(5);
   unit[0x130] = 1;
   unit[0x131] = 2;
-  unit = UnitGet(4);
+  unit = Unit_Get(4);
   for (i = 0; i <= 14; i++) {
     item = Func_02000d48(((struct OwnerInventoryState *)unit)->inventory[i]);
     if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)
@@ -48,7 +48,7 @@ void Func_02000520(void) {
       break;
     }
   }
-  unit = UnitGet(5);
+  unit = Unit_Get(5);
   for (i = 0; i <= 14; i++) {
     item = Func_02000d48(((struct OwnerInventoryState *)unit)->inventory[i]);
     if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)

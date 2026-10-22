@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 426 (one reordered row), from The Broken Seal's
-// BattleObjMake (games/tbs/src/battle/battle/placement.c): this game keys the
+// BattleObject_Make (games/tbs/src/battle/battle/placement.c): this game keys the
 // sprite and scale by the unit's enemy id, has eight characters, sets the
 // effect (686) before the scale switch and a visible flag beside the fade
 // flag. The cases are written in the listing's body order, each group as its
@@ -39,7 +39,7 @@ struct TlaBattleObj {
 extern const s32 Data_0812cacc[];
 
 struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 s32 SummonSlot_RegisterActorSprites(s32 unitId);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
@@ -47,7 +47,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 s32 ArcTan2(s32 y, s32 x);
 
-void BattleObjMake(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
+void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;
@@ -62,7 +62,7 @@ void BattleObjMake(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   fixedX = x * 65536;
   fixedZ = y * 65536;
   object = Func_080200c0(0xf000, fixedX, 0, fixedZ);
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   palette = 0;
   registeredSprite = SummonSlot_RegisterActorSprites(unitId);
 

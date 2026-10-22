@@ -5,8 +5,8 @@
 
 extern const u8 gData_02000f10[];
 extern const u8 gData_02000ebc[];
-u8 *UnitGet(s32 owner);
-void UnitCalc(s32 owner);
+u8 *Unit_Get(s32 owner);
+void Unit_Calculate(s32 owner);
 void Func_02000724(void);
 void Func_020006e4(void);
 void Func_020006ec(void);

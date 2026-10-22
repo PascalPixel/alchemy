@@ -19,7 +19,7 @@ struct DjinnUnit {
   u32 djinnActive[4];
 };
 
-struct DjinnUnit *UnitGet(s32 unitId);
+struct DjinnUnit *Unit_Get(s32 unitId);
 
 void Func_081049c8(u8 *counts) {
   struct DjinnMenuWork *work;
@@ -31,7 +31,7 @@ void Func_081049c8(u8 *counts) {
 
   work = Ram_HeapSlots->menuRuntime;
   for (ownerIndex = 0; ownerIndex < work->ownerCount; ownerIndex++) {
-    unit = UnitGet(work->owners[ownerIndex]);
+    unit = Unit_Get(work->owners[ownerIndex]);
     count = 0;
     for (element = 0; element <= 3; element++) {
       for (bit = 0; bit <= 19; bit++) {

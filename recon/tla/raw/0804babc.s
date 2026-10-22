@@ -31,7 +31,7 @@ Func_0804babc:
 	mov r8, r0
 .L_0804baf4:
 	ldrh r0, [r5]
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #67
 	adds r4, r4, r0
 	ldrb r3, [r4]

@@ -2,7 +2,7 @@
 #include "palbuf.h"
 #include "ram_buffer.h"
 
-void BattleFx_PackTargetBuffer(void) {
+void BattleEffect_PackTargetBuffer(void) {
   struct BattleEffectBuffers *work = Ram_HeapSlots->block32;
   u16 *packed = work->palette;
   s32 blue = 0x7c00;

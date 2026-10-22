@@ -29,7 +29,7 @@ void ResourceMetadata_ReleaseSlotFar(void *record, s32 slot);
 
 /// Frees the borrowed buffer and releases the motion graphics slot.
 void Func_0811e7dc(struct Work0811e7dc *work) {
-  struct MotionObject *object = BattleObjGet(work->objectId)->object;
+  struct MotionObject *object = BattleObject_Get(work->objectId)->object;
 
   if (work->buffer != NULL) {
     Func_080219ccFar(GetMotionRecord(object, 0));

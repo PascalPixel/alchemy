@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_RunParticleStreams
+	.global BattleEffect_RunParticleStreams
 	.thumb_func
-BattleFx_RunParticleStreams:
+BattleEffect_RunParticleStreams:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_RunParticleStreams:
 	ldr r3, [r3, #92]
 	lsls r0, r0, #6
 	str r3, [r1]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #128
 	ldr r3, .L_08164d04
 	lsls r2, r2, #19
@@ -99,7 +99,7 @@ BattleFx_RunParticleStreams:
 .L_08164d88:
 	.4byte 0x00000000
 .L_08164d8c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08164d90:
 	cmp r3, #1
 	bne .L_08164de2
@@ -148,7 +148,7 @@ BattleFx_RunParticleStreams:
 	adds r1, #138
 	movs r0, #1
 	movs r2, #3
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 .L_08164df0:
 	ldr r2, [sp, #60]
 	movs r3, #224
@@ -328,7 +328,7 @@ BattleFx_RunParticleStreams:
 	adds r0, #240
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r1, [sp, #60]
 	movs r4, #238
 	ldr r2, [r1]
@@ -502,9 +502,9 @@ BattleFx_RunParticleStreams:
 .L_081650ac:
 	.4byte gCameraSceneParameters
 .L_081650b0:
-	.4byte BattleFx_AdvanceBg2OnInterval
+	.4byte BattleEffect_AdvanceBg2OnInterval
 .L_081650b4:
-	.4byte BattleFx_FlushPendingGraphicsTransfer
+	.4byte BattleEffect_FlushPendingGraphicsTransfer
 .L_081650b8:
 	.4byte gMapCellBuffer
 .L_081650bc:
@@ -695,7 +695,7 @@ BattleFx_RunParticleStreams:
 .L_08165214:
 	.4byte Data_02020202
 .L_08165218:
-	.4byte BattleFx_ArmPaletteHBlankDma
+	.4byte BattleEffect_ArmPaletteHBlankDma
 .L_0816521c:
 	.4byte gInput
 .L_08165220:
@@ -1146,7 +1146,7 @@ BattleFx_RunParticleStreams:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -1166,11 +1166,11 @@ BattleFx_RunParticleStreams:
 .L_081655c0:
 	.4byte 0xfffb0000
 .L_081655c4:
-	.4byte BattleFx_AdvanceBg2OnInterval
+	.4byte BattleEffect_AdvanceBg2OnInterval
 .L_081655c8:
-	.4byte BattleFx_ArmPaletteHBlankDma
+	.4byte BattleEffect_ArmPaletteHBlankDma
 .L_081655cc:
-	.4byte BattleFx_FlushPendingGraphicsTransfer
+	.4byte BattleEffect_FlushPendingGraphicsTransfer
 .L_081655d0:
 	.4byte gBgScroll
 .L_081655d4:
@@ -1425,7 +1425,7 @@ BattleFx_RunParticleStreams:
 	ldr r2, .L_08165978
 	adds r0, r7, #0
 	movs r1, #64
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #4]
 	movs r2, #160
 	lsls r2, r2, #13
@@ -1601,7 +1601,7 @@ BattleFx_RunParticleStreams:
 	adds r0, r6, #0
 	movs r1, #64
 	movs r2, #1
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_08165940:
 	movs r0, #1
 	add r8, r0
@@ -1628,7 +1628,7 @@ BattleFx_RunParticleStreams:
 .L_0816596c:
 	.4byte 0x10101010
 .L_08165970:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08165974:
 	.4byte gData_08197410
 .L_08165978:
@@ -1775,7 +1775,7 @@ BattleFx_RunParticleStreams:
 	ldr r0, [r3]
 	bl ResourceObject_ReleaseFar
 .L_08165a9c:
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #280
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1785,4 +1785,4 @@ BattleFx_RunParticleStreams:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08165ab0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

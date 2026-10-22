@@ -25,7 +25,7 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 /// Returns whether a character can equip the item: bit classId of its
 /// equipMask, or 0 for classId 8 and up.
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
-  struct OwnerInventoryState *st = UnitGet(unit);
+  struct OwnerInventoryState *st = Unit_Get(unit);
   struct ItemDefinition *def = Item_GetDirect(item);
   s32 mask = def->equipMask;
 

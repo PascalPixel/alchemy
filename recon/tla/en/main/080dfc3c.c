@@ -1,9 +1,9 @@
-// Near miss, differ 2 of 69 (2026-10-15), ported from ☀️'s BattleFx_CircleAnchor
+// Near miss, differ 2 of 69 (2026-10-15), ported from ☀️'s BattleEffect_CircleAnchor
 // onto radial.c's OrbitEffect. One pair: the listing loads the angle before it
 // starts the 0x800 step (ldrh r3, [r7, #6]; movs r0, #128); this starts the
 // step first. A forced temporary with a one-pass block (as overlay 69e's
 // s0810.c) gives differ 4, the step held in an empty asm differ 12; no single
-// barrier helped. Belongs after radial.c's BattleFx_WanderAroundAnchor.
+// barrier helped. Belongs after radial.c's BattleEffect_WanderAroundAnchor.
 #include "iwram_call.h"
 #include "system.h"
 #include "fixed_math.h"
@@ -26,7 +26,7 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
-void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
+void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect);
 
 void Func_080dfc3c(struct OrbitEffect *effect) {
   struct OrbitEffect *anchor;
@@ -44,7 +44,7 @@ void Func_080dfc3c(struct OrbitEffect *effect) {
   effect->z = anchor->z + dz;
   effect->angle += 0x800;
   if (++effect->timer == 121) {
-    effect->update = BattleFx_WanderAroundAnchor;
+    effect->update = BattleEffect_WanderAroundAnchor;
     effect->timer = 0;
     effect->pause = 0;
     effect->speed = 0x1999;

@@ -7,7 +7,7 @@
 #include "field_scene.h"
 #include "field_effect.h"
 
-extern const u8 gBattleFx_CommonParticleScript[];
+extern const u8 gBattleEffect_CommonParticleScript[];
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -31,7 +31,7 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
+void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions options;
   s32 velocity[3];
   s32 sine;
@@ -58,7 +58,7 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   } while (i <= 16);
 }
 
-void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect) {
+void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
   s32 dx;
@@ -83,5 +83,5 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect) {
   }
   if (++effect->timer == 101)
     ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
-                                 (u32)gBattleFx_CommonParticleScript);
+                                 (u32)gBattleEffect_CommonParticleScript);
 }

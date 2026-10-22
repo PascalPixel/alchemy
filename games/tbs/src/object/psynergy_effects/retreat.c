@@ -8,8 +8,8 @@
 
 /// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 /// (timer counts up) until timer * 0x50 reaches 0x1000: from 1/16 turn a
-/// frame to just over 1/8 in 52 frames, as FieldFx_AdvanceAngleWithRamp.
-void FieldFx_UpdateSpinAngle(union FieldObject *fieldObject) {
+/// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
+void FieldEffect_UpdateSpinAngle(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   u32 step;
 
@@ -23,7 +23,7 @@ void FieldFx_UpdateSpinAngle(union FieldObject *fieldObject) {
 /// pixel a frame; once its scale falls below 0x3000 (84 frames from full
 /// size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
-void FieldFx_UpdateDescendingObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdateDescendingObject(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   u32 scale;
 
@@ -36,11 +36,11 @@ void FieldFx_UpdateDescendingObject(union FieldObject *fieldObject) {
     obj->spriteStorageKind = OBJECT_SPRITE_NONE;
 }
 
-/// The states of a Retreat particle (FieldFx_UpdateRadialLaunch).
+/// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
 enum RetreatParticleState {
   RETREAT_PARTICLE_AIM = 0,    ///< placed on the main object and aimed
   RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
-  /// Set by FieldFx_RunRetreat: freed on arrival.
+  /// Set by FieldEffect_RunRetreat: freed on arrival.
   RETREAT_PARTICLE_LAST_FLIGHT = 2
 };
 
@@ -48,7 +48,7 @@ enum RetreatParticleState {
 /// screen position (8 pixels lower) in a direction within 1/8 turn of up the
 /// screen, at up to 5 pixels a frame, and starts again from the main object on
 /// arrival until it takes its last flight.
-void FieldFx_UpdateRadialLaunch(struct EffectSlot *slot) {
+void FieldEffect_UpdateRadialLaunch(struct EffectSlot *slot) {
   struct EffectVector pos;
   struct FieldActor *main;
   s32 state;
@@ -89,7 +89,7 @@ void FieldFx_UpdateRadialLaunch(struct EffectSlot *slot) {
       slot->state--;
   } else if (state == RETREAT_PARTICLE_LAST_FLIGHT) {
     if (EffectSlot_HasPendingTarget(slot) == 0)
-      FieldFx_ClearOwnedSlot(slot);
+      FieldEffect_ClearOwnedSlot(slot);
   }
 }
 
@@ -99,13 +99,13 @@ void FieldFx_UpdateRadialLaunch(struct EffectSlot *slot) {
 /// Abilities: Retreat (FIELD_KIND_RETREAT).
 ///
 /// The caster turns south, plays animation 28 with its colours cycling,
-/// spins up for 70 frames (FieldFx_UpdateSpinAngle), then rises and shrinks
-/// out of sight (FieldFx_UpdateDescendingObject) as the particles fly. It
-/// is hidden, not released, and the effect opens an event (FieldEvent_Begin)
+/// spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises and shrinks
+/// out of sight (FieldEffect_UpdateDescendingObject) as the particles fly. It
+/// is hidden, not released, and the effect opens an event (FieldEvent_Start)
 /// it does not end: the Retreat exit raised before it (EXIT_RETREAT, by
 /// Field_UsePsynergy or Field_UseItem) then leaves the scene. Called by
-/// FieldFx_Run and FieldFx_DispatchRequestKind.
-void FieldFx_RunRetreat(void) {
+/// FieldEffect_Run and FieldEffect_DispatchRequestKind.
+void FieldEffect_RunRetreat(void) {
   struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;
   struct EffectVector pos;
@@ -113,9 +113,9 @@ void FieldFx_RunRetreat(void) {
   u8 last;
   u32 i;
 
-  FieldEvent_Begin();
+  FieldEvent_Start();
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
-  FieldFx_FadeToEffectColor();
+  FieldEffect_FadeToEffectColor();
   WaitFrames(10);
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);
   WaitFrames(30);
@@ -129,14 +129,14 @@ void FieldFx_RunRetreat(void) {
   Animation_ApplyChildValuesFar((struct DispatchObject *)obj,
                                 SPRITE_COLOR_NORMAL);
   ObjectDispatch_SelectAnimationFar(obj, 3);
-  obj->update = FieldFx_UpdateSpinAngle;
+  obj->update = FieldEffect_UpdateSpinAngle;
   obj->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
   obj->motionFlags = 0;
-  obj->update = FieldFx_UpdateDescendingObject;
+  obj->update = FieldEffect_UpdateDescendingObject;
   obj->targetX = ACTOR_NO_TARGET;
   pos.x = obj->x.fixed;
   pos.y = obj->y.fixed;
@@ -147,7 +147,7 @@ void FieldFx_RunRetreat(void) {
   do {
     s32 scale;
     EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, FieldFx_UpdateRadialLaunch);
+    EffectSlot_SetCallback(slot, FieldEffect_UpdateRadialLaunch);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               (Random16() * 7) >> 16);
@@ -169,7 +169,7 @@ void FieldFx_RunRetreat(void) {
     i++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(40);
-  FieldFx_FadeFromEffectColor();
+  FieldEffect_FadeFromEffectColor();
   WaitFrames(10);
 }
 
@@ -177,7 +177,7 @@ void FieldFx_RunRetreat(void) {
 /// as it falls 2 pixels a frame on the object it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
 /// the ground (4 on the world map, whose map is SceneId_Clear).
-void FieldFx_UpdateDescendingParticlePositiveArc(
+void FieldEffect_UpdateDescendingParticlePositiveArc(
     union FieldObject *fieldObject) {
   // One shared inline kernel with constant inversion grows the positive and
   // negative callbacks 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
@@ -208,9 +208,9 @@ void FieldFx_UpdateDescendingParticlePositiveArc(
   particle->z.fixed = source->z.fixed + ((0x10000 - scale) * 5) + 0x90000;
 }
 
-/// As FieldFx_UpdateDescendingParticlePositiveArc for the arc drawn upside
+/// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
 /// down, 16 pixels in front of the object and up to 5 pixels nearer.
-void FieldFx_UpdateDescendingParticleNegativeArc(
+void FieldEffect_UpdateDescendingParticleNegativeArc(
     union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct FieldActor *source;
@@ -275,9 +275,9 @@ struct DescendingArcSprite {
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above
 /// it, at 0.4 of full size, drawn with the tiles in scene->arcTileSlot. The
 /// upside-down arc draws in front of everything (priority 0), the other at
-/// the caster's priority, as FieldFx_SpawnScaledArcObjects does. Called by
-/// FieldFx_UpdatePairedArcSpawner, so arc is Avoid's caster.
-void FieldFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
+/// the caster's priority, as FieldEffect_SpawnScaledArcObjects does. Called by
+/// FieldEffect_UpdatePairedArcSpawner, so arc is Avoid's caster.
+void FieldEffect_SpawnDescendingArcParticles(struct FieldActor *arc) {
   struct FieldActor *source = arc;
   struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *leader = scene->mainObject;
@@ -303,7 +303,7 @@ void FieldFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
     object->scaleX = 0x6666;
     if (sprite == NULL)
       continue;
-    AnimationObjects_SelectAnimationFar((struct AnimationObject *)sprite, 0);
+    AnimationObject_SelectAnimationFar((struct AnimationObject *)sprite, 0);
     sprite->animation = zero;
     Resource_ResetEntry(sprite->resource);
     sprite->resource = scene->arcTileSlot;
@@ -316,9 +316,9 @@ void FieldFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   // Preserve the original partial-pair behavior until recovery is established.
-  objects[0]->update = FieldFx_UpdateDescendingParticleNegativeArc;
+  objects[0]->update = FieldEffect_UpdateDescendingParticleNegativeArc;
   ((struct DescendingArcSprite *)objects[0]->sprite)->attr.byte.variant = 0;
-  objects[1]->update = FieldFx_UpdateDescendingParticlePositiveArc;
+  objects[1]->update = FieldEffect_UpdateDescendingParticlePositiveArc;
   ((struct DescendingArcSprite *)objects[1]->sprite)->attr.byte.variant =
       ((struct DescendingArcSprite *)leader->sprite)->attr.byte.variant;
 }

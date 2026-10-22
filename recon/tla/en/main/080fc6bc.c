@@ -78,7 +78,7 @@ extern u32 gFrameCount;
 
 s32 UiWindow_UpdateOrCreate(void **window, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 ItemMenu_CollectItems(void *owner, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
 void ItemMenu_PageResult(struct MenuResult *state, s32 pane);
@@ -125,7 +125,7 @@ s32 Func_080fc6bc(s32 pane) {
   done = 0;
 
   while (done == 0 && GameFlag_Test(0x150) == 0) {
-    owner = UnitGet(menu->paneOwner[pane]);
+    owner = Unit_Get(menu->paneOwner[pane]);
     menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
     ItemMenu_DrawIcons(menu->items, 0);
     menu->selectedItemIcon->state = 13;
@@ -218,7 +218,7 @@ s32 Func_080fc6bc(s32 pane) {
             menu->selectedOwner = menu->ownerIds[member];
             menu->paneOwner[pane] = menu->ownerIds[member];
             menu->paneIndex[pane] = member;
-            menu->itemCount = ItemMenu_CollectItems(UnitGet(menu->paneOwner[pane]),
+            menu->itemCount = ItemMenu_CollectItems(Unit_Get(menu->paneOwner[pane]),
                                                menu->items, 0);
           } while (menu->itemCount == 0);
           Func_08104ef8(member / 4 * 4);

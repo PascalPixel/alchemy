@@ -64,7 +64,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   s32 i;
 
   state = Ram_HeapSlots->menuRuntime;
-  ItemMenu_PosCategory();
+  ItemMenu_PositionCategory();
   for (i = 0; i < 15; i++) {
     if (items[i] != 0 && (items[i] & 0x200) != 0) {
       icon = state->icons[i];
@@ -93,7 +93,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   }
 }
 
-void ItemMenu_PosCategory(void) {
+void ItemMenu_PositionCategory(void) {
   struct CategoryItemIconState *state = Ram_HeapSlots->menuRuntime;
   s32 x = 248;
   struct CategoryItemIcon **entry = state->icons;

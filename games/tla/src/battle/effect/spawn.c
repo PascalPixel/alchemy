@@ -19,7 +19,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
 
-void BattleFx_SpawnRandomParticleAtPosition(
+void BattleEffect_SpawnRandomParticleAtPosition(
     const struct ParticleSource *source) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
@@ -39,7 +39,7 @@ void BattleFx_SpawnRandomParticleAtPosition(
     u8 flags;
 
     ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                 (u32)gBattleFx_ParticleScript);
+                                 (u32)gBattleEffect_ParticleScript);
     Object_SetMode(object, 0);
     mask = 13;
     flags = object->child->flags;

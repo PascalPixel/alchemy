@@ -460,7 +460,7 @@ static s32 LinkLobby_PromptToParticipate(void) {
   if (set != 0) {
     return set;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLobbyWantParticipatePlease);
   Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
   Engine_TaskWait(5);
@@ -481,7 +481,7 @@ static s32 LinkLobby_ReportDisconnection(void) {
   LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_03);
-  Engine_EventBegin();
+  Engine_EventStart();
   work->raisedTrigger = LOBBY_EVENT_NONE;
   Engine_EventSetMessage(MsgLobbyLinkDisconnected);
   Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
@@ -493,7 +493,7 @@ static s32 LinkLobby_ReportDisconnection(void) {
 }
 
 /// Receives the partner's three member records into units 0x80 to 0x82 (the
-/// battle's enemies, by UnitGet) and its Djinn recovery table into the enemy
+/// battle's enemies, by Unit_Get) and its Djinn recovery table into the enemy
 /// side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
 /// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
 /// BattleUnit name holds. Returns how many records hold a member, or -1 when
@@ -584,9 +584,9 @@ next:
     goto second;
   }
   // The partner's members become this battle's enemies 0x80 to 0x82.
-  record = (u8 *)UnitGet(slot + 128);
+  record = (u8 *)Unit_Get(slot + 128);
   tries = 0;
-  if ((transferResult = SerialRuntime_BeginReceive(record)) == -1) {
+  if ((transferResult = SerialRuntime_StartReceive(record)) == -1) {
     goto failed;
   }
   goto test1;
@@ -621,7 +621,7 @@ second:
   heap = Runtime_BumpAllocateAlternatePool(size);
   tries = 0;
   if ((transferResult =
-           SerialRuntime_BeginReceive(Djinn_GetRecoveryTable(1))) != -1) {
+           SerialRuntime_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
     goto test2;
   }
 failed:
@@ -708,12 +708,12 @@ static s32 LinkLobby_SendPartyRecords(void) {
      * the send failure inside the loop and gives the copy's argument order;
      * as a plain block, 3 of 255 instructions differ in tbs-en. */
     do {
-      Iwram_CopyWords(heap, UnitGet(ownerIds[i]), size);
+      Iwram_CopyWords(heap, Unit_Get(ownerIds[i]), size);
       heap[0x12a] = 2;
       // As a u8, i - 128 is 0x80 + i: this member's unit on the partner's
       // side.
       slotMap[ownerIds[i]] = i - 128;
-      transferResult = SerialRuntime_BeginSend(heap, size);
+      transferResult = SerialRuntime_StartSend(heap, size);
       tries = 0;
       if (transferResult == -1) {
         result = transferResult;
@@ -759,7 +759,7 @@ next:
   // Pad to three records with the last copy marked absent (side 0).
   if (i <= 2) {
     heap[0x12a] = tries = 0;
-    if ((transferResult = SerialRuntime_BeginSend(heap, size)) != -1) {
+    if ((transferResult = SerialRuntime_StartSend(heap, size)) != -1) {
       goto test;
     }
     result = transferResult;
@@ -794,7 +794,7 @@ next:
         j--;
       }
     }
-    if ((transferResult = SerialRuntime_BeginSend(heap, size)) == -1) {
+    if ((transferResult = SerialRuntime_StartSend(heap, size)) == -1) {
       result = transferResult;
       goto done;
     }
@@ -894,13 +894,13 @@ static s32 LinkLobby_EnterBattle(void) {
   work = gEventWork;
   missedFrames = 0;
   if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
-    Engine_EventBegin();
+    Engine_EventStart();
   } else {
     if (!Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00))
       return LOBBY_NO_RESULT;
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05))
       return LOBBY_NO_RESULT;
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
@@ -1042,7 +1042,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   // the circle, +4 says the request is made, +5 offers a monster battle and
   // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
   // Look for the partner's signature twice, a frame apart.
   if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
@@ -1146,7 +1146,7 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
   u16 *tally;
   s32 messageBase;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
   // FACING_IS_NORTH's test, written out: strictly between northwest and
   // northeast.
@@ -1189,7 +1189,7 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
   s32 displayedPreset;
   s32 loadResult;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(actorId, gGameState.selectedActor, 0);
   Engine_EventSetMessage(MsgLobbyChooseParameters);
   Engine_EventShowMessage(actorId, 0);
@@ -1244,7 +1244,7 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
 /// Talking to ACTOR_HEALER, who serves as a Sanctum's healer
 /// (Engine_SanctumOpen).
 static s32 LinkLobby_OpenSanctum(s32 actorId) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_SanctumOpen(actorId);
   Engine_EventEnd();
 #ifdef UBFIX
@@ -1292,7 +1292,7 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 isaacPresent = LinkLobby_PartyContains(0);
   s32 speakerPresent = LinkLobby_PartyContains(actor);
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
   if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_04)) {
 
@@ -1350,7 +1350,7 @@ static s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
   s32 step = 0;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   switch (actor) {
   case ACTOR_TRAVELING_WARRIOR:
     message = MsgLobbyTravelingWarrior;
@@ -1380,7 +1380,7 @@ static s32 LinkLobby_TalkToVisitor(s32 actor) {
 static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
   if (!GameFlag_IsSet(FLAG_SCENE_TEMP_04)) {
     if (Party_CountActiveOwners() <= 3)
@@ -1405,7 +1405,7 @@ static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
 static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   struct GameState *state;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   state = &gGameState;
   Engine_ActorFaceActor(actorId, state->selectedActor, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
@@ -1536,7 +1536,7 @@ s32 LinkLobby_RunRoundResult(void) {
     s32 messageOffset;
     s32 v;
 
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
@@ -1590,7 +1590,7 @@ s32 LinkLobby_RunRoundResult(void) {
   } else if (gGameState.entrance == 9) {
 
     gGameState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
@@ -1620,7 +1620,7 @@ s32 LinkLobby_RunRoundResult(void) {
   } else if (gGameState.entrance == 10) {
     s32 v;
 
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -1659,7 +1659,7 @@ s32 LinkLobby_RunRoundResult(void) {
   } else if (gGameState.entrance == 11) {
     s32 v;
 
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -1680,7 +1680,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_GameFlagClear(FLAG_LINK_BATTLE_ARRANGED);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gGameState.idleSleepEnabled != 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
       Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);

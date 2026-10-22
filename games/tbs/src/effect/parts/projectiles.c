@@ -23,9 +23,9 @@
 /// side: 1 mirrors the pictures.
 /// anchor: where the Djinni appears (enum DjinniEntranceAnchor).
 /// outX, outY: receive the Djinni's last screen position.
-void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                s32 element, s32 side, s32 anchor, s32 *outX,
-                                s32 *outY) {
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                    s32 element, s32 side, s32 anchor,
+                                    s32 *outX, s32 *outY) {
   s32 center[3];
   s32 goal[3];
   s32 step[3];
@@ -48,7 +48,7 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect,
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   if (element > ELEMENT_JUPITER) {
@@ -249,7 +249,7 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect,
   }
   // Leave the canvas cleared and fully shown for the effect that follows,
   // without closing the layer.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -267,42 +267,42 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect,
 /// Six comets fly at each target, three frames apart, and burst into a flash
 /// and sparks; the effect's variant picks one of three comets.
 ///
-/// Abilities: Slash, Wind Slash, Sonic Slash (BATTLE_FX_SLASH).
-void BattleFx_RunSlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SLASH);
+/// Abilities: Slash, Wind Slash, Sonic Slash (BATTLE_EFFECT_SLASH).
+void BattleEffect_RunSlash(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SLASH);
 }
 /// Four spinning shurikens fly at each target, five frames apart, and vanish
 /// once past it.
 ///
-/// Abilities: Shuriken (BATTLE_FX_SHURIKEN).
-void BattleFx_RunShuriken(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SHURIKEN);
+/// Abilities: Shuriken (BATTLE_EFFECT_SHURIKEN).
+void BattleEffect_RunShuriken(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SHURIKEN);
 }
 /// Ten pellets fly slowly at each target and bounce off it, up or down at
 /// random.
 ///
-/// Abilities: Crazy Voice (BATTLE_FX_CRAZY_VOICE).
-void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_CRAZY_VOICE);
+/// Abilities: Crazy Voice (BATTLE_EFFECT_CRAZY_VOICE).
+void BattleEffect_RunCrazyVoice(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_CRAZY_VOICE);
 }
 /// Five yellow sparks fly level at each target, five frames apart.
 ///
-/// Abilities: Wing Flutter (BATTLE_FX_WING_FLUTTER).
-void BattleFx_RunWingFlutter(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_FLUTTER);
+/// Abilities: Wing Flutter (BATTLE_EFFECT_WING_FLUTTER).
+void BattleEffect_RunWingFlutter(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_FLUTTER);
 }
 /// Ten large yellow sparks stream level at each target, one a frame, spread up
 /// and down.
 ///
-/// Abilities: Wing Stroke (BATTLE_FX_WING_STROKE).
-void BattleFx_RunWingStroke(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_STROKE);
+/// Abilities: Wing Stroke (BATTLE_EFFECT_WING_STROKE).
+void BattleEffect_RunWingStroke(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_STROKE);
 }
 /// Ten small yellow sparks stream level at each target, one a frame.
 ///
-/// Abilities: Wing Beat (BATTLE_FX_WING_BEAT).
-void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_BEAT);
+/// Abilities: Wing Beat (BATTLE_EFFECT_WING_BEAT).
+void BattleEffect_RunWingBeat(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_BEAT);
 }
 /// Puts the user into its leap pose and fires the volley in this mode
 /// while its animation runs fast.
@@ -310,14 +310,15 @@ void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
 /// Called by Cutting Edge, Heat Wave and Blizzard. Leaves the user in its
 /// action pose, its animation back at the usual speed.
 static inline void
-BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
+BattleEffect_RunVolleyWithAction(struct BattleEffectArgument *effect,
+                                 s32 mode) {
   struct DispatchObject *user;
 
   user = (struct DispatchObject *)GetBattleObjectSlotFar(effect->actor)->object;
   ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
   ObjectDispatch_SetAnimationSpeedFar(user,
                                       PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
-  BattleFx_RunProjectileVolley(effect, mode);
+  BattleEffect_RunProjectileVolley(effect, mode);
   ObjectDispatch_SetAnimationSpeedFar(user,
                                       PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
 }
@@ -325,45 +326,45 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
 /// From the user's action pose, one large comet in ice colours flies at each
 /// target and bursts into 80 sparks.
 ///
-/// Abilities: Cutting Edge (BATTLE_FX_CUTTING_EDGE).
-void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_CUTTING_EDGE);
+/// Abilities: Cutting Edge (BATTLE_EFFECT_CUTTING_EDGE).
+void BattleEffect_RunCuttingEdge(struct BattleEffectArgument *effect) {
+  BattleEffect_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_CUTTING_EDGE);
 }
 /// From the user's action pose, seven fireballs trailing embers fly at each
 /// target, two frames apart, each bursting into 40 sparks.
 ///
-/// Abilities: Heat Wave (BATTLE_FX_HEAT_WAVE).
-void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_HEAT_WAVE);
+/// Abilities: Heat Wave (BATTLE_EFFECT_HEAT_WAVE).
+void BattleEffect_RunHeatWave(struct BattleEffectArgument *effect) {
+  BattleEffect_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_HEAT_WAVE);
 }
 /// Thirty ice chips fall from high above the user onto each target, without
 /// shaking the screen or knocking the target back; the battle shows the damage
 /// on frame 48.
 ///
-/// Abilities: Sleet (BATTLE_FX_SLEET).
-void BattleFx_RunSleet(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SLEET);
+/// Abilities: Sleet (BATTLE_EFFECT_SLEET).
+void BattleEffect_RunSleet(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SLEET);
 }
 /// Sixty ice chips stream at each target, one a frame, without knocking it
 /// back.
 ///
-/// Abilities: Ice Blessing (BATTLE_FX_ICE_BLESSING).
-void BattleFx_RunIceBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_ICE_BLESSING);
+/// Abilities: Ice Blessing (BATTLE_EFFECT_ICE_BLESSING).
+void BattleEffect_RunIceBlessing(struct BattleEffectArgument *effect) {
+  BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_ICE_BLESSING);
 }
 /// From the user's action pose, sixty ice chips stream at each target, one a
 /// frame, scattered up and down, without knocking it back.
 ///
-/// Abilities: Blizzard (BATTLE_FX_BLIZZARD).
-void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_BLIZZARD);
+/// Abilities: Blizzard (BATTLE_EFFECT_BLIZZARD).
+void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
+  BattleEffect_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_BLIZZARD);
 }
 
 /// PARTICLES holds the hit flashes from 0, the sparks from 100 and the
 /// fireball trails from 512.
 #define PROJECTILE_VOLLEY_PARTICLE_COUNT 1024
 
-/// The bytes of a gProjectiles_Modes row.
+/// The bytes of a gProjectileVolley_Modes row.
 enum VolleyField {
   PROJECTILE_VOLLEY_SHOTS,   ///< shots at each target
   PROJECTILE_VOLLEY_STEPS,   ///< frames a shot takes to reach its target
@@ -403,8 +404,8 @@ enum VolleyField {
 ///         PROJECTILE_VOLLEY_COMET_A); with prelude 1 a Mercury Djinni
 ///         enters first.
 /// mode: the shot and its flight (enum ProjectileVolleyMode).
-void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
+                                      s32 mode) {
   struct EffectPosition position;
   s32 screenX;
   s32 screenY;
@@ -440,12 +441,12 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   // The canvas's BG priority: 0 for Ice Blessing, 1 for the others. A
   // Djinni prelude then opens the layer again at priority 0.
   if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
-                               DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
+    BattleEffect_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
+                                   DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
   // The main blitter, mirrored on side 1: brightest-wins for Cutting Edge,
   // additive for the others.
@@ -531,16 +532,16 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
-  shots = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
-  steps = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
+  shots = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
+  steps = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
   {
-    s32 stagger = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_STAGGER]);
-    s32 delay = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
+    s32 stagger = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STAGGER]);
+    s32 delay = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
     s32 height = BattleUnit_GetEffectHeightFar(work->effect->actor);
 
     // Keep the shots within work->particles' 64.
@@ -805,7 +806,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                     particle->variant = (Random16() & 7) + 16;
                     spawned++;
                     if (spawned ==
-                        (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_SPARKS]))
+                        (gProjectileVolley_Modes[mode]
+                                                [PROJECTILE_VOLLEY_SPARKS]))
                       break;
                   }
                 }
@@ -828,8 +830,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
-                  screenPosition->y - gProjectiles_CometHeights[comet], 32,
-                  gProjectiles_CometHeights[comet]);
+                  screenPosition->y - gProjectileVolley_CometHeights[comet], 32,
+                  gProjectileVolley_CometHeights[comet]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               if (work->effect->side == 1)
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -842,7 +844,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
-                  gProjectiles_CometHeights[comet]);
+                  gProjectileVolley_CometHeights[comet]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               // Shurikens vanish once past their target.
@@ -853,7 +855,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                        mode == PROJECTILE_VOLLEY_BLIZZARD ||
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
               s32 cell = j & 3;
-              draw[0](canvas, work->sheet + gProjectiles_PelletOffsets[cell],
+              draw[0](canvas,
+                      work->sheet + gProjectileVolley_PelletOffsets[cell],
                       screenPosition->x - 4, screenPosition->y - 4, 8, 8);
             } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
               draw[0](canvas, work->sheet + j % 6 * (8 * 16),
@@ -892,46 +895,46 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gProjectiles_FlashOffsets[step],
-                  flash->x - gProjectiles_FlashWidths[step],
-                  flash->y - gProjectiles_FlashRises[step],
-                  gProjectiles_FlashWidths[step],
-                  gProjectiles_FlashHeights[step]);
+                  canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
+                  flash->x - gProjectileVolley_FlashWidths[step],
+                  flash->y - gProjectileVolley_FlashRises[step],
+                  gProjectileVolley_FlashWidths[step],
+                  gProjectileVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gProjectiles_FlashOffsets[step],
+                  canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
                   flash->x,
-                  flash->y + gProjectiles_FlashSteps[step] -
-                      gProjectiles_FlashRises[step],
-                  gProjectiles_FlashWidths[step],
-                  gProjectiles_FlashHeights[step]);
+                  flash->y + gProjectileVolley_FlashSteps[step] -
+                      gProjectileVolley_FlashRises[step],
+                  gProjectileVolley_FlashWidths[step],
+                  gProjectileVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
-                  work->sheet + gProjectiles_FlashOffsets[step] +
+                  work->sheet + gProjectileVolley_FlashOffsets[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
-                  flash->x - gProjectiles_FlashRises[step],
-                  flash->y - gProjectiles_FlashWidths[step],
-                  gProjectiles_FlashHeights[step],
-                  gProjectiles_FlashWidths[step]);
+                  flash->x - gProjectileVolley_FlashRises[step],
+                  flash->y - gProjectileVolley_FlashWidths[step],
+                  gProjectileVolley_FlashHeights[step],
+                  gProjectileVolley_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
-                  work->sheet + gProjectiles_FlashOffsets[step] +
+                  work->sheet + gProjectileVolley_FlashOffsets[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
-                  flash->x + gProjectiles_FlashSteps[step] -
-                      gProjectiles_FlashRises[step],
-                  flash->y, gProjectiles_FlashHeights[step],
-                  gProjectiles_FlashWidths[step]);
+                  flash->x + gProjectileVolley_FlashSteps[step] -
+                      gProjectileVolley_FlashRises[step],
+                  flash->y, gProjectileVolley_FlashHeights[step],
+                  gProjectileVolley_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             flash->z++;
@@ -989,7 +992,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 /// the hop. Sets the battler's motion object to move at up to 8 pixels a frame,
 /// jumping at 4 pixels a frame under the usual gravity, and selects
 /// POSE_STANDING.
-UNUSED void BattleFx_InitializeRisingObject(s32 id) {
+UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct MotionObject *object = slot->object;
 
@@ -1010,10 +1013,10 @@ UNUSED void BattleFx_InitializeRisingObject(s32 id) {
 /// in its leap pose. The speed is that distance over the frames; the
 /// distance is taken in 1/256 pixels so its square fits in 32 bits.
 ///
-/// Called by BattleFx_RunRushingStrike. Sets the battler's acceleration,
+/// Called by BattleEffect_RunRushingStrike. Sets the battler's acceleration,
 /// speed limit and gravity, turns it to face its motion, starts it moving on
 /// the ground towards that point and selects POSE_LEAP.
-void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
+void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
   struct MotionObject *object = slot->object;

@@ -12,7 +12,7 @@ Ui_LoadCharacterEntryForSlot:
 	adds r7, r2, #0
 	sub sp, #16
 	ldr r6, [r3, #60]
-	bl Localization_LookupEntryId
+	bl UiText_GetSpeakerPortrait
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2

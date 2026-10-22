@@ -81,7 +81,7 @@ FieldEvent_WaitFrames:
 	.global Func_02001fcc
 	.thumb_func
 Func_02001fcc:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001fd4
 	.thumb_func
 Func_02001fd4:
@@ -202,10 +202,10 @@ Func_020020b4:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -306,18 +306,18 @@ Func_02002114:
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
-	.global Field_BeginPaletteTransition
+	.global Field_StartPaletteTransition
 	.thumb_func
-Field_BeginPaletteTransition:
-	overlay_veneer Field_BeginPaletteTransitionFar
+Field_StartPaletteTransition:
+	overlay_veneer Field_StartPaletteTransitionFar
 	.endif
 	.endif
 	.global Func_02002124

@@ -20,7 +20,7 @@ Func_081093a4:
 	adds r0, r1, #0
 	mov r9, r2
 	str r3, [sp, #16]
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r0, #0
 	mov r0, r9
 	bl Item_Get
@@ -124,7 +124,7 @@ Func_081093a4:
 	strh r1, [r7, r5]
 	ldr r0, [sp, #20]
 	mov r8, r2
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldrh r3, [r7, #60]
 	add r2, sp, #24
 	str r3, [r2]
@@ -148,7 +148,7 @@ Func_081093a4:
 	str r3, [r2, #12]
 	strh r0, [r7, r5]
 	ldr r0, [sp, #20]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldrh r3, [r7, #60]
 	add r1, sp, #40
 	str r3, [r1]

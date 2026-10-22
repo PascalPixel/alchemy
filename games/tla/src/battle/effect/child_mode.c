@@ -32,7 +32,7 @@ void ObjectGroup_SetActiveChildParam(struct ChildGroup *group, s32 mode) {
 
 /// Fills count bytes of table with a rising shade ramp (0 to 63, by a step
 /// scaled by scale), then repeats it seven more times.
-void BattleFx_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
+void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
   u32 step = count * 2;
   s32 total = 0;
   u32 i;
@@ -60,7 +60,7 @@ void BattleFx_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
 
 /// Fills table with a shade ramp that rises over count bytes and falls back,
 /// repeated repeats times.
-void BattleFx_BuildShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale) {
+void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale) {
   s32 total = 0;
   u32 step = count * 2;
   u32 i;
@@ -88,8 +88,8 @@ void BattleFx_BuildShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale) {
   }
 }
 
-/// As BattleFx_BuildShadeRampWave, at twice the step.
-void BattleFx_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale) {
+/// As BattleEffect_BuildShadeRampWave, at twice the step.
+void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale) {
   s32 total = 0;
   u32 step = count * 2;
   u32 i;

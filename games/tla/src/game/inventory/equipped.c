@@ -1,7 +1,7 @@
 #include "inventory.h"
 
 s32 Inventory_FindEquipped(s32 owner, s32 type) {
-  struct OwnerInventoryState *base = UnitGet(owner);
+  struct OwnerInventoryState *base = Unit_Get(owner);
   s32 index;
   struct ItemDefinition *item;
 

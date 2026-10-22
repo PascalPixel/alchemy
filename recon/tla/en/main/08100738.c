@@ -19,7 +19,7 @@ struct InventoryMenuState {
   u8 itemCount;
 };
 
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 void Inventory_RemoveFar(s32 ownerId, s32 slot);
 s32 ItemMenu_CollectItems(struct BattleUnit *owner, u16 *items, s32 mode);
 s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
@@ -32,7 +32,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct BattleUnit *unit;
   struct ItemDefinition *item;
 
-  unit = UnitGet(ownerId);
+  unit = Unit_Get(ownerId);
   menu = Ram_HeapSlots->menuRuntime;
   itemId = ITEM_ID_MASK & unit->inventory[slot];
   item = Item_Get(itemId);

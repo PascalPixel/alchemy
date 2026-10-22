@@ -25,7 +25,7 @@ struct ClimbSprite {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_End(void);
 void EventRuntime_Wait(s32 frames);
 void WaitFrames(s32 frames);
@@ -48,7 +48,7 @@ s32 Func_080d53b8(void) {
   s32 position[3];
   s32 result;
 
-  EventRuntime_Begin();
+  EventRuntime_Start();
   if (leader->animationKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
   if (gPartyState.renderMode == 0) {

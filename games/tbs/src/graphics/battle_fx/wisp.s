@@ -1,6 +1,6 @@
 	.section .rodata
-	.global BattleFx_WispSheet
-BattleFx_WispSheet:
+	.global BattleEffect_WispSheet
+BattleEffect_WispSheet:
 	.incbin "games/tbs/src/graphics/battle_fx/wisp.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/wisp.bitmap.lz"
-	.byte 0x2e, 0x06	@ PACKER: left in the buffer by BattleFx_SmokeSheet+0x7ae
+	.byte 0x2e, 0x06	@ PACKER: left in the buffer by BattleEffect_SmokeSheet+0x7ae

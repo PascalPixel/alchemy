@@ -41,7 +41,7 @@ struct FieldActor {
 void Task_Wait(s32 frames);
 void GameFlag_Set(s32 flag);
 void Event_Wait(s32 frames);
-void Event_Begin(void);
+void Event_Start(void);
 void Event_End(void);
 struct FieldActor *Actor_Get(s32 actor);
 void Actor_SetAnimation(s32 actor, s32 animation);
@@ -55,7 +55,7 @@ void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width, s32 height,
                             s32 destX, s32 destY);
 void Audio_PlayCue(s32 cue);
 
-void Engine_EventBegin(void);
+void Engine_EventStart(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
 void Engine_EventResolvePendingActions(s32 skip);

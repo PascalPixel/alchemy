@@ -78,10 +78,10 @@ Func_02005790:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -273,7 +273,7 @@ FieldEvent_WaitFrames:
 	.global Func_02005880
 	.thumb_func
 Func_02005880:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02005888
 	.thumb_func
 Func_02005888:
@@ -349,7 +349,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_02005918
 	.thumb_func
 Func_02005918:
-	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:
@@ -454,10 +454,10 @@ Func_020059c0:
 	.thumb_func
 Func_020059c8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_FindNearestObjectFar
+	overlay_veneer BattleEffect_FindNearestObjectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_FindNearestObjectFar
+	overlay_veneer BattleEffect_FindNearestObjectFar
 	.else
 	overlay_veneer Func_080c82e8
 	.endif
@@ -514,10 +514,10 @@ Func_020059e8:
 	.thumb_func
 Func_020059f0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif
@@ -650,16 +650,16 @@ Func_02005a50:
 	overlay_veneer Func_080c88d0
 	.endif
 	.endif
-	.global ObjectEffect_BeginContextEffect26
+	.global ObjectEffect_StartContextEffect26
 	.thumb_func
-ObjectEffect_BeginContextEffect26:
+ObjectEffect_StartContextEffect26:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c88f0
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c88f0
 	.else
-	overlay_veneer ObjectEffect_BeginContextEffect26Far
+	overlay_veneer ObjectEffect_StartContextEffect26Far
 	.endif
 	.endif
 	.global Func_02005a60

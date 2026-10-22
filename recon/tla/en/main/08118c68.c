@@ -6,7 +6,7 @@
 #include "battle_work.h"
 #include "battle_party.h"
 
-s32 BattleEnemyList(s16 *unit_ids);
+s32 BattleEnemy_List(s16 *unit_ids);
 extern const s8 gData_081287c8[];
 
 void Func_08118c68(void) {
@@ -23,7 +23,7 @@ void Func_08118c68(void) {
     battle->partyUnits[i] = buf[i];
   battle->partyUnits[count] = 0xff;
 
-  count = BattleEnemyList(buf);
+  count = BattleEnemy_List(buf);
   kind = battle->unk042;
   if (kind >= 0) {
     if (kind <= 1) {

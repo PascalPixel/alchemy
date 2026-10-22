@@ -42,13 +42,13 @@ s32 BattleEscape_CheckSuccess(void) {
     chance = 0x1388 + (escapeState->failedAttempts * 0x7D0);
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
     for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
-      levelTotal += ((u8 *)UnitGet((s32)livingUnits[unitIndex]))[0x0f];
+      levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
     }
     chance += __divsi3(levelTotal * 0x1F4, livingCount);
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal += ((u8 *)UnitGet((s32)livingUnits[unitIndex]))[0x0f];
+      levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
     }
     chance -= __divsi3(levelTotal * 0x1F4, livingCount);
     if ((chance > 0) &&

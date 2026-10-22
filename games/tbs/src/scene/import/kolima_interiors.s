@@ -3,7 +3,7 @@
 	.set import.Engine_MapCopyCellsTo, 1
 	.set import.Engine_ActorSetSpriteFlags, 1
 	.set import.Engine_GameFlagIsSet, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.FieldScene_PrepareActors, 1
 	.set import.Object_GetById, 1

@@ -185,7 +185,7 @@ static void TolbiInteriors_EnterDoor(void) {
                    gTolbiInteriorsDoors[doorIndex].y);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Engine_EventRequestExit(*trigger);
 }
 
@@ -197,7 +197,7 @@ static void TolbiInteriors_EnterDoor(void) {
 static void TolbiInteriors_WatchWomanHideMedal(void) {
   struct FieldActor *sparkle;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiHeyWhatsThis);
 
   // A sparkle on the floor where she finds it.
@@ -240,7 +240,8 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN,
+                                  ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
   Engine_EventWait(30);
@@ -253,7 +254,7 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Actor_WalkByAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 16, 0);
   Actor_WalkByAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 0, 32);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
@@ -270,7 +271,7 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
 /// stranded passengers argue about the captain, who won't sail the ship. "He
 /// won't sail the ship, even though we agreed to do whatever it takes?"
 static void TolbiInteriors_WatchPassengersArgue(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiHeWontSailShipEven);
   Engine_EventWait(30);
   Engine_ActorJump(TOLBI_INTERIORS_ANGRY_PASSENGER, 4, 13);
@@ -281,12 +282,13 @@ static void TolbiInteriors_WatchPassengersArgue(void) {
   Engine_ActorShowEmote(TOLBI_INTERIORS_PASSENGER_WIFE,
                         EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE,
+                                  ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(TOLBI_INTERIORS_PASSENGER_WIFE, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_THIRD_PASSENGER,
-                                  ANIM_SHAKE_HEAD);
+                                  ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(TOLBI_INTERIORS_THIRD_PASSENGER, 0);
   Engine_EventWait(10);
@@ -294,7 +296,8 @@ static void TolbiInteriors_WatchPassengersArgue(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(TOLBI_INTERIORS_ANGRY_PASSENGER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE,
+                                  ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventEnd();
 }
@@ -411,14 +414,14 @@ static void TolbiInteriors_TalkToArmorMerchant(s32 speaker) {
 
 /// In Tolbi, the chef asks whether the party watched Colosso, which he missed.
 static void TolbiInteriors_TalkToChef(s32 speaker) {
-  Engine_EventBegin();
+  Engine_EventStart();
   TolbiInteriors_AskYesNo(MsgTolbiLookLikeWarrior, speaker);
   Engine_EventEnd();
 }
 
 /// In Tolbi after Colosso, the waitress grumbles about the chef's bad mood.
 static void TolbiInteriors_TalkToWaitress(s32 speaker) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiGrrrChefInBadMood);
   Engine_EventShowMessage(speaker, 0);
   Engine_EventEnd();
@@ -426,7 +429,7 @@ static void TolbiInteriors_TalkToWaitress(s32 speaker) {
 
 /// In Tolbi during the festival, a resident offers the party a bed.
 static void TolbiInteriors_TalkToHost(s32 speaker) {
-  Engine_EventBegin();
+  Engine_EventStart();
   TolbiInteriors_AskYesNo(MsgTolbiWantStay, speaker);
   Engine_EventEnd();
 }
@@ -435,7 +438,7 @@ static void TolbiInteriors_TalkToHost(s32 speaker) {
 /// the barrel she teases; once it is gone she greets them, startled, the first
 /// time, and then claims she is fine.
 static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_TAKEN) == 0) {
     TolbiInteriors_AskYesNo(MsgTolbiHeeHeeLook, speaker);
   } else {
@@ -455,7 +458,7 @@ static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
 
 /// In Tolbi, Mind Read on the medal woman gives the hiding place away.
 static void TolbiInteriors_ReadMedalWomanMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO) == 0) {
     Engine_EventSetMessage(MsgTolbiHehHehSheJustHid);
   } else {
@@ -468,7 +471,7 @@ static void TolbiInteriors_ReadMedalWomanMind(void) {
 /// In Tolbi after Colosso, the angry passenger complains the ships won't sail.
 /// "Grrr! What a scam!"
 static void TolbiInteriors_TalkToAngryPassenger(s32 speaker) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiGrrrScamWhyWontThey);
   Actor_ShowEmote(TOLBI_INTERIORS_ANGRY_PASSENGER,
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -480,7 +483,7 @@ static void TolbiInteriors_TalkToAngryPassenger(s32 speaker) {
 /// after Colosso, and rode the ship from Kalay with the party. "Hey! You're the
 /// would-be warrior!"
 static void TolbiInteriors_TalkToFellowPassenger(s32 speaker) {
-  Engine_EventBegin();
+  Engine_EventStart();
   TolbiInteriors_AskYesNo(MsgTolbiWarriorRemember, speaker);
   Engine_EventEnd();
 }

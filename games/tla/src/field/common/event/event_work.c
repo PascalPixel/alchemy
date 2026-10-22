@@ -75,5 +75,5 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   if (event->controlMode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         (u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
-  BattleFx_SelectBattleCue(row, column);
+  BattleEffect_SelectBattleCue(row, column);
 }

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
-	.global BattleFx_RunPrism
+	.global BattleEffect_RunPrism
 	.thumb_func
-BattleFx_RunPrism:
+BattleEffect_RunPrism:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -21,7 +21,7 @@ BattleFx_RunPrism:
 	ldr r3, [r3, #96]
 	movs r7, #239
 	str r3, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081492cc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -47,7 +47,7 @@ BattleFx_RunPrism:
 	ldr r0, [r3, #4]
 	adds r1, r4, #0
 	str r4, [sp, #16]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r5, [sp, #28]
 	b .L_081492d8
 .L_081492cc:
@@ -316,7 +316,7 @@ BattleFx_RunPrism:
 	lsls r2, r2, #6
 	adds r0, r6, #0
 	movs r1, #64
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	ldr r2, [r6, #8]
 	adds r3, r3, r2
@@ -377,7 +377,7 @@ BattleFx_RunPrism:
 	mov r0, r10
 	lsls r2, r2, #9
 	movs r1, #64
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	mov r0, r10
 	ldr r3, [r0, #4]
 	movs r2, #224
@@ -480,7 +480,7 @@ BattleFx_RunPrism:
 	b .L_08149640
 	.2byte 0x0000
 .L_08149618:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814961c:
 	.4byte Data_081979b7
 .L_08149620:
@@ -551,7 +551,7 @@ BattleFx_RunPrism:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -563,4 +563,4 @@ BattleFx_RunPrism:
 .L_081496c0:
 	.4byte Data_081979b7
 .L_081496c4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

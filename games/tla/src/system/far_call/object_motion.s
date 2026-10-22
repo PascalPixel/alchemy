@@ -101,10 +101,10 @@ ObjectMotion_SetVariantCallbackFar:
 	.thumb_func
 Motion_SetVarCbAndRefreshFar:
 	overlay_veneer Motion_SetVarCbAndRefresh
-	.global BattleFx_RunRisingObjectSequenceFar
+	.global BattleEffect_RunRisingObjectSequenceFar
 	.thumb_func
-BattleFx_RunRisingObjectSequenceFar:
-	overlay_veneer BattleFx_RunRisingObjectSequence
+BattleEffect_RunRisingObjectSequenceFar:
+	overlay_veneer BattleEffect_RunRisingObjectSequence
 	.global ObjectMotion_SetAngleTowardFar
 	.thumb_func
 ObjectMotion_SetAngleTowardFar:

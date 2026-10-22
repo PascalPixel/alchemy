@@ -7,7 +7,7 @@
 
 void UiWork_ProcessAll(void);
 
-void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
+void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   struct UiRenderWork *state =
       (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
@@ -23,7 +23,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
 void UiWork_ProcessAll(void);
 void UiWork_ProcessAllOrChannels(void);
 
-void UiWork_InitCountersAndScheduleRefresh(s32 initialize) {
+void UiWork_InitializeCountersAndScheduleRefresh(s32 initialize) {
   struct UiRenderWork *state =
       (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 

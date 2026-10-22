@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_UpdateArcEffect
+	.global BattleEffect_UpdateArcEffect
 	.thumb_func
-BattleFx_UpdateArcEffect:
+BattleEffect_UpdateArcEffect:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -75,7 +75,7 @@ BattleFx_UpdateArcEffect:
 	mov r1, r10
 	ldr r0, [r1]
 	str r2, [sp, #0]
-	bl BattleFx_GetObjectDepth
+	bl BattleEffect_GetObjectDepth
 	subs r0, #1
 	strh r0, [r5, #30]
 	b .L_080e15c2
@@ -83,7 +83,7 @@ BattleFx_UpdateArcEffect:
 	mov r3, r10
 	ldr r0, [r3]
 	str r2, [sp, #0]
-	bl BattleFx_GetObjectDepth
+	bl BattleEffect_GetObjectDepth
 	ldr r3, [r5, #16]
 	ldr r1, .L_080e15f8
 	adds r0, #1

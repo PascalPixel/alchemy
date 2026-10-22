@@ -23,7 +23,7 @@ void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_RemoveActiveOwner(s32 owner);
 s32 Party_AddActiveOwner(s32 owner);
 s32 Unit_AddHp(s32 owner, s32 delta);
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 s32 Unit_AddPp(s32 owner, s32 delta);
 void Func_02004904(s32 a, s32 b);
 
@@ -111,8 +111,8 @@ void Func_02001c7c(void) {
   Party_RemoveActiveOwner(1);
   JupiterLighthouseRoomM_AddHp(2, -10000);
   JupiterLighthouseRoomM_AddHp(0, -10000);
-  UnitCalc(0);
-  UnitCalc(2);
+  Unit_Calculate(0);
+  Unit_Calculate(2);
   JupiterLighthouseRoomM_AddHp(0, 173);
   JupiterLighthouseRoomM_AddPp(2, -10000);
   JupiterLighthouseRoomM_AddPp(0, -10000);

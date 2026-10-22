@@ -15,13 +15,13 @@
 #define SC_TOP 0          ///< Script start
 #define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
 
-#define SC_WAIT(n) 0x00, (n)                    ///< Wait n frames.
-#define SC_SYNC 0x01                            ///< Wait for arrival.
-#define SC_POS(x, y, z) 0x02, (x), (y), (z)     ///< Set position.
-#define SC_MOVE(x, y, z) 0x03, (x), (y), (z)    ///< Move toward the target.
-#define SC_MOVE_BY(x, y, z) 0x04, (x), (y), (z) ///< Move by a relative offset.
-#define SC_FACE_LINK 0x05                       ///< Face the linked object.
-#define SC_MOVE_LINK 0x06                       ///< Move to the linked object.
+#define SC_WAIT(n) 0x00, (n)                     ///< Wait n frames.
+#define SC_SYNC 0x01                             ///< Wait for arrival.
+#define SC_POSITION(x, y, z) 0x02, (x), (y), (z) ///< Set position.
+#define SC_MOVE(x, y, z) 0x03, (x), (y), (z)     ///< Move toward the target.
+#define SC_MOVE_BY(x, y, z) 0x04, (x), (y), (z)  ///< Move by a relative offset.
+#define SC_FACE_LINK 0x05                        ///< Face the linked object.
+#define SC_MOVE_LINK 0x06                        ///< Move to the linked object.
 /// Move toward the object's position plus an offset that is never filled in;
 /// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) 0x07, (a), (b)

@@ -5,9 +5,9 @@
 #include "../psynergy_effects_internal.h"
 
 /// Per-frame update: sways 4 pixels either side of anchorX, once every 128
-/// frames. The update of each spark FieldFx_RunSparkEmitter sheds; it writes
-/// the spark's x and advances its phase.
-void FieldFx_SwayParticle(union FieldObject *fieldObject) {
+/// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
+/// writes the spark's x and advances its phase.
+void FieldEffect_SwayParticle(union FieldObject *fieldObject) {
   struct SparkObject *obj = (struct SparkObject *)fieldObject;
   s16 *phase;
 
@@ -19,9 +19,9 @@ void FieldFx_SwayParticle(union FieldObject *fieldObject) {
 
 /// Per-frame update: spirals in on a point 10 pixels above the effect's
 /// position, at a radius of as many pixels as frames are left; released when
-/// timer reaches 0. The update of FieldFx_RunPly's eight spiralling particles;
-/// each one's work holds its starting angle.
-void FieldFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
+/// timer reaches 0. The update of FieldEffect_RunPly's eight spiralling
+/// particles; each one's work holds its starting angle.
+void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct FieldFxScene *scene = gEffectWork;
   struct EffectVector pos;
@@ -45,7 +45,7 @@ void FieldFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
       particle->z.fixed = pos.z;
     } else {
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
-                                   gFieldFx_CommonParticleScript);
+                                   gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -53,9 +53,9 @@ void FieldFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 /// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
 /// above the effect's position, and every 3 frames sheds a spark that sways
 /// as it slowly falls. With phase -1 it stays where it is. The update
-/// FieldFx_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
+/// FieldEffect_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
-void FieldFx_RunSparkEmitter(union FieldObject *fieldObject) {
+void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
   struct SparkObject *emitter = (struct SparkObject *)fieldObject;
   struct FieldFxScene *scene;
   s16 *phase;
@@ -80,7 +80,7 @@ void FieldFx_RunSparkEmitter(union FieldObject *fieldObject) {
     // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
     // and is freed after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
-      spark->update = FieldFx_SwayParticle;
+      spark->update = FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
       spark->motionFlags = ACTOR_FALLS;
       spark->gravity = 458;
@@ -90,19 +90,19 @@ void FieldFx_RunSparkEmitter(union FieldObject *fieldObject) {
                                     SPRITE_COLOR_BLUE_TINT);
       spark->lifetime = 72;
       ObjectDispatch_InitializeFar((struct DispatchObject *)spark,
-                                   gFieldFx_CommonParticleScript);
+                                   gFieldEffect_CommonParticleScript);
     }
   }
 }
 
-/// Runs FieldFx_RunPly, then stops the caster's hook.
+/// Runs FieldEffect_RunPly, then stops the caster's hook.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_KIND_PLY).
 ///
-/// This is Ply cast on a target, which FieldFx_DispatchRequestKind calls.
-void FieldFx_RunPlyOnTarget(s32 unused) {
-  FieldFx_RunPly();
-  FieldFx_StopCasterHook();
+/// This is Ply cast on a target, which FieldEffect_DispatchRequestKind calls.
+void FieldEffect_RunPlyOnTarget(s32 unused) {
+  FieldEffect_RunPly();
+  FieldEffect_StopCasterHook();
 }
 
 /// Eight particles spiral into the centre, where one appears, sheds sparks and
@@ -110,10 +110,10 @@ void FieldFx_RunPlyOnTarget(s32 unused) {
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_KIND_PLY).
 ///
-/// Called by FieldFx_Run and FieldFx_RunPlyOnTarget; frees the particles'
-/// shared sprite resource slot at the end and runs the effect scene's
-/// finishCallback.
-void FieldFx_RunPly(void) {
+/// Called by FieldEffect_Run and FieldEffect_RunPlyOnTarget; frees the
+/// particles' shared sprite resource slot at the end and runs the effect
+/// scene's finishCallback.
+void FieldEffect_RunPly(void) {
   struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->mainObject;
   struct FieldActor *object;
@@ -121,7 +121,7 @@ void FieldFx_RunPly(void) {
   u8 resourceSlot;
   s32 i;
 
-  FieldFx_FadeToEffectColor();
+  FieldEffect_FadeToEffectColor();
 
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
@@ -131,7 +131,7 @@ void FieldFx_RunPly(void) {
     if (object != 0) {
       object->scaleY = 0xb333; // 0.7
       object->scaleX = 0xb333;
-      object->update = FieldFx_UpdateShrinkingOrbitObject;
+      object->update = FieldEffect_UpdateShrinkingOrbitObject;
       object->timer = 120;
       object->work = i << 13;
       object->motionFlags = ACTOR_FLOATS;
@@ -187,10 +187,10 @@ void FieldFx_RunPly(void) {
                                 SPRITE_COLOR_NORMAL);
   AudioCommand_PlayFar(MUS_CURE);
   if (object != 0) {
-    target->update = FieldFx_RunSparkEmitter;
+    target->update = FieldEffect_RunSparkEmitter;
     target->timer = 0;
-    // Cast on a target (enabled cleared by FieldFx_DispatchRequestKind), the
-    // sparks fall for 192 frames instead of 128.
+    // Cast on a target (enabled cleared by FieldEffect_DispatchRequestKind),
+    // the sparks fall for 192 frames instead of 128.
     if (scene->enabled != 0)
       WaitFrames(128);
     else
@@ -216,5 +216,5 @@ void FieldFx_RunPly(void) {
     Resource_ResetEntry(resourceSlot);
   if (scene->finishCallback != 0)
     scene->finishCallback();
-  FieldFx_FadeFromEffectColor();
+  FieldEffect_FadeFromEffectColor();
 }

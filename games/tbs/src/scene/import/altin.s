@@ -17,7 +17,7 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.FieldScene_PrepareActors, 1
 	.set import.Engine_EventChooseYesNo, 1
@@ -49,7 +49,7 @@
 	.set import.Engine_EventRequestExit, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_InnOpen, 1
 	.set import.Engine_AudioPlayCue, 1

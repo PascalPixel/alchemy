@@ -64,12 +64,12 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   WaitFrames(18);
 }
 
-void ObjectEffect_BeginContextEffect26(void) {
+void ObjectEffect_StartContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(0x1A);
   GameFlag_SetBit(0x120);
 }
 
-void ObjectEffect_BeginContextEffect25(void) {
+void ObjectEffect_StartContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(0x19);
   GameFlag_SetBit(0x121);
 }

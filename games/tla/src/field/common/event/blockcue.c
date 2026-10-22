@@ -70,11 +70,11 @@ struct FrameSource {
 
 typedef void (*FrameDecoder)(const void *source, void *destination, s32 mode);
 
-extern const u8 BattleFx_DecodeFrameCode[];
-extern const u8 BattleFx_DecodeFrameCopyEnd[];
+extern const u8 BattleEffect_DecodeFrameCode[];
+extern const u8 BattleEffect_DecodeFrameCopyEnd[];
 /// The decoder with its tables and work area (constants.ld). The block is
 /// larger than the copy, which stops before the work area.
-extern u8 BattleFx_DecodeFrameBlockSize[];
+extern u8 BattleEffect_DecodeFrameBlockSize[];
 
 /// Draws the current frame of a picture into a cleared buffer of the given
 /// size. The ARM frame decoder runs from RAM: when no copy is loaded yet, this
@@ -84,11 +84,11 @@ void Func_080e43a4(struct FrameSource *source, void *buffer, s32 size) {
   FrameDecoder decode = Ram_HeapSlots->unk4c[1];
 
   if (decode == NULL) {
-    Dma_Set(BattleFx_DecodeFrameCode,
+    Dma_Set(BattleEffect_DecodeFrameCode,
             Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER,
-                                      (s32)BattleFx_DecodeFrameBlockSize),
-            0x84000000 | ((u32)(BattleFx_DecodeFrameCopyEnd -
-                                BattleFx_DecodeFrameCode) >>
+                                      (s32)BattleEffect_DecodeFrameBlockSize),
+            0x84000000 | ((u32)(BattleEffect_DecodeFrameCopyEnd -
+                                BattleEffect_DecodeFrameCode) >>
                           2),
             REG_DMA3);
     decode = Ram_HeapSlots->unk4c[1];

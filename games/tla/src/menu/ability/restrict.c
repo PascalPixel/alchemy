@@ -2,7 +2,7 @@
 #include "battle_system.h"
 
 s32 PsynergyMenu_IsActionRestricted(s32 no) {
-  u8 *action = BattleActGet((u32)(no << 18) >> 18);
+  u8 *action = BattleAction_Get((u32)(no << 18) >> 18);
   u32 flags;
 
   if (action[6] == 0) {

@@ -2284,7 +2284,7 @@ Func_02001788:
 .L_02009944:
 	.4byte gData_02002cdc
 .L_02009948:
-	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
+	.4byte BattleEffect_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200994c:
 	.4byte 0xffff0000
 	.section .text.x02009950,"ax",%progbits

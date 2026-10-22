@@ -136,10 +136,10 @@ extern const u16 gUlysses_DropFrames[];
 extern const u8 gUlysses_BeamPalette[];
 extern const u8 gUlysses_BeamSprite[];
 
-void BattleFx_BeginCanvasLayer(s32);
+void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
 void Func_08179e6c(void);
-s32 BattleFx_LoadBlitter(s32, s32);
+s32 BattleEffect_LoadBlitter(s32, s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
@@ -149,14 +149,14 @@ Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
 void WaitFrames(s32);
 void Runtime_ReleaseHeapBlock(s32);
-void BattleFx_FetchRectangleBlitters(s32, void **);
+void BattleEffect_FetchRectangleBlitters(s32, void **);
 u32 Random16(void);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void Audio_PlayCue(s32);
 void Func_0815f0a0(s32);
-void BattleFxKernels_IntegrateVector2(Particle *, s32, s32);
-void BattleFxKernels_IntegrateVector3(Particle *, s32, s32);
+void BattleEffectKernels_IntegrateVector2(Particle *, s32, s32);
+void BattleEffectKernels_IntegrateVector3(Particle *, s32, s32);
 s32 *Render_AllocateModelList(s32);
 void Render_ResetTransformState(void);
 void Func_08015160(s32, s32, s32);
@@ -171,12 +171,12 @@ void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
 s32 VramCache_AllocEntry(s32);
 void Palette_LoadBasicObjColors(void);
-void BattleFx_SpawnObjects(s32, s32, s32);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_SpawnObjects(s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_08158ce0(s32, s32);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_0813baec(void);
 
 #define ALCHEMY_TYPES_H
@@ -232,13 +232,13 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   work = SYSTEM->summon;
   ctl = SYSTEM->control;
   bank = SYSTEM->bank;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   Func_08179e6c();
-  BattleFx_LoadBlitter(104, 3);
+  BattleEffect_LoadBlitter(104, 3);
   blit[0] = SYSTEM->blit;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   camera = 0;
   waveScroll = 0;
   shipY = -0x1d0000;
@@ -384,7 +384,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   *(vu16 *)0x0400000c = 0x786;
   *(vu16 *)0x04000020 = 0x80;
   *(s32 *)0x04000028 = 0;
-  BattleFx_FetchRectangleBlitters(0, blit);
+  BattleEffect_FetchRectangleBlitters(0, blit);
   work->unk7790 = 0;
   work->unk7794 = 5;
   work->unk7798 = -1;
@@ -739,7 +739,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         if ((u32)q->timer <= 5) {
           ((BlitFunc)blit[1])(dest, work->frames + q->timer * 288,
                               (q->x >> 16) - 2, (q->y >> 16) - 12, 12, 24);
-          BattleFxKernels_IntegrateVector2(q, 64, 0);
+          BattleEffectKernels_IntegrateVector2(q, 64, 0);
           q->timer++;
         }
       }
@@ -749,7 +749,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
           ((BlitFunc)blit[1])(dest, work->frames + 0x6c0 + (q->timer / 4 << 11),
                               (q->x >> 16) - 16, (q->y >> 16) - 32, 32, 64);
           q->vx += 0x1000;
-          BattleFxKernels_IntegrateVector2(q, 64, 0);
+          BattleEffectKernels_IntegrateVector2(q, 64, 0);
           q->timer++;
         }
       }
@@ -975,7 +975,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   *(vu16 *)0x04000052 = 0x1010;
   arg->actors[arg->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(arg->actors, 0);
-  BattleFx_SpawnObjects(1, 663, 1);
+  BattleEffect_SpawnObjects(1, 663, 1);
   for (i = 0; i != 15; i++) {
     work->sprites[1 + i] = Func_0815b3b0(32, 16, 0x80006000, 0);
     Iwram_Copy(work->sprites[1 + i], work->sprites[0], 24);
@@ -1037,7 +1037,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
           }
           Audio_PlayCue(144);
           for (j = 0; j < arg->count; j++) {
-            BattleFx_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000, 100);
+            BattleEffect_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000, 100);
             Func_0814cd48(arg->actors[j], 7, 5, j, 7);
             work->shake = 4;
           }
@@ -1050,7 +1050,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
           q->timer = 0;
         }
         work->sprites[i]->rotation = p->z;
-        BattleFxKernels_IntegrateVector3(p, 64, 0);
+        BattleEffectKernels_IntegrateVector3(p, 64, 0);
         p->vx = -Trig_Cos(work->sprites[i]->rotation) * 8;
         p->vy = -Trig_Sin(work->sprites[i]->rotation) * 8;
         work->sprites[i]->tile = work->sprites[0]->tile;
@@ -1071,7 +1071,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       if ((u32)q->timer <= 17) {
         ((BlitFunc)blit[i & 1])(dest, work->frames + (q->timer / 3 << 11),
                                 (q->x >> 16) - 16, (q->y >> 16) - 48, 32, 64);
-        BattleFxKernels_IntegrateVector2(q, 56, -0x2000);
+        BattleEffectKernels_IntegrateVector2(q, 56, -0x2000);
         q->timer++;
       }
     }
@@ -1082,8 +1082,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   }
   for (i = 0; i != 16; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

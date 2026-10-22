@@ -275,14 +275,14 @@ static void Event_LeaveForWorldMap(void) {
 /// time the party nears the passage north (cell code 10): the two guards step
 /// together in front of it, and the map cells around them change.
 static void Event_GuardsBlockPassage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_WEST_GUARD, 136, 384);
   Actor_WalkToAndWait(ACTOR_EAST_GUARD, 152, 384);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
-  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_STAND);
   Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if TBS_PATCH_3
   Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -306,7 +306,7 @@ static void Event_IodemQuestionsGuards(void) {
   s32 destinationColumn;
 #endif
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 438);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -392,7 +392,7 @@ static void Event_IodemQuestionsGuards(void) {
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -419,7 +419,7 @@ static void Event_IodemQuestionsGuards(void) {
 /// must show travel papers it does not have; no, and he calls them strange.
 /// Afterwards, wounded, he vows to settle the score.
 static void Event_TalkToEastGuard(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
     Engine_EventSetMessage(MsgSuhallaPityColossoVictor);
@@ -435,7 +435,7 @@ static void Event_TalkToEastGuard(void) {
 
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
       Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
-      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIMATION_SHAKE_HEAD);
       Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
       gEventWork->message += 2;
@@ -454,7 +454,7 @@ static void Event_TalkToEastGuard(void) {
 static void Event_SoldierVanishes(void) {
   unsigned int beat;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
   Event_ShowMessageAndWait(ACTOR_VANISHING_SOLDIER, 0, 10);

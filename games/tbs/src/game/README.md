@@ -85,7 +85,7 @@ while equipped and what using it does.
 | `unleash_action`, `unleash_chance` | the ability a weapon unleashes, at `unleash_chance` steps of 5 percent (`RollWeaponUnleash`) |
 | `use_type` | what using it costs: `ITEM_USE_CONSUMED`, `ITEM_USE_MAY_BREAK` (one time in eight), `ITEM_USE_EMPTIES` (leaves an Empty Bottle), or `ITEM_USE_FREE` |
 | `element` | a weapon's attack element, `ELEMENT_NONE` for none |
-| `effect0_kind`, `effect0_amount` to `effect3_` | up to four effects while equipped, `enum ItemEffectKind` (`ITEM_EFFECT_ADD_HP`, `ITEM_EFFECT_SCALE_ATTACK` and the rest), which `UnitCalc` applies |
+| `effect0_kind`, `effect0_amount` to `effect3_` | up to four effects while equipped, `enum ItemEffectKind` (`ITEM_EFFECT_ADD_HP`, `ITEM_EFFECT_SCALE_ATTACK` and the rest), which `Unit_Calculate` applies |
 | `action_id` | the ability the item uses |
 
 `action_id` and `unleash_action` are rows of `actions.tsv`. Used in battle,
@@ -147,7 +147,7 @@ parts, and [game/inventory.c](game/inventory.c) reads and writes them.
 
 ## Stats are recomputed whole
 
-A unit's stats are never adjusted in place: `UnitCalc` works them all out
+A unit's stats are never adjusted in place: `Unit_Calculate` works them all out
 again whenever one of their inputs changes, and a menu previews a change by
 running the same computation, as the picture at the top of the page shows.
 
@@ -156,7 +156,7 @@ sequenceDiagram
     participant M as Menu_DrawOwnerStatusPanel
     participant H as Copy on the heap
     participant U as The unit
-    participant C as UnitCalc
+    participant C as Unit_Calculate
     M->>H: copy the unit
     M->>U: change its equipment
     M->>C: recompute the unit
@@ -165,7 +165,7 @@ sequenceDiagram
     H->>U: restore the unit
 ```
 
-`UnitCalc` ([game/units.c](game/units.c)) works a unit's stats out again
+`Unit_Calculate` ([game/units.c](game/units.c)) works a unit's stats out again
 from its base stats, equipment, set Djinn, class and battle stat levels,
 clamps each and writes them back, keeping current HP and PP at the same
 fraction of their maximums. It runs after anything that changes an input:
@@ -175,7 +175,7 @@ A menu that previews a change uses the same path. To show Attack without the
 Machete, `Menu_DrawOwnerStatusPanel`
 ([menu/menu/common.c](../menu/menu/common.c))
 copies the unit to the heap, changes the real unit's equipment, lets
-`UnitCalc` run, draws the new numbers against the copy and restores the
+`Unit_Calculate` run, draws the new numbers against the copy and restores the
 unit from it. The preview is what equipping would do because it is the same
 computation.
 
@@ -288,7 +288,7 @@ calls these functions through the far-call table
 ## Words used here
 
 - **owner** and **unit**: an owner is a number, and a unit the
-  `struct BattleUnit` `UnitGet(owner)` returns, with its stats, HP and PP,
+  `struct BattleUnit` `Unit_Get(owner)` returns, with its stats, HP and PP,
   inventory and Djinn. Owners `ISAAC` (0) to `PIERS` (7) are the eight
   characters, kept in `gGameState.owners` (`character_ids.h`); owners from
   `FIRST_ENEMY_UNIT` (128) are the current battle's six enemies.
@@ -316,21 +316,21 @@ calls these functions through the far-call table
 
 | Prefix | What it acts on |
 | --- | --- |
-| `Unit_`, `UnitGet`, `UnitCalc`, `UnitRatio` | one unit: stats, HP and PP, Psynergy, levels, elements |
+| `Unit_` | one unit: stats, HP and PP, Psynergy, levels, elements |
 | `Party_`, `GameState_`, `Game_` | the party and the game state |
 | `Item_`, `Inventory_`, `PartyInventory_`, `InventorySnapshot_`, `ItemCounter_`, `Equipment_` | items: one unit's inventory, the party's, the Colosso's snapshot, and the rare item counters |
 | `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
 | `GameFlag_` | the game flags |
 | `Djinn_`, `DjinnRecovery_` | the Djinn, and their recovery lists |
-| `Battle_`, `BattleRandom`, `BattleTarget_` | the battle arithmetic the battle folder calls |
-| `BattleUnitSet` | filling an enemy unit at the start of a battle |
+| `Battle_`, `BattleTarget_` | the battle arithmetic the battle folder calls |
+| `BattleUnit_` (`BattleUnit_Set`) | filling an enemy unit at the start of a battle |
 | `Runtime_` | `Runtime_CopyBytesDirectional` and `Runtime_GetBuildStampTime`, which the engine names elsewhere |
 
 ## Evidence and open questions
 
 The label columns are the English names from `games/tbs/text/en.po`, by the
 message each row's id reaches. The columns are named from what the code reads
-in them, and the item effect kinds from what `UnitCalc` does with each. Flags
+in them, and the item effect kinds from what `Unit_Calculate` does with each. Flags
 48 to 127 are the Djinn's found flags because `Djinn_AddToLeastLoadedOwner`
 sets flag `FLAG_DJINNI_0` + 20 × element + index when a Djinni joins.
 

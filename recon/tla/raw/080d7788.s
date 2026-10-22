@@ -46,7 +46,7 @@ Func_080d7788:
 .L_080d77da:
 	cmp r7, #0
 	blt .L_080d783e
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	movs r3, #1
 	negs r3, r3
 	cmp r8, r3

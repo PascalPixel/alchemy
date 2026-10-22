@@ -20,7 +20,7 @@ Func_0810bca0:
 	mov r8, r2
 	sub sp, #8
 	mov r11, r3
-	bl UnitGet
+	bl Unit_Get
 	mov r1, r8
 	lsls r1, r1, #1
 	mov r9, r1

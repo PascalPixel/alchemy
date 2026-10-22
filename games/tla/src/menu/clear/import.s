@@ -58,14 +58,14 @@ Func_02002220:
 	.thumb_func
 Func_02002228:
 	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
-	.global SerialRuntime_BeginReceive
+	.global SerialRuntime_StartReceive
 	.thumb_func
-SerialRuntime_BeginReceive:
+SerialRuntime_StartReceive:
 	overlay_veneer Party_CheckFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -196,10 +196,10 @@ Func_02002330:
 	.thumb_func
 Djinn_GetRecoveryTable:
 	overlay_veneer Djinn_GetRecoveryTableFar
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
+Unit_Calculate:
+	overlay_veneer Unit_CalculateFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:
@@ -278,10 +278,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif

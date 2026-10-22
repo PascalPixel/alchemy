@@ -228,7 +228,7 @@ Func_0200062c:
 	movs r0, #12
 	bl Object_GetById
 	movs r1, #43
-	bl Animation_SetIndexAndInitObjects
+	bl Animation_SetIndexAndInitializeObjects
 	movs r0, #12
 	movs r1, #3
 	bl Object_SetModeById

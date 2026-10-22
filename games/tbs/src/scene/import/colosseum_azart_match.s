@@ -40,7 +40,7 @@
 	.set import.ItemIcon_LoadTilesFar, 1
 	.set import.PartyTalkMenu_Choose, 1
 	.set import.Resource_LoadFixedBlockBIntoFreeSlot, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Inventory_AddItem, 1
 	.set import.Inventory_Equip, 1
 	.set import.Engine_GameFlagIsSet, 1
@@ -52,7 +52,7 @@
 	.set import.Party_RemoveActiveOwner, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_EventChooseYesNo, 1
 	.set import.Object_GetById, 1

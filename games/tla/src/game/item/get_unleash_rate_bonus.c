@@ -42,7 +42,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   rate = ((Equipment_GetUnleashRateBonus(owner) + (item->unleashChance * 5))
           << 0x10) /
          100;
-  if (rate > (s32)(BattleRandom() & 0xFFFF)) {
+  if (rate > (s32)(Battle_Random() & 0xFFFF)) {
     return item->unleashAction;
   }
   return 1;

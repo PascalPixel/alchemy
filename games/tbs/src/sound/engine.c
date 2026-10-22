@@ -429,8 +429,8 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
 
 /// Recalculates dirty stereo volumes and pitch from track settings and
 /// modulation.
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
-                           struct SoundTrack *track) {
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
+                                struct SoundTrack *track) {
   u32 volume;
   s32 pan;
   s32 pitch;

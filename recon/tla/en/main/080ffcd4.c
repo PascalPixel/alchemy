@@ -53,7 +53,7 @@ void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void Func_080ff850(void);
 s32 GameFlag_Test(s32 flag);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(void *unit, u16 *actions, s32 mode);
 s32 Func_080ff7b4(struct MenuResult *result, s32 index);
 void ItemMenu_HideAllIcons(void);
@@ -95,7 +95,7 @@ s32 Func_080ffcd4(void) {
     if (refresh) {
       if (refresh == 2) {
         menu->psynergyCount =
-            Func_080fd6f0(UnitGet(menu->ownerId), menu->psynergies, 0);
+            Func_080fd6f0(Unit_Get(menu->ownerId), menu->psynergies, 0);
         Func_080ff7b4(&state, 0);
         ItemMenu_HideAllIcons();
         PsynergyMenu_DrawPsynergyIcons(menu->psynergies);

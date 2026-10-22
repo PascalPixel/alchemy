@@ -10,8 +10,8 @@
 #include "dma.h"
 #include "io_reg.h"
 
-void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 void Tile_ClearLeftPixels(s32 x, s32 y, s32 width);
 void WaitFrames(s32 count);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -28,8 +28,8 @@ void Func_080d20fc(void) {
   u32 y;
   volatile u32 fill;
 
-  BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleFx_StartBufferInterpolation(24);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  BattleEffect_StartBufferInterpolation(24);
   for (;;) {
     for (; gData_080f3230[step] >= 0; step++) {
       for (x = 0; x < 26; x++) {

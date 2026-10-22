@@ -68,7 +68,7 @@ Func_080fcbd8:
 	adds r2, #22
 	adds r3, r7, r2
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #133
 	lsls r2, r2, #2
 	adds r3, r7, r2
@@ -107,7 +107,7 @@ Func_080fcbd8:
 	movs r0, #0
 	bl ItemMenu_DrawMessage
 .L_080fcca6:
-	bl ItemMenu_PosCategory
+	bl ItemMenu_PositionCategory
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #22
@@ -285,7 +285,7 @@ Func_080fcbd8:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrb r3, [r5]
 	ldrb r1, [r0, #9]
 	adds r0, r3, #0
@@ -293,7 +293,7 @@ Func_080fcbd8:
 	bl Unit_AddPpFar
 .L_080fce20:
 	ldrb r0, [r5]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	cmp r11, r9
 	beq .L_080fce66
 	ldrb r1, [r6]

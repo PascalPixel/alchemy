@@ -77,9 +77,9 @@ s32 EffectPosition_ProjectPoint(const void *point,
 /// The screen position of a battler's sprite, at its scaled height, 16
 /// pixels higher.
 ///
-/// Called by BattleFx_RunBeamSequence (beams.c), for the first target, and
-/// BattleFx_RunBurstShower (burst_shower.c), for the user. Leaves the view set
-/// to the battle camera (BattleUnit_ProjectToScreen).
+/// Called by BattleEffect_RunBeamSequence (beams.c), for the first target, and
+/// BattleEffect_RunBurstShower (burst_shower.c), for the user. Leaves the view
+/// set to the battle camera (BattleUnit_ProjectToScreen).
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position) {
   BattleUnit_ProjectToScreen(id, EffectPosition_Coordinates(position));
   position->y -= 16;
@@ -141,7 +141,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 ///
 /// XXX: what it was for; a debug build or the Lost Age's twin of this part
 /// would show whether the keys once chose an effect for enemy targets.
-void BattleFx_ProbeKeysForExtendedActor(void) {
+void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleEffectArgument *effect = work->effect;
 
@@ -161,7 +161,7 @@ void BattleFx_ProbeKeysForExtendedActor(void) {
 /// HEAP_SLOT_BATTLE_SHEET (from EWRAM first), HEAP_SLOT_BATTLE_EFFECT and
 /// HEAP_SLOT_BATTLE_CANVAS for the effect, and releases them in the reverse
 /// order once it returns.
-void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
+void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   s32 kind;
   s32 value;
 
@@ -179,11 +179,11 @@ void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
   value = kind - 100;
   // Unsigned, so kinds below 100 fall through to the beam sequences too.
   if ((u32)value <= 35) {
-    BattleFx_RunCastingImpact(effect, value);
+    BattleEffect_RunCastingImpact(effect, value);
   } else if (kind > 199) {
-    BattleFx_RunRingAndSparkScene(effect);
+    BattleEffect_RunRingAndSparkScene(effect);
   } else {
-    BattleFx_RunBeamSequence(effect);
+    BattleEffect_RunBeamSequence(effect);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);

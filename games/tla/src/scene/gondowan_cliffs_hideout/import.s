@@ -17,7 +17,7 @@ ObjectDispatch_SetSingleChildFlags:
 	.global Func_020001b4
 	.thumb_func
 Func_020001b4:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_020001bc
 	.thumb_func
 Func_020001bc:

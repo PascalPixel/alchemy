@@ -1,7 +1,7 @@
 // Near miss, differ 18 of 194: the sanctum's revival burst for a party member.
 // It hides the cursor, plays the service's sound, darkens the member's icon,
 // spawns 18 radial sparks around the member's position
-// (BattleFx_UpdateRadialMotion), then fades them, restores the icon and the
+// (BattleEffect_UpdateRadialMotion), then fades them, restores the icon and the
 // cursor. ☀️'s Shop_RunPartyMemberIconBurst in games/tbs/src/shop/shop.c, with
 // ⚓️'s work-block offsets (icons 0xf8, positions 0x118 and 0x128, burst flag
 // 0x508, sparks from 0x50c), effect mode 0x2a0 and callback flags 0x480.
@@ -62,9 +62,9 @@ void AudioCommand_WaitForStateByteClear(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
-void Shop_InitEffect(void);
+void Shop_InitializeEffect(void);
 void Shop_ResetEffects(void);
-void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect);
+void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
 extern s8 Data_0810cf28[];
 
@@ -96,7 +96,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   effect = (struct Effect_080b2f4c *)((u8 *)shop + 0x50c);
   do {
     Func_0808a528(effect, 0x2a0, position.x, position.z);
-    Func_0808a520(effect, BattleFx_UpdateRadialMotion);
+    Func_0808a520(effect, BattleEffect_UpdateRadialMotion);
     Func_0808a518(effect, 7);
     Func_08009248(*(s32 *)((u8 *)effect + 0), (Random16() * 7) >> 16);
     *(s32 *)((u8 *)effect + 44) = 0xb333;
@@ -146,7 +146,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
 
   Scheduler_RemoveCallback(Shop_ResetEffects);
   Func_08009280((s32)shop->partyMemberIcons[member], 16);
-  Shop_InitEffect();
+  Shop_InitializeEffect();
   WaitFrames(30);
   shop->cursor.anchor->active = savedKind;
 }

@@ -1,5 +1,5 @@
 // Near miss: listing 529 instructions, draft 529, differ 12. ☀️ twin:
-// BattleFx_RunHelmSplitter (effect.c, structure 0.800): the same swirl and
+// BattleEffect_RunHelmSplitter (effect.c, structure 0.800): the same swirl and
 // spark burst, with a second variant ⚓️ added at the target.
 // Statements, allocation and frame all match (effect r10, work r11, canvas at
 // sp+16, the two blitters at sp+20, the position at sp+28 and its address in
@@ -12,7 +12,7 @@
 // load sooner than agscc's arm9tdmi costs rank it. Measured: the BLDALPHA and
 // BG2PA stores take f18284c.c's blend pin (each differ 2 without); the timer
 // clear through &sparks->variant, i before the pixel pointer, the pixels
-// indexed and the sparks as &sparks[i] (as in BattleFx_RunHelmSplitter) are
+// indexed and the sparks as &sparks[i] (as in BattleEffect_RunHelmSplitter) are
 // the source's forms (38 to 22); a one-pass block on y fixes the height test
 // but moves the IntegrateVector2 arguments (18); an asm barrier on y relays out
 // the function (105). 2026-10-15 (fx-n3): rewritten for reading on struct
@@ -63,11 +63,11 @@ extern s8 gHelmSplitter_CellBiasY[];
 extern u8 gHelmSplitter_CellWidths[];
 extern u8 gHelmSplitter_CellHeights[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
+void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -78,21 +78,21 @@ void Func_08118088(s32 actor, s32 motion);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // Effect kind 51: the caster dashes at the target while a swirl of flame grows
 // over seven frames, then bursts into sparks that fall and bounce on the
 // ground. Variant 0 is ☀️'s: the swirl rises at the caster and throws pink
 // stars. Variant 1 is ⚓️'s own: the swirl, recoloured into the blue flame's
 // palette, rises at the target and throws 32 skulls.
-void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -105,7 +105,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   s32 i;
 
   // Set up the canvas and load the swirl and the spark sheets.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_WRITE16_POOLED(REG_BLDALPHA, 0x1010);
   if (effect->variant == 0) {
     // FAKEMATCH: as above, but here the pin alone loads the value between
@@ -141,8 +141,8 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
   }
   work->transferMode = 2;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
-  BattleFx_FetchRectangleBlitters(effect->side, draw);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  BattleEffect_FetchRectangleBlitters(effect->side, draw);
 
   // No spark is alive yet.
   for (i = 0, life = &work->particles[0].variant; i != 64; i++) {
@@ -235,7 +235,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
       spark = &sparks[i];
       if (spark->variant > 0) {
         spark->variant--;
-        BattleFxKernels_IntegrateVector2(spark, 60, 0);
+        BattleEffectKernels_IntegrateVector2(spark, 60, 0);
         if (spark->y > 0x680000) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
@@ -258,8 +258,8 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -1,6 +1,6 @@
 	.section .rodata
-	.global BattleFx_StarCrescentSheet
-BattleFx_StarCrescentSheet:
+	.global BattleEffect_StarCrescentSheet
+BattleEffect_StarCrescentSheet:
 	.incbin "games/tla/src/graphics/battle_fx/star_crescent.gbapal"
 	.incbin "games/tla/src/graphics/battle_fx/star_crescent.bitmap.lz"
-	.byte 0x03	@ PACKER: left in the buffer by BattleFx_GreyCrescentSheet+0xadb
+	.byte 0x03	@ PACKER: left in the buffer by BattleEffect_GreyCrescentSheet+0xadb

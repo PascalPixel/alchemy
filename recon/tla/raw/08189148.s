@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Dragon Cloud, Epicenter (kind 49).
-	.global BattleFx_RunDragonCloud
+	.global BattleEffect_RunDragonCloud
 	.thumb_func
-BattleFx_RunDragonCloud:
+BattleEffect_RunDragonCloud:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,7 +26,7 @@ BattleFx_RunDragonCloud:
 	ldr r3, [r3, #100]
 	movs r0, #0
 	str r3, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081891ac
 	movs r2, #128
 	lsls r2, r2, #19
@@ -129,7 +129,7 @@ BattleFx_RunDragonCloud:
 	ldr r0, [r5, #4]
 	adds r1, r7, #0
 	str r7, [sp, #20]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -359,7 +359,7 @@ BattleFx_RunDragonCloud:
 .L_08189418:
 	.4byte IwramCopyWords
 .L_0818941c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08189420:
 	.4byte Data_08199d5c
 .L_08189424:
@@ -543,7 +543,7 @@ BattleFx_RunDragonCloud:
 	movs r1, #62
 	lsls r2, r2, #7
 	adds r0, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r3, #3
 	mov r1, r8
 	ands r3, r1
@@ -974,7 +974,7 @@ BattleFx_RunDragonCloud:
 	adds r0, r7, #0
 	movs r1, #62
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	b .L_081898fa
 .L_081898ca:
 	ldr r2, .L_08189af0
@@ -999,7 +999,7 @@ BattleFx_RunDragonCloud:
 	adds r0, r7, #0
 	movs r1, #64
 	ldr r2, .L_08189af4
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_081898fa:
 	movs r3, #1
 	add r8, r3
@@ -1054,7 +1054,7 @@ BattleFx_RunDragonCloud:
 	adds r0, r6, #0
 	movs r1, #62
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r6, #24]
 	subs r3, #1
 	str r3, [r6, #24]
@@ -1110,7 +1110,7 @@ BattleFx_RunDragonCloud:
 	adds r0, r6, #0
 	movs r1, #60
 	ldr r2, .L_08189afc
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	subs r3, #1
 	str r3, [r6, #24]
@@ -1237,7 +1237,7 @@ BattleFx_RunDragonCloud:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #248
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1268,4 +1268,4 @@ BattleFx_RunDragonCloud:
 .L_08189b0c:
 	.4byte gData_0819746d
 .L_08189b10:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

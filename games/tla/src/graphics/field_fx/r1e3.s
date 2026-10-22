@@ -6,4 +6,4 @@
 	.global Resource_Data1E3
 Resource_Data1E3:
 	.incbin "games/tla/src/graphics/field_fx/r1e3.4bpp16x16.lz"
-	.byte 0x88	@ PACKER: left in the buffer by FieldFx_DustPuffB+0x6f
+	.byte 0x88	@ PACKER: left in the buffer by FieldEffect_DustPuffB+0x6f

@@ -1,6 +1,6 @@
 // Near miss, differ 42 of 456.
 
-// Twin: The Broken Seal's BattleFx_RunElementPillar, reached from the
+// Twin: The Broken Seal's BattleEffect_RunElementPillar, reached from the
 // scenes through the far-call table (table_47.s). It sets up its own heap
 // blocks, so unlike a dispatched effect it stores work->effect and marks
 // the work active (framesSinceTransfer = 1) itself. ⚓️ drops the twin's
@@ -64,7 +64,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The flecks live in the map cell buffer.
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-// The fleck's cell for each size from 1 to 6 (gBattleFx_FlareCells).
+// The fleck's cell for each size from 1 to 6 (gBattleEffect_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_IceTileSheet;
@@ -73,9 +73,9 @@ extern char ResourceId_YellowPaletteA;
 extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+void BattleEffect_StartCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -118,7 +118,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
   work->framesSinceTransfer = 1;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = 0x100c;
@@ -151,8 +151,8 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;   // each transfer leaves 3/4 of the old picture,
   work->transferValue = 75; // a trail
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   effect->variant++;
   if (effect->variant <= 0)
@@ -175,7 +175,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       s32 n;
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
-      BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+      BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
       /* FAKEMATCH: the native works out the pillar's and the glow's
        * pictures again for the mirrored half. The one-pass block ends CSE's
        * block, so they are not carried over (differ 259 without it, 42 with
@@ -188,7 +188,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
               43);
       Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
-      BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+      BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       n = frame / 2 % 4;
@@ -229,8 +229,8 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);

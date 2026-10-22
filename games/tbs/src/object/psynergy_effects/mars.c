@@ -6,7 +6,7 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (FieldFx_UpdatePhasedRadialParticle). The leader turns to the camera
+/// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera
 /// and plays animation 28, the sparks swarm the leader, who pulses for 100
 /// frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni,
 /// which then clears the Djinni's actor slot. Uses all 24 effect slots, tints
@@ -26,7 +26,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   if (djinni == NULL)
     return;
 
-  FieldFx_InitializeSlots();
+  FieldEffect_InitializeSlots();
   effectScene = gEffectWork;
   // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
@@ -45,10 +45,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // Spin up for 80 frames, then spin and shrink away.
   WaitFrames(20);
   AudioCommand_PlayFar(SE_140);
-  djinni->update = FieldFx_AdvanceAngleWithRamp;
+  djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
-  djinni->update = FieldFx_ShrinkObjectAndDestroySlow;
+  djinni->update = FieldEffect_ShrinkObjectAndDestroySlow;
   ObjectDispatch_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
@@ -62,7 +62,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   remaining = 23;
   do {
     EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, FieldFx_UpdatePhasedRadialParticle);
+    EffectSlot_SetCallback(slot, FieldEffect_UpdatePhasedRadialParticle);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               SPRITE_COLOR_RED_TINT);
@@ -99,7 +99,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader pulses while the sparks swarm it.
   WaitFrames(60);
-  leader->update = FieldFx_SetObjectAlternatingWords;
+  leader->update = FieldEffect_SetObjectAlternatingWords;
   WaitFrames(100);
 
   // Every spark still in use goes. This loop's cursor starts as
@@ -131,18 +131,18 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // Fade the palette back from the tint and free the effect slots.
   WaitFrames(30);
   Shop_RestoreFieldPaletteFar();
-  FieldFx_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
 /// Spins and shrinks an object by 0x400 a frame, then releases it: 53 frames
 /// from full size.
-DEFINE_SHRINK_AND_DESTROY(FieldFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
+DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
-/// FieldFx_RunVenusDjinnCapture in venus.c.
-void FieldFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
+/// FieldEffect_RunVenusDjinnCapture in venus.c.
+void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   struct DescendingOrbitObject *mote =
       (struct DescendingOrbitObject *)fieldObject;
   struct EffectVector position;
@@ -171,10 +171,10 @@ void FieldFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
 /// Effect slot callback of a Venus Djinni's particles: each starts on screen
 /// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
 /// the screen, over and over, until it is set to VENUS_PARTICLE_LAST_RISE and
-/// freed once it arrives. Set by FieldFx_RunVenusDjinnCapture in venus.c; a
+/// freed once it arrives. Set by FieldEffect_RunVenusDjinnCapture in venus.c; a
 /// particle that starts on an odd frame plays SE_144. It speeds up by 1 pixel a
 /// frame to at most 5, straight at its target.
-void FieldFx_UpdateRadialSpread(struct EffectSlot *effect) {
+void FieldEffect_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;
   s32 state;
@@ -214,6 +214,6 @@ void FieldFx_UpdateRadialSpread(struct EffectSlot *effect) {
       effect->state--;
   } else if (state == VENUS_PARTICLE_LAST_RISE) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
-      FieldFx_ClearOwnedSlot(effect);
+      FieldEffect_ClearOwnedSlot(effect);
   }
 }

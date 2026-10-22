@@ -42,7 +42,7 @@ extern u8 MsgGoesDown[];
 extern u8 MsgStrengthExhausted[];
 extern u8 MsgReaperCalls[];
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void Djinn_DeactivateFar(s32 unitId, s32 element, s32 index);
 u32 BattleEventRuntime_Reset(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);
@@ -63,7 +63,7 @@ void Func_0812561c(struct BattlePlan *plan) {
 
   unitId = plan->actorId;
   battleContinues = 0;
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   if (unitId <= 7 ||
       ((struct BattleWork *)Ram_HeapSlots->battleWork)->twoSided != 0) {
     list = &Djinn_GetRecoveryTableFar(unitId > 7)->list;
@@ -137,62 +137,62 @@ void Func_0812561c(struct BattlePlan *plan) {
       if (unit->elementLevels[i] < counts[i])
         unit->elementLevels[i] = counts[i];
     }
-    UnitCalcFar(unitId);
+    Unit_CalculateFar(unitId);
     for (i = 0; i <= 3; i++) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
       if (gain > 0) {
         BattleEventRuntime_Reset();
         BattleEventRuntime_SchedulePhase(25);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-        BattleEvPush(BATTLE_EVENT_NUMBER, gain);
-        BattleEvPush(BATTLE_EVENT_SOUND, 175);
-        BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, gain);
+        BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         Audio_PlayCue(212);
-        Object_SetMode(BattleObjGet(unitId)->object, 3);
+        Object_SetMode(BattleObject_Get(unitId)->object, 3);
         ObjectDispatch_SetAnimationSpeedFar(
-            (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
+            (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
         Func_08127308(unitId, i, 2, -1);
         BattleEventRuntime_WaitForReady();
       }
     }
     MemFree(before);
   }
-  if (battleContinues != 0 && BattleObjGet(unitId)->object != 0) {
+  if (battleContinues != 0 && BattleObject_Get(unitId)->object != 0) {
     s8 *poison;
     u8 *reaper;
 
     BattleEventRuntime_Reset();
     if (plan->hauntDamage != 0) {
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, plan->hauntDamage);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgCurseDamage);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, plan->hauntDamage);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgCurseDamage);
       if (Unit_AddHpFar(unitId, -plan->hauntDamage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         } else {
-          BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-          BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattleEvPush(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
+          BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+          BattleEvent_Push(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     BattleEventRuntime_Reset();
     poison = &unit->poison;
     if (*poison != 0) {
       s32 damage = unit->maxHp * *poison / 10;
       struct BattleWork *state = Ram_HeapSlots->battleWork;
 
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, damage);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgPoisonDamage);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, damage);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
         state->events.pendingCue = 134;
       } else {
@@ -201,34 +201,34 @@ void Func_0812561c(struct BattlePlan *plan) {
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         } else {
-          BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-          BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattleEvPush(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
+          BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+          BattleEvent_Push(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     BattleEventRuntime_Reset();
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
         Unit_AddHpFar(unitId, 0xc0000000) == 0) {
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls);
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
       if (unitId <= 7) {
-        BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
       } else {
-        BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
   }
-  if (BattleObjGet(unitId)->object != 0)
-    UnitCalcFar(unitId);
+  if (BattleObject_Get(unitId)->object != 0)
+    Unit_CalculateFar(unitId);
 }

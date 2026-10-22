@@ -18,8 +18,8 @@
 /// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) is reached only from the
 /// school (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE, in fuchin_temple.c) and has its
 /// own tables (XianInteriors_GetEvents). Once Xian has heard of Hsu, Master
-/// Feh, Feizhi and Hsu are there, Hsu lying in the bed (ANIM_HSU_IN_BED; the
-/// room's render with Hsu placed). FLAG_HSU_RESCUED_WITHOUT_PARTY, set when
+/// Feh, Feizhi and Hsu are there, Hsu lying in the bed (ANIMATION_HSU_IN_BED;
+/// the room's render with Hsu placed). FLAG_HSU_RESCUED_WITHOUT_PARTY, set when
 /// the party left the desert with Hsu still trapped (lamakan_desert.c), picks
 /// whether Feizhi thanks the party and Master Hama or Hama alone, and what
 /// Mind Read hears from each of them. Arriving here clears
@@ -131,7 +131,7 @@ enum {
 
 /// Hsu on his back with his arms at his sides, as he lies in the bed in the
 /// room behind the school (spr_041.png's frame 36; the room's render).
-enum { ANIM_HSU_IN_BED = 6 };
+enum { ANIMATION_HSU_IN_BED = 6 };
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -169,7 +169,7 @@ static inline u32 XianInteriors_GetLeaderFacing(void) {
 static void XianInteriors_TalkToWeaponMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Engine_ShopOpen(XIAN_WEAPON_STOCK, ACTOR_XIAN_WEAPON_MERCHANT);
@@ -189,7 +189,7 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
 static void XianInteriors_TalkToArmorMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Engine_ShopOpen(XIAN_ARMOR_STOCK, ACTOR_XIAN_ARMOR_MERCHANT);
@@ -211,7 +211,7 @@ static void XianInteriors_TalkToItemMerchant(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Engine_ShopOpen(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
@@ -231,7 +231,7 @@ static void XianInteriors_TalkToInnkeeper(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
     Engine_InnOpen(XIAN_INN, ACTOR_XIAN_INNKEEPER);
   } else {
@@ -250,7 +250,7 @@ static void XianInteriors_TalkToInnkeeper(void) {
 /// about Lamakan Desert too. A yes: no one can use Silk Road; a no: it is good
 /// to hear the desert is fine.
 static void XianInteriors_AskAboutSilkRoad(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
   Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
   Engine_EventEnd();
@@ -260,7 +260,7 @@ static void XianInteriors_AskAboutSilkRoad(void) {
 /// the news of Hsu whether the monsters in Altin spat water. A yes: how
 /// strange; a no: but why would Feizhi lie?
 static void XianInteriors_AskAboutAltinMonsters(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
   Engine_EventAskYesNo(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
   Engine_EventEnd();
@@ -271,7 +271,7 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
 /// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear); she welcomes the party, looks at
 /// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void XianInteriors_FeizhiThanksParty(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianWarriorWelcome);
   Engine_EventShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
   Engine_ActorFaceActor(ACTOR_FEIZHI, ACTOR_HSU, 0);
@@ -313,24 +313,24 @@ s32 XianInteriors_Initialize(void) {
                                          SPRITE_CHEST);
   } else if (entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    Engine_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);
+    Engine_ActorSetAnimation(ACTOR_HSU, ANIMATION_HSU_IN_BED);
   }
   return 0;
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {

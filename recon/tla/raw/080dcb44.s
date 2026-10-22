@@ -72,7 +72,7 @@ Func_080dcb44:
 	strb r3, [r1]
 	cmp r3, #0
 	beq .L_080dcc0e
-	bl BattleFx_AdvanceHueCycle
+	bl BattleEffect_AdvanceHueCycle
 	movs r1, #199
 	lsls r1, r1, #1
 	adds r1, #255
@@ -98,9 +98,9 @@ Func_080dcb44:
 	movs r3, #128
 	lsls r3, r3, #14
 	orrs r0, r3
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r0, #1
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 .L_080dcc0e:
 	movs r2, #164
 	lsls r2, r2, #2
@@ -108,7 +108,7 @@ Func_080dcb44:
 	ldrh r0, [r3]
 	bl Object_GetById
 	movs r1, #0
-	bl BattleFx_ApplyFlickerValue
+	bl BattleEffect_ApplyFlickerValue
 	movs r0, #203
 	lsls r0, r0, #1
 	adds r0, #255
@@ -289,7 +289,7 @@ Func_080dcb44:
 .L_080dcd84:
 	.4byte 0xfff20000
 .L_080dcd88:
-	.4byte BattleFx_SetCallbackWhenTargetUnset
+	.4byte BattleEffect_SetCallbackWhenTargetUnset
 .L_080dcd8c:
 	movs r1, #203
 	lsls r1, r1, #1

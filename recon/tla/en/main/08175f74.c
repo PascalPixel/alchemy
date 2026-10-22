@@ -217,7 +217,7 @@ extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 extern u8 gData_08143001[];
 
-void BattleFx_BeginCanvasLayer(s32);
+void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Func_08163c2c(s32, s32);
@@ -226,7 +226,7 @@ void WaitFrames(s32);
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
-void BattleFx_FetchRectangleBlitters(s32, DrawRectangleFn *);
+void BattleEffect_FetchRectangleBlitters(s32, DrawRectangleFn *);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -253,20 +253,20 @@ void Graphics_LoadGreyRamp(void);
 void Func_0815b434(void *, s32, s32);
 void Runtime_ReleaseHeapBlock(s32);
 void Func_0818caa8(void *, s32, s32, s32);
-void BattleFx_LoadBlitter(s32, s32);
+void BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
 struct ActorPos **GetBattleObjectSlotFar(s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081180e8(s32);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void BattleFxKernels_IntegrateVector2(struct Particle *, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void EffectPosition_ProjectScaledBattler(s32, struct Particle *);
 void Camera_ApplyVerticalShake(s32);
 void ObjectGroup_TickMemberTimers(void);
 void Scheduler_RemoveCallback(void *);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_EndCanvasLayer(void);
 
-void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
+void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   u16 tiles[16];
   struct Local264 local264;
   s32 pos248[4];
@@ -315,7 +315,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
   savedWidth = DISPLAY_1120->unk4;
   glyphs = SYSTEM_WORK->glyphs;
   scene = SYSTEM_WORK->scene;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   REG_BG2CNT = 0x784;
   PLTT[0] = (u32)&Value_00000000;
@@ -341,7 +341,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
   REG_BG2PA = (u32)&Value_00000080;
   REG_BG2X = 0;
   blit = routine;
-  BattleFx_FetchRectangleBlitters(0, blit);
+  BattleEffect_FetchRectangleBlitters(0, blit);
 
   source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009c);
   CpuCopy(PLTT + 0x120, source, 0x140);
@@ -1007,7 +1007,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
         }
         Runtime_ReleaseHeapBlock(188);
         Func_0818caa8(work->buffer + 0x1000, height, 58, t);
-        BattleFx_LoadBlitter(188, 3);
+        BattleEffect_LoadBlitter(188, 3);
         blit[1] = SYSTEM_WORK->blitBc;
       }
       for (j = 0; j != 2; j++) {
@@ -1424,21 +1424,21 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
         for (i = 0; i != arg->count; i++) {
           s32 spin = Random16();
 
-          BattleFx_StartActorMotion(arg->actors[i], 1, 0x40000, 0x80000,
+          BattleEffect_StartActorMotion(arg->actors[i], 1, 0x40000, 0x80000,
                                     spin * 2 + 0x20000,
                                     (Random16() & 31) + 120);
           Func_0814cd48(arg->actors[i], 7, 5, i, 32);
         }
         work->unk77a8 = 3;
       }
-      BattleFx_LoadBlitter(104, 31);
+      BattleEffect_LoadBlitter(104, 31);
       blit[0] = SYSTEM_WORK->blit;
       for (i = 0; i != 16; i++) {
         p = &PARTICLES[96 + i];
         if (p->timer >= 0 && p->timer < 24) {
           blit[0](canvas, SPRITE_BUFFER + (p->timer / 4) * 2048,
                   (p->x >> 16) - 16, (p->y >> 16) - 32, 32, 64);
-          BattleFxKernels_IntegrateVector2(p, 60, -0x2000);
+          BattleEffectKernels_IntegrateVector2(p, 60, -0x2000);
         }
         p->timer++;
       }
@@ -1452,7 +1452,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
             blit[0](canvas, glyphs + gData_08197410[size - 1],
                     (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                     size * 2);
-            BattleFxKernels_IntegrateVector2(p, 63, 0);
+            BattleEffectKernels_IntegrateVector2(p, 63, 0);
             if (p->y > 224 << 15) {
               p->vy = -p->vy;
             }
@@ -1572,7 +1572,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
       }
       if (frame >= 0) {
         DISPLAY_1120->unk4 += 0xfff4;
-        BattleFx_LoadBlitter(104, 27);
+        BattleEffect_LoadBlitter(104, 27);
         for (i = 0; i != 4; i++) {
           struct Particle *column = &work->columns[i];
 
@@ -1583,7 +1583,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
             column->x -= 8;
             column->y = i * 30 - 26;
             Runtime_ReleaseHeapBlock(104);
-            BattleFx_LoadBlitter(104, 19);
+            BattleEffect_LoadBlitter(104, 19);
           }
           SYSTEM_WORK->blit(canvas, work->buffer, column->x - 28, column->y, 28,
                             56);
@@ -1608,7 +1608,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
             drop->y += drop->vy;
           }
         }
-        BattleFx_LoadBlitter(104, 31);
+        BattleEffect_LoadBlitter(104, 31);
         blit[0] = SYSTEM_WORK->blit;
         for (i = 0; i != 4; i++) {
           s32 width = 120 - work->columns[i].x;
@@ -1619,7 +1619,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
           }
         }
         Runtime_ReleaseHeapBlock(104);
-        BattleFx_LoadBlitter(104, 47);
+        BattleEffect_LoadBlitter(104, 47);
         blit[0] = SYSTEM_WORK->blit;
         for (i = 0; i != 96; i++) {
           p = &PARTICLES[i];
@@ -1629,7 +1629,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
             blit[0](canvas, glyphs + gData_08197410[size - 1],
                     (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                     size * 2);
-            BattleFxKernels_IntegrateVector2(p, 60, 0);
+            BattleEffectKernels_IntegrateVector2(p, 60, 0);
             p->timer--;
           }
         }
@@ -1673,5 +1673,5 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
   }
   Runtime_ReleaseHeapBlock(188);
   Scheduler_RemoveCallback(gData_08143001);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

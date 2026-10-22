@@ -15,7 +15,7 @@ Func_08123648:
 	add r3, sp, #32
 	str r1, [r3]
 	mov r11, r1
-	bl BattleActGet
+	bl BattleAction_Get
 	str r0, [sp, #28]
 	movs r2, #0
 	ldrb r5, [r0]
@@ -164,7 +164,7 @@ Func_08123648:
 	bne .L_08123786
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	ldr r4, [sp, #0]

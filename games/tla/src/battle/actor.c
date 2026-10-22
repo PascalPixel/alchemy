@@ -13,7 +13,7 @@
 #include "motobj.h"
 #include "animspr.h"
 
-struct BattleUnit *UnitGet(s32);
+struct BattleUnit *Unit_Get(s32);
 
 void Animation_ApplyChildArgumentFar(void *, s32);
 
@@ -28,7 +28,7 @@ s32 BattleActor_RemoveFromLists(s32 id) {
 
   // Ally formation.
   work = Ram_HeapSlots->battleWork;
-  UnitGet(id)->side = BATTLE_UNIT_ABSENT;
+  Unit_Get(id)->side = BATTLE_UNIT_ABSENT;
   for (i = 0;; i++) {
     unit = work->partyUnits[i];
     if (unit == id) {
@@ -70,9 +70,9 @@ void BattleMotion_ShowDowned(s32 id) {
   struct AnimationEntry *ent;
   s32 n;
 
-  unit = UnitGet(id);
+  unit = Unit_Get(id);
   n = 0;
-  while ((rec = GetMotionRecord(BattleObjGet(id)->object, n)) != 0) {
+  while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
     if (unit->side != BATTLE_UNIT_ENEMY)
       Animation_ApplyChildArgumentFar(rec, 4);
     else
@@ -82,7 +82,7 @@ void BattleMotion_ShowDowned(s32 id) {
 
   if (unit->side == BATTLE_UNIT_ENEMY) {
     n = 0;
-    while ((rec = GetMotionRecord(BattleObjGet(id)->object, n)) != 0) {
+    while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
       /* FAKEMATCH: the native CSE block ends after the child lookup; a one-pass
          block keeps its load before the index shift, which a straight
          assignment reverses. */
@@ -97,6 +97,6 @@ void BattleMotion_ShowDowned(s32 id) {
     WaitFrames(4);
     BattleActor_RemoveFromLists(id);
     Map_RenderAllAnimatedTileFramesFar(recs, n); // Erase pixel by pixel.
-    BattleObj_MarkForRelease(id);
+    BattleObject_MarkForRelease(id);
   }
 }

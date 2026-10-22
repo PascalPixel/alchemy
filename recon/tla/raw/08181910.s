@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Life Shear (kind 129).
-	.global BattleFx_RunLifeShear
+	.global BattleEffect_RunLifeShear
 	.thumb_func
-BattleFx_RunLifeShear:
+BattleEffect_RunLifeShear:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,13 +25,13 @@ BattleFx_RunLifeShear:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleFx_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	b .L_0818194a
 .L_08181940:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleFx_BeginTiledCanvasFilled
+	bl BattleEffect_StartTiledCanvasFilled
 .L_0818194a:
 	ldr r3, .L_08181978
 	movs r2, #128
@@ -52,7 +52,7 @@ BattleFx_RunLifeShear:
 	bne .L_08181988
 	movs r0, #104
 	movs r1, #35
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08181990
 .L_08181978:
 	.4byte 0x00000100
@@ -65,7 +65,7 @@ BattleFx_RunLifeShear:
 .L_08181988:
 	movs r0, #104
 	movs r1, #39
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08181990:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -365,7 +365,7 @@ BattleFx_RunLifeShear:
 	adds r3, r3, r2
 	b .L_08181bfa
 .L_08181bbc:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08181bc0:
 	.4byte 0xffc00000
 .L_08181bc4:
@@ -678,7 +678,7 @@ BattleFx_RunLifeShear:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -715,4 +715,4 @@ BattleFx_RunLifeShear:
 .L_08181ea8:
 	.4byte gData_081991f0
 .L_08181eac:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

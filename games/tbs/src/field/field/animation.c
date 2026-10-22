@@ -117,7 +117,7 @@ s32 Animation_LookupValueByKey(s32 tag) {
 /// Resets each layer of a sprite from its animation's metadata: its facing
 /// kind, frames, scripts and codec, with no frame shown and no script
 /// running. The first layer also sets the sprite's size, scale and offsets.
-/// Returns 0. Called by Animation_SetIndexAndInitObjects.
+/// Returns 0. Called by Animation_SetIndexAndInitializeObjects.
 s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
   s32 i;
 
@@ -162,7 +162,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
 /// Resets one animation layer from its animation's metadata, as
 /// Animation_InitializeObjects does for each layer. Called by the sprite
 /// viewer.
-void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
+void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer) {
   void **frames;
   s32 zero;
   struct AnimationMetadata *metadata;
@@ -287,7 +287,7 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index) {
 /// Reached through the animation script's play command
 /// (Sprite_ComposeAnimationFrame) and, as Animation_SetWorkEntryFar, from the
 /// battle's motion and objects.
-/// XXX: unlike AnimationObjects_SelectAnimation it does not mask bit 7 off,
+/// XXX: unlike AnimationObject_SelectAnimation it does not mask bit 7 off,
 /// so with bit 7 set the index passes animationCount only in a set of more
 /// than 128 animations; a script that plays with bit 7 would show whether
 /// that is an original bug.
@@ -317,10 +317,10 @@ void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
 /// first layer's animation also sets the sprite's offsets. Returns 0.
 /// The engine's usual way to change what a sprite plays: called by the
 /// object dispatch and the player control, and as
-/// AnimationObjects_SelectAnimationFar by the battle, the shops, the menus,
+/// AnimationObject_SelectAnimationFar by the battle, the shops, the menus,
 /// the battle and Psynergy effects and the scene scripts.
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
-                                     s32 animation) {
+s32 AnimationObject_SelectAnimation(struct AnimationObject *sprite,
+                                    s32 animation) {
   s32 keepPlace;
   s32 i;
 
@@ -369,8 +369,8 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
 
 /// Sets each animated layer's timer to the given duration in frames.
 /// Returns 0.
-s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
-                                          s32 frames) {
+s32 AnimationObject_SetActiveFrameTimers(struct AnimationObject *sprite,
+                                         s32 frames) {
   u8 count = sprite->count;
   struct AnimationEntry **layerList;
   s32 remaining;
@@ -392,10 +392,10 @@ s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
 
 /// Sets the timer step, the animation speed, of each animated layer of a
 /// sprite (16 is normal speed). Called by the object dispatch and, as
-/// AnimationObjects_SetActiveTimerStepsFar, by the Sanctum, which stops a
+/// AnimationObject_SetActiveTimerStepsFar, by the Sanctum, which stops a
 /// party member's icon with 0 and restarts it with 16.
-void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
-                                          s32 step) {
+void AnimationObject_SetActiveTimerSteps(struct AnimationObject *sprite,
+                                         s32 step) {
   u8 count = sprite->count;
   if (count != 0) {
     struct AnimationEntry **layerList = sprite->entries;
@@ -681,12 +681,13 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
     command = script[0];
     duration = script[1];
     script += 2;
-    if (command == ANIM_CMD_PLAY || command == ANIM_CMD_HOLD ||
-        command == ANIM_CMD_JUMP || command == ANIM_CMD_END) {
+    if (command == ANIMATION_COMMAND_PLAY ||
+        command == ANIMATION_COMMAND_HOLD ||
+        command == ANIMATION_COMMAND_JUMP || command == ANIMATION_COMMAND_END) {
       break;
     }
-    if (command == ANIM_CMD_WAIT || command == ANIM_CMD_BLANK ||
-        command < ANIM_CMD_END) {
+    if (command == ANIMATION_COMMAND_WAIT ||
+        command == ANIMATION_COMMAND_BLANK || command < ANIMATION_COMMAND_END) {
       durationSum += duration;
       frameCount--;
       if (frameCount == 0) {

@@ -7,4 +7,4 @@
 	.global Field_GreenPanel
 Field_GreenPanel:
 	.incbin "games/tla/src/graphics/field/green_panel.4bpp.lz"
-	.byte 0x0a	@ PACKER: left in the buffer by FieldFx_FireColumn+0xaf
+	.byte 0x0a	@ PACKER: left in the buffer by FieldEffect_FireColumn+0xaf

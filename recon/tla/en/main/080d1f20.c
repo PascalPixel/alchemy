@@ -2,7 +2,7 @@
 // 0x26 (Ui_Headings in the directory; ResourceId_Headings is not defined
 // yet) into a 26x5-cell window and opens the window from the centre. The
 // native keeps the cell counter's 0x10000 inside the inner loop (and passes
-// it on to BattleFx_ApplyColorToSourceBuffer), where loop.c here hoists it;
+// it on to BattleEffect_ApplyColorToSourceBuffer), where loop.c here hoists it;
 // the row and column counters then take r5 and r1 the other way round, and
 // 16 is built in r2, not r0. Tried: the column counter in the row's block,
 // tile as s32 with (s16) casts, tile++ inside the store (differ 66 to 78).
@@ -17,9 +17,9 @@
 extern char ResourceId_Headings;
 
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
-void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 amount);
-void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
+void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 amount);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 
 void Func_080d1f20(s32 heading) {
   s32 *headings = Resource_GetTableEntry((s32)&ResourceId_Headings);
@@ -54,9 +54,9 @@ void Func_080d1f20(s32 heading) {
   REG_WINOUT = 0x3e;
   REG_WIN0H = 0x7878;
   REG_WIN0V = 0x1848;
-  BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleFx_ApplyColorToTargetBuffer(0x10008, 0);
-  BattleFx_StartBufferInterpolation(24);
+  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10008, 0);
+  BattleEffect_StartBufferInterpolation(24);
   REG_DISPCNT ^= 0x100;
   left = 120;
   right = 120;

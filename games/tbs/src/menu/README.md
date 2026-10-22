@@ -332,6 +332,7 @@ name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
 | `FourObjectMotion_` | the row of four figures the Status and Djinn screens show |
 | `Item_`, `Ability_` | using an item or Psynergy from the menu |
 | `Title_`, `Clear_`, `SaveMenu_`, `LinkLobby_`, `SceneData_` | the three overlays and their scene entry functions |
+| `Owner_`, `State_` | copying a unit's record, and the lobby's unused empty callback |
 | `UiWindow_`, `UiText_`, `UiIcon_`, `UiWork_`, `UiPalette_`, `Palette_`, `Resource_`, `Render_`, `Scheduler_` | windows, text, icons, palettes, VRAM entries and tasks, whose main code is in other folders |
 
 Some prefixes are older than the parts. `PsynergyMenu_InitializeEntryObjects`

@@ -13,7 +13,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 
 /// Each frame while frames are left, darkens the battle background's 128
 /// colours by one more step of 1092 into BG palette 0x050000c0.
-void BattleFx_DimBackgroundStep(void) {
+void BattleEffect_DimBackgroundStep(void) {
   struct BattleFxFadeWork *work =
       (struct BattleFxFadeWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *battle = (u8 *)Ram_HeapSlots->battleWork;

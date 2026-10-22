@@ -106,7 +106,7 @@ Func_080e4730:
 	adds r3, r6, r0
 	ldr r1, [r3]
 	mov r0, r8
-	bl Animation_SetIndexAndInitObjectsFar
+	bl Animation_SetIndexAndInitializeObjectsFar
 	mov r2, r8
 	ldr r1, [r2, #80]
 	movs r5, #63

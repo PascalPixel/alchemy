@@ -1,5 +1,5 @@
 	.section .rodata
-@ Uncolored art using BattleFx_EffectPalette02 colors (same effect).
+@ Uncolored art using BattleEffect_EffectPalette02 colors (same effect).
 	.global Resource_Data0EF
 Resource_Data0EF:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0ef.bitmap.lz"

@@ -12,7 +12,7 @@
 /// Four bolts close in, turning towards the centre for 16 frames and
 /// scattering sparks from their roots; the sparks fly on until frame 64.
 ///
-/// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_FX_RAY).
+/// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_EFFECT_RAY).
 ///
 /// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
 /// REG_BG2X, sets work->shakeFrames over the first 16 frames.
@@ -21,7 +21,7 @@
 ///         draws every bolt with the maximum blend, the others alternate it
 ///         with additive. The variant also sets the sparks each bolt throws
 ///         a frame (gRay_Sparks).
-void BattleFx_RunRay(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -39,7 +39,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   // The motes for the sparks are in the battle sheet's slot.
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginTiledCanvas(1);
+  BattleEffect_StartTiledCanvas(1);
   // Destruct Ray stretches the canvas across the screen; the others show it
   // at its own width over the targets' half (on side 1, moved 128 pixels).
   // BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the targets.

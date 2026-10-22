@@ -6,8 +6,8 @@
 #include "fixed_math.h"
 
 s32 Party_CountActiveOwnersFar(void);
-void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 mode);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
@@ -16,8 +16,8 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   s32 value;
   struct BattleUnit *unit;
   if (amount < 0) {
-    BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleFx_StartBufferInterpolation(4);
+    BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
+    BattleEffect_StartBufferInterpolation(4);
     if (amount < -10)
       Audio_PlayCue(134);
     else
@@ -27,7 +27,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   }
   count = Party_CountActiveOwnersFar();
   for (i = 0; i < count; i++) {
-    unit = UnitGet(gPartyState.activeOwners[i]);
+    unit = Unit_Get(gPartyState.activeOwners[i]);
     if (!scaled) {
       value = amount;
     } else {
@@ -56,7 +56,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
     remaining = count;
 
     do {
-      u8 *object = (u8 *)UnitGet(*entry);
+      u8 *object = (u8 *)Unit_Get(*entry);
       s32 amount;
 
       switch ((s8)object[0x131]) {
@@ -86,8 +86,8 @@ s32 BattleParty_ApplyStatusDamage(void) {
   }
 
   if (result != 0) {
-    BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleFx_StartBufferInterpolation(4);
+    BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
+    BattleEffect_StartBufferInterpolation(4);
     Audio_PlayCue(133);
   }
 

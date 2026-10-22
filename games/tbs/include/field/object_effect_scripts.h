@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-extern const s32 gFieldFx_CommonParticleScript[];
-extern const s32 gFieldFx_FragmentScript[];
+extern const s32 gFieldEffect_CommonParticleScript[];
+extern const s32 gFieldEffect_FragmentScript[];
 
 #endif

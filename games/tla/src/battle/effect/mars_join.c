@@ -25,7 +25,7 @@ struct DjinniObject {
 };
 
 void *Object_GetById(s32 id);
-void BattleFx_InitializeSlots(void);
+void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
@@ -36,12 +36,12 @@ void Camera_WorldToScreen(void *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(s32 object, s32 value);
 u32 Random16(void);
-void Shop_InitEffectFar(void);
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
+void Shop_InitializeEffectFar(void);
+void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 void Object_Destroy(void *object);
-void BattleFx_SetObjectAlternatingWords(u8 *object);
-void BattleFx_SpinUpAngle(void *obj);
-void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
+void BattleEffect_SetObjectAlternatingWords(u8 *object);
+void BattleEffect_SpinUpAngle(void *obj);
+void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
@@ -65,7 +65,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   if (djinni == NULL)
     return;
 
-  BattleFx_InitializeSlots();
+  BattleEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->effectWork;
   Shop_RestoreSceneTilesFar(0x201090);
   WaitFrames(30);
@@ -79,10 +79,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
   Audio_PlayCue(140);
-  djinni->update = BattleFx_SpinUpAngle;
+  djinni->update = BattleEffect_SpinUpAngle;
   djinni->timer = 0;
   WaitFrames(80);
-  djinni->update = BattleFx_ShrinkObjectAndDestroySlow;
+  djinni->update = BattleEffect_ShrinkObjectAndDestroySlow;
   Object_SetMode(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
@@ -143,7 +143,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   }
 
   WaitFrames(60);
-  leader->update = BattleFx_SetObjectAlternatingWords;
+  leader->update = BattleEffect_SetObjectAlternatingWords;
   WaitFrames(100);
 
   // Every spark still in use goes (state 5).
@@ -168,13 +168,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   WaitFrames(30);
-  Shop_InitEffectFar();
-  BattleFx_ClearActiveSlotsAndScheduleUpdates();
+  Shop_InitializeEffectFar();
+  BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
 /// Spins an object 1/8 turn and shrinks it by 0x400 a frame, destroying it once
 /// its scale falls below 0x3000.
-void BattleFx_ShrinkObjectAndDestroyFast(void *obj) {
+void BattleEffect_ShrinkObjectAndDestroyFast(void *obj) {
   /* FAKEMATCH: the step pinned to r1 and used by an empty asm loads its literal
    * before the scales; as a plain local, 18 instructions differ in tla-en. */
   register s32 step asm("r1") = 0xFFFFFC00;

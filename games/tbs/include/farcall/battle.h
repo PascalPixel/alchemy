@@ -6,7 +6,7 @@
 void DebugBattle_RunMenuFar(void);
 /// Readies the sprites of the units in `list` and releases those of units it
 /// lacks; with `refresh`, every listed unit's pose is set again afterwards.
-void BattleObj_SpawnObjectsForListFar(s16 *list, s32 refresh);
+void BattleObject_SpawnObjectsForListFar(s16 *list, s32 refresh);
 /// Points the battle camera at (x, depth, y) with a zoom in percent and lines
 /// the background's perspective plane up with it.
 void BattlePresentation_SetupTransitionSceneFar(s32 x, s32 depth, s32 y,
@@ -41,7 +41,7 @@ void BattleMotion_ApplyVariantMotionFar(s32 id, s32 variant);
 /// into `dst` if it's not null, and returns how many; HP isn't tested.
 s32 BattleParty_ListActorIdsFar(s32 groups, u16 *dst);
 /// Returns a unit's battle object, or null for a unit with no place
-/// (BattleObjGet); the effects find the sprites they move through it.
+/// (BattleObject_Get); the effects find the sprites they move through it.
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 /// Fights a battle against an enemy formation from its opening to its end, and
 /// returns the enemies defeated, ENCOUNTER_FLED or ENCOUNTER_PARTY_LOST.
@@ -69,7 +69,7 @@ void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
 void BattlePresentation_SetActorModesFar(u16 *actors, s32 mode);
 /// Starts playback of the targets' results as an effect's blow lands, with
 /// `cue` as the hit's sound (0 keeps the one set); see EFFECT_SHOW_DAMAGE.
-void BattleEvent_BeginPhaseFar(s32 cue);
+void BattleEvent_StartPhaseFar(s32 cue);
 /// Copies `count` colours with each channel scaled by `scale` (16.16, at most
 /// 1), to darken a palette; returns 0.
 s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,
@@ -86,8 +86,8 @@ s32 DjinnRecovery_TickTwentyFar(void);
 /// abilities and items included; returns 1 past the table's end.
 s32 DebugParty_LoadPresetFar(s32 preset);
 /// Readies the sprite of every unit in the battle and sets its display mode and
-/// motion afresh (BattleObjPut), as after a call for help.
-void BattleObjPutFar(void);
+/// motion afresh (BattleObject_Put), as after a call for help.
+void BattleObject_PutFar(void);
 #ifdef UBFIX
 /// Shows the bobbing cursor at (x, y), in screen pixels, and waits for
 /// KEY_ADVANCE; the battle command row waits on it.

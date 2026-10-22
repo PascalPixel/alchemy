@@ -19,8 +19,8 @@ gIrqHandlers:
 	.4byte 0	@ Dma1
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
-	.global IwramHalt
-IwramHalt:
+	.global Iwram_Halt
+Iwram_Halt:
 	.endif
 	.endif
 	.4byte 0	@ Dma2

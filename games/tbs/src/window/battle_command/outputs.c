@@ -159,7 +159,7 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
       character = 19;
   }
 
-  icon = Localization_LookupEntryId(character);
+  icon = UiText_GetSpeakerPortrait(character);
   if (icon == -1)
     return portrait;
 
@@ -209,7 +209,7 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
       character = 19;
   }
 
-  icon = Localization_LookupEntryId(character);
+  icon = UiText_GetSpeakerPortrait(character);
   if (icon != -1U) {
     if (side > 1U) {
       if (work->resourceIds[1] == icon) {

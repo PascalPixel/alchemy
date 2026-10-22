@@ -28,7 +28,7 @@ void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
       child->timer = 0;
       child->linkedObject = parent;
       if (sprite != NULL) {
-        AnimationObjects_SelectAnimation(sprite, 0);
+        AnimationObject_SelectAnimation(sprite, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
         sprite->slot = work->tileSlot;
@@ -46,7 +46,7 @@ void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
     struct FieldActor *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
-    effect->update = FieldFx_AnimateVerticalNegative;
+    effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 1;
   }
   {
@@ -54,7 +54,7 @@ void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 1;
-    effect->update = FieldFx_AnimateVerticalPositive;
+    effect->update = FieldEffect_AnimateVerticalPositive;
     effect->priorityFlags = 2;
   }
 }

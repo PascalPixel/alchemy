@@ -1,4 +1,4 @@
-// Draft, differ 2 of 242: The Broken Seal's BattleFx_PlaceFormationObjects
+// Draft, differ 2 of 242: The Broken Seal's BattleEffect_PlaceFormationObjects
 // with The Lost Age's three more formations (case 4: eleven objects from
 // signed columns, case 5: twelve in a 4x3 grid, case 6: eight more) in the
 // native's case order 0, 5, 1, 2, 6, 3, 4. Case 0 walks an explicit object

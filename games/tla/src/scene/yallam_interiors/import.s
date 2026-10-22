@@ -45,7 +45,7 @@ FieldEvent_WaitFrames:
 	.global Func_020009b0
 	.thumb_func
 Func_020009b0:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_020009b8
 	.thumb_func
 Func_020009b8:
@@ -118,10 +118,10 @@ ObjectMotion_SetActionVariant:
 	.thumb_func
 Func_02000a40:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	overlay_veneer Func_080c83e0
 	.endif

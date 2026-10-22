@@ -343,8 +343,8 @@ Func_0813fa88:
 .L_0813fd30:
 	.4byte IwramCopyWords
 .L_0813fd34:
-	.4byte BattleFx_DimBackgroundStep
+	.4byte BattleEffect_DimBackgroundStep
 .L_0813fd38:
-	.4byte BattleFx_TransferHalvedCanvas
+	.4byte BattleEffect_TransferHalvedCanvas
 .L_0813fd3c:
 	.4byte Func_0813f8d4

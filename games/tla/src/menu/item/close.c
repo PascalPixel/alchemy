@@ -67,7 +67,7 @@ struct ItemMenuOwner {
 
 void RenderOutput_ClearListFar(void *window);
 void Func_080f8ab4(s32 x, s32 y);
-void *UnitGet(s32 unitId);
+void *Unit_Get(s32 unitId);
 s32 ItemMenu_CollectItems(void *owner, u16 *items, s32 mode);
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items);
 void UiIcon_PrepareObject(void *icon);
@@ -87,7 +87,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
   } else {
     Func_080f8ab4(index * 24 - 10, 16);
   }
-  owner = UnitGet(menu->ownerIds[index]);
+  owner = Unit_Get(menu->ownerIds[index]);
   menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
   result = ItemMenu_RunOwnerSelection(menu->ownerIds, menu->items);
   UiIcon_PrepareObject(menu->paneIcons[pane]);
@@ -131,7 +131,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->paneIndex[0];
   /* FAKEMATCH(temporary): the first owner's byte offset, taken before the
-   * count; as UnitGet(ownerIds[selection]) below, 2 of 307 instructions
+   * count; as Unit_Get(ownerIds[selection]) below, 2 of 307 instructions
    * differ in tla-en. */
   s32 firstOffset = selection * 2;
   s32 count;
@@ -151,7 +151,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   result = 0;
   sortMode = 0;
   showEquipment = 0;
-  owner = UnitGet(*(u16 *)(firstOffset + (s32)ownerIds));
+  owner = Unit_Get(*(u16 *)(firstOffset + (s32)ownerIds));
 
   if (UiWindow_UpdateOrCreate(&menu->itemWindow, 13, 3, 17, 10, redraw))
     Menu_SpawnIconEntries(menu, menu->itemWindow);
@@ -169,10 +169,10 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
     if (redraw) {
       sortMode = 0;
       window = menu->statusWindow;
-      owner = UnitGet(ownerIds[selection]);
+      owner = Unit_Get(ownerIds[selection]);
       if (showEquipment) {
         menu->itemCount =
-            ItemMenu_CollectItems(UnitGet(ownerIds[selection]), menu->items, 0);
+            ItemMenu_CollectItems(Unit_Get(ownerIds[selection]), menu->items, 0);
         Func_080fa84c(ownerIds[selection]);
         Func_080f8170(window, ownerIds[selection], 0, 8);
       } else {

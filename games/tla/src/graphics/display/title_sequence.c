@@ -74,7 +74,7 @@ s32 Func_081a71c8(void) {
   REG_DISPCNT = 0;
   Ui_LoadWindowGraphics();
   Func_08014b70();
-  PaletteFade_Init();
+  PaletteFade_Initialize();
   gCpuLoadDisplayEnabled = cpuLoad;
   return 1;
 }

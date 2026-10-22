@@ -10,8 +10,8 @@
 /// gVortices_Counts may ask for more.
 #define FROTH_MOTES 30
 
-/// The tornado pictures follow the six glint cells (gBattleFx_GlintCells) in
-/// the sheet: 40x32 sections, the top and bottom ones' three frames
+/// The tornado pictures follow the six glint cells (gBattleEffect_GlintCells)
+/// in the sheet: 40x32 sections, the top and bottom ones' three frames
 /// interleaved, then the middle one's.
 #define WHIRLWIND_TORNADO_CELLS 0xc56
 #define WHIRLWIND_SECTION_BYTES (40 * 32)
@@ -21,7 +21,7 @@
 /// in a burst, flashing and knocking back its target, while the camera swings
 /// round over frames 17 to 63.
 ///
-/// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_FX_FROTH).
+/// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_EFFECT_FROTH).
 ///
 /// effect->variant picks the volley from gVortices_Counts (motes and frames)
 /// and how hard the screen shakes.
@@ -33,7 +33,7 @@
 /// colours, sets REG_BLDALPHA and work->shakeFrames, and turns the camera
 /// through Camera_ApplyPhasedDelta (work->cameraDelta and cameraPhase),
 /// which it removes before it returns.
-void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct BattleEffectWork *work;
   void *canvas;
@@ -55,7 +55,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -176,7 +176,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 /// 16, and the battle shows the damage on frame 32.
 ///
 /// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane
-/// (BATTLE_FX_WHIRLWIND).
+/// (BATTLE_EFFECT_WHIRLWIND).
 ///
 /// effect->variant picks the shape from gVortices_Shapes: how many tornadoes,
 /// how far they sway and how hard the screen shakes.
@@ -186,7 +186,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 /// palette into the first 64 background colours, fades the canvas in and out
 /// through REG_BLDALPHA and keeps work->shakeFrames at 1 so the screen shakes
 /// every frame.
-void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
+void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;
   void **cursor;
@@ -207,7 +207,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -286,10 +286,10 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
         // first three, glints 2 and 3 the last three; 1 and 3 are mirrored.
         if (point->variant >= 0) {
           cell = point->variant / 2 + (j / 2) * 3;
-          draw[j & 1](canvas, work->sheet + gBattleFx_GlintCells[cell],
+          draw[j & 1](canvas, work->sheet + gBattleEffect_GlintCells[cell],
                       point->x + x, point->y + y,
-                      gBattleFx_GlintCellWidths[cell],
-                      gBattleFx_GlintCellHeights[cell]);
+                      gBattleEffect_GlintCellWidths[cell],
+                      gBattleEffect_GlintCellHeights[cell]);
         }
         point->variant++;
         if (point->variant == 6) {
@@ -318,8 +318,8 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef FROTH_MOTE_CELL

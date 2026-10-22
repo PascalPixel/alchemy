@@ -17,7 +17,7 @@ struct DepthScene {
   s16 active;
 };
 
-void BattleFx_DrawSceneSprite(void);
+void BattleEffect_DrawSceneSprite(void);
 
 /// If the scene's sprite is active, stops its update callback
 /// (Func_080dba44) and frees its VRAM cache entry.
@@ -28,7 +28,7 @@ void Func_080dbb40(void) {
   asm volatile("");
   if (scene->active != 0) {
     scene->active = 0;
-    Scheduler_RemoveCallback(BattleFx_DrawSceneSprite);
+    Scheduler_RemoveCallback(BattleEffect_DrawSceneSprite);
     Resource_ResetEntry(scene->vramSlot);
   }
 }

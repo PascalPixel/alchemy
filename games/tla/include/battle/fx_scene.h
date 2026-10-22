@@ -75,7 +75,7 @@ STATIC_ASSERT(offsetof(struct BattleFxScene, slots) == 0x58);
 STATIC_ASSERT(offsetof(struct BattleFxScene, arcTileSlot) == 0x71a);
 STATIC_ASSERT(offsetof(struct BattleFxScene, messageMode) == 0x71c);
 
-static __inline__ s32 BattleFx_Interpolate(s32 to, s32 from, s32 step) {
+static __inline__ s32 BattleEffect_Interpolate(s32 to, s32 from, s32 step) {
   return from + (to - from) * step / 10;
 }
 

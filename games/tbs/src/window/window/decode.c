@@ -25,8 +25,8 @@ struct ArticleTable {
 
 // UiText_AppendArticleName copies a name into the decoded text at pos and
 // returns the position after it. A name may start with an article class
-// ({article_class:N}, MSG_ARTICLE_CLASS and its class), which picks the article
-// written before it. no is the article form the message asks for (its
+// ({article_class:N}, MESSAGE_ARTICLE_CLASS and its class), which picks the
+// article written before it. no is the article form the message asks for (its
 // argument code's operand); plural says the last number shown was not 1;
 // suffix tracks what the text last ended with, for the suffix codes (1: an s,
 // or in German s or z; 2: the end of a sentence, so the next word is
@@ -72,7 +72,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     entries[writePosition] = 0x0a;
     writePosition = (writePosition + 1) & 0x1ff;
   }
-  // A name's leading article class (MSG_ARTICLE_CLASS and its
+  // A name's leading article class (MESSAGE_ARTICLE_CLASS and its
   // operand) is never copied.
 #if (LANGUAGE == LANGUAGE_SPANISH)
   if (count == 0 || count == 4) {
@@ -227,53 +227,53 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 /// UiText_BuildRenderEntries expands into decoded text. Codes it does not
 /// name here are kept as they are; an operand is stored one above its value.
 enum {
-  MSG_END = 0,        ///< kept as TEXT_END: the window stays open
-  MSG_PAGE_BREAK = 1, ///< kept as TEXT_PAGE
-  MSG_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
-  MSG_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
-  MSG_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOUR
+  MESSAGE_END = 0,        ///< kept as TEXT_END: the window stays open
+  MESSAGE_PAGE_BREAK = 1, ///< kept as TEXT_PAGE
+  MESSAGE_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
+  MESSAGE_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
+  MESSAGE_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOUR
   /// Kept with its operand as TEXT_OUTLINE: the style of sprite text, 1
   /// outlined (UiText_RenderGlyphPair), 2 to 5 a motion (UiText_DrawGlyph).
-  MSG_TEXT_EFFECT = 9,
-  MSG_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
+  MESSAGE_TEXT_EFFECT = 9,
+  MESSAGE_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
-  MSG_LOCALIZED_WORD = 13,
+  MESSAGE_LOCALIZED_WORD = 13,
   /// Kept with its operand as TEXT_WINDOW_STATE: the window effect to run.
-  MSG_WINDOW_EFFECT = 15,
+  MESSAGE_WINDOW_EFFECT = 15,
   /// The name of the unit gGameState.selectedActor names.
-  MSG_PROTAGONIST_NAME = 16,
-  MSG_ACTOR_NAME = 17, ///< the name of the unit its operand names
+  MESSAGE_PROTAGONIST_NAME = 16,
+  MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
   // The argument codes write out the next message argument of their kind
-  // (MSG_ARG_). Outside Japanese the actor, class and item codes have an
-  // operand, the article form.
-  MSG_ARGUMENT_ACTOR_NAME = 18,
-  MSG_ARGUMENT_CLASS_NAME = 19,
-  MSG_ARGUMENT_ITEM_NAME = 20,
-  MSG_ARGUMENT_ABILITY_NAME = 21,
+  // (MESSAGE_ARGUMENT_). Outside Japanese the actor, class and item codes have
+  // an operand, the article form.
+  MESSAGE_ARGUMENT_ACTOR_NAME = 18,
+  MESSAGE_ARGUMENT_CLASS_NAME = 19,
+  MESSAGE_ARGUMENT_ITEM_NAME = 20,
+  MESSAGE_ARGUMENT_ABILITY_NAME = 21,
   /// The number argument, with a minus sign when negative; outside Japanese
   /// any number but -1, 0 and 1 makes what follows plural.
-  MSG_ARGUMENT_SIGNED_NUMBER = 22,
-  MSG_ARGUMENT_LOCATION_NAME = 23,
+  MESSAGE_ARGUMENT_SIGNED_NUMBER = 22,
+  MESSAGE_ARGUMENT_LOCATION_NAME = 23,
   /// TEXT_ARGUMENT_SPACE (code 143 in English, a space in German, Spanish,
   /// French and Italian) and a hyphen, and in those four a space after; the
   /// Japanese decoder keeps the code as it is.
-  MSG_EM_DASH = 24,
+  MESSAGE_EM_DASH = 24,
   /// English: the plural suffix; German, Spanish, French and Italian: the
   /// item's possessive
-  MSG_PLURAL_SUFFIX = 25,
+  MESSAGE_PLURAL_SUFFIX = 25,
   /// A button drawn as two characters, codes 128 + 2 * n and the next for
   /// operand value n; the Japanese decoder keeps the code as it is.
-  MSG_BUTTON_ICON = 26,
+  MESSAGE_BUTTON_ICON = 26,
   /// English: an apostrophe, and an s unless the name ended in s; German: an
   /// apostrophe after s or z, else an s; nothing in Spanish, French and
   /// Italian. The Japanese decoder keeps the code as it is.
-  MSG_POSSESSIVE_SUFFIX = 27,
+  MESSAGE_POSSESSIVE_SUFFIX = 27,
   /// The article class of the name it starts, in item and class names, which
   /// UiText_AppendArticleName reads and drops.
-  MSG_ARTICLE_CLASS = 29,
+  MESSAGE_ARTICLE_CLASS = 29,
   /// Kept as TEXT_END_ALT, which the channel ends as it ends TEXT_END.
-  MSG_END_NOW = 30,
+  MESSAGE_END_NOW = 30,
 };
 
 /// What the decoding effects of UiWork_SetBusyFlags put between characters.
@@ -410,47 +410,47 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
       if (overflow != 0) {
         if (code < 32) {
           switch (code) {
-          case MSG_ARGUMENT_CLASS_NAME:
+          case MESSAGE_ARGUMENT_CLASS_NAME:
             decode(&reader);
-            UiText_LookupArgument(MSG_ARG_CLASS, clear);
+            UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
             break;
-          case MSG_END:
-          case MSG_END_WAIT:
-          case MSG_END_NOW:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case MSG_ARGUMENT_SIGNED_NUMBER:
-            UiText_LookupArgument(MSG_ARG_NUMBER, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
-          case MSG_ARGUMENT_ITEM_NAME:
+          case MESSAGE_ARGUMENT_ITEM_NAME:
             decode(&reader);
-            UiText_LookupArgument(MSG_ARG_ITEM, clear);
+            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
             break;
-          case MSG_ARGUMENT_ABILITY_NAME:
-            UiText_LookupArgument(MSG_ARG_ABILITY, clear);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
             break;
-          case MSG_ARGUMENT_LOCATION_NAME:
-            UiText_LookupArgument(MSG_ARG_LOCATION, clear);
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
-          case MSG_TEXT_COLOR:
-          case MSG_TEXT_EFFECT:
-            decode(&reader);
-            break;
-          case MSG_ACTOR_NAME:
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
             decode(&reader);
             break;
-          case MSG_ARGUMENT_ACTOR_NAME:
+          case MESSAGE_ACTOR_NAME:
             decode(&reader);
             break;
-          case MSG_ARTICLE_CLASS:
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
             decode(&reader);
             break;
-          case MSG_PAGE_BREAK:
+          case MESSAGE_ARTICLE_CLASS:
+            decode(&reader);
+            break;
+          case MESSAGE_PAGE_BREAK:
             // The message ends at its first page, waiting for a button.
             running = 0;
             code = 2;
             break;
-          case MSG_PROTAGONIST_NAME:
+          case MESSAGE_PROTAGONIST_NAME:
             break;
           case -1:
             break;
@@ -524,21 +524,21 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           // A control code: write out names, numbers and articles, and keep
           // style codes with their operands.
           switch (code) {
-          case MSG_END:
-          case MSG_END_WAIT:
-          case MSG_END_NOW:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case MSG_TEXT_COLOR:
-          case MSG_TEXT_EFFECT:
-          case MSG_ARTICLE_CLASS:
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
+          case MESSAGE_ARTICLE_CLASS:
             entry[writePosition] = (u16)code;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             entry[writePosition] = decode(&reader) + 0xFFFFU;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
-          case MSG_ARGUMENT_SIGNED_NUMBER:
-            value = (s32)UiText_LookupArgument(MSG_ARG_NUMBER, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            value = (s32)UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
             magnitude = value;
             if (value < 0)
 #ifdef UBFIX
@@ -559,20 +559,20 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               i++;
             }
             break;
-          case MSG_ARGUMENT_CLASS_NAME:
+          case MESSAGE_ARGUMENT_CLASS_NAME:
             no = decode(&reader) - 1;
-            argument = UiText_LookupArgument(MSG_ARG_CLASS, clear);
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
             UiText_DecodeMessage(argument + MsgClassName, name,
                                  UI_MESSAGE_NAME_HALFWORDS);
             writePosition = UiText_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
-          case MSG_ARGUMENT_ITEM_NAME:
+          case MESSAGE_ARGUMENT_ITEM_NAME:
             no = decode(&reader) - 1;
 #if (LANGUAGE == LANGUAGE_SPANISH)
             form = no & 7;
 #endif
-            argument = UiText_LookupArgument(MSG_ARG_ITEM, clear);
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
             // The argument is an inventory code: its low 9 bits are the item,
             // a mask that RENDER_ENTRY_MASK's 0x1ff spells here. In German,
             // Spanish, French and Italian, forms 2 and 4, and 3 after a plural
@@ -597,8 +597,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             writePosition = UiText_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
-          case MSG_ARGUMENT_ABILITY_NAME:
-            argument = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
             UiText_DecodeMessage(argument + MsgAbilityName, name,
                                  UI_MESSAGE_NAME_HALFWORDS);
             p = name;
@@ -610,10 +610,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             writePosition = nextPosition;
             break;
-          case MSG_ARGUMENT_LOCATION_NAME:
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
             UiText_DecodeMessage(
                 Scene_GetAreaNameIndexFar(
-                    UiText_LookupArgument(MSG_ARG_LOCATION, clear), 1) +
+                    UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear),
+                    1) +
                     MsgDebugEntryName,
                 name, UI_MESSAGE_NAME_HALFWORDS);
             p = name;
@@ -625,9 +626,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             writePosition = nextPosition;
             break;
-          case MSG_PROTAGONIST_NAME:
+          case MESSAGE_PROTAGONIST_NAME:
             // A unit's name is 15 bytes, widened here to codes.
-            nameBytes = UnitGetFar(gGameState.selectedActor)->name;
+            nameBytes = Unit_GetFar(gGameState.selectedActor)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -639,10 +640,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             writePosition = UiText_AppendArticleName(0, name, writePosition,
                                                      entry, 0, 0, &suffix);
             break;
-          case MSG_ARGUMENT_ACTOR_NAME:
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
             no = decode(&reader) - 1;
-            nameBytes =
-                UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear))->name;
+            nameBytes = Unit_GetFar(UiText_LookupArgument(
+                                        MESSAGE_ARGUMENT_ACTOR, clear))
+                            ->name;
             nameOutput = name;
             j = 0;
             do {
@@ -654,9 +656,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             writePosition = UiText_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
-          case MSG_ACTOR_NAME:
+          case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
-            nameBytes = UnitGetFar(argument)->name;
+            nameBytes = Unit_GetFar(argument)->name;
             nameOutput = name;
             j = 0;
             do {
@@ -668,14 +670,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             writePosition = UiText_AppendArticleName(0, name, writePosition,
                                                      entry, 0, 0, &suffix);
             break;
-          case MSG_BUTTON_ICON:
+          case MESSAGE_BUTTON_ICON:
             argument = ((decode(&reader) - 1) << 1) + 128;
             entry[writePosition] = argument;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             entry[writePosition] = argument + 1;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
-          case MSG_EM_DASH:
+          case MESSAGE_EM_DASH:
             entry[writePosition] = TEXT_ARGUMENT_SPACE;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             entry[writePosition] = '-';
@@ -687,7 +689,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #endif
             break;
 #if (LANGUAGE == LANGUAGE_GERMAN)
-          case MSG_LOCALIZED_WORD:
+          case MESSAGE_LOCALIZED_WORD:
             no = decode(&reader) - 1;
             nameBytes = gUiText_NumberWords[(no & 7) * 2 + plural];
             while (*nameBytes != 0) {
@@ -697,7 +699,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
 #endif
 #if (LANGUAGE == LANGUAGE_ITALIAN)
-          case MSG_LOCALIZED_WORD:
+          case MESSAGE_LOCALIZED_WORD:
             ending = decode(&reader) - 1;
             if (ending == 0) {
               if (plural == 0)
@@ -711,9 +713,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
 #elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
-          case MSG_LOCALIZED_WORD:
+          case MESSAGE_LOCALIZED_WORD:
 #elif (LANGUAGE == LANGUAGE_ENGLISH)
-          case MSG_PLURAL_SUFFIX:
+          case MESSAGE_PLURAL_SUFFIX:
 #endif
 #if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
             if (plural != 0) {
@@ -727,15 +729,15 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
 #endif
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-          case MSG_PLURAL_SUFFIX:
+          case MESSAGE_PLURAL_SUFFIX:
             // The item argument is only looked at (clear 0), so the item's
             // name code after the possessive still takes it.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-            UiText_LookupArgument(MSG_ARG_ITEM, 0);
+            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
             possessives = gUiText_ItemPossessives;
             word = possessives.text[plural];
 #else
-            argument = UiText_LookupArgument(MSG_ARG_ITEM, 0);
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
             argument &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
             kind = gUiText_ItemGenders[argument];
@@ -754,15 +756,15 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
 #endif
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
-          case MSG_PLURAL_SUFFIX:
+          case MESSAGE_PLURAL_SUFFIX:
 #if (LANGUAGE == LANGUAGE_GERMAN)
-            argument = UiText_LookupArgument(MSG_ARG_ITEM, 0);
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
             argument &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
             kind = gUiText_ItemGenders[argument];
             word = possessives.text[kind & 3];
 #else
-            UiText_LookupArgument(MSG_ARG_ITEM, 0);
+            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
             word = gUiText_ItemPronoun;
 #endif
             for (i = 0; i < 16; i++) {
@@ -776,7 +778,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             suffix = 0;
             break;
 #endif
-          case MSG_POSSESSIVE_SUFFIX:
+          case MESSAGE_POSSESSIVE_SUFFIX:
 #if (LANGUAGE == LANGUAGE_GERMAN)
             if (suffix == 1)
               entry[writePosition] = '\'';
@@ -794,8 +796,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case -1:
             break;
-          case MSG_PAGE_BREAK:
-          case MSG_LINE_BREAK:
+          case MESSAGE_PAGE_BREAK:
+          case MESSAGE_LINE_BREAK:
 #if (LANGUAGE == LANGUAGE_ENGLISH)
             lineStart = 1;
 #endif
@@ -932,40 +934,40 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
       if (overflow != 0) {
         if (code < 32) {
           switch (code) {
-          case MSG_ARGUMENT_CLASS_NAME:
-            UiText_LookupArgument(MSG_ARG_CLASS, clear);
+          case MESSAGE_ARGUMENT_CLASS_NAME:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
             break;
-          case MSG_END:
-          case MSG_END_WAIT:
-          case MSG_END_NOW:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case MSG_TEXT_COLOR:
-          case MSG_TEXT_EFFECT:
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
             decode(&reader);
             break;
-          case MSG_ARGUMENT_SIGNED_NUMBER:
-            UiText_LookupArgument(MSG_ARG_NUMBER, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
-          case MSG_ARGUMENT_ITEM_NAME:
-            UiText_LookupArgument(MSG_ARG_ITEM, clear);
+          case MESSAGE_ARGUMENT_ITEM_NAME:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
             break;
-          case MSG_ARGUMENT_ABILITY_NAME:
-            UiText_LookupArgument(MSG_ARG_ABILITY, clear);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
             break;
-          case MSG_ARGUMENT_LOCATION_NAME:
-            UiText_LookupArgument(MSG_ARG_LOCATION, clear);
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
+            UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
-          case MSG_ACTOR_NAME:
+          case MESSAGE_ACTOR_NAME:
             decode(&reader);
             break;
-          case MSG_ARGUMENT_ACTOR_NAME:
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
             break;
-          case MSG_PAGE_BREAK:
+          case MESSAGE_PAGE_BREAK:
             running = 0;
             code = 2;
             break;
-          case MSG_PROTAGONIST_NAME:
+          case MESSAGE_PROTAGONIST_NAME:
             break;
           case -1:
             break;
@@ -1016,20 +1018,20 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           // A control code: write out names and numbers, and keep style
           // codes with their operands.
           switch (code) {
-          case MSG_END:
-          case MSG_END_WAIT:
-          case MSG_END_NOW:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case MSG_TEXT_COLOR:
-          case MSG_TEXT_EFFECT:
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
             entry[writePosition] = (u16)code;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             entry[writePosition] = decode(&reader) + 0xffffU;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
-          case MSG_ARGUMENT_SIGNED_NUMBER:
-            value = UiText_LookupArgument(MSG_ARG_NUMBER, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            value = UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
             numberText = UiText_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
             while (i != 16 && numberBuffer[i] != 0) {
@@ -1038,38 +1040,39 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               i++;
             }
             break;
-          case MSG_ARGUMENT_CLASS_NAME:
-            argument = UiText_LookupArgument(MSG_ARG_CLASS, clear);
+          case MESSAGE_ARGUMENT_CLASS_NAME:
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
             UiText_DecodeMessage(argument + MsgClassName, name,
                                  UI_MESSAGE_NAME_HALFWORDS);
             writePosition = UiText_AppendArticleName(mode, name, writePosition,
                                                      entry, 0, 0, 0);
             break;
-          case MSG_ARGUMENT_ITEM_NAME:
-            argument = UiText_LookupArgument(MSG_ARG_ITEM, clear);
+          case MESSAGE_ARGUMENT_ITEM_NAME:
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
             UiText_DecodeMessage((argument & 511) + MsgItemName, name,
                                  UI_MESSAGE_NAME_HALFWORDS);
             writePosition = UiText_AppendArticleName(mode, name, writePosition,
                                                      entry, 0, 0, 0);
             break;
-          case MSG_ARGUMENT_ABILITY_NAME:
-            argument = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
             UiText_DecodeMessage(argument + MsgAbilityName, name,
                                  UI_MESSAGE_NAME_HALFWORDS);
             writePosition = UiText_AppendArticleName(mode, name, writePosition,
                                                      entry, 0, 0, 0);
             break;
-          case MSG_ARGUMENT_LOCATION_NAME:
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
             UiText_DecodeMessage(
                 Scene_GetAreaNameIndexFar(
-                    UiText_LookupArgument(MSG_ARG_LOCATION, clear), 1) +
+                    UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear),
+                    1) +
                     MsgDebugEntryName,
                 name, UI_MESSAGE_NAME_HALFWORDS);
             writePosition = UiText_AppendArticleName(mode, name, writePosition,
                                                      entry, 0, 0, 0);
             break;
-          case MSG_PROTAGONIST_NAME:
-            nameBytes = UnitGetFar(gGameState.selectedActor)->name;
+          case MESSAGE_PROTAGONIST_NAME:
+            nameBytes = Unit_GetFar(gGameState.selectedActor)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1081,8 +1084,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             writePosition = UiText_AppendArticleName(mode, name, writePosition,
                                                      entry, 0, 0, 0);
             break;
-          case MSG_ARGUMENT_ACTOR_NAME:
-            unit = UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear));
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
+            unit = Unit_GetFar(
+                UiText_LookupArgument(MESSAGE_ARGUMENT_ACTOR, clear));
             // In battle a unit of class 122 is called Mystery Man and one of
             // class 125 Mystery Woman (MsgMysteryPersonName and the next).
             if (work->menuState != 0 &&
@@ -1107,9 +1111,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                   mode, name, writePosition, entry, 0, 0, 0);
             }
             break;
-          case MSG_ACTOR_NAME:
+          case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
-            nameBytes = UnitGetFar(argument)->name;
+            nameBytes = Unit_GetFar(argument)->name;
             nameOutput = name;
             j = 0;
             do {
@@ -1123,8 +1127,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case -1:
             break;
-          case MSG_PAGE_BREAK:
-          case MSG_LINE_BREAK:
+          case MESSAGE_PAGE_BREAK:
+          case MESSAGE_LINE_BREAK:
             lineStart = 1;
             // Keep the break in the decoded text.
             // Fall through.

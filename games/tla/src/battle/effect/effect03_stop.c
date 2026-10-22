@@ -10,10 +10,10 @@ struct ResourceEntry {
   u8 vramBlock;
 };
 
-void FieldFx_RunPly(void);
+void FieldEffect_RunPly(void);
 void EffectRuntime_StopCurrentObject();
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 struct ResourceEntry *Object_ReplaceResourceEntry(void *sprite,
                                                   struct ResourceEntry *last);
@@ -22,18 +22,18 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
 void Object_Destroy(struct ObjectRuntime *object);
 s32 Resource_ResetEntry(u32 entry);
-void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
+void BattleEffect_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
 void Func_080de8d0(struct ObjectRuntime *object);
 
 /// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
-void FieldFx_RunPlyOnTarget(void) {
-  FieldFx_RunPly();
+void FieldEffect_RunPlyOnTarget(void) {
+  FieldEffect_RunPly();
   EffectRuntime_StopCurrentObject();
 }
 
 /// Eight particles spiral in on the main object, one a frame; then a centre
 /// object flashes for 60 frames, emits sparks and flies off.
-void FieldFx_RunPly(void) {
+void FieldEffect_RunPly(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *target = scene->mainObject;
   struct ObjectRuntime *object;
@@ -49,7 +49,7 @@ void FieldFx_RunPly(void) {
     if (object != 0) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
-      object->update = (void (*)(void))BattleFx_UpdateShrinkingOrbitObject;
+      object->update = (void (*)(void))BattleEffect_UpdateShrinkingOrbitObject;
       object->action = 120;
       object->unk66 = i << 13;
       object->motionFlags = 4;
@@ -78,7 +78,7 @@ void FieldFx_RunPly(void) {
     for (i = 0; i < 30; i++) {
       /* FAKEMATCH: the native keeps object as a second register copy of the
        * centre object (r5 beside r6); this redundant reassignment stops gcse
-       * copy-propagating object = target away, as in ☀️'s FieldFx_RunPly. */
+       * copy-propagating object = target away, as in ☀️'s FieldEffect_RunPly. */
       target = object;
       if (i & 3)
         Animation_ApplyChildValuesFar(object, 9);
@@ -112,5 +112,5 @@ void FieldFx_RunPly(void) {
     Resource_ResetEntry(marker);
   if (scene->finishCallback != 0)
     scene->finishCallback();
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

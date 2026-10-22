@@ -95,6 +95,6 @@ void DisplayTransition_UpdateFrame(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);
 void DisplayTransition_InitializeState(s32 mode);
 void DisplayTransition_UpdateScanlineTable(void);
-void BattleFx_StartWindowHBlankDma(void);
+void BattleEffect_StartWindowHBlankDma(void);
 
 #endif

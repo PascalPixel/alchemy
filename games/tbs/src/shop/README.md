@@ -162,7 +162,7 @@ only one who needs the service (`Shop_CanServe`) can be chosen.
 
 `BattleUnit_ResetStateByMode` applies the service: full HP for a revive,
 poison or the haunting cleared, or every cursed item taken off, after which
-`UnitCalc` rebuilds the curse bits from what is still equipped. A member with
+`Unit_Calculate` rebuilds the curse bits from what is still equipped. A member with
 no cursed item equipped is therefore unchanged by removing a curse, whatever
 restraint bits made them eligible. Each service's lines are a run in the
 same order from `MsgReviveService`, `MsgCurePoisonService`,

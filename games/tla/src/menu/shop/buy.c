@@ -48,7 +48,7 @@ struct ShopWork {
   void *itemWindow;
 };
 
-void *UnitGet(s32 unitId);
+void *Unit_Get(s32 unitId);
 void Inventory_EquipFar(s32 unitId, s32 slot);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void Func_081084f4(s32 messageId);
@@ -64,7 +64,7 @@ extern u8 MsgLookBolder[];
 
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = UnitGet(unitId);
+  struct ShopUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
   s32 itemId;
   struct ItemDefinition *info;
@@ -133,7 +133,7 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   s32 itemId;
   u32 raw;
 
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   if (slot == -1)
     return 0;
   itemOffset = slot * 2 + 216;

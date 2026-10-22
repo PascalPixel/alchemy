@@ -1,12 +1,12 @@
-// Draft, differ 44 of 620: BattleFx_RunRagnarok, effect kind 58, The Broken Seal's
-// BattleFx_RunRagnarok.
+// Draft, differ 44 of 620: BattleEffect_RunRagnarok, effect kind 58, The Broken Seal's
+// BattleEffect_RunRagnarok.
 
-// Twin: ☀️ BattleFx_RunRagnarok (games/tbs/src/effect/effect.c), ported:
+// Twin: ☀️ BattleEffect_RunRagnarok (games/tbs/src/effect/effect.c), ported:
 // the strike columns are placed from the first target's position (half its x
 // less 24, or less 92 on side 1), the user's mode is set to 2 (Object_SetMode,
 // where ☀️ applies argument 2 to the children), the effect stays an argument
 // (☀️ also forces variant 1), each target is also flashed when its column
-// starts, callback BattleFx_ProcessPendingGraphicsTransfer at 0xc80.
+// starts, callback BattleEffect_ProcessPendingGraphicsTransfer at 0xc80.
 
 // Left: everything is reordered rows where the native puts a load (mostly the
 // work's reload from sp+52, the pooled tables) ahead of an independent
@@ -59,21 +59,21 @@ extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_BlastSheet;
 extern u8 gData_08198a92[];  // ☀️ gRagnarok_StrikeColumns
 extern u8 gData_08198a98[];  // ☀️ gPlasma_FlashCells
-extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
+extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
-void Func_0815f0a0(s32 resourceId); // BattleFx_StepPaletteToResource
+void Func_081180e8(s32 phase);      // BattleEventRuntime_StartPhaseFar
+void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Audio_PlayCue(s32 cue);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
@@ -81,7 +81,7 @@ void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // A blade of fire swings down over the targets and strikes twice, each
 // strike a flash and a fountain of sparks that bounce on the ground.
@@ -94,7 +94,7 @@ void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 // colours; each column strikes 8 frames after the last (shake, its flash, its
 // targets flashed) and 6 frames later throws its sparks and knocks the
 // targets back.
-void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 col;
@@ -112,9 +112,9 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
 
   // Open the canvas, pose the user and place the columns.
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(effect->side, draw);
   Object_SetMode(user, 2);
   ObjectDispatch_SetAnimationSpeedFar(user, 48);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
@@ -165,7 +165,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   frame = 0;
   do {
@@ -263,7 +263,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
             s32 y;
             s32 size;
 
-            BattleFxKernels_IntegrateVector2(spark, 64, 0x1000);
+            BattleEffectKernels_IntegrateVector2(spark, 64, 0x1000);
             spark->variant--;
             y = spark->y;
             if (y > (108 << 16)) {
@@ -310,8 +310,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   } while (frame != BLADE_FRAMES);
 
   ObjectDispatch_SetAnimationSpeedFar(user, 16);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

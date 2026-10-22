@@ -77,7 +77,7 @@ Func_02000138:
 .L_020081cc:
 	movs r0, #128
 	bl Func_02005a68
-	bl ObjectEffect_BeginContextEffect26
+	bl ObjectEffect_StartContextEffect26
 	adds r0, r6, #4
 	bl Func_02005990
 	b .L_020081ea
@@ -1201,7 +1201,7 @@ Func_0200129c:
 .L_02009458:
 	.4byte gData_02007bc0
 .L_0200945c:
-	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
+	.4byte BattleEffect_UpdateObjectMotionScaleAndLinkedAngle
 .L_02009460:
 	.4byte 0xffff0000
 	.section .text.x02009464,"ax",%progbits
@@ -2317,7 +2317,7 @@ Func_0200242c:
 	lsls r2, r2, #2
 	adds r3, r5, r2
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a500
@@ -2405,7 +2405,7 @@ Func_0200242c:
 	lsls r0, r0, #2
 	adds r3, r5, r0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a5a8
@@ -2484,7 +2484,7 @@ Func_0200242c:
 	lsls r0, r0, #2
 	adds r3, r5, r0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a90c

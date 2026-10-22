@@ -28,7 +28,7 @@ void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void Func_08118954(void);
 s32 DebugParty_LoadPreset(s32 preset);
-void UnitCalcFar(s32 unitId);
+void Unit_CalculateFar(s32 unitId);
 void Func_081197f0(s32 encounter);
 
 void DebugBattle_RunMenu(void) {
@@ -82,7 +82,7 @@ restart:
       }
       if (gInput.held & 0x80)
         GameFlag_SetBit(364);
-      UnitCalcFar(0);
+      Unit_CalculateFar(0);
       Data_02000436 = 0x2b;
       if (encounter == 28)
         GameFlag_SetBit(366);

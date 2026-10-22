@@ -739,7 +739,7 @@ MusicPlayer_Tick:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	MusicTrack_CalcOutput
+	bl	MusicTrack_CalculateOutput
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L30
@@ -1114,7 +1114,7 @@ MusicTrack_HandleNote:
 .Lnote_output:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	MusicTrack_CalcOutput
+	bl	MusicTrack_CalculateOutput
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]

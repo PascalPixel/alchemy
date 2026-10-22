@@ -32,7 +32,7 @@ struct EventWork15a {
 };
 
 void Func_080d2cc4(s32 message) {
-  EventRuntime_Begin();
+  EventRuntime_Start();
   EventRuntime_ResolvePendingActions(0);
   UiText_ShowPositionedMessageAndWaitFar(message, 1);
   GameFlag_ClearBit(0x142);

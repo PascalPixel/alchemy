@@ -73,7 +73,7 @@ DebugParty_LoadPreset:
 	ldrb r1, [r3, #1]
 	bl Unit_LevelUpToFar
 	mov r0, r8
-	bl UnitGet
+	bl Unit_Get
 	movs r5, #140
 	adds r1, r0, #0
 	adds r2, r1, #0

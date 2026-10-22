@@ -41,7 +41,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
     owners = party->activeOwners;
     count = result;
     do {
-      struct OwnerDjinnState *state = UnitGet(*owners);
+      struct OwnerDjinnState *state = Unit_Get(*owners);
 
       if (state->counts.banks.owned[index] <= 9) {
         u8 *p = state->counts.banks.owned;
@@ -75,7 +75,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
 }
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit) {
-  struct OwnerDjinnState *state = UnitGet(owner);
+  struct OwnerDjinnState *state = Unit_Get(owner);
   u32 owned;
 
   if (state->counts.slots[index] > 9)

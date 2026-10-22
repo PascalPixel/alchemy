@@ -372,7 +372,7 @@ static void VaultCave_PushPillarAhead(void) {
   if (FieldObject_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
-  Object_SetMode(leader, ANIM_PUSH);
+  Object_SetMode(leader, ANIMATION_PUSH);
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_238);
   pillar->speed = 0x3333;
@@ -391,7 +391,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->velocityZ = 0;
   leader->targetX = ACTOR_NO_TARGET;
   leader->targetZ = ACTOR_NO_TARGET;
-  Object_SetMode(leader, ANIM_STAND);
+  Object_SetMode(leader, ANIMATION_STAND);
 }
 
 /// Whirlwind blows the ivy away.
@@ -688,7 +688,7 @@ static void VaultCave_RunRumble(void) {
   s32 lowFadeLevel;
   s32 upperFadeBits;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (gFrameCount & 1) {
     layer->speedX = 1;
     layer->speedY = 1;

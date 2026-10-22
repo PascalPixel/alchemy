@@ -14,7 +14,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void Engine_EventBegin(void);
+void Engine_EventStart(void);
 void Engine_EventEnd(void);
 void Engine_EventResolvePendingActions(s32 skip);
 void Engine_EventSetMessage(s32 message);

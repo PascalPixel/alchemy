@@ -1,7 +1,7 @@
 // Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
-// The body of effect kinds 348, 353, 389 and 431 (BattleFx_RunSpasm to
-// BattleFx_RunSack in variant_k.c pass modes 0 to 3). Written from the
-// listing; ☀️'s BattleFx_RunFortyEightFrameEffect has the same frame count
+// The body of effect kinds 348, 353, 389 and 431 (BattleEffect_RunSpasm to
+// BattleEffect_RunSack in variant_k.c pass modes 0 to 3). Written from the
+// listing; ☀️'s BattleEffect_RunFortyEightFrameEffect has the same frame count
 // and shape (0.55) but is not its twin.
 // The shape matches, including the three mirrored copies as indexed loops
 // (written with walking pointers loop.c makes outer givs of them: differ
@@ -22,8 +22,8 @@
 // 2026-10-15 (lane N2): rewritten with the work struct, one mirroring macro
 // for the three copies and named constants; the same 386 instructions and
 // differ 24.
-// Resources 0x13c (BattleFx_EarthWallSheet), 0x148 (BattleFx_OrangePaletteB),
-// 0x129 (BattleFx_FireballSheet) and 0x150 (BattleFx_MarsDjinnSheet) need
+// Resources 0x13c (BattleEffect_EarthWallSheet), 0x148 (BattleEffect_OrangePaletteB),
+// 0x129 (BattleEffect_FireballSheet) and 0x150 (BattleEffect_MarsDjinnSheet) need
 // their names in system/resource/directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -91,7 +91,7 @@ extern const u8 gData_081991f0[];
 extern const s32 gData_081994d0[];
 extern const s32 gData_081994e0[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -102,7 +102,7 @@ void EffectPosition_ProjectBattler(
 void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void BattleFx_LoadBlitter(s32 slot, s32 blitter);
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -115,8 +115,8 @@ void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A symmetrical burst over the target. Three half-pictures of the earth
 // wall sheet are mirrored into three 64x64 cels; the burst grows through
@@ -137,7 +137,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   s32 x;
 
   // Build the three cels from their halves.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
                              work->sheet + PICTURE_OFFSET, 1, 1);
   Iwram_ClearWords(work->sheet, 0x4000);
@@ -161,10 +161,10 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - target.x) << 8;
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
     work->shakeFrames = 0;
     Audio_PlayCue(212);
@@ -222,7 +222,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

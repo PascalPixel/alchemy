@@ -17,12 +17,12 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
 void Camera_WorldToScreen(struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
-void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
+void BattleEffect_ClearOwnedSlot(struct EffectSlot *slot);
 
 /// Places a spark at random around the current owner and sends it 120 pixels
 /// along angle 0xc000. Each time EffectSlot_HasPendingTarget returns 0, state 1
 /// starts it over and state 2 clears its slot.
-void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
+void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;
   /* FAKEMATCH: the state is pinned to r8, the register the native gives
@@ -76,6 +76,6 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
       effect->state--;
   } else if (state == 2) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
-      BattleFx_ClearOwnedSlot(effect);
+      BattleEffect_ClearOwnedSlot(effect);
   }
 }

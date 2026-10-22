@@ -32,6 +32,27 @@ works; this page says only what differs here.
 Functions not yet matched are drafts under `recon/tla/en/main`, by address.
 `make progress` gives the counts.
 
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`Animation_`, `Battle_`, `BattleEffect_`, `BattleUnit_`, `Camera_`,
+`EffectPosition_`, `EffectStep_`, `Event_`, `FacingObject_`, `FieldEffect_`,
+`FieldMotes_`, `Field_`, `Graphics_`, `Item_`, `Map_`, `MapAnimation_`,
+`Motion_`, `Object_`, `ObjectCamera_`, `ObjectDispatch_`, `ObjectEffect_`,
+`ObjectGroup_`, `ObjectMotion_`, `ObjectSystem_`, `ObjectTable_`,
+`ObjectVisual_`, `OverlayObject_`, `Party_`, `ResourceTable_`, `Runtime_`,
+`Scene_`, `SceneActor_`, `Script_` and `ScriptObject_`. Those only The Lost
+Age's code has so far:
+
+| Prefix | What it acts on |
+| --- | --- |
+| `EventRuntime_` | the event work: its screens, countdowns and destinations, the owner the player controls, and the wait mode of `battle/effect` |
+| `ObjectEvent_`, `ObjectList_` | an event's objects (posing, placing on the ground, removing), and the list of active objects |
+| `Effect_`, `DriftScene_` | moving an effect, and the objects that drift through a scene (here and in `scene/idejima`) |
+| `MapCell_`, `Tilemap_` | a map cell's collision code and attributes, and decoding staged tilemap buffers |
+| `WaveScroll_` | the wave scroll's line offsets |
+| `Vitals_` | the HP and PP ratios |
+
 ## Evidence and open questions
 
 - XXX: what the scene table's sixth column means.

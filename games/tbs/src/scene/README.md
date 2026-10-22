@@ -186,11 +186,11 @@ commands of `event.h` over the engine calls of `field_event.h`.
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
 /// the first stops and stares, and the second throws the party out.
 static void Event_PatrolPairThrowsPartyOut(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
-  OBJ_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
-  OBJ_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
+  OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
   Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
@@ -198,12 +198,12 @@ static void Event_PatrolPairThrowsPartyOut(void) {
 }
 ```
 
-`EV_BEGIN` stops the leader and makes it the speaker, and `EV_END` returns the
+`EV_START` stops the leader and makes it the speaker, and `EV_END` returns the
 camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an actor.
-`OBJ_POS_SET`, `OBJ_WALK`, `OBJ_SPEED`, `OBJ_DIR`, `OBJ_FACE` and `OBJ_MODE`
-move, turn and animate actors by number (`OBJ_MODE` takes an `enum
-ActorAnimation` such as `ANIM_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
+`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
+move, turn and animate actors by number (`OBJECT_MODE` takes an `enum
+ActorAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
 game flags, and `SE(n)` plays a sound from `songs.h`.
 
 The script runs to its end before the scene loop looks at anything else, so a
@@ -255,7 +255,7 @@ place it twice.
 | `kolima_*.h` | Kolima Forest's scenes | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
 | `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
 | `vale.h`, `world_map_linked_effects.h` | Vale's gate and storm; Vale and the world map | the storm's door exits; the particles around a glowing actor |
-| `effect_*.h` | many | `FieldFx_Spawn` and the small effects it places, cutscene Psynergy |
+| `effect_*.h` | many | `FieldEffect_Spawn` and the small effects it places, cutscene Psynergy |
 | `object_*.h` | many | actors: staged actors, lookups by cell and distance, turning and waiting |
 | `map_panel.h`, `scroll_initialize_hblank_dma.h` | Crossbone Isle's stepping stones and Kolima Forest's floodgate; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
 
@@ -342,11 +342,30 @@ A scene's functions take its place's name (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees; most functions an
 event table names are `Event_` instead. Shared helpers take their family's
 prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedActor_`, and
-`FieldFx_` for the field effects). Some keep older descriptive names
+`FieldEffect_` for the field effects). Some keep older descriptive names
 (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the scenes that call
 them are humanized. The spellings some sites keep to match (fields reached
 through `offsetof`, another struct's view of an actor, update hooks returning
 `s32`) are in [Matching](../MATCHING.md).
+
+A run of functions inside one overlay that is about one thing takes that
+thing's name, and a party member's or the leader's part in an event takes
+that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`):
+
+| Prefix | Overlay | What it acts on |
+| --- | --- | --- |
+| `Pillar_` | `alpine_crossing_lama_temple.c` | the pillar drawn in front of or behind the leader |
+| `Village_`, `Houses_` | `altin.c` | Altin's village outside, and its houses and inn inside |
+| `Beast_`, `Spray_` | `altin.c` | the hopping water beast and its spray |
+| `Water_` | `altin_peak.c` | the water layer flickering away |
+| `Entrance_` | `babi_lighthouse.c` | an unused division |
+| `SceneState_` | `colosseum_satrage_match.c`, `crossbone_isle_keys.c` | storing a raised-event trigger, and an empty hook |
+| `InnWorker_` | `lalivero_interiors.c` | the inn worker's sigh |
+| `Reveal_`, `HeatGauge_`, `Manticore_` | `lamakan_desert.c` | the secrets Reveal shows, the heat gauge and the Manticore |
+| `Ship_`, `ShipGlow_`, `OrbGlow_`, `Ripple_`, `Wave_`, `Curtain_` | `lemurian_ship.c` | the ship's swell and glows, the water's ripple and the closing curtains |
+| `TretPalette_` | `tret_tree_interiors.c` | the scene's tint |
+| `FloatingPillar_`, `Rubble_` | `venus_lighthouse.c` | the floating pillars and the rubble particles |
+| `Reunion_`, `WagonChoice_`, `Bunza_` | `west_lunpa_cave.c` | the reunion and the choice to ride Bunza's wagon |
 
 ## Evidence and open questions
 

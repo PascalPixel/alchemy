@@ -8,8 +8,8 @@ FarCall_FieldTable:
 	export Object_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	overlay_veneer Render_PlaceProjectedSprite
 	overlay_veneer Animation_InitializeObjects
-	export AnimationObjects_SelectAnimationFar, AnimationObjects_SelectAnimation
-	overlay_veneer AnimationObjects_SetActiveFrameTimers
+	export AnimationObject_SelectAnimationFar, AnimationObject_SelectAnimation
+	overlay_veneer AnimationObject_SetActiveFrameTimers
 	export ResourceObject_CreateFar, ResourceObject_Create
 	export ResourceObject_ReleaseFar, ResourceObject_Release
 	overlay_veneer Render_PlaceSpritePartPair
@@ -17,7 +17,7 @@ FarCall_FieldTable:
 	export ResourceMetadata_UnregisterFar, ResourceMetadata_Unregister
 	overlay_veneer ResourceMetadata_ReleaseSlot
 	export ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord
-	overlay_veneer Animation_InitWorkFromMetadata
+	overlay_veneer Animation_InitializeWorkFromMetadata
 	export Animation_SetWorkEntryFar, Animation_SetWorkEntry
 	export ObjectSystem_InitializeFar, ObjectSystem_Initialize
 	export ObjectDispatch_SelectAnimationFar, ObjectDispatch_SelectAnimation
@@ -68,13 +68,13 @@ FarCall_FieldTable:
 	export ObjectDispatch_SetChildBlendModeFar, ObjectDispatch_SetChildBlendMode
 	export Map_SetScreenShakeFar, Map_SetScreenShake
 	export Map_WaitForShakeToSettleFar, Map_WaitForShakeToSettle
-	overlay_veneer Animation_SetIndexAndInitObjects
+	overlay_veneer Animation_SetIndexAndInitializeObjects
 	export ObjectSystem_SuspendProjectionAndShowSpritesFar, ObjectSystem_SuspendProjectionAndShowSprites
 	export ObjectSystem_ResumeProjectionAndHideLayersFar, ObjectSystem_ResumeProjectionAndHideLayers
 	overlay_veneer ObjectDispatch_SetChildFixedScale
 	export CheckMapPositionCellOccupiedFar, CheckMapPositionCellOccupied
 	export ObjectDispatch_RegisterChildMetadataFar, ObjectDispatch_RegisterChildMetadata
-	export WorldMap_BeginStillViewFar, WorldMap_BeginStillView
+	export WorldMap_StartStillViewFar, WorldMap_StartStillView
 	export Map_LoadAreaGraphicsFar, Map_LoadAreaGraphics
 	export Animation_ApplyChildValuesFar, Animation_ApplyChildValues
 	export ObjectGroup_SetChildValueUnlessFifteenFar, ObjectGroup_SetChildValueUnlessFifteen
@@ -84,7 +84,7 @@ FarCall_FieldTable:
 	export GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior
 	export ResourceSlot_LoadFar, ResourceSlot_Load
 	export SetMapCellCollisionFar, SetMapCellCollision
-	export AnimationObjects_SetActiveTimerStepsFar, AnimationObjects_SetActiveTimerSteps
+	export AnimationObject_SetActiveTimerStepsFar, AnimationObject_SetActiveTimerSteps
 	export Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable
 	export MapAnimation_SuspendFar, MapAnimation_Suspend
 	export MapAnimation_ResumeFar, MapAnimation_Resume

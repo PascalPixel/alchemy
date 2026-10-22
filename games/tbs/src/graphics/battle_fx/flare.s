@@ -1,7 +1,7 @@
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
-	.global BattleFx_FlareSheet
-BattleFx_FlareSheet:
+	.global BattleEffect_FlareSheet
+BattleEffect_FlareSheet:
 	.incbin "games/tbs/src/graphics/battle_fx/flare_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/flare.parts.lz"
 	.ifdef TBS_EDITION_ES

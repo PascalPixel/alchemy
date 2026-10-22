@@ -68,7 +68,7 @@ enum EnemyClassId {
   ENEMY_MIMIC_7 = 156,
   ENEMY_MIMIC_8 = 157,
   /// The Djinn the party fights, each element's in order of level;
-  /// BattleUnitSet puts them on the party's side.
+  /// BattleUnit_Set puts them on the party's side.
   ENEMY_VENUS_DJINNI = 158,
   ENEMY_VENUS_DJINNI_2 = 159,
   ENEMY_VENUS_DJINNI_3 = 160,

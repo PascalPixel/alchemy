@@ -7,7 +7,7 @@
 /// Gives the character the item, then equip every slot of their 15 that holds
 /// it.
 UNUSED static void Scene_GiveAndEquipItem(s32 character, s32 item) {
-  struct BattleUnit *unit = UnitGet(character);
+  struct BattleUnit *unit = Unit_Get(character);
   s32 i;
 
   Inventory_AddItem(character, item);

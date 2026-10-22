@@ -1,11 +1,11 @@
 	.section .rodata
 @ The pulse scales, the rope, vine and chain sprites and the particle
-@ scripts after gFieldFx_SparkleFrames, in the order of The Broken Seal's
+@ scripts after gFieldEffect_SparkleFrames, in the order of The Broken Seal's
 @ object/fxdata.c, which has no sprites here. Object scripts are words in
 @ this game's command numbers: 0x00 wait, 0x01 sync, 0x06 face the link,
 @ 0x0d loop, 0x16 set, 0x26 free, 0x27 argument.
 
-@ The Broken Seal's gBattleFx_PulseScales without its unread third word:
+@ The Broken Seal's gBattleEffect_PulseScales without its unread third word:
 @ two scales in 16.16 fixed point that alternate every four ticks
 	.global gData_080f0bfc
 gData_080f0bfc:
@@ -45,17 +45,17 @@ Data_080f0e00:
 @ One word, 0x11, which no code names
 	.4byte 0x11
 
-@ The Broken Seal's gBattleFx_CommonParticleScript: free; and from its
+@ The Broken Seal's gBattleEffect_CommonParticleScript: free; and from its
 @ second word, sync and free
-	.global gBattleFx_CommonParticleScript
-gBattleFx_CommonParticleScript:
+	.global gBattleEffect_CommonParticleScript
+gBattleEffect_CommonParticleScript:
 	.4byte 0x26
 	.global gData_080f0e58
 gData_080f0e58:
 	.4byte 0x01
 	.4byte 0x26
 
-@ The Broken Seal's gBattleFx_SourceHoldScript: face the link, wait a frame,
+@ The Broken Seal's gBattleEffect_SourceHoldScript: face the link, wait a frame,
 @ loop for ever to the top
 	.global gData_080f0e60
 gData_080f0e60:
@@ -63,7 +63,7 @@ gData_080f0e60:
 	.4byte 0x00, 1
 	.4byte 0x0d, 0xffff, 0
 
-@ The Broken Seal's gBattleFx_FragmentScript: sync, set the speed (work
+@ The Broken Seal's gBattleEffect_FragmentScript: sync, set the speed (work
 @ 0x0f) to 0x1000, argument 0, wait 10 frames, free
 	.global gData_080f0e78
 gData_080f0e78:

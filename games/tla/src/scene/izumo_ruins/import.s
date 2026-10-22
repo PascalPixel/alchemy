@@ -129,7 +129,7 @@ Func_02001480:
 	.global Func_02001488
 	.thumb_func
 Func_02001488:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001490
 	.thumb_func
 Func_02001490:
@@ -206,10 +206,10 @@ Func_020014e8:
 	.thumb_func
 Func_020014f0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif

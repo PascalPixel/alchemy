@@ -30,8 +30,8 @@ struct ArcEffectObject {
 /// The work of a Psynergy effect scene: its caster and target, where it takes
 /// place, the map state it restores and its 24 effect slots.
 /// It is the HEAP_SLOT_FX work slot, read as gEffectWork, cleared when
-/// allocated: FieldFx_LoadActionEffectResources takes it for a Psynergy or
-/// item use, and FieldFx_InitializeSlots for the Djinn joining effects and
+/// allocated: FieldEffect_LoadActionEffectResources takes it for a Psynergy or
+/// item use, and FieldEffect_InitializeSlots for the Djinn joining effects and
 /// Altmiller Cave's scene. The effect's end releases it.
 struct FieldFxScene {
   s32 angle;          ///< 1/65536 turns
@@ -94,7 +94,7 @@ STATIC_ASSERT(offsetof(struct FieldFxScene, messageMode) == 0x71c);
 
 /// Returns the value step tenths of the way from `from` to `to`; the Psynergy
 /// effects that use it step from 0 to 10, one a frame.
-static __inline__ s32 FieldFx_Interpolate(s32 to, s32 from, s32 step) {
+static __inline__ s32 FieldEffect_Interpolate(s32 to, s32 from, s32 step) {
   return from + (to - from) * step / 10;
 }
 

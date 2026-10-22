@@ -21,7 +21,7 @@ Func_080fae8c:
 	ldr r7, [r3]
 	mov r10, r1
 	adds r5, r0, #0
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r9
 	str r0, [sp, #0]
 	lsls r3, r2, #1
@@ -69,7 +69,7 @@ Func_080fae8c:
 	b .L_080faffe
 .L_080faf20:
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
@@ -111,7 +111,7 @@ Func_080fae8c:
 	b .L_080faffe
 .L_080faf78:
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
@@ -188,7 +188,7 @@ Func_080fae8c:
 	b .L_080fb08a
 .L_080fb012:
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1

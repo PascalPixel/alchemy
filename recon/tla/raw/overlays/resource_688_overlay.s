@@ -191,7 +191,7 @@ Func_02000310:
 	adds r6, r5, #0
 .L_02008332:
 	adds r0, r6, #0
-	bl BattleFx_GetResourceId
+	bl BattleEffect_GetResourceId
 	mov r8, r0
 	cmp r5, #7
 	bne .L_02008366

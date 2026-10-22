@@ -254,11 +254,11 @@ DisplayTransition_ShapesTail:
 	.global gObjectMotion_LaunchScript
 gObjectMotion_LaunchScript:
 	.4byte 1, 0, 1, 28, 1, 34, ObjectMotion_StepAngle, 16
-	.global gFieldFx_BurstParticleScriptA
-gFieldFx_BurstParticleScriptA:
+	.global gFieldEffect_BurstParticleScriptA
+gFieldEffect_BurstParticleScriptA:
 	.4byte 0, 1, 12, 38, 0, 27
-	.global gFieldFx_BurstParticleScriptB
-gFieldFx_BurstParticleScriptB:
+	.global gFieldEffect_BurstParticleScriptB
+gFieldEffect_BurstParticleScriptB:
 	.4byte 0, 1, 12, 18, 0, 27
 	.global gObjectMotion_StepAngleScript
 gObjectMotion_StepAngleScript:
@@ -266,8 +266,8 @@ gObjectMotion_StepAngleScript:
 	.global gUi_RenderResultValues
 gUi_RenderResultValues:
 	.byte 1, 3, 10, 0
-	.global gFieldFx_LinkedObjectScript
-gFieldFx_LinkedObjectScript:
+	.global gFieldEffect_LinkedObjectScript
+gFieldEffect_LinkedObjectScript:
 	.4byte 22, 9, 0xffff8000, 22, 10, 16384, 0, 2
 	.4byte 22, 9, 16384, 22, 10, 0xffffe000, 0, 2
 	.4byte 22, 9, 8192, 22, 10, 0xfffff000, 0, 2
@@ -317,26 +317,26 @@ gObjectMotion_TurnTowardLinkedScript:
 gObjectMotion_LinkedActionScript:
 	.4byte 5, 0, 1, 12, 65535, 0
 @ Ground particles, motes of light and sparkles
-	.global gFieldFx_GroundParticleTiles
-gFieldFx_GroundParticleTiles:
+	.global gFieldEffect_GroundParticleTiles
+gFieldEffect_GroundParticleTiles:
 	.incbin "games/tbs/src/field/common/effect/ground.4bpp16x16.plz"
-	.global gFieldFx_MoteTiles
-gFieldFx_MoteTiles:
+	.global gFieldEffect_MoteTiles
+gFieldEffect_MoteTiles:
 	.incbin "games/tbs/src/object/mote.4bpp16x16.plz"
-	.global gFieldFx_SparkleTiles
-gFieldFx_SparkleTiles:
+	.global gFieldEffect_SparkleTiles
+gFieldEffect_SparkleTiles:
 	.incbin "games/tbs/src/field/common/effect/sparkle.4bpp16x16.plz"
 	.balign 4, 0
-	.global gFieldFx_TargetColors
-gFieldFx_TargetColors:
+	.global gFieldEffect_TargetColors
+gFieldEffect_TargetColors:
 	.4byte 2113668, 2101764, 2101392, 2114052
 	.4byte 2113680, 2101776, 2105608, 2114064
-	.global gFieldFx_UntargetedObjectScript
-gFieldFx_UntargetedObjectScript:
+	.global gFieldEffect_UntargetedObjectScript
+gFieldEffect_UntargetedObjectScript:
 	.4byte 27
 	.global gEffectScripts
 gEffectScripts:
-	.4byte gFieldFx_ShortEffectScript, gFieldFx_MediumEffectScript, gFieldFx_LongEffectScript
+	.4byte gFieldEffect_ShortEffectScript, gFieldEffect_MediumEffectScript, gFieldEffect_LongEffectScript
 @ {tile << 16 | flag, place name}
 	.global gWorldMap_PlaceMarkers
 gWorldMap_PlaceMarkers:

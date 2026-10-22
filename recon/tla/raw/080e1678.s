@@ -936,7 +936,7 @@ Func_080e1678:
 	adds r0, r7, #0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFx_IntegrateVector3
+	bl BattleEffect_IntegrateVector3
 .L_080e1df8:
 	movs r3, #128
 	lsls r3, r3, #3
@@ -1002,11 +1002,11 @@ Func_080e1678:
 	adds r0, r0, r3
 	movs r3, #8
 	str r3, [sp, #0]
-	bl BattleFx_DrawCanvasBlock
+	bl BattleEffect_DrawCanvasBlock
 	adds r0, r7, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFx_IntegrateVector2
+	bl BattleEffect_IntegrateVector2
 	ldr r0, [r7, #24]
 .L_080e1e8c:
 	adds r0, #1

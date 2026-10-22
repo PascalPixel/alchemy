@@ -1,10 +1,10 @@
 // Draft (tla-en): listing 225 instructions, draft 225, common 223, differ 4.
 // Written from the listing; called only by Func_0818284c (f18284c.c), which
 // opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
-// shapes are BattleFx_RunFlare (0.55) and BattleFx_RunPrism.
+// shapes are BattleEffect_RunFlare (0.55) and BattleEffect_RunPrism.
 // Statements, registers, stores and the frame (canvas sp+20, the blitter pair
 // sp+12/sp+16, frame sp+8) all match; four places are left where the native
-// loads first and this build does not: BattleFx_ProcessPendingGraphicsTransfer's address before work
+// loads first and this build does not: BattleEffect_ProcessPendingGraphicsTransfer's address before work
 // in the prologue, the particle base before the reload pair that clears i in
 // both loop preheaders (after the hoisted heights in the second), and the
 // spilled frame before i * 8 is built. sched2 ties each on priority and takes
@@ -25,7 +25,7 @@
 // bubble's, and a heights local loaded before it moves the reload registers:
 // differ 4 and 6) and the spilled frame before i * 8 (a pinned frame behind
 // an asm: the whole allocation moves, differ 90).
-// Resource ids 0x190 (BattleFx_BlueBeamSheet) and 0xfd (Resource_Data0FD)
+// Resource ids 0x190 (BattleEffect_BlueBeamSheet) and 0xfd (Resource_Data0FD)
 // need their names in system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -62,13 +62,13 @@ extern u8 gData_0819966f[];
 extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
 
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void BattleFx_LoadBlitter(s32 slot, s32 blitter);
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 id);
 u32 Random16(void);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081180e8(s32 phase);
@@ -76,7 +76,7 @@ void Audio_PlayCue(s32 cue);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A column of bubbles. On the first frame 256 glowing ovals of random size
 // appear over the bottom left of the canvas; for 60 frames they float up
@@ -98,10 +98,10 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   {
     /* FAKEMATCH(pin): the callback pinned to r0 behind an empty asm that
      * holds r1, with work loaded after it, so the pool load comes before
-     * work's; as Scheduler_AddOrUpdateCallback(BattleFx_..., 0xc80) with work
+     * work's; as Scheduler_AddOrUpdateCallback(BattleEffect_..., 0xc80) with work
      * set at its declaration, 2 of 225 instructions differ in tla-en. */
     register void (*callback)(void) __asm__("r0") =
-        BattleFx_ProcessPendingGraphicsTransfer;
+        BattleEffect_ProcessPendingGraphicsTransfer;
 
     __asm__("" : "+l"(callback) : : "r1");
     work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -109,7 +109,7 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                 BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -151,7 +151,7 @@ void Func_08182898(struct BattleEffectArgument *effect) {
                 HI(bubble->x) - ((width = gData_0819966f[cel]) >> 1),
                 HI(bubble->y) - ((height = gData_0819967e[cel]) >> 1), width,
                 height);
-        BattleFxKernels_IntegrateVector2(bubble, 63, -0x4000);
+        BattleEffectKernels_IntegrateVector2(bubble, 63, -0x4000);
         if (bubble->y < -(gData_0819967e[cel] << 16))
           bubble->variant = -1;
       }
@@ -179,6 +179,6 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

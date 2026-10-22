@@ -42,7 +42,7 @@ Func_080e3074:
 	movs r6, #0
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl BattleFx_SetObjectTickMode
+	bl BattleEffect_SetObjectTickMode
 	ldr r3, .L_080e342c
 	mov r2, r10
 	str r3, [r2, #108]
@@ -231,7 +231,7 @@ Func_080e3074:
 	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e31e4
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	movs r3, #216
 	lsls r3, r3, #5
 	adds r3, #12
@@ -465,7 +465,7 @@ Func_080e3074:
 	b .L_080e3600
 	.2byte 0x0000
 .L_080e342c:
-	.4byte BattleFx_SpinObject
+	.4byte BattleEffect_SpinObject
 .L_080e3430:
 	.4byte 0x050003c0
 .L_080e3434:
@@ -704,7 +704,7 @@ Func_080e3074:
 	asrs r3, r3, #24
 	cmp r3, #0
 	beq .L_080e3664
-	bl BattleFx_EndX
+	bl BattleEffect_EndX
 	b .L_080e3664
 .L_080e3618:
 	.4byte Func_080e2d64
@@ -755,7 +755,7 @@ Func_080e3074:
 	mov r2, r10
 	ldrh r3, [r1]
 	strh r3, [r2, #6]
-	bl BattleFx_EndCanvasSprite
+	bl BattleEffect_EndCanvasSprite
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #56

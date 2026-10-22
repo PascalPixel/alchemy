@@ -4,22 +4,22 @@
 #include "battle_session.h"
 #include "battle_unit.h"
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
-/// BattleFx_StartActorMotion with fixed speeds and a random distance: unless
+/// BattleEffect_StartActorMotion with fixed speeds and a random distance: unless
 /// the unit is one of four enemies, the actor leaps back to 130-193% of its
 /// anchor's x, then takes mode 5.
-void BattleFx_StartActorMotionRandomDistance(s32 id) {
+void BattleEffect_StartActorMotionRandomDistance(s32 id) {
   struct BattleObj *slot;
   struct MotionObject *object;
   u32 enemy;
 
   slot = GetBattleObjectSlotFar(id);
   object = slot->object;
-  enemy = ((struct BattleUnit *)UnitGet(id))->enemyId;
+  enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     s32 percent = (Random16() & 63) + 130;
 

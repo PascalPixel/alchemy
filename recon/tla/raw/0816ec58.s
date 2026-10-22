@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Cool, Supercool, Megacool (kind 75).
-	.global BattleFx_RunCool
+	.global BattleEffect_RunCool
 	.thumb_func
-BattleFx_RunCool:
+BattleEffect_RunCool:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunCool:
 	movs r0, #1
 	str r3, [sp, #20]
 	mov r9, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816ecb8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -376,7 +376,7 @@ BattleFx_RunCool:
 .L_0816ef30:
 	.4byte IwramCopyWords
 .L_0816ef34:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816ef38:
 	.4byte Data_08198bb0
 .L_0816ef3c:
@@ -424,7 +424,7 @@ BattleFx_RunCool:
 	mov r4, r10
 	ldr r0, [r4, #4]
 	ldr r1, [sp, #8]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	mov r3, r10
 	ldr r2, [r3, #24]
 	movs r4, #8
@@ -486,7 +486,7 @@ BattleFx_RunCool:
 	str r3, [r5, #24]
 	adds r0, r5, #0
 	movs r1, #62
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	mov r4, r10
 	ldr r2, [r4, #24]
 .L_0816f014:
@@ -523,7 +523,7 @@ BattleFx_RunCool:
 .L_0816f058:
 	ldr r0, .L_0816f07c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -538,4 +538,4 @@ BattleFx_RunCool:
 .L_0816f078:
 	.4byte 0xffffe000
 .L_0816f07c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

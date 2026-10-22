@@ -1,15 +1,15 @@
 // Near miss, differ 30 of 410.
 
-// Twin: The Broken Seal's BattleFx_RunShiningStar (effect kind 62 there and
+// Twin: The Broken Seal's BattleEffect_RunShiningStar (effect kind 62 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is
 // read directly (the dispatcher stores work->effect), resource 0x134 is
 // unpacked into the sheet slot where The Broken Seal decodes its particle
-// sprites, the one blitter comes from BattleFx_LoadBlitter(104, MAX) before the
+// sprites, the one blitter comes from BattleEffect_LoadBlitter(104, MAX) before the
 // transfer settings, the callback runs at 0xc80, and the radii are bytes.
 // The two tables are not const: as const arrays loop.c hoists the cell offset
 // out of the draw loops and spills it (differ 182).
 
-// BattleFx_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
+// BattleEffect_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
 // returns its store-flag and The Broken Seal's returns s32: void it is 32
 // (alchemy permute, 12 minutes, found this and nothing else).
 
@@ -44,13 +44,13 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
@@ -72,7 +72,7 @@ extern u8 gMapCellBuffer[];
 // Eight rings of stars fly from the caster to the target, one every eight
 // frames and spinning as they go; each bounces where it meets the ground,
 // shaking the screen and flashing the targets.
-void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
+void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -96,16 +96,16 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
 
   // Set up: the rune palette, the dot sheet, one max blitter and the transfer.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Each star leaves from above the caster on its own course to the target,
   // the later ones after a longer delay (held in variant).
@@ -196,8 +196,8 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

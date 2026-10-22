@@ -124,7 +124,7 @@ Field_RunScene:
 	bl UiWork_InitializeWithResourceCountersFar
 	adds r0, r7, #0
 	bl ObjectSystem_InitializeFar
-	bl BattleFx_ResetCounters
+	bl BattleEffect_ResetCounters
 	ldr r6, .L_080cba94
 	ldr r0, [r6, #36]
 	mov lr, r0
@@ -195,7 +195,7 @@ Field_RunScene:
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r2, #214
 	lsls r2, r2, #1
 	movs r3, #128
@@ -283,7 +283,7 @@ Field_RunScene:
 .L_080cbb6c:
 	.4byte gMapCellBuffer
 .L_080cbb70:
-	bl FieldFx_ResumeCloakCheck
+	bl FieldEffect_ResumeCloakCheck
 	movs r1, #240
 	lsls r1, r1, #1
 	adds r3, r6, r1
@@ -342,7 +342,7 @@ Field_RunScene:
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_ClearBit
-	bl BattleFx_SumCounters
+	bl BattleEffect_SumCounters
 	cmp r0, #0
 	beq .L_080cbc02
 	b .L_080cbd7c
@@ -686,7 +686,7 @@ Field_RunScene:
 	bl UiText_ShowPositionedMessageAndWaitFar
 	ldr r3, .L_080cbef0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	ldr r4, .L_080cbee8
 	adds r6, r0, #0
 	strh r4, [r6, #56]
@@ -833,7 +833,7 @@ Field_RunScene:
 	cmp r0, r2
 	bne .L_080cbfea
 	bl EventRuntime_PrepareCurrentObject
-	bl BattleFx_RunVisibilityTransition
+	bl BattleEffect_RunVisibilityTransition
 	b .L_080cc0b6
 .L_080cbfea:
 	ldr r3, .L_080cc120
@@ -1408,7 +1408,7 @@ Field_RunScene:
 	mov r0, r10
 	strh r0, [r3]
 .L_080cc47e:
-	bl BattleFx_SumCounters
+	bl BattleEffect_SumCounters
 	cmp r0, #0
 	beq .L_080cc488
 	b .L_080cbdec
@@ -1463,7 +1463,7 @@ Field_RunScene:
 	ldr r3, [r3, #16]
 	bl Func_080cb2b8
 .L_080cc4f0:
-	bl BattleFx_SumCounters
+	bl BattleEffect_SumCounters
 	cmp r0, #0
 	beq .L_080cc49e
 	b .L_080cbd8c

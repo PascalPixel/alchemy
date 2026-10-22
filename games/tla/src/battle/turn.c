@@ -42,8 +42,8 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
     if (entry->command == 5) {
       struct BattleAct *action;
 
-      UnitGet(entry->unitId);
-      action = BattleActGet(Djinn_GetDefinitionHeaderFar(
+      Unit_Get(entry->unitId);
+      action = BattleAction_Get(Djinn_GetDefinitionHeaderFar(
           (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
       if (action->effect == 72 || action->effect == 76 ||
           action->effect == 79 || action->effect == 74 ||

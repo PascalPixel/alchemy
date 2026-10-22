@@ -1,6 +1,6 @@
 // Draft, differ 247 of 306 (2026-10-19, written from the listing; ☀️ has no
 // twin): the controlled actor grows out of a whirl of 100 sparks that
-// spiral in to it (resource 0x1ef, FieldFx_ColouredOrbs, as Func_080e74d8
+// spiral in to it (resource 0x1ef, FieldEffect_ColouredOrbs, as Func_080e74d8
 // uses). What remains is allocation: the ROM keeps the sprite in r5 and 15
 // in r7, builds the ~12 mask inside the first loop and keeps the next index
 // in r11 with no hoisted 0, and the stack slots follow from that.

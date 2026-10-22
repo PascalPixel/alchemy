@@ -33,8 +33,8 @@ enum BattlePlanFailure {
   PLAN_FAILURE_NO_PP   ///< the user has too little PP
 };
 
-/// One action, as BattleCommand_BuildPlan lays it out for BattleTargetExec to
-/// apply target by target.
+/// One action, as BattleCommand_BuildPlan lays it out for BattleTarget_Execute
+/// to apply target by target.
 struct BattlePlan {
   u8 actorId;                           ///< the acting unit
   s8 targetCount;                       ///< targets in targetIds

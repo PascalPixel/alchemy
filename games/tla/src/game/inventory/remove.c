@@ -1,7 +1,7 @@
 #include "inventory.h"
 
 s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
-  struct OwnerInventoryState *inv = UnitGet(owner);
+  struct OwnerInventoryState *inv = Unit_Get(owner);
   s32 raw = inv->inventory[slot];
   s32 item_id;
   struct ItemDefinition *item;
@@ -25,7 +25,7 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
 }
 
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
-  struct OwnerInventoryState *inv = UnitGet(owner);
+  struct OwnerInventoryState *inv = Unit_Get(owner);
   s32 raw = inv->inventory[slot];
   s32 item_id;
   struct ItemDefinition *item;

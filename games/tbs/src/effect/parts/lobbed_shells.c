@@ -10,7 +10,7 @@
 // Lobbed shells: a shell arcs from the user onto each target and bursts
 // into smoke or shards, in seven colourings.
 
-/// The lobbed shells' styles (BattleFx_RunLobbedShells), each named for the
+/// The lobbed shells' styles (BattleEffect_RunLobbedShells), each named for the
 /// effect that plays it, and its row of gLobbedShells_Records.
 enum LobbedShellsMode {
   LOBBED_SHELLS_BONE_CHILLER,  ///< blue, bursting into smoke
@@ -25,51 +25,51 @@ enum LobbedShellsMode {
 /// Gold shells arc from the user onto each target in turn and burst into
 /// shards.
 ///
-/// Abilities: Mad Spatter (BATTLE_FX_MAD_SPATTER).
-void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_MAD_SPATTER);
+/// Abilities: Mad Spatter (BATTLE_EFFECT_MAD_SPATTER).
+void BattleEffect_RunMadSpatter(struct BattleEffectArgument *effect) {
+  BattleEffect_RunLobbedShells(effect, LOBBED_SHELLS_MAD_SPATTER);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
-/// Abilities: Decompose (BATTLE_FX_DECOMPOSE).
-void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_DECOMPOSE);
+/// Abilities: Decompose (BATTLE_EFFECT_DECOMPOSE).
+void BattleEffect_RunDecompose(struct BattleEffectArgument *effect) {
+  BattleEffect_RunLobbedShells(effect, LOBBED_SHELLS_DECOMPOSE);
 }
 /// Blue shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
-/// Abilities: Bone Chiller (BATTLE_FX_BONE_CHILLER).
-void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_BONE_CHILLER);
+/// Abilities: Bone Chiller (BATTLE_EFFECT_BONE_CHILLER).
+void BattleEffect_RunBoneChiller(struct BattleEffectArgument *effect) {
+  BattleEffect_RunLobbedShells(effect, LOBBED_SHELLS_BONE_CHILLER);
 }
 /// Shells in the spider web's colours arc from the user onto each target in
 /// turn and burst into smoke.
 ///
-/// Abilities: Sticky Goo (BATTLE_FX_STICKY_GOO).
-void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_GOO);
+/// Abilities: Sticky Goo (BATTLE_EFFECT_STICKY_GOO).
+void BattleEffect_RunStickyGoo(struct BattleEffectArgument *effect) {
+  BattleEffect_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_GOO);
 }
 /// Shells in Mars Djinn colours arc from the user onto each target in turn
 /// and burst into smoke.
 ///
-/// Abilities: Poison Ink (BATTLE_FX_POISON_INK).
-void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_POISON_INK);
+/// Abilities: Poison Ink (BATTLE_EFFECT_POISON_INK).
+void BattleEffect_RunPoisonInk(struct BattleEffectArgument *effect) {
+  BattleEffect_RunLobbedShells(effect, LOBBED_SHELLS_POISON_INK);
 }
 /// Lime shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
-/// Abilities: Sticky Poison (BATTLE_FX_STICKY_POISON).
-void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_POISON);
+/// Abilities: Sticky Poison (BATTLE_EFFECT_STICKY_POISON).
+void BattleEffect_RunStickyPoison(struct BattleEffectArgument *effect) {
+  BattleEffect_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_POISON);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// shards.
 ///
-/// Abilities: Rotten Blood (BATTLE_FX_ROTTEN_BLOOD).
-void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_ROTTEN_BLOOD);
+/// Abilities: Rotten Blood (BATTLE_EFFECT_ROTTEN_BLOOD).
+void BattleEffect_RunRottenBlood(struct BattleEffectArgument *effect) {
+  BattleEffect_RunLobbedShells(effect, LOBBED_SHELLS_ROTTEN_BLOOD);
 }
 /// The bursts live after the shells in PARTICLES, from PARTICLES[256] (0x1c00
 /// bytes is 256 particles of 28): 32 slots a target, of which 4 smoke puffs
@@ -89,8 +89,8 @@ void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
 /// flashes and the battle shows the damage; the shell bursts into 4 smoke
 /// puffs that drift up or 16 shards that fly up and fall.
 ///
-/// Called by the seven handlers above, from BattleFx_RunMadSpatter to
-/// BattleFx_RunRottenBlood. Loads three palettes over the first 64
+/// Called by the seven handlers above, from BattleEffect_RunMadSpatter to
+/// BattleEffect_RunRottenBlood. Loads three palettes over the first 64
 /// background colours in turn, the style's last; frees PARTICLES 0 to 1023,
 /// then gives the shells 16 a target from 0 and the bursts 32 a target from
 /// LOBBED_SHELLS_BURSTS. Runs 8 frames a target plus 72 for smoke or 56 for
@@ -100,7 +100,8 @@ void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
 /// mode: the style (enum LobbedShellsMode): its colours and its row of
 ///       gLobbedShells_Records, which makes Rotten Blood's and Mad Spatter's
 ///       shells burst into shards.
-void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct EffectPosition position;
   BlitterPair draw;
   void **slots;
@@ -121,7 +122,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_CELLS and the

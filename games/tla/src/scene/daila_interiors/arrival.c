@@ -59,7 +59,7 @@ s32 DailaInteriors_Start(void) {
     }
   } else if (gPartyState.scene == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
     Func_02000dac(0);

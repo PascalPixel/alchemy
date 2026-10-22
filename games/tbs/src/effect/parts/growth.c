@@ -18,7 +18,7 @@
 /// The small thorn in the thorn sheet, after the 48x80 big one.
 #define THORN_SMALL_CELLS (48 * 80)
 
-/// What the growing columns grow (BattleFx_RunGrowingColumns).
+/// What the growing columns grow (BattleEffect_RunGrowingColumns).
 enum GrowingColumnsMode {
   GROWING_COLUMNS_VINES,  ///< Growth
   GROWING_COLUMNS_PILLARS ///< Punji's green pillars
@@ -38,19 +38,19 @@ struct DualColumn {
 
 /// Vines grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_FX_GROWTH).
-void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
-  BattleFx_RunGrowingColumns(effect, GROWING_COLUMNS_VINES);
+/// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_EFFECT_GROWTH).
+void BattleEffect_RunGrowth(struct BattleEffectArgument *effect) {
+  BattleEffect_RunGrowingColumns(effect, GROWING_COLUMNS_VINES);
 }
 /// Green pillars grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_FX_PUNJI).
+/// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_EFFECT_PUNJI).
 ///
 /// Punji Strike's row of actflags.tsv gives the stronger variant, as Punji
 /// Trap's does,
-/// so no ability plays BATTLE_FX_PUNJI's strongest variant.
-void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
-  BattleFx_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
+/// so no ability plays BATTLE_EFFECT_PUNJI's strongest variant.
+void BattleEffect_RunPunji(struct BattleEffectArgument *effect) {
+  BattleEffect_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
 }
 /// Vines or green pillars grow one every 4 frames,
 /// alternately mirrored, each throwing up dust from its root.
@@ -62,7 +62,7 @@ void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
 /// up a puff of dust. The battle moves on to the results 64 frames before the
 /// end; the scene fades out over 16 frames, and nothing grows in its last 4.
 ///
-/// Called by BattleFx_RunGrowth and BattleFx_RunPunji.
+/// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji.
 /// work->particles holds the 16 columns (struct DualColumn) and PARTICLES
 /// the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side 1,
 /// REG_BG2X; sets work->shakeFrames as each column appears.
@@ -71,7 +71,8 @@ void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
 ///         Punji Trap and Punji Strike, 12 for Wild Growth. The scene runs 4
 ///         frames a column and 56 more.
-void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
+                                    s32 mode) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -110,7 +111,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   if (mode == GROWING_COLUMNS_PILLARS) {
@@ -323,17 +324,17 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 /// Sixteen green vines grow from the middle of the row of targets, 2 frames
 /// apart, and shrink back.
 ///
-/// Abilities: Vine (BATTLE_FX_VINE).
+/// Abilities: Vine (BATTLE_EFFECT_VINE).
 ///
 /// Vine i appears on frame 2i + 5 and grows 4 pixels a frame up to 32,
 /// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
 /// odd vines are mirrored. Vine i shakes the screen on frame 4i + 5. On frame
 /// 32 the targets react together, with a sound.
 ///
-/// A Djinni appears first (BattleFx_RunDjinniEntrance). work->particles holds
-/// the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
+/// A Djinni appears first (BattleEffect_RunDjinniEntrance). work->particles
+/// holds the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
 /// work->shakeFrames.
-void BattleFx_RunVine(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   u32 *slots, *cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -348,10 +349,10 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleFx_RunDjinniEntrance(effect, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
-                             effect->side, DJINNI_ANCHOR_CENTRE, &originX,
-                             &originY);
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_RunDjinniEntrance(effect, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
+                                 effect->side, DJINNI_ANCHOR_CENTRE, &originX,
+                                 &originY);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
@@ -426,7 +427,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 /// Thorns burst from the ground one every 8 frames, throwing up dust from
 /// their roots.
 ///
-/// Abilities: Thorn, Briar, Nettle (BATTLE_FX_THORN).
+/// Abilities: Thorn, Briar, Nettle (BATTLE_EFFECT_THORN).
 ///
 /// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
 /// of dust on each of its first two frames; on frame 8i + 12 the targets
@@ -441,7 +442,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 /// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
 /// REG_BLDALPHA and, on side 1, REG_BG2X; sets work->shakeFrames as each
 /// thorn appears.
-void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
+void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
@@ -460,7 +461,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -478,7 +479,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   drawFlip = ((DrawRectangle *)
                   slots)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
 

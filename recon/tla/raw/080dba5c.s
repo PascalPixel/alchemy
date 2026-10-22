@@ -111,4 +111,4 @@ Func_080dba5c:
 .L_080dbb38:
 	.4byte IwramFillWords
 .L_080dbb3c:
-	.4byte BattleFx_DrawSceneSprite
+	.4byte BattleEffect_DrawSceneSprite

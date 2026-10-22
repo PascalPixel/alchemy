@@ -18,7 +18,7 @@ Func_0810a2d8:
 	ldr r3, [r3]
 	adds r7, r0, #0
 	str r3, [sp, #8]
-	bl UnitGet
+	bl Unit_Get
 	ldr r2, [sp, #12]
 	mov r8, r0
 	lsls r2, r2, #1

@@ -1,15 +1,15 @@
 .syntax unified
 	.thumb
-	.global Unit_CalcBaseElements
+	.global Unit_CalculateBaseElements
 	.thumb_func
-Unit_CalcBaseElements:
+Unit_CalculateBaseElements:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
 	push {r6, r7}
 	mov r10, r1
 	sub sp, #16
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #42
 	adds r2, r0, #0
 	adds r1, #255

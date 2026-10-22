@@ -23,7 +23,7 @@ Func_080ff7b4:
 	mov r9, r0
 	ldrb r0, [r3, r5]
 	mov r8, r3
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r10
 	ldrb r7, [r6, r2]
 	mov r2, r8

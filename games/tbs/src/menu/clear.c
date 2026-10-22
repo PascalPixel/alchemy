@@ -136,7 +136,7 @@
 
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
-static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
+static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The file select overlay's scene tables, for the scene loader: one entrance,
 /// the exit, and no placements or events.
@@ -459,7 +459,7 @@ s32 SaveMenu_Run(void) {
       // Marks the file cleared (SaveSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
       gGameState.unk20f = 1;
-      v7 = Save_WriteSelectedSlot();
+      v7 = SaveMenu_WriteSelectedSlot();
       if (v7 == -1) {
         goto L_ask;
       }
@@ -508,7 +508,7 @@ menu_top:;
     // Hidden button codes expand the list of names offered for a new game:
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
-    GameState_InitDefaults();
+    GameState_InitializeDefaults();
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
     v5 = 1;
     v7 = 0;
@@ -532,7 +532,7 @@ menu_top:;
         break;
       }
     }
-    Party_BeginChildhood();
+    Party_StartChildhood();
     gGameState.scene = (s32)&SceneId_ValeInteriorsInn;
     gGameState.entrance = 20;
     goto leave;
@@ -705,7 +705,7 @@ menu_top:;
 
       UiText_DrawResource(MsgClearSendingData, (struct UiWindow *)v6, 0, 4);
       Engine_TaskWait(10);
-      SerialRuntime_BeginSend(gSaveBuffer, 0x1004);
+      SerialRuntime_StartSend(gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
@@ -763,7 +763,7 @@ menu_top:;
         s16 sum;
 
         encodedSize = Clear_PackPasswordData(0, v6, data);
-        sum = Clear_ComputePasswordCrc16(encodedSize, data);
+        sum = Clear_CalculatePasswordCrc16(encodedSize, data);
         saveData[encodedSize] = (u16)sum >> 8;
         saveData[encodedSize + 1] = sum;
         encodedSize += 2;
@@ -1091,7 +1091,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   for (i = 0; i != 4; i++) {
-    struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+    struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
         ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
     struct PasswordStats *stats = &owner->stats;
 
@@ -1153,7 +1153,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 39;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
 
       for (n = 0; n != 15; n++) {
@@ -1176,7 +1176,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 107;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
       s32 m;
 
@@ -1313,7 +1313,7 @@ static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
 /// its complemented low 16 bits. 0xFFFFEFDF is -0x1021, CRC-16-CCITT's
 /// polynomial, subtracted where that CRC XORs it; bits above 15 never reach
 /// the result, since carries and borrows only move up.
-static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data) {
+static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;
   u32 bitIndex;

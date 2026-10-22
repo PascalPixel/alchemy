@@ -20,7 +20,7 @@ struct BattleFxScene;
 #define ObjectGroup_SetChildValueUnlessFifteenFar                              \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define ObjectDispatch_ReleaseFar Object_Destroy
-#define gBattleFx_PulseScales gData_080f0bfc
+#define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gFrameTick;
@@ -36,17 +36,17 @@ struct EffectOwner {
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
-void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
+void BattleEffect_ClearOwnedSlot(struct EffectSlot *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh();
 void Camera_WorldToScreen();
-void BattleFx_InitializeSlots(void);
+void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32);
-void Shop_InitEffectFar(void);
+void Shop_InitializeEffectFar(void);
 void EffectSlot_Initialize();
-void BattleFx_AdvanceSpinAngle();
+void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
@@ -88,7 +88,7 @@ struct SpreadPosition {
 
 void Audio_PlayCue(s32);
 
-extern const s32 gBattleFx_CommonParticleScript[];
+extern const s32 gBattleEffect_CommonParticleScript[];
 
 struct CaptureObject {
   u8 unk00[8];
@@ -120,7 +120,7 @@ void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
+void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
 struct LinkedCaptureObject {
   u8 padding000[8];
@@ -131,19 +131,19 @@ struct LinkedCaptureObject {
   struct LinkedCaptureObject *target;
 };
 
-void BattleFx_SetObjectAlternatingWords(u8 *object);
+void BattleEffect_SetObjectAlternatingWords(u8 *object);
 
-void BattleFx_SpinUpAngle(void *obj);
+void BattleEffect_SpinUpAngle(void *obj);
 
-void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
+void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
 
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 
 void BattleEffect_RunPhasedRadialParticleSequence(s32 arg);
 
-void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
+void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
-void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg) {
+void BattleEffect_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg) {
   struct OrbitPosition local;
   struct DescendingOrbitObject *other;
   s32 raw;
@@ -166,8 +166,8 @@ void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg) {
     ObjectDispatch_ReleaseFar(arg);
 }
 
-void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
+void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect);
 
-void BattleFx_RunVenusDjinnCapture(s32 arg);
+void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
-void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect);
+void BattleEffect_UpdateRandomTargetParticle(struct EffectSlot *effect);

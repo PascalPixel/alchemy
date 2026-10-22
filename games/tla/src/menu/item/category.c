@@ -25,7 +25,7 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
   struct CategoryMenuState *menu = Ram_HeapSlots->menuRuntime;
   u8 *items;
 
-  ItemMenu_PosCategory();
+  ItemMenu_PositionCategory();
   ItemMenu_HideAllIcons();
   UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels, window, 0, 0);
   UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 1, window, 0, 32);

@@ -15,7 +15,7 @@
 /// waves of water rise along the bottom of the screen; the canvas fades out
 /// over the last 16 frames.
 ///
-/// Abilities: Hail (BATTLE_FX_HAIL).
+/// Abilities: Hail (BATTLE_EFFECT_HAIL).
 ///
 /// The 64 chips start together and are let go four a frame from frame 4,
 /// alternately mirrored; the battle shows the damage on frame 8. The chips live
@@ -26,7 +26,7 @@
 /// chips' on frame 1), sets work->shakeFrames on frame 8.
 ///
 /// effect: the user and the targets; prelude 1 keeps the Djinni circling.
-void BattleFx_RunHail(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -42,11 +42,11 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // A Mercury Djinni appears over the user.
-  BattleFx_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
-                             DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
-  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+  BattleEffect_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
+                                 DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
@@ -177,17 +177,17 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 /// After a Venus Djinni enters, six rocks rise from the user shedding chips,
 /// swirl, and home in on the first target, each hitting it as it lands.
 ///
-/// Abilities: Ground (BATTLE_FX_GROUND).
+/// Abilities: Ground (BATTLE_EFFECT_GROUND).
 ///
 /// A rock's variant is 1 while it flies and 0 once it has hit; the chips are
 /// particles 32 to 63, four for each rock, each with its picture in velocityX
 /// and its blitter flags in velocityY. The Djinni entrance plays whatever the
 /// prelude. From frame 17 the BG palette steps towards the portal sheet's
-/// (BattleFx_StepPaletteToResource). Writes REG_BLDALPHA, sets
+/// (BattleEffect_StepPaletteToResource). Writes REG_BLDALPHA, sets
 /// work->shakeFrames on each hit.
 ///
 /// effect: the user and the targets; prelude 1 keeps the Djinni circling.
-void BattleFx_RunGround(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -205,10 +205,10 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // A Venus Djinni appears over the user.
-  BattleFx_RunDjinniEntrance(effect, ELEMENT_VENUS, work->effect->side,
-                             DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
+  BattleEffect_RunDjinniEntrance(effect, ELEMENT_VENUS, work->effect->side,
+                                 DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
@@ -238,7 +238,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   }
   for (frame = 0; frame != GROUND_FRAMES; frame++) {
     if (frame > 16)
-      BattleFx_StepPaletteToResource((s32)&ResourceId_PortalSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
     // Prelude: the Djinni circles above the user and from frame 17 rises 2
     // pixels a frame. For its first four frames it is drawn additively
     // first, so it flashes in.

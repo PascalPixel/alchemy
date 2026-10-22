@@ -84,7 +84,7 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   u16 *items;
 
   menu = Ram_HeapSlots->menuRuntime;
-  owner = UnitGet(ownerId);
+  owner = Unit_Get(ownerId);
   items = menu->items;
   menu->itemCount = ItemMenu_CollectItems(owner, items, 0);
   RenderOutput_RedrawSavedRectFar(menu->itemWindow);

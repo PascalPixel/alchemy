@@ -64,7 +64,7 @@ extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
 #endif
 
-/// The party status window's flags (PartyStatusDraw,
+/// The party status window's flags (PartyStatus_Draw,
 /// UiWindow_CreateWithLayoutBounds): one column of six tiles per party member
 /// (name, HP and, when shown, PP with a bar under each), and in battle an
 /// optional five-tile column of standby Djinn counts on its left.

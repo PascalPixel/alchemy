@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Spire, Clay Spire, Stone Spire (kind 2).
-	.global BattleFx_RunSpire
+	.global BattleEffect_RunSpire
 	.thumb_func
-BattleFx_RunSpire:
+BattleEffect_RunSpire:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunSpire:
 	movs r0, #1
 	ldr r1, [r5, #96]
 	str r1, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08159d0c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -39,7 +39,7 @@ BattleFx_RunSpire:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r6, [sp, #32]
 	str r5, [sp, #20]
@@ -295,7 +295,7 @@ BattleFx_RunSpire:
 	lsls r2, r2, #7
 	adds r0, r7, #0
 	movs r1, #64
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r7, #24]
 	ldr r2, [r7, #8]
 	adds r3, r3, r2
@@ -435,7 +435,7 @@ BattleFx_RunSpire:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -445,7 +445,7 @@ BattleFx_RunSpire:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0815a01c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815a020:
 	.4byte Data_081985b0
 .L_0815a024:

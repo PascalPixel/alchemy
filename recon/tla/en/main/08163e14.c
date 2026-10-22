@@ -1,13 +1,13 @@
 // Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
 // call reaches it), a second copy of The Broken Seal's
-// BattleFx_RunNereid (summon 2's, which The Lost Age keeps at
-// BattleFx_RunNereid).
+// BattleEffect_RunNereid (summon 2's, which The Lost Age keeps at
+// BattleEffect_RunNereid).
 
-// Twin: ☀️ BattleFx_RunNereid (games/tbs/src/effect/effect.c),
+// Twin: ☀️ BattleEffect_RunNereid (games/tbs/src/effect/effect.c),
 // ported: the palette goes by DMA 3, the blitters come from
-// BattleFx_FetchRectangleBlitters(0, draw), the effect stays an argument (its
-// count and actors are read from it; only BattleFx_SelectLivingTargets reads the work's copy),
-// formation resource 649, callback BattleFx_ProcessPendingGraphicsTransfer at 0xc80.
+// BattleEffect_FetchRectangleBlitters(0, draw), the effect stays an argument (its
+// count and actors are read from it; only BattleEffect_SelectLivingTargets reads the work's copy),
+// formation resource 649, callback BattleEffect_ProcessPendingGraphicsTransfer at 0xc80.
 
 // The column table is not const: the native reads it again after each draw
 // call, and as const data the reuse moved every register (differ 292).
@@ -63,27 +63,27 @@ extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
 extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
 extern u8 gData_0819896a[];        // the pillars' feet, x and y
-extern const u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
+extern const u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
-void BattleFx_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
-void BattleFx_SpawnObjects(s32 count, s32 resource,
-                   s32 priority); // BattleFx_SpawnObjects
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
+    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                   s32 priority); // BattleEffect_SpawnObjects
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Audio_PlayCue(s32 cue);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_0816442c(s32 formation, s32 x,
-                   s32 y); // BattleFx_PlaceFormationObjects
+                   s32 y); // BattleEffect_PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x,
-                   s32 y); // BattleFx_RunImpactBurst
-void BattleFx_EndCanvasLayer(void);  // BattleFx_EndCanvasLayer
+                   s32 y); // BattleEffect_RunImpactBurst
+void BattleEffect_EndCanvasLayer(void);  // BattleEffect_EndCanvasLayer
 
 struct Point2D {
   s32 x;
@@ -112,9 +112,9 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   cells = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The spray's palette and picture, the pillar's picture, the ember cells.
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
@@ -128,7 +128,7 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
                         cells);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -160,9 +160,9 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
       life += sizeof(struct EffectStep) / sizeof(s32);
     }
     embers = EMBERS;
-    BattleFx_SelectLivingTargets(work->effect);
+    BattleEffect_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleFx_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
+    BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
 
     for (frame = 0; frame != SCENE_FRAMES; frame++) {
       if ((gInput.repeat & 3) && frame > SKIP_FROM_FRAME &&
@@ -310,12 +310,12 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
       WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     Func_0816467c(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       ResourceObject_ReleaseFar(work->objects[k]);
   }
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

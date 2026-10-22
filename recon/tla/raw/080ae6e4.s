@@ -58,7 +58,7 @@ Func_080ae6e4:
 .L_080ae758:
 	adds r0, r2, #0
 	str r2, [sp, #0]
-	bl UnitCalc
+	bl Unit_Calculate
 	ldr r2, [sp, #0]
 	adds r2, #1
 	cmp r2, #7

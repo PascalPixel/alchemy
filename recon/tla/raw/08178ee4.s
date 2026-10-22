@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Heartbreak (kind 69).
-	.global BattleFx_RunHeartbreak
+	.global BattleEffect_RunHeartbreak
 	.thumb_func
-BattleFx_RunHeartbreak:
+BattleEffect_RunHeartbreak:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunHeartbreak:
 	adds r0, #1
 	mov r11, r1
 	ldr r6, .L_08178f50
-	bl BattleFx_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	ldr r3, .L_08178f4c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -36,12 +36,12 @@ BattleFx_RunHeartbreak:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #16]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	add r2, sp, #16
@@ -115,7 +115,7 @@ BattleFx_RunHeartbreak:
 	str r3, [r0, #12]
 	b .L_08178fd8
 .L_08178fc4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08178fc8:
 	.4byte 0xff9c0000
 .L_08178fcc:
@@ -142,7 +142,7 @@ BattleFx_RunHeartbreak:
 	mov r0, r8
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_08178ffa:
 	mov r3, r9
 	cmp r3, #32
@@ -189,7 +189,7 @@ BattleFx_RunHeartbreak:
 	movs r1, #60
 	mov r0, r8
 	ldr r2, .L_0817905c
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	b .L_08179060
 	.2byte 0x0000
 .L_08179058:
@@ -569,7 +569,7 @@ BattleFx_RunHeartbreak:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -604,4 +604,4 @@ BattleFx_RunHeartbreak:
 .L_0817938c:
 	.4byte 0x3f3f3f3f
 .L_08179390:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

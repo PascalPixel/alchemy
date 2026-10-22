@@ -94,7 +94,7 @@ Func_080fd968:
 	adds r3, #22
 	add r3, r10
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r10
 	ldrh r3, [r6, r2]
 	adds r5, r0, #0
@@ -102,7 +102,7 @@ Func_080fd968:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BattleActGet
+	bl BattleAction_Get
 	adds r7, r0, #0
 	ldrb r2, [r7, #9]
 	movs r1, #58

@@ -394,13 +394,13 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     for (index = 0; index != count; index++) {
       // The list's index taken as a unit id: 0 to 7, then 128 onward.
       // BUG: unitIds is never read. A gap among party ids can make
-      // BattleObjGet return NULL before the loop reaches the enemy ids,
+      // BattleObject_Get return NULL before the loop reaches the enemy ids,
       // and the scale store then goes near address 0.
       id = index + 120;
       if ((s32)index <= ALLY_MAX)
         id = index;
-      object = BattleObjGet(id);
-      if (UnitGetFar(id)->classId != ENEMY_FUSION_DRAGON)
+      object = BattleObject_Get(id);
+      if (Unit_GetFar(id)->classId != ENEMY_FUSION_DRAGON)
         object->scale = 0xb333;
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -417,8 +417,8 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
           BATTLE_SIDE_ENEMIES, presentation.effect.actors);
       presentation.effect.actors[presentation.effect.count] =
           BATTLE_UNIT_LIST_END;
-      BattleObj_SpawnObjectsForList(presentation.effect.actors, 0);
-      BattleFx_RunShatteringOpeningFar(&presentation.effect);
+      BattleObject_SpawnObjectsForList(presentation.effect.actors, 0);
+      BattleEffect_RunShatteringOpeningFar(&presentation.effect);
       BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
     }
@@ -435,7 +435,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     visibleCount =
         BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)visibleUnits);
     visibleUnitIds[visibleCount] = BATTLE_UNIT_LIST_END;
-    BattleObj_SpawnObjectsForList(visibleUnits, 0);
+    BattleObject_SpawnObjectsForList(visibleUnits, 0);
     visibleCount =
         BattleParty_ListActorIds(BATTLE_SIDE_PARTY, (u16 *)visibleUnits);
     for (index = 0; index != visibleCount; index++)

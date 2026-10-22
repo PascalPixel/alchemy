@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Condemn (kind 40).
-	.global BattleFx_RunCondemn
+	.global BattleEffect_RunCondemn
 	.thumb_func
-BattleFx_RunCondemn:
+BattleEffect_RunCondemn:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunCondemn:
 	lsls r0, r0, #6
 	str r2, [sp, #32]
 	mov r8, r3
-	bl BattleFx_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	ldr r3, .L_081457ec
 	movs r2, #128
 	lsls r2, r2, #19
@@ -48,7 +48,7 @@ BattleFx_RunCondemn:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	b .L_08145800
 	.2byte 0x0000
@@ -66,7 +66,7 @@ BattleFx_RunCondemn:
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #40]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r4, sp
@@ -183,9 +183,9 @@ BattleFx_RunCondemn:
 .L_081458e8:
 	.4byte 0x00001010
 .L_081458ec:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_081458f0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081458f4:
 	.4byte 0xffb00000
 .L_081458f8:
@@ -611,7 +611,7 @@ BattleFx_RunCondemn:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -636,6 +636,6 @@ BattleFx_RunCondemn:
 .L_08145c5c:
 	.4byte Data_020158d2
 .L_08145c60:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08145c64:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma

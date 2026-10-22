@@ -7,6 +7,6 @@
 @ picture carries the shared OBJ palette and those colours of the first
 @ tick.
 	.section .rodata
-	.global FieldFx_GlowDisc
-FieldFx_GlowDisc:
+	.global FieldEffect_GlowDisc
+FieldEffect_GlowDisc:
 	.incbin "games/tla/src/graphics/field_fx/glow_disc.8bpp.lz"

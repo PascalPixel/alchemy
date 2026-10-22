@@ -22,7 +22,7 @@ Func_08044558:
 	ldr r0, [sp, #48]
 	add r6, sp, #84
 	str r1, [sp, #28]
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #24]
 	movs r3, #192
 	lsls r3, r3, #18

@@ -160,7 +160,7 @@ Func_0811b9fc:
 	strb r3, [r5, #9]
 	lsls r3, r7, #1
 	ldrh r0, [r1, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #44
 	adds r2, #255
 	adds r3, r0, r2
@@ -248,7 +248,7 @@ Func_0811b9fc:
 	mov r1, r8
 	lsls r3, r7, #1
 	ldrh r0, [r1, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #44
 	adds r2, #255
 	adds r3, r0, r2

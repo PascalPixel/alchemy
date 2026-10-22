@@ -1,7 +1,7 @@
 #include "types.h"
 #include "battle_unit.h"
 
-struct BattleUnit *UnitGet(s32 unit);
+struct BattleUnit *Unit_Get(s32 unit);
 s32 BattleClass_IsSmall(s32 index);
 
 /// Lays out the actors of a summon in a column: each stands at x = -80
@@ -33,7 +33,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       __asm__ volatile("" : "+l"(id) : : "memory");
       spacing = 25;
       if ((u16)(id - 254) > 1) {
-        actor = UnitGet(actorIds[index]);
+        actor = Unit_Get(actorIds[index]);
         spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
         enemy = actor->enemyId;
         /* FAKEMATCH(barrier): the enemy id loaded before 357 is built; as
@@ -54,7 +54,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     __asm__ volatile("");
     spacing = 25;
     if ((u16)(actorIds[index] - 254) > 1) {
-      struct BattleUnit *actor = UnitGet(actorIds[index]);
+      struct BattleUnit *actor = Unit_Get(actorIds[index]);
 
       spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
     }

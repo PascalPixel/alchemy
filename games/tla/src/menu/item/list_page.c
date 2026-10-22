@@ -47,7 +47,7 @@ struct InventoryMenuState {
   u8 paneOwner[2];
 };
 
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y);
@@ -69,7 +69,7 @@ s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
   u32 rowIndex;
   u8 *message;
 
-  unit = UnitGet(menu->paneOwner[0]);
+  unit = Unit_Get(menu->paneOwner[0]);
   UiWindow_ClearInteriorTilesFar(window, 128, 8, 224, 96);
   firstEntry = state->page * PAGE_ROWS;
   rowCount = (u8)(state->entryCount - firstEntry);

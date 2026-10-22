@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Hail (kind 207).
-	.global BattleFx_RunHail
+	.global BattleEffect_RunHail
 	.thumb_func
-BattleFx_RunHail:
+BattleEffect_RunHail:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunHail:
 	mov r11, r0
 	movs r0, #0
 	str r3, [sp, #16]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #20]
 	movs r3, #65
 	ldr r1, [r2, #4]
@@ -38,7 +38,7 @@ BattleFx_RunHail:
 	ldr r0, [r4, #4]
 	adds r1, #24
 	str r1, [sp, #8]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_081585a0
@@ -181,7 +181,7 @@ BattleFx_RunHail:
 .L_081585a0:
 	.4byte 0x0000012f
 .L_081585a4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081585a8:
 	.4byte gMapCellBuffer
 .L_081585ac:
@@ -317,7 +317,7 @@ BattleFx_RunHail:
 	mov r0, r8
 	movs r1, #63
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_081586b2:
 	movs r1, #28
 	adds r7, #1
@@ -452,7 +452,7 @@ BattleFx_RunHail:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -470,4 +470,4 @@ BattleFx_RunHail:
 .L_081587dc:
 	.4byte Data_08198517
 .L_081587e0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

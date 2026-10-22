@@ -54,9 +54,9 @@ Sound_LoadPresetParameters:
 	.thumb_func
 Func_0200192c:
 	overlay_veneer Func_08000380
-	.global SerialRuntime_BeginReceive
+	.global SerialRuntime_StartReceive
 	.thumb_func
-SerialRuntime_BeginReceive:
+SerialRuntime_StartReceive:
 	overlay_veneer Party_CheckFar
 	.global Func_0200193c
 	.thumb_func
@@ -66,10 +66,10 @@ Func_0200193c:
 	.thumb_func
 Func_02001944:
 	overlay_veneer Scheduler_SetTaskFlagsFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -217,7 +217,7 @@ FieldEvent_WaitFrames:
 	.global Func_02001a14
 	.thumb_func
 Func_02001a14:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001a1c
 	.thumb_func
 Func_02001a1c:

@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 
 /// Clears every target's flash timer.
-void BattleFx_ClearActorTimers(void) {
+void BattleEffect_ClearActorTimers(void) {
   Iwram_ClearWords(Ram_HeapSlots->battleFxWork[0] + 0x78dc, 8);
 }
 

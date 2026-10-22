@@ -15,7 +15,7 @@ enum {
 /// frames from frame 36; at the burst frame the motes spread and rise, chips
 /// fly up and smoke rises over the heights they span.
 ///
-/// Abilities: Frost, Tundra, Glacier (BATTLE_FX_FROST).
+/// Abilities: Frost, Tundra, Glacier (BATTLE_EFFECT_FROST).
 ///
 /// The targets take a blue tint 4 frames apart from frame 40, the battle shows
 /// the damage 11 frames after the burst, and the effect ends 75 frames after
@@ -32,7 +32,7 @@ enum {
 ///         the burst frame (gFrost_Timings): 32 motes, 8 columns and frame
 ///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
 ///         Glacier.
-void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -55,13 +55,13 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
   /* FAKEMATCH(temporary): the motes, columns, chips and puffs draw through a
    * pointer to the pair, the columns' second picture through the pair itself;
    * as pair[1] everywhere, 36 of 782 instructions differ in tbs-en. */
-  BattleFx_FetchRectangleBlitters(0, draw = pair);
+  BattleEffect_FetchRectangleBlitters(0, draw = pair);
 
   // Motes: x holds the angle, z the radius (56 to 119), y the vertical
   // offset (-64 to -33 pixels, positive downwards on the canvas).
@@ -294,15 +294,15 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
           u32 size;
 
 #ifdef UBFIX
-          size = gBattleFx_PuffSizes[cell];
-          draw[1](canvas, puffSheet + gBattleFx_PuffCells[cell],
+          size = gBattleEffect_PuffSizes[cell];
+          draw[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
                   Q_16_16_TO_INT(puff->velocityX) - (size >> 1),
                   Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
-          draw[1](canvas, puffSheet + gBattleFx_PuffCells[cell],
+          draw[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
                   Q_16_16_TO_INT(puff->velocityX) -
-                      ((size = gBattleFx_PuffSizes[cell]) >> 1),
+                      ((size = gBattleEffect_PuffSizes[cell]) >> 1),
                   Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
                   size);
 #endif
@@ -320,6 +320,6 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

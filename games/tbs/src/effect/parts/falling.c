@@ -20,9 +20,9 @@
 
 // The falling shards (Ice) and bolts (Douse) rain diagonally onto the
 // targets' side. Both show the canvas only inside a slanted band of window 0,
-// whose edges BattleFx_ArmWin0HBlankDma feeds line by line from a table at the
-// start of Ram_MapCellBuffer. Each particle falls until it passes y 80, then
-// lands: shards shatter and kick up sparkle puffs, bolts flash and throw a
+// whose edges BattleEffect_ArmWin0HBlankDma feeds line by line from a table at
+// the start of Ram_MapCellBuffer. Each particle falls until it passes y 80,
+// then lands: shards shatter and kick up sparkle puffs, bolts flash and throw a
 // fountain of sparks. A falling particle's variant is -1 until it lands, then
 // counts the frames since. Shards and bolts are positioned in eighths of a
 // pixel, sparks in 16.16 fixed point.
@@ -42,7 +42,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// shatter into puffs of sparkle, flashing and shaking each target as they
 /// land.
 ///
-/// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_FX_ICE).
+/// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_EFFECT_ICE).
 ///
 /// The canvas shows only inside a slanted band of window 0, so the shards
 /// stream out of the sky above the targets. effect->variant picks the size of
@@ -50,7 +50,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); Ice Horn
 /// leaves longer trails and Ice Missile draws additively. effect->side is 1
 /// when the targets are the party, 0 when they are enemies.
-void BattleFx_RunIce(struct BattleEffectArgument *effect) {
+void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -69,10 +69,10 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // Setup: the narrow canvas, the shard sheet and the sparkle dots in the
   // sheet slot, then the display; window 1 hides BG2.
-  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkles, 0, 0);
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -132,7 +132,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
                                  WIN_RANGE(120, 248));
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma,
                                 EFFECT_CALLBACK_ORDER);
   // Trails: Ice Horn keeps 75% of each pixel a frame, the others 50%.
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -140,7 +140,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   for (frame = 0;
@@ -218,12 +218,12 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
       if (puff->variant != -1) {
         if (puff->variant <= 17) {
           s32 image = puff->variant / 2;
-          s32 x = puff->x / 8 - (gBattleFx_PuffSizes[image] >> 1);
-          s32 y = puff->y / 8 - (gBattleFx_PuffSizes[image] >> 1);
+          s32 x = puff->x / 8 - (gBattleEffect_PuffSizes[image] >> 1);
+          s32 y = puff->y / 8 - (gBattleEffect_PuffSizes[image] >> 1);
 
           draw[work->effect->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
-              canvas, sparkles + gBattleFx_PuffCells[image], x, y,
-              gBattleFx_PuffSizes[image], gBattleFx_PuffSizes[image]);
+              canvas, sparkles + gBattleEffect_PuffCells[image], x, y,
+              gBattleEffect_PuffSizes[image], gBattleEffect_PuffSizes[image]);
         }
         if (puff->variant > -1)
           puff->variant--;
@@ -237,11 +237,11 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
 
   // Finish: the callbacks before the blocks they read, in the reverse of
   // the order they were added.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
   EFFECT_RELEASE_BLITTERS();
-  BattleFx_EndCanvasLayer();
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_EndCanvasLayer();
+  BattleEffect_ConfigureEffectDisplay();
 }
 
 /// Douse's bolts are work->particles 0 to 63; their sparks follow window 0's
@@ -266,7 +266,7 @@ struct BoltSparkBuffer {
 /// bursting into a fountain of falling sparks where it lands, while the targets
 /// flash.
 ///
-/// Abilities: Douse, Drench, Deluge (BATTLE_FX_DOUSE).
+/// Abilities: Douse, Drench, Deluge (BATTLE_EFFECT_DOUSE).
 ///
 /// Like the falling shards, the canvas shows only inside a slanted band of
 /// window 0. effect->variant picks the volley from gFalling_Counts: 6 bolts of
@@ -274,7 +274,7 @@ struct BoltSparkBuffer {
 /// pixels apart, over 80 frames; it also picks how the canvas fades (see
 /// below). effect->side is 1 when the targets are the party, 0 when they are
 /// enemies.
-void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -292,12 +292,12 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // Setup: the bolt pictures go after the spark cells, which the particle
   // sheet decodes at the start of work->sheet; window 1 hides BG2.
-  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_FALLING_CELL, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -344,7 +344,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
         line, i, 103, ((i / 2 + 60) << 8) | (i / 2 + 188), WIN_RANGE(112, 240));
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma,
                                 EFFECT_CALLBACK_ORDER);
   // Douse clears the canvas every frame; Drench keeps half of each pixel and
   // Deluge three quarters, for trails.
@@ -355,7 +355,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   for (frame = 0;
@@ -447,9 +447,9 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   }
 
   // Finish: stop both transfers before releasing the blitters and canvas.
-  Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
   EFFECT_FINISH_CANVAS();
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_ConfigureEffectDisplay();
 }
 
 #undef FALLING_BUILD_SLANTED_WINDOW

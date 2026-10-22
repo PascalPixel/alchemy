@@ -31,7 +31,7 @@ void Func_08029810(struct FieldActor *object) {
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 // Spanish and Italian builds use a different name for this far call, as in
 // objlayer.c.
-s32 BattleFx_WaitForArcGroupsFar(s32 arg);
+s32 BattleEffect_WaitForArcGroupsFar(s32 arg);
 #else
 s32 Func_080c8828(s32 arg);
 #endif
@@ -63,7 +63,7 @@ s32 Func_08029838(s32 arg) {
   }
   if (pressed) {
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    if (BattleFx_WaitForArcGroupsFar(arg)) {
+    if (BattleEffect_WaitForArcGroupsFar(arg)) {
 #else
     if (Func_080c8828(arg)) {
 #endif

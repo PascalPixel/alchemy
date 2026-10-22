@@ -1,22 +1,22 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global BattleFx_GetResourceIdFar
+	.global BattleEffect_GetResourceIdFar
 	.thumb_func
-BattleFx_GetResourceIdFar:
+BattleEffect_GetResourceIdFar:
 	overlay_veneer Func_080d1eac
 	.global Event_ClearInvalidPackedValuesFar
 	.thumb_func
 Event_ClearInvalidPackedValuesFar:
 	overlay_veneer Event_ClearValidPackedIds
-	.global BattleFx_InitializeSlotsFar
+	.global BattleEffect_InitializeSlotsFar
 	.thumb_func
-BattleFx_InitializeSlotsFar:
-	overlay_veneer BattleFx_InitializeSlots
-	.global BattleFx_ClearActiveSlotsAndScheduleUpdatesFar
+BattleEffect_InitializeSlotsFar:
+	overlay_veneer BattleEffect_InitializeSlots
+	.global BattleEffect_ClearActiveSlotsAndScheduleUpdatesFar
 	.thumb_func
-BattleFx_ClearActiveSlotsAndScheduleUpdatesFar:
-	overlay_veneer BattleFx_ClearActiveSlotsAndScheduleUpdates
+BattleEffect_ClearActiveSlotsAndScheduleUpdatesFar:
+	overlay_veneer BattleEffect_ClearActiveSlotsAndScheduleUpdates
 	.global Motion_LaunchFromFocusedObjectFar
 	.thumb_func
 Motion_LaunchFromFocusedObjectFar:
@@ -37,10 +37,10 @@ Object_LinkObjectAndSetCallbackFar:
 	.thumb_func
 BattleEffect_PauseObjectFar:
 	overlay_veneer BattleEffect_PauseObject
-	.global BattleFx_ResumeObjectFar
+	.global BattleEffect_ResumeObjectFar
 	.thumb_func
-BattleFx_ResumeObjectFar:
-	overlay_veneer BattleFx_ResumeObject
+BattleEffect_ResumeObjectFar:
+	overlay_veneer BattleEffect_ResumeObject
 	.global ObjectTable_FindActiveByValueFar
 	.thumb_func
 ObjectTable_FindActiveByValueFar:

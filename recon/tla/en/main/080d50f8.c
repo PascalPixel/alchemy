@@ -22,7 +22,7 @@ struct ClimbSprite {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_End(void);
 void EventRuntime_Wait(s32 frames);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
@@ -48,7 +48,7 @@ s32 Func_080d50f8(void) {
   gridX = 8 + ((leader->x >> 16) & 0xfff0);
   gridY = 8 + ((leader->y >> 16) & 0xfff0);
   gridZ = 8 + ((leader->z >> 16) & 0xfff0);
-  EventRuntime_Begin();
+  EventRuntime_Start();
   if (leader->animationKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
   if (gPartyState.renderMode == 0) {

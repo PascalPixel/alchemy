@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Whiplash (kind 80).
-	.global BattleFx_RunWhiplash
+	.global BattleEffect_RunWhiplash
 	.thumb_func
-BattleFx_RunWhiplash:
+BattleEffect_RunWhiplash:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunWhiplash:
 	movs r0, #1
 	mov r11, r1
 	str r2, [sp, #8]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r4, [sp, #24]
 	ldr r3, [r4, #4]
 	cmp r3, #0
@@ -34,7 +34,7 @@ BattleFx_RunWhiplash:
 	movs r0, #104
 	movs r1, #23
 .L_0817c2b6:
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r5, [r5, #104]
 	str r5, [sp, #12]
 	ldr r1, [sp, #8]
@@ -458,7 +458,7 @@ BattleFx_RunWhiplash:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_0817c63c
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	b .L_0817c64c
 	.2byte 0x0000
 .L_0817c614:
@@ -470,7 +470,7 @@ BattleFx_RunWhiplash:
 .L_0817c620:
 	.4byte IwramCopyWords
 .L_0817c624:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817c628:
 	.4byte .L_0817c340
 .L_0817c62c:
@@ -488,7 +488,7 @@ BattleFx_RunWhiplash:
 	adds r0, r5, #0
 	movs r1, #60
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_0817c64c:
 	ldr r3, [r5, #24]
 	subs r3, #1
@@ -525,7 +525,7 @@ BattleFx_RunWhiplash:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -534,4 +534,4 @@ BattleFx_RunWhiplash:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817c6a8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

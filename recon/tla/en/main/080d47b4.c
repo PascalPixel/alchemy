@@ -1,5 +1,5 @@
 // Near miss of Func_080d47b4, differ 6 of 78 (was 28): The Broken Seal's
-// BattleFx_SpawnLinked with this game's object kind (488), the visual's byte at
+// BattleEffect_SpawnLinked with this game's object kind (488), the visual's byte at
 // 26 and the object returned. Left, instruction order: the native loads the
 // visual (ldr r0, [r5, #80]) before it starts the 0x100 mask, and in the copy
 // branch reads the new object's flags before the source's and starts the 12
@@ -40,10 +40,10 @@ struct BattleEffectLinkedObject *Object_CreateFar(s32 kind, s32 x, s32 y,
 void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void EventRuntime_Wait(s32 state);
-void BattleFx_CopyLinkedObjectPosition(void);
-extern const u8 gBattleFx_LinkedObjectScript[];
+void BattleEffect_CopyLinkedObjectPosition(void);
+extern const u8 gBattleEffect_LinkedObjectScript[];
 
-struct BattleEffectLinkedObject *BattleFx_SpawnLinked(s32 resourceId, s32 flags,
+struct BattleEffectLinkedObject *BattleEffect_SpawnLinked(s32 resourceId, s32 flags,
                                                       s32 state) {
   struct BattleEffectResource *resource;
   struct BattleEffectLinkedObject *object;
@@ -58,12 +58,12 @@ struct BattleEffectLinkedObject *BattleFx_SpawnLinked(s32 resourceId, s32 flags,
 
     if (object != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (u32)gBattleFx_LinkedObjectScript);
+                                   (u32)gBattleEffect_LinkedObjectScript);
       Object_SetMode(object, flags & 15);
       object->value55 = 0;
       object->counter = 0;
       object->resourceId = resourceId;
-      object->callback = BattleFx_CopyLinkedObjectPosition;
+      object->callback = BattleEffect_CopyLinkedObjectPosition;
       object->resource = resource;
       object->visual->value26 = 0;
 

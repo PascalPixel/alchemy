@@ -9,8 +9,8 @@
 /// a, b: object IDs.
 /// zoom: scale in percent.
 void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom) {
-  struct MotionObject *obj_a = BattleObjGet(a)->object;
-  struct MotionObject *obj_b = BattleObjGet(b)->object;
+  struct MotionObject *obj_a = BattleObject_Get(a)->object;
+  struct MotionObject *obj_b = BattleObject_Get(b)->object;
   s32 ax = obj_a->x;
   s32 bx = obj_b->x;
   s32 az = obj_a->z;

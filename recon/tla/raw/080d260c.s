@@ -95,7 +95,7 @@ PartyInventory_GiveItem:
 	b .L_080d2772
 .L_080d26d8:
 	ldr r0, [sp, #8]
-	bl UnitGet
+	bl Unit_Get
 	ldr r1, [sp, #4]
 	ldr r0, [sp, #8]
 	bl Inventory_GetQuantityFar
@@ -130,7 +130,7 @@ PartyInventory_GiveItem:
 	ldr r0, [sp, #8]
 	bl Unit_RefreshPsynergyFar
 	ldr r0, [sp, #8]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	adds r0, r6, #0
 	bl PartyInventory_AddFar
 	mov r8, r0

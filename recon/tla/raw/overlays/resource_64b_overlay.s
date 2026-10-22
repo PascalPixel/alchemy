@@ -628,7 +628,7 @@ Func_02000be0:
 	adds r3, r3, r2
 	adds r6, r0, #0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r5, r0, #0
 	bl Random16Far
 	ldrb r3, [r5, #15]

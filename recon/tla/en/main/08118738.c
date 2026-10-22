@@ -73,7 +73,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 
     Party_AddActiveOwnerFar(owner);
     Unit_LevelUpToFar(owner, gData_0812a174[row].level);
-    state = UnitGet(owner);
+    state = Unit_Get(owner);
     for (i = 0; i < 4; i++) {
       ((struct OwnerDjinnState *)state)->counts.banks.owned[i] = 0;
       ((struct OwnerDjinnState *)state)->counts.banks.active[i] = 0;

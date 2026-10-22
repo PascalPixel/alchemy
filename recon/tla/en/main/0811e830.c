@@ -39,7 +39,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   s32 i;
 
   unitId = saved->unitId;
-  object = BattleObjGet(unitId)->object;
+  object = BattleObject_Get(unitId)->object;
   QueueIoWriteDelay2(0x04000050, 0x3f40);
   BattlePres_SetActorRecordMode(unitId, 1);
   for (frame = 0; frame != 16; frame++) {
@@ -55,9 +55,9 @@ void Func_0811e830(struct SavedBattleObj *saved) {
     WaitFrames(1);
   }
   ReleaseBattleObjectRecords(unitId);
-  Iwram_CopyWords(BattleObjGet(saved->unitId), saved, 44);
+  Iwram_CopyWords(BattleObject_Get(saved->unitId), saved, 44);
   if (saved->reactivate) {
-    BattleObj_MarkForRelease(unitId);
+    BattleObject_MarkForRelease(unitId);
     BattleMotion_DestroyAllSlotObjects();
   }
   ResourceSlot_LoadFar(7, 0, 0, 0);
@@ -74,7 +74,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
       s32 resource = Func_0811a4e0(list[i]);
 
       if (resource)
-        BattleObjGet(list[i])->resource = resource;
+        BattleObject_Get(list[i])->resource = resource;
     }
     Func_0811b75c((s16 *)list, 1, 0);
     for (i = 0; i < count; i++)

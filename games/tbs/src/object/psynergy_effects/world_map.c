@@ -82,7 +82,7 @@ STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
 /// Sets up the world map screen: the marker tiles and their OAM entries, the
 /// cursor where the leader is on the map (or mid-screen when the place is not
 /// on it), and the place-name window.
-void FieldFx_SetupResourcesAndWindow(void) {
+void FieldEffect_SetupResourcesAndWindow(void) {
 #ifdef UBFIX
   union WorldMapMarkerPart *marker;
 #else
@@ -184,7 +184,7 @@ void FieldFx_SetupResourcesAndWindow(void) {
 
 /// Closes the world map screen: returns its VRAM blocks and removes the
 /// place-name window.
-void FieldFx_CleanupResourcesAndWindow(void) {
+void FieldEffect_CleanupResourcesAndWindow(void) {
   struct WorldMapWork *work = (struct WorldMapWork *)gMapCellBuffer;
 
   Resource_ResetEntry(work->markerVramBlock);
@@ -480,7 +480,7 @@ void Map_ShowWorldMap(s32 picture) {
   Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                  DISPCNT_OBJ_1D_MAP,
              &REG_DISPCNT);
-  FieldFx_SetupResourcesAndWindow();
+  FieldEffect_SetupResourcesAndWindow();
   Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers,
                                 SCHEDULER_KEY_MAIN_LOOP);
   if (GameFlag_TestFar(FLAG_NOT_ON_MAP))
@@ -489,7 +489,7 @@ void Map_ShowWorldMap(s32 picture) {
     WaitFrames(1);
   } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
   Scheduler_RemoveCallback(Map_UpdateWorldMapMarkers);
-  FieldFx_CleanupResourcesAndWindow();
+  FieldEffect_CleanupResourcesAndWindow();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Map_LoadAreaGraphicsFar();
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
@@ -547,9 +547,9 @@ void Field_UpdateObjectVisibilityBounds(void) {
 
 /// On the world map, zooms the view out (0x9d89) while L is held, then back.
 /// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
-/// times as far (FieldFx_ScheduleRatioTransition). Field_RunScene runs it
+/// times as far (FieldEffect_ScheduleRatioTransition). Field_RunScene runs it
 /// for event -889; the overlay tasks are suspended meanwhile.
-void FieldFx_RunVisibilityTransition(void) {
+void FieldEffect_RunVisibilityTransition(void) {
   struct FieldWork *field =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
 
@@ -557,13 +557,13 @@ void FieldFx_RunVisibilityTransition(void) {
     Scheduler_SuspendOverlayTasks();
     Field_UpdateObjectVisibilityBounds();
     Leader_StopMoving();
-    FieldFx_ScheduleRatioTransition(0x9d89, 6);
+    FieldEffect_ScheduleRatioTransition(0x9d89, 6);
     if (gKeysHeld & KEY_L) {
       do {
         WaitFrames(1);
       } while (gKeysHeld & KEY_L);
     }
-    FieldFx_ScheduleRatioTransition(0x10000, 6);
+    FieldEffect_ScheduleRatioTransition(0x10000, 6);
     Scheduler_ResumeOverlayTasks();
   }
 }

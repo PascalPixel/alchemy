@@ -7,8 +7,8 @@
 /// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank.
-// As ☀️'s FieldFx_StartWindowHBlankDma does.
-void BattleFx_StartWindowHBlankDma(void) {
+// As ☀️'s FieldEffect_StartWindowHBlankDma does.
+void BattleEffect_StartWindowHBlankDma(void) {
   struct DisplayTransitionState *work;
   u16 *src;
   volatile u16 *channel;

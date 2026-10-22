@@ -1,5 +1,5 @@
 // Draft (tla-en): listing 525 instructions, draft 525, common 488, differ 74.
-// Written from the listing (☀️'s BattleFx_RunCounterReveal is only a
+// Written from the listing (☀️'s BattleEffect_RunCounterReveal is only a
 // hint). A large sprite assembled from gMapCellBuffer cells sways on a
 // sine path over 108 frames, faded in and out through BLDALPHA, with two
 // blitters (heap slots 104 and 188) chosen by the effect's side.
@@ -7,9 +7,9 @@
 // effect's spill comes first, as the native; one between BG2PA's pinned
 // 0x100 and its store so the pool load comes before the address.
 // Left:
-// - the native loads gMapCellBuffer into r6 before BattleFx_BeginTiledCanvas
+// - the native loads gMapCellBuffer into r6 before BattleEffect_StartTiledCanvas
 // (here after it).
-// - both BattleFx_LoadBlitter calls set r1 before r0 in the native; sched2 breaks
+// - both BattleEffect_LoadBlitter calls set r1 before r0 in the native; sched2 breaks
 // the tie by RTL order here (the two moves are symmetric in the
 // dependence lists).
 // - the stores of the blitters' stack arguments and the side index's
@@ -67,7 +67,7 @@ extern const u8 gData_081993e0[];
 extern const u8 gData_081993e8[];
 extern const u16 gData_081993f0[];
 
-void BattleFx_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 s32 Trig_Sin(s32 angle);
@@ -75,16 +75,16 @@ s32 Trig_Cos(s32 angle);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void BattleFx_LoadBlitter(s32 slot, s32 blitter);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A great figure strikes. It sweeps down on the target from above the far
 // side, swaying on a small circle and fading in through the blend; its arm
@@ -93,7 +93,7 @@ void BattleFx_EndCanvasLayer(void);
 // and at frame 80 the blow lands and the result phase starts. From frame
 // 92 it fades out and rises away; the battle background is reloaded at the
 // end. On the far side the whole figure is drawn mirrored.
-void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -112,7 +112,7 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
   parts = Ram_MapCellBuffer;
-  BattleFx_BeginTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(0x2001);
   {
     /* FAKEMATCH: the native loads BG2PA's 0x100 from the pool before it
      * starts the register address; pinned behind a one-pass block it does
@@ -124,14 +124,14 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
     REG_BG2PA = scale;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
   draw[0] = (DrawRectangle)heap->unk64[1];
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
                 BLITTER(BLITTER_TRANSPARENT, CLIP_XY | FLIP_X));
   draw[1] = ((DrawRectangle *)heap)[47];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {
@@ -151,7 +151,7 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1000;
     }
     if (frame < 32)
-      BattleFxKernels_IntegrateVector2(&work->particles[0], 60, 0);
+      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, 0);
 
     // In over 32 frames, out over the last 16, rising away.
     if (frame <= 32) {
@@ -163,7 +163,7 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
       s32 level = FIGURE_FRAMES - frame;
 
       REG_BLDALPHA = ((16 - level / 2) << 8) | level;
-      BattleFxKernels_IntegrateVector2(&work->particles[0], 60, -0x8000);
+      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, -0x8000);
     }
 
     // The sway, and the canvas moved with the figure.
@@ -255,10 +255,10 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

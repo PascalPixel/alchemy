@@ -1,5 +1,5 @@
 // Draft: listing 1246 instructions, draft 1252, differ 796. No close ☀️ twin
-// (call order BattleFx_RunBoreas 0.468): ⚓️'s own effect on ☀️'s frame, a
+// (call order BattleEffect_RunBoreas 0.468): ⚓️'s own effect on ☀️'s frame, a
 // sibling of the four cards of Func_0818a220. The card itself scrolls on a
 // tiled background; its picture is a textured quad by ⚓️'s model kernels.
 // The native frame (84) holds effect at sp+48, the mode 44, canvas 40, the
@@ -31,7 +31,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -95,9 +95,9 @@ extern u8 gData_0819751a[];
 extern u8 Data_081992b0[];
 extern s32 Data_081991e0[];
 
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
-void BattleFx_LoadBlitter(s32 slot, s32 packed);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
+void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Audio_PlayCue(s32 cue);
@@ -106,13 +106,13 @@ void EffectPosition_ProjectSprite(s32 id,
 void Func_0815e22c(struct EffectPosition *middle);
 void Func_0815f0a0(s32 resource);
 void Func_081180e8(s32 phase);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
@@ -130,9 +130,9 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_ArmBg2AffineHBlankDma(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ArmBg2AffineHBlankDma(void);
 
 // The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 // the user to above the targets' middle for 48 frames, spinning upright and
@@ -167,28 +167,28 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
-  BattleFx_BeginTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(0x2001);
   if (effect->side == 0)
-    BattleFx_BeginTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(0x2001);
   else
-    BattleFx_BeginTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(0x2001);
   REG_BLDALPHA = 0x210;
   if (mode == CARD_SWORD) {
     if (effect->side == 0)
-      BattleFx_LoadBlitter(
+      BattleEffect_LoadBlitter(
           HEAP_SLOT_BLITTER,
           BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
     else
-      BattleFx_LoadBlitter(
+      BattleEffect_LoadBlitter(
           HEAP_SLOT_BLITTER,
           BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                   BLIT_ADDITIVE));
   } else {
     if (effect->side == 0)
-      BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+      BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                     BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
     else
-      BattleFx_LoadBlitter(
+      BattleEffect_LoadBlitter(
           HEAP_SLOT_BLITTER,
           BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                   BLIT_MAX));
@@ -237,9 +237,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
   if (mode == CARD_BAFFLE)
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, TRANSFER_CALLBACK_ORDER);
+    Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, TRANSFER_CALLBACK_ORDER);
   REG_BG2PA = 0x100;
 
   for (frame = 0; frame != length; frame++) {
@@ -387,7 +387,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         if (step->variant >= 0 && step->variant <= 15) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
                   overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);
-          BattleFxKernels_IntegrateVector2(step, 62, -0x1000);
+          BattleEffectKernels_IntegrateVector2(step, 62, -0x1000);
           if (step->y > 96 << 16) {
             step->velocityY = 0;
             step->y = 96 << 16;
@@ -417,7 +417,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         if (step->variant >= 0 && step->variant <= 63) {
           draw[0](canvas, CARD_NOISE + ((step->variant / 4 & 3) << 10),
                   overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);
-          BattleFxKernels_IntegrateVector2(step, 62, 0x2000);
+          BattleEffectKernels_IntegrateVector2(step, 62, 0x2000);
           step->variant++;
         }
       }
@@ -473,7 +473,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
                   overflow + HI(step->x) - Data_081974f4[cell] / 2,
                   HI(step->y) - Data_08197500[cell] / 2, Data_081974f4[cell],
                   Data_08197500[cell]);
-          BattleFxKernels_IntegrateVector2(step, 60, 0);
+          BattleEffectKernels_IntegrateVector2(step, 60, 0);
         }
       }
     }
@@ -485,7 +485,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 64) {
         Audio_PlayCue(144);
         Func_081180e8(-1);
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
                                   0x20000, 110);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
@@ -535,8 +535,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   if (mode == CARD_BAFFLE)
-    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

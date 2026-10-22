@@ -6,7 +6,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
-struct ObjectRuntime *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
+struct ObjectRuntime *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                    s32 angle) {
   struct ObjectRuntime *object;
   s32 scale;

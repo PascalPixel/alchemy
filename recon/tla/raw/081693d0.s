@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Neptune (scene kind 6).
-	.global BattleFx_RunNeptune
+	.global BattleEffect_RunNeptune
 	.thumb_func
-BattleFx_RunNeptune:
+BattleEffect_RunNeptune:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,7 +26,7 @@ BattleFx_RunNeptune:
 	ldr r2, [r5, #100]
 	lsls r6, r6, #4
 	str r2, [sp, #56]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08169440
 	movs r3, #160
@@ -66,7 +66,7 @@ BattleFx_RunNeptune:
 .L_08169450:
 	.4byte Graphics_SetBg2AffineScaleHalf
 .L_08169454:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08169458:
 	strh r3, [r2]
 	movs r0, #1
@@ -83,7 +83,7 @@ BattleFx_RunNeptune:
 	adds r1, #240
 	adds r3, r0, r1
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r3, [r5, #36]
 	movs r2, #237
 	lsls r2, r2, #3
@@ -277,12 +277,12 @@ BattleFx_RunNeptune:
 	str r0, [r1, #16]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #19
 	movs r0, #188
 	str r3, [sp, #80]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r2, sp
@@ -509,7 +509,7 @@ BattleFx_RunNeptune:
 .L_081697dc:
 	.4byte Data_02010002
 .L_081697e0:
-	.4byte BattleFx_BuildWindowEdgeTable
+	.4byte BattleEffect_BuildWindowEdgeTable
 .L_081697e4:
 	.4byte Data_08196e8c
 .L_081697e8:
@@ -1267,7 +1267,7 @@ BattleFx_RunNeptune:
 	ldr r2, [r2, r3]
 	adds r0, r5, #0
 	movs r1, #62
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -1745,7 +1745,7 @@ BattleFx_RunNeptune:
 	adds r0, r6, #0
 	movs r1, #60
 	lsls r2, r2, #7
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #4]
 	asrs r7, r3, #16
 	mov r12, r7
@@ -1846,7 +1846,7 @@ BattleFx_RunNeptune:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1861,4 +1861,4 @@ BattleFx_RunNeptune:
 .L_0816a210:
 	.4byte gData_08197410
 .L_0816a214:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

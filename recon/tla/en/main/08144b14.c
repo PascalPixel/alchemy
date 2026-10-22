@@ -1,12 +1,12 @@
 // Near miss, differ 62 of 652.
 
 // The body of three effect kinds (the wrappers in series_c.c pass modes 0 to
-// 2). Twin: The Broken Seal's BattleFx_RunMemberBeam, ported call for call.
+// 2). Twin: The Broken Seal's BattleEffect_RunMemberBeam, ported call for call.
 // The Lost Age's changes: a third mode (the Mars Djinn); every picture
 // unpacked with its palette by Resource_LoadAndDecompress; the canvas
 // prepared by Func_0815585c (mode | (side ^ prelude) << 4, then two
 // three-word arrays) where The Broken Seal calls
-// BattleFx_RunDjinniEntrance; BattleFx_FetchRectangleBlitters for the Djinn's
+// BattleEffect_RunDjinniEntrance; BattleEffect_FetchRectangleBlitters for the Djinn's
 // pair; the callback at 0xc80; the effect argument read directly; the camera
 // read each frame.
 
@@ -47,17 +47,17 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleFx_RunDjinniEntrance
+                   s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 
@@ -101,13 +101,13 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   /* FAKEMATCH: a pointer to the heap slots held from here, used only for
    * the second blitter's read: spilled, it makes reload rebuild the
-   * 0x03000000 base there, as the native does (see BattleFx_RunTriangleStrike).
+   * 0x03000000 base there, as the native does (see BattleEffect_RunTriangleStrike).
    * Measured (2026-10-15): 152 without it, 62 with it. */
   heap = Ram_HeapSlots;
 
   // Set up: the canvas for the Djinn when there is a prelude, then the beam,
   // the motes and the mode's Djinn, each with its palette.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   if (effect->prelude == 1)
     Func_0815585c(effect, (effect->side ^ effect->prelude) << 4 | mode, djinn,
                   djinnSize);
@@ -147,7 +147,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2X = offsetX << 8;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != effect->count * 16 + 116; frame++) {
     s32 *camera = Ram_HeapSlots->cameraWork;
@@ -165,7 +165,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
       s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn[0] + offsetX - 20;
       s32 y = (Trig_Cos(angle) * 4 >> 16) + djinn[1] - 24;
 
-      BattleFx_FetchRectangleBlitters(effect->side ^ prelude, draw);
+      BattleEffect_FetchRectangleBlitters(effect->side ^ prelude, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
@@ -174,9 +174,9 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
       Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     }
-    BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     draw[1] = (DrawRectangle)heap->unkb8[1];
 
@@ -269,6 +269,6 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

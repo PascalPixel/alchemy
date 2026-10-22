@@ -18,7 +18,7 @@ Func_080d8740:
 	bne .L_080d875e
 	b .L_080d8960
 .L_080d875e:
-	bl BattleFx_InitializeSlots
+	bl BattleEffect_InitializeSlots
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #224
@@ -240,8 +240,8 @@ Func_080d8740:
 	bge .L_080d8940
 	movs r0, #50
 	bl WaitFrames
-	bl Shop_InitEffectFar
-	bl BattleFx_ClearActiveSlotsAndScheduleUpdates
+	bl Shop_InitializeEffectFar
+	bl BattleEffect_ClearActiveSlotsAndScheduleUpdates
 .L_080d8960:
 	add sp, #52
 	pop {r3, r5, r6, r7}

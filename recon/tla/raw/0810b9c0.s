@@ -18,7 +18,7 @@ Func_0810b9c0:
 	ldr r3, [r3]
 	movs r5, #2
 	mov r9, r3
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #1
 	str r0, [sp, #16]
 	movs r2, #16

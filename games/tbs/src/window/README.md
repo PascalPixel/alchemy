@@ -34,7 +34,7 @@ order it holds:
 - `tileAttributes`, `tileCursor` and `alt`: the text tiles' bookkeeping;
 - `mode`, `menuState` and the current channel's style, copied in to draw;
 - `entries`: the decoded-text ring;
-- `values` and `names`: the eight message arguments and their `MSG_ARG_`
+- `values` and `names`: the eight message arguments and their `MESSAGE_ARGUMENT_`
   kinds;
 - `resourceIds` and `outputIds`: the two portrait slots;
 - `speakerVoiceSound` and the flags for halting speech.
@@ -144,12 +144,12 @@ releases the slot at the end.
 The decoder writes out everything the message refers to. An argument code
 takes its value from the argument table, which callers fill with
 `UiWork_PushValueSlot(value, kind)`: a name, a number, or an item or ability
-name, by its `MSG_ARG_` kind. Each language's articles, possessives and
+name, by its `MESSAGE_ARGUMENT_` kind. Each language's articles, possessives and
 endings come from `articles.c`, chosen by the article class an item or name
 carries. Style codes (colours, pauses, page breaks) are kept with their
 operands for the channel to run. A control code in the catalogs is written in
 braces: `{end_wait}`, at the end of `Your game was saved.{end_wait}`, is
-`MSG_END_WAIT`, kept as `TEXT_WAIT_KEY`, which waits for a button and closes
+`MESSAGE_END_WAIT`, kept as `TEXT_WAIT_KEY`, which waits for a button and closes
 the window.
 
 While a battle message is decoded `menuState` is 2, and the Japanese decoder
@@ -160,16 +160,16 @@ stored one above its value.
 
 | Name | Value | Kept as |
 | --- | --- | --- |
-| `MSG_END` | 0 | `TEXT_END`: the window stays open |
-| `MSG_PAGE_BREAK` | 1 | `TEXT_PAGE` |
-| `MSG_END_WAIT` | 2 | `TEXT_WAIT_KEY`: a button closes the window |
-| `MSG_LINE_BREAK` | 3 | `TEXT_NEWLINE` |
-| `MSG_TEXT_COLOR` | 8 | `TEXT_COLOUR`, with its operand |
-| `MSG_TEXT_EFFECT` | 9 | `TEXT_OUTLINE`, with its operand: the style of sprite text |
-| `MSG_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
-| `MSG_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
-| `MSG_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
-| `MSG_PROTAGONIST_NAME` | 16 | the name of the unit `gGameState.selectedActor` names |
+| `MESSAGE_END` | 0 | `TEXT_END`: the window stays open |
+| `MESSAGE_PAGE_BREAK` | 1 | `TEXT_PAGE` |
+| `MESSAGE_END_WAIT` | 2 | `TEXT_WAIT_KEY`: a button closes the window |
+| `MESSAGE_LINE_BREAK` | 3 | `TEXT_NEWLINE` |
+| `MESSAGE_TEXT_COLOR` | 8 | `TEXT_COLOUR`, with its operand |
+| `MESSAGE_TEXT_EFFECT` | 9 | `TEXT_OUTLINE`, with its operand: the style of sprite text |
+| `MESSAGE_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
+| `MESSAGE_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
+| `MESSAGE_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
+| `MESSAGE_PROTAGONIST_NAME` | 16 | the name of the unit `gGameState.selectedActor` names |
 | `TEXT_WORK_BLOCK` | 50 | the heap slot the tree walker is copied into |
 
 ## The decoded-text ring
@@ -365,7 +365,7 @@ is in `games/tbs/objects.tsv`, from `glyph_arm`.
 The prototypes are in `games/tbs/include/unit/window/`; its
 [`window.h`](../../include/unit/window/window.h) also holds what both objects
 use: the tilemap's tiles (`UI_TILE_`), the window flags (`UI_WINDOW_`), sprite
-motions (`UI_SPRITE_`), message argument kinds (`MSG_ARG_`) and the text
+motions (`UI_SPRITE_`), message argument kinds (`MESSAGE_ARGUMENT_`) and the text
 canvas's place in VRAM. The work block's layout, `struct UiRenderWork`, is in
 [`include/window.h`](../../include/window.h), and its offsets for each edition
 in `include/tbs_edition.h`.
@@ -403,6 +403,11 @@ in `include/tbs_edition.h`.
 | `Party_` | the joined-party messages and the party's Psynergy list |
 | `UiTimedNotice_` | the area name shown near the top of the screen on arrival |
 | `DebugMenu_` | the debug menus |
+| `BattleLayout_` | the party status window's highlighted columns while commands are chosen |
+| `AffineEffect_`, `ResourceMenu_` | the command icon menus' pulsing icon and their position table |
+| `Link_` | the link countdown window and its page arrows |
+| `Color_` | scaling a colour's channels |
+| `UiRender_` | an empty function nothing calls |
 | `Resource_`, `RenderResource_`, `Graphics_`, `GraphicsPalette_`, `Vram_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
 
 The `Ui_` functions that remain have no family yet. Many of these names are

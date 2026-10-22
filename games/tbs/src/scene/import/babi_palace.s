@@ -11,7 +11,7 @@
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_UiTextDrawQuantity, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
@@ -20,7 +20,7 @@
 	.set import.Party_ListActiveOwners, 1
 	.set import.Engine_InventorySnapshotRestore, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_PartyGiveItem, 1
 	.set import.Engine_EventChooseYesNo, 1

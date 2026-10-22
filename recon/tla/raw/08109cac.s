@@ -17,7 +17,7 @@ Func_08109cac:
 	adds r3, #220
 	ldr r3, [r3]
 	mov r11, r3
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #0
 	movs r2, #1
 	movs r3, #2

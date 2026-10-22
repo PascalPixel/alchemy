@@ -29,7 +29,7 @@ enum BurstShowerMode {
 /// casting impacts, Condemn, the gathering lights, Torch and Planet Diver,
 /// each of which removes it before it returns. Stops DMA 0 and restarts it
 /// from the top of the table.
-void BattleFx_ArmBg2AffineHBlankDma(void) {
+void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
@@ -40,51 +40,51 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
 /// The user fires a stream of flash bursts at the targets, one a frame, each
 /// towards a random point near a target.
 ///
-/// Abilities: Fire Blessing (BATTLE_FX_FIRE_BLESSING).
-void BattleFx_RunFireBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
+/// Abilities: Fire Blessing (BATTLE_EFFECT_FIRE_BLESSING).
+void BattleEffect_RunFireBlessing(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
 }
 /// The user fires a stream of bursts at the targets in the water-spray palette.
 ///
-/// Abilities: Water Blessing (BATTLE_FX_WATER_BLESSING).
-void BattleFx_RunWaterBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
+/// Abilities: Water Blessing (BATTLE_EFFECT_WATER_BLESSING).
+void BattleEffect_RunWaterBlessing(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
 }
 /// The user fires a stream of grey bursts at the targets, which turn solid
 /// black and stay so.
 ///
-/// Abilities: Dark Blessing (BATTLE_FX_DARK_BLESSING).
-void BattleFx_RunDarkBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
+/// Abilities: Dark Blessing (BATTLE_EFFECT_DARK_BLESSING).
+void BattleEffect_RunDarkBlessing(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
 }
 /// The user fires a stream of pink bursts at the targets, from 16 pixels
 /// higher than usual.
 ///
-/// Abilities: Dark Blessing, Acid Blessing (BATTLE_FX_ACID_BLESSING).
-void BattleFx_RunAcidBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
+/// Abilities: Dark Blessing, Acid Blessing (BATTLE_EFFECT_ACID_BLESSING).
+void BattleEffect_RunAcidBlessing(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
 }
 /// Shows violet lightning between the user and targets instead of bursts: a
 /// bolt flickers through three pictures in front of the user, and the targets
 /// flash in turn without being knocked back.
 ///
-/// Abilities: Storm Blessing (BATTLE_FX_STORM_BLESSING).
-void BattleFx_RunStormBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
+/// Abilities: Storm Blessing (BATTLE_EFFECT_STORM_BLESSING).
+void BattleEffect_RunStormBlessing(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
 }
 /// The user fires a stream of demon faces at the targets, from 16 pixels in
 /// front of it.
 ///
-/// Abilities: Evil Blessing (BATTLE_FX_EVIL_BLESSING).
-void BattleFx_RunEvilBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
+/// Abilities: Evil Blessing (BATTLE_EFFECT_EVIL_BLESSING).
+void BattleEffect_RunEvilBlessing(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
 }
 /// The user fires a stream of Mars-coloured bursts at the targets, from 28
 /// pixels in front of it.
 ///
-/// Abilities: Deadly Gas (BATTLE_FX_DEADLY_GAS).
-void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
+/// Abilities: Deadly Gas (BATTLE_EFFECT_DEADLY_GAS).
+void BattleEffect_RunDeadlyGas(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
 }
 #define BURST_SHOWER_FRAMES 64
 
@@ -105,7 +105,8 @@ void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
 ///       fires no bursts: a violet lightning bolt stands between the user and
 ///       the targets, on a canvas shown at three times its width. No effect
 ///       kind in the effect table uses BURST_SHOWER_MODE_ICE.
-void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
+                                 s32 mode) {
   u32 *slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -129,7 +130,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
   sprites = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The faces are drawn facing each way by side; the others take the usual
@@ -141,7 +142,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   } else {
-    BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+    BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   }
 
   // The pictures and the palette. The tornado sheet is loaded first in every
@@ -197,7 +198,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   for (i = 0; i != 64; i++) {

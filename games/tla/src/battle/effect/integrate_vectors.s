@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_IntegrateVector3
+	.global BattleEffect_IntegrateVector3
 	.thumb_func
-BattleFx_IntegrateVector3:
+BattleEffect_IntegrateVector3:
 	push	{r5, r6, r7, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6, r7}
@@ -29,9 +29,9 @@ BattleFx_IntegrateVector3:
 	asrs	r7, r7, #6
 	stmia	r0!, {r5, r6, r7}
 	pop	{r5, r6, r7, pc}
-	.global BattleFx_IntegrateVector2
+	.global BattleEffect_IntegrateVector2
 	.thumb_func
-BattleFx_IntegrateVector2:
+BattleEffect_IntegrateVector2:
 	push	{r5, r6, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6}

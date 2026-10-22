@@ -44,7 +44,7 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 
 s32 Func_0802632c(struct ObjectRuntime *object) {
@@ -197,7 +197,7 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
     s32 action;
 
     action = 9;
-    if (((struct UnitHp *)UnitGet(gPartyState.currentOwner))->hp == 0)
+    if (((struct UnitHp *)Unit_Get(gPartyState.currentOwner))->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {

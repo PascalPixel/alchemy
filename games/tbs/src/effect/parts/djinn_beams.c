@@ -14,31 +14,32 @@
 /// Motes drift down over each target and a column of light falls on it, in the
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
 ///
-/// Abilities: Revive, Water of Life (BATTLE_FX_REVIVE); Quartz
-/// (BATTLE_FX_REVIVE_201).
-void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
-  BattleFx_RunDjinnBeams(effect, ELEMENT_VENUS);
+/// Abilities: Revive, Water of Life (BATTLE_EFFECT_REVIVE); Quartz
+/// (BATTLE_EFFECT_REVIVE_201).
+void BattleEffect_RunRevive(struct BattleEffectArgument *effect) {
+  BattleEffect_RunDjinnBeams(effect, ELEMENT_VENUS);
 }
 /// Dew plays Revive's beams of light in the Mercury Djinni's colours, and with
 /// a prelude a Mercury Djinni appears first.
 ///
-/// Abilities: Dew (BATTLE_FX_DEW).
-void BattleFx_RunDew(struct BattleEffectArgument *effect) {
-  BattleFx_RunDjinnBeams(effect, ELEMENT_MERCURY);
+/// Abilities: Dew (BATTLE_EFFECT_DEW).
+void BattleEffect_RunDew(struct BattleEffectArgument *effect) {
+  BattleEffect_RunDjinnBeams(effect, ELEMENT_MERCURY);
 }
 /// When effect->prelude is 1, a Djinni appears, sways and then rises out of
 /// sight. Over each target in turn, 16 frames apart, eight motes drift down,
 /// and from 72 frames after its turn starts a column of light falls on it
 /// and narrows away; the battle shows the result on frame 80.
 ///
-/// Called by BattleFx_RunRevive and BattleFx_RunDew. Runs
-/// BattleFx_RunDjinniEntrance first when effect->prelude is 1. Loads three
+/// Called by BattleEffect_RunRevive and BattleEffect_RunDew. Runs
+/// BattleEffect_RunDjinniEntrance first when effect->prelude is 1. Loads three
 /// palettes over the first 64 background colours in turn, so the Djinni's
 /// is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X, and
 /// builds and frees its blitters every frame.
 ///
 /// element: the Djinni's, Venus or Mercury.
-void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 element) {
+void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
+                                s32 element) {
   struct EffectPosition one;
   struct EffectPosition screenPosition;
   s32 ground[3];
@@ -58,14 +59,14 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 element) {
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // Setup. The entrance (over the first target) mirrors the Djinni when the
   // targets are enemies (side ^ 1), and returns where it ends in djinnX and
   // djinnY.
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, element,
-                               work->effect->side ^ work->effect->prelude,
-                               DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
+    BattleEffect_RunDjinniEntrance(effect, element,
+                                   work->effect->side ^ work->effect->prelude,
+                                   DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
   // work->sheet: the column's strip and the glow pictures (EarthWallSheet)
   // from 0, then the motes and the Djinni.
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
@@ -134,7 +135,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 element) {
       s32 y = (Trig_Cos(angle) * 4 >> 16) + djinnY - 24;
 
       // Facing as in the entrance; k is the prelude, 1.
-      BattleFx_FetchRectangleBlitters(work->effect->side ^ k, draw);
+      BattleEffect_FetchRectangleBlitters(work->effect->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_CELLS, x, y, 40, 40);
@@ -243,8 +244,8 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 element) {
   }
 
   // Finish: the blitters were freed each frame.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef DJINN_BEAMS_MOTE_CELLS

@@ -25,7 +25,7 @@ Func_0814ea58:
 	str r2, [sp, #32]
 	ldr r3, [r3, #48]
 	str r3, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, [sp, #56]
 	cmp r3, #2
 	bne .L_0814ea9a
@@ -166,7 +166,7 @@ Func_0814ea58:
 .L_0814eb96:
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -395,7 +395,7 @@ Func_0814ea58:
 	adds r0, r7, #0
 	movs r1, #61
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	b .L_0814ed98
 .L_0814ed6e:
 	ldr r2, .L_0814ee84
@@ -417,7 +417,7 @@ Func_0814ea58:
 	adds r0, r7, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_0814ed98:
 	mov r3, r9
 	ldr r0, [sp, #44]
@@ -520,7 +520,7 @@ Func_0814ea58:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -531,7 +531,7 @@ Func_0814ea58:
 .L_0814ee74:
 	.4byte 0x04040404
 .L_0814ee78:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814ee7c:
 	.4byte gMapCellBuffer
 .L_0814ee80:

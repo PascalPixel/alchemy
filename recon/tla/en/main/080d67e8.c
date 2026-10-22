@@ -1,4 +1,4 @@
-// Near miss, differ 4 of 110: The Broken Seal twin (BattleFx_UpdateStormFlash).
+// Near miss, differ 4 of 110: The Broken Seal twin (BattleEffect_UpdateStormFlash).
 // After the second Random16 the native interleaves the two products as a*3,
 // 100, <<3, muls, +a, <<4 (movs r2, #100 one step later and muls one step later
 // than here). In sched2 the multiply has cost 4, which gives the 100 priority
@@ -17,13 +17,13 @@
 #include "io_reg.h"
 #include "system.h"
 
-void BattleFx_ApplyColorToTargetBuffer(void *buffer, s32 mode);
+void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
 s32 GameFlag_Test(s32 flag);
 void Audio_PlayCue(s32 cue);
 
 // Lightning: selects the palette according to the remaining duration.
-void BattleFx_UpdateStormFlash(void) {
+void BattleEffect_UpdateStormFlash(void) {
   struct FieldBlendWork *work = Ram_HeapSlots->unk70[2];
   struct BattleEffectBuffers *target = Ram_HeapSlots->block32;
   s16 *timer = &work->timer;
@@ -45,7 +45,7 @@ void BattleFx_UpdateStormFlash(void) {
     }
   case 5:
   case 10:
-    BattleFx_ApplyColorToTargetBuffer(work, 1);
+    BattleEffect_ApplyColorToTargetBuffer(work, 1);
     Dma_Set(work->delta, target->delta, 0x840002a0, REG_DMA3);
     target->duration = 12;
     target->step = 0;
@@ -53,7 +53,7 @@ void BattleFx_UpdateStormFlash(void) {
   case 1:
   case 6:
   case 11:
-    BattleFx_ApplyColorToTargetBuffer(work->to, 1);
+    BattleEffect_ApplyColorToTargetBuffer(work->to, 1);
     target->duration = 1;
     target->step = 0;
     break;

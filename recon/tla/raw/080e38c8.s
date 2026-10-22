@@ -71,7 +71,7 @@ Func_080e38c8:
 	ldr r2, [sp, #12]
 	ldr r0, [r2, #16]
 .L_080e394c:
-	bl BattleFx_GetObjectDepth
+	bl BattleEffect_GetObjectDepth
 	strh r0, [r5, #30]
 	movs r3, #192
 	lsls r3, r3, #5
@@ -404,7 +404,7 @@ Func_080e38c8:
 	ldr r2, [r3]
 	adds r0, r6, #0
 	movs r1, #64
-	bl BattleFx_IntegrateVector3
+	bl BattleEffect_IntegrateVector3
 .L_080e3bdc:
 	ldr r2, [sp, #4]
 	movs r3, #28

@@ -834,7 +834,7 @@ Func_02000a34:
 	.ifdef TLA_EDITION_IT
 	bl Field_EndActorSpriteEffect
 	.else
-	bl Field_BeginPaletteTransition
+	bl Field_StartPaletteTransition
 	.endif
 	.endif
 	bl Func_020032a4

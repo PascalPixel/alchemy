@@ -291,7 +291,7 @@ static void TolbiSpring_TossCoinOrMedal(void) {
     Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
     TolbiSpring_RiseAndFadeIn();
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorWalkToAndWait(leader, 120, 152);
   Engine_ActorFaceDirection(leader, FACING_SOUTH, 0);
   TolbiSpring_RunSpringGame();
@@ -300,7 +300,7 @@ static void TolbiSpring_TossCoinOrMedal(void) {
 
 /// Reads the Lucky Wheels rules sign in Tolbi.
 static void TolbiSpring_ReadLuckyWheelsRules(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiLuckyWheelsRulesPullLever);
   Engine_EventOpenMessage(-1, 0);
   Engine_EventEnd();
@@ -308,7 +308,7 @@ static void TolbiSpring_ReadLuckyWheelsRules(void) {
 
 /// Reads the Lucky Wheels prize sign in Tolbi.
 static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
   Engine_EventOpenMessage(-1, 0);
   Engine_EventEnd();
@@ -374,7 +374,7 @@ s32 TolbiSpring_Initialize(void) {
     // Lucky Dice returns here to report the change in the party's coins.
     if (gGameState.entrance == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE &&
         !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_ActorSetChildValue(TOLBI_SPRING_WHEELS_ATTENDANT, 1);
       Engine_ActorSetChildValue(TOLBI_SPRING_DICE_ATTENDANT, 2);
       Engine_EventOpenScreen();
@@ -407,7 +407,7 @@ s32 TolbiSpring_Initialize(void) {
     if (gGameState.entrance == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS &&
         !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       wonPrizes = gGameState.wonPrizes;
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
       Engine_EventWait(10);
@@ -452,7 +452,7 @@ static inline void TolbiSpring_ShowPrizeFrame(s32 sourceColumn, s32 sourceRow) {
 
 /// Animates the spring's prize reveal, gives the item, and closes it.
 static void TolbiSpring_RevealPrize(s32 item) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventWait(30);
   Engine_AudioPlayCue(SE_148);
   Engine_EventWait(100);
@@ -589,7 +589,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   u32 coins;
 
   cost = Party_GetAverageLevel() * 10;
-  Engine_EventBegin();
+  Engine_EventStart();
   coins = gGameState.coins;
   if (coins < cost) {
     Engine_EventSetMessage(MsgTolbiYaDontEnough);
@@ -632,7 +632,7 @@ static s32 TolbiSpring_RunSpringGame(void) {
   s32 message;
   struct GameState *state;
 
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   message = MsgTolbiThrow;
 #if TBS_PATCH_1

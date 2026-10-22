@@ -34,7 +34,7 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a5c(Object_GetById(5), 0);
   Func_02002a54();
   Func_02002a4c();
-  Field_BeginPaletteTransition(8);
+  Field_StartPaletteTransition(8);
 }
 
 void VenusLighthouseEntrance_UpdateSparkTrail(struct ObjectRuntime *object) {

@@ -176,7 +176,7 @@
 
 /// The two battle sprites drawn in two parts: the sprite after each is its
 /// second part, which SummonSlot_RegisterActorSprites loads into further
-/// enemy sprite slots and BattleObj_SpawnObjectsForList shows as the
+/// enemy sprite slots and BattleObject_SpawnObjectsForList shows as the
 /// object's second record.
 #define SPRITE_WITH_SECOND_PART_A                                              \
   476 ///< the Kraken's (ENEMY_KRAKEN, sprites.tsv)
@@ -222,9 +222,9 @@ enum BattlePlanStaging {
 #define STAGING_KIND_MASK 0xfff
 #define STAGING_VARIANT_MASK 0x3000
 #define STAGING_VARIANT_SHIFT 12
-#define STAGING_BY_ID_RANGE 0x4000 ///< BattleFx_DispatchByIdRangeFar
-#define STAGING_SCENE 0x8000       ///< BattleFx_RunSceneEffectFar, actor's view
-#define STAGING_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
+#define STAGING_BY_ID_RANGE 0x4000 ///< BattleEffect_DispatchByIdRangeFar
+#define STAGING_SCENE 0x8000 ///< BattleEffect_RunSceneEffectFar, actor's view
+#define STAGING_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
 /// Plays the effect on the side opposite its targets. Unused: no row of
 /// actflags.tsv in either game sets it and no code adds it, so the flip in
 /// BattlePresentation_RunUnitTransition never happens.
@@ -259,7 +259,7 @@ enum BattleCastKind {
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
-/// BattleActionRecord.target of a held unit's lost turn (CMD_NONE, from
+/// BattleActionRecord.target of a held unit's lost turn (COMMAND_NONE, from
 /// BattlePresentation_BuildOpponentEntries and
 /// BattlePresentation_BuildUnitEntries): as a place code, place 0 of the other
 /// side, 0x100 the party's for an enemy and 0x180 the enemies' for a party

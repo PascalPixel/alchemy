@@ -52,7 +52,7 @@ struct ModeEvent {
 
 void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
-void BattleFx_IntegrateVector3(struct EffectParticle *particle, s32 frames,
+void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
                                s32 flags);
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
@@ -61,7 +61,7 @@ s32 Trig_Sin(s32 angle);
 /// Animates a particle's sprite through 8 tiles (4 ticks each), grows its
 /// scale by 0.1 a frame up to 1.0, draws it at the particle's projected
 /// position and advances the particle.
-void BattleFx_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct EffectParticle *particle,
+void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct EffectParticle *particle,
                    s32 tiles) {
   s32 position[3];
   s32 scale;
@@ -80,5 +80,5 @@ void BattleFx_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct Ef
   sprite->x = position[0];
   sprite->y = position[2];
   Func_080eb01c(sprite);
-  BattleFx_IntegrateVector3(particle, 60, 0);
+  BattleEffect_IntegrateVector3(particle, 60, 0);
 }

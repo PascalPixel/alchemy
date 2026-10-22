@@ -238,18 +238,18 @@ enum IconKind {
 /// The kinds of message argument (UiWork_PushValueSlot), which the message
 /// codes such as {argument_item_name} read.
 enum {
-  MSG_ARG_NONE = 0, ///< an empty place in the argument table
-  MSG_ARG_ACTOR = 1,
-  MSG_ARG_ITEM = 2,
-  MSG_ARG_CLASS = 3,
-  MSG_ARG_ABILITY = 4,
-  MSG_ARG_NUMBER = 5,
-  MSG_ARG_LOCATION = 6,
+  MESSAGE_ARGUMENT_NONE = 0, ///< an empty place in the argument table
+  MESSAGE_ARGUMENT_ACTOR = 1,
+  MESSAGE_ARGUMENT_ITEM = 2,
+  MESSAGE_ARGUMENT_CLASS = 3,
+  MESSAGE_ARGUMENT_ABILITY = 4,
+  MESSAGE_ARGUMENT_NUMBER = 5,
+  MESSAGE_ARGUMENT_LOCATION = 6,
 };
 
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void RenderOutput_ReleaseFree(struct RenderOutput *out);
-void RenderOutput_InitFreeList(void);
+void RenderOutput_InitializeFreeList(void);
 void UiWork_InitializeWithResourceCounters(void);
 void UiWork_Initialize(s32 loadGlyphTiles);
 void UiWork_UploadDirtyBlocks(void);
@@ -264,7 +264,7 @@ void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *outputs);
 void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
                                  u32 top, u32 right, u32 bottom);
-void RenderOutputList_UpdateTail(struct RenderOutputList *list);
+void RenderOutput_UpdateListTail(struct RenderOutputList *list);
 // RenderOutput_AppendToList is called from battle_command.c with no prototype
 // in scope: in one file its definition would come before RenderOutput_Create
 // and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61
@@ -294,8 +294,8 @@ void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
 void UiWork_ResetCounters();
-void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
-void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles);
+void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void);
+void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles);
 void UiWork_FinalizeSharedSlot(void);
 void UiText_PrepareMessageWork(s32 argument);
 void UiText_ShowMessageAndWaitCore(s32 argument);
@@ -338,7 +338,7 @@ void UiText_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode);
 // UiWindow_PutGlyph is called from battle_command.c with no prototype in
-// scope, as in window.c above its definition: PartyStatusDraw passes four of
+// scope, as in window.c above its definition: PartyStatus_Draw passes four of
 // its five arguments, and in one file, with its definition first, it would not
 // compile. Split evidence for window|battle_command.
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
@@ -362,7 +362,7 @@ s32 UiText_BuildRenderEntriesMode1(s32 arg0);
 void UiText_LookupMessage(struct TextReader *reader, s32 message);
 s32 UiText_DecodeSymbol(struct TextReader *reader);
 void UiWork_ClearPortraitSlots(void);
-s32 Localization_LookupEntryId(u32 value);
+s32 UiText_GetSpeakerPortrait(u32 value);
 struct UiWindow *UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x,
                                                s32 y);
 void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);
@@ -482,7 +482,7 @@ void GraphicsPalette_ReservedNoOpC9BC(void);
 void GraphicsPalette_ReservedNoOpC9C0(void);
 void GraphicsPalette_ReservedNoOpC9C4(void);
 void OptionMenu_ResetEntries(struct WorkspaceWork *work);
-void WindowColor_ComputeTint(struct WorkspaceWork *work);
+void WindowColor_CalculateTint(struct WorkspaceWork *work);
 void WindowColor_WritePalette(struct WorkspaceWork *work);
 u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 scale_r, s32 scale_g,
                           s32 scale_b);
@@ -533,7 +533,7 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
                                s32 x, s32 y);
 // UiText_DrawPrefixedNumberAtOffset is called from battle_command.c with no
 // prototype in scope: in one file its definition would come before
-// PartyStatusDraw, and PartyStatusDraw changes (2 of 435 instructions in
+// PartyStatus_Draw, and PartyStatus_Draw changes (2 of 435 instructions in
 // tbs-en). Split evidence for window|battle_command.
 
 #endif

@@ -35,7 +35,7 @@ void Scene_ReturnFromBattle(s32 result);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
 void Scene_ResolveInteractionResult(void);
 void Party_PlaySavedMusic(void);
-void BattleFx_LoadResourceGroup(s32 unused);
+void BattleEffect_LoadResourceGroup(s32 unused);
 s32 Field_RunScene(s32 entrance);
 void Scene_TakeExit(s32 exitKind);
 
@@ -143,7 +143,7 @@ void Game_Run(s32 mode) {
       Party_PlaySavedMusic();
     }
     gPartyState.map = record->mapIndex;
-    BattleFx_LoadResourceGroup(0);
+    BattleEffect_LoadResourceGroup(0);
     Scene_TakeExit(Field_RunScene(entrance));
   }
 }

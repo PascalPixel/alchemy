@@ -1,7 +1,7 @@
 // Near miss, differ 89 of 744: Func_0814b350, an effect no table reaches
 // (unused), with one tagged dead store (462 without).
 
-// ☀️ twin: BattleFx_RunSparkTravel (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleEffect_RunSparkTravel (games/tbs/src/effect/effect.c), shape
 // 0.888, structure 1.000. ⚓️'s changes: the effect argument read directly,
 // the Mercury Djinn's small sheet (directory row 0x155) as ☀️'s, the
 // transfer callback at 0xc80, and ⚓️'s names for the shared routines.
@@ -45,19 +45,19 @@ extern char ResourceId_MercuryDjinnSmallSheet; // directory row 0x155
 extern char ResourceId_ParticleSpritesA;       // directory row 0x134
 extern char ResourceId_SparkleDots;            // directory row 0x17e
 
-extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
-extern u16 Data_0819744c[];  // ☀️ gBattleFx_PuffCells
-extern u8 Data_0819745e[];   // ☀️ gBattleFx_PuffSizes
+extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
+extern u16 Data_0819744c[];  // ☀️ gBattleEffect_PuffCells
+extern u8 Data_0819745e[];   // ☀️ gBattleEffect_PuffSizes
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // ☀️ BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPendingGraphicsTransfer
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_080150e4(s32 angle);       // ☀️ SceneTransform_ApplyRoll
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -92,11 +92,11 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  BattleFx_FetchRectangleBlitters(effect->side ^ 1, draw = callbacks);
+  BattleEffect_FetchRectangleBlitters(effect->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(effect->actor)->object;
   goal = GetBattleObjectSlotFar(effect->actors[0])->object;
 
@@ -116,7 +116,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // The Djinn travels from the caster to above the first target in 40
   // frames.
@@ -186,7 +186,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
         size = 9 - (screen.depth - 250) / 64;
         callbacks[0](canvas, sheet + gData_08197410[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);
-        BattleFxKernels_IntegrateVector3(spark, 60, 0);
+        BattleEffectKernels_IntegrateVector3(spark, 60, 0);
         if (frame > i + 30) {
           s32 dx = -spark->x >> 8;
           s32 dy = -spark->y >> 8;
@@ -303,8 +303,8 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

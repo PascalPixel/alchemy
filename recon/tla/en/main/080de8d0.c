@@ -1,5 +1,5 @@
 // Near miss, differ 8 of 125 (2026-10-15), ported from ☀️'s
-// BattleFx_RunSparkEmitter (object 673, update BattleFx_SwayParticle). The amplitude 6
+// BattleEffect_RunSparkEmitter (object 673, update BattleEffect_SwayParticle). The amplitude 6
 // << 16 as a block local gives the listing's r5 and the phase pointer's r8
 // (differ 60 without it). Left: the phase pointer's copy to r8 one slot late,
 // two scene loads one slot late, and the argument 9 started after the anchor
@@ -39,7 +39,7 @@ struct SparkObject {
 struct SparkObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *pos);
 void Animation_ApplyChildValuesFar(struct SparkObject *object, u32 value);
-void BattleFx_SwayParticle(struct SparkObject *obj);
+void BattleEffect_SwayParticle(struct SparkObject *obj);
 
 void Func_080de8d0(struct SparkObject *obj) {
   struct BattleFxScene *scene;
@@ -65,7 +65,7 @@ void Func_080de8d0(struct SparkObject *obj) {
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Object_Spawn(673, pos[0], pos[1], pos[2]);
     if (spark != 0) {
-      spark->update = BattleFx_SwayParticle;
+      spark->update = BattleEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999;
       spark->motionFlags = 2;
       spark->gravity = 458;
@@ -74,7 +74,7 @@ void Func_080de8d0(struct SparkObject *obj) {
       Animation_ApplyChildValuesFar(spark, 9);
       spark->unk5e = 72;
       ObjectDispatch_InitializeFar((struct DispatchObject *)spark,
-                                   gBattleFx_CommonParticleScript);
+                                   gBattleEffect_CommonParticleScript);
     }
   }
 }

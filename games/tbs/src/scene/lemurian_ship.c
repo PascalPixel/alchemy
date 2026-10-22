@@ -333,7 +333,7 @@ static void LemurianShip_SetSail(void) {
   struct FieldActor *ship;
   struct EventWork *event;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Map_CopyCellAttributes(18, 0, 3, 1, 18, 12);
   // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
@@ -349,7 +349,7 @@ static void LemurianShip_SetSail(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(10);
@@ -361,9 +361,9 @@ static void LemurianShip_SetSail(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Engine_ActorFaceDirection(IVAN, FACING_SOUTH, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(60);
   // The first question, Garet's: will the journey be over once they find
   // Jenna? The answer picks which of his two replies he says.
@@ -408,7 +408,7 @@ static void LemurianShip_SetSail(void) {
   Engine_EventWait(10);
   Engine_ActorFaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
@@ -437,16 +437,16 @@ static void LemurianShip_SetSail(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   // The third question, Mia's: the seas are rough; will they be all right?
   UiText_OpenMessageAtObject(3, 0);
@@ -456,13 +456,13 @@ static void LemurianShip_SetSail(void) {
   Engine_EventWait(20);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(20);
     Engine_EventShowMessage(MIA, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(20);
     gEventWork->message++;
     Engine_EventShowMessage(MIA, 0);
@@ -479,18 +479,18 @@ static void LemurianShip_SetSail(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(40);
   // Everyone boards by their own scripts, hopping up onto the deck (SE_153
   // each); the camera follows up to the ship.
@@ -528,10 +528,10 @@ static void LemurianShip_SetSail(void) {
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Engine_ActorFaceDirection(MIA, FACING_WEST, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   // The ship sails east and the curtains close: the sea's layer scrolls
   // faster while the gangway's north piece moves off with the ship, and the
@@ -606,7 +606,7 @@ static void Event_RaiseTheShip(void) {
 
   map = gMapWork[0];
 
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   // The leader steps to the water's edge; the backdrop brightens 16 steps.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 232);

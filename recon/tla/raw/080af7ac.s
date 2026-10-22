@@ -16,7 +16,7 @@ Func_080af7ac:
 	mov r9, r10
 .L_080af7c2:
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r0, #0
 	ldr r0, .L_080af85c
 	mov r1, r9
@@ -56,7 +56,7 @@ Func_080af7ac:
 	cmp r0, r1
 	beq .L_080af8be
 .L_080af812:
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_080af8ae
@@ -127,7 +127,7 @@ Func_080af7ac:
 	bl Unit_UpdateClass
 	mov r3, r8
 	ldr r0, [r3]
-	bl UnitCalc
+	bl Unit_Calculate
 .L_080af8ae:
 	movs r1, #4
 	add r8, r1

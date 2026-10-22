@@ -163,8 +163,8 @@ next_page:
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
-        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
-        UiWork_PushValueSlotFar(shop->selectedItem, MSG_ARG_ITEM);
+        UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           UiMessage_ShowAndWait(MsgPackFull);
         else
@@ -179,7 +179,7 @@ next_page:
         break;
       }
       if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
-        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         UiMessage_ShowAndWait(MsgCannotEquipStillWant);
         if (UiMessage_ShowChoice(0) != 0) {
           repromptRecipient = 1;
@@ -188,7 +188,7 @@ next_page:
       }
       AudioCommand_PlayFar(SE_MENU_CONFIRM);
       WaitFrames(1);
-      quantity = Shop_SelectBuyNum(unitId, shop->selectedItem);
+      quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
       if (quantity == -1)
         continue;
@@ -391,11 +391,11 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
       if (memberIndex == selected)
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            30);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           30);
       else
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            1);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           1);
       shop->partyMemberScale[memberIndex] = 0x10000;
       if (!Item_IsCompatibleWithOwnerFar(shop->partyMemberIds[memberIndex],
                                          itemId))
@@ -411,7 +411,7 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
 /// weapons and armor.
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedItemId = -1;
   s32 previewSlot;
@@ -448,17 +448,17 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   } else {
     replacedItemId = unit->inventory[previewSlot] & ITEM_ID_MASK;
   }
-  // Borrow a live slot so UnitCalc includes every equipment effect; restore
-  // both the slot and the stats before returning to the counter.
+  // Borrow a live slot so Unit_Calculate includes every equipment effect;
+  // restore both the slot and the stats before returning to the counter.
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
-  UnitCalcFar(unitId);
+  Unit_CalculateFar(unitId);
   previewStats[0] = unit->atk;
   previewStats[1] = unit->def;
   previewStats[2] = unit->agi;
   previewStats[3] = unit->luck;
   unit->inventory[previewSlot] = savedEntry;
-  UnitCalcFar(unitId);
+  Unit_CalculateFar(unitId);
   baseStats[0] = unit->atk;
   baseStats[1] = unit->def;
   baseStats[2] = unit->agi;
@@ -501,7 +501,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
   s32 nextOffset;
   u8 *icon;
 
-  unitBytes = (u8 *)UnitGetFar(unitId);
+  unitBytes = (u8 *)Unit_GetFar(unitId);
   x = 8;
   y = 8;
   if (window != 0) {
@@ -512,7 +512,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
       UiWork_PushValueSlotFar(
           (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
               1,
-          MSG_ARG_NUMBER);
+          MESSAGE_ARGUMENT_NUMBER);
       UiText_DrawCharacterAtOffsetFar(MsgYouHave, window, 0, 0);
     } else {
       UiText_DrawCharacterAtOffsetFar(MsgShopNoneInStock, window, 0, 0);
@@ -549,7 +549,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
 /// buy, the artifact's stock and a stack of 30 less what the member carries.
 /// Returns the count (1 for other items), or -1 when cancelled. Called by
 /// Shop_SelectBuy.
-s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
+s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopRuntime *shop;
   struct BattleUnit *unit;
   struct ItemDefinition *item;
@@ -560,7 +560,7 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
   s32 selectedQuantity;
 
   shop = gMenuWork;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   item = Item_GetDirectFar(itemId);
   selectedQuantity = 1;
   if (item->flags & ITEM_STACKABLE) {
@@ -742,7 +742,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// equipped. Called by Shop_BuyDone.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *definition = Item_GetDirectFar(itemId);
   s32 replacedSlot;
@@ -763,7 +763,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       return 0;
   }
 
-  UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+  UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
   UiMessage_ShowAndWait(MsgEquipNowPrompt);
   if (UiMessage_ShowChoice(0) != 0)
     return 0;
@@ -793,7 +793,7 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   struct BattleUnit *unit;
   s32 itemId;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   if (slot == -1) {
     return 0;
   }

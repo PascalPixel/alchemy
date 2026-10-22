@@ -104,14 +104,14 @@ void Scene_ReturnFromBattle(s32 result) {
   gGameState.sceneChangeReason = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = UnitGetFar(gGameState.selectedActor);
+    unit = Unit_GetFar(gGameState.selectedActor);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
     }
     if (GameFlag_TestFar(FLAG_CHILDHOOD)) {
       for (i = 0; i < 2; i++) {
-        unit = UnitGetFar(i);
+        unit = Unit_GetFar(i);
         unit->hp = unit->maxHp;
         unit->pp = unit->maxPp;
         Unit_UpdateGauges(unit);
@@ -156,7 +156,7 @@ void Scene_ReturnFromBattle(s32 result) {
 /// Returns the group scene belongs to. The scenes of one place share a group,
 /// which selects their music, area name and the flags kept while inside it.
 /// Called by Scene_ResolveInteractionResult.
-s32 FieldFx_GetResourceGroup(s32 scene) {
+s32 FieldEffect_GetResourceGroup(s32 scene) {
   return gField_SceneTable[scene].group;
 }
 
@@ -225,7 +225,7 @@ void Game_Run(s32 mode) {
     gGameState.scene = (s32)&SceneId_Clear;
     gGameState.entrance = CLEAR_FROM_SANCTUM;
   } else {
-    GameState_InitDefaultsFar();
+    GameState_InitializeDefaultsFar();
     gGameState.scene = (s32)&SceneId_Title;
     gGameState.entrance = TITLE_AFTER_RUN;
   }

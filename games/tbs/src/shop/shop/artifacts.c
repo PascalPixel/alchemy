@@ -51,10 +51,10 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   if (creditCost > gGameState.shopCredit)
     return;
   shop->selectedItem = ITEM_GAME_TICKET;
-  UiWork_PushValueSlotFar(ITEM_GAME_TICKET, MSG_ARG_ITEM);
+  UiWork_PushValueSlotFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);
   messageBase = MsgTokenGift;
   UiMessage_ShowAndRestoreState(messageBase);
-  UiWork_PushValueSlotFar(shop->selectedItem, MSG_ARG_ITEM);
+  UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
   UiMessage_ShowAndRestoreState(messageBase + 1);
 
   while (1) {
@@ -74,8 +74,8 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
-        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
-        UiWork_PushValueSlotFar(shop->selectedItem, MSG_ARG_ITEM);
+        UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           UiMessage_ShowAndWait(MsgPackFull);
         else

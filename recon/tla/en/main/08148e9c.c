@@ -1,9 +1,9 @@
 // Near miss, differ 64 of 429 (effect kind 20, the tornado).
 
-// ☀️ twin: BattleFx_RunWhirlwind (games/tbs/src/effect/effect.c), shape 0.835,
+// ☀️ twin: BattleEffect_RunWhirlwind (games/tbs/src/effect/effect.c), shape 0.835,
 // structure 0.941. Ported with ⚓️'s checklist: the effect argument read
 // directly, the tornado sheet unpacked into the work with
-// Resource_LoadAndDecompress, max blitters from BattleFx_LoadBlitter(104, 0x13)
+// Resource_LoadAndDecompress, max blitters from BattleEffect_LoadBlitter(104, 0x13)
 // and (188, 0x17), the transfer callback at 0xc80, the shape table
 // gData_081979ae (☀️ gVortices_Shapes) and the glint cell tables
 // gData_08197486/92/98, Func_08118088 for the struck targets, and the two
@@ -20,7 +20,7 @@
 // Tried (differ):
 // the repository draft (local copy of the work struct)                66
 // the shared struct BattleEffectWork                                  66
-// BattleFx_LoadBlitter declared returning s32 (plan 0c)                      64
+// BattleEffect_LoadBlitter declared returning s32 (plan 0c)                      64
 // greedy declaration-order scan, every local through every place     64
 
 #include "types.h"
@@ -52,19 +52,19 @@ extern char ResourceId_TornadoSheet;
 
 // ☀️ gVortices_Shapes: funnels, sway radius and shake, for each variant.
 extern u8 gData_081979ae[];
-// ☀️ gBattleFx_GlintCells, Widths and Heights.
+// ☀️ gBattleEffect_GlintCells, Widths and Heights.
 extern u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);                  // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);             // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleFx_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
@@ -72,7 +72,7 @@ void Audio_PlayCue(s32 cue);
 // One to four funnels of wind sway across the targets for 80 frames, each
 // drawn as three stacked segments with glints swirling around it; the canvas
 // is wiped every eight frames, and each target is struck seven times.
-void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
+void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -90,13 +90,13 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   // second mirrored.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                             COMPOSITE_CLIP_Y |
                                             COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -110,7 +110,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   REG_BLDALPHA = 0x1000;
   WaitFrames(1);
   Audio_PlayCue(141);
@@ -192,6 +192,6 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

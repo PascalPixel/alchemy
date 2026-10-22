@@ -13,7 +13,7 @@ void Game_RunFar(s32 mode);
 void FieldEvent_WaitFramesFar(s32 frames);
 /// Opens an event: closes any timed notice, stops the leader and resets the
 /// message and timing state.
-void FieldEvent_BeginFar(void);
+void FieldEvent_StartFar(void);
 /// Closes an event: gives the camera back to the leader and refreshes
 /// FLAG_LURE_CAP.
 void FieldEvent_EndFar(void);
@@ -157,10 +157,10 @@ void Ui_SetMessageVoiceFromActorFar(s32 arg0);
 void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
 /// Shows an emote bubble over an actor, then waits wait frames; the bubble
 /// rides the actor and pops after 46 frames whatever the wait.
-void FieldFx_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
+void FieldEffect_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
 /// Attaches, removes or briefly shows the effect object on an actor, by enum
 /// AttachedEffectFlag; the leader's step uses it on hazard ground.
-void FieldFx_ConfigureLinkedObjectFar(s32 id, s32 flags);
+void FieldEffect_ConfigureLinkedObjectFar(s32 id, s32 flags);
 /// Makes the target actor's sprite show the source actor's graphics; neither
 /// is checked for NULL. The Tolbi ship deck uses it.
 void ObjectVisual_CopyAttributesFar(u32 targetId, u32 sourceId);
@@ -225,21 +225,21 @@ s32 Field_ClimbUpFar(void);
 void Leader_StopMovingFar(void);
 /// Puts 32 semi-transparent ground particles under the leader and queues
 /// SE_170.
-void FieldFx_StartGroundParticlesFar(void);
+void FieldEffect_StartGroundParticlesFar(void);
 /// Starts the storm's lightning, bursts that repeat every 600 frames over
 /// Vale's storm scenes.
-void FieldFx_StartLightningFar(void);
+void FieldEffect_StartLightningFar(void);
 /// Stops the lightning from flashing again.
-void FieldFx_StopLightningFar(void);
+void FieldEffect_StopLightningFar(void);
 /// One last burst of lightning, starting two frames from now.
-void FieldFx_LastLightningFar(void);
+void FieldEffect_LastLightningFar(void);
 /// Restarts the lightning, the next burst flashing 118 frames from now.
-void FieldFx_ResumeLightningFar(void);
+void FieldEffect_ResumeLightningFar(void);
 /// One burst of three palette flashes from one colour mode to another, as
 /// Vale's eruption shows.
-void FieldFx_StartBufferBlendFar(s32 from, s32 to);
+void FieldEffect_StartBufferBlendFar(s32 from, s32 to);
 /// Loads the sparkles' tiles and clears all 32.
-void FieldFx_InitSparklesFar(void);
+void FieldEffect_InitializeSparklesFar(void);
 /// Starts a window transition in a mode at value 0, for the caller to move;
 /// Reveal and three scenes use it.
 void DisplayTransition_InitializeBattleEffectStateFar(s32 mode);
@@ -266,13 +266,14 @@ void DisplayScroll_InitializeHBlankDmaFar(s32 mode, s32 freqX, s32 stepX,
 void DisplayScroll_DisarmHBlankDmaFar(void);
 /// Has the target actor present an item: SE_124, animation 4, then the item's
 /// picture with sparkles. Returns the picture, or 0 when either is missing.
-s32 FieldFx_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target, s32 mode);
+s32 FieldEffect_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target,
+                                                  s32 mode);
 /// Shows a found item's picture, with sparkles or raised above the leader as
 /// flags ask, then returns the leader to standing.
 void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 /// Holds an item's picture above the leader for 80 frames, the way a found
 /// item is shown in most scenes.
-void FieldFx_StartEffectObject22Far(s32 value, s32 flags);
+void FieldEffect_StartEffectObject22Far(s32 value, s32 flags);
 /// Moves a marker's actor to (x, z) on the ground, in 16.16 pixels; -1 keeps
 /// the centre of its cell on that axis.
 void Marker_SetActorPositionFar(s32 id, s32 x, s32 y);
@@ -281,29 +282,29 @@ void Marker_SetActorPositionFar(s32 id, s32 x, s32 y);
 void Marker_MoveLeaderAwayFar(void);
 /// On the world map, freezes the perspective view and the camera while an
 /// event or menu runs; elsewhere it does nothing.
-void WorldMap_BeginEventFar(void);
-/// Undoes WorldMap_BeginEvent, reloading the area's graphics.
+void WorldMap_StartEventFar(void);
+/// Undoes WorldMap_StartEvent, reloading the area's graphics.
 void WorldMap_EndEventFar(void);
 /// Returns the actor in a slot, or NULL; scene overlays look actors up
 /// through it.
 void *ObjectTable_GetFar(u32 index);
 /// Starts the fade overlay on an object (the leader when NULL), which lasts
 /// until the next scene change.
-void FieldFx_StartFadeOverlayFar(void *object);
+void FieldEffect_StartFadeOverlayFar(void *object);
 /// Runs one step of the current Psynergy effect, an enum PsynergyEffectStep;
 /// Goma Cave's entrance plays Whirlwind on the stump's ivy with it.
 void Field_DispatchTypeHandlerFar(s32 kind);
 /// Prepares a Psynergy effect's work and spark tiles for an ability; while an
 /// effect resolves it only switches the ability.
-void FieldFx_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
+void FieldEffect_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
 /// Records an effect's caster and target; with no target the effect lands 16
 /// pixels in front of the caster.
-void FieldFx_SetupObjectPairFar(s32 user_id, s32 targetId);
+void FieldEffect_SetupObjectPairFar(s32 user_id, s32 targetId);
 /// Stops the caster's per-frame hook, restores its colours and waits a frame.
-void FieldFx_StopCasterHookFar(void);
+void FieldEffect_StopCasterHookFar(void);
 /// Ends a Psynergy effect, releasing its slots, tiles and work and playing
 /// the queued sound.
-void FieldFx_EndFar(void);
+void FieldEffect_EndFar(void);
 /// Puts the caster in its casting pose, with the flash, sound and ability
 /// name the effect calls for.
 void EventObject_InitializeFar(void);
@@ -313,15 +314,15 @@ void Field_EndBusyAndRevealFar(void);
 /// target.
 void RunSceneTransitionEffectFar(s32 x, s32 y);
 /// Ends Mind Read's wave, restoring the caster's colours and the palettes.
-void FieldFx_FinishSceneAndReleaseHeapBlockFar(void);
+void FieldEffect_FinishSceneAndReleaseHeapBlockFar(void);
 /// Stops BG0's scanline scroll and restores BG palette 15.
 void Ui_SetBank15PaletteAndClearRenderModeFar(void);
 /// Returns whether the scene has a Psynergy event of this group for what the
 /// leader faces; nothing in ☀️ calls it.
-s32 FieldFx_HasMatchingEvent5Far(s32 group);
+s32 FieldEffect_HasMatchingEvent5Far(s32 group);
 /// Returns whether the scene has an event for this item and what the leader
 /// faces; the item menu then closes and the item is used on the field.
-u32 FieldFx_HasTriggerFar(u16 item);
+u32 FieldEffect_HasTriggerFar(u16 item);
 /// Makes a sprite share another's VRAM block, so a chain of afterimages draws
 /// from one copy. Returns the sprite whose block is shared from now on, or
 /// NULL for no source.
@@ -359,20 +360,20 @@ void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 kind, s32 x,
                               s32 z);
 /// Frees an effect slot and its sprite; slot callbacks end with it on their
 /// own slot.
-void FieldFx_ClearOwnedSlotFar(struct EffectSlot *slot);
+void FieldEffect_ClearOwnedSlotFar(struct EffectSlot *slot);
 /// Converts a world position in 16.16 pixels to screen x and y, in place,
 /// using the world map's perspective there.
 void Camera_WorldToScreenFar(struct EffectVector *position);
 /// Returns the blip sound that voices a sprite's messages, or 0 for none or
 /// with the Speech option off.
-s32 FieldFx_GetResourceIdFar(u32 id);
+s32 FieldEffect_GetResourceIdFar(u32 id);
 /// Clears each button shortcut whose Psynergy the party can no longer cast.
 void Event_ClearInvalidPackedValuesFar(void);
 /// Allocates and clears the effect slots and starts their update; the Djinn
 /// joining effects and Altmiller Cave use them.
-void FieldFx_InitializeSlotsFar(void);
+void FieldEffect_InitializeSlotsFar(void);
 /// Frees every effect slot and its work, then waits a frame.
-void FieldFx_ClearActiveSlotsAndScheduleUpdatesFar(void);
+void FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar(void);
 /// Places an actor on the leader and walks it out to an offset, then gives
 /// it an action.
 void Motion_LaunchFromFocusedObjectFar(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -387,7 +388,7 @@ void ObjectMotion_CommitPositionAndActivateFar(u32 objectId, s32 x_offset,
 void Object_LinkObjectAndSetCallbackFar(u32 objectId, u32 linked_object_id);
 /// Pauses an object, keeping its update and pose in gGameState for later;
 /// Halt and the Colosso operators use it.
-void FieldFx_PauseObjectFar(s32 id);
+void FieldEffect_PauseObjectFar(s32 id);
 /// Captures up to 32 actors into gObjectSnapshots, for ObjectTable_Restore
 /// (ObjectTable_Snapshot); the save menu calls it.
 void SaveState_CaptureObjectTableFar(void);
@@ -395,7 +396,7 @@ void SaveState_CaptureObjectTableFar(void);
 /// the leader's height.
 void ObjectTable_RestoreFar(void);
 /// Starts a zoom to a 16.16 factor over the given frames, on the world map.
-void FieldFx_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
+void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the world map's zoom to end.
 void Event_WaitForZoomTransitionFar(void);
 /// Returns the area name of a scene and entrance, an offset from
@@ -406,14 +407,14 @@ s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
 void ObjectMotion_SetActionCallbackFar(struct ObjectRuntime *object, s32 kind);
 /// Plays SE_298 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and remembers
 /// sound_id to play again later.
-void FieldFx_SetQueuedSoundAndPlayFar(s32 sound_id);
-/// Plays the sound FieldFx_SetQueuedSoundAndPlay remembered, if any.
-void FieldFx_PlayQueuedSoundFar(void);
+void FieldEffect_SetQueuedSoundAndPlayFar(s32 sound_id);
+/// Plays the sound FieldEffect_SetQueuedSoundAndPlay remembered, if any.
+void FieldEffect_PlayQueuedSoundFar(void);
 /// Returns a character's sprite for a save file's summary, which records only
 /// whether it was childhood.
 s32 Party_RemapCharacterIdIfEnabledFar(s32 arg0, s32 arg1);
 #if TBS_PATCH_2
 /// While Reveal is active, destroys its sparkles and leaves its marks; the
 /// field menu calls it after each choice.
-void FieldFx_ClearRandomParticlesFar(void);
+void FieldEffect_ClearRandomParticlesFar(void);
 #endif

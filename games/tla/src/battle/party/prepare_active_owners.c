@@ -32,7 +32,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    ((struct BattleUnit *)UnitGet(owner))->side = 2;
+    ((struct BattleUnit *)Unit_Get(owner))->side = 2;
   }
 
   if (owners != 0)

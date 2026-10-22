@@ -285,7 +285,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
   s32 velocityZ;
 
   actor = Object_GetById(objectId);
-  options.update = FieldFx_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;
     velocity.x = Engine_MathCos(angle);
@@ -295,8 +295,8 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
     velocity.z = velocityZ;
     velocityX += Math_Divide(velocityX, 3);
     velocity.x = velocityX;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
-                  velocity.y, velocityZ, EFFECT_USE_UPDATE | 1, &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
+                      velocity.y, velocityZ, EFFECT_USE_UPDATE | 1, &options);
   }
 }
 
@@ -305,7 +305,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
 /// back to the ship at ENTRANCE_AFTER_BATTLE.
 static void Event_FightDeadbeard(void) {
 
-  EV_BEGIN();
+  EV_START();
   Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
   Battle_SetStart(BATTLE_START_SCENE);
   Field_RequestBattleFromEncounterTable(
@@ -337,7 +337,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void Event_CatchNut(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorSetPosition(ACTOR_ISLE_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
@@ -465,7 +465,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
       FLAG_CHECK((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                       (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
-    OBJ_POS_SET(ACTOR_SINKING_PILLAR, 650, 168);
+    OBJECT_POSITION_SET(ACTOR_SINKING_PILLAR, 650, 168);
     actor->y.fixed = -PIXELS(32);
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
     Engine_ActorSetSpritePriority(ACTOR_SINKING_PILLAR, 3);
@@ -533,7 +533,7 @@ static void Event_MovePillar(void) {
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (trigger 20):
 /// push it a step.
 static void Event_PushPillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_MovePillar();
@@ -556,7 +556,7 @@ static void Event_OpenEastDoor(void) {
           gGameState.scene +
           (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
            (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
-    EV_BEGIN();
+    EV_START();
     Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
     Battle_SetStart(BATTLE_START_SCENE);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
@@ -610,8 +610,8 @@ static void Event_OpenEastDoor(void) {
 /// Back from the battle at a corridor room's east door
 /// (ENTRANCE_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
-  EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  EV_START();
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   FLAG_SET((gGameState.scene +
@@ -721,25 +721,25 @@ static void CrossboneIsle_RestoreIvy(void) {
 
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-    OBJ_POS_SET(ACTOR_FIRST_IVY, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
-    OBJ_POS_SET(ACTOR_FIRST_IVY + 1, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY + 1, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 1);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
-    OBJ_POS_SET(ACTOR_FIRST_IVY + 2, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY + 2, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 2);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
-    OBJ_POS_SET(ACTOR_FIRST_IVY + 3, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY + 3, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 3);
     // BUG: no fourth ivy is placed, so its slot is empty (ObjectTable_ClearAll)
@@ -756,7 +756,7 @@ static void CrossboneIsle_RestoreIvy(void) {
 static void Event_PushIsleLog(void) {
   struct StagedActorProbe probe;
 
-  EV_BEGIN();
+  EV_START();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   }
@@ -773,7 +773,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
 
   selectedActor = Object_GetById(gGameState.selectedActor);
   logActor = Object_GetById(actorId);
-  EV_BEGIN();
+  EV_START();
   {
     fixedX = ((selectedActor->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
              PIXELS(8);
@@ -856,8 +856,8 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
 
 /// Runs the two animation changes used when touching a puzzle log.
 static void CrossboneIsle_AnimateTouchedLog(int actorId) {
-  OBJ_MODE(actorId, 1);
-  OBJ_MODE(actorId, 2);
+  OBJECT_MODE(actorId, 1);
+  OBJECT_MODE(actorId, 2);
 }
 
 /// Draws all twelve log footprints in Crossbone Isle Cave
@@ -966,7 +966,7 @@ static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
 #endif
     s32 movingFlags;
 
-    EV_BEGIN();
+    EV_START();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -2068,7 +2068,7 @@ s32 gEffectScript0[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -2077,7 +2077,7 @@ s32 gEffectScript1[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -2086,7 +2086,7 @@ s32 gEffectScript2[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };

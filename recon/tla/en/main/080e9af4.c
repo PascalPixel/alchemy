@@ -5,7 +5,7 @@
 // fixes it but reorders the opening, 18; a one-pass block 14), the search
 // counter's save among the position stores, and the glow's store and the
 // motion flags pointer's copy after the scale's address. The resource is
-// directory entry 0x1da, FieldFx_RingOrb: adoption names it RingOrb in
+// directory entry 0x1da, FieldEffect_RingOrb: adoption names it RingOrb in
 // system/resource/directory.s. The object search has a counter of its own, as
 // the ROM keeps it in r4 and saves it around the call (one i for every loop
 // takes r5, 38 -> 20); the slot is stored before the tile (46 -> 38), the
@@ -60,7 +60,7 @@ s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
-void BattleFx_SetObjectTickMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectTickMode(struct ObjectRuntime *object, s32 mode);
 s32 Resource_ResetEntry(u32 entry);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_080e9940(void);
@@ -93,7 +93,7 @@ void Func_080e9af4(void) {
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   Object_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
-  BattleFx_SetObjectTickMode(player, 0);
+  BattleEffect_SetObjectTickMode(player, 0);
   Object_SetMode(player, 5);
   Audio_PlayCue(130);
   WaitFrames(1);

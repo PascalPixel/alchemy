@@ -50,7 +50,7 @@ Func_080df1fc:
 	adds r0, r0, r3
 	movs r3, #128
 	lsls r3, r3, #8
-	bl BattleFx_SpawnItemBreakMode1
+	bl BattleEffect_SpawnItemBreakMode1
 	mov r1, r10
 	adds r6, r0, #0
 	ldr r2, .L_080df538
@@ -61,7 +61,7 @@ Func_080df1fc:
 	ldr r2, [r3, #8]
 	movs r3, #0
 	str r6, [sp, #20]
-	bl BattleFx_SpawnItemBreakMode1
+	bl BattleEffect_SpawnItemBreakMode1
 	adds r5, r0, #0
 	ldr r0, [sp, #20]
 	str r5, [sp, #24]
@@ -70,7 +70,7 @@ Func_080df1fc:
 	cmp r5, #0
 	bne .L_080df28c
 .L_080df286:
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	b .L_080df6de
 .L_080df28c:
 	movs r0, #15
@@ -209,7 +209,7 @@ Func_080df1fc:
 .L_080df3a4:
 	mov r2, r11
 	ldr r0, [r2]
-	bl BattleFx_GetCycledTableWord
+	bl BattleEffect_GetCycledTableWord
 	movs r3, #255
 	lsls r0, r0, #16
 	lsls r3, r3, #8
@@ -394,7 +394,7 @@ Func_080df1fc:
 .L_080df540:
 	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080df544:
-	.4byte BattleFx_SpawnFallingParticles
+	.4byte BattleEffect_SpawnFallingParticles
 .L_080df548:
 	.4byte gInput
 .L_080df54c:
@@ -573,13 +573,13 @@ Func_080df1fc:
 	blt .L_080df6b2
 .L_080df6c8:
 	adds r0, r7, #0
-	bl BattleFx_SpawnRadialParticleRing
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_SpawnRadialParticleRing
+	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #30
 	bl WaitFrames
 	b .L_080df6de
 .L_080df6da:
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080df6de:
 	add sp, #128
 	pop {r3, r5, r6, r7}
@@ -589,6 +589,6 @@ Func_080df1fc:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080df6ec:
-	.4byte BattleFx_SpawnFallingParticles
+	.4byte BattleEffect_SpawnFallingParticles
 .L_080df6f0:
 	.4byte gData_080f0e78

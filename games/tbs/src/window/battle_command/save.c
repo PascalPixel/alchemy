@@ -183,7 +183,7 @@ u32 SaveState_BuildSummaryHeader(void) {
   }
   gGameState.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = UnitGetFar(gGameState.selectedActor);
+  leader = Unit_GetFar(gGameState.selectedActor);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)
@@ -251,7 +251,7 @@ u32 SaveState_BuildSummaryHeader(void) {
 /// writes both halves of the save buffer, as records gSaveSlot and
 /// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
 /// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
-/// Save_WriteSelectedSlot it asks nothing and does not capture the object
+/// SaveMenu_WriteSelectedSlot it asks nothing and does not capture the object
 /// table first (SaveState_CaptureObjectTableFar).
 s16 SaveState_WriteCurrentSlotPair(void) {
   s16 file;
@@ -627,7 +627,7 @@ void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
             summary->party[i], (s8)summary->hasFlag20));
 
     if (sprite != NULL) {
-      AnimationObjects_SelectAnimationFar(sprite, 1);
+      AnimationObject_SelectAnimationFar(sprite, 1);
       sprite->flags = 0;
       sprite->image.priority = 0;
     }
@@ -700,7 +700,7 @@ void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
           ResourceObject_CreateFar(gMenu_PartySpriteResourceIds[i]);
 
       if (sprite != NULL) {
-        AnimationObjects_SelectAnimationFar(sprite, 2);
+        AnimationObject_SelectAnimationFar(sprite, 2);
         sprite->flags = 0;
         sprite->image.priority = 0;
       }
@@ -1201,7 +1201,7 @@ done:
 /// object table included, and makes it the current file. The question is "OK
 /// to save over this file?" Returns 0 (also when the player answers No), -1
 /// when cancelled, or a SAVE_ERROR_* after showing its message.
-s32 Save_WriteSelectedSlot(void) {
+s32 SaveMenu_WriteSelectedSlot(void) {
   s32 result;
   s32 file;
   s32 error;

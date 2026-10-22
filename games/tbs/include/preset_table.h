@@ -14,7 +14,7 @@ struct PresetValues {
   /// Its level in each element; Unit_GetElementLevels returns ten times each.
   u8 digits[4];
   /// Each element's struct BattleElementStats as one word: power in the low
-  /// halfword, resistance in the high (Unit_CalcBaseElements).
+  /// halfword, resistance in the high (Unit_CalculateBaseElements).
   s32 values[4];
 };
 

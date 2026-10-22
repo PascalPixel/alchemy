@@ -22,7 +22,7 @@
 /// Called by Field_RunPushTileEvent when the leader has pushed against a jump
 /// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
 /// Cave's pillar and Kolima Forest's bend, which import it. Moves the leader,
-/// and takes the field over between FieldEvent_Begin and FieldEvent_End.
+/// and takes the field over between FieldEvent_Start and FieldEvent_End.
 s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
@@ -57,7 +57,7 @@ again:
     // motion and sprite flags after landing, before returning field control.
     if (leader->animationKind == OBJECT_SPRITE_ONE)
       spriteFlags = ((struct AnimationObject *)leader->animation)->flags;
-    FieldEvent_Begin();
+    FieldEvent_Start();
     ObjectDispatch_SelectAnimationFar(leader, 6);
     WaitFrames(6);
     AudioCommand_PlayFar(SE_JUMP);
@@ -132,7 +132,7 @@ s32 Field_ClimbDown(void) {
       8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
   s32 result;
 
-  FieldEvent_Begin();
+  FieldEvent_Start();
 
   if (gGameState.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
@@ -215,7 +215,7 @@ s32 Field_ClimbUp(void) {
       8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
   s32 result;
 
-  FieldEvent_Begin();
+  FieldEvent_Start();
 
   if (object->animationKind == OBJECT_SPRITE_ONE)
     spriteFlags = ((struct AnimationObject *)object->animation)->flags;

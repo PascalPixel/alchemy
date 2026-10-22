@@ -43,7 +43,7 @@ struct MoteWork {
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void Func_080e9ee4(struct Mote *mote, s32 speed);
 void Func_080eb298(struct EffectSprite *sprite, struct Mote *mote);
-void BattleFx_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
+void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 
 void Func_080e9f68(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
@@ -108,7 +108,7 @@ void Func_080e9f68(void) {
     if ((u32)mote->timer < 20) {
       sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
       Func_080eb298(sprite, mote);
-      BattleFx_IntegrateVector3(&mote->x, 63, -0x8000);
+      BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
       mote->timer++;
     }
   }

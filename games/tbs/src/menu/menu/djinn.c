@@ -320,8 +320,8 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(SE_RECOVERY);
       result = Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                                  menu->pairIndex[0], menu->shownOwner[1]);
-      UnitCalcFar(menu->shownOwner[0]);
-      UnitCalcFar(menu->shownOwner[1]);
+      Unit_CalculateFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[1]);
       menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
       DjinnMenu_BuildLists(menu->backdrop);
@@ -344,7 +344,7 @@ s32 DjinnMenu_RunScreen(void) {
                           menu->pairIndex[0]);
       result = (s32)DjinnRecovery_AddStandbyFar(
           menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
-      UnitCalcFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[0]);
       menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
       menu->cursor->active = ICON_SHOWN;
@@ -365,8 +365,8 @@ s32 DjinnMenu_RunScreen(void) {
                         menu->pairIndex[0], menu->shownOwner[1]);
       result = Djinn_TransferFar(menu->shownOwner[1], menu->pairElement[1],
                                  menu->pairIndex[1], menu->shownOwner[0]);
-      UnitCalcFar(menu->shownOwner[0]);
-      UnitCalcFar(menu->shownOwner[1]);
+      Unit_CalculateFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[1]);
       DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = ICON_SHOWN;
@@ -396,7 +396,7 @@ s32 DjinnMenu_RunScreen(void) {
                         menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
           menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
-      UnitCalcFar(menu->shownOwner[0]);
+      Unit_CalculateFar(menu->shownOwner[0]);
       menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
       menu->cursor->active = ICON_SHOWN;
@@ -996,7 +996,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[ownerColumn] & DJINN_COLUMN_ON_HEADER))
         selectedRow = djinnRow;
       window = menu->statusWindow;
-      unit = UnitGetFar(menu->owners[ownerColumn]);
+      unit = Unit_GetFar(menu->owners[ownerColumn]);
       RenderOutput_RedrawSavedRectFar(window);
       UiText_DrawStringAtOffsetFar(unit->name, window, 0, 0);
       UiText_DrawCharacterAtOffsetFar(unit->classIndex + MsgClassName, window,
@@ -1018,19 +1018,19 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         UiWindow_SetTilemapEntryFar(
             menu->helpWindow,
             DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 0, 0, 0);
-        UiWork_PushValueSlotFar(menu->shownOwner[0], MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(menu->shownOwner[0], MESSAGE_ARGUMENT_ACTOR);
         UiWork_PushValueSlotFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                MSG_ARG_ABILITY);
+                                MESSAGE_ARGUMENT_ABILITY);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel, menu->helpWindow, 8,
                                         0);
 #else
-        UiWork_PushValueSlotFar(menu->shownOwner[0], MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(menu->shownOwner[0], MESSAGE_ARGUMENT_ACTOR);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel, menu->helpWindow, 0,
                                         0);
         UiWork_PushValueSlotFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                MSG_ARG_ABILITY);
+                                MESSAGE_ARGUMENT_ABILITY);
         UiWindow_SetTilemapEntryFar(
             menu->helpWindow,
             DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 6, 0, 0);
@@ -1201,7 +1201,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           DjinnRecovery_TickFar();
           Djinn_DeactivateFar(ISAAC, ELEMENT_VENUS, DJINNI_FLINT);
           DjinnRecovery_AddStandbyFar(ISAAC, ELEMENT_VENUS, DJINNI_FLINT);
-          UnitCalcFar(ISAAC);
+          Unit_CalculateFar(ISAAC);
           repeat = KEY_B;
           pressed = KEY_B;
         }
@@ -1373,7 +1373,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         DjinnRecovery_RemoveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn));
       }
-      UnitCalcFar(DJINN_OWNER(djinn));
+      Unit_CalculateFar(DJINN_OWNER(djinn));
       DjinnMenu_DrawElementList(&backdrop->list);
       redraw = 1;
     }
@@ -1460,7 +1460,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                   DjinnRecovery_RemoveFar(DJINN_OWNER(entry),
                                           DJINN_ELEMENT(entry),
                                           DJINN_NUMBER(entry));
-                  UnitCalcFar(DJINN_OWNER(entry));
+                  Unit_CalculateFar(DJINN_OWNER(entry));
                 }
               } else if (entry & DJINN_ENTRY_IS_SET) {
                 Djinn_DeactivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
@@ -1468,7 +1468,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                 DjinnRecovery_AddStandbyFar(DJINN_OWNER(entry),
                                             DJINN_ELEMENT(entry),
                                             DJINN_NUMBER(entry));
-                UnitCalcFar(DJINN_OWNER(entry));
+                Unit_CalculateFar(DJINN_OWNER(entry));
               }
             }
           }
@@ -1608,7 +1608,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 /// unit holds, or of every element for -1, and returns how many. The Djinn
 /// menu passes a DjinnListTable row, which holds DJINN_LIST_ROWS (10).
 s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element) {
-  struct BattleUnit *unit = UnitGetFar(ownerId);
+  struct BattleUnit *unit = Unit_GetFar(ownerId);
   s32 count = 0;
   s32 elementIndex;
   s32 djinnIndex;
@@ -1692,7 +1692,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
   u16 actions[48];
   struct DjinnMenuWork *menu;
 
-  unit = UnitGetFar(ownerId);
+  unit = Unit_GetFar(ownerId);
   menu = gMenuWork;
   giveElement = menu->pairElement[removePairSlot];
   giveIndex = menu->pairIndex[removePairSlot];
@@ -1759,8 +1759,8 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
     break;
   }
 
-  UnitCalcFar(ownerId);
-  unit = UnitGetFar(ownerId);
+  Unit_CalculateFar(ownerId);
+  unit = Unit_GetFar(ownerId);
 
   if (page == 0) {
     s32 label;
@@ -1901,7 +1901,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
       UiText_DrawCharacterAtOffsetFar(
           MsgAbilityName + (actions[first] & OWNER_ACTION_ID_MASK), window,
           x * 8 + 16, (y + line * 2) * 8 + 8);
-      UiText_DrawNumberAtOffsetFar(BattleActGet(actions[first])->ppCost, 2,
+      UiText_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
                                    window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }

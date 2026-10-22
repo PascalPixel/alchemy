@@ -59,7 +59,7 @@ void Func_02000128(s32 arg0) {
 }
 
 void FieldEvent_WaitFrames();
-void Field_BeginPaletteTransition();
+void Field_StartPaletteTransition();
 void Func_02003130();
 void Func_02003138();
 void Func_020031c8();
@@ -107,7 +107,7 @@ void Func_0200013c(s32 id) {
   Call2((void (*)())Func_02003290, (s32)Object_GetById(id), 0);
   Func_02003288();
   Func_02003280();
-  Call1((void (*)())Field_BeginPaletteTransition, 8);
+  Call1((void (*)())Field_StartPaletteTransition, 8);
   *flags = 3;
   object->gravity = 0x8000;
   Call1((void (*)())FieldEvent_WaitFrames, 5);

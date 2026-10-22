@@ -17,7 +17,7 @@ ResourceMetadata_ReleaseSlotFar:
 	.thumb_func
 ResourceMetadata_ClearRecordFar:
 	overlay_veneer ResourceMetadata_ClearRecord
-	.global Animation_InitWorkFromMetadataFar
+	.global Animation_InitializeWorkFromMetadataFar
 	.thumb_func
-Animation_InitWorkFromMetadataFar:
-	overlay_veneer Animation_InitWorkFromMetadata
+Animation_InitializeWorkFromMetadataFar:
+	overlay_veneer Animation_InitializeWorkFromMetadata

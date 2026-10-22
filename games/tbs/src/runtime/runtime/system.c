@@ -5,7 +5,7 @@
 #include "../runtime_internal.h"
 
 // The German, French, Spanish and Italian editions also take the
-// cartridge-removed interrupt, whose handler is IwramHalt.
+// cartridge-removed interrupt, whose handler is Iwram_Halt.
 #if TBS_PATCH_2
 #define SYSTEM_HALT_ON_GAMEPAK_IRQ 1
 #endif
@@ -47,7 +47,7 @@ void System_Initialize(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   Runtime_SetIrqHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);
 #if defined(SYSTEM_HALT_ON_GAMEPAK_IRQ)
-  Runtime_SetIrqHandler(IRQ_GAMEPAK, 1, IwramHalt);
+  Runtime_SetIrqHandler(IRQ_GAMEPAK, 1, Iwram_Halt);
 #endif
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   // Start audio and frame services only after the interrupt handlers are ready.

@@ -13,7 +13,7 @@
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 
 s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
                   s32 *forcedCount) {
@@ -26,7 +26,7 @@ s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
   s32 action;
 
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = UnitGet(unitIds[i]);
+    struct BattleUnit *unit = Unit_Get(unitIds[i]);
 
     for (action = 0; action < unit->actionEntryCount; action++) {
       if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00) != 0) {

@@ -7,6 +7,6 @@
 @ carries the shared OBJ palette, those colours of the first tick, and black
 @ for palette 15, which it does not use.
 	.section .rodata
-	.global FieldFx_RingOrb
-FieldFx_RingOrb:
+	.global FieldEffect_RingOrb
+FieldEffect_RingOrb:
 	.incbin "games/tla/src/graphics/field_fx/ring_orb.8bpp.lz"

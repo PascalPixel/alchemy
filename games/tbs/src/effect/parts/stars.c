@@ -16,14 +16,14 @@
 /// camera swings round; each knocks the target back on arrival, and the third
 /// lets the battle show the damage.
 ///
-/// Abilities: Astral Blast (BATTLE_FX_ASTRAL_BLAST).
+/// Abilities: Astral Blast (BATTLE_EFFECT_ASTRAL_BLAST).
 ///
 /// work->particles 0 to 2 are the rings, battle positions in 16.16. Loads the
 /// rune palette into the first 64 background colours, sets the user's
 /// animation (2, at speed 48, three times the usual, and does not set it
 /// back), turns the camera's yaw, sends the target back with its motion
 /// fields and sets work->shakeFrames.
-void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
 #ifndef UBFIX
   struct EffectPosition base;
@@ -57,7 +57,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
@@ -69,7 +69,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -132,7 +132,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           scale.z = scale.x;
           SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
           SceneTransform_ApplyRoll(j * 0x199a);
-          depth = EffectPosition_ProjectPoint(&gStars_Points[j & 1],
+          depth = EffectPosition_ProjectPoint(&gStar_Points[j & 1],
                                               &screenPosition);
           if (peak < depth)
             peak = depth;
@@ -210,13 +210,13 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
 /// bounce shaking the screen and flashing the targets; the battle shows the
 /// damage on frame 96.
 ///
-/// Abilities: Shining Star (BATTLE_FX_SHINING_STAR).
+/// Abilities: Shining Star (BATTLE_EFFECT_SHINING_STAR).
 ///
 /// It lasts 128 frames. work->particles 0 to 7 are the stars, battle positions
 /// in 16.16, each variant the frame it starts. Rebuilds the background ramp
 /// each frame (Graphics_UpdatePhasePalette, after loading the rune palette)
 /// and sets work->shakeFrames at each bounce.
-void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
+void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -242,7 +242,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   graphics = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
@@ -252,7 +252,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -297,13 +297,13 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
                 trails[i * 10 + j].velocityX =
                     screenPosition.x +
                     ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
-                      gStars_Radii[j & 1]) /
+                      gStar_Radii[j & 1]) /
                          2 >>
                      16);
                 trails[i * 10 + j].velocityY =
                     screenPosition.y -
                     (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
-                         gStars_Radii[j & 1] >>
+                         gStar_Radii[j & 1] >>
                      16);
               }
               for (j = 0; j != 10; j++) {

@@ -16,7 +16,7 @@
 /// Boulders drop along the row of targets, centred on it, and shatter into
 /// tumbling shards, hitting every target as each lands.
 ///
-/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_FX_SPIRE).
+/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_EFFECT_SPIRE).
 ///
 /// The boulders are work->particles, of which only y and its speed move; their
 /// shards are PARTICLES, SPIRE_SHARDS for each boulder. Each transfer clears
@@ -24,7 +24,7 @@
 ///
 /// effect: the targets; its variant picks the number of boulders
 ///         (gSpire_RockCounts: 1, 3 or 5).
-void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -44,7 +44,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,

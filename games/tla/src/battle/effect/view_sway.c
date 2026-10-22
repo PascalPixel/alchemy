@@ -3,7 +3,7 @@
 #include "mem.h"
 #include "view_move.h"
 
-// Field Psynergy kind 27 (BattleFx_Run's case 27): the view sways.
+// Field Psynergy kind 27 (BattleEffect_Run's case 27): the view sways.
 
 #define VIEW_MOVE_WORK_SIZE 0x1920
 
@@ -27,14 +27,14 @@ struct EffectScene {
 };
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_SetObjectTickMode(void *object, s32 mode);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 
 /// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
 /// holds for 10 frames, shrinks back to 2 and stops; then the map's view
 /// bounds come back.
-void BattleFx_RunViewSway(void) {
+void BattleEffect_RunViewSway(void) {
   struct EffectScene *scene;
   s32 phase;
   s32 amplitude;
@@ -44,7 +44,7 @@ void BattleFx_RunViewSway(void) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   scene = Ram_HeapSlots->effectWork;
   BattleEffect_InitializeSharedScene();
-  BattleFx_SetObjectTickMode(scene->mainObject, 0);
+  BattleEffect_SetObjectTickMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_Z);
   WaitFrames(10);
 
@@ -86,7 +86,7 @@ void BattleFx_RunViewSway(void) {
   } while (state != SWAY_DONE);
 
   Func_080e8c9c();
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
 }
 

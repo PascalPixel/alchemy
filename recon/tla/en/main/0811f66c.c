@@ -35,7 +35,7 @@ struct TargetEnemyDefinition {
   s8 targetStrategy;
 };
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 struct TargetEnemyDefinition *Enemy_GetDefinitionFar(s32 enemyId);
 
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
@@ -314,7 +314,7 @@ scan_complete:
     return -2;
 
   for (targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
-    unit = UnitGet(unitIds[targetIndex]);
+    unit = Unit_Get(unitIds[targetIndex]);
     CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
     if (applies != 0) {
       unitIds[targetCount] = unitIds[targetIndex];
@@ -327,16 +327,16 @@ scan_complete:
     return -1;
 
   if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
-      Enemy_GetDefinitionFar(UnitGet(actorId)->enemyId)->targetStrategy !=
+      Enemy_GetDefinitionFar(Unit_Get(actorId)->enemyId)->targetStrategy !=
           STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
            innerIndex++) {
-        thisUnit = UnitGet(unitIds[innerIndex]);
-        nextUnit = UnitGet(unitIds[innerIndex + 1]);
-        if (Enemy_GetDefinitionFar(UnitGet(actorId)->enemyId)->targetStrategy ==
+        thisUnit = Unit_Get(unitIds[innerIndex]);
+        nextUnit = Unit_Get(unitIds[innerIndex + 1]);
+        if (Enemy_GetDefinitionFar(Unit_Get(actorId)->enemyId)->targetStrategy ==
             STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;

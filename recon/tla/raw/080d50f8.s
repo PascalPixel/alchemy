@@ -47,7 +47,7 @@ Func_080d50f8:
 	movs r2, #8
 	add r2, r8
 	mov r9, r2
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	adds r3, r7, #0
 	adds r3, #84
 	ldrb r3, [r3]

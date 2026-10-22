@@ -5,36 +5,36 @@
 	.thumb_func
 Event_GetSpecialValueFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SnapScaleToFull
+	overlay_veneer BattleEffect_SnapScaleToFull
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SnapScaleToFull
+	overlay_veneer BattleEffect_SnapScaleToFull
 .else
 	overlay_veneer Event_GetSpecialValue
 .endif
 .endif
-	.global BattleFx_StartItemBreakFar
+	.global BattleEffect_StartItemBreakFar
 	.thumb_func
-BattleFx_StartItemBreakFar:
+BattleEffect_StartItemBreakFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer UpdateRisingParticleBurst
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer UpdateRisingParticleBurst
 .else
-	overlay_veneer BattleFx_StartItemBreak
+	overlay_veneer BattleEffect_StartItemBreak
 .endif
 .endif
-	.global BattleFx_SnapScaleToFullFar
+	.global BattleEffect_SnapScaleToFullFar
 	.thumb_func
-BattleFx_SnapScaleToFullFar:
+BattleEffect_SnapScaleToFullFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleParty_ApplyDrain
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleParty_ApplyDrain
 .else
-	overlay_veneer BattleFx_SnapScaleToFull
+	overlay_veneer BattleEffect_SnapScaleToFull
 .endif
 .endif
 	.global UpdateRisingParticleBurstFar

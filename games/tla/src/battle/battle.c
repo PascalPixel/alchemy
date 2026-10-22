@@ -8,7 +8,7 @@
 
 /// Readies every unit's battle graphics, releasing those of departed units,
 /// and resets everyone's display mode and motion.
-void BattleObjPut(void) {
+void BattleObject_Put(void) {
   s16 list[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);

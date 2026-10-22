@@ -156,7 +156,7 @@ Func_080e4d9c:
 	adds r0, r6, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFx_IntegrateVector2
+	bl BattleEffect_IntegrateVector2
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #0]
 .L_080e4ed2:
@@ -761,7 +761,7 @@ Func_080e4d9c:
 	adds r0, r6, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFx_IntegrateVector2
+	bl BattleEffect_IntegrateVector2
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #0]
 .L_080e53ca:
@@ -1141,7 +1141,7 @@ Func_080e4d9c:
 	mov r1, r10
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl BattleFx_SetObjectTickMode
+	bl BattleEffect_SetObjectTickMode
 	ldrh r2, [r5]
 .L_080e56e2:
 	lsls r3, r2, #16

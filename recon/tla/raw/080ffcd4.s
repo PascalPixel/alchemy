@@ -70,7 +70,7 @@ Func_080ffcd4:
 	adds r4, #22
 	adds r3, r7, r4
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	mov r1, r9
 	movs r2, #0
 	bl Func_080fd6f0

@@ -10,6 +10,6 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
   if (abilityId == 126) // Psy Drain.
     return 1;
-  pp = BattleActGet(abilityId)->ppCost;
+  pp = BattleAction_Get(abilityId)->ppCost;
   return (u32)((0 - pp) | pp) >> 31; // 1 if pp is nonzero.
 }

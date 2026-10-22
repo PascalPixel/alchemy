@@ -28,3 +28,19 @@ says only what differs here.
 Functions not yet matched are drafts under `recon/tla/en/main` (main image)
 and `recon/tla/en/overlays` (overlays), by address. `make progress` gives the
 counts.
+
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`AffineEffect_`, `Audio_`, `BattleEffect_`, `BattleUnit_`, `CharacterMenu_`,
+`Debug_`, `DjinnMenu_`, `Graphics_`, `Inn_`, `InventoryMenu_`, `Item_`,
+`ItemMenu_`, `LinkLobby_`, `Menu_`, `NodeChain_`, `Palette_`, `PsynergyMenu_`,
+`Render_`, `Resource_`, `Shop_`, `Title_`, `UiPalette_` and `UiWindow_`. Those
+only The Lost Age's code has so far:
+
+| Prefix | What it acts on |
+| --- | --- |
+| `Forge_` | the forge: its recipes, the materials the party holds and the roll for the result |
+| `EventTable_` | the shop's row limit |
+| `MenuIcon_`, `UiPanel_` | a menu icon's active state, and highlighting a panel's grid cell or rectangle |
+| `Lobby_`, `Flag_` | the link lobby's transfer state, and the flag test its circle reads |

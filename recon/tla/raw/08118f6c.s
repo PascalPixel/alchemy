@@ -48,7 +48,7 @@ Func_08118f6c:
 .L_08118fc0:
 	ldrh r0, [r6]
 	str r1, [sp, #0]
-	bl UnitGet
+	bl Unit_Get
 	ldr r1, [sp, #0]
 	mov r2, r8
 	ldrb r3, [r7, r2]

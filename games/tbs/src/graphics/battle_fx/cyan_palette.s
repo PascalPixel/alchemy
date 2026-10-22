@@ -1,5 +1,5 @@
 	.section .rodata
-	.global BattleFx_CyanPalette
-BattleFx_CyanPalette:
+	.global BattleEffect_CyanPalette
+BattleEffect_CyanPalette:
 	.incbin "games/tbs/src/graphics/battle_fx/cyan_palette.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/cyan_palette.bitmap.lz"

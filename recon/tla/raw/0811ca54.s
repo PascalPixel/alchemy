@@ -77,9 +77,9 @@ Func_0811ca54:
 	movs r3, #2
 	negs r3, r3
 	ands r0, r3
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	ldr r0, [r6, #8]
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r0, [r0]
 	movs r1, #3
 	mov r10, r0
@@ -117,7 +117,7 @@ Func_0811ca54:
 	lsls r3, r7, #1
 	adds r3, #36
 	ldrsh r0, [r2, r3]
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r3, [r0]
 	movs r0, #0
 	ldr r1, [r3, #80]

@@ -207,8 +207,9 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
   params.startScaleX = 0xcccc;
   params.startScaleY = 0xcccc;
   params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-  FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
-                EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+  FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase,
+                    phase, EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1,
+                    &params);
 #ifdef UBFIX
   return;
 #else
@@ -269,7 +270,7 @@ const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
 /// Master Hsu is still trapped, he is rescued without the party (see the file
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
     if (GameFlag_IsSet(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -471,7 +472,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
       break;
     }
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   // Three lines a mark, one for each member. They come right after Alpine
   // Crossing's signpost (`North: Altin Mine West: Lama Temple`) and have no
   // names of their own, so they count from a Fuchin Temple message two before
@@ -624,13 +625,13 @@ static void LamakanDesert_BatheInOasis(void) {
     options.startScaleY = 0xcccc;
     options.targetScaleX = 0x10000;
     options.targetScaleY = 0x13333;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
-                  EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                      EFFECT_SCALE_TO_TARGET,
-                  &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
+                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                          EFFECT_SCALE_TO_TARGET,
+                      &options);
   }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_BATHE);
   revealFrames = (u16 *)&((struct FieldWork *)work)->revealFrames;
   progress = &gGameState.hazardSteps;
   zero = 0;
@@ -659,7 +660,7 @@ static void LamakanDesert_BatheInOasis(void) {
     puff.startScaleY = 0xcccc;
     puff.targetScaleX = 0x8000;
     puff.targetScaleY = 0x13333;
-    FieldFx_Spawn(
+    FieldEffect_Spawn(
         actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
@@ -667,7 +668,7 @@ static void LamakanDesert_BatheInOasis(void) {
   Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Event_Wait(10);
   // frames is 0 here, so a running Reveal ends as the leader gets up.
   *(u16 *)&((struct FieldWork *)work)->revealFrames = frames;
@@ -706,8 +707,8 @@ static void HeatGauge_CountStep(void) {
     } else {
       z = actor->z.fixed;
     }
-    FieldFx_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0,
-                  EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+    FieldEffect_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
   } else {
     phase = gFrameCount & 7;
     if (phase != 0) {
@@ -718,9 +719,9 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = 0xcccc;
     params.startScaleY = 0xcccc;
     params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed, 0,
-                  ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase,
-                  EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed,
+                      0, ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
   }
 }
 
@@ -764,7 +765,7 @@ static void LamakanDesert_FallIntoPit(void) {
       }
     }
   }
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   // Face the pit, then reverse the walking direction while being pulled in.
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, best, 0);
@@ -778,7 +779,7 @@ static void LamakanDesert_FallIntoPit(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   record = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = (record->facing + 0x8000) & -0x1000;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_RUN);
   Object_SetActionById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
   record = Object_GetById(ACTOR_PARTY_LEADER);
@@ -835,9 +836,9 @@ static void LamakanDesert_SlideDownDune(void) {
     params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
     x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) -
         0x60000;
-    FieldFx_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                  ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
-                  EFFECT_USE_SPIN, &params);
+    FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
+                      ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
+                      EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
     // Let the fall complete before returning to ordinary field movement.
@@ -845,12 +846,12 @@ static void LamakanDesert_SlideDownDune(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + 0x80000);
-    Object_SetMode(actor, ANIM_LEADER_LEAP);
+    Object_SetMode(actor, ANIMATION_LEADER_LEAP);
     FieldObject_WaitForMove(actor);
     do {
       Engine_TaskWait(1);
     } while (actor->y.fixed != actor->terrainHeight);
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(3);
     return;
   }
@@ -912,7 +913,7 @@ static void LamakanDesert_MeetManticore(void) {
       record->targetX = ACTOR_NO_TARGET;
       record = Actor_Get(ACTOR_PARTY_LEADER);
       record->targetZ = ACTOR_NO_TARGET;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
       Actor_FaceActor(ACTOR_PARTY_LEADER, MANTICORE, 0);
       Engine_EventWait(40);
       Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -927,7 +928,7 @@ static void LamakanDesert_MeetManticore(void) {
       record = Actor_Get(ACTOR_PARTY_LEADER);
       FieldVector_AddPolarOffset(-0x100000, record->facing, &backwardOffset);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / 0x10000,
                                  backwardOffset.z / 0x10000);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -986,7 +987,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       Map_CopyCells(43, 56, 4, 2, 116, 126);
     } else if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
       v5 = 124;
-      FieldFx_SetQueuedSoundAndPlay(SE_169);
+      FieldEffect_SetQueuedSoundAndPlay(SE_169);
       Map_CopyCells(8, 14, 4, 4, 64, v5);
       Map_CopyCells(6, 18, 4, 4, 68, v5);
       Map_CopyCells(10, 21, 4, 4, 72, v5);
@@ -1176,18 +1177,18 @@ void HeatGauge_Start(void) {
 static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 
 const s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 const s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 const s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 // clang-format off

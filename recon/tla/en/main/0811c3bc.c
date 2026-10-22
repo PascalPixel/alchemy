@@ -15,7 +15,7 @@
 #include "system.h"
 #include "battle_system.h"
 #include "dma.h"
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 
 struct BattleSortedUnitEntry {
   u16 unitId;
@@ -41,11 +41,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
   firstCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   for (index = 0; index != 4; index++)
-    UnitGet(index);
+    Unit_Get(index);
   for (index = 0; index < firstCount; index++) {
     s32 unitId = unitIds[index];
 
-    unit = UnitGet(unitId);
+    unit = Unit_Get(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
     entry->value = unit->agi;
@@ -60,7 +60,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   for (index = 0; index < secondCount; index++) {
     s32 unitId = unitIds[index];
 
-    unit = UnitGet(unitId);
+    unit = Unit_Get(unitId);
     entry->unitId = unitId;
     entry->value = unit->agi >> 1;
     if (entry->value != 0)

@@ -29,7 +29,7 @@ extern char MsgHpFull;
 u32 BattleEventRuntime_Reset(void);
 
 s32 sub_08124af8(s32 id) {
-  struct BattleUnit *unit = UnitGet(id);
+  struct BattleUnit *unit = Unit_Get(id);
   u8 *count = &unit->refrain;
 
   if (*count != 0) {
@@ -47,9 +47,9 @@ s32 sub_08124af8(s32 id) {
       hp = max;
     gain = hp - before;
     if (gain != 0) {
-      BattleEvPush(0, id);
+      BattleEvent_Push(0, id);
       if (hp == unit->maxHp) {
-        BattleEvPush(4, (u32)&MsgHpFull);
+        BattleEvent_Push(4, (u32)&MsgHpFull);
       } else {
         {
           u32 opcode = 1;
@@ -58,14 +58,14 @@ s32 sub_08124af8(s32 id) {
            * to its argument register, as the native does; plain, the copy comes
            * first (one reordered pair, differ 2). */
           asm volatile("" : "+l"(opcode));
-          BattleEvPush(opcode, gain);
+          BattleEvent_Push(opcode, gain);
         }
-        BattleEvPush(4, (u32)&MsgHpRecover);
+        BattleEvent_Push(4, (u32)&MsgHpRecover);
       }
       unit->hp = hp;
-      UnitRatioFar(id);
+      Unit_UpdateRatiosFar(id);
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     if (--unit->refrain == 0)
       return 1;
   }
@@ -73,7 +73,7 @@ s32 sub_08124af8(s32 id) {
 }
 
 s32 BattleUnit_TickReflect(s32 id) {
-  u8 *value = (u8 *)&((struct BattleUnit *)UnitGet(id))->reflect;
+  u8 *value = (u8 *)&((struct BattleUnit *)Unit_Get(id))->reflect;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
@@ -84,7 +84,7 @@ s32 BattleUnit_TickReflect(s32 id) {
 }
 
 s32 BattleUnit_TickAgilityModifier(s32 id) {
-  struct BattleUnit *unit = UnitGet(id);
+  struct BattleUnit *unit = Unit_Get(id);
   u8 *value = &unit->agilityTurns;
   if (*value != 0) {
     (*value)--;
@@ -112,7 +112,7 @@ s32 DjinnRecovery_Tick(void) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 &&
-          ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
       }
       index++;
@@ -128,7 +128,7 @@ s32 DjinnRecovery_Tick(void) {
 
         Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
         DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
-        UnitCalcFar(id);
+        Unit_CalculateFar(id);
         removed = 1;
       } else {
         expiredEntry++;
@@ -154,7 +154,7 @@ void Func_08124cc0(void) {}
 
 extern char MsgDjinnIsSet;
 
-void BattleEvPush(u32 opcode, u32 operand);
+void BattleEvent_Push(u32 opcode, u32 operand);
 u32 BattleParty_IsUnitListed(u32 id);
 s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void BattleEventRuntime_WaitForReady(void);
@@ -181,7 +181,7 @@ s32 Func_08124cc4(s32 side) {
     do {
       if (timedEntry->turns > 0 &&
           BattleParty_IsUnitListed(timedEntry->unitId) &&
-          ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
         result = 1;
       }
@@ -208,21 +208,21 @@ s32 Func_08124cc4(s32 side) {
           result = 2;
           BattleEventRuntime_Reset();
           BattleEventRuntime_SchedulePhase(30);
-          BattleEvPush(0, id);
-          BattleEvPush(3, entry->element * 20 + entry->index + 300);
-          BattleEvPush(14, 175);
-          BattleEvPush(10, 0);
-          BattleEvPush(4, (u32)&MsgDjinnIsSet);
-          BattleEvPush(11, id);
+          BattleEvent_Push(0, id);
+          BattleEvent_Push(3, entry->element * 20 + entry->index + 300);
+          BattleEvent_Push(14, 175);
+          BattleEvent_Push(10, 0);
+          BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
+          BattleEvent_Push(11, id);
           if (BattleParty_IsUnitListed(id)) {
-            Object_SetMode((struct ObjectRuntime *)BattleObjGet(id)->object, 3);
+            Object_SetMode((struct ObjectRuntime *)BattleObject_Get(id)->object, 3);
             ObjectDispatch_SetAnimationSpeedFar(
-                (struct DispatchObject *)BattleObjGet(id)->object, 32);
+                (struct DispatchObject *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;
           Djinn_ActivateFar(id, element, entry->index);
           DjinnRecovery_RemoveFar(id, entry->element, entry->index);
-          UnitCalcFar(id);
+          Unit_CalculateFar(id);
           if (BattleParty_IsUnitListed(id))
             Func_08127308(id, element, 3, 0);
           BattleEventRuntime_WaitForReady();

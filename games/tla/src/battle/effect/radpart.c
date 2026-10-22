@@ -22,12 +22,12 @@ extern u32 gFrameTick;
 extern u32 gData_080f0bfc[];
 
 void *Object_GetById(s32 id);
-void BattleFx_InitializeSlots(void);
+void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void WaitFrames(s32 frames);
-void BattleFx_AdvanceSpinAngle();
+void BattleEffect_AdvanceSpinAngle();
 void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
 void Camera_WorldToScreen(struct EffectVector *position);
 void Object_Destroy(void *object);
@@ -37,8 +37,8 @@ void Animation_ApplyChildValuesToRecordFar(void *object, u32 value);
 u32 Random16(void);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void Object_SetMode(void *object, s32 mode);
-void Shop_InitEffectFar(void);
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
+void Shop_InitializeEffectFar(void);
+void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 /// circle and then close on the current owner, which turns and takes mode 28.
@@ -53,7 +53,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   object = Object_GetById(id);
   if (object == NULL)
     return;
-  BattleFx_InitializeSlots();
+  BattleEffect_InitializeSlots();
   scene = Ram_HeapSlots->effectWork;
   Shop_RestoreSceneTilesFar(0x20118c);
   Audio_PlayCue(173);
@@ -66,7 +66,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
   // Spin, then leap high.
   Audio_PlayCue(140);
-  object->update = BattleFx_AdvanceSpinAngle;
+  object->update = BattleEffect_AdvanceSpinAngle;
   WaitFrames(40);
   Audio_PlayCue(153);
   ObjectMotion_Launch(id, 12, 22);
@@ -101,11 +101,11 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   WaitFrames(40);
   Audio_PlayCue(164);
   WaitFrames(100);
-  Shop_InitEffectFar();
-  BattleFx_ClearActiveSlotsAndScheduleUpdates();
+  Shop_InitializeEffectFar();
+  BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-void BattleFx_SetObjectAlternatingWords(u8 *object) {
+void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   u32 *tick = &gFrameTick;
   u32 *table;
   u32 index;
@@ -125,7 +125,7 @@ void BattleFx_SetObjectAlternatingWords(u8 *object) {
   ((struct MotionObject *)object)->scaleY = value;
 }
 
-void BattleFx_SpinUpAngle(void *obj) {
+void BattleEffect_SpinUpAngle(void *obj) {
   u32 step;
 
   step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
@@ -139,7 +139,7 @@ void BattleFx_SpinUpAngle(void *obj) {
 
 /// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
 /// its scale falls below 0x3000.
-void BattleFx_ShrinkObjectAndDestroySlow(void *obj) {
+void BattleEffect_ShrinkObjectAndDestroySlow(void *obj) {
   /* FAKEMATCH: the step is pinned to r1 and used by an empty asm before the
    * scales load, so its literal loads first; without the pin, 18 instructions
    * differ in tla-en. */

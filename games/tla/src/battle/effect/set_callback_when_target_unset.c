@@ -11,7 +11,7 @@
 #include "object_runtime.h"
 #include "frame.h"
 
-void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target) {
+void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *target) {
   s32 tx;
   s32 ty;
 
@@ -22,7 +22,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target) {
     ty = target->targetY;
     if ((ty == tx) && (target->targetZ == ty)) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)target,
-                                   (u32)gBattleFx_UntargetedObjectScript);
+                                   (u32)gBattleEffect_UntargetedObjectScript);
     }
   }
 }
@@ -30,7 +30,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target) {
 extern u8 gData_080f0e9c[];
 void Animation_ApplyChildValuesFar(void *object, s32 value);
 
-void BattleFx_ApplyFlickerValue(void *object, s32 value) {
+void BattleEffect_ApplyFlickerValue(void *object, s32 value) {
   s32 child = value - 1;
 
   if (value == 0)

@@ -1,4 +1,4 @@
-// Near miss, differ 26 of 495: The Broken Seal's PartyStatusDraw on this
+// Near miss, differ 26 of 495: The Broken Seal's PartyStatus_Draw on this
 // game's work: at most four party members outside battle, the Djinn counts
 // drawn as tiles, with the glyphs past 9 copied to VRAM when any count passes
 // 9. Left, instruction order only but for one row: the native stores the
@@ -50,7 +50,7 @@ void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void Func_080426e0(struct UiWindow *window, u32 flags);
 void UiWindow_BuildLayoutBounds(s32 flags);
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
-struct StatusUnit *UnitGet(s32 owner);
+struct StatusUnit *Unit_Get(s32 owner);
 void Func_08041f70(s32 nibble);
 void UiText_DrawPrefixedNumberAtOffset(s32 value, struct UiWindow *window,
                                        s32 x, s32 y, s32 kind);
@@ -61,7 +61,7 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
 
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
 
-void PartyStatusDraw(s32 flags) {
+void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = Ram_HeapSlots->windowLayout;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
@@ -121,7 +121,7 @@ void PartyStatusDraw(s32 flags) {
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
-    struct StatusUnit *unit = UnitGet(members[i]);
+    struct StatusUnit *unit = Unit_Get(members[i]);
     s32 hp = unit->hp;
     s32 maxHp = unit->maxHp;
     s32 barLength;

@@ -5,7 +5,7 @@
 #include "../psynergy_effects_internal.h"
 
 /// Work slot 22 of the wave effect, 0x298 bytes (gBattleBgFxWork). It lives
-/// from RunSceneTransitionEffect to FieldFx_FinishSceneAndReleaseHeapBlock,
+/// from RunSceneTransitionEffect to FieldEffect_FinishSceneAndReleaseHeapBlock,
 /// after the conversation Mind Read reads.
 struct WaveFxWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
@@ -25,21 +25,21 @@ struct WaveFxWork {
 
 /// Starts the wave effect of caster x on target y (actor ids): fades the
 /// palettes toward a hue that shifts with the frame counter, and starts its
-/// per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
+/// per-frame update (FieldEffect_UpdateMindReadWave) after 8 frames.
 ///
 /// Abilities: Mind Read (FIELD_KIND_MIND_READ).
 ///
-/// The effect stays up until FieldFx_ClearChildValueOnMismatch ends it
+/// The effect stays up until FieldEffect_ClearChildValueOnMismatch ends it
 /// after the after event; meanwhile the message windows show thoughts
 /// (Ui_FillBank15PaletteGrey sets the window mode).
 void RunSceneTransitionEffect(s32 x, s32 y) {
   struct WaveFxWork *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_MIND_READ, 0x298);
-  FieldFx_FadeToEffectColor();
+  FieldEffect_FadeToEffectColor();
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
-  FieldFx_AdvanceHueCycle();
+  FieldEffect_AdvanceHueCycle();
   // 0x200000 is PALETTE_TRANSFORM_TINT: the BG colours tinted by the hue.
   ColorBuffer_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000, 1);
   ColorBuffer_StartInterpolation(8);
@@ -47,21 +47,21 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
   work->targetId = y;
   work->delay = 8;
   Ui_FillBank15PaletteGrey();
-  Scheduler_AddOrUpdateCallback(FieldFx_UpdateMindReadWave, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateMindReadWave, 0xc80);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
 /// releases the effect's work.
-void FieldFx_FinishSceneAndReleaseHeapBlock(void) {
+void FieldEffect_FinishSceneAndReleaseHeapBlock(void) {
   void *work;
 
   work = *(void **)((u32)&gBattleBgFxWork);
   Ui_SetBank15PaletteAndClearRenderMode();
-  Scheduler_RemoveCallback(FieldFx_UpdateMindReadWave);
+  Scheduler_RemoveCallback(FieldEffect_UpdateMindReadWave);
   Animation_ApplyChildPalette((struct MotionObject *)Object_GetById(
                                   ((struct WaveFxWork *)work)->sourceId),
                               1);
-  FieldFx_FadeFromEffectColor();
+  FieldEffect_FadeFromEffectColor();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MIND_READ);
 }
 
@@ -70,7 +70,7 @@ void FieldFx_FinishSceneAndReleaseHeapBlock(void) {
 /// steps the colour fade and the hue, keeps the caster's colours lit, and
 /// every 60 frames sends three particles (object 281) from the target to the
 /// caster, with sound 130.
-void FieldFx_UpdateMindReadWave(void) {
+void FieldEffect_UpdateMindReadWave(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   u16 *line;
   u32 scanline;
@@ -100,7 +100,7 @@ void FieldFx_UpdateMindReadWave(void) {
     ColorBuffer_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000,
                           1);
     ColorBuffer_StartInterpolation(1);
-    FieldFx_AdvanceHueCycle();
+    FieldEffect_AdvanceHueCycle();
   }
   Animation_ApplyChildPalette(
       (struct MotionObject *)Object_GetById(work->sourceId), 0);
@@ -129,7 +129,7 @@ void FieldFx_UpdateMindReadWave(void) {
         particle->speed = 0xa3d7; // 0.64 pixels a frame
         particle->acceleration = 0xa3d7;
         particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
-        particle->update = FieldFx_SetCallbackWhenTargetUnset;
+        particle->update = FieldEffect_SetCallbackWhenTargetUnset;
         // No shadow or outline, sprite priority 1.
         sprite->palette = 0;
         sprite->mode = 1;
@@ -152,7 +152,7 @@ void FieldFx_UpdateMindReadWave(void) {
 
 /// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
 /// scroll for each scanline from the wave's shown page.
-void FieldFx_ArmBg0HBlankDma(void) {
+void FieldEffect_ArmBg0HBlankDma(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   if (!work->delay) {
     u16 *line = work->lines[work->page];
@@ -168,7 +168,7 @@ void FieldFx_ArmBg0HBlankDma(void) {
 
 /// Moves the wave's hue on 4 degrees and works out its colour, each channel
 /// 4 to 11.
-void FieldFx_AdvanceHueCycle(void) {
+void FieldEffect_AdvanceHueCycle(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   s32 r = 0;
   s32 g = 0;
@@ -178,7 +178,7 @@ void FieldFx_AdvanceHueCycle(void) {
   u8 *pg;
   u8 *pb;
 
-  FieldFx_ComputeHueChannels(work->hue << 16, &r, &g, &b);
+  FieldEffect_CalculateHueChannels(work->hue << 16, &r, &g, &b);
 
   // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue (0x28b).
   offset = 0x28b;
@@ -204,15 +204,15 @@ void FieldFx_AdvanceHueCycle(void) {
 
 /// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
 /// (16.16).
-void FieldFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
-  *r = FieldFx_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
-  *g = FieldFx_HueChannelRamp(hue, 0, 31 << 16);
-  *b = FieldFx_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);
+void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
+  *r = FieldEffect_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
+  *g = FieldEffect_HueChannelRamp(hue, 0, 31 << 16);
+  *b = FieldEffect_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);
 }
 
 /// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
 /// high from 60 to 180, falling from 180 to 240, low elsewhere.
-s32 FieldFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
+s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high) {
   angle = FixedPoint_Remainder(angle, 360 << 16);
   if (angle < 60 << 16)
     return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, angle));
@@ -237,9 +237,9 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 }
 
 /// Per-frame update: once the object has arrived (no destination left on any
-/// axis), frees it: gFieldFx_UntargetedObjectScript is a lone SC_FREE.
+/// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
 /// Mind Read's particles end this way at the caster.
-void FieldFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
+void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)fieldObject;
   s32 targetY;
   s32 targetX;
@@ -250,13 +250,13 @@ void FieldFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
     targetY = object->targetY;
     if ((targetY == targetX) && (object->targetZ == targetY)) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   gFieldFx_UntargetedObjectScript);
+                                   gFieldEffect_UntargetedObjectScript);
     }
   }
 }
 
 /// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
-/// scanline scroll (FieldFx_ArmBg0HBlankDma) at each VBlank.
+/// scanline scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
 void Ui_FillBank15PaletteGrey(void) {
   volatile u16 *p;
 
@@ -286,7 +286,7 @@ void Ui_FillBank15PaletteGrey(void) {
   p += 1;
   *p = MIND_READ_GREY;
   // 0x480 is SCHEDULER_KEY_VBLANK.
-  Scheduler_AddOrUpdateCallback(FieldFx_ArmBg0HBlankDma, 0x480);
+  Scheduler_AddOrUpdateCallback(FieldEffect_ArmBg0HBlankDma, 0x480);
 }
 
 /// Stops the BG0 scanline scroll and restores BG palette 15.
@@ -294,7 +294,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
   void *work;
 
   work = gWindowWork[0];
-  Scheduler_RemoveCallback(FieldFx_ArmBg0HBlankDma);
+  Scheduler_RemoveCallback(FieldEffect_ArmBg0HBlankDma);
   // Palette 15's white, black and two greys.
   BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
   BG_PLTT_COLOR(15, 3) = 0;

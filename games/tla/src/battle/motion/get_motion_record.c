@@ -28,7 +28,7 @@ void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 
-void Camera_InitDefaultTransform(void) {
+void Camera_InitializeDefaultTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition transfer;
 

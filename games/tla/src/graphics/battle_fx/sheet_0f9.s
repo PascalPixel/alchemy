@@ -1,5 +1,5 @@
 	.section .rodata
-@ Uncolored art using BattleFx_LightningBoltSheet colors (same effect).
+@ Uncolored art using BattleEffect_LightningBoltSheet colors (same effect).
 	.global Resource_Data0F9
 Resource_Data0F9:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0f9.bitmap.lz"

@@ -6,9 +6,9 @@
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
-/// FieldFx_RunAvoid schedules it (order 0xc80) for its last 70 frames and
+/// FieldEffect_RunAvoid schedules it (order 0xc80) for its last 70 frames and
 /// removes it again.
-void FieldFx_BlinkAvoidCaster(void) {
+void FieldEffect_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
   struct AnimationObject *rec;
   struct AnimationEntry *entry;
@@ -30,10 +30,10 @@ void FieldFx_BlinkAvoidCaster(void) {
 
 /// The caster during the effect: sheds a pair of falling arcs every 5 frames
 /// (7 on the world map), and spins in phase 1, 3/64 turn a frame.
-/// FieldFx_RunAvoid makes it the caster's callback; it counts the caster's
-/// step and turns its angle. The arcs draw with the tiles FieldFx_RunAvoid
+/// FieldEffect_RunAvoid makes it the caster's callback; it counts the caster's
+/// step and turns its angle. The arcs draw with the tiles FieldEffect_RunAvoid
 /// loads into scene->arcTileSlot.
-void FieldFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
+void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   struct ArcEffectObject *caster = (struct ArcEffectObject *)fieldObject;
   s16 phase;
   s32 elapsedFrames;
@@ -44,9 +44,9 @@ void FieldFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   // SceneId_Clear is the world map's map (Field_RunScene).
   if (gGameState.map == (s32)&SceneId_Clear) {
     if (elapsedFrames % 7 == 0)
-      FieldFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
+      FieldEffect_SpawnDescendingArcParticles((struct FieldActor *)caster);
   } else if (elapsedFrames % 5 == 0) {
-    FieldFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
+    FieldEffect_SpawnDescendingArcParticles((struct FieldActor *)caster);
   }
 
   if (phase == 1)
@@ -83,10 +83,10 @@ void FieldEvent_ShowStatusMessage(void) {
 /// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
 /// marks it as cast from the Sacred Feather.
 ///
-/// Called by FieldFx_Run and FieldFx_DispatchRequestKind. Sets
+/// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind. Sets
 /// gGameState.avoidDistance and avoidByItem; the leader's steps count the
 /// distance down by their speed (object/step.c), 2,400 pixels in all.
-void FieldFx_RunAvoid(void) {
+void FieldEffect_RunAvoid(void) {
   struct FieldFxScene *scene;
   struct ArcEffectObject *object;
   struct AnimationObject *group;
@@ -108,11 +108,11 @@ void FieldFx_RunAvoid(void) {
     // The arcs' tiles (256 bytes) stay loaded until the effect's end; the
     // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
-    VramCache_Load((s16)slot, 0x100, gFieldFx_ArcSparkTiles);
+    VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;
     gGameState.avoidByItem = GameFlag_TestFar(FLAG_ITEM_USE);
     Animation_ApplyChildValuesFar((struct DispatchObject *)object, zero);
-    object->callback = FieldFx_UpdatePairedArcSpawner;
+    object->callback = FieldEffect_UpdatePairedArcSpawner;
     object->phase = zero;
     object->step = zero;
   }
@@ -132,11 +132,11 @@ void FieldFx_RunAvoid(void) {
   }
   object->callback = NULL;
   object->angle = angle;
-  Scheduler_AddOrUpdateCallback(FieldFx_BlinkAvoidCaster, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_BlinkAvoidCaster, 0xc80);
   WaitFrames(15);
   AudioCommand_PlayFar(SE_174);
   WaitFrames(55);
-  Scheduler_RemoveCallback(FieldFx_BlinkAvoidCaster);
+  Scheduler_RemoveCallback(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gGameState.cloaked != 0)

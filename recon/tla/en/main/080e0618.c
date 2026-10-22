@@ -52,7 +52,7 @@ struct ScatterVector {
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct ScatterParticle *p);
-void BattleFx_IntegrateVector3(struct ScatterParticle *particle, s32 frames,
+void BattleEffect_IntegrateVector3(struct ScatterParticle *particle, s32 frames,
                                s32 flags);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
@@ -100,7 +100,7 @@ void Func_080e0618(void) {
       else
         sprite->oam.index = work->tileB + (timer & 3) * 2;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
-      BattleFx_IntegrateVector3(particle, 63, -0x1400);
+      BattleEffect_IntegrateVector3(particle, 63, -0x1400);
       if (++particle->timer == 32)
         particle->timer = -1;
     }

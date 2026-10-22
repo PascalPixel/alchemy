@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global FieldFx_RunWhirlwind
+	.global FieldEffect_RunWhirlwind
 	.thumb_func
-FieldFx_RunWhirlwind:
+FieldEffect_RunWhirlwind:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -326,8 +326,8 @@ FieldFx_RunWhirlwind:
 	mov r3, r10
 	movs r1, #0
 	ldr r0, [r3, #16]
-	bl BattleFx_SetObjectTickMode
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_SetObjectTickMode
+	bl BattleEffect_PrepareBufferInterpolation
 	adds r2, r7, #0
 	adds r2, #100
 	movs r3, #0
@@ -343,7 +343,7 @@ FieldFx_RunWhirlwind:
 	adds r0, r7, #0
 	bl Object_Destroy
 .L_080dffd2:
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080dffd6:
 	add sp, #40
 	pop {r3, r5, r6, r7}
@@ -357,10 +357,10 @@ FieldFx_RunWhirlwind:
 .L_080dffe8:
 	.4byte 0x0001b333
 .L_080dffec:
-	.4byte BattleFx_ShrinkObjectScaleUntilHalf
+	.4byte BattleEffect_ShrinkObjectScaleUntilHalf
 .L_080dfff0:
 	.4byte Func_080dfc3c
 .L_080dfff4:
-	.4byte BattleFx_WanderAroundAnchor
+	.4byte BattleEffect_WanderAroundAnchor
 .L_080dfff8:
-	.4byte BattleFx_AgeAndCueAtEighty
+	.4byte BattleEffect_AgeAndCueAtEighty

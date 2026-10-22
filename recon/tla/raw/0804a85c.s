@@ -210,7 +210,7 @@ Func_0804a85c:
 	cmp r3, #254
 	beq .L_0804aac0
 	adds r0, r3, #0
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, [sp, #80]
 	adds r1, r0, #0
 	subs r3, #3
@@ -397,7 +397,7 @@ Func_0804a85c:
 	ldr r6, [sp, #20]
 	ldr r7, [sp, #16]
 	ldrh r0, [r6, r7]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -822,7 +822,7 @@ Func_0804a85c:
 	bne .L_0804ae6c
 	b .L_0804b3ac
 .L_0804ae6c:
-	bl UnitGet
+	bl Unit_Get
 	ldr r5, [sp, #20]
 	ldr r7, [sp, #16]
 	adds r6, r0, #0
@@ -1393,7 +1393,7 @@ Func_0804a85c:
 	bne .L_0804b2b8
 	b .L_0804b3ac
 .L_0804b2b8:
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, [sp, #16]
 	ldr r2, [sp, #20]
 	add r5, sp, #108

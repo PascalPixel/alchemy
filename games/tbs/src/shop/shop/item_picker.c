@@ -145,7 +145,7 @@ s32 Shop_SelectUse(s32 unitId) {
   s32 x;
   s32 y;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   selectionResult = 0;
   redraw = 1;
@@ -244,7 +244,7 @@ s32 Shop_SelectUse(s32 unitId) {
 /// the whole stack would sell for. Called by Shop_SelectUse each time the
 /// cursor moves.
 void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   u32 inventoryEntry = unit->inventory[slot];
   s32 quantity = (inventoryEntry >> INVENTORY_QUANTITY_SHIFT) + 1;

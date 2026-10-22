@@ -105,7 +105,7 @@ Func_080e8db0:
 	mov r2, r10
 	ldr r0, [r2, #16]
 	movs r1, #0
-	bl BattleFx_SetObjectTickMode
+	bl BattleEffect_SetObjectTickMode
 	ldr r3, [sp, #44]
 	cmp r3, #0
 	beq .L_080e8eae
@@ -350,7 +350,7 @@ Func_080e8db0:
 	bl ViewMove_RestoreNearbySprites
 	ldr r0, [sp, #36]
 	bl Resource_ResetEntry
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080e9064:
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

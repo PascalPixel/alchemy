@@ -480,7 +480,7 @@ Func_080ed2a4:
 	negs r3, r3
 	strh r3, [r6]
 .L_080ed654:
-	bl BattleFx_CleanupResourcesAndWindow
+	bl BattleEffect_CleanupResourcesAndWindow
 	movs r2, #64
 	movs r3, #128
 	lsls r3, r3, #19

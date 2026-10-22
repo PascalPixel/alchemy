@@ -139,7 +139,7 @@ These turn up all over the game.
 - Palette RAM and VRAM are written through either a volatile pointer or a
   plain one. Palette RAM is either `BG_PLTT_COLOR`, which is volatile, or a
   plain pointer to it such as `(u16 *)&BG_PLTT_COLOR(14, 0)`.
-  `BattleFx_RunJudgment`'s brightening ramp keeps a `volatile u16 *` from
+  `BattleEffect_RunJudgment`'s brightening ramp keeps a `volatile u16 *` from
   `&BG_PLTT_COLOR(0, 1)`, because with a plain pointer red's mask is hoisted
   out of the loop (24 of 2455 instructions differ in tbs-en).
   `Menu_RunCommandRow` writes the command icons' tiles through
@@ -203,9 +203,9 @@ These turn up all over the game.
 - A random value is masked in place, with the mask assigned first
   (`speed = 0x3ff; speed &= Random16();`). Written as `Random16() & 0x3ff`,
   the mask goes into a scratch register and the result is copied before the
-  `and`, so 3 instructions differ at each site. `BattleFx_RunNeptune`,
-  `BattleFx_RunPlanetDiver`, `BattleFx_RunRamses`, `BattleFx_RunMoteFountain`,
-  `BattleFx_RunTitanBlade` (`0x1FF`), `BattleFx_RunThor` (`THOR_LAUNCH_SPARKS`
+  `and`, so 3 instructions differ at each site. `BattleEffect_RunNeptune`,
+  `BattleEffect_RunPlanetDiver`, `BattleEffect_RunRamses`, `BattleEffect_RunMoteFountain`,
+  `BattleEffect_RunTitanBlade` (`0x1FF`), `BattleEffect_RunThor` (`THOR_LAUNCH_SPARKS`
   too) and `ReelGame_Run` ([`object/colorfx.c`](object/colorfx.c)) keep it.
 - A message that follows a named one is written as `MsgName + n`, such as
   `MsgSaveDataCorrupted + 2` for `MsgSaveRecoveryFailed`, where the ROM adds to
@@ -251,7 +251,7 @@ The field engine's spellings are about its map state and a few of its loops.
   (`MapAnimation_Update`).
 - `(u16)~(...)` makes a halfword mask (`Map_SetShownLayers`).
 - Three loops are written with `goto` (`Sprite_ComposeAnimationFrame`,
-  `AnimationObjects_SelectAnimation`), and the comments beside them give the
+  `AnimationObject_SelectAnimation`), and the comments beside them give the
   measured cost of their loop forms. The other `goto`s (the wander retries,
   the step searches, the map effects' script loops and the debug loops) stay
   until someone finds their loops.
@@ -277,10 +277,10 @@ each keeps its spelling until it is.
   `WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER)` (`TretPalette_UpdateSceneTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
   `*(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER)`
-  (`FieldFx_FadeToEffectColor`). It's also reached from a
+  (`FieldEffect_FadeToEffectColor`). It's also reached from a
   neighbouring slot, as in Menus below: as
   `gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND]`
-  (`FieldFx_UpdateLightning`), or as
+  (`FieldEffect_UpdateLightning`), or as
   `workCells[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_EVENT]` through
   `(u32 *)&gEventWork` (`Shop_SaveAndTintFieldPalette`), which is undefined
   behaviour with `gPaletteBufferWork` behind `UBFIX`.
@@ -432,20 +432,20 @@ macros whose exact shape decides the code.
 
 - A work slot is read as `WORK_SLOT(n)` or `gWorkSlot[n]`, through a base
   pointer as `slots[n - base]`, `EFFECT_SLOT` or `CANVAS_SLOT`, and when it
-  holds a blitter (a drawing routine `BattleFx_BuildBlitter` writes into a heap
+  holds a blitter (a drawing routine `BattleEffect_BuildBlitter` writes into a heap
   slot) as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gWorkSlot[n]`.
-  `BattleFx_RunParticleStreams` reads the background and blitter slots through
+  `BattleEffect_RunParticleStreams` reads the background and blitter slots through
   one base pointer, where two absolute reads make the function 16 bytes longer
   in tbs-en.
-  `BattleFx_RunIce` reads its two blitters one each way (both cast, 2 of 586
+  `BattleEffect_RunIce` reads its two blitters one each way (both cast, 2 of 586
   instructions differ; both through `EFFECT_BLITTERS`, 3).
 - A signed halving is written out as its expansion, `x = p->x; x += (u32)x >>
   31; x >>= 1;`, which lets the final shift follow later arithmetic (the
   centre of the Forcible Arm and Truncheon Fist flame in
-  `BattleFx_RunCastingImpact`). As `p->x / 2` in each arm, 57 of 3070
+  `BattleEffect_RunCastingImpact`). As `p->x / 2` in each arm, 57 of 3070
   instructions differ; as `x /= 2`, 6.
 - A statement macro takes the shape that all its uses match with. In
-  `BattleFx_BuildBlitter`'s second walk
+  `BattleEffect_BuildBlitter`'s second walk
   ([`effect/parts/blitter.c`](effect/parts/blitter.c)), `PUT`, `COPY` and
   `PATCH` are `do { } while (0)` blocks, `COPY_FROM` and `PUT_BRANCH` plain
   statements and `COPY_TWICE` a plain `{ }` block. As plain statements, `PUT`,
@@ -455,7 +455,7 @@ macros whose exact shape decides the code.
 
 The rules code reads party members and element tables in two ways each.
 
-- A unit is `UnitGet(owner)`, or from other banks `UnitGetFar(owner)`, the
+- A unit is `Unit_Get(owner)`, or from other banks `Unit_GetFar(owner)`, the
   far call that reaches it.
 - An element pair array is `s16 [4][2]` where the matching code indexes it,
   or goes through `struct BattleElementStats` with `UBFIX`.

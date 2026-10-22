@@ -60,7 +60,7 @@ Func_080e3d04:
 	lsls r3, r0, #2
 	ldr r1, [r2, r3]
 	movs r0, #8
-	bl Field_BeginColorTransition
+	bl Field_StartColorTransition
 	movs r2, #192
 	lsls r2, r2, #5
 	adds r2, #164
@@ -349,7 +349,7 @@ Func_080e3d04:
 	mov r1, r10
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl BattleFx_SetObjectTickMode
+	bl BattleEffect_SetObjectTickMode
 	mov r3, r10
 	ldrh r2, [r3, #2]
 	movs r3, #192
@@ -433,11 +433,11 @@ Func_080e3d04:
 	adds r0, r5, #0
 	bl Func_080eaf98
 	ldr r0, [sp, #12]
-	bl BattleFx_GetObjectDepth
+	bl BattleEffect_GetObjectDepth
 	adds r0, #10
 	strh r0, [r5, #30]
 	ldr r0, [sp, #12]
-	bl BattleFx_GetObjectPriority
+	bl BattleEffect_GetObjectPriority
 	ldrb r1, [r5, #9]
 	movs r2, #13
 	movs r3, #3
@@ -653,7 +653,7 @@ Func_080e3d04:
 	mov r0, r11
 	bl Resource_ResetEntry
 .L_080e4222:
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #32

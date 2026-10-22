@@ -105,7 +105,7 @@ s32 Field_RunScene(s32 entrance) {
     gGameState.pausedObject = -1;
     gGameState.cloaked = 0;
   }
-  FieldFx_ResumeCloakCheck();
+  FieldEffect_ResumeCloakCheck();
   work->queuedSound = -1;
   gOverlayArea.initialize();
 
@@ -137,7 +137,7 @@ s32 Field_RunScene(s32 entrance) {
         gGameState.pendingDjinnEvent = 0;
       }
       if (gGameState.pendingItem != 0) {
-        WorldMap_BeginEvent();
+        WorldMap_StartEvent();
         if (Party_CheckItemLimit(gGameState.pendingItem) == 0)
           PartyInventory_GiveItem(gGameState.pendingItem, 0);
         WorldMap_EndEvent();
@@ -172,7 +172,7 @@ s32 Field_RunScene(s32 entrance) {
             u32 i;
 
             Leader_StopMoving();
-            WorldMap_BeginEvent();
+            WorldMap_StartEvent();
             for (i = 0; i < work->fallenCount; i++) {
               ObjectDispatch_SelectAnimationFar(actor, 22);
               UiWork_PushValueSlotFar(work->fallenOwners[i], 1);
@@ -194,7 +194,7 @@ s32 Field_RunScene(s32 entrance) {
               AudioCommand_PlayFar(MUS_DEFEAT);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
                                                      1);
-              vitals = UnitGetFar(gGameState.selectedActor);
+              vitals = Unit_GetFar(gGameState.selectedActor);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
               gGameState.scene = gGameState.savedScene;
@@ -209,7 +209,7 @@ s32 Field_RunScene(s32 entrance) {
             Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
           } else if (work->event == FIELD_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
-            FieldFx_RunVisibilityTransition();
+            FieldEffect_RunVisibilityTransition();
           } else {
             Scene_RunRaisedEvent(work->event);
           }
@@ -267,7 +267,7 @@ s32 Field_RunScene(s32 entrance) {
           UiTimedNotice_CloseIfActiveFar();
           Leader_StopMoving();
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
-          WorldMap_BeginEvent();
+          WorldMap_StartEvent();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
@@ -284,23 +284,23 @@ s32 Field_RunScene(s32 entrance) {
           GameFlag_RefreshLureCapFar();
           work->menu = 0;
         } else if ((s16)work->talk != 0) {
-          WorldMap_BeginEvent();
+          WorldMap_StartEvent();
           Scene_TalkToActor(work->talk & 0xfff);
           WorldMap_EndEvent();
           work->talk = 0;
         } else if (work->tile != 0) {
-          WorldMap_BeginEvent();
+          WorldMap_StartEvent();
           Field_SearchTile(work->tile);
           WorldMap_EndEvent();
           work->tile = 0;
         } else if (work->psynergy != 0) {
           UiTimedNotice_CloseIfActiveFar();
-          WorldMap_BeginEvent();
+          WorldMap_StartEvent();
           Field_UsePsynergy(work->psynergy);
           WorldMap_EndEvent();
           work->psynergy = 0;
         } else if (work->item != 0) {
-          WorldMap_BeginEvent();
+          WorldMap_StartEvent();
           Field_UseItem(work->item, work->itemArgument);
           WorldMap_EndEvent();
           work->item = 0;
@@ -309,7 +309,7 @@ s32 Field_RunScene(s32 entrance) {
           // palette editor).
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
-          WorldMap_BeginEvent();
+          WorldMap_StartEvent();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
             Menu_RunSelectionFar();

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Jupiter (kind 283).
-	.global BattleFx_RunJupiter
+	.global BattleEffect_RunJupiter
 	.thumb_func
-BattleFx_RunJupiter:
+BattleEffect_RunJupiter:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunJupiter:
 	ldr r3, [r3, #100]
 	movs r0, #0
 	str r3, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08157a38
 	movs r2, #128
 	lsls r2, r2, #19
@@ -33,7 +33,7 @@ BattleFx_RunJupiter:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #20]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r0, .L_08157a3c
 	ldr r1, [sp, #24]
 	movs r2, #0
@@ -333,7 +333,7 @@ BattleFx_RunJupiter:
 	adds r0, r5, #0
 	movs r1, #62
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -374,7 +374,7 @@ BattleFx_RunJupiter:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #44
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -384,7 +384,7 @@ BattleFx_RunJupiter:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08157ce0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08157ce4:
 	.4byte Data_02010018
 .L_08157ce8:

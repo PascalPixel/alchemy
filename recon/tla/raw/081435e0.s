@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_BeginCanvasLayer
+	.global BattleEffect_StartCanvasLayer
 	.thumb_func
-BattleFx_BeginCanvasLayer:
+BattleEffect_StartCanvasLayer:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_BeginCanvasLayer:
 	ldr r3, [r3]
 	mov r11, r3
 	bl Func_0813ba50
-	bl BattleFx_ClearActorTimers
+	bl BattleEffect_ClearActorTimers
 	mov r2, r11
 	movs r3, #1
 	str r3, [r2, #12]

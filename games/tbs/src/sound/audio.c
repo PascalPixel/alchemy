@@ -59,7 +59,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 void MusicPlayer_StartSong(struct SoundPlayer *player,
                            const struct SequenceHeader *header);
 void MusicPlayer_Stop(struct SoundPlayer *player);
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
+void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 extern struct SoundWork gSound_Work;
 extern struct CgbNote gSound_CgbNotes[4];
@@ -78,8 +78,8 @@ void MusicTrack_ReleaseKey(struct SoundPlayer *player,
 void AudioEngine_SetPcmRate(u32 mode);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicPlayer_StepFade(struct SoundPlayer *player);
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
-                           struct SoundTrack *track);
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
+                                struct SoundTrack *track);
 void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
@@ -113,7 +113,7 @@ static __inline__ void MusicPlayer_SetFadeParameters(struct SoundPlayer *player,
 
 /// Begins a fade that stops and clears tracks when its volume reaches zero.
 /// Called by MusicPlayer_FadeOut.
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed) {
+void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed, SOUND_FADE_FULL_VOLUME);
 }
 
@@ -241,7 +241,7 @@ UNUSED void Audio_ResumeAllPlayers(void) {
 /// Begins the standard stop-and-clear fade. Called by AudioCommand_Play's fade
 /// cues.
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed) {
-  MusicPlayer_BeginFadeOut(player, speed);
+  MusicPlayer_StartFadeOut(player, speed);
 }
 
 /// Unused: begins a fade that pauses the player at zero volume, keeping its
@@ -322,7 +322,8 @@ void CgbAudio_Initialize(struct CgbNote *notes) {
   gSound_CommandTable[SOUND_COMMAND_STOP_TRACK] = MusicTrack_Stop;
   gSound_CommandTable[SOUND_COMMAND_FADE] =
       SOUND_COMMAND_CAST(SoundCommand, MusicPlayer_StepFade);
-  gSound_CommandTable[SOUND_COMMAND_CALCULATE_OUTPUT] = MusicTrack_CalcOutput;
+  gSound_CommandTable[SOUND_COMMAND_CALCULATE_OUTPUT] =
+      MusicTrack_CalculateOutput;
 
   work->cgbNotes = notes;
   work->cgbUpdate = Cgb_UpdateChannels;

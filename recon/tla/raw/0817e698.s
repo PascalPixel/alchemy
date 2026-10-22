@@ -19,7 +19,7 @@ Func_0817e698:
 	movs r0, #0
 	mov r10, r3
 	mov r9, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r1, #142
 	lsls r1, r1, #7
 	ldr r0, .L_0817e7d0
@@ -210,7 +210,7 @@ Func_0817e698:
 	str r3, [r1]
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10
@@ -426,7 +426,7 @@ Func_0817e698:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -436,7 +436,7 @@ Func_0817e698:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0817e9f8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817e9fc:
 	.4byte 0xffffff00
 .L_0817ea00:

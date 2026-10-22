@@ -5,11 +5,11 @@
 #include "../object_internal.h"
 
 /// Returns how far, in pixels, a field Psynergy of the given kind reaches:
-/// gFieldFx_TargetRangeByMode (fxdata.c) pairs kinds with ranges, ended by -1,
-/// and a kind not listed reaches 16 pixels. Called by
+/// gFieldEffect_TargetRangeByMode (fxdata.c) pairs kinds with ranges, ended by
+/// -1, and a kind not listed reaches 16 pixels. Called by
 /// Field_FindNearbyPsynergyTarget.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
-  s16 *rangeEntry = gFieldFx_TargetRangeByMode;
+  s16 *rangeEntry = gFieldEffect_TargetRangeByMode;
   s32 range = 16;
   s32 listedKind = *rangeEntry;
 
@@ -52,7 +52,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   nearestDistance = 32;
   source = ObjectTable_Get(id);
   if (source != 0) {
-    for (actorIndex = 0; actorIndex <= OBJ_LAST; actorIndex++) {
+    for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
       if (actorIndex == id)
         continue;
 
@@ -132,7 +132,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
   // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = (source->angle + 0x2000) & 0xc000;
-  for (actorIndex = 0; actorIndex <= OBJ_LAST; actorIndex++) {
+  for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
     if (actorIndex == id)
       continue;
 
@@ -206,7 +206,8 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 /// encoded actor pointer, or 0 when the target or picture is absent. Called by
 /// two scene overlays: McCoy's palace, when a reward chest opens, and Vault's
 /// interiors, when Ivan finds the Shaman's Rod.
-s32 FieldFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target,
+                                               s32 itemId) {
   void *targetActor;
   s32 emitter;
 
@@ -216,7 +217,7 @@ s32 FieldFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
     AudioCommand_PlayFar(SE_124);
     ObjectDispatch_SelectAnimationFar(targetActor, 4);
     WaitFrames(12);
-    emitter = (s32)FieldFx_StartRandomParticleEmitter(actor, itemId);
+    emitter = (s32)FieldEffect_StartRandomParticleEmitter(actor, itemId);
   }
   return emitter;
 }
@@ -257,7 +258,7 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 }
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
-/// used with ACT_PACKED runs its ending events. Called by FieldEvent_Begin when
+/// used with ACT_PACKED runs its ending events. Called by FieldEvent_Start when
 /// an event starts while the field is busy, by Field_RunScene before the pause
 /// menu, and by 30 scene overlays.
 void Field_EndBusyAndReveal(void) {

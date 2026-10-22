@@ -152,7 +152,7 @@ Func_080d85b8:
 	cmp r3, #3
 	bne .L_080d86f6
 	adds r0, r7, #0
-	bl BattleFx_ClearOwnedSlot
+	bl BattleEffect_ClearOwnedSlot
 .L_080d86f6:
 	add sp, #12
 	pop {r3, r5}

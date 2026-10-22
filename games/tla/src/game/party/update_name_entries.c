@@ -31,8 +31,8 @@ s32 LinkBattle_ReceiveParty(void) {
   named_count = 0;
   index = 0;
   while (index <= 2) {
-    name_entry = UnitGet(index + 128);
-    if (SerialRuntime_BeginReceive(name_entry) == -1) {
+    name_entry = Unit_Get(index + 128);
+    if (SerialRuntime_StartReceive(name_entry) == -1) {
       break;
     }
     SerialRuntime_WaitForReceive();
@@ -68,7 +68,7 @@ s32 LinkBattle_ReceiveParty(void) {
   }
   MemFree(buffer);
   buffer = Runtime_BumpAllocateAlternatePool(340);
-  if (SerialRuntime_BeginReceive(Resource_FarCall005(1)) != -1) {
+  if (SerialRuntime_StartReceive(Resource_FarCall005(1)) != -1) {
     SerialRuntime_WaitForReceive();
     WaitFrames(2);
   }
@@ -121,17 +121,17 @@ s32 LinkBattle_SendParty(void) {
     work->ownerSlots[i] = mark;
   count = BattleParty_PrepareActiveOwners(owners);
   for (i = 0; i < count; i++) {
-    Iwram_CopyWords(buffer, UnitGet(owners[i]), size);
+    Iwram_CopyWords(buffer, Unit_Get(owners[i]), size);
     ((struct LinkUnit *)buffer)->side = 2;
     work->ownerSlots[owners[i]] = i - 128;
-    if (SerialRuntime_BeginSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
     WaitFrames(2);
   }
   for (; i <= 2; i++) {
     ((struct LinkUnit *)buffer)->side = 0;
-    if (SerialRuntime_BeginSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
     WaitFrames(2);
@@ -155,7 +155,7 @@ s32 LinkBattle_SendParty(void) {
     do {
     } while (0);
   }
-  if (SerialRuntime_BeginSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
+  if (SerialRuntime_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     SerialRuntime_WaitForSend();
     WaitFrames(1);
     WaitFrames(2);

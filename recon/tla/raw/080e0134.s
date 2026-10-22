@@ -189,7 +189,7 @@ Func_080e0134:
 	bl WaitFrames
 	movs r0, #30
 	bl WaitFrames
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080e02dc:
 	add sp, #36
 	pop {r3, r5, r6}

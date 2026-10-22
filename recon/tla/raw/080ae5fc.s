@@ -61,7 +61,7 @@ Func_080ae5fc:
 	movs r5, #0
 .L_080ae66e:
 	adds r0, r5, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #166
 	lsls r3, r3, #1
 	adds r1, r5, #0
@@ -89,7 +89,7 @@ Func_080ae5fc:
 	str r3, [r0, r2]
 	adds r0, r5, #0
 	adds r5, #1
-	bl UnitCalc
+	bl Unit_Calculate
 	cmp r5, r7
 	blt .L_080ae66e
 	mov r1, r8

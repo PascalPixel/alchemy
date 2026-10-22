@@ -579,7 +579,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Object_SetMode(leader, ANIM_PUSH);
   moveRate = PIXELS(1) / 5;
   Engine_TaskWait(15);
-  Engine_AudioPlayCue(SE_185);
+  Engine_AudioPlayCue(SE_PUSH);
   pillar->speed = moveRate;
   pillar->acceleration = moveRate;
   Engine_ObjectSetPosition(pillar, targetPosition.x, targetPosition.y,
@@ -1794,7 +1794,7 @@ static void Event_StepOnWallSwitch(void) {
       GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED);
       Map_CopyCellsTo(26, 33, 19, 33, 1, 1);
       Engine_EventWait(30);
-      Engine_AudioPlayCue(SE_239);
+      Engine_AudioPlayCue(SE_HEAVY_MOVE);
       Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
       Engine_EventWait(20);
       dustX = PIXELS(288);
@@ -2347,7 +2347,7 @@ static void Event_StepOnWestWallSwitch(void) {
       Map_CopyCellsTo(44, 83, 44, 80, 3, 3);
       Engine_EventWait(30);
       Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-      Engine_AudioPlayCue(SE_239);
+      Engine_AudioPlayCue(SE_HEAVY_MOVE);
       Engine_EventWait(20);
       dustX = PIXELS(616);
       column = 0;
@@ -2420,7 +2420,7 @@ static void Event_StepOnEastWallSwitch(void) {
       Engine_AudioPlayCue(SE_161);
       Engine_EventWait(30);
       Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-      Engine_AudioPlayCue(SE_239);
+      Engine_AudioPlayCue(SE_HEAVY_MOVE);
       Engine_EventWait(20);
       dustX = PIXELS(704);
       column = 61;

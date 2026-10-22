@@ -383,7 +383,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         AudioCommand_PlayFar(SE_145);
       }
       if (frame == 46) {
-        AudioCommand_PlayFar(SE_137);
+        AudioCommand_PlayFar(SE_KIRIN);
       }
 
       EFFECT_FOR_EACH_TARGET(i, work->effect) {

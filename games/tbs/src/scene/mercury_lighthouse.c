@@ -2817,7 +2817,7 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(60);
   DisplayBlend_SuspendScript();
-  Engine_AudioPlayCue(SE_223);
+  Engine_AudioPlayCue(SE_LIFT);
   // The lift layer scrolls down with both riders, 137 pixels, slowing as it
   // nears the landing.
   for (;;) {
@@ -2860,7 +2860,7 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Engine_EventWait(6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
-  Engine_AudioPlayCue(SE_223);
+  Engine_AudioPlayCue(SE_LIFT);
   // The lift and its statue go back up without the leader.
   for (;;) {
     liftLayer->offsetY += liftSpeed;

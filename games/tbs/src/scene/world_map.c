@@ -2598,7 +2598,7 @@ static void WorldMap_CatchInStorm(s32 targetActor) {
       Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(id);
-    Event_PlayCue(SE_244);
+    Event_PlayCue(SE_SANDSTORM);
     FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, TASK_PRIORITY_SCENE);
     actor->motionFlags = alreadyTraveling;
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + PIXELS(32),

@@ -1351,7 +1351,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Engine_MapRenderWaitForValues();
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 208, 928);
-  Event_PlayCue(MUS_092);
+  Event_PlayCue(MUS_FANFARE_MEDIUM);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
                       20);
   Engine_ActorSetAnimation(ACTOR_CLEARING_WARRIOR, 9);

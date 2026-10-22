@@ -125,7 +125,7 @@ The credits roll over a slideshow of 32 battle backdrops
 (`gDisplayScroll_SlideResources`), each crossfading into the next, and its
 last entry, 0, fades the screen to black.
 `Title_Run` reaches them through the scroll bank as `ScrollFar_Entry00`, at
-the title scene's entrance 9, with `MUS_067` playing, before the clear
+the title scene's entrance 9, with `MUS_ENDING` playing, before the clear
 screen. Their waits come to 11,223 frames: a 300-frame lead, then for each
 of the 33 entries a 64-frame fade and a 267-frame hold.
 

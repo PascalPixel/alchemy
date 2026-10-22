@@ -738,7 +738,7 @@ static void Event_SinkPillarA(void) {
     effectOptions->startScaleY = 3 * Q16_ONE / 5;
     effectOptions->palette = 7;
     Actor_Get(ACTOR_SINKING_PILLAR_A)->motionFlags = 0;
-    Engine_AudioPlayCue(SE_185);
+    Engine_AudioPlayCue(SE_PUSH);
     for (i = 0; i < 16; i++) {
       Engine_TaskWait(3);
       Actor_Get(ACTOR_SINKING_PILLAR_A)->y.fixed -= PIXELS(1);
@@ -818,7 +818,7 @@ static void Event_SinkPillarB(void) {
       effectOptions->startScaleY = 3 * Q16_ONE / 5;
       effectOptions->palette = 7;
       Actor_Get(ACTOR_SINKING_PILLAR_B)->motionFlags = 0;
-      Engine_AudioPlayCue(SE_185);
+      Engine_AudioPlayCue(SE_PUSH);
       for (i = 0; i < 16; i++) {
         Engine_TaskWait(3);
         Actor_Get(ACTOR_SINKING_PILLAR_B)->y.fixed -= PIXELS(1);

@@ -467,7 +467,7 @@ void Shop_ResetEffects(void) {
 /// freeing its sparkles.
 static const s8 sSanctumServiceCues[4] = {
     [SANCTUM_SERVICE_REVIVE] = MUS_REVIVE,
-    [SANCTUM_SERVICE_CURE_POISON] = MUS_084,
+    [SANCTUM_SERVICE_CURE_POISON] = MUS_CURE,
     [SANCTUM_SERVICE_EXORCISE] = MUS_EXORCISE,
     [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_REMOVE_CURSE,
 };

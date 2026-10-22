@@ -843,7 +843,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Event_PlayCue(SE_171);
+  Event_PlayCue(SE_THUNDER);
   ColorBuffer_ApplyTarget(0x10005, 1);
   Engine_ColorBufferInterpolate(8);
   Engine_EventWait(32);

@@ -688,7 +688,7 @@ static void Event_RollLongLog(void) {
   ObjectDispatch_StartCamera((struct DispatchObject *)work->viewCenter,
                              (s32)log);
   Actor_SetSpeed(actor, PIXELS(1) / 2, acceleration);
-  Event_PlayCue(SE_239);
+  Event_PlayCue(SE_HEAVY_MOVE);
   Object_SetMode(rider, 2);
   Engine_ObjectSetPosition(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
                            0, rider->z.fixed);
@@ -712,7 +712,7 @@ static void Event_RollLongLog(void) {
   } else {
     Object_SetMode(log, 1);
     Event_PlayCue(SE_STOP_SLOT3);
-    Event_PlayCue(SE_213);
+    Event_PlayCue(SE_HEAVY_STOP);
     column = x >> 20;
     Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
     Map_CopyCellAttributes(85, 9, 1, 4, column, 61);
@@ -1974,18 +1974,18 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
-  Engine_AudioPlayCue(SE_237);
+  Engine_AudioPlayCue(SE_COLOSSO_GO);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
   Engine_GameFlagSet(FLAG_IN_TOWN);

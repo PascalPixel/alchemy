@@ -915,7 +915,7 @@ static void Event_PushStatueOrCrates(void) {
       // The leader leans on it, then both move together.
       Object_SetMode(leader, ANIM_PUSH);
       Engine_TaskWait(15);
-      Engine_AudioPlayCue(SE_185);
+      Engine_AudioPlayCue(SE_PUSH);
       pushed->speed = PIXELS(1) / 5;
       pushed->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(pushed, destination.x, destination.y,

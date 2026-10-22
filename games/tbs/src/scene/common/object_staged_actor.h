@@ -73,7 +73,7 @@ StagedActor_FindAtTile(const struct FieldPosition *position,
 /// The leader pushes what stands in front of them a cell on, unless
 /// something solid is beyond it or on top of it, the ground beyond refuses it
 /// or it is still moving: after a quarter second's push (animation 8) it and
-/// the leader slide one cell together, with SE_185.
+/// the leader slide one cell together, with SE_PUSH.
 UNUSED static void StagedActor_AdvancePair(void) {
   struct FieldPosition dst;
   struct FieldActor *lead;
@@ -125,7 +125,7 @@ UNUSED static void StagedActor_AdvancePair(void) {
   Object_SetMode(lead, 8);
   rate = 0x3333;
   Engine_TaskWait(15);
-  Engine_AudioPlayCue(SE_185);
+  Engine_AudioPlayCue(SE_PUSH);
   next->speed = rate;
   next->acceleration = rate;
   Engine_ObjectSetPosition(next, dst.x, dst.y, dst.z);
@@ -393,9 +393,10 @@ found:
 
 /// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
-/// SE_239 while the leader follows half a cell, and it stops with SE_STOP_SLOT3
-/// and SE_213. Its cells are blocked (collision 255) at its new place, through
-/// the map's layer 1 offset, and its old place is given back what was under it.
+/// SE_HEAVY_MOVE while the leader follows half a cell, and it stops with
+/// SE_STOP_SLOT3 and SE_HEAVY_STOP. Its cells are blocked (collision 255) at
+/// its new place, through the map's layer 1 offset, and its old place is given
+/// back what was under it.
 UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   struct MapScrollWork *workspace;
   struct FieldActor *actor;
@@ -482,7 +483,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   else
     Object_SetMode(actor, 2);
 
-  Engine_AudioPlayCue(SE_239);
+  Engine_AudioPlayCue(SE_HEAVY_MOVE);
   Engine_ObjectSetPosition(actor, probe.position.x, probe.position.y,
                            probe.position.z);
   Engine_ActorWaitForMove(0);
@@ -502,7 +503,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   Object_GetById(0)->update = NULL;
   FieldObject_WaitForMove(actor);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_AudioPlayCue(SE_213);
+  Engine_AudioPlayCue(SE_HEAVY_STOP);
 
   actor->x.fixed = probe.position.x;
   actor->z.fixed = probe.position.z;

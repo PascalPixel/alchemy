@@ -536,7 +536,7 @@ static void LemurianShip_SetSail(void) {
   // The ship sails east and the curtains close: the sea's layer scrolls
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
-  Engine_AudioPlayCue(MUS_067);
+  Engine_AudioPlayCue(MUS_ENDING);
   MusicCommand_SetPitchAndUpdateFrequency(240);
   Curtain_Start();
   Engine_EventWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);

@@ -669,7 +669,7 @@ static void Event_PushLogOffLedge(void) {
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Engine_EventWait(4);
   Event_PlayCue(SE_STOP_SLOT3);
-  Event_PlayCue(SE_239);
+  Event_PlayCue(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
   Engine_ActorSetAnimation(ACTOR_WEST_LOG, 2);
   stationaryMotion = 0;
@@ -681,7 +681,7 @@ static void Event_PushLogOffLedge(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_ActorWaitForMove(ACTOR_WEST_LOG);
   Event_PlayCue(SE_STOP_SLOT3);
-  Event_PlayCue(SE_213);
+  Event_PlayCue(SE_HEAVY_STOP);
   Engine_ActorSetAnimation(ACTOR_WEST_LOG, 3);
   Object_GetById(ACTOR_WEST_LOG)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -812,7 +812,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void Event_RideLogEast(void) {
 
-  Engine_AudioPlayCue(SE_241);
+  Engine_AudioPlayCue(SE_WATER_MOVE);
   SceneActor_PlacePairAtOffset(ACTOR_RIDING_LOG, 112, 0);
   SceneActor_PlacePairAtOffset(ACTOR_RIDING_LOG, 80, 0);
   Engine_GameFlagSet(FLAG_VALE_CAVE_RIDING_LOG_EAST);
@@ -828,7 +828,7 @@ static void Event_RideLogEast(void) {
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void Event_RideLogWest(void) {
 
-  Engine_AudioPlayCue(SE_241);
+  Engine_AudioPlayCue(SE_WATER_MOVE);
   SceneActor_PlacePairAtOffset(ACTOR_RIDING_LOG, -112, 0);
   SceneActor_PlacePairAtOffset(ACTOR_RIDING_LOG, -80, 0);
   Engine_GameFlagClear(FLAG_VALE_CAVE_RIDING_LOG_EAST);

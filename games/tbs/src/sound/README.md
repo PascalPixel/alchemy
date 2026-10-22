@@ -127,9 +127,9 @@ back in, and the code that asked for the fanfare need not track it.
 
 The music commands here select only tracks 0 to 7 (`MUSIC_ALL_TRACKS`, one
 bit a track), though the music player has 10. `MUS_006`, `MUS_022`,
-`MUS_028`, `MUS_029`, `MUS_040` to `MUS_043` and `MUS_074` use 9 or more,
-and their tracks 8 and 9 keep their volume and pitch through the ramps and
-under a fanfare.
+`MUS_028`, `MUS_029`, `MUS_040`, `MUS_041`, `MUS_WORLD_MAP`,
+`MUS_VENUS_LIGHTHOUSE` and `MUS_074` use 9 or more, and their tracks 8 and 9
+keep their volume and pitch through the ramps and under a fanfare.
 
 ### The driver's lock
 
@@ -168,10 +168,10 @@ Part of that code changes with the music. `Sound_LoadPresetParameters` copies
 one of `SOUND_PRESET_COUNT` (5) records of `SOUND_PRESET_SIZE` (152) bytes of
 mixer code (`IwramCodeRecords`, in `system/entry.s`) over
 `IwramSoundPresetCode`, in the middle of the code that renders the mix. Music
-loads record 3 for `MUS_067`, `MUS_070` and `MUS_075` and record 2 for the
-rest. A link battle loads record 4 with its music (`Battle_RunEncounter`),
-the link lobby record 2, and the audio test steps through all five with
-Select.
+loads record 3 for `MUS_ENDING`, `MUS_TITLE` and `MUS_ENDING_LOGO` and
+record 2 for the rest. A link battle loads record 4 with its music
+(`Battle_RunEncounter`), the link lobby record 2, and the audio test steps
+through all five with Select.
 
 The driver's own mixer, `SoundDriver_Mixer` (`mixer.s`), is separate code at
 `Ram_SoundMixer`, which `Audio_Initialize` copies there; the records never
@@ -189,7 +189,7 @@ touch it.
 The driver's names follow pret's for MusicPlayer2000 where its structure is
 the same. The cue layer's come from what `AudioCommand_Play` does with each
 range of numbers, and the songs' from `songs.h`, where a song without a
-proven name keeps its number (`MUS_070`, `SE_188`).
+proven name keeps its number (`MUS_074`, `SE_188`).
 
 The mixer records are the last step of `IwramSoundRenderFrame`'s loop. Each
 pass loads four words of the mix buffer, two 16-bit samples to a word, and
@@ -204,10 +204,11 @@ swaps the weights, an eighth of the mix and a quarter of the old samples, so
 more of what has already played carries into the next frame. Record 0 makes
 both channels one value from the two buffers together, record 1 crosses each
 channel's old samples with the other's, and record 4 clears the mix buffer, so
-nothing carries over. Record 3 is the title's music and the ending's: `MUS_070`
-over the title intro, `MUS_075` over the title shown after the prologue, and
-`MUS_067` through the credits and as the Lemurian ship sails off
-(`menu/title.c`, `scene/lemurian_ship.c`). Record 4 is the link battle's.
+nothing carries over. Record 3 is the title's music and the ending's:
+`MUS_TITLE` over the title intro, `MUS_ENDING_LOGO` over the Golden Sun logo
+after the ending's last scene, and `MUS_ENDING` through the credits and as the
+Lemurian ship sails off (`menu/title.c`, `scene/lemurian_ship.c`). Record 4 is
+the link battle's.
 
 A library call is dropped only when it meets another that holds the lock, and
 library calls all run on the main thread, one after another, except from a

@@ -25,9 +25,9 @@ enum {
   MUSIC_DEFAULT_RAMP_STEP = 4,
   /// The track mask of every music command here. It selects tracks 0 to 7
   /// only, though the music player has 10 (sound/players.s) and MUS_006,
-  /// MUS_022, MUS_028, MUS_029, MUS_040 to MUS_043 and MUS_074 use 9 or more:
-  /// their tracks 8 and 9 keep their volume and pitch through the ramps and
-  /// under a fanfare.
+  /// MUS_022, MUS_028, MUS_029, MUS_040, MUS_041, MUS_WORLD_MAP,
+  /// MUS_VENUS_LIGHTHOUSE and MUS_074 use 9 or more: their tracks 8 and 9
+  /// keep their volume and pitch through the ramps and under a fanfare.
   MUSIC_ALL_TRACKS = 0xff,
   MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerVolumes' entries, one a player.
   /// VBlanks after a fanfare starts before the music waits for it to end.
@@ -105,7 +105,7 @@ void AudioCommand_Play(s32 id) {
       return;
     gAudioSecondaryState = id;
     Sound_LoadPresetParameters(
-        (id == MUS_070 || id == MUS_075 || id == MUS_067) ? 3 : 2);
+        (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING) ? 3 : 2);
     Audio_PlaySound(id);
     // A silent start fades the new music in over 64 frames.
     if (flags & AUDIO_CUE_START_SILENT)
@@ -283,7 +283,7 @@ void Audio_InitializeRuntimeDefaults(void) {
 /// Sets the BGM tempo scale directly; 0x100 preserves its native tempo. The
 /// scale lasts until the next song starts (MusicPlayer_StartSong sets 0x100)
 /// or the tempo and pitch ramp moves. Called only by the Lemurian ship scene,
-/// which plays MUS_067 at 240 (0.94 of its tempo) as the ship sails off.
+/// which plays MUS_ENDING at 240 (0.94 of its tempo) as the ship sails off.
 void MusicCommand_SetPitchAndUpdateFrequency(u16 tempoScale) {
   MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, tempoScale);
 }
@@ -369,10 +369,11 @@ void AudioCommand_WaitForCompletion(void) {
 }
 
 /// Unused: returns the mixer record AudioCommand_Play gives music cue
-/// `command`: 3 for MUS_067, MUS_070 and MUS_075, 2 for the rest. Nothing in ☀️
-/// calls it.
+/// `command`: 3 for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO, 2 for the rest.
+/// Nothing in ☀️ calls it.
 UNUSED s32 AudioCommand_GetWidth(s32 command) {
-  if (command == MUS_070 || command == MUS_075 || command == MUS_067)
+  if (command == MUS_TITLE || command == MUS_ENDING_LOGO ||
+      command == MUS_ENDING)
     return 3;
   return 2;
 }

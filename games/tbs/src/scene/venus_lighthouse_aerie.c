@@ -1562,17 +1562,17 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetPosition(ACTOR_STAR_CARRIER, 0, 0);
   Actor_SetSpritePriority(ACTOR_FELIX, 0);
   if (star != NULL) {
-    Event_PlayCue(SE_309);
+    Event_PlayCue(SE_STAR_BOUNCE);
     Actor_SetSpriteFlags(&star->actor, 0);
     star->actor.velocityY = PIXELS(4);
     FieldObject_SetPosition(&star->actor, PIXELS(314), PIXELS(32), PIXELS(137));
     FieldObject_WaitForMove(&star->actor);
-    Event_PlayCue(SE_309);
+    Event_PlayCue(SE_STAR_BOUNCE);
     star->actor.sprite->image.priority = 1;
     star->actor.velocityY = PIXELS(6);
     FieldObject_SetPosition(&star->actor, PIXELS(285), PIXELS(32), PIXELS(146));
     FieldObject_WaitForMove(&star->actor);
-    Event_PlayCue(SE_309);
+    Event_PlayCue(SE_STAR_BOUNCE);
     star->actor.velocityY = PIXELS(5);
     FieldObject_SetPosition(&star->actor, PIXELS(300), PIXELS(32), PIXELS(154));
     FieldObject_WaitForMove(&star->actor);

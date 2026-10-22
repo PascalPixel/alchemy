@@ -23,7 +23,8 @@ struct FieldBlendWork {
   /// Nonzero arms the next flash a random 51 to 549 frames after each, with
   /// a thunderclap.
   s16 enabled;
-  s16 loud;      ///< nonzero plays the louder thunderclap, SE_172 for SE_171
+  s16 loud;      ///< nonzero plays the louder thunderclap, SE_THUNDER_LOUD for
+                 ///< SE_THUNDER
   u8 unk1f86[2]; ///< not named by TBS code
 };
 

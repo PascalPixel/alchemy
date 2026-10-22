@@ -495,7 +495,7 @@ static void Event_PushPipeworksPillar(void) {
   Engine_EventWait(6);
   actor->speed = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
-  Event_PlayCue(SE_239);
+  Event_PlayCue(SE_HEAVY_MOVE);
   Object_SetMode(actor, 2);
   Engine_ObjectSetPosition(actor, actor->x.fixed - PIXELS(48), 0,
                            actor->z.fixed);
@@ -514,7 +514,7 @@ static void Event_PushPipeworksPillar(void) {
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(SE_STOP_SLOT3);
-  Event_PlayCue(SE_213);
+  Event_PlayCue(SE_HEAVY_STOP);
   Engine_EventWait(15);
   Engine_EventEnd();
   Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
@@ -1250,18 +1250,18 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
-    Engine_AudioPlayCue(SE_236);
+    Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
     Engine_EventWait(60);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 1);
-    Engine_AudioPlayCue(SE_236);
+    Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
     Engine_EventWait(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
-    Engine_AudioPlayCue(SE_236);
+    Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
     Engine_EventWait(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_GO);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_GO, 0);
-    Engine_AudioPlayCue(SE_237);
+    Engine_AudioPlayCue(SE_COLOSSO_GO);
     Audio_PlayCueFromEventWork();
     Engine_EventEnd();
     Engine_GameFlagSet(FLAG_IN_TOWN);

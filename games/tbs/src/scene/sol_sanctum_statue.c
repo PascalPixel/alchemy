@@ -1196,7 +1196,7 @@ static void Event_PushCenterStatueNorth(void) {
   if (movingActor != 0) {
     if ((movingActor->z.fixed >> 20) == 8) {
       Engine_EventBegin();
-      Event_PlayCue(SE_185);
+      Event_PlayCue(SE_PUSH);
       Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Object_GetById(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1311,7 +1311,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   s32 statueZ;
 
   Engine_EventBegin();
-  Engine_AudioPlayCue(SE_185);
+  Engine_AudioPlayCue(SE_PUSH);
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;

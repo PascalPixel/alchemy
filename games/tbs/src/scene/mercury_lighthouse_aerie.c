@@ -1679,7 +1679,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     Object_GetById(ids[i])->motionFlags = 0;
     n++;
   }
-  Engine_AudioPlayCue(SE_223);
+  Engine_AudioPlayCue(SE_LIFT);
   for (i = 0; i <= 227; i++) {
     lift->offsetY -= speed;
     for (j = 0; j < n; j++) {
@@ -1719,7 +1719,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
     Object_GetById(ids[i])->motionFlags = 0;
     n++;
   }
-  Engine_AudioPlayCue(SE_223);
+  Engine_AudioPlayCue(SE_LIFT);
   for (i = 0; i <= 85; i++) {
     lift->offsetY += speed;
     for (j = 0; j < n; j++) {

@@ -2094,7 +2094,7 @@ static void Kalay_PushTunnelStatue(void) {
       Object_SetMode(leader, ANIM_PUSH);
       pushSpeed = PIXELS(1) / 5;
       Engine_TaskWait(15);
-      Engine_AudioPlayCue(SE_185);
+      Engine_AudioPlayCue(SE_PUSH);
       statue->speed = pushSpeed;
       statue->acceleration = pushSpeed;
       Engine_ObjectSetPosition(statue, target->x, target->y, target->z);

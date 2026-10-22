@@ -350,7 +350,7 @@ static void Event_SetFirstSmallJewel(void) {
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
       oneCell = 1;
-      Event_PlayCue(SE_182);
+      Event_PlayCue(SE_GEM_SET);
       Map_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
       Engine_MapRedraw();
       Engine_EventWait(40);
@@ -412,7 +412,7 @@ static void Event_SetSecondSmallJewel(void) {
     Engine_EventBegin();
     Field_EndBusyAndReveal();
     // The eye sparkles, then the doorway opens.
-    Engine_AudioPlayCue(SE_182);
+    Engine_AudioPlayCue(SE_GEM_SET);
     Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
     Engine_MapRedraw();
     Engine_EventWait(40);
@@ -604,7 +604,7 @@ static void Event_PushStatue(void) {
     if (FieldObject_CheckMovementCollision(statue, destination) <= 0) {
       Object_SetMode(leader, ANIM_PUSH);
       Engine_TaskWait(15);
-      Engine_AudioPlayCue(SE_185);
+      Engine_AudioPlayCue(SE_PUSH);
       statue->speed = PIXELS(1) / 5;
       statue->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(statue, destination->x, destination->y,

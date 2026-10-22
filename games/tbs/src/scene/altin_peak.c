@@ -885,7 +885,7 @@ static void AltinPeak_RestorePillarAutomaticPriority(void) {
 static void AltinPeak_PushSpritzRoomPillar(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
-  Event_PlayCue(SE_185);
+  Event_PlayCue(SE_PUSH);
   Actor_SetSpeed(ACTOR_SPRITZ_ROOM_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(ACTOR_SPRITZ_ROOM_PILLAR)->steeringFlags &=
@@ -1248,7 +1248,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 /// Update callback of the hopping water beast: once a second it leaps up and
-/// lands with a splash (SE_229) that shakes the screen briefly.
+/// lands with a splash (SE_SPLASH) that shakes the screen briefly.
 static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
   struct FieldActor *beast = &object->actor;
   s16 *shakeDelay = (s16 *)&beast->work;
@@ -1264,7 +1264,7 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
     beast->y.fixed -= PIXELS(3) / 2;
     if (beast->y.fixed < beast->terrainHeight) {
       if (object->effect.countdown != 0) {
-        Engine_AudioPlayCue(SE_229);
+        Engine_AudioPlayCue(SE_SPLASH);
         object->effect.countdown = 0;
         beast->work = 4;
         Map_SetShake(PIXELS(1), 0, Q16_ONE);
@@ -1288,7 +1288,7 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
 /// The beast lands with a splash, shaking the screen for holdFrames.
 static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
                                                   s32 holdFrames) {
-  Engine_AudioPlayCue(SE_229);
+  Engine_AudioPlayCue(SE_SPLASH);
   Map_SetShake(amplitude, 0, Q16_ONE);
   Engine_EventWait(holdFrames);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);

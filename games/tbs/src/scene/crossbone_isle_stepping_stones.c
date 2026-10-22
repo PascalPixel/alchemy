@@ -778,7 +778,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0,
                         CrossboneIsleSteppingStones_JitterBackgroundScroll);
-  Engine_AudioPlayCue(SE_231);
+  Engine_AudioPlayCue(SE_WATER_LEVEL);
   sShakeChance = 0;
   do {
     Engine_TaskWait(1);

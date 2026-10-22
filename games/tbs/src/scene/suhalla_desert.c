@@ -277,7 +277,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     }
     Engine_ActorWaitForMove(selectedActorId);
     // Start the capture countdown once the approach finishes.
-    Event_PlayCue(SE_244);
+    Event_PlayCue(SE_SANDSTORM);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_SCENE);
     selectedActor->motionFlags = captureActive;
@@ -353,7 +353,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   leaderX = selectedActor->x.part.pixel;
   leaderZ = selectedActor->z.part.pixel;
   Engine_EventBegin();
-  Engine_AudioPlayCue(SE_244);
+  Engine_AudioPlayCue(SE_SANDSTORM);
   // Grow over 16 frames and, the first time, fade the haze in with it.
   frame = 0;
   do {
@@ -837,7 +837,7 @@ static void SuhallaDesert_SetUpFirstSceneStorms(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
   if (Engine_GameFlagIsSet(FLAG_STORMS_RISEN)) {
     stormAlpha = 16;
-    QueueSceneSound(SE_244);
+    QueueSceneSound(SE_SANDSTORM);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
                       0x20000);
@@ -892,7 +892,7 @@ static void SuhallaDesert_SetUpSecondSceneStorms(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
   if (Engine_GameFlagIsSet(FLAG_STORMS_RISEN)) {
     stormAlpha = 16;
-    QueueSceneSound(SE_244);
+    QueueSceneSound(SE_SANDSTORM);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
                       0x20000);

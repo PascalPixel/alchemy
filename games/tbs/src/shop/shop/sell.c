@@ -325,7 +325,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     return;
   }
   // Discard each item before crediting coins and rebuilding the inventory grid.
-  AudioCommand_PlayFar(SE_102);
+  AudioCommand_PlayFar(SE_SHOP_SELL);
   for (soldCount = 0; soldCount < count; soldCount++)
     Inventory_DiscardFar(unitId, slot);
   Party_AdjustCoinsFar(total);

@@ -185,7 +185,7 @@ void FieldFx_RunPly(void) {
   // Sparks.
   Animation_ApplyChildValuesFar((struct DispatchObject *)object,
                                 SPRITE_COLOR_NORMAL);
-  AudioCommand_PlayFar(MUS_084);
+  AudioCommand_PlayFar(MUS_CURE);
   if (object != 0) {
     target->update = FieldFx_RunSparkEmitter;
     target->timer = 0;

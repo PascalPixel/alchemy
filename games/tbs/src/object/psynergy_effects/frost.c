@@ -121,7 +121,7 @@ void FieldFx_RunFrost(void) {
   scene = gEffectWork;
   target = scene->child;
   FieldFx_FadeToEffectColor();
-  AudioCommand_PlayFar(SE_115);
+  AudioCommand_PlayFar(SE_ICE);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the effect's position.
@@ -160,7 +160,7 @@ void FieldFx_RunFrost(void) {
   } while (remainingCycles >= 0);
 
   WaitFrames(10);
-  AudioCommand_PlayFar(SE_115);
+  AudioCommand_PlayFar(SE_ICE);
   WaitFrames(50);
 
   if (target != NULL && scene->enabled == 0) {

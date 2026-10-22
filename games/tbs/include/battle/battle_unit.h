@@ -268,7 +268,7 @@ struct BattleUnit {
   u8 unk022[2];   ///< Not named by any TBS code.
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
-  /// (Unit_CalcBaseElements).
+  /// (Unit_CalculateBaseElements).
   struct BattleElementStats baseElement[ELEMENT_COUNT];
   s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
   s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)

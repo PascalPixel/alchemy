@@ -108,7 +108,7 @@ FarCall_ObjectTable:
 	overlay_veneer ColorBuffer_Initialize
 	export ColorBuffer_SetTargetFar, ColorBuffer_SetTarget
 	export ColorBuffer_SetSourceFar, ColorBuffer_SetSource
-	overlay_veneer ColorBuffer_ComputeSteps
+	overlay_veneer ColorBuffer_CalculateSteps
 	export ColorBuffer_StartInterpolationFar, ColorBuffer_StartInterpolation
 	overlay_veneer ColorBuffer_Release
 	overlay_veneer ColorBuffer_SetBackdrop

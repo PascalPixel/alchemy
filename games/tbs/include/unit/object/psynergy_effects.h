@@ -341,7 +341,7 @@ void FieldEffect_FinishSceneAndReleaseHeapBlock(void);
 void FieldEffect_UpdateMindReadWave(void);
 void FieldEffect_ArmBg0HBlankDma(void);
 void FieldEffect_AdvanceHueCycle(void);
-void FieldEffect_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b);
+void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b);
 s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high);
 s32 FixedPoint_Remainder(s32 value, s32 divisor);
 void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject);

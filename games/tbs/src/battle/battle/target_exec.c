@@ -48,8 +48,8 @@ s32 BattleEffect_CheckDead(s32 effect) {
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
 
-/// The rate Battle_CalcPsynergyPowerFar and Battle_CalcRecoveryFar scale by:
-/// 256 is 1.
+/// The rate Battle_CalculatePsynergyPowerFar and Battle_CalculateRecoveryFar
+/// scale by: 256 is 1.
 #define FULL_RATE 256
 
 /// A message operand that shows nothing: the event only waits for the player.
@@ -404,12 +404,12 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
           elementBonus = 0;
         power = ability->power;
         if (kind == ABILITY_KIND_ATTACK_MULTIPLIED)
-          amount =
-              Battle_CalcAttackDamageFar(actor->atk, defense, 0, elementBonus) *
-              power / 10;
+          amount = Battle_CalculateAttackDamageFar(actor->atk, defense, 0,
+                                                   elementBonus) *
+                   power / 10;
         else
-          amount = Battle_CalcAttackDamageFar(actor->atk, defense, power,
-                                              elementBonus);
+          amount = Battle_CalculateAttackDamageFar(actor->atk, defense, power,
+                                                   elementBonus);
         amount *= multiplier;
         // A critical hit adds a quarter (a half for an ability's), then
         // the target's level / 5 + 6.
@@ -480,7 +480,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       if (element != ELEMENT_NONE)
         elementBonus = elementPower - target->element[element].resistance;
       power = ability->power;
-      amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
+      amount = Battle_CalculatePsynergyPowerFar(power, elementBonus, FULL_RATE);
       amount = amount * gPpLossTable[distance] / 100;
       amount *= multiplier;
       REDUCE_BY_GUARD(amount, target);
@@ -511,7 +511,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
 
       // An ability with no element (an item) heals as if at power 100.
       power = ability->power;
-      amount = Battle_CalcRecoveryFar(
+      amount = Battle_CalculateRecoveryFar(
           power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
       amount = amount * gHpRecoveryTable[distance] / 100;
       amount *= multiplier;
@@ -543,7 +543,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       if (element != ELEMENT_NONE)
         elementBonus = elementPower - target->element[element].resistance;
       power = ability->power;
-      amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
+      amount = Battle_CalculatePsynergyPowerFar(power, elementBonus, FULL_RATE);
       amount = amount * gPpDmgTable[distance] / 100;
       amount *= multiplier;
       REDUCE_BY_GUARD(amount, target);
@@ -616,7 +616,8 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
           }
           power += target->maxHp * maxHpPercent / 100;
         }
-        amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
+        amount =
+            Battle_CalculatePsynergyPowerFar(power, elementBonus, FULL_RATE);
         amount *= multiplier;
         // The fall-off by distance. (The ability kind is masked again, as the
         // bytes need.)
@@ -664,7 +665,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
         break;
       pp = target->pp;
       power = ability->power;
-      amount = Battle_CalcRecoveryFar(
+      amount = Battle_CalculateRecoveryFar(
           power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
       amount = amount * gPpRecoveryTable[distance] / 100;
       amount *= multiplier;
@@ -700,7 +701,8 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
         if (element != ELEMENT_NONE)
           elementBonus = elementPower - target->element[element].resistance;
         power = ability->power;
-        amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
+        amount =
+            Battle_CalculatePsynergyPowerFar(power, elementBonus, FULL_RATE);
         amount *= multiplier;
         amount = amount * gHpDmgTable[distance] / 100;
         REDUCE_BY_GUARD(amount, target);

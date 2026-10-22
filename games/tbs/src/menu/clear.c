@@ -136,7 +136,7 @@
 
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
-static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
+static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The file select overlay's scene tables, for the scene loader: one entrance,
 /// the exit, and no placements or events.
@@ -763,7 +763,7 @@ menu_top:;
         s16 sum;
 
         encodedSize = Clear_PackPasswordData(0, v6, data);
-        sum = Clear_ComputePasswordCrc16(encodedSize, data);
+        sum = Clear_CalculatePasswordCrc16(encodedSize, data);
         saveData[encodedSize] = (u16)sum >> 8;
         saveData[encodedSize + 1] = sum;
         encodedSize += 2;
@@ -1313,7 +1313,7 @@ static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
 /// its complemented low 16 bits. 0xFFFFEFDF is -0x1021, CRC-16-CCITT's
 /// polynomial, subtracted where that CRC XORs it; bits above 15 never reach
 /// the result, since carries and borrows only move up.
-static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data) {
+static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;
   u32 bitIndex;

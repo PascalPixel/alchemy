@@ -338,11 +338,11 @@ calls them by their far-call names (`../system/far_call/GAME.S`).
 
 | Ability kind | What the target takes | What the power is |
 | --- | --- | --- |
-| `ABILITY_KIND_HEAL_HP` (Cure, Ply, Herb) | HP back, by the healer's Power in the element (`Battle_CalcRecoveryFar`) | the HP restored at Power 100 |
+| `ABILITY_KIND_HEAL_HP` (Cure, Ply, Herb) | HP back, by the healer's Power in the element (`Battle_CalculateRecoveryFar`) | the HP restored at Power 100 |
 | `ABILITY_KIND_EFFECT` (Sleep, Impair, Drain) | damage only when the added effect lands, and otherwise `But it has no effect on <unit>!` | the damage at an even match |
-| `ABILITY_KIND_ATTACK` (Attack, Ragnarok) | a blow, the actor's Attack against the target's Defense (`Battle_CalcAttackDamageFar`) | damage added to a plain blow |
+| `ABILITY_KIND_ATTACK` (Attack, Ragnarok) | a blow, the actor's Attack against the target's Defense (`Battle_CalculateAttackDamageFar`) | damage added to a plain blow |
 | `ABILITY_KIND_ATTACK_MULTIPLIED` (Flint, Quick Strike) | a plain blow times the power | the multiplier, in tenths |
-| `ABILITY_KIND_DAMAGE` (Quake, Avalanche) | damage scaled by the actor's Power against the target's Resist (`Battle_CalcPsynergyPowerFar`) | the damage at an even match |
+| `ABILITY_KIND_DAMAGE` (Quake, Avalanche) | damage scaled by the actor's Power against the target's Resist (`Battle_CalculatePsynergyPowerFar`) | the damage at an even match |
 | `ABILITY_KIND_UNLEASHED_DAMAGE` (Fire Blessing, War Cry) | as `ABILITY_KIND_DAMAGE`, falling off faster | the damage at an even match |
 | `ABILITY_KIND_SUMMON` (Ramses, Judgment) | as `ABILITY_KIND_DAMAGE`, with a share of the target's maximum HP added to the power, falling off by its own table | the damage at an even match, before the share |
 | `ABILITY_KIND_PP_DAMAGE` (Crazy Voice) | PP lost, as `ABILITY_KIND_DAMAGE` | the PP lost at an even match |
@@ -428,7 +428,7 @@ figures are percentages:
 | an added effect's chance (`gHitTable`) | 100 | 60 | 30 | 30 | 30 | 30 |
 
 Avalanche is `ABILITY_KIND_DAMAGE` with a power of 160 and a range of 3, the
-aimed foe and two places on either side. At an even match `Battle_CalcPsynergyPowerFar`
+aimed foe and two places on either side. At an even match `Battle_CalculatePsynergyPowerFar`
 gives 160, so the aimed foe takes 160 to 163 with the random, a foe one place
 away 128 to 131 and one two places away 96 to 99. With the actor's Power 20
 ahead, the multiplier is 281 in 256ths, and the three take 175 to 178, 140 to

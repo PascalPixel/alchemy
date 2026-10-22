@@ -51,7 +51,7 @@ void PaletteFade_Start(s32 value) {
   if (state != NULL) {
     state->duration = value;
     state->step = 0;
-    PaletteFade_ComputeSteps((s16 *)state->current, (s16 *)state->target,
+    PaletteFade_CalculateSteps((s16 *)state->current, (s16 *)state->target,
                              (s16 *)state->delta, value);
   }
 }

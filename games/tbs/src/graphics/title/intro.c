@@ -679,8 +679,8 @@ UNUSED void Graphics_NoOpColor(void) {}
 /// Computes each of the 1536 colour components' change per frame from the
 /// current components to the target (nothing when `frames` is not
 /// positive). Called by PaletteFade_Start.
-void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
-                              s16 *componentSteps, s32 frames) {
+void PaletteFade_CalculateSteps(s16 *sourceComponents, s16 *targetComponents,
+                                s16 *componentSteps, s32 frames) {
   s32 remaining;
   s32 sourceValue;
   s32 targetValue;
@@ -1069,8 +1069,8 @@ void PaletteFade_Start(s32 frames) {
   if (fade != NULL) {
     fade->duration = frames;
     fade->step = 0;
-    PaletteFade_ComputeSteps((s16 *)fade->current, (s16 *)fade->target,
-                             (s16 *)fade->delta, frames);
+    PaletteFade_CalculateSteps((s16 *)fade->current, (s16 *)fade->target,
+                               (s16 *)fade->delta, frames);
   }
 }
 

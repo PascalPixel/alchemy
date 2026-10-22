@@ -184,7 +184,7 @@ struct BattleUnit {
   u8 unk022[2];       ///< Not named by any TLA C.
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
-  /// (Unit_CalcBaseElements).
+  /// (Unit_CalculateBaseElements).
   struct BattleElementStats baseElement[4];
   s16 maxHp;           ///< maximum HP (Unit_Calculate)
   s16 maxPp;           ///< maximum PP (Unit_Calculate)

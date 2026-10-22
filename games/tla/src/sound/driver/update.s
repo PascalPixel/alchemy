@@ -287,7 +287,7 @@ AlchemyUncreditedEnd_081c1922:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	MusicTrack_CalcOutput
+	bl	MusicTrack_CalculateOutput
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L_081c1b60

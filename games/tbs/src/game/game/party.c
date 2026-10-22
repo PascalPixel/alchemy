@@ -85,9 +85,9 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->classIndex = 0;
   unit->classId = enemyId;
 #ifdef UBFIX
-  Unit_CalcBaseElements(unitId, unit->baseElement);
+  Unit_CalculateBaseElements(unitId, unit->baseElement);
 #else
-  Unit_CalcBaseElements(unitId, (s16 (*)[2])unit->baseElement);
+  Unit_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
 #endif
   Unit_Calculate(unitId);
   unit->side = BATTLE_UNIT_ENEMY;

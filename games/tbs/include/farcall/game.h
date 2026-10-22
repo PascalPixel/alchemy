@@ -118,15 +118,15 @@ s32 Item_GetEquippedElementFar(s32 id);
 s32 Battle_RollEffectSuccessFar(s32 caster, s32 target, s32 resistance_category,
                                 s32 effect_id, s32 success_scale);
 /// Returns an attack's damage: attack less defense, plus twice the added power,
-/// scaled by the element difference and halved (Battle_CalcAttackDamage).
-s32 Battle_CalcAttackDamageFar(s32 atk, s32 def, s32 add, s32 bonus);
+/// scaled by the element difference and halved (Battle_CalculateAttackDamage).
+s32 Battle_CalculateAttackDamageFar(s32 atk, s32 def, s32 add, s32 bonus);
 /// Returns the power of Psynergy damage, scaled by the element difference and
-/// a multiplier where 256 is 1x (Battle_CalcPsynergyPower).
-s32 Battle_CalcPsynergyPowerFar(s32 power, s32 bonus, s32 rate);
+/// a multiplier where 256 is 1x (Battle_CalculatePsynergyPower).
+s32 Battle_CalculatePsynergyPowerFar(s32 power, s32 bonus, s32 rate);
 /// Returns the HP healed, scaled by the healer's power in the element and a
-/// multiplier where 256 is 1x (Battle_CalcRecovery); battle and the menu heal
-/// with it.
-s32 Battle_CalcRecoveryFar(s32 power, s32 element, s32 rate);
+/// multiplier where 256 is 1x (Battle_CalculateRecovery); battle and the menu
+/// heal with it.
+s32 Battle_CalculateRecoveryFar(s32 power, s32 element, s32 rate);
 /// Returns an enemy's definition, the first row for an id past the table.
 const u8 *Enemy_GetDefinitionFar(s32 selector);
 /// Returns the battle's next random number, from its own seed, which link

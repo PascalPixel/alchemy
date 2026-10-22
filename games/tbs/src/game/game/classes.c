@@ -5,7 +5,7 @@
 #include "../game_internal.h"
 
 /// The elemental power and resistance of one element level, in
-/// gElement_PowerResistByLevel, which Unit_CalcBaseElements reads by whole
+/// gElement_PowerResistByLevel, which Unit_CalculateBaseElements reads by whole
 /// level, 0 to 15.
 struct ElementLevelBonus {
   u16 power; ///< base power, before the tenths of a level
@@ -24,7 +24,7 @@ s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
 /// Writes ten times each element level to `output`: an enemy's from its
 /// element preset, a character's from the Djinn set on it (`source` is its
 /// Djinn bits) plus its own element bonus. Called by Class_Determine,
-/// Unit_GetElementLevel and Unit_CalcBaseElements.
+/// Unit_GetElementLevel and Unit_CalculateBaseElements.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
@@ -100,9 +100,10 @@ s32 Enemy_GetAttackElement(struct BattleUnit *unit) {
 // tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnit_Set
 // and Unit_UpdateClass, which both ignore the result.
 #ifdef UBFIX
-void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination) {
+void Unit_CalculateBaseElements(s32 owner,
+                                struct BattleElementStats *destination) {
 #else
-u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
+u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
 #endif
   // Without UBFIX the return type is u32, which keeps r0 as the ROM does
   // (as void, the two return instructions differ: 4 in tbs-en), and the
@@ -247,8 +248,8 @@ void Unit_UpdateClass(s32 ownerId) {
       Class_Determine(owner->classId, (u8 *)owner->djinnAvailable);
   Unit_RefreshPsynergy(ownerId);
 #ifdef UBFIX
-  Unit_CalcBaseElements(ownerId, owner->baseElement);
+  Unit_CalculateBaseElements(ownerId, owner->baseElement);
 #else
-  Unit_CalcBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
+  Unit_CalculateBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
 #endif
 }

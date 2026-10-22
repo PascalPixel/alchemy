@@ -34,7 +34,7 @@ void MusicTrack_ReleaseKey(struct SoundPlayer *player,
 void AudioEngine_SetPcmRate(u32 mode);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicPlayer_StepFade(struct SoundPlayer *player);
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
                            struct SoundTrack *track);
 void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);

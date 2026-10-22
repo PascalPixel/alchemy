@@ -45,8 +45,8 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 void MusicPlayer_StepFade(struct SoundPlayer *player);
 void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_Tick(struct SoundPlayer *player);
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
-                           struct SoundTrack *track);
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
+                                struct SoundTrack *track);
 void MusicTrack_HandleNote(u32 command, struct SoundPlayer *player,
                            struct SoundTrack *track);
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player,

@@ -204,7 +204,7 @@ MusicTrack_HandleNoteUnreferenced:
 .L_081c1d6e:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	MusicTrack_CalcOutput
+	bl	MusicTrack_CalculateOutput
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]

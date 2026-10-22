@@ -53,18 +53,18 @@ Item_GetEquippedElementFar:
 	.thumb_func
 BattleEffect_RollSuccessFar:
 	overlay_veneer BattleEffect_RollSuccess
-	.global Battle_CalcAttackDamageFar
+	.global Battle_CalculateAttackDamageFar
 	.thumb_func
-Battle_CalcAttackDamageFar:
-	overlay_veneer Battle_CalcAttackDamage
-	.global Battle_CalcPsynergyPowerFar
+Battle_CalculateAttackDamageFar:
+	overlay_veneer Battle_CalculateAttackDamage
+	.global Battle_CalculatePsynergyPowerFar
 	.thumb_func
-Battle_CalcPsynergyPowerFar:
-	overlay_veneer Battle_CalcPsynergyPower
-	.global Battle_CalcRecoveryFar
+Battle_CalculatePsynergyPowerFar:
+	overlay_veneer Battle_CalculatePsynergyPower
+	.global Battle_CalculateRecoveryFar
 	.thumb_func
-Battle_CalcRecoveryFar:
-	overlay_veneer Battle_CalcRecovery
+Battle_CalculateRecoveryFar:
+	overlay_veneer Battle_CalculateRecovery
 	.global Enemy_GetDefinitionFar
 	.thumb_func
 Enemy_GetDefinitionFar:

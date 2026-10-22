@@ -104,9 +104,10 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 s32 Unit_GetElementLevel(s32 owner, s32 element);
 s32 Enemy_GetAttackElement(struct BattleUnit *unit);
 #ifdef UBFIX
-void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination);
+void Unit_CalculateBaseElements(s32 owner,
+                                struct BattleElementStats *destination);
 #else
-u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]);
+u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 #endif
 s32 Class_Determine(s32 character, const u8 *djinn);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
@@ -115,11 +116,11 @@ void Unit_UpdateClass(s32 ownerId);
 s32 Battle_GetElementMultiplier(s32 input, s32 halve);
 s32 Battle_Random(void);
 u32 Battle_RandomPercent(void);
-s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
-                            s32 elementDifference);
-s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
-                             s32 powerMultiplier);
-s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
+s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
+                                 s32 elementDifference);
+s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
+                                  s32 powerMultiplier);
+s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
 s32 Item_GetEquippedElement(s32 owner);
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit);
 s32 RollWeaponUnleash(struct BattleUnit *owner);

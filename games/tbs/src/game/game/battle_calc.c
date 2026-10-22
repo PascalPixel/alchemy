@@ -69,10 +69,10 @@ u32 Battle_RandomPercent(void) { return ((u32)Battle_Random() * 100) >> 16; }
 /// Scales max(attack - defense, 0) + twice the action's added power by the
 /// elemental multiplier, then halves it. elementDifference is power minus
 /// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
-/// Reached through GAME.S as Battle_CalcAttackDamageFar, which
+/// Reached through GAME.S as Battle_CalculateAttackDamageFar, which
 /// BattleTarget_Execute calls for attacks and physical abilities.
-s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
-                            s32 elementDifference) {
+s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
+                                 s32 elementDifference) {
   s32 damage;
   s32 scaledDamage;
 
@@ -93,10 +93,10 @@ s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
 /// Returns the power of Psynergy: `power` times the multiplier for the element
 /// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
 /// powerMultiplier (also 256 = 1x). Reached through GAME.S as
-/// Battle_CalcPsynergyPowerFar, which BattleTarget_Execute calls for Psynergy
-/// damage.
-s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
-                             s32 powerMultiplier) {
+/// Battle_CalculatePsynergyPowerFar, which BattleTarget_Execute calls for
+/// Psynergy damage.
+s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
+                                  s32 powerMultiplier) {
   s32 scaledPower;
 
   scaledPower = Battle_GetElementMultiplier(elementDifference, 0) * power *
@@ -109,9 +109,9 @@ s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
 /// Returns the amount healed: `power` and `powerMultiplier` (256 is 1x) times
 /// the multiplier for twice the healer's element power above 100.
 ///   elementPower : the healer's power in the element (100 is 1x)
-/// Reached through GAME.S as Battle_CalcRecoveryFar, which the battle and the
-/// menu's healing use.
-s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
+/// Reached through GAME.S as Battle_CalculateRecoveryFar, which the battle and
+/// the menu's healing use.
+s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   s32 signedProduct;
   u32 scaledRecovery;
 

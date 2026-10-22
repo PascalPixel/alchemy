@@ -465,7 +465,7 @@ void FieldEffect_StartLightning(void) {
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
   ColorBuffer_Build(0x10003, buffers, work, 1);
   ColorBuffer_Build(0x10005, buffers, work->to, 1);
-  ColorBuffer_ComputeSteps(work->to, work->from, work->delta, 12);
+  ColorBuffer_CalculateSteps(work->to, work->from, work->delta, 12);
   ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
@@ -516,7 +516,7 @@ void FieldEffect_StartBufferBlend(s32 from, s32 to) {
   ColorBuffer_Build(from, buffers, work, 1);
   target = work->to;
   ColorBuffer_Build(to, buffers, target, 1);
-  ColorBuffer_ComputeSteps(target, work->from, work->delta, 12);
+  ColorBuffer_CalculateSteps(target, work->from, work->delta, 12);
   ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;

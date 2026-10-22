@@ -868,7 +868,7 @@ BattleTarget_Execute:
 	ldrh r0, [r4, #60]
 	movs r2, #0
 	ldr r3, [sp, #68]
-	bl Battle_CalcAttackDamageFar
+	bl Battle_CalculateAttackDamageFar
 	movs r1, #10
 	muls r0, r7
 	bl __divsi3
@@ -902,7 +902,7 @@ BattleTarget_Execute:
 	ldr r1, [sp, #12]
 	adds r2, r7, #0
 	ldr r3, [sp, #68]
-	bl Battle_CalcAttackDamageFar
+	bl Battle_CalculateAttackDamageFar
 .L_08120b42:
 	adds r5, r0, #0
 	ldr r4, [sp, #52]
@@ -1154,7 +1154,7 @@ BattleTarget_Execute:
 	ldr r1, [sp, #68]
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcPsynergyPowerFar
+	bl Battle_CalculatePsynergyPowerFar
 	adds r5, r0, #0
 	ldr r0, [sp, #60]
 	ldr r2, .L_08120f4c
@@ -1263,7 +1263,7 @@ BattleTarget_Execute:
 	movs r2, #128
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcRecoveryFar
+	bl Battle_CalculateRecoveryFar
 	ldr r4, [sp, #60]
 	ldr r2, .L_08120f58
 	lsls r3, r4, #2
@@ -1358,7 +1358,7 @@ BattleTarget_Execute:
 	lsls r2, r2, #1
 	ldr r1, [sp, #68]
 	adds r0, r7, #0
-	bl Battle_CalcPsynergyPowerFar
+	bl Battle_CalculatePsynergyPowerFar
 	ldr r4, [sp, #60]
 	ldr r2, .L_08120f64
 	lsls r3, r4, #2
@@ -1701,7 +1701,7 @@ BattleTarget_Execute:
 	adds r0, r7, #0
 	ldr r1, [sp, #68]
 	lsls r2, r2, #1
-	bl Battle_CalcPsynergyPowerFar
+	bl Battle_CalculatePsynergyPowerFar
 	adds r5, r0, #0
 	ldr r3, [sp, #28]
 	ldr r0, [sp, #52]
@@ -1893,7 +1893,7 @@ BattleTarget_Execute:
 	movs r2, #128
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcRecoveryFar
+	bl Battle_CalculateRecoveryFar
 	adds r5, r0, #0
 	ldr r0, [sp, #60]
 	ldr r2, .L_08121450
@@ -1985,7 +1985,7 @@ BattleTarget_Execute:
 	ldr r1, [sp, #68]
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcPsynergyPowerFar
+	bl Battle_CalculatePsynergyPowerFar
 	ldr r4, [sp, #60]
 	ldr r1, [sp, #52]
 	ldr r2, .L_0812145c

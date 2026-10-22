@@ -27,7 +27,7 @@ struct InventoryMenuState {
 
 struct BattleAct *BattleAction_Get(s32 action);
 struct BattleUnit *Unit_Get(s32 owner);
-s32 Battle_CalcRecoveryFar(s32 value, s32 selector, s32 multiplier);
+s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 void Unit_UpdateRatiosFar(s32 unitId);
 void Unit_CalculateFar(s32 unitId);
 u32 Random16(void);
@@ -83,7 +83,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           elementPower = caster->element[elementIndex].power;
         } else
           elementPower = 100;
-        amount = Battle_CalcRecoveryFar(amount, elementPower, 0x100);
+        amount = Battle_CalculateRecoveryFar(amount, elementPower, 0x100);
       }
 
       if (target->hp <= 0) {

@@ -343,7 +343,7 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
   }
 }
 
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
                            struct SoundTrack *track) {
   u32 volume;
   s32 pan;

@@ -84,7 +84,8 @@ void PaletteFade_Update(void);
 void PaletteFade_SetTarget(s32 index, s32 transform);
 void PaletteFade_SetBackdrop(s32 value);
 void PaletteFade_Start(s32 frames);
-void PaletteFade_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames);
+void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
+                                s32 frames);
 void PaletteFade_Release(void);
 
 #endif

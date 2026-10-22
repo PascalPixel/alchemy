@@ -119,7 +119,7 @@ BattleEffect_ApplyToTargets:
 	movs r2, #128
 	adds r0, r6, #0
 	lsls r2, r2, #1
-	bl Battle_CalcRecoveryFar
+	bl Battle_CalculateRecoveryFar
 	adds r6, r0, #0
 .L_081008f2:
 	movs r4, #56

@@ -12,8 +12,8 @@ void Title_NoOpPalette(void);
 s32 Title_ShowSplashScreen(s32 mode);
 s32 Title_ShowAnimatedSplash(void);
 void Graphics_NoOpColor(void);
-void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
-                              s16 *componentSteps, s32 frames);
+void PaletteFade_CalculateSteps(s16 *sourceComponents, s16 *targetComponents,
+                                s16 *componentSteps, s32 frames);
 void PaletteFade_Update(void);
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                        s32 paletteHalf);

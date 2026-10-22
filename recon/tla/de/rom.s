@@ -1177,10 +1177,10 @@ Owner_LevelUp:
 Func_080afbec:
 	.incbin "baserom.gba", 0x000bcbec, 0x000001d0
 	.section .rom.000bd084, "ax"
-	.global Unit_CalcBaseElements
-	.type Unit_CalcBaseElements, %function
+	.global Unit_CalculateBaseElements
+	.type Unit_CalculateBaseElements, %function
 	.thumb_func
-Unit_CalcBaseElements:
+Unit_CalculateBaseElements:
 	.incbin "baserom.gba", 0x000bd084, 0x000000c0
 	.section .rom.000bd144, "ax"
 	.global Class_Determine

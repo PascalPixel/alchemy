@@ -247,7 +247,8 @@ void DisplayTransition_UpdateFrame(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);
 void DisplayTransition_InitializeState(s32 value);
 
-void ColorBuffer_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames);
+void ColorBuffer_CalculateSteps(s16 *source, s16 *target, s16 *step,
+                                s32 frames);
 void ColorBuffer_Update(void);
 // UB: psynergy_effects.c calls ColorBuffer_Build with no declaration in
 // scope, as a function returning int. With its prototype in scope (as in one

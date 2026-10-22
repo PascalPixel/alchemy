@@ -59,8 +59,9 @@ s32 Item_ReturnOne(void) { return 1; }
 /// effectId, used by member sourceId, to targetId, or to every member when the
 /// action's range is ABILITY_RANGE_ALL. Item_Use passes fixedScale 1, the
 /// action's plain power; the Psynergy screen 0, which scales HP healing by the
-/// user's Power in the action's element (Battle_CalcRecoveryFar). Leaves the
-/// result message in the work's messageOffset, counted from MsgItemUseResult
+/// user's Power in the action's element (Battle_CalculateRecoveryFar). Leaves
+/// the result message in the work's messageOffset, counted from
+/// MsgItemUseResult
 /// ("You recovered all HP!"). Returns 0 after recalculating every member, or -1
 /// when nothing changed.
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
@@ -115,7 +116,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           elementPower = caster->element[elementIndex].power;
         } else
           elementPower = 100;
-        amount = Battle_CalcRecoveryFar(amount, elementPower, 0x100);
+        amount = Battle_CalculateRecoveryFar(amount, elementPower, 0x100);
       }
 
       if (target->hp <= 0) {

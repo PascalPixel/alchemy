@@ -714,7 +714,7 @@ power_end:
           bonus = 0;
         ap = action->power;
         if (type == 4)
-          dmg = Battle_CalcAttackDamageFar(actor->atk, scale, 0, bonus) * ap / 10;
+          dmg = Battle_CalculateAttackDamageFar(actor->atk, scale, 0, bonus) * ap / 10;
         else {
           s32 atk;
 
@@ -724,7 +724,7 @@ power_end:
             if (abilityId == 312)
               atk += ((struct BattleUnit *)Unit_Get(plan->actorId2))->atk / 4;
           }
-          dmg = Battle_CalcAttackDamageFar(atk, scale, ap, bonus);
+          dmg = Battle_CalculateAttackDamageFar(atk, scale, ap, bonus);
         }
         dmg *= adj;
         if (crit != 0) {
@@ -808,7 +808,7 @@ power_end:
       pp = target->pp;
       ELEMENT_BONUS();
       ap = action->power;
-      dmg = Battle_CalcPsynergyPowerFar(ap, bonus, 256);
+      dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
       dmg = dmg * gPpLossTable[dist] / 100;
       dmg *= adj;
       GUARD_CUT();
@@ -847,7 +847,7 @@ power_end:
         break;
 
       ap = action->power;
-      dmg = Battle_CalcRecoveryFar(ap, element == 4 ? 100 : power, 256);
+      dmg = Battle_CalculateRecoveryFar(ap, element == 4 ? 100 : power, 256);
       dmg = dmg * gHpRecoveryTable[dist] / 100;
       dmg *= adj;
       dmg += Battle_RandomFar() & 3;
@@ -877,7 +877,7 @@ power_end:
       pp = target->pp;
       ELEMENT_BONUS();
       ap = action->power;
-      dmg = Battle_CalcPsynergyPowerFar(ap, bonus, 256);
+      dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
       dmg = dmg * gPpDmgTable[dist] / 100;
       dmg *= adj;
       GUARD_CUT();
@@ -994,7 +994,7 @@ power_end:
             value = 10000;
           ap += value * rate / 100;
         }
-        dmg = Battle_CalcPsynergyPowerFar(ap, bonus, 256);
+        dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
         dmg *= adj;
         switch (type & 15) {
         case 5:
@@ -1060,7 +1060,7 @@ power_end:
         break;
       pp = target->pp;
       ap = action->power;
-      dmg = Battle_CalcRecoveryFar(ap, element == 4 ? 100 : power, 256);
+      dmg = Battle_CalculateRecoveryFar(ap, element == 4 ? 100 : power, 256);
       dmg = dmg * gPpRecoveryTable[dist] / 100;
       dmg *= adj;
       pp += dmg;
@@ -1094,7 +1094,7 @@ power_end:
         cur = target->hp;
         ELEMENT_BONUS();
         ap = action->power;
-        dmg = Battle_CalcPsynergyPowerFar(ap, bonus, 256);
+        dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
         dmg *= adj;
         dmg = dmg * gHpDmgTable[dist] / 100;
         GUARD_CUT();

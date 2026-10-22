@@ -52,7 +52,7 @@ UNUSED void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
 /// The three wave samples are one third of the 96-step colour cycle apart.
 /// The arithmetic is PaletteGlow_Update's.
 /// Nothing calls it.
-UNUSED void WindowColor_ComputeTint(struct WorkspaceWork *work) {
+UNUSED void WindowColor_CalculateTint(struct WorkspaceWork *work) {
   s16 phase;
   s32 bias;
   s32 blue;

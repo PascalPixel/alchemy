@@ -71,8 +71,8 @@ void MusicTrack_ReleaseKey(struct SoundPlayer *player,
 void AudioEngine_SetPcmRate(u32 mode);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicPlayer_StepFade(struct SoundPlayer *player);
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
-                           struct SoundTrack *track);
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
+                                struct SoundTrack *track);
 void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
@@ -280,7 +280,8 @@ void CgbAudio_Initialize(struct CgbNote *notes) {
       (SoundCommand)AudioEngine_SetPcmRate;
   gSound_CommandTable[SOUND_COMMAND_STOP_TRACK] = MusicTrack_Stop;
   gSound_CommandTable[SOUND_COMMAND_FADE] = (SoundCommand)MusicPlayer_StepFade;
-  gSound_CommandTable[SOUND_COMMAND_CALCULATE_OUTPUT] = MusicTrack_CalcOutput;
+  gSound_CommandTable[SOUND_COMMAND_CALCULATE_OUTPUT] =
+      MusicTrack_CalculateOutput;
 
   work->cgbNotes = notes;
   work->cgbUpdate = Cgb_UpdateChannels;

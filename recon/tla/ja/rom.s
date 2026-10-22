@@ -1049,22 +1049,22 @@ Item_GetEquippedElementFar:
 BattleEffect_RollSuccessFar:
 	.incbin "baserom.gba", 0x000a8120, 0x00000008
 	.section .rom.000a8128, "ax"
-	.global Battle_CalcAttackDamageFar
-	.type Battle_CalcAttackDamageFar, %function
+	.global Battle_CalculateAttackDamageFar
+	.type Battle_CalculateAttackDamageFar, %function
 	.thumb_func
-Battle_CalcAttackDamageFar:
+Battle_CalculateAttackDamageFar:
 	.incbin "baserom.gba", 0x000a8128, 0x00000008
 	.section .rom.000a8130, "ax"
-	.global Battle_CalcPsynergyPowerFar
-	.type Battle_CalcPsynergyPowerFar, %function
+	.global Battle_CalculatePsynergyPowerFar
+	.type Battle_CalculatePsynergyPowerFar, %function
 	.thumb_func
-Battle_CalcPsynergyPowerFar:
+Battle_CalculatePsynergyPowerFar:
 	.incbin "baserom.gba", 0x000a8130, 0x00000008
 	.section .rom.000a8138, "ax"
-	.global Battle_CalcRecoveryFar
-	.type Battle_CalcRecoveryFar, %function
+	.global Battle_CalculateRecoveryFar
+	.type Battle_CalculateRecoveryFar, %function
 	.thumb_func
-Battle_CalcRecoveryFar:
+Battle_CalculateRecoveryFar:
 	.incbin "baserom.gba", 0x000a8138, 0x00000008
 	.section .rom.000a8140, "ax"
 	.global Enemy_GetDefinitionFar
@@ -1437,10 +1437,10 @@ Owner_LevelUp:
 	.section .rom.000aabe8, "ax"
 	.incbin "baserom.gba", 0x000aabe8, 0x000001d0
 	.section .rom.000ab080, "ax"
-	.global Unit_CalcBaseElements
-	.type Unit_CalcBaseElements, %function
+	.global Unit_CalculateBaseElements
+	.type Unit_CalculateBaseElements, %function
 	.thumb_func
-Unit_CalcBaseElements:
+Unit_CalculateBaseElements:
 	.incbin "baserom.gba", 0x000ab080, 0x000000c0
 	.section .rom.000ab140, "ax"
 	.global Class_Determine

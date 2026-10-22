@@ -482,7 +482,7 @@ void GraphicsPalette_ReservedNoOpC9BC(void);
 void GraphicsPalette_ReservedNoOpC9C0(void);
 void GraphicsPalette_ReservedNoOpC9C4(void);
 void OptionMenu_ResetEntries(struct WorkspaceWork *work);
-void WindowColor_ComputeTint(struct WorkspaceWork *work);
+void WindowColor_CalculateTint(struct WorkspaceWork *work);
 void WindowColor_WritePalette(struct WorkspaceWork *work);
 u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 scale_r, s32 scale_g,
                           s32 scale_b);

@@ -120,8 +120,8 @@ kind chooses, scaled by distance and element.
 It rolls the added effect (`Battle_RollEffectSuccessFar`), then switches on the ability
 kind to choose the formula, then applies the added effect if it landed. The
 formulas are in `src/game/game/battle_calc.c` and are called by their
-far-call names: `Battle_CalcAttackDamageFar` for attacks, `Battle_CalcPsynergyPowerFar` for Psynergy
-damage, `Battle_CalcRecoveryFar` for healing.
+far-call names: `Battle_CalculateAttackDamageFar` for attacks, `Battle_CalculatePsynergyPowerFar` for Psynergy
+damage, `Battle_CalculateRecoveryFar` for healing.
 
 For `ABILITY_KIND_DAMAGE` the power is the damage the aimed target takes when
 the caster's Power in the ability's element equals the target's Resist in it;

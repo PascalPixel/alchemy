@@ -178,7 +178,7 @@ void FieldEffect_AdvanceHueCycle(void) {
   u8 *pg;
   u8 *pb;
 
-  FieldEffect_ComputeHueChannels(work->hue << 16, &r, &g, &b);
+  FieldEffect_CalculateHueChannels(work->hue << 16, &r, &g, &b);
 
   // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue (0x28b).
   offset = 0x28b;
@@ -204,7 +204,7 @@ void FieldEffect_AdvanceHueCycle(void) {
 
 /// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
 /// (16.16).
-void FieldEffect_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
+void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
   *r = FieldEffect_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
   *g = FieldEffect_HueChannelRamp(hue, 0, 31 << 16);
   *b = FieldEffect_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);

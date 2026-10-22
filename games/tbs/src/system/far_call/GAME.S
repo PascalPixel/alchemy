@@ -52,9 +52,9 @@ FarCall_GameTable:
 	export Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner
 	export Item_GetEquippedElementFar, Item_GetEquippedElement
 	export Battle_RollEffectSuccessFar, Battle_RollEffectSuccess
-	export Battle_CalcAttackDamageFar, Battle_CalcAttackDamage
-	export Battle_CalcPsynergyPowerFar, Battle_CalcPsynergyPower
-	export Battle_CalcRecoveryFar, Battle_CalcRecovery
+	export Battle_CalculateAttackDamageFar, Battle_CalculateAttackDamage
+	export Battle_CalculatePsynergyPowerFar, Battle_CalculatePsynergyPower
+	export Battle_CalculateRecoveryFar, Battle_CalculateRecovery
 	export Enemy_GetDefinitionFar, Enemy_GetDefinition
 	export Battle_RandomFar, Battle_Random
 	export Djinn_AddToOwnerFar, Djinn_AddToOwner

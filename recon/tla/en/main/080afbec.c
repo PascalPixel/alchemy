@@ -35,7 +35,7 @@ extern u8 MsgEnemyName[];
 
 struct BattleUnit *Unit_Get(s32 unitId);
 void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
-void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *elements);
+void Unit_CalculateBaseElements(s32 owner, struct BattleElementStats *elements);
 void Unit_Calculate(s32 unitId);
 
 s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
@@ -102,7 +102,7 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   unit->rewards = 0;
   unit->classIndex = 0;
   unit->enemyId = enemyId;
-  Unit_CalcBaseElements(unitId, unit->baseElement);
+  Unit_CalculateBaseElements(unitId, unit->baseElement);
   Unit_Calculate(unitId);
   unit->side = 1;
   if ((u16)(unit->enemyId - 9) <= 57)

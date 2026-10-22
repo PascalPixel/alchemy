@@ -1,4 +1,4 @@
-// Draft of Unit_CalcBaseElements: differ 8 of 86 (tla-en, 2026-10-18).
+// Draft of Unit_CalculateBaseElements: differ 8 of 86 (tla-en, 2026-10-18).
 // Ported from The Broken Seal's function of the same name
 // (games/tbs/src/game/game.c): a unit's base power and resistance in each
 // element, an enemy's copied from the preset its record names (48 here, the
@@ -33,7 +33,7 @@ const u8 *Enemy_GetDefinition(s32 selector);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
-u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
+u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
   struct BattleUnit *state = (struct BattleUnit *)Unit_Get(owner);
   u32 index;
   s32 values[4];

@@ -22,7 +22,7 @@ void Unit_UpdateClass(s32 ownerId) {
   owner->classIndex = Class_Determine(owner->enemyId, owner->djinnAvailable,
                                       Inventory_GetEquippedItem(owner, 10));
   Owner_UpdateClassActions(ownerId);
-  Unit_CalcBaseElements(ownerId, owner->baseElement);
+  Unit_CalculateBaseElements(ownerId, owner->baseElement);
 }
 
 void Unit_RefreshPsynergy(s32 owner_id) { Unit_UpdateClass(owner_id); }

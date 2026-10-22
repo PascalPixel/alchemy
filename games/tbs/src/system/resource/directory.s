@@ -133,7 +133,7 @@ Resource_DirectoryTable:
 	resource WorldMapTilesH, WorldMap_TilesH
 	resource WorldMapTilesI, WorldMap_TilesI
 	resource WorldMapTilesJ, WorldMap_TilesJ
-	group Colosso, RivalPathA, RivalPathB, RivalPathC, Lettering
+	group Colosso, OpponentPathA, OpponentPathB, OpponentPathC, Lettering
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC

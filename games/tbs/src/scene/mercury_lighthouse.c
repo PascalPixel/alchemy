@@ -184,19 +184,19 @@ enum MercuryLighthouseLowerActor {
   /// SPRITE_PIPE_NORTH_SOUTH for the third) along until each joins its
   /// channel's pipes.
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_FIRST_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_SECOND_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south (spr_229.png)
+  /// south, spr_229.png (its render)
   ACTOR_THIRD_PIPE,
   /// SPRITE_PIPE_END, one still frame, 59 pixels south of where
   /// ACTOR_THIRD_PIPE comes to rest; pushing it does nothing, and nothing else
   /// moves it: the rim of the fixed pipe the third section joins.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// (spr_230.png)
+  /// in spr_230.png (its render)
   ACTOR_PIPE_END
 };
 
@@ -204,15 +204,15 @@ enum MercuryLighthouseLowerActor {
 /// gate's floor switch and Sleet, a Mercury Djinni.
 enum MercuryLighthouseMiddleActor {
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south (spr_229.png)
+  /// south, spr_229.png (its render)
   ACTOR_STAIR_PIPE = ACTOR_FIRST_PLACED,
   /// 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs are
   /// raised; nothing moves it.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// (spr_230.png)
+  /// in spr_230.png (its render)
   ACTOR_STAIR_PIPE_END,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_FOUNTAIN_PIPE,
   /// ★ Named from what the player sees: a blue statue of a woman holding a jar
   /// (its render)
@@ -234,14 +234,14 @@ enum MercuryLighthouseUpperActor {
   /// its ledge (its render)
   ACTOR_SLIDING_STATUE,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_DOOR_ROOM_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south (spr_229.png)
+  /// south, spr_229.png (its render)
   ACTOR_DOOR_SWITCH_PIPE,
   /// Three in a row south of the stone doors' pipes; nothing moves them.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// (spr_230.png)
+  /// in spr_230.png (its render)
   ACTOR_FIRST_DOOR_PIPE_END,
   /// Five in a row along the north wall.
   /// ★ Named from what the player sees: stone statues of a robed figure (its
@@ -268,6 +268,7 @@ enum MercuryLighthouseExteriorActor {
   /// ★ Named from what the player sees: blue statues either side of the way in
   /// (its render)
   ACTOR_EAST_APPROACH_STATUE,
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_DOOR_STATUE,
   /// ★ Named from the game: "used Ply." (MsgMercuryDidThat)
   ACTOR_PLY_TARGET,
@@ -288,8 +289,11 @@ enum MercuryLighthouseExteriorActor {
 
 /// Puzzle states kept until the party leaves the lighthouse.
 enum {
+  /// ★ Named from its area name: Mercury Lighthouse
   FLAG_STAIRS_RAISED = FLAG_PLACE_TEMP_02,
+  /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_RUNNING = FLAG_PLACE_TEMP_06,
+  /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_SHOWN =
       FLAG_PLACE_TEMP_07, ///< the camera has shown it start once
   /// MercuryLighthouseLower's first pipe piece has been pushed into place,
@@ -305,11 +309,16 @@ enum {
   /// (its render)
   FLAG_PIPE_3_JOINED = FLAG_PLACE_TEMP_12,
   /// Unused: cleared with the three, but nothing sets or tests it.
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_UNUSED_PIPE_4_JOINED = FLAG_PLACE_TEMP_13,
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_ROOM_PIPE_PUSHED = FLAG_PLACE_TEMP_18,
   /// The door switch pipe's column: each opens a different stone door.
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_AT_47 = FLAG_PLACE_TEMP_19,
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_AT_48 = FLAG_PLACE_TEMP_1A,
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_AT_53 = FLAG_PLACE_TEMP_1B,
   /// Two flags per statue of MercuryLighthouseUpper's row along the north wall,
   /// one for each column it can rest at, then the last statue's.

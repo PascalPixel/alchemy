@@ -222,6 +222,8 @@ enum {
   /// boxes (gAltinPeak_SpritzEntrances': one ends at z 568, the one below it
   /// at x 384), so the player never sees it, and no event names it. It stands
   /// almost where AltinPeakJunction places its own boulder, (536, 636).
+  /// ★ Named from the game: "Mother, look!! A boulder blocking the road!!"
+  /// (MsgGomaNoUsePsynergy)
   ACTOR_UNUSED_SPRITZ_ROOM_BOULDER,
   /// The Mercury Djinni, placed until it has joined.
   /// ★ Named from the game: "Spritz" (MsgDjinnName)

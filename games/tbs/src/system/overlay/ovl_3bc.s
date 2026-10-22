@@ -13,8 +13,8 @@ gColosso_ModeScaleDuration:
 	.global gColosso_MarkerPriority
 gColosso_MarkerPriority:
 	.space 4
-	.global gColosso_CompetitorStartZ
-gColosso_CompetitorStartZ:
+	.global gColosso_WarriorStartZ
+gColosso_WarriorStartZ:
 	.space 4
 	.global gColosso_MarkerEndX
 gColosso_MarkerEndX:
@@ -46,8 +46,8 @@ gColosso_MarkerY:
 	.global gColosso_ModeBlendStep
 gColosso_ModeBlendStep:
 	.space 4
-	.global gColosso_CompetitorStartAngle
-gColosso_CompetitorStartAngle:
+	.global gColosso_WarriorStartAngle
+gColosso_WarriorStartAngle:
 	.space 4
 	.global gColosso_MarkerSteps
 gColosso_MarkerSteps:
@@ -97,6 +97,6 @@ gColosso_ModeScaleStep:
 	.global gColosso_MarkerEndY
 gColosso_MarkerEndY:
 	.space 4
-	.global gColosso_CompetitorStartX
-gColosso_CompetitorStartX:
+	.global gColosso_WarriorStartX
+gColosso_WarriorStartX:
 	.space 4

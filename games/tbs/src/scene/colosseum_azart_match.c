@@ -35,7 +35,7 @@
 ///   friend's turn, and where they stand is kept as their place; after Mia,
 ///   COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE starts the race.
 /// - COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, the race. Isaac runs alone
-///   against Azart, who follows a recorded path (Colosso_StartRival), with a
+///   against Azart, who follows a recorded path (Colosso_StartOpponent), with a
 ///   gauge at the top of the screen showing how near each is to the finish
 ///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
 ///   three. Azart runs east of the finish (1,304 pixels across, where the
@@ -179,14 +179,23 @@ enum {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race (ColosseumAzartMatch_Initialize restores them).
 enum {
+  /// ★ Named from the game: "See the water pipes?"
+  /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPES_MOVED =
       FLAG_PLACE_TEMP_01, ///< the Pipeworks' pipes, as water filled them
+  /// ★ Named from the game: "This area is called the Pipeworks."
+  /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_PLACE_TEMP_02,
+  /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_PLANT_GROWN =
       FLAG_PLACE_TEMP_03, ///< by Growth, before the Broken Bridge
   /// The byte of flags that keeps the Rock Challenge's second rock's column.
+  /// ★ Named from the game: "They call this the Rock Challenge."
+  /// (MsgColossoCallRockChallenge)
   FLAG_SECOND_ROCK_COLUMN = FLAG_PLACE_TEMP_10,
   /// Someone has reached the arena (ColosseumAzartMatch_CollectFinishItem).
+  /// ★ Named from the game: "You must get through several stages before you
+  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
@@ -759,7 +768,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartRival((s32)&ResourceId_RivalPathA);
+    Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
@@ -943,7 +952,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
       Engine_EventShowMessage(scene, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 280, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Engine_EventWait(30);
@@ -974,7 +983,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Engine_EventShowMessage(scene, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ROCK_A, PIXELS(312), PIXELS(168));
       Colosso_RepeatStageNumber(scene, 1);
@@ -1080,7 +1089,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       ColosseumAzartMatch_StartBrokenBridge();
       Engine_EventWait(60);
       Event_ShowMessage(scene, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 736, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 736, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 99 instructions
        * differ in tbs-en. */
@@ -1091,7 +1100,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       Engine_EventWait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
       Event_ShowMessage(scene, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(scene, 3);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1125,7 +1134,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Event_ShowMessage(scene, 0);
     Colosso_HidePointer();
     Engine_EventWait(15);
-    Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 984, 200);
+    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 200);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
     Event_ShowMessage(scene, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
@@ -1148,7 +1157,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Event_ShowMessage(scene, 0);
-    Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+    Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
     Colosso_RepeatStageNumber(scene, 4);
@@ -1454,7 +1463,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   return flag;
 }
 
-#include "common/colosso_path_rival.h"
+#include "common/colosso_path_opponent.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
@@ -1791,7 +1800,7 @@ s16 gColosseumAzartMatch_LetteringWon[] = {
 
 s16 gColosso_MarkerSlot = -1;
 
-s32 gColosso_RivalFinishScript[] = {
+s32 gColosso_OpponentFinishScript[] = {
     SC_ARG(2),
     SC_SYNC,
     SC_ARG(1),

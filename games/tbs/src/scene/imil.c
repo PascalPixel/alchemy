@@ -164,6 +164,8 @@ enum ImilInteriorsActor {
   /// ★ Named from the game: "Do you want weapons?" (MsgImilDoWantWeapons)
   ACTOR_WEAPON_MERCHANT,
   /// An old man.
+  /// ★ Named from the game: "Ask me anything about armor."
+  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
   /// A little girl who minds the shop while her mother is sick.
   /// ★ Named from the game: "please talk to my daughter."
@@ -208,7 +210,9 @@ enum ImilInteriorsActor {
 enum ImilTownFlag {
   /// Whether the leader leaves footprints in the snow, from where he stands
   /// (Imil_UpdateFootprints); the one set says which he last did.
+  /// ★ Named from its area name: Imil
   FLAG_IMIL_NO_FOOTPRINTS = FLAG_SCENE_TEMP_00,
+  /// ★ Named from its area name: Imil
   FLAG_IMIL_FOOTPRINTS = FLAG_SCENE_TEMP_01,
   /// Move has pushed the snowman to its place, for the rest of the visit.
   /// ★ Named from what the player sees: a snowman in a red hat and green scarf

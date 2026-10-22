@@ -539,7 +539,7 @@
 #define SE_246 246
 /// A Colosso match's round and result, and a Colosseum trial failed or cleared.
 #define SE_247 247
-/// A Colosso competitor fading in.
+/// A Colosso warrior fading in.
 #define SE_252 252
 /// The first voice blip of a message: an actor's voice is 0x100 plus its
 /// sprite's value (FieldFx_GetResourceId), and every few letters typed play it

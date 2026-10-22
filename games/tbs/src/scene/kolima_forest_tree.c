@@ -100,7 +100,9 @@ enum {
   /// Blank actors 28 pixels up at Tret's and Laurel's spots, never targeted;
   /// nothing addresses them but KolimaForestTree_PlayGesture, which takes one
   /// to say whose face to move.
+  /// ★ Named from the game: "Tret" (MsgEnemyName)
   ACTOR_TRET_BLANK,
+  /// ★ Named from the game: "Laurel" (MsgDebugGlyphName)
   ACTOR_LAUREL_BLANK,
   /// An invisible actor on Tret's spot that answers for him:
   /// talking to it, Mind Read on it and Hermes' Water used on it reach Tret.

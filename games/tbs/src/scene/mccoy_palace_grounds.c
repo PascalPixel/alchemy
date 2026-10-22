@@ -103,6 +103,7 @@ enum McCoyPalaceGroundsActor {
 enum {
   /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the scene
   /// is left.
+  /// ★ Named from its area name: McCoy's Palace
   FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
   /// The east guard has scolded the party for keeping McCoy waiting.
   /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)

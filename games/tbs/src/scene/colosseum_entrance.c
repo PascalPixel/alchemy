@@ -249,11 +249,11 @@ enum FlagBearerAnimation {
   FLAG_BEARER_ANIM_WHITE_FLAG = 6 ///< raises a white flag: he cleared it
 };
 
-/// The four soldiers of gColosseumOfficialsPlacements (SPRITE_SOLDIER),
+/// The four soldiers of gColosseumSoldiersPlacements (SPRITE_SOLDIER),
 /// who brief the party at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, congratulate Isaac
 /// after his wins and lead him through the passages; Isaac's companions take
 /// their own actor slots.
-enum ColosseumOfficialActor {
+enum ColosseumSoldierActor {
   /// ★ Named from what the player sees: soldiers in helmets with spears
   /// (its render)
   ACTOR_FIRST_SOLDIER = ACTOR_FIRST_PLACED,
@@ -324,13 +324,21 @@ enum ColosseumEntranceTrigger {
 enum {
   /// The Lucky Guess man has refused Isaac as a finalist
   /// (Event_OfferLuckyGuess).
+  /// ★ Named from the game: "Colosso's Lucky Guess makes the battles in the
+  /// colosseum better." (MsgColosseumColossosLuckyGuessMakesBattles)
   FLAG_LUCKY_GUESS_REFUSED_ISAAC = FLAG_PLACE_TEMP_C0,
   /// Navampa has explained that Dekka will not answer (Event_TalkToDekka).
+  /// ★ Named from the game: "Dekka must win the finals."
+  /// (MsgColosseumDekkaMustWinFinalsDekka)
   FLAG_NAVAMPA_SPOKE_FOR_DEKKA = FLAG_PLACE_TEMP_C1,
   /// The leader has crossed the cells behind the finals line, so stepping onto
   /// it asks whether Isaac is ready.
+  /// ★ Named from the game: "If you win there, you advance to the finals."
+  /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_ARMED = FLAG_SCENE_TEMP_34,
   /// The leader has stepped onto the line since; its touch is off.
+  /// ★ Named from the game: "If you win there, you advance to the finals."
+  /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
 };
 
@@ -375,7 +383,7 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
     case COLOSSEUM_FROM_COLOSSEUM_ENTRANCE:
     case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST:
     case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST:
-      table = gColosseumOfficialsPlacements;
+      table = gColosseumSoldiersPlacements;
       break;
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST:
       table = gColosseumPlacementsFromColosseumAzartMatchWest;
@@ -2288,7 +2296,7 @@ struct ScenePlacement gColosseumPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gColosseumOfficialsPlacements[] = {
+struct ScenePlacement gColosseumSoldiersPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,

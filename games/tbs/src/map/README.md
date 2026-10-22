@@ -4,7 +4,7 @@
 
 This folder holds the map data, as editable tables: 182 layered maps for the
 towns, dungeons and interiors, the world map's ground and default cells, and
-the rivals' recorded paths in the Colosso finals. It holds no code. Each
+the opponents' recorded paths in the Colosso finals. It holds no code. Each
 scene's row of `gField_SceneTable` ([`../field/scenes.s`](../field/scenes.s))
 gives a map number, which picks a row of `gMap_LayeredScenes`
 ([`../field/layered.tsv`](../field/layered.tsv)): the map's header, palette,
@@ -20,7 +20,7 @@ three tile sheets and layer data. `Map_LoadLayeredScene`
 | `gondowan_passage/`, `venus_entrance/` | two more layered maps, Gondowan Passage and Venus Lighthouse's entrance, built like the others |
 | `world/blocks.tsv` | the world map's ground (`Field_PerspectiveDataA`) |
 | `default/` | the world map's default cells, tile animation and block attributes (`Field_DefaultMapCells` and the tables after it) |
-| `colosso/` | the rivals' recorded paths, with the Colosso lettering placed after them |
+| `colosso/` | the opponents' recorded paths, with the Colosso lettering placed after them |
 | `map.s` | places `world/` and `default/` |
 | `map.inc` | the `map_header`, `map_layer` and `map_block` macros every `map.s` uses |
 
@@ -257,17 +257,17 @@ still view ([Field](../field/README.md#the-world-map-view)).
 
 ## The Colosso paths
 
-In each Colosso final the rival replays a recorded path. `colosso/` holds
+In each Colosso final the opponent replays a recorded path. `colosso/` holds
 three, each 7,200 points of ground in pixels, the size of the race's path
 buffer (`ColossoRaceWork.path`), with a row of two zeros where the run ends.
 The tables call the columns x and y; the race code reads each pair as x and
 z. The Azart match runs path A, the Satrage match path B and the Navampa match
-path C (`Colosso_StartRival`, `ColosseumSatrageMatch_StartRivalPath`).
+path C (`Colosso_StartOpponent`, `ColosseumSatrageMatch_StartOpponentPath`).
 
-Each frame `Colosso_UpdatePathRival` steps the rival to the next point,
+Each frame `Colosso_UpdatePathOpponent` steps the opponent to the next point,
 mirrored across the finish when asked, turning at most a sixteenth of a turn,
 and at the end walks it to the finish. Its recording mode writes down where
-an actor stands every frame and then plays it back with the rival. The
+an actor stands every frame and then plays it back with the opponent. The
 Colosso lettering, which differs by edition, is placed after the paths.
 
 ## Design

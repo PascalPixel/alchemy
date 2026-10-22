@@ -162,7 +162,7 @@ so its name carries `Unused`. In story order:
   ([colosseum_navampa_match.c](src/scene/colosseum_navampa_match.c)) is a
   countdown before the match at the third finals site, with its own Colosso
   lettering and sounds.
-- `ColosseumNavampaMatch_UnusedCompetitorTalk`, in the same file, asks a yes
+- `ColosseumNavampaMatch_UnusedWarriorTalk`, in the same file, asks a yes
   or no question and on yes makes the character it names the one the player
   moves alone, as the friends' turns do. XXX: likely its message numbers date
   from an earlier catalog, because the lines it would show, three apart per

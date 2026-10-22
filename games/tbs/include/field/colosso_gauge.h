@@ -33,9 +33,9 @@ struct ColossoGaugeWork {
   /// Colosso_SetGaugeHold sets it.
   s16 hold;
   s16 playerActor; ///< the actor id drawn as the player's marker
-  /// The actor id drawn as the rival's marker, and the actor that runs the
+  /// The actor id drawn as the opponent's marker, and the actor that runs the
   /// recorded path.
-  s16 rivalActor;
+  s16 opponentActor;
   /// The first finisher's prize: the actor raised over that finisher, who
   /// stops at finishZ minus 16 pixels.
   u16 finishItemActorA;
@@ -45,7 +45,7 @@ struct ColossoGaugeWork {
   /// 16-pixel bar pieces either side of the centre: 6 in Colosseum Final 3,
   /// 4 in Final 1 and 5 in Final 2.
   s16 segments;
-  /// 16.16 fixed-point pixels: the rival starts opposite Isaac across it and
+  /// 16.16 fixed-point pixels: the opponent starts opposite Isaac across it and
   /// runs its path mirrored across it.
   s32 finishX;
   s32 finishZ; ///< 16.16 fixed-point pixels
@@ -57,7 +57,7 @@ STATIC_ASSERT(offsetof(struct ColossoGaugeWork, vramBlock) == 216);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, level) == 218);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, hold) == 220);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, playerActor) == 222);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, rivalActor) == 224);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, opponentActor) == 224);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemActorA) == 226);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemActorB) == 228);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, segments) == 230);

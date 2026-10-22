@@ -110,47 +110,62 @@
 /// the rows of Garet, Ivan, Mia and Jenna take those characters' own ids.
 enum LinkLobbyActor {
   /// The attendant, who arranges every battle; ACTOR_GREETER calls her the
-  /// girl at the counter. "Please speak to me when you want to fight in a
-  /// battle."
+  /// girl at the counter.
+  /// ★ Named from the game: "Please speak to me when you want to fight in a
+  /// battle." (MsgLobbyPleaseSpeakWhen)
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED,
-  /// Reports the linked battles won, and answers for ACTOR_DEBUG_HELPER. "I
-  /// will tell you your total wins when you finish the linked finals."
+  /// Reports the linked battles won, and answers for ACTOR_DEBUG_HELPER.
+  /// ★ Named from the game: "I will tell you your total wins when you finish
+  /// the linked finals." (MsgLobbyTellTotalWins)
   ACTOR_LINKED_WINS_TELLER,
   /// Opens a Sanctum's services (LinkLobby_OpenSanctum); sprite 0x79, the
   /// healer of every Sanctum in sanctum.c.
+  /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
-  /// "Welcome to Battle Arena, where people craving battle meet!"
+  /// ★ Named from the game: "Welcome to Battle Arena, where people craving
+  /// battle meet!" (MsgFieldWelcomeToBattleArenaWherePeople)
   ACTOR_GREETER,
-  /// "I am a traveling warrior. I came here to become stronger..."
+  /// ★ Named from the game: "I am a traveling warrior. I came here to become
+  /// stronger..." (MsgLobbyTravelingWarrior)
   ACTOR_TRAVELING_WARRIOR,
-  /// "Up to three allies can fight in Linked Battle finals."
+  /// ★ Named from the game: "Up to three allies can fight in Linked Battle
+  /// finals." (MsgLobbyThreeAlliesFight)
   ACTOR_FINALS_VISITOR,
-  /// "Is this the Battle Arena the old man spoke of?"
+  /// ★ Named from the game: "Is this the Battle Arena the old man spoke of?"
+  /// (MsgLobbyBattleArenaOld)
   ACTOR_OLD_MANS_ARENA_VISITOR,
-  /// Loads a debug party (LinkLobby_ChooseDebugPartyPreset). "Choose your
-  /// parameters here."
+  /// Loads a debug party (LinkLobby_ChooseDebugPartyPreset).
+  /// ★ Named from the game: "Choose your parameters here."
+  /// (MsgLobbyChooseParameters)
   ACTOR_DEBUG_HELPER,
-  /// Explains the linked finals' limit of three allies, then "You can change
-  /// the order of your party in the status screen."
+  /// Explains the linked finals' limit of three allies, then the party order.
+  /// ★ Named from the game: "You can change the order of your party in the
+  /// status screen." (MsgLobbyChangeOrderParty)
   ACTOR_PARTY_ORDER_VISITOR,
-  /// "In the linked finals, you can't delay after your opponent selects a
-  /// move."
+  /// ★ Named from the game: "In the linked finals, you can't delay after your
+  /// opponent selects a move." (MsgFieldInTheLinkedFinalsYouCant)
   ACTOR_COMMAND_TIME_VISITOR,
-  /// "To use Summon quickly, Djinn must be on standby."
+  /// ★ Named from the game: "To use Summon quickly, Djinn must be on standby."
+  /// (MsgFieldToUseSummonQuicklyDjinnMust)
   ACTOR_SUMMON_VISITOR,
-  /// "Do you put Djinn on standby before a battle, or do you set them?"
+  /// ★ Named from the game: "Do you put Djinn on standby before a battle, or
+  /// do you set them?" (MsgFieldDoYouPutDjinnOnStandby)
   ACTOR_SET_DJINN_VISITOR,
-  /// "Remove Djinn you rarely use so you can summon quickly."
+  /// ★ Named from the game: "Remove Djinn you rarely use so you can summon
+  /// quickly." (MsgFieldRemoveDjinnYouRarelyUseSo)
   ACTOR_STANDBY_DJINN_VISITOR,
-  /// "Monster Battle rules say you all must fight as a team against a
-  /// monster."
+  /// ★ Named from the game: "Monster Battle rules say you all must fight as a
+  /// team against a monster." (MsgFieldMonsterBattleRulesSayYouAll)
   ACTOR_MONSTER_RULES_VISITOR,
-  /// Reports the most Monster Battles won in a row. "I'll be counting your
-  /// victories!"
+  /// Reports the most Monster Battles won in a row.
+  /// ★ Named from the game: "I'll be counting your victories!"
+  /// (MsgLobbyCantWaitSee)
   ACTOR_MONSTER_WINS_TELLER,
-  /// "All the warriors are impressive, so I get edgy before battles begin."
+  /// ★ Named from the game: "All the warriors are impressive, so I get edgy
+  /// before battles begin." (MsgFieldAllTheWarriorsAreImpressiveSo)
   ACTOR_EDGY_VISITOR,
-  /// "I could enter, but I'd just get hurt if I did... That'd be stupid."
+  /// ★ Named from the game: "I could enter, but I'd just get hurt if I did..."
+  /// (MsgFieldICouldEnterButIdJust)
   ACTOR_WARY_VISITOR
 };
 

@@ -170,7 +170,11 @@ enum KolimaActor {
   /// Granite, a Venus Djinni, placed until it has joined.
   /// ★ Named from the game: "Granite" (MsgDjinnName)
   ACTOR_GRANITE = ACTOR_FIRST_SPARKLE + 4,
+  /// ★ Named from the game: "I need to help evacuate the other villagers."
+  /// (MsgValeKyleAbleStop)
   ACTOR_FIRST_VILLAGER = ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS,
+  /// ★ Named from the game: "I need to help evacuate the other villagers."
+  /// (MsgValeKyleAbleStop)
   ACTOR_LAST_VILLAGER = ACTOR_HEALER
 };
 

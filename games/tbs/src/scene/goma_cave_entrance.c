@@ -90,11 +90,13 @@ enum GomaCaveEntranceActor {
   /// outside the camera's bounds. Nothing in the overlay addresses them, and
   /// Move spawns its own hand (FieldFx_StartItemBreak), so the player never
   /// sees them.
-  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  /// ★ Named from what the player sees: a large open hand, spr_215.png (its
+  /// render)
   ACTOR_UNUSED_MOVE_HAND_1,
-  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  /// ★ Named from what the player sees: a large open hand, spr_215.png (its
+  /// render)
   ACTOR_UNUSED_MOVE_HAND_2,
-  /// ★ Named from what the player sees: a tree stump (spr_212.png)
+  /// ★ Named from what the player sees: a tree stump, spr_212.png (its render)
   ACTOR_UNUSED_STUMP,
   /// The ivy holding the stump, until Ivan blows it away.
   /// ★ Named from the game: "It looks like it's trapped in the ivy."

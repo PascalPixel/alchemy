@@ -118,6 +118,7 @@ enum LamakanDesertTrigger {
 
 enum {
   /// FLAG_SCENE_TEMP_00: a bath, a pit or the Manticore is under way.
+  /// ★ Named from its area name: Lamakan Desert
   FLAG_DESERT_EVENT_RUNNING = FLAG_SCENE_TEMP_00,
   /// FLAG_SCENE_TEMP_01: Reveal shows the pits.
   /// ★ Named from the game: "Reveal" (MsgAbilityName)

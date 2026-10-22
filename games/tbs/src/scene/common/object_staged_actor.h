@@ -26,9 +26,10 @@
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
 // Cave, Kolima Forest (SceneId_KolimaForestEntrance to
 // SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
-// entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): blocks pushed
-// a cell at a time, and logs and other large things that roll until they meet
-// something, redrawn into the map where they stop.
+// entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): things
+// pushed a cell at a time, such as stone pillars, and logs and other large
+// things that roll until they meet something, redrawn into the map where they
+// stop.
 //
 // A large thing is one of six footprints, by its sprite's animation
 // (gStagedActor_FootprintKinds): its bounds in gStagedActor_FootprintBounds
@@ -69,10 +70,10 @@ StagedActor_FindAtTile(const struct FieldPosition *position,
   return 0;
 }
 
-/// The leader pushes the block in front of them a cell on, unless something
-/// solid is beyond it or on top of it, the ground beyond refuses it or it is
-/// still moving: after a quarter second's push (animation 8) the block and the
-/// leader slide one cell together, with SE_185.
+/// The leader pushes what stands in front of them a cell on, unless
+/// something solid is beyond it or on top of it, the ground beyond refuses it
+/// or it is still moving: after a quarter second's push (animation 8) it and
+/// the leader slide one cell together, with SE_185.
 UNUSED static void StagedActor_AdvancePair(void) {
   struct FieldPosition dst;
   struct FieldActor *lead;

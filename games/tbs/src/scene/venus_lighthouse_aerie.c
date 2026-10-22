@@ -130,7 +130,9 @@
 /// and VenusLighthouseFourthFloor, in the same place group, keep their Psynergy
 /// Stones in the same two flags, which no one goes back down to see.
 enum {
+  /// ★ Named from its area name: Lighthouse Aerie
   FLAG_AERIE_FIRST_BATTLE_BEGUN = FLAG_PLACE_TEMP_50,
+  /// ★ Named from its area name: Lighthouse Aerie
   FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_PLACE_TEMP_51
 };
 

@@ -280,7 +280,9 @@ enum KalayTunnelActor {
   /// first (its render)
   ACTOR_SECOND_STATUE,
   /// A man drawn with SPRITE_BUNZA who waits here once FLAG_KALAY_TUNNEL_OPEN
-  /// is set: "Layana was very hard on all of you, wasn't she?"
+  /// is set.
+  /// ★ Named from the game: "Layana was very hard on all of you, wasn't she?"
+  /// (MsgKalayLayanaWasVeryHardOn)
   ACTOR_WAITING_MAN,
   /// The sprite of the puddle that Frost freezes into an ice pillar in
   /// bilibin_cave.c.
@@ -298,12 +300,19 @@ enum { PUDDLE_ANIM_FROZEN = 5 };
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
 /// passages (place flags) while the party stays in the tunnel's scenes.
 enum KalayTunnelFlag {
-  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00, ///< the fade overlay
+  /// The fade overlay follows the leader.
+  /// ★ Named from its area name: Kalay Tunnel
+  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Each statue's particles have started their sound.
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_PLACE_TEMP_02,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_SECOND_PASSAGE_OPEN = FLAG_PLACE_TEMP_03
 };
 
@@ -332,7 +341,7 @@ static __inline__ void Kalay_ClearScriptDone(struct FieldActor *actor) {
 
 /// Talking to Scorch, a Mars Djinni, in the Kalay Tunnel
 /// (KalayTunnelTreasureRoom) adds it to the party, without a battle.
-static void Kalay_RecruitScorch(void) {
+static void Kalay_ScorchJoins(void) {
   Djinn_JoinParty(ACTOR_SCORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH));
 }
 
@@ -2959,7 +2968,7 @@ struct SceneEvent gKalay_TunnelEvents[] = {
     { EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_DisableLeaderAutomaticPriority) },
     { EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnableLeaderAutomaticPriority) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_KALAY_TUNNEL_SPIRIT_GLOVES_CHEST, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
-    { EVENT_TALK, ACTOR_SCORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_RecruitScorch) },
+    { EVENT_TALK, ACTOR_SCORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_ScorchJoins) },
     { SEARCH(SEARCH_CHEST), 102, FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_CHEST), 103, FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), 104, FLAG_KALAY_TUNNEL_COINS_CHEST, FIND_COINS(200) },

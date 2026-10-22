@@ -231,7 +231,7 @@ twice in one scene would place it twice.
 
 | Headers | Included by | What they hold |
 | --- | --- | --- |
-| `colosso_*.h`, `item_equip.h` | the three Colosso final matches (`colosseum_*_match.c`); `item_equip.h` also Goma Cave's entrance | the friends' cheering spots, the stage guides, the race gauge, the rival's recorded path, the start lettering |
+| `colosso_*.h`, `item_equip.h` | the three Colosso final matches (`colosseum_*_match.c`); `item_equip.h` also Goma Cave's entrance | the friends' cheering spots, the stage guides, the race gauge, the opponent's recorded path, the start lettering |
 | `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
 | `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
 | `kolima_*.h` | Kolima Forest's scenes | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |

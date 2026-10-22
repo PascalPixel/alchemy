@@ -50,7 +50,7 @@
 /// finals.
 ///
 /// Open questions:
-/// - XXX (no evidence): what ColosseumNavampaMatch_UnusedCompetitorTalk's
+/// - XXX (no evidence): what ColosseumNavampaMatch_UnusedWarriorTalk's
 ///   messages were meant to be; the Japanese and English catalogs hold the
 ///   same run after MsgColossoDidntThinkBattles (spectators' lines, the inn's
 ///   `Inn Full` sign, the stage announcements), so neither shipped the lines
@@ -134,7 +134,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult);
 static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId);
 static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode);
 static void ColosseumNavampaMatch_EmptyHook(void);
-static void ColosseumNavampaMatch_WaitForRivalToFinish(void);
+static void ColosseumNavampaMatch_WaitForOpponentToFinish(void);
 static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
                                                         s32 secondItem);
 static void ColosseumNavampaMatch_PushActorAhead(void);
@@ -195,23 +195,42 @@ enum {
 /// the race (ColosseumNavampaMatch_Initialize restores them), and the scales'
 /// state.
 enum {
-  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_60,       ///< by Growth, into a shortcut
+  /// ★ Named from the game: "Growth" (MsgAbilityName)
+  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_60, ///< by Growth, into a shortcut
+  /// ★ Named from the game: "This place is called the Wall Wedge."
+  /// (MsgColossoPlaceCalledWall)
   FLAG_WALL_WEDGE_HALTED = FLAG_PLACE_TEMP_61, ///< by Halt on WALL_OPERATOR
-  FLAG_SCALES_FROZEN = FLAG_PLACE_TEMP_62,     ///< by Frost on FROST_TARGET
+  /// ★ Named from the game: "This stage is called the Scales of Justice."
+  /// (MsgColossoStageCalledScales)
+  FLAG_SCALES_FROZEN = FLAG_PLACE_TEMP_62, ///< by Frost on FROST_TARGET
   /// By Force on SIDEWALK_BLOCK: the belt carries no one any more.
+  /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
+  /// (MsgColossoCalledMovingSidewalkStage)
   FLAG_SIDEWALK_BLOCK_KNOCKED_OFF = FLAG_PLACE_TEMP_63,
   /// Someone stands on the western pan, which has sunk (Event_StepOnScales).
+  /// ★ Named from the game: "This stage is called the Scales of Justice."
+  /// (MsgColossoStageCalledScales)
   FLAG_ON_SCALES = FLAG_PLACE_TEMP_67,
+  /// ★ Named from the game: "This stage is called the Scales of Justice."
+  /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
       FLAG_PLACE_TEMP_68, ///< SCALE_WEIGHT is on the western pan
+  /// ★ Named from the game: "To get across the tank, you'll need to roll the
+  /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
       FLAG_PLACE_TEMP_69, ///< at the east end (Event_RollLongLog)
   /// The byte of flags that keeps STONE's column.
+  /// ★ Named from the game: "You can get through quickly by moving the logs and
+  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_STONE_COLUMN = FLAG_PLACE_TEMP_70,
   /// Someone has reached the arena
   /// (ColosseumNavampaMatch_CollectFinishEquipment).
+  /// ★ Named from the game: "You must get through several stages before you
+  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
   /// LOG_AREA_STONE_A has settled; the next two flags are B's and C's.
+  /// ★ Named from the game: "You can get through quickly by moving the logs and
+  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };
 
@@ -820,8 +839,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 /// because in it, as in the English one, the lines three apart per character
 /// from MsgColossoDidntThinkBattles are a spectator's thought and the stage
 /// announcements, not this question.
-UNUSED static void
-ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
+UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   struct EventWork *work;
   s32 actorId;
   s32 messageOffset;
@@ -832,23 +850,23 @@ ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
   entrance = gGameState.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Engine_EventBegin();
-    messageOffset = competitorId * 3;
+    messageOffset = warriorId * 3;
     Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles);
-    Engine_EventOpenMessage(competitorId, 0);
+    Engine_EventOpenMessage(warriorId, 0);
     if (Engine_EventChooseYesNo(actorId, 0) == 0) {
       Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles + 1);
-      Engine_EventShowMessage(competitorId, 0);
+      Engine_EventShowMessage(warriorId, 0);
       work->startTransition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
       work->transitionFrames = 15;
       Engine_EventCloseScreen();
       Engine_EventWaitForScreen();
-      Colosso_ControlCharacterAlone(competitorId);
+      Colosso_ControlCharacterAlone(warriorId);
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
     } else {
       Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles + 2);
-      Engine_EventShowMessage(competitorId, 0);
+      Engine_EventShowMessage(warriorId, 0);
     }
     Engine_EventEnd();
   }
@@ -869,7 +887,7 @@ static void Event_ReachArena(void) {
   Engine_EventBegin();
   place = ColosseumNavampaMatch_CollectFinishEquipment(ITEM_CLAYMORE,
                                                        ITEM_HUNTERS_SWORD);
-  ColosseumNavampaMatch_WaitForRivalToFinish();
+  ColosseumNavampaMatch_WaitForOpponentToFinish();
   for (i = 0; i < 10; i++) {
     Object_RefreshSelectorById(OPPONENT);
   }
@@ -1109,7 +1127,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartRival((s32)&ResourceId_RivalPathC);
+    Colosso_StartOpponent((s32)&ResourceId_OpponentPathC);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:
@@ -1223,7 +1241,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   const s32 *leaderScaleScript;
   SchedulerCallback particleCallback;
 
-  // Place the rival and companions around the resting leader.
+  // Place the opponent and companions around the resting leader.
   Engine_ActorDestroy(PRIZE_A);
   Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
@@ -1584,7 +1602,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Event_ShowMessage(guideId, 0);
-    Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, x, 200);
+    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, x, 152);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
@@ -1608,7 +1626,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Engine_EventWait(30);
     Event_ShowMessage(guideId, 0);
     Colosso_HidePointer();
-    Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+    Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 2);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1644,7 +1662,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_StartWallWedge();
       Engine_EventWait(60);
       Engine_EventShowMessage(guideId, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 504, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 504, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 136 instructions
        * differ in tbs-en. */
@@ -1665,7 +1683,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       60);
       Engine_EventShowMessage(guideId, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
       work->raisedTrigger = 0;
@@ -1702,7 +1720,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       Engine_EventWait(30);
       Event_ShowMessage(guideId, 0);
       Event_ShowMessage(guideId, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 816, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 816, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
       Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
@@ -1730,7 +1748,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       FieldObject_WaitForMove(actor);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLING);
       Event_ShowMessage(guideId, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 4);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1793,7 +1811,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Engine_EventWait(30);
       Event_ShowMessage(guideId, 0);
       Event_ShowMessage(guideId, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 984, 184);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 184);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       ColosseumNavampaMatch_PositionAndActivateActor(ACTOR_PARTY_LEADER, 992,
                                                      184);
@@ -1823,7 +1841,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Event_ShowMessage(guideId, 0);
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -2034,15 +2052,15 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
 
 static void ColosseumNavampaMatch_EmptyHook(void) {}
 
-/// Unused: marks the rival path recorder as finished; nothing calls it.
-UNUSED static void ColosseumNavampaMatch_MarkRivalFinished(void) {
+/// Unused: marks the opponent path recorder as finished; nothing calls it.
+UNUSED static void ColosseumNavampaMatch_MarkOpponentFinished(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
   recorder->mode = PATH_RECORDER_FINISHED;
 }
 
-/// Waits until the rival path recorder reaches its finished mode.
-static void ColosseumNavampaMatch_WaitForRivalToFinish(void) {
+/// Waits until the opponent path recorder reaches its finished mode.
+static void ColosseumNavampaMatch_WaitForOpponentToFinish(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
   while (recorder->mode != PATH_RECORDER_FINISHED) {
@@ -2111,20 +2129,20 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
                                                         s32 secondItem) {
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
   struct FieldActor *actor;
-  s32 rivalFinishedFirst;
+  s32 opponentFinishedFirst;
   s32 x;
   s32 z;
   u16 *itemActorId;
   s16 *linkedItemActor;
 
-  rivalFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
+  opponentFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
   actor = Object_GetById(gGameState.selectedActor);
   if (work->finishX < actor->x.fixed) {
     x = work->finishX + PIXELS(12);
   } else {
     x = work->finishX - PIXELS(12);
   }
-  if (rivalFinishedFirst != 0) {
+  if (opponentFinishedFirst != 0) {
     z = work->finishZ + PIXELS(16);
     itemActorId = &work->finishItemActorB;
   } else {
@@ -2141,7 +2159,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   while (*linkedItemActor != 0) {
     Engine_TaskWait(1);
   }
-  if (rivalFinishedFirst == 0) {
+  if (opponentFinishedFirst == 0) {
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
@@ -2156,10 +2174,10 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   UiWork_PushValueSlot(gGameState.selectedActor, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(actor);
-  return rivalFinishedFirst;
+  return opponentFinishedFirst;
 }
 
-#include "common/colosso_path_rival.h"
+#include "common/colosso_path_opponent.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
@@ -2685,7 +2703,7 @@ s16 gColossoLetteringScriptWon[] = {
 
 s16 gColosso_MarkerSlot = -1;
 
-s32 gColosso_RivalFinishScript[] = {
+s32 gColosso_OpponentFinishScript[] = {
     SC_ARG(2),
     SC_SYNC,
     SC_ARG(1),

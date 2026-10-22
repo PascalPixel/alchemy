@@ -53,6 +53,7 @@ enum {
 /// event table and Healer line, and the Sol Sanctum approach moves its sentry,
 /// changes cell collision and stops sending its way down to
 /// SceneId_ValeEruption.
+/// ★ Named from its area name: Vale
 enum { FLAG_PARTY_LEFT_VALE = 0x815 };
 
 /// A scene entrance: where and facing which way the party arrives, and the

@@ -100,6 +100,8 @@ enum {
   /// ★ Named from the game: "I turned into a tree right when the sparkles
   /// fell from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_FIRST_GROUND_SPARKLE,
+  /// ★ Named from the game: "I turned into a tree right when the sparkles fell
+  /// from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_LAST_GROUND_SPARKLE = ACTOR_FIRST_GROUND_SPARKLE + 4
 };
 

@@ -109,7 +109,7 @@ enum {
 enum {
   /// A torch west of the fire, cold (TORCH_ANIM_UNLIT) where its twin burns.
   /// ★ Named from what the player sees: a golden torch on its stand, its bowl
-  /// grey with ash (places/bilibin-cave-rapier/map-5.png)
+  /// grey with ash, places/bilibin-cave-rapier/map-5.png (its render)
   ACTOR_RAPIER_ROOM_WEST_TORCH = 8,
   /// A fire between two torches, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its

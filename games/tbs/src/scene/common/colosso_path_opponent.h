@@ -19,11 +19,11 @@
 #include "flags.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-// the rival who races Isaac by running a recorded path, and the race gauge that
-// shows how near each of them is to the finish.
+// the opponent who races Isaac by running a recorded path, and the race gauge
+// that shows how near each of them is to the finish.
 
 /// The race's work in HEAP_SLOT_COLOSSO_RACE, allocated whole when the gauge
-/// starts: the gauge, then the rival's path.
+/// starts: the gauge, then the opponent's path.
 struct ColossoRaceWork {
   struct ColossoGaugeWork gauge;
   /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
@@ -33,14 +33,14 @@ struct ColossoRaceWork {
 
 STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 
-/// The rival's scene callback. PATH_RECORDER_PLAY plays the path back: each
-/// frame the rival steps to the next point (mirrored across the finish when
+/// The opponent's scene callback. PATH_RECORDER_PLAY plays the path back: each
+/// frame the opponent steps to the next point (mirrored across the finish when
 /// asked), turning by at most a sixteenth of a turn, and stands once still for
-/// three frames. At the path's end the rival walks to the finish, beside the
+/// three frames. At the path's end the opponent walks to the finish, beside the
 /// first finisher's item actor or the second's, and sets FLAG_SCENE_TEMP_11 (a
 /// racer has finished). PATH_RECORDER_RECORD records the actor's own path
-/// instead, up to 0x383e halfwords, then plays it back with the rival.
-static void Colosso_UpdatePathRival(void) {
+/// instead, up to 0x383e halfwords, then plays it back with the opponent.
+static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
   struct FieldActor *obj;
@@ -75,7 +75,7 @@ static void Colosso_UpdatePathRival(void) {
       obj->speed = 0x10000;
       Engine_ObjectSetPosition(obj, x, 0, fz);
       Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
-      Engine_ObjectSetScript(obj, gColosso_RivalFinishScript);
+      Engine_ObjectSetScript(obj, gColosso_OpponentFinishScript);
       return;
     }
     x <<= 16;
@@ -114,7 +114,7 @@ static void Colosso_UpdatePathRival(void) {
     if ((s16)rec->pos == 0x383e) {
       work->path[(s16)rec->pos++] = 0;
       work->path[(s16)rec->pos] = 0;
-      rec->actor = work->gauge.rivalActor;
+      rec->actor = work->gauge.opponentActor;
       rec->pos = 0;
       rec->mode = PATH_RECORDER_PLAY;
     }
@@ -124,9 +124,10 @@ static void Colosso_UpdatePathRival(void) {
 extern u8 gColosso_GaugeGraphics[];
 
 /// The race gauge's scene callback: a bar across the top of the screen, with
-/// the finish at its centre and blinking marks for the rival and Isaac at their
-/// distances from it (a pixel of bar for 14 of course). It slides down when the
-/// race starts and back up while FLAG_MENU_OPEN is set; hold keeps it down.
+/// the finish at its centre and blinking marks for the opponent and Isaac at
+/// their distances from it (a pixel of bar for 14 of course). It slides down
+/// when the race starts and back up while FLAG_MENU_OPEN is set; hold keeps it
+/// down.
 static void Colosso_DrawGauge(void) {
   struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
   s32 *dst = (s32 *)gauge;
@@ -212,7 +213,7 @@ static void Colosso_DrawGauge(void) {
 
   if ((gFrameCount & 15) > 4) {
     shape = 0x40000000;
-    actor = Engine_ActorLookup(gauge->rivalActor);
+    actor = Engine_ActorLookup(gauge->opponentActor);
     if (actor != 0) {
       x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
       y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;

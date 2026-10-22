@@ -32,7 +32,7 @@ extern struct ScenePlacement gColosseumEntrancePlacementsOther[];
 extern struct ScenePlacement gColosseumStandsPlacements[];
 extern struct ScenePlacement gColosseumTrialGroundsPlacements[];
 extern struct ScenePlacement gColosseumPlacements[];
-extern struct ScenePlacement gColosseumOfficialsPlacements[];
+extern struct ScenePlacement gColosseumSoldiersPlacements[];
 extern struct ScenePlacement gColosseumPlacementsFromColosseumAzartMatchWest[];
 extern struct ScenePlacement gColosseumPlacementsFromColosseumNavampaMatch[];
 extern struct ScenePlacement gColosseumEntrancePlacements[];

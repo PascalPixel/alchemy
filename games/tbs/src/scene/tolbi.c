@@ -413,7 +413,7 @@ static void Tolbi_EnterDoor(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                    gTolbiDoors[door].y);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
@@ -517,7 +517,7 @@ static void Tolbi_TalkToGambler(void) {
     // Yes: "I'll give you the chance to go first."
     gEventWork->message++;
     Engine_EventShowMessage(TOLBI_GAMBLER, 0);
-    Actor_SetSpeed(TOLBI_GAMBLER, 0x10000, 0x8000);
+    Actor_SetSpeed(TOLBI_GAMBLER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(TOLBI_GAMBLER, 320, 304);
     Actor_WalkToAndWait(TOLBI_GAMBLER, 316, 328);
     Engine_ActorFaceDirection(TOLBI_GAMBLER, FACING_NORTHWEST, 0);
@@ -551,8 +551,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
-  Actor_SetSpeed(TOLBI_SOLDIER_A, 0x10000, 0x8000);
-  Engine_ActorSetSpeed(TOLBI_SOLDIER_B, 0x10000, 0x8000);
+  Actor_SetSpeed(TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
+  Engine_ActorSetSpeed(TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
   firstMsg = MsgTolbiSeenAnyoneWho;
   Engine_EventSetMessage(firstMsg);
 
@@ -606,8 +606,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Engine_ActorSetAnimation(TOLBI_SOLDIER_A, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(TOLBI_SOLDIER_B, ANIM_NOD);
     Engine_EventWait(20);
-    Actor_SetSpeed(TOLBI_SOLDIER_A, 0x1cccc, 0xe666);
-    Actor_SetSpeed(TOLBI_SOLDIER_B, 0x1cccc, 0xe666);
+    Actor_SetSpeed(TOLBI_SOLDIER_A, PIXELS(9) / 5, PIXELS(9) / 10);
+    Actor_SetSpeed(TOLBI_SOLDIER_B, PIXELS(9) / 5, PIXELS(9) / 10);
     Actor_WalkTo(TOLBI_SOLDIER_A, 232, 248);
     Engine_EventWait(2);
     Actor_WalkTo(TOLBI_SOLDIER_B, 232, 248);
@@ -636,8 +636,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Engine_ActorSetAnimation(TOLBI_SOLDIER_A, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(TOLBI_SOLDIER_B, ANIM_NOD);
     Engine_EventWait(20);
-    Actor_SetSpeed(TOLBI_SOLDIER_A, 0x19999, 0xcccc);
-    Actor_SetSpeed(TOLBI_SOLDIER_B, 0x19999, 0xcccc);
+    Actor_SetSpeed(TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
     Engine_ActorWalkTo(TOLBI_SOLDIER_A, 72, 184);
     Engine_ActorWalkToAndWait(TOLBI_SOLDIER_B, 56, 184);
   }

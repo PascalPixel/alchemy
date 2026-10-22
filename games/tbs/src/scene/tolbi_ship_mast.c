@@ -10,19 +10,20 @@
 /// cutscenes here, each leading on into the next. In story order:
 ///
 /// - At Kalay, while the ship waits for its replacement: the captain's anchor
-///   charm, gone from his cabin, lies up here. Searching for it (search code
-///   11) finds the Anchor Charm (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND), but only
-///   once the party has confronted the crewman on deck or the warriors have
-///   gone to the captain (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT or
-///   FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). Until the first attack, Mind
-///   Read on the lookout has him wonder whether the party has worked out that
-///   he hid it ("I wonder if they figured out I was the one who hid the
-///   anchor"), and he leaves the monsters to Kaja's crew and the party.
-///   Once the charm is back, the setup moves him to his lookout spot. The
-///   crewman on deck at Kalay (KALAY_CREWMAN, tolbi_ship_deck.c) and in the
-///   captain's cabin (CABIN_CREWMAN, tolbi_ship_interiors.c) says he hid it
-///   too. XXX: likely the lookout is that crewman, because he says the same
-///   and stands on the mast only once the charm is back.
+///   charm, gone from his captain's quarters, lies up here. Searching for it
+///   (search code 11) finds the Anchor Charm
+///   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND), but only once the party has
+///   confronted the crewman on deck or the warriors have gone to the captain
+///   (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT or FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN).
+///   Until the first attack, Mind Read on the lookout has him wonder whether
+///   the party has worked out that he hid it ("I wonder if they figured out I
+///   was the one who hid the anchor"), and he leaves the monsters to Kaja's
+///   crew and the party. Once the charm is back, the setup moves him to his
+///   lookout spot. The crewman on deck at Kalay (KALAY_CREWMAN,
+///   tolbi_ship_deck.c) and in the captain's quarters (QUARTERS_CREWMAN,
+///   tolbi_ship_interiors.c) says he hid it too. XXX: likely the lookout is
+///   that crewman, because he says the same and stands on the mast only once
+///   the charm is back.
 /// - Under sail: TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR has him scan
 ///   both sides and call the course clear, then leads below to the cast-off;
 ///   the first time the leader is moved out of view, on later departures he

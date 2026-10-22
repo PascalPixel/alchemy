@@ -7,12 +7,12 @@
 /// named for it), the cargo hold
 /// (TOLBI_SHIP_INTERIORS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK), the rowing deck
 /// where the oarsmen row (the TOLBI_SHIP_INTERIORS_ROWING_DECK entrances and
-/// TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP) and the captain's cabin (the
-/// TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN entrances). Three exits lead up to the
+/// TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP) and the captain's quarters (the
+/// TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM entrances). Three exits lead up to the
 /// deck, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK from the hold,
 /// TOLBI_SHIP_INTERIORS_CRATE_HOLD_TO_TOLBI_SHIP_DECK from the cargo hold and
-/// TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the cabin, and
-/// TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK and
+/// TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the captain's
+/// quarters, and TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK and
 /// TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD join the hold and the
 /// rowing deck. The placements and events are chosen by the room and the
 /// voyage's stage; most of the voyage's cutscenes play here, at the entrances
@@ -26,20 +26,20 @@
 ///   "can't stand water", threaten to go ashore, and he and his friend Sean
 ///   go to make the captain sail (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The
 ///   crew's talk of the delay plays here (touch cell 10) if it has not on
-///   deck. In the cabin the warriors and passengers press the captain, who
-///   has just decided to sail (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
-///   Ouranos and Sean offer to guard the deck with Kaja, Sean thinks of the
-///   young warriors among the passengers, and then the captain finds his
-///   lucky anchor charm gone and will not sail without it. Giving him the
-///   Anchor Charm, found on the mast, plays
-///   TolbiShipInteriors_ReturnLuckyAnchor: Sean names the party to guard the
-///   oarsmen, and the party agrees (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
+///   deck. In the captain's quarters the warriors and passengers press the
+///   captain, who has just decided to sail
+///   (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL); Ouranos and Sean offer to guard
+///   the deck with Kaja, Sean thinks of the young warriors among the
+///   passengers, and then the captain finds his lucky anchor charm gone and
+///   will not sail without it. Giving him the Anchor Charm, found on the mast,
+///   plays TolbiShipInteriors_ReturnLuckyAnchor: Sean names the party to guard
+///   the oarsmen, and the party agrees (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
 /// - Setting sail: on the rowing deck Kaja tells the oarsmen they sail without
 ///   the replacement (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT), the party
 ///   guarding them below while he, Ouranos and Sean guard the deck, and that if
 ///   an oarsman falls the party must choose a passenger to row in his place,
 ///   keeping the two teams balanced. After the deck and the mast, the captain
-///   casts off in the cabin
+///   casts off in the captain's quarters
 ///   (TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF,
 ///   raising the charm), a passenger is called to the oars
 ///   (TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS) and
@@ -47,7 +47,7 @@
 ///   (TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING), which leads
 ///   to the world map for the next leg.
 /// - The attacks, each called by the lookout on the mast or the deck; before
-///   the first, the captain in the cabin hears of monsters
+///   the first, the captain in the captain's quarters hears of monsters
 ///   (TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS) and
 ///   turns the ship
 ///   (TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN). Then
@@ -71,12 +71,12 @@
 /// - The Kraken: TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP, the ship rocking,
 ///   "there's a huge sea monster on the ship!" (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK
 ///   shakes the scene until it is defeated on deck).
-/// - The island: off course, a short scene in the cabin
+/// - The island: off course, a short scene in the captain's quarters
 ///   (TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND) leads by
 ///   the world map (TOLBI_SHIP_INTERIORS_TO_WORLD_MAP) to
 ///   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, where the rowers
-///   rest at the island (FLAG_TOLBI_SHIP_AT_ISLAND) and the hold and cabin have
-///   their own talk. Back from it,
+///   rest at the island (FLAG_TOLBI_SHIP_AT_ISLAND) and the hold and captain's
+///   quarters have their own talk. Back from it,
 ///   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS has
 ///   Kaja switch the left and right teams, the left team's timing having taken
 ///   the ship off course, and the ship sets off for Tolbi.
@@ -88,8 +88,8 @@
 ///   voyage starts over.
 ///
 /// A travelling healer opens a Sanctum in the hold. At Tolbi
-/// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the cabin and the hold have their own
-/// placements.
+/// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
+/// their own placements.
 
 #include "script.h"
 #include "flags.h"
@@ -139,7 +139,8 @@
 /// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
 #define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
 
-/// Operations shared by the cabin, passenger hold and rowing-deck events.
+/// Operations shared by the captain's quarters, passenger hold and rowing-deck
+/// events.
 enum ShipSceneCommand {
   SHIP_FACE_PARTY_EAST_AND_WEST,
   SHIP_FACE_PARTY,
@@ -154,9 +155,9 @@ enum ShipSceneCommand {
   SHIP_SETUP_ROWING_PARTY,
   SHIP_RESTORE_ROWING_DECK_POSES,
   SHIP_RESTORE_ROWER_POSE,
-  SHIP_HIDE_CABIN_CREW,
+  SHIP_HIDE_QUARTERS_CREW,
   SHIP_HIDE_OURANOS_AND_SEAN,
-  SHIP_SETUP_CAPTAINS_CABIN,
+  SHIP_SETUP_CAPTAINS_QUARTERS,
   SHIP_SETUP_RECRUITMENT_DECK,
   SHIP_HIDE_OARS,
   SHIP_SETUP_PASSENGER_HOLD,
@@ -172,58 +173,71 @@ enum ShipSceneCommand {
 /// The nine passengers who may be called to the oars, in the order of their
 /// rows in gTolbiShipInteriors_HoldPlacementsAtSea and
 /// gTolbiShipInteriors_RowingDeckPlacements and of each seat's group of flags
-/// (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + passenger), each named by what they
-/// say.
+/// (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + passenger). The game gives them no
+/// names, so each is named by what they say, or by what the guides call
+/// themselves.
 enum TolbiShipPassenger {
-  /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK). "Nobody would choose
-  /// me... After all, I'm the tour group's guide!"
+  /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK), the tour's guide.
+  /// ★ Named from the game: "I'm the tour group's guide!"
+  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   PASSENGER_HEAD_GUIDE,
   /// The tour's other guide, a man carrying a pack drawn as kalay.c's
-  /// ACTOR_SECOND_GUIDE (child value
-  /// 2). "We had enough trouble just getting passengers!"
+  /// ACTOR_SECOND_GUIDE (child value 2).
+  /// ★ Named from the game: "We had enough trouble just getting passengers!"
+  /// (MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting)
   PASSENGER_SECOND_GUIDE,
-  /// A chef (SPRITE_CHEF). "I've been in a cold sweat thinking they were
-  /// going to choose me!"
+  /// A chef (SPRITE_CHEF).
+  /// ★ Named from the game: "I've been in a cold sweat"
+  /// (MsgTolbiShipInteriorsIveBeenInAColdSweat)
   PASSENGER_SWEATING,
-  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN). "Don't tell me
-  /// you're going to ask a lady to row?"
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN).
+  /// ★ Named from the game: "you're going to ask a lady to row?"
+  /// (MsgTolbiShipDontTellGoing)
   PASSENGER_LADY,
-  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN). "Oh, no. No... When our
-  /// eyes met, I knew that was it."
+  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN), who knows he will be
+  /// chosen.
+  /// ★ Named from the game: "When our eyes met, I knew that was it."
+  /// (MsgTolbiShipInteriorsOhNoNoWhenOurEyes)
   PASSENGER_STARED_AT,
-  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD). "If something happens to
-  /// our oarsmen, we'll need the help. If that
-  /// happens, we'll help out as warriors."
+  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD).
+  /// ★ Named from the game: "we'll help out as warriors."
+  /// (MsgTolbiShipInteriorsIfSomethingHappensToOurOarsmen)
   PASSENGER_WARRIOR,
-  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR). "All that
-  /// money
-  /// on tickets, and now we have to row the ship? Madness!"
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
+  /// ★ Named from the game: "All that money on tickets, and now we have to
+  /// row the ship? Madness!" (MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd)
   PASSENGER_TICKET_GRUMBLER,
-  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR). "Muscles rippling
-  /// everywhere... looks great!"
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
+  /// ★ Named from the game: "Muscles rippling everywhere... looks great!"
+  /// (MsgTolbiShipInteriorsMusclesRipplingEverywhereLooksGreatIf)
   PASSENGER_MUSCLE_ADMIRER,
-  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE). "Out of all these
-  /// people, you're asking a frail old man like me to row?"
+  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
+  /// ★ Named from the game: "a frail old man like me"
+  /// (MsgTolbiShipPeopleAskingFrail)
   PASSENGER_OLD_MAN
 };
 
-/// The captain's cabin, numbering the rows of
-/// gTolbiShipInteriors_CabinPlacements and
-/// gTolbiShipInteriors_CabinPlacementsWarriors from ACTOR_FIRST_PLACED; the
-/// party's rows take their own slots. The sprites are tolbi_ship_deck.c's:
-/// 0x2e the captain, 0x2f Kaja, 0x91 the crewman.
-enum TolbiShipCabinActor {
+/// The captain's quarters, numbering the rows of
+/// gTolbiShipInteriors_CaptainsQuartersPlacements and
+/// gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors from
+/// ACTOR_FIRST_PLACED; the party's rows take their own slots. The captain,
+/// Kaja and the crewman have the sprites they have on deck
+/// (tolbi_ship_deck.c).
+/// ★ Named from the game: "To the captain's quarters, of course."
+/// (MsgTolbiShipIfWeArentGoingSet)
+enum TolbiShipCaptainsQuartersActor {
   /// The captain, an old man with a white beard in green
   /// (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN).
-  CABIN_CAPTAIN = ACTOR_FIRST_PLACED,
-  CABIN_KAJA, ///< a bald man with a beard (SPRITE_KAJA)
+  QUARTERS_CAPTAIN = ACTOR_FIRST_PLACED,
+  QUARTERS_KAJA, ///< a bald man with a beard (SPRITE_KAJA)
   /// The crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who hid
-  /// the captain's anchor charm. "I have to confess that
-  /// I hid it on top of the mast."
-  CABIN_CREWMAN,
-  CABIN_OURANOS,
-  CABIN_SEAN,
-  CABIN_SECOND_GUIDE ///< PASSENGER_SECOND_GUIDE, drawn the same way
+  /// the captain's anchor charm.
+  /// ★ Named from the game: "I have to confess that I hid it on top of the
+  /// mast." (MsgTolbiShipInteriorsIWaitedTooLongIllGet)
+  QUARTERS_CREWMAN,
+  QUARTERS_OURANOS,
+  QUARTERS_SEAN,
+  QUARTERS_SECOND_GUIDE ///< PASSENGER_SECOND_GUIDE, drawn the same way
 };
 
 /// The hold while the ship waits at Kalay and after it reaches Tolbi,
@@ -267,11 +281,14 @@ enum TolbiShipSeaHoldActor {
 /// gTolbiShipInteriors_RowingDeckPlacements from ACTOR_FIRST_PLACED; the
 /// monsters of each attack are placed after them.
 enum TolbiShipRowingDeckActor {
-  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA). "I've been
-  /// sailing for many years, and I've never seen this island!"
+  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA), one of the crew
+  /// by his bandana. "I've been sailing for many years, and I've never seen
+  /// this island!"
   ROWING_CREWMAN = ACTOR_FIRST_PLACED,
-  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA). "Everyone rows in
-  /// time with this drum."
+  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA) who keeps the
+  /// oarsmen's time.
+  /// ★ Named from the game: "Everyone rows in time with this drum."
+  /// (MsgTolbiShipInteriorsEveryoneRowsInTimeWithThis)
   ROWING_DRUMMER,
   /// The eight oarsmen, men in red bandanas (SPRITE_MAN_IN_RED_BANDANA), a seat
   /// each, two by two from the north, the west seat
@@ -308,7 +325,7 @@ static s32 TolbiShipInteriors_GetChosenOarsman(void);
 static void TolbiShipInteriors_AskToRow(s32 speaker, s32 question,
                                         s32 seatFlag);
 static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void);
-static void TolbiShipInteriors_SetUpCabin(void);
+static void TolbiShipInteriors_SetUpCaptainsQuarters(void);
 static void TolbiShipInteriors_SetUpHold(void);
 static void TolbiShipInteriors_SetUpRowingDeck(void);
 static void TolbiShipInteriors_SetOarCollision(void);
@@ -344,7 +361,7 @@ static void TolbiShipInteriors_StartThirdAttack(void);
 static void TolbiShipInteriors_EndThirdAttack(void);
 static void TolbiShipInteriors_NoticeShipRocking(void);
 static void TolbiShipInteriors_ShakeWhileKrakenAboard(void);
-static void TolbiShipInteriors_ShowCabinBeforeIsland(void);
+static void TolbiShipInteriors_ShowCaptainsQuartersBeforeIsland(void);
 static void TolbiShipInteriors_ReachIsland(void);
 static void TolbiShipInteriors_DismissReplacementRowers(void);
 static void TolbiShipInteriors_SwapRowerSelections(s32 firstSeatFlags,
@@ -401,10 +418,10 @@ TolbiShipInteriors_LookAround(struct ScriptInterpreter *interpreter) {
   u32 choice = (u32)(Engine_RandomNext(actor) << 6) >> 16;
 
   if (choice == 6) {
-    s32 facing = 0x3000;
+    s32 facing = FACING_SOUTHEAST + FACING_STEP;
     actor->facing = facing;
   } else if (choice == 9) {
-    s32 facing = 0x5000;
+    s32 facing = FACING_SOUTH + FACING_STEP;
     actor->facing = facing;
   }
   return 1;
@@ -439,18 +456,20 @@ static s32 TolbiShipInteriors_HasArrived(struct FieldActor *actor) {
   return 0;
 }
 
-/// The update of Kaja (CABIN_KAJA) while the ship waits off the island: he
-/// paces between two spots in the cabin, looking about at each, and signals the
-/// captain (CABIN_CAPTAIN) through his own riseEnabled at three points of the
-/// round, but not while the captain is paused. work holds the step.
-static void TolbiShipInteriors_PaceCabin(union FieldObject *fieldObject) {
+/// The update of Kaja (QUARTERS_KAJA) while the ship waits off the island: he
+/// paces between two spots in the captain's quarters, looking about at each,
+/// and signals the captain (QUARTERS_CAPTAIN) through his own riseEnabled at
+/// three points of the round, but not while the captain is paused. work holds
+/// the step.
+static void
+TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *captain;
 
-  captain = Object_GetById(CABIN_CAPTAIN);
+  captain = Object_GetById(QUARTERS_CAPTAIN);
   switch ((s16)obj->work) {
   case 0:
-    obj->facing = 0xb000;
+    obj->facing = FACING_NORTHWEST + FACING_STEP;
     obj->work++;
     obj->riseCounter = 0;
     break;
@@ -519,11 +538,11 @@ static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
   struct FieldActor *watcher = (struct FieldActor *)fieldObject;
   struct FieldActor *pacer;
 
-  pacer = Object_GetById(CABIN_KAJA);
+  pacer = Object_GetById(QUARTERS_KAJA);
   if (watcher->paused != 0)
     return;
   if (pacer->riseEnabled == 1) {
-    watcher->facing = 0xd000;
+    watcher->facing = FACING_NORTH + FACING_STEP;
     watcher->riseCounter = 1;
     pacer->riseEnabled = 0;
   } else if (pacer->riseEnabled == 2) {
@@ -637,31 +656,31 @@ const struct ScenePlacement *TolbiShipInteriors_SelectPlacements(void) {
     return (const struct ScenePlacement *)placementBytes;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gTolbiShipInteriors_CabinPlacementsArrived;
+      return gTolbiShipInteriors_CaptainsQuartersPlacementsArrived;
     } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
         if (GameFlag_IsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-          gTolbiShipInteriors_CabinPlacementsWarriors[1].talkFacing =
+          gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors[1].talkFacing =
               TALK_FACE_PARTY_AND_BACK;
         }
         if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
           if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
-            gTolbiShipInteriors_CabinPlacementsWarriors[0].talkFacing =
-                TALK_FACE_PARTY;
+            gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors[0]
+                .talkFacing = TALK_FACE_PARTY;
           }
         }
-        return gTolbiShipInteriors_CabinPlacementsWarriors;
+        return gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors;
       }
       return gTolbiShipInteriors_PlacementsNone;
     } else {
-      return gTolbiShipInteriors_CabinPlacements;
+      return gTolbiShipInteriors_CaptainsQuartersPlacements;
     }
     break;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF:
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS:
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN:
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND:
-    return gTolbiShipInteriors_CabinPlacements;
+    return gTolbiShipInteriors_CaptainsQuartersPlacements;
     break;
   default:
     return gTolbiShipInteriors_PlacementsNone;
@@ -695,12 +714,12 @@ const struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
     return gTolbiShipInteriors_RowingDeckEvents;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-      return gTolbiShipInteriors_CabinEventsAtIsland;
+      return gTolbiShipInteriors_CaptainsQuartersEventsAtIsland;
     }
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gTolbiShipInteriors_CabinEventsArrived;
+      return gTolbiShipInteriors_CaptainsQuartersEventsArrived;
     }
-    return gTolbiShipInteriors_CabinEvents;
+    return gTolbiShipInteriors_CaptainsQuartersEvents;
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK:
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK:
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK:
@@ -715,40 +734,40 @@ const struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
 }
 
 /// The crewman asks whether the party wants to see the captain too. This is in
-/// the captain's cabin at Kalay, once the warriors want to see the captain; on
-/// yes, the passengers' pressure on the captain plays
+/// the captain's quarters at Kalay, once the warriors want to see the captain;
+/// on yes, the passengers' pressure on the captain plays
 /// (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
-static void TolbiShipInteriors_TalkToCabinCrewman(void) {
+static void TolbiShipInteriors_TalkToCaptainsQuartersCrewman(void) {
   Engine_EventBegin();
   Field_EndBusyAndReveal();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL) != 0) {
     Engine_EventSetMessage(MsgTolbiShipIfShipFromTolbiHad);
-    Event_ShowMessage(CABIN_CREWMAN, 0);
+    Event_ShowMessage(QUARTERS_CREWMAN, 0);
   } else {
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       Engine_EventSetMessage(MsgTolbiShipNowWantSeeCaptainToo);
-      Event_OpenMessage(CABIN_CREWMAN, 0);
+      Event_OpenMessage(QUARTERS_CREWMAN, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         TolbiShipInteriors_DiscussLaunchingWithoutAnchor();
       } else {
-        Engine_ActorStartRepeatedMotion(CABIN_CREWMAN, 2);
-        Event_ShowMessage(CABIN_CREWMAN, 0);
-        Actor_FaceDirection(CABIN_CREWMAN, 0xd000, 0);
+        Engine_ActorStartRepeatedMotion(QUARTERS_CREWMAN, 2);
+        Event_ShowMessage(QUARTERS_CREWMAN, 0);
+        Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTH + FACING_STEP, 0);
       }
     } else {
       Engine_EventSetMessage(MsgTolbiShipButWeCantSendShip);
-      Event_ShowMessage(CABIN_CREWMAN, 0);
+      Event_ShowMessage(QUARTERS_CREWMAN, 0);
     }
   }
   Engine_EventEnd();
 }
 
-/// Sean, in the captain's cabin, asks whether the party came to ask the
+/// Sean, in the captain's quarters, asks whether the party came to ask the
 /// captain to set sail.
-static void TolbiShipInteriors_TalkToSeanInCabin(void) {
+static void TolbiShipInteriors_TalkToSeanInCaptainsQuarters(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiShipYouCameAskCaptainSet);
-  Engine_EventAskYesNo(CABIN_SEAN, 0);
+  Engine_EventAskYesNo(QUARTERS_SEAN, 0);
   Engine_EventEnd();
 }
 
@@ -760,24 +779,24 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     Engine_EventSetMessage(MsgTolbiShipOarsmanWasInjured);
-    TolbiShipInteriors_Say(CABIN_CAPTAIN);
-    Actor_FaceDirection(CABIN_CAPTAIN, 0xd000, 60);
-    Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 4);
-    TolbiShipInteriors_Say(CABIN_CAPTAIN);
-    Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
+    TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+    Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_NORTH + FACING_STEP, 60);
+    Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 4);
+    TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+    Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
   } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Engine_EventSetMessage(MsgTolbiShipWeDontKnowMightHappen);
-    Event_ShowMessage(CABIN_CAPTAIN, 0);
+    Event_ShowMessage(QUARTERS_CAPTAIN, 0);
   } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL) != 0) {
     Engine_EventSetMessage(MsgTolbiShipBadLuckLosingMyLucky);
-    Event_ShowMessage(CABIN_CAPTAIN, 0);
+    Event_ShowMessage(QUARTERS_CAPTAIN, 0);
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) == 0 &&
         GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
       gEventWork->unk172 = 1;
     }
   } else {
     Engine_EventSetMessage(MsgTolbiShipItsTooLateHireMercenaries);
-    Event_ShowMessage(CABIN_CAPTAIN, 0);
+    Event_ShowMessage(QUARTERS_CAPTAIN, 0);
   }
   Engine_EventEnd();
 }
@@ -796,12 +815,12 @@ static void TolbiShipInteriors_TalkToWaitingWarrior(void) {
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventWait(40);
       TolbiShipInteriors_Say(HOLD_WARRIOR);
-      TolbiShipInteriors_Turn(HOLD_WARRIOR, 0x3000);
+      TolbiShipInteriors_Turn(HOLD_WARRIOR, FACING_SOUTHEAST + FACING_STEP);
       Event_ShowMessage(HOLD_WARRIOR, 0);
     } else {
       gEventWork->message += 2;
       Event_ShowMessage(HOLD_WARRIOR, 0);
-      Actor_FaceDirection(HOLD_WARRIOR, 0x3000, 0);
+      Actor_FaceDirection(HOLD_WARRIOR, FACING_SOUTHEAST + FACING_STEP, 0);
     }
   } else {
     Engine_EventSetMessage(MsgTolbiShipLongerWeSitHereMore);
@@ -838,75 +857,55 @@ static inline void TolbiShipInteriors_RejoinParty(s32 rowerId) {
   Engine_ActorSetPosition(rowerId, 0, 0);
 }
 
-/// The head guide under sail, when an oar needs a rower. If someone has already
-/// been chosen this round, the chosen passenger steps beside the leader and
-/// follows them out; otherwise the party may ask the head guide to row at the
-/// open seat.
+/// A passenger in the hold under sail, when an oar needs a rower. If someone
+/// has already been chosen this round, the chosen passenger steps beside the
+/// leader and follows them out while this one says chosenMessage; otherwise
+/// the party may ask this one to row (question) at the seat the attacks
+/// fought off number. The Ask...ToRow functions are this with each
+/// passenger's lines, except the stared-at passenger's and the second guide's,
+/// which write it out in full.
+#define TOLBI_SHIP_ASK_TO_ROW(speaker, chosenMessage, question, passenger)     \
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {               \
+    s32 rowerId = TolbiShipInteriors_GetChosenOarsman();                       \
+                                                                               \
+    Engine_EventBegin();                                                       \
+    TolbiShipInteriors_StepBesideLeader(rowerId);                              \
+    Engine_EventSetMessage(chosenMessage);                                     \
+    TolbiShipInteriors_Say(speaker);                                           \
+    TolbiShipInteriors_RejoinParty(rowerId);                                   \
+    Engine_EventEnd();                                                         \
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {     \
+    TolbiShipInteriors_AskToRow(                                               \
+        speaker, question, FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + (passenger));  \
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=  \
+             0) {                                                              \
+    TolbiShipInteriors_AskToRow(                                               \
+        speaker, question, FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + (passenger));   \
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != \
+             0) {                                                              \
+    TolbiShipInteriors_AskToRow(                                               \
+        speaker, question, FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + (passenger));  \
+  } else {                                                                     \
+    TolbiShipInteriors_AskToRow(                                               \
+        speaker, question, FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger));   \
+  }
+
+/// The head guide in the hold under sail.
 static void TolbiShipInteriors_AskHeadGuideToRow(void) {
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
-
-    Engine_EventBegin();
-    TolbiShipInteriors_StepBesideLeader(rowerId);
-    Engine_EventSetMessage(MsgTolbiShipLooksLikeYouveBeenChosen);
-    TolbiShipInteriors_Say(SEA_HOLD_HEAD_GUIDE);
-    TolbiShipInteriors_RejoinParty(rowerId);
-    Engine_EventEnd();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_HEAD_GUIDE, MsgTolbiShipNoooooNotGoing,
-                                FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
-                                    PASSENGER_HEAD_GUIDE);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_HEAD_GUIDE, MsgTolbiShipNoooooNotGoing,
-                                FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS +
-                                    PASSENGER_HEAD_GUIDE);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_HEAD_GUIDE, MsgTolbiShipNoooooNotGoing,
-                                FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                    PASSENGER_HEAD_GUIDE);
-  } else {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_HEAD_GUIDE, MsgTolbiShipNoooooNotGoing,
-                                FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                                    PASSENGER_HEAD_GUIDE);
-  }
+  TOLBI_SHIP_ASK_TO_ROW(SEA_HOLD_HEAD_GUIDE,
+                        MsgTolbiShipLooksLikeYouveBeenChosen,
+                        MsgTolbiShipNoooooNotGoing, PASSENGER_HEAD_GUIDE);
 }
 
-/// The same for the sweating passenger.
+/// The sweating passenger in the hold under sail.
 static void TolbiShipInteriors_AskSweatingPassengerToRow(void) {
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
-
-    Engine_EventBegin();
-    TolbiShipInteriors_StepBesideLeader(rowerId);
-    Engine_EventSetMessage(MsgTolbiShipHaHaHaChosenOarsman);
-    TolbiShipInteriors_Say(SEA_HOLD_SWEATING_PASSENGER);
-    TolbiShipInteriors_RejoinParty(rowerId);
-    Engine_EventEnd();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_SWEATING_PASSENGER, MsgTolbiShipJokingWantRow,
-        FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_SWEATING);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_SWEATING_PASSENGER, MsgTolbiShipJokingWantRow,
-        FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_SWEATING);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_SWEATING_PASSENGER, MsgTolbiShipJokingWantRow,
-        FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + PASSENGER_SWEATING);
-  } else {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_SWEATING_PASSENGER, MsgTolbiShipJokingWantRow,
-        FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_SWEATING);
-  }
+  TOLBI_SHIP_ASK_TO_ROW(SEA_HOLD_SWEATING_PASSENGER,
+                        MsgTolbiShipHaHaHaChosenOarsman,
+                        MsgTolbiShipJokingWantRow, PASSENGER_SWEATING);
 }
 
-/// The same for the lady, who is too seasick to talk once the ship is at
-/// anchor.
+/// The lady in the hold under sail, who is too seasick to talk once the ship
+/// is at anchor.
 static void TolbiShipInteriors_AskLadyToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     Engine_EventBegin();
@@ -915,33 +914,10 @@ static void TolbiShipInteriors_AskLadyToRow(void) {
     Engine_EventSetMessage(MsgTolbiShipDontFeelDontTalkMe);
     Engine_EventShowMessage(SEA_HOLD_LADY, 0);
     Engine_EventEnd();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
-
-    Engine_EventBegin();
-    TolbiShipInteriors_StepBesideLeader(rowerId);
-    Engine_EventSetMessage(MsgTolbiShipYouFinallyPickedSomeoneDidnt);
-    TolbiShipInteriors_Say(SEA_HOLD_LADY);
-    TolbiShipInteriors_RejoinParty(rowerId);
-    Engine_EventEnd();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_LADY, MsgTolbiShipDontTellGoing,
-                                FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
-                                    PASSENGER_LADY);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_LADY, MsgTolbiShipDontTellGoing,
-                                FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS +
-                                    PASSENGER_LADY);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_LADY, MsgTolbiShipDontTellGoing,
-                                FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                    PASSENGER_LADY);
   } else {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_LADY, MsgTolbiShipDontTellGoing,
-                                FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                                    PASSENGER_LADY);
+    TOLBI_SHIP_ASK_TO_ROW(SEA_HOLD_LADY,
+                          MsgTolbiShipYouFinallyPickedSomeoneDidnt,
+                          MsgTolbiShipDontTellGoing, PASSENGER_LADY);
   }
 }
 
@@ -992,7 +968,7 @@ static void TolbiShipInteriors_AskStaredAtPassengerToRow(void) {
   Engine_EventEnd();
 }
 
-/// The same for the second guide, written out in full.
+/// The second guide in the hold under sail, written out in full as well.
 static void TolbiShipInteriors_AskSecondGuideToRow(void) {
   s32 rowerId;
   struct FieldActor *actor;
@@ -1042,136 +1018,33 @@ static void TolbiShipInteriors_AskSecondGuideToRow(void) {
   Engine_EventEnd();
 }
 
-/// The same for the warrior.
+/// The warrior in the hold under sail.
 static void TolbiShipInteriors_AskWarriorToRow(void) {
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
-
-    Engine_EventBegin();
-    TolbiShipInteriors_StepBesideLeader(rowerId);
-    Engine_EventSetMessage(MsgTolbiShipThatsWhoYouPickedOarsman);
-    TolbiShipInteriors_Say(SEA_HOLD_WARRIOR);
-    TolbiShipInteriors_RejoinParty(rowerId);
-    Engine_EventEnd();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_WARRIOR, MsgTolbiShipNotThinkingMaking,
-                                FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
-                                    PASSENGER_WARRIOR);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_WARRIOR, MsgTolbiShipNotThinkingMaking,
-                                FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS +
-                                    PASSENGER_WARRIOR);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_WARRIOR, MsgTolbiShipNotThinkingMaking,
-                                FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                    PASSENGER_WARRIOR);
-  } else {
-    TolbiShipInteriors_AskToRow(SEA_HOLD_WARRIOR, MsgTolbiShipNotThinkingMaking,
-                                FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                                    PASSENGER_WARRIOR);
-  }
+  TOLBI_SHIP_ASK_TO_ROW(SEA_HOLD_WARRIOR, MsgTolbiShipThatsWhoYouPickedOarsman,
+                        MsgTolbiShipNotThinkingMaking, PASSENGER_WARRIOR);
 }
 
-/// The same for the ticket grumbler.
+/// The ticket grumbler in the hold under sail.
 static void TolbiShipInteriors_AskTicketGrumblerToRow(void) {
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
-
-    Engine_EventBegin();
-    TolbiShipInteriors_StepBesideLeader(rowerId);
-    Engine_EventSetMessage(MsgTolbiShipIfYouveChosenOarsmanLets);
-    TolbiShipInteriors_Say(SEA_HOLD_TICKET_GRUMBLER);
-    TolbiShipInteriors_RejoinParty(rowerId);
-    Engine_EventEnd();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipOarsmanGiveBreak,
-        FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_TICKET_GRUMBLER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipOarsmanGiveBreak,
-        FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_TICKET_GRUMBLER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipOarsmanGiveBreak,
-        FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + PASSENGER_TICKET_GRUMBLER);
-  } else {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipOarsmanGiveBreak,
-        FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_TICKET_GRUMBLER);
-  }
+  TOLBI_SHIP_ASK_TO_ROW(
+      SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipIfYouveChosenOarsmanLets,
+      MsgTolbiShipOarsmanGiveBreak, PASSENGER_TICKET_GRUMBLER);
 }
 
-/// The same for the muscle admirer.
+/// The muscle admirer in the hold under sail.
 static void TolbiShipInteriors_AskMuscleAdmirerToRow(void) {
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
-
-    Engine_EventBegin();
-    TolbiShipInteriors_StepBesideLeader(rowerId);
-    Engine_EventSetMessage(MsgTolbiShipYouveBeenChosenAsOarsman);
-    TolbiShipInteriors_Say(SEA_HOLD_MUSCLE_ADMIRER);
-    TolbiShipInteriors_RejoinParty(rowerId);
-    Engine_EventEnd();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_MUSCLE_ADMIRER, MsgTolbiShipPoorOarsmanFeel,
-        FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_MUSCLE_ADMIRER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_MUSCLE_ADMIRER, MsgTolbiShipPoorOarsmanFeel,
-        FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_MUSCLE_ADMIRER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
-             0) {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_MUSCLE_ADMIRER, MsgTolbiShipPoorOarsmanFeel,
-        FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + PASSENGER_MUSCLE_ADMIRER);
-  } else {
-    TolbiShipInteriors_AskToRow(
-        SEA_HOLD_MUSCLE_ADMIRER, MsgTolbiShipPoorOarsmanFeel,
-        FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_MUSCLE_ADMIRER);
-  }
+  TOLBI_SHIP_ASK_TO_ROW(SEA_HOLD_MUSCLE_ADMIRER,
+                        MsgTolbiShipYouveBeenChosenAsOarsman,
+                        MsgTolbiShipPoorOarsmanFeel, PASSENGER_MUSCLE_ADMIRER);
 }
 
-/// The same for the old man.
+/// The old man in the hold under sail.
 static void TolbiShipInteriors_AskOldManToRow(void) {
-  s32 rowerId;
-
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    rowerId = TolbiShipInteriors_GetChosenOarsman();
-    Engine_EventBegin();
-    TolbiShipInteriors_StepBesideLeader(rowerId);
-    Engine_EventSetMessage(MsgTolbiShipHoHoPersonGoingGet);
-    TolbiShipInteriors_Say(SEA_HOLD_OLD_MAN);
-    TolbiShipInteriors_RejoinParty(rowerId);
-    Engine_EventEnd();
-  } else {
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-      TolbiShipInteriors_AskToRow(
-          SEA_HOLD_OLD_MAN, MsgTolbiShipPeopleAskingFrail,
-          FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_OLD_MAN);
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
-               0) {
-      TolbiShipInteriors_AskToRow(
-          SEA_HOLD_OLD_MAN, MsgTolbiShipPeopleAskingFrail,
-          FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_OLD_MAN);
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
-               0) {
-      TolbiShipInteriors_AskToRow(
-          SEA_HOLD_OLD_MAN, MsgTolbiShipPeopleAskingFrail,
-          FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + PASSENGER_OLD_MAN);
-    } else {
-      TolbiShipInteriors_AskToRow(
-          SEA_HOLD_OLD_MAN, MsgTolbiShipPeopleAskingFrail,
-          FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_OLD_MAN);
-    }
-  }
+  TOLBI_SHIP_ASK_TO_ROW(SEA_HOLD_OLD_MAN, MsgTolbiShipHoHoPersonGoingGet,
+                        MsgTolbiShipPeopleAskingFrail, PASSENGER_OLD_MAN);
 }
+
+#undef TOLBI_SHIP_ASK_TO_ROW
 
 /// Finds a placed actor within twelve pixels of the requested floor position.
 static struct FieldActor *TolbiShipInteriors_FindActorNear(s32 x, s32 z) {
@@ -1302,233 +1175,164 @@ static s32 TolbiShipInteriors_GetChosenOarsman(void) {
   return TolbiShipInteriors_FindFirstSetFlag(ret, 1);
 }
 
-/// The head guide at the oars, by the round they were chosen in: Kaja's men
-/// are worried, monsters are everywhere, or the ship is starting to list.
+/// What a passenger at the oars says, or thinks under Mind Read, by the round
+/// they were chosen in: the first round's line, the second's, or a later
+/// one's. The TalkTo...AtOars and Read...MindAtOars functions are this, or
+/// TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER, with each passenger's lines.
+#define TOLBI_SHIP_ROWER_LINE_BY_ROUND(passenger, actor, first, second, later) \
+  Engine_EventBegin();                                                         \
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger)))   \
+    Engine_EventSetMessage(first);                                             \
+  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +           \
+                                (passenger)))                                  \
+    Engine_EventSetMessage(second);                                            \
+  else                                                                         \
+    Engine_EventSetMessage(later);                                             \
+  Engine_EventShowMessage(actor, 0);                                           \
+  Engine_EventEnd()
+
+/// The same with one line for the first round and one for any later.
+#define TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(passenger, actor, first, later)   \
+  Engine_EventBegin();                                                         \
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger)))   \
+    Engine_EventSetMessage(first);                                             \
+  else                                                                         \
+    Engine_EventSetMessage(later);                                             \
+  Engine_EventShowMessage(actor, 0);                                           \
+  Engine_EventEnd()
+
+/// The head guide at the oars: Kaja's men are worried, monsters are
+/// everywhere, or the ship is starting to list.
 static void TolbiShipInteriors_TalkToHeadGuideAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_HEAD_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_HEAD_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
-  else
-    Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
-  Engine_EventShowMessage(ROWING_HEAD_GUIDE, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_HEAD_GUIDE, ROWING_HEAD_GUIDE,
+                                 MsgTolbiShipThingHasKajaHisMen,
+                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The same for the second guide.
+/// The second guide at the oars, as the head guide.
 static void TolbiShipInteriors_TalkToSecondGuideAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_SECOND_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_SECOND_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
-  else
-    Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
-  Engine_EventShowMessage(ROWING_SECOND_GUIDE, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_SECOND_GUIDE, ROWING_SECOND_GUIDE,
+                                 MsgTolbiShipThingHasKajaHisMen,
+                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The same for the sweating passenger.
+/// The sweating passenger at the oars, as the head guide.
 static void TolbiShipInteriors_TalkToSweatingPassengerAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_SWEATING))
-    Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_SWEATING))
-    Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
-  else
-    Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
-  Engine_EventShowMessage(ROWING_SWEATING_PASSENGER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_SWEATING, ROWING_SWEATING_PASSENGER,
+                                 MsgTolbiShipThingHasKajaHisMen,
+                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                 MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The lady at the oars asks how many monsters are out there.
 static void TolbiShipInteriors_TalkToLadyAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_LADY))
-    Engine_EventSetMessage(MsgTolbiShipHowManyMonstersOutThere);
-  else
-    Engine_EventSetMessage(MsgTolbiShipAnotherMonsterIsntFirstClass);
-  Engine_EventShowMessage(ROWING_LADY, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
+      PASSENGER_LADY, ROWING_LADY, MsgTolbiShipHowManyMonstersOutThere,
+      MsgTolbiShipAnotherMonsterIsntFirstClass);
 }
 
 /// The stared-at passenger at the oars, as the head guide.
 static void TolbiShipInteriors_TalkToStaredAtPassengerAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_STARED_AT))
-    Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_STARED_AT))
-    Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
-  else
-    Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
-  Engine_EventShowMessage(ROWING_STARED_AT_PASSENGER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_STARED_AT,
+                                 ROWING_STARED_AT_PASSENGER,
+                                 MsgTolbiShipThingHasKajaHisMen,
+                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The same for the warrior.
+/// The warrior at the oars, as the head guide.
 static void TolbiShipInteriors_TalkToWarriorAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_WARRIOR))
-    Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_WARRIOR))
-    Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
-  else
-    Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
-  Engine_EventShowMessage(ROWING_WARRIOR, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_WARRIOR, ROWING_WARRIOR,
+                                 MsgTolbiShipThingHasKajaHisMen,
+                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The same for the ticket grumbler.
+/// The ticket grumbler at the oars, as the head guide.
 static void TolbiShipInteriors_TalkToTicketGrumblerAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_TICKET_GRUMBLER))
-    Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_TICKET_GRUMBLER))
-    Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
-  else
-    Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
-  Engine_EventShowMessage(ROWING_TICKET_GRUMBLER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_TICKET_GRUMBLER,
+                                 ROWING_TICKET_GRUMBLER,
+                                 MsgTolbiShipThingHasKajaHisMen,
+                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                 MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The muscle admirer at the oars, as the lady.
 static void TolbiShipInteriors_TalkToMuscleAdmirerAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_MUSCLE_ADMIRER))
-    Engine_EventSetMessage(MsgTolbiShipHowManyMonstersOutThere);
-  else
-    Engine_EventSetMessage(MsgTolbiShipAnotherMonsterIsntFirstClass);
-  Engine_EventShowMessage(ROWING_MUSCLE_ADMIRER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
+      PASSENGER_MUSCLE_ADMIRER, ROWING_MUSCLE_ADMIRER,
+      MsgTolbiShipHowManyMonstersOutThere,
+      MsgTolbiShipAnotherMonsterIsntFirstClass);
 }
 
-/// Mind Read on the head guide at the oars, by the round they were chosen in.
-/// "Just hurry up and slay that beast!"
+/// Mind Read on the head guide at the oars. "Just hurry up and slay that
+/// beast!"
 static void TolbiShipInteriors_ReadHeadGuideMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_HEAD_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_HEAD_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
-  else
-    Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
-  Engine_EventShowMessage(ROWING_HEAD_GUIDE, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_HEAD_GUIDE, ROWING_HEAD_GUIDE,
+                                 MsgTolbiShipDontCareTakesJustHurry,
+                                 MsgTolbiShipIfThoseMonstersComeBack,
+                                 MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// The same for the second guide.
+/// Mind Read on the second guide at the oars, as on the head guide.
 static void TolbiShipInteriors_ReadSecondGuideMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_SECOND_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_SECOND_GUIDE))
-    Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
-  else
-    Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
-  Engine_EventShowMessage(ROWING_SECOND_GUIDE, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_SECOND_GUIDE, ROWING_SECOND_GUIDE,
+                                 MsgTolbiShipDontCareTakesJustHurry,
+                                 MsgTolbiShipIfThoseMonstersComeBack,
+                                 MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// The same for the sweating passenger.
+/// Mind Read on the sweating passenger at the oars, as on the head guide.
 static void TolbiShipInteriors_ReadSweatingPassengerMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_SWEATING))
-    Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_SWEATING))
-    Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
-  else
-    Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
-  Engine_EventShowMessage(ROWING_SWEATING_PASSENGER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_SWEATING, ROWING_SWEATING_PASSENGER,
+                                 MsgTolbiShipDontCareTakesJustHurry,
+                                 MsgTolbiShipIfThoseMonstersComeBack,
+                                 MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
 /// Mind Read on the lady at the oars: there are so many monsters at sea.
 static void TolbiShipInteriors_ReadLadyMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_LADY))
-    Engine_EventSetMessage(MsgTolbiShipHadIdeaThereWereMany);
-  else
-    Engine_EventSetMessage(MsgTolbiShipWereSurroundedByMonstersStill);
-  Engine_EventShowMessage(ROWING_LADY, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
+      PASSENGER_LADY, ROWING_LADY, MsgTolbiShipHadIdeaThereWereMany,
+      MsgTolbiShipWereSurroundedByMonstersStill);
 }
 
 /// Mind Read on the stared-at passenger at the oars, as on the head guide.
 static void TolbiShipInteriors_ReadStaredAtPassengerMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_STARED_AT))
-    Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_STARED_AT))
-    Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
-  else
-    Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
-  Engine_EventShowMessage(ROWING_STARED_AT_PASSENGER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(
+      PASSENGER_STARED_AT, ROWING_STARED_AT_PASSENGER,
+      MsgTolbiShipDontCareTakesJustHurry, MsgTolbiShipIfThoseMonstersComeBack,
+      MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// The same for the warrior.
+/// Mind Read on the warrior at the oars, as on the head guide.
 static void TolbiShipInteriors_ReadWarriorMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_WARRIOR))
-    Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_WARRIOR))
-    Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
-  else
-    Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
-  Engine_EventShowMessage(ROWING_WARRIOR, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_WARRIOR, ROWING_WARRIOR,
+                                 MsgTolbiShipDontCareTakesJustHurry,
+                                 MsgTolbiShipIfThoseMonstersComeBack,
+                                 MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// The same for the ticket grumbler.
+/// Mind Read on the ticket grumbler at the oars, as on the head guide.
 static void TolbiShipInteriors_ReadTicketGrumblerMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_TICKET_GRUMBLER))
-    Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
-  else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
-                                PASSENGER_TICKET_GRUMBLER))
-    Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
-  else
-    Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
-  Engine_EventShowMessage(ROWING_TICKET_GRUMBLER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_BY_ROUND(
+      PASSENGER_TICKET_GRUMBLER, ROWING_TICKET_GRUMBLER,
+      MsgTolbiShipDontCareTakesJustHurry, MsgTolbiShipIfThoseMonstersComeBack,
+      MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
 /// Mind Read on the muscle admirer at the oars, as on the lady.
 static void TolbiShipInteriors_ReadMuscleAdmirerMindAtOars(void) {
-  Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
-                           PASSENGER_MUSCLE_ADMIRER))
-    Engine_EventSetMessage(MsgTolbiShipHadIdeaThereWereMany);
-  else
-    Engine_EventSetMessage(MsgTolbiShipWereSurroundedByMonstersStill);
-  Engine_EventShowMessage(ROWING_MUSCLE_ADMIRER, 0);
-  Engine_EventEnd();
+  TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
+      PASSENGER_MUSCLE_ADMIRER, ROWING_MUSCLE_ADMIRER,
+      MsgTolbiShipHadIdeaThereWereMany,
+      MsgTolbiShipWereSurroundedByMonstersStill);
 }
+
+#undef TOLBI_SHIP_ROWER_LINE_BY_ROUND
+#undef TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER
 
 /// Asks a passenger to row. On yes they walk to the leader and leave with them,
 /// and the seat's flag for this passenger (seatFlag) and
@@ -1641,7 +1445,7 @@ static void TolbiShipInteriors_TurnBackFromStairs(void) {
     UiText_ShowCenteredMessage(MsgTolbiShipWhereGoingSlay, 1, 8);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
-    TolbiShipInteriors_Turn(ACTOR_PARTY_LEADER, 0x4000);
+    TolbiShipInteriors_Turn(ACTOR_PARTY_LEADER, FACING_SOUTH);
     Engine_EventEnd();
   }
 }
@@ -1656,28 +1460,28 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
 
   Engine_EventBegin();
   Field_EndBusyAndReveal();
-  Engine_CameraSetSpeed(0x19999, 0x3333);
+  Engine_CameraSetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(448), -1, PIXELS(638),
                                        0x10000028u);
   Engine_EventSetMessage(MsgTolbiShipWonderCouldHaveHappened);
 
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x3000);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  TolbiShipInteriors_Turn(CABIN_CREWMAN, 0xd000);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
-  TolbiShipInteriors_Turn(CABIN_KAJA, 0x5000);
-  TolbiShipInteriors_Say(CABIN_KAJA);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_SOUTHEAST + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  TolbiShipInteriors_Turn(QUARTERS_CREWMAN, FACING_NORTH + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
+  TolbiShipInteriors_Turn(QUARTERS_KAJA, FACING_SOUTH + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
 
-  Engine_ActorFaceDirection(CABIN_CAPTAIN, FACING_EAST, 20);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  TolbiShipInteriors_Turn(CABIN_KAJA, 0x8000);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  TolbiShipInteriors_Turn(CABIN_CREWMAN, 0xb000);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
+  Engine_ActorFaceDirection(QUARTERS_CAPTAIN, FACING_EAST, 20);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  TolbiShipInteriors_Turn(QUARTERS_KAJA, FACING_WEST);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  TolbiShipInteriors_Turn(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
 
   Engine_GameFlagSet(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY);
   Engine_EventEnd();
@@ -1698,13 +1502,13 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   } else {
     Engine_EventBegin();
     Field_EndBusyAndReveal();
-    Camera_SetSpeed(0x26666, 0x4ccc);
+    Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
     TolbiShipInteriors_MoveCameraAndWait(PIXELS(1463), -1, PIXELS(464),
                                          0x10000014);
     Engine_ActorRunRepeatedMotion(HOLD_OURANOS, 1);
     Engine_EventSetMessage(MsgTolbiShipIfWeArentGoingSet);
     TolbiShipInteriors_Say(SPEAKER(HOLD_OURANOS, 2));
-    TolbiShipInteriors_Turn(HOLD_SECOND_GUIDE, 0xd000);
+    TolbiShipInteriors_Turn(HOLD_SECOND_GUIDE, FACING_NORTH + FACING_STEP);
     guideSpeaker = SPEAKER(HOLD_SECOND_GUIDE, 8);
     Actor_ShowEmote(HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
     Engine_ActorStartRepeatedMotion(HOLD_SECOND_GUIDE, 2);
@@ -1723,9 +1527,9 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     TolbiShipInteriors_Say(guideSpeaker);
     Engine_ActorRunRepeatedMotion(HOLD_SEAN, 1);
     TolbiShipInteriors_Say(seanSpeaker);
-    TolbiShipInteriors_Turn(HOLD_SEAN, 0xb000);
+    TolbiShipInteriors_Turn(HOLD_SEAN, FACING_NORTHWEST + FACING_STEP);
     TolbiShipInteriors_Say(seanSpeaker);
-    TolbiShipInteriors_Turn(HOLD_SECOND_GUIDE, 0xd000);
+    TolbiShipInteriors_Turn(HOLD_SECOND_GUIDE, FACING_NORTH + FACING_STEP);
     Actor_ShowEmote(HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Engine_ActorStartRepeatedMotion(HOLD_SECOND_GUIDE, 1);
     TolbiShipInteriors_Say(guideSpeaker);
@@ -1737,7 +1541,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     TolbiShipInteriors_Say(guideSpeaker);
     Engine_ActorSetAnimationAndWait(HOLD_SEAN, 4);
     TolbiShipInteriors_Say(seanSpeaker);
-    TolbiShipInteriors_Turn(HOLD_SEAN, 0x8000);
+    TolbiShipInteriors_Turn(HOLD_SEAN, FACING_WEST);
     Engine_ActorStartRepeatedMotion(HOLD_SEAN, 2);
     Event_ShowMessageAndWait(seanSpeaker, 0, 20);
     Actor_FaceDirection(HOLD_SECOND_GUIDE, FACING_EAST, 0);
@@ -1747,10 +1551,10 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     Actor_ShowEmote(HOLD_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
     Engine_ActorStartRepeatedMotion(HOLD_SEAN, 2);
     TolbiShipInteriors_Say(seanSpeaker);
-    TolbiShipInteriors_Turn(HOLD_SEAN, 0xb000);
+    TolbiShipInteriors_Turn(HOLD_SEAN, FACING_NORTHWEST + FACING_STEP);
     Engine_ActorRunRepeatedMotion(HOLD_SEAN, 1);
     TolbiShipInteriors_Say(seanSpeaker);
-    TolbiShipInteriors_Turn(HOLD_OURANOS, 0x3000);
+    TolbiShipInteriors_Turn(HOLD_OURANOS, FACING_SOUTHEAST + FACING_STEP);
     Actor_ShowEmote(HOLD_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Engine_ActorRunRepeatedMotion(HOLD_OURANOS, 1);
@@ -1758,10 +1562,10 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     Actor_ShowEmote(HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Engine_ActorRunRepeatedMotion(HOLD_SEAN, 1);
     TolbiShipInteriors_Say(seanSpeaker);
-    Actor_FaceDirection(HOLD_SECOND_GUIDE, 0xd000, 0);
-    Actor_FaceDirection(HOLD_OURANOS, 0x5000, 40);
+    Actor_FaceDirection(HOLD_SECOND_GUIDE, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(HOLD_OURANOS, FACING_SOUTH + FACING_STEP, 40);
     Actor_FaceDirection(HOLD_SECOND_GUIDE, FACING_EAST, 0);
-    TolbiShipInteriors_Turn(HOLD_OURANOS, 0x3000);
+    TolbiShipInteriors_Turn(HOLD_OURANOS, FACING_SOUTHEAST + FACING_STEP);
     Engine_ActorRunRepeatedMotion(HOLD_SECOND_GUIDE, 2);
     Event_ShowMessageAndWait(guideSpeaker, 0, 20);
     Actor_FaceDirection(HOLD_SEAN, FACING_SOUTH, 40);
@@ -1778,7 +1582,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     TolbiShipInteriors_Say(guideSpeaker);
     Engine_ActorSetAnimationAndWait(HOLD_OURANOS, 3);
     TolbiShipInteriors_Say(HOLD_OURANOS);
-    Actor_FaceDirection(HOLD_SEAN, 0xb000, 40);
+    Actor_FaceDirection(HOLD_SEAN, FACING_NORTHWEST + FACING_STEP, 40);
     Engine_ActorSetAnimation(HOLD_SEAN, 3);
     Engine_ActorSetAnimationAndWait(HOLD_OURANOS, 3);
     Actor_SetSpeed(HOLD_SEAN, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1812,7 +1616,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   }
 }
 
-/// In the captain's cabin at Kalay: the passengers press the captain to
+/// In the captain's quarters at Kalay: the passengers press the captain to
 /// launch; Ouranos and Sean offer to guard the deck, and the captain finds his
 /// lucky anchor charm gone and refuses to sail without it.
 static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
@@ -1820,248 +1624,250 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   s32 ouranosSpeech;
   s32 captainSpeech;
 
-  // Gather the cabin's attention around the argument about launching.
+  // Gather the captain's quarters's attention around the argument about
+  // launching.
   Event_PlayCue(MUS_028);
-  Camera_SetSpeed(0x26666, 0x4ccc);
+  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
                                        0x10000014);
-  Engine_ActorRunRepeatedMotion(CABIN_KAJA, 1);
+  Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 1);
   Engine_EventSetMessage(MsgTolbiShipYoureTryingLaunchShip);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
-  Actor_FaceDirection(CABIN_CREWMAN, 0xd000, 0);
-  Actor_FaceDirection(CABIN_OURANOS, FACING_EAST, 0);
-  Actor_FaceDirection(CABIN_SEAN, 0x3000, 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, FACING_WEST, 40);
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-  Engine_ActorStartRepeatedMotion(CABIN_KAJA, 2);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Actor_FaceDirection(CABIN_SEAN, FACING_EAST, 0);
-  Actor_FaceDirection(CABIN_OURANOS, 0xd000, 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, 0xd000, 20);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 1);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_OURANOS, 1));
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  Engine_ActorStartRepeatedMotion(CABIN_SECOND_GUIDE, 2);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_HEART, 20);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_SEAN, 9));
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
-  Engine_ActorSetAnimation(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0x3000);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_SEAN, 9));
-  TolbiShipInteriors_Turn(CABIN_OURANOS, 0xb000);
-  Engine_ActorSetAnimationAndWait(CABIN_OURANOS, 3);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_EAST, 0);
+  Actor_FaceDirection(QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_WEST, 40);
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  Engine_ActorStartRepeatedMotion(QUARTERS_KAJA, 2);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Actor_FaceDirection(QUARTERS_SEAN, FACING_EAST, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 1);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_OURANOS, 1));
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Engine_ActorStartRepeatedMotion(QUARTERS_SECOND_GUIDE, 2);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_HEART, 20);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_SEAN, 9));
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
+  Engine_ActorSetAnimation(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_SEAN, 9));
+  TolbiShipInteriors_Turn(QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(QUARTERS_OURANOS, 3);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(CABIN_SECOND_GUIDE, 1);
-  Engine_ActorSetAnimationAndWait(CABIN_SECOND_GUIDE, 3);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, FACING_WEST, 0);
-  Actor_FaceDirection(CABIN_SEAN, 0x5000, 0);
-  TolbiShipInteriors_Turn(CABIN_OURANOS, 0x5000);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SECOND_GUIDE, 1);
+  Engine_ActorSetAnimationAndWait(QUARTERS_SECOND_GUIDE, 3);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_WEST, 0);
+  Actor_FaceDirection(QUARTERS_SEAN, FACING_SOUTH + FACING_STEP, 0);
+  TolbiShipInteriors_Turn(QUARTERS_OURANOS, FACING_SOUTH + FACING_STEP);
   // Two passengers step aside as the conversation continues.
-  Actor_SetSpeed(CABIN_SECOND_GUIDE, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(CABIN_SEAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkTo(CABIN_SEAN, 444, 668);
-  Actor_WalkToAndWait(CABIN_SECOND_GUIDE, 472, 668);
-  Engine_ActorWaitForMove(CABIN_SEAN);
-  Engine_ActorSetAnimation(CABIN_SEAN, 1);
+  Actor_SetSpeed(QUARTERS_SECOND_GUIDE, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(QUARTERS_SEAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkTo(QUARTERS_SEAN, 444, 668);
+  Actor_WalkToAndWait(QUARTERS_SECOND_GUIDE, 472, 668);
+  Engine_ActorWaitForMove(QUARTERS_SEAN);
+  Engine_ActorSetAnimation(QUARTERS_SEAN, 1);
   Engine_EventWait(80);
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0xd000);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 1);
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, FACING_NORTH + FACING_STEP);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 1);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | CABIN_OURANOS, 0, 40);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 2);
-  Actor_FaceDirection(CABIN_OURANOS, 0xd000, 0);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_OURANOS, 1));
-  Actor_FaceDirection(CABIN_SEAN, 0xd000, 0);
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ActorSetAnimation(CABIN_OURANOS, 4);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | QUARTERS_OURANOS, 0, 40);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 2);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTH + FACING_STEP, 0);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_OURANOS, 1));
+  Actor_FaceDirection(QUARTERS_SEAN, FACING_NORTH + FACING_STEP, 0);
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ActorSetAnimation(QUARTERS_OURANOS, 4);
   Engine_EventWait(20);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_OURANOS, 1));
-  Engine_ActorSetAnimation(CABIN_KAJA, 3);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, 0xd000, 0);
-  Actor_SetAttachedEffect(CABIN_SECOND_GUIDE, 0x102);
-  Engine_ActorJump(CABIN_SECOND_GUIDE, 2, 20);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  Engine_ActorSetAnimationAndWait(CABIN_KAJA, 3);
-  seanSpeech = SPEAKER(CABIN_SEAN, 1);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  TolbiShipInteriors_Turn(CABIN_OURANOS, 0xd000);
-  Engine_ActorRunRepeatedMotion(CABIN_SEAN, 1);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_OURANOS, 1));
+  Engine_ActorSetAnimation(QUARTERS_KAJA, 3);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTH + FACING_STEP, 0);
+  Actor_SetAttachedEffect(QUARTERS_SECOND_GUIDE, 0x102);
+  Engine_ActorJump(QUARTERS_SECOND_GUIDE, 2, 20);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  Engine_ActorSetAnimationAndWait(QUARTERS_KAJA, 3);
+  seanSpeech = SPEAKER(QUARTERS_SEAN, 1);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  TolbiShipInteriors_Turn(QUARTERS_OURANOS, FACING_NORTH + FACING_STEP);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SEAN, 1);
   TolbiShipInteriors_Say(seanSpeech);
-  Actor_ShowEmote(CABIN_CAPTAIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Engine_ActorSetAnimation(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Engine_ActorJump(CABIN_SECOND_GUIDE, 4, 0);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  Engine_ActorSetAnimation(CABIN_KAJA, 3);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 1);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_OURANOS, 1));
-  Actor_ShowEmote(CABIN_CAPTAIN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(CABIN_CAPTAIN, 0);
-  Engine_ActorStartRepeatedMotion(CABIN_OURANOS, 2);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | CABIN_OURANOS, 0, 40);
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(CABIN_KAJA, 0x5000, 20);
-  Engine_ActorStartRepeatedMotion(CABIN_KAJA, 2);
-  Event_ShowMessageAndWait(CABIN_KAJA, 0, 20);
-  Engine_ActorSetAnimation(CABIN_OURANOS, 3);
+  Actor_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Engine_ActorSetAnimation(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Engine_ActorJump(QUARTERS_SECOND_GUIDE, 4, 0);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  Engine_ActorSetAnimation(QUARTERS_KAJA, 3);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 1);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_OURANOS, 1));
+  Actor_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessage(QUARTERS_CAPTAIN, 0);
+  Engine_ActorStartRepeatedMotion(QUARTERS_OURANOS, 2);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | QUARTERS_OURANOS, 0, 40);
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirection(QUARTERS_KAJA, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorStartRepeatedMotion(QUARTERS_KAJA, 2);
+  Event_ShowMessageAndWait(QUARTERS_KAJA, 0, 20);
+  Engine_ActorSetAnimation(QUARTERS_OURANOS, 3);
   Engine_EventWait(20);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Engine_ActorStartRepeatedMotion(CABIN_SEAN, 2);
-  ouranosSpeech = SPEAKER(CABIN_OURANOS, 4);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Engine_ActorStartRepeatedMotion(QUARTERS_SEAN, 2);
+  ouranosSpeech = SPEAKER(QUARTERS_OURANOS, 4);
   TolbiShipInteriors_Say(seanSpeech);
-  Actor_FaceDirection(CABIN_OURANOS, 0x5000, 20);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_SOUTH + FACING_STEP, 20);
   TolbiShipInteriors_Say(ouranosSpeech);
-  Engine_ActorStartRepeatedMotion(CABIN_SEAN, 2);
+  Engine_ActorStartRepeatedMotion(QUARTERS_SEAN, 2);
   TolbiShipInteriors_Say(seanSpeech);
-  Engine_ActorSetAnimationAndWait(CABIN_OURANOS, 3);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 1);
+  Engine_ActorSetAnimationAndWait(QUARTERS_OURANOS, 3);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 1);
   TolbiShipInteriors_Say(ouranosSpeech);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ActorRunRepeatedMotion(CABIN_KAJA, 1);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Actor_ShowEmote(CABIN_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(CABIN_OURANOS, 0xd000, 20);
-  Engine_ActorSetAnimation(CABIN_KAJA, 3);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Actor_ShowEmote(CABIN_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  Engine_ActorStartRepeatedMotion(CABIN_OURANOS, 2);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_OURANOS, 1));
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
-  Engine_ActorSetAnimation(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Actor_FaceDirection(CABIN_KAJA, 0xd000, 40);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Engine_ActorRunRepeatedMotion(CABIN_SEAN, 1);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 1);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Actor_ShowEmote(QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorSetAnimation(QUARTERS_KAJA, 3);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Actor_ShowEmote(QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  Engine_ActorStartRepeatedMotion(QUARTERS_OURANOS, 2);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_OURANOS, 1));
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
+  Engine_ActorSetAnimation(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Actor_FaceDirection(QUARTERS_KAJA, FACING_NORTH + FACING_STEP, 40);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SEAN, 1);
   Engine_EventWait(20);
   TolbiShipInteriors_Say(seanSpeech);
-  Actor_FaceDirection(CABIN_OURANOS, 0x5000, 0);
-  Actor_FaceDirection(CABIN_KAJA, 0x5000, 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, FACING_WEST, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_KAJA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(CABIN_CREWMAN, 0xb000, 40);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 1);
+  Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP, 40);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 1);
   TolbiShipInteriors_Say(ouranosSpeech);
-  Engine_ActorSetAnimation(CABIN_SEAN, 3);
+  Engine_ActorSetAnimation(QUARTERS_SEAN, 3);
   Event_ShowMessageAndWait(seanSpeech, 0, 20);
-  Engine_ActorRunRepeatedMotion(CABIN_KAJA, 2);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Engine_ActorSetAnimation(CABIN_SEAN, 3);
+  Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 2);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Engine_ActorSetAnimation(QUARTERS_SEAN, 3);
   TolbiShipInteriors_Say(seanSpeech);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Actor_FaceDirection(CABIN_CAPTAIN, FACING_WEST, 20);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_WEST, 20);
   Event_PlayCue(MUS_SILENCE);
-  Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
-  captainSpeech = SPEAKER(CABIN_CAPTAIN, 8);
-  Actor_ShowEmote(CABIN_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
+  captainSpeech = SPEAKER(QUARTERS_CAPTAIN, 8);
+  Actor_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   TolbiShipInteriors_Say(captainSpeech);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(CABIN_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(CABIN_CREWMAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(CABIN_SEAN, 0xd000, 0);
-  Actor_FaceDirection(CABIN_OURANOS, 0xd000, 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, 0xb000, 0);
-  Actor_FaceDirection(CABIN_CREWMAN, 0xb000, 0);
+  Actor_FaceDirection(QUARTERS_SEAN, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
-  Actor_SetAttachedEffect(CABIN_CAPTAIN, 0x102);
-  Engine_ActorJump(CABIN_CAPTAIN, 4, 40);
-  Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
+  Actor_SetAttachedEffect(QUARTERS_CAPTAIN, 0x102);
+  Engine_ActorJump(QUARTERS_CAPTAIN, 4, 40);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
   Event_ShowMessage(captainSpeech, 0);
-  Actor_SetSpeed(CABIN_CAPTAIN, PIXELS(8) / 5, PIXELS(4) / 5);
-  Actor_WalkToAndWait(CABIN_CAPTAIN, 475, 598);
-  Actor_FaceDirection(CABIN_CAPTAIN, FACING_WEST, 0);
-  Actor_SetSpeed(CABIN_KAJA, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkToAndWait(CABIN_KAJA, 462, 618);
-  TolbiShipInteriors_Turn(CABIN_KAJA, 0xb000);
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Engine_ActorStartRepeatedMotion(CABIN_KAJA, 2);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_KAJA, 8));
-  Actor_ShowEmote(CABIN_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  TolbiShipInteriors_Say(CABIN_OURANOS);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Actor_SetSpeed(QUARTERS_CAPTAIN, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkToAndWait(QUARTERS_CAPTAIN, 475, 598);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_WEST, 0);
+  Actor_SetSpeed(QUARTERS_KAJA, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(QUARTERS_KAJA, 462, 618);
+  TolbiShipInteriors_Turn(QUARTERS_KAJA, FACING_NORTHWEST + FACING_STEP);
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Engine_ActorStartRepeatedMotion(QUARTERS_KAJA, 2);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 8));
+  Actor_ShowEmote(QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  TolbiShipInteriors_Say(QUARTERS_OURANOS);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   TolbiShipInteriors_Say(seanSpeech);
-  Actor_ShowEmote(CABIN_CAPTAIN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  Engine_ActorJump(CABIN_CAPTAIN, 4, 0);
-  Actor_FaceDirection(CABIN_CAPTAIN, 0x5000, 20);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
+  Actor_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  Engine_ActorJump(QUARTERS_CAPTAIN, 4, 0);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP, 20);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
   Event_PlayCue(MUS_028);
-  Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x3000);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 4);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  // Settle the passengers into their positions for the next cabin visit.
-  Actor_WalkToAndWait(CABIN_SEAN, 444, 628);
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0xd000);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_SEAN, 9));
-  Actor_FaceDirection(CABIN_CAPTAIN, 0x5000, 20);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Actor_ShowEmote(CABIN_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_OURANOS, 1));
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-  Engine_ActorStartRepeatedMotion(CABIN_SECOND_GUIDE, 2);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  TolbiShipInteriors_Turn(CABIN_KAJA, 0x3000);
-  Engine_ActorSetAnimationAndWait(CABIN_KAJA, 4);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_KAJA, 1));
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Actor_FaceDirection(CABIN_OURANOS, FACING_EAST, 0);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Camera_SetSpeed(0x13333, 0x2666);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 4);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  // Settle the passengers where the next visit to the captain's quarters needs
+  // them.
+  Actor_WalkToAndWait(QUARTERS_SEAN, 444, 628);
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, FACING_NORTH + FACING_STEP);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_SEAN, 9));
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Actor_ShowEmote(QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_OURANOS, 1));
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+  Engine_ActorStartRepeatedMotion(QUARTERS_SECOND_GUIDE, 2);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  TolbiShipInteriors_Turn(QUARTERS_KAJA, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(QUARTERS_KAJA, 4);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 1));
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, 0);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_EAST, 0);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Camera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(464), -1, PIXELS(680),
                                        0x10000000);
-  Engine_ActorRunRepeatedMotion(CABIN_CREWMAN, 1);
-  TolbiShipInteriors_Turn(CABIN_CREWMAN, 0);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CREWMAN, 1);
+  TolbiShipInteriors_Turn(QUARTERS_CREWMAN, 0);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_ShowEmote(CABIN_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
-  Actor_FaceDirection(CABIN_CREWMAN, FACING_WEST, 20);
-  Actor_ShowEmote(CABIN_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ActorJump(CABIN_CREWMAN, 4, 40);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
-  Engine_ActorRunRepeatedMotion(CABIN_CREWMAN, 1);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
-  Actor_SetSpeed(CABIN_SECOND_GUIDE, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkTo(CABIN_SECOND_GUIDE, 438, 659);
-  Actor_FaceDirection(CABIN_CAPTAIN, FACING_WEST, 0);
-  Actor_FaceDirection(CABIN_KAJA, 0xb000, 0);
-  Actor_FaceDirection(CABIN_SEAN, 0x3000, 0);
-  Actor_FaceDirection(CABIN_OURANOS, 0xb000, 0);
+  Actor_ShowEmote(QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
+  Actor_FaceDirection(QUARTERS_CREWMAN, FACING_WEST, 20);
+  Actor_ShowEmote(QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ActorJump(QUARTERS_CREWMAN, 4, 40);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CREWMAN, 1);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
+  Actor_SetSpeed(QUARTERS_SECOND_GUIDE, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkTo(QUARTERS_SECOND_GUIDE, 438, 659);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_WEST, 0);
+  Actor_FaceDirection(QUARTERS_KAJA, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP, 0);
   Event_PlayCue(MUS_017);
-  Actor_SetSpeed(CABIN_CREWMAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkToAndWait(CABIN_CREWMAN, 488, 686);
-  Actor_FaceDirection(CABIN_CREWMAN, 0xb000, 0);
-  Engine_ActorWaitForMove(CABIN_SECOND_GUIDE);
-  Engine_ActorSetAnimation(CABIN_SECOND_GUIDE, 1);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, 0xd000, 0);
+  Actor_SetSpeed(QUARTERS_CREWMAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(QUARTERS_CREWMAN, 488, 686);
+  Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP, 0);
+  Engine_ActorWaitForMove(QUARTERS_SECOND_GUIDE);
+  Engine_ActorSetAnimation(QUARTERS_SECOND_GUIDE, 1);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTH + FACING_STEP, 0);
   Audio_PlayCueFromEventWork();
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 
-/// In the captain's cabin at Kalay, using the Anchor Charm on the captain: he
-/// has his lucky anchor back, Sean names the party to guard the oarsmen, and
+/// In the captain's quarters at Kalay, using the Anchor Charm on the captain:
+/// he has his lucky anchor back, Sean names the party to guard the oarsmen, and
 /// the party agrees to protect the ship
 /// (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
 static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
@@ -2075,85 +1881,87 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   // Let the captain explain why the anchor matters and ask the party to help.
   Engine_EventBegin();
   Field_EndBusyAndReveal();
-  Actor_FaceActor(CABIN_CAPTAIN, ACTOR_PARTY_LEADER, 0);
-  Actor_ShowEmote(CABIN_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  captainSpeech = SPEAKER(CABIN_CAPTAIN, 1);
-  Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 3);
+  Actor_FaceActor(QUARTERS_CAPTAIN, ACTOR_PARTY_LEADER, 0);
+  Actor_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  captainSpeech = SPEAKER(QUARTERS_CAPTAIN, 1);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 3);
   Engine_EventSetMessage(MsgTolbiShipItsMyLuckyAnchor);
   TolbiShipInteriors_Say(captainSpeech);
-  Engine_ActorStartRepeatedMotion(CABIN_KAJA, 1);
-  Engine_ActorStartRepeatedMotion(CABIN_SEAN, 1);
-  Engine_ActorStartRepeatedMotion(CABIN_OURANOS, 1);
-  Engine_ActorStartRepeatedMotion(CABIN_SECOND_GUIDE, 1);
-  Engine_ActorRunRepeatedMotion(CABIN_CREWMAN, 1);
-  Actor_FaceDirection(CABIN_KAJA, 0xd000, 0);
-  Actor_FaceDirection(CABIN_SEAN, 0xd000, 0);
-  Actor_FaceDirection(CABIN_OURANOS, 0xd000, 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, 0xd000, 0);
-  Actor_FaceDirection(CABIN_CREWMAN, 0xb000, 20);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
+  Engine_ActorStartRepeatedMotion(QUARTERS_KAJA, 1);
+  Engine_ActorStartRepeatedMotion(QUARTERS_SEAN, 1);
+  Engine_ActorStartRepeatedMotion(QUARTERS_OURANOS, 1);
+  Engine_ActorStartRepeatedMotion(QUARTERS_SECOND_GUIDE, 1);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CREWMAN, 1);
+  Actor_FaceDirection(QUARTERS_KAJA, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SEAN, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
   Event_OpenMessage(captainSpeech, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorRunRepeatedMotion(CABIN_KAJA, 2);
-    TolbiShipInteriors_Say(SPEAKER(CABIN_KAJA, 9));
-    Actor_ShowEmote(CABIN_CAPTAIN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+    Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 2);
+    TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 9));
+    Actor_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
     TolbiShipInteriors_Say(captainSpeech);
     gEventWork->message += 2;
   } else {
     gEventWork->message += 2;
-    Engine_ActorRunRepeatedMotion(CABIN_KAJA, 1);
-    TolbiShipInteriors_Say(SPEAKER(CABIN_KAJA, 9));
-    Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
-    TolbiShipInteriors_Say(SPEAKER(CABIN_CAPTAIN, 9));
+    Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 1);
+    TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 9));
+    Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
+    TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 9));
   }
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Camera_SetSpeed(0xcccc, 0x1999);
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(472), -1, PIXELS(636), 1);
-  Actor_SetSpeed(CABIN_SECOND_GUIDE, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkToAndWait(CABIN_SECOND_GUIDE, 472, 662);
-  TolbiShipInteriors_Turn(CABIN_SECOND_GUIDE, 0xb000);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x5000);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
-  Engine_ActorSetAnimationAndWait(CABIN_KAJA, 3);
-  Actor_FaceDirection(CABIN_OURANOS, FACING_EAST, 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, FACING_WEST, 20);
-  Engine_ActorSetAnimation(CABIN_OURANOS, 3);
-  Engine_ActorSetAnimationAndWait(CABIN_SECOND_GUIDE, 3);
+  Actor_SetSpeed(QUARTERS_SECOND_GUIDE, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(QUARTERS_SECOND_GUIDE, 472, 662);
+  TolbiShipInteriors_Turn(QUARTERS_SECOND_GUIDE,
+                          FACING_NORTHWEST + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
+  Engine_ActorSetAnimationAndWait(QUARTERS_KAJA, 3);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_EAST, 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_WEST, 20);
+  Engine_ActorSetAnimation(QUARTERS_OURANOS, 3);
+  Engine_ActorSetAnimationAndWait(QUARTERS_SECOND_GUIDE, 3);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(CABIN_SEAN, 1);
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0x3000);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | CABIN_SEAN, 0, 20);
-  Actor_FaceDirection(CABIN_OURANOS, 0xb000, 20);
-  Actor_ShowEmote(CABIN_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  TolbiShipInteriors_Say(CABIN_OURANOS);
-  seanSpeech = SPEAKER(CABIN_SEAN, 9);
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0xd000);
-  Engine_ActorSetAnimation(CABIN_SEAN, 4);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SEAN, 1);
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | QUARTERS_SEAN, 0, 20);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_ShowEmote(QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  TolbiShipInteriors_Say(QUARTERS_OURANOS);
+  seanSpeech = SPEAKER(QUARTERS_SEAN, 9);
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, FACING_NORTH + FACING_STEP);
+  Engine_ActorSetAnimation(QUARTERS_SEAN, 4);
   TolbiShipInteriors_Say(seanSpeech);
-  TolbiShipInteriors_Turn(CABIN_SECOND_GUIDE, 0xb000);
-  Engine_ActorRunRepeatedMotion(CABIN_SECOND_GUIDE, 1);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  Actor_ShowEmote(CABIN_KAJA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  TolbiShipInteriors_Turn(CABIN_KAJA, 0x3000);
-  Engine_ActorRunRepeatedMotion(CABIN_KAJA, 1);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Engine_ActorSetAnimationAndWait(CABIN_SEAN, 3);
+  TolbiShipInteriors_Turn(QUARTERS_SECOND_GUIDE,
+                          FACING_NORTHWEST + FACING_STEP);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SECOND_GUIDE, 1);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  Actor_ShowEmote(QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  TolbiShipInteriors_Turn(QUARTERS_KAJA, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 1);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Engine_ActorSetAnimationAndWait(QUARTERS_SEAN, 3);
   TolbiShipInteriors_Say(seanSpeech);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 2);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0xd000);
-  Engine_ActorSetAnimationAndWait(CABIN_SEAN, 3);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 2);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, FACING_NORTH + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(QUARTERS_SEAN, 3);
   TolbiShipInteriors_Say(seanSpeech);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 2);
-  TolbiShipInteriors_Turn(CABIN_OURANOS, 0xb000);
-  TolbiShipInteriors_Say(CABIN_OURANOS);
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 2);
+  TolbiShipInteriors_Turn(QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_OURANOS);
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, 0);
   TolbiShipInteriors_Say(seanSpeech);
-  Actor_FaceDirection(CABIN_CAPTAIN, 0x3000, 0);
-  Actor_FaceDirection(CABIN_KAJA, FACING_EAST, 0);
-  Actor_FaceDirection(CABIN_OURANOS, 0xd000, 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, 0xd000, 0);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_KAJA, FACING_EAST, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTH + FACING_STEP, 0);
   // Bring the rest of the party out beside Isaac for the agreement.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 486, 608);
@@ -2179,107 +1987,107 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(MIA, 486, 656);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
-  Actor_ShowEmote(CABIN_SEAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Actor_ShowEmote(QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   TolbiShipInteriors_Say(seanSpeech);
-  Engine_ActorRunRepeatedMotion(CABIN_KAJA, 1);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_KAJA, 1));
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x5000);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x3000);
-  Event_OpenMessage(CABIN_CAPTAIN, 0);
+  Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 1);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 1));
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_SOUTHEAST + FACING_STEP);
+  Event_OpenMessage(QUARTERS_CAPTAIN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
-    Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
-    TolbiShipInteriors_Say(CABIN_CAPTAIN);
-    Engine_ActorSetAnimationAndWait(CABIN_SEAN, 3);
+    Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
+    TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+    Engine_ActorSetAnimationAndWait(QUARTERS_SEAN, 3);
     TolbiShipInteriors_Say(seanSpeech);
-    Engine_ActorStartRepeatedMotion(CABIN_KAJA, 1);
-    Event_ShowMessageAndWait(SPEAKER(CABIN_KAJA, 9), 0, 40);
+    Engine_ActorStartRepeatedMotion(QUARTERS_KAJA, 1);
+    Event_ShowMessageAndWait(SPEAKER(QUARTERS_KAJA, 9), 0, 40);
     gEventWork->message += 1;
   } else {
     gEventWork->message += 3;
-    Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 3);
-    Event_ShowMessageAndWait(CABIN_CAPTAIN, 0, 40);
+    Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 3);
+    Event_ShowMessageAndWait(QUARTERS_CAPTAIN, 0, 40);
   }
-  Engine_ActorRunRepeatedMotion(CABIN_SECOND_GUIDE, 1);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SECOND_GUIDE, 1);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
   value = 176;
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x5000);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Engine_ActorRunRepeatedMotion(CABIN_SECOND_GUIDE, 1);
-  TolbiShipInteriors_Turn(CABIN_SECOND_GUIDE, (value << 8));
-  Event_ShowMessageAndWait(CABIN_SECOND_GUIDE, 0, 20);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
-  Actor_SetSpeed(CABIN_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
-  captainAboveSpeech = SPEAKER(CABIN_CAPTAIN, 4);
-  Actor_WalkToAndWait(CABIN_CAPTAIN, 472, 632);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SECOND_GUIDE, 1);
+  TolbiShipInteriors_Turn(QUARTERS_SECOND_GUIDE, (value << 8));
+  Event_ShowMessageAndWait(QUARTERS_SECOND_GUIDE, 0, 20);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
+  Actor_SetSpeed(QUARTERS_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
+  captainAboveSpeech = SPEAKER(QUARTERS_CAPTAIN, 4);
+  Actor_WalkToAndWait(QUARTERS_CAPTAIN, 472, 632);
   TolbiShipInteriors_Say(captainAboveSpeech);
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-  Engine_ActorStartRepeatedMotion(CABIN_SECOND_GUIDE, 2);
-  TolbiShipInteriors_Say(CABIN_SECOND_GUIDE);
-  Engine_ActorSetAnimation(CABIN_CAPTAIN, 4);
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  Engine_ActorStartRepeatedMotion(QUARTERS_SECOND_GUIDE, 2);
+  TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
+  Engine_ActorSetAnimation(QUARTERS_CAPTAIN, 4);
   Event_ShowMessageAndWait(captainAboveSpeech, 0, 40);
-  Engine_ActorRunRepeatedMotion(CABIN_OURANOS, 1);
-  TolbiShipInteriors_Turn(CABIN_OURANOS, (value << 8));
-  TolbiShipInteriors_Say(SPEAKER(CABIN_OURANOS, 1));
-  Actor_ShowEmote(CABIN_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  Actor_SetSpeed(CABIN_CREWMAN, PIXELS(12) / 5, PIXELS(6) / 5);
-  Engine_ActorJump(CABIN_CREWMAN, 2, 0);
-  Actor_WalkToAndWait(CABIN_CREWMAN, 462, 674);
-  TolbiShipInteriors_Turn(CABIN_CREWMAN, (value << 8));
-  Engine_ActorStartRepeatedMotion(CABIN_CREWMAN, 2);
-  TolbiShipInteriors_Say(CABIN_CREWMAN);
-  TolbiShipInteriors_Turn(CABIN_KAJA, 0x5000);
-  Engine_ActorSetAnimationAndWait(CABIN_KAJA, 4);
-  TolbiShipInteriors_Say(CABIN_KAJA);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
+  Engine_ActorRunRepeatedMotion(QUARTERS_OURANOS, 1);
+  TolbiShipInteriors_Turn(QUARTERS_OURANOS, (value << 8));
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_OURANOS, 1));
+  Actor_ShowEmote(QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Actor_SetSpeed(QUARTERS_CREWMAN, PIXELS(12) / 5, PIXELS(6) / 5);
+  Engine_ActorJump(QUARTERS_CREWMAN, 2, 0);
+  Actor_WalkToAndWait(QUARTERS_CREWMAN, 462, 674);
+  TolbiShipInteriors_Turn(QUARTERS_CREWMAN, (value << 8));
+  Engine_ActorStartRepeatedMotion(QUARTERS_CREWMAN, 2);
+  TolbiShipInteriors_Say(QUARTERS_CREWMAN);
+  TolbiShipInteriors_Turn(QUARTERS_KAJA, FACING_SOUTH + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(QUARTERS_KAJA, 4);
+  TolbiShipInteriors_Say(QUARTERS_KAJA);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(captainAboveSpeech);
-  Actor_ShowEmote(CABIN_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessageAndWait(CABIN_SECOND_GUIDE, 0, 40);
-  TolbiShipInteriors_Turn(CABIN_KAJA, 0x3000);
-  Engine_ActorStartRepeatedMotion(CABIN_KAJA, 2);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_KAJA, 1));
-  TolbiShipInteriors_Turn(CABIN_SEAN, 0);
-  Actor_FaceDirection(CABIN_CAPTAIN, FACING_WEST, 0);
-  Actor_FaceDirection(CABIN_KAJA, 0x5000, 0);
-  Actor_FaceDirection(CABIN_OURANOS, (value << 8), 0);
-  Actor_FaceDirection(CABIN_SECOND_GUIDE, (value << 8), 0);
-  Actor_FaceDirection(CABIN_CREWMAN, (value << 8), 20);
-  Engine_ActorRunRepeatedMotion(CABIN_SEAN, 1);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | CABIN_SEAN, 0, 20);
-  Actor_ShowEmote(CABIN_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0xd000);
-  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | CABIN_CAPTAIN, 0);
+  Actor_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessageAndWait(QUARTERS_SECOND_GUIDE, 0, 40);
+  TolbiShipInteriors_Turn(QUARTERS_KAJA, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorStartRepeatedMotion(QUARTERS_KAJA, 2);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 1));
+  TolbiShipInteriors_Turn(QUARTERS_SEAN, 0);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_WEST, 0);
+  Actor_FaceDirection(QUARTERS_KAJA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(QUARTERS_OURANOS, (value << 8), 0);
+  Actor_FaceDirection(QUARTERS_SECOND_GUIDE, (value << 8), 0);
+  Actor_FaceDirection(QUARTERS_CREWMAN, (value << 8), 20);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SEAN, 1);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | QUARTERS_SEAN, 0, 20);
+  Actor_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_NORTH + FACING_STEP);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | QUARTERS_CAPTAIN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
-    TolbiShipInteriors_Say(SPEAKER(CABIN_CAPTAIN, 1));
+    Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
+    TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 1));
     gEventWork->message += 1;
   } else {
     gEventWork->message += 1;
-    TolbiShipInteriors_Say(SPEAKER(CABIN_CAPTAIN, 1));
+    TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 1));
   }
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_CAPTAIN, 1));
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x8000);
-  TolbiShipInteriors_Say(SPEAKER(CABIN_CAPTAIN, 4));
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 1));
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_WEST);
+  TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 4));
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 0, 0);
-  Engine_ActorSetAnimation(CABIN_SEAN, 3);
-  Engine_ActorSetAnimation(CABIN_OURANOS, 3);
-  Engine_ActorSetAnimation(CABIN_KAJA, 3);
-  Engine_ActorStartRepeatedMotion(CABIN_CREWMAN, 2);
-  Engine_ActorRunRepeatedMotion(CABIN_SECOND_GUIDE, 2);
+  Engine_ActorSetAnimation(QUARTERS_SEAN, 3);
+  Engine_ActorSetAnimation(QUARTERS_OURANOS, 3);
+  Engine_ActorSetAnimation(QUARTERS_KAJA, 3);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CREWMAN, 2);
+  Engine_ActorRunRepeatedMotion(QUARTERS_SECOND_GUIDE, 2);
   Engine_EventWait(20);
   // Send the crew away and merge the party's separate scene actors again.
-  action = gTolbiShipInteriors_LeaveCabin;
-  Actor_SetActionScript(CABIN_CREWMAN, action);
+  action = gTolbiShipInteriors_LeaveCaptainsQuarters;
+  Actor_SetActionScript(QUARTERS_CREWMAN, action);
   Engine_EventWait(4);
-  Actor_SetActionScript(CABIN_OURANOS, action);
+  Actor_SetActionScript(QUARTERS_OURANOS, action);
   Engine_EventWait(4);
-  Actor_SetActionScript(CABIN_SEAN, action);
+  Actor_SetActionScript(QUARTERS_SEAN, action);
   Engine_EventWait(4);
-  Actor_SetActionScript(CABIN_KAJA, action);
+  Actor_SetActionScript(QUARTERS_KAJA, action);
   Engine_ActorSetAnimation(MIA, ANIM_WALK);
   actor = Object_GetById(IVAN);
   if (actor != 0) {
@@ -2301,9 +2109,9 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Actor_SetActionScript(CABIN_SECOND_GUIDE, action);
-  Actor_WalkToAndWait(CABIN_CAPTAIN, 456, 648);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0);
+  Actor_SetActionScript(QUARTERS_SECOND_GUIDE, action);
+  Actor_WalkToAndWait(QUARTERS_CAPTAIN, 456, 648);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, 0);
   PartyInventory_Discard(ITEM_ANCHOR_CHARM);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED);
   Engine_EventEnd();
@@ -2342,7 +2150,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
         Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Engine_ActorSetChildValue(CABIN_SECOND_GUIDE, 2);
+      Engine_ActorSetChildValue(QUARTERS_SECOND_GUIDE, 2);
     }
     break;
   }
@@ -2355,7 +2163,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     TolbiShipInteriors_SetUpRowingDeck();
     break;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
-    TolbiShipInteriors_SetUpCabin();
+    TolbiShipInteriors_SetUpCaptainsQuarters();
     break;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
@@ -2454,7 +2262,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     }
     break;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND:
-    TolbiShipInteriors_ShowCabinBeforeIsland();
+    TolbiShipInteriors_ShowCaptainsQuartersBeforeIsland();
     break;
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -2477,8 +2285,9 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   return 0;
 }
 
-/// Restores the cabin's actors after the anchor and departure conversations.
-static void TolbiShipInteriors_SetUpCabin(void) {
+/// Restores the captain's quarters's actors after the anchor and departure
+/// conversations.
+static void TolbiShipInteriors_SetUpCaptainsQuarters(void) {
   struct FieldActor *actor;
   struct FieldActor *other;
   s32 done;
@@ -2498,37 +2307,41 @@ static void TolbiShipInteriors_SetUpCabin(void) {
     return;
   }
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND)) {
-    actor = Object_GetById(CABIN_KAJA);
-    TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_CABIN_CREW, 0, 0);
-    TolbiShipInteriors_PlaceActor(CABIN_CAPTAIN, 456, 652, 0);
+    actor = Object_GetById(QUARTERS_KAJA);
+    TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
+    TolbiShipInteriors_PlaceActor(QUARTERS_CAPTAIN, 456, 652, 0);
     x = 0x1e0;
-    TolbiShipInteriors_PlaceActor(CABIN_KAJA, x, 600, 0xb000);
-    Actor_SetSpeed(CABIN_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
+    TolbiShipInteriors_PlaceActor(QUARTERS_KAJA, x, 600,
+                                  FACING_NORTHWEST + FACING_STEP);
+    Actor_SetSpeed(QUARTERS_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
     actor->work = done;
     zero = 0;
     actor->riseEnabled = zero;
     actor->collisionFlags |= 128;
-    actor->update = TolbiShipInteriors_PaceCabin;
-    other = Object_GetById(CABIN_CAPTAIN);
+    actor->update = TolbiShipInteriors_PaceCaptainsQuarters;
+    other = Object_GetById(QUARTERS_CAPTAIN);
     other->riseCounter = zero;
     other->update = TolbiShipInteriors_WatchPacer;
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      TolbiShipInteriors_PlaceActor(ACTOR_PARTY_LEADER, x, 666, 0xa000);
+      TolbiShipInteriors_PlaceActor(ACTOR_PARTY_LEADER, x, 666,
+                                    FACING_NORTHWEST);
     }
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF)) {
-    TolbiShipInteriors_PlaceActor(CABIN_CAPTAIN, 444, 614, 0xd000);
-    TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_CABIN_CREW, 0, 0);
+    TolbiShipInteriors_PlaceActor(QUARTERS_CAPTAIN, 444, 614,
+                                  FACING_NORTH + FACING_STEP);
+    TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
-    TolbiShipInteriors_PlaceActor(CABIN_CAPTAIN, 456, 648, 0);
-    TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_CABIN_CREW, 0, 0);
+    TolbiShipInteriors_PlaceActor(QUARTERS_CAPTAIN, 456, 648, 0);
+    TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL)) {
-    heading = 0xb000;
-    TolbiShipInteriors_PlaceActor(CABIN_CAPTAIN, 475, 598, 0x8000);
-    TolbiShipInteriors_PlaceActor(CABIN_KAJA, 462, 618, heading);
-    Object_GetById(CABIN_SEAN)->facing = 0x3000;
-    Object_GetById(CABIN_OURANOS)->facing = heading;
-    TolbiShipInteriors_PlaceActor(CABIN_SECOND_GUIDE, 438, 659, 0xd000);
-    TolbiShipInteriors_PlaceActor(CABIN_CREWMAN, 488, 688, heading);
+    heading = FACING_NORTHWEST + FACING_STEP;
+    TolbiShipInteriors_PlaceActor(QUARTERS_CAPTAIN, 475, 598, FACING_WEST);
+    TolbiShipInteriors_PlaceActor(QUARTERS_KAJA, 462, 618, heading);
+    Object_GetById(QUARTERS_SEAN)->facing = FACING_SOUTHEAST + FACING_STEP;
+    Object_GetById(QUARTERS_OURANOS)->facing = heading;
+    TolbiShipInteriors_PlaceActor(QUARTERS_SECOND_GUIDE, 438, 659,
+                                  FACING_NORTH + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(QUARTERS_CREWMAN, 488, 688, heading);
   }
 }
 
@@ -2545,17 +2358,21 @@ static void TolbiShipInteriors_SetUpHold(void) {
   }
 
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-    TolbiShipInteriors_PlaceActor(SEA_HOLD_HEAD_GUIDE, 152, 444, 0x3000);
+    TolbiShipInteriors_PlaceActor(SEA_HOLD_HEAD_GUIDE, 152, 444,
+                                  FACING_SOUTHEAST + FACING_STEP);
     Actor_SetActionScript(SEA_HOLD_HEAD_GUIDE,
                           gTolbiShipInteriors_LookAroundScript);
     TolbiShipInteriors_PlaceActor(SEA_HOLD_SWEATING_PASSENGER, 184, 480,
                                   0xb000);
     TolbiShipInteriors_PlaceActor(SEA_HOLD_STARED_AT_PASSENGER, 170, 488,
                                   0xb000);
-    TolbiShipInteriors_PlaceActor(SEA_HOLD_WARRIOR, 136, 488, 0xd000);
-    TolbiShipInteriors_PlaceActor(SEA_HOLD_MUSCLE_ADMIRER, 120, 480, 0xd000);
-    TolbiShipInteriors_PlaceActor(SEA_HOLD_TICKET_GRUMBLER, 184, 526, 0xb000);
-    TolbiShipInteriors_PlaceActor(SEA_HOLD_LADY, 136, 584, 0x8000);
+    TolbiShipInteriors_PlaceActor(SEA_HOLD_WARRIOR, 136, 488,
+                                  FACING_NORTH + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(SEA_HOLD_MUSCLE_ADMIRER, 120, 480,
+                                  FACING_NORTH + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(SEA_HOLD_TICKET_GRUMBLER, 184, 526,
+                                  FACING_NORTHWEST + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(SEA_HOLD_LADY, 136, 584, FACING_WEST);
     Actor_SetActionScript(SEA_HOLD_LADY, gTolbiShipInteriors_Shiver);
     return;
   }
@@ -2647,28 +2464,30 @@ static void TolbiShipInteriors_PlaceFoundActors(s32 gated) {
     return;
   }
   if ((actor = TolbiShipInteriors_FindFirstSetFlag(0, 0)) != 0) {
-    TolbiShipInteriors_PlaceActor(actor, 410, 172, 0xd000);
+    TolbiShipInteriors_PlaceActor(actor, 410, 172, FACING_NORTH + FACING_STEP);
     Engine_ActorSetPosition(ROWING_FIRST_OARSMAN, 0, 0);
   }
   if (gated && !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF)) {
     return;
   }
   if ((actor = TolbiShipInteriors_FindFirstSetFlag(1, 0)) != 0) {
-    TolbiShipInteriors_PlaceActor(actor, 470, 172, 0xb000);
+    TolbiShipInteriors_PlaceActor(actor, 470, 172,
+                                  FACING_NORTHWEST + FACING_STEP);
     Engine_ActorSetPosition(ROWING_FIRST_OARSMAN + 1, 0, 0);
   }
   if (gated && !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED)) {
     return;
   }
   if ((actor = TolbiShipInteriors_FindFirstSetFlag(2, 0)) != 0) {
-    TolbiShipInteriors_PlaceActor(actor, 410, 204, 0xd000);
+    TolbiShipInteriors_PlaceActor(actor, 410, 204, FACING_NORTH + FACING_STEP);
     Engine_ActorSetPosition(ROWING_FIRST_OARSMAN + 2, 0, 0);
   }
   if (gated) {
     return;
   }
   if ((actor = TolbiShipInteriors_FindFirstSetFlag(3, 0)) != 0) {
-    TolbiShipInteriors_PlaceActor(actor, 470, 204, 0xb000);
+    TolbiShipInteriors_PlaceActor(actor, 470, 204,
+                                  FACING_NORTHWEST + FACING_STEP);
     Engine_ActorSetPosition(ROWING_FIRST_OARSMAN + 3, 0, 0);
   }
 }
@@ -2687,12 +2506,15 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_PLACE_FOLLOWERS_AND_MONSTERS, 0, 0);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESET_CAMERA, 1, 0);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(168), 0x1000001);
-  TolbiShipInteriors_PlaceActor(ROWING_KAJA, 440, 164, 0x5000);
-  TolbiShipInteriors_PlaceActor(ROWING_CREWMAN, 428, 190, 0xd000);
-  TolbiShipInteriors_PlaceActor(ROWING_DRUMMER, 452, 190, 0xb000);
+  TolbiShipInteriors_PlaceActor(ROWING_KAJA, 440, 164,
+                                FACING_SOUTH + FACING_STEP);
+  TolbiShipInteriors_PlaceActor(ROWING_CREWMAN, 428, 190,
+                                FACING_NORTH + FACING_STEP);
+  TolbiShipInteriors_PlaceActor(ROWING_DRUMMER, 452, 190,
+                                FACING_NORTHWEST + FACING_STEP);
   Engine_ActorSetAnimation(ROWING_DRUMMER, 1);
   mode = 128;
-  TolbiShipInteriors_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, 0x8000);
+  TolbiShipInteriors_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, FACING_WEST);
   gEventWork->startTransition = (mode << 1);
   Engine_EventOpenScreen();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2707,7 +2529,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   TolbiShipInteriors_Say(ROWING_CREWMAN);
   Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
   TolbiShipInteriors_Say(ROWING_KAJA);
-  TolbiShipInteriors_Turn(ROWING_KAJA, 0xd000);
+  TolbiShipInteriors_Turn(ROWING_KAJA, FACING_NORTH + FACING_STEP);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
@@ -2733,7 +2555,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 60);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
-  Actor_FaceDirection(ROWING_KAJA, 0x5000, 20);
+  Actor_FaceDirection(ROWING_KAJA, FACING_SOUTH + FACING_STEP, 20);
   TolbiShipInteriors_Say(ROWING_KAJA);
   Engine_ActorStartRepeatedMotion(ROWING_DRUMMER, 1);
   Actor_ShowEmote(ROWING_DRUMMER, (mode << 1), 40);
@@ -2771,23 +2593,23 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   Engine_ActorSetAnimationAndWait(ROWING_DRUMMER, 3);
   Engine_EventWait(40);
   Actor_ShowEmote(ROWING_DRUMMER, (mode << 1), 20);
-  TolbiShipInteriors_Turn(ROWING_DRUMMER, 0xb000);
+  TolbiShipInteriors_Turn(ROWING_DRUMMER, FACING_NORTHWEST + FACING_STEP);
   TolbiShipInteriors_Say(ROWING_DRUMMER);
-  TolbiShipInteriors_Turn(ROWING_KAJA, 0x3000);
+  TolbiShipInteriors_Turn(ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP);
   Actor_ShowEmote(ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ROWING_KAJA, 0, 60);
   Actor_ShowEmote(ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
-  TolbiShipInteriors_Turn(ROWING_KAJA, 0xb000);
+  TolbiShipInteriors_Turn(ROWING_KAJA, FACING_NORTHWEST + FACING_STEP);
   Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
   TolbiShipInteriors_Say(ROWING_KAJA);
   TolbiShipInteriors_RunSceneCommand(SHIP_SHOW_PARTY_EMOTE, 2, 80);
-  TolbiShipInteriors_Turn(ROWING_CREWMAN, 0xd000);
+  TolbiShipInteriors_Turn(ROWING_CREWMAN, FACING_NORTH + FACING_STEP);
   Engine_ActorStartRepeatedMotion(ROWING_CREWMAN, 2);
   TolbiShipInteriors_Say(ROWING_CREWMAN);
   Engine_ActorSetAnimationAndWait(ROWING_DRUMMER, 3);
   Engine_ActorStartRepeatedMotion(ROWING_DRUMMER, 2);
   TolbiShipInteriors_Say(ROWING_DRUMMER);
-  TolbiShipInteriors_Turn(ROWING_KAJA, 0x5000);
+  TolbiShipInteriors_Turn(ROWING_KAJA, FACING_SOUTH + FACING_STEP);
   Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
   Engine_ActorRunRepeatedMotion(ROWING_KAJA, 1);
   TolbiShipInteriors_Say(ROWING_KAJA);
@@ -2811,37 +2633,37 @@ static void TolbiShipInteriors_CastOff(void) {
   struct FieldActor *anchorCharm;
 
   Engine_EventBegin();
-  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 0, 1);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
+  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 0, 1);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
   Engine_EventWait(20);
-  Actor_SetSpeed(CABIN_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(CABIN_CAPTAIN, 468, 614);
-  Actor_WalkToAndWait(CABIN_CAPTAIN, 472, 596);
-  Actor_FaceDirection(CABIN_CAPTAIN, FACING_WEST, 20);
-  Engine_ActorJump(CABIN_CAPTAIN, 4, 20);
+  Actor_SetSpeed(QUARTERS_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(QUARTERS_CAPTAIN, 468, 614);
+  Actor_WalkToAndWait(QUARTERS_CAPTAIN, 472, 596);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_WEST, 20);
+  Engine_ActorJump(QUARTERS_CAPTAIN, 4, 20);
   anchorCharm = TolbiShipInteriors_PlaceAnchorCharm();
   Engine_EventWait(20);
   Event_PlayCue(SE_214);
   Engine_ObjectSetScript(anchorCharm, gTolbiShipInteriors_AnchorCharmPulse);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
   Engine_EventWait(20);
-  Actor_WalkToAndWait(CABIN_CAPTAIN, 466, 624);
-  TolbiShipInteriors_Turn(CABIN_CAPTAIN, 0x5000);
-  Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
+  Actor_WalkToAndWait(QUARTERS_CAPTAIN, 466, 624);
+  TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
   Engine_EventSetMessage(MsgTolbiShipCastOff);
-  Event_ShowMessageAndWait(CABIN_CAPTAIN, 0, 20);
+  Event_ShowMessageAndWait(QUARTERS_CAPTAIN, 0, 20);
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 11, 0);
 }
 
 /// Announces departure after a replacement rower has joined the crew.
 static void TolbiShipInteriors_AnnounceDeparture(void) {
   Engine_EventBegin();
-  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 1);
-  Actor_FaceDirection(CABIN_CAPTAIN, 0x5000, 40);
-  Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
+  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 1);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP, 40);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
   Engine_EventSetMessage(MsgTolbiShipWereOff);
-  Event_ShowMessageAndWait(CABIN_CAPTAIN, 0, 20);
+  Event_ShowMessageAndWait(QUARTERS_CAPTAIN, 0, 20);
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 11, 0);
 }
 
@@ -2893,7 +2715,7 @@ static void TolbiShipInteriors_ShowRowing(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_OARS, 0, 0);
   TolbiShipInteriors_InstallRowingDeckActors(0);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCENE, 1, 20);
-  Engine_CameraSetSpeed(0x6666, 0xccc);
+  Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Engine_CameraMoveTo(0x1b80000, -1, 0xb00000, 1);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ROWING_DRUMMER, 7);
@@ -2944,13 +2766,13 @@ static void TolbiShipInteriors_ShowRowing(void) {
 /// Asks the crew about the monsters before returning belowdecks.
 static void TolbiShipInteriors_AskAboutMonsters(void) {
   Engine_EventBegin();
-  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 1);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
+  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 1);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
   Engine_EventWait(10);
-  Actor_FaceDirection(CABIN_CAPTAIN, 0x3000, 20);
-  Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 20);
+  Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
   Engine_EventSetMessage(MsgTolbiShipMonsters);
-  Event_ShowMessageAndWait(CABIN_CAPTAIN, 0, 20);
+  Event_ShowMessageAndWait(QUARTERS_CAPTAIN, 0, 20);
   TolbiShipInteriors_RunSceneCommand(
       SHIP_CLOSE_SCENE,
       TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_SEA_MONSTERS, 0);
@@ -2961,11 +2783,11 @@ static void TolbiShipInteriors_AnnounceTurn(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 1);
-  Engine_ActorRunRepeatedMotion(CABIN_CAPTAIN, 1);
+  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 1);
+  Engine_ActorRunRepeatedMotion(QUARTERS_CAPTAIN, 1);
   Engine_EventSetMessage(MsgTolbiShipImTurning);
-  TolbiShipInteriors_Say(CABIN_CAPTAIN);
-  Actor_FaceDirection(CABIN_CAPTAIN, 0xd000, 40);
+  TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_NORTH + FACING_STEP, 40);
   TolbiShipInteriors_RunSceneCommand(
       SHIP_CLOSE_SCENE,
       TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD, 0);
@@ -3049,8 +2871,8 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     }
     Actor_SetSpeed(rowerId, PIXELS(1), halfStep);
     Actor_WalkToAndWait(rowerId, 448, 168);
-    Actor_FaceDirection(rowerId, 0xb000, 20);
-    Actor_FaceDirection(ROWING_KAJA, 0x3000, 20);
+    Actor_FaceDirection(rowerId, FACING_NORTHWEST + FACING_STEP, 20);
+    Actor_FaceDirection(ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP, 20);
     Engine_ActorSetAnimation(ROWING_KAJA, 3);
     TolbiShipInteriors_Say(ROWING_KAJA);
     Actor_ShowEmote(rowerId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -3060,30 +2882,30 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     Engine_ActorSetAnimationAndWait(rowerId, 3);
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-      Actor_FaceDirection(ROWING_KAJA, 0x3000, 0);
+      Actor_FaceDirection(ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP, 0);
       Actor_WalkToAndWait(rowerId, 470, 204);
-      TolbiShipInteriors_Turn(rowerId, 0xb000);
+      TolbiShipInteriors_Turn(rowerId, FACING_NORTHWEST + FACING_STEP);
     } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
                0) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 422, 154);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-      Actor_FaceDirection(ROWING_KAJA, 0x5000, 0);
+      Actor_FaceDirection(ROWING_KAJA, FACING_SOUTH + FACING_STEP, 0);
       Actor_WalkToAndWait(rowerId, 410, 204);
       leftSeat = 1;
-      TolbiShipInteriors_Turn(rowerId, 0xd000);
+      TolbiShipInteriors_Turn(rowerId, FACING_NORTH + FACING_STEP);
     } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
                0) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-      Actor_FaceDirection(ROWING_KAJA, 0x3000, 0);
+      Actor_FaceDirection(ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP, 0);
       Actor_WalkToAndWait(rowerId, 470, 172);
-      TolbiShipInteriors_Turn(rowerId, 0xb000);
+      TolbiShipInteriors_Turn(rowerId, FACING_NORTHWEST + FACING_STEP);
     } else {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 422, 154);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-      Actor_FaceDirection(ROWING_KAJA, 0x5000, 0);
+      Actor_FaceDirection(ROWING_KAJA, FACING_SOUTH + FACING_STEP, 0);
       Actor_WalkToAndWait(rowerId, 410, 172);
       leftSeat = 1;
-      TolbiShipInteriors_Turn(rowerId, 0xd000);
+      TolbiShipInteriors_Turn(rowerId, FACING_NORTH + FACING_STEP);
     }
     Engine_ActorFaceEachOther(ROWING_KAJA, ACTOR_PARTY_LEADER, 20);
     TolbiShipInteriors_Say(SPEAKER(ROWING_KAJA, 2));
@@ -3314,7 +3136,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     struct FieldActor *actor;
 
     actor = Object_GetById(arg);
-    actor->facing = 0x5000;
+    actor->facing = FACING_SOUTH + FACING_STEP;
   }
     Engine_ActorSetAnimation(arg, 5);
     Object_SetActionById(arg, opt);
@@ -3323,7 +3145,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     struct FieldActor *actor;
 
     actor = Object_GetById(arg);
-    actor->facing = 0x5000;
+    actor->facing = FACING_SOUTH + FACING_STEP;
     actor->scaleX = -Q16_ONE;
   }
     Engine_ActorSetAnimation(arg, 5);
@@ -3333,7 +3155,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     struct FieldActor *actor;
 
     actor = Object_GetById(arg);
-    actor->facing = 0x5000;
+    actor->facing = FACING_SOUTH + FACING_STEP;
   }
     TolbiShipInteriors_PoseSceneActor(arg);
     if (opt == 0) {
@@ -3361,10 +3183,10 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     TolbiShipInteriors_RunSceneCommand(SHIP_RESET_CAMERA, 1, 0);
     TolbiShipInteriors_RunSceneCommand(SHIP_PLACE_FOLLOWERS_AND_MONSTERS, 0, 0);
     TolbiShipInteriors_PlaceFoundActors(0);
-    TolbiShipInteriors_PlaceActor(ACTOR_PARTY_LEADER, 432, 168, 0x4000);
-    TolbiShipInteriors_PlaceActor(GARET, 448, 168, 0x4000);
-    TolbiShipInteriors_PlaceActor(IVAN, 424, 152, 0x4000);
-    TolbiShipInteriors_PlaceActor(MIA, 458, 152, 0x4000);
+    TolbiShipInteriors_PlaceActor(ACTOR_PARTY_LEADER, 432, 168, FACING_SOUTH);
+    TolbiShipInteriors_PlaceActor(GARET, 448, 168, FACING_SOUTH);
+    TolbiShipInteriors_PlaceActor(IVAN, 424, 152, FACING_SOUTH);
+    TolbiShipInteriors_PlaceActor(MIA, 458, 152, FACING_SOUTH);
     break;
   case SHIP_RESTORE_ROWING_DECK_POSES:
     if (arg != 0) {
@@ -3372,7 +3194,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
 
       Engine_ActorSetAnimation(ROWING_FIRST_OARSMAN + 3, 1);
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 3);
-      actor->facing = 0x3000;
+      actor->facing = FACING_SOUTHEAST + FACING_STEP;
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 3);
       actor->scaleX = Q16_ONE;
     }
@@ -3381,18 +3203,18 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
 
       Engine_ActorSetAnimation(ROWING_FIRST_OARSMAN + 4, 1);
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 4);
-      actor->facing = 0x5000;
+      actor->facing = FACING_SOUTH + FACING_STEP;
       Engine_ActorSetAnimation(ROWING_FIRST_OARSMAN + 5, 1);
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 5);
-      actor->facing = 0x3000;
+      actor->facing = FACING_SOUTHEAST + FACING_STEP;
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 5);
       actor->scaleX = Q16_ONE;
       Engine_ActorSetAnimation(ROWING_FIRST_OARSMAN + 6, 1);
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 6);
-      actor->facing = 0x5000;
+      actor->facing = FACING_SOUTH + FACING_STEP;
       Engine_ActorSetAnimation(ROWING_FIRST_OARSMAN + 7, 1);
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 7);
-      actor->facing = 0x3000;
+      actor->facing = FACING_SOUTHEAST + FACING_STEP;
       actor = Object_GetById(ROWING_FIRST_OARSMAN + 7);
       actor->scaleX = Q16_ONE;
     }
@@ -3406,12 +3228,17 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     Actor_SetPosition(ROWING_FIRST_OAR + 7, PIXELS(470), PIXELS(316));
     Engine_TaskWait(1);
     if (arg != 0) {
-      Actor_FaceDirection(ROWING_FIRST_OARSMAN + 3, 0xb000, 0);
+      Actor_FaceDirection(ROWING_FIRST_OARSMAN + 3,
+                          FACING_NORTHWEST + FACING_STEP, 0);
     }
-    Actor_FaceDirection(ROWING_FIRST_OARSMAN + 4, 0xd000, 0);
-    Actor_FaceDirection(ROWING_FIRST_OARSMAN + 5, 0xb000, 0);
-    Actor_FaceDirection(ROWING_FIRST_OARSMAN + 6, 0xd000, 0);
-    TolbiShipInteriors_Turn(ROWING_FIRST_OARSMAN + 7, 0xb000);
+    Actor_FaceDirection(ROWING_FIRST_OARSMAN + 4, FACING_NORTH + FACING_STEP,
+                        0);
+    Actor_FaceDirection(ROWING_FIRST_OARSMAN + 5,
+                        FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ROWING_FIRST_OARSMAN + 6, FACING_NORTH + FACING_STEP,
+                        0);
+    TolbiShipInteriors_Turn(ROWING_FIRST_OARSMAN + 7,
+                            FACING_NORTHWEST + FACING_STEP);
     break;
   case SHIP_RESTORE_ROWER_POSE: {
     struct FieldActor *actor;
@@ -3419,28 +3246,29 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     actor = Object_GetById(arg);
     Engine_ActorSetAnimation(arg, 1);
     if (opt != 0) {
-      actor->facing = 0x3000;
+      actor->facing = FACING_SOUTHEAST + FACING_STEP;
     } else {
-      actor->facing = 0x5000;
+      actor->facing = FACING_SOUTH + FACING_STEP;
     }
     actor->scaleX = Q16_ONE;
   } break;
-  case SHIP_HIDE_CABIN_CREW:
-    Actor_SetPosition(CABIN_KAJA, 0, 0);
-    Actor_SetPosition(CABIN_SEAN, 0, 0);
-    Actor_SetPosition(CABIN_OURANOS, 0, 0);
-    Actor_SetPosition(CABIN_SECOND_GUIDE, 0, 0);
-    Actor_SetPosition(CABIN_CREWMAN, 0, 0);
+  case SHIP_HIDE_QUARTERS_CREW:
+    Actor_SetPosition(QUARTERS_KAJA, 0, 0);
+    Actor_SetPosition(QUARTERS_SEAN, 0, 0);
+    Actor_SetPosition(QUARTERS_OURANOS, 0, 0);
+    Actor_SetPosition(QUARTERS_SECOND_GUIDE, 0, 0);
+    Actor_SetPosition(QUARTERS_CREWMAN, 0, 0);
     break;
   case SHIP_HIDE_OURANOS_AND_SEAN:
     Actor_SetPosition(HOLD_SEAN, 0, 0);
     Actor_SetPosition(HOLD_OURANOS, 0, 0);
     break;
-  case SHIP_SETUP_CAPTAINS_CABIN:
+  case SHIP_SETUP_CAPTAINS_QUARTERS:
     TolbiShipInteriors_RunSceneCommand(SHIP_RESET_CAMERA, 1, 0);
-    Actor_SetPosition(CABIN_KAJA, 0, 0);
-    Actor_SetPosition(CABIN_CREWMAN, 0, 0);
-    TolbiShipInteriors_PlaceActor(CABIN_CAPTAIN, 444, 614, 0xd000);
+    Actor_SetPosition(QUARTERS_KAJA, 0, 0);
+    Actor_SetPosition(QUARTERS_CREWMAN, 0, 0);
+    TolbiShipInteriors_PlaceActor(QUARTERS_CAPTAIN, 444, 614,
+                                  FACING_NORTH + FACING_STEP);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     if (arg != 0) {
       TolbiShipInteriors_PlaceAnchorCharm();
@@ -3469,24 +3297,35 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     } while (slot <= 7);
     break;
   case SHIP_SETUP_PASSENGER_HOLD:
-    TolbiShipInteriors_PlaceActor(HOLD_SECOND_GUIDE, 152, 532, 0xb000);
-    TolbiShipInteriors_PlaceActor(HOLD_WARRIOR, 134, 490, 0x3000);
-    TolbiShipInteriors_PlaceActor(HOLD_TICKET_GRUMBLER, 166, 490, 0x5000);
-    TolbiShipInteriors_PlaceActor(HOLD_MUSCLE_ADMIRER, 182, 504, 0x5000);
-    TolbiShipInteriors_PlaceActor(HOLD_OLD_MAN, 118, 504, 0x3000);
+    TolbiShipInteriors_PlaceActor(HOLD_SECOND_GUIDE, 152, 532,
+                                  FACING_NORTHWEST + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(HOLD_WARRIOR, 134, 490,
+                                  FACING_SOUTHEAST + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(HOLD_TICKET_GRUMBLER, 166, 490,
+                                  FACING_SOUTH + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(HOLD_MUSCLE_ADMIRER, 182, 504,
+                                  FACING_SOUTH + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(HOLD_OLD_MAN, 118, 504,
+                                  FACING_SOUTHEAST + FACING_STEP);
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_OURANOS_AND_SEAN, 0, 0);
     break;
   case SHIP_SETUP_MONSTER_ENCOUNTER:
     TolbiShipInteriors_PlaceActor(ROWING_CREWMAN, 416, 328, 0);
-    TolbiShipInteriors_PlaceActor(ROWING_DRUMMER, 448, 352, 0xd000);
-    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN, 454, 248, 0x3000);
+    TolbiShipInteriors_PlaceActor(ROWING_DRUMMER, 448, 352,
+                                  FACING_NORTH + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN, 454, 248,
+                                  FACING_SOUTHEAST + FACING_STEP);
     TolbiShipInteriors_PlaceActor(arg, 408, 290, 0);
     TolbiShipInteriors_PlaceActor(opt, 408, 342, 0);
-    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 3, 420, 356, 0xd000);
+    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 3, 420, 356,
+                                  FACING_NORTH + FACING_STEP);
     TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 4, 408, 304, 0);
-    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 5, 418, 378, 0xd000);
-    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 6, 440, 262, 0x3000);
-    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 7, 448, 378, 0xd000);
+    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 5, 418, 378,
+                                  FACING_NORTH + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 6, 440, 262,
+                                  FACING_SOUTHEAST + FACING_STEP);
+    TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN + 7, 448, 378,
+                                  FACING_NORTH + FACING_STEP);
     break;
   case SHIP_CLEAR_FLAG_RANGE:
     for (slot = arg; slot <= opt; slot++) {
@@ -3672,11 +3511,11 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   Engine_EventWait(10);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);
-  Camera_SetSpeed(0x39999, 0x7333);
+  Camera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(320),
                                        0x10000014);
   Engine_ActorRunRepeatedMotion(ROWING_CREWMAN, 2);
-  TolbiShipInteriors_Turn(ROWING_CREWMAN, 0xd000);
+  TolbiShipInteriors_Turn(ROWING_CREWMAN, FACING_NORTH + FACING_STEP);
   Engine_EventSetMessage(message + 1);
   TolbiShipInteriors_Say(ROWING_CREWMAN);
   Actor_FaceDirection(ROWING_CREWMAN, FACING_EAST, 20);
@@ -3700,8 +3539,9 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   TolbiShipInteriors_PlaceActor(GARET, 458, 310, 0);
   TolbiShipInteriors_PlaceActor(IVAN, 444, 330, 0);
   TolbiShipInteriors_PlaceActor(MIA, 432, 310, 0);
-  TolbiShipInteriors_PlaceActor(ROWING_KAJA, 440, 134, 0x8000);
-  TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN, 454, 248, 0x3000);
+  TolbiShipInteriors_PlaceActor(ROWING_KAJA, 440, 134, FACING_WEST);
+  TolbiShipInteriors_PlaceActor(ROWING_FIRST_OARSMAN, 454, 248,
+                                FACING_SOUTHEAST + FACING_STEP);
   Engine_ActorSetAnimation(ROWING_FIRST_OARSMAN, 6);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(308), 0x1000001);
   Engine_EventOpenScreen();
@@ -3715,17 +3555,17 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   Engine_EventSetMessage(MsgTolbiShipHeyAreYouOk);
   TolbiShipInteriors_Say(ROWING_KAJA);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0xc000, 0);
-  Camera_SetSpeed(0x26666, 0x4ccc);
+  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   Actor_SetSpeed(ROWING_KAJA, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ROWING_KAJA, 408, 134);
   Actor_WalkToAndWait(ROWING_KAJA, 408, 152);
   Actor_WalkToAndWait(ROWING_KAJA, 424, 164);
-  Camera_SetSpeed(0x19999, 0x3333);
+  Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
   Actor_WalkToAndWait(ROWING_KAJA, 424, 222);
   Actor_WalkToAndWait(ROWING_KAJA, 424, 262);
-  Actor_FaceDirection(ROWING_KAJA, 0x3000, 20);
+  Actor_FaceDirection(ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ROWING_KAJA, 1);
   TolbiShipInteriors_Say(ROWING_KAJA);
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
@@ -3740,7 +3580,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   Actor_MoveToAndWait(ROWING_KAJA, 0x1b0, 0x10c);
   Actor_MoveToAndWait(ROWING_KAJA, 0x1c4, 0x10c);
   Engine_ActorSetAnimation(ROWING_KAJA, 1);
-  TolbiShipInteriors_Turn(ROWING_KAJA, 0xd000);
+  TolbiShipInteriors_Turn(ROWING_KAJA, FACING_NORTH + FACING_STEP);
   Engine_ActorStartRepeatedMotion(ROWING_KAJA, 2);
   Event_ShowMessageAndWait(ROWING_KAJA, 0, 20);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0xc000, 20);
@@ -3751,7 +3591,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
   Engine_EventWait(10);
-  TolbiShipInteriors_Turn(ROWING_KAJA, 0x5000);
+  TolbiShipInteriors_Turn(ROWING_KAJA, FACING_SOUTH + FACING_STEP);
   Event_OpenMessage(ROWING_KAJA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
@@ -3770,7 +3610,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   Actor_SetActionScript(GARET, action);
   Actor_SetActionScript(IVAN, action);
   Actor_RunActionScriptAndWait(MIA, action);
-  Camera_SetSpeed(0x9999, 0x1333);
+  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 424, 272);
@@ -3888,7 +3728,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(40);
-  TolbiShipInteriors_Turn(MIA, 0x6000);
+  TolbiShipInteriors_Turn(MIA, FACING_SOUTHWEST);
   // The party notices the rocking, then turns to the crew for an explanation.
   Engine_EventSetMessage(MsgTolbiShipWonderWhatsWrongShipShouldnt);
   Event_ShowMessageAndWait(MIA, 0, 40);
@@ -3903,7 +3743,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Actor_FaceDirection(MIA, FACING_WEST, 40);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  TolbiShipInteriors_Turn(IVAN, 0x2000);
+  TolbiShipInteriors_Turn(IVAN, FACING_SOUTHEAST);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   TolbiShipInteriors_Say(IVAN);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -3919,7 +3759,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Engine_ActorSetSpriteFlags(actor, 1);
   Actor_SetSpeed(ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ROWING_KAJA, 430, 134);
-  TolbiShipInteriors_Turn(ROWING_KAJA, 0x3000);
+  TolbiShipInteriors_Turn(ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP);
   Engine_ActorStartRepeatedMotion(ROWING_KAJA, 2);
   TolbiShipInteriors_Say(ROWING_KAJA);
   Engine_ActorStartRepeatedMotion(firstRower, 1);
@@ -3935,9 +3775,9 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWER_POSE, secondRower, 1);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWER_POSE, thirdRower, 0);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWING_DECK_POSES, 1, 0);
-  Actor_FaceDirection(firstRower, 0xd000, 0);
-  Actor_FaceDirection(secondRower, 0xb000, 0);
-  Actor_FaceDirection(thirdRower, 0xd000, 0);
+  Actor_FaceDirection(firstRower, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(secondRower, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(thirdRower, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_EAST, 0);
@@ -3950,11 +3790,11 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
   Actor_WalkToAndWait(ROWING_KAJA, 440, 134);
   Actor_SetPosition(ROWING_KAJA, 0, 0);
-  TolbiShipInteriors_Turn(GARET, 0x8000);
+  TolbiShipInteriors_Turn(GARET, FACING_WEST);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   TolbiShipInteriors_Say(GARET);
   Actor_FaceDirection(IVAN, FACING_EAST, 0);
-  TolbiShipInteriors_Turn(MIA, 0x8000);
+  TolbiShipInteriors_Turn(MIA, FACING_WEST);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(IVAN, ANIM_NOD);
@@ -3998,19 +3838,19 @@ static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
 }
 
 /// TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND, in the
-/// captain's cabin, after the ship has come off course: a short exchange, then
-/// TOLBI_SHIP_INTERIORS_TO_WORLD_MAP leads by the world map to the island
+/// captain's quarters, after the ship has come off course: a short exchange,
+/// then TOLBI_SHIP_INTERIORS_TO_WORLD_MAP leads by the world map to the island
 /// (TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND).
-static void TolbiShipInteriors_ShowCabinBeforeIsland(void) {
+static void TolbiShipInteriors_ShowCaptainsQuartersBeforeIsland(void) {
   Engine_EventBegin();
-  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 0);
-  TolbiShipInteriors_PlaceActor(CABIN_KAJA, 468, 616, 32768);
+  TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 0);
+  TolbiShipInteriors_PlaceActor(QUARTERS_KAJA, 468, 616, 32768);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCENE, 1, 20);
-  Engine_ActorRunRepeatedMotion(CABIN_KAJA, 2);
+  Engine_ActorRunRepeatedMotion(QUARTERS_KAJA, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(CABIN_CAPTAIN, 53248, 80);
-  Actor_FaceDirection(CABIN_CAPTAIN, FACING_EAST, 20);
-  Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, 53248, 80);
+  Actor_FaceDirection(QUARTERS_CAPTAIN, FACING_EAST, 20);
+  Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
   Engine_EventWait(20);
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE,
                                      TOLBI_SHIP_INTERIORS_TO_WORLD_MAP, 0);
@@ -4054,7 +3894,7 @@ static void TolbiShipInteriors_ReachIsland(void) {
   Actor_SetSpeed(ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ROWING_KAJA, 408, 142);
-  Actor_FaceDirection(ROWING_KAJA, 0x3000, 20);
+  Actor_FaceDirection(ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorStartRepeatedMotion(ROWING_KAJA, 2);
   Engine_EventSetMessage(MsgTolbiShipReachedIslandRowers);
   TolbiShipInteriors_Say(ROWING_KAJA);
@@ -4064,10 +3904,10 @@ static void TolbiShipInteriors_ReachIsland(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWER_POSE, thirdRower, 0);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWER_POSE, fourthRower, 1);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWING_DECK_POSES, 0, 0);
-  Actor_FaceDirection(firstRower, 0xd000, 0);
-  Actor_FaceDirection(secondRower, 0xb000, 0);
-  Actor_FaceDirection(thirdRower, 0xd000, 0);
-  Engine_ActorFaceDirection(fourthRower, 0xb000, 60);
+  Actor_FaceDirection(firstRower, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(secondRower, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(thirdRower, FACING_NORTH + FACING_STEP, 0);
+  Engine_ActorFaceDirection(fourthRower, FACING_NORTHWEST + FACING_STEP, 60);
   // The first rower's identity selects the response to the unexpected stop.
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
                            PASSENGER_OLD_MAN)) {
@@ -4117,12 +3957,12 @@ static void TolbiShipInteriors_ReachIsland(void) {
   Actor_SetSpeed(firstRower, PIXELS(1), PIXELS(1) / 2);
   progressB = gTolbiShipInteriors_LeaveByStairs;
   Actor_RunActionScriptAndWait(firstRower, progressB);
-  Actor_FaceDirection(secondRower, 0x5000, 0);
+  Actor_FaceDirection(secondRower, FACING_SOUTH + FACING_STEP, 0);
   Engine_ActorFaceDirection(thirdRower, FACING_EAST, 0);
   Actor_FaceDirection(fourthRower, FACING_WEST, 40);
-  Engine_ActorFaceDirection(secondRower, 0xd000, 0);
-  Engine_ActorFaceDirection(thirdRower, 0xb000, 0);
-  Engine_ActorFaceDirection(fourthRower, 0x5000, 20);
+  Engine_ActorFaceDirection(secondRower, FACING_NORTH + FACING_STEP, 0);
+  Engine_ActorFaceDirection(thirdRower, FACING_NORTHWEST + FACING_STEP, 0);
+  Engine_ActorFaceDirection(fourthRower, FACING_SOUTH + FACING_STEP, 20);
   Actor_SetSpeed(secondRower, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(thirdRower, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(fourthRower, PIXELS(1), PIXELS(1) / 2);
@@ -4163,8 +4003,10 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   fourthRower = TolbiShipInteriors_FindFirstSetFlag(3, 0);
   Engine_EventBegin();
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
-  TolbiShipInteriors_PlaceActor(ROWING_CREWMAN, 472, 144, 0x5000);
-  TolbiShipInteriors_PlaceActor(ROWING_KAJA, 408, 142, 0x3000);
+  TolbiShipInteriors_PlaceActor(ROWING_CREWMAN, 472, 144,
+                                FACING_SOUTH + FACING_STEP);
+  TolbiShipInteriors_PlaceActor(ROWING_KAJA, 408, 142,
+                                FACING_SOUTHEAST + FACING_STEP);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventOpenScreen();
@@ -4193,10 +4035,10 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   Engine_ActorSetAnimation(firstRower, 1);
   Engine_ActorSetAnimation(secondRower, 1);
   Engine_ActorSetAnimation(thirdRower, 1);
-  Actor_FaceDirection(secondRower, 0xd000, 0);
-  Actor_FaceDirection(firstRower, 0xb000, 0);
-  Actor_FaceDirection(fourthRower, 0xd000, 0);
-  Actor_FaceDirection(thirdRower, 0xb000, 20);
+  Actor_FaceDirection(secondRower, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(firstRower, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(fourthRower, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(thirdRower, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ROWING_KAJA, 1);
   TolbiShipInteriors_Say(ROWING_KAJA);
   Engine_ActorSetAnimation(firstRower, 3);
@@ -4209,7 +4051,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   Engine_ActorSetAnimation(thirdRower, 3);
   Engine_ActorSetAnimationAndWait(fourthRower, 3);
   Actor_FaceDirection(ROWING_KAJA, FACING_EAST, 0);
-  TolbiShipInteriors_Turn(ACTOR_PARTY_LEADER, 0x8000);
+  TolbiShipInteriors_Turn(ACTOR_PARTY_LEADER, FACING_WEST);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
   Actor_SetSpeed(ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
@@ -4277,8 +4119,8 @@ s32 gTolbiShipInteriors_LeaveHold[] = {
     SC_END,
 };
 
-/// Those gathered in the cabin walk out.
-s32 gTolbiShipInteriors_LeaveCabin[] = {
+/// Those gathered in the captain's quarters walk out.
+s32 gTolbiShipInteriors_LeaveCaptainsQuarters[] = {
     SC_SET(SW_SPEED, PIXELS(1)),
     SC_SET(SW_ACCEL, PIXELS(1) / 2),
     SC_ARG(2),
@@ -4388,8 +4230,8 @@ struct SceneEntrance gTolbiShipInteriors_EntrancesOther[] = {
     {SCENE_TABLE_END},
 };
 
-/// The passengers' hold, the cargo hold, the rowing deck and the cabin, each
-/// entrance named for its room.
+/// The passengers' hold, the cargo hold, the rowing deck and the captain's
+/// quarters, each entrance named for its room.
 struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
     {TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS,
      152, 0, 584, FACING_NORTH, 0, 30, 380, 270, 620, 0},
@@ -4494,7 +4336,7 @@ struct ScenePlacement gTolbiShipInteriors_PlacementsNone[] = {
 };
 
 // clang-format off
-struct ScenePlacement gTolbiShipInteriors_CabinPlacements[] = {
+struct ScenePlacement gTolbiShipInteriors_CaptainsQuartersPlacements[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(446), 0, PIXELS(620), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4504,9 +4346,9 @@ struct ScenePlacement gTolbiShipInteriors_CabinPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-/// The cabin once the warriors have come to see the captain, with the party's
+/// The captain's quarters once the warriors have come to see the captain, with the party's
 /// followers.
-struct ScenePlacement gTolbiShipInteriors_CabinPlacementsWarriors[] = {
+struct ScenePlacement gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4528,8 +4370,8 @@ struct ScenePlacement gTolbiShipInteriors_CabinPlacementsWarriors[] = {
     { SCENE_TABLE_END },
 };
 
-/// The cabin once the ship has reached Tolbi.
-struct ScenePlacement gTolbiShipInteriors_CabinPlacementsArrived[] = {
+/// The captain's quarters once the ship has reached Tolbi.
+struct ScenePlacement gTolbiShipInteriors_CaptainsQuartersPlacementsArrived[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
@@ -4802,50 +4644,50 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
     { SCENE_EVENTS_END },
 };
 
-/// The cabin, from the wait at Kalay until the ship reaches Tolbi. The Anchor
+/// The captain's quarters, from the wait at Kalay until the ship reaches Tolbi. The Anchor
 /// Charm is given back to the captain here.
-struct SceneEvent gTolbiShipInteriors_CabinEvents[] = {
+struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEvents[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK },
-    { EVENT_TALK, CABIN_CAPTAIN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToCaptain) },
-    { EVENT_TALK, CABIN_CREWMAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToCabinCrewman) },
-    { EVENT_TALK, CABIN_KAJA, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsIWonderIfThereAreAny) },
-    { EVENT_TALK, CABIN_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsRightWhenWeFoundSomeWarriors) },
-    { EVENT_TALK, CABIN_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsICantBelieveHimRefusingTo) },
-    { EVENT_TALK, CABIN_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIHadNoIdeaHeWas) },
-    { EVENT_TALK, CABIN_SEAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToSeanInCabin) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsThisIsAChanceToMake) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsTheShipWontLeaveDockUntil) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipInteriorsAsLongAsWeHaveThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeKnewTheRisksWhenWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CREWMAN, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsSendingOutAShipWhenIts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWaitedTooLongIllGet) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_KAJA, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsIfWeDontSetSailNow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThisIsRidiculousTheShipCant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThatThingCouldntHaveGottenLost) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWouldSteal) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipDoesntLeaveSoon) },
+    { EVENT_TALK, QUARTERS_CAPTAIN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToCaptain) },
+    { EVENT_TALK, QUARTERS_CREWMAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToCaptainsQuartersCrewman) },
+    { EVENT_TALK, QUARTERS_KAJA, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsIWonderIfThereAreAny) },
+    { EVENT_TALK, QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsRightWhenWeFoundSomeWarriors) },
+    { EVENT_TALK, QUARTERS_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsICantBelieveHimRefusingTo) },
+    { EVENT_TALK, QUARTERS_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIHadNoIdeaHeWas) },
+    { EVENT_TALK, QUARTERS_SEAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToSeanInCaptainsQuarters) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsThisIsAChanceToMake) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsTheShipWontLeaveDockUntil) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipInteriorsAsLongAsWeHaveThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeKnewTheRisksWhenWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CREWMAN, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsSendingOutAShipWhenIts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWaitedTooLongIllGet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_KAJA, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsIfWeDontSetSailNow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThisIsRidiculousTheShipCant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThatThingCouldntHaveGottenLost) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWouldSteal) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipDoesntLeaveSoon) },
     { EVENT_TOUCH, 10, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT_SCRIPT(TolbiShipInteriors_WatchCrewWonderAtDelay) },
-    { USE_ITEM_ON_ACTOR(ITEM_ANCHOR_CHARM), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, EVENT_SCRIPT(TolbiShipInteriors_ReturnLuckyAnchor) },
+    { USE_ITEM_ON_ACTOR(ITEM_ANCHOR_CHARM), QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, EVENT_SCRIPT(TolbiShipInteriors_ReturnLuckyAnchor) },
     { 0xc423, 102, 0xf94, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 
-/// The cabin while the ship waits off the island.
-struct SceneEvent gTolbiShipInteriors_CabinEventsAtIsland[] = {
+/// The captain's quarters while the ship waits off the island.
+struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEventsAtIsland[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK },
-    { EVENT_TALK, CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMayHaveTakenTheWrong) },
-    { EVENT_TALK, CABIN_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWindsDirectionAndTheHigh) },
+    { EVENT_TALK, QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMayHaveTakenTheWrong) },
+    { EVENT_TALK, QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWindsDirectionAndTheHigh) },
     { SEARCH(SEARCH_JAR), 102, 0xf94, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 
-/// The cabin once the ship has reached Tolbi.
-struct SceneEvent gTolbiShipInteriors_CabinEventsArrived[] = {
+/// The captain's quarters once the ship has reached Tolbi.
+struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEventsArrived[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK },
-    { EVENT_TALK, CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
+    { EVENT_TALK, QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
     { SEARCH(SEARCH_JAR), 102, 0xf94, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };

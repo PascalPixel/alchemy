@@ -49,10 +49,14 @@
 /// and, once Kite has run behind its ledge, puts it back there.
 ///
 /// Open questions:
-/// - XXX: why the second room draws a lone crate and a treasure chest as still
-///   objects (ValeCave_ApplyEntryState) rather than as placements or map
-///   cells; the room's render with its objects outlined would show what they
-///   cover.
+/// - XXX (no evidence): why ValeCave_ApplyEntryState creates still objects of
+///   sprite 223 (spr_223.png, a wooden crate) at (120, 232) and SPRITE_CHEST
+///   at (642, 552) in the second room that show nothing: the sprites alone
+///   hold neither (render probe vale-cave), the crates seen there are the
+///   map's, no chest is drawn at the second, and neither object is solid or a
+///   target (ACTOR_NOT_TARGETED); Vault creates the same kind of object on its
+///   well (vault_revisit.c), and nothing in the ROM says what they were meant
+///   to show.
 /// - XXX (picture): Kite keeping to the far side of its ledge, its twelve
 ///   trigger cells and the points of gValeCave_WalkTargets drawn on the map.
 
@@ -863,7 +867,8 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
       Engine_ActorSetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
       Engine_ActorSetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
-      // A lone crate, sprite 223 (spr_223.png), drawn still under the actors.
+      // A still object of sprite 223 (spr_223.png, a wooden crate) that shows
+      // nothing (an open question).
       OverlayObject_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
       break;
     case VALE_CAVE_KITE_EAST_FROM_WEST:
@@ -890,8 +895,8 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_SOUTH_FROM_WEST:
     case VALE_CAVE_KITE_SOUTH_FROM_EAST:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
-      // The holes' part: a still treasure chest drawn under the actors, the
-      // riding log's passage, and the holes already filled.
+      // The holes' part: a still chest object that shows nothing (an open
+      // question), the riding log's passage, and the holes already filled.
       OverlayObject_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552),
                                            SPRITE_CHEST);
       Map_CopyCellAttributes(23, 34, 13, 3, 0, 34);

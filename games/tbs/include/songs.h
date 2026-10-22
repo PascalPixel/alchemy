@@ -107,7 +107,7 @@
 /// Field music of Venus Lighthouse.
 #define MUS_043 43
 /// The music of every battle gEncounter_BattleMusic lists no other song for.
-#define MUS_050 50
+#define MUS_BATTLE 50
 /// Battle music gEncounter_BattleMusic gives some encounters;
 /// Battle_RunEncounter plays it, then MUS_076, for a battle with no cue of its
 /// own.
@@ -125,10 +125,11 @@
 #define MUS_055 55
 /// Plays when a battle is won (Battle_RunEncounter), except during the Djinn
 /// lesson (FLAG_DJINN_LESSON).
-#define MUS_058 58
-/// Plays when the party is defeated in battle, before "goes down in defeat" or
-/// "party has been defeated".
-#define MUS_059 59
+#define MUS_VICTORY 58
+/// Plays when the whole party falls: defeated in battle, before "goes down in
+/// defeat" or "party has been defeated", or felled on the field by poison or
+/// hazardous ground.
+#define MUS_DEFEAT 59
 /// Plays as the party finds Hammet in the Lunpa Fortress and as Ivan is met in
 /// Vault.
 #define MUS_060 60
@@ -186,7 +187,7 @@
 #define MUS_088 88
 /// The fanfare as a member levels up after a battle, and as a Colosso round
 /// begins.
-#define MUS_089 89
+#define MUS_LEVEL_UP 89
 /// The smallest prize fanfare: two pairs in Lucky Dice, a Tolbi Spring prize
 /// under 5,000 coins, and one level from the debug level editor.
 #define MUS_091 91

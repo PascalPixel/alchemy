@@ -308,9 +308,9 @@ won:
   Battle_ClearSerialTransferPayload();
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->twoSided != 0)
-      AudioCommand_PlayFar(MUS_058);
+      AudioCommand_PlayFar(MUS_VICTORY);
     if (battle->spoils.defeated != 0) {
-      AudioCommand_PlayFar(MUS_058);
+      AudioCommand_PlayFar(MUS_VICTORY);
       if (battle->defeatState <= DEFEAT_SEVERAL) {
         BattleUnitSetFar(FIRST_ENEMY_UNIT,
                          battle->enemyClasses[battle->firstDefeated], 26);
@@ -342,7 +342,7 @@ party_lost:
   // "X goes down in defeat..." for a lone member, else "X's party has been
   // defeated!".
   Battle_ClearSerialTransferPayload();
-  AudioCommand_PlayFar(MUS_059);
+  AudioCommand_PlayFar(MUS_DEFEAT);
   UiWork_ClearValueNameTablesFar();
   UiWork_PushValueSlotFar(gGameState.activeOwners[0], VALUE_UNIT_NAME);
   if (BattleParty_PrepareActiveOwners(0) == 1)

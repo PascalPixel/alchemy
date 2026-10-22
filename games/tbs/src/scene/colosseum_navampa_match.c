@@ -1874,7 +1874,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Engine_AudioPlayCue(MUS_089);
+    Engine_AudioPlayCue(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);

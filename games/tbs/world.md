@@ -77,7 +77,13 @@ and climbing spots). The shape gives the ground's height, which
 `Map_GetTerrainHeight` computes from the shape's terrain kind and height
 samples.
 
-![One screen of Goma Cave, and beside it the same screen with its ground cells drawn over it, each raised by its height as the actors standing on it are: white edges where the ground steps up or down run along the rock rims around the dark floor, the cells of the two doorways that lead on are yellow with the scene's own codes, and a wall cell at the right edge is red.](https://alchemy.pascalpixel.com/guides/map/cells.png)
+A wall need not be coded. `Map_CheckObjectStep` lets an object step at most
+8 pixels up or 12 down, so ground that rises sharply stops the leader as
+surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
+ground 32 pixels high runs along the foot of each cliff, some of it cut along
+a cell's diagonal.
+
+![One screen of Goma Cave, and beside it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands 32 pixels above the floor, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; yellow outlines on the two doorway cells with the scene's own codes. The cave has no wall-coded cells; its walls are all height.](https://alchemy.pascalpixel.com/guides/map/cells.png)
 
 [Maps](src/map/README.md) describes the map format, the header and how the
 build makes each map from editable tables.
@@ -85,17 +91,26 @@ build makes each map from editable tables.
 ## The world map
 
 The world map is flat. `BG2` and `BG3` are affine backgrounds, and their scale
-changes on every scanline so that a line near the horizon covers far more of
-the map than a line at the bottom of the screen. When the camera's pitch
-changes, `WorldMap_BuildScanlineTable` gives each screen line a width scale
-and a ground distance. Each frame `Transform_UpdateVertices`, an ARM routine
-run from IWRAM, turns them into a page of affine values, and
-`MapAnimation_ApplyAffineFrame` sets the first line's values and starts an
-HBlank DMA that feeds each following line its own. There are two pages, and
-alternate frames use them. XXX: likely double buffering, because the HBlank
-DMA reads one page throughout the frame while the next is built.
+changes on every scanline, so a line higher on the screen covers more of the
+map than a line lower down. `WorldMap_BuildScanlineTable` gives each screen
+line a width scale and a ground distance when the world map is set up, and
+again only if the camera's pitch changes, which nothing in the game does. Each
+frame `Transform_UpdateVertices`, an ARM routine run from IWRAM, turns them
+into a page of affine values, and `MapAnimation_ApplyAffineFrame` sets the
+first line's values and starts an HBlank DMA that feeds each following line
+its own. There are two pages, and
+alternate frames use them: the HBlank DMA reads one page throughout a frame
+while `Transform_UpdateVertices` builds the other, and a render of each page
+shows the one on screen alternating every frame.
 
-![Isaac walking and running on the world map, the ground tilting away towards the horizon](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
+Each screen line reads one straight row of the flat ground, and its affine
+values set how wide that row is and where it lies. Together the 160 lines
+sample a trapezoid around the party; when the player holds L to zoom out, the
+lines spread so far apart that some rows of the ground are never drawn.
+
+![The world map's screen above the ground as video memory holds it, laid flat: as the party walks south from Vale and then holds L to zoom out, a lit trapezoid on the flat ground shows every pixel some screen line reads, wider at the top of the screen than at the bottom, with five lines picked out in the same colours on both. Zoomed out, the lines spread apart and leave rows of the ground unread between them.](https://alchemy.pascalpixel.com/guides/field/world-map-footprint.gif)
+
+![Isaac walking and running on the world map, the ground drawn in perspective](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
 The world map runs in display mode 2, which has only the two affine
 backgrounds. Pulled apart, the ground is `BG3`, the middle map layer of

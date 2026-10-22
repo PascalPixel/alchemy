@@ -272,16 +272,24 @@ it, so no palette cycle runs in the game.
 
 The world map is a flat map that the display tilts into perspective. `BG2` and
 `BG3` are affine backgrounds, which the hardware scales and rotates as it
-draws, and the field gives every scanline its own scale, so a line near the
-horizon covers far more of the map than a line at the bottom of the screen.
+draws, and the field gives every scanline its own scale, so a line higher on
+the screen covers more of the map than a line lower down.
 
-When the camera's pitch changes, `WorldMap_BuildScanlineTable` gives each
-screen line a width scale and a ground distance, or zeros above the horizon.
-Each frame `Transform_UpdateVertices`, an ARM routine run from RAM, turns
+`WorldMap_BuildScanlineTable` gives each screen line a width scale and a
+ground distance, or zeros for a line above the horizon. It runs when the world
+map is set up and again only if the camera's pitch changes, which nothing in
+the game does, and at that one pitch every line meets the ground. Each frame `Transform_UpdateVertices`, an ARM routine run from RAM, turns
 them into a page of affine values. `MapAnimation_ApplyAffineFrame` sets the
 first line's values and starts a DMA that runs in each HBlank, the pause after
 a scanline is drawn, to feed the next line its own. There are two pages, and
 alternate frames use them.
+
+Each screen line reads one straight row of the flat ground, and its affine
+values set how wide that row is and where it lies. Together the 160 lines
+sample a trapezoid around the party; when the player holds L to zoom out, the
+lines spread so far apart that some rows of the ground are never drawn.
+
+![The world map's screen above the ground as video memory holds it, laid flat: as the party walks south from Vale and then holds L to zoom out, a lit trapezoid on the flat ground shows every pixel some screen line reads, wider at the top of the screen than at the bottom, with five lines picked out in the same colours on both. Zoomed out, the lines spread apart and leave rows of the ground unread between them.](https://alchemy.pascalpixel.com/guides/field/world-map-footprint.gif)
 
 ![The world map as the party first leaves Vale, at twice the GBA's size, beside each scanline's width scale drawn as a bar on its own line: the scale falls steadily from 0.61 on the top line to 0.44 on the bottom one, so a line near the top covers more of the map](https://alchemy.pascalpixel.com/guides/field/world-map-scanlines.png)
 

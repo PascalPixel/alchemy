@@ -67,7 +67,13 @@ lines, `MAP_CELL_HAZARD` for the Lamakan Desert's sand, and `MAP_CELL_LEDGE`,
 `MAP_CELL_CLIMB` and `MAP_CELL_JUMP_FORWARD`, which `Field_RunPushTileEvent`
 acts on when the leader pushes against them.
 
-![One screen of Goma Cave, and beside it the same screen with its ground cells drawn over it, each raised by its height as the actors standing on it are: white edges where the ground steps up or down run along the rock rims around the dark floor, the cells of the two doorways that lead on are yellow with the scene's own codes, and a wall cell at the right edge is red.](https://alchemy.pascalpixel.com/guides/map/cells.png)
+A wall need not be coded. `Map_CheckObjectStep` lets an object step at most
+8 pixels up or 12 down, so ground that rises sharply stops the leader as
+surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
+ground 32 pixels high runs along the foot of each cliff, some of it cut along
+a cell's diagonal.
+
+![One screen of Goma Cave, and beside it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands 32 pixels above the floor, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; yellow outlines on the two doorway cells with the scene's own codes. The cave has no wall-coded cells; its walls are all height.](https://alchemy.pascalpixel.com/guides/map/cells.png)
 
 Collision and height belong to a layer: code that asks about the ground
 reads the cell in the window of the layer the object follows, so an object

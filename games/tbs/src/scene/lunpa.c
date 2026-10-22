@@ -309,7 +309,7 @@ static void Event_TalkToWestGuard(void) {
 /// the party came from there and whether they are here to save Hammet.
 static void Event_TalkToEastGuard(void) {
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_EventSetMessage(MsgLunpaEastGuardDemandsAuthorization);
     Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
@@ -335,7 +335,7 @@ static void Event_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) == 0) {
-    thoughts = Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY);
+    thoughts = Engine_GameFlagIsSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
     if (thoughts == 0) {
       thoughts = MsgLunpaEastGuardFearsBlame;
     } else {

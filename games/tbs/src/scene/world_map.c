@@ -42,7 +42,7 @@
 ///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES), the caravan, cut off from Kalay by
 ///   the destroyed bridge, turns north for Lunpa as the ground shakes and a
 ///   rock falls beside it; then the party goes on into Vault. It sets
-///   FLAG_GUARDS_SUSPECT_KALAY.
+///   FLAG_LUNPA_GUARDS_SUSPECT_KALAY.
 /// - Mercury Lighthouse lit (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT): the
 ///   lighthouse transition (WorldMap_PlayLighthouseTransition), then Mercury
 ///   Lighthouse Aerie (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
@@ -630,7 +630,7 @@ const struct ScenePlacement *WorldMap_GetPlacements(void) {
     }
     break;
   case WORLD_MAP_HAMMETS_CARAVAN_LEAVES:
-    if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
       return gWorldMapPlacementsHammetsCaravan;
     }
     break;
@@ -804,12 +804,12 @@ static void WorldMap_UpdateLocationContacts(void) {
   }
 }
 
-/// Touching Vault's actor: the first time, until FLAG_GUARDS_SUSPECT_KALAY is
-/// set, WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays Hammet's caravan leaving
-/// (WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES); later it is Vault's door
-/// (WORLD_MAP_TO_VAULT_SOUTH).
+/// Touching Vault's actor: the first time, until
+/// FLAG_LUNPA_GUARDS_SUSPECT_KALAY is set, WORLD_MAP_HAMMETS_CARAVAN_LEAVES
+/// plays Hammet's caravan leaving (WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES); later
+/// it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
 static void Event_EnterVault(void) {
-  if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_EventRequestExit(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
   } else {
     Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -905,7 +905,7 @@ s32 WorldMap_Initialize(void) {
       }
       break;
     case WORLD_MAP_HAMMETS_CARAVAN_LEAVES:
-      if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
         WorldMap_ShowHammetsCaravan();
       }
       break;
@@ -1048,7 +1048,7 @@ static void WorldMap_BoardBunzasWagon(void) {
 /// north for Lunpa, leaving Ivan behind, as the ground shakes and a rock falls
 /// beside it. Then the party goes on into Vault (WORLD_MAP_TO_VAULT_SOUTH).
 /// Called by WorldMap_Initialize at WORLD_MAP_HAMMETS_CARAVAN_LEAVES until
-/// FLAG_GUARDS_SUSPECT_KALAY is set; sets it.
+/// FLAG_LUNPA_GUARDS_SUSPECT_KALAY is set; sets it.
 static void WorldMap_ShowHammetsCaravan(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
@@ -1331,7 +1331,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5848, 1576);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(FLAG_GUARDS_SUSPECT_KALAY);
+  GameFlag_Set(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
   Engine_EventRequestExit(WORLD_MAP_TO_VAULT_SOUTH);
   Engine_EventEnd();
 }

@@ -879,7 +879,7 @@
 /// Vault on the world map leads straight in.
 /// ★ Named from the game: "You're not from Kalay, are you?"
 /// (MsgLunpaEastGuardAsksIfFrom)
-#define FLAG_GUARDS_SUSPECT_KALAY 0x85a
+#define FLAG_LUNPA_GUARDS_SUSPECT_KALAY 0x85a
 /// After Donpa's judgment, the left guard at the Lunpa Fortress Gates has
 /// half recognized Hammet with the party, then dismissed it; his thoughts
 /// afterwards say the man looks like that merchant.

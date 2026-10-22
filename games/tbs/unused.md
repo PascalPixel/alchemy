@@ -1,216 +1,232 @@
 # What did the game leave unused?
 
-The Broken Seal's cartridge holds more than the player can ever see. There's a
-second way for Garet to join Isaac on the stormy night, a burst of water by
-Vale's river that nobody watches, a cook in Vault who offers bones he never
-gets to offer, and a whole scene on top of Mercury Lighthouse that no door
-leads to. The bytes are all there, because Alchemy rebuilds the cartridge
-exactly, and that's what makes them findable: once the code is readable, every
-path to a piece of content can be followed, and the pieces no path reaches
-stand out.
+The cartridge holds code, table rows and messages that no path through the
+game reaches. They are kept because their bytes are part of the image, and
+they are marked in the source so that a reader knows the code never runs.
 
-Every find on this page is proven from the code, and each says why the game
-never shows it. In the source, its comment opens with `Unused:`, and where it
-holds something the player would have seen, its name carries `Unused` right
-after its prefix (`Event_UnusedGaretJoinsIsaac`), so a reader meets the fact
-in the code before the docs. Where the evidence isn't conclusive, the comment
-says `XXX: likely` and why, and the name stays as it is.
+Something is unused when no cell, event table, exit, flag path or other code
+can bring control to it. The source marks it in three ways:
 
-![The whole of Vale on the stormy night, drawn from its own map: rain over the cliffs and thatched houses, the river running down through the village, and Garet beside his chest outside his house](https://alchemy.pascalpixel.com/places/vale-storm/map-0.png)
+- A function nothing refers to at all is declared `UNUSED`.
+- Anything the game can never reach, whether a function, a table row or a
+  scene, has a comment that opens with `Unused:` and says why, and what the
+  player would have seen.
+- Where it holds something the player would have seen (an event, a scene, its
+  scripts and tables), its name carries `Unused` after its family prefix, as in
+  `Event_UnusedGaretJoinsIsaac`. A helper or an empty function keeps its name,
+  since `UNUSED` already says nothing calls it.
 
-## How can something be in the game and never play?
+A function can be unused without being `UNUSED`: `Event_UnusedGaretJoinsIsaac`
+is named by a row of its scene's event table, so the linker sees a reference,
+but that row can never be selected. Code that only the debug menus reach is
+not unused; its comment says the debug menus reach it, and its name is left
+alone. Where the evidence isn't conclusive, the comment says `XXX: likely` and
+why, and the name is left alone too.
 
-A scene says what happens through its tables (see [Scenes](src/scene/README.md)),
-and three rules decide whether a row of them can ever run.
+## How is unreachability established?
 
-The first is that the first matching row wins. When the leader talks to
-someone, steps on a cell or searches a spot, `Scene_FindEvent`
-([events.c](src/object/object/events.c)) walks the scene's event table from
-the top and runs the first row whose kind, trigger and condition all fit. A
-later row for the same person or cell, whose condition is no stricter than an
-earlier one's, never gets a turn.
+A scene's events are rows in its tables (see [Scenes](src/scene/README.md)),
+and a row runs only if a lookup returns it. Three properties of the lookup and
+of the map account for nearly every unused row on this page.
 
-The second is that a search on a named spot, a chest, a jar or an oven, ignores
-its condition while it's looked up. The game wants the leader to keep checking
-an opened chest and hear that it's empty, so the condition is tested only after
-the row is found. That means an oven with an item row first is answered by that
-row forever, even after the item is gone.
+`Scene_FindEvent` ([events.c](src/object/object/events.c)) walks the table from
+the top and returns the first row whose kind, target and condition fit. A later
+row for the same actor or cell runs only where every earlier row's condition
+fails, so a row behind one with no condition is never returned. The walk stops
+at the table's end marker, and rows after it are never read.
 
-The third is reach. A function no table, exit or other code names is never
-called (Alchemy keeps it because its bytes are in the cartridge, and tags it
-`UNUSED`), and a cell the player can only reach by crossing
-other cells first fires those cells' events first.
+A search on a named spot (a chest, a jar, an oven, everything but
+`SEARCH_UNNAMED`) is returned whatever its condition, unless its result is a
+mimic battle; `Event_SearchIgnoresCondition` decides this. `Field_SearchTile`
+tests the condition afterwards, so that an opened chest still reports that it
+is empty. The consequence is that a named spot with two rows under the same
+trigger always answers with the first.
 
-## What's unused in Vale?
+A cell's event fires only when the leader stands on it. Where every route to
+a cell crosses other cells first, their events have already run, and any flag
+they set is set when the leader arrives.
 
-The stormy night that opens the game keeps two pieces it never plays, both in
-[vale_storm.c](src/scene/vale_storm.c). `Event_UnusedGaretJoinsIsaac` is an
-earlier version of Garet joining Isaac. In it Garet runs up, heaves for breath
-while his sprite swells and shrinks with each gasp (`*Hah* *Hah*`), and asks
-`Are you trapped, too?` before the two go on together, lines that appear
-nowhere else. Its cell, code 32, lies past the cells where Isaac hears Garet
-struggling with his chest and where Garet calls after him and joins, so by the
-time the leader can stand on it, `FLAG_VALE_STORM_GARET_JOINED` is set and the
-event's first test ends it.
+A function that no table, exit or code names is never called. Such functions
+are found by reference: nothing in the image holds their address or calls them.
 
-The same night has a third door into one of the village's houses.
-`ValeStorm_UnusedOpenSanctumDoor` would open it and walk the
-leader inside, and the storm's exit table even has a row for it, but no event
-names the function and nothing else takes that exit. The house's other two
-doors lead to the same entrance.
+## Rows behind an earlier row
 
-The morning three years later has a spare too. In
-[vale.c](src/scene/vale.c), `Event_UnusedRoofMended` is another cut of the
-end of the roof scene, with the same lines as the one the game plays
-(`Good job, Garet.` and `I was devastated when Kyle died...` among them) but
-its own camera and map cells. No table names it.
+These rows are present in their tables, each with a `// Unused:` tag, and an
+earlier row with an equal or weaker condition always answers first.
 
-Back from Kalay, Vale would have had a moment of its own.
-`Event_UnusedWaterBurstsByTheRiver` shakes the village with a tremor and makes
-water burst up three times beside the river, north of the villager who
-remembers playing there with Felix. He'd have started, sniffled through
-`I still remember when Felix and I used to play here...*Sniff*`, and turned to
-the leader to say Felix must be protecting Jenna. The three water sprites are
-even placed in Vale's after-Kalay actors, waiting, but no table names the
-event, so the player only ever hears his two lines by talking to him and
-reading his mind.
+**Vault's cook.** After the party has reached Kalay, Vault's inn has a cook in
+its upstairs room with two talk rows in
+[vault_interiors_revisit.c](src/scene/vault_interiors_revisit.c). The first
+shows `MsgVaultWeDontGetALotOf` under `CONDITION_ALWAYS`. The second runs
+`Event_UnusedOfferLeftoverBones`, which would have shown
+`I did some cooking, so now I've got all these useless bones.` and
+`...You want some?`, and gives nothing. The girl at the inn has her own
+`Event_OfferBones`, which does run.
 
-## What's unused in Sol Sanctum?
+**Ovens with an item.** In [imil.c](src/scene/imil.c),
+[kalay_interiors.c](src/scene/kalay_interiors.c) and
+[suhalla_interiors.c](src/scene/suhalla_interiors.c), an oven that hides an
+item has its `FIND_ITEM` row first and a `FIND_MESSAGE` row for its dish under
+the same trigger after it. Because a named search ignores its condition during
+the lookup, the item row answers every time; once the item is taken,
+`Field_SearchTile` finds its flag set and the leader reports
+`It's pitch dark inside.` Five dish rows are unreachable this way, showing
+three messages:
 
-In the statue room, [sol_sanctum_statue.c](src/scene/sol_sanctum_statue.c)
-keeps `SolSanctumStatue_UnusedMoveNorthwestStatue`, which slides the northwest
-statue by itself to the spot that opens its seal. Nothing calls it: the player
-pushes the statue there with Move instead.
+| File | Item | Message never shown |
+| --- | --- | --- |
+| `imil.c` | Lucky Pepper | `MsgImilItsSomeHotStewItWarms` (`It's some hot stew.`) |
+| `kalay_interiors.c`, two tables | Smoke Bomb | `MsgKalayInteriorsHesMakingRoastedEggplantWithCheese` |
+| `suhalla_interiors.c`, two tables | Smoke Bomb | `MsgSuhallaInteriorsItsACactusSteakIWonder` (`It's a cactus steak!`) |
 
-## What's unused in Vault?
+**Copied talk rows.** Two rows are exact copies of the row above them and
+change nothing: the young man from Kolima at Fuchin Temple
+([fuchin_temple.c](src/scene/fuchin_temple.c)), and the healer in the Sanctum
+by Altin ([sanctum.c](src/scene/sanctum.c)).
 
-When the party comes back to Vault after reaching Kalay, the cook in the inn's
-back room has two talk rows in
-[vault_interiors_revisit.c](src/scene/vault_interiors_revisit.c). The second,
-`Event_UnusedOfferLeftoverBones`, has him say
-`I did some cooking, so now I've got all these useless bones.` and ask
-`...You want some?`. The first row, a plain line about how few travelers come
-in winter, has no condition, so it always answers first. The girl at the inn
-still hands out Bones, so the cook's offer would have been a second one.
+**Crossbone Isle's blue doors.** In
+[crossbone_isle_keys.c](src/scene/crossbone_isle_keys.c), cell codes 53 and 54
+(the third and fourth blue doors) each have a plain `EVENT_TOUCH` row, then a
+`TOUCH_WALKING_INTO(FACING_SOUTH)` row running `Event_UnusedCheckLeaderAhead`.
+The plain row has no push or facing requirement, so it always matches first.
+Its events, `Event_OpenThirdBlueDoor` and `Event_OpenFourthBlueDoor`, look
+ahead themselves once the leader has pressed south against the door, so the
+player sees the same result either way.
 
-## What's unused in Imil, Kalay and Suhalla?
+## Rows after the end marker
 
-Three kitchens have the same small casualty. Searching an oven usually shows
-what's cooking, and a few ovens hide an item the first time. In
-[imil.c](src/scene/imil.c), [kalay_interiors.c](src/scene/kalay_interiors.c)
-and [suhalla_interiors.c](src/scene/suhalla_interiors.c), the oven with the
-item has its item row first and its dish row after it, under the same
-trigger. Because a named search ignores its condition, the item row answers
-every time, and once the item is taken the leader just looks in and finds it
-pitch dark inside. So nobody reads `It's some hot stew.` with its warm body and
-soul in Imil (the Lucky Pepper's oven), `He's making roasted eggplant with
-cheese.` in Kalay (the Smoke Bomb's, in both the houses' and the inn's tables),
-or `It's a cactus steak!` in Suhalla (another Smoke Bomb).
+[altin_peak.c](src/scene/altin_peak.c)'s `gAltinPeak_SecondWaterBeastEvents`
+has two rows after its `SCENE_EVENTS_END`, followed by a second end marker: a
+second copy of the `ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE` exit, and
+a chest on code 100 holding a Herb under flag `0xf05`. Code 100 is also the
+cell of the room's Cookie chest, which is above the end marker and is the one
+the game uses.
 
-## What's unused at Mercury Lighthouse?
+## An event its own flag ends
 
-At the top, [mercury_lighthouse_aerie.c](src/scene/mercury_lighthouse_aerie.c)
-keeps `MercuryLighthouseAerie_UnusedAlexCastsPly`: Alex raising his hands and
-casting Ply on the lift's statue. In the game, Alex and Saturos simply warp
-over to the lift and ride it down, and nothing calls the cast.
+`Event_UnusedGaretJoinsIsaac` in [vale_storm.c](src/scene/vale_storm.c) is an
+earlier version of Garet joining Isaac on the stormy night. Its row answers cell
+code 32. Every route to that cell crosses code 30
+(`Event_HearGaretStruggling`) and code 31 (`Event_GaretCallsAfterIsaac`), so
+Garet has always joined by the time the leader stands on it, and joining sets
+`FLAG_VALE_STORM_GARET_JOINED`. The event's first test is that flag, so it
+ends at once.
 
-The same overlay serves a whole scene nobody visits. Scene 59,
-`SceneId_UnusedMercuryLighthouseAerieCopy`, loads the aerie's code and map, but
-its setup does nothing for it, and no exit, table or code leads there. The
-debug scene list's label for it, the message `MsgDebugCategoryName` shows for
-each scene, is `MTO07NG`, after `MTO06` for the aerie itself. The `NG` is how
-Japanese teams often mark a take as no good, which would fit a floor that was
-dropped, though nothing in the code says so.
+Run, it would have Garet run up (`gValeStorm_UnusedGaretRunsUpScript`), pant
+`*Hah* *Hah*` while `gValeStorm_UnusedGaretPantingScript` scales his sprite,
+and ask `Are you trapped, too?` before the two go on together. Those lines
+appear in no other event.
 
-## What's unused from Fuchin Temple to the Lamakan Desert?
+## Functions nothing calls
 
-Two talk rows are plain copies of the row above them, which always answers
-first: Fuchin Temple's visitor from Kolima asking about the bridge
-([fuchin_temple.c](src/scene/fuchin_temple.c)), and the healer in Altin's
-Sanctum talking of the monsters ([sanctum.c](src/scene/sanctum.c)). They change
-nothing the player sees.
+These are declared `UNUSED`. Each holds something the player would have seen,
+so its name carries `Unused`. In story order:
 
-Altin Peak's third room ([altin_peak.c](src/scene/altin_peak.c)) has two rows
-after its table's end marker, where no lookup ever reads: a second copy of an
-exit, and a chest holding a Herb, under flag `0xf05`, on the very spot where
-the room's Cookie chest stands.
+- `ValeStorm_UnusedOpenSanctumDoor` ([vale_storm.c](src/scene/vale_storm.c))
+  plays the door sound, animates the door's cells and walks the leader into a
+  house of Vale through `VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR`.
+  The storm's exit table has a row for that exit, but no event row names the
+  function and nothing else takes the exit. It leads to
+  `VALE_INTERIORS_SHOPS_FROM_VALE_WEST`, the same entrance as the house's two
+  doors that are used.
+- `Event_UnusedRoofMended` ([vale.c](src/scene/vale.c)) is another version of
+  `Event_RoofMended`, the end of the morning the story begins. It shows the
+  same messages, `Good job, Garet.` and `I was devastated when Kyle died...`
+  among them, with its own camera moves and map cells.
+- `Event_UnusedWaterBurstsByTheRiver` ([vale.c](src/scene/vale.c)) runs in
+  Vale after Kalay. It shakes the map and has water grow up three times
+  (`gValeGrowingWaterAction`) north of `ACTOR_STRONGMAN_REMEMBERING_FELIX`,
+  who then shows `MsgValeIUsedToPlayHere`
+  (`I still remember when Felix and I used to play here...*Sniff*`) and a
+  second line, and the event sets `FLAG_PLACE_TEMP_05`. The three water actors
+  from `ACTOR_FIRST_WATER` are placed in Vale's actor table and nothing else
+  shows them. His talk and Mind Read rows show the same two lines.
+- `SolSanctumStatue_UnusedMoveNorthwestStatue`
+  ([sol_sanctum_statue.c](src/scene/sol_sanctum_statue.c)) slides the
+  northwest statue by itself to (504, 152), where it opens its seal. The player
+  moves the statue there with Move instead.
+- `MercuryLighthouseAerie_UnusedAlexCastsPly`
+  ([mercury_lighthouse_aerie.c](src/scene/mercury_lighthouse_aerie.c)) has
+  Alex raise his hands and cast Ply on the lift's statue. The scene the game
+  plays, `MercuryLighthouseAerie_AlexAppears`, has Alex and Saturos warp to the
+  lift and ride it down without it.
+- `Manticore_UnusedReturn` ([lamakan_desert.c](src/scene/lamakan_desert.c))
+  walks the Manticore back to its spot at (168, 96) and settles it.
+- `CrossboneIsleKeys_UnusedUpdateKeyIcons`
+  ([crossbone_isle_keys.c](src/scene/crossbone_isle_keys.c)) would show the
+  item icons of the Blue Keys still lying in the room one after another, every
+  16 frames. Nothing adds it as a callback.
+- `ColosseumNavampaMatch_UnusedCountdown`
+  ([colosseum_navampa_match.c](src/scene/colosseum_navampa_match.c)) is a
+  countdown before the match at the third finals site, with its own Colosso
+  lettering and sounds.
+- `ColosseumNavampaMatch_UnusedCompetitorTalk`, in the same file, asks a yes
+  or no question and on yes makes the character it names the one the player
+  moves alone, as the friends' turns do. XXX: likely its message numbers date
+  from an earlier catalog, because the lines it would show, three apart per
+  character from `MsgColossoDidntThinkBattles`, are a spectator's thought and
+  the stage announcements.
 
-In the Lamakan Desert, [lamakan_desert.c](src/scene/lamakan_desert.c) keeps
-`Manticore_UnusedReturn`, the Manticore walking back to its spot and settling.
-Nothing calls it.
+Most other `UNUSED` functions, in the overlays and in the main image, are
+helpers and empty functions, and they keep their names. A few more hold
+something the player would see but don't carry `Unused` in their names yet,
+among them `LunpaFortress_FirstPatrolThrowsPartyOut` (the first patrol asking
+who the party is and sending them out) and `LunpaFortress_TryCollectArcticBlade`
+and its three neighbours (four swords set out on display actors); each has its
+`Unused:` comment. Two copied cell animations in the overlays are unused
+tables: `gSolSanctumEruption_UnusedStarCells` and
+`gTretTreeBranch_UnusedCellSteps`.
 
-## What's unused between Kalay and Colosso?
+## A scene nothing leads to
 
-On Crossbone Isle, the room of locked doors in
-[crossbone_isle_keys.c](src/scene/crossbone_isle_keys.c)
-has two rows for walking south into its third and fourth blue doors,
-`Event_UnusedCheckLeaderAhead`. Plain touch rows for the same doors come first,
-and they already look ahead after a dozen steps of pressing against the door,
-so the player sees the same thing either way. The room would also have flashed
-the icons of the Blue Keys still lying about, one after another
-(`CrossboneIsleKeys_UnusedUpdateKeyIcons`), but nothing starts it.
+`SceneId_UnusedMercuryLighthouseAerieCopy` loads the overlay and map of
+Mercury Lighthouse's aerie
+([mercury_lighthouse_aerie.c](src/scene/mercury_lighthouse_aerie.c)), and the area names call it Mercury Lighthouse. The overlay's setup does
+nothing for it, and no exit, table or code leads there; only the debug scene
+selector, which reaches every scene, can. Its label in the debug scene list,
+the message `MsgDebugCategoryName` shows for each scene, is `MTO07NG`, after
+`MTO06` for the aerie itself. XXX: likely `NG` marks a dropped take, as
+Japanese teams often use it, but nothing in the code says so.
 
-In Tolbi on the day of the finals, four lines follow a soldier's line about
-scalpers in the catalog and are shown by nothing at all: `The finals are about
-to start. It's kind of sad.`, `Just wait until Colosso ends, like a good
-kid.`, `The prices drop once Colosso ends, so buying now would be foolish!` and
-`They said they'd buy it after Colosso ended, but I wonder...`. They read like
-finals-day lines for the family in town, the father who loves souvenirs, the
-mother and the crying child, who repeat their festival lines instead. No table
-or code names them or counts on to them, but which person was meant to say
-which is a guess, so [tolbi.c](src/scene/tolbi.c) marks it `XXX: likely`.
-
-The third Colosso finals site,
-[colosseum_navampa_match.c](src/scene/colosseum_navampa_match.c), keeps a countdown before
-the match, `ColosseumNavampaMatch_UnusedCountdown`, with its own lettering and
-sounds, and `ColosseumNavampaMatch_UnusedCompetitorTalk`, which asks a yes or no
-question and hands the player control of the character it names, as the
-friends' turns do. The lines it would show, three apart per character, are a
-spectator's thought and the stage announcements, which suggests its message
-numbers are older than the final catalog.
-
-## How many lines does nobody hear?
+## Messages nothing shows
 
 The English catalog, [en.po](text/en.po), holds 10,723 messages. Counting the
-unused ones exactly is harder than it sounds, because a cutscene sets one
-message and then moves on through the ones after it, often across several
-functions and yes or no answers that the engine picks by offset. Counting
-generously, so that every function could carry the message on as far as any
-code in its scene shows lines, leaves 15 messages unaccounted for. Seven of
-those are labels such as `Exp to next level`, and four are the Lucky Dice
-results and the answers to two questions, which the menus, the dice and the yes
-or no window choose by number in ways this count can't follow, so they aren't
-counted as unused. The other four are the Tolbi family's finals-day lines
-above.
+unused ones is not a matter of looking for message symbols nobody names,
+because a cutscene sets one message and then advances through the ones after
+it, often across several functions and yes or no answers chosen by offset. A
+generous count, which lets every function carry its message on as far as any
+code in its scene shows lines, leaves 15 messages unaccounted for. Seven are
+labels such as `Exp to next level`, and four are the Lucky Dice results and
+the answers to two questions, which the menus, the dice and the yes or no
+window choose by number in ways the count can't follow; they aren't counted
+as unused.
 
-Then there are the lines only unused code shows: Garet's gasps on the stormy
-night, the cook's bones, the three dishes, and whatever the competitor talk
-was meant to say.
+The remaining four follow `MsgTolbiSpringOhThereAreAlwaysScalpersAt` in the
+catalog, and no row or code shows them:
 
-## What about the debug rooms?
+- `The finals are about to start. It's kind of sad.`
+- `Just wait until Colosso ends, like a good kid.`
+- `The prices drop once Colosso ends, so buying now would be foolish!`
+- `They said they'd buy it after Colosso ended, but I wonder...`
+
+A comment in [tolbi.c](src/scene/tolbi.c), above the family's rows in
+`gTolbiEventsFinalsDay`, gives the likely reading: the father, the mother and
+the crying boy had finals-day lines of their own, because these speak of
+waiting for Colosso to end and of buying once prices drop, and the family
+repeats its festival lines instead. XXX: which line was meant for which person
+isn't known.
+
+Beyond these, the messages that only unused code shows are those listed with
+their events above.
+
+## Debug scenes
 
 The ten scenes at the end of the scene table, `TestRoom0` to `TestRoom7`,
-`IncreaseItemAndLevel` and `MenuTest`, aren't unused in the same sense: they
-were made for testing, and the debug scene selector reaches them, as it
-reaches every scene. That selector, `Menu_RunSelection`
-([debug.c](src/window/battle_command/debug.c)), opens from the Start menu
-with B held, but only in debug mode, and nothing the retail game runs seems to
-turn debug mode on. [Debug rooms](src/debug/README.md) has the rooms and the
-evidence.
-
-## How much is there?
-
-- Events and table rows that never run: Garet's other joining, the cook's
-  bones, the Keys room's two look-ahead rows, five oven rows with three dish
-  lines between them, two copied talk rows and Altin Peak's two rows past the
-  end.
-- Scenes no exit, table or code leads to: one, `SceneId_UnusedMercuryLighthouseAerieCopy`.
-- Functions in the scenes nothing reaches: 51, of which nine hold something the
-  player would have seen and carry `Unused` in their names; most of the rest
-  are small helpers and empty functions the overlays keep.
-- Tables in the scenes nothing reads: seven, two of them copied cell
-  animations (`gSolSanctumEruption_UnusedStarCells`,
-  `gTretTreeBranch_UnusedCellSteps`) and five empty tables or words.
-- Functions in the main image nothing calls: 59, from palette-cycling queues
-  to sound commands, plus two in the debug rooms.
-- Messages nothing shows, beyond those of unused events: four.
+`IncreaseItemAndLevel` and `MenuTest`, are not unused in this sense: the debug
+scene selector, `Menu_RunSelection`
+([debug.c](src/window/battle_command/debug.c)), reaches them, as it reaches
+every scene. The selector opens from the Start menu with B held, but only
+while `gDebugMode` is set. XXX: likely the retail game never sets it, because
+nothing writes `gDebugMode` but the reset at start-up and the sprite viewer,
+which nothing leads to. [Debug rooms](src/debug/README.md) has the rooms and
+the evidence.

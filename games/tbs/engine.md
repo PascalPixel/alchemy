@@ -2,8 +2,7 @@
 
 The engine is the code the field, the battles and the menus are built on:
 start-up, the frame loop and its tasks, the banked layout of the main image,
-the overlays that hold each place's code, and the sound driver's cues. Each
-part has a folder guide, linked from its section below.
+the overlays that hold each place's code, and the sound driver's cues.
 
 ## Start-up
 

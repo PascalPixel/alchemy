@@ -35,21 +35,21 @@ void Kolima_UpdateCurseDust(void) {
   case KOLIMA_DUST_CLOSING:
     if (gFallingEffectWidth < 15000)
       gFallingEffectWidth += 50;
-    if (gFallingEffectOffset > 0x3c0000)
-      gFallingEffectOffset -= 0x4000;
+    if (gFallingEffectOffset > PIXELS(60))
+      gFallingEffectOffset -= PIXELS(1) / 4;
     break;
   case KOLIMA_DUST_CLOSING_WIDE:
     if (gFallingEffectWidth < 30000)
       gFallingEffectWidth += 50;
-    if (gFallingEffectOffset > 0x180000)
-      gFallingEffectOffset -= 0x4000;
+    if (gFallingEffectOffset > PIXELS(24))
+      gFallingEffectOffset -= PIXELS(1) / 4;
     break;
   case KOLIMA_DUST_DRIFTING:
-    if (gFallingEffectOffset < -0x800000) {
+    if (gFallingEffectOffset < -PIXELS(128)) {
       gFallingEffectState = KOLIMA_DUST_CENTRED;
     } else {
       gFallingEffectWidth += 50;
-      gFallingEffectOffset -= 0x4000;
+      gFallingEffectOffset -= PIXELS(1) / 4;
     }
     break;
   }
@@ -63,17 +63,17 @@ void Kolima_UpdateCurseDust(void) {
           (((u32)Engine_RandomNext() * gFallingEffectWidth >> 16) << 8) +
           gFallingEffectOffset;
     else
-      x = origin[0] + (Engine_RandomNext() << 8) - 0x800000;
-    z = origin[2] + (Engine_RandomNext() << 8) - 0x800000;
+      x = origin[0] + (Engine_RandomNext() << 8) - PIXELS(128);
+    z = origin[2] + (Engine_RandomNext() << 8) - PIXELS(128);
     object->motionFlags = 0;
-    object->y.fixed = 0xa00000;
+    object->y.fixed = PIXELS(160);
     sprite = object->sprite;
-    object->scaleX = 0xe666;
-    object->scaleY = 0xe666;
+    object->scaleX = 9 * Q16_ONE / 10;
+    object->scaleY = 9 * Q16_ONE / 10;
     object->x.fixed = x;
     object->z.fixed = z;
     sprite->flags = 0;
-    object->priorityFlags &= ~1;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     sprite->image.priority = 1;
     Object_SetMode(object, 1);
     Engine_ObjectSetScript(object, gFallingEffectScript);

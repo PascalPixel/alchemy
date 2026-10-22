@@ -60,7 +60,7 @@
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_IceChipSheet;
 extern char ResourceId_MercuryDjinnSmallSheet;
-// The ice chip's four cels: ☀️'s gProjectiles_PelletOffsets,
+// The ice chip's four cels: ☀️'s gProjectileVolley_PelletOffsets,
 // gHail_CellWidths and gHail_CellHeights.
 extern const u16 Data_0819851c[];
 extern const u8 Data_08198513[];

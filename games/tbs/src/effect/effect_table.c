@@ -273,9 +273,9 @@ struct Vector3 gBind_TriangleStrikeVertex[] = {{.x = 0, .y = 24, .z = 0}};
 // stars.c and procne.c: Ring bolt, spinning star and whirlwind comet paths.
 
 /// The two star points, 48 and 28 pixels up (16.16).
-struct Vector3 gStars_Points[] = {{.x = 0, .y = 48 << 16, .z = 0},
-                                  {.x = 0, .y = 28 << 16, .z = 0}};
-u8 gStars_Radii[] = {32, 16};
+struct Vector3 gStar_Points[] = {{.x = 0, .y = 48 << 16, .z = 0},
+                                 {.x = 0, .y = 28 << 16, .z = 0}};
+u8 gStar_Radii[] = {32, 16};
 u8 gProcne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 u8 gProcne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
 u16 gProcne_Frames[] = {334, 347, 359, 372};
@@ -868,10 +868,10 @@ u8 gBolt_GlintModes[] = {COMPOSITE_MAX, COMPOSITE_MAX, COMPOSITE_ADDITIVE};
 // projectiles.c: Projectile volley modes and picture cells.
 
 /// Comet picture heights, by comet (enum ProjectileVolleyComet).
-u8 gProjectiles_CometHeights[] = {24, 36, 48};
+u8 gProjectileVolley_CometHeights[] = {24, 36, 48};
 /// Each projectile volley mode, by the PROJECTILE_VOLLEY_ columns
 /// (projectiles.c).
-u8 gProjectiles_Modes[][5] = {
+u8 gProjectileVolley_Modes[][5] = {
     // PROJECTILE_VOLLEY_: SHOTS, STEPS, STAGGER, DELAY, SPARKS
     [PROJECTILE_VOLLEY_SLASH] = {6, 10, 3, 32, 4},
     [PROJECTILE_VOLLEY_SHURIKEN] = {4, 10, 5, 32, 8},
@@ -887,13 +887,14 @@ u8 gProjectiles_Modes[][5] = {
     [PROJECTILE_VOLLEY_WING_STROKE] = {10, 10, 1, 32, 4},
 };
 // Hit flash pictures, by step (flash frame / 2).
-u8 gProjectiles_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
-u8 gProjectiles_FlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
-u8 gProjectiles_FlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
-u8 gProjectiles_FlashRises[] = {0, 3, 5, 7, 10, 12, 12};
-u16 gProjectiles_FlashOffsets[] = {8192, 8312, 8582, 9014, 9674, 10646, 11738};
+u8 gProjectileVolley_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
+u8 gProjectileVolley_FlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
+u8 gProjectileVolley_FlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
+u8 gProjectileVolley_FlashRises[] = {0, 3, 5, 7, 10, 12, 12};
+u16 gProjectileVolley_FlashOffsets[] = {8192, 8312,  8582, 9014,
+                                        9674, 10646, 11738};
 /// Ice chip pictures, by shot index & 3.
-u16 gProjectiles_PelletOffsets[] = {2308, 2372, 2436, 2500};
+u16 gProjectileVolley_PelletOffsets[] = {2308, 2372, 2436, 2500};
 
 // djinn_attacks.c: Mercury Djinni flame launch frames.
 
@@ -991,10 +992,10 @@ u8 gGaia_LateRockColumns[] = {136, 40, 120, 56, 104, 72};
 
 // The six cells of the growing beam picture, and how far each reaches short of
 // the user. The Lost Age reads the same tables.
-u8 gBeams_CellWidths[] = SLASH_CELL_WIDTHS;
-u8 gBeams_CellHeights[] = SLASH_CELL_HEIGHTS;
-u16 gBeams_Cells[] = {0, 266, 752, 1533, 2495, 3496};
-u8 gBeams_CellReaches[] = SLASH_CELL_REACH;
+u8 gBeam_CellWidths[] = SLASH_CELL_WIDTHS;
+u8 gBeam_CellHeights[] = SLASH_CELL_HEIGHTS;
+u16 gBeam_Cells[] = {0, 266, 752, 1533, 2495, 3496};
+u8 gBeam_CellReaches[] = SLASH_CELL_REACH;
 
 // casting_impact.c: Casting impact glints and orbit cells.
 

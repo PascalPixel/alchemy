@@ -364,7 +364,7 @@ void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
 /// fireball trails from 512.
 #define PROJECTILE_VOLLEY_PARTICLE_COUNT 1024
 
-/// The bytes of a gProjectiles_Modes row.
+/// The bytes of a gProjectileVolley_Modes row.
 enum VolleyField {
   PROJECTILE_VOLLEY_SHOTS,   ///< shots at each target
   PROJECTILE_VOLLEY_STEPS,   ///< frames a shot takes to reach its target
@@ -537,11 +537,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
-  shots = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
-  steps = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
+  shots = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
+  steps = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
   {
-    s32 stagger = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_STAGGER]);
-    s32 delay = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
+    s32 stagger = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STAGGER]);
+    s32 delay = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
     s32 height = BattleUnit_GetEffectHeightFar(work->effect->actor);
 
     // Keep the shots within work->particles' 64.
@@ -806,7 +806,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                     particle->variant = (Random16() & 7) + 16;
                     spawned++;
                     if (spawned ==
-                        (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_SPARKS]))
+                        (gProjectileVolley_Modes[mode]
+                                                [PROJECTILE_VOLLEY_SPARKS]))
                       break;
                   }
                 }
@@ -829,8 +830,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
-                  screenPosition->y - gProjectiles_CometHeights[comet], 32,
-                  gProjectiles_CometHeights[comet]);
+                  screenPosition->y - gProjectileVolley_CometHeights[comet], 32,
+                  gProjectileVolley_CometHeights[comet]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               if (work->effect->side == 1)
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -843,7 +844,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
-                  gProjectiles_CometHeights[comet]);
+                  gProjectileVolley_CometHeights[comet]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               // Shurikens vanish once past their target.
@@ -854,7 +855,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                        mode == PROJECTILE_VOLLEY_BLIZZARD ||
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
               s32 cell = j & 3;
-              draw[0](canvas, work->sheet + gProjectiles_PelletOffsets[cell],
+              draw[0](canvas,
+                      work->sheet + gProjectileVolley_PelletOffsets[cell],
                       screenPosition->x - 4, screenPosition->y - 4, 8, 8);
             } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
               draw[0](canvas, work->sheet + j % 6 * (8 * 16),
@@ -893,46 +895,46 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gProjectiles_FlashOffsets[step],
-                  flash->x - gProjectiles_FlashWidths[step],
-                  flash->y - gProjectiles_FlashRises[step],
-                  gProjectiles_FlashWidths[step],
-                  gProjectiles_FlashHeights[step]);
+                  canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
+                  flash->x - gProjectileVolley_FlashWidths[step],
+                  flash->y - gProjectileVolley_FlashRises[step],
+                  gProjectileVolley_FlashWidths[step],
+                  gProjectileVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gProjectiles_FlashOffsets[step],
+                  canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
                   flash->x,
-                  flash->y + gProjectiles_FlashSteps[step] -
-                      gProjectiles_FlashRises[step],
-                  gProjectiles_FlashWidths[step],
-                  gProjectiles_FlashHeights[step]);
+                  flash->y + gProjectileVolley_FlashSteps[step] -
+                      gProjectileVolley_FlashRises[step],
+                  gProjectileVolley_FlashWidths[step],
+                  gProjectileVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
-                  work->sheet + gProjectiles_FlashOffsets[step] +
+                  work->sheet + gProjectileVolley_FlashOffsets[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
-                  flash->x - gProjectiles_FlashRises[step],
-                  flash->y - gProjectiles_FlashWidths[step],
-                  gProjectiles_FlashHeights[step],
-                  gProjectiles_FlashWidths[step]);
+                  flash->x - gProjectileVolley_FlashRises[step],
+                  flash->y - gProjectileVolley_FlashWidths[step],
+                  gProjectileVolley_FlashHeights[step],
+                  gProjectileVolley_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
-                  work->sheet + gProjectiles_FlashOffsets[step] +
+                  work->sheet + gProjectileVolley_FlashOffsets[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
-                  flash->x + gProjectiles_FlashSteps[step] -
-                      gProjectiles_FlashRises[step],
-                  flash->y, gProjectiles_FlashHeights[step],
-                  gProjectiles_FlashWidths[step]);
+                  flash->x + gProjectileVolley_FlashSteps[step] -
+                      gProjectileVolley_FlashRises[step],
+                  flash->y, gProjectileVolley_FlashHeights[step],
+                  gProjectileVolley_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             flash->z++;

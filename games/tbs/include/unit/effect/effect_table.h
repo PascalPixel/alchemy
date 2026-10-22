@@ -126,8 +126,8 @@ extern u8 gCondemn_PanelX[][7];
 extern u8 gCondemn_PanelY[][7];
 extern struct Vector3 gBind_Vertex[];
 extern struct Vector3 gBind_TriangleStrikeVertex[];
-extern struct Vector3 gStars_Points[];
-extern u8 gStars_Radii[];
+extern struct Vector3 gStar_Points[];
+extern u8 gStar_Radii[];
 extern u8 gProcne_GridX[];
 extern u8 gProcne_GridY[];
 extern u16 gProcne_Frames[];
@@ -322,7 +322,7 @@ enum ProjectileVolleyComet {
   PROJECTILE_VOLLEY_COMET_B, ///< CometSheetB
   PROJECTILE_VOLLEY_COMET_C  ///< CometSheetC, also Cutting Edge's
 };
-extern u8 gProjectiles_CometHeights[];
+extern u8 gProjectileVolley_CometHeights[];
 /// The projectile volley's modes (BattleEffect_RunProjectileVolley), each named
 /// for the effect that fires it; the casting impacts fire two of them.
 enum ProjectileVolleyMode {
@@ -341,13 +341,13 @@ enum ProjectileVolleyMode {
   PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
   PROJECTILE_VOLLEY_WING_STROKE    ///< large yellow sparks, spread up and down
 };
-extern u8 gProjectiles_Modes[][5];
-extern u8 gProjectiles_FlashWidths[];
-extern u8 gProjectiles_FlashHeights[];
-extern u8 gProjectiles_FlashSteps[];
-extern u8 gProjectiles_FlashRises[];
-extern u16 gProjectiles_FlashOffsets[];
-extern u16 gProjectiles_PelletOffsets[];
+extern u8 gProjectileVolley_Modes[][5];
+extern u8 gProjectileVolley_FlashWidths[];
+extern u8 gProjectileVolley_FlashHeights[];
+extern u8 gProjectileVolley_FlashSteps[];
+extern u8 gProjectileVolley_FlashRises[];
+extern u16 gProjectileVolley_FlashOffsets[];
+extern u16 gProjectileVolley_PelletOffsets[];
 extern u8 gDjinnAttacks_LaunchFrames[];
 extern u8 gHail_CellWidths[];
 extern u8 gHail_CellHeights[];
@@ -409,10 +409,10 @@ extern u8 gGaia_MoundWidths[];
 extern u8 gGaia_MoundHeights[];
 extern s8 gGaia_Bg2Shifts[][3];
 extern u8 gGaia_LateRockColumns[];
-extern u8 gBeams_CellWidths[];
-extern u8 gBeams_CellHeights[];
-extern u16 gBeams_Cells[];
-extern u8 gBeams_CellReaches[];
+extern u8 gBeam_CellWidths[];
+extern u8 gBeam_CellHeights[];
+extern u16 gBeam_Cells[];
+extern u8 gBeam_CellReaches[];
 extern u8 gCastingImpact_GlintDrawFlags[];
 extern u8 gCastingImpact_ImageX[][7];
 extern u8 gCastingImpact_ImageY[];

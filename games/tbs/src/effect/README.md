@@ -694,7 +694,7 @@ flowchart TD
 
 A projectile volley ([`projectiles.c`](parts/projectiles.c)) fires shots from
 the user at each target. Its mode (`enum ProjectileVolleyMode`) picks the shot
-picture, the aim and the sounds, and its row of `gProjectiles_Modes` gives the
+picture, the aim and the sounds, and its row of `gProjectileVolley_Modes` gives the
 shots a target (`PROJECTILE_VOLLEY_SHOTS`), their flight
 (`PROJECTILE_VOLLEY_STEPS`), the stagger between shots and the delay between
 targets, and the sparks a hit throws. Each frame moves and draws every launched

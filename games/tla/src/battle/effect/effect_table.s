@@ -380,7 +380,7 @@ Data_0819790c:
 	.global Data_08197918
 Data_08197918:
 	.4byte 0, 24, 0
-@ The Broken Seal's gStars_Points; read by BattleEffect_RunAstralBlast
+@ The Broken Seal's gStar_Points; read by BattleEffect_RunAstralBlast
 	.global gData_08197924
 gData_08197924:
 	.4byte 0, 0x300000, 0, 0
@@ -1322,7 +1322,7 @@ Data_0819846e:
 	.global Data_08198472
 Data_08198472:
 	.byte 1, 1, 0
-@ The Broken Seal's gProjectiles_CometHeights; read by BattleEffect_RunProjectileVolley
+@ The Broken Seal's gProjectileVolley_CometHeights; read by BattleEffect_RunProjectileVolley
 	.global Data_08198475
 Data_08198475:
 	.byte 24, 36, 48
@@ -1335,15 +1335,15 @@ Data_08198478:
 	.byte 32, 4, 60, 12, 1, 32, 4, 10, 10, 1, 32, 4, 7, 8, 2, 32
 	.byte 40, 20, 12, 1, 32, 40, 30, 24, 2, 32, 8, 30, 16, 1, 32, 8
 	.byte 30, 16, 1, 32, 8, 30, 16, 1, 32, 8, 60, 12, 1, 32, 4
-@ The Broken Seal's gProjectiles_FlashWidths; read by BattleEffect_RunProjectileVolley
+@ The Broken Seal's gProjectileVolley_FlashWidths; read by BattleEffect_RunProjectileVolley
 	.global Data_081984d7
 Data_081984d7:
 	.byte 12, 18, 24, 30, 36, 39, 40
-@ The Broken Seal's gProjectiles_FlashHeights; read by BattleEffect_RunProjectileVolley
+@ The Broken Seal's gProjectileVolley_FlashHeights; read by BattleEffect_RunProjectileVolley
 	.global Data_081984de
 Data_081984de:
 	.byte 10, 15, 18, 22, 27, 28, 30
-@ The Broken Seal's gProjectiles_FlashSteps; read by BattleEffect_RunProjectileVolley
+@ The Broken Seal's gProjectileVolley_FlashSteps; read by BattleEffect_RunProjectileVolley
 	.global Data_081984e5
 Data_081984e5:
 	.byte 2, 3, 4, 4, 5, 6, 6
@@ -1351,11 +1351,11 @@ Data_081984e5:
 	.global Data_081984ec
 Data_081984ec:
 	.byte 0, 3, 5, 7, 10, 12, 12, 0
-@ The Broken Seal's gProjectiles_FlashOffsets; read by BattleEffect_RunProjectileVolley
+@ The Broken Seal's gProjectileVolley_FlashOffsets; read by BattleEffect_RunProjectileVolley
 	.global Data_081984f4
 Data_081984f4:
 	.2byte 8192, 8312, 8582, 9014, 9674, 10646, 11738
-@ The Broken Seal's gProjectiles_PelletOffsets; read by BattleEffect_RunProjectileVolley
+@ The Broken Seal's gProjectileVolley_PelletOffsets; read by BattleEffect_RunProjectileVolley
 	.global Data_08198502
 Data_08198502:
 	.2byte 2308, 2372, 2436, 2500
@@ -1376,7 +1376,7 @@ Data_08198513:
 Data_08198517:
 	.byte 8, 8, 8, 8
 	.balign 2
-@ The Broken Seal's gProjectiles_PelletOffsets; read by BattleEffect_RunHail
+@ The Broken Seal's gProjectileVolley_PelletOffsets; read by BattleEffect_RunHail
 	.global Data_0819851c
 Data_0819851c:
 	.2byte 2308, 2372, 2436, 2500
@@ -1580,7 +1580,7 @@ Data_08198860:
 	.global Data_08198866
 Data_08198866:
 	.byte 7, 9, 11, 13, 13, 11
-@ The Broken Seal's gBeams_Cells; read by Func_0815e3ac
+@ The Broken Seal's gBeam_Cells; read by Func_0815e3ac
 	.global Data_0819886c
 Data_0819886c:
 	.2byte 0, 266, 752, 1533, 2495, 3496
@@ -1661,7 +1661,7 @@ gData_0819893d:
 	.global gData_08198940
 gData_08198940:
 	.byte 37, 104, 19, 81, 20, 47
-@ The Broken Seal's gProjectiles_PelletOffsets; read by Func_0815f16c
+@ The Broken Seal's gProjectileVolley_PelletOffsets; read by Func_0815f16c
 	.global gData_08198946
 gData_08198946:
 	.2byte 2308, 2372, 2436, 2500

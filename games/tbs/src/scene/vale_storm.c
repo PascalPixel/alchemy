@@ -754,7 +754,7 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
   Event_ShowMessageAndWait(ACTOR_KYLE, 0, 20);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 20);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
   // "Aren't you coming?" "I need to help evacuate the other villagers."
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -1128,7 +1128,7 @@ static void ValeStorm_BumpIntoShovingMan(void) {
   FieldFx_PlayQueuedSound();
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Actor_ShowEmote(ACTOR_SHOVING_MAN, EMOTE_IN_FRONT | 0, 20);
+  Actor_ShowEmote(ACTOR_SHOVING_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   message = MsgValeHuh;
   Engine_EventSetMessage(message);
   Event_ShowMessage(ACTOR_SHOVING_MAN, 0);
@@ -1152,7 +1152,7 @@ static void Event_HearGaretStruggling(void) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgValeUghHrnghhh);
       Event_ShowMessageAndWait(ACTOR_GARET, 0, 20);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 40);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 382, 619);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1269,7 +1269,7 @@ static void Event_UnusedGaretJoinsIsaac(void) {
     message = MsgValeHey;
     Engine_EventSetMessage(message);
     Event_ShowMessage(ACTOR_GARET, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     Camera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
@@ -1417,8 +1417,8 @@ static void Event_WatchBoulderFall(void) {
     Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeStorm_LeaderScript);
     Actor_RunActionScriptAndWait(ACTOR_GARET, gValeStorm_GaretScript);
     Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 0, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     Event_PlayCue(SE_145);
     Engine_EventWait(40);
@@ -1506,7 +1506,7 @@ static void Event_WatchBoulderFall(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ActorRunRepeatedMotion(ACTOR_ELDER_EAST, 2);
     Event_ShowMessage(ACTOR_ELDER_WEST_STAND_IN, 0);
-    Actor_ShowEmote(ACTOR_ELDER_WEST, EMOTE_IN_FRONT | 0, 0);
+    Actor_ShowEmote(ACTOR_ELDER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_ELDER_WEST, 2);
     Event_ShowMessageAndWait(ACTOR_ELDER_EAST_STAND_IN, 0, 40);
     Actor_SetAttachedEffect(ACTOR_ELDER_FAR_EAST,
@@ -1519,12 +1519,13 @@ static void Event_WatchBoulderFall(void) {
     Engine_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_STAND);
     Engine_TaskWait(1);
     Actor_SetChildValue(ACTOR_ELDER_FAR_WEST, 0);
-    Actor_ShowEmote(ACTOR_ELDER_FAR_WEST, EMOTE_IN_FRONT | 5, 20);
+    Actor_ShowEmote(ACTOR_ELDER_FAR_WEST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     Actor_FaceDirection(ACTOR_ELDER_FAR_WEST, FACING_WEST, 40);
     Actor_FaceDirection(ACTOR_ELDER_FAR_WEST, FACING_EAST, 20);
     Actor_FaceDirection(ACTOR_ELDER_FAR_WEST, FACING_WEST, 20);
     Actor_FaceDirection(ACTOR_ELDER_FAR_WEST, FACING_SOUTH, 40);
-    Actor_ShowEmote(ACTOR_ELDER_FAR_WEST, EMOTE_IN_FRONT | 0, 0);
+    Actor_ShowEmote(ACTOR_ELDER_FAR_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                    0);
     Engine_ActorRunRepeatedMotion(ACTOR_ELDER_FAR_WEST, 2);
     Engine_ActorJump(ACTOR_ELDER_FAR_WEST, 4, 40);
     Engine_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, 9);
@@ -1669,7 +1670,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Engine_TaskWait(3);
   Engine_EventSetMessage(MsgValeNoBrother);
   Engine_EventShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 20);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 1094);
   {
     struct FieldActor *leader;
@@ -1767,7 +1768,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Engine_CameraWaitForMove();
   Engine_ActorRunRepeatedMotion(ACTOR_JENNAS_FATHER, 2);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Engine_ActorFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_KYLE, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_KYLE, 2);
@@ -1801,9 +1802,9 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Engine_ActorFaceDirection(ACTOR_KYLE, FACING_EAST, 10);
   Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
-  Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_KYLE, EMOTE_IN_FRONT | 5, 60);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 6, 20);
+  Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_KYLE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 20);
   Engine_ActorFaceDirection(ACTOR_DORA, FACING_EAST, 30);
@@ -1817,10 +1818,10 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
   Engine_ActorSetAnimation(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Actor_ShowEmote(ACTOR_KYLE, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_JENNAS_MOTHER, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_KYLE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_JENNAS_MOTHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Engine_ActorFaceDirection(ACTOR_DORA, FACING_EAST, 10);
   Engine_ActorFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_JENNAS_MOTHER, 0);
   Engine_EventWait(20);
@@ -1950,7 +1951,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Camera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
   Object_RefreshSelectorById(ACTOR_DORA);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 0);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 40);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
@@ -1967,7 +1968,7 @@ static void ValeStorm_RunRiverSearch(void) {
   }
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 40);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 30);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   helpMessage = MsgValeDontSupposeTwo;
   Engine_EventSetMessage(helpMessage);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
@@ -1981,8 +1982,8 @@ static void ValeStorm_RunRiverSearch(void) {
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Engine_EventWait(40);
   } else {
-    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 90);
-    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 40);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Engine_ActorSetAnimation(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Engine_EventSetMessage((helpMessage + 2));
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
@@ -2237,11 +2238,12 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ValeStorm_PlayImpactBeat(PIXELS(4), 20);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_EXHAUSTED_STRONGMAN, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_EXHAUSTED_STRONGMAN, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                  0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceEachOther(ACTOR_JENNA, ACTOR_EXHAUSTED_STRONGMAN, 0);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);

@@ -229,7 +229,8 @@ static void Event_AskAboutGoingToKolima(void) {
 /// nightgown screams, then turns to the party. "AAAAH!!!"
 static void Event_TalkToWomanInMiladysNightgown(void) {
   Engine_EventBegin();
-  Actor_ShowEmote(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
+                  EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 2);
   Engine_EventWait(40);
   Engine_EventSetMessage(MsgBilibinAaaah);
@@ -459,7 +460,7 @@ static void Event_CaptainAsksPartyToChoose(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_22) != 0) {
       Engine_EventBegin();
-      Actor_ShowEmote(ACTOR_CAPTAIN, EMOTE_IN_FRONT, 0);
+      Actor_ShowEmote(ACTOR_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHWEST + FACING_STEP, 10);
       Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
       Engine_EventWait(20);
@@ -659,7 +660,7 @@ static void Event_AudienceWithMcCoy(void) {
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_CAPTAIN, 3);
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
+    Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
@@ -720,7 +721,7 @@ static void Event_AudienceWithMcCoy(void) {
                                                      ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 20);
-    Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 40);
+    Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     // Let the party accept the assignment or leave after McCoy refuses them.
     Engine_EventOpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
@@ -806,7 +807,7 @@ static void Event_AudienceWithMcCoy(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 20);
-  Engine_ActorShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 1, 60);
+  Engine_ActorShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // A returning party can reconsider the assignment without replaying the
   // captain's announcement.
   Engine_EventSetMessage(MsgBilibinYehveChangeHeart);
@@ -825,7 +826,7 @@ accepted:
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-  Engine_ActorShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_EventSetMessage(MsgBilibinHmmmWellGrant);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
   // Animate McCoy tossing the barricade key to the party.
@@ -845,13 +846,13 @@ accepted:
   Actor_MoveToAndWait(ACTOR_BARRICADE_KEY, 894, 668);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
   Engine_EventOpenMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
@@ -876,19 +877,19 @@ accepted:
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_EventShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 1, 60);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Engine_ActorFaceDirection(GARET, FACING_EAST, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
   Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 1);
@@ -910,7 +911,7 @@ accepted:
   Engine_ActorFaceDirection(GARET, FACING_EAST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventSetMessage(MsgBilibinWellSGoing);
@@ -928,7 +929,7 @@ accepted:
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
   Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -972,7 +973,7 @@ accepted:
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorSetAnimation(ACTOR_LORD_MCCOY, 4);
@@ -982,10 +983,10 @@ accepted:
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 7, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 7, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 7, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   Engine_EventWait(10);
@@ -1013,9 +1014,9 @@ accepted:
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(GARET);
   Engine_ActorStop(IVAN);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
@@ -1081,7 +1082,7 @@ static void Event_CaptainHintsAtBarricade(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Engine_EventSetMessage(MsgBilibinNameSorryRejected);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 264, 660);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 248, 660);
@@ -1092,7 +1093,7 @@ static void Event_CaptainHintsAtBarricade(void) {
   Engine_EventAskYesNo(ACTOR_CAPTAIN, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
@@ -1242,8 +1243,8 @@ static void Event_McCoyRewardsParty(void) {
   McCoyPalace_FaceCompanionsForDiscussion();
   Engine_EventWait(20);
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   } else {
     Engine_EventWait(40);
   }
@@ -1259,8 +1260,8 @@ static void Event_McCoyRewardsParty(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
@@ -1279,7 +1280,7 @@ static void Event_McCoyRewardsParty(void) {
     if (advanceAlternateReply != 0) {
       gEventWork->message++;
     }
-    Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   } else {
     gEventWork->message += 4;
   }
@@ -1307,7 +1308,7 @@ static void Event_McCoyRewardsParty(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   McCoyPalace_FaceCompanionsForAudience();
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
@@ -1316,7 +1317,7 @@ static void Event_McCoyRewardsParty(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 8, 60);
+  Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);

@@ -614,7 +614,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
                             0);
   Engine_EventWait(30);
   Engine_ActorStartRepeatedMotion(ACTOR_FIRST_AREA_ATTACKING_APE, 2);
-  Engine_ActorShowEmote(ACTOR_FIRST_AREA_ATTACKING_APE, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorShowEmote(ACTOR_FIRST_AREA_ATTACKING_APE,
+                        EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_AudioPlayCue(SE_147);
   Engine_EventWait(60);
 
@@ -1061,7 +1062,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                             0);
   Engine_EventWait(30);
   Engine_ActorStartRepeatedMotion(ACTOR_THIRD_AREA_ATTACKING_APE, 2);
-  Engine_ActorShowEmote(ACTOR_THIRD_AREA_ATTACKING_APE, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorShowEmote(ACTOR_THIRD_AREA_ATTACKING_APE,
+                        EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_AudioPlayCue(SE_147);
   Engine_EventWait(60);
   leaderForX = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1383,7 +1385,8 @@ s32 MogallForest_Initialize(void) {
         Engine_EventWaitForScreen();
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         Engine_EventWait(30);
-        Actor_ShowEmote(ACTOR_FIRST_AREA_NORTH_APE, EMOTE_IN_FRONT, 0);
+        Actor_ShowEmote(ACTOR_FIRST_AREA_NORTH_APE,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
         Engine_ActorRunRepeatedMotion(ACTOR_FIRST_AREA_NORTH_APE, 2);
         Engine_EventWait(30);
         MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 136, 116,

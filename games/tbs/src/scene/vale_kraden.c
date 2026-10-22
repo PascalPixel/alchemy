@@ -280,21 +280,21 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
     // The three are puzzled, and Jenna asks what he means.
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Event_ShowMessageAndWait(JENNA, 0, 10);
     // Kraden: they spoke of Mt. Aleph and Sol Sanctum as if they had seen
     // them.
-    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(GARET, FACING_EAST, 0);
     Actor_FaceDirection(JENNA, FACING_WEST, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
     // Kraden looks from one to another and asks whether that is not strange.
@@ -317,7 +317,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Actor_FaceDirection(JENNA, FACING_WEST, 10);
     Event_ShowMessageAndWait(JENNA, 0, 6);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 30);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
     Engine_ActorJump(GARET, 4, 30);
     Actor_FaceDirection(GARET, FACING_EAST, 10);
     Event_ShowMessageAndWait(GARET, 0, 6);
@@ -340,9 +340,9 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 0);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
@@ -375,9 +375,9 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
     // Kraden asks whether the ban on climbing Mt. Aleph should stop them;
     // either way, they will only look.
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_OpenMessage(ACTOR_KRADEN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -446,10 +446,10 @@ static void Event_KradenPlansSanctumVisit(void) {
     Event_ShowMessageAndWait(JENNA, 0, 6);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Actor_FaceDirection(GARET, FACING_WEST, 10);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 30);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
     Event_ShowMessageAndWait(GARET, 0, 10);
     // Kraden hops, eager to start.
-    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 0, 40);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Engine_ActorJump(ACTOR_KRADEN, 4, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -462,9 +462,9 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 232, 218);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_EventCloseScreen();
@@ -591,7 +591,7 @@ static void Event_MeetSaturosAndMenardi(void) {
 
   // Isaac hurries forward and Garet and Jenna step out beside him.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 30);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 328);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
 
@@ -610,9 +610,9 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_ActorSetAnimation(GARET, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(JENNA, FACING_EAST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 30);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   ValeKraden_FacePartySouth();
   // The camera pans down to the strangers, and their theme plays.
   Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
@@ -639,11 +639,11 @@ static void Event_MeetSaturosAndMenardi(void) {
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 6);
   // They sense they are watched; Saturos looks about, and both walk round to
   // face the party.
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 60);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 40);
@@ -666,7 +666,7 @@ static void Event_MeetSaturosAndMenardi(void) {
   // whether they were eavesdropping.
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
@@ -716,15 +716,15 @@ static void Event_MeetSaturosAndMenardi(void) {
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Actor_FaceActor(ACTOR_SATUROS, GARET, 30);
   Actor_FaceActor(ACTOR_SATUROS, JENNA, 30);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   // Saturos lets them go; Jenna is surprised and Menardi doubts him, but he
   // sees no reason to delay the children.
   Engine_EventSetMessage(MsgValeSaturosGo);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 6);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Engine_ActorStartRepeatedMotion(JENNA, 1);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -848,7 +848,7 @@ static void Event_OverhearKraden(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Engine_EventWait(20);
     Engine_EventShowMessage(ACTOR_KRADEN, 0);
-    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
     Engine_EventShowMessageAndWait(ACTOR_KRADEN, 0, 2);
@@ -1008,7 +1008,8 @@ static void Event_TalkToRockslideSurvivor(void) {
       message = MsgValeRockslideDestroyedFence;
       Engine_EventSetMessage(message);
       Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 20);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 30);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                      30);
       Engine_CameraMoveTo(PIXELS(98), -1, PIXELS(283), 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 94, 293);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -1040,7 +1041,8 @@ static void Event_TalkToRockslideSurvivor(void) {
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Engine_ActorJump(ACTOR_ROCKSLIDE_SURVIVOR, 4, 40);
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 6);
-        Actor_ShowEmote(ACTOR_ROCKSLIDE_SURVIVOR, EMOTE_IN_FRONT | 1, 40);
+        Actor_ShowEmote(ACTOR_ROCKSLIDE_SURVIVOR,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
         Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Engine_EventWait(10);
@@ -1062,8 +1064,8 @@ static void Event_TalkToRockslideSurvivor(void) {
         Engine_ActorStop(GARET);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
         Actor_FaceDirection(GARET, FACING_SOUTH, 60);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
-        Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | 5, 120);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+        Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
         Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
       // Garet walks back into Isaac.

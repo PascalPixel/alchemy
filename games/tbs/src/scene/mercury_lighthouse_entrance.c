@@ -623,7 +623,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
     Object_GetById(MIA)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Engine_EventWait(20);
-  Engine_ActorShowEmote(MIA, EMOTE_IN_FRONT | 2, 60);
+  Engine_ActorShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   actor = Object_GetById(MIA);
 #ifdef UBFIX
   actor->update = MercuryLighthouseEntrance_MiaWatchesLeader;

@@ -332,7 +332,7 @@ static void Event_AskIsaacHisBusiness(void) {
   Engine_EventSetMessage(MsgValeHeyBoy);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
   Event_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 6);
-  Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
@@ -780,7 +780,7 @@ static void Event_HurryToThePlaza(void) {
   Engine_EventOpenScreen();
   Object_RefreshSelectorById(ACTOR_DORA);
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
   // The camera finds Kyle coming up the path: "Isaac, Dora, hurry! The
@@ -947,7 +947,7 @@ static void Event_VisitSickDora(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventSetMessage(MsgValeCoughCoughWho);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 80);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
@@ -963,11 +963,11 @@ static void Event_VisitSickDora(void) {
   Engine_EventWait(40);
   // "Isaac..." "Are you finally home? Have you completed your mission!?"
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 8, 40);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, 13);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ActorSetAnimation(ACTOR_DORA, 11);
   Engine_EventWait(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
@@ -977,7 +977,7 @@ static void Event_VisitSickDora(void) {
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, 12);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorSetAnimation(ACTOR_DORA, 13);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
@@ -987,11 +987,11 @@ static void Event_VisitSickDora(void) {
     gEventWork->message += 1;
   }
   if (GameFlag_IsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
-    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_DORA, 0);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 7, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
   Engine_EventSetMessage(firstMessage);
@@ -1000,11 +1000,11 @@ static void Event_VisitSickDora(void) {
     gEventWork->message += 1;
   }
   if (Engine_GameFlagIsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
-    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_DORA, 0);
-  Engine_ActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 7, 60);
+  Engine_ActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // "You can't get out of your promises just because you're worried about
   // me." "I just caught a cold." "But I'm fine now. Look!"
   Engine_EventSetMessage(firstMessage + 3);

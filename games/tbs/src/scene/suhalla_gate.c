@@ -319,7 +319,7 @@ static void Event_IodemQuestionsGuards(void) {
   Actor_SetSpeed(ACTOR_IODEM, 0x19999, 0xcccc);
   Actor_WalkToAndWait(ACTOR_IODEM, 108, 0x1af);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 40);
@@ -328,7 +328,7 @@ static void Event_IodemQuestionsGuards(void) {
   Engine_EventSetMessage(MsgSuhallaMeaning);
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
   // The guards describe the attack before Iodem asks who was responsible.
-  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 132, 0x1a4);
@@ -340,7 +340,7 @@ static void Event_IodemQuestionsGuards(void) {
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 40);
-  Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -366,7 +366,7 @@ static void Event_IodemQuestionsGuards(void) {
   }
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 0x1a0);

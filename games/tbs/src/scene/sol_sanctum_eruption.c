@@ -364,13 +364,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   // Jenna: "What about Isaac and Garet? You can't just leave them here!"
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 40);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 40);
   Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 10);
   // Saturos: "Forget about them." Menardi: they might survive. Saturos: "So
   // what do you suggest we do?" Alex: take Jenna, and they will bring the
@@ -393,7 +393,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   // Alex: "Regardless, Kraden must come with us."
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 10);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   // Felix steps forward: Alex is breaking their promise. Alex: conditions
   // have changed. Felix will not let them hurt Jenna; Kraden offers himself
   // in her place.
@@ -435,7 +435,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
@@ -446,18 +446,18 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 40);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Engine_EventWait(40);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 20);
   Engine_ActorSetAnimation(ACTOR_SATUROS, 3);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
@@ -474,7 +474,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 10);
   // Menardi: "Let's make haste!" She shoves Jenna, who stumbles away.
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI, 0);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -489,7 +489,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
   // Felix: "Hey, don't push my sister!" Menardi: "You owe us your life!"
   // Saturos: "Menardi!"
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 3);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
@@ -502,7 +502,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 2);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 2, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
@@ -970,7 +970,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(40);
   Engine_ActorJump(GARET, 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   // Garet: "Jenna and Kraden are gone!"
   Engine_EventSetMessage(MsgSolSanctumFriendsGone);
@@ -979,7 +979,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Engine_EventWait(60);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(80);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
   Engine_EventWait(10);
@@ -1078,8 +1078,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 1;
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(60);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(80);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1131,7 +1131,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_EventWait(10);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_EventWait(40);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
@@ -1141,7 +1141,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_EventSetMessage(MsgSolSanctumOverHere);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(40);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(40);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Engine_EventWait(60);
@@ -1165,8 +1165,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // dangerous..." A jolt; Garet: "You're the dangerous one!"
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(100);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(20);
@@ -1190,11 +1190,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_EventWait(40);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
@@ -1209,7 +1209,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
                              TASK_PRIORITY_SCENE);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(186), -1, PIXELS(166), 1);
@@ -1253,8 +1253,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // and, after drifting closer, "You must leave this place."
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
@@ -1477,8 +1477,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   SolSanctumEruption_FinishMaterialization();
   Event_PlayCue(SE_141);
   Engine_EventWait(100);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   // The Wise One: "It's erupting... Flee, now!" Garet: "But how..." The Wise
   // One: "I will help you..." It glows and the chamber fades to white.
@@ -1653,8 +1653,8 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     Engine_TaskWait(6);
   }
   if (corner == CHAMBER_NORTHWEST) {
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   }
   Engine_TaskWait(20);
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateElementalArcs,

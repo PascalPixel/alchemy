@@ -182,7 +182,7 @@ static void Event_ReturnFromMtAleph(void) {
   // "I thought Mt. Aleph was inactive..." The villagers worry about Isaac and
   // Garet, last seen going to Kraden's house.
   Engine_EventSetMessage(MsgValeMtAlephWasInactive);
-  Actor_ShowEmote(ACTOR_GREAT_HEALER, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_GREAT_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP, 0);
@@ -250,7 +250,7 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_EventWait(50);
   Actor_SetSpeed(GARET, 0x18000, 0xc000);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
@@ -348,9 +348,9 @@ static void Event_ReturnFromMtAleph(void) {
   // "Where have you been?" "What happened?"
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(50);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(50);
   // The Great Healer: "What happened?" The two look at each other and shake
   // their heads.
@@ -366,7 +366,7 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(40);
   // Dora notices who is missing.
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(50);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(10);
@@ -461,8 +461,8 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventWait(40);
   Actor_SetActionScript(GARET, actionScript);
   Object_RefreshSelectorById(1);
-  Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   FieldFx_LastLightning();

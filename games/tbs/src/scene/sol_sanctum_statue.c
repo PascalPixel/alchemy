@@ -385,14 +385,14 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // Kraden: "Good work, everyone!" and "So the statue puzzle was the trap..."
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 80);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
   Event_SayThenWait(ACTOR_KRADEN, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
@@ -564,7 +564,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   Event_SayThenWait(ACTOR_KRADEN, 20);
-  Engine_ActorShowEmote(JENNA, EMOTE_IN_FRONT | 2, 0);
+  Engine_ActorShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Event_SayThenWait(JENNA, 6);
@@ -576,9 +576,9 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Kraden: they have hidden something very important, perhaps the key to
   // Alchemy itself.
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(60);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   Event_SayThenWait(ACTOR_KRADEN, 6);
@@ -603,7 +603,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventSetMessage(MsgSolSanctumTryFindSolution);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   Event_SayThenWait(GARET, 6);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);

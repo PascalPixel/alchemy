@@ -202,7 +202,8 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventWait(2);
 
   // She runs to it and picks it up.
-  Actor_ShowEmote(TOLBI_INTERIORS_MEDAL_WOMAN, EMOTE_IN_FRONT, 50);
+  Actor_ShowEmote(TOLBI_INTERIORS_MEDAL_WOMAN,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_SetSpeed(TOLBI_INTERIORS_MEDAL_WOMAN, 0x10000, 0x8000);
   Actor_WalkToAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 600, 848);
   Actor_FaceDirection(TOLBI_INTERIORS_MEDAL_WOMAN, FACING_NORTH, 0);
@@ -215,7 +216,8 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventWait(30);
 
   // She notices the party.
-  Actor_ShowEmote(TOLBI_INTERIORS_MEDAL_WOMAN, EMOTE_IN_FRONT | 8, 50);
+  Actor_ShowEmote(TOLBI_INTERIORS_MEDAL_WOMAN, EMOTE_IN_FRONT | EMOTE_SMILE,
+                  50);
   Engine_EventWait(20);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
   Engine_EventWait(20);
@@ -225,13 +227,14 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventWait(20);
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 50);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(TOLBI_INTERIORS_MEDAL_WOMAN, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(TOLBI_INTERIORS_MEDAL_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  50);
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
 
   // She hides it and comes back, then leaves.
@@ -264,7 +267,8 @@ static void TolbiInteriors_WatchPassengersArgue(void) {
   Engine_EventShowMessage(TOLBI_INTERIORS_ANGRY_PASSENGER, 0);
   Engine_EventWait(10);
 
-  Engine_ActorShowEmote(TOLBI_INTERIORS_PASSENGER_WIFE, EMOTE_IN_FRONT | 2, 50);
+  Engine_ActorShowEmote(TOLBI_INTERIORS_PASSENGER_WIFE,
+                        EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE, ANIM_NOD);
   Engine_EventWait(30);
@@ -368,7 +372,7 @@ static void TolbiInteriors_TalkToWeaponMerchant(s32 speaker) {
   } else {
     Engine_EventSetMessage(MsgTolbiLookStrongGo);
     Engine_EventShowMessage(speaker, 0);
-    Engine_ActorShowEmote(speaker, EMOTE_IN_FRONT | 6, 0);
+    Engine_ActorShowEmote(speaker, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     Engine_EventWait(40);
     Engine_EventShowMessage(speaker, 0);
   }
@@ -455,7 +459,8 @@ static void TolbiInteriors_ReadMedalWomanMind(void) {
 static void TolbiInteriors_TalkToAngryPassenger(s32 speaker) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiGrrrScamWhyWontThey);
-  Actor_ShowEmote(TOLBI_INTERIORS_ANGRY_PASSENGER, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(TOLBI_INTERIORS_ANGRY_PASSENGER,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Event_ShowMessage(speaker, 0);
   Engine_EventEnd();
 }

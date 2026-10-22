@@ -474,7 +474,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   Engine_GameFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorFaceDirection(ACTOR_LOOKOUT, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventSetMessage(MsgTolbiShipAvast);
   Engine_EventShowMessageAndWait(ACTOR_LOOKOUT, 0, 10);
@@ -605,7 +605,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 3, 60);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(2), PIXELS(1));
   TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
   Engine_EventWait(20);
@@ -635,7 +635,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 3, 60);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(2), PIXELS(1));
   TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
   // The lookout jumps, the monsters' theme plays, and Sean cries out.
@@ -645,7 +645,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_EventSetMessage(MsgTolbiShipMonsters2);
   Event_ShowMessageAndWait(ACTOR_SEAN, 0, 20);
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_LOOKOUT, 2);
@@ -712,7 +712,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetDestination(ACTOR_FIRST_BIRD + 5, 320, 100);
   Actor_SetDestination(ACTOR_FIRST_BIRD + 6, 380, 100);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(20);
   Actor_SetPosition(ACTOR_FIRST_BIRD, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_BIRD + 1, 0, 0);
@@ -741,7 +741,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
     actor->scaleY += Q16_ONE / 20;
     Engine_TaskWait(1);
   }
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_LOOKOUT, 2);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 168, 340);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 200, 340);
@@ -816,7 +816,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Actor_SetAttachedEffect(ACTOR_LOOKOUT, 258);
   Engine_EventWait(120);
   Engine_ActorStartRepeatedMotion(ACTOR_LOOKOUT, 1);
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT, 60);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
   Engine_ActorJump(ACTOR_LOOKOUT, 4, 10);

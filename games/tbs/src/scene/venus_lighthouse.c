@@ -1171,7 +1171,7 @@ static void Event_JumpDown(void) {
   leader->update =
       (void (*)(union FieldObject *))VenusLighthouse_EmitRisingParticles;
 #endif
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
@@ -1273,7 +1273,7 @@ static void Event_MovePillarTowardWall(void) {
   conversationFlag = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
   walkSpeed = 0xcccc;
   walkAcceleration = 0x6666;
-  emote = EMOTE_IN_FRONT;
+  emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   garetX = 0x338;
   Engine_EventBegin();
   actor = Object_GetById(ACTOR_WALL_PILLAR);

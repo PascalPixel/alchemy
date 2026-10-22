@@ -308,7 +308,7 @@ static void Event_InspectFirstMinotaurRelief(void) {
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
@@ -960,11 +960,11 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // Garet: "What's wrong, Kraden?"
   Engine_EventSetMessage(MsgSolSanctumWrongKraden);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 2);
   // Kraden: "Those two said there was a hidden passage leading deeper into
   // the sanctum."
@@ -1034,7 +1034,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST, 60);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
@@ -1135,7 +1135,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   // Kraden: "More statues... It doesn't look like we can reach them".
   Engine_EventSetMessage(MsgSolSanctumMoreStatuesOutOfReach);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   // Kraden: "Perhaps Psynergy is the key..."

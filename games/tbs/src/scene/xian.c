@@ -434,10 +434,12 @@ static void Xian_TalkToWaterCarrier(void) {
     scaleX += 0x1999;
     puddle->scaleX = scaleX;
   } while (scaleX <= 0xffff);
-  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 5, 70);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                  70);
   Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                  0);
   Engine_ActorStartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(70);
   Engine_EventSetMessage(MsgXianDoingMadeMeSpillMy);
@@ -754,7 +756,8 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   carrier->speed = 0;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->acceleration = 0;
-  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                  0);
   Engine_ActorStartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(60);
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0x18000, 0xc000);
@@ -763,7 +766,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
   Engine_ActorWaitForMove(ACTOR_WOMAN_CARRYING_WATER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetActionScript(ACTOR_WOMAN_CARRYING_WATER, gXian_WaterCarrierRoute);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = XIAN_WATER_CARRIER_UPDATE;

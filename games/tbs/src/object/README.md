@@ -126,6 +126,8 @@ once. A request an event raises waits for the event to return, so a battle a
 cutscene asks for starts only after its last line, and an exit it takes
 discards whatever else it raised.
 
+![The twelve request fields, in the loop's order, at each change as Isaac walks into a door in Vale, watched an instruction at a time: on the first frame `action` is raised with the door's code 7 and cleared again within the frame, as on every frame he pushes against it; at frame 17 it stays raised while the door's event runs; at frame 21 the event raises `exit` 6 with `action` still set, `action` is cleared, and then `exit`, as the scene ends](https://alchemy.pascalpixel.com/guides/object/requests.png)
+
 An `event` is either a scene event to run (`Scene_RunRaisedEvent`) or a
 negative code from `enum FieldEventCode` that the loop handles itself:
 `FIELD_EVENT_PARTY_FELL` when characters fell to poison or hazardous ground
@@ -342,6 +344,3 @@ call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
   and 20 to 220, more than the 240 by 160 screen, and pass it to a window
   service that takes tiles, and with no caller in the ROM nothing shows what
   they were given.
-- XXX (picture): the request loop has no take-apart picture: a frame-by-frame strip of
-  the request fields as a cutscene raises an exit with another request would
-  show the order.

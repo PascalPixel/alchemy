@@ -40,7 +40,16 @@
 /// the circles of light the patrols carry, which flicker as they shake
 /// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
 /// shows the pair's two circles). Each has stretches of its rounds where
-/// it cannot see the leader. The guards who fight instead pick one of four
+/// it cannot see the leader. On the upper floor the pair walk east and west
+/// between 88 and 192 pixels across, one 192 and one 288 pixels down; each
+/// sees a leader in his own column up to six rows away, or within a row of
+/// his up to six columns away, whatever stands between them, but never one
+/// in rows 5 to 7 from column 10 west, at the passage's top, or in columns 8
+/// and 9 below row 22 (LunpaFortress_IsLeaderInPatrolSafeZone)
+/// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/patrol-sight.png:
+/// the west passage with the pair's rounds in yellow, every cell either
+/// guard sees from some point of his round in red, and the cells they never
+/// look at in green). The guards who fight instead pick one of four
 /// challenges, by gLunpaFortressRandomPick, drawn on every entrance.
 ///
 /// The Cell Key opens the cell doors of all four scenes, facing each door
@@ -72,8 +81,12 @@
 /// never read.
 ///
 /// Open questions:
-/// - XXX (picture): LunpaFortressUpperFloor's west corridor taken apart, the
-///   cells along the pair's rounds where they cannot see the leader.
+/// - XXX: what CAVE_INVISIBLE_ACTOR and the three invisible actors of
+///   LunpaFortressToadonpa do; each stands in one of the cells behind the
+///   Cell Key's doors, by the jar or chest the map draws there
+///   (https://alchemy.pascalpixel.com/places/lunpa-fortress-toadonpa/map-0.png),
+///   so likely they make it solid, and the map's collision attributes at
+///   those cells would settle it.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -190,12 +203,11 @@ enum {
   CAVE_FIRST_SWITCH_COVER = ACTOR_FIRST_PLACED,
   CAVE_PASSAGE_COVER,
   CAVE_SECOND_SWITCH_COVER,
-  /// An invisible solid actor (SPRITE_BLANK, ACTOR_SOLID) at (504, 168) that
-  /// makes the jar the map draws there, in the cell behind the cave's eastern
-  /// door, stop the leader: the map's collision lets him walk onto the jar,
-  /// and with this actor he stops 14 pixels short of it. Its sprite is hidden
-  /// by LunpaFortress_InitializeCave.
-  CAVE_JAR_BLOCKER,
+  /// An invisible actor at (504, 168), in the cell behind the cave's eastern
+  /// door by the jar the map draws there, its sprite hidden by
+  /// LunpaFortress_InitializeCave; no event names it. XXX: likely it makes
+  /// the jar solid, as the file's open questions say.
+  CAVE_INVISIBLE_ACTOR,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
   CAVE_CRATES
@@ -205,16 +217,15 @@ enum {
 /// gLunpaFortressToadonpaPlacements from ACTOR_FIRST_PLACED; its rows for Ivan,
 /// Mia and Garet keep the party's own slots.
 enum {
-  /// Three invisible solid actors (SPRITE_BLANK, ACTOR_SOLID) at (56, 72),
-  /// (136, 72) and (216, 72), in line with the cell doors
-  /// gLunpaFortressToadonpaDoorCells lists third, second and first, that make
-  /// the jar, chest and jar the map draws in those cells stop the leader. The
-  /// map's collision lets him walk onto the two jars; the chest's own cells
-  /// already stop him, so the middle actor changes nothing. Scene_Initialize
-  /// hides their sprites and lays them underfoot.
-  TOADONPA_WEST_JAR_BLOCKER = ACTOR_FIRST_PLACED,
-  TOADONPA_CHEST_BLOCKER,
-  TOADONPA_EAST_JAR_BLOCKER,
+  /// Three invisible actors at (56, 72), (136, 72) and (216, 72), in line with
+  /// the cell doors gLunpaFortressToadonpaDoorCells lists third, second and
+  /// first, by the jar, chest and jar the map draws in those cells.
+  /// Scene_Initialize hides their sprites and lays them underfoot, and no
+  /// event names them. XXX: likely they make the jars and chest solid, as the
+  /// file's open questions say.
+  TOADONPA_WEST_INVISIBLE_ACTOR = ACTOR_FIRST_PLACED,
+  TOADONPA_MIDDLE_INVISIBLE_ACTOR,
+  TOADONPA_EAST_INVISIBLE_ACTOR,
   TOADONPA_BOSS,
   TOADONPA_HAMMET,
   TOADONPA_DODONPA, ///< SPRITE_DODONPA
@@ -3012,15 +3023,15 @@ s32 Scene_Initialize(void) {
     OBJ_DIR(TOADONPA_HAMMET, FACING_EAST, 0);
     OBJ_MODE(TOADONPA_HAMMET, 0);
     LunpaFortress_RestoreToadonpaDoors();
-    sceneActor = Actor_Get(TOADONPA_WEST_JAR_BLOCKER);
+    sceneActor = Actor_Get(TOADONPA_WEST_INVISIBLE_ACTOR);
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    sceneActor = Actor_Get(TOADONPA_CHEST_BLOCKER);
+    sceneActor = Actor_Get(TOADONPA_MIDDLE_INVISIBLE_ACTOR);
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    sceneActor = Actor_Get(TOADONPA_EAST_JAR_BLOCKER);
+    sceneActor = Actor_Get(TOADONPA_EAST_INVISIBLE_ACTOR);
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -3248,7 +3259,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (sceneActor != 0) {
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  sceneActor = Actor_Get(CAVE_JAR_BLOCKER);
+  sceneActor = Actor_Get(CAVE_INVISIBLE_ACTOR);
   if (sceneActor != 0) {
     Engine_ActorSetSpriteFlags(sceneActor, 0);
   }
@@ -3257,7 +3268,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (sceneActor != 0) {
     sceneActor->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   }
-  Engine_ActorSetSpriteFlags(Actor_Get(CAVE_JAR_BLOCKER), 0);
+  Engine_ActorSetSpriteFlags(Actor_Get(CAVE_INVISIBLE_ACTOR), 0);
   EV_END();
   Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }

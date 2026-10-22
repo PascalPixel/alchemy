@@ -30,7 +30,16 @@
 ///   fall into the lighthouse, and the beacon erupts: its beam
 ///   (ACTOR_BEAM_BOTTOM to ACTOR_BEAM_TOP) rises, the aerie splits and its
 ///   statues move apart, and the light lifts the party away to the world map's
-///   lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT).
+///   lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The beam's
+///   five segments are sprites stacked over the beacon, with particles
+///   rising round them, and the split is drawn by copying the map's cells
+///   (Map_CopyCellsTo in VenusLighthouseAerie_EruptBeacon)
+///   (https://alchemy.pascalpixel.com/places/venus-lighthouse-aerie/eruption.gif:
+///   eight seconds from just before the segments stack, each numbered 1 to 5
+///   from the bottom;
+///   https://alchemy.pascalpixel.com/places/venus-lighthouse-aerie/eruption-layers-3d.gif:
+///   five and a half seconds in, pulled apart into its layers, the sky at
+///   the back, BG2, BG1 and BG0, and the sprites in front).
 /// - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
 ///   VenusLighthouseAerie_ShowShebaInDanger): Sheba hangs from the broken
 ///   aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the world map
@@ -43,10 +52,6 @@
 /// A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_SHOPS).
-///
-/// Open questions:
-/// - XXX (picture): the beacon's eruption taken apart: the five beam segments,
-///   the particles circling them, and the aerie's halves moving apart.
 
 #include "script.h"
 #include "game_state.h"

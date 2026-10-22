@@ -40,9 +40,16 @@
 /// COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace from
 /// what it takes for a dream.
 ///
-/// Open questions:
-/// - XXX (picture): the shifting floor's lifts alternating their routes every
-///   COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES, with the cells they copy.
+/// The shifting floor's four lifts run on every visit until Halt stops them
+/// (ColosseumSatrageMatch_UpdateLifts): every
+/// COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES the phase flips, all four lifts
+/// lined up across the water in one phase and two up and two down, by turns,
+/// in the other. Each frame the task copies collision into row 13 from
+/// column 58 and into cell (58, 11): one pair of copies by phase once the
+/// last lift has stopped, another while it moves
+/// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/lifts.gif:
+/// two cycles, the copied cells outlined with their codes and the phase and
+/// timer written above).
 
 #include "script.h"
 #include "game_state.h"

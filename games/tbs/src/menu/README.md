@@ -146,6 +146,14 @@ The **Item** screen chooses a member (`ITEM_STEP_OWNER`), one of their items
 Drop, Remove or Details (`ITEM_STEP_INSPECT`). Giving chooses the receiver
 (`ITEM_STEP_TARGET`) and, when the receiver's bag is full, what they give back
 (`ITEM_STEP_TRADE`). Nothing sets `ITEM_STEP_IDLE` or `ITEM_STEP_QUANTITY`.
+Each window it draws is a `struct UiWindow` that its work,
+`struct InventoryMenuState`, keeps a pointer to: the party figures in
+`mainWindow`, the prompt in `messageWindow`, the member's stats in
+`statusWindow`, the items in `listWindow`, which holds the command grid once
+an item is chosen, the button help in `helpWindow` and the item's description
+in `infoWindow`.
+
+![The Item screen in Vale at twice the GBA's size at two moments, each window outlined at the place and size its UiWindow gives, in tiles, and labelled with the InventoryMenuState member that points to it: with Isaac's items listed (MAINWINDOW with the party figures, MESSAGEWINDOW asking `Which item?`, STATUSWINDOW with his stats, LISTWINDOW with the Machete chosen, HELPWINDOW and INFOWINDOW describing the Machete), and with the Machete's commands up in LISTWINDOW](https://alchemy.pascalpixel.com/guides/menu/item-windows.png)
 
 The **Djinn** screen chooses a Djinni (`DJINN_STEP_SELECT_DJINN`) and what to
 do with it (`DJINN_STEP_SELECT_ACTION`): set it, put it on standby, give it to
@@ -239,6 +247,3 @@ last BIOS instruction fetched; as a width that is over 30, so
   (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
   and every test are in the menu's own code, so nothing in the ROM needs it to
   be a flag, and only Camelot's sources could say why it is one.
-- XXX (picture): no picture yet takes a screen apart into its windows and the menu
-  work's views; a render of the Item screen with each window outlined and
-  labelled by the struct that draws it would show it.

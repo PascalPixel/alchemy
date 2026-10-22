@@ -20,7 +20,12 @@
 /// a cocoon tears it: its cell is redrawn and its flag set. The next step on a
 /// torn cocoon breaks through, and the leader spins and falls to the room
 /// below, arriving at the entrance numbered as the cocoon (FLAG_ARRIVE_FALLING
-/// plays the landing). The map draws four cocoons already torn (22, 52, 54 and
+/// plays the landing): the cocoons 21 to 29 and 31 and 32 drop the leader
+/// into one room and 50 to 59 into another
+/// (https://alchemy.pascalpixel.com/places/tret-tree-interiors/cocoons.png:
+/// the whole map, its six rooms where the grid lays them out, each cocoon's
+/// cells labelled with its code and the entrance of the same number ringed in
+/// the same colour). The map draws four cocoons already torn (22, 52, 54 and
 /// 58) and the setup sets their flags, so they give way at the first step. A
 /// latch in the scene state (sLastCocoon) keeps a step from counting twice
 /// until the leader walks on. Cocoon 50 is the way down to Tret: entrances 50,
@@ -49,10 +54,6 @@
 /// ends; casting Reveal stops it), and scales the first map layer to the room.
 /// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
 /// (search events 100 to 102).
-///
-/// Open questions:
-/// - XXX (picture): the six rooms side by side with each cocoon's touch code
-///   and the entrance it drops the leader to.
 
 #include "battle_effect_runtime.h"
 #include "version.h"

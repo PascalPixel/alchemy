@@ -19,16 +19,15 @@
 /// removes its placement. Talking to it starts a battle with it.
 ///
 /// The setup opens the scene with a backdrop fade, blends BG1 over the rest of
-/// the screen and splits BG3's scroll at a scanline that follows the map's
-/// vertical scroll: above the split BG3 drifts one pixel left every four
-/// frames, below it BG3 scrolls with the map. Casting Reveal sets the blend and
-/// the window again as at entry. The overlay also keeps three unused hooks and
-/// a link-cable input exchange no table reaches.
-///
-/// Open questions:
-/// - XXX (picture): BG3 split at the scanline
-///   TretTreeBranch_UpdateBg3ScrollSplit computes, drifting above and
-///   scrolling with the map below.
+/// the screen and splits BG3's scroll at a scanline, 192 less the ground
+/// layer's vertical scroll (TretTreeBranch_UpdateBg3ScrollSplit). BG3 follows
+/// the map's horizontal scroll on both sides of the split, and above it its
+/// offset also falls by one every four frames, so the clouds there drift
+/// right while the band below moves only with the map
+/// (https://alchemy.pascalpixel.com/places/tret-tree-branch/bg3-split.gif:
+/// the screen beside BG3 alone, the split marked in red). Casting Reveal sets
+/// the blend and the window again as at entry. The overlay also keeps three
+/// unused hooks and a link-cable input exchange no table reaches.
 
 #include "unit/scene/tret_tree_branch.h"
 #include "unit/object/object.h"

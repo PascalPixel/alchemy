@@ -25,7 +25,15 @@
 /// about what lies beyond the river.
 ///
 /// Until the curse is lifted the forest keeps its cursed colours
-/// (KolimaPalette_Curse). Retreat from here always leads back to the forest's
+/// (KolimaPalette_Curse), which keeps the healthy set and the cursed set
+/// both. As the water heals Tret, KolimaForestTree_RestoreTret fades
+/// background palettes 0 to 13 to the healthy set, then pulses them towards
+/// the healthy set and back towards the cursed one every 30 frames
+/// (KolimaForestTree_UpdateHealingPalette) while the camera pans to three
+/// places, flashes between the two sets four times and settles on the healthy
+/// one (https://alchemy.pascalpixel.com/places/kolima-forest-tree/healing-palette.gif:
+/// the screen beside those palettes, from the line that the water has seeped
+/// into Tret until Tret speaks). Retreat from here always leads back to the forest's
 /// way in (SceneId_KolimaForestEntrance,
 /// KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP), and the way back,
 /// KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the Floodgate
@@ -36,9 +44,6 @@
 ///   selects whose face KolimaForestTree_PlayGesture moves, likely left from a
 ///   version where those actors were drawn; the ROM keeps no such version, and
 ///   nothing reads the actors but that function.
-/// - XXX (picture): the forest's colours returning as Tret is healed
-///   (KolimaForestTree_UpdateHealingPalette), from KolimaPalette_Curse's
-///   colours to the healthy ones.
 
 #include "battle_effect_runtime.h"
 #include "game_state.h"

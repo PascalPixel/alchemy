@@ -38,6 +38,13 @@
 /// and while either stands beside the pillar, on cell (35, 23), the pillar
 /// melts into a puddle and the cells north and south of it change with it;
 /// when both leave it freezes again (BilibinCave_UpdateThirdPuddleFromTorches).
+/// Melting turns the collision codes of cells (36, 22) and (36, 24), north
+/// and south of the puddle, from MAP_CELL_ENCOUNTER_GROUND_1 to
+/// MAP_CELL_JUMP_FORWARD
+/// (https://alchemy.pascalpixel.com/places/bilibin-cave-ice/third-puddle-melt.gif:
+/// the fourth torch, put a cell west of (35, 23), moved onto it with Move, its
+/// cell outlined in yellow and the two rewritten cells in red with their
+/// codes).
 /// FLAG_PLACE_TEMP_03 and FLAG_PLACE_TEMP_04 remember which torch stands there
 /// and FLAG_PLACE_TEMP_02 that the pillar has melted, so coming back from
 /// SceneId_BilibinCaveRapier puts the torches and the pillar back; leaving
@@ -49,11 +56,6 @@
 /// (Event_StartFootprints, Event_StopFootprints; the snow is in
 /// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
 /// and Water of Life.
-///
-/// Open questions:
-/// - XXX (picture): the ice room's third puddle melting as a torch is pushed
-///   beside it, with the cells BilibinCave_UpdateThirdPuddleFromTorches
-///   changes outlined.
 
 #include "script.h"
 #include "game_state.h"

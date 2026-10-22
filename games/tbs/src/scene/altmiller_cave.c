@@ -1,62 +1,60 @@
 /// @file
-/// Altmiller Cave, six scenes (SceneId_AltmillerCaveEntrance to
-/// SceneId_AltmillerCaveDraught) whose area name is Altmiller Cave: rooms one
-/// after another, each named here by its scene, entered from the world map at
-/// AltmillerCaveEntrance. The rooms share one entrance table, and the getters
-/// pick the rest of each room's tables by gGameState.scene;
-/// AltmillerCave_Initialize sends an entry from outside the cave to the
-/// room's first entrance, darkens the dark rooms and puts back what the party
-/// has done.
+/// Altmiller Cave, where the party finds Babi while Tolbi searches for him
+/// during Colosso (babi_palace.c). Its six scenes share this overlay and the
+/// area name Altmiller Cave:
 ///
-/// The party comes here during Colosso's trials, while Babi, the ruler of
-/// Tolbi, is missing: in his palace it has heard Iodem's soldiers report that
-/// they searched this cave for him in vain, and Iodem say that he has seen
-/// Babi vanish into it before (babi_palace.c). The cave is dark:
-/// AltmillerCaveEntrance darkens by steps as the party walks in (touches 60 to
-/// 65), the other dark rooms all at once, and Reveal lights them while it lasts
-/// (AltmillerCave_StartReveal, AltmillerCave_EndReveal; scene flag FLAG_DARK).
+/// - AltmillerCaveEntrance (SceneId_AltmillerCaveEntrance): the dark passage
+///   in from the world map and the chamber beyond it.
+/// - AltmillerCaveBabi (SceneId_AltmillerCaveBabi): the invisible Babi, who
+///   asks for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
+///   (AltmillerCave_RestoreBabiAndInviteParty), and a chest that is a Mimic.
+/// - AltmillerCaveVialChest (SceneId_AltmillerCaveVialChest) and
+///   AltmillerCaveCookieChest (SceneId_AltmillerCaveCookieChest): a chest
+///   each.
+/// - AltmillerCaveSquall (SceneId_AltmillerCaveSquall): Squall, a Jupiter
+///   Djinni, three fallen columns to push, a stone pillar for Move and a
+///   puddle for Frost.
+/// - AltmillerCaveDraught (SceneId_AltmillerCaveDraught): three more fallen
+///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that
+///   holds the Mystic Draught behind the wall the puzzle opens.
 ///
-/// In AltmillerCaveBabi the party meets someone it can hear but not see,
-/// wrapped in Psynergetic light (ACTOR_INVISIBLE_BABI). Talking to him the
-/// first time (AltmillerCave_MeetInvisibleBabi, FLAG_MET_INVISIBLE_BABI), he
-/// says he ran out of his draught and cannot move, and asks the party to fetch
-/// it from deep in the cave: five rocks there, turned the ends first, bring out
-/// colored lights, and turning the rock of each light's color, `blue, green,
-/// white, yellow, and red` from the left, opens a hidden door left by an
-/// ancient civilization. The party argues over whether to help him. Walking
-/// away the first time he calls the party back to say the draught is on a
-/// table behind the door (AltmillerCave_BabiCallsPartyBack), and until it is
-/// found he repeats the order (AltmillerCave_RepeatRockOrder).
+/// The rooms share one entrance table and one exit table, and the other
+/// getters choose by gGameState.scene. AltmillerCave_Initialize sends an entry
+/// from outside the cave (entrance 0) to the room's first entrance, darkens the
+/// dark rooms and puts back what the party has done. Saving Babi
+/// (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on; the
+/// overlay's own state is in scene flags and gSceneState, so it starts over on
+/// every ordinary entrance.
 ///
-/// AltmillerCaveVialChest to AltmillerCaveCookieChest lead on, with a chest in
-/// AltmillerCaveVialChest and AltmillerCaveCookieChest. AltmillerCaveSquall is
-/// lit; in it Squall, a Jupiter Djinni, starts its battle when spoken to, three
-/// obstacles move when pushed (as three do in AltmillerCaveDraught), a pillar
-/// that Move slides into its cell opens the way beside it (which the editions
-/// from TBS_PATCH_1 on also keep open after a battle, FLAG_PILLAR_IN_PLACE),
-/// and a puddle the party hops over (AltmillerCave_HopSelectedActor) until
-/// Frost freezes it, unless something stands on it
-/// (AltmillerCave_CheckFrostTargetCollision). AltmillerCaveDraught, also lit,
-/// holds the five rocks, whose colors show only while Reveal shines. Talking to
-/// one turns it (AltmillerCave_TurnRock): the leftmost and then the rightmost
-/// bring out a ring of five lights above them, which spins and stops with one
-/// light on top; turning that light's rock spins it again, a wrong rock puts
-/// the lights away and starts over, and after three matches the wall bursts
-/// (AltmillerCave_ReleaseWallBurst) and the chest beyond holds the Mystic
-/// Draught (FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT). The puzzle's state is kept in
-/// the scene's work, and coming back up to the rocks
-/// (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts it over.
+/// Every room but the two lit ones is dark (FLAG_DARK): BG1 is blended over
+/// the rest (ALTMILLER_CAVE_DARKNESS_BLEND), leaving the light around the
+/// party. AltmillerCaveEntrance darkens by steps instead
+/// (FLAG_DARKNESS_BY_STEPS): touch cells 60 to 65 each set a level, kept in
+/// gSceneState byte 4, from the lightest at the mouth to the darkest by the
+/// inner chamber. Reveal lights a dark room while it lasts and shows the
+/// rocks' colours (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
 ///
-/// Back in AltmillerCaveBabi, talking to him with the draught plays
-/// AltmillerCave_RestoreBabiAndInviteParty (FLAG_BABI_SAVED): he drinks it
-/// and appears, and Ivan reads his mind and finds him to be Babi, the ruler of
-/// Tolbi, who hid himself with the power of an ancient civilization, not
-/// Psynergy, and has been searching for Lemurians to escape growing old. Two
-/// men from Tolbi, sent by Iodem, find him and take him back for the finals,
-/// and Babi invites the party to fight in them. Stuck in Tolbi until Colosso
-/// is over anyway, Garet asks whether they should enter: on yes it is decided,
-/// and on no they will wait until Tolbi and let Isaac decide there, where the
-/// story goes on (colosseum_entrance.c, babi_palace.c).
+/// The rock puzzle keeps the rounds matched in gSceneState byte 0 and its
+/// state and the light at the top in struct RockPuzzle after it. Turning the
+/// leftmost rock and then the rightmost brings out the ring of five lights; the
+/// ring spins (AltmillerCave_SpinLights, a scheduler task) and stops with one
+/// light at the top, and turning that light's rock spins it on to a different
+/// light. A wrong rock puts the lights away. The third match bursts the wall
+/// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
+/// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
+///
+/// Open questions:
+/// - XXX: what the window values the darkness puts in gDisplayTransition mean
+///   (mask 0x1d1d and active 0x3f by steps, 0x3f3f and 31 otherwise), and
+///   DisplayTransition_InitializeBattleEffectState's mode 0x4d; the window
+///   modes of DisplayTransition_UpdateScanlineTable would settle them.
+/// - XXX: what the leader's animations 6 and 7 show as it hops over the
+///   puddle; a render of the party's sprite animations would settle it.
+/// - XXX: struct LightWheel's unk04, which nothing in the overlay reads; a
+///   watch on the wheel while it spins would settle whether anything does.
+/// - XXX (picture): AltmillerCaveEntrance's darkness taken apart, BG1's blend
+///   weight shown at each of the six levels beside the touch cells that set
+///   them.
 
 #include "game_state.h"
 #include "version.h"
@@ -110,6 +108,8 @@
 enum {
   /// Babi's second sheet, SPRITE_INVISIBLE_BABI: the old man with
   /// long pink hair and a cane, standing unseen in the cave.
+  /// ★ Named from the game: "Wrapped in Psynergetic light... Who could it
+  /// be?" (MsgAltmillerSee)
   ACTOR_INVISIBLE_BABI = 8,
   /// SPRITE_BABI, the same old man once seen.
   /// ★ Named from the game: "Babi!" (MsgAltmillerBabi)
@@ -124,9 +124,9 @@ enum {
   ACTOR_SECOND_SOLDIER = 11
 };
 
-/// AltmillerCaveSquall and AltmillerCaveDraught place first the three obstacles
-/// the party pushes; AltmillerCaveSquall then a puddle, a pillar for Move and
-/// Squall, a Jupiter Djinni.
+/// AltmillerCaveSquall and AltmillerCaveDraught place first the three fallen
+/// columns the party pushes; AltmillerCaveSquall then a puddle, a pillar for
+/// Move and Squall, a Jupiter Djinni.
 enum {
   /// ★ Named from what the player sees: white stone columns lying across the
   /// floor, in the way (its render)
@@ -141,21 +141,44 @@ enum {
   ACTOR_SQUALL = 13
 };
 
-/// AltmillerCaveDraught: the five colored lights and the five rocks, each in
-/// Babi's order, the rocks left to right. The order is "blue, green, white,
-/// yellow, red".
+/// AltmillerCaveDraught: the five coloured lights and the five rocks, each in
+/// Babi's order, the rocks left to right.
 enum {
+  /// ★ Named from the game: "There will be five colors: blue, green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_FIRST_LIGHT = 11,
+  /// ★ Named from the game: "The blue light corresponds to the rock farthest
+  /// to the left." (MsgAltmillerDontTrustAnyone)
   ACTOR_BLUE_LIGHT = ACTOR_FIRST_LIGHT,
+  /// ★ Named from the game: "There will be five colors: blue, green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_GREEN_LIGHT,
+  /// ★ Named from the game: "There will be five colors: blue, green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_WHITE_LIGHT,
+  /// ★ Named from the game: "There will be five colors: blue, green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_YELLOW_LIGHT,
+  /// ★ Named from the game: "There will be five colors: blue, green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_RED_LIGHT,
+  /// ★ Named from the game: "Turn the five rocks in accordance with those
+  /// colors." (MsgAltmillerDontTrustAnyone)
   ACTOR_FIRST_ROCK,
+  /// ★ Named from the game: "The blue light corresponds to the rock farthest
+  /// to the left." (MsgAltmillerDontTrustAnyone)
   ACTOR_BLUE_ROCK = ACTOR_FIRST_ROCK,
+  /// ★ Named from the game: "In order, the other rocks are green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_GREEN_ROCK,
+  /// ★ Named from the game: "In order, the other rocks are green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_WHITE_ROCK,
+  /// ★ Named from the game: "In order, the other rocks are green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_YELLOW_ROCK,
+  /// ★ Named from the game: "In order, the other rocks are green, white,
+  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_RED_ROCK
 };
 
@@ -189,6 +212,16 @@ enum {
   /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   FLAG_PILLAR_IN_PLACE = FLAG_SCENE_TEMP_12
 };
+
+/// The darkness: BG1 blended over every layer, at the weights
+/// BLEND_ALPHA gives each level.
+#define ALTMILLER_CAVE_DARKNESS_BLEND                                          \
+  (BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
+/// A dark room's weights, which AltmillerCaveEntrance's levels do not use.
+#define ALTMILLER_CAVE_DARK_ALPHA BLEND_ALPHA(4, 12)
+
+/// The puddle's animation once Frost has frozen it.
+enum { PUDDLE_ANIM_FROZEN = 5 };
 
 static void AltmillerCave_ReleaseWallBurst(void);
 
@@ -273,29 +306,29 @@ const struct ScenePlacement *AltmillerCave_GetPlacements(void) {
 static void AltmillerCave_ApplyFadeBlend(void) {
   s8 level = ((s8 *)gSceneState)[4];
 
-  Io_Write16(0x3f42, &REG_BLDCNT);
+  Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
   if (level == 0) {
-    s32 alpha = 0x1000;
+    s32 alpha = BLEND_ALPHA(0, 16);
 
     REG_BLDALPHA = alpha;
   } else if (level == 1) {
-    s32 alpha = 0xe00;
+    s32 alpha = BLEND_ALPHA(0, 14);
 
     REG_BLDALPHA = alpha;
   } else if (level == 2) {
-    s32 alpha = 0xc00;
+    s32 alpha = BLEND_ALPHA(0, 12);
 
     REG_BLDALPHA = alpha;
   } else if (level == 3) {
-    s32 alpha = 0xa00;
+    s32 alpha = BLEND_ALPHA(0, 10);
 
     REG_BLDALPHA = alpha;
   } else if (level == 4) {
-    s32 alpha = 0x800;
+    s32 alpha = BLEND_ALPHA(0, 8);
 
     REG_BLDALPHA = alpha;
   } else {
-    s32 alpha = 0x600;
+    s32 alpha = BLEND_ALPHA(0, 6);
 
     REG_BLDALPHA = alpha;
   }
@@ -396,11 +429,11 @@ static void AltmillerCave_InitializeDarkness(void) {
     *slot = value;
   }
   {
-    s32 blendControl = 0x3f42;
+    s32 blendControl = ALTMILLER_CAVE_DARKNESS_BLEND;
     REG_BLDCNT = blendControl;
   }
   {
-    s32 blendAlpha = 0xc04;
+    s32 blendAlpha = ALTMILLER_CAVE_DARK_ALPHA;
     REG_BLDALPHA = blendAlpha;
   }
 }
@@ -409,7 +442,7 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
   if (gGameState.scene == (s32)&SceneId_AltmillerCaveEntrance) {
-    s32 alpha = 0x1000;
+    s32 alpha = BLEND_ALPHA(0, 16);
 
     REG_BLDALPHA = alpha;
   }
@@ -830,11 +863,12 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 }
 
-/// Bringing Babi the Mystic Draught: he drinks it and appears, startling the
-/// party; Ivan reads his mind and finds him to be Babi, the ruler of Tolbi,
-/// who sought Lemurians to escape growing old. Two men from Tolbi find him and
-/// take him back, and he invites the party to Colosso's finals; Garet asks
-/// whether they should take part.
+/// In AltmillerCaveBabi, talking to Babi or reading his mind once the Mystic
+/// Draught is found: he drinks it and appears, startling the party. Ivan reads
+/// his mind and finds him to be Babi, the ruler of Tolbi, who sought Lemurians
+/// to escape growing old. Two soldiers from Tolbi find him and take him back,
+/// and he invites the party to Colosso's finals; Garet asks whether they
+/// should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct DisplayTransitionState *display;
   struct FieldActor *actor;
@@ -845,8 +879,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
 
   // Give Babi the draught and bring the party beside him.
   GameFlag_Set(FLAG_BABI_SAVED);
-  // Item 237 is the Mystic Draught.
-  Engine_PartyRemoveItem(237);
+  Engine_PartyRemoveItem(ITEM_MYSTIC_DRAUGHT);
   Engine_EventBegin();
   Field_EndBusyAndReveal();
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
@@ -1155,11 +1188,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
     {
-      s32 control = 0x3f42;
+      s32 control = ALTMILLER_CAVE_DARKNESS_BLEND;
 
       REG_BLDCNT = control;
     }
-    REG_BLDALPHA = (eva << 8) | evb;
+    REG_BLDALPHA = BLEND_ALPHA(evb, eva);
     Engine_TaskWait(7);
   }
   {
@@ -1466,11 +1499,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(20);
   for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
     {
-      s32 control = 0x3f42;
+      s32 control = ALTMILLER_CAVE_DARKNESS_BLEND;
 
       REG_BLDCNT = control;
     }
-    REG_BLDALPHA = (evb << 8) | eva;
+    REG_BLDALPHA = BLEND_ALPHA(eva, evb);
     Engine_TaskWait(7);
   }
   {
@@ -1486,8 +1519,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     *slot = value;
   }
   Engine_TaskWait(1);
-  Io_Write16(0x3f42, &REG_BLDCNT);
-  Io_Write16(0xc04, &REG_BLDALPHA);
+  Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
+  Io_Write16(ALTMILLER_CAVE_DARK_ALPHA, &REG_BLDALPHA);
   Engine_CameraMoveToActor(ACTOR_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
@@ -1613,9 +1646,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventEnd();
 }
 
-/// Talking to the invisible Babi the first time: he can be heard but not
-/// seen, cannot move, and asks the party to bring his draught from deep in
-/// the cave, telling the order of the five rocks.
+/// In AltmillerCaveBabi, talking to the invisible Babi or reading his mind
+/// the first time: he can be heard but not seen, cannot move, and asks the
+/// party to bring his draught from deep in the cave, telling the order of the
+/// five rocks.
 static void AltmillerCave_MeetInvisibleBabi(void) {
   struct FieldActor *leader;
   s32 line;
@@ -1890,8 +1924,9 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Babi again before the draught is found: he asks whether the
-/// party forgot the order of the rock colors, and tells it again.
+/// In AltmillerCaveBabi, talking to Babi again before the draught is found:
+/// he asks whether the party forgot the order of the rock colors, and tells it
+/// again.
 static void AltmillerCave_RepeatRockOrder(void) {
   s32 question;
 
@@ -1911,8 +1946,9 @@ static void AltmillerCave_RepeatRockOrder(void) {
   Engine_EventEnd();
 }
 
-/// Walking away from Babi once: the party is told where the draught is.
-/// "Wait... The draught is... on a table behind the door."
+/// In AltmillerCaveBabi, walking away from Babi (touch cell 19) the first
+/// time after meeting him: he calls the party back and says where the draught
+/// is. "Wait... The draught is... on a table behind the door."
 static void AltmillerCave_BabiCallsPartyBack(void) {
   if (Engine_GameFlagIsSet(FLAG_MET_INVISIBLE_BABI) == 0)
     return;
@@ -2034,7 +2070,7 @@ s32 AltmillerCave_Initialize(void) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, 5);
+      Engine_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIM_FROZEN);
       Map_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     } else {
       Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=
@@ -2077,7 +2113,7 @@ s32 AltmillerCave_Initialize(void) {
 
         puzzleState[0] = 0;
         puzzleState[1] = PUZZLE_START;
-        puzzleState[2] = 4;
+        puzzleState[2] = ACTOR_RED_LIGHT - ACTOR_FIRST_LIGHT;
       }
     }
     state = (s8 *)&gSceneState[1];
@@ -2181,7 +2217,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
     s32 scale;
 
-    EffectSlot_Initialize(fragment, 284, position.x, position.z);
+    EffectSlot_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     EffectSlot_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     EffectSlot_SetObjectMode(fragment, 7);
     ObjectGroup_SetChildValueUnlessFifteen(
@@ -2356,12 +2392,12 @@ struct ScenePlacement gAltmillerCave_BabiPlacements[] = {
 };
 
 struct ScenePlacement gAltmillerCave_SquallPlacements[] = {
-    {0x129, CONDITION_ALWAYS, 7, PIXELS(328), 0, PIXELS(256), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
-    {0x12a, CONDITION_ALWAYS, 7, PIXELS(352), 0, PIXELS(296), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
-    {0x12a, CONDITION_ALWAYS, 7, PIXELS(368), 0, PIXELS(200), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
+    {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+     PIXELS(328), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+     PIXELS(352), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+     PIXELS(368), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(376), 0, PIXELS(280),
      FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(472), 0,
@@ -2372,32 +2408,32 @@ struct ScenePlacement gAltmillerCave_SquallPlacements[] = {
 };
 
 struct ScenePlacement gAltmillerCave_DraughtPlacements[] = {
-    {0x129, CONDITION_ALWAYS, 7, PIXELS(392), 0, PIXELS(416), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
-    {0x12a, CONDITION_ALWAYS, 7, PIXELS(416), 0, PIXELS(456), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
-    {0x129, CONDITION_ALWAYS, 7, PIXELS(456), 0, PIXELS(480), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
-    {0x124, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(488), PIXELS(8), PIXELS(1752),
-     FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x124, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(472), PIXELS(40),
+    {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+     PIXELS(392), 0, PIXELS(416), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+     PIXELS(416), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+     PIXELS(456), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_LIGHT, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(488), PIXELS(8),
      PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x124, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(504), PIXELS(56),
+    {SPRITE_LIGHT, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(472), PIXELS(40),
      PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x124, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), PIXELS(40),
+    {SPRITE_LIGHT, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(504), PIXELS(56),
      PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x124, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(520), PIXELS(8), PIXELS(1752),
-     FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x125, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(440), 0, PIXELS(190),
-     FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x125, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(472), 0, PIXELS(174),
-     FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x125, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(504), 0, PIXELS(174),
-     FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x125, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(174),
-     FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x125, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(568), 0, PIXELS(190),
-     FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_LIGHT, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), PIXELS(40),
+     PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_LIGHT, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(520), PIXELS(8),
+     PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(440), 0,
+     PIXELS(190), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(472), 0,
+     PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(504), 0,
+     PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0,
+     PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(568), 0,
+     PIXELS(190), FACING_SOUTH, TALK_FACE_PARTY, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2490,15 +2526,15 @@ struct SceneEvent gAltmillerCave_BabiEvents[] = {
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
     {EVENT_TOUCH, 19, FLAG_BABI_CALLED_PARTY_BACK, EVENT_SCRIPT(AltmillerCave_BabiCallsPartyBack)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), EVENT_TRIGGER_OWN_EFFECT | ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI,
         EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, MSGNO(MsgAltmillerNeedDraught)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), EVENT_TRIGGER_OWN_EFFECT | ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED,
         EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
-    {SEARCH(SEARCH_CHEST), 100, 0xef5, 0x500005},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_ALTMILLER_CAVE_MIMIC_BEATEN, FIND_MIMIC | 5},
     {SCENE_EVENTS_END},
 };
 

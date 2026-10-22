@@ -57,6 +57,13 @@ enum SpriteId {
   /// ★ Named from what the player sees: a splash of white and pale blue
   /// spray (spr_214.png)
   SPRITE_SPLASH = 0xd6,
+  /// The fields of Psynergy that rise over the party as Kolima's curse falls.
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
+  SPRITE_PSYNERGY_FIELD = 0xdc,
+  /// The sparkles of Tret's glamour that rain on Kolima and its forest.
+  /// ★ Named from what the player sees: rings of golden light (spr_026.png)
+  SPRITE_GOLDEN_RINGS = 0x1a,
   /// The statues Move or a push slides in Bilibin and its Treasury.
   /// ★ Named from what the player sees: a golden statue of a figure in a long
   /// robe (spr_243.png)

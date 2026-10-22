@@ -29,7 +29,7 @@ extern u32 gLunpaFortressExitsOther[];
 extern u32 gLunpaFortressUpperFloorExits[];
 extern u32 gLunpaFortressCaveAndToadonpaExits[];
 extern struct ScenePlacement gLunpaFortressPlacementsOther[];
-extern struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[];
+extern struct ScenePlacement gLunpaFortressUnusedWestLunpaCavePlacements[];
 extern struct ScenePlacement gLunpaFortressGroundFloorPlacements[];
 extern struct ScenePlacement gLunpaFortressUpperFloorPlacements[];
 extern struct ScenePlacement gLunpaFortressCavePlacements[];

@@ -1,35 +1,29 @@
 /// @file
-/// SceneId_Suhalla, the desert village of Gondowan on the way to
-/// Lalivero, at the edge of the Suhalla Desert.
+/// Suhalla (SceneId_Suhalla, area name Suhalla), the desert village of
+/// Gondowan at the edge of the Suhalla Desert, on the way from Gondowan
+/// Passage to Lalivero.
 ///
-/// Its people and their talk come in two sets, each a placement table and an
-/// event table, chosen by whether Babi has held his audience after Colosso
-/// (FLAG_BABI_SPOKE_AFTER_COLOSSO). Before it, the village talks of the
-/// sandstorms that make the desert impossible to cross, of its distrust of
-/// Angara, and of Sheba, the holy child of Lalivero, whom Tolbi's ruler took
-/// as a hostage; one woman asks whether the party is trying to get to
-/// Lalivero (Event_AskIfGoingToLalivero).
+/// Its people come in two sets, each a placement table and an event table,
+/// chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's audience after
+/// Colosso the village talks of the sandstorms that close the desert, of its
+/// distrust of Angara and of Sheba, the hostage; after it, of the soldiers the
+/// storms caught on the way to Babi Lighthouse, who lie in one of its houses
+/// (suhalla_interiors.c). The same people stand in the same rows of both
+/// placement tables, so one enum names them; the woman the sandstorms brought
+/// stands off the map until the audience.
 ///
-/// At that audience Babi sent the party to Venus Lighthouse with Iodem, who
-/// commands his soldiers, and Sheba left Tolbi for Lalivero with soldiers
-/// bound for Babi Lighthouse. Afterwards the village talks of those soldiers:
-/// caught in the sandstorms, nearly all perished, and the survivors lie in a
-/// house of the village (SceneId_SuhallaInteriors, where Iodem questions them).
-/// The storms attack people as if they were alive, and one old woman asks
-/// whether a sandstorm brought the party to Suhalla
-/// (Event_AskIfBroughtBySandstorm), for everyone the storms catch winds up
-/// here.
+/// Five doors, whose cell codes are their exits' numbers (SUHALLA_TO_INN to
+/// SUHALLA_TO_HOUSE_EAST), open as the leader walks north into them
+/// (Event_EnterDoor, Event_EnterWideDoor) and lead into the village's
+/// buildings. Three ways lead out onto the world map, and the desert's
+/// sandstorms drop a caught party at WORLD_MAP_FROM_SUHALLA. A chest and two
+/// jars hold a Hard Nut, a Lucky Medal and coins, and Growth grows a sprout
+/// and changes its cell. Its scene flag:
 ///
-/// Five doors (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST) open as the leader
-/// walks north into them and lead into the village's buildings
-/// (SceneId_SuhallaInteriors), the wide door of SUHALLA_TO_SANCTUM into Suhalla
-/// Sanctum. Three ways lead out onto the world map: SUHALLA_TO_WORLD_MAP, to
-/// WORLD_MAP_FROM_SUHALLA, where the desert's sandstorms also drop the party,
-/// SUHALLA_TO_WORLD_MAP_NORTH and SUHALLA_TO_WORLD_MAP_EAST. A chest and two
-/// jars hold a Hard Nut, a Lucky Medal and 5 coins, and Growth on a sprout
-/// grows it and changes its cell (FLAG_SCENE_TEMP_01, a scene flag, so the
-/// grown sprout is redrawn only on a return that keeps the party's position, as
-/// after a battle).
+/// - FLAG_SCENE_TEMP_01: Growth has grown the sprout; a return that keeps the
+///   party's position, as after a battle, draws it grown again.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "unit/scene/suhalla.h"
@@ -53,7 +47,8 @@
 #include "songs.h"
 #include "flags.h"
 
-// FLAG_SCENE_TEMP_01: Growth has made the sprout grow.
+/// The sprout's animation once Growth has grown it.
+enum { SPROUT_ANIM_GROWN = 4 };
 
 /// Suhalla's people and its sprout, numbering the rows of both placement
 /// tables from ACTOR_FIRST_PLACED: gSuhallaPlacementsLater places the same
@@ -230,7 +225,7 @@ s32 Scene_Initialize(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
     Event_GrowSprout();
-    Engine_ActorSetAnimation(ACTOR_SPROUT, 4);
+    Engine_ActorSetAnimation(ACTOR_SPROUT, SPROUT_ANIM_GROWN);
   }
   return 0;
 }
@@ -248,7 +243,8 @@ struct SceneEntrance gSuhallaEntrances[] = {
      0, -1, -1, -1, -1, 0},
     {SUHALLA_FROM_HOUSE_EAST, CONDITION_ALWAYS, 296, 0, 296, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
-    {6, CONDITION_ALWAYS, 120, 0, 272, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_SIXTH_UNUSED, CONDITION_ALWAYS, 120, 0, 272, FACING_EAST, 0, -1,
+     -1, -1, -1, 0},
     {SUHALLA_FROM_WORLD_MAP, CONDITION_ALWAYS, 40, 0, 176, FACING_EAST, 0, -1,
      -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -331,11 +327,11 @@ u16 gSuhallaWideDoorOpenSteps[] = {
 };
 
 struct SceneEvent gSuhallaEvents[] = {
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWideDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWideDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
@@ -353,19 +349,19 @@ struct SceneEvent gSuhallaEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaSouthernGondowanIsGuardedByThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaIveHeardThatTolbisColossoIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaNoneOfTheGrownUpsIn) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(ITEM_HARD_NUT) },
-    { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_GrowSprout) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gSuhallaEventsLater[] = {
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWideDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWideDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
@@ -385,9 +381,9 @@ struct SceneEvent gSuhallaEventsLater[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaIfYouFightTheStormsYoull) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaGrownUpsSayTheSandstormsAttack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheySayTheSoldiersWereRavaged) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(ITEM_HARD_NUT) },
-    { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_GrowSprout) },
     { SCENE_EVENTS_END },
 };

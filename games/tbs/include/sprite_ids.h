@@ -215,6 +215,28 @@ enum SpriteId {
   /// ★ Named from what the player sees: a four-pointed glint that shrinks
   /// to a dot (spr_286.png)
   SPRITE_GLINT = 286,
+  /// The whirlwinds of the Suhalla Desert, which Douse stops.
+  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
+  SPRITE_SANDSTORM = 0x121,
+  /// The lights of Altmiller Cave's rock puzzle, coloured by their palette.
+  /// ★ Named from the game: "Lights will appear on the wall."
+  /// (MsgAltmillerDontTrustAnyone)
+  SPRITE_LIGHT = 0x124,
+  /// The rocks of Altmiller Cave's rock puzzle, coloured by their palette
+  /// while Reveal shines.
+  /// ★ Named from the game: "Turn the five rocks in accordance with those
+  /// colors." (MsgAltmillerDontTrustAnyone)
+  SPRITE_TURNING_ROCK = 0x125,
+  /// The boulders of Gondowan Cave that Lift raises.
+  /// ★ Named from what the player sees: a round grey boulder (its render)
+  SPRITE_ROUND_BOULDER = 0x127,
+  /// What the party pushes in Altmiller Cave's lit rooms.
+  /// ★ Named from what the player sees: a white stone column lying north to
+  /// south (its render)
+  SPRITE_FALLEN_COLUMN_NORTH_SOUTH = 0x129,
+  /// ★ Named from what the player sees: a white stone column lying west to
+  /// east (its render)
+  SPRITE_FALLEN_COLUMN_WEST_EAST = 0x12a,
   /// The statues that chase the leader in Crossbone Isle, and those of the
   /// Tunnel Ruins and Venus Lighthouse.
   /// ★ Named from what the player sees: a statue of a woman in a long robe

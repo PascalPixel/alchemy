@@ -1,60 +1,54 @@
 /// @file
-/// Gondowan Passage, the guarded bridge into Gondowan, and Gondowan Cave, the
-/// cave east of it.
+/// Gondowan Passage and Gondowan Cave, the guarded bridge into Gondowan and the
+/// cave east of it, which the party crosses on the way from Tolbi to Babi
+/// Lighthouse. Three scenes share this overlay:
 ///
-/// - Gondowan Passage (SceneId_GondowanPassage), between two points of the
-///   world map (GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH and
-///   GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH). Three soldiers guard the bridge to
-///   Gondowan, and Retreat does not work here (FLAG_RETREAT_BLOCKED, set on
-///   every entry). At first the first soldier asks `Do you wish to cross into
-///   Gondowan?` and lets the party pass either way, sending them to watch
-///   Colosso in Tolbi until it is over (FLAG_COLOSSO_OVER); the second
-///   grumbles in his mind about missing it, and the third warns that no one
-///   gets through the cave to the east to Kalay: those who tried never
-///   returned.
+/// - Gondowan Passage (SceneId_GondowanPassage, area name Gondowan Passage):
+///   three soldiers guard the bridge, and Iodem waits there to go on to Babi
+///   Lighthouse with the party once Babi has spoken to it after Colosso
+///   (FLAG_BABI_SPOKE_AFTER_COLOSSO).
+/// - Gondowan Cave (SceneId_GondowanCave, area name Gondowan Cave): both ways
+///   in from the world map, a tree stump that Move sends leaping into the
+///   water, a stone pillar to push or move in after it, and a boulder for
+///   Lift.
+/// - GondowanCaveRiver (SceneId_GondowanCaveRiver): the river between the
+///   cave's two halves, with a boulder for Lift and two chests.
 ///
-///   After Colosso, Lord Babi of Tolbi asks the party to go to Venus
-///   Lighthouse with Iodem, who commands his soldiers, and Iodem goes ahead
-///   to wait for them at the passage. Once Babi has spoken
-///   (FLAG_BABI_SPOKE_AFTER_COLOSSO) the scene takes other placements and
-///   events: Iodem stands in the passage, and the soldiers talk of him.
-///   Talking to him, or walking up to him while he is not with the party
-///   (trigger 11), makes him travel with it (FLAG_IODEM_FOLLOWING_PARTY): `I've
-///   been waiting for you, Isaac! We should go to Babi Lighthouse soon.` While
-///   he travels with them, entering keeps his actor out of sight, and until he
-///   has reached Babi Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE) turning back
-///   (trigger 10) brings him out to ask `Why are you going back, Isaac?` If
-///   the party has something to fetch, he stays to wait, and a defeat now
-///   returns them to the Tolbi Sanctum (TOLBI_INTERIORS_SANCTUM_NORTH); if
-///   not, he rejoins them.
-/// - Gondowan Cave (SceneId_GondowanCaveRiver and SceneId_GondowanCave), the
-///   cave that, the soldiers say, no one gets through. Someone in Tolbi's
-///   houses thinks the same (tolbi_interiors.c, Mind Read,
-///   MsgTolbiInteriorsYoudThinkYouCouldGetThrough): `Not unless you can lift
-///   boulders, at any rate.` Both ways in are in GondowanCave
-///   (GONDOWAN_CAVE_TO_WORLD_MAP_EAST and GONDOWAN_CAVE_TO_WORLD_MAP_WEST),
-///   and GondowanCaveRiver lies between two parts of it
-///   (GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH and _SOUTH lead in,
-///   GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH and _SOUTH back).
+/// One exit table serves every scene; the other getters choose by
+/// gGameState.scene, Gondowan Passage's placements and events also by
+/// FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other scene
+/// number. Every scene's event table carries GondowanCaveRiver's two chests.
 ///
-///   In GondowanCave a stump answers Move from column 30 or less: it spins,
-///   leaps across and lies where it lands, freeing the cell where it stood
-///   (FLAG_GONDOWAN_CAVE_STUMP_MOVED). A pillar is pushed by walking
-///   into it, east or west, or moved with Move; once it is past column 42 it
-///   drops into its place for good, shown from then on by a second actor
-///   (FLAG_GONDOWAN_CAVE_PILLAR_DROPPED). Both are story flags, so the
-///   cave stays solved. Lift raises a boulder in each scene; in GondowanCave it
-///   also takes away the invisible actor beside it (ACTOR_BOULDER_SIDE).
-///   Two chests in GondowanCaveRiver hold an Apple and a Lucky Medal (each
-///   scene's table carries their search events). Arriving by
-///   GONDOWAN_CAVE_FROM_WORLD_MAP_EAST always gives cell (107, 17) the
-///   attributes it takes when the pillar drops, and leaving by
-///   GONDOWAN_CAVE_TO_WORLD_MAP_EAST runs an event: with FLAG_SCENE_TEMP_04
-///   set, which no code in this overlay sets, it first puts the puzzle's flags
-///   into one arrangement.
+/// Gondowan Passage sets FLAG_RETREAT_BLOCKED on every entry. While Iodem
+/// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his actor is kept out
+/// of sight; talking to him or walking up to him while he waits (touch cell
+/// 11) makes him come along (Event_IodemRejoins), and until he has reached
+/// Babi Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE) turning back (touch cell
+/// 10) brings him out to ask why (Event_IodemAsksWhyTurningBack). If he stays
+/// to wait, the saved place becomes the Tolbi Sanctum, so a defeat returns the
+/// party there.
 ///
-/// Every scene shares one exit table; the getters choose each scene's other
-/// tables, and an empty set serves any other scene number.
+/// GondowanCave's way across the water is two things that float in it, and
+/// touch cells 10 and 11 jump the leader across them (Event_JumpAcross). Both
+/// are kept in story flags, so the cave stays solved and Scene_Initialize
+/// puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has leapt in,
+/// and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has gone in past
+/// column 42, shown from then on by ACTOR_DROPPED_PILLAR. Arriving by
+/// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST always gives cell (107, 17) the
+/// attributes it takes when the pillar drops.
+///
+/// Open questions:
+/// - XXX (no evidence): what flags 0x9a3, 0x9a4 and 0x9a6 hold;
+///   Event_LeaveToWorldMapEast rearranges them only with FLAG_SCENE_TEMP_04
+///   set, which nothing in the game sets, and no other code reads them.
+/// - XXX: why arriving from the world map's east side fills the pillar's cell;
+///   likely so that a party coming in from the east is never cut off, because
+///   it is the cell the dropped pillar fills. A recording of that arrival with
+///   the puzzle unsolved would settle it.
+/// - XXX: what ACTOR_BOULDER_SIDE does; likely holds the cell beside the
+///   boulder, because it stands one cell west of it and Lift takes it away with
+///   the boulder. A render with its collision drawn would settle it.
+
 #include "game_state.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -90,11 +84,16 @@
 /// ACTOR_FIRST_PLACED: the soldiers who guard the bridge, and in the second
 /// table Iodem after them.
 enum GondowanPassageActor {
-  /// Asks `Do you wish to cross into Gondowan?`
+  /// Asks whether the party will cross into Gondowan.
+  /// ★ Named from the game: "Us? We're the soldiers who guard the bridge to
+  /// Gondowan." (MsgGondowanCaveUsWereTheSoldiersWhoGuard)
   ACTOR_FIRST_SOLDIER = ACTOR_FIRST_PLACED,
-  /// "Us? We're the soldiers who guard the bridge to Gondowan."
+  /// ★ Named from the game: "Us? We're the soldiers who guard the bridge to
+  /// Gondowan." (MsgGondowanCaveUsWereTheSoldiersWhoGuard)
   ACTOR_SECOND_SOLDIER,
-  /// "Even if you head east, you can't get to Kalay from here, even!"
+  /// Warns that the cave to the east leads nowhere.
+  /// ★ Named from the game: "Us? We're the soldiers who guard the bridge to
+  /// Gondowan." (MsgGondowanCaveUsWereTheSoldiersWhoGuard)
   ACTOR_THIRD_SOLDIER,
   /// Waits for the party once Babi has spoken after Colosso.
   /// ★ Named from the game: "Why would Iodem choose to wait for us"
@@ -105,32 +104,43 @@ enum GondowanPassageActor {
 /// GondowanCaveRiver's placed actor, the one row of
 /// gGondowanCaveRiverPlacements that an event names.
 enum GondowanCaveRiverActor {
-  ACTOR_RIVER_BOULDER = ACTOR_FIRST_PLACED ///< raised by Lift
+  /// Raised by Lift.
+  /// ★ Named from what the player sees: a round grey boulder by the river
+  /// (its render)
+  ACTOR_RIVER_BOULDER = ACTOR_FIRST_PLACED
 };
 
 /// GondowanCave's placed actors, numbered in the order of
 /// gGondowanCavePlacements from ACTOR_FIRST_PLACED.
 enum GondowanCaveActor {
-  /// Moved with Move, in the sprite of the Goma Cave stump the game calls "that
-  /// stump" (MsgGomaNoUsePsynergy).
+  /// Moved with Move, in the sprite of the Goma Cave stump.
+  /// ★ Named from the game: "that stump" (MsgGomaNoUsePsynergy)
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
   /// Pushed or moved with Move, in the sprite the stone pillars of other scenes
   /// use (crossbone_isle_stepping_stones.c).
   /// ★ Named from what the player sees: a tall tan stone pillar standing on
   /// the cave floor (its render)
   ACTOR_PILLAR,
-  /// Stands in for the pillar once it has dropped into its place; out of sight
-  /// at first. It is drawn in the stump's sprite, and on later visits in the
-  /// animation the stump takes once it has landed.
+  /// Stands in for the pillar once it has dropped in; out of sight at first.
+  /// It is drawn in the stump's sprite, splashing in (STUMP_ANIM_SPLASH) and
+  /// on later visits afloat (STUMP_ANIM_AFLOAT).
+  /// ★ Named from what the player sees: the pillar's top in the water, after
+  /// the splash it drops in with (its render)
   ACTOR_DROPPED_PILLAR,
   /// Raised by Lift.
   /// ★ Named from what the player sees: a round boulder in the cave passage,
   /// which floats up under Lift (its render)
   ACTOR_BOULDER,
   /// An invisible actor 16 pixels west of the boulder, which Lift takes away
-  /// with it. XXX: likely holds the cell beside the boulder, because it
-  /// stands one cell from it and goes when the boulder does.
+  /// with it (the file's open questions ask what it does).
   ACTOR_BOULDER_SIDE
+};
+
+/// SPRITE_STUMP's animations once it is in the water, which the stump and the
+/// pillar's stand-in take.
+enum {
+  STUMP_ANIM_AFLOAT = 2, ///< afloat
+  STUMP_ANIM_SPLASH = 3  ///< landing with a splash, then afloat
 };
 
 // The leap event also runs after the shared staged-actor movement.
@@ -329,9 +339,10 @@ static void Event_ReadSoldierMind(void) {
   MESSAGE_PUT(ACTOR_SECOND_SOLDIER, 0);
 }
 
-/// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST
-/// (collision code 1), out to the world map. With FLAG_SCENE_TEMP_04 set, the
-/// puzzle's saved flags return to one arrangement first.
+/// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (collision code 1),
+/// out to the world map. With FLAG_SCENE_TEMP_04 set, which nothing in the
+/// game sets, three unnamed flags and the pillar's are first put into one
+/// arrangement.
 static void Event_LeaveToWorldMapEast(void) {
   struct EventWork *event;
 
@@ -351,13 +362,13 @@ static void Event_LeaveToWorldMapEast(void) {
   EV_END();
 }
 
-/// Walking into the pillar in GondowanCave from the west or the
-/// east (triggers 10 and 11): look at what is ahead, which starts the push.
-static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
+/// Walking west or east into touch cells 10 and 11 in GondowanCave: the leader
+/// jumps two cells forward where the map allows (Field_TryJumpForward), across
+/// the stump and the pillar once they float in the water.
+static void Event_JumpAcross(void) { Engine_LeaderCheckAhead(); }
 
-/// Move on the stump in GondowanCave, until it has leapt: from
-/// column 30 or less it spins and leaps across, freeing the cell where it
-/// stood.
+/// Move on the stump in GondowanCave, until it has leapt: from column 30 or
+/// less it spins and leaps into the water, freeing the cell where it stood.
 static void Event_MoveStump(void) {
   Object_GetById(ACTOR_STUMP);
   EV_BEGIN();
@@ -387,8 +398,8 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
   OBJ_MODE(ACTOR_DROPPED_PILLAR, animation);
 }
 
-/// Move on the pillar in GondowanCave, and after each push: past
-/// column 42 it drops into its place for good.
+/// Move on the pillar in GondowanCave, and after each push: past column 42 it
+/// drops into the water with a splash, for good.
 static void Event_MovePillar(void) {
   EV_BEGIN();
   if ((Object_GetById(ACTOR_PILLAR)->x.fixed >> 20) > 42) {
@@ -397,7 +408,7 @@ static void Event_MovePillar(void) {
 
     Map_CopyCellAttributes(108, 17, 1, 1, destinationCellX, destinationCellZ);
     WAIT(8);
-    GondowanCave_PlaceDroppedPillar(3);
+    GondowanCave_PlaceDroppedPillar(STUMP_ANIM_SPLASH);
     SE(SE_CAST);
     FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
@@ -474,10 +485,10 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = 0;
   actor->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(SE_CAST);
-  OBJ_MODE(actorId, 3);
+  OBJ_MODE(actorId, STUMP_ANIM_SPLASH);
   Map_WaitForShakeToSettle();
   WAIT(10);
-  OBJ_MODE(actorId, 2);
+  OBJ_MODE(actorId, STUMP_ANIM_AFLOAT);
 }
 
 /// Unused: an empty function nothing calls.
@@ -507,11 +518,11 @@ s32 Scene_Initialize(void) {
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       OBJ_POS_SET(ACTOR_STUMP, 440, 308);
-      OBJ_MODE(ACTOR_STUMP, 2);
+      OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_AFLOAT);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
-      GondowanCave_PlaceDroppedPillar(2);
+      GondowanCave_PlaceDroppedPillar(STUMP_ANIM_AFLOAT);
     }
     actor = Actor_Get(ACTOR_BOULDER_SIDE);
     Engine_ActorSetSpriteFlags(actor, 0);
@@ -643,7 +654,7 @@ struct ScenePlacement gGondowanPassagePlacementsWithIodem[] = {
 };
 
 struct ScenePlacement gGondowanCaveRiverPlacements[] = {
-    { 0x127, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(504), 0, PIXELS(624), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(440), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -659,7 +670,7 @@ struct ScenePlacement gGondowanCavePlacements[] = {
         PIXELS(664), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x127, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(636), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(640), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -679,8 +690,8 @@ struct SceneEvent gGondowanPassageEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadSoldierMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
-    { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
@@ -697,8 +708,8 @@ struct SceneEvent gGondowanPassageEventsWithIodem[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
-    { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
@@ -708,8 +719,8 @@ struct SceneEvent gGondowanCaveRiverEvents[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_RIVER_BOULDER, CONDITION_ALWAYS, 0 },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
-    { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
@@ -724,11 +735,11 @@ struct SceneEvent gGondowanCaveEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftBoulder) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(Event_MovePillar) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcross) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcross) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
-    { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

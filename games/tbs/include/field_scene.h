@@ -189,6 +189,11 @@ struct SceneEvent {
 
 STATIC_ASSERT(sizeof(struct SceneEvent) == 12);
 
+/// SceneEvent.trigger bit 10: a Psynergy event runs in place of the
+/// Psynergy's effect, as Mind Read on someone who notices it does, and a
+/// search shows no checking message.
+#define EVENT_TRIGGER_OWN_EFFECT 0x400
+
 /// SceneEvent.control's low four bits: what the event answers.
 enum SceneEventKind {
   EVENT_TALK = 0, ///< the A button on an actor; trigger is its id

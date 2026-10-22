@@ -18,8 +18,8 @@ enum CaveTrigger {
 
 enum CaveActor {
   /// Placed at (0, 0, 0), outside the cave's camera bounds, so the player
-  /// never sees it (Event_FreezeHiddenPuddle).
-  ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
+  /// never sees it (Event_UnusedFreezePuddle).
+  ACTOR_UNUSED_PUDDLE = ACTOR_FIRST_PLACED,
   /// ★ Named from what the player sees: a small blue puddle in the cave's
   /// southwest end (its render)
   ACTOR_SOUTH_PUDDLE,

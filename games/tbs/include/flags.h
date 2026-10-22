@@ -400,6 +400,12 @@
 /// GondowanCave's stone pillar has dropped into its place for good.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_GONDOWAN_CAVE_PILLAR_DROPPED 0x9a5
+// GondowanCaveRiver's two chests, whose search events every scene of the
+// overlay carries.
+/// ★ Named from the game: "Apple" (MsgItemName)
+#define FLAG_GONDOWAN_CAVE_APPLE 0xfa0
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_GONDOWAN_CAVE_LUCKY_MEDAL 0xfa1
 
 // Alpine Crossing and Lama Temple
 /// At the Alpine Crossing, Feizhi has caught up with the party, found the road
@@ -495,12 +501,15 @@
 /// The chest behind the rocks' wall.
 /// ★ Named from the game: "Mystic Draught" (MsgItemName)
 #define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30
-/// Room 3's chest.
+/// AltmillerCaveVialChest's chest.
 /// ★ Named from the game: "Vial" (MsgItemName)
 #define FLAG_ALTMILLER_CAVE_VIAL 0xf9c
-/// Room 5's chest.
+/// AltmillerCaveCookieChest's chest.
 /// ★ Named from the game: "Cookie" (MsgItemName)
 #define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d
+/// AltmillerCaveBabi's chest, a Mimic (FIND_MIMIC).
+/// ★ Named from the game: "really a Mimic!" (MsgChestWasMimic)
+#define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN 0xef5
 
 // Babi Lighthouse
 /// Arrival through room 2's entrance 10 changes its tiles and collision;
@@ -1020,6 +1029,13 @@
 /// ★ Named from the game: "You soldiers were supposed to be heading for
 /// Babi Lighthouse!" (MsgSuhallaIodem)
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
+// The village's chest and jars.
+/// ★ Named from the game: "Hard Nut" (MsgItemName)
+#define FLAG_SUHALLA_CHEST_HARD_NUT 0xfad
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_SUHALLA_JAR_LUCKY_MEDAL 0xfae
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_SUHALLA_JAR_COINS 0xfaf
 /// The Smoke Bomb in one of the houses' ovens is found.
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB 0xfb0
@@ -1040,6 +1056,9 @@
 #define FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH 0x8fb
 /// ★ Named from its area name: Suhalla Gate
 #define FLAG_SUHALLA_GATE_ENTERED_FROM_EAST 0x8fc
+/// The chest beyond the gate, in SuhallaGateDew.
+/// ★ Named from the game: "Mint" (MsgItemName)
+#define FLAG_SUHALLA_GATE_MINT 0xfb4
 
 // Suhalla Desert
 /// Iodem has told the party that Sheba is nowhere to be found and asked

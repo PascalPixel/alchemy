@@ -9,6 +9,8 @@
 #include "flags.h"
 #include "item_ids.h"
 
+/// The rooms by the entrance the party comes in by; each is also its door's
+/// trigger and exit kind (ROOM_DOOR).
 enum InteriorRoom {
   ROOM_FIRST_HOME = 1,
   ROOM_SECOND_HOME,
@@ -17,8 +19,8 @@ enum InteriorRoom {
   ROOM_ITEM_SHOP,
   ROOM_INN,
   ROOM_TEMPLE,
-  ROOM_STOREROOM,
-  ROOM_NINTH,
+  ROOM_CRATE_ROOM,
+  ROOM_NINTH_UNUSED, ///< no exit leads here
   ROOM_GATE_TO_SUHALLA,
   ROOM_TEMPLE_SECOND_ENTRANCE
 };
@@ -107,6 +109,7 @@ enum InteriorActor {
   ACTOR_ITEM_COUNTER
 };
 
+/// Lunpa's shops and inn, as Engine_ShopOpen and Engine_InnOpen number them.
 enum {
   SHOP_LUNPA_ITEMS = 25,
   SHOP_LUNPA_WEAPONS = 29,

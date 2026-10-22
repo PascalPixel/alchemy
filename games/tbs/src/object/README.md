@@ -1,5 +1,7 @@
 # Field objects
 
+![Isaac walks up and down a narrow passage of Goma Cave until a random battle starts: the screen flashes and goes black, and the battle opens on Isaac, Garet and Ivan facing a Ghost, with `Ghost appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
+
 A field scene, a room, a town, a dungeon floor or the world map, runs here
 from the moment `Game_Run` loads it until the party leaves. The code sets the
 scene up, hands the leader to the player, and handles whatever interrupts the
@@ -458,5 +460,4 @@ call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
   and 20 to 220, more than the 240 by 160 screen, and pass it to a window
   service that takes tiles, and with no caller in the ROM nothing shows what
   they were given.
-- XXX (picture): a random battle starting while the party walks (to re-render once the walk and the party are fixed).
 - XXX (picture): the field loop's requests, as a plain-language illustration of what can interrupt walking and the order the game deals with them.

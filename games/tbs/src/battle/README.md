@@ -756,5 +756,4 @@ side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the
 enemies' column, and `BattleClass_HasHeavyImpact` reads the class bit that
 makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
 bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
-- XXX (picture): a random battle starting while the party walks (to re-render once the walk and the party are fixed).
 - XXX (picture): a round's events played one at a time, as an illustration.

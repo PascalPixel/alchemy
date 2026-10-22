@@ -77,7 +77,7 @@ extern u32 gFrameCount;
 
 s32 IwramRatioMulQ14(s32 divisor, s32 value) __attribute__((long_call));
 void IwramTransformVectorFarArm(const void *vector, s32 *result);
-s32 IwramSqrtFarArm(s32 value);
+s32 Iwram_SqrtFarArm(s32 value);
 
 void Func_080212dc(s32 depth, s32 *position, struct ScanVertex *scanline) {
   s32 groundPoint[3];
@@ -116,7 +116,7 @@ void Func_080212dc(s32 depth, s32 *position, struct ScanVertex *scanline) {
       vertical = (diagonal - cameraCoordinates[1]) >> 4;
       horizontalSquared = MulQ16(horizontal, horizontal);
       verticalSquared = MulQ16(vertical, vertical);
-      verticalSquared = IwramSqrtFarArm(horizontalSquared + verticalSquared)
+      verticalSquared = Iwram_SqrtFarArm(horizontalSquared + verticalSquared)
                         << 12;
       if (vertical < 0)
         verticalSquared = -verticalSquared;

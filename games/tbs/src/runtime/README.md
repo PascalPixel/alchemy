@@ -34,7 +34,7 @@ IWRAM and points the interrupt vector at its dispatcher
 graphics. It then installs `System_VBlankHandler`, arms the soft-reset keys,
 starts the sound driver, resets the sprite VRAM cache and the task table,
 waits ten frames and calls `Game_RunFar`. The German, French, Spanish and
-Italian editions (`TBS_PATCH_2`) also install `IwramHalt` for the
+Italian editions (`TBS_PATCH_2`) also install `Iwram_Halt` for the
 cartridge-removed interrupt.
 
 Neither function returns. `Game_Run` (`games/tbs/src/object/object/scene.c`)

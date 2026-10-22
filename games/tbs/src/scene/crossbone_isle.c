@@ -465,7 +465,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
       FLAG_CHECK((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                       (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
-    OBJECT_POS_SET(ACTOR_SINKING_PILLAR, 650, 168);
+    OBJECT_POSITION_SET(ACTOR_SINKING_PILLAR, 650, 168);
     actor->y.fixed = -PIXELS(32);
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
     Engine_ActorSetSpritePriority(ACTOR_SINKING_PILLAR, 3);
@@ -721,25 +721,25 @@ static void CrossboneIsle_RestoreIvy(void) {
 
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-    OBJECT_POS_SET(ACTOR_FIRST_IVY, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
-    OBJECT_POS_SET(ACTOR_FIRST_IVY + 1, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY + 1, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 1);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
-    OBJECT_POS_SET(ACTOR_FIRST_IVY + 2, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY + 2, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 2);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
-    OBJECT_POS_SET(ACTOR_FIRST_IVY + 3, 968, 968);
+    OBJECT_POSITION_SET(ACTOR_FIRST_IVY + 3, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 3);
     // BUG: no fourth ivy is placed, so its slot is empty (ObjectTable_ClearAll)
@@ -2068,7 +2068,7 @@ s32 gEffectScript0[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -2077,7 +2077,7 @@ s32 gEffectScript1[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -2086,7 +2086,7 @@ s32 gEffectScript2[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };

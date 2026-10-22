@@ -2265,19 +2265,19 @@ struct SceneEvent gImilFuchinFalls_DragonRoomEvents[] = {
 };
 
 s32 gImilFuchinFalls_DustScript0[] = {
-    SC_WAIT(1), SC_LOOP(22, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
-    SC_WAIT(1), SC_POS(0, 0, 0),     SC_WAIT(1),
+    SC_WAIT(1), SC_LOOP(22, SC_TOP),  SC_CALL(Fuchin_SetDustPalette),
+    SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };
 
 s32 gImilFuchinFalls_DustScript1[] = {
-    SC_WAIT(1), SC_LOOP(44, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
-    SC_WAIT(1), SC_POS(0, 0, 0),     SC_WAIT(1),
+    SC_WAIT(1), SC_LOOP(44, SC_TOP),  SC_CALL(Fuchin_SetDustPalette),
+    SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };
 
 s32 gImilFuchinFalls_DustScript2[] = {
     SC_WAIT(1), SC_LOOP(126, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
-    SC_WAIT(1), SC_POS(0, 0, 0),      SC_WAIT(1),
+    SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };

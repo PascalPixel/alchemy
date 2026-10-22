@@ -2240,7 +2240,7 @@ s32 gValeGate_FirstTravelerBounceActions[] = {
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -2266,7 +2266,7 @@ s32 gValeGate_SecondTravelerBounceActions[] = {
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -2343,7 +2343,7 @@ s32 gValeGate_PartyDepartureActions[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(215), 0, PIXELS(921)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -2380,7 +2380,7 @@ s32 gValeGate_AideRunActions[] = {
     SC_MOVE(PIXELS(129), 0, PIXELS(647)),
     SC_SYNC,
     SC_ARG(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 

@@ -2853,7 +2853,7 @@ UNUSED static void WorldMap_CycleActorPalettes(struct FieldActor *actor) {
 #include "common/world_map_linked_effects.h"
 
 s32 gCaravanFirstWagonArrives[] = {
-    SC_POS(PIXELS(5848), 0, PIXELS(1576)),
+    SC_POSITION(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
@@ -2877,7 +2877,7 @@ s32 gCaravanFirstWagonDeparts[] = {
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
     SC_ARG(ANIMATION_STAND),
-    SC_POS(PIXELS(5656), 0, PIXELS(1800)),
+    SC_POSITION(PIXELS(5656), 0, PIXELS(1800)),
     SC_END,
 };
 
@@ -2885,24 +2885,24 @@ s32 gCaravanFirstWagonReturns[] = {
     SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gCaravanWagonHeadsNorth[] = {
-    SC_POS(PIXELS(5868), 0, PIXELS(1704)),
+    SC_POSITION(PIXELS(5868), 0, PIXELS(1704)),
     SC_WAIT(1),
     SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(5872), 0, PIXELS(1528)),
     SC_SYNC,
     SC_MOVE(PIXELS(5880), 0, PIXELS(1352)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gCaravanSecondWagonArrives[] = {
-    SC_POS(PIXELS(5848), 0, PIXELS(1576)),
+    SC_POSITION(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
@@ -2926,7 +2926,7 @@ s32 gCaravanSecondWagonDeparts[] = {
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
     SC_ARG(ANIMATION_STAND),
-    SC_POS(PIXELS(5640), 0, PIXELS(1768)),
+    SC_POSITION(PIXELS(5640), 0, PIXELS(1768)),
     SC_END,
 };
 
@@ -2936,12 +2936,12 @@ s32 gCaravanSecondWagonReturns[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gCaravanThirdWagonArrives[] = {
-    SC_POS(PIXELS(5848), 0, PIXELS(1576)),
+    SC_POSITION(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
@@ -2965,7 +2965,7 @@ s32 gCaravanThirdWagonDeparts[] = {
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
     SC_ARG(ANIMATION_STAND),
-    SC_POS(PIXELS(5656), 0, PIXELS(1768)),
+    SC_POSITION(PIXELS(5656), 0, PIXELS(1768)),
     SC_END,
 };
 
@@ -2975,12 +2975,12 @@ s32 gCaravanThirdWagonReturns[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gCaravanFourthWagonArrives[] = {
-    SC_POS(PIXELS(5848), 0, PIXELS(1576)),
+    SC_POSITION(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
@@ -3004,14 +3004,14 @@ s32 gCaravanFourthWagonDeparts[] = {
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
     SC_ARG(ANIMATION_STAND),
-    SC_POS(PIXELS(5672), 0, PIXELS(1768)),
+    SC_POSITION(PIXELS(5672), 0, PIXELS(1768)),
     SC_END,
 };
 
 s32 gCaravanFourthWagonReturns[] = {
     SC_ARG(3), SC_MOVE(PIXELS(5672), 0, PIXELS(1795)),
     SC_SYNC,   SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -3753,7 +3753,7 @@ s32 gIslandWakeScript[] = {
     SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 512),
     SC_WAIT(1),
     SC_LOOP(48, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };

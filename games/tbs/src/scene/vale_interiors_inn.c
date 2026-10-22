@@ -1302,14 +1302,15 @@ s32 gValeInteriorsInn_LeaveHouseScript[] = {
 };
 
 s32 gValeInteriorsInn_DoraLeavesScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)), SC_SYNC, SC_POS(0, 0, 0),
+    SC_ARG(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValeInteriorsInn_IsaacLeavesScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
     SC_SYNC,   SC_MOVE(PIXELS(387), 0, PIXELS(661)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -1385,7 +1386,7 @@ s32 gValeInteriorsInn_FlameRisesScript[] = {
     SC_ADD(SW_SCALE_Y, -1310),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(3)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_ARG(1),
     SC_END,
 };

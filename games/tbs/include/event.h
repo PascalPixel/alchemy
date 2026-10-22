@@ -15,7 +15,8 @@
 // Actors by number. Positions are whole pixels, speeds 16.16 pixels a frame,
 // headings 1/65536 turns (enum Facing), modes enum ActorAnimation, emotes enum
 // Emote (with EMOTE_IN_FRONT), and t the frames waited after.
-#define OBJECT_POS_SET(no, x, z) Actor_SetPosition((no), (x) << 16, (z) << 16)
+#define OBJECT_POSITION_SET(no, x, z)                                          \
+  Actor_SetPosition((no), (x) << 16, (z) << 16)
 #define OBJECT_WALK(no, x, z) Actor_WalkTo((no), (x), (z))
 #define OBJECT_SPEED(no, s, a) Actor_SetSpeed((no), (s), (a))
 #define OBJECT_DIR(no, d, t) Actor_FaceDirection((no), (d), (t))

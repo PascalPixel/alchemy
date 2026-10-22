@@ -728,18 +728,18 @@ static void MercuryLighthouse_SpawnRipple(struct FieldActor *source) {
 #include "common/mercury_lighthouse_pillar.h"
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
@@ -990,7 +990,7 @@ s32 gMercuryLighthouseEntrance_SparkBurstScript[] = {
     SC_WAIT(6),
     SC_LOOP(4, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };

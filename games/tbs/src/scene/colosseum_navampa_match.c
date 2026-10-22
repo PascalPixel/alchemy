@@ -2368,7 +2368,7 @@ s32 gColossoLinkedEffect[] = {
     SC_WAIT(2),
     SC_WAIT(50),
     SC_LOOP(2, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_SET(SW_HOOK, 0),
     SC_END,
 };
@@ -2642,7 +2642,7 @@ s32 gColossoParticleKinds[] = {
     SC_CALL(ColosseumNavampaMatch_AdvanceParticleMotion),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

@@ -1994,21 +1994,30 @@ static void ColosseumEntrance_InitializeContestants(void) {
 }
 
 s32 gColosseumEntrance_GatherIntoIsaacScript[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(262), 0, PIXELS(188)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_END,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(262), 0, PIXELS(188)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_END,
 };
 
 s32 gColosseumEntrance_GatherIntoGaretScript[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(246), 0, PIXELS(200)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_END,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(246), 0, PIXELS(200)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_END,
 };
 
 s32 gColosseumEntrance_RejoinPartyScript[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(808), 0, PIXELS(120)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_END,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(808), 0, PIXELS(120)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_END,
 };
 
 s32 gColosseumEntrance_EnterGatesScript[] = {
@@ -2061,7 +2070,7 @@ s32 gColosseumEntrance_EnterFinalsScript[] = {
     SC_MOVE(PIXELS(808), 0, PIXELS(58)),
     SC_SYNC,
     SC_ARG(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 

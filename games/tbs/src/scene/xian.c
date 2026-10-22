@@ -865,18 +865,18 @@ s32 Xian_Initialize(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
@@ -934,17 +934,13 @@ s32 gXian_TrainingTreeJump[] = {
 
 /// The effect at the tree's foot when the student strikes it: 18 frames.
 s32 gXian_TreeImpactScript[] = {
-    SC_WAIT(18), SC_WAIT(1), SC_POS(0, 0, 0), SC_WAIT(1), SC_FREE,
+    SC_WAIT(18), SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE,
 };
 
 /// Each particle beside the leaping student, facing west: 16 frames.
 s32 gXian_TrainingParticleScript[] = {
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(16),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_SET(SW_FACING, FACING_WEST), SC_WAIT(16), SC_WAIT(1),
+    SC_POSITION(0, 0, 0),           SC_WAIT(1),  SC_FREE,
 };
 
 /// The doors' opening frames, copied from map cells.

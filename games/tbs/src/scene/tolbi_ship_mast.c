@@ -928,7 +928,7 @@ s32 gTolbiShipMast_FollowCameraActions[] = {
     SC_CALL(TolbiShipMast_FollowCameraAndRotate),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

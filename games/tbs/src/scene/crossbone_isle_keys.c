@@ -357,7 +357,7 @@ static void Event_BaneSecondEscape(void) {
       WAIT(30);
 
       // Leave the Djinni tilted while its scale animation continues.
-      OBJECT_POS_SET(ACTOR_BANE, 888, 664);
+      OBJECT_POSITION_SET(ACTOR_BANE, 888, 664);
       spinningDjinni = Object_GetById(ACTOR_BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
@@ -409,7 +409,7 @@ static void Event_BaneLastEscape(void) {
     Actor_WalkToAndWait(ACTOR_BANE, 880, 744);
     Actor_WalkToAndWait(ACTOR_BANE, 878, 752);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 760);
-    OBJECT_POS_SET(ACTOR_BANE, 856, 824);
+    OBJECT_POSITION_SET(ACTOR_BANE, 856, 824);
     WAIT(10);
     OBJECT_DIR(ACTOR_BANE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_BANE, 0x100);
@@ -618,7 +618,7 @@ static void Event_ShowRedKey(void) {
 /// hidden again.
 static void Event_HideRedKey(void) {
   Map_CopyCells(24, 48, 1, 2, 25, 48);
-  OBJECT_POS_SET(ACTOR_RED_KEY, 8, 8);
+  OBJECT_POSITION_SET(ACTOR_RED_KEY, 8, 8);
 }
 
 /// Collects the selected key, hides its actor and remembers it was taken.
@@ -1076,7 +1076,7 @@ static void Event_PushFirstPillar(void) {
 /// restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Scheduler_RemoveCallback(CrossboneIsleKeys_FollowSecondPillar);
-  OBJECT_POS_SET(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
   if (FLAG_CHECK(BANE_LOOKED_EAST_FLAG) != 0) {
     Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
@@ -1294,16 +1294,16 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
   switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-      OBJECT_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
+      OBJECT_POSITION_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
     }
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-      OBJECT_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
+      OBJECT_POSITION_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
     }
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-      OBJECT_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
+      OBJECT_POSITION_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
     }
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-      OBJECT_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
+      OBJECT_POSITION_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
     }
     break;
   case 10:
@@ -1335,16 +1335,16 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
   Colosso_ShowItemIcon(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY);
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-    OBJECT_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
+    OBJECT_POSITION_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-    OBJECT_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
+    OBJECT_POSITION_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-    OBJECT_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
+    OBJECT_POSITION_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-    OBJECT_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
+    OBJECT_POSITION_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(0);
@@ -1418,7 +1418,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   // Restore the surviving Djinni at the last completed escape stage.
   if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-      OBJECT_POS_SET(ACTOR_BANE, 856, 824);
+      OBJECT_POSITION_SET(ACTOR_BANE, 856, 824);
       djinni = Object_GetById(ACTOR_BANE);
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
@@ -1427,14 +1427,14 @@ static void CrossboneIsleKeys_InitializeBane(void) {
           (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
-      OBJECT_POS_SET(ACTOR_BANE, 888, 664);
+      OBJECT_POSITION_SET(ACTOR_BANE, 888, 664);
       djinni = Object_GetById(ACTOR_BANE);
       djinni->sprite->rotation = 0;
       ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)djinni, 16);
     } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-      OBJECT_POS_SET(ACTOR_BANE, 584, 680);
+      OBJECT_POSITION_SET(ACTOR_BANE, 584, 680);
     } else {
-      OBJECT_POS_SET(ACTOR_BANE, 584, 664);
+      OBJECT_POSITION_SET(ACTOR_BANE, 584, 664);
     }
   }
 }

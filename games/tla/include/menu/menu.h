@@ -19,7 +19,7 @@ extern s8 gMenu_TopEntryPositionByCommand[];
 extern u8 gShop_GlyphBytes[];
 extern u8 gStatusMenu_LevelLetterString[];
 void *AffineEffect_InitializeWork(void);
-void ItemMenu_PosCategory(void);
+void ItemMenu_PositionCategory(void);
 void Menu_AppendResourceEntry(s32 no);
 void Menu_EndResourceSelection(void);
 void Resource_ResetPendingTransfer(void);

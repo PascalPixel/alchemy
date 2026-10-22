@@ -1543,7 +1543,7 @@ s32 PsynergyMenu_SelectAction(void) {
                                   menu->statusWindow, 0, -24);
 
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
-    ItemMenu_PosCategory();
+    ItemMenu_PositionCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
         Unit_GetFar(menu->ownerIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
@@ -1801,7 +1801,7 @@ s32 ItemMenu_SelectItem(void) {
   }
   UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, STATUS_EQUIP_WINDOW_WIDTH,
                           10, 2);
-  ItemMenu_PosCategory();
+  ItemMenu_PositionCategory();
 
   for (iconIndex = 0; iconIndex < 32; iconIndex++) {
     struct RenderOutput *icon = menu->entryIcons[iconIndex];
@@ -1815,13 +1815,13 @@ s32 ItemMenu_SelectItem(void) {
                                   64, -24);
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3,
                                   menu->statusWindow, 0, -24);
-  ItemMenu_PosCategory();
+  ItemMenu_PositionCategory();
   WaitFrames(1);
   Menu_SpawnIconEntries((struct InventoryMenuState *)menu, menu->messageWindow);
 
   done = 0;
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
-    ItemMenu_PosCategory();
+    ItemMenu_PositionCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     owner = Unit_GetFar(menu->paneOwner[0]);
     for (iconIndex = 0; iconIndex <= 14; iconIndex++)
@@ -1989,7 +1989,7 @@ void ItemMenu_DrawCategory(struct UiWindow *window, s32 ownerId, s32 mode) {
   u16 *items;
 
   Unit_GetFar(ownerId);
-  ItemMenu_PosCategory();
+  ItemMenu_PositionCategory();
   ItemMenu_HideAllIcons();
   UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels, window, 0, 0);
   UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 1, window, 0, 32);
@@ -2077,7 +2077,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   s32 slotIndex;
 
   menu = gMenuWork;
-  ItemMenu_PosCategory();
+  ItemMenu_PositionCategory();
   for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
     if (items[slotIndex] != 0 && (items[slotIndex] & INVENTORY_EQUIPPED) != 0) {
       icon = menu->entryIcons[slotIndex];
@@ -2108,7 +2108,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 
 /// Moves all 32 entry icons off screen, to (248, 168), before a screen lays
 /// them out again.
-void ItemMenu_PosCategory(void) {
+void ItemMenu_PositionCategory(void) {
   struct InventoryMenuState *state = gMenuWork;
   s32 x = 248;
   struct RenderOutput **entry = state->entryIcons;

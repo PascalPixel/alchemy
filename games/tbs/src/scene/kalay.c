@@ -2423,13 +2423,13 @@ s32 gKalay_TourGroupLeaveScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_TIMER, 1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
     SC_ARG(2),
     SC_MOVE(PIXELS(192), 0, PIXELS(222)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -2553,9 +2553,12 @@ s32 gKalay_PartyFidgetScript[] = {
 };
 
 s32 gKalay_PartyGatherScript[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(388), 0, PIXELS(300)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_END,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(388), 0, PIXELS(300)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_END,
 };
 
 s32 gKalay_FrostGrowScript[] = {

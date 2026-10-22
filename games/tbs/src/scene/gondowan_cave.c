@@ -265,7 +265,7 @@ static void Event_IodemAsksWhyTurningBack(void) {
                              leader->z.part.pixel);
       }
       Engine_ActorWaitForMove(ACTOR_IODEM);
-      OBJECT_POS_SET(ACTOR_IODEM, 0, 0);
+      OBJECT_POSITION_SET(ACTOR_IODEM, 0, 0);
       WAIT(30);
       OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_WALK);
       Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
@@ -397,8 +397,8 @@ static void Event_PushPillar(void) {
 
 /// Hides the pillar and shows the actor that stands in for it in its place.
 static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
-  OBJECT_POS_SET(ACTOR_PILLAR, 0, 0);
-  OBJECT_POS_SET(ACTOR_DROPPED_PILLAR, 696, 288);
+  OBJECT_POSITION_SET(ACTOR_PILLAR, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_DROPPED_PILLAR, 696, 288);
   OBJECT_MODE(ACTOR_DROPPED_PILLAR, animation);
 }
 
@@ -513,7 +513,7 @@ s32 Scene_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_GondowanPassage) {
     FLAG_SET(FLAG_RETREAT_BLOCKED);
     if (FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-      OBJECT_POS_SET(ACTOR_IODEM, 0, 0);
+      OBJECT_POSITION_SET(ACTOR_IODEM, 0, 0);
     }
   }
   if (gGameState.scene == (s32)&SceneId_GondowanCave) {
@@ -521,7 +521,7 @@ s32 Scene_Initialize(void) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
-      OBJECT_POS_SET(ACTOR_STUMP, 440, 308);
+      OBJECT_POSITION_SET(ACTOR_STUMP, 440, 308);
       OBJECT_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
@@ -535,18 +535,18 @@ s32 Scene_Initialize(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// Packs signed pixel steps with X in the upper halfword and Z in the lower.

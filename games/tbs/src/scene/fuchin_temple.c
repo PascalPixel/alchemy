@@ -797,7 +797,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   // Restore the tree and let the student return to the demonstration spot.
   FuchinTemple_StudentWalksAroundTree();
   Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  OBJECT_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
   Engine_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
   Object_GetById(ACTOR_TRAINING_TREE)->y.fixed = 0xc0000;
   Object_GetById(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
@@ -843,7 +843,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   OBJECT_SPEED(ACTOR_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   FuchinTemple_StudentWalksAroundTree();
   Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  OBJECT_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
   Engine_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
   tree = Object_GetById(ACTOR_TRAINING_TREE);
   tree->y.fixed = 0xc0000;
@@ -1008,7 +1008,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 
   actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
   Event_ShowMessageAndWait(ACTOR_MESSENGER_STUDENT, 0, 50);
-  OBJECT_POS_SET(ACTOR_FEIZHI, 304, 216);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI, 304, 216);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 304, 248);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1029,7 +1029,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   OBJECT_EMOTE(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  OBJECT_POS_SET(ACTOR_FEH, 304, 216);
+  OBJECT_POSITION_SET(ACTOR_FEH, 304, 216);
   OBJECT_WALK(ACTOR_FEH, 304, 248);
   OBJECT_WALK(ACTOR_FEIZHI, 280, 264);
   Engine_ActorWaitForMove(ACTOR_FEH);
@@ -1120,7 +1120,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   WAIT(10);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 256, 280);
   OBJECT_DIR(ACTOR_FEIZHI, FACING_SOUTH, 20);
-  OBJECT_POS_SET(ACTOR_FEIZHI, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI, 0, 0);
   Engine_ActorDestroy(ACTOR_FEIZHI);
   WAIT(30);
   Engine_ActorRunRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
@@ -1151,8 +1151,8 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WalkToAndWait(ACTOR_FEH, 240, 184);
   Engine_ActorRunRepeatedMotion(ACTOR_FEH, 2);
   WAIT(20);
-  OBJECT_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
-  OBJECT_POS_SET(ACTOR_TRAINING_TREE_TARGET, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE_TARGET, 232, 168);
   // Restore the tree before leaving the group ready for another demonstration.
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->y.fixed = 0xc0000;
@@ -1436,7 +1436,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 168);
   OBJECT_DIR(ACTOR_TREE_STUDENT, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  OBJECT_POS_SET(ACTOR_TRAINING_TREE, 232, 168);
+  OBJECT_POSITION_SET(ACTOR_TRAINING_TREE, 232, 168);
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->y.fixed = 0xc0000;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
@@ -2072,7 +2072,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   // Interrupt the discussion with the arrival from the southern path.
-  OBJECT_POS_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   Event_ShowMessageAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2243,11 +2243,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   Engine_ActorWaitForMove(ACTOR_HAMAS_BOY_MONK);
   OBJECT_WALK(ACTOR_HAMAS_BOY_MONK, 472, 608);
-  OBJECT_POS_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 0);
   Engine_ActorWaitForMove(ACTOR_HAMA);
-  OBJECT_POS_SET(ACTOR_HAMA, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_HAMA, 0, 0);
   Engine_ActorWaitForMove(ACTOR_HAMAS_BOY_MONK);
-  OBJECT_POS_SET(ACTOR_HAMAS_BOY_MONK, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_HAMAS_BOY_MONK, 0, 0);
   Actor_WalkToAndWait(IVAN, 488, 520);
   OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(MIA, 1);
@@ -2298,9 +2298,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   WAIT(20);
   OBJECT_WALK(GARET, 448, 512);
   Actor_WalkToAndWait(MIA, 448, 512);
-  OBJECT_POS_SET(MIA, 0, 0);
+  OBJECT_POSITION_SET(MIA, 0, 0);
   Engine_ActorWaitForMove(GARET);
-  OBJECT_POS_SET(GARET, 0, 0);
+  OBJECT_POSITION_SET(GARET, 0, 0);
   WAIT(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 20);
   WAIT(30);
@@ -2315,7 +2315,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   WAIT(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Actor_WalkToAndWait(IVAN, 448, 512);
-  OBJECT_POS_SET(IVAN, 0, 0);
+  OBJECT_POSITION_SET(IVAN, 0, 0);
   EV_END();
   FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED);
 }
@@ -2410,7 +2410,7 @@ s32 Scene_Initialize(void) {
       Map_CopyCellAttributes(10, 84, 1, 1, 10, 24);
     }
     if (Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_GROTTO_OPENED)) {
-      OBJECT_POS_SET(ACTOR_FALLS_MONK, 152, 392);
+      OBJECT_POSITION_SET(ACTOR_FALLS_MONK, 152, 392);
       Engine_ActorFaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 0);
       Map_CopyCellAttributes(10, 26, 1, 1, 10, 22);
     }
@@ -2533,18 +2533,18 @@ static void FuchinTemple_AnimateRevealLesson(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
@@ -2878,7 +2878,7 @@ s32 gFuchinTemple_ShotScript[] = {
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(44),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };

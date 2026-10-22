@@ -497,17 +497,17 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   OBJECT_SPEED(GARET, 0xcccc, 0x6666);
   OBJECT_SPEED(IVAN, 0xcccc, 0x6666);
   OBJECT_SPEED(MIA, 0xcccc, 0x6666);
-  OBJECT_POS_SET(ACTOR_PARTY_LEADER, 166, 80);
+  OBJECT_POSITION_SET(ACTOR_PARTY_LEADER, 166, 80);
   partyActor = Actor_Get(ACTOR_PARTY_LEADER);
   partyActor->facing = FACING_NORTH;
-  OBJECT_POS_SET(GARET, 148, 90);
+  OBJECT_POSITION_SET(GARET, 148, 90);
   partyActor = Actor_Get(GARET);
   partyActor->facing = FACING_NORTH;
-  OBJECT_POS_SET(IVAN, 182, 90);
+  OBJECT_POSITION_SET(IVAN, 182, 90);
   partyActor = Object_GetById(IVAN);
   partyActor->facing = FACING_NORTH;
   if (hasMia != 0) {
-    OBJECT_POS_SET(MIA, 166, 104);
+    OBJECT_POSITION_SET(MIA, 166, 104);
     partyActor = Object_GetById(MIA);
     partyActor->facing = FACING_NORTH;
   }
@@ -1128,18 +1128,18 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// The torn cocoons redrawn after a battle: the cocoon's flag, whether it is
@@ -1223,7 +1223,7 @@ s32 gTretTreeInteriors_FaceSinksActions[] = {
     SC_ADD(SW_SCALE_Y, -0x1000),
     SC_WAIT(4),
     SC_LOOP(8, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -1233,7 +1233,7 @@ s32 gTretTreeInteriors_RejoinLeaderActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(80)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

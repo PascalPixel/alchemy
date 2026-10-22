@@ -1168,7 +1168,7 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   struct InventoryMenuState *menu;
 
   menu = gMenuWork;
-  ItemMenu_PosCategory();
+  ItemMenu_PositionCategory();
   RenderOutput_RedrawSavedRectFar(menu->itemWindow);
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }

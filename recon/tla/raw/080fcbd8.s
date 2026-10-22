@@ -107,7 +107,7 @@ Func_080fcbd8:
 	movs r0, #0
 	bl ItemMenu_DrawMessage
 .L_080fcca6:
-	bl ItemMenu_PosCategory
+	bl ItemMenu_PositionCategory
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #22

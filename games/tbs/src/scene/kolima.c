@@ -1718,7 +1718,7 @@ s32 gKolima_ProtectiveFieldShrinkActions[] = {
     SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 200),
     SC_WAIT(1),
     SC_LOOP(90, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

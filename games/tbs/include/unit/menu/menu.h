@@ -231,7 +231,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns);
 void Menu_PlaceEntryObjectInGrid(struct RenderOutput *icon, s32 index,
                                  s32 originX, s32 originY, s32 columns);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
-void ItemMenu_PosCategory(void);
+void ItemMenu_PositionCategory(void);
 s32 Menu_CreateEightEntryObjects(struct UiWindow *window);
 void ItemMenu_ApplyFlags(const u8 *flags);
 void ItemMenu_ResetCategory(void);

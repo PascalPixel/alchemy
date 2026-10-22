@@ -2715,7 +2715,7 @@ s32 gAltinPeak_DebrisScript[] = {
     SC_CALL(AltinPeak_FlyDebris),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -2754,7 +2754,7 @@ s32 gAltinPeak_StatueSinkScript[] = {
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -2764,7 +2764,7 @@ s32 gAltinPeak_RejoinScript[] = {
     SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(328), 0, PIXELS(118)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

@@ -201,7 +201,7 @@ static void Event_PatrolPairThrowsPartyOut(void) {
 `EV_BEGIN` stops the leader and makes it the speaker, and `EV_END` returns the
 camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an actor.
-`OBJECT_POS_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
+`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
 move, turn and animate actors by number (`OBJECT_MODE` takes an `enum
 ActorAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
 game flags, and `SE(n)` plays a sound from `songs.h`.

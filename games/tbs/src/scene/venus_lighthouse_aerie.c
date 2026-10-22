@@ -3220,18 +3220,18 @@ VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
@@ -3245,7 +3245,7 @@ s32 gVenusLighthouseAerie_JoinLeaderAction[] = {
     SC_MOVE(PIXELS(492), 0, PIXELS(164)),
     SC_SYNC,
     SC_ARG(ANIMATION_STAND),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -3296,12 +3296,12 @@ s32 gVenusLighthouseAerie_BeamRiseAction[] = {
 
 s32 gVenusLighthouseAerie_BeamCloseAction[] = {
     SC_ADD(SW_Y, PIXELS(4)), SC_WAIT(1), SC_LOOP(30, SC_TOP),
-    SC_POS(0, 0, 0),         SC_WAIT(1), SC_END,
+    SC_POSITION(0, 0, 0),    SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_BeamEndAction[] = {
     SC_ADD(SW_Y, PIXELS(2)), SC_WAIT(1), SC_LOOP(160, SC_TOP),
-    SC_POS(0, 0, 0),         SC_WAIT(1), SC_END,
+    SC_POSITION(0, 0, 0),    SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
@@ -3312,7 +3312,7 @@ s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
     SC_ADD(SW_Y, PIXELS(1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -3325,7 +3325,7 @@ s32 gVenusLighthouseAerie_RiseParticleScript[] = {
     SC_ADD(SW_Y, -PIXELS(1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -3345,7 +3345,7 @@ s32 gVenusLighthouseAerie_WalkOutAction[] = {
     SC_MOVE(PIXELS(200), 0, PIXELS(200)),
     SC_SYNC,
     SC_ARG(ANIMATION_STAND),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -3363,21 +3363,13 @@ s32 gVenusLighthouseAerie_RiseActionScript[] = {
 };
 
 s32 gVenusLighthouseAerie_StepBackAction[] = {
-    SC_ADD(SW_Y, -(PIXELS(3) / 4)),
-    SC_WAIT(1),
-    SC_LOOP(120, SC_TOP),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_END,
+    SC_ADD(SW_Y, -(PIXELS(3) / 4)), SC_WAIT(1), SC_LOOP(120, SC_TOP),
+    SC_POSITION(0, 0, 0),           SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_LeapAction[] = {
-    SC_ADD(SW_Y, -(PIXELS(9) / 2)),
-    SC_WAIT(1),
-    SC_LOOP(80, SC_TOP),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_END,
+    SC_ADD(SW_Y, -(PIXELS(9) / 2)), SC_WAIT(1), SC_LOOP(80, SC_TOP),
+    SC_POSITION(0, 0, 0),           SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_PartyExitAction[] = {

@@ -1156,7 +1156,7 @@ s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_ARG(2), SC_MOVE(PIXELS(72), 0, PIXELS(294)),
     SC_SYNC,   SC_MOVE(PIXELS(77), 0, PIXELS(329)),
     SC_SYNC,   SC_MOVE(PIXELS(70), 0, PIXELS(415)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_END,
 };
 

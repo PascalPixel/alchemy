@@ -279,8 +279,9 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 /// The event command "set actor position": puts the actor at (x, z), 16.16
 /// pixels, at rest. An actor that follows the ground (ACTOR_FOLLOWS_TERRAIN)
 /// keeps its height above the terrain at the new place. Clears its velocity and
-/// targets. Scene scripts reach it as Engine_ActorSetPosition (OBJECT_POS_SET,
-/// Actor_SetPosition); Motion_LaunchFromFocusedObject calls it too.
+/// targets. Scene scripts reach it as Engine_ActorSetPosition
+/// (OBJECT_POSITION_SET, Actor_SetPosition); Motion_LaunchFromFocusedObject
+/// calls it too.
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object;
   s32 terrainHeight;

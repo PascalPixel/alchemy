@@ -1302,7 +1302,7 @@ s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[] = {
     SC_ADD(SW_SCALE_Y, -983),
     SC_WAIT(1),
     SC_LOOP(90, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

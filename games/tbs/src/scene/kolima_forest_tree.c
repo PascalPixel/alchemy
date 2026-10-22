@@ -1080,7 +1080,7 @@ s32 gKolimaForestTree_MiaApproachActions[] = {
 
 s32 gKolimaForestTree_RejoinPartyActions[] = {
     SC_ARG(2),  SC_MOVE(PIXELS(328), 0, PIXELS(212)),
-    SC_SYNC,    SC_POS(0, 0, 0),
+    SC_SYNC,    SC_POSITION(0, 0, 0),
     SC_WAIT(1), SC_END,
 };
 

@@ -3021,7 +3021,7 @@ s32 gValeStorm_ShovingManScript[] = {
     SC_SYNC,   SC_MOVE(PIXELS(179), 0, PIXELS(836)),
     SC_SYNC,   SC_MOVE(PIXELS(226), 0, PIXELS(840)),
     SC_SYNC,   SC_MOVE(PIXELS(226), 0, PIXELS(944)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_ARG(1), SC_END,
 };
 
@@ -3087,7 +3087,7 @@ s32 gValeStorm_JennaRunsIntoRiversideHouse[] = {
     SC_SYNC,   SC_MOVE(PIXELS(170), 0, PIXELS(1195)),
     SC_SYNC,   SC_MOVE(PIXELS(149), 0, PIXELS(1194)),
     SC_SYNC,   SC_MOVE(PIXELS(149), 0, PIXELS(1175)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_ARG(1), SC_END,
 };
 
@@ -3095,7 +3095,7 @@ s32 gValeStorm_DoraComesOutOfRiversideHouse[] = {
     SC_ARG(2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
-    SC_POS(PIXELS(102), 0, PIXELS(1189)),
+    SC_POSITION(PIXELS(102), 0, PIXELS(1189)),
     SC_WAIT(1),
     SC_MOVE(PIXELS(102), 0, PIXELS(1218)),
     SC_SYNC,
@@ -3110,7 +3110,7 @@ s32 gValeStorm_JennaComesOutOfRiversideHouse[] = {
     SC_ARG(2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
-    SC_POS(PIXELS(102), 0, PIXELS(1189)),
+    SC_POSITION(PIXELS(102), 0, PIXELS(1189)),
     SC_SYNC,
     SC_MOVE(PIXELS(102), 0, PIXELS(1218)),
     SC_SYNC,
@@ -3132,7 +3132,7 @@ s32 gValeStorm_DoraHeadsNorth[] = {
 s32 gValeStorm_JennaHeadsForPlaza[] = {
     SC_ARG(2), SC_MOVE(PIXELS(153), 0, PIXELS(1251)),
     SC_SYNC,   SC_MOVE(PIXELS(177), 0, PIXELS(1357)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_ARG(1), SC_END,
 };
 
@@ -3142,7 +3142,7 @@ s32 gValeStorm_DoraLeavesForHelp[] = {
     SC_SYNC,   SC_MOVE(PIXELS(148), 0, PIXELS(1078)),
     SC_SYNC,   SC_MOVE(PIXELS(148), 0, PIXELS(1064)),
     SC_SYNC,   SC_MOVE(PIXELS(35), 0, PIXELS(1064)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_SYNC,   SC_POSITION(0, 0, 0),
     SC_ARG(1), SC_END,
 };
 

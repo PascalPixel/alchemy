@@ -252,12 +252,12 @@ s32 Scene_Initialize(void) {
     Map_CopyCellAttributes(43, 11, 3, 1, 12, 11);
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
-    OBJECT_POS_SET(ACTOR_WEST_PILLAR, 264, 312);
+    OBJECT_POSITION_SET(ACTOR_WEST_PILLAR, 264, 312);
     Map_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
     if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) !=
         0) {
-      OBJECT_POS_SET(ACTOR_WEST_PILLAR, 280, 312);
+      OBJECT_POSITION_SET(ACTOR_WEST_PILLAR, 280, 312);
       Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
     }
   }
@@ -309,11 +309,11 @@ static void Event_IvanRejoins(void) {
       Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(GARET);
-    OBJECT_POS_SET(GARET, 0, 0);
+    OBJECT_POSITION_SET(GARET, 0, 0);
     EV_END();
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
-    OBJECT_POS_SET(IVAN, 360, 248);
+    OBJECT_POSITION_SET(IVAN, 360, 248);
     OBJECT_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkToAndWait(IVAN, 272, 248);
     Actor_WalkToAndWait(IVAN, 272, 208);
@@ -475,9 +475,9 @@ static void Event_IvanRejoins(void) {
     OBJECT_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     OBJECT_WALK(GARET, 248, 168);
     Actor_WalkToAndWait(IVAN, 248, 168);
-    OBJECT_POS_SET(IVAN, 0, 0);
+    OBJECT_POSITION_SET(IVAN, 0, 0);
     Engine_ActorWaitForMove(GARET);
-    OBJECT_POS_SET(GARET, 0, 0);
+    OBJECT_POSITION_SET(GARET, 0, 0);
     Map_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     FLAG_SET(FLAG_GOMA_CAVE_IVAN_JOINED);
     EV_END();
@@ -653,18 +653,18 @@ retry:
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {

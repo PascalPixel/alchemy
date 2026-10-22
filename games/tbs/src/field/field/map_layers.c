@@ -650,7 +650,7 @@ void Map_SetCameraCenter(s32 x, s32 y) {
 }
 
 /// The top left of a layer's visible area, in cells.
-struct MapTilePos {
+struct MapTilePosition {
   s32 x, y;
 };
 
@@ -669,9 +669,9 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
-  struct MapTilePos visibleLayers[3];
+  struct MapTilePosition visibleLayers[3];
   s32 i;
-  struct MapTilePos *visibleLayer = visibleLayers;
+  struct MapTilePosition *visibleLayer = visibleLayers;
   u32 y;
   u32 x;
 
@@ -830,9 +830,9 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[y * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-  struct MapTilePos visibleLayers[3];
+  struct MapTilePosition visibleLayers[3];
   s32 i;
-  struct MapTilePos *visibleLayer = visibleLayers;
+  struct MapTilePosition *visibleLayer = visibleLayers;
   s32 x;
 
   // The three layers' visible areas: their scroll positions in cells.
@@ -980,9 +980,9 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[dstY * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-  struct MapTilePos visibleLayers[3];
+  struct MapTilePosition visibleLayers[3];
   s32 i;
-  struct MapTilePos *visibleLayer = visibleLayers;
+  struct MapTilePosition *visibleLayer = visibleLayers;
   s32 x;
 
   // The three layers' visible areas: their scroll positions in cells.

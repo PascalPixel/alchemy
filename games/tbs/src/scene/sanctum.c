@@ -2465,7 +2465,7 @@ s32 gSanctum_CursorBob[] = {
     SC_WAIT(1),
     SC_SYNC,
     SC_SYNC,
-    SC_POS(0x2, 0x3, 0x4),
+    SC_POSITION(0x2, 0x3, 0x4),
     SC_MOVE(0x2, 0x2, 0x1),
     SC_SYNC,
     SC_SYNC,

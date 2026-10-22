@@ -1775,7 +1775,7 @@ s32 gImil_MiaRunOutScript[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(150), 0, PIXELS(268)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -1789,7 +1789,7 @@ s32 gImil_FollowMiaOutScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(132), 0, PIXELS(206)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

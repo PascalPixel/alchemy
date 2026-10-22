@@ -759,7 +759,7 @@ static void Event_SinkPillarA(void) {
     OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 3);
     Engine_ObjectDispatchRelease(overlay);
     Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    OBJECT_POS_SET(ACTOR_PUDDLE_A, 744, 136);
+    OBJECT_POSITION_SET(ACTOR_PUDDLE_A, 744, 136);
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
     WAIT(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
@@ -838,7 +838,7 @@ static void Event_SinkPillarB(void) {
       OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 3);
       Engine_ObjectDispatchRelease(overlay);
       Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      OBJECT_POS_SET(ACTOR_PUDDLE_B, 776, 232);
+      OBJECT_POSITION_SET(ACTOR_PUDDLE_B, 776, 232);
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
       WAIT(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
@@ -1217,8 +1217,8 @@ static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   MapObject_SetPosition(100, 0, 0);
   MapObject_SetPosition(101, 0, 0);
-  OBJECT_POS_SET(ACTOR_VANISHING_STATUE_A, 136, 792);
-  OBJECT_POS_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
+  OBJECT_POSITION_SET(ACTOR_VANISHING_STATUE_A, 136, 792);
+  OBJECT_POSITION_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
 }
 
 /// Reveal makes the two false statues vanish. As it shows what is hidden, the
@@ -1564,9 +1564,9 @@ s32 TunnelRuins_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        OBJECT_POS_SET(ACTOR_SINKING_PILLAR_A, 744, 136);
+        OBJECT_POSITION_SET(ACTOR_SINKING_PILLAR_A, 744, 136);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->y.fixed = -PIXELS(16);
-        OBJECT_POS_SET(ACTOR_PUDDLE_A, 744, 136);
+        OBJECT_POSITION_SET(ACTOR_PUDDLE_A, 744, 136);
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_00)) {
         Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 0);
@@ -1581,7 +1581,7 @@ s32 TunnelRuins_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-        OBJECT_POS_SET(ACTOR_SINKING_PILLAR_B, 776, 232);
+        OBJECT_POSITION_SET(ACTOR_SINKING_PILLAR_B, 776, 232);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->y.fixed = -PIXELS(16);
         Engine_ActorSetPosition(ACTOR_PUDDLE_B, PIXELS(776), PIXELS(232));
         FLAG_SET(FLAG_SCENE_TEMP_02);
@@ -1623,9 +1623,9 @@ s32 TunnelRuins_Initialize(void) {
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_A, 6);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_B, 6);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
-        OBJECT_POS_SET(ACTOR_EAST_PILLAR_A, 728, 312);
+        OBJECT_POSITION_SET(ACTOR_EAST_PILLAR_A, 728, 312);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
-        OBJECT_POS_SET(ACTOR_EAST_PILLAR_B, 744, 312);
+        OBJECT_POSITION_SET(ACTOR_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
@@ -1679,12 +1679,12 @@ s32 TunnelRuins_Initialize(void) {
         Object_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
         Object_GetById(ACTOR_BALANCE_WEST)->timer = 2;
         Object_GetById(ACTOR_BALANCE_EAST)->timer = 4;
-        OBJECT_POS_SET(ACTOR_CARRY_STONE_A, 200, 152);
+        OBJECT_POSITION_SET(ACTOR_CARRY_STONE_A, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_A)->timer = ACTOR_BALANCE_EAST;
         Object_GetById(ACTOR_CARRY_STONE_A)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJECT_POS_SET(ACTOR_CARRY_STONE_B, 200, 152);
+        OBJECT_POSITION_SET(ACTOR_CARRY_STONE_B, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_B)->timer = ACTOR_CARRY_STONE_A;
         Object_GetById(ACTOR_CARRY_STONE_B)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_B)->priorityFlags |=
@@ -1722,11 +1722,11 @@ s32 TunnelRuins_Initialize(void) {
       WAIT(1);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         Map_CopyCells(24, 59, 1, 2, 32, 46);
-        OBJECT_POS_SET(ACTOR_LADY_STATUE_A, 408, 792);
-        OBJECT_POS_SET(ACTOR_LADY_STATUE_B, 376, 792);
-        OBJECT_POS_SET(ACTOR_LADY_STATUE_C, 408, 760);
-        OBJECT_POS_SET(ACTOR_LADY_STATUE_D, 376, 760);
-        OBJECT_POS_SET(ACTOR_LADY_STATUE_E, 392, 776);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_A, 408, 792);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_B, 376, 792);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_C, 408, 760);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_D, 376, 760);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_E, 392, 776);
       }
       Object_GetById(ACTOR_LADY_STATUE_A)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
@@ -1792,18 +1792,18 @@ s32 gStagedActor_FootprintBounds[] = {
 };
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// A balance platform's height by its weight (its timer): each carved stone on

@@ -2952,9 +2952,12 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void) {
 /// At Kalay, as the crew's talk of the delay ends: Kaja walks off and is
 /// hidden.
 const s32 gTolbiShipDeck_KajaLeavesActions[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(202), 0, PIXELS(600)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_END,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(202), 0, PIXELS(600)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_END,
 };
 
 /// At the same moment the captain steps aside and turns west.
@@ -2989,7 +2992,7 @@ const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(216), 0, PIXELS(586)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -3092,7 +3095,7 @@ const s32 gTolbiShipDeck_SwellActions[] = {
     SC_ADD(SW_SCALE_Y, 0x147a),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -3101,7 +3104,7 @@ const s32 gTolbiShipDeck_SwellActions[] = {
 const s32 gTolbiShipDeck_MonsterGoesBelowActions[] = {
     SC_MOVE(PIXELS(216), 0, PIXELS(586)),
     SC_SYNC,
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -3126,19 +3129,27 @@ const s32 gTolbiShipDeck_HopActions[] = {
 /// At Tolbi, a passenger who rowed walks away once they have spoken, and is
 /// hidden.
 const s32 gTolbiShipDeck_RowerLeavesActions[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(82), 0, PIXELS(656)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_END,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(82), 0, PIXELS(656)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_END,
 };
 
 /// Back from the island, Sean, Ouranos and the tour guide go below by the
 /// first door, one after another.
 const s32 gTolbiShipDeck_GoBelowActions[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(186), 0, PIXELS(604)),
-    SC_SYNC,         SC_MOVE(PIXELS(216), 0, PIXELS(604)),
-    SC_SYNC,         SC_MOVE(PIXELS(216), 0, PIXELS(586)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),
+    SC_ARG(2),
+    SC_MOVE(PIXELS(186), 0, PIXELS(604)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(216), 0, PIXELS(604)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(216), 0, PIXELS(586)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
     SC_END,
 };
 

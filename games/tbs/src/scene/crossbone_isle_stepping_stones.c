@@ -825,7 +825,7 @@ static void Event_FlipWaterSwitch(void) {
     Object_GetById(ACTOR_WATER)->motionFlags = waterRaised;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    OBJECT_POS_SET(ACTOR_WATER, 272, 416);
+    OBJECT_POSITION_SET(ACTOR_WATER, 272, 416);
     OBJECT_MODE(ACTOR_WATER, 1);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80, 24);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateFootSteps, 80, 28);
@@ -842,7 +842,7 @@ static void Event_FlipWaterSwitch(void) {
     Object_GetById(ACTOR_WATER)->motionFlags = 0;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    OBJECT_POS_SET(ACTOR_WATER, 272, 436);
+    OBJECT_POSITION_SET(ACTOR_WATER, 272, 436);
     OBJECT_MODE(ACTOR_WATER, 2);
     Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80, 24);
@@ -1681,18 +1681,18 @@ s32 Scene_Initialize(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.

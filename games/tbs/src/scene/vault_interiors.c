@@ -3645,7 +3645,7 @@ s32 gVaultInteriors_VaultScriptA[] = {
     SC_MOVE(PIXELS(744), 0, PIXELS(408)),
     SC_SYNC,
     SC_ARG(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -3657,7 +3657,7 @@ s32 gVaultInteriors_VaultScriptB[] = {
     SC_MOVE(PIXELS(744), 0, PIXELS(408)),
     SC_SYNC,
     SC_ARG(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 

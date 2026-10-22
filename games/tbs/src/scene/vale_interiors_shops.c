@@ -980,9 +980,12 @@ s32 gValeInteriorsShops_FatherPacingScript[] = {
 };
 
 s32 gValeInteriorsShops_PartyLeavesScript[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(808), 0, PIXELS(508)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),
+    SC_ARG(2),
+    SC_MOVE(PIXELS(808), 0, PIXELS(508)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
     SC_END,
 };
 
@@ -990,7 +993,7 @@ s32 gValeInteriorsShops_SleepZScript[] = {
     SC_CALL(ValeInteriorsShops_AdvanceSleepZ),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

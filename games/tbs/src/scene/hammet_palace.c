@@ -339,13 +339,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
   work->transitionFrames = 24;
   work->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  OBJECT_POS_SET(ACTOR_LAYANA, 856, 440);
-  OBJECT_POS_SET(ACTOR_PARTY_LEADER, 856, 486);
-  OBJECT_POS_SET(GARET, 848, 502);
-  OBJECT_POS_SET(IVAN, 872, 486);
-  OBJECT_POS_SET(MIA, 880, 502);
-  OBJECT_POS_SET(ACTOR_FIRST_SOLDIER, 840, 518);
-  OBJECT_POS_SET(ACTOR_SECOND_SOLDIER, 888, 518);
+  OBJECT_POSITION_SET(ACTOR_LAYANA, 856, 440);
+  OBJECT_POSITION_SET(ACTOR_PARTY_LEADER, 856, 486);
+  OBJECT_POSITION_SET(GARET, 848, 502);
+  OBJECT_POSITION_SET(IVAN, 872, 486);
+  OBJECT_POSITION_SET(MIA, 880, 502);
+  OBJECT_POSITION_SET(ACTOR_FIRST_SOLDIER, 840, 518);
+  OBJECT_POSITION_SET(ACTOR_SECOND_SOLDIER, 888, 518);
   Camera_MoveTo(PIXELS(864), -1, PIXELS(472), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -778,8 +778,8 @@ static void HammetPalace_IvanReportsToLayana(void) {
   OBJECT_SPEED(ACTOR_SECOND_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   OBJECT_WALK(ACTOR_FIRST_SOLDIER, 848, 540);
   Actor_WalkToAndWait(ACTOR_SECOND_SOLDIER, 880, 540);
-  OBJECT_POS_SET(ACTOR_FIRST_SOLDIER, 0, 0);
-  OBJECT_POS_SET(ACTOR_SECOND_SOLDIER, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_FIRST_SOLDIER, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_SECOND_SOLDIER, 0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_LAYANA, ANIMATION_NOD);
   OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   OBJECT_MODE(GARET, ANIMATION_NOD);
@@ -843,7 +843,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   // Pan from the entrance while the party walks into its speaking positions.
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  OBJECT_POS_SET(ACTOR_PARTY_LEADER, 864, 630);
+  OBJECT_POSITION_SET(ACTOR_PARTY_LEADER, 864, 630);
   gEventWork->startTransition = v5 = 0x100;
   gEventWork->transitionFrames = 40;
   Engine_EventOpenScreen();
@@ -1003,9 +1003,12 @@ static void HammetPalace_HammetsHomecoming(void) {
 }
 
 s32 gHammetPalace_PartyActions[] = {
-    SC_ARG(2),       SC_MOVE(PIXELS(856), 0, PIXELS(486)),
-    SC_SYNC,         SC_ARG(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),
+    SC_ARG(2),
+    SC_MOVE(PIXELS(856), 0, PIXELS(486)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
     SC_END,
 };
 

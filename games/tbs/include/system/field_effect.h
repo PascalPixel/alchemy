@@ -66,7 +66,7 @@ union FieldObject {
 };
 
 // The object script commands field effects' scripts are written with: the
-// same commands as objcmd.h's SC_WAIT, SC_POS, SC_LOOP and SC_FREE.
+// same commands as objcmd.h's SC_WAIT, SC_POSITION, SC_LOOP and SC_FREE.
 #define SCRIPT_WAIT(frames) 0, (frames)
 #define SCRIPT_SET_POSITION(x, y, z) 2, (x), (y), (z)
 #define SCRIPT_REPEAT(count, label) 12, (count), (label)

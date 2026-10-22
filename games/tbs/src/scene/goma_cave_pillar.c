@@ -570,7 +570,7 @@ static void Event_WitnessCheersForgeCaught(void) {
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 248);
   Actor_WalkToAndWait(ACTOR_WITNESS, 568, 296);
-  OBJECT_POS_SET(ACTOR_WITNESS, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_WITNESS, 0, 0);
   Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_GOMA_CAVE_WITNESS_LEFT);
   EV_END();
@@ -589,17 +589,17 @@ s32 Scene_Initialize(void) {
   work->transitionFrames = 24;
   Object_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   if (FLAG_CHECK(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
-    OBJECT_POS_SET(ACTOR_WEST_PILLAR, 344, 104);
+    OBJECT_POSITION_SET(ACTOR_WEST_PILLAR, 344, 104);
     GomaCavePillar_CopyWestPillarCells(24);
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
   }
   if (FLAG_CHECK(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    OBJECT_POS_SET(ACTOR_STUMP, 0, 0);
+    OBJECT_POSITION_SET(ACTOR_STUMP, 0, 0);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
   if (FLAG_CHECK(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
-    OBJECT_POS_SET(ACTOR_EAST_PILLAR, 616, 232);
+    OBJECT_POSITION_SET(ACTOR_EAST_PILLAR, 616, 232);
     if (gGameState.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
         gGameState.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       Object_GetById(ACTOR_EAST_PILLAR)->terrainId = 2;
@@ -613,7 +613,7 @@ s32 Scene_Initialize(void) {
   if (gGameState.entrance == ENTRANCE_STUMP_FALL) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    OBJECT_POS_SET(ACTOR_STUMP, 384, 192);
+    OBJECT_POSITION_SET(ACTOR_STUMP, 384, 192);
     WAIT(60);
     Object_GetById(ACTOR_STUMP)->terrainId = 2;
     Actor_MoveToAndWait(ACTOR_STUMP, 408, 192);

@@ -3395,7 +3395,7 @@ s32 gVale_JennaWalksToTheHouse[] = {
 /// the river and vanishes (Event_UnusedWaterBurstsByTheRiver).
 s32 gVale_UnusedWaterGrows[] = {
     SC_ARG(1),
-    SC_POS(PIXELS(266), 0, PIXELS(1230)),
+    SC_POSITION(PIXELS(266), 0, PIXELS(1230)),
     SC_SET(SW_SCALE_X, 0x1999),
     SC_SET(SW_SCALE_Y, 0x1999),
     SC_WAIT(1),
@@ -3404,7 +3404,7 @@ s32 gVale_UnusedWaterGrows[] = {
     SC_ADD(SW_SCALE_Y, 0x147a),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
 };

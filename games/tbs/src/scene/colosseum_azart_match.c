@@ -1620,7 +1620,7 @@ s32 gColosseumAzartMatch_ScriptB[] = {
     SC_WAIT(2),
     SC_WAIT(50),
     SC_LOOP(2, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_SET(SW_HOOK, 0),
     SC_END,
 };

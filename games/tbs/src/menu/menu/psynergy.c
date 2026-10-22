@@ -190,7 +190,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
           ItemMenu_DrawMessage(0, MsgPsynergyChooseForR);
           break;
         }
-        ItemMenu_PosCategory();
+        ItemMenu_PositionCategory();
         Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->ownerIds[0], 0,
                                   STATUS_PANEL_EXPERIENCE);
         chosenAction = PsynergyMenu_RunList(0);

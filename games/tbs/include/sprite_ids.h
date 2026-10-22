@@ -21,6 +21,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
   SPRITE_SOLDIER = 0x98,
+  /// The lights that float about the Elemental Star Room.
+  /// ★ Named from what the player sees: a small glowing blue-green light (its
+  /// sprite sheet, spr_287.png)
+  SPRITE_FLOATING_LIGHT = 0x11f,
   /// The statues of Sol Sanctum's statue room and Luna and Sol rooms.
   /// ★ Named from what the player sees: a winged statue holding a blue orb
   /// (its sprite sheet, spr_201.png)

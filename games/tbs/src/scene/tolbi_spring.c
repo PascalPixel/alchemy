@@ -32,6 +32,26 @@
 ///   its weight halved for later tosses. The spring opens to show the prize as
 ///   it is given. In the editions before TBS_PATCH_1 the coin and medal counts
 ///   show an `=` after each number.
+///
+/// Open questions:
+/// - XXX: what the four obstacles in the spring are (sprites 0x18c and
+///   0x18d, a red creature and a green shell with a coin in
+///   graphics/sprite/spr_396.png and spr_397.png); a recording of a toss
+///   would settle it and name the sprites.
+/// - XXX: which of sprites 0x18e and 0x18f, a green and a gold token, is the
+///   coin and which the medal; a recording of a coin toss would settle it.
+/// - XXX: what TOLBI_SPRING_EAST_MIRRORED_PROP and _WEST_ show below the
+///   signs: likely their reflections in the spring, because they are the
+///   signs' sprite mirrored and drawn underfoot; a render of the scene would
+///   settle it.
+/// - XXX: what SpringTossMotion's first two bytes and SpringObstacle's last
+///   two hold (unk00, unk16); nothing in this overlay reads them, and a reader
+///   elsewhere would settle it.
+/// - XXX: what MUS_091, MUS_092, MUS_093, SE_116, SE_148, SE_216, SE_300 and
+///   SE_301 sound like; hearing each where the games play it would name it in
+///   songs.h.
+/// - XXX (picture): the toss: the token's path past the obstacles into the
+///   five prize rings, each ring labelled with what a coin wins there.
 
 #include "keystate.h"
 #include "unit/scene/tolbi_spring.h"
@@ -92,29 +112,36 @@ enum TolbiSpringGameRoomActor {
   TOLBI_SPRING_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED,
   /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR).
   TOLBI_SPRING_DICE_ATTENDANT,
-  /// Beside the Lucky Dice attendant, in his sprite. "Read the sign if ya
-  /// don't know the rules." XXX: likely a second attendant, because the
-  /// Colosso's attendants wear the same sprite.
+  /// Beside the Lucky Dice attendant, in his sprite: likely a second
+  /// attendant, because the Colosso's attendants wear the same sprite.
+  /// ★ Named from the game: "Read the sign if ya don't know the rules."
+  /// (MsgTolbiSpringReadTheSignIfYaDont)
   TOLBI_SPRING_DICE_RULES_ATTENDANT,
   /// A Lucky Dice player, a burly grey-haired man
-  /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR). "Is this yer first time to play Lucky
-  /// Dice?"
+  /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
+  /// ★ Named from the game: "Is this yer first time to play Lucky Dice?"
+  /// (MsgTolbiYerFirstTime)
   TOLBI_SPRING_DICE_PLAYER_FIRST_TIME,
-  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE). "Whoa! Getting triple
-  /// digits is real tough!"
+  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
+  /// ★ Named from the game: "Getting triple digits is real tough!"
+  /// (MsgTolbiSpringWhoaGettingTripleDigitsIsReal)
   TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS,
-  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS). "I don't want to
-  /// stop playing Lucky Dice, but I can't spend anymore!"
+  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
+  /// ★ Named from the game: "I don't want to stop playing Lucky Dice"
+  /// (MsgTolbiSpringIDontWantToStopPlaying)
   TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
   TOLBI_SPRING_WHEELS_PRIZE_SIGN,
   TOLBI_SPRING_WHEELS_RULES_SIGN,
-  /// "Lucky Dice. Throw the dice on the table and try to get the same
-  /// numbers."
+  /// ★ Named from the game: "Throw the dice on the table"
+  /// (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
   TOLBI_SPRING_DICE_RULES_SIGN,
   /// A soldier, gone after Colosso, drawn with the long-haired fighter's
-  /// sprite (SPRITE_PERSON_WITH_SWORD). "poor soldiers like us"
+  /// sprite (SPRITE_PERSON_WITH_SWORD).
+  /// ★ Named from the game: "poor soldiers like us"
+  /// (MsgTolbiSpringTheresNoWayPoorSoldiersLike)
   TOLBI_SPRING_SOLDIER,
-  /// "Lucky Dice. If two numbers match on either the dice or the table..."
+  /// ★ Named from the game: "If two numbers match on either"
+  /// (MsgTolbiSpringLuckyDiceIfTwoNumbersMatch)
   TOLBI_SPRING_DICE_PAIRS_SIGN
 };
 
@@ -130,25 +157,28 @@ enum TolbiSpringActor {
   /// The four obstacles that move in the spring during a toss, in the order
   /// of sObstacles.
   TOLBI_SPRING_FIRST_OBSTACLE,
-  /// A sign east of the spring, in sprite 0x112, the sign sprite of Lalivero
-  /// and the Kolima Forest floodgate. "If you toss a Lucky Medal and you get
-  /// really lucky, you'll get a better prize than you would with a coin."
+  /// A sign east of the spring (SPRITE_SIGNPOST).
+  /// ★ Named from the game: "If you toss a Lucky Medal"
+  /// (MsgTolbiTossLuckyMedal)
   TOLBI_SPRING_MEDAL_SIGN = TOLBI_SPRING_FIRST_OBSTACLE + 4,
-  /// A sign west of the spring, in the same sprite. "Face away from Tolbi
-  /// Spring and toss a coin into it."
+  /// A sign west of the spring, in the same sprite.
+  /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
+  /// it." (MsgTolbiFaceAwayTolbi)
   TOLBI_SPRING_COIN_SIGN,
   /// In the signs' sprite, below each, mirrored and drawn underfoot
   /// (TolbiSpring_Initialize); nothing talks to them.
   TOLBI_SPRING_EAST_MIRRORED_PROP,
   TOLBI_SPRING_WEST_MIRRORED_PROP,
-  /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK). "Tolbi
-  /// Spring has mysterious powers."
+  /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
+  /// ★ Named from the game: "Tolbi Spring has mysterious powers."
+  /// (MsgTolbiSpringTolbiSpringHasMysteriousPowersStand)
   TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS,
   /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) who asks for a medal.
-  /// "Do you have a Lucky Medal?"
+  /// ★ Named from the game: "Do you have a Lucky Medal?" (MsgTolbiLuckyMedal)
   TOLBI_SPRING_MEDAL_SEEKER,
-  /// A visitor, a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR). "Too bad
-  /// I only have one Lucky Medal."
+  /// A visitor, a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
+  /// ★ Named from the game: "Too bad I only have one Lucky Medal."
+  /// (MsgTolbiSpringTooBadIOnlyHaveOne)
   TOLBI_SPRING_VISITOR_ONE_MEDAL
 };
 
@@ -164,8 +194,31 @@ enum TolbiSpringSearchTarget {
 
 // FLAG_SCENE_TEMP_00 is set once the spring has risen and faded in.
 
-#define SPRING_CENTER_X PIXELS(120)
-#define SPRING_CENTER_Z PIXELS(71)
+/// The spring's centre, which the prize rings pull the tossed token toward.
+#define TOLBI_SPRING_CENTER_X PIXELS(120)
+#define TOLBI_SPRING_CENTER_Z PIXELS(71)
+
+// The window of the party's coins and Lucky Medals, and the menu of what to
+// toss, in window cells, with the counts' x in pixels: the European editions'
+// longer words widen both and move the counts right.
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE
+#define TOLBI_SPRING_COUNT_WIDTH 17
+#else
+#define TOLBI_SPRING_COUNT_WIDTH 19
+#endif
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TOLBI_SPRING_COUNT_NUMBER_X 56
+#define TOLBI_SPRING_TOSS_MENU_X 22
+#define TOLBI_SPRING_TOSS_MENU_WIDTH 7
+#elif LANGUAGE == LANGUAGE_ENGLISH
+#define TOLBI_SPRING_COUNT_NUMBER_X 72
+#define TOLBI_SPRING_TOSS_MENU_X 20
+#define TOLBI_SPRING_TOSS_MENU_WIDTH 9
+#else
+#define TOLBI_SPRING_COUNT_NUMBER_X 88
+#define TOLBI_SPRING_TOSS_MENU_X 19
+#define TOLBI_SPRING_TOSS_MENU_WIDTH 10
+#endif
 
 /// The tossed coin or medal: its last four positions for the trail, its
 /// velocity and the frames the prize rings still pull it.
@@ -574,25 +627,6 @@ static void TolbiSpring_OfferLuckyDice(void) {
   Engine_EventEnd();
 }
 
-#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE
-#define ASK_WIDTH 17
-#else
-#define ASK_WIDTH 19
-#endif
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define NUMBER_X 56
-#define TOSS_X 22
-#define TOSS_WIDTH 7
-#elif LANGUAGE == LANGUAGE_ENGLISH
-#define NUMBER_X 72
-#define TOSS_X 20
-#define TOSS_WIDTH 9
-#else
-#define NUMBER_X 88
-#define TOSS_X 19
-#define TOSS_WIDTH 10
-#endif
-
 /// Chooses a coin or medal, runs its toss, and awards the resulting prize.
 static s32 TolbiSpring_RunSpringGame(void) {
   s32 choice = 0;
@@ -618,13 +652,14 @@ prompt:
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   Event_SetMessage(message);
   Event_OpenMessage(-1, 0);
-  window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
+  window = UiWindow_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
   {
     text = MsgTolbiCoins;
     UiText_DrawCharacterAtOffset(text, window, 0, 0);
-    UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
+    UiText_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
     UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
-    UiText_DrawNumberInWindow(medals, 6, window, NUMBER_X, 8);
+    UiText_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X,
+                              8);
   }
   choice = Menu_SelectCoinsOrMedals(choice);
   UiWork_Finalize(window, 2);
@@ -655,7 +690,8 @@ prompt:
       }
     }
   }
-  window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
+  window = UiWindow_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
+                           TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
   {
     text = MsgTolbiToss;
     UiText_DrawCharacterAtOffset(text, window, 0, 0);
@@ -692,12 +728,13 @@ prompt:
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Event_SetMessage(message);
     Event_OpenMessage(-1, 0);
-    window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
+    window = UiWindow_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
     UiText_DrawCharacterAtOffset(text, window, 0, 0);
-    UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
+    UiText_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
     UiText_DrawCharacterAtOffset(MsgTolbiCounterMarker, window, 104, 0);
     UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
-    UiText_DrawNumberInWindow(medals, 6, window, NUMBER_X, 8);
+    UiText_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X,
+                              8);
     UiText_DrawCharacterAtOffset(MsgTolbiCounterMarker, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
     UiWork_Finalize(window, 2);
@@ -729,7 +766,8 @@ prompt:
         }
       }
     }
-    window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
+    window = UiWindow_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
+                             TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
     result = MsgTolbiToss;
     UiText_DrawCharacterAtOffset(result, window, 0, 0);
     UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
@@ -985,8 +1023,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         s32 deltaZ;
         s32 distance;
 
-        deltaX = (SPRING_CENTER_X - toss->trail[0].x) >> 8;
-        deltaZ = (SPRING_CENTER_Z - toss->trail[0].z) >> 8;
+        deltaX = (TOLBI_SPRING_CENTER_X - toss->trail[0].x) >> 8;
+        deltaZ = (TOLBI_SPRING_CENTER_Z - toss->trail[0].z) >> 8;
         // BUG: an exact center position leaves a zero divisor below.
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
         toss->velocity.x += ((PIXELS(1) / 10) * deltaX) / distance;
@@ -1018,8 +1056,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 0);
           }
           {
-            s32 deltaX = (SPRING_CENTER_X - toss->trail[0].x) >> 16;
-            s32 deltaZ = (SPRING_CENTER_Z - toss->trail[0].z) >> 16;
+            s32 deltaX = (TOLBI_SPRING_CENTER_X - toss->trail[0].x) >> 16;
+            s32 deltaZ = (TOLBI_SPRING_CENTER_Z - toss->trail[0].z) >> 16;
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
             // Classify squared pixel distance into the five prize rings.
@@ -1499,13 +1537,13 @@ const struct ScenePlacement gTolbiSpringPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x18d, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x112, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_SIGNPOST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(176), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x112, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_SIGNPOST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(72), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x112, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_SIGNPOST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(176), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x112, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_SIGNPOST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(48), 0, PIXELS(136), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },

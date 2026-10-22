@@ -1,18 +1,17 @@
 /// @file
-/// SceneId_Tolbi, the town of Babi, its ruler, where Colosso, a festival
-/// of warriors, is held each year in the colosseum.
+/// Tolbi (SceneId_Tolbi), the town Babi rules, where Colosso, a festival of
+/// warriors, is held each year in the colosseum. The party comes to Tolbi
+/// across the Karagol Sea from Kalay while the festival is on, and the town's
+/// talk follows the Colosso story in three stages. Tolbi_SelectEvents gives
+/// each stage its own event table; one placement table serves all three, and
+/// Tolbi_ApplyEntryState moves the actors whose places change:
 ///
-/// The party comes to Tolbi across the Karagol Sea from Kalay while the
-/// festival is on, and the town's talk follows the Colosso story in three
-/// stages. Tolbi_SelectEvents gives each stage its own event table; one
-/// placement table serves all three, and Tolbi_ApplyEntryState moves the
-/// actors whose places change:
 /// - The festival (neither story flag set). The trials have begun at the
 ///   colosseum, but Babi is not there, and his soldiers are searching the
-///   town. The first time the party steps on cell code 20, two of them stop
-///   it to show his picture, `Have you seen anyone who looks like this?`, and
-///   go their way whatever it answers (Tolbi_MeetSearchingSoldiers,
-///   FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI).
+///   town. The first time the party steps on TOLBI_CELL_SOLDIERS, two of them
+///   stop it to show his picture, `Have you seen anyone who looks like
+///   this?`, and go their way whatever it answers
+///   (Tolbi_MeetSearchingSoldiers, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI).
 /// - Finals day (FLAG_BABI_SAVED), once the party has saved Babi in
 ///   Altmiller Cave: he has shown himself at the finals, the town hurries to
 ///   the colosseum, and the scalper who slept under the archway has moved,
@@ -26,24 +25,38 @@
 /// In every stage two children run a loop around the plaza
 /// (gTolbiOlderBrotherRun, gTolbiYoungerSisterRun), each stopping when it runs
 /// up behind the other or finds the leader in its way (Tolbi_UpdateKid), and
-/// quarrel over their allowance. A visitor trying his luck stands at the gate
-/// of Tolbi Spring; once the party agrees to test its luck he steps aside for
+/// quarrel over their allowance. A visitor testing his luck stands at the
+/// gate of Tolbi Spring; once the party agrees to go first he steps aside for
 /// good (Tolbi_TalkToSpringVisitor, FLAG_TOLBI_SPRING_OPENED), and the gate
-/// leads into Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins
-/// the party when spoken to. Growth raises a sprout and Frost freezes a puddle,
-/// each a scene flag kept only through a return that keeps the party's
-/// position; Reveal uncovers a chest with Power Bread, and a barrel and a jar
-/// hold 9 coins and a Lucky Medal (during the festival, the international
-/// editions find the jar only when the party faces north).
+/// (TOLBI_CELL_SPRING_GATE) leads into Tolbi Spring (TOLBI_TO_TOLBI_SPRING).
+/// Ember, a Mars Djinni, joins the party when spoken to. Growth raises a
+/// sprout and Frost freezes a puddle, each a scene flag kept only through a
+/// return that keeps the party's position; Reveal uncovers a chest with Power
+/// Bread, and a barrel and a jar hold 9 coins and a Lucky Medal (during the
+/// festival, the editions from TBS_PATCH_1 on find the jar only when the
+/// party faces north).
 ///
-/// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, each numbered as
-/// its trigger, lead into Tolbi's houses, inns and shops and into Tolbi Sanctum
-/// (all SceneId_TolbiInteriors), but for TOLBI_TO_LUCKY_WHEELS, which with
-/// TOLBI_TO_LUCKY_DICE leads into the Lucky Dice and Lucky Wheels rooms
-/// (SceneId_TolbiGameRooms, whose area name is also Tolbi).
+/// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, whose cells carry
+/// their exits' numbers, lead into Tolbi's houses, inns and shops and into
+/// Tolbi Sanctum (all SceneId_TolbiInteriors), but for TOLBI_TO_LUCKY_WHEELS,
+/// which with TOLBI_TO_LUCKY_DICE leads into the Lucky Dice and Lucky Wheels
+/// rooms (SceneId_TolbiGameRooms, whose area name is also Tolbi).
 /// TOLBI_TO_BABI_PALACE_ENTRANCE leads to Babi's Palace,
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the world map.
+///
+/// Open questions:
+/// - XXX: what reads the event work's word at 0x1f4 (EVENT_WORK_1F4), which
+///   Tolbi_MeetSearchingSoldiers sets to the poster before the yes/no choice
+///   under the "Missing Person" window; tracing the window's side object
+///   (UiWindow_CreateWithSideObject) would settle it and give the field its
+///   name in struct EventWork.
+/// - XXX (no evidence): whether the four messages after
+///   MsgTolbiSpringOhThereAreAlwaysScalpersAt (`The finals are about to
+///   start.` and the rest) were the festival family's finals-day lines; no
+///   row or code shows them, and the family repeats its festival lines.
+/// - XXX (picture): the children's loop around the plaza, each child's path
+///   drawn and the leader's cell where they stop.
 
 #include "unit/scene/tolbi.h"
 #include "djinn_ids.h"
@@ -942,11 +955,8 @@ struct SceneEvent gTolbiEventsFinalsDay[] = {
     { EVENT_TALK, TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsWereSoRivetingThe) },
     { EVENT_TALK, TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIHaveSeatsToTheFinals) },
     { EVENT_TALK, TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIOversleptAgainSoICant) },
-    // XXX: likely the family below had finals-day lines of its own, the four
-    // messages after MsgTolbiSpringOhThereAreAlwaysScalpersAt (`The finals are
-    // about to start.` and the rest), because those speak of waiting for
-    // Colosso to end and of buying once prices drop, and no row or code shows
-    // them; the family repeats its festival lines instead.
+    // The family repeats its festival lines on finals day; the file's open
+    // questions ask whether four unused messages were meant for it.
     { EVENT_TALK, TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
     { EVENT_TALK, TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
     { EVENT_TALK, TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },

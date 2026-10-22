@@ -1075,7 +1075,7 @@
 /// ★ Named from the game: "have you seen anyone who looks like this?"
 /// (MsgTolbiSeenAnyoneWho)
 #define FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI 0x8c0
-/// The gambler has let the party go first into Tolbi Spring.
+/// The visitor at the gate of Tolbi Spring has let the party go first.
 /// ★ Named from the game: "I'll give you the chance to go first."
 /// (MsgTolbiWantTestLuck)
 #define FLAG_TOLBI_SPRING_OPENED 0x8c1

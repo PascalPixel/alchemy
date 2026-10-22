@@ -45,6 +45,13 @@
 /// confront the tour guide on the Tolbi docks
 /// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
 /// Medal, and searching the ovens shows what is cooking.
+///
+/// Open questions:
+/// - XXX: what the camera limits that TBS_PATCH_1 moves 8 pixels show
+///   differently; renders of the inn and the east and south rooms in tbs-ja
+///   and tbs-en would settle it.
+/// - XXX (picture): the inn, its passage and its four guest rooms, each
+///   labelled with the exits that join them.
 
 #include "game_state.h"
 #include "unit/scene/tolbi_interiors.h"
@@ -68,6 +75,8 @@
 /// (MsgTolbiHeWontSailShipEven)
 #define FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN 0x300
 
+// From TBS_PATCH_1 on, the camera stops 8 pixels further at the inn and in
+// the east and south rooms.
 #if !TBS_PATCH_1
 #define TOLBI_INTERIORS_INN_CAMERA_MAX_Z 736
 #define TOLBI_INTERIORS_EAST_ROOM_CAMERA_MAX_X 944

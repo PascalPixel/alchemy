@@ -46,6 +46,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: an oar dipping into the water with a
   /// splash (its render)
   SPRITE_OAR = 0xe1,
+  /// The sign beside Tolbi Spring, Lalivero's and the Kolima Forest
+  /// floodgate's.
+  /// ★ Named from what the player sees: a wooden sign on a post (its render)
+  SPRITE_SIGNPOST = 0x112,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
   /// as Sol Sanctum's statues stand on its seals (its render)
   SPRITE_STONE_STATUE = 0xcb,

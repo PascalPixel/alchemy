@@ -66,6 +66,22 @@
 ///   room brightens, redraws the cells of the hidden path and uses the eye up
 ///   (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET). The first room's inscription points
 ///   the way: `The dragon's flame illuminates the path of truth in darkness.`
+///
+/// Open questions:
+/// - XXX: why walking north into the third room's trigger 24 floats the fourth
+///   log south (Fuchin_ThirdRoom_MoveFourthLogSouthFromLowerStop); the room's
+///   map around that cell, or a recording of the push, would settle it.
+/// - XXX: why the crates the dragon statue's room and the third room place
+///   (SPRITE_CRATE, child value 15) show nothing in the renders; a render of
+///   those rooms' sprites alone would settle it.
+/// - XXX: what the log sounds SE_241 and SE_289, the dust's SE_136 and the
+///   eye's SE_182 are; a recording of a log push and of the eye being set
+///   would let them be named in songs.h.
+/// - XXX: what the leader's animations 6 and 7 in ImilFuchinFalls_HopBy show
+///   (the hop's crouch and its flight); the leader sprite's sheet would
+///   settle it.
+/// - XXX (picture): the log rooms' rebuild, each log's track cells rewritten
+///   as its place flags change, drawn over the room's collision map.
 
 #include "script.h"
 #include "game_state.h"
@@ -93,6 +109,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "djinn_ids.h"
+#include "character_ids.h"
 #include "call.h"
 #include "battle_party.h"
 #include "field_effect.h"
@@ -133,11 +150,12 @@ enum ImilFuchinFallsActor {
   /// Zephyr, a Jupiter Djinni, after the second room's three logs.
   /// ★ Named from the game: "Zephyr" (MsgDjinnName)
   ACTOR_ZEPHYR = ACTOR_FIRST_PLACED + 3,
-  /// Sprite 0xdf in the dragon statue's room, the sprite of the third room's
-  /// two foreground pieces (Fuchin_CreateForegroundActor); on entry
-  /// ImilFuchinFalls_PrepareRoom stills it at floor height and draws it at
-  /// sprite priority 1, as those are drawn. XXX: what it shows is not known;
-  /// the room's renders show nothing where it stands.
+  /// A crate (SPRITE_CRATE) in the dragon statue's room, the sprite of the
+  /// third room's two foreground pieces (Fuchin_CreateForegroundActor); on
+  /// entry ImilFuchinFalls_PrepareRoom stills it at floor height and draws it
+  /// at sprite priority 1 with child value 15, as those are drawn. XXX: why
+  /// the room's renders show no crate where it stands; a render of the
+  /// room's sprites alone would settle whether child value 15 hides it.
   ACTOR_DRAGON_ROOM_FOREGROUND = ACTOR_FIRST_PLACED
 };
 
@@ -1365,8 +1383,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       ImilFuchinFalls_PlaceDragonsEye();
     }
     if ((u16)(gGameState.entrance - 2) <= 3) {
-      Fuchin_CreateForegroundActor(PIXELS(156), 0, PIXELS(452), 223);
-      Fuchin_CreateForegroundActor(PIXELS(188), 0, PIXELS(452), 223);
+      Fuchin_CreateForegroundActor(PIXELS(156), 0, PIXELS(452), SPRITE_CRATE);
+      Fuchin_CreateForegroundActor(PIXELS(188), 0, PIXELS(452), SPRITE_CRATE);
     }
   } else if (gGameState.scene == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
     value = 0;
@@ -1397,7 +1415,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       } else {
         gEventWork->startTransition =
             SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-        ColorBuffer_ApplySource(0x203108, 1);
+        ColorBuffer_ApplySource(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
         ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
         Engine_ColorBufferInterpolate(1);
         Engine_TaskWait(1);
@@ -1624,14 +1642,14 @@ static void Fuchin_LightDragonWithEye(void) {
   Field_EndBusyAndReveal();
 
   for (pass = 0; pass < 4; pass++) {
-    Engine_ColorBufferApplyTarget(0x204318, 1);
+    Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_TINT | RGB(24, 24, 16), 1);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(2);
     if (pass == 0) {
       Map_CopyCellsTo(30, 8, 12, 8, 8, 7);
       Map_CopyCellsTo(30, 57, 19, 57, 1, 1);
     }
-    Engine_ColorBufferApplyTarget(0x203108, 1);
+    Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(2);
   }
@@ -1642,7 +1660,7 @@ static void Fuchin_LightDragonWithEye(void) {
   FieldScheduler_AddCallback(ImilFuchinFalls_BlowCaveMouthDust,
                              TASK_PRIORITY_SCENE);
   Engine_TaskWait(40);
-  Engine_ColorBufferApplyTarget(0x201090, 1);
+  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), 1);
   Engine_ColorBufferInterpolate(40);
   Engine_TaskWait(80);
   Engine_TaskRemoveCallback(ImilFuchinFalls_BlowCaveMouthDust);
@@ -1686,8 +1704,9 @@ static void Fuchin_ReadShadowInscription(void) {
 }
 
 /// Searching the dragon statue in Fuchin Falls Cave (trigger 20): its burning
-/// red eyes once set, else its empty sockets, and with the Dragon's Eye carried
-/// the offer to set it.
+/// red eyes once set, else its empty sockets; with the Dragon's Eye carried
+/// it then requests the field menu (the event work's unk172, FieldWork's
+/// menu), which opens as the search ends so that the eye can be used.
 static void Fuchin_SearchDragonStatue(void) {
   Engine_EventBegin();
 
@@ -1717,7 +1736,7 @@ static void Fuchin_EndRevealLighting(void) {
     transition->duration = 1;
     transition->step = 1;
     Engine_ColorBufferApplySource(0, 1);
-    Engine_ColorBufferApplyTarget(0x203108, 1);
+    Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
     Engine_ColorBufferInterpolate(16);
     Engine_TaskWait(16);
   }
@@ -1987,57 +2006,57 @@ struct ScenePlacement gImilFuchinFalls_NoPlacements[] = {
 };
 
 struct ScenePlacement gImilFuchinFalls_ImilFallsCavePlacements[] = {
-    { 0x5c, 0x59, ACTOR_STAND,
+    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_FEVER, ACTOR_STAND,
         PIXELS(263), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_FirstRoomPlacements[] = {
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(136), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(200), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(296), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_SecondRoomPlacements[] = {
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(248), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(312), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x5d, 0x6e, ACTOR_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_ZEPHYR, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_ThirdRoomPlacements[] = {
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(328), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(248), 0, PIXELS(568), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(248), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(248), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_FourthRoomPlacements[] = {
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(328), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(120), 0, PIXELS(744), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_DragonRoomPlacements[] = {
-    { 0xdf, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(312), 0, PIXELS(128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

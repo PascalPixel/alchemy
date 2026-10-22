@@ -262,10 +262,10 @@
 #define SE_LANDING_THUD 127
 /// Climbing stairs: an EXIT_STYLE_ANIMATED exit, and the stairs up in Vale's
 /// inn and Isaac's house.
-#define SE_128 128
+#define SE_STAIRS_UP 128
 /// Going down stairs: an EXIT_STYLE_ANIMATED_ALTERNATE exit, and the stairs
 /// down in Vale's inn and Isaac's house.
-#define SE_129 129
+#define SE_STAIRS_DOWN 129
 /// Field Psynergy beginning: Carry, Cloak, Force, Lift, Mind Read and Ply, and
 /// a Psynergy shortcut set in the menu.
 #define SE_130 130

@@ -134,7 +134,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
 /// Leaves through an EXIT_STYLE_ANIMATED exit (animation 26);
 /// FLAG_EXIT_ARRIVAL_PENDING makes the next scene play the matching arrival
 /// (ObjectEffect_RunPendingFlagEvent). Called by the exit handling in events.c,
-/// after it plays SE_128.
+/// after it plays SE_STAIRS_UP.
 void ObjectEffect_BeginContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(0x1A);
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_PENDING);
@@ -142,7 +142,7 @@ void ObjectEffect_BeginContextEffect26(void) {
 
 /// Leaves through an EXIT_STYLE_ANIMATED_ALTERNATE exit (animation 25),
 /// recorded in FLAG_EXIT_ARRIVAL_ALTERNATE. Called by the exit handling in
-/// events.c, after it plays SE_129.
+/// events.c, after it plays SE_STAIRS_DOWN.
 void ObjectEffect_BeginContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(0x19);
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_ALTERNATE);

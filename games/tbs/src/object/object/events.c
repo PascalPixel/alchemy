@@ -373,11 +373,11 @@ s32 Scene_RunTouchOrExit(s32 value) {
         AudioCommand_PlayFar(SE_MAP_EXIT);
         break;
       case EXIT_STYLE_ANIMATED:
-        AudioCommand_PlayFar(SE_128);
+        AudioCommand_PlayFar(SE_STAIRS_UP);
         ObjectEffect_BeginContextEffect26();
         break;
       case EXIT_STYLE_ANIMATED_ALTERNATE:
-        AudioCommand_PlayFar(SE_129);
+        AudioCommand_PlayFar(SE_STAIRS_DOWN);
         ObjectEffect_BeginContextEffect25();
         break;
       }

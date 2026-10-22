@@ -8,14 +8,9 @@
 /// FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the Colosso Tour's group has left
 /// Kalay; and FLAG_COLOSSO_OVER, whether the Colosso finals have been fought.
 ///
-/// Kalay Docks (KalayDocks) is where the party's road to Tolbi ends:
-/// Silk Road is blocked, so everyone bound for Tolbi and its Colosso must cross
-/// the Karagol Sea by ship, and the tickets are dear. The first time the party
-/// walks in from the world map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH,
-/// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) KalayTolbiDocks_GaretSeesTheKaragol
-/// plays: Garet runs to the water ("So this is the ocean Kraden was talking
-/// about!"), a young man tells him the Karagol is surrounded by land and no
-/// true ocean, and Garet means to see a real one someday. Until the tour's
+/// Kalay Docks (KalayDocks): the first time the party walks in from the world
+/// map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
+/// KalayTolbiDocks_GaretSeesTheKaragol plays. Until the tour's
 /// group has left Kalay, the ship is open to look around and the man at its
 /// plank (ACTOR_CHECKING_TICKETS) checks no tickets; afterwards he stands in
 /// the way and asks for one, takes it if the party has bought it
@@ -24,8 +19,12 @@
 /// (FLAG_KALAY_DOCKS_WENT_ASHORE, cleared each time the party comes back off
 /// the ship by KALAY_DOCKS_FROM_TOLBI_SHIP_DECK). A woman
 /// (ACTOR_WOMAN_WITH_A_MESSAGE) asks the party to tell her daughter in Tolbi
-/// that the daughter's mother cannot afford the tickets
-/// (FLAG_KALAY_DOCKS_CARRYING_MESSAGE). Ground, a Venus Djinni (ACTOR_GROUND),
+/// that she cannot afford the tickets (FLAG_KALAY_DOCKS_CARRYING_MESSAGE).
+/// She is the daughter's mother, and the man beside her
+/// (ACTOR_MAN_AT_SILK_ROADS_END) her father: the Japanese text of
+/// MsgKalayPassMessageDaughter has her name herself 母, "Mother", as she would
+/// to her daughter, which the English renders `Her mother says that tickets
+/// are too expensive`. Ground, a Venus Djinni (ACTOR_GROUND),
 /// waits on the docks until it joins. Once the ship has crossed, the travellers
 /// are gone and the dock hands wait for a ship that has not returned. The docks
 /// lead to the world map (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and
@@ -42,13 +41,10 @@
 /// sailed, when she says it will not leave again for the monsters at sea; in
 /// the Tolbi room no tickets are sold at all, the sea being too dangerous.
 ///
-/// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing,
-/// on which the party helped the crew fight off the Kraken. Stepping off
-/// (trigger 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party is met by a
-/// man on the docks who has heard the ship was attacked by a monster; if the
-/// party makes light of it, he will not believe they fought the monsters alone:
-/// "Everyone knows that Kaja was the one who killed the Kraken!" Kaja is the
-/// sea dog whose crew the party helped against the monsters. The woman's
+/// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing.
+/// Stepping off (trigger 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party is
+/// met by a man on the docks who asks about the monster, with a reply for each
+/// answer. The woman's
 /// daughter (ACTOR_WAITING_DAUGHTER) watches the sea for her parents and takes
 /// the message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED). Two stacks of crates
 /// slide along the pier under Move, a chest holds a Potion and a box 35 coins,
@@ -59,18 +55,9 @@
 /// 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken
 /// home and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them.
-///
-/// Open questions:
-///
-/// - XXX: what reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO (entrance 90),
-///   which no exit names; likely the debug menus, as Babi Palace's entrances 90
-///   and 91 set story flags the same way, and the debug menus' scene lists
-///   would settle it.
-/// - XXX: why the woman with the message (ACTOR_WOMAN_WITH_A_MESSAGE, a
-///   woman's sprite) speaks of the daughter's mother as someone else ("Her
-///   mother says that tickets are too expensive"), and the man beside her
-///   (ACTOR_MAN_AT_SILK_ROADS_END) thinks of the daughter as his; the Japanese
-///   text of MsgKalayPassMessageDaughter would settle who was meant to ask.
+/// Only the debug menus' scene selector, which warps to any scene and
+/// entrance by number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO, which
+/// sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -688,7 +675,8 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_EventEnd();
 }
 
-/// An entrance no exit leads to, whose arrival sets FLAG_COLOSSO_OVER.
+/// An entrance no exit, table or code leads to, whose arrival sets
+/// FLAG_COLOSSO_OVER; the debug menus' scene selector reaches it.
 enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
 /// Prepares whichever of the three scenes is entered. Arriving by
@@ -742,7 +730,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 
   KalayTolbiDocks_UpdateCrateCells();
   if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
-    Engine_ActorSetChildValue(ACTOR_SECOND_TOUR_GUIDE, 2);
+    Engine_ActorSetChildValue(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
   }
   if (gGameState.entrance == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);

@@ -2,10 +2,8 @@
 /// Kalay, the merchants' town Lord Hammet founded, the front of his palace,
 /// and the tunnel beneath them: four places in six scenes.
 ///
-/// - Kalay (SceneId_Kalay), a town at a great crossroads, Xian to the east and
-///   Tolbi to the west. Its founder Lord Hammet is away, and the people pass on
-///   rumours that thieves have captured him; his wife, Lady Layana, speaks
-///   little of it. Eight doors (triggers 1 to 8) open into the houses, the
+/// - Kalay (SceneId_Kalay), the town. Eight doors (triggers 1 to 8) open into
+/// the houses, the
 ///   weapon and armor shops, the inn and the Kalay Sanctum (kalay_interiors.c),
 ///   and KALAY_TO_WEAPON_SHOP_COUNTER and KALAY_TO_ARMOR_SHOP_COUNTER into the
 ///   same two shops from behind their counters; KALAY_TO_HAMMET_PALACE_GROUNDS
@@ -21,24 +19,19 @@
 ///
 ///   Once the party has heard of the Colosso tour at the inn
 ///   (FLAG_KALAY_HEARD_OF_COLOSSO_TOUR), leaving town plays the tour group's
-///   departure, once (FLAG_KALAY_COLOSSO_TOUR_LEFT): the guides stop the
-///   group, count it and find a man missing, then pace while the tourists
-///   grumble that they will be late for Colosso and that a landslide means
-///   they must go by boat, until the head guide says they will miss the boat
-///   if they wait any longer and leads the group off without him; he runs
-///   after it.
+///   departure, once (FLAG_KALAY_COLOSSO_TOUR_LEFT): the guides count the
+///   group, find a man missing and lead it off without him, and he runs after
+///   it. The second guide is the head guide's sprite with its green and blue
+///   swapped (SPRITE_COLOR_RBG), here and in kalay_interiors.c and
+///   kalay_tolbi_docks.c.
 /// - Hammet Palace (SceneId_HammetPalaceGrounds), before the door of the
 ///   palace, where two soldiers of Kalay stand guard; the palace's rooms are
 ///   SceneId_HammetPalace (hammet_palace.c). The first time the party comes,
 ///   before Ivan has reported to Layana (FLAG_IVAN_REPORTED_TO_LAYANA), the
-///   guards turn them away, `This is Lord Hammet's palace. The lord is away.`,
-///   until they recognize Ivan, who calls himself Lord Hammet's servant: he
-///   stayed in Vault to look for Hammet's stolen rod, the Shaman's Rod, and
-///   recovered it. Ivan learns that Hammet is still a prisoner in Lunpa,
-///   insists that his friends hear everything, and the guards take everyone in
-///   to Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
-///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS). Afterwards they
-///   say the soldiers of Kalay will rescue Hammet themselves, as Layana asked.
+///   guards recognize Ivan and take everyone in to Lady Layana
+///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
+///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS); afterwards they
+///   have other lines.
 ///   Walking into the door (trigger 2) opens it into the palace
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE); HAMMET_PALACE_GROUNDS_TO_KALAY
 ///   leads back to town.
@@ -46,14 +39,11 @@
 ///   (the world map's WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE leads in at
 ///   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH). A guard (ACTOR_TUNNEL_GUARD)
 ///   bars `the cave up ahead` by Hammet and Layana's command, and a Nut floats
-///   here until Catch takes it (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT). After
-///   the party has freed Hammet from Lunpa, Bunza, a Kalay merchant, brings him
-///   home in his wagon, and the party with him if they ride along
-///   (KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH). Hammet tells them of this
-///   entrance, an underground passage to Hammet Palace kept in case Dodonpa's
-///   henchmen are in Kalay, and asks Bunza to take the party round through the
-///   town so that the passage stays secret. The guard opens it, Hammet goes in,
-///   and the party rides off (KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH, to
+///   here until Catch takes it (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).
+///   Arriving with Hammet in Bunza's wagon (SPRITE_LARGE_WAGON) after Lunpa
+///   (KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) plays his homecoming: the
+///   guard opens the way, Hammet goes in, and the party rides off
+///   (KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH, to
 ///   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH). Once FLAG_KALAY_TUNNEL_OPEN
 ///   is set the guard stands turned east.
 ///   KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE leads into the Kalay Tunnel's
@@ -100,9 +90,6 @@
 ///   (ACTOR_WAITING_MAN) is Bunza; likely, because he is drawn with
 ///   SPRITE_BUNZA, which every other scene places beside Hammet as Bunza, but
 ///   his lines never name him.
-/// - XXX: Bunza's wagon here is sprite 0x111, not SPRITE_WAGON (0x9a); a
-///   render of the Kalay Tunnel Entrance's arrival would show how the two
-///   differ.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -1228,7 +1215,9 @@ static void Kalay_PrepareTown(void) {
   if (gGameState.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
     Actor_SetPosition(ACTOR_TOWN_STATUE, PIXELS(424), PIXELS(88));
   }
-  Engine_ActorSetChildValue(ACTOR_SECOND_GUIDE, 2);
+  // The second guide shares the first's sprite, drawn with its green and blue
+  // swapped to tell them apart.
+  Engine_ActorSetChildValue(ACTOR_SECOND_GUIDE, SPRITE_COLOR_RBG);
   found = Engine_GameFlagIsSet(FLAG_KALAY_TOWN_NUT_CAUGHT);
   if (found != 0) {
     Engine_ActorSetPosition(ACTOR_TOWN_NUT, 0, 0);
@@ -2315,7 +2304,8 @@ static void Kalay_UpdateTunnelEmitters(void) {
   }
 }
 
-/// Creates a short-lived particle with random position and velocity offsets.
+/// Creates a short-lived particle with random position and velocity offsets: a
+/// puff of dust (SPRITE_DUST_PUFF) with its blue raised to full.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   s32 depth;
   struct FieldActor *particle;
@@ -2326,7 +2316,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   depth = z;
   random = Engine_RandomNext();
   particle = Engine_ObjectCreate(
-      222, (x - PIXELS(8)),
+      SPRITE_DUST_PUFF, (x - PIXELS(8)),
       (((((u32)(random << 3) >> 16) << 16) + height) + PIXELS(16)), depth);
   if (particle != 0) {
     ((u8 *)particle)[offsetof(struct FieldActor, motionFlags)] =
@@ -2334,7 +2324,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
     spriteBytes = (u8 *)particle->sprite;
     attributeMask -= 13;
     spriteBytes[9] = ((spriteBytes[9] & attributeMask) | 8);
-    ObjectGroup_SetChildValue(particle, 9);
+    ObjectGroup_SetChildValue(particle, SPRITE_COLOR_BLUE_TINT);
     Engine_ActorSetSpriteFlags(particle, 0);
     random = Random_Next();
     particle->velocityX = ((((u32)(random << 1) >> 16) - 1) << 16);
@@ -2827,7 +2817,7 @@ struct ScenePlacement gKalay_TunnelEntrancePlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(198), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x111, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_LARGE_WAGON, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },

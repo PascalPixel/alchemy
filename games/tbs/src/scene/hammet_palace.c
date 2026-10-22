@@ -3,43 +3,27 @@
 /// in Kalay. The scene before its door, also Hammet Palace in the game's area
 /// names, is kalay.c's HammetPalaceGrounds.
 ///
-/// Hammet, the merchant who founded Kalay, has been held in Lunpa since soon
-/// after Mt. Aleph erupted, and his wife, Lady Layana, keeps the palace. Two
-/// scripted scenes in the room where she stands frame the party's part in his
-/// rescue, and between them what she says follows the party's progress:
+/// Two scripted scenes in the room where Lady Layana stands frame the party's
+/// part in Hammet's rescue from Lunpa, and between them three flags pick where
+/// she stands and what she says:
 ///
 /// - Ivan's report (HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
-///   when the guards at the door bring the party in (kalay.c). Layana had hoped
-///   Hammet came back with Ivan. The ransom was paid long ago, yet Dodonpa,
-///   Lunpa's leader and grandson of Lunpa the noble thief, still holds him, and
-///   Layana will not risk his life by sending her soldiers, nor let the party
-///   go, who have a quest of their own. Ivan presses her, and she tells of a
-///   prophecy, that Ivan would set out with warriors from Vale, and of an oath:
-///   Adepts at the south-western edge of the world once saved Hammet's life,
-///   and their Jupiter Adept gave him the Shaman's Rod and Ivan, asking him to
-///   use the rod to find something the party will need on their journey. She
-///   sends everyone back to their posts (FLAG_IVAN_REPORTED_TO_LAYANA).
+///   when the guards at the door bring the party in (kalay.c); it ends by
+///   setting FLAG_IVAN_REPORTED_TO_LAYANA.
 /// - Between the two, until the party has heard in Lunpa that Hammet is held
 ///   there (place flag FLAG_PLACE_TEMP_21, set by kalay.c's scenes), Layana
-///   says Dodonpa may have spies in Kalay. Afterwards she stands elsewhere in
-///   her room, and the first time they speak she scolds `Isaac, you sneaked
-///   into Lunpa? That's far too dangerous!` and asks them not to go back
-///   (FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from then on she talks of
-///   Dodonpa's greed.
+///   talks of Dodonpa's spies. Afterwards she stands elsewhere in her room,
+///   and the first time they speak she scolds `Isaac, you sneaked into Lunpa?
+///   That's far too dangerous!` (FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from
+///   then on she talks of Dodonpa's greed.
 /// - Hammet's homecoming (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM, the
 ///   first time once Hammet is free, FLAG_DODONPA_LOCKED_UP;
-///   FLAG_HAMMET_BACK_HOME_SEEN). Hammet welcomes the party. Layana is harsh:
-///   she had told Ivan time and again not to go to Lunpa, and the rescue was
-///   Kalay's to make, when their quest is to recover the Elemental Stars. Ivan
-///   takes the blame and decides that they leave at once on Felix's trail, and
-///   Hammet sends them to Hesperia, the continent west of Angara, with the
-///   Shaman's Rod, as the Jupiter Adept said. Afterwards Hammet repeats it,
-///   Layana and the palace's people speak of keeping his return secret, and
-///   they tell of the door to the underground passage, where Hammet keeps his
-///   treasure, opened for the party in thanks: entering by
-///   HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
+///   FLAG_HAMMET_BACK_HOME_SEEN), in which Hammet sends the party on to
+///   Hesperia. Afterwards Hammet stands beside Layana, and the door to the
+///   underground passage, opened for the party in thanks, is drawn open on
+///   entering by HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
 ///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with FLAG_KALAY_TUNNEL_OPEN
-///   set draws it open.
+///   set.
 ///
 /// The people of the palace (ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK to
 /// ACTOR_ASKING_ABOUT_THE_SILK_TRADE) have one line before Hammet is free and
@@ -51,15 +35,6 @@
 /// (KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE). Searching finds a turban,
 /// the symbol of Kalay's soldiers, and two books, `Business and You` and `The
 /// Good Host`; a chest holds a Water Jacket and a barrel a Nut.
-///
-/// Open questions:
-///
-/// - XXX: the palace's people drawn with sprites 0x7e and 0x7f, which
-///   sprite_ids.h does not name; their sheets (spr_126.png, spr_127.png)
-///   would settle what they show.
-/// - XXX: what the place flag FLAG_PLACE_TEMP_21, which kalay.c sets once
-///   the party has heard in Lunpa that Hammet is held there, should be called
-///   in both overlays that read it; a shared name needs a home both include.
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/hammet_palace.h"
@@ -1132,9 +1107,9 @@ struct ScenePlacement gHammetPalacePlacements[] = {
         PIXELS(712), 0, PIXELS(246), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_MAN_IN_BLACK_SUIT, 0x0, ACTOR_STAND,
         PIXELS(212), 0, PIXELS(522), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MAN_IN_RED_2, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(169), 0, PIXELS(114), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x7f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN_2, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(114), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

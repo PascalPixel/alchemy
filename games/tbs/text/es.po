@@ -45619,7 +45619,7 @@ msgstr ""
 "Lo que podemos hacer ahora\n"
 "es proteger el barco...{end_wait}"
 
-msgctxt "MsgTolbiShipIslandMonstersUnknown"
+msgctxt "MsgTolbiShipMonstersAnywhereAroundHere"
 msgid "08005"
 msgstr ""
 "Ten cuidado, puede\n"

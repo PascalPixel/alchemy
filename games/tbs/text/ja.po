@@ -46579,7 +46579,7 @@ msgstr ""
 "いま われわれにできるのは\n"
 "船を まもることだ・・・。{end_wait}"
 
-msgctxt "MsgTolbiShipIslandMonstersUnknown"
+msgctxt "MsgTolbiShipMonstersAnywhereAroundHere"
 msgid "08428"
 msgstr ""
 "ここから 島を見ても\n"

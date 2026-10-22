@@ -1,60 +1,41 @@
-/// @file
-/// McCoy's Palace (SceneId_McCoyPalace), the palace of Lord McCoy, the lord
-/// of Bilibin. The grounds outside its gate (SceneId_McCoyPalaceGrounds,
-/// mccoy_palace_grounds.c) have the same area name, and the party comes in
-/// from there (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, arriving at
-/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST;
-/// MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST leads back out).
+/// @file McCoy's Palace in Bilibin: SceneId_McCoyPalace, with the area name
+/// McCoy's Palace, which its grounds share (mccoy_palace_grounds.c). The party
+/// comes in from the grounds by MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST,
+/// or straight into McCoy's room by
+/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, which the red carpet's door
+/// (trigger 9) also reaches. Its people follow three story flags,
+/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, FLAG_KOLIMA_CURSE_LIFTED and
+/// FLAG_MCCOY_PALACE_REWARD_TAKEN, in what they say and how they turn when
+/// talked to (Scene_GetPlacements).
 ///
-/// Where it falls in the story: the people of Kolima have been turned into
-/// trees by the curse of the holy tree, which McCoy had cut down to build his
-/// wife, Lady McCoy, a grand palace. McCoy has hired warrior after warrior to
-/// end the curse, and not one has come back. His gate guards let the party
-/// in, and the palace's people follow the story through three flags:
-/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY (McCoy has turned the party away),
-/// FLAG_KOLIMA_CURSE_LIFTED and FLAG_MCCOY_PALACE_REWARD_TAKEN, which change
-/// what each of them says and how they turn when talked to.
+/// Arriving in McCoy's room before the curse is lifted plays
+/// Event_AudienceWithMcCoy: McCoy asks whether the party can save Kolima. A
+/// refusal sends it away (FLAG_MCCOY_PALACE_JOB_REFUSED) to come back later;
+/// an acceptance ends with McCoy taking back the key to the barricades and the
+/// captain seeing the party out (FLAG_CAPTAIN_SEEING_PARTY_OUT). Outside
+/// McCoy's door the captain then plays Event_CaptainHintsAtBarricade, which
+/// sets FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY.
 ///
-/// The first audience. The red carpet leads to McCoy's door (trigger 9,
-/// MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM to
-/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, which
-/// MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST also reaches), and arriving there
-/// before the curse is lifted runs Event_AudienceWithMcCoy: McCoy's captain
-/// announces the party, and McCoy, seeing children, asks whether they can save
-/// Kolima. Refusing, the party is sent away (FLAG_MCCOY_PALACE_JOB_REFUSED) and
-/// may come back to change their minds. Accepting, McCoy tosses them the key to
-/// the barricades to the east, Garet bristles at being called children, and
-/// McCoy decides that he cannot send such wee lads to their doom after all: he
-/// takes the key back and his captain sees them out (place flag
-/// FLAG_PLACE_TEMP_21). Outside McCoy's door the captain catches up with them
-/// (Event_CaptainHintsAtBarricade), asks them to promise not to go to Kolima
-/// and lets slip that the barricade may not need a key, which sets
-/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY.
+/// Once the curse is lifted, the grounds' guards bring the party into McCoy's
+/// room, and Event_McCoyRewardsParty plays until
+/// FLAG_MCCOY_PALACE_PARTY_REWARDED; McCoy's lines differ as the party has met
+/// him before or not. The captain takes the party to the treasure room
+/// (FLAG_REWARD_OFFERED), where Event_PresentRewardChests shows four chests: a
+/// search of one gives its Vial, Potion, Psy Crystal or Water of Life
+/// (McCoyPalace_ClaimReward), and the others are then locked. The chest taken
+/// from is kept only in scene flags (FLAG_TOOK_VIAL and the others), so once
+/// the party has left the palace all four search as locked. Leaving without
+/// a reward (trigger 51), the captain walks the leader back; with it (trigger
+/// 50) he sees the party off (FLAG_PARTY_SEEN_OFF).
 ///
-/// The reward. Once the curse is lifted, the gate guards arrest the party and
-/// bring them in by MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST again, and
-/// Event_McCoyRewardsParty runs until the party has been rewarded
-/// (FLAG_MCCOY_PALACE_PARTY_REWARDED): McCoy asks their names, and Garet, Ivan
-/// and Mia introduce themselves; his lines differ as he has met them before or
-/// not (the barricade hint flag); he thanks them, admits he relied on his money
-/// and forgot his people's needs, and has the captain take them to the treasure
-/// room (MCCOY_PALACE_ENTRANCE_ROOM_TO_TREASURE_ROOM, place flag
-/// FLAG_PLACE_TEMP_22). There the captain and the soldier who keeps the
-/// treasure present four chests (Event_PresentRewardChests, FLAG_SCENE_TEMP_02
-/// while choosing): searching one gives its Vial, Potion, Psy Crystal or Water
-/// of Life (FLAG_SCENE_TEMP_10 to _13 record which); afterwards the chosen
-/// chest is empty and the others locked. Walking out without a reward (trigger
-/// 51), the captain walks the leader back; with it (trigger 50), he sees the
-/// party off (FLAG_MCCOY_PALACE_PARTY_REWARDED, place flag FLAG_PLACE_TEMP_33).
-///
-/// Elsewhere in the palace: a woman with Lady McCoy's silk nightgown dreams of
-/// sleeping in one, and after the reward screams when spoken to ("AAAAH!!!");
-/// an old man who praises the party's courage (place flags FLAG_PLACE_TEMP_02
-/// and FLAG_PLACE_TEMP_03 mark the first word and the first Mind Read); two
-/// barrels hold an Elixir and a Smoke Bomb; a wardrobe holds a silk negligee
+/// Two barrels hold an Elixir and a Smoke Bomb, a wardrobe a silk negligee
 /// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
-/// portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY). FLAG_SCENE_TEMP_00
-/// records that the captain has opened McCoy's door.
+/// portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
+///
+/// Open questions:
+/// - XXX: what animations 2 and 5 of the reward chests show as a chest opens
+///   and as it shuts again for want of room; the chest sprite's animation
+///   table would settle names for them.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -94,6 +75,8 @@ enum McCoyPalaceActor {
   /// A burly grey-haired man; points the way to McCoy. "If you want to see Lord
   /// McCoy, follow the red carpet."; later "The people of Bilibin will never
   /// forget your bravery."
+  /// ★ Named from the game: "If you want to see Lord McCoy, follow the red
+  /// carpet." (MsgBilibinIfYouWantToSeeLord)
   ACTOR_VILLAGER_FOLLOW_RED_CARPET = ACTOR_FIRST_PLACED,
   /// A woman in a green dress; warns the party about McCoy. "Make sure you
   /// don't offend Lord McCoy!"; later "I heard you received a spectacular
@@ -105,18 +88,22 @@ enum McCoyPalaceActor {
   /// ★ Named from the game: "Oh, are you willing to go to Kolima Forest?"
   /// (MsgBilibinYouWillingGoKolimaForest)
   ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST,
-  /// A young man with brown hair; speaks of the old tree in Kolima Forest. "I
-  /// always
-  /// believed that the old tree in Kolima Forest should be protected!"; later
-  /// "Things are looking grim south of Goma Range..."
+  /// A young man with brown hair; speaks of the old tree in Kolima Forest;
+  /// later "Things are looking grim south of Goma Range..."
+  /// ★ Named from the game: "I always believed that the old tree in Kolima
+  /// Forest should be protected!" (MsgBilibinIAlwaysBelievedThatTheOld)
   ACTOR_YOUNG_MAN_PROTECT_OLD_TREE,
   /// A woman with fair hair standing in Lady McCoy's room. "This is Lady
   /// McCoy's room, so don't touch anything."; later "Milady was very upset when
   /// she left the room."
+  /// ★ Named from the game: "This is Lady McCoy's room, so don't touch
+  /// anything." (MsgBilibinThisIsLadyMccoysRoomSo)
   ACTOR_VILLAGER_LADY_MCCOYS_ROOM,
   /// A woman with fair hair who admires Lady McCoy. "Milady was renowned far
   /// and wide for her beauty!"; later "For once, milord didn't let Lady McCoy
   /// push him around!"
+  /// ★ Named from the game: "Milady was renowned far and wide for her beauty!"
+  /// (MsgBilibinMiladyWasRenownedFarAndWide)
   ACTOR_VILLAGER_MILADYS_BEAUTY,
   /// A woman with fair hair; screams when spoken to ("AAAAH!!!"); Mind Read:
   /// "Oh, no! This nightgown has a hole... Milady will be furious!"
@@ -158,6 +145,46 @@ enum McCoyPalaceActor {
   /// ★ Named from the game: "You may select a single item from among these
   /// four chests." (MsgBilibinYouMaySelectASingleItem)
   ACTOR_WATER_OF_LIFE_CHEST
+};
+
+/// The palace's temporary flags: the scene flags last until the party leaves
+/// the palace's scene, the place flags until it leaves McCoy's Palace.
+enum {
+  /// The captain has opened McCoy's door, so walking through it is silent.
+  FLAG_MCCOYS_DOOR_OPEN = FLAG_SCENE_TEMP_00,
+  /// The party is choosing its reward among the four chests.
+  /// ★ Named from the game: "You may select a single item from among these
+  /// four chests." (MsgBilibinYouMaySelectASingleItem)
+  FLAG_CHOOSING_REWARD = FLAG_SCENE_TEMP_02,
+  /// The chest the reward was taken from, which then searches as empty.
+  /// ★ Named from the game: "Vial" (MsgItemName)
+  FLAG_TOOK_VIAL = FLAG_SCENE_TEMP_10,
+  /// ★ Named from the game: "Potion" (MsgItemName)
+  FLAG_TOOK_POTION = FLAG_SCENE_TEMP_11,
+  /// ★ Named from the game: "Psy Crystal" (MsgItemName)
+  FLAG_TOOK_PSY_CRYSTAL = FLAG_SCENE_TEMP_12,
+  /// ★ Named from the game: "Water of Life" (MsgItemName)
+  FLAG_TOOK_WATER_OF_LIFE = FLAG_SCENE_TEMP_13,
+  /// The old man has praised the party once; he then warns of the holy tree.
+  /// ★ Named from the game: "You are a fine warrior." (MsgBilibinFineWarrior)
+  FLAG_OLD_MAN_HAS_PRAISED = FLAG_PLACE_TEMP_02,
+  /// Mind Read has heard the old man's first thought.
+  /// ★ Named from the game: "Sometimes, we need children to remind us of our
+  /// own responsibilities." (MsgBilibinSometimesWeNeedChildrenRemind)
+  FLAG_OLD_MAN_THOUGHTS_READ = FLAG_PLACE_TEMP_03,
+  /// McCoy has had the captain see the party out after the first audience.
+  /// ★ Named from the game: "I dinnae want tae talk about it anymore.
+  /// Captain?" (MsgBilibinWellSGoing)
+  FLAG_CAPTAIN_SEEING_PARTY_OUT = FLAG_PLACE_TEMP_21,
+  /// McCoy has had the captain take the party to the treasure room, until it
+  /// takes a reward.
+  /// ★ Named from the game: "Please show them their reward!"
+  /// (MsgBilibinLordMccoyOrdered)
+  FLAG_REWARD_OFFERED = FLAG_PLACE_TEMP_22,
+  /// The captain has seen the party off with its reward.
+  /// ★ Named from the game: "You are always welcome in the palace of Lord
+  /// McCoy." (MsgBilibinAlwaysWelcomeInPalaceLord)
+  FLAG_PARTY_SEEN_OFF = FLAG_PLACE_TEMP_33
 };
 
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
@@ -205,7 +232,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
     return placements;
   }
-  return gMcCoyPalacePlacementsOther;
+  return gMcCoyPalaceNoPlacements;
 }
 
 /// What the party can talk to and search in the palace.
@@ -213,7 +240,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalace) {
     return gMcCoyPalaceEvents;
   }
-  return gMcCoyPalaceEventsOther;
+  return gMcCoyPalaceNoEvents;
 }
 
 /// McCoy's Palace, before the reward: a woman with fair hair asks about going
@@ -250,11 +277,11 @@ static void Event_TalkToWomanInMiladysNightgown(void) {
 static void Event_TalkToOldManPraisingTheWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinFineWarrior);
-  if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) != 0) {
+  if (GameFlag_IsSet(FLAG_OLD_MAN_HAS_PRAISED) != 0) {
     Engine_EventSetMessage(MsgBilibinItsVeryRecklessForSuch);
   }
   Event_ShowMessage(ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, 0);
-  GameFlag_Set(FLAG_PLACE_TEMP_02);
+  GameFlag_Set(FLAG_OLD_MAN_HAS_PRAISED);
   Engine_EventEnd();
 }
 
@@ -270,10 +297,13 @@ static void Event_TalkToSoldierWatchingKolima(void) {
 /// McCoy's Palace, the treasure room: the soldier who keeps the treasure. While
 /// the party chooses, only one item; after, the reward was the greatest;
 /// before, Bilibin's great treasures go to whoever ends the curse.
+///
+/// Unused: with flag 0x84d set he would say `Pick any one of the four
+/// treasures.` instead, but nothing in the game names or sets that flag.
 static void Event_TalkToSoldierShowingTheReward(void) {
   Engine_EventBegin();
 
-  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_CHOOSING_REWARD) != 0) {
     Engine_EventSetMessage(MsgBilibinMayChooseOnlyOneItem);
   } else if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Engine_EventSetMessage(MsgBilibinRewardReceivedWasIndeedGreatest);
@@ -295,11 +325,11 @@ static void Event_TalkToSoldierShowingTheReward(void) {
 static void Event_ReadOldMansThoughtsOnTheWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinSometimesWeNeedChildrenRemind);
-  if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0) {
+  if (GameFlag_IsSet(FLAG_OLD_MAN_THOUGHTS_READ) != 0) {
     Engine_EventSetMessage(MsgBilibinLookedVeryCourageousWalkingToward);
   }
   Event_ShowMessage(ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, 0);
-  GameFlag_Set(FLAG_PLACE_TEMP_03);
+  GameFlag_Set(FLAG_OLD_MAN_THOUGHTS_READ);
   Engine_EventEnd();
 }
 
@@ -308,7 +338,7 @@ static void Event_ReadOldMansThoughtsOnTheWarriors(void) {
 static void Event_ReadRewardSoldiersThoughts(void) {
   Engine_EventBegin();
 
-  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_CHOOSING_REWARD) != 0) {
     Engine_EventSetMessage(MsgBilibinNonethelessIfYourLuckSour);
   } else if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Engine_EventSetMessage(MsgBilibinGoodTreasureIfGetTurned);
@@ -333,7 +363,7 @@ static void Event_WalkThroughDoor(void) {
   work = gEventWork;
   hideDoorLayers = 0;
   if (work->touchedTrigger == 9) {
-    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_MCCOYS_DOOR_OPEN) == 0) {
       Engine_AudioPlayCue(SE_188);
       hideDoorLayers = 1;
     }
@@ -388,9 +418,9 @@ static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
 /// a Vial, while no reward is taken.
 static void Event_SearchVialChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_10);
+    McCoyPalace_ShowUnavailableChest(FLAG_TOOK_VIAL);
   } else {
-    McCoyPalace_ClaimReward(ACTOR_VIAL_CHEST, ITEM_VIAL, FLAG_SCENE_TEMP_10);
+    McCoyPalace_ClaimReward(ACTOR_VIAL_CHEST, ITEM_VIAL, FLAG_TOOK_VIAL);
   }
 }
 
@@ -398,10 +428,9 @@ static void Event_SearchVialChest(void) {
 /// a Potion, while no reward is taken.
 static void Event_SearchPotionChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_11);
+    McCoyPalace_ShowUnavailableChest(FLAG_TOOK_POTION);
   } else {
-    McCoyPalace_ClaimReward(ACTOR_POTION_CHEST, ITEM_POTION,
-                            FLAG_SCENE_TEMP_11);
+    McCoyPalace_ClaimReward(ACTOR_POTION_CHEST, ITEM_POTION, FLAG_TOOK_POTION);
   }
 }
 
@@ -409,10 +438,10 @@ static void Event_SearchPotionChest(void) {
 /// a Psy Crystal, while no reward is taken.
 static void Event_SearchPsyCrystalChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_12);
+    McCoyPalace_ShowUnavailableChest(FLAG_TOOK_PSY_CRYSTAL);
   } else {
     McCoyPalace_ClaimReward(ACTOR_PSY_CRYSTAL_CHEST, ITEM_PSY_CRYSTAL,
-                            FLAG_SCENE_TEMP_12);
+                            FLAG_TOOK_PSY_CRYSTAL);
   }
 }
 
@@ -420,10 +449,10 @@ static void Event_SearchPsyCrystalChest(void) {
 /// a Water of Life, while no reward is taken.
 static void Event_SearchWaterOfLifeChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_13);
+    McCoyPalace_ShowUnavailableChest(FLAG_TOOK_WATER_OF_LIFE);
   } else {
     McCoyPalace_ClaimReward(ACTOR_WATER_OF_LIFE_CHEST, ITEM_WATER_OF_LIFE,
-                            FLAG_SCENE_TEMP_13);
+                            FLAG_TOOK_WATER_OF_LIFE);
   }
 }
 
@@ -442,8 +471,8 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
     Engine_ActorSetAnimation(chestActorId, 2);
     Engine_GameFlagSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     Engine_GameFlagSet(chestFlag);
-    Engine_GameFlagClear(FLAG_PLACE_TEMP_22);
-    Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
+    Engine_GameFlagClear(FLAG_REWARD_OFFERED);
+    Engine_GameFlagClear(FLAG_CHOOSING_REWARD);
   } else {
     Engine_AudioPlayCue(SE_125);
     Engine_ActorSetAnimation(chestActorId, 5);
@@ -458,7 +487,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
 /// depart!"
 static void Event_CaptainAsksPartyToChoose(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
-    if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_22) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_REWARD_OFFERED) != 0) {
       Engine_EventBegin();
       Actor_ShowEmote(ACTOR_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHWEST + FACING_STEP, 10);
@@ -498,7 +527,7 @@ static void Event_CaptainSeesPartyOff(void) {
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     GameFlag_Set(FLAG_MCCOY_PALACE_PARTY_REWARDED);
-    GameFlag_Set(FLAG_PLACE_TEMP_33);
+    GameFlag_Set(FLAG_PARTY_SEEN_OFF);
     Engine_EventEnd();
   }
 }
@@ -531,7 +560,7 @@ s32 Scene_Initialize(void) {
   Map_SetLayerEntryFlag(2);
   Engine_GameFlagSet(FLAG_MCCOY_PALACE_VISITED);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
+    Engine_GameFlagClear(FLAG_MCCOYS_DOOR_OPEN);
   }
   // A first audience and a return to the entrance have different greetings.
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0 &&
@@ -540,7 +569,7 @@ s32 Scene_Initialize(void) {
       Event_AudienceWithMcCoy();
     } else if (gGameState.entrance ==
                    MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM &&
-               Engine_GameFlagIsSet(FLAG_PLACE_TEMP_21) != 0) {
+               Engine_GameFlagIsSet(FLAG_CAPTAIN_SEEING_PARTY_OUT) != 0) {
       Event_CaptainHintsAtBarricade();
     }
   } else {
@@ -558,7 +587,7 @@ s32 Scene_Initialize(void) {
         // Restore the displayed chest row after reloading the treasure room.
         if (gGameState.entrance ==
             MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
-          if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_22) != 0) {
+          if (Engine_GameFlagIsSet(FLAG_REWARD_OFFERED) != 0) {
             if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
               McCoyPalace_OpenRewardChestRow();
               McCoyPalace_PositionRewardChests();
@@ -944,7 +973,7 @@ accepted:
   Engine_ActorSetAnimationAndWait(ACTOR_CAPTAIN, 3);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
-  Engine_ActorSetAnimation(ACTOR_LORD_MCCOY, 4);
+  Engine_ActorSetAnimation(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorJump(ACTOR_BARRICADE_KEY, 6, 0);
   actor = Object_GetById(ACTOR_LORD_MCCOY);
@@ -978,7 +1007,7 @@ accepted:
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ActorSetAnimation(ACTOR_LORD_MCCOY, 4);
+  Engine_ActorSetAnimation(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimation(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
@@ -1051,7 +1080,7 @@ accepted:
   gEventWork->transitionFrames = 16;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
+  Engine_GameFlagSet(FLAG_CAPTAIN_SEEING_PARTY_OUT);
 leave:
   Engine_EventRequestExit(MCCOY_PALACE_MCCOYS_ROOM_TO_ENTRANCE_ROOM);
   Engine_EventEnd();
@@ -1070,7 +1099,7 @@ static void Event_CaptainHintsAtBarricade(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 660);
   Engine_EventWait(20);
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Engine_GameFlagSet(FLAG_MCCOYS_DOOR_OPEN);
   Event_PlayCue(SE_188);
   Map_ClearLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
@@ -1166,7 +1195,7 @@ static void Event_McCoyRewardsParty(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 904, 736);
   Engine_EventWait(60);
   Engine_ActorWaitForMove(ACTOR_CAPTAIN);
-  Engine_ActorSetAnimation(ACTOR_CAPTAIN, 1);
+  Engine_ActorSetAnimation(ACTOR_CAPTAIN, ANIM_STAND);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(20);
@@ -1395,7 +1424,7 @@ static void Event_McCoyRewardsParty(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 764);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(FLAG_PLACE_TEMP_22);
+  GameFlag_Set(FLAG_REWARD_OFFERED);
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
     GameFlag_Set(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY);
     GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
@@ -1414,7 +1443,7 @@ static void Event_PresentRewardChests(void) {
   // Restore the chest-row collision patches before presenting the reward.
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Engine_CameraMoveTo(0x2740000, -1, 0x2ec0000, 0);
+  Engine_CameraMoveTo(PIXELS(628), -1, PIXELS(748), 0);
   McCoyPalace_OpenRewardChestRow();
   Object_GetById(ACTOR_PARTY_LEADER)->facing = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(577), PIXELS(760));
@@ -1448,7 +1477,7 @@ static void Event_PresentRewardChests(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkTo(ACTOR_CAPTAIN, 628, 764);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 612, 764);
-  Engine_ActorSetAnimation(ACTOR_CAPTAIN, 1);
+  Engine_ActorSetAnimation(ACTOR_CAPTAIN, ANIM_STAND);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 1);
   // The captain and the keeper explain that only one chest may be chosen.
@@ -1460,7 +1489,7 @@ static void Event_PresentRewardChests(void) {
   Engine_EventShowMessageAndWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
+  Engine_GameFlagSet(FLAG_CHOOSING_REWARD);
   Engine_EventEnd();
 }
 
@@ -1610,37 +1639,39 @@ u32 gMcCoyPalaceExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gMcCoyPalacePlacementsOther[] = {
+/// Unused: the getters return it for any scene but SceneId_McCoyPalace, and the
+/// overlay serves no other.
+struct ScenePlacement gMcCoyPalaceNoPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
 struct ScenePlacement gMcCoyPalacePlacements[] = {
-    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(265), 0, PIXELS(702), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(342), 0, PIXELS(632), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(632), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, ACTOR_WANDER,
         PIXELS(166), 0, PIXELS(728), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(326), 0, PIXELS(378), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_WANDER,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, ACTOR_WANDER,
         PIXELS(362), 0, PIXELS(142), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(87), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { SPRITE_OLD_MAN_WITH_CANE, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(952), 0, PIXELS(289), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_SOLDIER_IN_SPIKED_HELMET, 0x0, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(951), 0, PIXELS(438), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(616), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_MCCOY, 0x0, ACTOR_STAND,
+    { SPRITE_MCCOY, CONDITION_IN_VIEW, ACTOR_STAND,
         PIXELS(894), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xf5, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KEY, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1656,30 +1687,31 @@ struct ScenePlacement gMcCoyPalacePlacements[] = {
         0, 0, 0, FACING_SOUTHEAST, TALK_KEEP_FACING, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(616), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(632), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(648), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(664), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(616), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(648), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(664), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(616), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(648), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_CHEST, 0x0, 7,
+    { SPRITE_CHEST, CONDITION_IN_VIEW, ACTOR_RESET_ACTION,
         PIXELS(664), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gMcCoyPalaceEventsOther[] = {
+/// Unused, as gMcCoyPalaceNoPlacements is.
+struct SceneEvent gMcCoyPalaceNoEvents[] = {
     { SCENE_EVENTS_END },
 };
 
@@ -1763,8 +1795,8 @@ struct SceneEvent gMcCoyPalaceEvents[] = {
     { SEARCH(SEARCH_UNNAMED), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchPotionChest) },
     { SEARCH(SEARCH_UNNAMED), 102, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchPsyCrystalChest) },
     { SEARCH(SEARCH_UNNAMED), 103, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchWaterOfLifeChest) },
-    { EVENT_TOUCH, 50, FLAG_PLACE_TEMP_33, EVENT_SCRIPT(Event_CaptainSeesPartyOff) },
-    { EVENT_TOUCH, 51, FLAG_PLACE_TEMP_33, EVENT_SCRIPT(Event_CaptainAsksPartyToChoose) },
+    { EVENT_TOUCH, 50, FLAG_PARTY_SEEN_OFF, EVENT_SCRIPT(Event_CaptainSeesPartyOff) },
+    { EVENT_TOUCH, 51, FLAG_PARTY_SEEN_OFF, EVENT_SCRIPT(Event_CaptainAsksPartyToChoose) },
     { SEARCH(SEARCH_BARREL), 120, FLAG_MCCOY_PALACE_BARREL_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
     { SEARCH(SEARCH_BARREL), 121, FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASilkNegligeeIsaacPut)) },

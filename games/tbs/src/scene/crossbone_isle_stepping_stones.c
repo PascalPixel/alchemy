@@ -18,7 +18,7 @@
 ///   switch beside the floodgate (Event_FlipWaterSwitch) closes it, so the
 ///   water backs up and floats the logs higher, or opens it to drain them
 ///   back down; the water level lasts only while the party stays
-///   (FLAG_SCENE_TEMP_00, kept through a battle).
+///   (WATER_RAISED_FLAG, kept through a battle).
 /// - SceneId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
 ///   cliffs and ladders: four pillars that Move and Carry shift, and that
 ///   settle and redraw their footprints after every push (Event_MovePillar), a
@@ -31,6 +31,16 @@
 ///
 /// The other three side rooms are in crossbone_isle_keys.c, and the
 /// ninth floor's in crossbone_isle.c.
+///
+/// Open questions:
+/// - XXX: what the two cells at the floodgate's foot show, which
+///   gCrossboneIsleSteppingStones_FloodgateFootSteps draws after the gate
+///   closes; a recording of CrossboneIsleFloodgate's switch would settle it.
+/// - XXX: what script slot 0x23 is, which the action table
+///   gCrossboneIsleSteppingStones_ActionTable sets to 2 and 0 before reading
+///   the actor's timer into its palette; no SW_ name covers it, and the
+///   script interpreter's table of slots would settle one in objcmd.h.
+
 #include "script.h"
 #include "game_state.h"
 #include "map_scroll.h"
@@ -81,6 +91,10 @@
 #include "event.h"
 #include "macros.h"
 
+/// A chest searched while facing the given way.
+#define SEARCH_CHEST_FACING(facing)                                            \
+  (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
+
 /// The placed actors, numbered in the order of each room's placement table
 /// (Scene_GetPlacements).
 enum CrossboneIsleSteppingStonesActor {
@@ -128,8 +142,9 @@ enum CrossboneIsleSteppingStonesActor {
 
 /// CrossboneIsleFloodgate: the water has been raised.
 #define WATER_RAISED_FLAG FLAG_SCENE_TEMP_00
-// CrossboneIsleStackedPillars keeps FLAG_SCENE_TEMP_00 to 03 for its four
-// pillars' footprints.
+/// CrossboneIsleStackedPillars: the first pillar's footprint flag, the four
+/// pillars' from this one.
+#define FIRST_PILLAR_FOOTPRINT_FLAG FLAG_SCENE_TEMP_00
 // CrossboneIsleDragonStatue: FLAG_SCENE_TEMP_00 to 02 the three puddles are
 // frozen, 03 the leader stood on the third when Frost began, 04 the sinking
 // pillar has sunk.
@@ -530,7 +545,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 #if TBS_PATCH_1
   jumpDirection = (leader->facing + 0x2000) & 0xc000;
 #endif
-  if (gGameState.movementMode != 0) {
+  if (gGameState.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;
   }
   position = &destination;
@@ -709,7 +724,7 @@ static s32 sShakeChance;
 static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
   u32 line = REG_VCOUNT;
   u32 *src = &((u32 *)gBgScroll)[1];
-  volatile u32 *reg = (volatile u32 *)0x04000014;
+  volatile u32 *reg = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 46) {
     if ((u32)(Engine_RandomNext() * 100) >> 16 < sShakeChance) {
@@ -717,7 +732,7 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
     }
   }
   *reg = *src++;
-  reg = (volatile u32 *)0x04000018;
+  reg = (volatile u32 *)&REG_BG2HOFS;
   *reg++ = *src++;
   *reg = *src;
 }
@@ -807,7 +822,7 @@ static void Event_FlipWaterSwitch(void) {
   // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
     SE(SE_232);
-    Map_AnimateCells(gCrossboneIsleSteppingStones_ShiftSteps1, 84, 24);
+    Map_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
     WAIT(30);
     SE(SE_240);
     Engine_ActorSetSpritePriority(ACTOR_WATER, 1);
@@ -816,8 +831,8 @@ static void Event_FlipWaterSwitch(void) {
     water->y.fixed = -PIXELS(32);
     OBJ_POS_SET(ACTOR_WATER, 272, 416);
     OBJ_MODE(ACTOR_WATER, 1);
-    Map_AnimateCells(gCrossboneIsleSteppingStones_ShiftSteps3, 80, 24);
-    Map_AnimateCells(gCrossboneIsleSteppingStones_ShiftSteps5, 80, 28);
+    Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80, 24);
+    Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateFootSteps, 80, 28);
     Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
     CrossboneIsleSteppingStones_AnimateWaterLevel();
     CrossboneIsleSteppingStones_DrawFloatingLogs();
@@ -825,7 +840,7 @@ static void Event_FlipWaterSwitch(void) {
     FLAG_SET(WATER_RAISED_FLAG);
   } else {
     SE(SE_232);
-    Map_AnimateCells(gCrossboneIsleSteppingStones_ShiftSteps2, 84, 24);
+    Map_AnimateCells(gCrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
     WAIT(30);
     SE(SE_230);
     Object_GetById(ACTOR_WATER)->motionFlags = 0;
@@ -834,7 +849,7 @@ static void Event_FlipWaterSwitch(void) {
     OBJ_POS_SET(ACTOR_WATER, 272, 436);
     OBJ_MODE(ACTOR_WATER, 2);
     Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
-    Map_AnimateCells(gCrossboneIsleSteppingStones_ShiftSteps4, 80, 24);
+    Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80, 24);
     CrossboneIsleSteppingStones_AnimateWaterLevel();
     CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 1);
     CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 2);
@@ -921,7 +936,7 @@ static s32 CrossboneIsleSteppingStones_UpdateActorPriority(
 
   if (((struct FieldWork *)gEventWork)->castStarted == 1) {
     actor->sprite->image.priority = leader->sprite->image.priority;
-    actor->collisionFlags |= 1;
+    actor->collisionFlags |= ACTOR_SOLID;
 #ifdef UBFIX
     return;
 #else
@@ -950,7 +965,7 @@ static s32 CrossboneIsleSteppingStones_UpdateActorPriority(
     }
   } else {
     actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-    actor->collisionFlags |= 1;
+    actor->collisionFlags |= ACTOR_SOLID;
   }
   if (hit == 0) {
     actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -1054,7 +1069,7 @@ static void Event_MovePillar(void) {
             REG_DMA3);
     Dma_Wait(REG_DMA3);
     if (FieldObject_CheckMovementCollision(actor, &sProbePosition) == -1) {
-      actor->motionFlags = 3;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     }
     flags = &actor->motionFlags;
     CrossboneIsleSteppingStones_SetCellAttributes(
@@ -1615,7 +1630,7 @@ s32 Scene_Initialize(void) {
         entry[0] = 0;
         entry[1] = 0;
         entry[2] = 0;
-        entry[4] = i + FLAG_SCENE_TEMP_00;
+        entry[4] = i + FIRST_PILLAR_FOOTPRINT_FLAG;
         entry += 5;
       }
     }
@@ -1657,7 +1672,7 @@ s32 Scene_Initialize(void) {
     actor = Object_GetById(ACTOR_THIRD_PUDDLE);
     actor->update = 0;
     CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_RISING_PILLAR);
-    Object_GetById(ACTOR_RISING_PILLAR)->collisionFlags |= 8;
+    Object_GetById(ACTOR_RISING_PILLAR)->collisionFlags |= ACTOR_NOT_TARGETED;
     if (Engine_GameFlagIsSet(FIRST_FROZEN_PUDDLE_FLAG + 2) == 0) {
       Object_GetById(ACTOR_THIRD_PUDDLE)->scaleX = 3 * Q16_ONE / 2;
       Object_GetById(ACTOR_THIRD_PUDDLE)->scaleY = 3 * Q16_ONE / 2;
@@ -1726,23 +1741,28 @@ s32 gCrossboneIsleSteppingStones_ActionTable[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u16 gCrossboneIsleSteppingStones_ShiftSteps1[] = {
+/// The floodgate's switch flipping as Event_FlipWaterSwitch closes the gate,
+/// and flipping back as it opens it.
+u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[] = {
     MAP_CELL_STEP(76, 34, 1, 2, 4), MAP_CELL_STEP(77, 34, 1, 2, 4), MAP_CELL_STEP(78, 34, 1, 2, 4), MAP_CELL_STEP(79, 34, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gCrossboneIsleSteppingStones_ShiftSteps2[] = {
+u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[] = {
     MAP_CELL_STEP(79, 34, 1, 2, 4), MAP_CELL_STEP(78, 34, 1, 2, 4), MAP_CELL_STEP(77, 34, 1, 2, 4), MAP_CELL_STEP(76, 34, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gCrossboneIsleSteppingStones_ShiftSteps3[] = {
+/// The floodgate closing, and opening again.
+u16 gCrossboneIsleSteppingStones_FloodgateCloseSteps[] = {
     MAP_CELL_STEP(67, 34, 2, 5, 6), MAP_CELL_STEP(69, 34, 2, 5, 6), MAP_CELL_STEP(71, 34, 2, 5, 6), MAP_CELL_STEP(73, 34, 2, 5, 6), MAP_CELL_STEPS_END,
 };
 
-u16 gCrossboneIsleSteppingStones_ShiftSteps4[] = {
+u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[] = {
     MAP_CELL_STEP(71, 50, 2, 5, 6), MAP_CELL_STEP(69, 50, 2, 5, 6), MAP_CELL_STEP(67, 50, 2, 5, 6), MAP_CELL_STEP(65, 50, 2, 5, 6), MAP_CELL_STEPS_END,
 };
 
-u16 gCrossboneIsleSteppingStones_ShiftSteps5[] = {
+/// Two cells at the floodgate's foot, drawn after it closes. XXX: what they
+/// show; a recording of the gate closing would settle it.
+u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[] = {
     MAP_CELL_STEP(75, 38, 2, 1, 4), MAP_CELL_STEP(77, 38, 2, 1, 6), MAP_CELL_STEP(79, 38, 2, 1, 8), MAP_CELL_STEP(65, 53, 2, 1, 1), MAP_CELL_STEPS_END,
 };
 
@@ -1832,21 +1852,21 @@ struct ScenePlacement gCrossboneIsleIcePillarsPlacements[] = {
 };
 
 struct ScenePlacement gCrossboneIsleFloodgatePlacements[] = {
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(144), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(232), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(208), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(232), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(272), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(352), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd6, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1866,9 +1886,9 @@ struct ScenePlacement gCrossboneIsleSteppingStonesPlacementsOther[] = {
 };
 
 struct ScenePlacement gCrossboneIsleDragonStatuePlacements[] = {
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(208), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(224), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x125, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1891,10 +1911,10 @@ struct SceneEvent gCrossboneIsleSteppingStonesEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushPillar) },
-    { SEARCH(SEARCH_CHEST), 100, 0xec2, FIND_ITEM(ITEM_ANTIDOTE) },
-    { SEARCH(SEARCH_CHEST), 101, 0xec3, FIND_ITEM(ITEM_NUT) },
-    { SEARCH(SEARCH_CHEST), 102, 0xec4, FIND_COINS(111) },
-    { SEARCH(SEARCH_CHEST), 103, 0xec5, FIND_ITEM(ITEM_HARD_NUT) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_STEPPING_STONES_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_CROSSBONE_ISLE_STEPPING_STONES_NUT, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_CROSSBONE_ISLE_STEPPING_STONES_111_COINS, FIND_COINS(111) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_STEPPING_STONES_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 1, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 2, CONDITION_ALWAYS, 0 },
@@ -1906,10 +1926,10 @@ struct SceneEvent gCrossboneIsleIcePillarsEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
-    { SEARCH(SEARCH_CHEST), 100, 0xec6, FIND_ITEM(ITEM_LUCKY_PEPPER) },
-    { SEARCH(SEARCH_CHEST), 101, 0xec7, FIND_ITEM(ITEM_MYSTERY_BLADE) },
-    { SEARCH(SEARCH_CHEST), 102, 0xec8, FIND_COINS(222) },
-    { SEARCH(SEARCH_CHEST), 103, 0xec9, FIND_ITEM(ITEM_ELIXIR) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_ICE_PILLARS_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_CROSSBONE_ISLE_ICE_PILLARS_MYSTERY_BLADE, FIND_ITEM(ITEM_MYSTERY_BLADE) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_CROSSBONE_ISLE_ICE_PILLARS_222_COINS, FIND_COINS(222) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_ICE_PILLARS_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
     { SCENE_EVENTS_END },
 };
 
@@ -1917,12 +1937,12 @@ struct SceneEvent gCrossboneIsleFloodgateEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
-    { 0x413, 100, 0xed2, FIND_COINS(555) },
-    { 0xc413, 100, 0xed2, FIND_COINS(555) },
-    { 0x413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { 0xe413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_CHEST), 102, 0xed4, FIND_ITEM(ITEM_POTION) },
-    { SEARCH(SEARCH_CHEST), 103, 0xed5, FIND_ITEM(ITEM_NINJA_GARB) },
+    { SEARCH_CHEST_FACING(FACING_EAST), 100, FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS, FIND_COINS(555) },
+    { SEARCH_CHEST_FACING(FACING_NORTH), 100, FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS, FIND_COINS(555) },
+    { SEARCH_CHEST_FACING(FACING_EAST), 101, FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH_CHEST_FACING(FACING_NORTHEAST), 101, FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOODGATE_POTION, FIND_ITEM(ITEM_POTION) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB, FIND_ITEM(ITEM_NINJA_GARB) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipWaterSwitch) },
     { SCENE_EVENTS_END },
 };
@@ -1936,18 +1956,18 @@ struct SceneEvent gCrossboneIsleStackedPillarsEvents[] = {
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushStackedPillar) },
     { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StartRising) },
     { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StopRising) },
-    { SEARCH(SEARCH_CHEST), 100, 0xeda, FIND_COINS(777) },
-    { SEARCH(SEARCH_CHEST), 101, 0xedb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { 0x413, 102, 0xedc, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { SEARCH(SEARCH_CHEST), 103, 0xedd, FIND_ITEM(ITEM_WICKED_MACE) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 1, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_MovePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 2, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_MovePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 3, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_MovePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 1, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_MovePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 2, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_MovePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 3, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_MovePillar) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_777_COINS, FIND_COINS(777) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH_CHEST_FACING(FACING_EAST), 102, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_WICKED_MACE, FIND_ITEM(ITEM_WICKED_MACE) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FIRST_PILLAR_FOOTPRINT_FLAG, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 1, FIRST_PILLAR_FOOTPRINT_FLAG + 1, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 2, FIRST_PILLAR_FOOTPRINT_FLAG + 2, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 3, FIRST_PILLAR_FOOTPRINT_FLAG + 3, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR, FIRST_PILLAR_FOOTPRINT_FLAG, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 1, FIRST_PILLAR_FOOTPRINT_FLAG + 1, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 2, FIRST_PILLAR_FOOTPRINT_FLAG + 2, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 3, FIRST_PILLAR_FOOTPRINT_FLAG + 3, EVENT_SCRIPT(Event_MovePillar) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
@@ -1959,10 +1979,14 @@ struct SceneEvent gCrossboneIsleDragonStatueEvents[] = {
      CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_PushSinkingPillar)},
-    {SEARCH(SEARCH_CHEST), 100, 0xede, FIND_COINS(888)},
-    {SEARCH(SEARCH_CHEST), 101, 0xedf, FIND_ITEM(ITEM_POTION)},
-    {SEARCH(SEARCH_CHEST), 102, 0xee0, FIND_ITEM(ITEM_CLERICS_RING)},
-    {SEARCH(SEARCH_CHEST), 103, 0xee1, FIND_ITEM(ITEM_SMOKE_BOMB)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_888_COINS,
+     FIND_COINS(888)},
+    {SEARCH(SEARCH_CHEST), 101, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_POTION,
+     FIND_ITEM(ITEM_POTION)},
+    {SEARCH(SEARCH_CHEST), 102, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_CLERICS_RING,
+     FIND_ITEM(ITEM_CLERICS_RING)},
+    {SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_SMOKE_BOMB,
+     FIND_ITEM(ITEM_SMOKE_BOMB)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_SINKING_BOULDER, PILLAR_SUNK_FLAG,
      EVENT_SCRIPT(Event_StartMovingSinkingPillar)},

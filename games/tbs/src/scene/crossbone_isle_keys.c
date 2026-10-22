@@ -15,16 +15,23 @@
 /// - SceneId_CrossboneIsleStatues, off the fourth, where five statues of a
 ///   robed woman wait, lit in circles by braziers in the dark. As the leader
 ///   crosses each one's stretch of the room it steps out after him unless he is
-///   hidden by Cloak, and goes back home once he is past (FLAG_SCENE_TEMP_20
-///   while one is after him); Halt stops one where it stands, and Reveal clears
-///   the translucent layer over the room while it lasts.
+///   hidden by Cloak, and goes back home once he is past
+///   (PURSUER_AFTER_LEADER_FLAG while one is after him); Halt stops one where
+///   it stands, and Reveal clears the translucent layer over the room while it
+///   lasts.
 /// - SceneId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni,
 ///   hides. Five pillars to push or move with Move, a ladder and a puddle that
 ///   Frost freezes into a pillar of ice make a way across the room. The first
 ///   three times the party comes near, Bane flees, the third time to the room's
 ///   last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to _LAST_ESCAPE); there
 ///   it runs to whichever spot the leader steps toward unless Halt holds it.
-///   Once the battle with Bane is won, Bane joins the party.
+///   Talked to while Halt holds it, Bane joins the party.
+///
+/// Open questions:
+/// - XXX (picture): the statues of CrossboneIsleStatues stepping out after the
+///   leader across their stretches, and going home, as one take-apart picture
+///   of the room.
+
 #include "game_state.h"
 #include "djinn_ids.h"
 #include "version.h"
@@ -181,11 +188,17 @@ enum CrossboneIsleBaneActor {
 
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
-// CrossboneIsleBane's temporary flags: FLAG_SCENE_TEMP_00 the puddle
-// is frozen, 01 to 05 end Move on each pillar, 06 the chest on the second
-// pillar has reached the ladder, 07 selects the ladder cell's other attributes.
-// CrossboneIsleStatues keeps FLAG_SCENE_TEMP_20 while a pursuer is
-// after the leader.
+/// CrossboneIsleBane: the puddle is frozen.
+#define BANE_PUDDLE_FROZEN_FLAG FLAG_SCENE_TEMP_00
+/// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
+#define BANE_CHEST_AT_LADDER_FLAG FLAG_SCENE_TEMP_06
+/// CrossboneIsleBane: the leader last looked east from the ladder, which gives
+/// the ladder cell its other attributes.
+#define BANE_LOOKED_EAST_FLAG FLAG_SCENE_TEMP_07
+// The Move events of CrossboneIsleBane's pillars also test FLAG_SCENE_TEMP_01
+// and 03 to 05, which nothing sets.
+/// CrossboneIsleStatues: a statue is after the leader.
+#define PURSUER_AFTER_LEADER_FLAG FLAG_SCENE_TEMP_20
 
 /// Publishes the next raised-event trigger.
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step) {
@@ -204,8 +217,8 @@ static __inline__ void LiftPillar(s32 column, u8 motionFlags) {
 
 #include "common/object_staged_actor.h"
 
-/// Raised in CrossboneIsleBane once the battle with Bane is won:
-/// Bane, a Venus Djinni, joins the party.
+/// Talking to Bane in CrossboneIsleBane while Halt holds it
+/// (EVENT_TALK_HALTED): Bane, a Venus Djinni, joins the party.
 static void Event_BaneJoins(void) {
   Djinn_JoinParty(ACTOR_BANE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE));
 }
@@ -594,7 +607,7 @@ static void Event_ShowRedKey(void) {
   s32 z = PIXELS(776);
 
   Map_CopyCells(25, 45, 1, 2, 25, 48);
-  if (Engine_GameFlagIsSet(0xeeb) == 0)
+  if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
     Engine_ActorSetPosition(keyActorId, x, z);
   WAIT(1);
 }
@@ -618,27 +631,32 @@ static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
 
 /// Catch on CrossboneIsleKeys's first Blue Key: the party gets it.
 static void Event_CatchFirstBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY, 0xee7);
+  CrossboneIsleKeys_CollectKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY,
+                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY);
 }
 
 /// Catch on CrossboneIsleKeys's second Blue Key: the party gets it.
 static void Event_CatchSecondBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY, 0xee8);
+  CrossboneIsleKeys_CollectKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY,
+                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1);
 }
 
 /// Catch on CrossboneIsleKeys's third Blue Key: the party gets it.
 static void Event_CatchThirdBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY, 0xee9);
+  CrossboneIsleKeys_CollectKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY,
+                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2);
 }
 
 /// Catch on CrossboneIsleKeys's fourth Blue Key: the party gets it.
 static void Event_CatchFourthBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY, 0xeea);
+  CrossboneIsleKeys_CollectKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY,
+                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3);
 }
 
 /// Catch on CrossboneIsleKeys's revealed Red Key: the party gets it.
 static void Event_CatchRedKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_RED_KEY, ITEM_RED_KEY, 0xeeb);
+  CrossboneIsleKeys_CollectKey(ACTOR_RED_KEY, ITEM_RED_KEY,
+                               FLAG_CROSSBONE_ISLE_RED_KEY);
 }
 
 /// Starts the first chase when an uncloaked leader enters its area.
@@ -648,10 +666,10 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct EventWork *event = gEventWork;
 
-  if (!FLAG_CHECK(FLAG_SCENE_TEMP_20) && gGameState.cloaked == 0 &&
+  if (!FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
       gGameState.pausedObject != ACTOR_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
-    Engine_GameFlagSet(FLAG_SCENE_TEMP_20);
+    Engine_GameFlagSet(PURSUER_AFTER_LEADER_FLAG);
     event->raisedTrigger = TRIGGER_FIRST_CHASE;
   }
 }
@@ -679,7 +697,7 @@ static void Event_DodgeFirstPursuer(void) {
   Actor_SetDestination(ACTOR_FIRST_STATUE, 360, 152);
   Engine_ActorWaitForMove(ACTOR_FIRST_STATUE);
   EV_END();
-  GameFlag_Clear(FLAG_SCENE_TEMP_20);
+  GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
 
 /// Starts the second chase when the leader enters column ten.
@@ -689,10 +707,10 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct EventWork *work = gEventWork;
 
-  if (FLAG_CHECK(FLAG_SCENE_TEMP_20) == 0 && gGameState.cloaked == 0 &&
+  if (FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && gGameState.cloaked == 0 &&
       gGameState.pausedObject != ACTOR_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
-    FLAG_SET(FLAG_SCENE_TEMP_20);
+    FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
     SceneState_StoreStep(&work->raisedTrigger, TRIGGER_SECOND_CHASE);
   }
 }
@@ -720,7 +738,7 @@ static void Event_DodgeSecondPursuer(void) {
   Actor_SetDestination(ACTOR_SECOND_STATUE, 168, 264);
   Engine_ActorWaitForMove(ACTOR_SECOND_STATUE);
   EV_END();
-  GameFlag_Clear(FLAG_SCENE_TEMP_20);
+  GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
 
 /// Moves a pursuer to the leader column and remembers its last column.
@@ -844,9 +862,9 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct GameState *state = &gGameState;
 
   if (state->pausedObject != ACTOR_FIFTH_STATUE &&
-      FLAG_CHECK(FLAG_SCENE_TEMP_20) == 0 && state->cloaked == 0 &&
+      FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && state->cloaked == 0 &&
       column == 19 && (u32)(row - 15) <= 1) {
-    FLAG_SET(FLAG_SCENE_TEMP_20);
+    FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
     SceneState_StoreStep(&work->raisedTrigger, TRIGGER_FIFTH_CHASE);
   }
 }
@@ -873,7 +891,7 @@ static void Event_DodgeFifthPursuer(void) {
   Actor_SetDestination(ACTOR_FIFTH_STATUE, 312, 232);
   Engine_ActorWaitForMove(ACTOR_FIFTH_STATUE);
   EV_END();
-  GameFlag_Clear(FLAG_SCENE_TEMP_20);
+  GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
 
 /// Reveal in CrossboneIsleStatues: the translucent layer over the room
@@ -901,26 +919,26 @@ static void Event_UseLadder(void) {
   u16 facing = leader->facing;
 
   if (facing == FACING_NORTH) {
-    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_06) != 0) {
+    if (Engine_GameFlagIsSet(BANE_CHEST_AT_LADDER_FLAG) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
         Map_CopyCellAttributes(46, 43, 1, 1, destinationColumn, destinationRow);
       }
     }
-    Engine_GameFlagClear(FLAG_SCENE_TEMP_07);
+    Engine_GameFlagClear(BANE_LOOKED_EAST_FLAG);
     Field_ClimbUp();
   } else if (facing == FACING_SOUTH) {
     Field_ClimbDown();
-  } else if (facing == 0) {
-    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_06) != 0) {
+  } else if (facing == FACING_EAST) {
+    if (Engine_GameFlagIsSet(BANE_CHEST_AT_LADDER_FLAG) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
         Map_CopyCellAttributes(58, 36, 1, 1, destinationColumn, destinationRow);
       }
     }
-    Engine_GameFlagSet(FLAG_SCENE_TEMP_07);
+    Engine_GameFlagSet(BANE_LOOKED_EAST_FLAG);
     Engine_LeaderCheckAhead();
   } else if (facing == FACING_WEST) {
     if (leader->y.fixed == 0) {
@@ -945,9 +963,9 @@ static void Event_FreezePuddle(void) {
     u8 *priorityFlags = &puddle->priorityFlags;
 
     *motionFlags = 0;
-    *priorityFlags = 2;
+    *priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Engine_GameFlagSet(BANE_PUDDLE_FROZEN_FLAG);
 }
 
 /// Walking into CrossboneIsleBane's first pillar from the ladder side
@@ -969,28 +987,28 @@ static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
   Map_CopyCellAttributes(58, 42, 1, 1, 42, 42);
   Map_CopyCellAttributes(62, 37, 3, 1, 37, 42);
 
-  Object_GetById(ACTOR_FIRST_PILLAR)->motionFlags = 1;
+  Object_GetById(ACTOR_FIRST_PILLAR)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
 }
 
 /// Restores support under the first pillar at the eastern cell.
 static void CrossboneIsleKeys_RestoreEastUnderfootCell(void) {
 
   Map_CopyCellAttributes(58, 41, 1, 1, 42, 42);
-  Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
+  Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the middle cell.
 static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
 
   Map_CopyCellAttributes(44, 42, 1, 1, 41, 42);
-  Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
+  Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the western cell.
 static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
 
   Map_CopyCellAttributes(39, 42, 1, 1, 40, 42);
-  Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
+  Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Move on CrossboneIsleBane's first pillar: its support cells are
@@ -1003,11 +1021,13 @@ static void Event_UpdateFirstPillarTerrain(void) {
   u8 lowered;
 
   if (height == 0) {
-    Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
+    Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags =
+        ACTOR_PRIORITY_UNDERFOOT;
   }
   CrossboneIsleKeys_RestoreFirstPillarTerrain();
   lowered = 0;
-  Object_GetById(ACTOR_FIRST_PILLAR)->motionFlags = 3;
+  Object_GetById(ACTOR_FIRST_PILLAR)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (column == 40) {
     CrossboneIsleKeys_RestoreWestUnderfootCell();
   } else if (column == 42) {
@@ -1055,13 +1075,13 @@ static void Event_PushFirstPillar(void) {
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Scheduler_RemoveCallback(CrossboneIsleKeys_FollowSecondPillar);
   OBJ_POS_SET(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
-  if (FLAG_CHECK(FLAG_SCENE_TEMP_07) != 0) {
+  if (FLAG_CHECK(BANE_LOOKED_EAST_FLAG) != 0) {
     Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
     Map_CopyCellAttributes(46, 43, 1, 1, 45, 43);
   }
   CrossboneIsleKeys_PositionSecondPillarMapObject();
-  FLAG_SET(FLAG_SCENE_TEMP_06);
+  FLAG_SET(BANE_CHEST_AT_LADDER_FLAG);
 }
 
 /// Move on CrossboneIsleBane's second pillar: the chest on top of it stays
@@ -1271,16 +1291,16 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
   }
   switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
-    if (Engine_GameFlagIsSet(0xee7) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
       OBJ_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
     }
-    if (Engine_GameFlagIsSet(0xee8) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
       OBJ_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
     }
-    if (Engine_GameFlagIsSet(0xee9) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
       OBJ_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
     }
-    if (Engine_GameFlagIsSet(0xeea) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
       OBJ_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
     }
     break;
@@ -1312,16 +1332,16 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
   Colosso_ShowItemIcon(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY);
-  if (FLAG_CHECK(0xee7) == 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
     OBJ_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
   }
-  if (FLAG_CHECK(0xee8) == 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
     OBJ_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
   }
-  if (FLAG_CHECK(0xee9) == 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
     OBJ_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
   }
-  if (FLAG_CHECK(0xeea) == 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
     OBJ_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
@@ -1343,10 +1363,10 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
 
 /// Configures the pursuers, their chase triggers and blending.
 static void CrossboneIsleKeys_InitializeStatues(void) {
-  Object_GetById(ACTOR_FIRST_STATUE)->collisionFlags = 1;
-  Object_GetById(ACTOR_SECOND_STATUE)->collisionFlags = 1;
-  Object_GetById(ACTOR_THIRD_STATUE)->collisionFlags = 1;
-  Object_GetById(ACTOR_FOURTH_STATUE)->collisionFlags = 1;
+  Object_GetById(ACTOR_FIRST_STATUE)->collisionFlags = ACTOR_SOLID;
+  Object_GetById(ACTOR_SECOND_STATUE)->collisionFlags = ACTOR_SOLID;
+  Object_GetById(ACTOR_THIRD_STATUE)->collisionFlags = ACTOR_SOLID;
+  Object_GetById(ACTOR_FOURTH_STATUE)->collisionFlags = ACTOR_SOLID;
   Object_GetById(ACTOR_FIRST_STATUE)->scaleX = 7 * Q16_ONE / 10;
   Object_GetById(ACTOR_SECOND_STATUE)->scaleX = 7 * Q16_ONE / 10;
   Object_GetById(ACTOR_THIRD_STATUE)->scaleX = 7 * Q16_ONE / 10;
@@ -1388,7 +1408,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   Object_GetById(ACTOR_FOURTH_PILLAR)->motionFlags = 0;
   Object_GetById(ACTOR_FIFTH_PILLAR)->motionFlags = 0;
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
-  if (FLAG_CHECK(FLAG_SCENE_TEMP_00) != 0) {
+  if (FLAG_CHECK(BANE_PUDDLE_FROZEN_FLAG) != 0) {
     Event_FreezePuddle();
     OBJ_MODE(ACTOR_PUDDLE, 5);
   }
@@ -1597,10 +1617,10 @@ struct SceneEvent gCrossboneIsleKeysRoomEvents[] = {
     // Unused: the plain touch rows above answer codes 53 and 54 first.
     { TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedCheckLeaderAhead) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedCheckLeaderAhead) },
-    { SEARCH(SEARCH_CHEST), 100, 0xeca, FIND_COINS(333) },
-    { SEARCH(SEARCH_CHEST), 101, 0xecb, FIND_ITEM(ITEM_FAIRY_RING) },
-    { SEARCH(SEARCH_CHEST), 102, 0xecc, FIND_ITEM(ITEM_COOKIE) },
-    { SEARCH(SEARCH_CHEST), 103, 0xecd, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_KEYS_333_COINS, FIND_COINS(333) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_KEYS_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SCENE_EVENTS_END },
 };
 
@@ -1621,10 +1641,10 @@ struct SceneEvent gCrossboneIsleStatuesEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_THIRD_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FOURTH_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIFTH_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
-    { SEARCH(SEARCH_CHEST), 100, 0xece, FIND_COINS(444) },
-    { SEARCH(SEARCH_CHEST), 101, 0xecf, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_CHEST), 102, 0xed0, FIND_ITEM(ITEM_STORM_GEAR) },
-    { SEARCH(SEARCH_CHEST), 103, 0xed1, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_STATUES_444_COINS, FIND_COINS(444) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR, FIND_ITEM(ITEM_STORM_GEAR) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_STATUES_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
@@ -1682,24 +1702,28 @@ struct SceneEvent gCrossboneIsleBaneEvents[] = {
      EVENT_SCRIPT(Event_BaneKeepsAway)},
     {EVENT_TOUCH, 41, FLAG_DJINNI_0 + DJINNI_BANE,
      EVENT_SCRIPT(Event_BaneKeepsAway)},
-    {0x7, ACTOR_BANE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BaneJoins)},
+    {EVENT_TALK_HALTED, ACTOR_BANE, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_BaneJoins)},
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_BANE, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_HaltBane)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, BANE_PUDDLE_FROZEN_FLAG,
      EVENT_SCRIPT(Event_FreezePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_SCENE_TEMP_01,
      EVENT_SCRIPT(Event_UpdateFirstPillarTerrain)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, FLAG_SCENE_TEMP_06,
-     EVENT_SCRIPT(Event_UpdateSecondPillarTerrain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR,
+     BANE_CHEST_AT_LADDER_FLAG, EVENT_SCRIPT(Event_UpdateSecondPillarTerrain)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR, FLAG_SCENE_TEMP_03,
      EVENT_SCRIPT(Event_UpdateThirdPillarTerrain)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_PILLAR, FLAG_SCENE_TEMP_04,
      EVENT_SCRIPT(Event_UpdateFourthPillarTerrain)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIFTH_PILLAR, FLAG_SCENE_TEMP_05,
      EVENT_SCRIPT(Event_UpdateFifthPillarTerrain)},
-    {SEARCH(SEARCH_CHEST), 104, 0xed6, FIND_COINS(666)},
-    {SEARCH(SEARCH_CHEST), 105, 0xed7, FIND_ITEM(ITEM_WATER_OF_LIFE)},
-    {SEARCH(SEARCH_CHEST), 106, 0xed8, FIND_ITEM(ITEM_ELIXIR)},
+    {SEARCH(SEARCH_CHEST), 104, FLAG_CROSSBONE_ISLE_BANE_666_COINS,
+     FIND_COINS(666)},
+    {SEARCH(SEARCH_CHEST), 105, FLAG_CROSSBONE_ISLE_BANE_WATER_OF_LIFE,
+     FIND_ITEM(ITEM_WATER_OF_LIFE)},
+    {SEARCH(SEARCH_CHEST), 106, FLAG_CROSSBONE_ISLE_BANE_ELIXIR,
+     FIND_ITEM(ITEM_ELIXIR)},
     {SEARCH(SEARCH_CHEST), 107, FLAG_CROSSBONE_ISLE_DEMON_AXE,
      FIND_ITEM(ITEM_DEMON_AXE)},
     {SCENE_EVENTS_END},

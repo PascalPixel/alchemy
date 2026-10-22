@@ -18,9 +18,9 @@ extern u16 gPalaceGateOpenSteps[];
 extern s32 gGuardWatchesParty[];
 extern struct SceneEntrance gMcCoyPalaceGroundsEntrances[];
 extern u32 gMcCoyPalaceGroundsExits[];
-extern struct ScenePlacement gMcCoyPalaceGroundsPlacementsOther[];
+extern struct ScenePlacement gMcCoyPalaceGroundsNoPlacements[];
 extern struct ScenePlacement gMcCoyPalaceGroundsPlacements[];
-extern struct SceneEvent gMcCoyPalaceGroundsEventsOther[];
+extern struct SceneEvent gMcCoyPalaceGroundsNoEvents[];
 extern struct SceneEvent gMcCoyPalaceGroundsEvents[];
 
 #endif

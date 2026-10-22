@@ -1,34 +1,31 @@
-/// @file
-/// Lemurian ship (SceneId_LemurianShip, by its area name), the last scene of
-/// the game: the edge of Lalivero, where Babi's ship lies under the water.
+/// @file The wharf at the edge of Lalivero where Babi's ship lies sunk, the
+/// game's last scene: SceneId_LemurianShip, with the area name Lemurian ship.
+/// It is entered from Faran's house (lalivero_interiors.c) once Iodem has given
+/// the party the Black Orb, and stepping back on cell code 1
+/// (Event_LeaveTheShip) returns there.
 ///
-/// Where it falls in the story: back in Lalivero from Venus Lighthouse, Iodem
-/// of Tolbi gives the party the Black Orb, which they need to sail Babi's ship,
-/// "the ship of the ancients", docked at the edge of town; Babi, the ruler of
-/// Tolbi, crossed the sea in it, and the party has promised him to find
-/// Lemuria. The ship will also help them search for Jenna, swept out to sea
-/// with Idejima.
+/// LemurianShip_SetupScene sinks the ship's two map layers 90 pixels, puts the
+/// ship's pieces and the party at sprite priority 1, and starts the water's
+/// ripple (Ripple_Start), an HBlank DMA of per-line scroll offsets for BG3 that
+/// Reveal stops while it shows the scene. Arriving by
+/// LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug scene selector reaches,
+/// first gives the leader the Black Orb.
 ///
-/// The scene's one story event is using the Black Orb at the water's edge (cell
-/// code 10, RaiseTheShip): the orb glows, spray rises and the ship comes up out
-/// of the water 90 pixels. SetSail then plays the departure: Garet, Ivan and
-/// Mia step out and talk over the journey ("It looks like it's finally time to
-/// leave Gondowan."), and the player answers three questions with yes or no,
-/// each choosing one of two replies: Garet's, whether the journey ends once
-/// they find Jenna; Mia's, whether they must find Jenna before going to
-/// Lemuria; and Mia's, whether they will be all right on the rough seas. The
-/// party boards, the ship sails east as curtains close (Curtain_Start), and the
-/// game goes to the clear screen, the title's TITLE_FROM_LEMURIAN_SHIP, with
-/// the music kept (FLAG_KEEP_MUSIC). The callbacks RaiseTheShip adds (the
-/// swell, the spray and the ship's glow) run until then.
+/// Using the Black Orb at the water's edge (cell code 10) plays
+/// Event_RaiseTheShip: the orb glows, spray rises and the ship comes up out of
+/// the water 90 pixels. It adds Ship_UpdateSwell and ShipGlow_CyclePalette,
+/// which run to the end of the game, and then LemurianShip_SetSail plays the
+/// departure: three yes-or-no questions each choose one of two replies, the
+/// party boards, the ship sails east as the curtains close (Curtain_Start), and
+/// the game goes to the clear screen by the title's TITLE_FROM_LEMURIAN_SHIP,
+/// keeping the music (FLAG_KEEP_MUSIC).
 ///
-/// Setup (LemurianShip_SetupScene) sinks the ship's two pieces 90 pixels, draws
-/// them and the party behind the water layers and starts the water's ripple,
-/// which Reveal stops while it shows the scene. Arriving by
-/// LEMURIAN_SHIP_WITH_BLACK_ORB, which the entrance table does not list, first
-/// gives the leader the Black Orb. Stepping back on cell code 1 (LeaveTheShip)
-/// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE, back to Lalivero
-/// (SceneId_LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP).
+/// Open questions:
+/// - XXX: what sprite 0x1f6 shows, the two pieces placed over the water, of
+///   which the north one sails off with the ship; a render of the scene would
+///   settle a name in sprite_ids.h.
+/// - XXX: what sprite 0x1f7 shows, the drops of spray Ship_UpdateSwell
+///   creates; a recording of the ship rising would settle a name.
 
 #include "script.h"
 #include "version.h"
@@ -91,6 +88,10 @@ enum {
   SHIP_SOUTH
 };
 
+/// The deck height of a party member who has not yet boarded: the swell
+/// (Ship_UpdateSwell) moves only those who have.
+#define SHIP_NOT_ON_DECK (-0x10000)
+
 /// The sprite of a ship piece or a party actor.
 // ACTOR_SPRITE reads actor->sprite through an s32, so each store reloads it as
 // the native does; read as the field, the two stores share one load.
@@ -100,11 +101,11 @@ enum {
 #else
 #define ACTOR_SPRITE(actor) ((struct AnimationObject *)*(s32 *)&(actor)->sprite)
 #endif
-/// Sets one of the sprite's two priority bits of a ship piece or a party
-/// actor: 9 sets the first, any other the second.
-#define SET_PRIORITY(actor, n)                                                 \
-  ((n) == 9 ? (void)(ACTOR_SPRITE(actor)->image.priority = 1)                  \
-            : (void)(ACTOR_SPRITE(actor)->shadow.priority = 1))
+/// The sprite priority of an actor's picture and of its shadow.
+#define SET_IMAGE_PRIORITY(actor, level)                                       \
+  ((void)(ACTOR_SPRITE(actor)->image.priority = (level)))
+#define SET_SHADOW_PRIORITY(actor, level)                                      \
+  ((void)(ACTOR_SPRITE(actor)->shadow.priority = (level)))
 
 s32 Math_DivideUnsigned();
 
@@ -124,7 +125,7 @@ const struct ScenePlacement *LemurianShip_GetPlacements(void) {
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
 /// colour. Reached by stepping on cell code 1 (gLemurianShipEvents); takes
 /// LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
-static void LeaveTheShip(void) {
+static void Event_LeaveTheShip(void) {
   Engine_EventRequestExit(gEventWork->touchedTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
@@ -148,7 +149,7 @@ const struct SceneEvent *LemurianShip_GetEvents(void) {
 
 /// Slides a window of six colours along gShipGlowPalettes into palette 7's
 /// colours 4 to 9, one step every 6 frames, so the ship's glow ripples.
-/// Run each frame once RaiseTheShip has brought the ship up.
+/// Run each frame once Event_RaiseTheShip has brought the ship up.
 static void ShipGlow_CyclePalette(void) {
   u16 *frame;
   s32 paletteIndex;
@@ -157,7 +158,7 @@ static void ShipGlow_CyclePalette(void) {
   paletteIndex = Math_DivideUnsigned(*frame, 6);
   Dma_Set((const void *)(((u32)(paletteIndex << 16) >> 15) +
                          (u32)gShipGlowPalettes),
-          (void *)0x050000e8, (DMA_ENABLE << 16) | 6, REG_DMA3);
+          (void *)&BG_PLTT_COLOR(7, 4), (DMA_ENABLE << 16) | 6, REG_DMA3);
   (*frame)++;
   if (*frame > 35)
     *frame = 0;
@@ -167,33 +168,26 @@ static void ShipGlow_CyclePalette(void) {
 /// gSprayFallScript, which frees it.
 /// The update hook Ship_UpdateSwell gives each drop it creates.
 static void Spray_Update(union FieldObject *fieldObject) {
-  u8 *obj = (u8 *)fieldObject;
-  u16 *wait = &((struct FieldActor *)obj)->timer;
-  s32 left = *wait;
+  struct FieldActor *drop = (struct FieldActor *)fieldObject;
 
-  if (*(s16 *)wait != 0) {
+  if (drop->timer != 0) {
     s32 drift;
 
-    *wait = left - 1;
+    drop->timer--;
     drift = Engine_RandomNext();
     drift -= Engine_RandomNext();
-    ((struct FieldActor *)obj)->x.fixed += drift;
-    ((struct FieldActor *)obj)->y.fixed += 0xcccc;
-  } else if (*(s16 *)&((struct FieldActor *)obj)->work != 0) {
-    *(s16 *)&((struct FieldActor *)obj)->work = 0;
-    Object_SetMode((struct FieldActor *)obj, 1);
-    {
-      u16 *p = (u16 *)(obj + 94);
-      s32 delay = 20;
-
-      *p = delay;
-    }
-    Engine_ObjectSetScript((struct FieldActor *)obj, gSprayFallScript);
+    drop->x.fixed += drift;
+    drop->y.fixed += 0xcccc;
+  } else if ((s16)drop->work != 0) {
+    drop->work = 0;
+    Object_SetMode(drop, 1);
+    drop->wait = 20;
+    Engine_ObjectSetScript(drop, gSprayFallScript);
   }
 }
 
 /// Every 40 frames, the Black Orb's glow fades a step, down to 4.
-/// Run each frame while the ship rises; RaiseTheShip adds and removes it.
+/// Run each frame while the ship rises; Event_RaiseTheShip adds and removes it.
 static void OrbGlow_Fade(void) {
   s32 frame = gOrbGlowFadeFrames + 1;
 
@@ -209,8 +203,8 @@ static void OrbGlow_Fade(void) {
 /// The Black Orb's glow pulses in the blend, the ship (the hull on BG2, the
 /// deck on BG1) and everyone on deck bob with the swell, and spray rises from
 /// the water in a screen-sized box (240 by 160) at the view.
-/// Run each frame from RaiseTheShip to the end of the game; each part runs
-/// while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is set.
+/// Run each frame from Event_RaiseTheShip to the end of the game; each part
+/// runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is set.
 static void Ship_UpdateSwell(void) {
   /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again with ldrh for
    * the register write; as a plain u16, 5 of 225 instructions differ in
@@ -234,25 +228,25 @@ static void Ship_UpdateSwell(void) {
     swell = Iwram_MulQ16(Engine_MathSin(gSwellPhase << 9), 2) << 16;
     map->layers[MAP_LAYER_MIDDLE].offsetY = gShipHullY + swell;
     map->layers[MAP_LAYER_OVERHEAD].offsetY = gShipDeckY + swell;
-    if (gLeaderDeckY != -0x10000) {
+    if (gLeaderDeckY != SHIP_NOT_ON_DECK) {
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       actor->y.fixed = gLeaderDeckY + swell;
       actor->terrainHeight = gLeaderDeckY + swell;
       actor->motionFlags = 0;
     }
-    if (gGaretDeckY != -0x10000) {
+    if (gGaretDeckY != SHIP_NOT_ON_DECK) {
       actor = Object_GetById(GARET);
       actor->y.fixed = gGaretDeckY + swell;
       actor->terrainHeight = gLeaderDeckY + swell;
       actor->motionFlags = 0;
     }
-    if (gMiaDeckY != -0x10000) {
+    if (gMiaDeckY != SHIP_NOT_ON_DECK) {
       actor = Object_GetById(MIA);
       actor->y.fixed = gMiaDeckY + swell;
       actor->terrainHeight = gLeaderDeckY + swell;
       actor->motionFlags = 0;
     }
-    if (gIvanDeckY != -0x10000) {
+    if (gIvanDeckY != SHIP_NOT_ON_DECK) {
       actor = Object_GetById(IVAN);
       actor->y.fixed = gIvanDeckY + swell;
       actor->terrainHeight = gLeaderDeckY + swell;
@@ -276,7 +270,7 @@ static void Ship_UpdateSwell(void) {
       actor->timer = 60;
       actor->work = 1;
       actor->motionFlags = 0;
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->sprite->image.priority = 2;
       Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
       Object_SetMode(actor, 0);
@@ -334,10 +328,10 @@ static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
 /// Lemurian ship, the departure: the others step out and talk over the journey
 /// while three questions shape their replies, everyone boards, and the ship
 /// sails east as the curtains close and the game goes to the clear screen.
-/// Called by RaiseTheShip once the ship has risen. Sets FLAG_KEEP_MUSIC and
-/// sends the party to the clear screen (SceneId_Title,
+/// Called by Event_RaiseTheShip once the ship has risen. Sets FLAG_KEEP_MUSIC
+/// and sends the party to the clear screen (SceneId_Title,
 /// TITLE_FROM_LEMURIAN_SHIP).
-static void SetSail(void) {
+static void LemurianShip_SetSail(void) {
   struct MapScrollWork *scroll;
   struct FieldActor *ship;
   struct EventWork *event;
@@ -599,14 +593,14 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
 /// the ship comes up out of the sea 90 pixels; then the party sets sail.
 /// Reached by using the Black Orb at the water's edge (cell code 10). Adds
 /// the swell and glow callbacks, which run to the end of the game, and calls
-/// SetSail.
-static void RaiseTheShip(void) {
+/// LemurianShip_SetSail.
+static void Event_RaiseTheShip(void) {
   struct MapScrollWork *map;
   s32 i;
   s32 flash;
   s32 white;
   s32 dark;
-  s32 sunk;
+  s32 risen;
   /* FAKEMATCH(volatile): each BGxCNT value stored at sp+6 with strh on its
    * way to the register; as a plain u16, 6 of 231 instructions differ in
    * tbs-en. */
@@ -622,22 +616,22 @@ static void RaiseTheShip(void) {
   Event_Wait(40);
   Event_PlayCue(SE_140);
   for (i = 0; i <= 15; i++) {
-    Io_Write16((i << 11) | (i << 5), &PLTT_BACKDROP);
+    Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Event_Wait(10);
   }
   {
-    u16 color = 0x7e00;
+    u16 color = RGB(0, 16, 31);
 
     PLTT_BACKDROP = color;
   }
   {
-    u16 bright = 0x1010;
+    u16 bright = BLEND_ALPHA(16, 16);
 
     for (flash = 0; flash < 3; flash++) {
       Event_PlayCue(SE_212);
       REG_BLDALPHA = bright;
       Event_Wait(3);
-      Io_Write16(0x810, &REG_BLDALPHA);
+      Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
       Event_Wait(65);
     }
   }
@@ -658,24 +652,24 @@ static void RaiseTheShip(void) {
   gOrbGlowFadeFrames = 0;
   FieldScheduler_AddCallback(OrbGlow_Fade, TASK_PRIORITY_SCENE);
   // The ship rises 90 pixels, 0.2 pixels a frame.
-  sunk = 0;
+  risen = 0;
   do {
     map->layers[MAP_LAYER_MIDDLE].offsetY += 0x3333;
     map->layers[MAP_LAYER_OVERHEAD].offsetY += 0x3333;
-    sunk += 0x3333;
+    risen += 0x3333;
     Task_Wait(1);
-  } while (sunk <= 0x59ffff);
+  } while (risen < PIXELS(90));
   Engine_TaskRemoveCallback(OrbGlow_Fade);
   gSprayActive = 0;
-  REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 3;
-  REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
-  REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
+  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
   Event_PlayCue(SE_STOP_SLOT3);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
   Event_PlayCue(SE_145);
-  Io_Write16(191, &REG_BLDCNT);
+  Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
   for (white = 0; white <= 16; white++) {
     REG_BLDY = white;
     Event_Wait(1);
@@ -694,12 +688,12 @@ static void RaiseTheShip(void) {
   AudioCommand_WaitForStateByteClear();
   Event_Wait(20);
   Event_End();
-  SetSail();
+  LemurianShip_SetSail();
 }
 
 /// Sets the Lemurian ship's scene up: the ship sunk 90 pixels, its pieces and
-/// the party drawn behind the water layers, and the ripple running. The scene's
-/// initialization; arriving by LEMURIAN_SHIP_WITH_BLACK_ORB first gives the
+/// the party at sprite priority 1 over the layers' new priorities, and the
+/// ripple running. Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB first gives the
 /// leader the Black Orb.
 s32 LemurianShip_SetupScene(void) {
   struct MapScrollWork *map;
@@ -714,54 +708,56 @@ s32 LemurianShip_SetupScene(void) {
   ((struct EventWork *)gMapWork[19])->startTransition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Object_GetById(SHIP_NORTH)->collisionFlags = 0;
-  Object_GetById(SHIP_NORTH)->priorityFlags = 2;
+  Object_GetById(SHIP_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Object_GetById(SHIP_SOUTH)->collisionFlags = 0;
-  Object_GetById(SHIP_SOUTH)->priorityFlags = 2;
+  Object_GetById(SHIP_SOUTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
     struct FieldActor *actor = Object_GetById(SHIP_NORTH);
 
-    SET_PRIORITY(actor, 9);
+    SET_IMAGE_PRIORITY(actor, 1);
   }
   {
     struct FieldActor *actor = Object_GetById(SHIP_SOUTH);
 
-    SET_PRIORITY(actor, 9);
+    SET_IMAGE_PRIORITY(actor, 1);
   }
   {
     struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    SET_PRIORITY(actor, 9);
-    SET_PRIORITY(actor, 21);
+    SET_IMAGE_PRIORITY(actor, 1);
+    SET_SHADOW_PRIORITY(actor, 1);
   }
   {
     struct FieldActor *actor = Object_GetById(GARET);
 
-    SET_PRIORITY(actor, 9);
-    SET_PRIORITY(actor, 21);
+    SET_IMAGE_PRIORITY(actor, 1);
+    SET_SHADOW_PRIORITY(actor, 1);
   }
   {
     struct FieldActor *actor = Object_GetById(IVAN);
 
-    SET_PRIORITY(actor, 9);
-    SET_PRIORITY(actor, 21);
+    SET_IMAGE_PRIORITY(actor, 1);
+    SET_SHADOW_PRIORITY(actor, 1);
   }
   {
     struct FieldActor *actor = Object_GetById(MIA);
 
-    SET_PRIORITY(actor, 9);
-    SET_PRIORITY(actor, 21);
+    SET_IMAGE_PRIORITY(actor, 1);
+    SET_SHADOW_PRIORITY(actor, 1);
   }
-  REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 2;
-  REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
-  REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 3;
-  Io_Write16(0x2648, &REG_BLDCNT);
-  Io_Write16(0x810, &REG_BLDALPHA);
+  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  Io_Write16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
+                 BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,
+             &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
   {
     struct MapLayerScroll *layer = map->layers + 1;
 
-    layer->offsetY += -0x5a0000;
+    layer->offsetY += -PIXELS(90);
     layer = map->layers + 2;
-    layer->offsetY += -0x5a0000;
+    layer->offsetY += -PIXELS(90);
   }
   Engine_MapRedraw();
   Ripple_Start();
@@ -906,7 +902,7 @@ static void Curtain_Close(void) {
 
 /// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels
 /// open.
-/// Called by SetSail as the ship leaves; adds Curtain_Close.
+/// Called by LemurianShip_SetSail as the ship leaves; adds Curtain_Close.
 static void Curtain_Start(void) {
   u8 *tiles;
 
@@ -998,13 +994,13 @@ struct ScenePlacement gLemurianShipPlacements[] = {
 };
 
 struct SceneEvent gLemurianShipEvents[] = {
-    {EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveTheShip)},
+    {EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTheShip)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(Ripple_StopForReveal)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(Ripple_Start)},
     {USE_ITEM(ITEM_BLACK_ORB), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(RaiseTheShip)},
+     EVENT_SCRIPT(Event_RaiseTheShip)},
     {SCENE_EVENTS_END},
 };
 
@@ -1026,13 +1022,13 @@ s32 gShipHullY = 0;
 
 s32 gShipDeckY = 0;
 
-s32 gLeaderDeckY = -0x10000;
+s32 gLeaderDeckY = SHIP_NOT_ON_DECK;
 
-s32 gGaretDeckY = -0x10000;
+s32 gGaretDeckY = SHIP_NOT_ON_DECK;
 
-s32 gMiaDeckY = -0x10000;
+s32 gMiaDeckY = SHIP_NOT_ON_DECK;
 
-s32 gIvanDeckY = -0x10000;
+s32 gIvanDeckY = SHIP_NOT_ON_DECK;
 
 u32 gShipGlowStep[] = {
     0,

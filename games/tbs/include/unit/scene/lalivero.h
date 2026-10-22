@@ -12,7 +12,7 @@ const u32 *Lalivero_GetExits(void);
 const struct ScenePlacement *Lalivero_GetPlacements(void);
 const struct SceneEvent *Lalivero_GetEvents(void);
 s32 Lalivero_Initialize(void);
-extern s32 gLaliveroMournerSobs[];
+extern s32 gLalivero_CryingScript[];
 extern struct SceneEntrance gLaliveroEntrances[];
 extern u32 gLaliveroExits[];
 extern struct ScenePlacement gLaliveroPlacements[];

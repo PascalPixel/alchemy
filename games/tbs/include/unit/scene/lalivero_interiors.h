@@ -11,17 +11,18 @@ const u32 *LaliveroInteriors_GetExits(void);
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void);
 const struct SceneEvent *LaliveroInteriors_GetEvents(void);
 s32 Scene_Initialize(void);
-extern s32 gLaliveroInnWorkerChores[];
-extern struct SceneEntrance gLaliveroEntrances[];
-extern struct SceneRegion gLaliveroSanctumRegions[];
-extern struct SceneRegion gLaliveroRegions[];
-extern u32 gLaliveroExits[];
-extern struct ScenePlacement gLaliveroPlacements[];
-extern struct ScenePlacement gFaranHousePlacements[];
-extern struct ScenePlacement gFaranHousePlacementsAfterLighthouse[];
-extern struct SceneEvent gLaliveroEvents[];
-extern struct SceneEvent gLaliveroEventsAfterLighthouse[];
-extern struct SceneEvent gFaranHouseEvents[];
-extern struct SceneEvent gFaranHouseEventsAfterLighthouse[];
+extern s32 gLaliveroInteriors_InnWorkerChores[];
+extern struct SceneEntrance gLaliveroInteriors_Entrances[];
+extern struct SceneRegion gLaliveroInteriors_ShopsRegions[];
+extern struct SceneRegion gLaliveroInteriors_FaransHouseRegions[];
+extern u32 gLaliveroInteriors_Exits[];
+extern struct ScenePlacement gLaliveroInteriors_ShopsPlacements[];
+extern struct ScenePlacement gLaliveroInteriors_FaransHousePlacements[];
+extern struct ScenePlacement
+    gLaliveroInteriors_FaransHousePlacementsAfterLighthouse[];
+extern struct SceneEvent gLaliveroInteriors_ShopsEvents[];
+extern struct SceneEvent gLaliveroInteriors_ShopsEventsAfterLighthouse[];
+extern struct SceneEvent gLaliveroInteriors_FaransHouseEvents[];
+extern struct SceneEvent gLaliveroInteriors_FaransHouseEventsAfterLighthouse[];
 
 #endif

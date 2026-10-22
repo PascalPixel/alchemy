@@ -845,6 +845,24 @@
 /// ★ Named from the game: "Please wait for me outside Faran's house. I wish to
 /// speak with you." (MsgLaliveroPleaseWaitForMeOutside)
 #define FLAG_IODEM_ASKED_TO_MEET 0x9bc
+/// The jar in the street.
+/// ★ Named from the game: "Water of Life" (MsgItemName)
+#define FLAG_LALIVERO_WATER_OF_LIFE 0xfb6
+/// The stone pillar in the street.
+/// ★ Named from the game: "Psy Crystal" (MsgItemName)
+#define FLAG_LALIVERO_PSY_CRYSTAL 0xfb7
+/// The chest in the street.
+/// ★ Named from the game: "Warrior's Helm" (MsgItemName)
+#define FLAG_LALIVERO_WARRIORS_HELM 0xfb8
+/// A barrel in the shops' scene (LaliveroShops).
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_LALIVERO_SHOPS_LUCKY_MEDAL 0xfb9
+/// A barrel in the shops' scene (LaliveroShops).
+/// ★ Named from the game: "Antidote" (MsgItemName)
+#define FLAG_LALIVERO_SHOPS_ANTIDOTE 0xfba
+/// A barrel in Faran's house and the inn (LaliveroFaransHouse).
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_LALIVERO_FARANS_HOUSE_LUCKY_MEDAL 0xfbb
 // Lunpa
 /// Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then
 /// on Lunpa's east guard asks whether the party came from Kalay, and touching
@@ -1793,6 +1811,99 @@
 /// The Nut circling over the island has been caught.
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_CROSSBONE_ISLE_NUT_CAUGHT 0xfd7
+/// The island's first chest; like the second, it opens from the east, south
+/// or southeast.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_COIN 0xec0
+/// The island's second chest.
+/// ★ Named from the game: "Mint" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_MINT 0xec1
+/// The chests of CrossboneIsleSteppingStones.
+/// ★ Named from the game: "Antidote" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_ANTIDOTE 0xec2
+/// ★ Named from the game: "Nut" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_NUT 0xec3
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_111_COINS 0xec4
+/// ★ Named from the game: "Hard Nut" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_HARD_NUT 0xec5
+/// The chests of CrossboneIsleIcePillars.
+/// ★ Named from the game: "Lucky Pepper" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_LUCKY_PEPPER 0xec6
+/// ★ Named from the game: "Mystery Blade" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_MYSTERY_BLADE 0xec7
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_222_COINS 0xec8
+/// ★ Named from the game: "Elixir" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_ELIXIR 0xec9
+/// The chests of CrossboneIsleKeys.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_KEYS_333_COINS 0xeca
+/// ★ Named from the game: "Fairy Ring" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING 0xecb
+/// ★ Named from the game: "Cookie" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_KEYS_COOKIE 0xecc
+/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_KEYS_SMOKE_BOMB 0xecd
+/// The chests of CrossboneIsleStatues.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_STATUES_444_COINS 0xece
+/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB 0xecf
+/// ★ Named from the game: "Storm Gear" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR 0xed0
+/// ★ Named from the game: "Psy Crystal" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STATUES_PSY_CRYSTAL 0xed1
+/// The chests of CrossboneIsleFloodgate.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS 0xed2
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL 0xed3
+/// ★ Named from the game: "Potion" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_POTION 0xed4
+/// ★ Named from the game: "Ninja Garb" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB 0xed5
+/// The chests of CrossboneIsleBane besides the Demon Axe's.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_BANE_666_COINS 0xed6
+/// ★ Named from the game: "Water of Life" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_BANE_WATER_OF_LIFE 0xed7
+/// ★ Named from the game: "Elixir" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_BANE_ELIXIR 0xed8
+/// The chests of CrossboneIsleStackedPillars.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_777_COINS 0xeda
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL 0xedb
+/// ★ Named from the game: "Psy Crystal" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL 0xedc
+/// ★ Named from the game: "Wicked Mace" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_WICKED_MACE 0xedd
+/// The chests of CrossboneIsleDragonStatue.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_888_COINS 0xede
+/// ★ Named from the game: "Potion" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_POTION 0xedf
+/// ★ Named from the game: "Cleric's Ring" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_CLERICS_RING 0xee0
+/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_SMOKE_BOMB 0xee1
+/// The chests of CrossboneIsleFloatingLogs.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_999_COINS 0xee2
+/// ★ Named from the game: "Water of Life" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_WATER_OF_LIFE 0xee3
+/// ★ Named from the game: "Muramasa" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_MURAMASA 0xee4
+/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_SLEEP_BOMB 0xee5
+/// The four Blue Keys of CrossboneIsleKeys have been picked up, one flag each
+/// from this one.
+/// ★ Named from the game: "Blue Key" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY 0xee7
+/// The Red Key of CrossboneIsleKeys has been picked up.
+/// ★ Named from the game: "Red Key" (MsgItemName)
+#define FLAG_CROSSBONE_ISLE_RED_KEY 0xeeb
 /// CrossboneIsleBane's chest, carried on its second pillar: a Demon Axe.
 /// ★ Named from the game: "Demon Axe" (MsgItemName)
 #define FLAG_CROSSBONE_ISLE_DEMON_AXE 0xed9

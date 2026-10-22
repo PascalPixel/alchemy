@@ -3588,6 +3588,9 @@ enum {
 enum {
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
+  /// The middle of the room, facing south. No exit leads to it: only the debug
+  /// scene selector, which warps to any entrance from 0 to 99, reaches it.
+  CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE = 99,
 };
 /// SceneId_CrossboneIsleFloatingLogs's exits.
 enum {
@@ -5289,19 +5292,19 @@ enum {
   BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM =
       11, ///< ★ Named from what the player sees: the small room with a locked
           ///< door and the arch on to the stone door (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_EAST =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST =
       12, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
-  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_RISE =
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_PIT =
       13, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_SOUTHWEST =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST =
       14, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH =
       15, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_NORTHWEST =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST =
       16, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH =
@@ -5336,19 +5339,19 @@ enum {
   BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM =
       10, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_EAST =
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST =
       11, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_RISE =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT =
       12, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_SOUTHWEST =
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST =
       13, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH =
       14, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_NORTHWEST =
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST =
       15, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH =
@@ -6055,8 +6058,9 @@ enum {
 /// SceneId_LemurianShip's entrances.
 enum {
   LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE = 1,
-  /// In no table row and led to by no exit; arriving by it hands the leader the
-  /// Black Orb. XXX: what arrives that way is not known.
+  /// In no table row and led to by no exit: only the debug scene selector,
+  /// which warps to any entrance from 0 to 99, reaches it. Arriving by it hands
+  /// the leader the Black Orb.
   LEMURIAN_SHIP_WITH_BLACK_ORB = 99,
 };
 /// SceneId_LemurianShip's exits.

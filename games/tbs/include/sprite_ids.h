@@ -79,8 +79,8 @@ enum SpriteId {
   /// ★ Named from what the player sees: an oar dipping into the water with a
   /// splash (its render)
   SPRITE_OAR = 0xe1,
-  /// The sign beside Tolbi Spring, Lalivero's and the Kolima Forest
-  /// floodgate's, and the signposts on the world map.
+  /// The signs of Lalivero, Tolbi Spring, Altin Peak and Kolima Forest's
+  /// floodgate, and the signposts on the world map.
   /// ★ Named from what the player sees: a wooden sign on a post (its render)
   SPRITE_SIGNPOST = 0x112,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
@@ -132,10 +132,6 @@ enum SpriteId {
   /// ★ Named from what the player sees: a golden statue of a figure in a long
   /// robe (spr_243.png)
   SPRITE_GOLDEN_STATUE = 0xf3,
-  /// Ivy on a cliff or round a stump, which Whirlwind blows away.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
-  SPRITE_IVY = 0xf8,
   SPRITE_DUST_PUFF = 222, ///< a puff of dust kicked up where an actor stands
   /// ★ Named from what the player sees: a wooden crate (spr_223.png)
   SPRITE_CRATE = 0xdf,
@@ -173,19 +169,29 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round floating platform (its
   /// render)
   SPRITE_FLOATING_PLATFORM = 0xf2,
+  /// The keys the scenes show: the barricade key McCoy tosses to the party,
+  /// and Lunpa Fortress's Cell Key.
+  /// ★ Named from what the player sees: a golden key (spr_245.png)
+  SPRITE_KEY = 0xf5,
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH = 0xf6,
   /// A fire burning on the ground, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame (spr_247.png)
   SPRITE_FIRE = 0xf7,
+  /// The ivy Whirlwind blows away, in Goma Cave, Vault, Bilibin, Lunpa
+  /// Fortress and Crossbone Isle, and a patch outside McCoy's Palace.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  SPRITE_IVY = 0xf8,
   /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
   SPRITE_CAPPED_PILLAR = 0xfd,
-  /// The pillars Move, Carry and pushes shift in Venus Lighthouse. Animations
-  /// 1 and 2 show a grey and an orange spiral on top; 3 to 8 a piece of gold
-  /// track instead, along which the lighthouse's lights run.
+  /// The pillars Move, Carry and pushes shift in Venus Lighthouse and on the
+  /// Road to Babi Lighthouse. Animations 1 and 2 show a grey and an orange
+  /// spiral on top; 3 to 8 a piece of gold track instead, along which Venus
+  /// Lighthouse's lights run.
   /// ★ Named from what the player sees: a grey pillar with a spiral carved on
   /// top (spr_256.png)
   SPRITE_SPIRAL_PILLAR = 0x100,
@@ -237,6 +243,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a white stone column lying west to
   /// east (its render)
   SPRITE_FALLEN_COLUMN_WEST_EAST = 0x12a,
+  /// The two halves of Babi Lighthouse's stone door, which slide apart.
+  /// ★ Named from what the player sees: half of a dark stone door (its
+  /// render)
+  SPRITE_STONE_DOOR_HALF = 0x128,
   /// The statues that chase the leader in Crossbone Isle, and those of the
   /// Tunnel Ruins and Venus Lighthouse.
   /// ★ Named from what the player sees: a statue of a woman in a long robe

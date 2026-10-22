@@ -1,32 +1,28 @@
 # Debug rooms
 
-![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
+![No door, table or event of the game leads to the three test rooms. The only way in is the debug scene selector, which warps to any scene by number, and the field opens it only when the Start menu is opened with B held while debug mode is on. Debug mode is switched off at power-on, and nothing the player can reach switches it on, so in the released game the selector, and the rooms behind it, are never reached. From the selector come the Djinn room, which eight scenes share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
 
-The ROM keeps three test rooms, each an ordinary scene overlay: one that hands
-out Djinn, one for levels and for browsing items, icons and letters, and one
-of shop and message tests. They are built exactly as [Scenes](../scene/README.md)
-describes, with the same entry, import and event tables, and are the smallest
-complete examples of one.
+The cartridge still holds three rooms the developers used to test the game,
+though no player can walk into them: one that hands out Djinn, one for
+raising levels and browsing items, icons and letters, and one of shop and
+message tests. Each is an ordinary scene overlay, built exactly as
+[Scenes](../scene/README.md) describes, with the same entry, import and event
+tables, so they are the smallest complete examples of a scene in the game.
 
 ## How the rooms are reached
 
 Only the debug scene selector leads to the rooms, and only the debug mode the
 retail game never turns on opens it.
 
-```mermaid
-flowchart TB
-    start["Start menu opened with B held"] --> mode{{"gDebugMode set?"}}
-    mode -->|no| menu["the Start menu"]
-    mode -->|yes| sel["Menu_RunSelection:<br/>any scene and entrance by number"]
-    sel --> rows["scene table rows TestRoom0 to TestRoom7,<br/>IncreaseItemAndLevel, MenuTest"]
-    rows --> ovl["the room's overlay"]
-```
+No door, table or event of the game leads to the rooms. During development a
+tester could open a menu that warps to any scene by number; that menu is
+still in the game, but it opens only in debug mode, and nothing the player
+can do turns debug mode on.
 
-No exit, table or code of the game leads to them. Ten rows at the end of the
-scene table (`games/tbs/src/field/scenes.s`) run them: `TestRoom0` to
-`TestRoom7` all run the Djinn room's overlay, each on its own map, and
-`IncreaseItemAndLevel` and `MenuTest` run the other two. The only way in is
-the debug scene selector, `Menu_RunSelection`
+Ten rows at the end of the scene table (`games/tbs/src/field/scenes.s`) run
+the rooms: `TestRoom0` to `TestRoom7` all run the Djinn room's overlay, each
+on its own map, and `IncreaseItemAndLevel` and `MenuTest` run the other two.
+The only way in is the debug scene selector, `Menu_RunSelection`
 ([debug.c](../window/battle_command/debug.c)), which warps to any scene and
 entrance by number. `Field_RunScene` opens it when the Start menu is opened
 with B held, and only while `gDebugMode` is set.
@@ -51,7 +47,14 @@ rooms count as reachable rather than unused.
 Each room's first entry sets the room up every time the party walks in, so a
 second visit repeats what the first did.
 
-![Three columns: Vale before the visit, then the menu test room twice, each with the party, its levels, the coins and eleven rare-item counters. In Vale the party is Isaac and Garet at level 1, the coins 0 and every counter 0. After the room's first entry Isaac is level 50 and Garet 30, Ivan and Mia have joined at 30, the coins are still 0, and the counters read Shamshir 3, Silver Blade 2 and 1 for each of the others, from the Masamune to the Warrior's Helm. After the setup runs a second time, as the next visit runs it, the levels are unchanged and every counter has gone up by the same amount again: Shamshir 6, Silver Blade 4, the others 2.](https://alchemy.pascalpixel.com/guides/debug/menu-test-setup.png)
+![The menu test room's setup runs every time the party walks in, in the English edition. Before the first visit, in Vale, the party is Isaac and Garet at level 1, and the shops' counters for their rare items are all 0. After the first visit, Isaac is level 50 and Garet, Ivan and Mia level 30, and the counters read 3 Shamshirs, 2 Silver Blades and 1 of each of the nine other rare items. After a second visit the levels are unchanged, since a level is only ever raised to its target, but every counter has gone up again: 6 Shamshirs, 4 Silver Blades and 2 of each of the others.](https://alchemy.pascalpixel.com/illustrations/debug/setup-every-visit.svg)
+
+A scene's start-up runs each time the party enters, not once. For a town that
+means placing its people; for a test room it means building the test setup
+again. The menu test room shows the consequence: its setup raises the
+party's levels to fixed targets, which a second visit cannot raise further,
+but adds to the shops' stock of rare items, which a second visit adds to
+again.
 
 The Djinn room's (`Scene_RunEmptyScene`) does nothing. The level room's
 (`FieldScene_RunEntrySetup`) draws the level editor 1.6 times its size (1.7 in
@@ -75,6 +78,12 @@ exit regions, so each answers that entry with `SceneData_ReturnZero`.
 The Djinn room places one Djinni of each element and lets the party take it
 again on every visit.
 
+![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
+
+Talking to one of the four Djinn plays the same capture the game plays
+anywhere else, and the room then forgets the Djinni was taken, so it stands
+there again next time.
+
 Flint, Fizz, Forge and Gust stand as actors 8 to 11, each placed only while its
 Djinni's flag is clear. Talking to one calls `Djinn_JoinParty`, the same call
 the game uses, which plays the element's capture effect and gives that
@@ -94,7 +103,9 @@ on the next visit. Those two calls are the room's whole import table.
 The level room raises the party's levels and browses the game's items, icons,
 letters and abilities.
 
-![The level room in English at twice the GBA's size, with no map behind it, each actor on screen labelled with its number: the leader 0, the item browser 8, the level editor 11 and the ability browser 12](https://alchemy.pascalpixel.com/guides/debug/level-room.png)
+The room has no map; its people are the tools. One raises the party's levels,
+others step through every item, icon, letter and ability the game has, and a
+few test the emotes and Force.
 
 Actor 8 is the item browser, 9 the icon browser, 10 the glyph browser and 11
 the level editor; outside Japanese, 12 is the ability browser and 13 and 14
@@ -121,10 +132,15 @@ is.
 
 ## The menu test room
 
-The menu test room's actors run the shop, message and inventory tests with a
+The menu test room's people run the shop, message and inventory tests with a
 ready-made party.
 
-![The menu test room at twice the GBA's size, with no map behind it, each actor labelled with its number: the leader 0, Garet 1, Ivan 2, Mia 3 and Jenna 5 in the first column, and the placed actors 8 to 17 beside them](https://alchemy.pascalpixel.com/guides/debug/menu-room.png)
+![In the menu test room, outside the Japanese edition, Felix gives a different test depending on which way the leader faces when talking to him. Facing north, from below him, the leader gets the weapon shop's lines; facing west, from his right, the armour shop's; facing east, from his left, the item shop's; facing south, from above, the Sanctum's. Each is a separate talk event that names the facing it needs. A second Felix does the same with the Warrior's shops.](https://alchemy.pascalpixel.com/illustrations/debug/facing.svg)
+
+Talking to someone in a scene runs that scene's talk event for them, and an
+event can also ask which way the leader is facing. The menu test room uses
+that to fit four tests into one person: Felix pages through a different
+shop's lines depending on the side the leader talks to him from.
 
 Talking to the party members runs tests: Garet raises the four to level 10,
 then 20 on the next talk, and so on (`gMenuTest_SlotOffsets`), which changes
@@ -135,14 +151,15 @@ out Djinn and treasure, wound and afflict Isaac and Garet, and run a preset
 shop (`Shop_OpenDebugShop`) with 200000 coins, broken equipment and afflicted
 members.
 
-Actors 16 and 17 changed most. In Japanese they are plain talk events: 16
-opens the character selector, whose choice nothing uses, and 17 an item
-browser. Everywhere else each has four `EVENT_TALK` rows that differ in the
-way the leader must face, written in bits 15 to 12 of the control word as
-sixteenths of a turn from east, with bit 10 asking for the facing. Most open a
-message browser that pages through one keeper's lines. To the south, 17 has no
-row in English; in German, Spanish, French and Italian it shows
-`MsgValeComeOnHurry` with no speaker.
+The two Felixes, actors 16 (`ACTOR_FELIX`) and 17 (`ACTOR_SECOND_FELIX`),
+changed most. In Japanese they are plain talk events: 16 opens the character
+selector, whose choice nothing uses, and 17 an item browser. Everywhere else
+each has four `EVENT_TALK` rows that differ in the way the leader must face,
+written in bits 15 to 12 of the control word as sixteenths of a turn from
+east, with bit 10 asking for the facing. Most open a message browser that
+pages through one keeper's lines. To the south, 17 has no row in English; in
+German, Spanish, French and Italian it shows `MsgValeComeOnHurry` with no
+speaker.
 
 | Facing (bits 15 to 12) | Direction | Actor 16 | Actor 17 |
 | --- | --- | --- | --- |
@@ -150,6 +167,16 @@ row in English; in German, Spanish, French and Italian it shows
 | `0x8` | west | the armour shop's lines | the Warrior's armour shop's lines |
 | `0x0` | east | the item shop's lines | the Warrior's item shop's lines |
 | `0x4` | south | the Sanctum's lines | no row in English; `MsgValeComeOnHurry` elsewhere |
+
+## How it fits with the rest of the game
+
+The rooms are scenes like any other: the scene table names their overlays,
+`Field_RunScene` runs them, and their events call the same main-image code
+the real places call, through the same import tables
+([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+The selector that reaches them is in [Windows](../window/README.md), and the
+palette editor that the same debug mode opens is in
+[Field objects](../object/README.md).
 
 ## Limits
 

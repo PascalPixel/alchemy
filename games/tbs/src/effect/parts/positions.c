@@ -165,10 +165,10 @@ void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
   s32 kind;
   s32 value;
 
-  // One local holds the sheet size, then the kind, then the impact.
-  // XXX: why 0x60e bytes, a little over two mote sets (2 * MOTE_SET_BYTES is
-  // 0x604); the largest picture these runners decode into the sheet slot
-  // would settle it.
+  // One local holds the sheet size, then the kind, then the impact. The
+  // largest picture the three runners decode into the sheet slot is
+  // ParticleSpritesD's ten flare cells, 2x2 to 20x20 pixels, 1,540 bytes
+  // (2 * MOTE_SET_BYTES); the slot's last 10 bytes are never written.
   value = 0x60e;
   Runtime_AllocateBlock(HEAP_SLOT_BATTLE_SHEET, value);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,

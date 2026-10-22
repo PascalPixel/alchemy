@@ -37,9 +37,9 @@ struct InventoryMenuState {
   struct UiWindow *infoWindow;
   struct UiWindow *equipWindow;
   struct UiWindow *listWindow;
-  struct UiWindow *unknownWindow38; ///< only closed by name in TBS
+  struct UiWindow *unknownWindow38; ///< never given a window; only closed
   struct UiWindow *modalWindow;
-  struct UiWindow *unknownWindow40; ///< only closed by name in TBS
+  struct UiWindow *unknownWindow40; ///< never given a window; only closed
   struct RenderOutput *gridCursor;  ///< only prepared by name in TBS
   struct RenderOutput *entryIcons[32];
   struct RenderOutput *categoryIcons[8];

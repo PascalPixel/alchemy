@@ -41,7 +41,7 @@ s32 BattleClass_GetPalette(s32 index) {
 /// Returns 1 for a small class, which takes one enemy sprite slot instead of
 /// two and stands closer to its neighbours; 0 out of range.
 /// Called by the formation and placement code (BattleFormation_BuildEnemyList,
-/// Summon_LayoutPositions), the sprite slots (EnemyCheck,
+/// BattlePlacement_LayoutEnemies), the sprite slots (EnemyCheck,
 /// SummonSlot_RegisterActorSprites) and motion.c.
 s32 BattleClass_IsSmall(s32 index) {
   s32 result;
@@ -81,12 +81,13 @@ u32 BattleClass_GetAttackHop(u32 index) {
 }
 
 /// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
-/// SE_IMPACT; 0 out of range.
+/// SE_IMPACT; 0 out of range. Only the Mars Lighthouse bosses set it in
+/// sprites.tsv: ENEMY_SATUROS_2, ENEMY_MENARDI and ENEMY_FUSION_DRAGON.
 /// Called by the beam effects (beams.c) through its far stub.
-s32 Summon_IsEntrySecondaryFlagged(s32 index) {
+s32 BattleClass_HasHeavyImpact(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
-  return gSummon_EntryTable[index].layoutBit0;
+  return gSummon_EntryTable[index].heavyImpact;
 }
 
 /// Returns the height an effect is drawn at over a class, in pixels, or 0

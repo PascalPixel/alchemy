@@ -301,8 +301,8 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 /// first place; each is fought alone (formatn.tsv rows 213 and 347), so
 /// neither does. Called by BattleUnit_RefreshPlacement and EnemyUpdate;
 /// writes only xPositions and zPositions, in pixels.
-void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
-                            s32 *zPositions) {
+void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
+                                   s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
   s32 z = ((count - 1) * totalSpacing) / 2;
   s32 index;
@@ -375,7 +375,7 @@ s32 EnemyUpdate(void) {
        enemyIndex++)
     unitIds[enemyIndex] = battle->enemyIds[enemyIndex];
   enemyCount = enemyIndex;
-  Summon_LayoutPositions(unitIds, enemyCount, xPositions, zPositions);
+  BattlePlacement_LayoutEnemies(unitIds, enemyCount, xPositions, zPositions);
   for (enemyIndex = 0; enemyIndex < enemyCount; enemyIndex++) {
     s32 unitId = battle->enemyIds[enemyIndex];
 
@@ -436,7 +436,7 @@ void BattleUnit_RefreshPlacement(void) {
        unitIndex++)
     unitIds[unitIndex] = battle->enemyIds[unitIndex];
   count = unitIndex;
-  Summon_LayoutPositions(unitIds, count, xPositions, zPositions);
+  BattlePlacement_LayoutEnemies(unitIds, count, xPositions, zPositions);
   for (unitIndex = 0; unitIndex < count; unitIndex++, enemyPlace++) {
     s32 unitId = battle->enemyIds[unitIndex];
 

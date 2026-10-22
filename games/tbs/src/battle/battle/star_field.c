@@ -262,7 +262,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   }
   work->frames = 0;
   work->ready = 0;
-  work->canvasOrigin.unk_08 = 0;
+  work->canvasOrigin.queued = 0;
   Iwram_ClearWords(gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], 0x4000);
   // The sheet's 128 bytes of colours, then its pictures; then the
   // element's own colours over them.
@@ -427,7 +427,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       work->canvasOrigin.y = (64U - (u32)projectedPosition->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->canvasOrigin.x,
                               DMA_COPY_WORDS(2));
-      work->canvasOrigin.unk_08 = 1;
+      work->canvasOrigin.queued = 1;
       WaitFrames(1);
     }
     Graphics_ResetVramBlockAndReleaseHeapBlocks(element);
@@ -446,7 +446,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
                           (u32)&effectWork->trackedCanvas.origin.x,
                           DMA_COPY_WORDS(2));
-      effectWork->trackedCanvas.origin.unk_08 = 1;
+      effectWork->trackedCanvas.origin.queued = 1;
       WaitFrames(1);
     }
     BattleFx_EndElementStreaksFar();

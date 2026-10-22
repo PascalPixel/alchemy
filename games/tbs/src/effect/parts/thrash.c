@@ -31,15 +31,18 @@ void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, SPARK_GROUPS_RISING);
 }
 
-/// The user leaps at the first target, then a burst of 340 sparks rises
-/// beneath it and the canvas flashes.
+/// Unused: no row of actflags.tsv names its kind, and the handler table is
+/// reached with no other kind (BattleFx_RunTableEffect). The user would leap
+/// at the first target, then a burst of 340 sparks would rise beneath it and
+/// the canvas flash. It is Severe Blow's effect in The Lost Age, whose row
+/// for Severe Blow names this kind; here Severe Blow plays a casting impact.
 ///
-/// Abilities: none (BATTLE_FX_SEVERE_BLOW_LEAP).
+/// Abilities: none (BATTLE_FX_UNUSED_SEVERE_BLOW_LEAP).
 ///
 /// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
 /// after 12 frames with effect->variant set to SPARK_GROUPS_SEVERE_BLOW,
 /// overriding the ability's own.
-void BattleFx_RunSevereBlowLeap(struct BattleEffectArgument *effect) {
+void BattleFx_RunUnusedSevereBlowLeap(struct BattleEffectArgument *effect) {
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
   WaitFrames(12);
   effect->variant = SPARK_GROUPS_SEVERE_BLOW;

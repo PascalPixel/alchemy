@@ -20,9 +20,10 @@ with B held, and only while `gDebugMode` is set.
 Nothing but start-up (`gDebugMode = 0` in `runtime/runtime/system.c`) and the
 sprite viewer, `Ui_RunIconMonitor` (`field/field/sprite_viewer.c`), writes
 `gDebugMode`, and the sprite viewer is reached only through a far-call veneer
-at the end of `system/far_call/FIELD.S` that no code names. XXX: likely the
-retail game never turns debug mode on, for that reason; a caller of the veneer
-would show otherwise. [Unused](../../unused.md#debug-scenes) explains why the
+at the end of `system/far_call/FIELD.S` that no code names. A bare veneer has
+no symbol, so no code can branch to it, and the far-call table's own
+directory row is passed only to stubs that do nothing ([System](../system/README.md));
+the retail game therefore never turns debug mode on. [Unused](../../unused.md#debug-scenes) explains why the
 rooms count as reachable rather than unused.
 
 ## Files
@@ -131,16 +132,22 @@ The game gives the rooms no names, so their scene ids (`TestRoom0` to
 show. `test.c` keeps one empty function nothing calls, `DebugMenu_NoOp`, marked
 `UNUSED`.
 
-- XXX: whether anything in the retail game turns debug mode on (above).
-- XXX: why one overlay serves eight scenes, each on its own map; the maps'
-  contents would say what each room was for.
-- XXX: the 56 words at the head of the Djinn room's data
+The eight Djinn room scenes, `TestRoom0` to `TestRoom7`, use maps 172 to 179,
+which no other scene uses. The eight maps are one placeholder copied eight
+times: each `map.s` places the same 64 by 64 cell header, map 1's blocks,
+shapes and grid, map 0's markers and tile set 68's sheets, and differs only in
+its labels. The rooms are reserved slots that were never given their own
+content, which is why one overlay serves them all.
+
+- XXX (no evidence): what the 56 words at the head of the Djinn room's data
   (`gTestRooms_EntrancesHead`, eight rows of seven) and the same words in the
-  menu test room (`gDebugItemPromptHead`) are read by nothing by name; a reader
-  of them would say what they hold.
-- XXX: likely a benchmark for the text buffer, the Japanese loop in
-  `DebugMenu_GivePartyDjinn`, because it fills a local buffer sixteen times
-  with 32 to 47 letters and nothing reads the result.
+  menu test room (`gDebugItemPromptHead`) hold; no code reads them, since an
+  overlay's data is reached only through its entries and none returns them,
+  and no other data in the ROM has their layout.
+- XXX (no evidence): what the Japanese loop in `DebugMenu_GivePartyDjinn` was
+  for; it fills a buffer nothing reads with 32 to 47 copies of a letter, so it
+  changes nothing the code or the player can see, and whatever it once fed is
+  gone from every edition.
 - XXX (picture): the level and menu test rooms have no picture; a frame of each with its
   actors labelled by number and event would show what the tables above
   describe.

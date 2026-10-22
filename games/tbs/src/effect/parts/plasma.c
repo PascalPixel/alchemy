@@ -229,8 +229,8 @@ void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
 ///
 /// Called by BattleFx_RunNova and BattleFx_RunDynamite, and with
 /// SPARK_GROUPS_RISING by BattleFx_RunCastingImpact for Severe Blow and by
-/// BattleFx_RunThrash and BattleFx_RunSevereBlowLeap in thrash.c, which set
-/// effect->variant first (SPARK_GROUPS_SEVERE_BLOW or SPARK_GROUPS_THRASH).
+/// BattleFx_RunThrash and BattleFx_RunUnusedSevereBlowLeap in thrash.c, which
+/// set effect->variant first (SPARK_GROUPS_SEVERE_BLOW or SPARK_GROUPS_THRASH).
 ///
 /// work->particles hold the ring flashes, 16 for each burst; PARTICLES the
 /// sparks, one run of gPlasma_Shapes' count for each burst. Sets

@@ -16,8 +16,9 @@ struct AnimationObject;
 struct BattleCanvasOrigin {
   s32 x; ///< BG2X, 8 fractional bits
   s32 y; ///< BG2Y, 8 fractional bits
-  /// Written after staging the coordinates; no reader has been identified.
-  s32 unk_08;
+  /// 1 once the coordinates are queued, 0 before the first; nothing in the
+  /// game reads it, and the queue copies only x and y.
+  s32 queued;
 };
 
 STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
@@ -52,7 +53,9 @@ struct BattleEffectWork {
     struct {
       u8 sheet[0x6980];   ///< the effect's decoded pictures, at fixed offsets
       s32 bg2xLines[160]; ///< BG2X for each scanline, for an HBlank DMA
-      u8 unk_6c00[0x480]; ///< not named by TBS code
+      /// The rest of imageStorage, which only effects that skip the scanline
+      /// table reach through it.
+      u8 imageTail[0x480];
     };
     u8 imageStorage[0x7080];
     /// The tracked elemental scene stages its origin inside the image area.
@@ -68,7 +71,7 @@ struct BattleEffectWork {
   /// The transfer mode's argument: the fill value, the share kept (50 or 75
   /// percent) or the darken or brighten amount.
   s32 transferValue;
-  s32 unk_7788;       ///< not named by TBS code
+  s32 unused7788;     ///< never read or written in either game
   s32 frame;          ///< frame counter some effects keep, from 0
   s32 scrollTimer;    ///< frames since the last interval scroll step
   s32 scrollInterval; ///< frames between interval scroll steps
@@ -96,7 +99,7 @@ struct BattleEffectWork {
   u16 bldcnt;
   u16 bldalpha;
   ///@}
-  u16 unk_77ce; ///< not named by TBS code
+  u16 padding; ///< aligns bg2x; never read or written
   /// BG2's reference point, written to BG2X and BG2Y by
   /// Display_ApplyBg2Reference and BattleFx_AdvanceBg2OnInterval.
   ///@{

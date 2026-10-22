@@ -99,8 +99,8 @@ s32 BattleUnit_GetWeaponKind(s32 itemId);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y);
-void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
-                            s32 *zPositions);
+void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
+                                   s32 *zPositions);
 s32 EnemySlotGet(void);
 #ifdef UBFIX
 void EnemyUpdate(void);
@@ -394,7 +394,7 @@ s32 BattleClass_GetPalette(s32 index);
 s32 BattleClass_IsSmall(s32 index);
 u32 BattleClass_GetAttackEffect(u32 index);
 u32 BattleClass_GetAttackHop(u32 index);
-s32 Summon_IsEntrySecondaryFlagged(s32 index);
+s32 BattleClass_HasHeavyImpact(s32 index);
 s32 BattleClass_GetEffectHeight(s32 index);
 
 u32 BattleSpoils_RankItem(u32 inventoryEntry);

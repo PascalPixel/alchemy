@@ -445,8 +445,8 @@ BattleFxHandler gBattleFx_EffectHandlers[BATTLE_FX_KIND_COUNT - 1] = {
     [BATTLE_FX_WEAKEN - 1] = BattleFx_RunWeaken, // stat_change.c: Weaken
     [BATTLE_FX_TAINT - 1] = BattleFx_RunTaint,   // target_motes.c: Taint
     [BATTLE_FX_DELUDE - 1] = BattleFx_RunDelude, // target_motes.c: Delude
-    [BATTLE_FX_ORBITING_SPIRALS - 1] =
-        BattleFx_RunOrbitingSpirals, // planet_diver.c
+    [BATTLE_FX_UNUSED_ORBITING_SPIRALS - 1] =
+        BattleFx_RunUnusedOrbitingSpirals, // planet_diver.c
     [BATTLE_FX_HEARTRENDER - 1] =
         BattleFx_RunHeartrender, // target_motes.c: Heartrender
     [BATTLE_FX_PARALYZE - 1] = BattleFx_RunParalyze, // target_motes.c: Paralyze
@@ -492,7 +492,8 @@ BattleFxHandler gBattleFx_EffectHandlers[BATTLE_FX_KIND_COUNT - 1] = {
     [BATTLE_FX_VORPAL_SLASH - 1] =
         BattleFx_RunVorpalSlash,               // thrash.c: Vorpal Slash
     [BATTLE_FX_DROWN - 1] = BattleFx_RunDrown, // target_motes.c: Drown
-    [BATTLE_FX_TRIANGLE_STRIKE - 1] = BattleFx_RunTriangleStrike, // bind.c
+    [BATTLE_FX_UNUSED_TRIANGLE_STRIKE - 1] =
+        BattleFx_RunUnusedTriangleStrike, // bind.c
     [BATTLE_FX_ASTRAL_BLAST - 1] =
         BattleFx_RunAstralBlast,                     // stars.c: Astral Blast
     [BATTLE_FX_GRANITE - 1] = BattleFx_RunGranite,   // stat_change.c: Granite
@@ -627,7 +628,8 @@ BattleFxHandler gBattleFx_EffectHandlers[BATTLE_FX_KIND_COUNT - 1] = {
         BattleFx_RunDragonDriver, // tiamat.c: Dragon Driver
     [BATTLE_FX_DRAIN_FANG - 1] =
         BattleFx_RunDrainFang, // target_strike.c: Drain Fang
-    [BATTLE_FX_SEVERE_BLOW_LEAP - 1] = BattleFx_RunSevereBlowLeap, // thrash.c
+    [BATTLE_FX_UNUSED_SEVERE_BLOW_LEAP - 1] =
+        BattleFx_RunUnusedSevereBlowLeap,        // thrash.c
     [BATTLE_FX_THRASH - 1] = BattleFx_RunThrash, // thrash.c: Thrash
     [BATTLE_FX_RECOVERY - 1] =
         BattleFx_RunRecovery, // mirrored_wall.c: Recovery

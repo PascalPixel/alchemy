@@ -344,8 +344,10 @@ decoder (`Render_DecodeFrame`) and `Tile_ConvertMap`. The cartridge's bus is
 16 bits wide, so 32-bit ARM instructions run slowly from ROM, and the rest of
 the game is Thumb. `Object_UpdateAll` is an ARM copy of the object update for
 the first eight objects, written for the same treatment, but nothing runs it.
-XXX: why the Thumb update is used instead; a build of the game that calls
-`Object_RunUpdateAllFromHeap` would show what the ARM copy was for.
+It is a smaller update than the field needs: it covers eight objects of the
+64, and has none of the field's extras that `Object_UpdateAllThumb` adds (free
+flight, terrain following, floating, and solid objects that refuse to overlap),
+so it could not stand in for the Thumb update.
 
 ## How the field fits with the rest of the game
 
@@ -375,11 +377,13 @@ The command names (`SC_WAIT`, `SC_SYNC` and the rest) are the macros of
 from the fields each family reads, and the map words from the loader. None is
 recovered from the original.
 
-- XXX: the update accepts command words up to 63 but the table has 47
-  entries, so a word from 47 to 63 would call through whatever follows the
-  table; a script that uses one would show whether that was meant.
-- XXX: why the Thumb object update is used rather than the ARM copy (see [Routines run
-  from RAM](#routines-run-from-ram)).
+The update accepts command words up to 63 but the table has 47 entries, so a
+word from 47 to 63 would call through whatever follows the table. No script
+does: every script in the game is written in `objcmd.h`'s macros, whose last
+command is `SC_KEY_COUNT` (`0x23`), and no script holds a bare word from
+`0x24` to 63, so neither the eleven entries that act as `SC_END` nor the words
+past the table are ever called.
+
 - XXX (picture): no picture yet takes a sprite apart into its four animation layers and the
   composed buffer, or shows the world map's scanline table as the scale of
   each line; renders of both belong beside their sections here.

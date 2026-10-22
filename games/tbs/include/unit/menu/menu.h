@@ -22,13 +22,13 @@ struct RenderOutput;
 /// L + A cycles through in this order.
 enum ListSort {
   /// The equipped items, the items that are not equipment, then the other
-  /// equipment (gMenu_ListOrderMode0).
+  /// equipment (gMenu_ListOrderEquippedThenItems).
   LIST_SORT_EQUIPPED_THEN_ITEMS = 0,
   /// The equipped items, the other equipment, then the rest
-  /// (gMenu_ListOrderMode1).
+  /// (gMenu_ListOrderEquippedThenEquipment).
   LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
-  LIST_SORT_EQUIPMENT_FIRST = 2, ///< gMenu_ListOrderMode2
-  /// The items that are not equipment first (gMenu_ListOrderDefault).
+  LIST_SORT_EQUIPMENT_FIRST = 2, ///< gMenu_ListOrderEquipmentFirst
+  /// The items that are not equipment first (gMenu_ListOrderItemsFirst).
   LIST_SORT_ITEMS_FIRST = 3,
   LIST_SORT_COUNT = 4
 };

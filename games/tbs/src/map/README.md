@@ -122,8 +122,14 @@ buffer first, since the cell words overwrite them.
 
 `gMapCellBuffer` itself is 32 KB, so the cells run on through
 `gActorSpriteSlots` and `gDecodeBuffer`, and neither can hold anything else
-while a map is loaded. A battle reuses that memory, and the scene's map is
-loaded again when the party returns. [System](../system/README.md) has the
+while a map is loaded. Only code that reloads the cells afterwards writes
+there: a battle, after which the scene's map is loaded again; the link lobby,
+which leaves the partner's party in `gActorSpriteSlots` for the link battle
+that follows; and the world map's still view, which saves `BG1`'s tiles to
+`gDecodeBuffer` and draws into the cells, which
+`Map_LoadDefaultCellsAndUpdateBlock` then puts back. The debug sprite viewer
+also loads sprites there. The tile animation only reads from
+`Ram_DecodeBuffer`, at offsets that land past it. [System](../system/README.md) has the
 EWRAM layout.
 
 ### One grid, three layers
@@ -146,6 +152,14 @@ A cell whose block is 4,095, the highest 12 bits can hold, is a placeholder.
 As the map is converted, `Tile_ConvertMap` gives each placeholder a fresh
 block number, counting up from 0 in grid order. The ROM also keeps an unused
 C version of that numbering, `TileMap_NumberPlaceholderBlocks`.
+
+The placeholder is how the grid writes a block's first use. Each map's block
+table is ordered by where its blocks first appear in the grid, and the grid
+writes that first appearance as 4,095 and every later one by number, so a map
+has exactly as many placeholders as blocks (`map_003` has 1,331 of each).
+Every map follows the rule but Venus Lighthouse's entrance, whose grid names
+170 cells' blocks before their placeholders; those cells still get the right
+blocks, since the numbering depends only on the placeholders.
 
 ### Chests and Psynergy Stones
 
@@ -279,14 +293,10 @@ called the marker list because that function is the only code that reads the
 pointer the loader stores to it, although `MapScrollWork`
 (`include/map_scroll.h`) still names the field `script`.
 
-- XXX: what the placeholder blocks are filled with; a trace of the map's BG
-  tiles after loading a map with placeholders would settle it.
-- XXX: what the header's last two bytes mean (`pad0` and `pad1` in
-  `map.inc`, `unk0a` in the loader, which does not read them); every map has
-  them 0.
-- XXX: which code may use `gActorSpriteSlots` and `gDecodeBuffer` while a map
-  is loaded, given that the cells fill them; a trace of their writers outside
-  a battle would settle it.
+The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
+`struct LayeredSceneHeader`) are 0 in every map of both games, and nothing
+reads them: the loader is the only code that reads the header.
+
 - XXX (picture): no picture yet shows a grid's three planes beside the cell words
   `Tile_ConvertMap` weaves from them, or a tile animation channel copying its
   frames; renders of both belong beside their sections here.

@@ -206,7 +206,7 @@ enum {
 /// Dynamite (enum EffectVariant), which their callers set before the run.
 enum {
   SPARK_GROUPS_SEVERE_BLOW = 3, ///< 340 sparks and a flash: Severe Blow's
-                                ///< impact and BattleFx_RunSevereBlowLeap
+                                ///< impact and BattleFx_RunUnusedSevereBlowLeap
   SPARK_GROUPS_THRASH           ///< 32 sparks: Thrash
 };
 extern u16 gPlasma_Shapes[][5];

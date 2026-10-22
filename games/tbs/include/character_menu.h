@@ -28,7 +28,7 @@ struct CharacterMenuState {
   s8 ownerCount[2]; ///< members each pane chooses from
   struct UiWindow *actionWindow;
   struct UiWindow *statusWindow;
-  struct UiWindow *unknownWindow028; ///< only cleared by name in TBS
+  struct UiWindow *unknownWindow028; ///< never given a window; only cleared
   struct UiWindow *helpWindow;
   u8 unk030[0x18]; ///< not named by TBS code
   struct RenderOutput *entryIcons[32];

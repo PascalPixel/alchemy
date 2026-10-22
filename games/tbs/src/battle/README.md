@@ -552,14 +552,14 @@ Abilities and enemies are named from the label columns of their tables,
 are named from what `battle_calc.c` computes, and the event kinds from what
 playback does with each.
 
-- XXX: bits 0 and 1 of the `flags` column of `actflags.tsv`
-  (`STAGING_ON_DOWNED`, `STAGING_OTHER_SIDE`) are read, but no row sets them.
-  The plan sets the first itself for the revive effects; nothing sets the
-  second. A row or code path that sets it would show what it was for.
-- XXX: `Summon_LayoutPositions` places the enemies, and
-  `Summon_IsEntrySecondaryFlagged` reads a bit of the enemy class table that
-  `../effect/parts/beams.c` also tests; neither concerns summons. Naming the
-  second needs the classes that set that bit, compared in renders.
+Bits 0 and 1 of the `flags` column of `actflags.tsv` (`STAGING_ON_DOWNED`,
+`STAGING_OTHER_SIDE`) are read, but no row in either game sets them. The plan
+adds the first itself for the revive effects; nothing adds the second, so the
+side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the
+enemies' column, and `BattleClass_HasHeavyImpact` reads the class bit that
+makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
+bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
+
 - XXX (picture): a round has no take-apart picture. One frame per event of a Quake
   turn, beside the queue with the event playing marked, would show the rules
   and the effect meeting; a battlefield render with each place's position

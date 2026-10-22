@@ -76,9 +76,11 @@ u8 *TestRooms_GetEvents(void) { return (u8 *)gTestRooms_Events; }
 /// to set up.
 s32 Scene_RunEmptyScene(void) { return 0; }
 
-/// Eight rows of seven words that nothing reads by name; the menu test room
-/// keeps the same 56 words (gDebugItemPromptHead, test.c). XXX: what they
-/// hold is not known; a reader of them, or their source, would say.
+/// Eight rows of seven words that nothing reads; the menu test room keeps the
+/// same 56 words (gDebugItemPromptHead, test.c), and no other data in the ROM
+/// has their layout. Overlay data is reached only through the room's entries,
+/// and none returns them. XXX: what they hold is unknown, since no code reads
+/// them.
 u32 gTestRooms_EntrancesHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
     0x780078, 0, 120, 0x780000, 0x10003, 2, 0,

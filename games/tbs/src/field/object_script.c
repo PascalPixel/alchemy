@@ -65,7 +65,10 @@ const s32 gObjectDispatch_EndScript[] = {
 
 /// The handler for each script command number; 0x24 onwards act as SC_END.
 /// Object_UpdateAll (update.c) and Object_UpdateAllThumb (object_motion.c)
-/// call through it.
+/// call through it. They take any word up to 63 as a command, so 0x2f to 63
+/// would call through the data after the table, but every script in the game
+/// is written in objcmd.h's macros, the last SC_KEY_COUNT, and none holds a
+/// word from 0x24 to 63 where a command goes.
 const ScriptCommand gScriptObject_CommandTable[47] = {
     Script_Wait,                       // 0x00 SC_WAIT
     Script_WaitForArrival,             // 0x01 SC_SYNC

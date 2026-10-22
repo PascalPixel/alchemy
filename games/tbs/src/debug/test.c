@@ -464,30 +464,32 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   DebugMenu_RecalculateParty();
 }
 
-/// Runs the Japanese buffer loop, then grants and sets test Djinn. Talking to
-/// ACTOR_DORA: `You got a Djinni!`, then Isaac takes the first seven Venus
-/// Djinn, Garet seven Mars, Mia seven Mercury and Ivan six Jupiter, each set.
-/// XXX: likely a text-buffer benchmark, because the Japanese loop fills a
-/// local buffer sixteen times with 32 to 47 letters and nothing reads it.
+/// Grants and sets test Djinn. Talking to ACTOR_DORA: `You got a Djinni!`,
+/// then Isaac takes the first seven Venus Djinn, Garet seven Mars, Mia seven
+/// Mercury and Ivan six Jupiter, each set. In Japanese it first fills a local
+/// buffer sixteen times with 32 to 47 copies of a letter; nothing reads the
+/// buffer, so the loop's only lasting effect is gMenuTest_FillLetter, which
+/// nothing else reads either. The call the string presumably fed is gone from
+/// every edition.
 static void DebugMenu_GivePartyDjinn(void) {
-  /* FAKEMATCH(dead): the Japanese benchmark's buffer, unread outside
+  /* FAKEMATCH(dead): the Japanese loop's buffer, unread outside
    * Japanese, for the frame's 256 bytes; as declared inside the #if, 2 of 232
    * instructions differ in tbs-en. */
-  UNUSED u8 benchmarkBuffer[256];
+  UNUSED u8 fillBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;
   s32 characterIndex;
 
   for (pass = 0; pass < 16; pass++) {
     for (characterIndex = 0; characterIndex < 256; characterIndex++) {
-      benchmarkBuffer[characterIndex] = 0;
+      fillBuffer[characterIndex] = 0;
     }
     for (characterIndex = 0; characterIndex < pass + 32; characterIndex++) {
-      benchmarkBuffer[characterIndex] = gMenuTest_BenchmarkCharacter + 1;
+      fillBuffer[characterIndex] = gMenuTest_FillLetter + 1;
     }
-    gMenuTest_BenchmarkCharacter++;
-    if (gMenuTest_BenchmarkCharacter > 96) {
-      gMenuTest_BenchmarkCharacter = 65;
+    gMenuTest_FillLetter++;
+    if (gMenuTest_FillLetter > 96) {
+      gMenuTest_FillLetter = 65;
     }
   }
 #endif
@@ -842,8 +844,8 @@ static s32 DebugMenu_ConfirmShopAction(s32 unitId) {
 #endif
 
 /// Eight rows of seven words that nothing reads by name, the same 56 words as
-/// the Djinn room's gTestRooms_EntrancesHead (rooms.c). XXX: what they hold
-/// is not known; a reader of them, or their source, would say.
+/// the Djinn room's gTestRooms_EntrancesHead (rooms.c), which says why their
+/// meaning is unknown.
 u32 gDebugItemPromptHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
     0x780078, 0, 120, 0x780000, 0x10003, 2, 0,
@@ -984,4 +986,4 @@ s32 gMenuTest_SlotOffsets = 10;
 
 /// One less than the character the Japanese loop of DebugMenu_GivePartyDjinn
 /// fills with: 65 at first, so 'B', one more each pass, back to 65 after 96.
-s32 gMenuTest_BenchmarkCharacter = 65;
+s32 gMenuTest_FillLetter = 65;

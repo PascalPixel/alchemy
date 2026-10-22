@@ -22,9 +22,9 @@ struct BattleSpriteDefinition {
   u8 spriteBits5 : 3; ///< the attack-hop height
   ///@}
   /// The byte at 3.
-  /// bits: 7..5 layoutKind | 4..1 layoutBits1 | 0 layoutBit0
+  /// bits: 7..5 layoutKind | 4..1 layoutBits1 | 0 heavyImpact
   ///@{
-  u8 layoutBit0 : 1;  ///< read by Summon_IsEntrySecondaryFlagged only
+  u8 heavyImpact : 1; ///< 1 for a class whose beam blow lands heavily
   u8 layoutBits1 : 4; ///< the sprite's palette
   u8 layoutKind : 3;  ///< the defeat-sound kind; above 4 reads as none
   ///@}
@@ -41,7 +41,7 @@ struct SummonDefinition {
   /// The summon's ability id: its name is message MsgAbilityName plus it, and
   /// its low 14 bits pick the icon.
   u16 nameMessageId;
-  u8 unk02[2];         ///< not named by TBS code
+  u8 reserved[2];      ///< 0 in every row; read by no code
   u8 djinnRequired[4]; ///< standby Djinn needed, by element
 };
 

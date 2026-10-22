@@ -159,7 +159,8 @@ them before it returns. While it runs, an effect also has the two blitter slots
 
 A critical hit adds `EFFECT_KIND_CRITICAL_OFFSET` to an attack's kind in
 `BattlePresentation_RunAttack` (`battle/battle/staging.c`), which plays the
-blow's critical version.
+blow's critical version: for the plain attacks' kinds 1 to 5, the ring and
+spark scene at 201 to 205.
 
 ## The canvas
 
@@ -675,31 +676,55 @@ unusual spelling to match, [Matching](../MATCHING.md) lists it.
 ## Evidence and open questions
 
 A handler's name comes from the abilities that reach its kind, read from
-`actflags.tsv` and named as the English release names them;
-a runner is named from what it draws. The three handlers
-no ability reaches, `BattleFx_RunOrbitingSpirals` (`planet_diver.c`),
-`BattleFx_RunTriangleStrike` (`bind.c`) and `BattleFx_RunSevereBlowLeap`
-(`thrash.c`), are named from what they draw. The recordings come from
+`actflags.tsv` and named as the English release names them; a runner is named
+from what it draws. The recordings come from
 [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools#pictures),
 which plays an ability in a built tbs-en edition over a plain grey backdrop.
 
-- XXX: nothing found reaches the three unreached handlers' kinds; a caller
-  outside `actflags.tsv`, or a kind computed at run time, would settle whether
-  anything plays them.
-- XXX: the work block's `unk_` fields, and the particles' spare word in the
-  effects whose use of it has not been read, are not understood.
-- XXX: why `work->sheet` may grow into the scanline table only for effects that
-  do not use it. The parts that name `bg2xLines` are `burst_shower.c`,
-  `casting_impact.c`, `condemn.c`, `gathering_lights.c`, `planet_diver.c`,
-  `streaks.c`, `target_motes.c` and `torch.c`; those that name `imageStorage`
-  are `beams.c`, `casting_impact.c`, `death_plunge.c` and `thrash.c`. Whether
-  any one run of `casting_impact.c` uses both would settle the overlap.
-- XXX: whether any effect uses `PARTICLES` past the first 32 KB, over
-  `gActorSpriteSlots`; the largest index each effect reserves would settle it.
-- XXX: why `BattleFx_DispatchByIdRange` sizes its sheet slot `0x60e` bytes; the
-  largest picture its runners decode there would settle it.
-- XXX: which critical versions `EFFECT_KIND_CRITICAL_OFFSET` reaches in each
-  range of kinds.
+Three handlers are unused, and are named from what they draw:
+`BattleFx_RunUnusedOrbitingSpirals` (`planet_diver.c`),
+`BattleFx_RunUnusedTriangleStrike` (`bind.c`) and
+`BattleFx_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is reached
+only with a kind from an `actflags.tsv` row, through the plan's
+`presentationFlags`: the plan changes only the variant and the staging bits,
+the auto battle passes kind 0, and a critical hit's offset applies only to
+plain attacks, which are dispatched by id range. No row names any of the three
+kinds. The Lost Age keeps the same three handlers at the same kinds, and its
+row for Severe Blow names `BATTLE_FX_UNUSED_SEVERE_BLOW_LEAP`: there Severe Blow
+is the leap, where here it plays a casting impact.
+
+A plain attack's kind is 1 or 4 for the party (`BattleCommand_BuildPlan`) and
+1 to 5 for an enemy class (`sprites.tsv`), all by id range, so the beam
+sequences play them. No ability uses the critical-hit effects
+(`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so
+only plain attacks score critical hits, and `EFFECT_KIND_CRITICAL_OFFSET`
+reaches kinds 201 to 205: the ring and spark scene, which plays the same for
+each.
+
+The work block holds no unknown fields. `unused7788` and `padding` (before the
+word-aligned `bg2x`) are never read or written in either game; `imageTail` is
+the end of `imageStorage`; and a `BattleCanvasOrigin`'s `queued` word is set
+once its coordinates are queued, but the queue copies only `x` and `y` and
+nothing reads it. A particle's `variant` is each family's own, and each family
+says what it holds where it launches its particles.
+
+`work->sheet` and the scanline table share their storage with `imageStorage`,
+so an effect may decode a picture past `sheet` only when it doesn't build the
+table. `casting_impact.c`, the one part that names both, keeps that rule:
+Mortal Danger and Asura decode their pictures from the start of the work
+block, Asura's reaching 27,648 bytes, past the table, and those two impacts
+alone skip building it.
+
+No effect uses `PARTICLES` past its first 32 KB, over `gActorSpriteSlots`: the
+largest range any effect reserves is 1,024 particles, 28 KB
+(`gathering_lights.c`, `helm_splitter.c`, `lobbed_shells.c`, `neptune.c`,
+`nereid.c`, `plasma.c` and `target_strike.c`).
+
+`BattleFx_DispatchByIdRange` sizes its sheet slot `0x60e` bytes. The largest
+picture its three runners decode there is `ParticleSpritesD`'s ten flare cells,
+2 by 2 to 20 by 20 pixels, 1,540 bytes (`2 * MOTE_SET_BYTES`); the slot's last
+10 bytes are never written.
+
 - XXX (picture): no picture yet takes an effect apart. Three would show a mechanism this page
   explains: the canvas alone beside the battle it is blended over, with the
   stretch to twice its width; one effect frame by frame under each

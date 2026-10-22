@@ -178,7 +178,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
 /// green and blue each sway with the frame, out of step by their phases
 /// (1/65536ths of a turn), so the effect shimmers through colours.
 ///
-/// Called each frame by BattleFx_RunBind and BattleFx_RunTriangleStrike
+/// Called each frame by BattleFx_RunBind and BattleFx_RunUnusedTriangleStrike
 /// (bind.c), BattleFx_RunShiningStar (stars.c) and BattleFx_RunThor
 /// (thor.c), which all pass phases a third of a turn apart (0xaaab, 0x5555
 /// and 0); Thor passes twice its frame, for a faster shimmer. Level n's

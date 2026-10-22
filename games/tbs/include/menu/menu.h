@@ -11,10 +11,10 @@
 /// The status screen highlight's width in tiles on each ailment row: Down,
 /// Poison, Venom, Curse and Haunt.
 extern u8 gCharacterMenu_CursorWidths[];
-extern u8 gMenu_ListOrderDefault[];
-extern u8 gMenu_ListOrderMode0[];
-extern u8 gMenu_ListOrderMode1[];
-extern u8 gMenu_ListOrderMode2[];
+extern u8 gMenu_ListOrderItemsFirst[];
+extern u8 gMenu_ListOrderEquippedThenItems[];
+extern u8 gMenu_ListOrderEquippedThenEquipment[];
+extern u8 gMenu_ListOrderEquipmentFirst[];
 /// `-`, before a stat change that is not a gain (ItemMenu_DrawStat).
 extern u8 gMenu_MinusSignString;
 /// `+`, before a stat gain.

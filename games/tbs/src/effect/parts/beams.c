@@ -180,7 +180,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     // user's class is flagged in the summon table and SE_IMPACT otherwise. On
     // frame 4 the target takes KNOCKBACK_NUDGE.
     if (frame == 5) {
-      if (Summon_IsEntrySecondaryFlaggedFar(unit->classId))
+      if (BattleClass_HasHeavyImpactFar(unit->classId))
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_IMPACT);

@@ -247,21 +247,23 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
 }
 
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
-/// for its enemy kind (EnemyDefinition.unk48) or class
-/// (ClassDefinition.unk50). Called by Battle_RollEffectSuccess.
+/// for its enemy kind (EnemyDefinition.weakEffects) or class
+/// (ClassDefinition.weakEffects). Called by Battle_RollEffectSuccess.
 s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;
 
   if (target->classIndex == CLASS_INDEX_ENEMY) {
-    weakEffects = Enemy_GetDefinition(target->classId) + 0x48;
+    weakEffects =
+        ((const struct EnemyDefinition *)Enemy_GetDefinition(target->classId))
+            ->weakEffects;
     for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
       if (*weakEffects == effectId)
         return 1;
       weakEffects++;
     }
   } else {
-    weakEffects = Class_GetDefinition(target->classIndex)->unk50;
+    weakEffects = Class_GetDefinition(target->classIndex)->weakEffects;
     for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
       if (*weakEffects++ == effectId)
         return 1;

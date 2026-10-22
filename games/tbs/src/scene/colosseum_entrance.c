@@ -37,41 +37,21 @@
 ///   grounds, the finals' waiting room and the passages to the finals stages,
 ///   each an entrance's camera box on it
 ///   (https://alchemy.pascalpixel.com/places/colosseum/camera-boxes.png).
-///   Each arrival is an entrance of its own, and
-///   ColosseumEntrance_ApplyArrivalState plays the scene that entrance stands
-///   for. During the trials, the attendant in the stands
-///   (COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST and
-///   COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS) shows the party two warriors' trials:
-///   the first time the screen goes to one who strains, gives up and runs
-///   (COLOSSEUM_FAILED_TRIAL_FROM_STANDS), the second time to one who heaves
-///   the trial's load up and drops it, shaking the ground
-///   (COLOSSEUM_CLEARED_TRIAL_FROM_STANDS), and back in the stands he explains
-///   what the party saw (FLAG_COLOSSO_FAILED_TRIAL_SEEN,
-///   FLAG_COLOSSO_CLEARED_TRIAL_SEEN). On the finals day the party arrives at
-///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, where four soldiers tell it that only
-///   Isaac may enter: by Babi's leave Garet, Ivan and Mia may cheer him from
-///   the stage, and at Ivan's asking Isaac is shown the finals stages first.
-///   The party's items are kept here (InventorySnapshot_Take) for Babi's Palace
-///   to give back after the finals. A soldier leads Isaac east
-///   (COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST) to Colosseum Final 1 for
-///   its tour, which ends in the waiting room
-///   (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST). There the seven warriors who
-///   cleared the trials introduce themselves: Morgan, the highest-ranked;
-///   Azart, the second-best; Galahad, the third seed; Satrage, the
-///   fourth-ranked; Dekka; Navampa of Gondowan, the sixth-ranked; and Buford,
-///   the seventh seed. Stepping to the line asks whether Isaac is ready
-///   (Event_FinalsBegin); when he is, the warriors line up by rank and march
-///   out, and Isaac walks alone from the east passage
-///   (COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH) into Colosseum Final 1, where his
-///   friends lend a hand before the race. After the first win
-///   (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST, FLAG_COLOSSO_FIRST_MATCH_WON)
-///   the soldiers congratulate him and lead him west to Colosseum Final 2
-///   (COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST and
-///   COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH); after the
-///   second (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH,
-///   FLAG_COLOSSO_SECOND_MATCH_WON) they lead him east again, and the same
-///   passages now lead to the last of the stages, Colosseum Final 3, on its
-///   own map. The finals stages and their races are in colosseum_azart_match.c,
+///   Every arrival is an entrance of its own, and
+///   ColosseumEntrance_ApplyArrivalState plays the cutscene that entrance
+///   stands for. During the trials the stands' entrances
+///   (COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST,
+///   COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS) alternate with the two trial
+///   cutscenes (COLOSSEUM_FAILED_TRIAL_FROM_STANDS,
+///   COLOSSEUM_CLEARED_TRIAL_FROM_STANDS), which FLAG_COLOSSO_FAILED_TRIAL_SEEN
+///   and FLAG_COLOSSO_CLEARED_TRIAL_SEEN record. On the finals day
+///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE keeps the party's items
+///   (InventorySnapshot_Take) for Babi's Palace to give back, and the waiting
+///   room's line asks whether Isaac is ready (Event_FinalsBegin). Each finals
+///   stage returns to its own entrance here
+///   (COLOSSEUM_FROM_COLOSSEUM_*_MATCH_*), and FLAG_COLOSSO_FIRST_MATCH_WON and
+///   FLAG_COLOSSO_SECOND_MATCH_WON choose which stage the long passages lead to
+///   next; the stages themselves are colosseum_azart_match.c,
 ///   colosseum_satrage_match.c and colosseum_navampa_match.c.
 ///
 /// The three scenes share one exit table, a run of exits for each scene, and

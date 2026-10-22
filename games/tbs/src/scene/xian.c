@@ -48,6 +48,16 @@
 /// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
 /// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum (XIAN_FROM_SANCTUM_WEST)
 /// clears FLAG_SHOW_LOCATION_NAME, so the name is not shown again.
+///
+/// Open questions:
+///
+/// - XXX: what the three actors of sprite 0xdf from ACTOR_FIRST_DECORATION on
+///   show, drawn under the others in palette 15 and never a target; a render of
+///   the village with them hidden would settle it, and with it a name for the
+///   sprite.
+/// - XXX: what the leader's object modes 6 and 7 show as he jumps over the
+///   spilled water (Xian_JumpOverSpilledWater); the frames they pick in the
+///   party's sprite sheets would settle their names.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -165,8 +175,7 @@ enum { ANIM_PUDDLE_FROZEN = 5 };
 /// for two seconds.
 enum { XIAN_TRIGGER_CARRIER_BLOCKED = 200, XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
-/// Talking to Mist in Xian: Mist, a Mercury Djinni,
-/// joins the party.
+/// Talking to Mist in Xian: Mist, a Mercury Djinni, joins the party.
 static void Xian_MistJoins(void) {
   Djinn_JoinParty(ACTOR_MIST, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST));
 }
@@ -320,10 +329,10 @@ const struct ScenePlacement *Xian_GetPlacements(void) {
   return gXian_Placements;
 }
 
-/// A villager asks whether the young warriors came through Mogall Forest. She's
-/// ACTOR_WOMAN_ON_YOUNG_WARRIORS, and asks before Xian hears of Hsu. "Young
-/// warriors, very gallant! You came through Mogall Forest?" A yes earns
-/// respect; a no is a lie, since Silk Road from Altin is blocked.
+/// A villager in Xian asks whether the young warriors came through Mogall
+/// Forest. She is ACTOR_WOMAN_ON_YOUNG_WARRIORS, and asks before Xian hears of
+/// Hsu. "Young warriors, very gallant! You came through Mogall Forest?" A yes
+/// earns respect; a no is a lie, since Silk Road from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianYoungWarriorsVeryGallantCame);
@@ -331,12 +340,12 @@ static void Xian_AskAboutYoungWarriors(void) {
   Engine_EventEnd();
 }
 
-/// Talking to the water carrier. While she carries her water east of x = 320
-/// the first time, she spills it: a puddle spreads at her feet, she cries "You
-/// made me spill my water!" and walks back west to fetch more, the leader
-/// stepping aside if he is in her way. Otherwise she only answers: "Do not
-/// speak to me. I might spill my water.", or once it is spilled, "Now I must
-/// get water again."
+/// Talking to the water carrier in Xian. While she carries her water east of
+/// x = 320 the first time, she spills it: a puddle spreads at her feet, she
+/// cries "You made me spill my water!" and walks back west to fetch more, the
+/// leader stepping aside if he is in her way. Otherwise she only answers: "Do
+/// not speak to me. I might spill my water.", or once it is spilled, "Now I
+/// must get water again."
 static void Xian_TalkToWaterCarrier(void) {
   struct FieldActor *puddle;
   struct FieldActor *carrier;
@@ -471,16 +480,16 @@ static void Xian_TalkToWaterCarrier(void) {
   Engine_EventEnd();
 }
 
-/// Frost on the spilled water, before it freezes: the puddle is drawn in
-/// front while the leader stands north of it.
+/// Frost on the spilled water in Xian, before it freezes: the puddle is drawn
+/// in front while the leader stands north of it.
 static void Xian_UpdatePuddlePriority(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if ((leader->z.fixed >> 20) <= 13)
     Engine_ActorSetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }
 
-/// Frost freezes the spilled water: the puddle turns to ice the leader can
-/// stand on, and there is nothing left to jump over.
+/// Frost freezes the spilled water in Xian: the puddle turns to ice the leader
+/// can stand on, and there is nothing left to jump over.
 static void Xian_FreezeSpilledWater(void) {
   struct FieldActor *puddle;
   s32 stationaryMotionFlags;
@@ -501,9 +510,9 @@ static void Xian_FreezeSpilledWater(void) {
   Engine_EventEnd();
 }
 
-/// The kung fu student. The first time: "Hoo-whaaa... Hachaaa!", the leader
-/// steps back, and the student leaps at the tree, which jumps under his strike;
-/// "Heh heh heh..." Afterwards: "My kung fu is strong."
+/// Talking to the kung fu student in Xian. The first time: "Hoo-whaaa...
+/// Hachaaa!", the leader steps back, and the student leaps at the tree, which
+/// jumps under her strike; "Heh heh heh..." Afterwards: "My kung fu is strong."
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   struct FieldActor *leader;
@@ -541,8 +550,10 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
-    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0, 0x20001, 0);
-    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0, 0x20001, 0);
+    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
+                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
+                  EFFECT_USE_PRIORITY | 1, 0);
     Engine_AudioPlayCue(SE_132);
     particleCallback = Xian_SpawnTrainingParticles;
     Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
@@ -566,18 +577,21 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_ActorWaitForMove(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
     Engine_TaskRemoveCallback((void (*)(void))particleCallback);
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0, 0x20001, 0);
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0, 0x20001, 0);
-    reboundVelocity = -0x8000;
-    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0, 0x20001,
+    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0, EFFECT_USE_PRIORITY | 1,
                   0);
+    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
+                  EFFECT_USE_PRIORITY | 1, 0);
+    reboundVelocity = -0x8000;
+    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
+                  EFFECT_USE_PRIORITY | 1, 0);
     Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
     Engine_AudioPlayCue(SE_124);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0, 0x20001, 0);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0, 0x20001,
-                  0);
-    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0, 0x20001,
-                  0);
+    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+                  EFFECT_USE_PRIORITY | 1, 0);
+    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+                  EFFECT_USE_PRIORITY | 1, 0);
     Engine_TaskRemoveCallback(Xian_RotateTrainingTree);
     Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Object_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
@@ -593,10 +607,11 @@ static void Xian_TalkToKungFuStudent(void) {
   }
 }
 
-/// Feizhi asks whether the party are strong warriors. She's by the south exit
-/// after she has left Master Feh's school, and before Xian hears of Hsu. "You
-/// are the warriors from the school... Are you strong warriors?" A yes: she
-/// hopes they will go west; a no: very few warriors would call themselves weak.
+/// Feizhi asks, in Xian, whether the party are strong warriors. She is by the
+/// south exit after she has left Master Feh's school, and before Xian hears of
+/// Hsu. "You are the warriors from the school... Are you strong warriors?" A
+/// yes: she hopes they will go west; a no: very few warriors would call
+/// themselves weak.
 static void Xian_TalkToFeizhi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorsFromSchoolStrongWarriors);
@@ -604,8 +619,8 @@ static void Xian_TalkToFeizhi(void) {
   Engine_EventEnd();
 }
 
-/// Walking into the spilled water before it is frozen: the leader jumps two
-/// cells over it, where nothing stands in the way.
+/// Walking into the spilled water in Xian before it is frozen: the leader jumps
+/// two cells over it, where nothing stands in the way.
 static void Xian_JumpOverSpilledWater(void) {
   s32 savedMotionFlags;
   struct FieldActor *leader;
@@ -669,31 +684,31 @@ static void Xian_OpenDoorAndLeave(void) {
   switch (event->touchedTrigger) {
   case XIAN_TO_HOUSE:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapAnimateCells(gXian_DoorSteps1, 81, 18);
+    Engine_MapAnimateCells(gXian_HouseDoorOpens, 81, 18);
     break;
   case XIAN_TO_HOUSE_NORTH:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapAnimateCells(gXian_DoorSteps2, 83, 11);
+    Engine_MapAnimateCells(gXian_NorthHouseDoorOpens, 83, 11);
     break;
   case XIAN_TO_XIAN_INTERIORS_EAST:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapAnimateCells(gXian_DoorSteps2, 86, 11);
+    Engine_MapAnimateCells(gXian_NorthHouseDoorOpens, 86, 11);
     break;
   case XIAN_TO_INN:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapAnimateCells(gXian_DoorSteps3, 84, 24);
+    Engine_MapAnimateCells(gXian_InnDoorOpens, 84, 24);
     break;
   case XIAN_TO_WEAPON_AND_ARMOR_SHOP:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapAnimateCells(gXian_DoorSteps3, 72, 7);
+    Engine_MapAnimateCells(gXian_InnDoorOpens, 72, 7);
     break;
   case XIAN_TO_SANCTUM:
     Engine_AudioPlayCue(SE_188);
-    Engine_MapAnimateCells(gXian_DoorSteps4, 69, 11);
+    Engine_MapAnimateCells(gXian_SanctumDoorOpens, 69, 11);
     break;
   case XIAN_TO_FUCHIN_TEMPLE_INTERIORS:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapAnimateCells(gXian_DoorSteps5, 83, 7);
+    Engine_MapAnimateCells(gXian_SchoolDoorOpens, 83, 7);
     break;
   default:
     break;
@@ -703,7 +718,7 @@ static void Xian_OpenDoorAndLeave(void) {
   Engine_EventEnd();
 }
 
-/// Force on the training tree: it jumps, and the student cries out.
+/// Force on the training tree in Xian: it jumps, and the student cries out.
 /// "Wha-Wha-What happened? The tree jumped on its own!", the next time
 /// "...It jumped again... I am too tired...".
 static void Xian_StrikeTrainingTreeWithForce(void) {
@@ -715,9 +730,12 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   FieldScheduler_AddCallback(rotationCallback, TASK_PRIORITY_SCENE);
   Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
   Engine_AudioPlayCue(SE_124);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0, 0x20001, 0);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0, 0x20001, 0);
-  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0, 0x20001, 0);
+  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+                EFFECT_USE_PRIORITY | 1, 0);
+  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+                EFFECT_USE_PRIORITY | 1, 0);
+  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+                EFFECT_USE_PRIORITY | 1, 0);
   Engine_TaskRemoveCallback(rotationCallback);
   Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Engine_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
@@ -735,8 +753,9 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Engine_EventEnd();
 }
 
-/// The leader has stood in the water carrier's way for two seconds: both walk
-/// to the start of her route, the leader turns west, and she sets off again.
+/// Raised in Xian when the leader has stood in the water carrier's way for two
+/// seconds: both walk to the start of her route, the leader turns west, and she
+/// sets off again.
 static void Xian_MoveAsideForWaterCarrier(void) {
   struct FieldActor *carrier;
 
@@ -776,8 +795,8 @@ static void Xian_MoveAsideForWaterCarrier(void) {
 const struct SceneEvent *Xian_GetEvents(void) { return gXian_Events; }
 
 /// Queues and plays SE_169 and sets up the village as the story and this visit
-/// left it: after the news of Hsu (or, back from a battle, after his strike)
-/// the kung fu student stands where his strike leaves him; Feizhi is gone
+/// left it: after the news of Hsu (or, back from a battle, after her strike)
+/// the kung fu student stands where her strike leaves her; Feizhi is gone
 /// after the news or once she has seen the rockslide; back from a battle, the
 /// frozen puddle keeps its ice; the water carrier is hooked to
 /// Xian_WatchWaterCarrierPath; and the training tree, its Force mark and the
@@ -812,10 +831,11 @@ s32 Xian_Initialize(void) {
     actor = Object_GetById(decorationIndex + ACTOR_FIRST_DECORATION);
     actor->sprite->image.priority = 1;
     actor->motionFlags = 0;
-    actor->collisionFlags = 8;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
     Engine_ActorSetSpriteFlags(actor, 0);
     ObjectGroup_SetChildValue(actor, 15);
-    actor->priorityFlags = (actor->priorityFlags & 254) | 2;
+    actor->priorityFlags = (actor->priorityFlags & ~ACTOR_PRIORITY_AUTOMATIC) |
+                           ACTOR_PRIORITY_UNDERFOOT;
   }
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02)) {
     Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
@@ -889,7 +909,7 @@ s32 gXian_WaterCarrierRoute[] = {
     SC_MOVE(PIXELS(424), 0, PIXELS(216)),
     SC_SYNC,
     SC_WAIT(10),
-    SC_SET(SW_FACING, 0x1000),
+    SC_SET(SW_FACING, FACING_EAST + FACING_STEP),
     SC_WAIT(10),
     SC_ARG(3),
     SC_WAIT(60),
@@ -935,31 +955,31 @@ s32 gXian_TrainingParticleScript[] = {
 };
 
 /// The doors' opening frames, copied from map cells.
-u16 gXian_DoorSteps1[] = {
+u16 gXian_HouseDoorOpens[] = {
     MAP_CELL_STEP(64, 48, 1, 2, 4),
     MAP_CELL_STEP(63, 48, 1, 2, 4),
     MAP_CELL_STEPS_END,
 };
 
-u16 gXian_DoorSteps2[] = {
+u16 gXian_NorthHouseDoorOpens[] = {
     MAP_CELL_STEP(69, 50, 2, 2, 4),
     MAP_CELL_STEP(65, 50, 2, 2, 4),
     MAP_CELL_STEPS_END,
 };
 
-u16 gXian_DoorSteps3[] = {
+u16 gXian_InnDoorOpens[] = {
     MAP_CELL_STEP(66, 46, 3, 2, 4),
     MAP_CELL_STEP(63, 46, 3, 2, 4),
     MAP_CELL_STEPS_END,
 };
 
-u16 gXian_DoorSteps4[] = {
+u16 gXian_SanctumDoorOpens[] = {
     MAP_CELL_STEP(67, 50, 4, 2, 4),
     MAP_CELL_STEP(63, 50, 4, 2, 4),
     MAP_CELL_STEPS_END,
 };
 
-u16 gXian_DoorSteps5[] = {
+u16 gXian_SchoolDoorOpens[] = {
     MAP_CELL_STEP(66, 44, 3, 2, 4),
     MAP_CELL_STEP(63, 44, 3, 2, 4),
     MAP_CELL_STEPS_END,
@@ -1023,7 +1043,7 @@ struct ScenePlacement gXian_Placements[] = {
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(440), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { SPRITE_FEIZHI, IF_FLAG_SET(FLAG_FEIZHI_WENT_TO_HSU), ACTOR_STAND,
-        PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
+        PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gXian_WaterCarrierRoute,
         PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
@@ -1032,7 +1052,7 @@ struct ScenePlacement gXian_Placements[] = {
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x5b, FLAG_DJINNI_0 + DJINNI_MIST, ACTOR_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_MIST, ACTOR_STAND,
         PIXELS(448), 0, PIXELS(328), FACING_WEST, TALK_FACE_PARTY, 0 },
     { 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACE_PARTY, 0 },
@@ -1076,7 +1096,7 @@ struct SceneEvent gXian_Events[] = {
     { EVENT_TALK, ACTOR_KUNG_FU_STUDENT, CONDITION_ALWAYS, MSGNO(MsgXianAltinWasFloodedWithWaterBut) },
     { EVENT_TALK, ACTOR_MUSCULAR_MAN_ON_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianWeClearedTheRocksFromSilk) },
     { EVENT_TALK, ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianManyStrangeThingsHappenedAllAt) },
-    { (1u << 28) | PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_UpdatePuddlePriority) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SPILLED_WATER, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_UpdatePuddlePriority) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_FreezeSpilledWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_StrikeTrainingTreeWithForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheseChildrenMustHaveComeTo) },

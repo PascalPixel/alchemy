@@ -31,6 +31,15 @@
 /// Master Hama, and her thoughts praise the party's power as well as Hama's;
 /// otherwise she thanks Master Hama alone, and her thoughts are glad some of
 /// Hama's power passed to her. Arriving here clears FLAG_SHOW_LOCATION_NAME.
+///
+/// Open questions:
+///
+/// - XXX: what the still objects of type 20 that XianInteriors_Initialize
+///   places in the inn and the shops are; type 20 is SPRITE_CHEST's number,
+///   but the rooms' renders show no chest where they stand, so a render with
+///   them hidden would settle it.
+/// - XXX: what Hsu's animation 6 shows in the room behind the school; a render
+///   of the room once Xian has heard of Hsu would settle it.
 
 #include "game_state.h"
 #include "unit/scene/xian_interiors.h"
@@ -62,9 +71,7 @@ enum XianInteriorsActor {
   /// ★ Named from the game: "The mulberry harvest is over. Now there is much
   /// food for the caterpillars!" (MsgXianInteriorsTheMulberryHarvestIsOverNow)
   ACTOR_MAN_ON_THE_MULBERRY_HARVEST = ACTOR_FIRST_PLACED,
-  /// A woman in a green apron, in the same room. "Farm work is very hard.
-  /// Warriors have no idea how hard
-  /// it is."
+  /// A woman in a green apron, in the same room.
   /// ★ Named from the game: "Farm work is very hard."
   /// (MsgXianInteriorsFarmWorkIsVeryHardWarriors)
   ACTOR_FARM_WORKER,
@@ -100,10 +107,7 @@ enum XianInteriorsActor {
   /// they have not come yet." (MsgXianInteriorsNormallyManyMerchantsComeToThe)
   ACTOR_WOMAN_AWAITING_MERCHANTS,
   /// A man in a cook's cap, in the inn's room at XIAN_INTERIORS_INN_SOUTH,
-  /// with the innkeeper. "All
-  /// the people who came to eat are from Xian."; once Xian has heard of Hsu,
-  /// Mind Read hears "Eat, warrior. I will add many hot peppers and savory
-  /// spices."
+  /// with the innkeeper.
   /// ★ Named from the game: "All the people who came to eat are from Xian."
   /// (MsgXianInteriorsAllThePeopleWhoCameTo)
   ACTOR_COOK
@@ -164,7 +168,8 @@ static inline u32 XianInteriors_GetLeaderFacing(void) {
   return leader->facing;
 }
 
-/// Opens the weapon shop from its counter side, or discusses martial arts.
+/// Talking to Xian's weapon merchant: across the counter, the weapon shop;
+/// from elsewhere, talk of martial arts.
 static void XianInteriors_TalkToWeaponMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -183,7 +188,8 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Opens the armor shop from its counter side, or discusses armor and kung fu.
+/// Talking to Xian's armor merchant: across the counter, the armor shop;
+/// from elsewhere, talk of armor and kung fu.
 static void XianInteriors_TalkToArmorMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -202,7 +208,9 @@ static void XianInteriors_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Opens the item shop or asks whether the party will cross the desert.
+/// Talking to Xian's item merchant: across the counter, the item shop; from
+/// elsewhere, talk of armor, or, once Xian has heard of Hsu, whether the party
+/// will cross the desert.
 static void XianInteriors_TalkToItemMerchant(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
@@ -221,7 +229,8 @@ static void XianInteriors_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers a room from the counter side, or discusses travel through Xian.
+/// Talking to Xian's innkeeper: across the counter, the inn; from elsewhere,
+/// talk of towns and travelers.
 static void XianInteriors_TalkToInnkeeper(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
@@ -240,10 +249,10 @@ static void XianInteriors_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// A young man asks whether something is wrong on Silk Road. He's
-/// ACTOR_YOUNG_MAN_ON_SILK_ROAD, after the news of Hsu, and asks about Lamakan
-/// Desert too. A yes: no one can use Silk Road; a no: it is good to hear the
-/// desert is fine.
+/// A young man in a house in Xian asks whether something is wrong on Silk
+/// Road. He is ACTOR_YOUNG_MAN_ON_SILK_ROAD, after the news of Hsu, and asks
+/// about Lamakan Desert too. A yes: no one can use Silk Road; a no: it is good
+/// to hear the desert is fine.
 static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
@@ -251,9 +260,9 @@ static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventEnd();
 }
 
-/// After the news of Hsu, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD asks whether the
-/// monsters in Altin spat water. A yes: how strange; a no: but why would Feizhi
-/// lie?
+/// An old man in a house in Xian, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, asks after
+/// the news of Hsu whether the monsters in Altin spat water. A yes: how
+/// strange; a no: but why would Feizhi lie?
 static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
@@ -261,8 +270,8 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-/// Feizhi thanks the party and Master Hama for freeing Hsu. She's in the room
-/// behind Master Feh's school, when the party helped free Hsu
+/// Feizhi thanks the party and Master Hama for freeing Hsu, in Xian. She is in
+/// the room behind Master Feh's school, when the party helped free Hsu
 /// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear); she welcomes the party, looks at
 /// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void XianInteriors_FeizhiThanksParty(void) {
@@ -285,11 +294,12 @@ const struct SceneEvent *XianInteriors_GetEvents(void) {
   return gXianInteriors_Events;
 }
 
-/// Opens the room through a window transition and creates its configured
-/// objects (kind 20): one in the inn (XIAN_INTERIORS_INN_SOUTH and
+/// Opens the room through a window transition and places still objects of
+/// type 20 under the actors (OverlayObject_CreateConfiguredObject): one in the
+/// inn (XIAN_INTERIORS_INN_SOUTH and
 /// XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS), two in the shops
 /// (XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
-/// clears FLAG_SHOW_LOCATION_NAME and Hsu takes his pose.
+/// clears FLAG_SHOW_LOCATION_NAME and Hsu takes his animation 6.
 s32 XianInteriors_Initialize(void) {
   s16 entrance;
 

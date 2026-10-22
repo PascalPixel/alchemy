@@ -1,42 +1,45 @@
-/// @file
-/// SceneId_Lalivero, the town by Babi Lighthouse and Venus Lighthouse,
-/// which has been "the symbol of Lalivero since the olden days". The story
-/// brings the party here twice, and Lalivero_GetPlacements and
-/// Lalivero_GetEvents pick the town's people and events for the visit by
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE, whether the party is back from Venus
-/// Lighthouse (set at its aerie after Sheba's fall).
+/// @file Lalivero, the town by Babi Lighthouse, one scene with the area name
+/// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
+/// story brings the party here twice, and Lalivero_GetPlacements and
+/// Lalivero_GetEvents choose the town's people and events for each visit by
+/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE, set at Venus Lighthouse's aerie.
 ///
-/// The party first comes in from the world map (LALIVERO_FROM_WORLD_MAP_EAST or
-/// LALIVERO_FROM_WORLD_MAP_WEST) with Iodem of Tolbi, and WatchWoundedSoldiers
-/// plays (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN): more of Tolbi's soldiers lie
-/// beaten in the street. They tell Iodem that seven people beat them, the same
-/// group the soldiers had been following, and headed for the ruins beneath Babi
-/// Lighthouse; one of the seven was Sheba, "the holy child of Lalivero", whom
-/// the scholar Kraden was protecting, and Faran, the master of Lalivero,
-/// followed them into the ruins. Iodem resolves to follow, and the story moves
-/// on to Babi Lighthouse. Until the party comes back, the townsfolk mourn
-/// Sheba, whom Tolbi had taken from them, and the guard at the wharf
-/// (ACTOR_WHARF_GUARD) lets no one near "Babi's most precious belonging".
+/// On the first visit the party comes in from the world map with Iodem, and
+/// Event_WatchWoundedSoldiers plays once (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN):
+/// two of Tolbi's soldiers lie beaten in the street and tell Iodem that Sheba's
+/// captors went to the ruins beneath Babi Lighthouse, with Faran after them.
+/// The townsfolk talk of Sheba, and the guard at the wharf lets no one by.
 ///
-/// The party comes back from Venus Lighthouse, where Sheba fell from the top
-/// into the sea, by way of Faran's house (lalivero_interiors.c), and Iodem has
-/// asked it to wait for him outside. Its first step onto trigger 50 then plays
-/// ReceiveBlackOrb (FLAG_IODEM_FAREWELL_SEEN): Garet stops the leader, Iodem
-/// comes out of Faran's house and says that the misty island the party saw
-/// from the lighthouse may be Lemuria, the island of the ancients, which could
-/// save Babi's life, and gives the party the Black Orb that sails Babi's ship,
-/// "the ship of the ancients", docked at the edge of town. The wharf's guard
-/// now lets the party through (FLAG_LALIVERO_WHARF_OPEN), trigger 51 turns the
-/// party back toward the ship, a sign stands at the north exit ("No
-/// trespassing. Danger beyond this point."), and the townsfolk talk of the
-/// beacon of Venus Lighthouse and of Sheba's fall.
+/// On the second visit the party comes back through Faran's house. Its first
+/// step onto trigger 50 plays Event_IodemGivesBlackOrb
+/// (FLAG_IODEM_FAREWELL_SEEN), in which Iodem comes out of the house and gives
+/// the party the Black Orb that sails Babi's ship;
+/// Lalivero_TalkAboutIdejimaShip adds a few lines when FLAG_SAW_SHIP_AT_IDEJIMA
+/// is set. The wharf's guard then lets the party through
+/// (FLAG_LALIVERO_WHARF_OPEN), trigger 51 turns it back toward the ship, and a
+/// sign and three blocked cells close the north exit.
 ///
-/// On both visits Torch, a Mars Djinni, waits in the town until it joins; doors
-/// (EnterDoor) lead into the houses, shops and inn (SceneId_LaliveroShops and
-/// SceneId_LaliveroFaransHouse) and, through a gate (trigger 6), into the
-/// Lalivero Sanctum; LALIVERO_TO_WORLD_MAP_EAST and LALIVERO_TO_WORLD_MAP_WEST
-/// lead to the world map; and a jar, a stone pillar and a chest hold a Water of
-/// Life, a Psy Crystal and a Warrior's Helm.
+/// On both visits Torch, a Mars Djinni, waits until it joins;
+/// Event_EnterDoor opens the door or the Sanctum's gate before the leader
+/// leaves by the touched trigger's exit into SceneId_LaliveroShops or
+/// SceneId_LaliveroFaransHouse; the world map lies east and west; and a jar, a
+/// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
+/// Helm.
+///
+/// Open questions:
+/// - XXX: whether entrances 90 and 91 (ENTRANCE_FROM_AERIE and
+///   ENTRANCE_FROM_AERIE_QUIETLY) are reached from anywhere, since no exit
+///   names them and the aerie leads into Faran's house; a search of every
+///   exit table and the debug menus' scene select would settle it.
+/// - XXX: what the three cells at the north exit, given the attributes of cell
+///   (20, 23) after Venus Lighthouse, change; the map's collision codes, or a
+///   recording of the leader walking north there, would settle it.
+/// - XXX: why the first visit gives one of its five cells, at x 78, far from
+/// the
+///   soldiers, the same attributes; the map at that cell would settle it.
+/// - XXX: why the chest asks the leader to face west on the first visit and
+///   not on the second; a recording of both visits would show whether it can
+///   be opened from another side.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -63,13 +66,15 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
+#include "heap_state.h"
 
-static void TalkToIodemAboutTheShip(void);
+static void Lalivero_TalkAboutIdejimaShip(void);
 
 /// Entrances that set up the later visit, 90 as if the party had also seen the
-/// ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). XXX: no exit leads to
-/// them and the entrance table has no row for them, while the aerie's exit
-/// leads into Faran's house instead; likely starts for testing.
+/// ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them and the
+/// entrance table has no row for them (the aerie's exit leads into Faran's
+/// house): only the debug scene selector, which warps to any entrance from 0
+/// to 99, reaches them.
 enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 
 /// The placed actors, numbered in the order of gLaliveroPlacements.
@@ -87,7 +92,7 @@ enum LaliveroActor {
   /// ★ Named from what the player sees: a second soldier lying in the street
   /// (its render)
   ACTOR_EAST_SOLDIER,
-  /// A young man with brown hair who sobs for Sheba (gLaliveroMournerSobs).
+  /// A young man with brown hair who sobs for Sheba (gLalivero_CryingScript).
   /// "Ohh... They took Sheba and headed for the ruins."
   /// ★ Named from the game: "Ohh... They took"
   /// (MsgLaliveroOhhTheyTookShebaHeaded)
@@ -156,16 +161,16 @@ enum LaliveroActor {
 /// The door at trigger 6, into the Lalivero Sanctum, is a gate two cells wide.
 enum { GATE_TRIGGER = 6 };
 
-enum {
-  HEAP_ITEM_ICON = 17,
-  ITEM_ICON_BUFFER_SIZE = 0x608,
-  ITEM_ICON_TILES = 0x400,
-  ITEM_ICON_TILE_BYTES = 128
-};
+/// A chest searched while facing the given way.
+#define SEARCH_CHEST_FACING(facing)                                            \
+  (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
+
+/// An item icon's tiles: a 16-pixel square at 4 bits a pixel.
+#define ICON_TILE_BYTES (16 * 16 / 2)
 
 /// Lalivero, either visit: talking to Torch, a Mars Djinni, makes it join the
 /// party.
-static void TalkToTorch(void) {
+static void Event_TalkToTorch(void) {
   Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
 }
 
@@ -188,7 +193,7 @@ const struct ScenePlacement *Lalivero_GetPlacements(void) {
 
 /// Lalivero, the first visit: the young man mourning Sheba stops sobbing to say
 /// she was taken to the ruins, faces north again and goes back to sobbing.
-static void TalkToMourner(s32 actor) {
+static void Event_TalkToVillagerTheyTookSheba(s32 actor) {
   void Actor_FaceDirection();
 
   struct FieldActor *object;
@@ -201,12 +206,12 @@ static void TalkToMourner(s32 actor) {
   Event_ShowMessage(actor, 0);
   Actor_FaceDirection(actor, FACING_NORTH, 0);
   Engine_EventWait(20);
-  Actor_SetActionScript(actor, gLaliveroMournerSobs);
+  Actor_SetActionScript(actor, gLalivero_CryingScript);
 }
 
 /// Lalivero, after Venus Lighthouse: the woman with fair hair asks whether the
 /// party is leaving Lalivero, and wishes it well either way.
-static void TalkToWomanAskingIfLeaving(s32 actor) {
+static void Event_WomanAsksIfLeaving(s32 actor) {
   s32 message = MsgLaliveroLeavingLalivero;
   Engine_EventSetMessage(message);
   Engine_EventOpenMessage(actor, 0);
@@ -222,7 +227,7 @@ static void TalkToWomanAskingIfLeaving(s32 actor) {
 /// Lalivero, after Venus Lighthouse: the guard at the wharf's door ("I was
 /// told to let you in if you showed up...") lets the party through and steps
 /// aside (sets FLAG_LALIVERO_WHARF_OPEN).
-static void TalkToWharfGuard(void) {
+static void Event_WharfGuardLetsPartyThrough(void) {
 
   Engine_GameFlagSet(FLAG_LALIVERO_WHARF_OPEN);
   Engine_EventSetMessage(MsgLaliveroWasToldLetInIf);
@@ -236,7 +241,7 @@ static void TalkToWharfGuard(void) {
 /// The leader walks through one of Lalivero's doors. As the leader walks into a
 /// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
 /// and the exit of the touched trigger is taken.
-static void EnterDoor(void) {
+static void Event_EnterDoor(void) {
   s32 door = gEventWork->touchedTrigger;
   s32 x = gLaliveroDoorCells[door][0];
   s32 y = gLaliveroDoorCells[door][1];
@@ -257,7 +262,7 @@ static void EnterDoor(void) {
 
 /// Lalivero: a doorway with no door (triggers 8 and 11); leave by the touched
 /// trigger's exit.
-static void TakeTouchedExit(void) {
+static void Event_TakeTouchedExit(void) {
   struct EventWork *work = gEventWork;
   s16 *trigger = (s16 *)&work->touchedTrigger;
   s32 exit = *trigger;
@@ -273,7 +278,7 @@ static void TakeTouchedExit(void) {
 /// protecting her. They headed for the ruins beneath Babi Lighthouse, and
 /// Faran, the master of Lalivero, followed them in. The soldiers send the party
 /// on, and Iodem sets off for Babi Lighthouse.
-static void WatchWoundedSoldiers(void) {
+static void Event_WatchWoundedSoldiers(void) {
   struct FieldActor *leader;
 
   Engine_EventBegin();
@@ -471,7 +476,7 @@ static void WatchWoundedSoldiers(void) {
 /// life. The party promised Babi to find it, though it means first to find
 /// Jenna, whom it is searching for, and Iodem gives it the Black Orb that
 /// sails Babi's ship. Garet is glad to see the ocean at last.
-static void ReceiveBlackOrb(void) {
+static void Event_IodemGivesBlackOrb(void) {
   struct FieldActor *leader;
 
   GameFlag_Set(FLAG_IODEM_FAREWELL_SEEN);
@@ -645,7 +650,7 @@ static void ReceiveBlackOrb(void) {
   // Arriving through the aerie, the party also talks about the ship they saw
   // at Idejima.
   if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) != 0) {
-    TalkToIodemAboutTheShip();
+    Lalivero_TalkAboutIdejimaShip();
   }
   Engine_EventSetMessage(MsgLaliveroBabiToldMeShipAncients);
   Engine_EventWait(10);
@@ -765,7 +770,7 @@ static void ReceiveBlackOrb(void) {
 
 /// The ship the party saw at Idejima was not Babi's, which is here in
 /// Lalivero, but, Garet guesses, Saturos's.
-static void TalkToIodemAboutTheShip(void) {
+static void Lalivero_TalkAboutIdejimaShip(void) {
   Engine_EventSetMessage(MsgLaliveroThoughtShipWeSawAt);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
@@ -807,7 +812,7 @@ static void TalkToIodemAboutTheShip(void) {
 
 /// Lalivero, trigger 51 after Venus Lighthouse: Garet turns the leader back
 /// toward Babi's ship and the wharf the guard was keeping.
-static void TurnBackToTheShip(void) {
+static void Event_TurnBackToTheShip(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLaliveroWhereGoingArentWeTaking);
   Event_ShowMessage(GARET, 0);
@@ -830,7 +835,7 @@ const struct SceneEvent *Lalivero_GetEvents(void) {
 s32 Lalivero_Initialize(void) {
   union FieldObject *object;
   struct AnimationObject *sprite;
-  u8 *icon;
+  GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
@@ -865,10 +870,10 @@ s32 Lalivero_Initialize(void) {
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
+  icon = Engine_HeapAllocate(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Engine_ItemLoadIcon(ITEM_BLACK_ORB);
-  Engine_VramLoad(sprite->slot, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
-  Engine_HeapRelease(HEAP_ITEM_ICON);
+  Engine_VramLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
+  Engine_HeapRelease(HEAP_SLOT_GLYPH_TRANSFER);
 
   if (GameFlag_IsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     // A sign now stands at the north exit, and three cells there take the
@@ -911,7 +916,7 @@ s32 Lalivero_Initialize(void) {
       object->actor.paused = 1;
       object = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       object->actor.paused = 1;
-      WatchWoundedSoldiers();
+      Event_WatchWoundedSoldiers();
       object = (union FieldObject *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       object->actor.paused = 0;
       object = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
@@ -923,7 +928,7 @@ s32 Lalivero_Initialize(void) {
 
 /// The sobbing of ACTOR_VILLAGER_THEY_TOOK_SHEBA: the sprite squashes and
 /// stretches twice, then rests 80 frames.
-s32 gLaliveroMournerSobs[] = {
+s32 gLalivero_CryingScript[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
     SC_ADD(SW_SCALE_X, -0x4000),
@@ -1021,7 +1026,7 @@ struct ScenePlacement gLaliveroPlacements[] = {
         PIXELS(224), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(288), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gLaliveroMournerSobs,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gLalivero_CryingScript,
         PIXELS(248), 0, PIXELS(96), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(312), 0, PIXELS(280), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -1047,7 +1052,7 @@ struct ScenePlacement gLaliveroPlacements[] = {
         PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { MARS_DJINNI, 0x5e, ACTOR_STAND,
+    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_TORCH, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1083,9 +1088,9 @@ struct ScenePlacement gLaliveroPlacementsAfterLighthouse[] = {
         PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { MARS_DJINNI, 0x5e, ACTOR_STAND,
+    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_TORCH, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x112, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SIGN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1114,20 +1119,20 @@ u16 gLaliveroGateOpenSteps[] = {
 struct SceneEvent gLaliveroEvents[] = {
     { EVENT_EXIT, 20, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
     { EVENT_EXIT, 21, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TakeTouchedExit) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(TakeTouchedExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit) },
     { EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
     { EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
-    { EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToMourner) },
+    { EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToVillagerTheyTookSheba) },
     { EVENT_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
     { EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisAllHappenedBecauseTolbiTook) },
     { EVENT_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
@@ -1147,33 +1152,33 @@ struct SceneEvent gLaliveroEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroITriedToStepInFront) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyAllHaveALessonComing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWonderWhatBabisMostPrecious) },
-    { EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToTorch) },
-    { SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { SEARCH(SEARCH_STONE_PILLAR), 101, 0xfb7, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { 0x8413, 102, 0xfb8, FIND_ITEM(ITEM_WARRIORS_HELM) },
+    { EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToTorch) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+    { SEARCH(SEARCH_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { SEARCH_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
-    { EVENT_TOUCH, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(ReceiveBlackOrb) },
-    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(TurnBackToTheShip) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TakeTouchedExit) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(TakeTouchedExit) },
-    { EVENT_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(TalkToWharfGuard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(TalkToWharfGuard) },
+    { EVENT_TOUCH, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(Event_IodemGivesBlackOrb) },
+    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TurnBackToTheShip) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit) },
+    { EVENT_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(Event_WharfGuardLetsPartyThrough) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(Event_WharfGuardLetsPartyThrough) },
     { EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
     { EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
     { EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
-    { EVENT_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToWomanAskingIfLeaving) },
+    { EVENT_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WomanAsksIfLeaving) },
     { EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroISawTheBeaconOfVenus) },
     { EVENT_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
     { EVENT_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroThePeninsulaBehindVenusLighthouseIs) },
@@ -1193,10 +1198,10 @@ struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroYouMustBeGreatWarriorsTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorWouldBeFineEvenAfter) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisSureSeemsLikeAStrange) },
-    { EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToTorch) },
-    { SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { SEARCH(SEARCH_STONE_PILLAR), 101, 0xfb7, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { SEARCH(SEARCH_CHEST), 102, 0xfb8, FIND_ITEM(ITEM_WARRIORS_HELM) },
+    { EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToTorch) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+    { SEARCH(SEARCH_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

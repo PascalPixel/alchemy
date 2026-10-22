@@ -1,39 +1,32 @@
-/// @file
-/// Lalivero's buildings, in two scenes with the area name Lalivero: the town
-/// whose master, Faran, raised Sheba, the girl Lalivero received from the sky.
+/// @file Lalivero's buildings: two scenes in one overlay, with the area name
+/// Lalivero, and Lalivero Sanctum for the Sanctum's rooms of LaliveroShops
+/// (LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST and LALIVERO_SHOPS_SANCTUM). Each
+/// scene has tables for before and after Venus Lighthouse, chosen by
+/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE, as the town's are (lalivero.c).
 ///
-/// Where they fall in the story: when the party first comes to Lalivero,
-/// Sheba has been taken hostage and Faran has followed her captors into the
-/// ruins; the town talks of little else, and of the lighthouse Babi is
-/// building. The party comes back from Venus Lighthouse by the Lighthouse
-/// Aerie's way down (ENTRANCE_FROM_AERIE, which sets
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE), and from then on each scene reads its
-/// "after" tables: the people speak of the rough seas since the beacon was lit
-/// and of the search for Sheba, who fell from the lighthouse into the sea.
+/// SceneId_LaliveroShops holds the houses, the weapon, armor and item shops and
+/// the Sanctum. Each shopkeeper stands behind a counter and trades only with a
+/// leader facing north across it (Event_TalkToWeaponMerchant and the others);
+/// from any other side they talk. Stepping into the Sanctum by
+/// LALIVERO_SHOPS_SANCTUM makes it the place a defeated party wakes. Barrels
+/// hold a Lucky Medal and an Antidote.
 ///
-/// - SceneId_LaliveroShops: the houses, three shops and the Sanctum, whose area
-///   name is Lalivero Sanctum by LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST and
-///   LALIVERO_SHOPS_SANCTUM. The weapon, armor and item merchants trade across
-///   their counters and the healer offers the Sanctum's services; entering the
-///   Sanctum by LALIVERO_SHOPS_SANCTUM makes it the place a defeated party
-///   wakes. Barrels hold a Lucky Medal and an Antidote. The doors lead back out
-///   into Lalivero (lalivero.c, SceneId_Lalivero).
-/// - SceneId_LaliveroFaransHouse: Faran's house, the inn, and the way out to
-///   the edge of town where Babi's ship lies
-///   (LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP, to
-///   LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE). Before Venus Lighthouse,
-///   Faran's household waits for news, and an inn worker too worried about
-///   Sheba to work apologizes once (FLAG_INN_WORKER_APOLOGIZED) and goes back
-///   to her chores. Back from the lighthouse,
-///   LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE runs the report
-///   (ReportToFaran): Faran and Iodem have found no sign of Sheba; the party
-///   tells what became of Jenna and the others, in one of two versions by
-///   whether they saw the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA), and will
-///   go on searching for Jenna; Faran is sure Sheba lived, Iodem tells him what
-///   an Adept is, and Faran sends them off. Stepping on trigger 51 afterwards,
-///   Iodem asks the party to wait for him outside Faran's house
-///   (FLAG_IODEM_ASKED_TO_MEET), where he gives them the Black Orb
-///   (lalivero.c).
+/// SceneId_LaliveroFaransHouse holds Faran's house, the inn and the way out to
+/// the wharf where Babi's ship lies (LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP).
+/// Before Venus Lighthouse an inn worker apologizes once for her distraction
+/// (Event_TalkToInnWorker, FLAG_INN_WORKER_APOLOGIZED) and goes back to her
+/// chores. The aerie of Venus Lighthouse leads in by
+/// LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
+/// Event_ReportToFaran: the party reports to Faran and Iodem, in one of two
+/// versions by FLAG_SAW_SHIP_AT_IDEJIMA. Trigger 51 afterwards plays
+/// Event_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which sends the party
+/// outside, where Iodem gives it the Black Orb (lalivero.c). A barrel holds a
+/// Lucky Medal.
+///
+/// Open questions:
+/// - XXX: what animation 6 shows of the napping worker upstairs in the
+///   northwest house; his sprite's animation table or a recording would settle
+///   a name in enum ActorAnimation.
 
 #include "script.h"
 #include "game_state.h"
@@ -63,8 +56,11 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
-static void TellFaranAboutJenna(void);
+static void LaliveroInteriors_TellFaranAboutJenna(void);
 
+/// An entrance that sets FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE. No exit leads to
+/// it and the entrance table has no row for it: only the debug scene selector,
+/// which warps to any entrance from 0 to 99, reaches it.
 enum {
   ENTRANCE_FROM_AERIE = 90,
 };
@@ -199,10 +195,6 @@ enum LaliveroInteriorsActor {
 /// ★ Named from the game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
 enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_PLACE_TEMP_00 };
 
-/// Behind a counter: the actor is drawn under the counter's top and the
-/// party talks across it.
-#define ACTOR_BEHIND_COUNTER 4
-
 /// LaliveroFaransHouse: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct ScriptInterpreter *interpreter) {
   Actor_SetAttachedEffect(ACTOR_INN_WORKER,
@@ -211,28 +203,28 @@ static s32 InnWorker_Sigh(struct ScriptInterpreter *interpreter) {
 }
 
 const struct SceneEntrance *LaliveroInteriors_GetEntrances(void) {
-  return gLaliveroEntrances;
+  return gLaliveroInteriors_Entrances;
 }
 
 const struct SceneRegion *LaliveroInteriors_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroShops) {
-    return gLaliveroSanctumRegions;
+    return gLaliveroInteriors_ShopsRegions;
   }
-  return gLaliveroRegions;
+  return gLaliveroInteriors_FaransHouseRegions;
 }
 
-const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroExits; }
+const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroInteriors_Exits; }
 
 /// The people of each scene; Faran's house fills up after Venus Lighthouse.
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
     // Faran's house and the inn.
     if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
-      return gFaranHousePlacementsAfterLighthouse;
+      return gLaliveroInteriors_FaransHousePlacementsAfterLighthouse;
     }
-    return gFaranHousePlacements;
+    return gLaliveroInteriors_FaransHousePlacements;
   }
-  return gLaliveroPlacements;
+  return gLaliveroInteriors_ShopsPlacements;
 }
 
 /// The side the leader faces: the facing rounded to the nearest of east,
@@ -247,7 +239,7 @@ static inline u16 Leader_GetSide(void) {
 /// from elsewhere, before Venus Lighthouse, they ask whether the party has
 /// heard that Sheba was taken hostage and Faran went after her, and after it
 /// tell of the rough sea.
-static void TalkToWeaponMerchant(s32 keeper) {
+static void Event_TalkToWeaponMerchant(s32 keeper) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Leader_GetSide's rounding, written with the mask 0xc000, which
   // loads from the literal pool where the helper's builds the mask.
@@ -275,7 +267,7 @@ static void TalkToWeaponMerchant(s32 keeper) {
 
 /// Lalivero (LaliveroShops): the armor shop across the counter; otherwise
 /// small talk.
-static void TalkToArmorMerchant(s32 keeper) {
+static void Event_TalkToArmorMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
   } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
@@ -289,7 +281,7 @@ static void TalkToArmorMerchant(s32 keeper) {
 
 /// Lalivero (LaliveroShops): the item shop across the counter; otherwise
 /// small talk.
-static void TalkToItemMerchant(s32 keeper) {
+static void Event_TalkToItemMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
   } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
@@ -303,7 +295,7 @@ static void TalkToItemMerchant(s32 keeper) {
 
 /// Lalivero Sanctum: the healer offers the Sanctum's services across the
 /// counter; otherwise small talk of Babi's lighthouse.
-static void TalkToHealer(s32 healer) {
+static void Event_TalkToHealer(s32 healer) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_ConfirmAct(healer);
   } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
@@ -317,7 +309,7 @@ static void TalkToHealer(s32 healer) {
 
 /// Lalivero (LaliveroFaransHouse), the inn: a room for the night across the
 /// counter; otherwise small talk.
-static void TalkToInnkeeper(s32 innkeeper) {
+static void Event_TalkToInnkeeper(s32 innkeeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
   } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
@@ -333,7 +325,7 @@ static void TalkToInnkeeper(s32 innkeeper) {
 /// stops her chores to apologize: worry for Sheba keeps her from concentrating.
 /// A leader standing west of her steps aside to the south before she starts
 /// again.
-static void TalkToInnWorker(void) {
+static void Event_TalkToInnWorker(void) {
   s16 side;
 
   side = Leader_GetSide();
@@ -362,13 +354,13 @@ static void TalkToInnWorker(void) {
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Engine_EventWait(20);
   }
-  Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroInnWorkerChores);
+  Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
   Engine_EventEnd();
 }
 
 /// Lalivero (LaliveroFaransHouse), trigger 51 in Faran's house after the
 /// report: the camera finds Iodem, who asks the party to wait for him outside.
-static void IodemCallsOut(void) {
+static void Event_IodemCallsOut(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
   Engine_EventBegin();
@@ -389,7 +381,7 @@ static void IodemCallsOut(void) {
 
 /// Lalivero (LaliveroFaransHouse): Iodem, talked to before he has given the
 /// Black Orb, repeats his request.
-static void TalkToIodem(void) {
+static void Event_TalkToIodem(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
   Engine_EventSetMessage(MsgLaliveroPleaseWaitForMeOutside);
@@ -398,7 +390,7 @@ static void TalkToIodem(void) {
 
 /// Both scenes, a doorway out: take the touched trigger's exit with the exit
 /// sound.
-static void LeaveBuilding(void) {
+static void Event_LeaveBuilding(void) {
   struct EventWork *work = gEventWork;
   s16 *trigger = (s16 *)&work->touchedTrigger;
 
@@ -411,14 +403,14 @@ static void LeaveBuilding(void) {
 const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
     if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
-      return gFaranHouseEventsAfterLighthouse;
+      return gLaliveroInteriors_FaransHouseEventsAfterLighthouse;
     }
-    return gFaranHouseEvents;
+    return gLaliveroInteriors_FaransHouseEvents;
   }
   if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
-    return gLaliveroEventsAfterLighthouse;
+    return gLaliveroInteriors_ShopsEventsAfterLighthouse;
   }
-  return gLaliveroEvents;
+  return gLaliveroInteriors_ShopsEvents;
 }
 
 /// Lalivero (LaliveroFaransHouse),
@@ -426,7 +418,7 @@ const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
 /// Lighthouse: the party reports to Faran and Iodem. No sign of Sheba, nor of
 /// Jenna and the others; Faran's faith that Sheba lived, what an Adept is, and
 /// a farewell as the party sets out to search for Jenna.
-static void ReportToFaran(void) {
+static void Event_ReportToFaran(void) {
   struct FieldActor *leader;
 
   Engine_EventBegin();
@@ -482,7 +474,7 @@ static void ReportToFaran(void) {
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
   if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
-    TellFaranAboutJenna();
+    LaliveroInteriors_TellFaranAboutJenna();
   } else {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
@@ -762,7 +754,7 @@ static void ReportToFaran(void) {
 /// The party tells Faran and Iodem what became of Jenna and the others, when
 /// it did not see the ship at Idejima: Felix said he sent Jenna ahead to the
 /// ship.
-static void TellFaranAboutJenna(void) {
+static void LaliveroInteriors_TellFaranAboutJenna(void) {
   Engine_EventSetMessage(MsgLaliveroTellOthers);
   Engine_EventWait(20);
 
@@ -839,17 +831,19 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_LaliveroShops) {
-    // The shops and the sanctum.
+    // Each shopkeeper is drawn under the counter's top, and counts as nearer
+    // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
+    // counter.
     actor = Object_GetById(ACTOR_ITEM_MERCHANT);
     actor->priorityFlags = 0;
-    actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
+    actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->sprite->image.priority = 2;
     actor = Object_GetById(ACTOR_WEAPON_MERCHANT);
     actor->priorityFlags = 0;
-    actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
+    actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->sprite->image.priority = 2;
     actor = Object_GetById(ACTOR_ARMOR_MERCHANT);
-    actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
+    actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     Engine_ActorSetAnimation(ACTOR_NAPPING_WORKER, 6);
@@ -861,18 +855,21 @@ s32 Scene_Initialize(void) {
   }
   if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
     actor = Object_GetById(ACTOR_INNKEEPER);
-    actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
+    actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     if (Engine_GameFlagIsSet(FLAG_INN_WORKER_APOLOGIZED) != 0) {
-      Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroInnWorkerChores);
+      Actor_SetActionScript(ACTOR_INN_WORKER,
+                            gLaliveroInteriors_InnWorkerChores);
     }
     if (gGameState.entrance ==
         LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE) {
-      ReportToFaran();
-      // Iodem and Faran stay, with behavior 6 as in their later placements.
-      Engine_ActorSetActionCallback(Object_GetById(ACTOR_IODEM), 6);
-      Engine_ActorSetActionCallback(Object_GetById(ACTOR_FARAN), 6);
+      Event_ReportToFaran();
+      // Iodem and Faran turn toward the leader, as their later placements do.
+      Engine_ActorSetActionCallback(Object_GetById(ACTOR_IODEM),
+                                    ACTOR_FACE_LEADER);
+      Engine_ActorSetActionCallback(Object_GetById(ACTOR_FARAN),
+                                    ACTOR_FACE_LEADER);
       gGameState.entrance = LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST;
     }
   }
@@ -881,8 +878,8 @@ s32 Scene_Initialize(void) {
 
 /// The inn worker's chores once she has apologized: she paces between two
 /// spots, turning to each side, and sighs now and then.
-s32 gLaliveroInnWorkerChores[] = {
-    SC_SET(SW_COLLISION, 129),
+s32 gLaliveroInteriors_InnWorkerChores[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_SET(SW_SPEED, 0x26666),
     SC_SET(SW_ACCEL, 0x13333),
     SC_LABEL(1),
@@ -915,7 +912,7 @@ s32 gLaliveroInnWorkerChores[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct SceneEntrance gLaliveroEntrances[] = {
+struct SceneEntrance gLaliveroInteriors_Entrances[] = {
     {LALIVERO_SHOPS_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
      FACING_NORTH, 0, 0, 8, 240, 192, 0},
     {LALIVERO_SHOPS_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0, 168,
@@ -968,17 +965,17 @@ struct SceneEntrance gLaliveroEntrances[] = {
 };
 
 // clang-format off
-struct SceneRegion gLaliveroSanctumRegions[] = {
-    {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, 10},
+struct SceneRegion gLaliveroInteriors_ShopsRegions[] = {
+    {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, LALIVERO_SHOPS_TO_LALIVERO_EAST_SOUTHEAST},
     {SCENE_TABLE_END},
 };
 
-struct SceneRegion gLaliveroRegions[] = {
-    {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, 22},
+struct SceneRegion gLaliveroInteriors_FaransHouseRegions[] = {
+    {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTH},
     {SCENE_TABLE_END},
 };
 
-u32 gLaliveroExits[] = {
+u32 gLaliveroInteriors_Exits[] = {
     SCENE_EXITS(LaliveroShops),
     SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_WEST),
     SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_SOUTHEAST),
@@ -1006,7 +1003,7 @@ u32 gLaliveroExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gLaliveroPlacements[] = {
+struct ScenePlacement gLaliveroInteriors_ShopsPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(176), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1015,7 +1012,7 @@ struct ScenePlacement gLaliveroPlacements[] = {
         PIXELS(328), 0, PIXELS(136), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(120), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER_NEAR,
         PIXELS(616), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(664), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
@@ -1038,7 +1035,7 @@ struct ScenePlacement gLaliveroPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gFaranHousePlacements[] = {
+struct ScenePlacement gLaliveroInteriors_FaransHousePlacements[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1058,16 +1055,16 @@ struct ScenePlacement gFaranHousePlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gFaranHousePlacementsAfterLighthouse[] = {
+struct ScenePlacement gLaliveroInteriors_FaransHousePlacementsAfterLighthouse[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(240), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_FARAN, CONDITION_ALWAYS, 6,
+    { SPRITE_FARAN, CONDITION_ALWAYS, ACTOR_FACE_LEADER,
         PIXELS(104), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_IODEM, CONDITION_ALWAYS, 6,
+    { SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_FACE_LEADER,
         PIXELS(128), 0, PIXELS(96), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(336), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1084,17 +1081,17 @@ struct ScenePlacement gFaranHousePlacementsAfterLighthouse[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gLaliveroEvents[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
+struct SceneEvent gLaliveroInteriors_ShopsEvents[] = {
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
     { EVENT_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOfCourseIHaveSeenActor) },
     { EVENT_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
     { EVENT_TALK, ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll) },
@@ -1115,33 +1112,33 @@ struct SceneEvent gLaliveroEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsBeenSoLongSinceI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIWonderHowActorKnewAbout) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThoseCavesAreTooDangerousFor) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToHealer) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheLaliveransAreATimidPeople) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantRescueActorIfI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfAnythingHappensToActorIll) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIBetBabisTowerWillBe) },
-    { SEARCH(SEARCH_BARREL), 100, 0xfb9, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_BARREL), 101, 0xfba, FIND_ITEM(ITEM_ANTIDOTE) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_LALIVERO_SHOPS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), 101, FLAG_LALIVERO_SHOPS_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingMushroomSoupInLalivero)) },
     { SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsALaliveroSaladWithPotato)) },
     { SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsThePotIsFullOfA)) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
+struct SceneEvent gLaliveroInteriors_ShopsEventsAfterLighthouse[] = {
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
     { EVENT_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheContinentBrokeApartAroundThe) },
     { EVENT_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIShudderToThinkWhatWould) },
@@ -1162,67 +1159,67 @@ struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImWorriedThatWeWontGet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeCantPossiblyDigAHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheMysteryOfTheRuinsShould) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToHealer) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsNoOneCouldPossiblySwimIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenWillTheOceanBeCalm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheChampaArePeopleFromA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFirstTheLighthouseWasStruckDown) },
-    { SEARCH(SEARCH_BARREL), 100, 0xfb9, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_BARREL), 101, 0xfba, FIND_ITEM(ITEM_ANTIDOTE) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_LALIVERO_SHOPS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), 101, FLAG_LALIVERO_SHOPS_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingMushroomSoupInLalivero)) },
     { SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsALaliveroSaladWithPotato)) },
     { SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsThePotIsFullOfA)) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gFaranHouseEvents[] = {
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
+struct SceneEvent gLaliveroInteriors_FaransHouseEvents[] = {
+    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
     { EVENT_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeReceivedActorFromTheSky) },
     { EVENT_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
     { EVENT_TALK, ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
-    { EVENT_TALK, ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(TalkToInnWorker) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(TalkToInnWorker) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToInnkeeper) },
+    { EVENT_TALK, ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(Event_TalkToInnWorker) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(Event_TalkToInnWorker) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyDidThisHaveToHappen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHousecleaningChangingSheetsItsAllDone) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOnceThisIncidentIsOverI) },
-    { SEARCH(SEARCH_BARREL), 102, 0xfbb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), 102, FLAG_LALIVERO_FARANS_HOUSE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesFryingFreshwaterFishFromThe)) },
     { SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsRiceMadeWithGrainsFrom)) },
     { SEARCH(SEARCH_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingRoastChickenThisScent)) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gFaranHouseEventsAfterLighthouse[] = {
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
-    { EVENT_TOUCH, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT_SCRIPT(IodemCallsOut) },
-    { EVENT_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(TalkToIodem) },
+struct SceneEvent gLaliveroInteriors_FaransHouseEventsAfterLighthouse[] = {
+    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBuilding) },
+    { EVENT_TOUCH, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT_SCRIPT(Event_IodemCallsOut) },
+    { EVENT_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(Event_TalkToIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, MSGNO(MsgLaliveroInteriorsIMustExplainTheirPromiseTo) },
     { EVENT_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFaranSaysKnowingHerPowersActor) },
     { EVENT_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouAreLeavingAfterAllArent) },
@@ -1234,13 +1231,13 @@ struct SceneEvent gFaranHouseEventsAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTolbiIsToBeBlamedFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoThereAreSomePeopleLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsPleaseUseThatShipToFind) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToInnkeeper) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIMustSayItIsNice) },
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWouldTheLightingMakeSuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImSleepyTheseBrightNightsHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsGeeWhatAmIGoingTo) },
-    { SEARCH(SEARCH_BARREL), 102, 0xfbb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), 102, FLAG_LALIVERO_FARANS_HOUSE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesFryingFreshwaterFishFromThe)) },
     { SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsRiceMadeWithGrainsFrom)) },
     { SEARCH(SEARCH_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingRoastChickenThisScent)) },

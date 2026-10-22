@@ -4,11 +4,14 @@
 /// @file
 /// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
 /// music and SE_ ids sound effects, as their sequences in sound/sequence are
-/// named. A sound whose meaning is shown has a name; the others keep their
-/// number. AudioCommand_Play tests the controls AUDIO_CUE_FADE_BGM and
-/// AUDIO_CUE_FADE_SLOT3 first, then the ranges: from AUDIO_SONG_FIRST on a song
-/// table player, from AUDIO_JINGLE_FIRST fanfares, below that music, where
-/// AUDIO_CUE_KEEP_BGM is also a control (audio_engine_symbols.h).
+/// named. Only the ids ☀️ plays are here: the code's own, the field music
+/// gScene_InteractionRuleTable and gEncounter_BattleMusic choose by number, and
+/// the voices and defeat sounds reached by adding to a first id. A sound whose
+/// meaning is shown has a name; the others keep their number. AudioCommand_Play
+/// tests the controls AUDIO_CUE_FADE_BGM and AUDIO_CUE_FADE_SLOT3 first, then
+/// the ranges: from AUDIO_SONG_FIRST on a song table player, from
+/// AUDIO_JINGLE_FIRST fanfares, below that music, where AUDIO_CUE_KEEP_BGM is
+/// also a control (audio_engine_symbols.h).
 
 #define MUS_000 0
 #define MUS_001 1
@@ -21,12 +24,6 @@
 #define MUS_008 8
 #define MUS_009 9
 #define MUS_010 10
-#define MUS_011 11
-#define MUS_012 12
-#define MUS_013 13
-#define MUS_014 14
-#define MUS_015 15
-#define MUS_016 16
 #define MUS_017 17 ///< not a song: fades the music out (AUDIO_CUE_FADE_BGM)
 #define MUS_018 18 ///< not a song: keeps the music (AUDIO_CUE_KEEP_BGM)
 #define MUS_019 19 ///< a song with no tracks: silence
@@ -41,27 +38,16 @@
 #define MUS_028 28
 #define MUS_029 29
 #define MUS_030 30
-#define MUS_031 31
-#define MUS_034 34
-#define MUS_035 35
-#define MUS_036 36
-#define MUS_037 37
-#define MUS_038 38
-#define MUS_039 39
 #define MUS_040 40
 #define MUS_041 41
 #define MUS_042 42
 #define MUS_043 43
-#define MUS_044 44
-#define MUS_049 49
 #define MUS_050 50
 #define MUS_051 51
 #define MUS_052 52
 #define MUS_053 53
 #define MUS_054 54
 #define MUS_055 55
-#define MUS_056 56
-#define MUS_057 57
 #define MUS_058 58
 #define MUS_059 59
 #define MUS_060 60
@@ -69,13 +55,10 @@
 #define MUS_062 62
 #define MUS_063 63
 #define MUS_064 64
-#define MUS_065 65
 #define MUS_067 67
-#define MUS_068 68
 #define MUS_070 70
 #define MUS_071 71
 #define MUS_072 72
-#define MUS_073 73
 #define MUS_074 74
 #define MUS_075 75
 #define MUS_076 76
@@ -92,13 +75,10 @@
 #define MUS_091 91
 #define MUS_092 92
 #define MUS_093 93
-#define MUS_095 95
 #define SE_100 100
 #define SE_SHOP_PURCHASE 101
 #define SE_102 102
 #define SE_103 103
-#define SE_104 104
-#define SE_105 105
 #define SE_106 106
 #define SE_107 107
 #define SE_TRIPLE_TONE_LOW 108
@@ -112,10 +92,7 @@
 #define SE_116 116
 #define SE_117 117
 #define SE_118 118
-#define SE_119 119
-#define SE_120 120
 #define SE_SCUFFLE 121
-#define SE_122 122
 #define SE_MAP_EXIT 123
 #define SE_124 124
 #define SE_125 125
@@ -155,15 +132,11 @@
 #define SE_GATE_MOVE 157
 #define SE_DOOR_OPEN 158
 #define SE_159 159
-#define SE_160 160
 #define SE_161 161
 #define SE_162 162
 #define SE_163 163
 #define SE_164 164
-#define SE_165 165
-#define SE_166 166
 #define SE_SCENE_TRANSITION 167
-#define SE_168 168
 #define SE_169 169
 #define SE_170 170
 #define SE_171 171
@@ -172,9 +145,6 @@
 #define SE_174 174
 #define SE_175 175
 #define SE_176 176
-#define SE_177 177
-#define SE_178 178
-#define SE_179 179
 #define SE_180 180
 #define SE_181 181
 #define SE_182 182
@@ -186,23 +156,13 @@
 #define SE_188 188
 #define SE_189 189
 #define SE_190 190
-#define SE_191 191
-#define SE_192 192
-#define SE_193 193
-#define SE_194 194
-#define SE_195 195
 #define SE_196 196
-#define SE_197 197
 #define SE_198 198
-#define SE_199 199
 #define SE_200 200
 #define SE_201 201
 #define SE_202 202
-#define SE_203 203
 #define SE_204 204
-#define SE_205 205
 #define SE_206 206
-#define SE_207 207
 #define SE_208 208
 #define SE_209 209
 #define SE_HIDDEN_PASSAGE_OPEN 210
@@ -213,14 +173,10 @@
 #define SE_215 215
 #define SE_216 216
 #define SE_217 217
-#define SE_218 218
 #define SE_219 219
 #define SE_220 220
 #define SE_221 221
-#define SE_222 222
 #define SE_223 223
-#define SE_224 224
-#define SE_225 225
 #define SE_226 226
 #define SE_227 227
 #define SE_228 228
@@ -230,25 +186,16 @@
 #define SE_232 232
 #define SE_233 233
 #define SE_234 234
-#define SE_235 235
 #define SE_236 236
 #define SE_237 237
 #define SE_238 238
 #define SE_239 239
 #define SE_240 240
 #define SE_241 241
-#define SE_242 242
-#define SE_243 243
 #define SE_244 244
-#define SE_245 245
 #define SE_246 246
 #define SE_247 247
-#define SE_248 248
-#define SE_249 249
-#define SE_250 250
-#define SE_251 251
 #define SE_252 252
-#define SE_253 253
 #define SE_256 256
 #define SE_257 257
 #define SE_258 258
@@ -283,10 +230,7 @@
 #define SE_287 287
 #define SE_288 288
 #define SE_289 289 ///< not a sound: fades player 3 out (AUDIO_CUE_FADE_SLOT3)
-#define SE_290 290
-#define SE_291 291
 #define SE_292 292
-#define SE_293 293
 #define SE_298 298
 #define SE_300 300
 #define SE_301 301
@@ -298,128 +242,5 @@
 #define SE_307 307
 #define SE_308 308
 #define SE_309 309
-#define SE_310 310
-#define SE_311 311
-#define SE_512 512
-#define SE_520 520
-#define SE_521 521
-#define SE_522 522
-#define SE_523 523
-#define SE_524 524
-#define SE_525 525
-#define SE_526 526
-#define SE_527 527
-#define SE_528 528
-#define SE_529 529
-#define SE_530 530
-#define SE_531 531
-#define SE_532 532
-#define SE_533 533
-#define SE_534 534
-#define SE_535 535
-#define SE_536 536
-#define SE_538 538
-#define SE_539 539
-#define SE_542 542
-#define SE_543 543
-#define SE_544 544
-#define SE_545 545
-#define SE_546 546
-#define SE_547 547
-#define SE_548 548
-#define SE_549 549
-#define SE_550 550
-#define SE_551 551
-#define SE_552 552
-#define SE_554 554
-#define SE_555 555
-#define SE_556 556
-#define SE_557 557
-#define SE_558 558
-#define SE_559 559
-#define SE_560 560
-#define SE_561 561
-#define SE_562 562
-#define SE_563 563
-#define SE_564 564
-#define SE_565 565
-#define SE_566 566
-#define SE_567 567
-#define SE_568 568
-#define SE_569 569
-#define SE_570 570
-#define SE_571 571
-#define SE_572 572
-#define SE_573 573
-#define SE_574 574
-#define SE_575 575
-#define SE_576 576
-#define SE_577 577
-#define SE_578 578
-#define SE_579 579
-#define SE_580 580
-#define SE_581 581
-#define SE_582 582
-#define SE_583 583
-#define SE_584 584
-#define SE_585 585
-#define SE_586 586
-#define SE_587 587
-#define SE_588 588
-#define SE_589 589
-#define SE_590 590
-#define SE_591 591
-#define SE_592 592
-#define SE_593 593
-#define SE_594 594
-#define SE_595 595
-#define SE_596 596
-#define SE_597 597
-#define SE_598 598
-#define SE_610 610
-#define SE_611 611
-#define SE_612 612
-#define SE_613 613
-#define SE_614 614
-#define SE_615 615
-#define SE_616 616
-#define SE_617 617
-#define SE_618 618
-#define SE_619 619
-#define SE_620 620
-#define SE_621 621
-#define SE_622 622
-#define SE_623 623
-#define MUS_700 700
-#define MUS_701 701
-#define MUS_702 702
-#define MUS_703 703
-#define MUS_704 704
-#define MUS_705 705
-#define MUS_706 706
-#define MUS_707 707
-#define MUS_708 708
-#define MUS_709 709
-#define MUS_710 710
-#define MUS_720 720
-#define MUS_721 721
-#define MUS_722 722
-#define MUS_723 723
-#define MUS_724 724
-#define MUS_725 725
-#define MUS_726 726
-#define MUS_727 727
-#define MUS_728 728
-#define MUS_729 729
-#define MUS_730 730
-#define MUS_741 741
-#define MUS_742 742
-#define MUS_743 743
-#define MUS_750 750
-#define MUS_751 751
-#define MUS_752 752
-#define MUS_753 753
-#define MUS_754 754
-#define MUS_799 799
 
 #endif

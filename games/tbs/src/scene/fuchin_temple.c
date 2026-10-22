@@ -2346,7 +2346,8 @@ s32 Scene_Initialize(void) {
   s32 heardHsuTrapped;
 
   if (gGameState.scene == (s32)&SceneId_FuchinTempleInteriors) {
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gGameState.entrance ==
         FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED)) {

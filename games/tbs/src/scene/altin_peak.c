@@ -1523,7 +1523,8 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
 /// Sets up the room being entered: puzzles already solved and the water
 /// levels already lowered. Returns 0.
 s32 Scene_Initialize(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     AltinPeak_RestoreFirstWaterBeastRoom();
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
@@ -2059,7 +2060,8 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
@@ -2074,7 +2076,8 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   Engine_CameraWaitForMove();
   Event_LoadAreaScript(gAltinPeak_FirstWaterBeastEventsDrained);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Engine_EventEnd();
 }
 
@@ -2089,11 +2092,13 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   AltinPeak_DrainSecondWater();
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Engine_EventEnd();
 }
 
@@ -2107,11 +2112,13 @@ static void AltinPeak_DrainAfterThirdBeast(void) {
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   AltinPeak_DrainThirdWater();
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Engine_EventEnd();
 }
 
@@ -2283,7 +2290,8 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_SetActionScript(IVAN, party);
   Actor_RunActionScriptAndWait(MIA, party);
   Engine_EventWait(20);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   gEventWork->transitionFrames = 16;
   GameFlag_Set(FLAG_HYDROS_STATUES_DEFEATED);
@@ -3081,10 +3089,10 @@ struct SceneEvent gAltinPeak_SecondWaterBeastEvents[] = {
     {SCENE_EVENTS_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
     // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest on code
-    // 100 holding a Herb under flag 0xf05, the spot where the Cookie chest
-    // above already stands.
+    // 100 holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, the spot where the
+    // Cookie chest above already stands.
     {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
-    {SEARCH(SEARCH_CHEST), 100, 0xf05, FIND_ITEM(ITEM_HERB)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_UNUSED_HERB, FIND_ITEM(ITEM_HERB)},
     {SCENE_EVENTS_END},
 };
 
@@ -3124,7 +3132,7 @@ struct SceneEvent gAltinPeak_PoolEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_POOL_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezePoolRoomPuddle)},
     {EVENT_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
     {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipPoolRoomSwitch)},
-    {SEARCH(SEARCH_CHEST), 100, 0xef2, 0x500002},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN, FIND_MIMIC | 2},
     {SCENE_EVENTS_END},
 };
 

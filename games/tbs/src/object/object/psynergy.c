@@ -31,7 +31,7 @@ s32 Field_UsePsynergy(u32 code) {
   s32 ppCost;
   s32 declined;
 
-  abilityGroup = BattleActGet(abilityId)->type0c;
+  abilityGroup = BattleAction_Get(abilityId)->type0c;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
   ObjectTable_Get(gGameState.selectedActor);
@@ -80,7 +80,7 @@ s32 Field_UsePsynergy(u32 code) {
 
   // A party member pays the PP.
   if (userId <= ALLY_MAX) {
-    ppCost = BattleActGet(abilityId)->ppCost;
+    ppCost = BattleAction_Get(abilityId)->ppCost;
     if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its exit back (the scene and

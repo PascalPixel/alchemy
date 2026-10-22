@@ -117,7 +117,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   /// and it returns PLAN_REPORTED.
   /// Called by BattleCommand_BuildPlan once the command gives its ability id.
   s32 BattlePlan_SetTargets(s32 abilityId) {
-    struct BattleAct *ability = BattleActGet(abilityId);
+    struct BattleAct *ability = BattleAction_Get(abilityId);
     s32 mode = ability->targetMode;
     s32 includeDowned = 0;
     s32 targetCount;
@@ -249,8 +249,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if (id == BATTLE_UNIT_REMOVED)
         continue;
       if (Unit_AddHpFar(id, 0xc0000000) == 0) {
-        BattleEvPush(BATTLE_EVENT_HIT, id);
-        BattleEvPush(BATTLE_EVENT_DEFEAT, id);
+        BattleEvent_Push(BATTLE_EVENT_HIT, id);
+        BattleEvent_Push(BATTLE_EVENT_DEFEAT, id);
       }
     }
     BattleEvent_DispatchQueued();
@@ -280,7 +280,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // A bound unit (restraint bit 0) loses one action in four,
   // except Defend.
   if ((actor->restraint & RESTRAINT_BOUND) &&
-      request->command != COMMAND_DEFEND && (BattleRandomFar() & 3) == 0) {
+      request->command != COMMAND_DEFEND && (Battle_RandomFar() & 3) == 0) {
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
     return PLAN_REPORTED;
@@ -336,7 +336,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     s32 canCast = 1;
 
     abilityId = request->parameter;
-    ability = BattleActGet(abilityId);
+    ability = BattleAction_Get(abilityId);
     if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
       return PLAN_REPORTED;
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
@@ -425,7 +425,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       return PLAN_REPORTED;
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-    if ((BattleActGet(abilityId)->flags & ABILITY_KIND_MASK) ==
+    if ((BattleAction_Get(abilityId)->flags & ABILITY_KIND_MASK) ==
         ABILITY_KIND_UNLEASHED_DAMAGE)
       message = MsgActorUnleashesAbility;
     else
@@ -499,7 +499,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
                            DJINN_INDEX(request->parameter))) {
       if (Djinn_IsReadyFar(request->unitId, DJINN_ELEMENT(request->parameter),
                            DJINN_INDEX(request->parameter))) {
-        BattleActGet(abilityId);
+        BattleAction_Get(abilityId);
         BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
         Djinn_ActivateFar(request->unitId, DJINN_ELEMENT(request->parameter),
                           DJINN_INDEX(request->parameter));
@@ -509,15 +509,15 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         Unit_CalculateFar(request->unitId);
         BattleEvent_Reset();
         BattleEvent_SchedulePhase(30);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, request->unitId);
-        BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
-                     DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
-                         DJINN_INDEX(request->parameter) +
-                         ABILITY_DJINNI_FIRST);
-        BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
-        BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
-        BattleEvPush(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, request->unitId);
+        BattleEvent_Push(BATTLE_EVENT_ABILITY_NAME,
+                         DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
+                             DJINN_INDEX(request->parameter) +
+                             ABILITY_DJINNI_FIRST);
+        BattleEvent_Push(BATTLE_EVENT_SOUND, SE_175);
+        BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         AudioCommand_PlayFar(SE_212);
         ObjectDispatch_SelectAnimationFar(
             BattleObject_Get(request->unitId)->object, POSE_CAST);
@@ -546,7 +546,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       DjinnRecovery_AddStandbyFar(request->unitId,
                                   DJINN_ELEMENT(request->parameter),
                                   DJINN_INDEX(request->parameter));
-      ability = BattleActGet(abilityId);
+      ability = BattleAction_Get(abilityId);
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgActorUnleashesDjinn);
@@ -652,9 +652,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)
         break;
-      if (actor->delusion != 0 && (BattleRandomFar() & 255) <= 152)
+      if (actor->delusion != 0 && (Battle_RandomFar() & 255) <= 152)
         plan->targetMultiplier[0] = 0;
-      if ((BattleRandomFar() & 31) == 0)
+      if ((Battle_RandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
     } while (0);
     if (GameFlag_TestFar(FLAG_DJINN_LESSON))
@@ -662,10 +662,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // Critical hit: one chance in 32, or else the equipment's unleash bonus
     // in 200ths, against a 16-bit roll.
     if (target->hp != 0) {
-      if ((BattleRandomFar() & 31) == 0)
+      if ((Battle_RandomFar() & 31) == 0)
         plan->targetCritical[0] = CRITICAL_HIT;
       else if ((Equipment_GetUnleashRateBonusFar(actor) << 16) / 200 >
-               (BattleRandomFar() & 0xffff))
+               (Battle_RandomFar() & 0xffff))
         plan->targetCritical[0] = CRITICAL_HIT;
     }
   }
@@ -674,7 +674,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // Plan an ability.
   //----------------------------------------------------------------------
   else {
-    struct BattleAct *ability = BattleActGet(abilityId);
+    struct BattleAct *ability = BattleAction_Get(abilityId);
 
     plan->element = ability->element;
     plan->presentationFlags = 0;
@@ -704,7 +704,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         amount = 1;
       else
         amount = 2;
-      if ((BattleRandomFar() & 255) < chance) {
+      if ((Battle_RandomFar() & 255) < chance) {
         s32 index;
 
         for (index = 0; index < plan->targetCount; index++)
@@ -733,7 +733,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         mask = 3;
         break;
       }
-      if ((BattleRandomFar() & mask) == 0) {
+      if ((Battle_RandomFar() & mask) == 0) {
         s32 index;
 
         for (index = 0; index < plan->targetCount; index++)
@@ -746,8 +746,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
 
       for (index = 0; index < plan->targetCount; index++)
         plan->targetHit[index] =
-            BattleHitCheck(request->unitId, plan->targetIds[index],
-                           ability->element, ability->effect, 100);
+            Battle_RollEffectSuccessFar(request->unitId, plan->targetIds[index],
+                                        ability->element, ability->effect, 100);
     }
     // How it is staged: the ability's row of actflags.tsv, its variant
     // raised to the first target's multiplier less one (a double or triple

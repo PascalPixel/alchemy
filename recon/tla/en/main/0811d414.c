@@ -162,7 +162,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       u32 saved;
 
       state->count = count;
-      state->check = BattleRandomFar();
+      state->check = Battle_RandomFar();
       /* FAKEMATCH: the one-pass IME scope keeps the seed copy between writes
        * and reloads state after the first write. */
       do {
@@ -184,7 +184,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       state->count = count;
       if (BattleLink_SendActions() < 0)
         goto fail;
-      if (BattleRandomFar() != state->check)
+      if (Battle_RandomFar() != state->check)
         goto fail;
       gBattleRandomSeed = state->seed;
     }

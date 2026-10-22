@@ -265,7 +265,7 @@ Func_0811edb0:
 	lsrs r3, r3, #24
 	cmp r3, #2
 	bne .L_0811eff4
-	bl BattleRandomFar
+	bl Battle_RandomFar
 	movs r3, #7
 	ands r0, r3
 	cmp r0, #0
@@ -277,10 +277,10 @@ Func_0811edb0:
 	lsls r3, r3, #1
 	adds r3, #216
 	ldrh r1, [r6, r3]
-	bl BattleEvPush
+	bl BattleEvent_Push
 	ldr r1, .L_0811f02c
 	movs r0, #4
-	bl BattleEvPush
+	bl BattleEvent_Push
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]

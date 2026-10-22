@@ -97,7 +97,7 @@ Func_08124e20:
 	bl BattleEventRuntime_SchedulePhase
 	movs r0, #0
 	adds r1, r5, #0
-	bl BattleEvPush
+	bl BattleEvent_Push
 	ldrb r3, [r6]
 	movs r2, #150
 	lsls r1, r3, #2
@@ -108,19 +108,19 @@ Func_08124e20:
 	lsls r2, r2, #1
 	adds r1, r1, r2
 	movs r0, #3
-	bl BattleEvPush
+	bl BattleEvent_Push
 	movs r0, #14
 	movs r1, #175
-	bl BattleEvPush
+	bl BattleEvent_Push
 	movs r0, #10
 	movs r1, #0
-	bl BattleEvPush
+	bl BattleEvent_Push
 	movs r0, #4
 	ldr r1, .L_0812510c
-	bl BattleEvPush
+	bl BattleEvent_Push
 	movs r0, #11
 	adds r1, r5, #0
-	bl BattleEvPush
+	bl BattleEvent_Push
 	movs r0, #212
 	bl Audio_PlayCue
 	adds r0, r5, #0

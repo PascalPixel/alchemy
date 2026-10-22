@@ -155,9 +155,9 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
       }
     }
   } else if (itemDefinition->useType == 2) {
-    if ((BattleRandomFar() & 7) == 0) {
-      BattleEvPush(2, unit->inventory[selection->parameter]);
-      BattleEvPush(4, (u32)&MsgItemBroke);
+    if ((Battle_RandomFar() & 7) == 0) {
+      BattleEvent_Push(2, unit->inventory[selection->parameter]);
+      BattleEvent_Push(4, (u32)&MsgItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattleEv_DispatchQueued();
     }

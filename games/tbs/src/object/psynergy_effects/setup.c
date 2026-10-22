@@ -32,7 +32,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work = *(gWorkSlot + HEAP_SLOT_FX);
   }
   work->action = abilityId;
-  work->fieldKind = BattleActGet(abilityId)->type0c;
+  work->fieldKind = BattleAction_Get(abilityId)->type0c;
   running = ev->resolvingAction;
   if (running != 0)
     return;

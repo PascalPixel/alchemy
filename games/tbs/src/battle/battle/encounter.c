@@ -197,9 +197,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
     battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
   } else if (gGameState.battleStart == BATTLE_START_NORMAL) {
-    if ((BattleRandomFar() & 15) == 0)
+    if ((Battle_RandomFar() & 15) == 0)
       battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
-    else if ((BattleRandomFar() & 31) == 0)
+    else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = BATTLE_ENCOUNTER_ENEMIES_FIRST;
   }
   // After the entry transition the camera callback owns the background
@@ -409,8 +409,8 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
 /// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
 /// how many there are (0 when unitIds is null). A link battle looks only at
 /// the opponent's three places. Called by BattleIntro_AnnounceEncounter,
-/// BattleParty_CollectUnitList and BattleTargetExec.
-s32 BattleEnemyList(s16 *unitIds) {
+/// BattleParty_CollectUnitList and BattleTarget_Execute.
+s32 BattleEnemy_List(s16 *unitIds) {
   s16 *output;
   s32 count;
   s32 id;

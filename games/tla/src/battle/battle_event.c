@@ -104,7 +104,7 @@ u32 BattleEv_DispatchQueued(void) {
   return BattleEventRuntime_Reset();
 }
 
-void BattleEvPush(u32 opcode, u32 operand) {
+void BattleEvent_Push(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
   u32 index = queue->count;
 

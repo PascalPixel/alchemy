@@ -1,6 +1,6 @@
 /// @file
 /// Battle events: a downed unit's reset, waiting for the player, and the
-/// event queue, filled by BattleEvPush and played at once by
+/// event queue, filled by BattleEvent_Push and played at once by
 /// BattleEvent_DispatchQueued.
 // Part of battle.c.
 
@@ -201,10 +201,11 @@ void BattleEvent_MarkDisplay(void) { gBattleDisplayWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than
 /// falls): its HP to 0, out of the lists, and its object released.
-/// Reached through the BATTLE_EVENT_REMOVE_UNIT event, which BattleTargetExec
-/// queues for a self-destructing actor, from BattleEvent_DispatchQueued and
-/// BattleEvent_Playback. A party unit is left as it is. Clears the battle
-/// object's object and active and releases its dispatch object.
+/// Reached through the BATTLE_EVENT_REMOVE_UNIT event, which
+/// BattleTarget_Execute queues for a self-destructing actor, from
+/// BattleEvent_DispatchQueued and BattleEvent_Playback. A party unit is left as
+/// it is. Clears the battle object's object and active and releases its
+/// dispatch object.
 #ifdef UBFIX
 void BattleObject_DestroyTemporaryObject(s32 unitId) {
 #else
@@ -232,8 +233,8 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 /// The BATTLE_EVENT_DJINN_BONUS event: grants the Djinn bonus for the rest of
 /// the action. Its operand is ignored.
 /// Called for the event by BattleEvent_DispatchQueued and BattleEvent_Playback;
-/// BattleTargetExec queues it. Sets EVENT_FLAG_DJINN_BONUS in runtime->flags,
-/// which BattleEvent_Reset clears.
+/// BattleTarget_Execute queues it. Sets EVENT_FLAG_DJINN_BONUS in
+/// runtime->flags, which BattleEvent_Reset clears.
 void BattleEvent_GrantDjinnBonus(struct BattleEventState *runtime,
                                  u32 operand) {
   runtime->flags |= EVENT_FLAG_DJINN_BONUS;
@@ -328,14 +329,14 @@ u32 BattleEvent_DispatchQueued(void) {
 
 /// Queues one battle event (enum BattleEventOpcode) with its operand, and
 /// returns the opcode.
-/// Called, directly or through PUSH_MESSAGE, by BattleTargetExec for each
+/// Called, directly or through PUSH_MESSAGE, by BattleTarget_Execute for each
 /// step of an outcome, and by staging.c, plan.c and turn_end.c. Appends to
 /// gBattleWork->events.queue with no test against BATTLE_EVENT_CAPACITY: a
 /// caller must keep one target's events, or one queue played at once, within
 /// it. The queue is emptied by BattleEvent_Reset, by
 /// BattleEvent_SchedulePhase and before each target
 /// BattleEvent_Playback resolves.
-u32 BattleEvPush(u32 opcode, u32 operand) {
+u32 BattleEvent_Push(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &gBattleWork->events.queue;
   u32 index = queue->count;
 

@@ -1993,7 +1993,7 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
 
   {
     struct BattleAct *action =
-        BattleActGet(itemDefinition->actionId & OWNER_ACTION_ID_MASK);
+        BattleAction_Get(itemDefinition->actionId & OWNER_ACTION_ID_MASK);
 
     if (itemDefinition->actionId != 0) {
       if (itemDefinition->type != ITEM_TYPE_NONE) {

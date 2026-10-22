@@ -15,7 +15,7 @@ struct PsynergyMenuState {
   u16 paneAction[2];
 };
 
-struct BattleAct *BattleActGet(s32 action);
+struct BattleAct *BattleAction_Get(s32 action);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // The Spanish and Italian far-call tables reach BattleEffect_HasMatchingEvent5
 // through this stub (as selrow.c).
@@ -40,7 +40,7 @@ s32 Func_080fcf14(void) {
   menu = Ram_HeapSlots->menuRuntime;
   action = menu->paneAction[0];
   asm volatile("");
-  psynergy = BattleActGet(0x3fff & action);
+  psynergy = BattleAction_Get(0x3fff & action);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   if (Func_080c84f8(psynergy->type) != 0)
 #else

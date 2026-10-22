@@ -337,10 +337,10 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   // A failed cast: "blocked" (sealed) or too little PP, shown at once.
   if (plan->failure != PLAN_FAILURE_NONE) {
     if (plan->failure == PLAN_FAILURE_SEALED) {
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, plan->actorId);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, MsgPsynergyBlocked);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, plan->actorId);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgPsynergyBlocked);
     } else {
-      BattleEvPush(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
     }
     BattleEvent_DispatchQueued();
     BattlePresentation_RestorePalette();
@@ -430,7 +430,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
 /// Clears the highlights, then applies the action to each target in turn and
 /// plays its events; with no target, only waits for the player.
 /// Called by BattlePresentation_DispatchAction for PLAN_SHOW_MESSAGES, an
-/// action with no animation: each target's BattleTargetExec is played at
+/// action with no animation: each target's BattleTarget_Execute is played at
 /// once by BattleEvent_DispatchQueued.
 #ifdef UBFIX
 void BattlePresentation_RunActorEntries(struct BattlePlan *plan, s32 unused) {
@@ -444,7 +444,7 @@ s32 BattlePresentation_RunActorEntries(struct BattlePlan *plan, s32 unused) {
     BattlePresentation_WaitForAdvance();
   } else {
     for (targetIndex = 0; targetIndex < plan->targetCount; targetIndex++) {
-      BattleTargetExec(plan, targetIndex);
+      BattleTarget_Execute(plan, targetIndex);
       BattleEvent_DispatchQueued();
     }
   }
@@ -556,8 +556,8 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
     WaitFrames(2);
     WaitFrames(4);
     WaitFrames(10);
-    BattleEvPush(BATTLE_EVENT_UNIT_NAME, plan->targetIds[0]);
-    BattleEvPush(BATTLE_EVENT_MESSAGE, MsgNimblyDodgesBlow);
+    BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, plan->targetIds[0]);
+    BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgNimblyDodgesBlow);
     BattleEvent_DispatchQueued();
     ObjMotRst(work.effect.actors[0]);
   } else {
@@ -814,10 +814,10 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
     }
   } else if (itemDefinition->useType == ITEM_USE_MAY_BREAK) {
     // One time in eight it breaks, shown at once.
-    if ((BattleRandomFar() & 7) == 0) {
-      BattleEvPush(BATTLE_EVENT_ITEM_NAME,
-                   unit->inventory[selection->parameter]);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, MsgUsedItemBroke);
+    if ((Battle_RandomFar() & 7) == 0) {
+      BattleEvent_Push(BATTLE_EVENT_ITEM_NAME,
+                       unit->inventory[selection->parameter]);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgUsedItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattleEvent_DispatchQueued();
     }
@@ -960,10 +960,10 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   // events do, and an ability with no effect only restores the palette.
   if (plan->failure != PLAN_FAILURE_NONE) {
     if (plan->failure == PLAN_FAILURE_SEALED) {
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, plan->actorId);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, MsgPsynergyBlocked);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, plan->actorId);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgPsynergyBlocked);
     } else {
-      BattleEvPush(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
     }
     BattleEvent_DispatchQueued();
     BattlePresentation_RestorePalette();

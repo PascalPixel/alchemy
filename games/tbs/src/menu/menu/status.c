@@ -1342,8 +1342,8 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
         (menu->psynergies[state->selectedIndex] & OWNER_ACTION_ID_MASK) +
             MsgAbilityDescription,
         menu->infoWindow, 0, 0);
-    ability = BattleActGet(menu->psynergies[state->selectedIndex] &
-                           OWNER_ACTION_ID_MASK);
+    ability = BattleAction_Get(menu->psynergies[state->selectedIndex] &
+                               OWNER_ACTION_ID_MASK);
 #if LANGUAGE != LANGUAGE_JAPANESE
     UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
@@ -1385,7 +1385,7 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
   for (row = 0; row <= PAGE_ROWS - 1; row++) {
     if (row == state->row) {
       ability =
-          BattleActGet(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
+          BattleAction_Get(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
       if (ability->element != 4) {
         UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 0);
@@ -1399,7 +1399,7 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
       }
     } else {
       ability =
-          BattleActGet(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
+          BattleAction_Get(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
       if (ability->element != 4) {
         UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 4);
@@ -1456,7 +1456,7 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
       s32 y;
       s32 range;
       action =
-          BattleActGet(OWNER_ACTION_ID_MASK & menu->psynergies[entryIndex]);
+          BattleAction_Get(OWNER_ACTION_ID_MASK & menu->psynergies[entryIndex]);
       messageId = (menu->psynergies[entryIndex] & OWNER_ACTION_ID_MASK) +
                   MsgAbilityName;
       y = row * 16 + LIST_FIRST_ROW * 8;

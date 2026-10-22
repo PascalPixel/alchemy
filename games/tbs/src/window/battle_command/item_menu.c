@@ -29,7 +29,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   if ((definition->type != 0) && (Item_CanOwnerEquip(unit, item) == 0)) {
     return itemUseStatus;
   }
-  if ((BATTLE_OK & BattleActGet(definition->actionId)->flags) == 0) {
+  if ((BATTLE_OK & BattleAction_Get(definition->actionId)->flags) == 0) {
     return 2;
   }
   return 0;

@@ -21,7 +21,7 @@ draws; this page says only what differs here.
 - **Tables.** `actflags.tsv`, `actstat.tsv` and `formatn.tsv` are ⚓️'s own,
   with its own abilities and enemy groups; their rows are not ☀️'s.
 - **Names.** A function that does what its ☀️ twin does takes the twin's
-  name (`BattleEvPush`, `BattleTargetExec`), so a search finds both.
+  name (`BattleEvent_Push`, `BattleTarget_Execute`), so a search finds both.
 
 ## Status
 

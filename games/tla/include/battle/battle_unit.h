@@ -45,7 +45,7 @@ enum Element {
 /// as if aimed at.
 #define ABILITY_RANGE_ALL 255
 
-/// The low four bits of BattleAct.flags: how BattleTargetExec applies
+/// The low four bits of BattleAct.flags: how BattleTarget_Execute applies
 /// the ability's power. Kinds 0, 7 and 9 apply none: 0 is no ability, 7 is
 /// Granite, Flash and Kite, 9 the field Psynergy, Defend, Flee and enemies'
 /// commands.
@@ -66,9 +66,10 @@ enum AbilityKind {
 };
 
 /// BattleAct.effect: what an ability does besides its damage or healing,
-/// applied by BattleTargetExec unless noted. Each is named for the abilities
-/// that have it (actions.tsv, with their English names and descriptions).
-/// Sidestep (48) and Crazy Voice (52) have effects no code here reads.
+/// applied by BattleTarget_Execute unless noted. Each is named for the
+/// abilities that have it (actions.tsv, with their English names and
+/// descriptions). Sidestep (48) and Crazy Voice (52) have effects no code here
+/// reads.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
   ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote

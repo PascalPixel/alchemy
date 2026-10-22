@@ -4,14 +4,14 @@
 #include "scene.h"
 #include "battle_unit.h"
 
-s32 BattleRandomFar(void);
+s32 Battle_RandomFar(void);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct BattleUnit *state = Unit_Get(unitId);
 
   if (turns <= 5) {
     s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
-    if (threshold >= (BattleRandomFar() & 0xffff))
+    if (threshold >= (Battle_RandomFar() & 0xffff))
       return 1;
   }
   return 0;

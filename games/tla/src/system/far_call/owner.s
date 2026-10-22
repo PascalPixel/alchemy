@@ -49,30 +49,30 @@ Party_RemoveActiveOwnerFar:
 	.thumb_func
 Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
-	.global BattleHitCheck
+	.global BattleEffect_RollSuccessFar
 	.thumb_func
-BattleHitCheck:
+BattleEffect_RollSuccessFar:
 	overlay_veneer BattleEffect_RollSuccess
-	.global BattleAtkCalc
+	.global Battle_CalcAttackDamageFar
 	.thumb_func
-BattleAtkCalc:
+Battle_CalcAttackDamageFar:
 	overlay_veneer Battle_CalcAttackDamage
-	.global BattlePowerCalc
+	.global Battle_CalcPsynergyPowerFar
 	.thumb_func
-BattlePowerCalc:
+Battle_CalcPsynergyPowerFar:
 	overlay_veneer Battle_CalcPsynergyPower
-	.global BattleRecoveryCalc
+	.global Battle_CalcRecoveryFar
 	.thumb_func
-BattleRecoveryCalc:
+Battle_CalcRecoveryFar:
 	overlay_veneer Battle_CalcRecovery
 	.global Enemy_GetDefinitionFar
 	.thumb_func
 Enemy_GetDefinitionFar:
 	overlay_veneer Enemy_GetDefinition
-	.global BattleRandomFar
+	.global Battle_RandomFar
 	.thumb_func
-BattleRandomFar:
-	overlay_veneer BattleRandom
+Battle_RandomFar:
+	overlay_veneer Battle_Random
 	.global Djinn_AddToOwnerFar
 	.thumb_func
 Djinn_AddToOwnerFar:

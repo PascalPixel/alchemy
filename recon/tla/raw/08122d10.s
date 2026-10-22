@@ -70,7 +70,7 @@ BattleEvent_Playback:
 	adds r2, #124
 	adds r0, r1, r2
 	ldr r1, [r6]
-	bl BattleTargetExec
+	bl BattleTarget_Execute
 	ldr r3, [r6]
 	adds r3, #1
 	str r3, [r6]

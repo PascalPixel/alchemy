@@ -77,7 +77,7 @@ s32 PsynergyMenu_Run(void) {
     struct EventWork *target = WORK_SLOT(HEAP_SLOT_EVENT);
     u16 request;
     // The action looked up here is not used.
-    BattleActGet(OWNER_ACTION_ID_MASK & state->paneAction[0]);
+    BattleAction_Get(OWNER_ACTION_ID_MASK & state->paneAction[0]);
     request = psynergy | (owner << 10);
     target->psynergyRequest = request;
   }
@@ -263,7 +263,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         chosenTarget = MENU_TARGET_WHOLE_PARTY;
       }
       if (useResult != -1) {
-        action = BattleActGet(menu->paneAction[0] & OWNER_ACTION_ID_MASK);
+        action = BattleAction_Get(menu->paneAction[0] & OWNER_ACTION_ID_MASK);
         Unit_AddPpFar(menu->ownerIds[0], -action->ppCost);
       }
       Unit_CalculateFar(menu->ownerIds[0]);
@@ -316,8 +316,9 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   s32 targetModeDifference;
   s32 classification;
 
-  action = BattleActGet(OWNER_ACTION_ID_MASK &
-                        ((struct PsynergyMenuState *)gMenuWork)->paneAction[0]);
+  action =
+      BattleAction_Get(OWNER_ACTION_ID_MASK &
+                       ((struct PsynergyMenuState *)gMenuWork)->paneAction[0]);
   if (FieldEffect_HasMatchingEvent5Far(action->type0c) != 0) {
     return 0;
   }
@@ -894,8 +895,8 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
   if (mode == PSYNERGY_LIST_SHORTCUTS) {
     for (slotIndex = 0; slotIndex < 32; slotIndex++) {
       if (unit->actionSlots[slotIndex].encodedAction != 0) {
-        if (BattleActGet(unit->actionSlots[slotIndex].encodedAction &
-                         OWNER_ACTION_ID_MASK)
+        if (BattleAction_Get(unit->actionSlots[slotIndex].encodedAction &
+                             OWNER_ACTION_ID_MASK)
                 ->type0c != 0) {
           actions[actionCount] = unit->actionSlots[slotIndex].encodedAction;
           actionCount++;
@@ -907,8 +908,8 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
       for (slotIndex = 0; slotIndex < 32; slotIndex++) {
         if (unit->actionSlots[slotIndex].encodedAction != 0) {
           struct BattleAct *ability =
-              BattleActGet(unit->actionSlots[slotIndex].encodedAction &
-                           OWNER_ACTION_ID_MASK);
+              BattleAction_Get(unit->actionSlots[slotIndex].encodedAction &
+                               OWNER_ACTION_ID_MASK);
 
           if (passIndex == 0 &&
               (ability->type0c != 0 ||
@@ -1068,7 +1069,8 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
     cursor = firstEntry;
     do {
       owner = Unit_GetFar(menu->ownerIds[0]);
-      ability = BattleActGet(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]);
+      ability =
+          BattleAction_Get(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
         UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
@@ -1198,8 +1200,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       // Select shows the shortcut help while held, for field Psynergy.
       if (menu->mode == PSYNERGY_MODE_USE) {
         if ((gKeysPressed & KEY_SELECT) != 0 && shortcutHelp == 0) {
-          ability = BattleActGet(menu->psynergies[state.selectedIndex] &
-                                 OWNER_ACTION_ID_MASK);
+          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+                                     OWNER_ACTION_ID_MASK);
           if (ability->type0c == 0) {
             AudioCommand_PlayFar(SE_MENU_ERROR);
           } else {
@@ -1234,8 +1236,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
             AudioCommand_PlayFar(SE_MENU_ERROR);
             continue;
           }
-          ability = BattleActGet(menu->psynergies[state.selectedIndex] &
-                                 OWNER_ACTION_ID_MASK);
+          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+                                     OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
             AudioCommand_PlayFar(SE_MENU_ERROR);
           } else {
@@ -1288,8 +1290,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 
       // Select + L or R: make the field Psynergy that shortcut.
       if ((gKeysPressed & KEY_L) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
-        ability = BattleActGet(menu->psynergies[state.selectedIndex] &
-                               OWNER_ACTION_ID_MASK);
+        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+                                   OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
           AudioCommand_PlayFar(SE_MENU_ERROR);
         } else {
@@ -1306,8 +1308,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       }
 
       if ((gKeysPressed & KEY_R) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
-        ability = BattleActGet(menu->psynergies[state.selectedIndex] &
-                               OWNER_ACTION_ID_MASK);
+        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+                                   OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
           AudioCommand_PlayFar(SE_MENU_ERROR);
         } else {
@@ -1342,7 +1344,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 /// draws such Psynergy in the low-HP colour and refuses A on it.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
-  struct BattleAct *action = BattleActGet(((u32)actionEntry << 18) >> 18);
+  struct BattleAct *action = BattleAction_Get(((u32)actionEntry << 18) >> 18);
 
   if (action->type0c != 0 ||
       (action->flags & (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE)) ==

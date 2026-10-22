@@ -14,7 +14,7 @@
 
 /// The battle's linear congruential random number generator. Returns bits 8
 /// to 23 of the new seed.
-u32 BattleRandom(void) {
+u32 Battle_Random(void) {
   s32 seed;
 
   seed = (gBattleRandomSeed * 0x41c64e6d) + 0x3039;
@@ -23,9 +23,9 @@ u32 BattleRandom(void) {
 }
 
 /// Returns a battle random number from 0 to 99.
-u32 BattleRandomPercent(void) { return (BattleRandom() * 100) >> 16; }
+u32 Battle_RandomPercent(void) { return (Battle_Random() * 100) >> 16; }
 
-/// Returns attack damage (the far-call alias BattleAtkCalc):
+/// Returns attack damage (the far-call alias Battle_CalcAttackDamageFar):
 /// (atk - def + add * 2) / 2 times the elemental difference multiplier. 256 is
 /// unity; the difference has half the effect it has in
 /// Battle_CalcPsynergyPower (128-384).
@@ -49,7 +49,7 @@ s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
   return dmg;
 }
 
-/// Returns Psynergy power (the far-call alias BattlePowerCalc): power times
+/// Returns Psynergy power (the far-call alias Battle_CalcPsynergyPowerFar): power times
 /// rate and the elemental multiplier (0-512, with 256 unity).
 /// bonus: elemental difference (power - resistance).
 /// rate: multiplier, with 256 unity.
@@ -62,7 +62,7 @@ s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
   return val >> 16;
 }
 
-/// Returns the amount recovered (the far-call alias BattleRecoveryCalc): power
+/// Returns the amount recovered (the far-call alias Battle_CalcRecoveryFar): power
 /// and rate times the multiplier (256 is unity) for twice the user's elemental
 /// power above 100.
 /// element: user's elemental power (100: unity, >=200: double, <=0: zero).

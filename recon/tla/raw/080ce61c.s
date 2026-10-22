@@ -23,7 +23,7 @@ Func_080ce61c:
 	sub sp, #16
 	mov r0, r9
 	str r3, [sp, #12]
-	bl BattleActGet
+	bl BattleAction_Get
 	mov r2, r8
 	ldrb r0, [r0, #6]
 	lsrs r7, r2, #10
@@ -317,7 +317,7 @@ Func_080ce61c:
 	cmp r7, #7
 	bgt .L_080ce920
 	mov r0, r9
-	bl BattleActGet
+	bl BattleAction_Get
 	adds r5, r0, #0
 	adds r0, r7, #0
 	bl Unit_Get

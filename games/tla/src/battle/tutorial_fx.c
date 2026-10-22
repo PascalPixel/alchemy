@@ -21,7 +21,7 @@ void Func_08138050(struct BattleFxRequest *request, s32 value);
 s32 BattleObject_MarkForRelease(s32 objectId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
-s32 EnemyUpdate(void);
+s32 Enemy_Update(void);
 struct BattleObj *BattleObject_Get(s32 objectId);
 void BattleObject_Put(void);
 
@@ -40,7 +40,7 @@ void Func_08119734(s32 id) {
   BattleUnit_SetFar(128, unit, 255);
   work->enemyIds[0] = 128;
   work->enemyIds[1] = 255;
-  EnemyUpdate();
+  Enemy_Update();
   object = (s32 *)BattleObject_Get(128);
   BattleObject_Make((struct BattleObj *)object, 128, object[3] / 0x10000,
                 object[4] / 0x10000);

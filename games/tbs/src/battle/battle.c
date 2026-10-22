@@ -11,7 +11,7 @@
 /// auto battle), and each action is announced and planned
 /// (BattleCommand_BuildPlan, plan.c), staged
 /// (BattlePresentation_DispatchAction, staging.c) and applied to each target
-/// (BattleTargetExec, target_exec.c), which queues the battle events
+/// (BattleTarget_Execute, target_exec.c), which queues the battle events
 /// BattleEvent_Playback plays (playback.c). README.md in this folder gives the
 /// words, prefixes and spellings the parts use.
 

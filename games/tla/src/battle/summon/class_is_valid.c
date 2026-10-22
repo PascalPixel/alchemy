@@ -19,7 +19,7 @@ struct Layout {
   s16 field[6];
 };
 
-s32 EnemyCheck(s32 arg0) {
+s32 Enemy_CheckRoom(s32 arg0) {
   s32 retval;
   s32 i;
   struct Layout *ptr;

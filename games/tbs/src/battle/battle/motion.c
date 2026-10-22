@@ -15,7 +15,7 @@
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
-/// staging code, the auto battle, BattleTargetExec and the Quake effect.
+/// staging code, the auto battle, BattleTarget_Execute and the Quake effect.
 void ObjMotRst(s32 unitId) {
   s32 z;
   s32 stopped;

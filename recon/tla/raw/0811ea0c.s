@@ -280,10 +280,10 @@ Func_0811ea0c:
 	ldr r4, [sp, #16]
 	movs r0, #0
 	ldrb r1, [r4, #3]
-	bl BattleEvPush
+	bl BattleEvent_Push
 	ldr r1, .L_0811eda8
 	movs r0, #4
-	bl BattleEvPush
+	bl BattleEvent_Push
 	bl BattleEv_DispatchQueued
 	mov r2, r8
 	movs r1, #36

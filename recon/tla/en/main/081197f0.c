@@ -107,7 +107,7 @@ void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
 void Func_081281ec(void);
 s32 VramCache_AllocEntry(s32 size);
-u32 BattleRandomFar(void);
+u32 Battle_RandomFar(void);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
 void BattlePresentation_UpdateCamera(void);
 void Func_0811b9fc(void);
@@ -265,9 +265,9 @@ s32 Func_081197f0(s32 enemyGroup) {
   if (GameFlag_Test(0x16e) != 0) {
     battle->encounterMode = 1;
   } else if (gPartyState.battleStart == 0) {
-    if ((BattleRandomFar() & 15) == 0)
+    if ((Battle_RandomFar() & 15) == 0)
       battle->encounterMode = 1;
-    else if ((BattleRandomFar() & 31) == 0)
+    else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = 2;
   } else if (gPartyState.battleStart == 6) {
     battle->encounterMode = 2;

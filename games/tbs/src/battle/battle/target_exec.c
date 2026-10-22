@@ -1,5 +1,5 @@
 /// @file
-/// An ability applied to one target, BattleTargetExec: damage, healing and
+/// An ability applied to one target, BattleTarget_Execute: damage, healing and
 /// its added effect.
 // Part of battle.c.
 
@@ -8,9 +8,9 @@
 /// Returns 1 for an effect that still applies when the ability's damage has
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the actor.
-/// Called by BattleTargetExec before the added effect.
+/// Called by BattleTarget_Execute before the added effect.
 /// @param effect the ability's effect (enum AbilityEffect)
-s32 BattleEffectDeadCheck(s32 effect) {
+s32 BattleEffect_CheckDead(s32 effect) {
   switch (effect) {
   case ABILITY_EFFECT_DRAIN_HP:
   case ABILITY_EFFECT_DRAIN_PP:
@@ -48,7 +48,8 @@ s32 BattleEffectDeadCheck(s32 effect) {
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
 
-/// The rate BattlePowerCalc and BattleRecoveryCalc scale by: 256 is 1.
+/// The rate Battle_CalcPsynergyPowerFar and Battle_CalcRecoveryFar scale by:
+/// 256 is 1.
 #define FULL_RATE 256
 
 /// A message operand that shows nothing: the event only waits for the player.
@@ -105,7 +106,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// HP or PP for a drain, and plan->hauntDamage; adds an enemy to
 /// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag
 /// bit 1 when the party is challenged; queues the events that show it all.
-/// It takes BattleRandomFar rolls, and borrows a heap block for the target's
+/// It takes Battle_RandomFar rolls, and borrows a heap block for the target's
 /// copy.
 ///
 /// It runs in phases, each marked in the body:
@@ -128,9 +129,9 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// multiplier, critical hit and any hit roll made in advance
 /// @param slot which of the plan's targets (0 to plan->targetCount - 1)
 #ifdef UBFIX
-void BattleTargetExec(struct BattlePlan *plan, s32 slot) {
+void BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
 #else
-s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
+s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
 #endif
   s32 distance; // steps from the aimed position, 0 to 5
   struct BattleAct *ability;
@@ -178,7 +179,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   multiplier = plan->targetMultiplier[slot];
   critical = plan->targetCritical[slot];
 
-  ability = BattleActGet(abilityId);
+  ability = BattleAction_Get(abilityId);
   actor = Unit_GetFar(actorId);
   target = Unit_GetFar(targetId);
   Iwram_CopyWords(savedTarget, target, unitSize);
@@ -241,8 +242,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     chance += 30;
     // Percent to a fraction of the 16-bit random range.
     chance *= 65536 / 100;
-    if (chance > (BattleRandomFar() & 0xffff))
-      BattleEvPush(BATTLE_EVENT_DJINN_BONUS, 5);
+    if (chance > (Battle_RandomFar() & 0xffff))
+      BattleEvent_Push(BATTLE_EVENT_DJINN_BONUS, 5);
   }
 
   // Whether the effect lands: a roll made when the action was planned, or
@@ -253,8 +254,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
     plannedHit = plan->targetHit[slot];
     if (plannedHit == HIT_NOT_ROLLED)
-      hit = BattleHitCheck(actorId, targetId, element, ability->effect,
-                           gHitTable[distance]);
+      hit = Battle_RollEffectSuccessFar(actorId, targetId, element,
+                                        ability->effect, gHitTable[distance]);
     else
       hit = plannedHit;
   }
@@ -265,17 +266,17 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // Calling for help: an enemy calls another of its kind, or a random member
   // of its formation, into an empty enemy slot. Speed Surge is an enemy
   // splitting itself in two. It needs the roll, room among the enemy
-  // sprite slots (EnemyCheck) and a free unit id.
+  // sprite slots (Enemy_CheckRoom) and a free unit id.
   if (ability->effect == ABILITY_EFFECT_CALL_ALLY ||
       ability->effect == ABILITY_EFFECT_CALL_HELP) {
     s32 classId;
     s32 newUnitId;
 
     classId = actor->classId;
-    newUnitId = EnemySlotGet();
+    newUnitId = Enemy_GetFreeSlot();
     if (ability->effect == ABILITY_EFFECT_CALL_HELP)
-      classId = BattleGroupRandom(work->enemyGroup);
-    if (hit != 0 && EnemyCheck(classId) != 0 && newUnitId >= 0) {
+      classId = BattleFormation_GetRandomMember(work->enemyGroup);
+    if (hit != 0 && Enemy_CheckRoom(classId) != 0 && newUnitId >= 0) {
       s32 suffix;
 
       // The newcomer's name letter; on the first duplicate the enemy
@@ -302,7 +303,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       }
       // Lay the enemies out again and put the newcomer's sprite in place
       // (the anchors are 16.16 fixed point).
-      EnemyUpdate();
+      Enemy_Update();
       {
         struct BattleObj *obj;
 
@@ -316,11 +317,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         s32 enemyCount;
         s32 i;
 
-        enemyCount = BattleEnemyList(enemyIds);
+        enemyCount = BattleEnemy_List(enemyIds);
         for (i = 0; i < enemyCount; i++)
           ObjMotRst((u16)enemyIds[i]);
       }
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, newUnitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, newUnitId);
       if (abilityId != ABILITY_SPEED_SURGE)
         PUSH_MESSAGE(MsgAppears);
       else
@@ -359,7 +360,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     } else if (ability->effect == ABILITY_EFFECT_SELF_DESTRUCT) {
       // The actor leaves the battle (BattleObject_DestroyTemporaryObject).
       if (actor->hp != 0)
-        BattleEvPush(BATTLE_EVENT_REMOVE_UNIT, actorId);
+        BattleEvent_Push(BATTLE_EVENT_REMOVE_UNIT, actorId);
     } else if (ability->effect == ABILITY_EFFECT_DRAIN_PP) {
       // Psy Drain does PP damage, and misses a target with no PP.
       if (target->pp != 0)
@@ -404,9 +405,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         power = ability->power;
         if (kind == ABILITY_KIND_ATTACK_MULTIPLIED)
           amount =
-              BattleAtkCalc(actor->atk, defense, 0, elementBonus) * power / 10;
+              Battle_CalcAttackDamageFar(actor->atk, defense, 0, elementBonus) *
+              power / 10;
         else
-          amount = BattleAtkCalc(actor->atk, defense, power, elementBonus);
+          amount = Battle_CalcAttackDamageFar(actor->atk, defense, power,
+                                              elementBonus);
         amount *= multiplier;
         // A critical hit adds a quarter (a half for an ability's), then
         // the target's level / 5 + 6.
@@ -417,7 +420,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
             amount = amount * 3 / 2;
           amount += (target->level / 5) + 6;
           if (pass == 0) {
-            BattleEvPush(BATTLE_EVENT_MARK, 0);
+            BattleEvent_Push(BATTLE_EVENT_MARK, 0);
             {
               s32 message;
 
@@ -426,11 +429,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
               message = MsgCritical;
               if (IS_PARTY_UNIT(targetId))
                 message += 1;
-              BattleEvPush(BATTLE_EVENT_MESSAGE_NO_WAIT, message);
+              BattleEvent_Push(BATTLE_EVENT_MESSAGE_NO_WAIT, message);
             }
           }
         }
-        amount += BattleRandomFar() & 3;
+        amount += Battle_RandomFar() & 3;
         REDUCE_BY_GUARD(amount, target);
         if (amount <= 0)
           amount = 1;
@@ -450,20 +453,20 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       // The flinch, then "<target> takes <amount> damage"; a fall queues the
       // defeat before its message, and a target still standing is redrawn.
       hp -= amount;
-      BattleEvPush(BATTLE_EVENT_HIT, targetId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, amount);
+      BattleEvent_Push(BATTLE_EVENT_HIT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
       // The affinity picks "damage.", "damage!" or "damage!!!".
       PUSH_MESSAGE((IS_PARTY_UNIT(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
                    affinity);
 
       if (hp <= 0) {
-        BattleEvPush(BATTLE_EVENT_DEFEAT, targetId);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_DEFEAT, targetId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
         hp = 0;
         PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
       } else
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
       damageDealt = target->hp - hp;
       target->hp = hp;
       Unit_UpdateRatiosFar(targetId);
@@ -477,7 +480,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (element != ELEMENT_NONE)
         elementBonus = elementPower - target->element[element].resistance;
       power = ability->power;
-      amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
+      amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
       amount = amount * gPpLossTable[distance] / 100;
       amount *= multiplier;
       REDUCE_BY_GUARD(amount, target);
@@ -485,14 +488,14 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (ability->effect == ABILITY_EFFECT_DRAIN_PP && amount > pp)
         amount = pp;
 
-      BattleEvPush(BATTLE_EVENT_HIT, targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, amount);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_HIT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgPpLossP : MsgPpLossE);
       pp -= amount;
       if (pp <= 0)
         pp = 0;
-      BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
       damageDealt = target->pp - pp;
       target->pp = pp;
       Unit_UpdateRatiosFar(targetId);
@@ -508,21 +511,21 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
       // An ability with no element (an item) heals as if at power 100.
       power = ability->power;
-      amount = BattleRecoveryCalc(
+      amount = Battle_CalcRecoveryFar(
           power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
       amount = amount * gHpRecoveryTable[distance] / 100;
       amount *= multiplier;
-      amount += BattleRandomFar() & 3;
+      amount += Battle_RandomFar() & 3;
       newHp += amount;
       if (newHp > target->maxHp) {
         newHp = target->maxHp;
         amount = newHp - target->hp;
       }
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       if (newHp == target->maxHp)
         PUSH_MESSAGE(MsgHpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUMBER, amount);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
         PUSH_MESSAGE(MsgHpRecover);
       }
       damageDealt = target->hp - newHp;
@@ -540,18 +543,18 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (element != ELEMENT_NONE)
         elementBonus = elementPower - target->element[element].resistance;
       power = ability->power;
-      amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
+      amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
       amount = amount * gPpDmgTable[distance] / 100;
       amount *= multiplier;
       REDUCE_BY_GUARD(amount, target);
-      BattleEvPush(BATTLE_EVENT_HIT, targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, amount);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_HIT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgDmgP : MsgDmgE);
       pp -= amount;
       if (pp <= 0)
         pp = 0;
-      BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
       target->pp = pp;
       Unit_UpdateRatiosFar(targetId);
       break;
@@ -613,7 +616,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           }
           power += target->maxHp * maxHpPercent / 100;
         }
-        amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
+        amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
         amount *= multiplier;
         // The fall-off by distance. (The ability kind is masked again, as the
         // bytes need.)
@@ -628,7 +631,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           amount = amount * gHpDmgTable6[distance] / 100;
           break;
         }
-        amount += BattleRandomFar() & 3;
+        amount += Battle_RandomFar() & 3;
         REDUCE_BY_GUARD(amount, target);
         // In the Djinn tutorial a summon always fells its target.
         if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0 &&
@@ -636,20 +639,20 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           amount = newHp;
         }
       }
-      BattleEvPush(BATTLE_EVENT_HIT, targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, amount);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_HIT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       PUSH_MESSAGE((IS_PARTY_UNIT(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
                    affinity);
       newHp -= amount;
 
       if (newHp <= 0) {
-        BattleEvPush(BATTLE_EVENT_DEFEAT, targetId);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_DEFEAT, targetId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
         newHp = 0;
         PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgGoesDown : MsgFelled);
       } else
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
       damageDealt = target->hp - newHp;
       target->hp = newHp;
       Unit_UpdateRatiosFar(targetId);
@@ -661,7 +664,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       pp = target->pp;
       power = ability->power;
-      amount = BattleRecoveryCalc(
+      amount = Battle_CalcRecoveryFar(
           power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
       amount = amount * gPpRecoveryTable[distance] / 100;
       amount *= multiplier;
@@ -670,11 +673,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         pp = target->maxPp;
         amount = pp - target->pp;
       }
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       if (pp == target->maxPp)
         PUSH_MESSAGE(MsgPpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUMBER, amount);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
         PUSH_MESSAGE(MsgPpRecover);
       }
       target->pp = pp;
@@ -697,30 +700,30 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         if (element != ELEMENT_NONE)
           elementBonus = elementPower - target->element[element].resistance;
         power = ability->power;
-        amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
+        amount = Battle_CalcPsynergyPowerFar(power, elementBonus, FULL_RATE);
         amount *= multiplier;
         amount = amount * gHpDmgTable[distance] / 100;
         REDUCE_BY_GUARD(amount, target);
-        BattleEvPush(BATTLE_EVENT_HIT, targetId);
-        BattleEvPush(BATTLE_EVENT_NUMBER, amount);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_HIT, targetId);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
         PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgDmgP : MsgDmgE);
         newHp -= amount;
 
         if (newHp <= 0) {
-          BattleEvPush(BATTLE_EVENT_DEFEAT, targetId);
-          BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+          BattleEvent_Push(BATTLE_EVENT_DEFEAT, targetId);
+          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
           newHp = 0;
           PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
         } else
-          BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
+          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
         damageDealt = target->hp - newHp;
         target->hp = newHp;
         Unit_UpdateRatiosFar(targetId);
         break;
       }
-      BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       PUSH_MESSAGE(MsgNoEffect);
       break;
     }
@@ -733,9 +736,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // it revives or drains. The target's name goes first, for the effect's
   // first message; a message uses up the arguments pushed before it, so each
   // later message pushes the name again.
-  BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+  BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
   if ((Battle_IsReviveEffectFar(ability->effect) != 0 || target->hp != 0 ||
-       BattleEffectDeadCheck(ability->effect) != 0) &&
+       BattleEffect_CheckDead(ability->effect) != 0) &&
       hit != 0) {
     switch (ability->effect) {
     // Tonic leaves confusion and charm, and ends sleep without a message.
@@ -745,63 +748,63 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (target->delusion != 0) {
         target->delusion = 0;
         PUSH_MESSAGE(MsgCureDelusion);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       }
       if (target->stun != 0) {
         target->stun = 0;
-        BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
         PUSH_MESSAGE(MsgCureStun);
       }
       target->sleep = 0;
       if (target->psySeal != 0) {
         target->psySeal = 0;
         PUSH_MESSAGE(MsgCureSeal);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       }
       if (target->grimReaper != 0) {
         target->grimReaper = 0;
         PUSH_MESSAGE(MsgCureCurse);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       }
       if (target->haunt != 0) {
         target->haunt = 0;
         PUSH_MESSAGE(MsgCureSpirit);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       }
       if (target->poison != 0) {
         PUSH_MESSAGE(MsgCurePoison);
         target->poison = 0;
       }
-      BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
       break;
 
     // Restore cures what Tonic does, but not the evil spirit or poison.
     case ABILITY_EFFECT_RESTORE:
       if (target->delusion != 0) {
         target->delusion = 0;
-        BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
         PUSH_MESSAGE(MsgCureDelusion);
       }
       if (target->stun != 0) {
         target->stun = 0;
-        BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
         PUSH_MESSAGE(MsgCureStun);
       }
       target->sleep = 0;
       if (target->psySeal != 0) {
         target->psySeal = 0;
-        BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
         PUSH_MESSAGE(MsgCureSeal);
       }
       if (target->grimReaper == 0)
         break;
       target->grimReaper = 0;
-      BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
       PUSH_MESSAGE(MsgCureCurse);
       break;
 
@@ -845,7 +848,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (newHp == (s16)maxHpBits)
         PUSH_MESSAGE(MsgHpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUMBER, restored);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, restored);
         PUSH_MESSAGE(MsgHpRecover);
       }
       target->hp = newHp;
@@ -871,7 +874,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (newPp == maxPp)
         PUSH_MESSAGE(MsgPpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUMBER, restored);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, restored);
         PUSH_MESSAGE(MsgPpRecover);
       }
       target->pp = newPp;
@@ -887,7 +890,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->agilityStage = AGILITY_STAGE_DOUBLED;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, target->agi - savedTarget->agi);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->agi - savedTarget->agi);
       PUSH_MESSAGE(MsgAgiUp);
       break;
 
@@ -895,7 +898,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->agilityStage = STAT_STAGE_MIN;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->agi - target->agi);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, savedTarget->agi - target->agi);
       PUSH_MESSAGE(MsgAgiDown);
       break;
 
@@ -903,7 +906,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->attackStage -= 1;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->atk - target->atk);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, savedTarget->atk - target->atk);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -912,7 +915,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->attackStage -= 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->atk - target->atk);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, savedTarget->atk - target->atk);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -921,7 +924,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->attackStage += 1;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, target->atk - savedTarget->atk);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->atk - savedTarget->atk);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -930,7 +933,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->attackStage += 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, target->atk - savedTarget->atk);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->atk - savedTarget->atk);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -939,7 +942,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->defenseStage -= 1;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->def - target->def);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, savedTarget->def - target->def);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -948,7 +951,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->defenseStage -= 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->def - target->def);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, savedTarget->def - target->def);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -957,7 +960,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->defenseStage += 1;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, target->def - savedTarget->def);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->def - savedTarget->def);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -966,7 +969,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->defenseStage += 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, target->def - savedTarget->def);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->def - savedTarget->def);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -1008,9 +1011,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_RESISTANCE_DOWN:
       target->resistanceStage -= 1;
       CLAMP_STAT_STAGE(target->resistanceStage);
-      BattleEvPush(BATTLE_EVENT_NUMBER,
-                   (savedTarget->resistanceStage - target->resistanceStage) *
-                       RESISTANCE_PER_STAGE);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, (savedTarget->resistanceStage -
+                                             target->resistanceStage) *
+                                                RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResDown);
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
@@ -1018,9 +1021,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_RESISTANCE_DOWN_2:
       target->resistanceStage -= 2;
       CLAMP_STAT_STAGE(target->resistanceStage);
-      BattleEvPush(BATTLE_EVENT_NUMBER,
-                   (savedTarget->resistanceStage - target->resistanceStage) *
-                       RESISTANCE_PER_STAGE);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, (savedTarget->resistanceStage -
+                                             target->resistanceStage) *
+                                                RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResDown);
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
@@ -1028,9 +1031,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_RESISTANCE_UP:
       target->resistanceStage += 1;
       CLAMP_STAT_STAGE(target->resistanceStage);
-      BattleEvPush(BATTLE_EVENT_NUMBER,
-                   (target->resistanceStage - savedTarget->resistanceStage) *
-                       RESISTANCE_PER_STAGE);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, (target->resistanceStage -
+                                             savedTarget->resistanceStage) *
+                                                RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResUp);
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
@@ -1038,9 +1041,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_RESISTANCE_UP_2:
       target->resistanceStage += 2;
       CLAMP_STAT_STAGE(target->resistanceStage);
-      BattleEvPush(BATTLE_EVENT_NUMBER,
-                   (target->resistanceStage - savedTarget->resistanceStage) *
-                       RESISTANCE_PER_STAGE);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, (target->resistanceStage -
+                                             savedTarget->resistanceStage) *
+                                                RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResUp);
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
@@ -1099,7 +1102,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     // Instant death: "X goes down!" on the party, Drown's "X suffocates!"
     // or "X's spirit has been drained!" on an enemy.
     case ABILITY_EFFECT_INSTANT_DEATH:
-      BattleEvPush(BATTLE_EVENT_DEFEAT, targetId);
+      BattleEvent_Push(BATTLE_EVENT_DEFEAT, targetId);
       if (target->side == BATTLE_UNIT_PARTY)
         PUSH_MESSAGE(MsgKoDown);
       else if (abilityId == ABILITY_DROWN)
@@ -1135,12 +1138,12 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         newHp = actor->maxHp;
         amount = newHp - actor->hp;
       }
-      BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, actorId);
+      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, actorId);
       if (newHp == actor->maxHp)
         PUSH_MESSAGE(MsgHpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUMBER, amount);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
         PUSH_MESSAGE(MsgHpRecover);
       }
       actor->hp = newHp;
@@ -1160,12 +1163,12 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         newPp = actor->maxPp;
         drained = newPp - actor->pp;
       }
-      BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, actorId);
+      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, actorId);
       if (newPp == actor->maxPp)
         PUSH_MESSAGE(MsgPpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUMBER, drained);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, drained);
         PUSH_MESSAGE(MsgPpRecover);
       }
       actor->pp = newPp;
@@ -1183,7 +1186,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         amount = actor->maxPp - actor->pp;
       if (amount == 0)
         break;
-      BattleEvPush(BATTLE_EVENT_NUMBER, amount);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
       PUSH_SIDE_MESSAGE(targetId, MsgLeechTake, MsgLeechGain);
       Unit_AddPpFar(actorId, amount);
       break;
@@ -1230,7 +1233,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (target->grimReaper <= 1)
         break;
       target->grimReaper -= 1;
-      BattleEvPush(BATTLE_EVENT_NUMBER, target->grimReaper);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->grimReaper);
       PUSH_MESSAGE(MsgDeathCount);
       break;
 
@@ -1285,15 +1288,15 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   //------------------------------------------------------------------
   // 7. Waking from damage, and the recalculated stats
   //------------------------------------------------------------------
-  BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+  BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
 
   // Losing HP or PP wakes a sleeping target still standing one time in four,
   // unless it fell asleep this round: Battle_ProcessRoundEnd has not yet
   // counted it down from STATUS_TURNS.
   if (target->hp != 0 && target->sleep != 0 && target->sleep < STATUS_TURNS &&
-      damageDealt > 0 && (BattleRandomFar() & 3) == 0) {
+      damageDealt > 0 && (Battle_RandomFar() & 3) == 0) {
     target->sleep = 0;
-    BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
+    BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
     PUSH_MESSAGE(MsgWakes);
   }
   MemFree(savedTarget);
@@ -1301,11 +1304,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // The party's status is drawn now, not through the queue.
   PartyStatusDrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)
-    BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
+    BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
   // A haunted actor pays, one time in four, for each target it took HP or PP
   // from: a quarter of that (at least 1), gathered in hauntDamage and taken
   // from its own HP at the end of its turn (BattleUnit_ProcessTurnEnd).
-  if (actor->haunt != 0 && (BattleRandomFar() & 3) == 0 && damageDealt > 0) {
+  if (actor->haunt != 0 && (Battle_RandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 
     share = damageDealt >> 2;
@@ -1324,7 +1327,7 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
   if (abilityId == ABILITY_PSY_DRAIN)
     return 1;
-  pp = BattleActGet(abilityId)->ppCost;
+  pp = BattleAction_Get(abilityId)->ppCost;
   // The sign bit of -pp | pp: 1 when pp is not 0, with no branch.
   return (u32)((0 - pp) | pp) >> 31;
 }

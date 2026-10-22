@@ -34,7 +34,7 @@ extern u8 Msg04162[]; // "Can be used in Battle" (MsgUsableInBattle)
 extern u8 Msg04163[]; // "Can be used in Towns" (MsgUsableInField)
 extern u8 Msg04164[]; // the same text again (MsgUsableAnywhere)
 
-struct BattleAct *BattleActGet(s32 action);
+struct BattleAct *BattleAction_Get(s32 action);
 void UiWindow_Commit(s32 window);
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
@@ -56,7 +56,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
             (s32)&Msg02181,
         (s32)menu->infoWindow, 0, 0);
     ability =
-        BattleActGet(menu->psynergies[state->selectedIndex] & ACTION_ID_MASK);
+        BattleAction_Get(menu->psynergies[state->selectedIndex] & ACTION_ID_MASK);
     UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
     if (ability->unk04[2] != 0 || (ability->flags & 0x40) != 0) {
@@ -77,7 +77,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   base = state->page * 5;
   for (row = 0; row <= 4; row++) {
     if (row == state->row) {
-      ability = BattleActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
+      ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != 4) {
         UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + 2, 0);
@@ -87,7 +87,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 14);
       }
     } else {
-      ability = BattleActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
+      ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != 4) {
         UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + 2, 4);

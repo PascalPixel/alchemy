@@ -144,11 +144,11 @@ void Func_0812561c(struct BattlePlan *plan) {
       if (gain > 0) {
         BattleEventRuntime_Reset();
         BattleEventRuntime_SchedulePhase(25);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-        BattleEvPush(BATTLE_EVENT_NUMBER, gain);
-        BattleEvPush(BATTLE_EVENT_SOUND, 175);
-        BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, gain);
+        BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         Audio_PlayCue(212);
         Object_SetMode(BattleObject_Get(unitId)->object, 3);
         ObjectDispatch_SetAnimationSpeedFar(
@@ -165,21 +165,21 @@ void Func_0812561c(struct BattlePlan *plan) {
 
     BattleEventRuntime_Reset();
     if (plan->hauntDamage != 0) {
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, plan->hauntDamage);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgCurseDamage);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, plan->hauntDamage);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgCurseDamage);
       if (Unit_AddHpFar(unitId, -plan->hauntDamage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         } else {
-          BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-          BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattleEvPush(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
+          BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+          BattleEvent_Push(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
     BattleEv_DispatchQueued();
@@ -189,10 +189,10 @@ void Func_0812561c(struct BattlePlan *plan) {
       s32 damage = unit->maxHp * *poison / 10;
       struct BattleWork *state = Ram_HeapSlots->battleWork;
 
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, damage);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgPoisonDamage);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, damage);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
         state->events.pendingCue = 134;
       } else {
@@ -201,14 +201,14 @@ void Func_0812561c(struct BattlePlan *plan) {
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         } else {
-          BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-          BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattleEvPush(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
+          BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+          BattleEvent_Push(BATTLE_EVENT_MESSAGE, unitId <= 7 ? (u32)MsgGoesDown : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
     BattleEv_DispatchQueued();
@@ -216,15 +216,15 @@ void Func_0812561c(struct BattlePlan *plan) {
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
         Unit_AddHpFar(unitId, 0xc0000000) == 0) {
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls);
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
       if (unitId <= 7) {
-        BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
       } else {
-        BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
       }
     }
     BattleEv_DispatchQueued();

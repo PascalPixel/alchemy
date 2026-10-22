@@ -75,7 +75,7 @@ s32 BattleEvent_SchedulePhase(s32 frames) {
 #define FELLED_FLASH_FRAMES 30
 
 /// Plays the plan's targets one at a time: resolves the next target with
-/// BattleTargetExec, then plays the events it queued over the frames that
+/// BattleTarget_Execute, then plays the events it queued over the frames that
 /// follow, until every target is done.
 /// Runs each frame as a scheduler callback (main-loop order 0xc80), added by
 /// the staging runners in staging.c and by BattleEvent_SchedulePhase,
@@ -113,7 +113,7 @@ void BattleEvent_Playback(void) {
         events->queue.count = 0;
         events->eventIndex = 0;
         events->timer = 0;
-        BattleTargetExec(&work->plan, events->queue.targetIndex);
+        BattleTarget_Execute(&work->plan, events->queue.targetIndex);
         events->queue.targetIndex++;
         events->phase = BATTLE_PLAYBACK_DISPATCH;
       } else {

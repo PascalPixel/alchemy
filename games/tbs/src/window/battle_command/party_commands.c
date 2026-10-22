@@ -376,7 +376,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         entryValue = unit->actionSlots[k].encodedAction & ACTION_ID_MASK;
         if (entryValue != 0) {
           do {
-            if ((BattleActGet(entryValue)->flags & 0x80) != 0) {
+            if ((BattleAction_Get(entryValue)->flags & 0x80) != 0) {
               pick[cnt] = k;
               list[cnt] = entryValue;
               cnt++;
@@ -396,7 +396,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         }
         parameter =
             unit->actionSlots[pick[mode]].encodedAction & ACTION_ID_MASK;
-        ability = BattleActGet(parameter);
+        ability = BattleAction_Get(parameter);
         // cost holds the ability's range, not its PP.
         cost = ability->range;
         iconSprite = &state->icons[1];
@@ -480,7 +480,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         WaitFrames(1);
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
-        ability = BattleActGet(summon->nameMessageId);
+        ability = BattleAction_Get(summon->nameMessageId);
         handle = VramCache_AllocEntry(128);
         commandWindow =
             UiWindow_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
@@ -576,7 +576,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         element = (parameter >> 8) & 15;
         index = parameter & 255;
         if (Djinn_IsActiveFar(actorId, element, index) != 0) {
-          ability = BattleActGet(Djinn_GetAbilityIdFar(element, index));
+          ability = BattleAction_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
           commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
           state->icons[0].oam.f.x = 64;
@@ -688,7 +688,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         }
         selection = pick[mode];
         parameter = selection;
-        ability = BattleActGet(
+        ability = BattleAction_Get(
             Item_GetDirectFar(unit->inventory[selection])->actionId);
         cost = ability->range;
         iconSprite = &state->icons[1];

@@ -67,7 +67,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
     s32 selectedAction;
     s32 actionIndex;
 
-    roll = BattleRandomFar() & 0xff;
+    roll = Battle_RandomFar() & 0xff;
     total = weights[0];
     selectedAction = 0;
     actionIndex = 0;
@@ -120,7 +120,7 @@ select_again:
     break;
   case ACTION_STRATEGY_RANDOM_START:
     if (selectionMemory->initialized == 0) {
-      selectionMemory->selection = BattleRandomFar();
+      selectionMemory->selection = Battle_RandomFar();
       selectionMemory->initialized = 1;
     }
     // fall through
@@ -163,7 +163,7 @@ select_again:
       // Only an item that is used up, whose ability's flags are exactly
       // ABILITY_KIND_HEAL_HP or ABILITY_KIND_EFFECT, with no higher bit set.
       if (item->useType == ITEM_USE_CONSUMED) {
-        itemAction = BattleActGet(item->actionId);
+        itemAction = BattleAction_Get(item->actionId);
         abilityId = item->actionId;
         request->command = COMMAND_ITEM;
         flags = itemAction->flags;
@@ -186,7 +186,7 @@ select_again:
 
   if (needsChoice != 0) {
     // A guard or an escape becomes its own command, aimed at the user itself.
-    ability = BattleActGet(abilityId);
+    ability = BattleAction_Get(abilityId);
     effect = ability->effect;
     switch (effect) {
     case ABILITY_EFFECT_DEFEND:

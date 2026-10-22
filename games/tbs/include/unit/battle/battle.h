@@ -61,7 +61,7 @@ s32 BattleUnit_TickStun(s32 unitId);
 s32 BattleUnit_TickSleep(s32 unitId);
 
 /// Pushes a message to show, waiting for the player to read it.
-#define PUSH_MESSAGE(message) BattleEvPush(BATTLE_EVENT_MESSAGE, (message))
+#define PUSH_MESSAGE(message) BattleEvent_Push(BATTLE_EVENT_MESSAGE, (message))
 
 /// Moves camera yaw by 512 while L/R is held; two identical functions exist.
 #define DEFINE_ADJUST_CAMERA(name)                                             \
@@ -82,13 +82,13 @@ s32 BattleUnit_TickSleep(s32 unitId);
   }
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
-s32 BattleEnemyList(s16 *unitIds);
+s32 BattleEnemy_List(s16 *unitIds);
 s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds);
 s32 BattleParty_ListActorIds(s32 sideMask, u16 *unitIds);
 void BattleObject_Put(void);
 void BattleParty_ListAllUnitsAndSubmit(void);
 s32 BattleMotion_GetSlotPalette(s32 unitId);
-s32 EnemyCheck(s32 classId);
+s32 Enemy_CheckRoom(s32 classId);
 s32 SummonSlot_RegisterActorSprites(s32 unitId);
 #ifdef UBFIX
 void BattleMotion_ReleaseObjectSlotByValue(s32 unitId);
@@ -101,11 +101,11 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y);
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions);
-s32 EnemySlotGet(void);
+s32 Enemy_GetFreeSlot(void);
 #ifdef UBFIX
-void EnemyUpdate(void);
+void Enemy_Update(void);
 #else
-s32 EnemyUpdate(void);
+s32 Enemy_Update(void);
 #endif
 void BattleUnit_RefreshPlacement(void);
 s32 BattlePlacement_ContainsId(s16 *list, s32 place);
@@ -254,12 +254,12 @@ void BattleEvent_DispatchQueued(void);
 #else
 u32 BattleEvent_DispatchQueued(void);
 #endif
-u32 BattleEvPush(u32 opcode, u32 operand);
-s32 BattleEffectDeadCheck(s32 effect);
+u32 BattleEvent_Push(u32 opcode, u32 operand);
+s32 BattleEffect_CheckDead(s32 effect);
 #ifdef UBFIX
-void BattleTargetExec(struct BattlePlan *plan, s32 slot);
+void BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 #else
-s32 BattleTargetExec(struct BattlePlan *plan, s32 slot);
+s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 #endif
 u32 Ability_IsPsynergy(s32 abilityId);
 #ifdef UBFIX
@@ -385,7 +385,7 @@ void BattleEnemy_LetterFirstOfClass(s32 classId);
 #else
 s32 BattleEnemy_LetterFirstOfClass(s32 classId);
 #endif
-s32 BattleGroupRandom(s32 recordId);
+s32 BattleFormation_GetRandomMember(s32 recordId);
 s32 BattleFormation_BuildEnemyList(s32 recordId);
 
 u32 BattleClass_GetDefeatSoundKind(s32 index);

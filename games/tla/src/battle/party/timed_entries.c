@@ -47,9 +47,9 @@ s32 sub_08124af8(s32 id) {
       hp = max;
     gain = hp - before;
     if (gain != 0) {
-      BattleEvPush(0, id);
+      BattleEvent_Push(0, id);
       if (hp == unit->maxHp) {
-        BattleEvPush(4, (u32)&MsgHpFull);
+        BattleEvent_Push(4, (u32)&MsgHpFull);
       } else {
         {
           u32 opcode = 1;
@@ -58,9 +58,9 @@ s32 sub_08124af8(s32 id) {
            * to its argument register, as the native does; plain, the copy comes
            * first (one reordered pair, differ 2). */
           asm volatile("" : "+l"(opcode));
-          BattleEvPush(opcode, gain);
+          BattleEvent_Push(opcode, gain);
         }
-        BattleEvPush(4, (u32)&MsgHpRecover);
+        BattleEvent_Push(4, (u32)&MsgHpRecover);
       }
       unit->hp = hp;
       Unit_UpdateRatiosFar(id);
@@ -154,7 +154,7 @@ void Func_08124cc0(void) {}
 
 extern char MsgDjinnIsSet;
 
-void BattleEvPush(u32 opcode, u32 operand);
+void BattleEvent_Push(u32 opcode, u32 operand);
 u32 BattleParty_IsUnitListed(u32 id);
 s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void BattleEventRuntime_WaitForReady(void);
@@ -208,12 +208,12 @@ s32 Func_08124cc4(s32 side) {
           result = 2;
           BattleEventRuntime_Reset();
           BattleEventRuntime_SchedulePhase(30);
-          BattleEvPush(0, id);
-          BattleEvPush(3, entry->element * 20 + entry->index + 300);
-          BattleEvPush(14, 175);
-          BattleEvPush(10, 0);
-          BattleEvPush(4, (u32)&MsgDjinnIsSet);
-          BattleEvPush(11, id);
+          BattleEvent_Push(0, id);
+          BattleEvent_Push(3, entry->element * 20 + entry->index + 300);
+          BattleEvent_Push(14, 175);
+          BattleEvent_Push(10, 0);
+          BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
+          BattleEvent_Push(11, id);
           if (BattleParty_IsUnitListed(id)) {
             Object_SetMode((struct ObjectRuntime *)BattleObject_Get(id)->object, 3);
             ObjectDispatch_SetAnimationSpeedFar(

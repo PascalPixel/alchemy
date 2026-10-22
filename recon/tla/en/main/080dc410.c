@@ -43,7 +43,7 @@ struct EffectWork {
 };
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-struct BattleAct *BattleActGet(s32 actionId);
+struct BattleAct *BattleAction_Get(s32 actionId);
 s32 ResourceTable_CountFreeBlocks(void);
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
 void BattleEffect_StartArcEffect(void);
@@ -65,7 +65,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work = Ram_HeapSlots->effectWork;
   }
   work->action = abilityId;
-  work->animation = BattleActGet(abilityId)->unk04[2];
+  work->animation = BattleAction_Get(abilityId)->unk04[2];
   running = *(s8 *)(event + 0xcb6);
   if (running != 0)
     return;

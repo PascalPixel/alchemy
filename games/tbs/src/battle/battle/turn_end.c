@@ -17,7 +17,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
     // 0x28f is 65536 / 100 rounded down, scaling the percentage to a 16-bit
     // random number.
     s32 threshold = ((unit->luck * 3 - turns * 5) + bias) * 0x28f;
-    if (threshold >= (BattleRandomFar() & 0xffff))
+    if (threshold >= (Battle_RandomFar() & 0xffff))
       return 1;
   }
   return 0;
@@ -346,15 +346,15 @@ s32 Battle_ProcessRoundEnd(void) {
           if (BattleObject_Get(unitId) != 0) {
             BattleEvent_Reset();
             BattleEvent_SchedulePhase(30);
-            BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+            BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
             // The Djinni's own ability, which names it (ABILITY_DJINNI_FIRST).
-            BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
-                         expiredEntry->element * DJINN_PER_ELEMENT +
-                             expiredEntry->index + ABILITY_DJINNI_FIRST);
-            BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
-            BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
+            BattleEvent_Push(BATTLE_EVENT_ABILITY_NAME,
+                             expiredEntry->element * DJINN_PER_ELEMENT +
+                                 expiredEntry->index + ABILITY_DJINNI_FIRST);
+            BattleEvent_Push(BATTLE_EVENT_SOUND, SE_175);
+            BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);
-            BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+            BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
             AudioCommand_PlayFar(SE_212);
             ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                               POSE_CAST);
@@ -637,12 +637,12 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       if (gain > 0) {
         BattleEvent_Reset();
         BattleEvent_SchedulePhase(25);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-        BattleEvPush(BATTLE_EVENT_NUMBER, gain);
-        BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattleEvent_Push(BATTLE_EVENT_NUMBER, gain);
+        BattleEvent_Push(BATTLE_EVENT_SOUND, SE_175);
         // MsgEarthPowerUp and the next three, in enum Element order.
         PUSH_MESSAGE(MsgEarthPowerUp + i);
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         AudioCommand_PlayFar(SE_212);
         ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                           POSE_CAST);
@@ -657,20 +657,20 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     MemFree(before);
   }
   // Damage at the turn's end, each queue played at once: the haunting
-  // spirit's (the shares of its damage BattleTargetExec gathered), poison's,
-  // then the Grim Reaper's countdown.
+  // spirit's (the shares of its damage BattleTarget_Execute gathered),
+  // poison's, then the Grim Reaper's countdown.
   if (battleContinues != 0) {
     s8 *poison;
     BattleEvent_Reset();
     if (plan->hauntDamage != 0) {
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, plan->hauntDamage);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, plan->hauntDamage);
       PUSH_MESSAGE(MsgCurseDamage);
       if (Unit_AddHpFar(unitId, -plan->hauntDamage) == 0) {
         s32 text;
-        BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
           text = MsgGoesDown;
         } else {
@@ -678,7 +678,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         }
         PUSH_MESSAGE(text);
       } else {
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
     BattleEvent_DispatchQueued();
@@ -688,9 +688,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     if (*poison != 0) {
       s32 damage = unit->maxHp * *poison / 10;
       struct BattleWork *state = gBattleWork;
-      BattleEvPush(BATTLE_EVENT_HIT, unitId);
-      BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvPush(BATTLE_EVENT_NUMBER, damage);
+      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattleEvent_Push(BATTLE_EVENT_NUMBER, damage);
       PUSH_MESSAGE(MsgPoisonDamage);
       // DEAD: *poison is nonzero here, so the hit's cue is always
       // SE_HEAVY_IMPACT; the compare and both stores are in the ROM.
@@ -701,8 +701,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         s32 text;
-        BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
           text = MsgGoesDown;
         } else {
@@ -710,7 +710,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         }
         PUSH_MESSAGE(text);
       } else {
-        BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
     BattleEvent_DispatchQueued();
@@ -720,11 +720,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     // MsgReaperCalls (see Matching on message offsets).
     if (unit->grimReaper != 0) {
       if (--unit->grimReaper == 0 && Unit_AddHpFar(unitId, 0xc0000000) == 0) {
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
         PUSH_MESSAGE(MsgReaperCalls);
-        BattleEvPush(BATTLE_EVENT_HIT, unitId);
-        BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
-        BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
+        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
           PUSH_MESSAGE(MsgReaperCalls - 3);
         } else {

@@ -125,13 +125,13 @@ void Func_08124e20(void) {
           if (BattleObject_Get(unitId) != 0) {
             BattleEventRuntime_Reset();
             BattleEventRuntime_SchedulePhase(30);
-            BattleEvPush(0, unitId);
-            BattleEvPush(3, expiredEntry->element * 20 + expiredEntry->index +
+            BattleEvent_Push(0, unitId);
+            BattleEvent_Push(3, expiredEntry->element * 20 + expiredEntry->index +
                                 300);
-            BattleEvPush(14, 175);
-            BattleEvPush(10, 0);
-            BattleEvPush(4, (u32)&MsgDjinnIsSet);
-            BattleEvPush(11, unitId);
+            BattleEvent_Push(14, 175);
+            BattleEvent_Push(10, 0);
+            BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
+            BattleEvent_Push(11, unitId);
             Audio_PlayCue(212);
             if (BattleParty_IsUnitListed(unitId)) {
               Object_SetMode(BattleObject_Get(unitId)->object, 3);

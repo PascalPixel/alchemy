@@ -10,7 +10,7 @@ Func_081224d8:
 	sub sp, #4
 	str r3, [sp, #0]
 	adds r5, r0, #0
-	bl BattleRandomFar
+	bl Battle_RandomFar
 	ldrb r2, [r5]
 	movs r3, #255
 	ands r0, r3

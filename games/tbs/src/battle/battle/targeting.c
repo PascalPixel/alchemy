@@ -116,11 +116,11 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// Counts the ailments of unit that Restore is taken to cure: delusion,
 /// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
 /// XXX: likely wrong, because Restore and Tonic clear stun and never
-/// confusion or charm (BattleTargetExec), as Restore's description and the
+/// confusion or charm (BattleTarget_Execute), as Restore's description and the
 /// party's target window (BattleTarget_RunSelection) have it; only
-/// BattleHitCheck counts confusion and charm too. Cerebus and the Hydros
-/// Statue, the enemies with Restore, pass over an ally who is only stunned,
-/// and may spend it on one who is only confused or charmed.
+/// Battle_RollEffectSuccessFar counts confusion and charm too. Cerebus and the
+/// Hydros Statue, the enemies with Restore, pass over an ally who is only
+/// stunned, and may spend it on one who is only confused or charmed.
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
     if ((unit)->delusion != 0)                                                 \

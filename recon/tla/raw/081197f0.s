@@ -347,7 +347,7 @@ Func_081197f0:
 	ldrb r3, [r3]
 	cmp r3, #0
 	bne .L_08119b08
-	bl BattleRandomFar
+	bl Battle_RandomFar
 	movs r3, #15
 	ands r0, r3
 	cmp r0, #0
@@ -357,7 +357,7 @@ Func_081197f0:
 	strb r3, [r0]
 	b .L_08119b12
 .L_08119af4:
-	bl BattleRandomFar
+	bl Battle_RandomFar
 	movs r3, #31
 	ands r0, r3
 	cmp r0, #0

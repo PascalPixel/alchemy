@@ -1901,7 +1901,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
       UiText_DrawCharacterAtOffsetFar(
           MsgAbilityName + (actions[first] & OWNER_ACTION_ID_MASK), window,
           x * 8 + 16, (y + line * 2) * 8 + 8);
-      UiText_DrawNumberAtOffsetFar(BattleActGet(actions[first])->ppCost, 2,
+      UiText_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
                                    window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }

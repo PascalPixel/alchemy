@@ -322,7 +322,7 @@ calls these functions through the far-call table
 | `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
 | `GameFlag_` | the game flags |
 | `Djinn_`, `DjinnRecovery_` | the Djinn, and their recovery lists |
-| `Battle_`, `BattleRandom`, `BattleTarget_` | the battle arithmetic the battle folder calls |
+| `Battle_`, `Battle_Random`, `BattleTarget_` | the battle arithmetic the battle folder calls |
 | `BattleUnit_Set` | filling an enemy unit at the start of a battle |
 | `Runtime_` | `Runtime_CopyBytesDirectional` and `Runtime_GetBuildStampTime`, which the engine names elsewhere |
 

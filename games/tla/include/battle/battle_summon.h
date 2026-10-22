@@ -42,14 +42,14 @@ struct BattleSummonState {
 };
 
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
-s32 EnemySlotGet(void);
-s32 EnemyCheck(s32 classId);
+s32 Enemy_GetFreeSlot(void);
+s32 Enemy_CheckRoom(s32 classId);
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
-s32 BattleGroupRandom(s32 recordId);
+s32 BattleFormation_GetRandomMember(s32 recordId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 s32 BattleEnemy_ReleaseNameLetter(s32 actorId);
 s32 BattleEnemy_LetterFirstOfClass(s32 classId);
-s32 EnemyUpdate(void);
+s32 Enemy_Update(void);
 
 #endif

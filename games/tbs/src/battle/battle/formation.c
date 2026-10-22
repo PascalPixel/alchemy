@@ -266,7 +266,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 /// the caller to give the first letter 0 (BattleEnemy_LetterFirstOfClass);
 /// later ones take the next free letter, wrapping. Returns -1 when five classes
 /// are already listed. Called by BattleFormation_BuildEnemyList for each enemy
-/// and by BattleTargetExec for an enemy called into the battle. Changes
+/// and by BattleTarget_Execute for an enemy called into the battle. Changes
 /// BattleWork's enemyClasses, the up to five classes listed, and fields that
 /// despite their names hold the letters: summonChannels each class's last
 /// letter given (-1 for none yet), summonMasks its letters in use (bit n for
@@ -359,7 +359,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
 
 /// Gives the first enemy of the class on the field the first letter (0),
 /// appended to its name, once a second of its class arrives.
-/// Called by BattleFormation_BuildEnemyList and BattleTargetExec when
+/// Called by BattleFormation_BuildEnemyList and BattleTarget_Execute when
 /// BattleEnemy_ClaimNameLetter returns bit 15. Writes BattleUnit.name.
 #ifdef UBFIX
 void BattleEnemy_LetterFirstOfClass(s32 classId) {
@@ -408,8 +408,8 @@ s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
 /// Returns the class id of a random member of the formation, among those
 /// that may appear (maximum count above 0); formation 1 stands in for an id
 /// out of range.
-/// Called by BattleTargetExec when an enemy calls for help.
-s32 BattleGroupRandom(s32 recordId) {
+/// Called by BattleTarget_Execute when an enemy calls for help.
+s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 choices[5];
   struct BattleFormationRecord *record;
   s32 *choicesBase;

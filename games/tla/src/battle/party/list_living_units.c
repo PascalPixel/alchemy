@@ -4,7 +4,7 @@
 #include "types.h"
 #include "battle_unit.h"
 
-s32 BattleEnemyList(s16 *unit_ids) {
+s32 BattleEnemy_List(s16 *unit_ids) {
   s16 *output;
   s32 count;
   s32 id;

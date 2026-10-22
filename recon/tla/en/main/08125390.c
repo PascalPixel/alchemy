@@ -37,7 +37,7 @@ extern char MsgDjinnDrained;
 extern char MsgAllDjinnDrained;
 extern char MsgDjinnOnStandby;
 
-void BattleEvPush(u32 opcode, u32 operand);
+void BattleEvent_Push(u32 opcode, u32 operand);
 
 void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce) {
   u8 elements[10];
@@ -86,16 +86,16 @@ picked:
   if (count == 0)
     return;
 
-  count = ((u32)BattleRandomFar() * count) >> 16;
+  count = ((u32)Battle_RandomFar() * count) >> 16;
   element = elements[count];
   djinni = indices[count];
   if (active) {
     DjinnRecovery_AddStandbyFar(unitId, element, djinni);
     Djinn_DeactivateFar(unitId, element, djinni);
     if (announce) {
-      BattleEvPush(0, unitId);
-      BattleEvPush(3, element * 20 + djinni + 300);
-      BattleEvPush(4, (u32)&MsgDjinnOnStandby);
+      BattleEvent_Push(0, unitId);
+      BattleEvent_Push(3, element * 20 + djinni + 300);
+      BattleEvent_Push(4, (u32)&MsgDjinnOnStandby);
       return;
     }
   } else if (announce) {
@@ -140,17 +140,17 @@ picked:
 
   if (!shown) {
     shown = 1;
-    BattleEvPush(0, unitId);
+    BattleEvent_Push(0, unitId);
     if (!all) {
       s32 message;
 
-      BattleEvPush(3, element * 20 + djinni + 300);
+      BattleEvent_Push(3, element * 20 + djinni + 300);
       message = (u32)&MsgDjinnDrained;
       if (unitId < 0 || unitId > 7)
         message++;
-      BattleEvPush(4, message);
+      BattleEvent_Push(4, message);
     } else {
-      BattleEvPush(4, (u32)&MsgAllDjinnDrained);
+      BattleEvent_Push(4, (u32)&MsgAllDjinnDrained);
     }
   }
   if (all)

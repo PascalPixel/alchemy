@@ -20,7 +20,7 @@ BattleEffect_ApplyToTargets:
 	ldr r3, [r3]
 	mov r10, r2
 	str r3, [sp, #4]
-	bl BattleActGet
+	bl BattleAction_Get
 	movs r1, #0
 	mov r11, r0
 	mov r2, r10
@@ -119,7 +119,7 @@ BattleEffect_ApplyToTargets:
 	movs r2, #128
 	adds r0, r6, #0
 	lsls r2, r2, #1
-	bl BattleRecoveryCalc
+	bl Battle_CalcRecoveryFar
 	adds r6, r0, #0
 .L_081008f2:
 	movs r4, #56

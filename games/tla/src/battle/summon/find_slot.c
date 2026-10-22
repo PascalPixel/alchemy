@@ -1,7 +1,7 @@
 #include "types.h"
 #include "owner_state.h"
 
-s32 EnemySlotGet(void) {
+s32 Enemy_GetFreeSlot(void) {
   s32 i;
   s32 id;
 

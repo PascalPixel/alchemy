@@ -99,7 +99,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 
   battle = gBattleWork;
   UiWork_ClearValueNameTablesFar();
-  BattleEnemyList(enemies);
+  BattleEnemy_List(enemies);
 
   announced = 0;
   if (enemyCount != 0) {
@@ -153,7 +153,7 @@ void BattleParty_CollectUnitList(void) {
   // The shuffled and interleaved formations (a link battle's included)
   // keep the enemies in unit order; the others place the first enemy in
   // the centre and the rest alternately either side of it.
-  count = BattleEnemyList(unitIds);
+  count = BattleEnemy_List(unitIds);
   formation = battle->battleType;
   if (formation >= FORMATION_SHUFFLED) {
     if (formation <= FORMATION_INTERLEAVED) {

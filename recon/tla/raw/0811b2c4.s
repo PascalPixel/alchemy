@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global EnemyUpdate
+	.global Enemy_Update
 	.thumb_func
-EnemyUpdate:
+Enemy_Update:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

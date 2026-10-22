@@ -20,7 +20,7 @@ FarCall_GameTable:
 	export Inventory_RepairFar, Inventory_Repair
 	overlay_veneer Item_GetTargetMode
 	export Inventory_GetEquippedItemFar, Inventory_GetEquippedItem
-	export BattleActGet, BattleAction_GetDirect
+	export BattleAction_Get, BattleAction_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
 	export Unit_KnowsActionFar, Unit_KnowsAction
 	export GameState_InitDefaultsFar, GameState_InitDefaults
@@ -51,12 +51,12 @@ FarCall_GameTable:
 	export RollWeaponUnleashFar, RollWeaponUnleash
 	export Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner
 	export Item_GetEquippedElementFar, Item_GetEquippedElement
-	export BattleHitCheck, Battle_RollEffectSuccess
-	export BattleAtkCalc, Battle_CalcAttackDamage
-	export BattlePowerCalc, Battle_CalcPsynergyPower
-	export BattleRecoveryCalc, Battle_CalcRecovery
+	export Battle_RollEffectSuccessFar, Battle_RollEffectSuccess
+	export Battle_CalcAttackDamageFar, Battle_CalcAttackDamage
+	export Battle_CalcPsynergyPowerFar, Battle_CalcPsynergyPower
+	export Battle_CalcRecoveryFar, Battle_CalcRecovery
 	export Enemy_GetDefinitionFar, Enemy_GetDefinition
-	export BattleRandomFar, BattleRandom
+	export Battle_RandomFar, Battle_Random
 	export Djinn_AddToOwnerFar, Djinn_AddToOwner
 	export Djinn_ActivateFar, Djinn_Activate
 	export Djinn_DeactivateFar, Djinn_Deactivate

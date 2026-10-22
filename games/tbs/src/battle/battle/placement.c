@@ -28,9 +28,9 @@
 /// already holds; a party member's battle sprite), palette, size and weapon
 /// sprite, turned to face the centre, and starts its motion script
 /// (gBattlePresentation_ActorObjectScript). Called by
-/// BattleUnit_RefreshPlacement and by BattleTargetExec for an enemy that joins.
-/// Fills in actor, creates a field object for it and, for an enemy, claims its
-/// sprite slots.
+/// BattleUnit_RefreshPlacement and by BattleTarget_Execute for an enemy that
+/// joins. Fills in actor, creates a field object for it and, for an enemy,
+/// claims its sprite slots.
 void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -299,7 +299,7 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 /// enemy (27 for more than four), so it sits only roughly centred. The
 /// Kraken and the Fusion Dragon would stand nearer, 50 pixels left, past the
 /// first place; each is fought alone (formatn.tsv rows 213 and 347), so
-/// neither does. Called by BattleUnit_RefreshPlacement and EnemyUpdate;
+/// neither does. Called by BattleUnit_RefreshPlacement and Enemy_Update;
 /// writes only xPositions and zPositions, in pixels.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
@@ -340,8 +340,8 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 }
 
 /// Returns the id of the first free enemy unit, or -1 when all six are taken.
-/// Called by BattleTargetExec when an enemy calls for help.
-s32 EnemySlotGet(void) {
+/// Called by BattleTarget_Execute when an enemy calls for help.
+s32 Enemy_GetFreeSlot(void) {
   s32 enemySlot;
   s32 unitId;
 
@@ -356,12 +356,12 @@ s32 EnemySlotGet(void) {
 }
 
 /// Lays the enemies out again and moves each one's object anchor to its new
-/// place. Called by BattleTargetExec after an enemy joins. Writes the
+/// place. Called by BattleTarget_Execute after an enemy joins. Writes the
 /// anchorX and anchorZ of every enemy's battle object.
 #ifdef UBFIX
-void EnemyUpdate(void) {
+void Enemy_Update(void) {
 #else
-s32 EnemyUpdate(void) {
+s32 Enemy_Update(void) {
 #endif
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[14];

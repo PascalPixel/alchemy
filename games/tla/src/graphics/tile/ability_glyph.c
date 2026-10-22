@@ -21,7 +21,7 @@ struct BattleActionGlyph {
 extern u8 *gUiIcon_FramePointerTable[];
 extern u8 *gUiIcon_PsynergyIconPointers[];
 
-struct BattleActionGlyph *BattleActGet(s32 action);
+struct BattleActionGlyph *BattleAction_Get(s32 action);
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                   s32 *tileOut, s32 reuse);
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
@@ -29,7 +29,7 @@ s32 Ui_CountSecondTableEntries(void);
 
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse) {
-  UiIcon_BuildAbilityIconTiles(BattleActGet(action)->icon, with_base, slot,
+  UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->icon, with_base, slot,
                                tile, reuse);
 }
 

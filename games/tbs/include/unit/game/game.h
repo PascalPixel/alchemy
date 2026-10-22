@@ -113,8 +113,8 @@ struct ClassDefinition *Class_GetDefinition(s32 classId);
 void Unit_UpdateClass(s32 ownerId);
 
 s32 Battle_GetElementMultiplier(s32 input, s32 halve);
-s32 BattleRandom(void);
-u32 BattleRandomPercent(void);
+s32 Battle_Random(void);
+u32 Battle_RandomPercent(void);
 s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
                             s32 elementDifference);
 s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,

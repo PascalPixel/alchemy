@@ -75,7 +75,7 @@ Func_080fcab8:
 	mov r2, r8
 	ands r0, r3
 	ldr r5, [r2, #108]
-	bl BattleActGet
+	bl BattleAction_Get
 	ldr r3, [sp, #12]
 	ldr r2, [sp, #4]
 	movs r1, #179

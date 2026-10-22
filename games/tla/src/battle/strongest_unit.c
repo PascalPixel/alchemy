@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 
 struct BattleUnit *Unit_Get(s32 unitId);
-u32 BattleRandomFar(void);
+u32 Battle_RandomFar(void);
 
 /// Picks a random living target on one side: the party (target codes 0x100 +
 /// slot) when party is set, otherwise the enemies (0x180 + slot); 0 when none
@@ -33,7 +33,7 @@ s32 Func_0811f4d4(s32 party) {
   }
   if (count == 0)
     return 0;
-  return targets[(count * BattleRandomFar()) >> 16];
+  return targets[(count * Battle_RandomFar()) >> 16];
 }
 
 /// Finds the living unit with the highest Attack on unitId's side (the party

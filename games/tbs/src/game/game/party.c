@@ -21,7 +21,7 @@
 /// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
 /// the table's 165 rows but within the check, are filled from row 0. Called by
 /// the battle set-up (Battle_RunEncounter, BattleFormation_BuildEnemyList) and
-/// by BattleTargetExec when an enemy calls for help.
+/// by BattleTarget_Execute when an enemy calls for help.
 /// XXX: why a Djinni is put on the party's side is unknown; the battle code
 /// that reads BATTLE_UNIT_PARTY for an enemy would say.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {

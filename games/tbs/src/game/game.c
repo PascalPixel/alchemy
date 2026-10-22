@@ -20,7 +20,7 @@
 ///                   Party_AdjustCoins
 ///   Classes         classes.c: Class_Determine, Unit_UpdateClass
 ///   Battle maths    battle_calc.c: Battle_GetElementMultiplier,
-///                   BattleRandom
+///                   Battle_Random
 ///   Djinn           djinn.c: Djinn_AddToOwner, Djinn_Activate
 
 #include "game_internal.h"

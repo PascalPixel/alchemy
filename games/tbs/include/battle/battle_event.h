@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_EVENT_H
 
 /// @file
-/// The battle event queue: the events BattleEvPush queues and the playback
+/// The battle event queue: the events BattleEvent_Push queues and the playback
 /// phases that play them.
 
 #include "edition.h"
@@ -22,7 +22,8 @@ enum BattlePlaybackPhase {
 
 /// The battle event queue: up to 64 events, each an opcode (enum
 /// BattleEventOpcode) and one operand, in the order they play. It lives in
-/// BattleWork.events.queue: BattleEvPush appends to it and playback reads it.
+/// BattleWork.events.queue: BattleEvent_Push appends to it and playback reads
+/// it.
 struct BattleEventQueue {
   u8 opcodes[BATTLE_EVENT_CAPACITY]; ///< enum BattleEventOpcode
   /// Each event's operand: a unit, item or ability id, a number, a message or
@@ -37,7 +38,7 @@ STATIC_ASSERT(offsetof(struct BattleEventQueue, operands) == 0x040);
 STATIC_ASSERT(offsetof(struct BattleEventQueue, targetIndex) == 0x140);
 STATIC_ASSERT(offsetof(struct BattleEventQueue, count) == 0x144);
 
-/// The battle events BattleEvPush queues, each with one operand, for
+/// The battle events BattleEvent_Push queues, each with one operand, for
 /// BattleEvent_Playback (or BattleEvent_DispatchQueued) to play in order. The
 /// names, numbers and messages build what the player reads: the arguments
 /// first, then the message that shows them.

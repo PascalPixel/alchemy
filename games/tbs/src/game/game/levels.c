@@ -6,7 +6,7 @@
 
 /// Returns the definition of action `actionId` (its low 14 bits); an id
 /// past the table gives the first. Reached through GAME.S as
-/// BattleActGet, which every bank uses to read an ability.
+/// BattleAction_Get, which every bank uses to read an ability.
 struct BattleAct *BattleAction_GetDirect(s32 actionId) {
   u32 entryIndex;
 

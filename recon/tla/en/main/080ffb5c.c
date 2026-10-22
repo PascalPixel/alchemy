@@ -2,7 +2,7 @@
 // name, PP cost and range, "no Psynergy" when empty, then the owner's name,
 // class and level), ☀️'s PsynergyMenu_DrawListPage in
 // games/tbs/src/menu/menu.c, rewritten with ⚓️'s calls (Unit_Get,
-// RenderOutput_RedrawSavedRectFar, BattleActGet, the far text routines), its
+// RenderOutput_RedrawSavedRectFar, BattleAction_Get, the far text routines), its
 // work-block offsets (list 0x1c4, count 0x214, owner 0x216) and its numbered
 // messages. Instruction order only: the entry's halfword load against the
 // 0x3fff mask's first move, the row's move, and the class offset's move.
@@ -42,7 +42,7 @@ extern const u8 gMenu_LvString[];
 
 u8 *Unit_Get(s32 owner);
 void RenderOutput_RedrawSavedRectFar(s32 window);
-struct BattleAct *BattleActGet(s32 action);
+struct BattleAct *BattleAction_Get(s32 action);
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 pageSize, s32 page,
                             s32 style);
@@ -89,7 +89,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       s32 msg;
       s32 y;
       s32 range;
-      act = BattleActGet(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
+      act = BattleAction_Get(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
       msg = (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)&Msg01447;
       y = row * 16 + 16;
 

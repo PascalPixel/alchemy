@@ -2,7 +2,7 @@
 #include "battle_work.h"
 #include "text/msg_ids.h"
 
-s32 BattleEnemyList(s16 *unit_ids);
+s32 BattleEnemy_List(s16 *unit_ids);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
 void UiText_DrawQuantity(s32 value, s32 slot);
@@ -19,7 +19,7 @@ void Func_08118bcc(s32 enemyCount) {
 
   battle = Ram_HeapSlots->battleWork;
   UiWork_ClearValueNameTablesFar();
-  BattleEnemyList(enemies);
+  BattleEnemy_List(enemies);
 
   announced = 0;
   if (enemyCount != 0) {

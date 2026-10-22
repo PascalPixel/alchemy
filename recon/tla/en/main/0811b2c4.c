@@ -11,7 +11,7 @@
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
 struct BattleObj *BattleObject_Get(s32 id);
 
-void EnemyUpdate(void) {
+void Enemy_Update(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 unitIds[14];
   s32 x[6];

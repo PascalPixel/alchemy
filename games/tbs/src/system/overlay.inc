@@ -202,7 +202,7 @@
 	import PartyInventory_FindOwner, PartyInventory_FindOwnerFar
 	import PartyInventory_Remove, PartyInventory_RemoveFar
 	import Inventory_Equip, Inventory_EquipFar
-	import Engine_DebugGetAbility, BattleActGet
+	import Engine_DebugGetAbility, BattleAction_Get
 	import GameState_InitDefaults, GameState_InitDefaultsFar
 	import Engine_GameFlagIsSet, GameFlag_TestFar
 	import Engine_GameFlagSet, GameFlag_SetBitFar

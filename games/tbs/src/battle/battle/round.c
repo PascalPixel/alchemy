@@ -339,8 +339,8 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
       // parameter: the Djinni's element in bits 8 to 11, its number below.
       // The unit lookup's result is unused.
       Unit_GetFar(entry->unitId);
-      action = BattleActGet(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
-                                                  entry->parameter & 0xff));
+      action = BattleAction_Get(Djinn_GetAbilityIdFar(
+          entry->parameter >> 8 & 15, entry->parameter & 0xff));
       if (action->effect == ABILITY_EFFECT_DEFEND ||
           action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
           action->effect == ABILITY_EFFECT_GROUND) {
@@ -378,7 +378,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
 /// its count over the received header and sends it back.
 struct BattleLinkedActionState {
   s32 count; ///< actions that follow the header
-  s32 check; ///< the parent's next BattleRandomFar; the child checks its own
+  s32 check; ///< the parent's next Battle_RandomFar; the child checks its own
   s32 seed;  ///< the parent's gRandomSeed, the round's battle seed
   u8 unused[28]; ///< padding; a header packet carries only the first 20 bytes
 };
@@ -527,7 +527,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       u32 saved;
 
       state->count = count;
-      state->check = BattleRandomFar();
+      state->check = Battle_RandomFar();
       IRQ_LOCK(saved);
       gBattleRandomSeed = state->seed = gRandomSeed;
       IRQ_UNLOCK(saved);
@@ -539,7 +539,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
         goto fail;
       result = state->count;
       state->count = count;
-      if (LinkBattle_SendActions() < 0 || BattleRandomFar() != state->check)
+      if (LinkBattle_SendActions() < 0 || Battle_RandomFar() != state->check)
         goto fail;
       gBattleRandomSeed = state->seed;
     }

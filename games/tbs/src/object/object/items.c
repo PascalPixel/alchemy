@@ -232,7 +232,7 @@ void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
         GameFlag_IsConditionActive(event->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
-        BattleActGet(((const u8 *)&event->control)[1])->type0c == group &&
+        BattleAction_Get(((const u8 *)&event->control)[1])->type0c == group &&
         (anyPhase || (event->control & 0x7000000f) == eventFlags)) {
       // Any Psynergy of the same field kind (type0c) as the event's matches.
       if ((event->control & EVENT_PSYNERGY_IN_AREA) != 0)
@@ -265,7 +265,7 @@ s32 Field_RunPsynergyEvents(s32 packed) {
 
   abilityId = packed & 0x3FF;
   userId = ((u32)packed >> 10) & 0xF;
-  group = BattleActGet(abilityId)->type0c;
+  group = BattleAction_Get(abilityId)->type0c;
   // The leader is looked up and the result is not used.
   ObjectTable_Get(gGameState.selectedActor);
   beforeEvent = FieldEffect_FindMatchingEvent(

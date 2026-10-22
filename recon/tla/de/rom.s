@@ -2896,10 +2896,10 @@ Func_081197f0:
 BattleObject_Make:
 	.incbin "baserom.gba", 0x0011a7c4, 0x000009c0
 	.section .rom.0011b2dc, "ax"
-	.global EnemyUpdate
-	.type EnemyUpdate, %function
+	.global Enemy_Update
+	.type Enemy_Update, %function
 	.thumb_func
-EnemyUpdate:
+Enemy_Update:
 	.incbin "baserom.gba", 0x0011b2dc, 0x000001e8
 	.section .rom.0011b772, "ax"
 	.incbin "baserom.gba", 0x0011b772, 0x00000002
@@ -2991,10 +2991,10 @@ BattlePresentation_WaitForAdvance:
 Func_08120060:
 	.incbin "baserom.gba", 0x00120078, 0x000000f8
 	.section .rom.0012046c, "ax"
-	.global BattleTargetExec
-	.type BattleTargetExec, %function
+	.global BattleTarget_Execute
+	.type BattleTarget_Execute, %function
 	.thumb_func
-BattleTargetExec:
+BattleTarget_Execute:
 	.incbin "baserom.gba", 0x0012046c, 0x0000206c
 	.section .rom.001224f0, "ax"
 	.incbin "baserom.gba", 0x001224f0, 0x00000740

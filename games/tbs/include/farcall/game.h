@@ -52,7 +52,7 @@ s32 Inventory_RepairFar(s32 owner, s32 slot);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *inv, s32 type);
 /// Returns the definition of an ability by its low 14 bits, the first for an id
 /// past the table (BattleAction_GetDirect); every bank reads abilities so.
-struct BattleAct *BattleActGet(s32 actionId);
+struct BattleAct *BattleAction_Get(s32 actionId);
 /// Teaches a character an action for good and rebuilds its list, returning the
 /// action's place there, or -1 when the list is full.
 s32 Unit_LearnPsynergyFar();
@@ -115,23 +115,23 @@ s32 Item_GetEquippedElementFar(s32 id);
 /// Rolls whether an ability's effect takes hold on a target, from the base
 /// rate, the element levels, luck and weakness, scaled by `success_scale`
 /// percent (Battle_RollEffectSuccess).
-s32 BattleHitCheck(s32 caster, s32 target, s32 resistance_category,
-                   s32 effect_id, s32 success_scale);
+s32 Battle_RollEffectSuccessFar(s32 caster, s32 target, s32 resistance_category,
+                                s32 effect_id, s32 success_scale);
 /// Returns an attack's damage: attack less defense, plus twice the added power,
 /// scaled by the element difference and halved (Battle_CalcAttackDamage).
-s32 BattleAtkCalc(s32 atk, s32 def, s32 add, s32 bonus);
+s32 Battle_CalcAttackDamageFar(s32 atk, s32 def, s32 add, s32 bonus);
 /// Returns the power of Psynergy damage, scaled by the element difference and
 /// a multiplier where 256 is 1x (Battle_CalcPsynergyPower).
-s32 BattlePowerCalc(s32 power, s32 bonus, s32 rate);
+s32 Battle_CalcPsynergyPowerFar(s32 power, s32 bonus, s32 rate);
 /// Returns the HP healed, scaled by the healer's power in the element and a
 /// multiplier where 256 is 1x (Battle_CalcRecovery); battle and the menu heal
 /// with it.
-s32 BattleRecoveryCalc(s32 power, s32 element, s32 rate);
+s32 Battle_CalcRecoveryFar(s32 power, s32 element, s32 rate);
 /// Returns an enemy's definition, the first row for an id past the table.
 const u8 *Enemy_GetDefinitionFar(s32 selector);
 /// Returns the battle's next random number, from its own seed, which link
 /// battles exchange before resolving a round.
-s32 BattleRandomFar(void);
+s32 Battle_RandomFar(void);
 /// Gives a unit a Djinni, returning -1 when it has it already or holds ten of
 /// that element.
 s32 Djinn_AddToOwnerFar(s32 owner, s32 index, s32 bit);

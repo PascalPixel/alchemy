@@ -1083,10 +1083,10 @@ Func_0804e3f4:
 Inventory_GetEquippedItemFar:
 	.incbin "baserom.gba", 0x000b6070, 0x00000008
 	.section .rom.000b6078, "ax"
-	.global BattleActGet
-	.type BattleActGet, %function
+	.global BattleAction_Get
+	.type BattleAction_Get, %function
 	.thumb_func
-BattleActGet:
+BattleAction_Get:
 	.incbin "baserom.gba", 0x000b6078, 0x00000008
 	.section .rom.000b6080, "ax"
 	.global Unit_LearnPsynergyFar
@@ -1197,28 +1197,28 @@ Party_RemoveActiveOwnerFar:
 Item_GetEquippedElementFar:
 	.incbin "baserom.gba", 0x000b6118, 0x00000008
 	.section .rom.000b6120, "ax"
-	.global BattleHitCheck
-	.type BattleHitCheck, %function
+	.global BattleEffect_RollSuccessFar
+	.type BattleEffect_RollSuccessFar, %function
 	.thumb_func
-BattleHitCheck:
+BattleEffect_RollSuccessFar:
 	.incbin "baserom.gba", 0x000b6120, 0x00000008
 	.section .rom.000b6128, "ax"
-	.global BattleAtkCalc
-	.type BattleAtkCalc, %function
+	.global Battle_CalcAttackDamageFar
+	.type Battle_CalcAttackDamageFar, %function
 	.thumb_func
-BattleAtkCalc:
+Battle_CalcAttackDamageFar:
 	.incbin "baserom.gba", 0x000b6128, 0x00000008
 	.section .rom.000b6130, "ax"
-	.global BattlePowerCalc
-	.type BattlePowerCalc, %function
+	.global Battle_CalcPsynergyPowerFar
+	.type Battle_CalcPsynergyPowerFar, %function
 	.thumb_func
-BattlePowerCalc:
+Battle_CalcPsynergyPowerFar:
 	.incbin "baserom.gba", 0x000b6130, 0x00000008
 	.section .rom.000b6138, "ax"
-	.global BattleRecoveryCalc
-	.type BattleRecoveryCalc, %function
+	.global Battle_CalcRecoveryFar
+	.type Battle_CalcRecoveryFar, %function
 	.thumb_func
-BattleRecoveryCalc:
+Battle_CalcRecoveryFar:
 	.incbin "baserom.gba", 0x000b6138, 0x00000008
 	.section .rom.000b6140, "ax"
 	.global Enemy_GetDefinitionFar
@@ -1227,10 +1227,10 @@ BattleRecoveryCalc:
 Enemy_GetDefinitionFar:
 	.incbin "baserom.gba", 0x000b6140, 0x00000008
 	.section .rom.000b6148, "ax"
-	.global BattleRandomFar
-	.type BattleRandomFar, %function
+	.global Battle_RandomFar
+	.type Battle_RandomFar, %function
 	.thumb_func
-BattleRandomFar:
+Battle_RandomFar:
 	.incbin "baserom.gba", 0x000b6148, 0x00000008
 	.section .rom.000b6150, "ax"
 	.global Djinn_AddToOwnerFar
@@ -4125,10 +4125,10 @@ Func_081197f0:
 BattleObject_Make:
 	.incbin "baserom.gba", 0x0011a7c4, 0x000009c0
 	.section .rom.0011b2dc, "ax"
-	.global EnemyUpdate
-	.type EnemyUpdate, %function
+	.global Enemy_Update
+	.type Enemy_Update, %function
 	.thumb_func
-EnemyUpdate:
+Enemy_Update:
 	.incbin "baserom.gba", 0x0011b2dc, 0x000001e8
 	.section .rom.0011b772, "ax"
 	.incbin "baserom.gba", 0x0011b772, 0x00000002
@@ -4220,10 +4220,10 @@ BattlePresentation_WaitForAdvance:
 Func_08120060:
 	.incbin "baserom.gba", 0x00120078, 0x000000f8
 	.section .rom.0012046c, "ax"
-	.global BattleTargetExec
-	.type BattleTargetExec, %function
+	.global BattleTarget_Execute
+	.type BattleTarget_Execute, %function
 	.thumb_func
-BattleTargetExec:
+BattleTarget_Execute:
 	.incbin "baserom.gba", 0x0012046c, 0x0000206c
 	.section .rom.001224f0, "ax"
 	.incbin "baserom.gba", 0x001224f0, 0x00000740

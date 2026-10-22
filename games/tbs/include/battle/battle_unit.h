@@ -52,7 +52,7 @@ enum Element {
 #define ABILITY_KIND_MASK 15
 
 /// An ability kind picks what the ability's power does to each target: the
-/// formula BattleTargetExec puts it through. ABILITY_KIND_BLANK,
+/// formula BattleTarget_Execute puts it through. ABILITY_KIND_BLANK,
 /// ABILITY_KIND_EFFECT_ONLY and ABILITY_KIND_NO_POWER apply no power. No row
 /// has a kind above ABILITY_KIND_HEAL_PP, which would apply none either.
 enum AbilityKind {
@@ -85,13 +85,12 @@ enum AbilityKind {
 };
 
 /// BattleAct.effect: what an ability does besides its damage or healing,
-/// applied by BattleTargetExec unless noted. Each is named for the abilities
-/// that have it (actions.tsv, with their English names and descriptions).
-/// ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are read by no code
-/// here, and no row has ABILITY_EFFECT_RESTORE_HP or ABILITY_EFFECT_RESTORE_PP.
-/// A stat
-/// change whose name ends in `_2` moves its stat two stages, one without moves
-/// it one.
+/// applied by BattleTarget_Execute unless noted. Each is named for the
+/// abilities that have it (actions.tsv, with their English names and
+/// descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are
+/// read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
+/// ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_2` moves its
+/// stat two stages, one without moves it one.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
   ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)

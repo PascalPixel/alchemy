@@ -35,7 +35,7 @@ s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
                                   s32 y);
 struct BattleUnit *Unit_Get(s32 owner);
-struct BattleAct *BattleActGet(s32 action);
+struct BattleAct *BattleAction_Get(s32 action);
 extern u8 MsgAbilityName;
 extern u8 MsgShortcutHelp[];
 extern u8 MsgChangeCharacterHelp[];
@@ -77,7 +77,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
     cursor = firstEntry * 2 + 0x1c4;
     do {
       owner = Unit_Get(menu->ownerIds[0]);
-      ability = BattleActGet(0x3fff & *(const u16 *)(cursor + (s32)menu));
+      ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {
         UiWork_SetParamNibbleFar(2);

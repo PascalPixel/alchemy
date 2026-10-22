@@ -34,7 +34,7 @@ struct BattleUnit *Unit_Get(s32 owner);
 void Unit_CalculateFar(s32 owner);
 void *MemAlloc(s32 size);
 void MemFree(void *block);
-struct BattleAct *BattleActGet(s32 actionId);
+struct BattleAct *BattleAction_Get(s32 actionId);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 s32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
@@ -245,7 +245,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       UiText_DrawCharacterAtOffsetFar(
           (s32)MsgAbilityName + (actions[first] & 0x3fff), window, x * 8 + 16,
           (y + line * 2) * 8 + 8);
-      UiText_DrawNumberAtOffsetFar(BattleActGet(actions[first])->ppCost, 2,
+      UiText_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
                                    window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }

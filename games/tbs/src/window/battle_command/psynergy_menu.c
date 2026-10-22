@@ -100,7 +100,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           if (encodedAction == 0) {
             break;
           }
-          action = BattleActGet(encodedAction);
+          action = BattleAction_Get(encodedAction);
           UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
           UiWindow_SetTilemapEntry(window, PSYNERGY_COST_SECOND_TILE, 12, i * 2,
                                    0);
@@ -204,8 +204,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if ((BattleActGet(actions[result])->flags & ACTION_USABLE_IN_BATTLE) !=
-            0) {
+        if ((BattleAction_Get(actions[result])->flags &
+             ACTION_USABLE_IN_BATTLE) != 0) {
           break;
         }
         /* FAKEMATCH(dead): a dead store keeps the test above from being

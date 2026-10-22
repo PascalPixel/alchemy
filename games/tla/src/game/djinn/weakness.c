@@ -122,7 +122,7 @@ s32 Battle_IsReviveEffect(s32 effect_id) {
 }
 
 s32 Unit_GetElementLevel(s32 unitId, s32 element);
-u32 BattleRandomPercent(void);
+u32 Battle_RandomPercent(void);
 
 /// Rolls whether effect `effectId` takes hold on `target`: it fails at once
 /// when there is nothing for it to do; the chance is the base rate, plus three
@@ -233,7 +233,7 @@ action4_done:
     attempts = 3;
 
   for (attempt = 0; attempt < attempts; attempt++) {
-    if (score * successScale / 100 >= (s32)BattleRandomPercent()) {
+    if (score * successScale / 100 >= (s32)Battle_RandomPercent()) {
       return 1;
     }
   }

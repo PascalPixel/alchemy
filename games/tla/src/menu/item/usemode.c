@@ -11,7 +11,7 @@ s32 BattleEffect_HasTriggerFar(s32);
 // as in shop.c.
 s32 Func_080c8500(s32);
 #endif
-void *BattleActGet(s32);
+void *BattleAction_Get(s32);
 s32 Item_CanOwnerEquip(s32, s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
@@ -41,7 +41,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
     __asm__ volatile("");
     id = 0x3fff;
     id &= use;
-    abilityData = BattleActGet(id);
+    abilityData = BattleAction_Get(id);
 
     if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
       if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {

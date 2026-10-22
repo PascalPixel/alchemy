@@ -7,11 +7,11 @@ s32 Func_08100d40(s32 item) {
   return Func_08100d58(*(u16 *)(Item_Get(item) + 40) & 0x3fff);
 }
 
-u8 *BattleActGet(s32 actionId);
+u8 *BattleAction_Get(s32 actionId);
 s32 Audio_PlayCueReturnOne(s32 cue);
 
 s32 Func_08100d58(s32 kind) {
-  u8 *action = BattleActGet(kind);
+  u8 *action = BattleAction_Get(kind);
 
   switch (action[1] & 15) {
   case 1:

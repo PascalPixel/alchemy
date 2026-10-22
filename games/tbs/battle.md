@@ -61,7 +61,7 @@ enemy's special move. Its id is the same row in three tables:
 
 | Table | Read through | What its row says |
 | --- | --- | --- |
-| `src/game/actions.tsv` | `struct BattleAct`, `BattleActGet` | what the ability does: its targets, element, range, PP cost, power, added effect and ability kind |
+| `src/game/actions.tsv` | `struct BattleAct`, `BattleAction_Get` | what the ability does: its targets, element, range, PP cost, power, added effect and ability kind |
 | `src/battle/actflags.tsv` | `gBattle_ActionFlags` | the effect that draws it, and how it is staged |
 | `src/battle/actstat.tsv` | `gBattle_ActionStatus` | how the battle shows it, where it overrides the default |
 
@@ -101,7 +101,7 @@ A round has five steps, each in its own part of `src/battle/battle/`:
    rolled in advance, and the staging.
 3. `BattlePresentation_DispatchAction` (`staging.c`) stages the plan and runs
    its effect.
-4. `BattleTargetExec` (`target_exec.c`) applies the ability to each target.
+4. `BattleTarget_Execute` (`target_exec.c`) applies the ability to each target.
 5. `turn_end.c` counts down stat changes and statuses, recovers Djinn and
    applies poison and the Grim Reaper's countdown.
 
@@ -114,14 +114,14 @@ and [planning an action](src/battle/README.md#planning-an-action).
 
 ## Resolving an ability
 
-`BattleTargetExec` puts each target in turn through the formula its ability
+`BattleTarget_Execute` puts each target in turn through the formula its ability
 kind chooses, scaled by distance and element.
 
-It rolls the added effect (`BattleHitCheck`), then switches on the ability
+It rolls the added effect (`Battle_RollEffectSuccessFar`), then switches on the ability
 kind to choose the formula, then applies the added effect if it landed. The
 formulas are in `src/game/game/battle_calc.c` and are called by their
-far-call names: `BattleAtkCalc` for attacks, `BattlePowerCalc` for Psynergy
-damage, `BattleRecoveryCalc` for healing.
+far-call names: `Battle_CalcAttackDamageFar` for attacks, `Battle_CalcPsynergyPowerFar` for Psynergy
+damage, `Battle_CalcRecoveryFar` for healing.
 
 For `ABILITY_KIND_DAMAGE` the power is the damage the aimed target takes when
 the caster's Power in the ability's element equals the target's Resist in it;
@@ -261,7 +261,7 @@ after the effect returns it waits in `BattleEvent_WaitForReady` until
 playback is done. Playback stays idle until the effect calls
 `EFFECT_SHOW_DAMAGE(hitSound)`, which most effects do on the frame the blow
 lands; if an effect never calls it, the wait after the effect starts playback
-instead. From then on, once a frame, the task runs `BattleTargetExec` for the
+instead. From then on, once a frame, the task runs `BattleTarget_Execute` for the
 next target and plays that target's events over the following frames before
 it moves on.
 
@@ -270,7 +270,7 @@ sequenceDiagram
     participant D as BattlePresentation_DispatchAction
     participant F as Effect
     participant P as BattleEvent_Playback (task)
-    participant T as BattleTargetExec
+    participant T as BattleTarget_Execute
     participant Q as Event queue
     D->>P: Scheduler_AddOrUpdateCallback
     D->>F: start the effect
@@ -282,8 +282,8 @@ sequenceDiagram
         F->>F: WaitFrames
     and playback runs the rules
         loop each target, once a frame
-            P->>T: BattleTargetExec(target)
-            T->>Q: BattleEvPush (arguments, then message)
+            P->>T: BattleTarget_Execute(target)
+            T->>Q: BattleEvent_Push (arguments, then message)
             P->>Q: play that target's events
         end
     end
@@ -292,8 +292,8 @@ sequenceDiagram
 ```
 
 The two sides meet at the battle event queue (`struct BattleEventQueue`,
-`BATTLE_EVENT_CAPACITY` events). `BattleTargetExec` never draws or waits: it
-changes the target's HP and statuses and pushes events with `BattleEvPush` in
+`BATTLE_EVENT_CAPACITY` events). `BattleTarget_Execute` never draws or waits: it
+changes the target's HP and statuses and pushes events with `BattleEvent_Push` in
 the order the player sees them, a message's arguments before the message,
 since the message takes them from the window system's argument table when it
 is decoded. `BattleEvent_DispatchQueued` plays the same queue straight

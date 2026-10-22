@@ -8,7 +8,7 @@
 /// that left) and sets each one's display mode and motion afresh. Called by
 /// Battle_RunEncounter as the battle is set up, by
 /// BattlePresentation_DispatchAction, BattlePresentation_RunUnitTransition,
-/// the auto battle and BattleTargetExec after a call for help, and through
+/// the auto battle and BattleTarget_Execute after a call for help, and through
 /// the far stub BattleObject_PutFar by BattleEffect_RunParticleStreams.
 void BattleObject_Put(void) {
   s16 unitIds[14];
@@ -40,8 +40,8 @@ s32 BattleMotion_GetSlotPalette(s32 id) {
 
 /// Returns 1 if an enemy of class classId would find room among the enemy
 /// sprite slots: one free slot for a small enemy, two free side by side for
-/// a large one. Called by BattleTargetExec before an enemy calls for help.
-s32 EnemyCheck(s32 classId) {
+/// a large one. Called by BattleTarget_Execute before an enemy calls for help.
+s32 Enemy_CheckRoom(s32 classId) {
   struct BattleWork *battle;
   s32 needsSingleSlot;
   s32 spriteSlot;

@@ -87,7 +87,7 @@ s32 Func_080fd968(s32 window, s32 unused, struct MenuResult *state);
 s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
-struct BattleAct *BattleActGet(s32 action);
+struct BattleAct *BattleAction_Get(s32 action);
 void Audio_PlayCue(s32 cue);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
@@ -184,7 +184,7 @@ s32 Func_080fdad4(s32 paneIndex) {
 
       if (menu->mode == 0) {
         if ((KEYS_PRESSED & 4) && shortcutHelp == 0) {
-          ability = BattleActGet(menu->psynergies[state.selectedIndex] &
+          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->unk04[2] == 0) {
             Audio_PlayCue(114);
@@ -218,7 +218,7 @@ s32 Func_080fdad4(s32 paneIndex) {
             Audio_PlayCue(114);
             continue;
           }
-          ability = BattleActGet(menu->psynergies[state.selectedIndex] &
+          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
             Audio_PlayCue(114);
@@ -269,7 +269,7 @@ s32 Func_080fdad4(s32 paneIndex) {
       }
 
       if ((KEYS_PRESSED & 0x200) && (gInput.held & 4)) {
-        ability = BattleActGet(menu->psynergies[state.selectedIndex] &
+        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Audio_PlayCue(114);
@@ -285,7 +285,7 @@ s32 Func_080fdad4(s32 paneIndex) {
       }
 
       if ((KEYS_PRESSED & 0x100) && (gInput.held & 4)) {
-        ability = BattleActGet(menu->psynergies[state.selectedIndex] &
+        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Audio_PlayCue(114);

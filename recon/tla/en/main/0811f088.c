@@ -133,10 +133,10 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattleEvPush(0, plan->actorId);
-      BattleEvPush(4, (u32)&MsgPsynergyBlocked);
+      BattleEvent_Push(0, plan->actorId);
+      BattleEvent_Push(4, (u32)&MsgPsynergyBlocked);
     } else {
-      BattleEvPush(4, (u32)&MsgCastLacksPp);
+      BattleEvent_Push(4, (u32)&MsgCastLacksPp);
     }
     BattleEv_DispatchQueued();
     Func_0812756c();

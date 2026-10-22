@@ -55,7 +55,7 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
 /// Random16 with its own seed. Returns bits 8 to 23 of the new seed and writes
 /// gBattleRandomSeed. Rolls that use it advance independently of Random16;
 /// link battles exchange this seed before resolving the round.
-s32 BattleRandom(void) {
+s32 Battle_Random(void) {
   u32 seed;
 
   seed = ((u32)gBattleRandomSeed * 0x41c64e6dU) + 0x3039U;
@@ -64,13 +64,13 @@ s32 BattleRandom(void) {
 }
 
 /// Returns a battle random number from 0 to 99.
-u32 BattleRandomPercent(void) { return ((u32)BattleRandom() * 100) >> 16; }
+u32 Battle_RandomPercent(void) { return ((u32)Battle_Random() * 100) >> 16; }
 
 /// Scales max(attack - defense, 0) + twice the action's added power by the
 /// elemental multiplier, then halves it. elementDifference is power minus
 /// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
-/// Reached through GAME.S as BattleAtkCalc, which BattleTargetExec calls for
-/// attacks and physical abilities.
+/// Reached through GAME.S as Battle_CalcAttackDamageFar, which
+/// BattleTarget_Execute calls for attacks and physical abilities.
 s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
                             s32 elementDifference) {
   s32 damage;
@@ -92,8 +92,9 @@ s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
 
 /// Returns the power of Psynergy: `power` times the multiplier for the element
 /// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
-/// powerMultiplier (also 256 = 1x). Reached through GAME.S as BattlePowerCalc,
-/// which BattleTargetExec calls for Psynergy damage.
+/// powerMultiplier (also 256 = 1x). Reached through GAME.S as
+/// Battle_CalcPsynergyPowerFar, which BattleTarget_Execute calls for Psynergy
+/// damage.
 s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
                              s32 powerMultiplier) {
   s32 scaledPower;
@@ -108,7 +109,7 @@ s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
 /// Returns the amount healed: `power` and `powerMultiplier` (256 is 1x) times
 /// the multiplier for twice the healer's element power above 100.
 ///   elementPower : the healer's power in the element (100 is 1x)
-/// Reached through GAME.S as BattleRecoveryCalc, which the battle and the
+/// Reached through GAME.S as Battle_CalcRecoveryFar, which the battle and the
 /// menu's healing use.
 s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   s32 signedProduct;
@@ -184,7 +185,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   rate = ((Equipment_GetUnleashRateBonus(owner) + (item->unleashChance * 5))
           << 0x10) /
          100;
-  if (rate > (BattleRandom() & 0xFFFF)) {
+  if (rate > (Battle_Random() & 0xFFFF)) {
     return item->unleashAction;
   }
   return 1;
@@ -290,10 +291,11 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// the target's luck (so every two points of luck take off three), plus
 /// 25 against a weakness, times `successScale` percent. A base rate of 0 or
 /// less counts as its magnitude, still scaled but skipping the levels, luck
-/// and weakness; 0 still succeeds when BattleRandomPercent gives 0, about 1
+/// and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about 1
 /// time in 100. Luff gets three tries.
-/// Reached through GAME.S as BattleHitCheck, which BattleTargetExec and the
-/// battle plan call for each target of an ability with an effect.
+/// Reached through GAME.S as Battle_RollEffectSuccessFar, which
+/// BattleTarget_Execute and the battle plan call for each target of an ability
+/// with an effect.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   // Restore's psySeal and confusion reads and Cure All's haunt read go
@@ -372,7 +374,7 @@ action4_done:
   }
 
   for (attempt = 0; attempt < attempts; attempt++) {
-    if (score * successScale / 100 >= (s32)BattleRandomPercent()) {
+    if (score * successScale / 100 >= (s32)Battle_RandomPercent()) {
       return 1;
     }
   }

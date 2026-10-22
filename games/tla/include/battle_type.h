@@ -6,7 +6,7 @@
 
 enum { BATTLE_TARGET_CAPACITY = 13, BATTLE_PLAN_SIZE = 0x64 };
 
-/// One action, laid out for BattleTargetExec to apply target by target.
+/// One action, laid out for BattleTarget_Execute to apply target by target.
 struct BattlePlan {
   u8 actorId;     ///< the acting unit
   s8 targetCount; ///< targets in targetIds

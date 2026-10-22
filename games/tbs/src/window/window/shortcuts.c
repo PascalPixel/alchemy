@@ -183,10 +183,10 @@ void Debug_SelectAbilityPair(void) {
         RenderOutput_RedrawSavedRect(info);
         UiText_DrawCharacterAtOffset(MsgPsynergyNeedMorePp, info, 0, 16);
         if (row != 0) {
-          cost = BattleActGet(list[second].ability)->ppCost;
+          cost = BattleAction_Get(list[second].ability)->ppCost;
           ability = list[second].ability;
         } else {
-          cost = BattleActGet(list[first].ability)->ppCost;
+          cost = BattleAction_Get(list[first].ability)->ppCost;
           ability = list[first].ability;
         }
         UiText_DrawNumberAtOffset(cost, 2, info, 64, 16);
@@ -272,7 +272,7 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
       ability = unit->actionSlots[slotIndex].encodedAction & ACTION_ID_MASK;
       if (ability == 0)
         break;
-      BattleActGet(ability);
+      BattleAction_Get(ability);
       output[outputCount].owner = owner;
       output[outputCount].ability = ability;
       outputCount++;

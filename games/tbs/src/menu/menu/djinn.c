@@ -1705,9 +1705,9 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
 
   if (page == 0) {
     if (previewMode == DJINN_PREVIEW_NO_CHANGE) {
-      UiText_DrawNumberInWindowFar(unit->maxHp, DJINN_PREVIEW_DIGITS, window,
+      UiText_DrawNumberInWindowFar(unit->hpMax, DJINN_PREVIEW_DIGITS, window,
                                    x * 8 + DJINN_PREVIEW_MAX_X, y * 8 + 56);
-      UiText_DrawNumberInWindowFar(unit->maxPp, DJINN_PREVIEW_DIGITS, window,
+      UiText_DrawNumberInWindowFar(unit->ppMax, DJINN_PREVIEW_DIGITS, window,
                                    x * 8 + DJINN_PREVIEW_MAX_X, y * 8 + 64);
       UiText_DrawNumberInWindowFar(unit->hp, DJINN_PREVIEW_DIGITS, window,
                                    x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 56);

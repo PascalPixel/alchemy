@@ -518,12 +518,12 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       amount *= multiplier;
       amount += Battle_RandomFar() & 3;
       newHp += amount;
-      if (newHp > target->maxHp) {
-        newHp = target->maxHp;
+      if (newHp > target->hpMax) {
+        newHp = target->hpMax;
         amount = newHp - target->hp;
       }
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
-      if (newHp == target->maxHp)
+      if (newHp == target->hpMax)
         PUSH_MESSAGE(MsgHpFull);
       else {
         BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
@@ -615,7 +615,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
             break;
 #endif
           }
-          power += target->maxHp * maxHpPercent / 100;
+          power += target->hpMax * maxHpPercent / 100;
         }
         amount =
             Battle_CalculatePsynergyPowerFar(power, elementBonus, FULL_RATE);
@@ -671,12 +671,12 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       amount = amount * gPpRecoveryTable[distance] / 100;
       amount *= multiplier;
       pp += amount;
-      if (pp > target->maxPp) {
-        pp = target->maxPp;
+      if (pp > target->ppMax) {
+        pp = target->ppMax;
         amount = pp - target->pp;
       }
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
-      if (pp == target->maxPp)
+      if (pp == target->ppMax)
         PUSH_MESSAGE(MsgPpFull);
       else {
         BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
@@ -815,33 +815,33 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_HEAL_HP_30: {
       s32 oldHp;
       s32 maxHpBits;
-      s32 maxHp;
+      s32 hpMax;
       s32 newHp;
       s32 restored;
 #ifndef UBFIX
       u16 *stat;
 #endif
 
-      // UB: a pointer walks from hp down past it to maxHp, reading each stat
+      // UB: a pointer walks from hp down past it to hpMax, reading each stat
       // twice, unsigned and signed, as the ROM does; the member reads behind
       // UBFIX share one load each.
 #ifdef UBFIX
       oldHp = (u16)target->hp;
       newHp = target->hp;
-      maxHpBits = (u16)target->maxHp;
-      maxHp = target->maxHp;
+      maxHpBits = (u16)target->hpMax;
+      hpMax = target->hpMax;
 #else
       stat = (u16 *)&target->hp;
       oldHp = *stat--;
       newHp = *(s16 *)(stat + 1);
       stat--;
       maxHpBits = *stat--;
-      maxHp = *(s16 *)(stat + 1);
+      hpMax = *(s16 *)(stat + 1);
 #endif
       if (ability->effect == ABILITY_EFFECT_HEAL_HP_60)
-        newHp += maxHp * 60 / 100;
+        newHp += hpMax * 60 / 100;
       else
-        newHp += maxHp * 30 / 100;
+        newHp += hpMax * 30 / 100;
       if (newHp > (s16)maxHpBits)
         newHp = (s16)maxHpBits;
       restored = newHp - (s16)oldHp;
@@ -861,20 +861,20 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
 
     case ABILITY_EFFECT_HEAL_PP_7: {
       s32 oldPp;
-      s32 maxPp;
+      s32 ppMax;
       s32 newPp;
       s32 restored;
 
       newPp = target->pp;
-      maxPp = target->maxPp;
+      ppMax = target->ppMax;
       oldPp = newPp;
-      newPp += maxPp * 7 / 100;
-      if (newPp > maxPp)
-        newPp = maxPp;
+      newPp += ppMax * 7 / 100;
+      if (newPp > ppMax)
+        newPp = ppMax;
       restored = newPp - oldPp;
       if (restored == 0 && kind != ABILITY_KIND_HEAL_PP)
         break;
-      if (newPp == maxPp)
+      if (newPp == ppMax)
         PUSH_MESSAGE(MsgPpFull);
       else {
         BattleEvent_Push(BATTLE_EVENT_NUMBER, restored);
@@ -983,7 +983,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       if (target->hp != 0)
         break;
       PUSH_MESSAGE(MsgRevived);
-      target->hp = target->maxHp;
+      target->hp = target->hpMax;
       Unit_UpdateRatiosFar(targetId);
       break;
 
@@ -991,7 +991,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       if (target->hp != 0)
         break;
       PUSH_MESSAGE(MsgRevived);
-      target->hp = target->maxHp / 2;
+      target->hp = target->hpMax / 2;
       Unit_UpdateRatiosFar(targetId);
       break;
 
@@ -999,7 +999,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       if (target->hp != 0)
         break;
       PUSH_MESSAGE(MsgRevived);
-      target->hp = target->maxHp * 8 / 10;
+      target->hp = target->hpMax * 8 / 10;
       Unit_UpdateRatiosFar(targetId);
       break;
 
@@ -1137,13 +1137,13 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       if (ability->effect == ABILITY_EFFECT_DRAIN_HALF_HP)
         amount /= 2;
       newHp += amount;
-      if (newHp > actor->maxHp) {
-        newHp = actor->maxHp;
+      if (newHp > actor->hpMax) {
+        newHp = actor->hpMax;
         amount = newHp - actor->hp;
       }
       BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, actorId);
-      if (newHp == actor->maxHp)
+      if (newHp == actor->hpMax)
         PUSH_MESSAGE(MsgHpFull);
       else {
         BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);
@@ -1162,13 +1162,13 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       newPp = actor->pp;
       drained = damageDealt;
       newPp += drained;
-      if (newPp > actor->maxPp) {
-        newPp = actor->maxPp;
+      if (newPp > actor->ppMax) {
+        newPp = actor->ppMax;
         drained = newPp - actor->pp;
       }
       BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, actorId);
-      if (newPp == actor->maxPp)
+      if (newPp == actor->ppMax)
         PUSH_MESSAGE(MsgPpFull);
       else {
         BattleEvent_Push(BATTLE_EVENT_NUMBER, drained);
@@ -1185,8 +1185,8 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       amount = damageDealt / 10;
       if (target->pp < amount)
         amount = target->pp;
-      if (actor->pp + amount > actor->maxPp)
-        amount = actor->maxPp - actor->pp;
+      if (actor->pp + amount > actor->ppMax)
+        amount = actor->ppMax - actor->pp;
       if (amount == 0)
         break;
       BattleEvent_Push(BATTLE_EVENT_NUMBER, amount);

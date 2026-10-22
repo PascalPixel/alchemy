@@ -319,8 +319,8 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
   ownerCount = FieldParty_ListActiveOwners(owners);
   for (i = 0; i < ownerCount; i++) {
     state = Unit_Get(owners[i]);
-    state->hp = state->maxHp;
-    state->pp = state->maxPp;
+    state->hp = state->hpMax;
+    state->pp = state->ppMax;
     Engine_OwnerRecalculateRatios(owners[i]);
   }
   Party_AddActiveOwner(GARET);

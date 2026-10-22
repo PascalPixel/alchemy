@@ -32,8 +32,8 @@ top:
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
-    effect->maxSpeed = 4 << 16;
-    effect->limitTurnStep = state;
+    effect->speedMax = 4 << 16;
+    effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
     return;
   }
@@ -51,8 +51,8 @@ top:
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->maxTurnStep = 0x1000;
-    effect->limitTurnStep = 1;
+    effect->turnStepMax = 0x1000;
+    effect->turnStepLimited = 1;
     *statePointer = *statePointer + 1;
     return;
   }

@@ -181,12 +181,12 @@ void Unit_Calculate(s32 owner) {
   // either no longer gives its stat to within 1 (the stat was written
   // without Unit_UpdateRatios), both gauges are reset to full and the unit's HP
   // and PP refilled, before the fractions carry over to the new maxima.
-  if (UNIT_STAT_DIFF(unit->maxHp * unit->hpGauge / 0x4000, unit->hp) > 1 ||
-      UNIT_STAT_DIFF(unit->maxPp * unit->ppGauge / 0x4000, unit->pp) > 1) {
+  if (UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / 0x4000, unit->hp) > 1 ||
+      UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / 0x4000, unit->pp) > 1) {
     unit->hpGauge = 0x4000;
     unit->ppGauge = 0x4000;
-    unit->hp = unit->maxHp;
-    unit->pp = unit->maxPp;
+    unit->hp = unit->hpMax;
+    unit->pp = unit->ppMax;
   }
 
   // RESTRAINT_KEEP_BOUND keeps RESTRAINT_BOUND, and RESTRAINT_REMOVABLE clears
@@ -424,10 +424,10 @@ void Unit_Calculate(s32 owner) {
   if (unit->classIndex)
     statLimit = 1999;
 
-  previousMaximum = unit->maxHp;
+  previousMaximum = unit->hpMax;
   CLAMP(stats->hp, 0, statLimit);
-  unit->maxHp = stats->hp;
-  if (previousMaximum != unit->maxHp) {
+  unit->hpMax = stats->hp;
+  if (previousMaximum != unit->hpMax) {
     value = stats->hp * unit->hpGauge / 0x4000;
     CLAMP(value, 0, statLimit);
     if (unit->hp != 0 && value == 0)
@@ -435,10 +435,10 @@ void Unit_Calculate(s32 owner) {
     unit->hp = value;
   }
 
-  previousMaximum = unit->maxPp;
+  previousMaximum = unit->ppMax;
   CLAMP(stats->pp, 0, statLimit);
-  unit->maxPp = stats->pp;
-  if (previousMaximum != unit->maxPp) {
+  unit->ppMax = stats->pp;
+  if (previousMaximum != unit->ppMax) {
     value = stats->pp * unit->ppGauge / 0x4000;
     CLAMP(value, 0, statLimit);
     if (unit->pp != 0 && value == 0)
@@ -652,8 +652,8 @@ void Party_EndChildhood(void) {
     struct BattleUnit *unit = Unit_Get(owner);
     s32 slot;
 
-    unit->hp = unit->maxHp;
-    unit->pp = unit->maxPp;
+    unit->hp = unit->hpMax;
+    unit->pp = unit->ppMax;
     Unit_UpdateGauges(unit);
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -689,8 +689,8 @@ void Party_RestoreHpPp(s32 cureConditions) {
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     unit = Unit_Get(gGameState.activeOwners[partyIndex]);
 
-    unit->hp = unit->maxHp;
-    unit->pp = unit->maxPp;
+    unit->hp = unit->hpMax;
+    unit->pp = unit->ppMax;
     Unit_UpdateGauges(unit);
 
     if (cureConditions == 1) {
@@ -733,7 +733,7 @@ void Party_RestorePpOfLitElements(void) {
     }
 
     unit = Unit_Get(ownerId);
-    unit->pp = unit->maxPp;
+    unit->pp = unit->ppMax;
     Unit_UpdateGauges(unit);
   }
 }
@@ -766,33 +766,33 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
   return result;
 }
 
-/// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
+/// Sets the unit's HP, clamped to 0..hpMax, and recomputes its HP and PP
 /// gauges. Called by BattleObject_DestroyTemporaryObject.
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 clamped;
 
-  clamped = Unit_ClampGaugeValue(hp, unit->maxHp);
+  clamped = Unit_ClampGaugeValue(hp, unit->hpMax);
   unit->hp = clamped;
   Unit_UpdateGauges(unit);
 }
 
-/// Sets the unit's PP, clamped to 0..maxPp, and recomputes its HP and PP
+/// Sets the unit's PP, clamped to 0..ppMax, and recomputes its HP and PP
 /// gauges. Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
   s32 clamped;
 
-  clamped = Unit_ClampGaugeValue(pp, unit->maxPp);
+  clamped = Unit_ClampGaugeValue(pp, unit->ppMax);
   unit->pp = clamped;
   Unit_UpdateGauges(unit);
 }
 
-/// Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
+/// Adds delta to the HP of unit owner, clamped to 0..hpMax, recomputes its
 /// gauges and returns the new HP. Called by battle's round end, poison and
 /// regeneration, and by the field's damage floors and status damage.
 s32 Unit_AddHp(s32 owner, s32 delta) {
   struct BattleUnit *unit = Unit_Get(owner);
   s32 currentHp = unit->hp;
-  s32 maximumHp = unit->maxHp;
+  s32 maximumHp = unit->hpMax;
   s32 value = currentHp + delta;
   s32 result;
 
@@ -802,14 +802,14 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
   return unit->hp;
 }
 
-/// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
+/// Adds delta to the PP of unit owner, clamped to 0..ppMax, recomputes its
 /// gauges and returns the new PP. Called when Psynergy is used in the field,
 /// in battle and from the menu, by PP recovery at the end of a battle round,
 /// and by the debug menu.
 s16 Unit_AddPp(s32 owner, s32 delta) {
   struct BattleUnit *unit = Unit_Get(owner);
   s32 currentPp = unit->pp;
-  s32 maximumPp = unit->maxPp;
+  s32 maximumPp = unit->ppMax;
   s32 value = currentPp + delta;
   s32 result;
 

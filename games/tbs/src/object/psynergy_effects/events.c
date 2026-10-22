@@ -226,8 +226,8 @@ void Party_RemoveOwnerRestored(s32 unit) {
   Party_RemoveActiveOwnerFar(unit);
   Event_ClearInvalidPackedValues();
   vitals = Unit_GetFar(unit);
-  vitals->hp = vitals->maxHp;
-  vitals->pp = vitals->maxPp;
+  vitals->hp = vitals->hpMax;
+  vitals->pp = vitals->ppMax;
   Unit_UpdateGauges(vitals);
   vitals->poison = 0;
   // Count the members who remain and still have HP.

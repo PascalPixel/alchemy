@@ -78,8 +78,8 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 5 << 16;
-    effect->maxSpeed = 5 << 16;
-    effect->limitTurnStep = state;
+    effect->speedMax = 5 << 16;
+    effect->turnStepLimited = state;
     effect->state++;
 
     if ((gFrameCount & 2) != 0)

@@ -418,7 +418,7 @@ void Party_AddHp(s32 amount, s32 percent) {
     if (!percent) {
       hpDelta = amount;
     } else {
-      hpDelta = unit->maxHp * amount / 100;
+      hpDelta = unit->hpMax * amount / 100;
       if (hpDelta == 0) {
         hpDelta = amount;
         if (hpDelta < 0)
@@ -448,14 +448,14 @@ s32 Party_ApplyPoisonDamage(void) {
 
     switch (unit->poison) {
     case POISON_NORMAL:
-      hpDelta = -((unit->maxHp + 10) / 20);
+      hpDelta = -((unit->hpMax + 10) / 20);
       if (hpDelta == 0)
         hpDelta = -1;
       if (worstPoison <= 0)
         worstPoison = POISON_NORMAL;
       break;
     case POISON_DEADLY:
-      hpDelta = -((unit->maxHp + 5) / 10);
+      hpDelta = -((unit->hpMax + 5) / 10);
       if (hpDelta == 0)
         hpDelta = -1;
       if (worstPoison <= POISON_NORMAL)

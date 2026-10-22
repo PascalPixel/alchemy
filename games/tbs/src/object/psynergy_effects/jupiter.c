@@ -144,8 +144,8 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = 0x50000;
-    effect->maxSpeed = 0x50000;
-    effect->limitTurnStep = state;
+    effect->speedMax = 0x50000;
+    effect->turnStepLimited = state;
     effect->state++;
 
     // At the leader's sprite priority, until MARS_SPARK_RISING brings it in

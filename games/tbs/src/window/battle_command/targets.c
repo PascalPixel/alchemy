@@ -422,7 +422,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             UiText_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
             UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
                                       conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
+            UiText_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_PP: {
             s32 anchor;
@@ -438,7 +438,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             UiText_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
             UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
                                       conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
+            UiText_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_REVIVE: {
             s32 anchor;

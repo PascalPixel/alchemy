@@ -1145,11 +1145,11 @@ void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags) {
   UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
   MENU_DRAW_STATUS_LABEL(gMenu_HpString, window, 40, 16);
   UiText_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
-  UiText_DrawNumberInWindowFar(unit->maxHp, 4, window, 112, 16);
+  UiText_DrawNumberInWindowFar(unit->hpMax, 4, window, 112, 16);
   UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 16);
   MENU_DRAW_STATUS_LABEL(gMenu_PpString, window, 40, 24);
   UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
-  UiText_DrawNumberInWindowFar(unit->maxPp, 4, window, 112, 24);
+  UiText_DrawNumberInWindowFar(unit->ppMax, 4, window, 112, 24);
   UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel, window, 40, 8);
   UiText_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);

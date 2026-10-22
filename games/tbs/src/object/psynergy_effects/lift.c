@@ -139,8 +139,8 @@ again:
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 3 << 16;
-    effect->maxSpeed = 3 << 16;
-    effect->limitTurnStep = 0;
+    effect->speedMax = 3 << 16;
+    effect->turnStepLimited = 0;
     effect->state++;
     return;
   }
@@ -167,8 +167,8 @@ again:
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->maxTurnStep = 0x800;
-    effect->limitTurnStep = 1;
+    effect->turnStepMax = 0x800;
+    effect->turnStepLimited = 1;
     effect->state++;
     return;
   }

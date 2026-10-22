@@ -357,10 +357,10 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // digits.
   UiText_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
-  value = unit->maxHp;
+  value = unit->hpMax;
   UiText_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
-  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
+  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
     UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
@@ -372,7 +372,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
   value = unit->pp;
   UiText_DrawNumberRightAligned(value, window, 48, 48);
-  value = unit->maxPp;
+  value = unit->ppMax;
   UiText_DrawNumberRightAligned(value, window, 88, 48);
 #else
   // Each row string ("HP    /" and "EP    /") holds the label and the slash,
@@ -381,10 +381,10 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // from 16 at the font's widths, the maximum from 56 a cell a character,
   // ending at 88.
   UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, window, 0, 40);
-  value = unit->maxHp;
+  value = unit->hpMax;
   UiText_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
-  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
+  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
     UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
@@ -395,7 +395,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
   value = unit->pp;
   UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
-  value = unit->maxPp;
+  value = unit->ppMax;
   UiText_DrawNumberInWindowFar(value, 4, window, 56, 48);
 #endif
 }

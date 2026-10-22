@@ -2213,8 +2213,8 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
     fragment->acceleration = PIXELS(5);
-    fragment->maxSpeed = PIXELS(5);
-    fragment->limitTurnStep = currentPhase;
+    fragment->speedMax = PIXELS(5);
+    fragment->turnStepLimited = currentPhase;
     (*phase)++;
     if ((gFrameTick & 3) == 0)
       Engine_AudioPlayCue(SE_HEAVY_IMPACT);

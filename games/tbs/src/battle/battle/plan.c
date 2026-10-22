@@ -355,7 +355,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->failure = PLAN_FAILURE_NONE;
       actor->pp -= ability->ppCost;
       Unit_UpdateRatiosFar(request->unitId);
-      CLAMP(actor->pp, 0, actor->maxPp);
+      CLAMP(actor->pp, 0, actor->ppMax);
     }
   } break;
 

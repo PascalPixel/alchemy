@@ -112,8 +112,8 @@ void Scene_ReturnFromBattle(s32 result) {
     if (GameFlag_TestFar(FLAG_CHILDHOOD)) {
       for (i = 0; i < 2; i++) {
         unit = Unit_GetFar(i);
-        unit->hp = unit->maxHp;
-        unit->pp = unit->maxPp;
+        unit->hp = unit->hpMax;
+        unit->pp = unit->ppMax;
         Unit_UpdateGauges(unit);
       }
     }

@@ -475,13 +475,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         UiText_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
         UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, statusWindow,
                                   88, 24);
-        UiText_DrawNumberInWindow(unit->maxHp, 4, statusWindow, 96, 24);
+        UiText_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
         UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString, statusWindow, 40,
                                   32);
         UiText_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
         UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, statusWindow,
                                   88, 32);
-        UiText_DrawNumberInWindow(unit->maxPp, 4, statusWindow, 96, 32);
+        UiText_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
 
         UiText_DrawCharacterAtOffset(
             OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK), statusWindow, 136,

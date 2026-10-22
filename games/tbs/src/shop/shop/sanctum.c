@@ -334,7 +334,7 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
 
   unit = Unit_GetFar(unitId);
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
-    unit->hp = unit->maxHp;
+    unit->hp = unit->hpMax;
     Unit_UpdateRatiosFar(unitId);
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     unit->poison = 0;
@@ -426,9 +426,9 @@ void Shop_UpdateBurstSparkle(struct EffectSlot *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
-    effect->maxSpeed = 0x20000;
+    effect->speedMax = 0x20000;
     effect->acceleration = 0x6666;
-    effect->limitTurnStep = state;
+    effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {
     targetPending = EffectSlot_HasPendingTargetFar(effect);

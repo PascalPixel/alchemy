@@ -97,10 +97,10 @@ void Colosso_ControlCharacterAlone(s32 id) {
   gGameState.selectedActor = id;
   Engine_CameraFollowActor(id, 0);
   unit = Unit_Get(id);
-  unit->hp = unit->maxHp;
-  unit->pp = unit->maxPp;
+  unit->hp = unit->hpMax;
+  unit->pp = unit->ppMax;
   unit->poison = 0;
-  v = (unit->hp << 14) / unit->maxHp;
+  v = (unit->hp << 14) / unit->hpMax;
   t = 0x4000;
   if (v <= 0x4000) {
     t = 0;
@@ -111,7 +111,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   if ((u16)t == 0 && unit->hp != 0) {
     unit->hpGauge = 1;
   }
-  v = (unit->pp << 14) / unit->maxPp;
+  v = (unit->pp << 14) / unit->ppMax;
   t = 0x4000;
   if (v <= 0x4000) {
     t = 0;

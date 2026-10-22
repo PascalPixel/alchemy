@@ -304,13 +304,13 @@ void PartyStatus_Draw(s32 flags) {
   for (i = 0; i != count; i++) {
     struct BattleUnit *unit = Unit_GetFar(members[i]);
     s32 hp = unit->hp;
-    s32 maxHp = unit->maxHp;
+    s32 hpMax = unit->hpMax;
     s32 barLength;
     s32 current;
 
     if (hp == 0)
       UiWork_SetParamNibble(2);
-    else if (hp <= maxHp / 4)
+    else if (hp <= hpMax / 4)
       UiWork_SetParamNibble(4);
     else
       UiWork_SetParamNibble(15);
@@ -325,10 +325,10 @@ void PartyStatus_Draw(s32 flags) {
     UiText_DrawStringAtOffset(unit->name, window,
                               (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     UiWork_SetParamNibble(15);
-    if (unit->maxHp != 0) {
+    if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
       current = unit->hp;
-      barLength = ((current * 40) / unit->maxHp);
+      barLength = ((current * 40) / unit->hpMax);
       if (barLength == 0 && current != 0)
         barLength = 1;
       UiWindow_DrawStatusBarTiles(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1,
@@ -341,9 +341,9 @@ void PartyStatus_Draw(s32 flags) {
       UiText_DrawPrefixedNumberAtOffset(unit->pp, window,
                                         (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                         y * 8 + 16, 1);
-      if (unit->maxPp != 0) {
+      if (unit->ppMax != 0) {
         current = unit->pp;
-        barLength = ((current * 40) / unit->maxPp);
+        barLength = ((current * 40) / unit->ppMax);
         if (barLength == 0 && current != 0)
           barLength = 1;
         UiWindow_DrawStatusBarTiles(

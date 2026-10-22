@@ -278,8 +278,8 @@ next_state:
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = 4 << 16;
-    effect->maxSpeed = 4 << 16;
-    effect->limitTurnStep = state;
+    effect->speedMax = 4 << 16;
+    effect->turnStepLimited = state;
     (*statePtr)++;
     return;
   }
@@ -295,8 +295,8 @@ next_state:
   if (state == OUT_AND_BACK_AIM_BACK) {
     effect->targetX = effect->originX;
     effect->targetZ = effect->originZ;
-    effect->maxTurnStep = 0x400;
-    effect->limitTurnStep = 1;
+    effect->turnStepMax = 0x400;
+    effect->turnStepLimited = 1;
     (*statePtr)++;
     return;
   }

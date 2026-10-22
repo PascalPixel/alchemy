@@ -9,6 +9,16 @@
 /// the dying forest. Five sparkles lie on the ground until Tret lifts the curse
 /// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
+/// The fields flicker: the leader's and Mia's show on even frames and Ivan's
+/// and Garet's on odd ones, each lifted out of sight on the others
+/// (KolimaForestEntrance_FlickerPsynergyFields). A sparkle bursts where it
+/// lands only inside the boxes KolimaForestEntrance_BurstOnPsynergyField
+/// tests, two with Mia in the party and three without her
+/// (https://alchemy.pascalpixel.com/places/kolima-forest-entrance/psynergy-fields.png:
+/// two frames running without Mia and with her, each field's place labelled
+/// with whose it is, in colour on the frame it shows, and the boxes outlined
+/// in yellow).
+///
 /// Three logs lie here, rolled by walking into them; the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can
 /// cross, and from the bank the leader can hop east (trigger 11,
@@ -19,11 +29,6 @@
 /// FLAG_SCENE_TEMP_00: the log is in the river. Like every scene flag it is
 /// cleared when the party next comes in, so the log is back on the bank, but a
 /// battle keeps it.
-///
-/// Open questions:
-/// - XXX (picture): the fields of Psynergy flickering two on even frames and
-///   two on odd (KolimaForestEntrance_FlickerPsynergyFields), and the areas
-///   KolimaForestEntrance_BurstOnPsynergyField tests with and without Mia.
 
 #include "script.h"
 #include "flags.h"

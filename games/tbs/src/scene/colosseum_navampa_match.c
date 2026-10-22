@@ -33,6 +33,14 @@
 ///   the Hunter's Sword, and the battle is ENCOUNTER_ZONE_COLOSSO's fifth or
 ///   sixth group, the Navampa with or without the Claymore.
 ///
+/// Stepping onto the Scales of Justice's western pan (touch 15,
+/// Event_StepOnScales) sends it, with the rider, down towards 4 pixels high
+/// and the eastern pan up towards 32, and stepping off (touch 16) swings them back; the
+/// weight Move sets on the western pan does the same
+/// (https://alchemy.pascalpixel.com/places/colosseum-navampa-match/scales.gif:
+/// the leader stepping on, each pan labelled with its height in whole
+/// pixels).
+///
 /// Win or lose, the third match ends Colosso:
 /// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and
 /// a win also FLAG_WON_COLOSSO. In the scene that follows
@@ -47,8 +55,6 @@
 ///   same run after MsgColossoDidntThinkBattles (spectators' lines, the inn's
 ///   `Inn Full` sign, the stage announcements), so neither shipped the lines
 ///   it was written for.
-/// - XXX (picture): the Scales of Justice, the western pan sinking under a
-///   rider or SCALE_WEIGHT as the eastern pan rises.
 
 #include "script.h"
 #include "version.h"

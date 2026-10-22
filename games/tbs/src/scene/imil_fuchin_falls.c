@@ -35,7 +35,15 @@
 ///   FLAG_PLACE_TEMP_15 the fourth's, so the logs are back where they started
 ///   once the party leaves the cave's scenes. After each move, and on entry,
 ///   the room's rebuild function puts every log at the cell its flags name and
-///   rewrites the cells of each log's track to match. In the third room the
+///   rewrites the cells of each log's track to match: in the first room
+///   (Fuchin_RebuildEntranceLogs) the track's cells are first copied in from
+///   a copy below the room that has each log's trigger cells (11 and 12, 13
+///   and 14, 15 and 16) at both ends of its run, then the end each log's flag
+///   says it is not at is overwritten with a wall cell of the water
+///   (https://alchemy.pascalpixel.com/places/fuchin-falls-cave-entrance/log-rebuild.png:
+///   the track's cells with their collision codes, entered with none, then
+///   one, two and three of FLAG_PLACE_TEMP_01 to _03 set, the cells changed
+///   from the first outlined). In the third room the
 ///   logs block one another, so where a log stops depends on where the others
 ///   lie; in the second and third rooms the leader hops across gaps a log's
 ///   stop leaves.
@@ -75,8 +83,6 @@
 ///   43 of map_064's grid_collision.tsv), so it is likely a slip in the table,
 ///   and a recording of the push from the cells south of it would settle it
 ///   (the renderer's event recording follows an exit out of the room instead).
-/// - XXX (picture): the log rooms' rebuild, each log's track cells rewritten
-///   as its place flags change, drawn over the room's collision map.
 
 #include "script.h"
 #include "game_state.h"

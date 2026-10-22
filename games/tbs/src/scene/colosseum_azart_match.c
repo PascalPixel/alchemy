@@ -38,7 +38,13 @@
 ///   against Azart, who follows a recorded path (Colosso_StartRival), with a
 ///   gauge at the top of the screen showing how near each is to the finish
 ///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
-///   three. At the arena (Event_ReachArena) the first to arrive takes the Iron
+///   three. Azart runs east of the finish (1,304 pixels across, where the
+///   prizes stand), his path the mirror of one through Isaac's own stages,
+///   so he is seen only as he comes into the arena
+///   (https://alchemy.pascalpixel.com/places/colosseum-azart-match/race.png:
+///   Isaac left standing at the start, Azart's place over the race mirrored
+///   back across the finish and drawn in red on the course, a dot every five
+///   seconds, and the gauge at four moments). At the arena (Event_ReachArena) the first to arrive takes the Iron
 ///   Shield and the second the Padded Gloves, which Isaac is given and equipped
 ///   with, and the two fight: the battle is ENCOUNTER_ZONE_COLOSSO's first or
 ///   second group, the Azart who has the shield or the one who has not.
@@ -50,11 +56,6 @@
 /// COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST, and
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
-///
-/// Open questions:
-/// - XXX (picture): the race, the leader against the opponent's recorded path,
-///   with the gauge that shows how near each is to the finish
-///   (Colosso_StartRaceGauge).
 
 #include "script.h"
 #include "version.h"

@@ -105,6 +105,8 @@ in the ramps' 8.8 fixed point, and the usual step `MUSIC_DEFAULT_RAMP_STEP`
 is 4, so a full fade takes 64 frames. The music resumes where it was, fading
 back in, and the code that asked for the fanfare need not track it.
 
+![A night at Bilibin's inn drawn as a chart, a column a frame over 25 seconds and a row for each track of the eight players, each cell lit while its track has notes sounding, as bright as its output volume: the music player's rows go dark six seconds in as the fanfare player's rows start, stay dark while the fanfare plays for about five seconds, and come back from about thirteen seconds; player 2 lights once and player 4 in short runs, for sound effects. Small screens below show the inn, the black of the night and the room opening again.](https://alchemy.pascalpixel.com/guides/sound/players.png)
+
 The music commands here select only tracks 0 to 7 (`MUSIC_ALL_TRACKS`, one
 bit a track), though the music player has 10. `MUS_006`, `MUS_022`,
 `MUS_028`, `MUS_029`, `MUS_040` to `MUS_043` and `MUS_074` use 9 or more,
@@ -204,7 +206,3 @@ player 2 the interface's (`SE_MENU_CONFIRM`, `SE_MENU_CANCEL`,
 `SE_MENU_ERROR`, `SE_SHOP_PURCHASE`) and player 3 the field's and battle's
 actions (`SE_CAST`, `SE_IMPACT`, `SE_HEAVY_IMPACT`, `SE_DOOR_OPEN`). A
 floating effect therefore never cuts those off.
-
-- XXX (picture): no picture yet takes a frame's sound apart, such as the eight players'
-  tracks drawn as rows while a fanfare silences the music and it fades back
-  in.

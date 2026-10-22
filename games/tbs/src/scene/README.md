@@ -136,6 +136,14 @@ An event's kind says what starts it and what its trigger is:
 | `PSYNERGY_ON_ACTOR(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an actor, or anywhere | the actor's number, or 0 |
 | `EVENT_RAISED` | the scene's code raising a value | the value |
 
+The touch, exit and search rows meet the map through its collision codes: a
+cell whose code is one of the scene's own, 1 to 239, is answered by the first
+row of a matching kind with that code as its trigger. On the screen of Vale
+below, the codes at the doorsteps and beside the second house are touch
+rows', and the path's 19 has no row in the event table.
+
+![A screen of Vale by day drawn from its map at twice the GBA's size, each cell with one of the scene's own collision codes tinted and labelled with the code: magenta for the cells a touch row names, such as 7 and 8 at the doorsteps of two houses and 100 and 101 beside the second, and grey for 19, three cells on a path that no row names](https://alchemy.pascalpixel.com/guides/scene/event-cells.png)
+
 A Psynergy event's phase (`enum PsynergyPhase`) says when it runs around the
 effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
 `PSYNERGY_PHASE_AFTER_CAST` after, and `PSYNERGY_PHASE_EFFECT_ACTS` from inside
@@ -279,7 +287,3 @@ animations, named in `enum ActorAnimation` from Isaac's sprite
 seen side-on to full size facing the player, and a leaving turns from his
 back to side-on as he shrinks and is then hidden. The alternate pair, which
 goes with `SE_STAIRS_DOWN`, has its own drawings of the same turns.
-
-- XXX (picture): the actors are labelled (above), but no picture yet marks each event
-  cell by its collision code, which would show how the event table meets the
-  map.

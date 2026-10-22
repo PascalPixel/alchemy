@@ -40,7 +40,16 @@
 /// the circles of light the patrols carry, which flicker as they shake
 /// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
 /// shows the pair's two circles). Each has stretches of its rounds where
-/// it cannot see the leader. The guards who fight instead pick one of four
+/// it cannot see the leader. On the upper floor the pair walk east and west
+/// between 88 and 192 pixels across, one 192 and one 288 pixels down; each
+/// sees a leader in his own column up to six rows away, or within a row of
+/// his up to six columns away, whatever stands between them, but never one
+/// in rows 5 to 7 from column 10 west, at the passage's top, or in columns 8
+/// and 9 below row 22 (LunpaFortress_IsLeaderInPatrolSafeZone)
+/// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/patrol-sight.png:
+/// the west passage with the pair's rounds in yellow, every cell either
+/// guard sees from some point of his round in red, and the cells they never
+/// look at in green). The guards who fight instead pick one of four
 /// challenges, by gLunpaFortressRandomPick, drawn on every entrance.
 ///
 /// The Cell Key opens the cell doors of all four scenes, facing each door
@@ -78,8 +87,6 @@
 ///   (https://alchemy.pascalpixel.com/places/lunpa-fortress-toadonpa/map-0.png),
 ///   so likely they make it solid, and the map's collision attributes at
 ///   those cells would settle it.
-/// - XXX (picture): LunpaFortressUpperFloor's west corridor taken apart, the
-///   cells along the pair's rounds where they cannot see the leader.
 
 #include "game_state.h"
 #include "field_event.h"

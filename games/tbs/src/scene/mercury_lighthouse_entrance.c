@@ -28,7 +28,15 @@
 ///   a rippling pond.` Ply cast on the invisible actor there from one cell
 ///   only, (12, 32), dims the room, raises sparks from the water, starts the
 ///   colours shimmering and opens the routes that need it
-///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED). From then on the pool's heart
+///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED): it copies the collision of 13
+///   by 7 cells over the pool at (6, 32), and entering the goddess's room
+///   once it is set copies them again. Cells out in the water take code 21,
+///   the heart 11 and cells on the pool's rim 31, the codes the hops and
+///   lights below answer, while the water between them stays a wall
+///   (https://alchemy.pascalpixel.com/places/mercury-lighthouse-entrance/pool-ply-cells.png:
+///   the pool's cells with their codes, entered by the goddess's room before
+///   and after Ply, the cells whose words changed outlined). From then on
+///   the pool's heart
 ///   (cell code 11) gives the leader up to three lights, each hop into the
 ///   water spends one, and landing in it without one sinks the leader back to
 ///   the heart (the helpers of common/mercury_lighthouse_pillar.h). Dropping in
@@ -74,8 +82,6 @@
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH and _MIDDLE) were
 ///   for; no exit or code leads to them, so nothing in the ROM shows them in
 ///   use.
-/// - XXX (picture): the pool's cells before and after Ply, the routes the
-///   copied cell attributes open drawn over the room's collision map.
 
 #include "script.h"
 #include "animspr.h"

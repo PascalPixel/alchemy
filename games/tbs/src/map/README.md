@@ -120,6 +120,8 @@ copied into RAM, which weaves them into 128 by 128 cell words, 64 KB from the
 start of `Ram_MapCellBuffer`. The first two planes are saved to a temporary
 buffer first, since the cell words overwrite them.
 
+![Goma Cave's grid as Tile_ConvertMap leaves it, taken back apart into its three planes a cell to two pixels: the collision codes, nearly all open ground with a few event and wall cells; the shapes, outlining the rock rims; and the blocks, the three layers' windows full of different blocks and the rest of the grid one block. Beside them six by four cells of the map with each cell's word written over it in hex, the shape in its top byte and the block in its low bits](https://alchemy.pascalpixel.com/guides/map/grid-planes.png)
+
 `gMapCellBuffer` itself is 32 KB, so the cells run on through
 `gActorSpriteSlots` and `gDecodeBuffer`, and neither can hold anything else
 while a map is loaded. Only code that reloads the cells afterwards writes
@@ -186,6 +188,8 @@ the channel's script, `stop` (`0xfeff`) halts the channel, and `end`
 RAM at `Ram_DecodeBuffer` plus its offset, which lands in `gMapLayerData`, and
 a lower one from elsewhere in video memory; the line is 512 for a map whose
 animations copy 64-byte tiles (`MapState.wideTiles`).
+
+![Vale where Garet's sister stands, beside the 512 tiles of its ground layer's character block in grey, 32 to a row: every few frames one group of tiles in the block's lower half is rewritten by the tile animation and outlined in red, while the rest stay as they are](https://alchemy.pascalpixel.com/guides/map/tile-animation.gif)
 
 The blend script changes how the layers blend over time. `control` sets
 `REG_BLDCNT`; `level` sets `REG_BLDALPHA`, or `REG_BLDY` when the control's
@@ -296,7 +300,3 @@ pointer the loader stores to it, although `MapScrollWork`
 The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
 `struct LayeredSceneHeader`) are 0 in every map of both games, and nothing
 reads them: the loader is the only code that reads the header.
-
-- XXX (picture): no picture yet shows a grid's three planes beside the cell words
-  `Tile_ConvertMap` weaves from them, or a tile animation channel copying its
-  frames; renders of both belong beside their sections here.

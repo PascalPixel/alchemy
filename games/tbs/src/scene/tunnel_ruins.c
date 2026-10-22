@@ -45,10 +45,16 @@
 ///   carved stones set on the balance, FLAG_SCENE_TEMP_03 the pillar soaked by
 ///   Douse and FLAG_SCENE_TEMP_04 its puddle frozen.
 ///
-/// Open questions:
-/// - XXX (picture): the balance platforms taken apart, each carved stone's
-///   weight beside the heights gTunnelRuins_BalanceHeights gives the two
-///   platforms.
+/// Each balance platform's timer is its weight: both start at 3, and a carved
+/// stone set on one adds one to it and takes one from the other, and
+/// gTunnelRuins_BalanceHeights turns each weight into the platform's height.
+/// Entering from the Great Statue's north sets the balance up empty; coming
+/// in by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it,
+/// one
+/// stone on the west platform and two stacked on the east, weights 2 and 4
+/// (https://alchemy.pascalpixel.com/places/tunnel-ruins-lady-statues/balance.png:
+/// the balance as each entrance sets it up, each platform labelled with its
+/// weight and height in pixels and each stone with its letter).
 
 #include "script.h"
 #include "version.h"

@@ -112,7 +112,12 @@ backgrounds down while the sprites rise along the slope until frame 278, and
 flashes white into the title picture, where "Press Start" pulses for up to a
 minute; if nothing is pressed `Title_Run` starts again from the logos. After
 the prologue the same intro plays without the prompt and holds the picture
-five seconds. A or Start cuts each part short.
+five seconds. A or Start cuts each part short. Of the backgrounds, `BG1` at
+the back scrolls a pixel every third tick and `BG2` in front every other one,
+each copying the next band of its picture in as a new row of tiles comes
+into view.
+
+![The title intro after the prologue, 140 frames after the screen first shows, pulled apart into its layers: `BG1` at the back with purple clouds, `BG2` with blue sky and clouds, `BG0` with the mountain, and in front the sprites, the sun on its patch of blue sky and the lens flares below it](https://alchemy.pascalpixel.com/guides/graphics/title-intro-layers-3d.gif)
 
 ### Two backdrops in one background memory
 
@@ -152,6 +157,8 @@ ahead into the hidden part of the ring, so only lines about to show are ever
 drawn and the tile memory the credits need doesn't grow with the text.
 Opaque border sprites over the top 16 and bottom 24 pixels, first in OAM,
 hide the rows that are only partly on screen.
+
+![The credits from their first lines beside the sprites' tile memory, 32 tiles to a row: the staff names lie in it as lines of text, and each time the scroll enters a new line one row of the memory is outlined in red as the next line, such as `Scenario` or `Director`, is drawn into it ahead of being shown](https://alchemy.pascalpixel.com/guides/graphics/credits-tile-ring.gif)
 
 ![The staff names scroll up over a backdrop of Vale's houses in the rain, which fades into a stone hall lit by torches while the names keep moving.](https://alchemy.pascalpixel.com/guides/graphics/credits.gif)
 
@@ -208,8 +215,3 @@ draw.
   rather than globals of their own; the ROM's code shows only that both reach
   the same addresses, no other code uses them, and only Camelot's link map or
   source could say whether the sharing was meant.
-- XXX (picture): no picture yet shows the tile ring: the 32 rows of sprite tile memory
-  drawn a tile to a pixel as the names scroll, with each row filled as
-  `DisplayScroll_RenderEnteringLine` draws it.
-- XXX (picture): no picture yet takes the title intro apart into its two scrolling
-  backgrounds and its rising sprites.

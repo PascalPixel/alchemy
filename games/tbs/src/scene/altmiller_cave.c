@@ -35,7 +35,14 @@
 /// (FLAG_DARKNESS_BY_STEPS): touch cells 60 to 65 each set a level, kept in
 /// gSceneState byte 4, from the lightest at the mouth to the darkest by the
 /// inner chamber, and blends outside the light while BG1 is left out inside
-/// it. Reveal lights a dark room while it lasts and shows the
+/// it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the layers under
+/// it 16 sixteenths at level 0, two fewer at each level after, down to 6 at
+/// level 5. Where one level meets the next, a cell of each lies side by
+/// side, so the level is that of the cell the leader last stepped on, in
+/// either direction
+/// (https://alchemy.pascalpixel.com/places/altmiller-cave-entrance/darkness-levels.png:
+/// the passage's map with each cell labelled with the level it sets, over the
+/// same moment drawn at each of the six levels). Reveal lights a dark room while it lasts and shows the
 /// rocks' colours (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
 ///
 /// The rock puzzle keeps the rounds matched in gSceneState byte 0 and its
@@ -46,11 +53,6 @@
 /// light. A wrong rock puts the lights away. The third match bursts the wall
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
-///
-/// Open questions:
-/// - XXX (picture): AltmillerCaveEntrance's darkness taken apart, BG1's blend
-///   weight shown at each of the six levels beside the touch cells that set
-///   them.
 
 #include "game_state.h"
 #include "version.h"

@@ -96,13 +96,16 @@ enum {
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI = 70,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH = 71,
   WORLD_MAP_FROM_CLEAR = 72,
-  /// After the look back at Venus Lighthouse, a sparkling transition sends the
-  /// party on to Sheba's fall by WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE
-  /// (WorldMap_StartTransitionEffect).
+  /// After the look back at Venus Lighthouse, the lighthouse shakes in clouds
+  /// of dust and WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE sends the party on to
+  /// Sheba's fall (WorldMap_ShakeVenusLighthouse).
   WORLD_MAP_BEFORE_SHEBAS_FALL = 73,
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE = 74,
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS = 75,
   WORLD_MAP_FROM_CROSSBONE_ISLE = 76,
+  /// Where one of the Suhalla Desert's storms sets the party down, still in
+  /// the air, beside the world map's own storm.
+  WORLD_MAP_FROM_SUHALLA_DESERT_STORM = 77,
   /// Where a defeat returns after Iodem hands over the Black Orb: the orb is
   /// discarded and WORLD_MAP_TO_LUNPA_SUHALLA leads on.
   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,

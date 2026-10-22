@@ -136,29 +136,29 @@
 #include "songs.h"
 #include "item_ids.h"
 
-static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
+static s32 WorldMap_AlignToMap(struct ScriptInterpreter *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_ShowHammetsCaravan(void);
-static void WorldMap_ShakeTransferStartCamera(void);
-static void WorldMap_ShakeTransferLandingCamera(void);
-static void WorldMap_UpdateTransferredActorLanding(void);
+static void WorldMap_ShakeCameraOverCaravan(void);
+static void WorldMap_ShakeCameraWhereRockFalls(void);
+static void WorldMap_UpdateFallingRock(void);
 static void WorldMap_SailToFirstMonsterAttack(void);
 static void WorldMap_SailToSecondMonsterAttack(void);
 static void WorldMap_SailToThirdMonsterAttack(void);
-static void WorldMap_TransferToTolbiShipInteriors(void);
+static void WorldMap_SailToKraken(void);
 static void WorldMap_SailUntilLandSighted(void);
-static void WorldMap_CompleteTransfer(void);
+static void WorldMap_SailIntoTolbi(void);
 static void WorldMap_StepDownFromBunzasWagon(void);
 static void WorldMap_RunBlackOrbScene(void);
 static void WorldMap_BlockGatewayCaveExit(s32 actor);
-static void Event_StopLeavingShip(void);
+static void Event_IodemCallsLeaderBack(void);
 static void WorldMap_ShowEndingScene(void);
-static void WorldMap_StartTransitionEffect(void);
-static void WorldMap_UpdateTransitionEffect(void);
+static void WorldMap_ShakeVenusLighthouse(void);
+static void WorldMap_UpdateLighthouseQuake(void);
 static void WorldMap_SailTolbiShipToIsland(void);
 static s32 WorldMap_GetRowingBalance(void);
 static s32 WorldMap_GetSeatRowValue(u32 seat);
-static void WorldMap_RunOpeningRise(void);
+static void WorldMap_ShowIslandDrifting(void);
 static void WorldMap_UpdateStormTimer(void);
 static void WorldMap_PlayLighthouseTransition(s32 palette);
 
@@ -278,6 +278,43 @@ enum WorldMapActor {
 /// The trigger raised by touching a place's actor.
 #define PLACE_TRIGGER(actor) (CONTACT_TRIGGER_BASE + (actor))
 
+/// The world map's own event triggers: cell codes the map's cells carry, and
+/// the value the storm raises. Each exit cell carries the number of the exit
+/// it leads to, so the exit rows of gWorldMapEvents name their trigger by that
+/// exit.
+enum WorldMapTrigger {
+  TRIGGER_TOLBI_SHIP = 74,     ///< the shore beside the anchored ship
+  TRIGGER_CROSSBONE_ISLE = 75, ///< the island's shore, walked onto northward
+  TRIGGER_FLINT = 90,          ///< the ground around Flint
+  TRIGGER_CORONA = 91,         ///< the ground around Corona
+  TRIGGER_VINE = 92,           ///< the ground around Vine
+  TRIGGER_HAIL = 93,           ///< the ground around Hail
+  TRIGGER_STORM = 95,          ///< the ground under the storm
+  TRIGGER_SHIPWRECK = 96,      ///< the scuttled ship off Gateway Cave
+  /// Raised by WorldMap_UpdateStormTimer when the party's time in the air
+  /// runs out.
+  TRIGGER_STORM_TIME_UP = 99,
+  TRIGGER_TURTLE_BOOTS = 100 ///< the ground where the Turtle Boots are buried
+};
+
+/// The rowers' balance (WorldMap_GetRowingBalance) that takes the Tolbi-bound
+/// Ship off course to the island.
+enum { ROWING_BALANCE_OFF_COURSE = 11 };
+
+/// Isaac's animations the map plays beyond enum ActorAnimation, as his sprite
+/// (spr_000.png) draws them.
+enum {
+  ANIM_LEADER_LOOK_UP = 22, ///< his head thrown back, looking up
+  ANIM_LEADER_HOLD_UP = 28  ///< both arms raised, holding something up
+};
+
+/// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge has fallen.
+enum { WORLD_MAP_BRIDGE_ANIM_BROKEN = 2 };
+
+/// The falling rock's animations (spr_216.png): it tumbles as it falls, then
+/// shatters where it lands.
+enum { FALLING_ROCK_ANIM_TUMBLE = 2, FALLING_ROCK_ANIM_SHATTER = 3 };
+
 /// The actors of Hammet's caravan leaving Vault
 /// (gWorldMapPlacementsHammetsCaravan, WORLD_MAP_HAMMETS_CARAVAN_LEAVES),
 /// numbered from ACTOR_FIRST_PLACED; Garet's row takes his own actor.
@@ -295,7 +332,7 @@ enum WorldMapCaravanActor {
   /// horse (its render)
   ACTOR_CARAVAN_FIRST_WAGON,
   /// What the falling rock is held above as it drops
-  /// (WorldMap_UpdateTransferredActorLanding); it grows from a tenth of its
+  /// (WorldMap_UpdateFallingRock); it grows from a tenth of its
   /// size as it moves (gCaravanRockGuideScript).
   ACTOR_FALLING_ROCK_GUIDE = ACTOR_CARAVAN_FIRST_WAGON + 4,
   /// Drawn as the rocks in sol_sanctum_eruption.c; it lands by the
@@ -444,15 +481,15 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
 }
 
 /// Cycles Flint's palette and circles him around his place on the map, until
-/// the party meets him (WorldMap_InitializeFirstDjinni).
-static void WorldMap_UpdateBobbingMarker(union FieldObject *fieldObject) {
+/// the party meets him (WorldMap_SetUpFlint).
+static void WorldMap_CircleFlint(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   s16 *angle;
 
   if (gFrameCount & 2)
-    Engine_ObjectSetPartPalettes(actor, 10);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_RED_TINT);
   else
-    Engine_ObjectSetPartPalettes(actor, 7);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_WHITE);
   if ((s16)actor->work == 0) {
     angle = (s16 *)&actor->timer;
     actor->x.fixed = PIXELS(5584);
@@ -466,16 +503,15 @@ static void WorldMap_UpdateBobbingMarker(union FieldObject *fieldObject) {
 }
 
 /// Animates the first Djinni until it has met the party.
-static s32
-WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_SetUpFlint(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
-  if (Engine_GameFlagIsSet(FLAG_DJINNI_0) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DJINNI_0 + DJINNI_FLINT) != 0) {
     return 0;
   }
   if (Engine_GameFlagIsSet(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
-  actor->update = WorldMap_UpdateBobbingMarker;
+  actor->update = WorldMap_CircleFlint;
   actor->motionFlags = 0;
   actor->timer = 0;
   actor->work = 0;
@@ -493,18 +529,17 @@ const struct SceneRegion *WorldMap_GetRegions(void) { return NULL; }
 const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
 /// Aligns the actor to the map and selects its flagged animation mode.
-static s32
-WorldMap_ApplyMapRotationAndMode(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_SetUpKolimaBridge(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
-  WorldMap_ApplyMapRotation(interpreter);
+  WorldMap_AlignToMap(interpreter);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_COLLAPSED) != 0) {
-    Object_SetMode(actor, 2);
+    Object_SetMode(actor, WORLD_MAP_BRIDGE_ANIM_BROKEN);
   }
   return 1;
 }
 
 /// Aligns the actor's sprite rotation to the map.
-static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_AlignToMap(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct MapRenderWork *work = gMapWork[0];
   struct AnimationObject *sprite = actor->sprite;
@@ -515,8 +550,7 @@ static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter) {
 }
 
 /// Enables the actor's collision and aligns its sprite to the map.
-static s32
-WorldMap_ApplyMapRotationAndCollision(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_SetUpIodem(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct MapRenderWork *work = gMapWork[0];
   struct AnimationObject *sprite = actor->sprite;
@@ -534,7 +568,7 @@ WorldMap_ApplyMapRotationAndCollision(struct ScriptInterpreter *interpreter) {
 static s32 WorldMap_SetUpStorm(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   Engine_ActorSetSpriteFlags(actor, 0);
-  Engine_ObjectSetPartPalettes(actor, 10);
+  Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_RED_TINT);
   actor->collisionFlags = 0;
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     Engine_GameFlagSet(FLAG_SCENE_TEMP_F1);
@@ -800,7 +834,8 @@ s32 WorldMap_Initialize(void) {
     Engine_TaskWait(1);
     Engine_CameraSetSpeed(PIXELS(8), PIXELS(1));
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    FieldScheduler_AddCallback(WorldMap_UpdateLocationContacts, 0xc80);
+    FieldScheduler_AddCallback(WorldMap_UpdateLocationContacts,
+                               TASK_PRIORITY_SCENE);
     if (Engine_GameFlagIsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       FieldMap_SetWindowCellTile(128, 256, 176, 56);
     }
@@ -816,11 +851,11 @@ s32 WorldMap_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
         if (Engine_GameFlagIsSet(FLAG_BLACK_ORB_RETURNED) == 0 &&
             Engine_GameFlagIsSet(FLAG_SCENE_TEMP_34) != 0) {
-          gWorldMapTriggerActor = ACTOR_IODEM;
+          gWorldMapIodem = ACTOR_IODEM;
           Actor_SetPosition(ACTOR_IODEM, PIXELS(6036), PIXELS(3400));
-          Object_GetById(gWorldMapTriggerActor)->facing =
+          Object_GetById(gWorldMapIodem)->facing =
               FACING_SOUTHEAST + FACING_STEP;
-          WorldMap_BlockGatewayCaveExit(gWorldMapTriggerActor);
+          WorldMap_BlockGatewayCaveExit(gWorldMapIodem);
         }
       } else if (Engine_GameFlagIsSet(FLAG_BLACK_ORB_RETURNED) == 0 &&
                  Engine_GameFlagIsSet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) ==
@@ -849,30 +884,31 @@ s32 WorldMap_Initialize(void) {
       WorldMap_SailToThirdMonsterAttack();
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN:
-      WorldMap_TransferToTolbiShipInteriors();
+      WorldMap_SailToKraken();
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND:
       WorldMap_SailUntilLandSighted();
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI:
-      WorldMap_CompleteTransfer();
+      WorldMap_SailIntoTolbi();
       break;
     case WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH:
       WorldMap_StepDownFromBunzasWagon();
       break;
     case WORLD_MAP_FROM_CLEAR:
-      WorldMap_RunOpeningRise();
+      WorldMap_ShowIslandDrifting();
       break;
     case WORLD_MAP_BEFORE_SHEBAS_FALL:
-      WorldMap_StartTransitionEffect();
+      WorldMap_ShakeVenusLighthouse();
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE:
     case WORLD_MAP_FROM_CROSSBONE_ISLE:
-    case 77:
+    case WORLD_MAP_FROM_SUHALLA_DESERT_STORM:
       Engine_GameFlagSet(FLAG_NOT_ON_MAP);
       if (FieldGameFlag_GetByte(FLAG_SCENE_TEMP_F8) != 0) {
         gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
-        FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, 0xc80);
+        FieldScheduler_AddCallback(WorldMap_UpdateStormTimer,
+                                   TASK_PRIORITY_SCENE);
       }
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS:
@@ -999,7 +1035,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, PIXELS(5848), PIXELS(1576));
   Engine_TaskWait(1);
-  Actor_SetChildValue(ACTOR_CARAVAN_HAMMET, 15);
+  Actor_SetChildValue(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
   spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
   Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
@@ -1054,10 +1090,10 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_PlayCue(SE_289);
   Engine_EventWait(20);
   WorldMap_EndEvent();
-  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON, 1);
-  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 1, 1);
-  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 2, 1);
-  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 3, 1);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 1, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 2, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 3, ANIM_STAND);
   Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
@@ -1079,7 +1115,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 20);
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, PIXELS(5656), PIXELS(1784));
   Engine_TaskWait(1);
-  Actor_SetChildValue(ACTOR_CARAVAN_HAMMET, 0);
+  Actor_SetChildValue(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
   spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
   Engine_ActorSetSpriteFlags(spriteActor, SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_CARAVAN_HAMMET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1108,17 +1144,17 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
                            10);
   Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_HAMMET, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
                            10);
   Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
   WorldMap_EndEvent();
   Event_PlayCue(SE_107);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   // Focus on the departure effect before moving the group to the landing.
-  WorldMap_ShakeTransferStartCamera();
+  WorldMap_ShakeCameraOverCaravan();
   Event_PlayCue(SE_289);
   Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1143,11 +1179,11 @@ static void WorldMap_ShowHammetsCaravan(void) {
   actor->y.fixed = PIXELS(64);
   actor->sprite->rotation = 0xf000;
   Engine_ActorSetSpriteFlags(actor, 0);
-  Object_SetMode(actor, 2);
+  Object_SetMode(actor, FALLING_ROCK_ANIM_TUMBLE);
   Engine_TaskWait(1);
   spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
-  FieldScheduler_AddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
+  FieldScheduler_AddCallback(WorldMap_UpdateFallingRock, TASK_PRIORITY_SCENE);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
@@ -1162,8 +1198,8 @@ static void WorldMap_ShowHammetsCaravan(void) {
   spriteActor->velocityY = PIXELS(6);
   Event_PlayCue(SE_145);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
-  WorldMap_ShakeTransferLandingCamera();
-  WorldMap_ShakeTransferLandingCamera();
+  WorldMap_ShakeCameraWhereRockFalls();
+  WorldMap_ShakeCameraWhereRockFalls();
   Engine_EventWait(60);
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
@@ -1174,7 +1210,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetAttachedEffect(ACTOR_CARAVAN_HAMMET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
-  Engine_TaskRemoveCallback(WorldMap_UpdateTransferredActorLanding);
+  Engine_TaskRemoveCallback(WorldMap_UpdateFallingRock);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_FALLING_ROCK_GUIDE, 0, 0);
   Actor_SetPosition(ACTOR_FALLING_ROCK, 0, 0);
@@ -1196,10 +1232,10 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetAttachedEffect(ACTOR_CARAVAN_MAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_MAN, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_MAN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_MAN, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_CARAVAN_HAMMET, 5656, 1784);
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 0, 0);
   Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5624, 1736);
@@ -1273,7 +1309,7 @@ static inline void WorldMap_MoveShakeCamera(s32 x, s32 z) {
 }
 
 /// Shakes the camera around the departure point.
-static void WorldMap_ShakeTransferStartCamera(void) {
+static void WorldMap_ShakeCameraOverCaravan(void) {
   WorldMap_MoveShakeCamera(PIXELS(5644), PIXELS(1784));
   WorldMap_MoveShakeCamera(PIXELS(5636), PIXELS(1788));
   WorldMap_MoveShakeCamera(PIXELS(5644), PIXELS(1780));
@@ -1289,7 +1325,7 @@ static void WorldMap_ShakeTransferStartCamera(void) {
 }
 
 /// Shakes the camera around the landing point.
-static void WorldMap_ShakeTransferLandingCamera(void) {
+static void WorldMap_ShakeCameraWhereRockFalls(void) {
   WorldMap_MoveShakeCamera(PIXELS(5612), PIXELS(1736));
   WorldMap_MoveShakeCamera(PIXELS(5604), PIXELS(1740));
   WorldMap_MoveShakeCamera(PIXELS(5612), PIXELS(1732));
@@ -1307,7 +1343,7 @@ static void WorldMap_ShakeTransferLandingCamera(void) {
 /// Keeps the falling rock above its guide as it drops, and lands it once.
 /// Run each frame while the rock falls in WorldMap_ShowHammetsCaravan; sets
 /// FLAG_SCENE_TEMP_00 as it lands.
-static void WorldMap_UpdateTransferredActorLanding(void) {
+static void WorldMap_UpdateFallingRock(void) {
   struct FieldActor *actor;
   struct FieldActor *guide;
 
@@ -1319,7 +1355,7 @@ static void WorldMap_UpdateTransferredActorLanding(void) {
     actor->y.fixed = PIXELS(10);
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
       Event_PlayCue(SE_145);
-      Object_SetMode(actor, 3);
+      Object_SetMode(actor, FALLING_ROCK_ANIM_SHATTER);
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       actor->timer = 1;
     }
@@ -1354,103 +1390,62 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
   Engine_EventEnd();
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and
-/// WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK leads up to the lookout on the
-/// mast for the second monster attack
-/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK).
+/// The middle legs of the crossing: the ship, seen from above, sails west
+/// across the Karagol Sea from the far east of the map until
+/// gCrossingShipSailsWest says it has gone far enough, and the party leaves
+/// by exit, back aboard. Sets FLAG_TOLBI_SHIP_ROWING.
+static inline void WorldMap_SailCrossingLeg(s32 exit) {
+  struct FieldActor *actor;
+
+  actor = Object_GetById(ACTOR_CROSSING_SHIP);
+  Engine_EventBegin();
+  Camera_MoveTo(-1, -1, -1, 0);
+  Engine_TaskWait(1);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
+  actor->scaleX = 5 * Q16_ONE / 4;
+  actor->scaleY = 5 * Q16_ONE / 4;
+  Engine_TaskWait(1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
+  Engine_EventOpenScreen();
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
+  actor->timer = 0;
+  Actor_SetActionScript(ACTOR_CROSSING_SHIP, gCrossingShipSailsWest);
+  do {
+    Engine_TaskWait(1);
+  } while (actor->timer == 0);
+  Engine_EventCloseScreen();
+  Engine_EventWaitForScreen();
+  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
+  Engine_EventRequestExit(exit);
+  Engine_EventEnd();
+}
+
+/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_TOLBI_SHIP_MAST_
+/// SECOND_ATTACK leads up to the lookout on the mast for the second monster
+/// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK).
 /// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK; sets
-/// FLAG_TOLBI_SHIP_ROWING.
+/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK.
 static void WorldMap_SailToSecondMonsterAttack(void) {
-  struct FieldActor *actor;
-
-  actor = Object_GetById(ACTOR_CROSSING_SHIP);
-  Engine_EventBegin();
-  Camera_MoveTo(-1, -1, -1, 0);
-  Engine_TaskWait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
-  actor->scaleX = 5 * Q16_ONE / 4;
-  actor->scaleY = 5 * Q16_ONE / 4;
-  Engine_TaskWait(1);
-  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
-  Engine_EventOpenScreen();
-  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
-  actor->timer = 0;
-  Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
-  do {
-    Engine_TaskWait(1);
-  } while (actor->timer == 0);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
-  Engine_EventEnd();
+  WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and
-/// WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK leads up to the lookout on the
-/// mast for the third monster attack
-/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK).
+/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_TOLBI_SHIP_MAST_
+/// THIRD_ATTACK leads up to the lookout on the mast for the third monster
+/// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK).
 /// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK; sets
-/// FLAG_TOLBI_SHIP_ROWING.
+/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK.
 static void WorldMap_SailToThirdMonsterAttack(void) {
-  struct FieldActor *actor;
-
-  actor = Object_GetById(ACTOR_CROSSING_SHIP);
-  Engine_EventBegin();
-  Camera_MoveTo(-1, -1, -1, 0);
-  Engine_TaskWait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
-  actor->scaleX = 5 * Q16_ONE / 4;
-  actor->scaleY = 5 * Q16_ONE / 4;
-  Engine_TaskWait(1);
-  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
-  Engine_EventOpenScreen();
-  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
-  actor->timer = 0;
-  Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
-  do {
-    Engine_TaskWait(1);
-  } while (actor->timer == 0);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
-  Engine_EventEnd();
+  WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
 }
 
-/// Stages the party's arrival in the ship's interior.
+/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_TOLBI_SHIP_INTERIORS
+/// leads back down to the rowing deck as the Kraken comes aboard
+/// (TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP).
 /// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN; sets
-/// FLAG_TOLBI_SHIP_ROWING.
-static void WorldMap_TransferToTolbiShipInteriors(void) {
-  struct FieldActor *actor;
-
-  actor = Object_GetById(ACTOR_CROSSING_SHIP);
-  Engine_EventBegin();
-  Camera_MoveTo(-1, -1, -1, 0);
-  Engine_TaskWait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
-  actor->scaleX = 5 * Q16_ONE / 4;
-  actor->scaleY = 5 * Q16_ONE / 4;
-  Engine_TaskWait(1);
-  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
-  Engine_EventOpenScreen();
-  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
-  actor->timer = 0;
-  Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
-  do {
-    Engine_TaskWait(1);
-  } while (actor->timer == 0);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS);
-  Engine_EventEnd();
+/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN.
+static void WorldMap_SailToKraken(void) {
+  WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS);
 }
 
 /// The last leg of the Tolbi-bound Ship's crossing: the ship sails west,
@@ -1476,10 +1471,10 @@ static void WorldMap_SailUntilLandSighted(void) {
   Engine_EventOpenScreen();
   Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
   actor->timer = 0;
-  if (WorldMap_GetRowingBalance() == 11) {
-    Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderTurn);
+  if (WorldMap_GetRowingBalance() == ROWING_BALANCE_OFF_COURSE) {
+    Actor_SetActionScript(ACTOR_CROSSING_SHIP, gCrossingShipVeersNorth);
   } else {
-    Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
+    Actor_SetActionScript(ACTOR_CROSSING_SHIP, gCrossingShipSailsWest);
   }
   do {
     Engine_TaskWait(1);
@@ -1494,7 +1489,7 @@ static void WorldMap_SailUntilLandSighted(void) {
 /// Finishes the journey and restores the leader's movement.
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI;
 /// sets FLAG_TOLBI_SHIP_REACHED_TOLBI and clears FLAG_TOLBI_SHIP_ROWING.
-static void WorldMap_CompleteTransfer(void) {
+static void WorldMap_SailIntoTolbi(void) {
   struct FieldActor *actor;
 
   actor = Object_GetById(ACTOR_CROSSING_SHIP);
@@ -1602,29 +1597,29 @@ static void Event_MeetFlint(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Task_Wait(16);
     djinni->update = 0;
-    Engine_ObjectSetPartPalettes(djinni, 0);
+    Engine_ObjectSetPartPalettes(djinni, SPRITE_COLOR_NORMAL);
     djinni->gravity = PIXELS(1);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Event_PlayCue(SE_131);
     Engine_PsynergyBegin(140, 0);
     for (i = 59; i >= 0; i--) {
       if (gFrameCount & 2)
-        Engine_ObjectSetPartPalettes(djinni, 7);
+        Engine_ObjectSetPartPalettes(djinni, SPRITE_COLOR_WHITE);
       else
-        Engine_ObjectSetPartPalettes(djinni, 0);
+        Engine_ObjectSetPartPalettes(djinni, SPRITE_COLOR_NORMAL);
       if ((gFrameCount & 15) == 0)
         WorldMap_CreateLinkedEffects(djinni);
       Task_Wait(1);
     }
     FieldFx_End();
-    Engine_ObjectSetPartPalettes(djinni, 0);
+    Engine_ObjectSetPartPalettes(djinni, SPRITE_COLOR_NORMAL);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);
@@ -1652,7 +1647,7 @@ static void Event_MeetFlint(void) {
       djinni->facing += FACING_STEP;
       Task_Wait(1);
     }
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
@@ -1676,7 +1671,7 @@ static void Event_MeetFlint(void) {
       count++;
       goto plead;
     }
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 20);
     Event_SetMessage(MsgWorldMapSeeWontRegret);
@@ -1704,7 +1699,7 @@ static void Event_MeetFlint(void) {
   WorldMap_BeginEvent();
   Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
   // Offer the tutorial again, then demonstrate setting and standby.
   Event_SetMessage(MsgWorldMapSeeDjinnUseful);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
@@ -1725,7 +1720,7 @@ static void Event_MeetFlint(void) {
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
   if (Event_ChooseYesNo(0, 0) == 1) {
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_SetMessage(MsgWorldMapHmmmmExplainAgain);
     Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1737,7 +1732,7 @@ static void Event_MeetFlint(void) {
       return;
     }
   }
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
   Event_SetMessage(MsgWorldMapYeahWantLearn);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
@@ -1759,7 +1754,7 @@ static void Event_MeetFlint(void) {
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
 }
 
-s32 gWorldMapTriggerActor;
+s32 gWorldMapIodem;
 
 /// Brings Bunza's wagon to a stop and lets Isaac step down, after Hammet's
 /// return home (kalay.c's Kalay_HammetReturnsToPalace).
@@ -1783,14 +1778,14 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Engine_TaskWait(1);
   Event_PlayCue(SE_141);
   Actor_SetSpeed(ACTOR_KALAY_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
-  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, 2);
+  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5485, 2136);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Camera_MoveTo(PIXELS(5560), -1, PIXELS(2136), 1);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5534, 2136);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5544, 2158);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5608, 2168);
-  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, 1);
+  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_STAND);
   Event_PlayCue(SE_289);
   Engine_EventWait(20);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
@@ -1800,7 +1795,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5576, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
   Event_PlayCue(SE_141);
-  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, 2);
+  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5624, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5624, 2104);
@@ -1828,30 +1823,27 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 /// Orb is handed back and before the wounded soldiers are seen in Lalivero
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_SCENE_TEMP_34 and
 /// FLAG_SAW_SHIP_AT_IDEJIMA, and turns Gateway Cave's exit into
-/// Event_StopLeavingShip.
+/// Event_IodemCallsLeaderBack.
 static void WorldMap_RunBlackOrbScene(void) {
   struct FieldActor *leader;
 
   Engine_EventBegin();
-  gWorldMapTriggerActor = ACTOR_IODEM;
+  gWorldMapIodem = ACTOR_IODEM;
   WorldMap_BlockGatewayCaveExit(ACTOR_IODEM);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   WorldMap_BeginEvent();
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ActorSetPosition(gWorldMapTriggerActor, leader->x.fixed,
-                            leader->z.fixed);
+    Engine_ActorSetPosition(gWorldMapIodem, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(8) / 5, PIXELS(4) / 5);
-  Actor_WalkToAndWait(gWorldMapTriggerActor, 5992, 3448);
-  Engine_ActorFaceDirection(gWorldMapTriggerActor, FACING_EAST, 20);
-  Engine_ActorShowEmote(gWorldMapTriggerActor,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Engine_ActorStartRepeatedMotion(gWorldMapTriggerActor, 2);
+  Actor_SetSpeed(gWorldMapIodem, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkToAndWait(gWorldMapIodem, 5992, 3448);
+  Engine_ActorFaceDirection(gWorldMapIodem, FACING_EAST, 20);
+  Engine_ActorShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Engine_ActorStartRepeatedMotion(gWorldMapIodem, 2);
   Engine_EventSetMessage(MsgWorldMapLook);
-  Engine_EventShowMessageAndWait(gWorldMapTriggerActor | SPEAKER_PORTRAIT_LEFT,
-                                 0, 10);
+  Engine_EventShowMessageAndWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 10);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   WorldMap_EndEvent();
   FieldFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
@@ -1860,59 +1852,57 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   WorldMap_BeginEvent();
-  Engine_ActorSetAttachedEffect(
-      gWorldMapTriggerActor, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorSetAttachedEffect(gWorldMapIodem, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
-  Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
-  Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x3000, 0, 40);
-  Actor_WalkToAndWait(gWorldMapTriggerActor, 5992, 3400);
-  Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 6036, 3400);
-  Engine_ActorFaceDirection(gWorldMapTriggerActor,
-                            FACING_SOUTHEAST + FACING_STEP, 20);
+  Engine_ActorRunRepeatedMotion(gWorldMapIodem, 1);
+  Engine_EventShowMessageAndWait(
+      gWorldMapIodem | SPEAKER_PORTRAIT_LEFT | SPEAKER_PORTRAIT_RIGHT, 0, 40);
+  Actor_WalkToAndWait(gWorldMapIodem, 5992, 3400);
+  Engine_ActorWalkToAndWait(gWorldMapIodem, 6036, 3400);
+  Engine_ActorFaceDirection(gWorldMapIodem, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gBlackOrbLeaderScript);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
-  Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
+  Engine_ActorRunRepeatedMotion(gWorldMapIodem, 1);
+  Engine_EventShowMessageAndWait(gWorldMapIodem, 0, 10);
   while (Object_GetById(ACTOR_PARTY_LEADER)->timer == 0) {
     Engine_TaskWait(1);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-  Engine_ActorShowEmote(gWorldMapTriggerActor,
-                        EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-  Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 2);
-  Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-  Engine_ActorFaceDirection(gWorldMapTriggerActor, FACING_WEST, 10);
-  Engine_EventShowMessage(gWorldMapTriggerActor, 0);
+  Engine_ActorShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+  Engine_ActorRunRepeatedMotion(gWorldMapIodem, 2);
+  Engine_EventShowMessageAndWait(gWorldMapIodem, 0, 10);
+  Engine_ActorFaceDirection(gWorldMapIodem, FACING_WEST, 10);
+  Engine_EventShowMessage(gWorldMapIodem, 0);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
-  Object_GetById(gWorldMapTriggerActor)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(gWorldMapTriggerActor, 6028, 3400);
+  Object_GetById(gWorldMapIodem)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(gWorldMapIodem, 6028, 3400);
   Engine_EventWait(1);
-  Object_GetById(gWorldMapTriggerActor)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(gWorldMapIodem)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(20);
-  Object_GetById(gWorldMapTriggerActor)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 6036, 3400);
+  Object_GetById(gWorldMapIodem)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Engine_ActorWalkToAndWait(gWorldMapIodem, 6036, 3400);
   Engine_EventWait(1);
-  Object_GetById(gWorldMapTriggerActor)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(gWorldMapIodem)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_ItemShowFound(ITEM_BLACK_ORB, 3);
   Engine_PartyGiveItem(ITEM_BLACK_ORB, 0);
-  Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
+  Engine_ActorRunRepeatedMotion(gWorldMapIodem, 1);
   Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
-  Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-  Engine_ActorFaceDirection(gWorldMapTriggerActor,
-                            FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_EventShowMessageAndWait(gWorldMapIodem, 0, 10);
+  Engine_ActorFaceDirection(gWorldMapIodem, FACING_SOUTHEAST + FACING_STEP, 0);
   WorldMap_EndEvent();
   FieldFx_ScheduleRatioTransition(Q16_ONE, 10);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
   Engine_GameFlagSet(FLAG_SAW_SHIP_AT_IDEJIMA);
   gGameState.savedScene = (s32)&SceneId_WorldMap;
-  gGameState.savedEntrance = 78;
+  gGameState.savedEntrance = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   Engine_EventEnd();
 }
 
 /// Turns Gateway Cave's exit (the event of ACTOR_PLACE_GATEWAY_CAVE's
-/// PLACE_TRIGGER) into a touch event that runs Event_StopLeavingShip, and
+/// PLACE_TRIGGER) into a touch event that runs Event_IodemCallsLeaderBack, and
 /// stands Iodem (ACTOR_IODEM, whose placement row it finds by his sprite) at
 /// pixel (6036, 3400); the actor given is not used.
 /// Called by WorldMap_RunBlackOrbScene, and by WorldMap_Initialize when the
@@ -1925,14 +1915,14 @@ static void WorldMap_BlockGatewayCaveExit(s32 actor) {
     if (gWorldMapEvents[i].control == EVENT_EXIT &&
         gWorldMapEvents[i].trigger == PLACE_TRIGGER(ACTOR_PLACE_GATEWAY_CAVE)) {
       gWorldMapEvents[i].control = EVENT_TOUCH;
-      gWorldMapEvents[i].value = (u32)Event_StopLeavingShip;
+      gWorldMapEvents[i].value = (u32)Event_IodemCallsLeaderBack;
     }
     if (gWorldMapEvents[i].control == SCENE_EVENTS_END)
       break;
     i++;
   }
   for (i = 0;; i++) {
-    if (gWorldMapPlacements[i].sprite == 57) {
+    if (gWorldMapPlacements[i].sprite == SPRITE_IODEM) {
       gWorldMapPlacements[i].x = PIXELS(6036);
       gWorldMapPlacements[i].z = PIXELS(3400);
       gWorldMapPlacements[i].facing = FACING_SOUTHEAST + FACING_STEP;
@@ -1967,7 +1957,7 @@ static void Event_TalkAboutBlackOrb(void) {
   Engine_EventBegin();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
-  Engine_EventShowMessage(gWorldMapTriggerActor, 0);
+  Engine_EventShowMessage(gWorldMapIodem, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventEnd();
 }
@@ -1977,11 +1967,11 @@ static void Event_TalkAboutBlackOrb(void) {
 /// Babi's ship!"
 /// Reached by touching Gateway Cave while WorldMap_BlockGatewayCaveExit has
 /// made it a touch event.
-static void Event_StopLeavingShip(void) {
+static void Event_IodemCallsLeaderBack(void) {
   Engine_EventBegin();
   WorldMap_BeginEvent();
   Engine_EventSetMessage(MsgWorldMapIsaacWhereGoingSaidUse);
-  Engine_EventShowMessage(gWorldMapTriggerActor, 0);
+  Engine_EventShowMessage(gWorldMapIodem, 0);
   WorldMap_EndEvent();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 6008, 3400);
@@ -2048,7 +2038,7 @@ static void Event_UseBlackOrb(void) {
   WorldMap_BeginEvent();
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_HOLD_UP);
   // Present the orb icon before its sparks and the ship's response.
   orb = Object_Create(SPRITE_BLANK, leader->x.fixed + PIXELS(2), PIXELS(38),
                       leader->z.fixed);
@@ -2074,96 +2064,99 @@ static void Event_UseBlackOrb(void) {
     orb->update = WorldMap_PulseOrbAndSpawnSparks;
     Event_Wait(80);
   }
-  Object_GetById(gWorldMapTriggerActor)->facing =
-      FACING_SOUTHEAST + FACING_STEP;
-  Actor_ShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_RunRepeatedMotion(gWorldMapTriggerActor, 2);
+  Object_GetById(gWorldMapIodem)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_ShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_RunRepeatedMotion(gWorldMapIodem, 2);
   message = MsgWorldMapMatter;
   Event_SetMessage(message);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 80);
+  Event_ShowMessageAndWait(gWorldMapIodem, 0, 80);
   if (orb != NULL) {
     Engine_ObjectDispatchRelease(orb);
   }
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
-  Actor_Jump(gWorldMapTriggerActor, 6, 40);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 20);
+  Actor_Jump(gWorldMapIodem, 6, 40);
+  Event_ShowMessageAndWait(gWorldMapIodem, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(gWorldMapTriggerActor, FACING_NORTH + FACING_STEP, 20);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x9000, 0, 40);
-  Actor_SetAnimationAndWait(gWorldMapTriggerActor, 4);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x9000, 0, 20);
-  Actor_FaceDirection(gWorldMapTriggerActor, FACING_SOUTHEAST + FACING_STEP,
-                      20);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-  Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetAnimation(gWorldMapTriggerActor, 2);
+  Actor_FaceDirection(gWorldMapIodem, FACING_NORTH + FACING_STEP, 20);
+  Event_ShowMessageAndWait(
+      gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 40);
+  Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(
+      gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 20);
+  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTHEAST + FACING_STEP, 20);
+  Event_ShowMessageAndWait(gWorldMapIodem, 0, 10);
+  Actor_SetSpeed(gWorldMapIodem, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
   iodem = Actor_Get(ACTOR_IODEM);
   FieldObject_SetPosition(iodem, PIXELS(6010), iodem->y.fixed, PIXELS(3400));
   FieldObject_WaitForMove(iodem);
   FieldObject_SetPosition(iodem, PIXELS(6001), 0, PIXELS(3416));
   FieldObject_WaitForMove(iodem);
-  Actor_SetAnimation(ACTOR_IODEM, 1);
-  Actor_FaceDirection(gWorldMapTriggerActor, FACING_SOUTH + FACING_STEP, 10);
-  Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor | SPEAKER_PORTRAIT_LEFT, 0,
-                           20);
-  Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
+  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH + FACING_STEP, 10);
+  Actor_RunRepeatedMotion(gWorldMapIodem, 1);
+  Event_ShowMessageAndWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 20);
+  Actor_SetSpeed(gWorldMapIodem, PIXELS(1), PIXELS(1) / 2);
   Object_GetById(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetAnimation(ACTOR_IODEM, 2);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   FieldObject_SetPosition(iodem, PIXELS(5997), 0, PIXELS(3424));
   FieldObject_WaitForMove(iodem);
-  Actor_SetAnimation(ACTOR_IODEM, 1);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
   Event_Wait(10);
-  Actor_SetAnimation(ACTOR_IODEM, 2);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   FieldObject_SetPosition(iodem, PIXELS(6001), 0, PIXELS(3416));
   FieldObject_WaitForMove(iodem);
-  Actor_SetAnimation(ACTOR_IODEM, 1);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
   Message_ShowCentered(message + 6, 1);
   gEventWork->message++;
   PartyInventory_Discard(ITEM_BLACK_ORB);
   Event_Wait(20);
-  Actor_SetAnimation(gWorldMapTriggerActor, 4);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
+  Actor_SetAnimation(gWorldMapIodem, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(gWorldMapIodem, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimationAndWait(gWorldMapTriggerActor, 3);
-  Actor_SetAnimation(gWorldMapTriggerActor, 2);
+  Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_NOD);
+  Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(gWorldMapTriggerActor, actor->x.part.pixel,
+    Actor_SetDestination(gWorldMapIodem, actor->x.part.pixel,
                          actor->z.part.pixel);
   }
-  Actor_WaitForMove(gWorldMapTriggerActor);
-  Actor_SetPosition(gWorldMapTriggerActor, 0, 0);
+  Actor_WaitForMove(gWorldMapIodem);
+  Actor_SetPosition(gWorldMapIodem, 0, 0);
   WorldMap_EndEvent();
   FieldFx_ScheduleRatioTransition(Q16_ONE, 6);
   Event_Wait(20);
   WorldMap_RestoreGatewayCaveExit();
-  Engine_ActorDestroy(gWorldMapTriggerActor);
+  Engine_ActorDestroy(gWorldMapIodem);
   GameFlag_Clear(FLAG_SCENE_TEMP_34);
   GameFlag_Set(FLAG_BLACK_ORB_RETURNED);
   Event_End();
 }
 
+/// The box around Venus Lighthouse, in pixels, where dust puffs up as it
+/// shakes (WorldMap_UpdateLighthouseQuake).
 enum {
-  TRANSITION_EFFECT_TYPE = 222,
-  TRANSITION_EFFECT_LEFT = 6064,
-  TRANSITION_EFFECT_TOP = 3148,
-  TRANSITION_EFFECT_WIDTH = 40,
-  TRANSITION_EFFECT_DEPTH = 30
+  QUAKE_DUST_LEFT = 6064,
+  QUAKE_DUST_TOP = 3148,
+  QUAKE_DUST_WIDTH = 40,
+  QUAKE_DUST_DEPTH = 30
 };
 
 u16 gWorldMapBlend;
 
+/// Queues one frame of the lighthouse transition, a whole tile map, into BG0's
+/// screen block.
 #define WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, offset)                       \
-  IO_WRITE_QUEUE_PUSH(0x06002000, (u32)((buffer) + (offset)), 0x84000140)
+  IO_WRITE_QUEUE_PUSH((u32)BG_SCREEN_BLOCK(4), (u32)((buffer) + (offset)),     \
+                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x140)
 
 /// Shows Jenna and Kraden's closing scene before returning to the title.
 /// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
 static void WorldMap_ShowEndingScene(void) {
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   Engine_EventBegin();
-  FieldFx_ScheduleRatioTransition(Q16_ONE, 0x12c);
+  FieldFx_ScheduleRatioTransition(Q16_ONE, 300);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ActorSetAnimation(JENNA, 19);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 5);
@@ -2218,16 +2211,16 @@ static void WorldMap_ShowEndingScene(void) {
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX,
                     0);
   Map_LoadDefaultCellsAndUpdateBlock();
   Engine_EventWait(20);
   Actor_SetActionScript(ACTOR_ALEX, gEndingAlexWalk);
   Engine_EventWait(80);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Engine_ActorJump(ACTOR_KRADEN, 4, 40);
-  Engine_ActorSetAnimation(JENNA, 1);
+  Engine_ActorSetAnimation(JENNA, ANIM_STAND);
   Engine_ActorJump(JENNA, 4, 60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 40);
@@ -2262,7 +2255,7 @@ static void WorldMap_ShowEndingScene(void) {
   Actor_SetSpeed(JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkTo(ACTOR_KRADEN, 7804, 3512);
   Actor_WalkToAndWait(JENNA, 7788, 3544);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   WorldMap_BeginEvent();
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
@@ -2283,7 +2276,7 @@ static void WorldMap_ShowEndingScene(void) {
 /// Starts the sparkling travel transition and fades out to its destination.
 /// Called by WorldMap_Initialize at WORLD_MAP_BEFORE_SHEBAS_FALL; sets
 /// FLAG_KEEP_MUSIC.
-static void WorldMap_StartTransitionEffect(void) {
+static void WorldMap_ShakeVenusLighthouse(void) {
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_141);
   Engine_ColorBufferApplySource(0, 0);
@@ -2293,14 +2286,14 @@ static void WorldMap_StartTransitionEffect(void) {
   gEventWork->transitionFrames = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+  Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_TaskWait(1);
   Engine_CameraSetSpeed(PIXELS(4), PIXELS(1) / 2);
   {
-    s32 transitionDelay = 3200;
-    SchedulerCallback transitionCallback = WorldMap_UpdateTransitionEffect;
-    FieldScheduler_AddCallback(transitionCallback, transitionDelay);
+    s32 priority = TASK_PRIORITY_SCENE;
+    SchedulerCallback callback = WorldMap_UpdateLighthouseQuake;
+    FieldScheduler_AddCallback(callback, priority);
   }
   Engine_ColorBufferApplySource(0, 0);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_MUTED, 1);
@@ -2316,14 +2309,14 @@ static void WorldMap_StartTransitionEffect(void) {
 }
 
 /// Scatters transition particles and jitters the camera.
-static void WorldMap_UpdateTransitionEffect(void) {
-  u32 x = (u32)Engine_RandomNext() * TRANSITION_EFFECT_WIDTH >> 16;
-  u32 z = (u32)Engine_RandomNext() * TRANSITION_EFFECT_DEPTH >> 16;
+static void WorldMap_UpdateLighthouseQuake(void) {
+  u32 x = (u32)Engine_RandomNext() * QUAKE_DUST_WIDTH >> 16;
+  u32 z = (u32)Engine_RandomNext() * QUAKE_DUST_DEPTH >> 16;
   struct FieldActor *object;
 
-  object = Engine_ObjectCreate(TRANSITION_EFFECT_TYPE,
-                               PIXELS(x) + PIXELS(TRANSITION_EFFECT_LEFT), 0,
-                               PIXELS(z) + PIXELS(TRANSITION_EFFECT_TOP));
+  object =
+      Engine_ObjectCreate(SPRITE_DUST_PUFF, PIXELS(x) + PIXELS(QUAKE_DUST_LEFT),
+                          0, PIXELS(z) + PIXELS(QUAKE_DUST_TOP));
   if (object != NULL) {
     struct AnimationObject *sprite = object->sprite;
     s32 scale = (((u32)Engine_RandomNext() << 15) >> 16) + 6 * Q16_ONE / 5;
@@ -2334,7 +2327,7 @@ static void WorldMap_UpdateTransitionEffect(void) {
     object->scaleX = scale;
     object->scaleY = scale;
     Object_SetMode(object, 1);
-    Engine_ObjectSetScript(object, gTransitionSparkScript);
+    Engine_ObjectSetScript(object, gQuakeDustScript);
   }
   if (gFrameCount % 3 == 0) {
     switch (((u32)Engine_RandomNext() << 2) >> 16) {
@@ -2366,7 +2359,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  Engine_ActorSetAnimation(ACTOR_CROSSING_SHIP, 2);
+  Engine_ActorSetAnimation(ACTOR_CROSSING_SHIP, ANIM_WALK);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(4872), PIXELS(808));
   actor = Actor_Get(ACTOR_CROSSING_SHIP);
   {
@@ -2390,7 +2383,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   Actor_MoveToAndWait(ACTOR_CROSSING_SHIP, 4760, 456);
   Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(1) / 10, PIXELS(1) / 20);
   Actor_MoveToAndWait(ACTOR_CROSSING_SHIP, 4760, 440);
-  Engine_ActorSetAnimation(ACTOR_CROSSING_SHIP, 1);
+  Engine_ActorSetAnimation(ACTOR_CROSSING_SHIP, ANIM_STAND);
   Engine_EventWait(40);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -2469,7 +2462,7 @@ static void WorldMap_SpawnIslandWake(void) {
   sprite->image.priority = leader->sprite->image.priority;
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   actor->motionFlags = leader->motionFlags;
-  ObjectGroup_SetChildValue(actor, 9);
+  ObjectGroup_SetChildValue(actor, SPRITE_COLOR_BLUE_TINT);
   Object_SetMode(actor, 2);
   Engine_ObjectSetScript(actor, gIslandWakeScript);
 }
@@ -2478,7 +2471,7 @@ static void WorldMap_SpawnIslandWake(void) {
 /// leaves for it (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_CLEAR, once the cleared game
 /// is saved (menu/clear.c).
-static void WorldMap_RunOpeningRise(void) {
+static void WorldMap_ShowIslandDrifting(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
 
@@ -2490,22 +2483,22 @@ static void WorldMap_RunOpeningRise(void) {
   actor->scaleY = 6 * Q16_ONE / 5;
   Engine_CameraFollowActor(ACTOR_DRIFTING_ISLAND, 1);
   Engine_TaskWait(1);
-  Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
+  Actor_SetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
   spriteActor = Actor_Get(ACTOR_DRIFTING_ISLAND);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
   Actor_SetSpeed(ACTOR_DRIFTING_ISLAND, PIXELS(2) / 5, PIXELS(1) / 5);
   actor->timer = 0;
-  Actor_SetActionScript(ACTOR_DRIFTING_ISLAND, gOpeningLeaderRise);
-  FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, 0xc80);
+  Actor_SetActionScript(ACTOR_DRIFTING_ISLAND, gIslandDriftsEast);
+  FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PRIORITY_SCENE);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
   Engine_EventWait(120);
-  FieldFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 0x12c);
-  Engine_EventWait(0x10e);
+  FieldFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 300);
+  Engine_EventWait(270);
   gEventWork->transitionFrames = 16;
   PLTT_BACKDROP = 0x7fff;
   Engine_EventCloseScreen();
@@ -2529,7 +2522,7 @@ static void WorldMap_UpdateStormTimer(void) {
   progress = FieldGameFlag_GetByte(FLAG_SCENE_TEMP_F8);
   if (progress != 0) {
     if (progress == 1) {
-      scene->raisedTrigger = 99;
+      scene->raisedTrigger = TRIGGER_STORM_TIME_UP;
     } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN) == 0) {
       progress -= 1;
     }
@@ -2560,7 +2553,7 @@ static void WorldMap_CatchInStorm(s32 targetActor) {
     }
     Engine_ActorWaitForMove(id);
     Event_PlayCue(SE_244);
-    FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, 0xc80);
+    FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, TASK_PRIORITY_SCENE);
     actor->motionFlags = alreadyTraveling;
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + PIXELS(32),
                              actor->z.fixed);
@@ -2595,7 +2588,7 @@ static void Event_StartDousingStorm(void) {
 static void Event_DouseMapStorm(void) {
   struct FieldActor *selectedActor;
 
-  if (gEventWork->raisedTrigger == 99) {
+  if (gEventWork->raisedTrigger == TRIGGER_STORM_TIME_UP) {
     gEventWork->raisedTrigger = 0;
   }
   Engine_GameFlagClear(FLAG_SCENE_TEMP_F0);
@@ -2642,11 +2635,14 @@ static void Event_StormDropsParty(void) {
 /// Refreshes the transition's blend registers on alternating frames.
 static void WorldMap_UpdateTransitionBlend(void) {
 
-  IoWriteQueue_Store16(0x04000050, 0x3f41);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if ((gFrameCount & 2) != 0) {
-    IoWriteQueue_Store16(0x04000052, gWorldMapBlend | 0x0c);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA,
+                         gWorldMapBlend | BLEND_ALPHA(12, 0));
   } else {
-    IoWriteQueue_Store16(0x04000052, gWorldMapBlend | 0x10);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA,
+                         gWorldMapBlend | BLEND_ALPHA(16, 0));
   }
 }
 
@@ -2700,10 +2696,13 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   WorldMap_BeginStillView();
   FieldResource_DecodeType01(gWorldMapPackedTiles, buffer);
   FieldResource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
-  IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + palette * 32),
-                      0x80000010);
-  IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
-  FieldScheduler_AddCallback(WorldMap_UpdateTransitionBlend, 0xc80);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
+                      (u32)(gWorldMapPalettes + palette * 32),
+                      DMA_ENABLE << 16 | 16);
+  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 0x1000, (u32)buffer,
+                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x400);
+  FieldScheduler_AddCallback(WorldMap_UpdateTransitionBlend,
+                             TASK_PRIORITY_SCENE);
   Engine_EventBegin();
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
   Object_GetById(gGameState.selectedActor)->spriteStorageKind = 0;
@@ -2713,42 +2712,43 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   Engine_AudioPlayCue(SE_246);
 
   // Fade through the inward frames, hold, then reverse the animation.
-  gWorldMapBlend = 0xe00;
+  gWorldMapBlend = BLEND_ALPHA(0, 14);
   WorldMap_ShowTransitionFrame(buffer, 0x3480, 2);
-  gWorldMapBlend = 0xd00;
+  gWorldMapBlend = BLEND_ALPHA(0, 13);
   WorldMap_ShowTransitionFrame(buffer, 0x2e80, 2);
-  gWorldMapBlend = 0xc00;
+  gWorldMapBlend = BLEND_ALPHA(0, 12);
   WorldMap_ShowTransitionFrame(buffer, 0x2880, 2);
-  gWorldMapBlend = 0xb00;
+  gWorldMapBlend = BLEND_ALPHA(0, 11);
   WorldMap_ShowTransitionFrame(buffer, 0x2280, 2);
-  gWorldMapBlend = 0xa00;
+  gWorldMapBlend = BLEND_ALPHA(0, 10);
   WorldMap_ShowTransitionFrame(buffer, 0x1c80, 2);
-  gWorldMapBlend = 0x900;
+  gWorldMapBlend = BLEND_ALPHA(0, 9);
   WorldMap_ShowTransitionFrame(buffer, 0x1680, 2);
-  gWorldMapBlend = 0x800;
+  gWorldMapBlend = BLEND_ALPHA(0, 8);
   WorldMap_ShowTransitionFrame(buffer, 0x1080, 140);
 
   WorldMap_ShowTransitionFrame(buffer, 0x1680, 4);
   WorldMap_ShowTransitionFrame(buffer, 0x1c80, 4);
   WorldMap_ShowTransitionFrame(buffer, 0x2280, 4);
-  gWorldMapBlend = 0x900;
+  gWorldMapBlend = BLEND_ALPHA(0, 9);
   WorldMap_ShowTransitionFrame(buffer, 0x2880, 4);
-  gWorldMapBlend = 0xa00;
+  gWorldMapBlend = BLEND_ALPHA(0, 10);
   WorldMap_ShowTransitionFrame(buffer, 0x2e80, 4);
-  gWorldMapBlend = 0xb00;
+  gWorldMapBlend = BLEND_ALPHA(0, 11);
   WorldMap_ShowTransitionFrame(buffer, 0x3480, 4);
-  gWorldMapBlend = 0xc00;
+  gWorldMapBlend = BLEND_ALPHA(0, 12);
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
   Map_LoadAreaGraphics();
-  FieldScheduler_AddCallback(WorldMap_JitterTransitionCamera, 0xc80);
+  FieldScheduler_AddCallback(WorldMap_JitterTransitionCamera,
+                             TASK_PRIORITY_SCENE);
   Engine_AudioPlayCue(SE_141);
-  gWorldMapBlend = 0xd00;
+  gWorldMapBlend = BLEND_ALPHA(0, 13);
   Engine_EventWait(4);
-  gWorldMapBlend = 0xe00;
+  gWorldMapBlend = BLEND_ALPHA(0, 14);
   Engine_EventWait(4);
-  gWorldMapBlend = 0xf00;
+  gWorldMapBlend = BLEND_ALPHA(0, 15);
   Engine_EventWait(4);
-  gWorldMapBlend = 0x1000;
+  gWorldMapBlend = BLEND_ALPHA(0, 16);
   Engine_EventWait(45);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -2761,9 +2761,9 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
 UNUSED static void
 WorldMap_UpdateBlinkingLinkedEffects(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Engine_ObjectSetPartPalettes(actor, 7);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_WHITE);
   } else {
-    Engine_ObjectSetPartPalettes(actor, 0);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     WorldMap_CreateLinkedEffects(actor);
@@ -2800,7 +2800,7 @@ s32 gCaravanFirstWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2809,30 +2809,33 @@ s32 gCaravanFirstWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5864), 0, PIXELS(1624)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_END,
 };
 
 s32 gCaravanFirstWagonDeparts[] = {
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5868), 0, PIXELS(1624)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_POS(PIXELS(5656), 0, PIXELS(1800)),
     SC_END,
 };
 
 s32 gCaravanFirstWagonReturns[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(5800), 0, PIXELS(1800)), SC_SYNC, SC_POS(0, 0, 0),
+    SC_ARG(ANIM_WALK),
+    SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
+    SC_SYNC,
+    SC_POS(0, 0, 0),
     SC_END,
 };
 
 s32 gCaravanWagonHeadsNorth[] = {
     SC_POS(PIXELS(5868), 0, PIXELS(1704)),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5872), 0, PIXELS(1528)),
     SC_SYNC,
     SC_MOVE(PIXELS(5880), 0, PIXELS(1352)),
@@ -2846,7 +2849,7 @@ s32 gCaravanSecondWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2855,25 +2858,28 @@ s32 gCaravanSecondWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5832), 0, PIXELS(1640)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_END,
 };
 
 s32 gCaravanSecondWagonDeparts[] = {
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1640)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_POS(PIXELS(5640), 0, PIXELS(1768)),
     SC_END,
 };
 
 s32 gCaravanSecondWagonReturns[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(5640), 0, PIXELS(1795)),
-    SC_SYNC,   SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_ARG(ANIM_WALK),
+    SC_MOVE(PIXELS(5640), 0, PIXELS(1795)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
+    SC_SYNC,
+    SC_POS(0, 0, 0),
     SC_END,
 };
 
@@ -2882,7 +2888,7 @@ s32 gCaravanThirdWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2891,25 +2897,28 @@ s32 gCaravanThirdWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5832), 0, PIXELS(1624)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_END,
 };
 
 s32 gCaravanThirdWagonDeparts[] = {
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1624)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_POS(PIXELS(5656), 0, PIXELS(1768)),
     SC_END,
 };
 
 s32 gCaravanThirdWagonReturns[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(5656), 0, PIXELS(1795)),
-    SC_SYNC,   SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
-    SC_SYNC,   SC_POS(0, 0, 0),
+    SC_ARG(ANIM_WALK),
+    SC_MOVE(PIXELS(5656), 0, PIXELS(1795)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
+    SC_SYNC,
+    SC_POS(0, 0, 0),
     SC_END,
 };
 
@@ -2918,7 +2927,7 @@ s32 gCaravanFourthWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2927,17 +2936,17 @@ s32 gCaravanFourthWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5832), 0, PIXELS(1608)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_END,
 };
 
 s32 gCaravanFourthWagonDeparts[] = {
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1608)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_POS(PIXELS(5672), 0, PIXELS(1768)),
     SC_END,
 };
@@ -2963,20 +2972,20 @@ s32 gCaravanRockGuideScript[] = {
 };
 
 s32 gBlackOrbLeaderScript[] = {
-    SC_SET(0x23, 0),
-    SC_ARG(2),
+    SC_SET(SW_TIMER, 0),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(6008), 0, PIXELS(3400)),
     SC_SYNC,
     SC_MOVE(PIXELS(6020), 0, PIXELS(3400)),
     SC_SYNC,
-    SC_ARG(1),
-    SC_SET(0x23, 1),
+    SC_ARG(ANIM_STAND),
+    SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEndingAlexWalk[] = {
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
     SC_MOVE(PIXELS(7576), 0, PIXELS(3464)),
@@ -2989,14 +2998,14 @@ s32 gEndingAlexWalk[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(7752), 0, PIXELS(3496)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEndingKradenWalk[] = {
-    SC_ARG(2),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
     SC_MOVE(PIXELS(7576), 0, PIXELS(3464)),
@@ -3007,15 +3016,15 @@ s32 gEndingKradenWalk[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(7704), 0, PIXELS(3512)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEndingJennaWalk[] = {
-    SC_SET(0x23, 0),
-    SC_ARG(2),
+    SC_SET(SW_TIMER, 0),
+    SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
     SC_MOVE(PIXELS(7576), 0, PIXELS(3464)),
@@ -3026,39 +3035,49 @@ s32 gEndingJennaWalk[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(7688), 0, PIXELS(3528)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(ANIM_STAND),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
     SC_END,
 };
 
-s32 gTransitionSparkScript[] = {
+s32 gQuakeDustScript[] = {
     SC_WAIT(16),
     SC_FREE,
 };
 
-s32 gTransferLeaderIdle[] = {
-    SC_ARG(2),       SC_MOVE_BY(PIXELS(-8), 0, 0),
-    SC_SYNC,         SC_LOOP(40, SC_TOP),
-    SC_SET(0x23, 1), SC_MOVE_BY(PIXELS(-8), 0, 0),
-    SC_SYNC,         SC_MOVE_BY(PIXELS(-8), 0, 0),
-    SC_SYNC,         SC_END,
+s32 gCrossingShipSailsWest[] = {
+    SC_ARG(ANIM_WALK),
+    SC_MOVE_BY(PIXELS(-8), 0, 0),
+    SC_SYNC,
+    SC_LOOP(40, SC_TOP),
+    SC_SET(SW_TIMER, 1),
+    SC_MOVE_BY(PIXELS(-8), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(PIXELS(-8), 0, 0),
+    SC_SYNC,
+    SC_END,
 };
 
-s32 gTransferLeaderTurn[] = {
-    SC_ARG(2),       SC_MOVE_BY(PIXELS(-8), 0, PIXELS(-2)),
-    SC_SYNC,         SC_LOOP(40, SC_TOP),
-    SC_SET(0x23, 1), SC_MOVE_BY(PIXELS(-8), 0, PIXELS(-2)),
-    SC_SYNC,         SC_MOVE_BY(PIXELS(-8), 0, PIXELS(-2)),
-    SC_SYNC,         SC_END,
+s32 gCrossingShipVeersNorth[] = {
+    SC_ARG(ANIM_WALK),
+    SC_MOVE_BY(PIXELS(-8), 0, PIXELS(-2)),
+    SC_SYNC,
+    SC_LOOP(40, SC_TOP),
+    SC_SET(SW_TIMER, 1),
+    SC_MOVE_BY(PIXELS(-8), 0, PIXELS(-2)),
+    SC_SYNC,
+    SC_MOVE_BY(PIXELS(-8), 0, PIXELS(-2)),
+    SC_SYNC,
+    SC_END,
 };
 
-s32 gOpeningLeaderRise[] = {
+s32 gIslandDriftsEast[] = {
     SC_MOVE_BY(PIXELS(24), 0, 0),
     SC_SYNC,
     SC_LOOP(10, SC_TOP),
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_MOVE_BY(PIXELS(24), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(24), 0, 0),
@@ -3066,8 +3085,8 @@ s32 gOpeningLeaderRise[] = {
     SC_END,
 };
 
-s32 gWorldMapPlacement0[] = {
-    SC_CALL(WorldMap_InitializeFirstDjinni),
+s32 gWorldMapFlintScript[] = {
+    SC_CALL(WorldMap_SetUpFlint),
     SC_END,
 };
 
@@ -3217,7 +3236,8 @@ struct SceneEntrance gWorldMapEntrances[] = {
      FACING_WEST, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 4576, 0, 508,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {77, CONDITION_ALWAYS, 4392, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SUHALLA_DESERT_STORM, CONDITION_ALWAYS, 4392, 0, 328,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
     {WORLD_MAP_JENNA_AND_KRADEN_ADRIFT, CONDITION_ALWAYS, 7552, 0, 3504,
@@ -3369,22 +3389,22 @@ u32 gWorldMapExits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gWorldMapPlacement2[] = {
-    SC_CALL(WorldMap_ApplyMapRotationAndMode),
+s32 gWorldMapKolimaBridgeScript[] = {
+    SC_CALL(WorldMap_SetUpKolimaBridge),
     SC_END,
 };
 
-s32 gWorldMapPlacement1[] = {
-    SC_CALL(WorldMap_ApplyMapRotation),
+s32 gWorldMapAlignToMapScript[] = {
+    SC_CALL(WorldMap_AlignToMap),
     SC_END,
 };
 
-s32 gWorldMapPlacement4[] = {
-    SC_CALL(WorldMap_ApplyMapRotationAndCollision),
+s32 gWorldMapIodemScript[] = {
+    SC_CALL(WorldMap_SetUpIodem),
     SC_END,
 };
 
-s32 gWorldMapPlacement3[] = {
+s32 gWorldMapStormScript[] = {
     SC_CALL(WorldMap_SetUpStorm),
     SC_CALL(WorldMap_BlinkActorSprite),
     SC_END,
@@ -3392,104 +3412,104 @@ s32 gWorldMapPlacement3[] = {
 
 // clang-format off
 struct ScenePlacement gWorldMapPlacements[] = {
-    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapPlacement0,
+    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapFlintScript,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_CORONA, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_HAIL, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5848), 0, PIXELS(1576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6976), 0, PIXELS(1624), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5416), 0, PIXELS(2840), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x115, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5422), 0, PIXELS(2232), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x115, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5036), 0, PIXELS(2328), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0x109, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_SNOWY_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5928), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x108, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_STUMP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7352), 0, PIXELS(1240), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_BLUE_ROOFED_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7544), 0, PIXELS(1976), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10b, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TEMPLE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6888), 0, PIXELS(1712), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10b, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TEMPLE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7880), 0, PIXELS(1560), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6584), 0, PIXELS(1192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5996), 0, PIXELS(2894), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(4904), 0, PIXELS(2280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10d, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_MERCURY_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6024), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10f, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_MOUNTAIN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5656), 0, PIXELS(1112), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x114, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6088), 0, PIXELS(3176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10e, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_BARRICADE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6952), 0, PIXELS(1362), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x110, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_BABI_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5996), 0, PIXELS(2808), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6424), 0, PIXELS(1302), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6484), 0, PIXELS(1184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(4840), 0, PIXELS(1960), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5656), 0, PIXELS(2392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5480), 0, PIXELS(2600), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x113, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_FOREST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7790), 0, PIXELS(2080), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5976), 0, PIXELS(3400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5988), 0, PIXELS(774), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6224), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6920), 0, PIXELS(1664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6092), 0, PIXELS(2200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x113, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_FOREST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7166), 0, PIXELS(1054), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x113, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_FOREST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7856), 0, PIXELS(1736), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x112, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x112, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x112, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x116, CONDITION_ALWAYS, (s32)gWorldMapPlacement2,
+    { SPRITE_WORLD_MAP_BRIDGE, CONDITION_ALWAYS, (s32)gWorldMapKolimaBridgeScript,
         PIXELS(7568), 0, PIXELS(1384), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x117, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_GATEHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(4942), 0, PIXELS(2690), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x1f5, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIPWRECK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapAlignToMapScript,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x121, FLAG_SCENE_TEMP_F1, (s32)gWorldMapPlacement3,
+    { SPRITE_WHIRLWIND, FLAG_SCENE_TEMP_F1, (s32)gWorldMapStormScript,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
+    { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapIodemScript,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
-    { GARET, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { GARET, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3501,29 +3521,29 @@ struct ScenePlacement gWorldMapPlacementsHammetsCaravan[] = {
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5848), 0, PIXELS(1576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsFromWestLunpaCave[] = {
-    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BUNZA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3533,87 +3553,87 @@ struct ScenePlacement gWorldMapPlacementsFromWestLunpaCave[] = {
 };
 
 struct ScenePlacement gWorldMapPlacementsCrossingEnds[] = {
-    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5384), 0, PIXELS(2248), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x115, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5422), 0, PIXELS(2232), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x115, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5028), 0, PIXELS(2328), FACING_WEST, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsCrossing[] = {
-    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5432), 0, PIXELS(2312), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsFromKalayTunnelEntranceSouth[] = {
-    { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsJennaAndKradenAdrift[] = {
-    { JENNA, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { JENNA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SHEBA, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SHEBA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_KRADEN, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7544), 0, PIXELS(3496), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_ALEX, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_ALEX, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7708), 0, PIXELS(3456), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_FELIX, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_FELIX, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7800), 0, PIXELS(3544), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x1f5, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIPWRECK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7604), 0, PIXELS(3522), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsFromClear[] = {
-    { 0x1f8, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_ISLAND, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7464), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsBeforeShebasFall[] = {
-    { 0x114, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6080), 0, PIXELS(3168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEvent gWorldMapEvents[] = {
-    { EVENT_TOUCH, 90, FLAG_DJINNI_0 + DJINNI_FLINT, EVENT_SCRIPT(Event_MeetFlint) },
-    { EVENT_TOUCH, 95, FLAG_SCENE_TEMP_F1, EVENT_SCRIPT(Event_WalkIntoStorm) },
+    { EVENT_TOUCH, TRIGGER_FLINT, FLAG_DJINNI_0 + DJINNI_FLINT, EVENT_SCRIPT(Event_MeetFlint) },
+    { EVENT_TOUCH, TRIGGER_STORM, FLAG_SCENE_TEMP_F1, EVENT_SCRIPT(Event_WalkIntoStorm) },
     { EVENT_TALK, ACTOR_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetVine) },
     { EVENT_TALK, ACTOR_MARS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetCorona) },
     { EVENT_TALK, ACTOR_MERCURY_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetHail) },
-    { EVENT_TOUCH, 92, FLAG_DJINNI_0 + DJINNI_VINE, EVENT_SCRIPT(Event_MeetVine) },
-    { EVENT_TOUCH, 91, FLAG_DJINNI_0 + DJINNI_CORONA, EVENT_SCRIPT(Event_MeetCorona) },
-    { EVENT_TOUCH, 93, FLAG_DJINNI_0 + DJINNI_HAIL, EVENT_SCRIPT(Event_MeetHail) },
-    { SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchShipwreck) },
-    { USE_ITEM(ITEM_BLACK_ORB), 96, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(Event_UseBlackOrb) },
-    { SEARCH(SEARCH_GROUND), 100, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
+    { EVENT_TOUCH, TRIGGER_VINE, FLAG_DJINNI_0 + DJINNI_VINE, EVENT_SCRIPT(Event_MeetVine) },
+    { EVENT_TOUCH, TRIGGER_CORONA, FLAG_DJINNI_0 + DJINNI_CORONA, EVENT_SCRIPT(Event_MeetCorona) },
+    { EVENT_TOUCH, TRIGGER_HAIL, FLAG_DJINNI_0 + DJINNI_HAIL, EVENT_SCRIPT(Event_MeetHail) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_SHIPWRECK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchShipwreck) },
+    { USE_ITEM(ITEM_BLACK_ORB), TRIGGER_SHIPWRECK, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(Event_UseBlackOrb) },
+    { SEARCH(SEARCH_GROUND), TRIGGER_TURTLE_BOOTS, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
     { EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_EAST },
-    { EVENT_EXIT, 50, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_NORTH },
-    { EVENT_EXIT, 51, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_WEST },
-    { EVENT_EXIT, 18, CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_EAST },
-    { EVENT_EXIT, 28, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_NORTH },
-    { EVENT_EXIT, 55, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_SOUTH },
-    { EVENT_EXIT, 29, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH },
-    { EVENT_EXIT, 42, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST },
-    { EVENT_EXIT, 32, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
-    { EVENT_EXIT, 61, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
-    { EVENT_EXIT, 47, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
+    { EVENT_EXIT, WORLD_MAP_TO_MOGALL_FOREST_SIGN, CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
+    { EVENT_EXIT, WORLD_MAP_TO_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_EAST },
+    { EVENT_EXIT, WORLD_MAP_TO_ALPINE_CROSSING_NORTH, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_NORTH },
+    { EVENT_EXIT, WORLD_MAP_TO_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_WEST },
+    { EVENT_EXIT, WORLD_MAP_TO_LAMAKAN_DESERT_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_EAST },
+    { EVENT_EXIT, WORLD_MAP_TO_SUHALLA_DESERT_NORTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_NORTH },
+    { EVENT_EXIT, WORLD_MAP_TO_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_SOUTH },
+    { EVENT_EXIT, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH },
+    { EVENT_EXIT, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST },
+    { EVENT_EXIT, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
+    { EVENT_EXIT, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
+    { EVENT_EXIT, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_VALE_GATE), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_GATE },
     { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterVault) },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
@@ -3650,11 +3670,11 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
     { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterLalivero) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(Event_ReturnToTolbiShip) },
-    { EVENT_EXIT | EVENT_TOUCH_FACING | FACING_NORTH, 75, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
+    { TOUCH_WALKING_INTO(FACING_EAST), TRIGGER_TOLBI_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(Event_ReturnToTolbiShip) },
+    { EVENT_EXIT | EVENT_TOUCH_FACING | FACING_NORTH, TRIGGER_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_StartDousingStorm) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_DouseMapStorm) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StormDropsParty) },
+    { EVENT_RAISED, TRIGGER_STORM_TIME_UP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StormDropsParty) },
     { SCENE_EVENTS_END },
 };
 

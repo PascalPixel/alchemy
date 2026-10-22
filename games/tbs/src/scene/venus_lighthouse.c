@@ -5,87 +5,100 @@
 /// own entrance, placement and event tables (VenusLighthouseGroundFloor's
 /// entrances are the fallback table), all share one exit table, and
 /// VenusLighthouse_Initialize redraws each scene's puzzles as their flags left
-/// them, case by entrance. The party reaches the lighthouse after the strange
-/// wanderers, as the wounded outside call them, have opened it and gone on.
+/// them, case by entrance. Inside, only the actors of the room entered are
+/// placed (CONDITION_IN_VIEW). The party reaches the lighthouse after the
+/// strange wanderers, as the wounded outside call them, have opened it and
+/// gone on.
 ///
 /// - Venus Lighthouse Entry (SceneId_VenusLighthouseEntry), outside. The
-///   scholars and Babi's soldiers the wanderers attacked lie hurt: a young boy
-///   seemed to glow and the entrance opened, one soldier thought he
-///   recognized one of them as Kraden ("An alchemist who served Babi... Was
-///   it Kraden?"), and they soon headed north for Babi Lighthouse. A man who
-///   tells of the attack flickers and vanishes
+///   scholars and Babi's soldiers the wanderers attacked lie hurt and say what
+///   they saw; a soldier who tells of the attack flickers and vanishes
 ///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the collision of his spot
-///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST and _WEST lead to the
-///   world map, and VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR,
-///   the open door, into VenusLighthouseGroundFloor.
+///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the
+///   open door, leads in.
 /// - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by a scene
 ///   rule of its own), the floor behind the front door. Three scholars say
-///   Kraden told the attackers to stop, went in, and came back saying this is
-///   not the entrance but something about its being the exit, and that his
-///   group did something to the statue that lit up the floor. The statue
-///   (search trigger 41) speaks to Isaac's soul: the path long closed begins
-///   far away, on the soil of an ancient people. The room flashes and the
-///   statue opens one of its two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
-///   _SECOND_PATH, chosen the first time by the frame counter's parity and
-///   switched at each search after), redrawing cells here; the Tunnel Ruins
-///   under Babi Lighthouse redraw their rooms to match (tunnel_ruins.c), and
-///   they lead up into VenusLighthouseFirstFloor. Reliefs (search triggers 35
-///   to 40) say to seek the power within with the eyes of truth, and Reveal
-///   shows a hidden path in two places. Move pushes a pillar to a wall, where
-///   Garet wishes they could carry it (FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL),
-///   and Carry, from the Carry Stone in one of the floor's two chests, sets it
-///   down beyond (FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED). A floor switch is
-///   pressed while the leader stands on it (FLAG_SCENE_TEMP_01) and held down
-///   by a pillar Moved onto it (FLAG_SCENE_TEMP_00); until then, walking off a
-///   ledge (trigger 45) drops the leader to the floor below.
-///   VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR (trigger 23)
-///   and VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR link the
-///   two scenes.
-/// - Venus Lighthouse (SceneId_VenusLighthouseFirstFloor), the first floor
-///   of the climb, where the Tunnel Ruins come up
-///   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES;
-///   VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES leads back
-///   down), in the room
-///   VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR also
-///   reaches. A floor drifts the party south (trigger 30), a hole drops the
-///   leader into the room below (trigger 35), three pillars can be Moved or
-///   pushed, and two pillars by a gap are carried across it with Carry, or
-///   dropped into it to fall through the floor. A chest holds the Thunder
+///   Kraden went in and came back saying this is not the entrance. The great
+///   statue (TRIGGER_GREAT_STATUE) speaks to Isaac's soul and opens one of its
+///   two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first
+///   time by the frame counter's parity, then switching at each search), which
+///   the Tunnel Ruins under Babi Lighthouse redraw to match (tunnel_ruins.c);
+///   they lead up into VenusLighthouseFirstFloor. The reliefs
+///   (TRIGGER_FIRST_RELIEF) are read, and Reveal shows a hidden path in two
+///   places. Move pushes a pillar to a wall
+///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL) and Carry, from the Carry Stone in
+///   one of the floor's chests, sets it down beyond
+///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED). A floor switch is pressed while
+///   the leader stands on it and held by a statue Moved onto it; until then the
+///   ledge (TRIGGER_LEDGE) drops the leader to the floor below.
+/// - Venus Lighthouse (SceneId_VenusLighthouseFirstFloor), where the Tunnel
+///   Ruins come up
+///   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A floor
+///   carries the party south, a hole drops the leader into the room below,
+///   three capped pillars are Moved or pushed, and two pillars by a gap are
+///   carried across it, or dropped through the floor. A chest holds the Thunder
 ///   Crown, and a Psynergy Stone lies here.
 /// - Venus Lighthouse (SceneId_VenusLighthouseSecondFloor). A sparkling
-///   passage (trigger 2) takes the leader through in a trail of sparks; a floor
-///   switch (trigger 35) slides a wall aside in a cloud of dust the first time
-///   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED); a pillar Moved or pushed into its
-///   socket sinks and opens a gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN); and a
-///   door is locked.
-///   VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR leads up
-///   into VenusLighthouseThirdFloor.
+///   passage takes the leader through in a trail of sparks; a floor switch
+///   slides a wall aside in a cloud of dust the first time
+///   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED); and a pillar Moved or pushed into its
+///   socket sinks, and a light runs from the lady statue along the gold track
+///   over it to open the gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
 /// - Venus Lighthouse (SceneId_VenusLighthouseThirdFloor). Three more
-///   sparkling passages, a drifting floor, and three pillars that sink into
-///   free sockets (FLAG_VENUS_LIGHTHOUSE_SOCKETS_A and _B record which); with
-///   all three sunk the gate opens
-///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN). A door is locked and a
+///   sparkling passages, a drifting floor, and three pillars carrying pieces
+///   of track that sink into four sockets; with all three sunk two lights run
+///   from the statue, and when the track leads one to the gate it opens
+///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
+///   FLAG_VENUS_LIGHTHOUSE_SOCKETS_A or _B for where the pillars stand). A
 ///   chest holds Dragon Scales.
-/// - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). A passage raises
-///   the leader to the floor above (trigger 18), floors drift the party each
-///   way (triggers 30 to 33), and a west and an east floor switch slide their
-///   walls aside (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED,
-///   which VenusLighthouseThirdFloor also redraws). Carry sets down four
-///   floating pillars, and the platforms under them rise or sink to their
-///   weight (FLAG_SCENE_TEMP_00 plus the pillar's number; Move on them does
-///   nothing). Four pillars sunk into sockets open the gate of the room their
-///   pillars stand in (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A door is
-///   locked, a chest holds the Gaia Blade, a Psynergy Stone lies here, and
-///   VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE leads to the
-///   Lighthouse Aerie.
+/// - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). Floors carry the
+///   party each way, a west and an east floor switch slide their walls aside
+///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
+///   VenusLighthouseThirdFloor also redraws), and Carry sets down four floating
+///   pillars on two balance platforms that sink and rise to their weight
+///   (gVenusBalancePlatformHeights). Four pillars carrying track sink into
+///   eight sockets, and the lights run on to the pillar room's gate
+///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A chest holds the Gaia Blade,
+///   a Psynergy Stone lies here, and a passage raises the leader on a platform
+///   in a spray to the Lighthouse Aerie
+///   (VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE).
 ///
-/// The wall and gate flags (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to
-/// FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN) are place flags: they last while the
-/// party stays in the scenes of the climb (SceneId_VenusLighthouseFirstFloor to
-/// SceneId_VenusLighthouseAerie, one place group),
-/// so the floors stay solved between them. The FLAG_SCENE_TEMP_ states last
-/// only until the next change of scene other than a return from battle.
-/// Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
+/// Locked doors stand on the second floor and above (TRIGGER_LOCKED_DOOR). The
+/// wall and gate flags (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to
+/// FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN) and the Psynergy Stones' flags are
+/// place flags: they last while the party stays in the scenes of the climb
+/// (SceneId_VenusLighthouseFirstFloor to SceneId_VenusLighthouseAerie, one
+/// place group), so the floors stay solved between them. The FLAG_SCENE_TEMP_
+/// states last only until the next change of scene other than a return from
+/// battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
+///
+/// Open questions:
+/// - XXX: what the sounds SE_142, SE_161, SE_162, SE_170, SE_180, SE_185,
+///   SE_188, SE_204, SE_228, SE_239, SE_246, SE_289 and SE_308 and the music
+///   MUS_017 are; a recording of the floors' events would settle their names.
+/// - XXX: what the ground floor's path cells show
+/// (VenusLighthouse_DrawFirstPath),
+///   and what the world map's picture of Venus Lighthouse stands for in the
+///   statue room (gVenusMiniatureLighthouseScript); a render of the room with
+///   each path flag would settle both.
+/// - XXX: what the objects VenusLighthouse_CreateBlendedPassageEffect and
+///   VenusLighthouse_CreateOccludingPassageEffect make show, drawn as a crate,
+///   a capped column and a chest; a render of a fall and of a pillar sinking
+///   would settle it.
+/// - XXX: whether a second light through a socket takes the wrong path after
+///   VenusLighthouse_RouteLight has moved its cursor; playing the third and
+///   fourth floors' sockets through would settle it.
+/// - XXX: what the first floor's cells 31 and 32 are, where walking pushes a
+///   capped pillar and stepping sets or clears the room effect's actor
+///   (Event_SetLeaderAsEffectTarget); a render of the pillar room would settle
+///   it.
+/// - XXX: the per-sprite animations the scene plays by number (the hurt
+///   scholars' and soldiers' 5, the light's 7, the leader's 5 and 12) and the
+///   leader's action 24 as he falls through the hole; a
+///   render of each would settle their names.
+/// - XXX (picture): a floor of the third or fourth floor with its sockets
+///   labelled, the pieces of track on the pillars' tops, and a light's path
+///   from the statue to the gate.
 
 #include "script.h"
 #include "game_state.h"
@@ -150,6 +163,50 @@
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
 #define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
+// The Psynergy Stones of the first and fourth floors, taken until the party
+// leaves the climb.
+#define FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE 0x350
+#define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE 0x351
+
+/// The cells the floors' events answer, by floor; a number means one thing on
+/// one floor and another on the next. Each exit cell carries the number of the
+/// exit it leads by, and the event rows name it by that exit, as they do the
+/// sparkling passages, which leave by their own number
+/// (Event_EnterSparklingPassage).
+enum VenusLighthouseTrigger {
+  TRIGGER_LOCKED_DOOR = 25,     ///< a locked door, from the second floor up
+  TRIGGER_DRIFT_SOUTH = 30,     ///< a floor that carries the party south
+  TRIGGER_CHEST = 100,          ///< a floor's chest
+  TRIGGER_PSYNERGY_STONE = 110, ///< a floor's Psynergy Stone
+  // VenusLighthouseGroundFloor
+  /// The first of the six reliefs, whose words Event_ReadRelief shows in
+  /// their order.
+  TRIGGER_FIRST_RELIEF = 35,
+  TRIGGER_GREAT_STATUE = 41,
+  TRIGGER_LEDGE = 45, ///< where the leader jumps down until the switch is held
+  TRIGGER_FLOOR_SWITCH = 46,
+  TRIGGER_WALL_PILLAR = 50, ///< walking into ACTOR_WALL_PILLAR
+  TRIGGER_SECOND_CHEST = 101,
+  // VenusLighthouseFirstFloor
+  TRIGGER_HOLE = 35,
+  TRIGGER_CARRY_PILLARS = 45, ///< the gap and the two pillars beside it
+  // VenusLighthouseSecondFloor
+  TRIGGER_WALL_SWITCH = 35,
+  TRIGGER_GATE_PILLAR = 36, ///< the gap and ACTOR_GATE_PILLAR
+  // VenusLighthouseThirdFloor
+  TRIGGER_SWITCH_PILLARS = 35, ///< the gaps and the three switch pillars
+  // VenusLighthouseFourthFloor
+  TRIGGER_RISING_PASSAGE = 18,
+  TRIGGER_DRIFT_NORTH = 31,
+  TRIGGER_DRIFT_WEST = 32,
+  TRIGGER_DRIFT_EAST = 33,
+  TRIGGER_FLOATING_PILLARS = 35,          ///< pushing a floating pillar
+  TRIGGER_FLOATING_PILLARS_GAP = 36,      ///< a gap jumped west or east
+  TRIGGER_FLOATING_PILLARS_EAST_GAP = 37, ///< a gap jumped east
+  TRIGGER_WEST_WALL_SWITCH = 40,
+  TRIGGER_EAST_WALL_SWITCH = 41,
+  TRIGGER_SOCKET_PILLARS = 45 ///< the gaps and the four socket pillars
+};
 
 // UB: passage offsets and dust directions can be negative. The callers use
 // bounded pixel offsets or directions -1..1, so these products fit s32.
@@ -290,7 +347,7 @@ enum VenusLighthouseSecondFloorActor {
   /// the track before the gate (its render)
   ACTOR_GATE_PILLAR,
   /// SPRITE_PARTICLE, the kind of object
-  /// VenusLighthouse_CreateScriptedGateEffect makes: once the pillar sinks it
+  /// VenusLighthouse_CreateLight makes: once the pillar sinks it
   /// travels gVenusSecondFloorLightToGate to the gate, which opens, and stays
   /// there
   /// shedding particles.
@@ -403,7 +460,10 @@ static void VenusLighthouse_ConfigurePassageEffect(struct FieldActor *object,
   ObjectGroup_SetChildValue(object, childValue);
 }
 
-/// Creates a blended passage effect behind the actors.
+/// Creates a translucent object behind the actors, of sprite type, as the
+/// leader or a pillar falls through the floor. XXX: what it shows; its sprites
+/// (223, a crate, and 253, a capped column) suggest a mask over the hole, and
+/// a render of a fall would settle it.
 static struct FieldActor *
 VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *effect;
@@ -418,7 +478,10 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-/// Creates a passage effect that preserves the overlapping actors' draw order.
+/// Creates an object drawn under the actors around it while a pillar sinks
+/// into its socket, so that the leader standing north of it is not hidden.
+/// XXX: what it shows; it is made of sprite 20, the chest, and a render of a
+/// pillar sinking would settle it.
 static struct FieldActor *
 VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object;
@@ -449,8 +512,9 @@ enum {
 #include "common/object_distance.h"
 #include "common/object_findslot.h"
 
-/// Pushes the adjacent pillar only when its destination and overhead space are
-/// clear.
+/// Pushing a pillar: the pillar ahead of the leader moves one cell on with him,
+/// leaning into it (ANIM_LEADER_PUSH), when the cell beyond is free, nothing
+/// stands on the pillar, and it is no statue (SW_VENUS_IMMOVABLE).
 static void VenusLighthouse_PushAdjacentPillar(void) {
   struct FieldPosition targetPosition;
   struct FieldActor *leader;
@@ -560,7 +624,8 @@ static UNUSED s32 StagedActor_FillGridAttributeRectangle(u32 layerIndex, s32 x,
   return 0;
 }
 
-/// Restores child values encoded in the placed actors' script timers.
+/// After a battle, draws every actor whose timer holds a VENUS_COLOR_MARK in
+/// its colour mode again.
 static void VenusLighthouse_RestoreScriptedChildValues(void) {
   struct FieldActor **actors = gEventWork->placedActors;
   struct FieldActor *actor;
@@ -573,7 +638,8 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
   }
 }
 
-/// Applies the current script timer's child value and advances the script.
+/// Called by gVenusGreyStatueScript and gVenusGreyPillarScript: draws the
+/// actor in the colour mode of its VENUS_COLOR_MARK.
 static s32
 VenusLighthouse_UpdateChildFromTimer(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -696,10 +762,10 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Walking north into a sparkling passage, in VenusLighthouseSecondFloor
-/// (trigger 2) or VenusLighthouseThirdFloor (triggers 4, 5 and 11): the leader
-/// dissolves in sparks and leaves by the exit of the trigger's number, coming
-/// out at its far end.
+/// Walking north into a sparkling passage, on VenusLighthouseSecondFloor or
+/// VenusLighthouseThirdFloor: the leader dissolves in sparks and leaves by the
+/// exit of the passage's own number, coming out at its far end
+/// (VenusLighthouse_ArriveThroughSparkPassage).
 static void Event_EnterSparklingPassage(void) {
   struct FieldActor *leader;
   struct EventWork *eventWork;
@@ -763,14 +829,14 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 }
 
 /// Makes the leader the actor the room's effect follows.
-/// It's reached by stepping onto this spot in VenusLighthouseFirstFloor
-/// (trigger 32).
+/// Reached by stepping onto cell 32 of VenusLighthouseFirstFloor, by the capped
+/// pillars.
 static void Event_SetLeaderAsEffectTarget(void) {
   gActorEffectWork->actor = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-/// Stepping onto this spot in VenusLighthouseFirstFloor (trigger 31): the
-/// room's effect follows no one.
+/// Stepping onto cell 31 of VenusLighthouseFirstFloor, by the capped pillars:
+/// the room's effect follows no one.
 static void Event_ClearEffectTarget(void) { gActorEffectWork->actor = NULL; }
 
 #include "common/object_depth.h"
@@ -832,14 +898,15 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 
 #include "common/effect_radial.h"
 
-// Emit shrinking particles around a moving gate effect every four frames.
+// A light's update hook: every four frames a shrinking particle around it,
+// and now and then a sound while it moves.
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
 // void differs in 172 bytes (extent 196 to 192 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
-static void VenusLighthouse_EmitGateParticles(union FieldObject *fieldObject) {
+static void VenusLighthouse_TrailLight(union FieldObject *fieldObject) {
 #else
-static s32 VenusLighthouse_EmitGateParticles(union FieldObject *fieldObject) {
+static s32 VenusLighthouse_TrailLight(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct EffectOptions options;
@@ -883,9 +950,10 @@ static s32 VenusLighthouse_EmitGateParticles(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Creates a scripted gate effect at the supplied pixel coordinates.
-static struct FieldActor *
-VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
+/// Creates a light at a lady statue, at pixel x and z, and starts it along its
+/// path script, trailing particles (VenusLighthouse_TrailLight).
+static struct FieldActor *VenusLighthouse_CreateLight(s32 x, s32 z,
+                                                      const s32 *script) {
   struct FieldActor *effect;
   s32 fixedX;
   s32 fixedZ;
@@ -905,10 +973,9 @@ VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
   effect->collisionFlags = 0;
   effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 #ifdef UBFIX
-  effect->update = VenusLighthouse_EmitGateParticles;
+  effect->update = VenusLighthouse_TrailLight;
 #else
-  effect->update =
-      (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
+  effect->update = (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
 #endif
   effect->riseEnabled = 0;
   Engine_ObjectSetScript(effect, script);
@@ -1141,8 +1208,8 @@ static void Event_ReadRelief(void) {
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
-  message =
-      work->facingTrigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) - 35;
+  message = work->facingTrigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
+            TRIGGER_FIRST_RELIEF;
 #endif
   Engine_MessageShowCentered(message, 1);
   Engine_EventEnd();
@@ -1190,8 +1257,8 @@ static void Event_RevealPath(void) {
   Map_CopyCellsTo(117, 55, 110, 55, 3, 3);
 }
 
-/// In VenusLighthouseGroundFloor, walking off the ledge (trigger 45) before the
-/// floor switch is held down: the leader jumps down to the floor below and
+/// In VenusLighthouseGroundFloor, walking off the ledge (TRIGGER_LEDGE) before
+/// the floor switch is held down: the leader jumps down to the floor below and
 /// shakes his head.
 static void Event_JumpDown(void) {
   struct FieldActor *leader;
@@ -1231,6 +1298,42 @@ static void Event_JumpDown(void) {
   Engine_EventEnd();
 }
 
+/// Redraws the great statue's room for the first of the two paths it opens
+/// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH): a 7-by-8 block of cells and eleven
+/// 3-by-2 pieces. XXX: what changes on screen; a render of the room with
+/// each flag would settle it.
+static inline void VenusLighthouse_DrawFirstPath(void) {
+  Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
+  Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
+  Map_CopyCellsTo(41, 90, 29, 93, 3, 2);
+  Map_CopyCellsTo(41, 90, 27, 94, 3, 2);
+  Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
+  Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
+  Map_CopyCellsTo(41, 96, 25, 91, 3, 2);
+  Map_CopyCellsTo(41, 92, 25, 93, 3, 2);
+  Map_CopyCellsTo(41, 96, 25, 95, 3, 2);
+  Map_CopyCellsTo(41, 96, 25, 97, 3, 2);
+  Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
+  Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
+}
+
+/// Redraws the great statue's room with the second path open
+/// (FLAG_VENUS_LIGHTHOUSE_SECOND_PATH), as VenusLighthouse_DrawFirstPath.
+static inline void VenusLighthouse_DrawSecondPath(void) {
+  Map_CopyCellsTo(111, 27, 89, 27, 7, 8);
+  Map_CopyCellsTo(41, 90, 25, 91, 3, 2);
+  Map_CopyCellsTo(41, 90, 25, 93, 3, 2);
+  Map_CopyCellsTo(41, 90, 25, 95, 3, 2);
+  Map_CopyCellsTo(41, 90, 25, 97, 3, 2);
+  Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
+  Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
+  Map_CopyCellsTo(41, 94, 27, 92, 3, 2);
+  Map_CopyCellsTo(41, 96, 29, 93, 3, 2);
+  Map_CopyCellsTo(41, 94, 27, 94, 3, 2);
+  Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
+  Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
+}
+
 /// Searching the statue in VenusLighthouseGroundFloor: "The statue speaks to
 /// Isaac's soul..." The room flashes, the path it opens changes (the first time
 /// by the frame counter's parity, then to the other path) and its cells are
@@ -1266,33 +1369,11 @@ static void Event_SearchStatue(void) {
   if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH);
-    Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
-    Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
-    Map_CopyCellsTo(41, 90, 29, 93, 3, 2);
-    Map_CopyCellsTo(41, 90, 27, 94, 3, 2);
-    Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
-    Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
-    Map_CopyCellsTo(41, 96, 25, 91, 3, 2);
-    Map_CopyCellsTo(41, 92, 25, 93, 3, 2);
-    Map_CopyCellsTo(41, 96, 25, 95, 3, 2);
-    Map_CopyCellsTo(41, 96, 25, 97, 3, 2);
-    Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
-    Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
+    VenusLighthouse_DrawFirstPath();
   } else {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
-    Map_CopyCellsTo(111, 27, 89, 27, 7, 8);
-    Map_CopyCellsTo(41, 90, 25, 91, 3, 2);
-    Map_CopyCellsTo(41, 90, 25, 93, 3, 2);
-    Map_CopyCellsTo(41, 90, 25, 95, 3, 2);
-    Map_CopyCellsTo(41, 90, 25, 97, 3, 2);
-    Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
-    Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
-    Map_CopyCellsTo(41, 94, 27, 92, 3, 2);
-    Map_CopyCellsTo(41, 96, 29, 93, 3, 2);
-    Map_CopyCellsTo(41, 94, 27, 94, 3, 2);
-    Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
-    Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
+    VenusLighthouse_DrawSecondPath();
   }
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(20);
@@ -1667,9 +1748,9 @@ static void Event_CarryPillarAcrossGap(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouseSecondFloor, stepping on the floor switch (trigger 35):
-/// the wall slides aside in a cloud of dust, the first time only
-/// (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED), and the scene cuts to
+/// In VenusLighthouseSecondFloor, stepping on the floor switch
+/// (TRIGGER_WALL_SWITCH): the wall slides aside in a cloud of dust, the first
+/// time only (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED), and the scene cuts to
 /// VenusLighthouseFirstFloor by
 /// VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST, where
 /// VenusLighthouse_AnimatePairedTileWaves shows what moved there before
@@ -1944,10 +2025,10 @@ static void Event_MoveSwitchPillar(void) {
       continue;
     }
     // Once all three pillars settle, run the paired scripts that open the gate.
-    firstGateEffect = VenusLighthouse_CreateScriptedGateEffect(
-        888, 680, gVenusThirdFloorLightToNortheast);
-    secondGateEffect = VenusLighthouse_CreateScriptedGateEffect(
-        888, 680, gVenusThirdFloorLightToSoutheast);
+    firstGateEffect =
+        VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToNortheast);
+    secondGateEffect =
+        VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToSoutheast);
     // SC_FREE clears the script pointer; work value 0x28 signals the
     // opening cue earlier, while the gate effects are still running.
     while (((struct ScriptInterpreter *)firstGateEffect)->script != 0 ||
@@ -2209,7 +2290,8 @@ static void Event_CarryFloatingPillar(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouseFourthFloor, pushing a pillar (triggers 35 to 37).
+/// In VenusLighthouseFourthFloor, pushing a floating pillar
+/// (TRIGGER_FLOATING_PILLARS and the gaps beside it).
 static void Event_PushPuzzlePillar(void) {
 
   Engine_EventBegin();
@@ -2494,14 +2576,14 @@ static void Event_MoveSocketPillar(void) {
       Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
       Object_PlaceCurrentWithinCameraBounds(ACTOR_SOCKET_EFFECT_STATUE, 1);
       Camera_WaitForMove();
-      firstGateEffect = VenusLighthouse_CreateScriptedGateEffect(
+      firstGateEffect = VenusLighthouse_CreateLight(
           136, 776, gVenusFourthFloorLightFromStatue);
       Event_Wait(30);
       Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
       Camera_MoveTo(PIXELS(216), -1, PIXELS(632), 1);
       ObjectDispatch_WaitForValue16(firstGateEffect);
       Object_SetScript(firstGateEffect, gVenusFourthFloorLightToSoutheast);
-      secondGateEffect = VenusLighthouse_CreateScriptedGateEffect(
+      secondGateEffect = VenusLighthouse_CreateLight(
           216, 760, gVenusFourthFloorLightToSouthwest);
       while (((struct ScriptInterpreter *)firstGateEffect)->script != 0 ||
              ((struct ScriptInterpreter *)secondGateEffect)->script != 0) {
@@ -2538,8 +2620,9 @@ static void Event_JumpOrPushSocketPillar(void) {
   Event_MoveSocketPillar();
 }
 
-/// In VenusLighthouseFourthFloor, walking south into the passage (trigger 18):
-/// the leader rises out of the room to the floor above (
+/// In VenusLighthouseFourthFloor, walking south into the passage
+/// (TRIGGER_RISING_PASSAGE): the leader rises out of the room to the floor
+/// above (
 /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING, where
 /// VenusLighthouse_RaiseLeaderWithSpray lands him on ACTOR_RISING_PLATFORM).
 static void Event_EnterRisingPassage(void) {
@@ -2670,33 +2753,11 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_FLOOR_SWITCH:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_SMALL_ROOM:
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
-        Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
-        Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
-        Map_CopyCellsTo(41, 90, 29, 93, 3, 2);
-        Map_CopyCellsTo(41, 90, 27, 94, 3, 2);
-        Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
-        Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
-        Map_CopyCellsTo(41, 96, 25, 91, 3, 2);
-        Map_CopyCellsTo(41, 92, 25, 93, 3, 2);
-        Map_CopyCellsTo(41, 96, 25, 95, 3, 2);
-        Map_CopyCellsTo(41, 96, 25, 97, 3, 2);
-        Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
-        Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
+        VenusLighthouse_DrawFirstPath();
       } else {
         if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
           break;
-        Map_CopyCellsTo(111, 27, 89, 27, 7, 8);
-        Map_CopyCellsTo(41, 90, 25, 91, 3, 2);
-        Map_CopyCellsTo(41, 90, 25, 93, 3, 2);
-        Map_CopyCellsTo(41, 90, 25, 95, 3, 2);
-        Map_CopyCellsTo(41, 90, 25, 97, 3, 2);
-        Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
-        Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
-        Map_CopyCellsTo(41, 94, 27, 92, 3, 2);
-        Map_CopyCellsTo(41, 96, 29, 93, 3, 2);
-        Map_CopyCellsTo(41, 94, 27, 94, 3, 2);
-        Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
-        Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
+        VenusLighthouse_DrawSecondPath();
       }
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE:
@@ -2826,10 +2887,10 @@ s32 VenusLighthouse_Initialize(void) {
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_GATE_EFFECT, PIXELS(743), PIXELS(696));
 #ifdef UBFIX
-        actor->update = VenusLighthouse_EmitGateParticles;
+        actor->update = VenusLighthouse_TrailLight;
 #else
         actor->update =
-            (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
+            (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
 #endif
       }
       Event_MoveGatePillar();
@@ -2962,10 +3023,10 @@ s32 VenusLighthouse_Initialize(void) {
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_SWITCH_GATE_EFFECT, PIXELS(727), PIXELS(632));
 #ifdef UBFIX
-        actor->update = VenusLighthouse_EmitGateParticles;
+        actor->update = VenusLighthouse_TrailLight;
 #else
         actor->update =
-            (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
+            (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
 #endif
       }
       Event_MoveSwitchPillar();
@@ -3139,10 +3200,10 @@ s32 VenusLighthouse_Initialize(void) {
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_SOCKET_GATE_EFFECT, PIXELS(215), PIXELS(600));
 #ifdef UBFIX
-        actor->update = VenusLighthouse_EmitGateParticles;
+        actor->update = VenusLighthouse_TrailLight;
 #else
         actor->update =
-            (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
+            (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
 #endif
       }
       Event_MoveSocketPillar();
@@ -3152,10 +3213,12 @@ s32 VenusLighthouse_Initialize(void) {
   return 0;
 }
 
-/// Standing on this floor (VenusLighthouseFourthFloor's trigger 31) carries the
+/// Standing on this floor (VenusLighthouseFourthFloor's TRIGGER_DRIFT_NORTH)
+/// carries the
 /// party north in a trail of dust; at a ledge they drop down. The floors of
-/// triggers 30, 32 and 33 do the same south, west and east, and the southward
-/// floor also lies in VenusLighthouseFirstFloor and VenusLighthouseThirdFloor.
+/// TRIGGER_DRIFT_SOUTH, _WEST and _EAST do the same south, west and east, and
+/// the southward floor also lies in VenusLighthouseFirstFloor and
+/// VenusLighthouseThirdFloor.
 static void Event_DriftNorth(void) {
   struct Vector3 args;
 
@@ -3627,100 +3690,107 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
       VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE);
 }
 
-/// Selects the pillar's push script from its direction, support animation and
-/// socket.
+/// Called by a light's path script as it reaches a socket: it looks at the
+/// pillar sunk there, 16 pixels below the light, and sends the light on along
+/// the path that pillar's piece of track leads to, or puts it out
+/// (gVenusLightGoesOut) when there is no spiral pillar, its piece does not join
+/// the edge the light comes in by (gVenusTracksMovingWest and the rest), or the
+/// socket has no path for it. Each socket's list of pieces is searched from a
+/// cursor that the search moves on for good (gVenusThirdFloorSocketTracks).
+/// XXX: a second light through the same socket would then take a path by the
+/// moved cursor; whether any arrangement of pillars does so would need the
+/// puzzle played through.
 static s32 VenusLighthouse_RouteLight(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *pillar = (struct FieldActor *)interpreter;
-  struct FieldPosition supportPosition;
-  struct FieldActor *support;
+  struct FieldActor *light = (struct FieldActor *)interpreter;
+  struct FieldPosition pillarPosition;
+  struct FieldActor *pillar;
   struct AnimationObject *sprite;
-  const u8 *allowedShapes;
-  u8 shapeId;
-  u32 switchIndex;
-  s32 shapeIndex;
-  const u8 *shapeCursor;
+  const u8 *allowedTracks;
+  u8 track;
+  u32 socket;
+  s32 pathIndex;
+  const u8 *trackCursor;
 
-  supportPosition.x = pillar->x.fixed;
-  supportPosition.y = pillar->y.fixed - PIXELS(16);
-  supportPosition.z = pillar->z.fixed;
-  support = SceneData_FindSlotAtPosition(&supportPosition, 0);
-  // XXX: Do the pillar placement and action-script tables guarantee a support
-  // with an animation entry every time this script runs?
-  sprite = support->sprite;
+  pillarPosition.x = light->x.fixed;
+  pillarPosition.y = light->y.fixed - PIXELS(16);
+  pillarPosition.z = light->z.fixed;
+  pillar = SceneData_FindSlotAtPosition(&pillarPosition, 0);
+  // XXX: the paths end only on sockets, so a pillar is likely always there;
+  // a light over an empty socket would read through a null pillar.
+  sprite = pillar->sprite;
   if (sprite->entries[0]->animId == SPRITE_SPIRAL_PILLAR) {
-    s32 velocityX = pillar->velocityX;
+    s32 velocityX = light->velocityX;
     s32 speedX = velocityX < 0 ? -velocityX : velocityX;
-    s32 velocityZ = pillar->velocityZ;
+    s32 velocityZ = light->velocityZ;
     s32 speedZ = velocityZ < 0 ? -velocityZ : velocityZ;
 
     if (speedX > speedZ) {
       if (velocityX / PIXELS(1) < 0) {
-        allowedShapes = gVenusTracksMovingWest;
+        allowedTracks = gVenusTracksMovingWest;
       } else {
-        allowedShapes = gVenusTracksMovingEast;
+        allowedTracks = gVenusTracksMovingEast;
       }
     } else {
       if (velocityZ / PIXELS(1) < 0) {
-        allowedShapes = gVenusTracksMovingNorth;
+        allowedTracks = gVenusTracksMovingNorth;
       } else {
-        allowedShapes = gVenusTracksMovingSouth;
+        allowedTracks = gVenusTracksMovingSouth;
       }
     }
-    for (; *allowedShapes != 0; allowedShapes++) {
-      if (sprite->lastNo == *allowedShapes) {
+    for (; *allowedTracks != TRACK_END; allowedTracks++) {
+      if (sprite->lastNo == *allowedTracks) {
         break;
       }
     }
-    if (*allowedShapes == 0) {
-      Engine_ObjectSetScript(pillar, gVenusLightGoesOut);
+    if (*allowedTracks == TRACK_END) {
+      Engine_ObjectSetScript(light, gVenusLightGoesOut);
       return 0;
     }
-    // The socket tables retain their moving cursors between push-script calls.
     if (gGameState.scene == (s32)&SceneId_VenusLighthouseThirdFloor) {
-      for (switchIndex = 0;
-           switchIndex <= 3 &&
-           !(pillar->x.fixed >> 20 == gVenusThirdFloorSockets[switchIndex].x &&
-             pillar->z.fixed >> 20 == gVenusThirdFloorSockets[switchIndex].z);
-           switchIndex++) {
+      for (socket = 0;
+           socket <= 3 &&
+           !(light->x.fixed >> 20 == gVenusThirdFloorSockets[socket].x &&
+             light->z.fixed >> 20 == gVenusThirdFloorSockets[socket].z);
+           socket++) {
       }
-      for (shapeIndex = 0;; shapeIndex++) {
-        shapeCursor = gVenusThirdFloorSocketTracks[switchIndex];
-        shapeId = *shapeCursor;
-        if (shapeId == 0) {
-          Engine_ObjectSetScript(pillar, gVenusLightGoesOut);
+      for (pathIndex = 0;; pathIndex++) {
+        trackCursor = gVenusThirdFloorSocketTracks[socket];
+        track = *trackCursor;
+        if (track == TRACK_END) {
+          Engine_ObjectSetScript(light, gVenusLightGoesOut);
           return 0;
         }
-        if (shapeId == support->sprite->lastNo) {
+        if (track == pillar->sprite->lastNo) {
           break;
         }
-        gVenusThirdFloorSocketTracks[switchIndex] = shapeCursor + 1;
+        gVenusThirdFloorSocketTracks[socket] = trackCursor + 1;
       }
-      Engine_ObjectSetScript(
-          pillar, gVenusThirdFloorSocketPaths[switchIndex][shapeIndex]);
+      Engine_ObjectSetScript(light,
+                             gVenusThirdFloorSocketPaths[socket][pathIndex]);
     } else {
-      for (switchIndex = 0;
-           switchIndex <= 7 &&
-           !(pillar->x.fixed >> 20 == gVenusFourthFloorSockets[switchIndex].x &&
-             pillar->z.fixed >> 20 == gVenusFourthFloorSockets[switchIndex].z);
-           switchIndex++) {
+      for (socket = 0;
+           socket <= 7 &&
+           !(light->x.fixed >> 20 == gVenusFourthFloorSockets[socket].x &&
+             light->z.fixed >> 20 == gVenusFourthFloorSockets[socket].z);
+           socket++) {
       }
-      for (shapeIndex = 0;; shapeIndex++) {
-        shapeCursor = gVenusFourthFloorSocketTracks[switchIndex];
-        shapeId = *shapeCursor;
-        if (shapeId == 0) {
-          Engine_ObjectSetScript(pillar, gVenusLightGoesOut);
+      for (pathIndex = 0;; pathIndex++) {
+        trackCursor = gVenusFourthFloorSocketTracks[socket];
+        track = *trackCursor;
+        if (track == TRACK_END) {
+          Engine_ObjectSetScript(light, gVenusLightGoesOut);
           return 0;
         }
-        if (shapeId == support->sprite->lastNo) {
+        if (track == pillar->sprite->lastNo) {
           break;
         }
-        gVenusFourthFloorSocketTracks[switchIndex] = shapeCursor + 1;
+        gVenusFourthFloorSocketTracks[socket] = trackCursor + 1;
       }
-      Engine_ObjectSetScript(
-          pillar, gVenusFourthFloorSocketPaths[switchIndex][shapeIndex]);
+      Engine_ObjectSetScript(light,
+                             gVenusFourthFloorSocketPaths[socket][pathIndex]);
     }
   } else {
-    Engine_ObjectSetScript(pillar, gVenusLightGoesOut);
+    Engine_ObjectSetScript(light, gVenusLightGoesOut);
   }
   return 0;
 }
@@ -3748,6 +3818,8 @@ s32 gEffectScript2[] = {
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 #endif
 
+/// The cell ahead for each of sixteen headings, 16 pixels east-west in the
+/// upper halfword and north-south in the lower (DIRECTION_STEP).
 u32 gStagedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
@@ -3757,6 +3829,8 @@ u32 gStagedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
+/// The third floor's four sockets, by cell: northwest, northeast, southwest
+/// and southeast.
 struct SwitchCell gVenusThirdFloorSockets[] = {
     {48, 41},
     {52, 41},
@@ -3765,10 +3839,14 @@ struct SwitchCell gVenusThirdFloorSockets[] = {
 };
 
 // clang-format off
+/// The heights of a balance platform by the weight on it (its timer, from 0
+/// to 6): the more floating pillars stand on its side, the lower it sinks.
 u32 gVenusBalancePlatformHeights[] = {
     0xfff00000, 0xfff00000, 0xffe00000, 0xffd00000, 0xffc00000, 0xffb00000, 0xffb00000,
 };
 
+/// The fourth floor's eight sockets, by cell: northwest, northeast, west,
+/// east, far west, middle, southwest and southeast.
 struct SwitchCell gVenusFourthFloorSockets[] = {
     { 11, 39 },
     { 14, 39 },
@@ -3826,6 +3904,8 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
+/// The lady statues' object script: drawn grey (VENUS_COLOR_MARK), and never
+/// pushed (SW_VENUS_IMMOVABLE).
 s32 gVenusGreyStatueScript[] = {
     SC_SET(SW_TIMER, VENUS_COLOR_MARK(SPRITE_COLOR_GREY)),
     SC_SET(SW_VENUS_IMMOVABLE, 1),
@@ -3833,12 +3913,16 @@ s32 gVenusGreyStatueScript[] = {
     SC_END,
 };
 
+/// The first floor's capped pillars' object script: drawn grey.
 s32 gVenusGreyPillarScript[] = {
     SC_SET(SW_TIMER, VENUS_COLOR_MARK(SPRITE_COLOR_GREY)),
     SC_CALL(VenusLighthouse_UpdateChildFromTimer),
     SC_END,
 };
 
+/// The leader's action script after he jumps down from the ledge
+/// (Event_JumpDown): he swells and shrinks ten times, flashing
+/// (VenusLighthouse_PulseChildEffect).
 s32 gVenusLeaderDazedScript[] = {
     SC_ARG(12),
     SC_SET(SW_HOOK, (s32)VenusLighthouse_PulseChildEffect),
@@ -3855,6 +3939,10 @@ s32 gVenusLeaderDazedScript[] = {
     SC_END,
 };
 
+/// The object script of the world map's picture of Venus Lighthouse, placed
+/// in the ground floor's statue room at three fifths of its size, with no
+/// collision. XXX: what it stands for there; a render of the room would settle
+/// it.
 s32 gVenusMiniatureLighthouseScript[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 5),
@@ -3863,6 +3951,8 @@ s32 gVenusMiniatureLighthouseScript[] = {
     SC_END,
 };
 
+/// A drop of the spray that carries the leader up to the aerie: it pulses
+/// from full size to a quarter four times, then is freed.
 s32 gVenusSprayScript[] = {
     SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_SET(SW_SCALE_X, Q16_ONE),
@@ -3883,6 +3973,7 @@ s32 gVenusSprayScript[] = {
     SC_FREE,
 };
 
+/// The object scripts that give a spiral pillar its piece of track.
 s32 gVenusTrackNorthSouthScript[] = {
     SC_ARG(TRACK_NORTH_SOUTH),
     SC_END,
@@ -3913,11 +4004,14 @@ s32 gVenusTrackSouthWestScript[] = {
     SC_END,
 };
 
+/// The second floor's light: from the lady statue along the track, over the
+/// sunk gate pillar, to the gate (VenusLighthouse_TrailLight trails
+/// it).
 s32 gVenusSecondFloorLightToGate[] = {
     SC_CALL(VenusLighthouse_ClearScriptedSpriteFlags),
     SC_ARG(7),
     SC_SET(SW_SPEED, PIXELS(1)),
-    SC_SET(SW_HOOK, (s32)VenusLighthouse_EmitGateParticles),
+    SC_SET(SW_HOOK, (s32)VenusLighthouse_TrailLight),
     SC_MOVE(PIXELS(760), 0, PIXELS(728)),
     SC_SYNC,
     SC_POS(PIXELS(760), 0, PIXELS(728)),
@@ -3934,6 +4028,10 @@ s32 gVenusSecondFloorLightToGate[] = {
     SC_END,
 };
 
+/// The third floor's lights, from the lady statue to a socket, from socket to
+/// socket, and from a socket to the gate, where SW_VENUS_LIGHT_ARRIVED opens
+/// it; each that reaches a socket asks VenusLighthouse_RouteLight for its next
+/// path.
 s32 gVenusThirdFloorLightToNortheast[] = {
     SC_MOVE(PIXELS(872), 0, PIXELS(680)),
     SC_SYNC,
@@ -3961,6 +4059,8 @@ s32 gVenusThirdFloorLightToSoutheast[] = {
     SC_END,
 };
 
+/// A light that cannot go on: it stops trailing particles and is freed ten
+/// frames later.
 s32 gVenusLightGoesOut[] = {
     SC_SET(SW_HOOK, 0),
     SC_WAIT(10),
@@ -4043,6 +4143,9 @@ s32 gVenusThirdFloorLightSoutheastToSouthwest[] = {
     SC_END,
 };
 
+/// The fourth floor's lights, as the third floor's: the first from the
+/// statue to the fork, where Event_MoveSocketPillar sends it on to the
+/// southeast socket and a second light to the southwest one.
 s32 gVenusFourthFloorLightFromStatue[] = {
     SC_MOVE(PIXELS(216), 0, PIXELS(776)),
     SC_SYNC,
@@ -4205,6 +4308,7 @@ s32 gVenusFourthFloorLightNorthwestToGate[] = {
     SC_END,
 };
 
+/// The gates' cell animations as each opens, a cell column at a time.
 u16 gVenusSecondFloorGateCells[] = {
     MAP_CELL_STEP(124, 50, 1, 2, 6), MAP_CELL_STEP(124, 47, 1, 2, 6), MAP_CELL_STEP(124, 44, 1, 2, 6), MAP_CELL_STEP(124, 41, 1, 2, 6), MAP_CELL_STEPS_END,
 };
@@ -4579,9 +4683,9 @@ struct ScenePlacement gVenusLighthouseFourthFloorPlacements[] = {
 };
 
 struct SceneEvent gVenusLighthouseEntryEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST },
     { EVENT_TALK, ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
     { EVENT_TALK, ACTOR_SCHOLAR_LIGHTHOUSE_OPEN, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIodemBeHappyTheEntranceTo) },
     { EVENT_TALK, ACTOR_SCHOLAR_BARBARIANS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseOhhhHowCouldTheyAttackMere) },
@@ -4600,52 +4704,52 @@ struct SceneEvent gVenusLighthouseEntryEvents[] = {
 };
 
 struct SceneEvent gVenusLighthouseGroundFloorEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 4, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 5, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 8, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 9, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH },
-    { EVENT_EXIT, 11, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 14, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 20, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 21, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 22, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 23, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 24, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 25, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 26, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 30, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 31, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 32, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS },
-    { EVENT_TOUCH, 45, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_JumpDown) },
-    { EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnFloorSwitch) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillarTowardWall) },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS },
+    { EVENT_TOUCH, TRIGGER_LEDGE, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_JumpDown) },
+    { EVENT_TOUCH, TRIGGER_FLOOR_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnFloorSwitch) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillarTowardWall) },
     { EVENT_TALK, ACTOR_SCHOLAR_ATTACKED_ANYWAY, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenToldThemToStopBut) },
     { EVENT_TALK, ACTOR_SCHOLAR_NOT_THE_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenWentInsideButThenCame) },
     { EVENT_TALK, ACTOR_DOOR_SCHOLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToScholarByDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_ATTACKED_ANYWAY, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIfKradenHadntBeenThereWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_NOT_THE_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenSaidSomethingAboutThisBeing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOOR_SCHOLAR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIWonderWhatMysteriesTheStatue) },
-    { SEARCH(SEARCH_UNNAMED), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #if LANGUAGE == LANGUAGE_JAPANESE
-    { SEARCH(SEARCH_UNNAMED), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
-    { SEARCH(SEARCH_UNNAMED), 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
-    { SEARCH(SEARCH_UNNAMED), 38, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
-    { SEARCH(SEARCH_UNNAMED), 39, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_FIRST_RELIEF + 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_FIRST_RELIEF + 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_FIRST_RELIEF + 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_FIRST_RELIEF + 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #endif
 #if !TBS_PATCH_1 || TBS_PATCH_2
-    { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_FIRST_RELIEF + 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #endif
-    { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchStatue) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf37, FIND_ITEM(ITEM_LUCKY_CAP) },
-    { SEARCH(SEARCH_CHEST), 101, 0xf38, FIND_ITEM(ITEM_CARRY_STONE) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_GREAT_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchStatue) },
+    { SEARCH(SEARCH_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_LUCKY_CAP, FIND_ITEM(ITEM_LUCKY_CAP) },
+    { SEARCH(SEARCH_CHEST), TRIGGER_SECOND_CHEST, FLAG_VENUS_LIGHTHOUSE_CARRY_STONE, FIND_ITEM(ITEM_CARRY_STONE) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarTowardWall) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FLOOR_SWITCH_STATUE, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillarOntoSwitch) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryPillarPastWall) },
@@ -4655,34 +4759,34 @@ struct SceneEvent gVenusLighthouseGroundFloorEvents[] = {
 };
 
 struct SceneEvent gVenusLighthouseFirstFloorEvents[] = {
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 8, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS },
-    { EVENT_EXIT, 11, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 12, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 16, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
-    { EVENT_EXIT, 17, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 18, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 19, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
-    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FallThroughFloor) },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR },
+    { EVENT_TOUCH, TRIGGER_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH, TRIGGER_HOLE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FallThroughFloor) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthPillar) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthPillar) },
     { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearEffectTarget) },
     { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetLeaderAsEffectTarget) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushCarryPillar) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf34, FIND_ITEM(ITEM_THUNDER_CROWN) },
-    { SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_CARRY_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushCarryPillar) },
+    { SEARCH(SEARCH_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN, FIND_ITEM(ITEM_THUNDER_CROWN) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthPillar) },
@@ -4698,47 +4802,47 @@ struct SceneEvent gVenusLighthouseFirstFloorEvents[] = {
 };
 
 struct SceneEvent gVenusLighthouseSecondFloorEvents[] = {
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 4, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 7, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT },
-    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWallSwitch) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_JumpOrPushGatePillar) },
-    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_TO_PILLAR_PIT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT },
+    { EVENT_TOUCH, TRIGGER_WALL_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWallSwitch) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_JumpOrPushGatePillar) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_MoveGatePillar) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gVenusLighthouseThirdFloorEvents[] = {
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 10, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 12, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 13, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 17, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR },
-    { EVENT_EXIT, 18, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSwitchPillar) },
-    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf35, FIND_ITEM(ITEM_DRAGON_SCALES) },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_NORTHWEST_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRAGON_SCALES, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS },
+    { EVENT_TOUCH, TRIGGER_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_SWITCH_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSwitchPillar) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
+    { SEARCH(SEARCH_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_DRAGON_SCALES, FIND_ITEM(ITEM_DRAGON_SCALES) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchPillar) },
@@ -4746,40 +4850,40 @@ struct SceneEvent gVenusLighthouseThirdFloorEvents[] = {
 };
 
 struct SceneEvent gVenusLighthouseFourthFloorEvents[] = {
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 4, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 5, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 7, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 9, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST },
-    { EVENT_EXIT, 11, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_WEST },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 17, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterRisingPassage) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
-    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWestWallSwitch) },
-    { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnEastWallSwitch) },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
-    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftNorth) },
-    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftWest) },
-    { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftEast) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSocketPillar) },
-    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf36, FIND_ITEM(ITEM_GAIA_BLADE) },
-    { SEARCH(SEARCH_UNNAMED), 110, 0x351, FIND_PSYNERGY_STONE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_WEST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH },
+    { EVENT_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), TRIGGER_RISING_PASSAGE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterRisingPassage) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_FLOATING_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
+    { TOUCH_WALKING_INTO(FACING_WEST), TRIGGER_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
+    { TOUCH_WALKING_INTO(FACING_EAST), TRIGGER_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
+    { TOUCH_WALKING_INTO(FACING_EAST), TRIGGER_FLOATING_PILLARS_EAST_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_FLOATING_PILLARS_EAST_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
+    { EVENT_TOUCH, TRIGGER_WEST_WALL_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWestWallSwitch) },
+    { EVENT_TOUCH, TRIGGER_EAST_WALL_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnEastWallSwitch) },
+    { EVENT_TOUCH, TRIGGER_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH, TRIGGER_DRIFT_NORTH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftNorth) },
+    { EVENT_TOUCH, TRIGGER_DRIFT_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftWest) },
+    { EVENT_TOUCH, TRIGGER_DRIFT_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftEast) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, TRIGGER_SOCKET_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSocketPillar) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
+    { SEARCH(SEARCH_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_GAIA_BLADE, FIND_ITEM(ITEM_GAIA_BLADE) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FLOATING_PILLAR, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FLOATING_PILLAR + 1, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FLOATING_PILLAR + 2, CONDITION_ALWAYS, 0 },
@@ -4796,6 +4900,8 @@ struct SceneEvent gVenusLighthouseFourthFloorEvents[] = {
 };
 // clang-format on
 
+/// Cursors into each third-floor socket's list of pieces in
+/// gVenusThirdFloorTrackLists, which VenusLighthouse_RouteLight moves on.
 const u8 *gVenusThirdFloorSocketTracks[] = {
     gVenusThirdFloorTrackLists,
     gVenusThirdFloorTrackLists + 4,
@@ -4831,6 +4937,7 @@ s32 *gVenusThirdFloorSoutheastPaths[] = {
     gVenusLightGoesOut,
 };
 
+/// Each third-floor socket's paths, by the index of the piece in its list.
 s32 **gVenusThirdFloorSocketPaths[] = {
     gVenusThirdFloorNorthwestPaths,
     gVenusThirdFloorNortheastPaths,
@@ -4838,6 +4945,7 @@ s32 **gVenusThirdFloorSocketPaths[] = {
     gVenusThirdFloorSoutheastPaths,
 };
 
+/// As gVenusThirdFloorSocketTracks, for the fourth floor.
 const u8 *gVenusFourthFloorSocketTracks[] = {
     gVenusFourthFloorTrackLists,      gVenusFourthFloorTrackLists + 2,
     gVenusFourthFloorTrackLists + 3,  gVenusFourthFloorTrackLists + 5,
@@ -4885,6 +4993,7 @@ s32 *gVenusFourthFloorSoutheastPaths[] = {
     gVenusLightGoesOut,
 };
 
+/// As gVenusThirdFloorSocketPaths, for the fourth floor.
 s32 **gVenusFourthFloorSocketPaths[] = {
     gVenusFourthFloorNorthwestPaths, gVenusFourthFloorNortheastPaths,
     gVenusFourthFloorWestPaths,      gVenusFourthFloorEastPaths,

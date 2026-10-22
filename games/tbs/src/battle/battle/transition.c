@@ -394,12 +394,12 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     for (index = 0; index != count; index++) {
       // The list's index taken as a unit id: 0 to 7, then 128 onward.
       // BUG: unitIds is never read. A gap among party ids can make
-      // BattleObjGet return NULL before the loop reaches the enemy ids,
+      // BattleObject_Get return NULL before the loop reaches the enemy ids,
       // and the scale store then goes near address 0.
       id = index + 120;
       if ((s32)index <= ALLY_MAX)
         id = index;
-      object = BattleObjGet(id);
+      object = BattleObject_Get(id);
       if (UnitGetFar(id)->classId != ENEMY_FUSION_DRAGON)
         object->scale = 0xb333;
     }

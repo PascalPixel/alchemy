@@ -52,7 +52,7 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
   unit->challenge = 0;
 
   UnitCalcFar(unitId);
-  BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+  BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
 }
 
 // XXX: likely only a second spelling of struct BattlePromptSprite, because
@@ -218,7 +218,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
     Unit_SetHpFar(enemy, 0);
     BattleObject_RemoveFromLists(unitId);
     BattleObject_MarkForRelease(unitId);
-    slot = BattleObjGet(unitId);
+    slot = BattleObject_Get(unitId);
     ObjectDispatch_ReleaseFar((struct DispatchObject *)slot->object);
     slot->object = 0;
     slot->active = 0;
@@ -316,8 +316,9 @@ u32 BattleEvent_DispatchQueued(void) {
         PartyStatusDrawFar(gBattleWork->partyStatus);
         break;
       case BATTLE_EVENT_REFRESH_UNIT:
-        BattleUnit_BuildStatusFlags(queue->operands[eventIndex],
-                                    BattleObjGet(queue->operands[eventIndex]));
+        BattleUnit_BuildStatusFlags(
+            queue->operands[eventIndex],
+            BattleObject_Get(queue->operands[eventIndex]));
         BattlePresentation_SetActorModeAndAction(queue->operands[eventIndex]);
         break;
       }

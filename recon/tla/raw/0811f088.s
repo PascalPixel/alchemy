@@ -39,7 +39,7 @@ Func_0811f088:
 	b .L_0811f140
 .L_0811f0c6:
 	ldrb r0, [r7]
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldrb r1, [r7, #3]
 	ldr r3, [r0]
 	mov r8, r1
@@ -156,7 +156,7 @@ Func_0811f088:
 	bl Func_0811e3ac
 	mov r10, r0
 	ldr r0, [r6, #8]
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r3, [r5, #36]
 	movs r2, #128
 	ldr r0, [r0]
@@ -212,7 +212,7 @@ Func_0811f088:
 	adds r3, #36
 	ldrsh r0, [r2, r3]
 	str r4, [sp, #0]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #0
 	ldr r0, [r0]
 	bl GetMotionRecord

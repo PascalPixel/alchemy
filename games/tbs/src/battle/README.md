@@ -683,7 +683,7 @@ form a table of contents. The functions are declared in
   **outcome** (`enum BattlePlanStaging`, how it is staged) and its
   **presentation flags** (the `actflags.tsv` row: `STAGING_*`).
 - **battle object**: a unit's figure on the battlefield (`struct BattleObj`,
-  `BattleObjGet`). Its **records** are its sprites; the Kraken and the Fusion
+  `BattleObject_Get`). Its **records** are its sprites; the Kraken and the Fusion
   Dragon are drawn in two parts and have two (`SPRITE_WITH_SECOND_PART_A`,
   `SPRITE_WITH_SECOND_PART_B`).
 - **event**: one thing the battle shows while an action plays, waiting in the
@@ -710,7 +710,7 @@ for its `struct BattleObj`, `object` for that object's
 | `BattleTarget_` | targets an enemy or a confused unit picks |
 | `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera, the palettes |
 | `BattleEvent_` | the event queue and its playback |
-| `BattleObject_`, `BattleObjGet`, `BattleObjMake`, `BattleObjPut` | the battle objects |
+| `BattleObject_`, `BattleObject_Get`, `BattleObject_Make`, `BattleObject_Put` | the battle objects |
 | `BattleMotion_` | their movements |
 | `BattlePlacement_` | where each place stands on the battlefield |
 | `BattleUnit_` | one unit's battle state: its guard, weapon sprite, status flags and turn-end counters |

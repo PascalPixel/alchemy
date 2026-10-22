@@ -3551,10 +3551,10 @@ Func_08118f6c:
 Func_081197f0:
 	.incbin "baserom.gba", 0x001197f0, 0x00000844
 	.section .rom.0011a7a8, "ax"
-	.global BattleObjMake
-	.type BattleObjMake, %function
+	.global BattleObject_Make
+	.type BattleObject_Make, %function
 	.thumb_func
-BattleObjMake:
+BattleObject_Make:
 	.incbin "baserom.gba", 0x0011a7a8, 0x000009c0
 	.section .rom.0011b2c0, "ax"
 	.global EnemyUpdate

@@ -249,7 +249,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   WaitFrames(10);
   // A roll nothing uses, which still advances the random sequence.
   Random16();
-  actorRecord = BattleObjGet(actorId)->object;
+  actorRecord = BattleObject_Get(actorId)->object;
 
   // The caster's side, taken as the side the target is not on, and the
   // caster's POSE_CAST when its id is among that side's first sideCount ids.
@@ -319,7 +319,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
-  BattleObjPut();
+  BattleObject_Put();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
     BattlePresentation_SetActorRecordMode(index + sideStart,
@@ -369,8 +369,8 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
   UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], 13, 0);
   ObjectDispatch_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
-  BattleObjGet(work.effect.actors[0]);
+      (struct DispatchObject *)BattleObject_Get(work.effect.actor)->object, 16);
+  BattleObject_Get(work.effect.actors[0]);
 
   work.effect.count = 1;
   if ((u16)work.effect.actors[0] <= ALLY_MAX)
@@ -427,7 +427,7 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   // The actor raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
-  object = BattleObjGet(work.effect.actor)->object;
+  object = BattleObject_Get(work.effect.actor)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if ((u16)action->target <= ALLY_MAX) {
@@ -443,7 +443,7 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   // Keep each target's sprite entries' parameters for the effect.
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++) {
     struct AnimationObject *animation =
-        BattleObjGet(work.effect.actors[targetIndex])->object->records;
+        BattleObject_Get(work.effect.actors[targetIndex])->object->records;
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
@@ -499,7 +499,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     unit->hp = 0;
 
   // The damage pose, and the status window with names and HP only.
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
   PartyStatusDrawFar(PARTY_STATUS_HP_ONLY);
   UiWork_ClearValueNameTablesFar();
@@ -530,7 +530,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     UiText_ShowMessageAndWaitCoreFar(MsgDowned);
   }
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_STANDING);
 }
 
@@ -542,7 +542,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationObject *object;
   if (UnitGetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
-    object = BattleObjGet(unitId)->object->records;
+    object = BattleObject_Get(unitId)->object->records;
     AnimationObjects_SelectAnimationFar(object, POSE_DAMAGE);
     actorData = object->entries[0];
     actorData->param = SPRITE_COLOR_GREY;

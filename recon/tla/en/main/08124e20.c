@@ -73,7 +73,7 @@ s32 sub_08124af8(s32 id);
 
 #define ANNOUNCE_END(tick, message)                                            \
   if (tick(unitId) != 0) {                                                     \
-    BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));                 \
+    BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     UiText_DrawQuantity(unitId, 1);                                            \
     UiText_ShowMessageAndWaitCoreFar((s32)&message);                           \
     BattlePresentation_WaitForAdvance();                                       \
@@ -81,7 +81,7 @@ s32 sub_08124af8(s32 id);
 
 #define ANNOUNCE_END_POSE(tick, message)                                       \
   if (tick(unitId) != 0) {                                                     \
-    BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));                 \
+    BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     UiText_DrawQuantity(unitId, 1);                                            \
     BattlePres_SetActorModeAndAction(unitId);                                  \
     UiText_ShowMessageAndWaitCoreFar((s32)&message);                           \
@@ -106,7 +106,7 @@ void Func_08124e20(void) {
     timedEntry = list->entries;
     if (recoveryIndex < list->count) {
       do {
-        if (timedEntry->turns > 0 && BattleObjGet(timedEntry->unitId) != 0 &&
+        if (timedEntry->turns > 0 && BattleObject_Get(timedEntry->unitId) != 0 &&
             UnitGet(timedEntry->unitId)->hp != 0) {
           timedEntry->turns--;
         }
@@ -122,7 +122,7 @@ void Func_08124e20(void) {
           u8 unitId = expiredEntry->unitId;
           u8 element;
 
-          if (BattleObjGet(unitId) != 0) {
+          if (BattleObject_Get(unitId) != 0) {
             BattleEventRuntime_Reset();
             BattleEventRuntime_SchedulePhase(30);
             BattleEvPush(0, unitId);
@@ -134,9 +134,9 @@ void Func_08124e20(void) {
             BattleEvPush(11, unitId);
             Audio_PlayCue(212);
             if (BattleParty_IsUnitListed(unitId)) {
-              Object_SetMode(BattleObjGet(unitId)->object, 3);
+              Object_SetMode(BattleObject_Get(unitId)->object, 3);
               ObjectDispatch_SetAnimationSpeedFar(
-                  (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
+                  (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;
             Djinn_ActivateFar(unitId, element, expiredEntry->index);

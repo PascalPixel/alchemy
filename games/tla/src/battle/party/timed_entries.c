@@ -215,9 +215,9 @@ s32 Func_08124cc4(s32 side) {
           BattleEvPush(4, (u32)&MsgDjinnIsSet);
           BattleEvPush(11, id);
           if (BattleParty_IsUnitListed(id)) {
-            Object_SetMode((struct ObjectRuntime *)BattleObjGet(id)->object, 3);
+            Object_SetMode((struct ObjectRuntime *)BattleObject_Get(id)->object, 3);
             ObjectDispatch_SetAnimationSpeedFar(
-                (struct DispatchObject *)BattleObjGet(id)->object, 32);
+                (struct DispatchObject *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;
           Djinn_ActivateFar(id, element, entry->index);

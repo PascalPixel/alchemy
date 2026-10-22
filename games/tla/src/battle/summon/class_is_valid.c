@@ -12,7 +12,7 @@
 #include "ram_buffer.h"
 #include "motobj.h"
 
-s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
+s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObject_Get(id)->palette; }
 
 struct Layout {
   u8 pad[4];

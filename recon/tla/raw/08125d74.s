@@ -321,7 +321,7 @@ Func_08125d74:
 	movs r1, #2
 	adds r0, r5, #0
 	add r10, r1
-	bl BattleObjGet
+	bl BattleObject_Get
 	adds r7, r0, #0
 	adds r0, r5, #0
 	bl UnitGet

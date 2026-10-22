@@ -15,7 +15,7 @@
 #define ObjectDispatch_SetAnimationSpeedFar                                 \
   ((void (*)(s32, s32))ObjectDispatch_SetAnimationSpeedFar)
 
-s32 *BattleObjGet(s32);
+s32 *BattleObject_Get(s32);
 
 struct StatusIconRecord {
   u8 unk00[0x14];
@@ -130,6 +130,6 @@ s32 BattlePres_SetActorModeAndAction(s32 id) {
     value = 5 - value;
   }
 
-  Object_SetMode(*BattleObjGet(id), value);
-  ObjectDispatch_SetAnimationSpeedFar(*BattleObjGet(id), (id & 3) + 14);
+  Object_SetMode(*BattleObject_Get(id), value);
+  ObjectDispatch_SetAnimationSpeedFar(*BattleObject_Get(id), (id & 3) + 14);
 }

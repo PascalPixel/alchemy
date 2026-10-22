@@ -321,7 +321,8 @@ s32 Battle_ProcessRoundEnd(void) {
     if (recoveryIndex < list->count) {
       timedEntry = list->entries;
       do {
-        if (timedEntry->turns > 0 && BattleObjGet(timedEntry->unitId) != 0 &&
+        if (timedEntry->turns > 0 &&
+            BattleObject_Get(timedEntry->unitId) != 0 &&
             UnitGetFar(timedEntry->unitId)->hp != 0) {
           timedEntry->turns--;
         }
@@ -342,7 +343,7 @@ s32 Battle_ProcessRoundEnd(void) {
           u8 unitId = expiredEntry->unitId;
           s32 element;
 
-          if (BattleObjGet(unitId) != 0) {
+          if (BattleObject_Get(unitId) != 0) {
             BattleEvent_Reset();
             BattleEvent_SchedulePhase(30);
             BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
@@ -355,10 +356,10 @@ s32 Battle_ProcessRoundEnd(void) {
             PUSH_MESSAGE(MsgDjinnSet);
             BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
             AudioCommand_PlayFar(SE_212);
-            ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object,
+            ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                               POSE_CAST);
             ObjectDispatch_SetAnimationSpeedFar(
-                (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
+                (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
             element = expiredEntry->element;
             Djinn_ActivateFar(unitId, element, expiredEntry->index);
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
@@ -442,75 +443,75 @@ s32 Battle_ProcessRoundEnd(void) {
         // Each counter that ends rebuilds the unit's status icons and shows
         // its message; the end of stun or sleep also sets the unit standing.
         if (BattleUnit_TickAgilityModifier(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgAgiNormal);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickAttackModifier(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgAtkNormal);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickDefenseModifier(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgDefNormal);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickResistanceModifier(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgResNormal);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickDelusion(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgCureDelusion);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickConfusion(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgConscious);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickCharm(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgConscious2);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickStun(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           BattlePresentation_SetActorModeAndAction(unitId);
           UiText_ShowMessageAndWaitCoreFar(MsgCureStun);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickSleep(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           BattlePresentation_SetActorModeAndAction(unitId);
           UiText_ShowMessageAndWaitCoreFar(MsgWakes);
           BattlePresentation_WaitForAdvance();
         }
         if (Battle_AdvanceCounterAndCheckChance(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgCureSeal);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickRefrain(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgRefrainEnd);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickReflect(unitId) != 0) {
-          BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+          BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
           UiText_ShowMessageAndWaitCoreFar(MsgReflectEnd);
           BattlePresentation_WaitForAdvance();
@@ -642,10 +643,10 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
         AudioCommand_PlayFar(SE_212);
-        ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object,
+        ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                           POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
-            (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
+            (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
         // The pillar of each element whose power rose, its strength the most
         // Djinn of one element the summon used, less one.
         ElementGlow_Play(unitId, i, GLOW_PILLAR, mostOfOneElement - 1);

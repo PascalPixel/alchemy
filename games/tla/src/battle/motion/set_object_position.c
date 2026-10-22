@@ -36,7 +36,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
   struct BattleObj *slot;
   struct MotionObject *object;
 
-  slot = BattleObjGet(objectId);
+  slot = BattleObject_Get(objectId);
   object = slot->object;
   object->acceleration = 0x10000;
   object->speedLimit = 0x40000;
@@ -54,7 +54,7 @@ void Func_0811c01c(s32 objectId) {
   struct BattleObj *slot;
   struct MotionObject *object;
 
-  slot = BattleObjGet(objectId);
+  slot = BattleObject_Get(objectId);
   object = slot->object;
   object->acceleration = 0x10000;
   object->speedLimit = 0x40000;
@@ -91,7 +91,7 @@ void Func_0811c074(s32 id, s32 variant) {
   s32 scale;
   s32 enemyId;
 
-  slot = BattleObjGet(id);
+  slot = BattleObject_Get(id);
   object = slot->object;
   enemyId = ((struct BattleUnit *)UnitGet(id))->enemyId;
   if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376) {

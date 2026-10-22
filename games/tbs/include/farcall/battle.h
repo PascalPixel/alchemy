@@ -41,7 +41,7 @@ void BattleMotion_ApplyVariantMotionFar(s32 id, s32 variant);
 /// into `dst` if it's not null, and returns how many; HP isn't tested.
 s32 BattleParty_ListActorIdsFar(s32 groups, u16 *dst);
 /// Returns a unit's battle object, or null for a unit with no place
-/// (BattleObjGet); the effects find the sprites they move through it.
+/// (BattleObject_Get); the effects find the sprites they move through it.
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 /// Fights a battle against an enemy formation from its opening to its end, and
 /// returns the enemies defeated, ENCOUNTER_FLED or ENCOUNTER_PARTY_LOST.
@@ -86,8 +86,8 @@ s32 DjinnRecovery_TickTwentyFar(void);
 /// abilities and items included; returns 1 past the table's end.
 s32 DebugParty_LoadPresetFar(s32 preset);
 /// Readies the sprite of every unit in the battle and sets its display mode and
-/// motion afresh (BattleObjPut), as after a call for help.
-void BattleObjPutFar(void);
+/// motion afresh (BattleObject_Put), as after a call for help.
+void BattleObject_PutFar(void);
 #ifdef UBFIX
 /// Shows the bobbing cursor at (x, y), in screen pixels, and waits for
 /// KEY_ADVANCE; the battle command row waits on it.

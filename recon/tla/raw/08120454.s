@@ -581,7 +581,7 @@ BattleTargetExec:
 .L_081208b8:
 	bl EnemyUpdate
 	mov r0, r9
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r2, [r0, #12]
 	cmp r2, #0
 	bge .L_081208d0
@@ -601,8 +601,8 @@ BattleTargetExec:
 .L_081208e0:
 	asrs r3, r3, #16
 	mov r1, r9
-	bl BattleObjMake
-	bl BattleObjPut
+	bl BattleObject_Make
+	bl BattleObject_Put
 	add r5, sp, #96
 	adds r0, r5, #0
 	bl BattleEnemyList

@@ -26,7 +26,7 @@ extern u16 gResource_SlotAssignments[];
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot);
 struct BattleObj;
 #ifndef OWN_BattlePresentation_SpawnActorObject
-void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
+void BattleObject_Make(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 #endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);

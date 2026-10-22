@@ -175,7 +175,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // until it is drawn (window/battle_command/party_status.c).
   UiWindow_CreateWithLayoutBoundsFar(PARTY_STATUS_CLOSED);
   Camera_InitDefaultTransform();
-  BattleObjPut();
+  BattleObject_Put();
   BattlePresentation_InitializeWorkAndResetState();
   BattleBackground_Load(BATTLE_BACKGROUND_FLAT, battle->background, 0);
   // The camera on the centre at 190 percent, until the opening sets its own

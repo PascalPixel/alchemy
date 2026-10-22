@@ -8,7 +8,7 @@ void ReleaseBattleObjectRecords(s32 objectId) {
   s32 recordIndex;
   void *record;
 
-  slot = BattleObjGet(objectId);
+  slot = BattleObject_Get(objectId);
   if (slot != NULL) {
     object = slot->object;
     if (object != NULL) {

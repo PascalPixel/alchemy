@@ -37,7 +37,7 @@ Func_0811edb0:
 	movs r0, #0
 	bl BattlePres_SetActorModes
 	ldr r0, [r5, #8]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
@@ -72,7 +72,7 @@ Func_0811edb0:
 	lsls r3, r7, #1
 	adds r3, #36
 	ldrsh r0, [r2, r3]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #0
 	ldr r0, [r0]
 	bl GetMotionRecord

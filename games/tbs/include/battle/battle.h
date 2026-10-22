@@ -115,7 +115,8 @@ extern s8 gBattleParty_CenterOrderOffsets[];
 /// Round-end effects go to the party (BATTLE_SIDE_PARTY), then the enemies
 /// (BATTLE_SIDE_ENEMIES).
 extern const struct BattleGroupOrder gBattleParty_RoundEndGroupOrder;
-/// A lone SC_END: a battle unit's object script, which BattleObjMake starts.
+/// A lone SC_END: a battle unit's object script, which BattleObject_Make
+/// starts.
 extern const s32 gBattlePresentation_ActorObjectScript[];
 /// The advance arrow beside a battle message: eight 128-byte frames of a
 /// 256-colour sprite, one every four frames.

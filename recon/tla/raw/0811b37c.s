@@ -69,14 +69,14 @@ Func_0811b37c:
 	mov r2, r9
 	strb r2, [r1, r3]
 	adds r0, r5, #0
-	bl BattleObjGet
+	bl BattleObject_Get
 	mov r3, r11
 	ldrsb r2, [r6, r3]
 	mov r1, r11
 	adds r3, r6, #1
 	ldrsb r3, [r3, r1]
 	adds r1, r5, #0
-	bl BattleObjMake
+	bl BattleObject_Make
 	subs r7, #1
 	movs r2, #1
 	adds r6, #2
@@ -133,13 +133,13 @@ Func_0811b37c:
 	cmp r5, #254
 	beq .L_0811b48e
 	adds r0, r5, #0
-	bl BattleObjGet
+	bl BattleObject_Get
 	mov r1, r9
 	ldr r2, [r6, r1]
 	mov r1, r10
 	ldr r3, [r6, r1]
 	adds r1, r5, #0
-	bl BattleObjMake
+	bl BattleObject_Make
 .L_0811b48e:
 	movs r2, #2
 	subs r7, #1

@@ -61,10 +61,10 @@ Func_081195ec:
 	ldr r2, [sp, #0]
 	mov r1, r9
 	ldrh r6, [r1, r2]
-	bl BattleObjGet
+	bl BattleObject_Get
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r3, [r0]
 	ldr r4, [r5]
 	mov r12, r3
@@ -117,7 +117,7 @@ Func_081195ec:
 	adds r3, #65
 	ldrb r0, [r3]
 	bl PartyStatusDrawFar
-	bl BattleObjPut
+	bl BattleObject_Put
 	movs r1, #6
 	ldr r0, [sp, #0]
 	bl BattlePres_SetActorModes

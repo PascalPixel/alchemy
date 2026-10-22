@@ -33,7 +33,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
-      struct BattleObj *slot = BattleObjGet(unitIds[unitIndex]);
+      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -77,7 +77,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   {
     count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
-      struct BattleObj *slot = BattleObjGet(unitIds[unitIndex]);
+      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -107,7 +107,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   {
     count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
-      struct BattleObj *slot = BattleObjGet(unitIds[unitIndex]);
+      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -315,9 +315,10 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
     pose = POSE_ENEMY_DOWN - pose;
   }
 
-  ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, pose);
+  ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
   ObjectDispatch_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObjGet(unitId)->object, (unitId & 3) + 14);
+      (struct DispatchObject *)BattleObject_Get(unitId)->object,
+      (unitId & 3) + 14);
 }
 
 /// Releases every sprite unitId's object holds and leaves it with none,
@@ -330,7 +331,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   s32 recordIndex;
   struct AnimationObject *record;
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   if (battleObject != NULL) {
     object = battleObject->object;
     if (object != NULL) {
@@ -355,7 +356,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// list lacks, then creates each listed unit's sprites (body, weapon, status
 /// icon and effect; or the two parts of a two-part enemy) unless it has
 /// them, building its status icons and setting its pose. With refreshPoses,
-/// sets every listed unit's pose again afterwards. Called by BattleObjPut
+/// sets every listed unit's pose again afterwards. Called by BattleObject_Put
 /// (refreshing) and BattleParty_ListAllUnitsAndSubmit, by the staging and
 /// entry transition code, and through its far stub by
 /// BattleEffect_SelectLivingTargets. Writes the objects' records, their storage
@@ -391,7 +392,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
        unitIndex++) {
     if (unitId == BATTLE_UNIT_REMOVED)
       continue;
-    battleObject = BattleObjGet(unitId);
+    battleObject = BattleObject_Get(unitId);
     if (battleObject == 0)
       continue;
     BattleUnit_BuildStatusFlags(unitId, battleObject);
@@ -474,7 +475,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     if ((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END) {
       for (;;) {
         if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
-            (battleObject = BattleObjGet(spriteId)) != 0 &&
+            (battleObject = BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
           BattlePresentation_SetActorModeAndAction(spriteId);
         unitIndex++;
@@ -488,7 +489,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 
 /// Returns unitId's battle object, through its place, or null for a
 /// unit with no place. Called throughout the battle parts.
-struct BattleObj *BattleObjGet(s32 unitId) {
+struct BattleObj *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct BattleObj *objects = battle->slots;
   s32 placementIndex;
@@ -555,7 +556,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 s32 BattleObject_MarkForRelease(s32 unitId) {
   struct BattleObj *battleObject;
   BattleMotion_ReleaseObjectSlotByValue(unitId);
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   battleObject->active = 1;
   return 0;
 }
@@ -578,7 +579,7 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
     if (placementIndex <= ALLY_MAX) {
       unitId = placementIndex;
     }
-    battleObject = BattleObjGet(unitId);
+    battleObject = BattleObject_Get(unitId);
     if ((battleObject != NULL) && (battleObject->active != 0)) {
       ObjectDispatch_ReleaseFar((struct DispatchObject *)battleObject->object);
       battleObject->object = NULL;
@@ -622,7 +623,7 @@ s32 Camera_ApplyTransformByFlag(void) {
 /// and y, then its depth; Render_ProjectPoint). Returns 0. Reached through
 /// its far stub from EffectPosition_ProjectBattler.
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
-  struct MotionObject *object = BattleObjGet(unitId)->object;
+  struct MotionObject *object = BattleObject_Get(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
   s32 position[3];
   s32 projectionScale;

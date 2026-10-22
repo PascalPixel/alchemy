@@ -150,16 +150,16 @@ void Func_0812561c(struct BattlePlan *plan) {
         BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
         Audio_PlayCue(212);
-        Object_SetMode(BattleObjGet(unitId)->object, 3);
+        Object_SetMode(BattleObject_Get(unitId)->object, 3);
         ObjectDispatch_SetAnimationSpeedFar(
-            (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
+            (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
         Func_08127308(unitId, i, 2, -1);
         BattleEventRuntime_WaitForReady();
       }
     }
     MemFree(before);
   }
-  if (battleContinues != 0 && BattleObjGet(unitId)->object != 0) {
+  if (battleContinues != 0 && BattleObject_Get(unitId)->object != 0) {
     s8 *poison;
     u8 *reaper;
 
@@ -229,6 +229,6 @@ void Func_0812561c(struct BattlePlan *plan) {
     }
     BattleEv_DispatchQueued();
   }
-  if (BattleObjGet(unitId)->object != 0)
+  if (BattleObject_Get(unitId)->object != 0)
     UnitCalcFar(unitId);
 }

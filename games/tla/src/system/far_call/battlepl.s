@@ -12,7 +12,7 @@ BattleParty_ListActorIdsFar:
 	.global GetBattleObjectSlotFar
 	.thumb_func
 GetBattleObjectSlotFar:
-	overlay_veneer BattleObjGet
+	overlay_veneer BattleObject_Get
 	.global Battle_RunEncounterFar
 	.thumb_func
 Battle_RunEncounterFar:

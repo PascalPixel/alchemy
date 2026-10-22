@@ -292,12 +292,12 @@ Func_0812561c:
 	movs r0, #212
 	bl Audio_PlayCue
 	mov r0, r8
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #3
 	ldr r0, [r0]
 	bl Object_SetMode
 	mov r0, r8
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #32
 	ldr r0, [r0]
 	bl ObjectDispatch_SetAnimationSpeedFar
@@ -321,7 +321,7 @@ Func_0812561c:
 	b .L_08125a64
 .L_08125890:
 	mov r0, r8
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r3, [r0]
 	cmp r3, #0
 	bne .L_0812589e
@@ -530,7 +530,7 @@ Func_0812561c:
 	bl BattleEv_DispatchQueued
 .L_08125a64:
 	mov r0, r8
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r3, [r0]
 	cmp r3, #0
 	beq .L_08125a76

@@ -13,8 +13,8 @@ struct SpriteEntry;
 
 /// A unit's place on the battlefield: its sprite object, resources and
 /// animations, its anchor spot and scale, and the conditions it shows.
-/// BattleWork.slots holds the 14, reached by unit id through BattleObjGet;
-/// BattleObjMake fills one in when the unit is placed.
+/// BattleWork.slots holds the 14, reached by unit id through BattleObject_Get;
+/// BattleObject_Make fills one in when the unit is placed.
 struct BattleObj {
   struct MotionObject *object; ///< NULL once released
   u16 resource;                ///< the unit's sprite

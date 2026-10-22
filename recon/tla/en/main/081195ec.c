@@ -5,7 +5,7 @@
 // old actors) and the battle's party list, redraws the status and brings the
 // reserves in (mode 6). No ☀️ twin. The battle work declared after the
 // counts puts the spills in the native's slots (permute), and both ids read
-// before the lookups load the reserve id before the first BattleObjGet
+// before the lookups load the reserve id before the first BattleObject_Get
 // (14 to 6 to 4). Left: the native copies the object into r0 (mov r0, ip)
 // before it loads the position's three words, and builds the owner step 1
 // before it reloads the party list's offset (ldr r1, [sp, #8]). Tried: the
@@ -41,8 +41,8 @@ void Func_081195ec(void) {
   for (i = 0; i < count; i++) {
     s32 unit = work->partyUnits[i];
     s32 id = reserves[i];
-    struct BattleObj *from = BattleObjGet(unit);
-    struct BattleObj *to = BattleObjGet(id);
+    struct BattleObj *from = BattleObject_Get(unit);
+    struct BattleObj *to = BattleObject_Get(id);
     struct MotionObject *object = to->object;
     struct MotionObject *place = from->object;
 
@@ -56,7 +56,7 @@ void Func_081195ec(void) {
   for (i = 0; i < count; i++)
     gPartyState.activeOwners[actorCount + i] = actors[i];
   PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
-  BattleObjPut();
+  BattleObject_Put();
   BattlePres_SetActorModes(reserves, 6);
   WaitFrames(32);
 }

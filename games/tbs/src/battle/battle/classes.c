@@ -20,7 +20,7 @@ u32 BattleClass_GetDefeatSoundKind(s32 index) {
 #define ENEMY_CLASS_LAST 171
 
 /// Returns the class's battle sprite, row 0's for a class out of range.
-/// Called by BattleObjMake and SummonSlot_RegisterActorSprites.
+/// Called by BattleObject_Make and SummonSlot_RegisterActorSprites.
 s32 BattleClass_GetSprite(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;
@@ -31,7 +31,7 @@ s32 BattleClass_GetSprite(s32 index) {
 /// For a class out of range it returns row 0's sprite, not a palette.
 /// XXX: likely a slip copied from BattleClass_GetSprite, because no other
 /// getter here returns another column for a bad index. Called by
-/// BattleObjMake and SummonSlot_RegisterActorSprites.
+/// BattleObject_Make and SummonSlot_RegisterActorSprites.
 s32 BattleClass_GetPalette(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;

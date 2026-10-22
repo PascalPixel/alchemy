@@ -13,7 +13,7 @@ void ReleaseBattleObjectRecords(s32 no) {
   s32 i;
   void *rec;
 
-  slot = BattleObjGet(no);
+  slot = BattleObject_Get(no);
   if (slot != NULL) {
     obj = slot->object;
     if (obj != NULL) {

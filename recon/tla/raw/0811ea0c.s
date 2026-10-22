@@ -20,7 +20,7 @@ Func_0811ea0c:
 	str r3, [sp, #8]
 	ldrb r5, [r0]
 	adds r0, r5, #0
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r2, [r0, #12]
 	ldr r3, [r0]
 	str r2, [r3, #8]
@@ -116,7 +116,7 @@ Func_0811ea0c:
 .L_0811eaf4:
 	ldr r3, [sp, #16]
 	ldrb r0, [r3]
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r5, [r0]
 	movs r1, #0
 	adds r0, r5, #0
@@ -169,7 +169,7 @@ Func_0811ea0c:
 	asrs r3, r3, #16
 	cmp r0, r3
 	beq .L_0811ebb8
-	bl BattleObjGet
+	bl BattleObject_Get
 	adds r5, r0, #0
 	movs r1, #0
 	ldr r0, [r5]
@@ -204,7 +204,7 @@ Func_0811ea0c:
 .L_0811ebb8:
 	mov r1, r8
 	ldr r0, [r1, #8]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #16
 	ldr r0, [r0]
 	bl ObjectDispatch_SetAnimationSpeedFar

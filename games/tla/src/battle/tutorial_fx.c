@@ -22,8 +22,8 @@ s32 BattleObject_MarkForRelease(s32 objectId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
 s32 EnemyUpdate(void);
-struct BattleObj *BattleObjGet(s32 objectId);
-void BattleObjPut(void);
+struct BattleObj *BattleObject_Get(s32 objectId);
+void BattleObject_Put(void);
 
 void Func_08119734(s32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
@@ -41,10 +41,10 @@ void Func_08119734(s32 id) {
   work->enemyIds[0] = 128;
   work->enemyIds[1] = 255;
   EnemyUpdate();
-  object = (s32 *)BattleObjGet(128);
-  BattleObjMake((struct BattleObj *)object, 128, object[3] / 0x10000,
+  object = (s32 *)BattleObject_Get(128);
+  BattleObject_Make((struct BattleObj *)object, 128, object[3] / 0x10000,
                 object[4] / 0x10000);
-  BattleObjPut();
+  BattleObject_Put();
 }
 
 void Func_081197a8(s32 value) {

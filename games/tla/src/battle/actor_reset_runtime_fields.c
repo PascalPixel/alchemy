@@ -12,7 +12,7 @@
 #include "owner_state.h"
 #include "battle_status_icon.h"
 
-s32 BattleObjGet(s32);
+s32 BattleObject_Get(s32);
 
 s32 BattleActor_ResetRuntimeFields(s32 actor) {
   u8 *state;
@@ -55,5 +55,5 @@ s32 BattleActor_ResetRuntimeFields(s32 actor) {
   state[0x148] = 0;
 
   UnitCalcFar(actor);
-  return BattleUnit_BuildStatusFlags(actor, BattleObjGet(actor));
+  return BattleUnit_BuildStatusFlags(actor, BattleObject_Get(actor));
 }

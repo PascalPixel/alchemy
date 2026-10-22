@@ -99,7 +99,7 @@ u16 *Djinn_GetRecoveryTableFar(s32 owner);
 void Func_081185c4(void);
 void UiWindow_CreateWithLayoutBoundsFar(s32 layout);
 void Camera_InitDefaultTransform(void);
-void BattleObjPut(void);
+void BattleObject_Put(void);
 void Func_081263c4(void);
 void Func_081263fc(s32 mode, s32 background, s32 value);
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
@@ -251,7 +251,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     Func_081185c4();
   UiWindow_CreateWithLayoutBoundsFar(9);
   Camera_InitDefaultTransform();
-  BattleObjPut();
+  BattleObject_Put();
   Func_081263c4();
   Func_081263fc(1, battle->background, 0);
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);

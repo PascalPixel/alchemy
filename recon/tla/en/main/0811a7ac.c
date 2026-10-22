@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 426 (one reordered row), from The Broken Seal's
-// BattleObjMake (games/tbs/src/battle/battle/placement.c): this game keys the
+// BattleObject_Make (games/tbs/src/battle/battle/placement.c): this game keys the
 // sprite and scale by the unit's enemy id, has eight characters, sets the
 // effect (686) before the scale switch and a visible flag beside the fade
 // flag. The cases are written in the listing's body order, each group as its
@@ -47,7 +47,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 s32 ArcTan2(s32 y, s32 x);
 
-void BattleObjMake(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
+void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;

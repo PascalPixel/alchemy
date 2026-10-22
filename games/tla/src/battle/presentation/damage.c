@@ -39,7 +39,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   if (character->hp < 0)
     character->hp = 0;
 
-  slot = BattleObjGet(unitId);
+  slot = BattleObject_Get(unitId);
   Object_SetMode(slot->object, 5);
   PartyStatusDrawFar(0);
   UiWork_ClearValueNameTablesFar();
@@ -70,7 +70,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
   }
 
-  slot = BattleObjGet(unitId);
+  slot = BattleObject_Get(unitId);
   Object_SetMode(slot->object, 1);
 }
 
@@ -86,7 +86,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *entry;
 
   if (((struct BattleUnit *)UnitGet(unitId))->hp <= 0) {
-    animation = BattleObjGet(unitId)->object->records;
+    animation = BattleObject_Get(unitId)->object->records;
     Animation_ApplyChildArgumentFar(animation, 5);
     entry = animation->entry;
     entry->param = 6;

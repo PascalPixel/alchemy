@@ -79,7 +79,7 @@ Func_0811df70:
 	ands r0, r3
 	bl PartyStatusDrawFar
 	ldr r0, [sp, #12]
-	bl BattleObjGet
+	bl BattleObject_Get
 	ldr r0, [r0]
 	ldr r3, .L_0811e038
 	movs r2, #128
@@ -322,7 +322,7 @@ Func_0811df70:
 	lsls r3, r6, #1
 	adds r3, #36
 	ldrsh r0, [r2, r3]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #0
 	ldr r0, [r0]
 	bl GetMotionRecord
@@ -425,7 +425,7 @@ Func_0811df70:
 .L_0811e296:
 	bl BattleEventRuntime_WaitForReady
 .L_0811e29a:
-	bl BattleObjPut
+	bl BattleObject_Put
 	movs r0, #3
 	ldr r1, [sp, #4]
 	bl BattleParty_ListActorIds

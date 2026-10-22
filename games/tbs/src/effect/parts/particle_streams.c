@@ -578,7 +578,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         ResourceObject_ReleaseFar(work->objects[0]);
         ResourceObject_ReleaseFar(work->objects[1]);
-        BattleObjPutFar();
+        BattleObject_PutFar();
       }
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }

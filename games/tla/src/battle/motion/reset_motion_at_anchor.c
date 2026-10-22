@@ -19,7 +19,7 @@
 
 s32 ArcTan2(s32, s32);
 
-struct BattleObj *BattleObjGet(s32 objectId) {
+struct BattleObj *BattleObject_Get(s32 objectId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   struct BattleObj *slots = work->slots;
   s32 index;
@@ -40,7 +40,7 @@ void ObjMotRst(s32 slotId) {
   struct BattleObj *slot;
   struct MotionObject *object;
 
-  slot = BattleObjGet(slotId);
+  slot = BattleObject_Get(slotId);
   object = slot->object;
   zero = 0;
   object->acceleration = 0x20000;
@@ -62,7 +62,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   struct BattleObj *slot;
   struct MotionObject *object;
 
-  slot = BattleObjGet(objectId);
+  slot = BattleObject_Get(objectId);
   object = slot->object;
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;

@@ -85,7 +85,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners);
 s32 BattleEnemyList(s16 *unitIds);
 s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds);
 s32 BattleParty_ListActorIds(s32 sideMask, u16 *unitIds);
-void BattleObjPut(void);
+void BattleObject_Put(void);
 void BattleParty_ListAllUnitsAndSubmit(void);
 s32 BattleMotion_GetSlotPalette(s32 unitId);
 s32 EnemyCheck(s32 classId);
@@ -97,7 +97,7 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId);
 #endif
 s32 BattleUnit_GetWeaponKind(s32 itemId);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
-void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
+void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y);
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions);
@@ -127,7 +127,7 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId);
 #endif
 void ReleaseBattleObjectRecords(s32 unitId);
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
-struct BattleObj *BattleObjGet(s32 unitId);
+struct BattleObj *BattleObject_Get(s32 unitId);
 void ResetMotionRecordGroup(void *recordGroup);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
 s32 BattleObject_MarkForRelease(s32 unitId);

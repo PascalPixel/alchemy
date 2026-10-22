@@ -305,11 +305,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       {
         struct BattleObj *obj;
 
-        obj = BattleObjGet(newUnitId);
-        BattleObjMake(obj, newUnitId, obj->anchorX / 0x10000,
-                      obj->anchorZ / 0x10000);
+        obj = BattleObject_Get(newUnitId);
+        BattleObject_Make(obj, newUnitId, obj->anchorX / 0x10000,
+                          obj->anchorZ / 0x10000);
       }
-      BattleObjPut();
+      BattleObject_Put();
       {
         s16 enemyIds[8];
         s32 enemyCount;

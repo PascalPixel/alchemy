@@ -84,7 +84,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
        unitIndex++) {
     if (unitId == 254)
       continue;
-    battleObject = (struct TlaBattleObj *)BattleObjGet(unitId);
+    battleObject = (struct TlaBattleObj *)BattleObject_Get(unitId);
     if (battleObject == 0)
       continue;
     if (battleObject->fading != 0)
@@ -159,7 +159,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
     if ((spriteId = unitIds[0]) != 255) {
       for (;;) {
         if (unitIds[unitIndex] != 254 &&
-            (battleObject = (struct TlaBattleObj *)BattleObjGet(spriteId)) != 0 &&
+            (battleObject = (struct TlaBattleObj *)BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
           BattlePres_SetActorModeAndAction(spriteId);
         unitIndex++;

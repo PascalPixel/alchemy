@@ -9,8 +9,8 @@
 /// Battle_RunEncounter as the battle is set up, by
 /// BattlePresentation_DispatchAction, BattlePresentation_RunUnitTransition,
 /// the auto battle and BattleTargetExec after a call for help, and through
-/// the far stub BattleObjPutFar by BattleEffect_RunParticleStreams.
-void BattleObjPut(void) {
+/// the far stub BattleObject_PutFar by BattleEffect_RunParticleStreams.
+void BattleObject_Put(void) {
   s16 unitIds[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
@@ -30,7 +30,9 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
 /// Returns the palette of unit id's battle object. Called by
 /// BattleEvent_Playback and BattleMotion_FlashHit, and through its far stub
 /// by the effect dispatcher (effect/parts/dispatch.c).
-s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
+s32 BattleMotion_GetSlotPalette(s32 id) {
+  return BattleObject_Get(id)->palette;
+}
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by
 /// side, a small one (BattleClass_IsSmall) one.
@@ -65,7 +67,7 @@ s32 EnemyCheck(s32 classId) {
 /// The slots stay the unit's until BattleMotion_ReleaseObjectSlotByValue
 /// frees them as it leaves the battle. Returns the first slot and the
 /// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
-/// a load fails. Called by BattleObjMake. Writes gBattleWork->spriteSlots
+/// a load fails. Called by BattleObject_Make. Writes gBattleWork->spriteSlots
 /// and the slots' 16 KB sprite buffers at Ram_ActorSpriteSlots.
 s32 SummonSlot_RegisterActorSprites(s32 unitId) {
   s32 spritePart;
@@ -210,7 +212,7 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 /// Returns the weapon sprite a party member's attack shows for the kind of
 /// weapon they have equipped (gBattleUnit_WeaponAnims tables), or 0 for no
 /// weapon, for Felix, or for a unit that is no party member. Called by
-/// BattleObjMake, which keeps it in BattleObj.overlay for
+/// BattleObject_Make, which keeps it in BattleObj.overlay for
 /// BattleObject_SpawnObjectsForList to add as a layer of the body sprite.
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   struct BattleUnit *unit;

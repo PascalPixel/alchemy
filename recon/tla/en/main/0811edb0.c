@@ -68,7 +68,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   BattlePres_BuildTargetList(plan, &work);
   BattlePres_SetActorModes(0, 0);
   {
-    struct BattleObj *slot = BattleObjGet(work.actor);
+    struct BattleObj *slot = BattleObject_Get(work.actor);
     struct BattleWork *battle;
     u8 *mode;
 
@@ -91,7 +91,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++) {
     struct ItemAnimation *animation = GetMotionRecord(
-        BattleObjGet(work.actors[targetOrFadeIndex])->object, 0);
+        BattleObject_Get(work.actors[targetOrFadeIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)

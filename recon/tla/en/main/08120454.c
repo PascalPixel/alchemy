@@ -627,10 +627,10 @@ power_end:
       {
         struct BattleObj *obj;
 
-        obj = BattleObjGet(ent);
-        BattleObjMake(obj, ent, obj->anchorX / 0x10000, obj->anchorZ / 0x10000);
+        obj = BattleObject_Get(ent);
+        BattleObject_Make(obj, ent, obj->anchorX / 0x10000, obj->anchorZ / 0x10000);
       }
-      BattleObjPut();
+      BattleObject_Put();
       {
         s32 num;
 

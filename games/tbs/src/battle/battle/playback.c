@@ -189,7 +189,7 @@ void BattleEvent_Playback(void) {
               AudioCommand_PlayFar(events->pendingCue);
             events->actorId = events->queue.operands[eventIndex];
             ObjectDispatch_SelectAnimationFar(
-                BattleObjGet(events->actorId)->object, POSE_DAMAGE);
+                BattleObject_Get(events->actorId)->object, POSE_DAMAGE);
             events->phase = PLAY_HIT;
             events->timer = 0;
             break;
@@ -205,8 +205,9 @@ void BattleEvent_Playback(void) {
             BattleObject_ResetRuntimeFields(events->actorId);
             unit = UnitGetFar(events->actorId);
             for (recordIndex = 0;
-                 (record = GetMotionRecord(
-                      BattleObjGet(events->actorId)->object, recordIndex)) != 0;
+                 (record =
+                      GetMotionRecord(BattleObject_Get(events->actorId)->object,
+                                      recordIndex)) != 0;
                  recordIndex++) {
               if (unit->side != BATTLE_UNIT_ENEMY)
                 AnimationObjects_SelectAnimationFar(record, POSE_PARTY_HELD);
@@ -227,8 +228,8 @@ void BattleEvent_Playback(void) {
 
             BattleUnit_BuildStatusFlags(
                 events->queue.operands[eventIndex],
-                BattleObjGet(events->queue.operands[eventIndex]));
-            slot = BattleObjGet(events->queue.operands[eventIndex]);
+                BattleObject_Get(events->queue.operands[eventIndex]));
+            slot = BattleObject_Get(events->queue.operands[eventIndex]);
             BattleMotion_SetRecordChildValues(
                 slot->object, BattleMotion_GetSlotPalette(
                                   events->queue.operands[eventIndex]));
@@ -304,14 +305,14 @@ void BattleEvent_Playback(void) {
           struct BattleObj *slot;
 
           selection[0] = BATTLE_UNIT_LIST_END;
-          slot = BattleObjGet(events->actorId);
+          slot = BattleObject_Get(events->actorId);
           BattleMotion_SetRecordChildValues(
               slot->object, BattleMotion_GetSlotPalette(events->actorId));
         } else {
           selection[0] = events->actorId;
           selection[1] = BATTLE_UNIT_LIST_END;
           BattleMotion_SetRecordChildValues(
-              BattleObjGet(events->actorId)->object, SPRITE_COLOR_WHITE);
+              BattleObject_Get(events->actorId)->object, SPRITE_COLOR_WHITE);
         }
         BattleLayout_HighlightPartyPanelsFar(selection);
       }
@@ -362,8 +363,9 @@ void BattleEvent_Playback(void) {
           s32 lastFrameMask;
 
           for (recordIndex = 0, slot = records, lastFrameMask = 0xff;
-               (record = GetMotionRecord(BattleObjGet(events->actorId)->object,
-                                         recordIndex)) != 0;
+               (record =
+                    GetMotionRecord(BattleObject_Get(events->actorId)->object,
+                                    recordIndex)) != 0;
                recordIndex++) {
             struct AnimationEntry *child;
             u8 previousFrame;
@@ -393,7 +395,7 @@ void BattleEvent_Playback(void) {
         s32 step;
         s32 base;
 
-        slot = BattleObjGet(events->actorId);
+        slot = BattleObject_Get(events->actorId);
         slot->fading = 1;
         for (count = 0; (record = GetMotionRecord(slot->object, count)) != 0;
              count++)

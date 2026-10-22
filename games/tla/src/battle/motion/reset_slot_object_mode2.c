@@ -26,8 +26,8 @@ void BattleMotion_ReservedNoOp83B0();
 /// covers the distance in about travelDivisor frames.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
-  struct BattleObj *actorSlot = BattleObjGet(actorId);
-  struct BattleObj *targetSlot = BattleObjGet(targetId);
+  struct BattleObj *actorSlot = BattleObject_Get(actorId);
+  struct BattleObj *targetSlot = BattleObject_Get(targetId);
   struct MotionObject *object = actorSlot->object;
   struct MotionObject *target = targetSlot->object;
   s32 scale = 75;
@@ -67,7 +67,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
 void BattleMotion_ResetSlotObjectMode2(s32 id) {
   struct MotionObject *object;
 
-  object = BattleObjGet(id)->object;
+  object = BattleObject_Get(id)->object;
   Object_ResetMotion(object);
   Object_SetMode(object, 2);
 }
@@ -90,8 +90,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
     s32 z;
   } pos;
 
-  first = BattleObjGet(firstId)->object;
-  secondSlot = BattleObjGet(secondId);
+  first = BattleObject_Get(firstId)->object;
+  secondSlot = BattleObject_Get(secondId);
 
   x1 = first->targetX;
   /* FAKEMATCH: ⚓️ loads the first target before it builds the unset marker */
@@ -135,7 +135,7 @@ u8 *ResourceMetadata_RegisterFar(s32 resource, s32 id);
 void Animation_SetWorkEntryFar(u8 *effect, s32 entry);
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
-  struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObjGet(slot);
+  struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObject_Get(slot);
   u8 *effect;
 
   if (entry->object != NULL) {
@@ -159,7 +159,7 @@ s32 Camera_ApplyTransformByFlag(void);
 s32 Func_0811c37c(s32 owner);
 
 s32 Func_0811c2b4(s32 slot, s32 *screen) {
-  struct MotionObject *object = BattleObjGet(slot)->object;
+  struct MotionObject *object = BattleObject_Get(slot)->object;
   struct SlotMotionRecord *record = GetMotionRecord(object, 0);
   s32 scale;
   /* FAKEMATCH: an unused vector the size of the native frame. */
@@ -174,7 +174,7 @@ s32 Func_0811c2b4(s32 slot, s32 *screen) {
 void *UnitGet(s32 owner);
 
 s32 Func_0811c314(s32 slot, s32 *screen) {
-  struct MotionObject *object = BattleObjGet(slot)->object;
+  struct MotionObject *object = BattleObject_Get(slot)->object;
   struct SlotMotionRecord *record = GetMotionRecord(object, 0);
   s32 scale;
 

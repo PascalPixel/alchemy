@@ -13,7 +13,7 @@
 #include "battle_session.h"
 #include "owner_state.h"
 
-struct BattleObj *BattleObjGet(s32 arg0);
+struct BattleObj *BattleObject_Get(s32 arg0);
 s32 BattleObject_MarkForRelease(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
@@ -27,7 +27,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
     Unit_SetHpFar(creature, 0);
     BattleActor_RemoveFromLists(arg0);
     BattleObject_MarkForRelease(arg0);
-    runtime = BattleObjGet(arg0);
+    runtime = BattleObject_Get(arg0);
     Object_Destroy((struct DispatchObject *)runtime->object);
     runtime->object = 0;
     runtime->active = 0;

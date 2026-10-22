@@ -9,7 +9,7 @@
 #include "battle_session.h"
 
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
-struct BattleObj *BattleObjGet(s32 id);
+struct BattleObj *BattleObject_Get(s32 id);
 
 void EnemyUpdate(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
@@ -37,7 +37,7 @@ void EnemyUpdate(void) {
     s32 id = unitIds[i];
 
     if (id != 0xfe) {
-      struct BattleObj *object = BattleObjGet(id);
+      struct BattleObj *object = BattleObject_Get(id);
 
       object->anchorX = x[i] << 16;
       object->anchorZ = z[i] << 16;

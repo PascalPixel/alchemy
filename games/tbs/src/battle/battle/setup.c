@@ -314,7 +314,8 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 
       entry = list->entries;
       do {
-        if (entry->turns == afterBattle && BattleObjGet(entry->unitId) == 0) {
+        if (entry->turns == afterBattle &&
+            BattleObject_Get(entry->unitId) == 0) {
           u8 id = entry->unitId;
           u8 element = entry->element;
           u8 index = entry->index;

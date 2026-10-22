@@ -1070,7 +1070,7 @@ Func_0812381c:
 	ldr r3, [r4]
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #3
 	ldr r0, [r0]
 	bl Object_SetMode
@@ -1078,7 +1078,7 @@ Func_0812381c:
 	ldr r3, [r2]
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl BattleObjGet
+	bl BattleObject_Get
 	movs r1, #32
 	ldr r0, [r0]
 	bl ObjectDispatch_SetAnimationSpeedFar

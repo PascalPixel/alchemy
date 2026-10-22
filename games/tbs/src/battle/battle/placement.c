@@ -31,7 +31,7 @@
 /// BattleUnit_RefreshPlacement and by BattleTargetExec for an enemy that joins.
 /// Fills in actor, creates a field object for it and, for an enemy, claims its
 /// sprite slots.
-void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
+void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;
@@ -380,7 +380,7 @@ s32 EnemyUpdate(void) {
     s32 unitId = battle->enemyIds[enemyIndex];
 
     if (unitId != BATTLE_UNIT_REMOVED) {
-      struct BattleObj *object = BattleObjGet(unitId);
+      struct BattleObj *object = BattleObject_Get(unitId);
 
       object->anchorX = xPositions[enemyIndex] * 65536;
       object->anchorZ = zPositions[enemyIndex] * 65536;
@@ -425,9 +425,9 @@ void BattleUnit_RefreshPlacement(void) {
     s32 unitId = unitIds[unitIndex];
 
     battle->placement[unitId] = partyPlace;
-    BattleObjMake(BattleObjGet(unitId), unitId,
-                  gBattlePlacement_StepPairs[partyPlace * 2],
-                  gBattlePlacement_StepPairs[partyPlace * 2 + 1]);
+    BattleObject_Make(BattleObject_Get(unitId), unitId,
+                      gBattlePlacement_StepPairs[partyPlace * 2],
+                      gBattlePlacement_StepPairs[partyPlace * 2 + 1]);
   }
 
   // The enemies, laid out by size.
@@ -441,8 +441,8 @@ void BattleUnit_RefreshPlacement(void) {
     s32 unitId = battle->enemyIds[unitIndex];
 
     if (unitId != BATTLE_UNIT_REMOVED)
-      BattleObjMake(BattleObjGet(unitId), unitId, xPositions[enemyPlace],
-                    zPositions[enemyPlace]);
+      BattleObject_Make(BattleObject_Get(unitId), unitId,
+                        xPositions[enemyPlace], zPositions[enemyPlace]);
   }
 }
 

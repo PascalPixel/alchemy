@@ -162,7 +162,7 @@ static void Colosso_TakePlaceForMatch(void) {
     struct FieldActor *actor = Object_GetById(actorId);
 
     if (actor != 0 && actor->spriteStorageKind == 1 &&
-        actor->sprite->entries[0]->animId == 165) {
+        actor->sprite->entries[0]->animationId == 165) {
       s32 distanceX = (supporter->x.fixed - actor->x.fixed) / PIXELS(1);
       s32 distanceZ = (supporter->z.fixed - actor->z.fixed) / PIXELS(1);
 

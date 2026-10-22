@@ -146,16 +146,16 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
             break;
           }
           Item_GetDirectFar(item);
-          UiWork_SetParamNibble(15);
+          UiWork_SetParameterNibble(15);
           if (Item_ClassifyUseAbility(owner, item) != 0) {
-            UiWork_SetParamNibble(4);
+            UiWork_SetParameterNibble(4);
           } else if ((item & INVENTORY_BROKEN) != 0) {
-            UiWork_SetParamNibble(2);
+            UiWork_SetParameterNibble(2);
           }
           UiText_DrawCharacterAtOffset((item & INVENTORY_ITEM_ID_MASK) +
                                            MsgItemName,
                                        window, 16, i * 16);
-          UiWork_SetParamNibble(15);
+          UiWork_SetParameterNibble(15);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;

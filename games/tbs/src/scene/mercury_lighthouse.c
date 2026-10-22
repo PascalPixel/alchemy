@@ -2883,7 +2883,7 @@ static void MercuryLighthouse_RideLift(void) {
 
 /// Mia casts Ply on the Ply target, moved onto the door.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
-  struct FieldFxScene *effectWork;
+  struct FieldEffectScene *effectWork;
   u8 flags;
 
   effectWork = gEffectWork;
@@ -3040,7 +3040,7 @@ s32 gMercuryLighthouse_SparkBurstScript[] = {
 s32 gMercuryLighthouse_PushScriptA[] = {
     SC_WAIT(45),
     SC_SET(SW_SPEED, 0xcccc),
-    SC_SET(SW_ACCEL, 0x3333),
+    SC_SET(SW_ACCELERATION, 0x3333),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
     SC_MOVE(PIXELS(792), 0, PIXELS(712)),
     SC_SYNC,
@@ -3050,7 +3050,7 @@ s32 gMercuryLighthouse_PushScriptA[] = {
 s32 gMercuryLighthouse_PushScriptB[] = {
     SC_WAIT(60),
     SC_SET(SW_SPEED, 0xcccc),
-    SC_SET(SW_ACCEL, 0x3333),
+    SC_SET(SW_ACCELERATION, 0x3333),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
     SC_MOVE(PIXELS(792), 0, PIXELS(744)),
     SC_SYNC,
@@ -3061,7 +3061,7 @@ s32 gMercuryLighthouse_PushScriptB[] = {
 s32 gMercuryLighthouse_PushScriptD[] = {
     SC_WAIT(60),
     SC_SET(SW_SPEED, 0xcccc),
-    SC_SET(SW_ACCEL, 0x3333),
+    SC_SET(SW_ACCELERATION, 0x3333),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
     SC_MOVE(PIXELS(824), 0, PIXELS(744)),
     SC_SYNC,

@@ -47,15 +47,15 @@
 #define SC_ADD(w, v) 0x16, (w), (v) ///< Add to a work value.
 #define SC_CMP(w, v) 0x17, (w), (v) ///< Test whether work value w equals v.
 #define SC_PLAYER 0x18              ///< Player input control
-#define SC_KEYS 0x19        ///< Move 8 pixels a step by the direction pad
-#define SC_WORLD 0x1a       ///< World map control
-#define SC_FREE 0x1b        ///< Release
-#define SC_ARG(v) 0x1c, (v) ///< Switch the sprites to animation v.
-#define SC_NOP(v) 0x1d, (v) ///< Skip its operand.
-#define SC_SE(n) 0x1e, (n)  ///< Sound effect
-#define SC_BASE 0x1f        ///< Restart from the next word.
-#define SC_B54_OFF 0x20     ///< Hide the sprites (OBJECT_SPRITE_NONE).
-#define SC_B54_ON 0x21      ///< Show one sprite (OBJECT_SPRITE_ONE).
+#define SC_KEYS 0x19              ///< Move 8 pixels a step by the direction pad
+#define SC_WORLD 0x1a             ///< World map control
+#define SC_FREE 0x1b              ///< Release
+#define SC_ANIMATION(v) 0x1c, (v) ///< Switch the sprites to animation v.
+#define SC_NOP(v) 0x1d, (v)       ///< Skip its operand.
+#define SC_SE(n) 0x1e, (n)        ///< Sound effect
+#define SC_BASE 0x1f              ///< Restart from the next word.
+#define SC_B54_OFF 0x20           ///< Hide the sprites (OBJECT_SPRITE_NONE).
+#define SC_B54_ON 0x21            ///< Show one sprite (OBJECT_SPRITE_ONE).
 /// Call fn with the object each frame until it returns zero.
 #define SC_CALL(fn) 0x22, (s32)(fn)
 #define SC_KEY_COUNT 0x23 ///< Check the configured keys.
@@ -75,7 +75,7 @@ enum ScriptWork {
   SW_VELOCITY_Y = 0x0d,
   SW_VELOCITY_Z = 0x0e,
   SW_SPEED = 0x0f,
-  SW_ACCEL = 0x10,
+  SW_ACCELERATION = 0x10,
   SW_TARGET_X = 0x11,
   SW_TARGET_Y = 0x12,
   SW_TARGET_Z = 0x13,

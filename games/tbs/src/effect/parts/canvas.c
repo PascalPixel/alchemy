@@ -647,7 +647,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80; // 0.5 in 8-bit fixed point
-  u8 *canvas = ((u8 **)gBattleFxWork)[1];
+  u8 *canvas = ((u8 **)gBattleEffectWork)[1];
   s32 step;
   s32 i;
   s32 x;

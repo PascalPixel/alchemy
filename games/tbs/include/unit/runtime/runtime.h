@@ -93,7 +93,7 @@ s32 ArcTan2(s32 x, s32 y);
 s32 Math_IntegerSqrt(s32 value);
 s32 FixedSqrt(s32 value);
 
-s32 Palette_GetBasicObjColors(void);
+s32 Palette_GetBasicSpriteColors(void);
 void NumberText_FormatHex(u32 value);
 void NumberText_FormatDecimal(s32 number);
 void DebugText_PrintBlanks(u32 count);
@@ -103,7 +103,7 @@ void DebugText_PrintHex(u32 value, s32 digits);
 void DebugText_PrintDecimal(s32 value, s32 digits);
 void DebugText_Clear(void);
 void Ui_LoadWindowGraphics(void);
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 
 void Runtime_InitializeHeap(void);
 s32 Runtime_GetRemainingIwram(void);

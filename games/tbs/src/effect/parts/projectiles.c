@@ -988,12 +988,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
 /// Sends a battler back to its place (its anchor) with a hop.
 ///
-/// Nothing calls it; ObjMotRst (battle/motion.c) sets the same motion without
-/// the hop. Sets the battler's motion object to move at up to 8 pixels a frame,
-/// jumping at 4 pixels a frame under the usual gravity, and selects
-/// POSE_STANDING.
+/// Nothing calls it; BattleMotion_ReturnToSpot (battle/motion.c) sets the same
+/// motion without the hop. Sets the battler's motion object to move at up to 8
+/// pixels a frame, jumping at 4 pixels a frame under the usual gravity, and
+/// selects POSE_STANDING.
 UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
-  struct BattleObj *slot = GetBattleObjectSlotFar(id);
+  struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct MotionObject *object = slot->object;
 
   object->acceleration = 0x20000;
@@ -1017,8 +1017,8 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
 /// speed limit and gravity, turns it to face its motion, starts it moving on
 /// the ground towards that point and selects POSE_LEAP.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
-  struct BattleObj *slot = GetBattleObjectSlotFar(id);
-  struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
+  struct BattleObject *slot = GetBattleObjectSlotFar(id);
+  struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);
   struct MotionObject *object = slot->object;
   struct MotionObject *target = targetSlot->object;
   s32 rate = 80;

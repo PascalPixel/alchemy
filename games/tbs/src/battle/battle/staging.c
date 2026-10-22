@@ -50,7 +50,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   battle->brightness = 0x10000;
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   Render_ResetTransformState();
-  Transform_SetLookAt(camera->eye, camera->pos);
+  Transform_SetLookAt(camera->eye, camera->focus);
   Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
   if (delay != 0) {
     transition->targetYaw = YAW_PARTY_TURN;
@@ -112,7 +112,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   BattleObject_Put();
   unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
-    ObjMotRst(unitIds[unitIndex]);
+    BattleMotion_ReturnToSpot(unitIds[unitIndex]);
   request->unitId = BATTLE_UNIT_LIST_END;
 finish:
   BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_PLANE,
@@ -377,7 +377,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
           GetMotionRecord(BattleObject_Get(work.effect.actors[i])->object, 0);
       for (child = 0; child != animation->count - 1; child++)
         work.savedAnimationParameters[i][child] =
-            animation->entries[child]->param;
+            animation->entries[child]->colorMode;
     }
     // The side the effect plays on: the targets'.
     if (plan->presentationFlags & STAGING_SCENE) {
@@ -527,8 +527,8 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
   // The run up: as long as the attacker's POSE_LEAP, with its class's hop
   // height (16.16).
   animation = GetMotionRecord(BattleObject_Get(plan->actorId)->object, 0);
-  frames = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
-                                                 2, 1);
+  frames = ResourceMetadata_SumCommandLengthsFar(
+      animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], frames,
                               BattleClass_GetAttackHop(unit->classId) << 16);
   ObjectDispatch_SetAnimationSpeedFar(
@@ -559,7 +559,7 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
     BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, plan->targetIds[0]);
     BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgNimblyDodgesBlow);
     BattleEvent_DispatchQueued();
-    ObjMotRst(work.effect.actors[0]);
+    BattleMotion_ReturnToSpot(work.effect.actors[0]);
   } else {
     // A hit. A critical hit plays the effect's critical version, with only the
     // pair on the field and the camera zooming in on them (scale 100 to 130)
@@ -613,9 +613,9 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
       BattleParty_ListAllUnitsAndSubmit();
       BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
     }
-    ObjMotRst(work.effect.actors[0]);
+    BattleMotion_ReturnToSpot(work.effect.actors[0]);
   }
-  ObjMotRst(work.effect.actor);
+  BattleMotion_ReturnToSpot(work.effect.actor);
   return 0;
 }
 
@@ -668,8 +668,8 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattlePlan *input,
 
   missed = flags & 2;
   animation = GetMotionRecord(BattleObject_Get(savedInput->actorId)->object, 0);
-  frames = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
-                                                 2, 1);
+  frames = ResourceMetadata_SumCommandLengthsFar(
+      animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.actor, savedInput->targetIds[0],
                               frames, 0);
   ObjectDispatch_SetAnimationSpeedFar(
@@ -686,13 +686,13 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattlePlan *input,
     WaitFrames(2);
     WaitFrames(4);
     WaitFrames(10);
-    ObjMotRst(savedInput->targetIds[0]);
+    BattleMotion_ReturnToSpot(savedInput->targetIds[0]);
   } else {
     BattleEffect_DispatchByIdRangeFar(&work.effect);
     BattleEvent_DispatchQueued();
-    ObjMotRst(savedInput->targetIds[0]);
+    BattleMotion_ReturnToSpot(savedInput->targetIds[0]);
   }
-  ObjMotRst(work.effect.actor);
+  BattleMotion_ReturnToSpot(work.effect.actor);
   return 0;
 }
 
@@ -751,7 +751,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
       work.savedAnimationParameters[targetOrFadeIndex][entryIndex] =
-          animation->entries[entryIndex]->param;
+          animation->entries[entryIndex]->colorMode;
   }
 
   // An item with an effect dims the background over 20 frames, to about two
@@ -789,7 +789,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
   ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.count;
        targetOrFadeIndex++)
-    ObjMotRst(work.effect.actors[targetOrFadeIndex]);
+    BattleMotion_ReturnToSpot(work.effect.actors[targetOrFadeIndex]);
 
   // Spend the item, by its use type.
   unit = Unit_GetFar(selection->unitId);
@@ -862,10 +862,10 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
     previousFrame = child->frame;
     child->frame = previousFrame | lastFrameMask;
     entryCount = record->count;
-    child->param = colorMode;
+    child->colorMode = colorMode;
     for (childIndex = 1; childIndex < entryCount; childIndex++) {
       child = *children++;
-      child->param = 0;
+      child->colorMode = 0;
       child->frame = 0xff;
     }
     recordIndex++;
@@ -953,7 +953,7 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
       work.savedAnimationParameters[targetIndex][entryIndex] =
-          animation->entries[entryIndex]->param;
+          animation->entries[entryIndex]->colorMode;
   }
 
   // A failed cast is shown at once; otherwise the effect plays while the
@@ -980,7 +980,7 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     BattleEvent_WaitForReady();
     ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
     for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
-      ObjMotRst(work.effect.actors[targetIndex]);
+      BattleMotion_ReturnToSpot(work.effect.actors[targetIndex]);
   }
   return 0;
 }
@@ -1110,7 +1110,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
                                      recordCount)) != 0) {
       entry = record->entries[0];
       records[recordCount] = record;
-      entry->param = SPRITE_COLOR_GREY;
+      entry->colorMode = SPRITE_COLOR_GREY;
       entry->frame = 0xff;
       recordCount++;
     }

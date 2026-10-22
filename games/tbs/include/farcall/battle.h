@@ -42,7 +42,7 @@ void BattleMotion_ApplyVariantMotionFar(s32 id, s32 variant);
 s32 BattleParty_ListActorIdsFar(s32 groups, u16 *dst);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get); the effects find the sprites they move through it.
-struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
+struct BattleObject *GetBattleObjectSlotFar(s32 objectId);
 /// Fights a battle against an enemy formation from its opening to its end, and
 /// returns the enemies defeated, ENCOUNTER_FLED or ENCOUNTER_PARTY_LOST.
 s32 Battle_RunEncounterFar(s32 enemyGroup);

@@ -49,7 +49,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   s32 i;
   s32 k;
 
-  slots = &gBattleFxWork[1];
+  slots = &gBattleEffectWork[1];
   canvas = slots[0];
   work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];

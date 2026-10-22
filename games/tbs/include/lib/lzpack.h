@@ -15,8 +15,9 @@
 /// holds.
 struct LzPackNode {
   struct LzPackNode *next; ///< Next node with the same value.
-  struct LzPackNode *prev; ///< Previous node, or the bucket field at the head.
-  s32 slot;                ///< its window position, 0 to 0x3ff
+  struct LzPackNode
+      *previous; ///< Previous node, or the bucket field at the head.
+  s32 slot;      ///< its window position, 0 to 0x3ff
 };
 
 /// The LZ packer's work: a node per window position, a chain head per byte
@@ -27,12 +28,12 @@ struct LzPackWork {
   struct LzPackNode *bucket[0x100]; ///< each byte value's chain, or null
   s32 flagMask;            ///< the flag bit of the next item, 0x80 first
   s32 bucketBySlot[0x400]; ///< each position's byte; -1 past the input
-  s32 outCnt;              ///< bytes of outBuf in use
+  s32 outCount;            ///< bytes of outBuffer in use
   /// The group being built: its flag byte, then up to eight items.
-  u8 outBuf[0x24];
+  u8 outBuffer[0x24];
   s32 matchOffset; ///< the best match's distance back (LzPack_FindWindowMatch)
-  s32 matchLen;    ///< its length; 1 for none
-  s32 pos;         ///< the window position being packed
+  s32 matchLength; ///< its length; 1 for none
+  s32 position;    ///< the window position being packed
   u32 inputCursor; ///< input bytes read into the window
   s32 outTotal;    ///< bytes written to the output
   u32 inputLimit;  ///< the input's size

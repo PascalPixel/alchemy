@@ -181,7 +181,7 @@ struct SoundNote {
   struct SoundTrack *track;
   /// The note started after this one in the track's list (nearer its head);
   /// NULL at the head.
-  struct SoundNote *prev;
+  struct SoundNote *previous;
   /// The note started before this one in the track's list; NULL at the end.
   struct SoundNote *next;
   u8 unk38[8]; ///< Not named by TBS code.

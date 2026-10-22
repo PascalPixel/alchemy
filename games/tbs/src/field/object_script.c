@@ -98,7 +98,7 @@ const ScriptCommand gScriptObject_CommandTable[47] = {
     Object_MoveByKeys,                 // 0x19 SC_KEYS
     Object_MoveOnWorldMap,             // 0x1a SC_WORLD
     Script_FreeObject,                 // 0x1b SC_FREE
-    Script_SetAnimation,               // 0x1c SC_ARG
+    Script_SetAnimation,               // 0x1c SC_ANIMATION
     Script_Nop,                        // 0x1d SC_NOP
     Script_PlaySound,                  // 0x1e SC_SE
     Script_SetBase,                    // 0x1f SC_BASE

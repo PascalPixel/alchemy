@@ -596,7 +596,7 @@ static void Event_ReachArena(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
   Actor_WalkToAndWait(OPPONENT, 1312, 192);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
-  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
@@ -645,10 +645,10 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
 #endif
   if (result < 0) {
-    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_ARMS_RAISED);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CROUCH);
   } else {
-    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_DEFEATED);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_DEFEATED);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);
@@ -1194,7 +1194,7 @@ static void ColosseumAzartMatch_SelectPresentationScript(u32 mode, u32 param) {
   const s16 *script;
 
   gColosso_LetteringMode = mode;
-  gColosso_LetteringParam = (param << 4);
+  gColosso_LetteringParameter = (param << 4);
 
   FieldScheduler_AddCallback(Colosso_UpdateLettering, TASK_PRIORITY_SCENE);
 
@@ -1802,29 +1802,29 @@ s16 gColosseumAzartMatch_LetteringWon[] = {
 s16 gColosso_MarkerSlot = -1;
 
 s32 gColosso_OpponentFinishScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(6),
     SC_CALL(ColosseumAzartMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
-    SC_ARG(10),
+    SC_ANIMATION(10),
     SC_WAIT(150),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gColosseumAzartMatch_ApproachScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(6),
     SC_CALL(ColosseumAzartMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
-    SC_ARG(28),
+    SC_ANIMATION(28),
     SC_WAIT(150),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };

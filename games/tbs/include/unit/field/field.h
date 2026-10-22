@@ -285,7 +285,7 @@ void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
                                s32 value);
 void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
                                s32 value);
-void Ui_SetGridColumnParameter(s32 slot, s32 value);
+void Ui_SetGridColumnColorMode(s32 slot, s32 value);
 void Ui_SetGridColumnPriority(s32 slot, s32 value);
 
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
@@ -401,16 +401,16 @@ void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);
 void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY);
 void Map_UpdateLayerScroll(void);
 void Map_SetCameraCenter(s32 x, s32 y);
-void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
+void Map_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX, u32 dstY,
                                  u32 width, u32 height);
 void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
                                   u32 destinationY);
-void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY);
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY);
-void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                           s32 dstY);
+void Map_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
+                           s32 dstX, s32 dstY);
 void Map_SetShownLayers(u32 layerFlags);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);

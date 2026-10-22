@@ -15,7 +15,7 @@
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct EffectSlot *effect;
   s8 *slotState;
   s32 remaining;
@@ -87,7 +87,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 
     nextState = VENUS_PARTICLE_LAST_RISE;
     slotState = (s8 *)scene;
-    slotState += offsetof(struct FieldFxScene, effects) +
+    slotState += offsetof(struct FieldEffectScene, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
     do {

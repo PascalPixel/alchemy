@@ -48,16 +48,16 @@ void Camera_ResetSceneDefaults(void) {
 
   camera->pitch = 152 << 8;
   camera->distance = 255 << 17;
-  SET_VECTOR(camera->pos, 0, 0, 0);
+  SET_VECTOR(camera->focus, 0, 0, 0);
   camera->yaw = 0;
-  camera->followPos = 0;
+  camera->followPosition = 0;
   gProjection.centerX = 0;
   gProjection.centerY = 0;
   camera->unk18 = 0;
 
   // The eye sits `distance` behind the target along the camera's view.
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&camera->pos[0]);
+  SceneTransform_ApplyPosition(&camera->focus[0]);
   SceneTransform_ApplyYaw((s16)camera->yaw);
   SceneTransform_ApplyPitch((s16)camera->pitch);
 
@@ -182,7 +182,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 /// its sprites and windows. The allocation extends beyond these members.
 struct LuckyDiceSprites {
   u8 filler[200];                  ///< Lucky Dice never touches these bytes
-  struct OamShadow obj[128];       ///< copied to OAM each frame
+  struct OamShadow oam[128];       ///< copied to OAM each frame
   struct UiWindow *coinsWindow;    ///< the player's coins
   struct UiWindow *winningsWindow; ///< the winnings of the last throw
   struct UiWindow *helpWindow;     ///< the Throw and Quit buttons
@@ -456,28 +456,28 @@ void LuckyDice_Run(void) {
       Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
     }
     Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     // The fixed sprites: the board frame and the two lucky numbers.
     spriteCount = 0;
-    sprites->obj[spriteCount].attr01 = 0xc0006000;
-    sprites->obj[spriteCount].attr2 = 0x358;
+    sprites->oam[spriteCount].attr01 = 0xc0006000;
+    sprites->oam[spriteCount].attr2 = 0x358;
     spriteCount++;
-    sprites->obj[spriteCount].attr01 = 0x40102020;
-    sprites->obj[spriteCount].attr2 = 0x398;
+    sprites->oam[spriteCount].attr01 = 0x40102020;
+    sprites->oam[spriteCount].attr2 = 0x398;
     spriteCount++;
-    sprites->obj[spriteCount].attr01 = 0x40102030;
-    sprites->obj[spriteCount].attr2 = 0x3a0;
+    sprites->oam[spriteCount].attr01 = 0x40102030;
+    sprites->oam[spriteCount].attr2 = 0x3a0;
     spriteCount++;
-    sprites->obj[spriteCount].attr01 = 0x40042020;
-    sprites->obj[spriteCount].attr2 = 0x3a8;
+    sprites->oam[spriteCount].attr01 = 0x40042020;
+    sprites->oam[spriteCount].attr2 = 0x3a8;
     spriteCount++;
-    sprites->obj[spriteCount].attr01 = 0x40042030;
-    sprites->obj[spriteCount].attr2 = 0x3a8;
+    sprites->oam[spriteCount].attr01 = 0x40042030;
+    sprites->oam[spriteCount].attr2 = 0x3a8;
     spriteCount++;
     for (index = 0; index != DICE_COUNT; index++) {
-      sprites->obj[spriteCount].attr01 = (32 + index * 16) | 0x40202000;
-      sprites->obj[spriteCount].attr2 = luckyNumbers[index] * 8 + 0x3b0;
+      sprites->oam[spriteCount].attr01 = (32 + index * 16) | 0x40202000;
+      sprites->oam[spriteCount].attr2 = luckyNumbers[index] * 8 + 0x3b0;
       spriteCount++;
     }
 
@@ -489,9 +489,9 @@ void LuckyDice_Run(void) {
           AudioCommand_PlayFar(SE_LUCKY_DICE_NUMBER);
         }
         if (resultTimer >= index * 5) {
-          sprites->obj[spriteCount].attr01 =
+          sprites->oam[spriteCount].attr01 =
               0x80002040 | ((56 + index * 32) << 16);
-          sprites->obj[spriteCount].attr2 = numbers[index] * 32 + 152;
+          sprites->oam[spriteCount].attr2 = numbers[index] * 32 + 152;
           spriteCount++;
         }
       }
@@ -503,9 +503,9 @@ void LuckyDice_Run(void) {
           labelX = DICE_KIND_X - gLuckyDice_LabelCounts[resultKind] * 16 +
                    index * 32;
           labelY = 96;
-          sprites->obj[spriteCount].attr01 =
+          sprites->oam[spriteCount].attr01 =
               (((labelX & 0x1ff) << 16) | labelY) | 0x80002000;
-          sprites->obj[spriteCount].attr2 =
+          sprites->oam[spriteCount].attr2 =
               gLuckyDice_LabelTiles[resultKind] * 8 + 152 + index * 32;
           spriteCount++;
         }
@@ -698,11 +698,11 @@ void LuckyDice_Run(void) {
       // affine matrix (attr1 bits 9 to 13); 0x278 and 0x160 wrap in OAM's 9-
       // and 8-bit fields to 120 across and 96 down.
       if (dieY + 96 > -16) {
-        sprites->obj[spriteCount].attr01 =
+        sprites->oam[spriteCount].attr01 =
             ((drawOrder[index] << 25) | (((dieX + 0x278) & 0x1ff) << 16) |
              ((dieY + 0x160) & 255)) |
             0x40002300;
-        sprites->obj[spriteCount].attr2 =
+        sprites->oam[spriteCount].attr2 =
             (gLuckyDice_FaceTiles[rollingDie->variant / 1024] << 3) | 0x400;
         spriteCount++;
       }
@@ -714,12 +714,12 @@ void LuckyDice_Run(void) {
         Render_ProjectPoint(&diceWork->particles[index], screen);
         x = screen[0] - 0x800 / (spriteDepth[drawOrder[index]] / 2 + 128);
         y = screen[1] + 0x300 / (spriteDepth[drawOrder[index]] / 2 + 128);
-        sprites->obj[spriteCount].attr01 =
+        sprites->oam[spriteCount].attr01 =
             ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
         if (index == 1) {
-          sprites->obj[spriteCount].attr01 |= 0x10000000;
+          sprites->oam[spriteCount].attr01 |= 0x10000000;
         }
-        sprites->obj[spriteCount].attr2 = 0x958;
+        sprites->oam[spriteCount].attr2 = 0x958;
         spriteCount++;
       }
     }
@@ -744,10 +744,10 @@ void LuckyDice_Run(void) {
       shadowX = screen[0];
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
-        sprites->obj[spriteCount].attr01 =
+        sprites->oam[spriteCount].attr01 =
             (((index + 2) << 25) | (((shadowX + 0x270) & 0x1ff) << 16)) |
             ((shadowY + 0x158) & 255) | 0x40002300;
-        sprites->obj[spriteCount].attr2 = 0x890;
+        sprites->oam[spriteCount].attr2 = 0x890;
         spriteCount++;
       }
     }
@@ -945,8 +945,8 @@ void LuckyDice_Run(void) {
     // and shadow, scaled by depth) and copy the sprites to OAM.
     // An unused sprite is parked at x 240, just past the right edge.
     for (; spriteCount != 128; spriteCount++) {
-      sprites->obj[spriteCount].attr01 = 0x40f02000;
-      sprites->obj[spriteCount].attr2 = 0;
+      sprites->oam[spriteCount].attr01 = 0x40f02000;
+      sprites->oam[spriteCount].attr2 = 0;
     }
 
     // OAM keeps affine matrix n in the fourth halfwords of entries 4n to
@@ -957,13 +957,13 @@ void LuckyDice_Run(void) {
       affineB = 0;
       affineC = 0;
       affineD = affineScale;
-      sprites->obj[index * 4 + 0].attr2 |= affineA << 16;
-      sprites->obj[index * 4 + 1].attr2 |= affineB << 16;
-      sprites->obj[index * 4 + 2].attr2 |= affineC << 16;
-      sprites->obj[index * 4 + 3].attr2 |= affineD << 16;
+      sprites->oam[index * 4 + 0].attr2 |= affineA << 16;
+      sprites->oam[index * 4 + 1].attr2 |= affineB << 16;
+      sprites->oam[index * 4 + 2].attr2 |= affineC << 16;
+      sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
 
-    Dma_Set(sprites->obj, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
+    Dma_Set(sprites->oam, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
             REG_DMA3);
     WaitFrames(1);
     frame++;

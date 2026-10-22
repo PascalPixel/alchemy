@@ -110,8 +110,8 @@
 /// gaps are FieldActor fields this view does not use.
 struct Object {
   u8 pad0[6];
-  u16 angle;               ///< FieldActor.facing, 1/65536 turns
-  struct EffectVector pos; ///< 16.16 fixed-point pixels
+  u16 angle;                    ///< FieldActor.facing, 1/65536 turns
+  struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
   u8 kind; ///< FieldActor.terrainId; not read through this view
   u8 pad2[0x2d];
@@ -137,7 +137,7 @@ static __inline__ void FieldEffect_UpdateSceneSlots(void) {
   struct EffectSlot *effect;
   s32 remainingSlots;
 
-  effect = ((struct FieldFxScene *)gEffectWork)->effects;
+  effect = ((struct FieldEffectScene *)gEffectWork)->effects;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
@@ -211,7 +211,7 @@ struct CaptureObject {
 /// A particle's sprite (struct AnimationObject), seen as the two fields
 /// Douse and Mind Read set on it; the notes give the AnimationObject fields
 /// at the same offsets.
-struct WaveFxSprite {
+struct WaveEffectSprite {
   u32 unk00[2];
   u8 unk08;
   u32 unk09_0 : 2;
@@ -258,7 +258,7 @@ static inline void FieldEffect_InitializeFallingFragment(
 /// pixels. Carry's and Lift's no-target effects are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
-    struct FieldFxScene *work;                                                 \
+    struct FieldEffectScene *work;                                             \
     struct MotionObject *obj;                                                  \
     struct MotionObject *pair[2];                                              \
     struct ScatterPosition pos;                                                \

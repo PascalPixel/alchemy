@@ -1130,8 +1130,8 @@ union PackedWord {
 
 /// Finishes a track through the base command table entry. Extended commands
 /// 0 and 3: they end the track as the finish command (0xB1) does.
-void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player,
-                                   struct SoundTrack *track) {
+void Runtime_CallWorkEntryWithArguments(struct SoundPlayer *player,
+                                        struct SoundTrack *track) {
   SoundCommand finishSequence = *(&gSound_CommandTable[SOUND_COMMAND_FINISH]);
 
   finishSequence(player, track);

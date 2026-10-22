@@ -86,7 +86,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   s32 frame;
   s32 cell;
 
-  cursor = gBattleFxWork;
+  cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);

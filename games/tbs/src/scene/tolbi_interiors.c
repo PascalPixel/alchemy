@@ -1002,7 +1002,7 @@ u16 gTolbiInteriorsDoorOpening[] = {
     MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim gTolbiInteriorsDoors[] = {
+struct MapCellAnimation gTolbiInteriorsDoors[] = {
     {gTolbiInteriorsDoorOpening, 24, 100},
     {gTolbiInteriorsDoorOpening, 33, 100},
     {gTolbiInteriorsDoorOpening, 50, 99},

@@ -226,7 +226,8 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
   s32 farExtent;
 
   for (i = 0; i <= 5; i++) {
-    if (actor->sprite->entries[0]->animId == gStagedActor_FootprintKinds[i]) {
+    if (actor->sprite->entries[0]->animationId ==
+        gStagedActor_FootprintKinds[i]) {
       probe->footprintIndex = i;
       break;
     }

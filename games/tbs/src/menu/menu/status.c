@@ -304,7 +304,7 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
   result = 0;
   cursor = menu->ownerCursors[slot];
   cursor->active = ICON_SHOWN;
-  cursor->animStep = 0;
+  cursor->animationStep = 0;
   RenderOutput_RedrawSavedRectFar(menu->ownerWindow);
   // FLAG_LINK_BATTLE_ARRANGED is set while a link battle is arranged in the
   // Battle Arena, in which only the first three members fight
@@ -1064,7 +1064,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
   }
   // The four element icons, then the Djinn counts and, in mode 1, the
   // elemental levels, Power and Resist.
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
     UiWindow_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
     UiWindow_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
@@ -1141,7 +1141,7 @@ void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags) {
   UiText_DrawCharacterAtOffsetFar(unit->classIndex + MsgClassName, window, 0,
                                   32);
   MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 104, 0);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
   MENU_DRAW_STATUS_LABEL(gMenu_HpString, window, 40, 16);
   UiText_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);

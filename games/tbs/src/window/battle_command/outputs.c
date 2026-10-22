@@ -231,7 +231,7 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode) {
   if (out != NULL) {
     out->active = mode;
-    out->animStep = 0;
+    out->animationStep = 0;
   }
 }
 

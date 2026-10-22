@@ -62,7 +62,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
 
   innkeeper = Object_GetByIdFar(objectId);
   state->resourceId =
-      ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animId;
+      ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
   innkeeperWindow =
       UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
 
@@ -91,7 +91,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
 
     innkeeper = Object_GetByIdFar(objectId);
     state->resourceId =
-        ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animId;
+        ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
     innkeeperWindow =
         UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
     UiMessage_ShowAndWait(messageBase +

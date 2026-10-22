@@ -102,7 +102,7 @@ void FieldEffect_EndCloak(void) {
   ((struct ScriptMotionObject *)object)->hook = 0;
 
   for (i = 0; i < 5; ++i) {
-    entry->param = SPRITE_COLOR_WHITE;
+    entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = SPRITE_FLAG_OUTLINED;
     WaitFrames(2);
@@ -112,11 +112,11 @@ void FieldEffect_EndCloak(void) {
   }
 
   for (i = 0; i < 5; ++i) {
-    entry->param = SPRITE_COLOR_WHITE;
+    entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = 0;
     WaitFrames(2);
-    entry->param = SPRITE_COLOR_NORMAL;
+    entry->colorMode = SPRITE_COLOR_NORMAL;
     animation->dirty = 1;
     WaitFrames(2);
   }
@@ -155,7 +155,7 @@ void FieldEffect_StartCloak(void) {
   ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
   do {
-    entry->param = SPRITE_COLOR_WHITE;
+    entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = SPRITE_FLAG_OUTLINED;
     WaitFrames(2);
@@ -165,7 +165,7 @@ void FieldEffect_StartCloak(void) {
     n++;
   } while (n <= 9);
   n = 0;
-  entry->param = n;
+  entry->colorMode = n;
   animation->flags = SPRITE_FLAG_OUTLINED;
   animation->dirty = 1;
   // Check the tile at once: off a Cloak tile, unhide and drop the request

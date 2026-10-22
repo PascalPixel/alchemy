@@ -679,16 +679,16 @@ static void Tolbi_FreezePuddle(void) {
 /// The action script of a mirrored actor: flips its sprite and passes 7 on.
 s32 gTolbiMirroredActor[] = {
     SC_SET(SW_SCALE_X, -Q16_ONE),
-    SC_ARG(7),
+    SC_ANIMATION(7),
     SC_END,
 };
 
 /// The older brother runs a loop of eight points, 32 pixels across, south-east
 /// of the fountain.
 s32 gTolbiOlderBrotherRun[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(352), 0, PIXELS(352)),
     SC_SYNC,
@@ -711,9 +711,9 @@ s32 gTolbiOlderBrotherRun[] = {
 
 /// The younger sister runs the same loop half a lap ahead.
 s32 gTolbiYoungerSisterRun[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(368), 0, PIXELS(320)),
     SC_SYNC,
@@ -1052,7 +1052,7 @@ u16 gTolbiDoorOpening[] = {
 };
 
 /// The doors, in the order of their triggers 1 to 9, by map cell.
-struct MapCellAnim gTolbiDoors[] = {
+struct MapCellAnimation gTolbiDoors[] = {
     {gTolbiDoorOpening, 48, 6},  {gTolbiDoorOpening, 63, 4},
     {gTolbiDoorOpening, 71, 8},  {gTolbiDoorOpening, 71, 4},
     {gTolbiDoorOpening, 66, 21}, {gTolbiDoorOpening, 61, 24},

@@ -14,7 +14,7 @@ void FieldEffect_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct EffectVector pos;
   s8 *statePointer;
   s16 angle;
@@ -66,7 +66,7 @@ top:
 /// FieldEffect_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
 void FieldEffect_RunHaltOnTarget(s32 unused) {
-  struct FieldActor *target = ((struct FieldFxScene *)gEffectWork)->child;
+  struct FieldActor *target = ((struct FieldEffectScene *)gEffectWork)->child;
 
   target->paused = 1;
   FieldEffect_RunHalt();
@@ -80,7 +80,7 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 ///
 /// Abilities: Halt (FIELD_KIND_HALT).
 void FieldEffect_RunHalt(void) {
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;
   struct MotionObject *orb;
   struct EffectSlot *effect;
@@ -190,7 +190,7 @@ void FieldEffect_PauseObject(s32 actorId) {
     if (object->spriteStorageKind == 1) {
       entry = object->sprite->entries[0];
       if (entry != NULL) {
-        gGameState.pausedPose = entry->param;
+        gGameState.pausedPose = entry->colorMode;
       }
     }
     object->update = FieldEffect_UpdatePausedObject;

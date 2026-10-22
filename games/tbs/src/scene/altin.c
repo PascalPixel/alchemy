@@ -819,7 +819,7 @@ static void Village_ApplyWaterLevel(void) {
   } else {
     FieldEffect_SetQueuedSoundAndPlay(SE_170);
     Actor_SetChildValue(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
-    Engine_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
+    Engine_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
   }
   if (gGameState.entrance == ALTIN_FROM_SANCTUM) {
@@ -978,31 +978,31 @@ static void Village_ScareOffBeast(void) {
 s32 gAltinHouses_CookScript[] = {
     SC_ADD(SW_COLLISION, 128),
     SC_SET(SW_SPEED, 0x26666),
-    SC_SET(SW_ACCEL, 0x13333),
+    SC_SET(SW_ACCELERATION, 0x13333),
     SC_LABEL(1),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(30),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(356), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(50),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(20),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(ALTIN_COOK_LAST_POT_X), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_EAST + FACING_STEP),
     SC_WAIT(90),
@@ -1441,7 +1441,7 @@ u16 gAltinVillage_NortheastDoorCells[] = {
 };
 
 /// Each door trigger's opening picture and cell, from trigger 2.
-struct MapCellAnim gAltinVillage_Doors[] = {
+struct MapCellAnimation gAltinVillage_Doors[] = {
     {gAltinVillage_SouthwestDoorCells, 41, 5},
     {gAltinVillage_SanctumDoorCells, 51, 6},
     {gAltinVillage_NorthwestDoorCells, 57, 17},

@@ -32,8 +32,8 @@ STATIC_ASSERT(sizeof(union AffineMatrix) == 8);
 
 /// Matrices handed out this frame (AffineMatrix_BuildForEffect), up to 32;
 /// Render_ResetFrame sets it back to 0 after each VBlank.
-extern u8 gObjAffineCount;
+extern u8 gSpriteAffineCount;
 /// This frame's 32 matrices, copied into OAM with the sprites.
-extern union AffineMatrix gObjAffineMatrices[];
+extern union AffineMatrix gSpriteAffineMatrices[];
 
 #endif

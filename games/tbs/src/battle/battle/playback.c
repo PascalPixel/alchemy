@@ -224,7 +224,7 @@ void BattleEvent_Playback(void) {
             PartyStatus_DrawFar(gBattleWork->partyStatus);
             break;
           case BATTLE_EVENT_REFRESH_UNIT: {
-            struct BattleObj *slot;
+            struct BattleObject *slot;
 
             BattleUnit_BuildStatusFlags(
                 events->queue.operands[eventIndex],
@@ -302,7 +302,7 @@ void BattleEvent_Playback(void) {
       // own colours and the panel goes dark.
       if (events->timer & 1) {
         if (events->timer & 2) {
-          struct BattleObj *slot;
+          struct BattleObject *slot;
 
           selection[0] = BATTLE_UNIT_LIST_END;
           slot = BattleObject_Get(events->actorId);
@@ -373,7 +373,7 @@ void BattleEvent_Playback(void) {
             *slot++ = record;
             child = record->entries[0];
             previousFrame = child->frame;
-            child->param = colorMode;
+            child->colorMode = colorMode;
             child->frame = previousFrame | lastFrameMask;
           }
         }
@@ -389,7 +389,7 @@ void BattleEvent_Playback(void) {
         // The dissolve: steps 0 to 127 of render_animated_tile_frame, four a
         // frame from timer 5 to 36; at 37 the tiles are cleared, the object
         // released, and the queue goes on.
-        struct BattleObj *slot;
+        struct BattleObject *slot;
         struct AnimationObject *record;
         s32 count;
         s32 step;

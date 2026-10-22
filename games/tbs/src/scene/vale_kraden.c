@@ -1153,10 +1153,10 @@ static void Event_TalkToCottageVisitor(void) {
 
 /// Leads the party away from the broken fence, then leaves the map.
 s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(72), 0, PIXELS(294)),
-    SC_SYNC,   SC_MOVE(PIXELS(77), 0, PIXELS(329)),
-    SC_SYNC,   SC_MOVE(PIXELS(70), 0, PIXELS(415)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(72), 0, PIXELS(294)),
+    SC_SYNC,         SC_MOVE(PIXELS(77), 0, PIXELS(329)),
+    SC_SYNC,         SC_MOVE(PIXELS(70), 0, PIXELS(415)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 

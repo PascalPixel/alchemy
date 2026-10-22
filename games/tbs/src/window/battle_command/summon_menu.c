@@ -184,7 +184,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
             sprites[index].oam.f.tile = glyph;
             // A summon the party cannot afford is drawn in colour 2.
             if (!affordable)
-              UiWork_SetParamNibble(2);
+              UiWork_SetParameterNibble(2);
             UiText_DrawCharacterAtOffset(
                 SummonDefinition_Get(id)->nameMessageId + MsgAbilityName,
                 window, 16, index * 16);
@@ -199,7 +199,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
                 col++;
               }
             }
-            UiWork_SetParamNibble(15);
+            UiWork_SetParameterNibble(15);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)

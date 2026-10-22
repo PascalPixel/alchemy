@@ -144,12 +144,12 @@ static void Event_SayThenWait(s32 speaker, s32 frames);
 
 /// A block of map cells copied from one place in the map to another.
 struct CellCopy {
-  s32 srcX;   ///< map cells
-  s32 srcY;   ///< map cells
-  s32 destX;  ///< map cells
-  s32 destY;  ///< map cells
-  s32 width;  ///< map cells
-  s32 height; ///< map cells
+  s32 sourceX;      ///< map cells
+  s32 sourceY;      ///< map cells
+  s32 destinationX; ///< map cells
+  s32 destinationY; ///< map cells
+  s32 width;        ///< map cells
+  s32 height;       ///< map cells
 };
 
 /// The seal being opened: its cell animations, its flag, where the leader
@@ -160,9 +160,9 @@ struct SealScene {
   struct CellCopy pulseB;
   struct CellCopy opened;
   s32 flag;
-  s32 facing; ///< 1/65536 turns
-  s32 destX;  ///< pixels
-  s32 destZ;  ///< pixels
+  s32 facing;       ///< 1/65536 turns
+  s32 destinationX; ///< pixels
+  s32 destinationZ; ///< pixels
   struct CellCopy stairs[3];
   s32 actor;
   s32 actorX;    ///< pixels
@@ -965,7 +965,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
 
   spriteWords = sScrollingSprites.words;
   pixels = Runtime_AllocateBlock(14, 1024);
-  Resource_DecodeByteLz(gSolSanctumStatue_SpriteRowsGfx, pixels);
+  Resource_DecodeByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
   tile = Engine_VramLoad(Resource_FindFreeEntry(), 128, pixels);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
@@ -1341,50 +1341,50 @@ static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
 /// Configures the northwest seal animation and statue return position.
 static void SolSanctumStatue_OpenNorthwestSeal(void) {
   struct SealScene *scene = &sSealScene;
-  scene->open.srcX = 0;
-  scene->open.srcY = 55;
-  scene->open.destX = 32;
-  scene->open.destY = 40;
+  scene->open.sourceX = 0;
+  scene->open.sourceY = 55;
+  scene->open.destinationX = 32;
+  scene->open.destinationY = 40;
   scene->open.width = 4;
   scene->open.height = 3;
-  scene->pulseA.srcX = 2;
-  scene->pulseA.srcY = 30;
-  scene->pulseA.destX = 34;
-  scene->pulseA.destY = 10;
+  scene->pulseA.sourceX = 2;
+  scene->pulseA.sourceY = 30;
+  scene->pulseA.destinationX = 34;
+  scene->pulseA.destinationY = 10;
   scene->pulseA.width = 2;
   scene->pulseA.height = 1;
-  scene->pulseB.srcX = 2;
-  scene->pulseB.srcY = 28;
-  scene->pulseB.destX = 34;
-  scene->pulseB.destY = 10;
+  scene->pulseB.sourceX = 2;
+  scene->pulseB.sourceY = 28;
+  scene->pulseB.destinationX = 34;
+  scene->pulseB.destinationY = 10;
   scene->pulseB.width = 2;
   scene->pulseB.height = 1;
-  scene->opened.srcX = 2;
-  scene->opened.srcY = 30;
-  scene->opened.destX = 16;
-  scene->opened.destY = 10;
+  scene->opened.sourceX = 2;
+  scene->opened.sourceY = 30;
+  scene->opened.destinationX = 16;
+  scene->opened.destinationY = 10;
   scene->opened.width = 2;
   scene->opened.height = 1;
   scene->flag = FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN;
   scene->facing = FACING_SOUTH;
-  scene->destX = 500;
-  scene->destZ = 132;
-  scene->stairs[0].srcX = 8;
-  scene->stairs[0].srcY = 55;
-  scene->stairs[0].destX = 32;
-  scene->stairs[0].destY = 40;
+  scene->destinationX = 500;
+  scene->destinationZ = 132;
+  scene->stairs[0].sourceX = 8;
+  scene->stairs[0].sourceY = 55;
+  scene->stairs[0].destinationX = 32;
+  scene->stairs[0].destinationY = 40;
   scene->stairs[0].width = 4;
   scene->stairs[0].height = 3;
-  scene->stairs[1].srcX = 2;
-  scene->stairs[1].srcY = 30;
-  scene->stairs[1].destX = 34;
-  scene->stairs[1].destY = 10;
+  scene->stairs[1].sourceX = 2;
+  scene->stairs[1].sourceY = 30;
+  scene->stairs[1].destinationX = 34;
+  scene->stairs[1].destinationY = 10;
   scene->stairs[1].width = 2;
   scene->stairs[1].height = 1;
-  scene->stairs[2].srcX = 2;
-  scene->stairs[2].srcY = 28;
-  scene->stairs[2].destX = 16;
-  scene->stairs[2].destY = 10;
+  scene->stairs[2].sourceX = 2;
+  scene->stairs[2].sourceY = 28;
+  scene->stairs[2].destinationX = 16;
+  scene->stairs[2].destinationY = 10;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
   scene->actor = ACTOR_NORTHWEST_STATUE;
@@ -1396,50 +1396,50 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
 /// Configures the northeast seal animation and statue return position.
 static void SolSanctumStatue_OpenNortheastSeal(void) {
   struct SealScene *scene = &sSealScene;
-  scene->open.srcX = 4;
-  scene->open.srcY = 55;
-  scene->open.destX = 36;
-  scene->open.destY = 40;
+  scene->open.sourceX = 4;
+  scene->open.sourceY = 55;
+  scene->open.destinationX = 36;
+  scene->open.destinationY = 40;
   scene->open.width = 4;
   scene->open.height = 3;
-  scene->pulseA.srcX = 4;
-  scene->pulseA.srcY = 30;
-  scene->pulseA.destX = 36;
-  scene->pulseA.destY = 10;
+  scene->pulseA.sourceX = 4;
+  scene->pulseA.sourceY = 30;
+  scene->pulseA.destinationX = 36;
+  scene->pulseA.destinationY = 10;
   scene->pulseA.width = 2;
   scene->pulseA.height = 1;
-  scene->pulseB.srcX = 4;
-  scene->pulseB.srcY = 28;
-  scene->pulseB.destX = 36;
-  scene->pulseB.destY = 10;
+  scene->pulseB.sourceX = 4;
+  scene->pulseB.sourceY = 28;
+  scene->pulseB.destinationX = 36;
+  scene->pulseB.destinationY = 10;
   scene->pulseB.width = 2;
   scene->pulseB.height = 1;
-  scene->opened.srcX = 4;
-  scene->opened.srcY = 30;
-  scene->opened.destX = 18;
-  scene->opened.destY = 10;
+  scene->opened.sourceX = 4;
+  scene->opened.sourceY = 30;
+  scene->opened.destinationX = 18;
+  scene->opened.destinationY = 10;
   scene->opened.width = 2;
   scene->opened.height = 1;
   scene->flag = FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN;
   scene->facing = FACING_SOUTH;
-  scene->destX = 654;
-  scene->destZ = 132;
-  scene->stairs[0].srcX = 12;
-  scene->stairs[0].srcY = 55;
-  scene->stairs[0].destX = 36;
-  scene->stairs[0].destY = 40;
+  scene->destinationX = 654;
+  scene->destinationZ = 132;
+  scene->stairs[0].sourceX = 12;
+  scene->stairs[0].sourceY = 55;
+  scene->stairs[0].destinationX = 36;
+  scene->stairs[0].destinationY = 40;
   scene->stairs[0].width = 4;
   scene->stairs[0].height = 3;
-  scene->stairs[1].srcX = 4;
-  scene->stairs[1].srcY = 30;
-  scene->stairs[1].destX = 36;
-  scene->stairs[1].destY = 10;
+  scene->stairs[1].sourceX = 4;
+  scene->stairs[1].sourceY = 30;
+  scene->stairs[1].destinationX = 36;
+  scene->stairs[1].destinationY = 10;
   scene->stairs[1].width = 2;
   scene->stairs[1].height = 1;
-  scene->stairs[2].srcX = 4;
-  scene->stairs[2].srcY = 28;
-  scene->stairs[2].destX = 18;
-  scene->stairs[2].destY = 10;
+  scene->stairs[2].sourceX = 4;
+  scene->stairs[2].sourceY = 28;
+  scene->stairs[2].destinationX = 18;
+  scene->stairs[2].destinationY = 10;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
   scene->actor = ACTOR_NORTHEAST_STATUE;
@@ -1451,50 +1451,50 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
 /// Configures the southwest seal animation and statue return position.
 static void SolSanctumStatue_OpenSouthwestSeal(void) {
   struct SealScene *scene = &sSealScene;
-  scene->open.srcX = 0;
-  scene->open.srcY = 58;
-  scene->open.destX = 32;
-  scene->open.destY = 43;
+  scene->open.sourceX = 0;
+  scene->open.sourceY = 58;
+  scene->open.destinationX = 32;
+  scene->open.destinationY = 43;
   scene->open.width = 4;
   scene->open.height = 1;
-  scene->pulseA.srcX = 2;
-  scene->pulseA.srcY = 31;
-  scene->pulseA.destX = 34;
-  scene->pulseA.destY = 11;
+  scene->pulseA.sourceX = 2;
+  scene->pulseA.sourceY = 31;
+  scene->pulseA.destinationX = 34;
+  scene->pulseA.destinationY = 11;
   scene->pulseA.width = 2;
   scene->pulseA.height = 1;
-  scene->pulseB.srcX = 2;
-  scene->pulseB.srcY = 29;
-  scene->pulseB.destX = 34;
-  scene->pulseB.destY = 11;
+  scene->pulseB.sourceX = 2;
+  scene->pulseB.sourceY = 29;
+  scene->pulseB.destinationX = 34;
+  scene->pulseB.destinationY = 11;
   scene->pulseB.width = 2;
   scene->pulseB.height = 1;
-  scene->opened.srcX = 2;
-  scene->opened.srcY = 31;
-  scene->opened.destX = 16;
-  scene->opened.destY = 11;
+  scene->opened.sourceX = 2;
+  scene->opened.sourceY = 31;
+  scene->opened.destinationX = 16;
+  scene->opened.destinationY = 11;
   scene->opened.width = 2;
   scene->opened.height = 1;
   scene->flag = FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN;
   scene->facing = FACING_NORTH;
-  scene->destX = 500;
-  scene->destZ = 216;
-  scene->stairs[0].srcX = 8;
-  scene->stairs[0].srcY = 58;
-  scene->stairs[0].destX = 32;
-  scene->stairs[0].destY = 43;
+  scene->destinationX = 500;
+  scene->destinationZ = 216;
+  scene->stairs[0].sourceX = 8;
+  scene->stairs[0].sourceY = 58;
+  scene->stairs[0].destinationX = 32;
+  scene->stairs[0].destinationY = 43;
   scene->stairs[0].width = 4;
   scene->stairs[0].height = 1;
-  scene->stairs[1].srcX = 2;
-  scene->stairs[1].srcY = 31;
-  scene->stairs[1].destX = 34;
-  scene->stairs[1].destY = 11;
+  scene->stairs[1].sourceX = 2;
+  scene->stairs[1].sourceY = 31;
+  scene->stairs[1].destinationX = 34;
+  scene->stairs[1].destinationY = 11;
   scene->stairs[1].width = 2;
   scene->stairs[1].height = 1;
-  scene->stairs[2].srcX = 2;
-  scene->stairs[2].srcY = 29;
-  scene->stairs[2].destX = 16;
-  scene->stairs[2].destY = 11;
+  scene->stairs[2].sourceX = 2;
+  scene->stairs[2].sourceY = 29;
+  scene->stairs[2].destinationX = 16;
+  scene->stairs[2].destinationY = 11;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
   scene->actor = ACTOR_SOUTHWEST_STATUE;
@@ -1506,50 +1506,50 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
 /// Configures the southeast seal animation and statue return position.
 static void SolSanctumStatue_OpenSoutheastSeal(void) {
   struct SealScene *scene = &sSealScene;
-  scene->open.srcX = 4;
-  scene->open.srcY = 58;
-  scene->open.destX = 36;
-  scene->open.destY = 43;
+  scene->open.sourceX = 4;
+  scene->open.sourceY = 58;
+  scene->open.destinationX = 36;
+  scene->open.destinationY = 43;
   scene->open.width = 4;
   scene->open.height = 1;
-  scene->pulseA.srcX = 4;
-  scene->pulseA.srcY = 31;
-  scene->pulseA.destX = 36;
-  scene->pulseA.destY = 11;
+  scene->pulseA.sourceX = 4;
+  scene->pulseA.sourceY = 31;
+  scene->pulseA.destinationX = 36;
+  scene->pulseA.destinationY = 11;
   scene->pulseA.width = 2;
   scene->pulseA.height = 1;
-  scene->pulseB.srcX = 4;
-  scene->pulseB.srcY = 29;
-  scene->pulseB.destX = 36;
-  scene->pulseB.destY = 11;
+  scene->pulseB.sourceX = 4;
+  scene->pulseB.sourceY = 29;
+  scene->pulseB.destinationX = 36;
+  scene->pulseB.destinationY = 11;
   scene->pulseB.width = 2;
   scene->pulseB.height = 1;
-  scene->opened.srcX = 4;
-  scene->opened.srcY = 31;
-  scene->opened.destX = 18;
-  scene->opened.destY = 11;
+  scene->opened.sourceX = 4;
+  scene->opened.sourceY = 31;
+  scene->opened.destinationX = 18;
+  scene->opened.destinationY = 11;
   scene->opened.width = 2;
   scene->opened.height = 1;
   scene->flag = FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN;
   scene->facing = FACING_NORTH;
-  scene->destX = 654;
-  scene->destZ = 216;
-  scene->stairs[0].srcX = 12;
-  scene->stairs[0].srcY = 58;
-  scene->stairs[0].destX = 36;
-  scene->stairs[0].destY = 43;
+  scene->destinationX = 654;
+  scene->destinationZ = 216;
+  scene->stairs[0].sourceX = 12;
+  scene->stairs[0].sourceY = 58;
+  scene->stairs[0].destinationX = 36;
+  scene->stairs[0].destinationY = 43;
   scene->stairs[0].width = 4;
   scene->stairs[0].height = 1;
-  scene->stairs[1].srcX = 4;
-  scene->stairs[1].srcY = 31;
-  scene->stairs[1].destX = 36;
-  scene->stairs[1].destY = 11;
+  scene->stairs[1].sourceX = 4;
+  scene->stairs[1].sourceY = 31;
+  scene->stairs[1].destinationX = 36;
+  scene->stairs[1].destinationY = 11;
   scene->stairs[1].width = 2;
   scene->stairs[1].height = 1;
-  scene->stairs[2].srcX = 4;
-  scene->stairs[2].srcY = 29;
-  scene->stairs[2].destX = 18;
-  scene->stairs[2].destY = 11;
+  scene->stairs[2].sourceX = 4;
+  scene->stairs[2].sourceY = 29;
+  scene->stairs[2].destinationX = 18;
+  scene->stairs[2].destinationY = 11;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
   scene->actor = ACTOR_SOUTHEAST_STATUE;
@@ -1559,8 +1559,8 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
 }
 
 #define COPY_CELLS(copy)                                                       \
-  Map_CopyCellsTo((copy).srcX, (copy).srcY, (copy).destX, (copy).destY,        \
-                  (copy).width, (copy).height)
+  Map_CopyCellsTo((copy).sourceX, (copy).sourceY, (copy).destinationX,         \
+                  (copy).destinationY, (copy).width, (copy).height)
 
 /// Animates the seal and either advances the story or resets its statue.
 /// Called by the four OpenXSeal functions with sSealScene filled in. Sets the
@@ -1602,8 +1602,8 @@ static void SolSanctumStatue_OpenSeal(void) {
         Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &=
             ~ACTOR_FACES_MOTION;
         Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-        Engine_ActorSetDestination(ACTOR_PARTY_LEADER, scene->destX,
-                                   scene->destZ);
+        Engine_ActorSetDestination(ACTOR_PARTY_LEADER, scene->destinationX,
+                                   scene->destinationZ);
         COPY_CELLS(scene->stairs[0]);
         COPY_CELLS(scene->stairs[1]);
         COPY_CELLS(scene->stairs[2]);

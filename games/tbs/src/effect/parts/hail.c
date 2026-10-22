@@ -352,7 +352,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Shakes the battle view while gBattleFxWork's shakeFrames lasts, moving
+/// Shakes the battle view while gBattleEffectWork's shakeFrames lasts, moving
 /// BG1 and the projection centre by a random offset; once the shake runs
 /// out, BG1 returns to its saved position and the centre to (120, 120). It
 /// takes two random numbers each shaking frame, x first.

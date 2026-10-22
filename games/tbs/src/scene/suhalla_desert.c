@@ -591,7 +591,7 @@ static void Event_StormGivesChase(void) {
 /// (FieldEffect_RunDouse).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
-  ((struct FieldFxScene *)state)->childOption = 1;
+  ((struct FieldEffectScene *)state)->childOption = 1;
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
@@ -881,7 +881,7 @@ static void SuhallaDesert_SetUpSecondSceneStorms(void) {
     sprite = actor->sprite;
     part = sprite->entries[0];
     if (part != 0) {
-      part->param = 10;
+      part->colorMode = 10;
     }
     sprite->dirty = 1;
     sprite->flags = 0;

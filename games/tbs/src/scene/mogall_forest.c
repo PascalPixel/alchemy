@@ -1736,7 +1736,7 @@ const s32 *gEffectScripts[] = {
 
 /// The script of each rock moved with Move: it is drawn in greys.
 s32 gMogallForest_RockScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_TIMER, SPRITE_COLOR_GREY),
     SC_CALL(MogallForest_CopyTimerToChild),
     SC_END,

@@ -2422,7 +2422,7 @@ s32 Scene_Initialize(void) {
 /// window that announces its name. Nyunpa's Mind Read events carry
 /// PSYNERGY_SCRIPT_PLAYS_EFFECT, so the field plays nothing of its own.
 static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
 
   Engine_GameFlagSet(FLAG_PSYNERGY_EFFECT);
   Engine_PsynergyStart(ABILITY_MIND_READ, 1);
@@ -2555,7 +2555,7 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gFuchinTemple_JumpingStudentScript[] = {
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_SET(SW_GRAVITY, 0x9999),
     SC_LABEL(1),
     SC_SET(SW_VELOCITY_Y, 0x30000),

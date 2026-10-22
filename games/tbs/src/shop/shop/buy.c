@@ -66,7 +66,7 @@ next_page:
                        selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
       shop->mode = 4;
       Shop_DrawStock(stockWindow, selectionIndex);
-      Shop_DrawMsg(messageWindow, itemId + MsgItemPlainName);
+      Shop_DrawMessage(messageWindow, itemId + MsgItemPlainName);
       RenderOutput_RedrawSavedRectFar(priceWindow);
       Shop_DrawItemPrice(priceWindow, itemId, stockDefinition->price,
                          SHOP_PRICE_KIND_BUY);
@@ -268,7 +268,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
       zero = 0;
       icon->kind = zero;
       icon->active = UI_SPRITE_HOP_UP;
-      icon->animStep = zero;
+      icon->animationStep = zero;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
       icon = RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 216,
@@ -276,7 +276,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
       zero = 0;
       icon->kind = zero;
       icon->active = UI_SPRITE_HOP_DOWN_2;
-      icon->animStep = zero;
+      icon->animationStep = zero;
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {
@@ -294,7 +294,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
         if (stockIndex == selected) {
           icon->active = UI_SPRITE_SWELL;
           highlightFrame = 10;
-          icon->animStep = highlightFrame;
+          icon->animationStep = highlightFrame;
           icon->sentinel = 253;
         }
         icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
@@ -369,7 +369,7 @@ draw:
 
 /// Shows `message`, an item's description, in the help window; a NULL window
 /// is ignored. Called by the counters' lists each time the cursor moves.
-void Shop_DrawMsg(struct UiWindow *window, s32 message) {
+void Shop_DrawMessage(struct UiWindow *window, s32 message) {
   if (window != 0) {
 #if TBS_PATCH_1
     RenderOutput_RedrawSavedRectFar(window);

@@ -77,7 +77,7 @@ whose rows start at `BATTLE_EFFECT_QUAKE`, the first kind after `BATTLE_EFFECT_N
 Each row's comment names the part that defines the handler and the first
 ability that selects the kind. Of the table's 407 rows, 162 have a handler,
 143 different functions between them; a kind with no handler has no name in
-`enum BattleFxKind` ([`effect.h`](../../include/unit/effect/effect.h)) and an
+`enum BattleEffectKind` ([`effect.h`](../../include/unit/effect/effect.h)) and an
 empty row. Abilities whose rows give the same kind and variant play the same
 effect.
 
@@ -128,7 +128,7 @@ spaces:
 The effect is an enumerator, never a number, and its prefix says how it is
 reached:
 
-- `BATTLE_EFFECT_` (`enum BattleFxKind`): a row of the handler table;
+- `BATTLE_EFFECT_` (`enum BattleEffectKind`): a row of the handler table;
 - `SCENE_EFFECT_` (`enum SceneEffectKind`): a row with `STAGING_SCENE`;
 - `CASTING_IMPACT_` (`enum CastingImpact`, in
   [`casting_impact.c`](parts/casting_impact.c)): a row with
@@ -884,7 +884,7 @@ template, the tables, the colour fragments and the bit operands, in that order.
 ## Words used here
 
 - **effect kind**: `effect->kind`, the number that picks which effect plays.
-  `enum BattleFxKind` names the handler table's kinds, `enum SceneEffectKind`
+  `enum BattleEffectKind` names the handler table's kinds, `enum SceneEffectKind`
   the summons' scenes and `enum CastingImpact` the casting impacts. It is not
   the ability kind.
 - **runner** and **mode**: a runner draws a family of effect kinds, and the

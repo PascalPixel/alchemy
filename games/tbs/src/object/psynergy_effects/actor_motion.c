@@ -178,7 +178,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
   }
   if (found == NULL)
     return NULL;
-  if (((struct AnimationObject *)found->animation)->entries[0]->animId !=
+  if (((struct AnimationObject *)found->animation)->entries[0]->animationId !=
       sprite)
     return NULL;
   return found;

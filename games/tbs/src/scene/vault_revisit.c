@@ -737,9 +737,9 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gVaultRevisit_BoyRoundTheWellScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(136), 0, PIXELS(376)),
     SC_SYNC,
@@ -762,9 +762,9 @@ s32 gVaultRevisit_BoyRoundTheWellScript[] = {
 };
 
 s32 gVaultRevisit_GirlRoundTheWellScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(120), 0, PIXELS(424)),
     SC_SYNC,

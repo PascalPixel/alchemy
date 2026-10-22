@@ -203,7 +203,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   // 0x296 of palette 15 between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
-    UiWork_SetParamNibbleFar(2);
+    UiWork_SetParameterNibbleFar(2);
   }
   UiText_DrawCharacterAtOffsetFar(
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -213,11 +213,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                               DJINN_ELEMENT(menu->pairEntries[0]) +
                                   DJINN_ELEMENT_TILE,
                               5, row, zero = 0);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
     if ((menu->pairEntries[1] & DJINN_ENTRY_IS_SET) == 0) {
-      UiWork_SetParamNibbleFar(2);
+      UiWork_SetParameterNibbleFar(2);
     }
     UiText_DrawCharacterAtOffsetFar(
         DJINN_ELEMENT(menu->pairEntries[1]) * DJINN_PER_ELEMENT +
@@ -226,10 +226,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     UiWindow_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[1]) + DJINN_ELEMENT_TILE, 5, 2, mode);
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   } else if (mode - 2 <= 1) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
-      UiWork_SetParamNibbleFar(2);
+      UiWork_SetParameterNibbleFar(2);
     }
     UiText_DrawCharacterAtOffsetFar(
         DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -238,7 +238,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     UiWindow_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
     UiWindow_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
   }
 

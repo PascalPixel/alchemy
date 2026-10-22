@@ -1221,7 +1221,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   struct FieldActor *child;
   struct AnimationObject *part;
   struct AnimationObject *sprite;
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
@@ -1294,62 +1294,62 @@ static void ValeInteriorsInn_DemonstrateCatch(void) {
 }
 
 s32 gValeInteriorsInn_LeaveHouseScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
-    SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(748)),
-    SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(691)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
+    SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(748)),
+    SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(691)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_DoraLeavesScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValeInteriorsInn_IsaacLeavesScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
-    SC_SYNC,   SC_MOVE(PIXELS(387), 0, PIXELS(661)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
+    SC_SYNC,         SC_MOVE(PIXELS(387), 0, PIXELS(661)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValeInteriorsInn_DoraRunsAheadScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
-    SC_SYNC,   SC_MOVE(PIXELS(508), 0, PIXELS(402)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
+    SC_SYNC,         SC_MOVE(PIXELS(508), 0, PIXELS(402)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_IsaacRunsAheadScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
-    SC_SYNC,   SC_MOVE(PIXELS(468), 0, PIXELS(390)),
-    SC_SYNC,   SC_MOVE(PIXELS(486), 0, PIXELS(393)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
+    SC_SYNC,         SC_MOVE(PIXELS(468), 0, PIXELS(390)),
+    SC_SYNC,         SC_MOVE(PIXELS(486), 0, PIXELS(393)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_DoraRunsBackScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
-    SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
-    SC_SYNC,   SC_MOVE(PIXELS(455), 0, PIXELS(450)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
+    SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
+    SC_SYNC,         SC_MOVE(PIXELS(455), 0, PIXELS(450)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_IsaacRunsBackScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
-    SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
-    SC_SYNC,   SC_MOVE(PIXELS(481), 0, PIXELS(443)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
+    SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
+    SC_SYNC,         SC_MOVE(PIXELS(481), 0, PIXELS(443)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_RunToPlazaScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
-    SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(513)),
-    SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(589)),
-    SC_SYNC,   SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
+    SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(513)),
+    SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(589)),
+    SC_SYNC,         SC_END,
 };
 
 s32 gValeInteriorsInn_FlameShakesScript[] = {
@@ -1359,7 +1359,7 @@ s32 gValeInteriorsInn_FlameShakesScript[] = {
 };
 
 s32 gValeInteriorsInn_FlameRisesScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x13333),
     SC_WAIT(3),
@@ -1387,7 +1387,7 @@ s32 gValeInteriorsInn_FlameRisesScript[] = {
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(3)),
     SC_POSITION(0, 0, 0),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

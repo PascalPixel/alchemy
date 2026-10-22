@@ -250,7 +250,7 @@ enum {
 #define ALTMILLER_CAVE_BRIGHTENING_WINOUT (WINOUT_WIN01_ALL | WINOUT_WINOBJ_ALL)
 
 /// The puddle's animation once Frost has frozen it.
-enum { PUDDLE_ANIM_FROZEN = 5 };
+enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 static void AltmillerCave_ReleaseWallBurst(void);
 
@@ -487,7 +487,7 @@ static void AltmillerCave_StartReveal(void) {
 /// Reveal's light ends: the cave darkens again and AltmillerCaveDraught's rocks
 /// lose their colors.
 static void AltmillerCave_EndReveal(void) {
-  struct FieldFxScene *work = (struct FieldFxScene *)gEffectWork;
+  struct FieldEffectScene *work = (struct FieldEffectScene *)gEffectWork;
 
   if (Engine_GameFlagIsSet(FLAG_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
@@ -505,11 +505,11 @@ static void AltmillerCave_EndReveal(void) {
 /// Retreat's first phase: the Psynergy's first actor faces south, and its
 /// object is copied into a new one for the effect to use.
 static void AltmillerCave_StartRetreat(void) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
   struct FieldActor *original;
   struct FieldActor *replacement;
 
-  work = (struct FieldFxScene *)gEffectWork;
+  work = (struct FieldEffectScene *)gEffectWork;
   original = work->mainObject;
   Engine_ActorFaceDirection(work->firstObjectId, FACING_SOUTH, 0);
   Animation_ApplyChildValues((struct DispatchObject *)original, 0);
@@ -551,7 +551,7 @@ static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
 /// Frost's first phase on AltmillerCaveSquall's puddle: notes whether its place
 /// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
-  struct FieldFxScene *scene = (struct FieldFxScene *)gEffectWork;
+  struct FieldEffectScene *scene = (struct FieldEffectScene *)gEffectWork;
   struct FieldActor *target = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
@@ -567,7 +567,7 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
 /// Frost on AltmillerCaveSquall's puddle, unless blocked: it freezes and its
 /// cell takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
-  struct FieldFxScene *scene = (struct FieldFxScene *)gEffectWork;
+  struct FieldEffectScene *scene = (struct FieldEffectScene *)gEffectWork;
   struct FieldActor *puddle = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
@@ -2102,7 +2102,8 @@ s32 AltmillerCave_Initialize(void) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE,
+                               PUDDLE_ANIMATION_FROZEN);
       Map_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     } else {
       Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=
@@ -2233,13 +2234,13 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
 /// The wall bursts: 24 pieces fly out from the ring's center, the wall's
 /// cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
   struct EffectVector position;
   struct EffectSlot *fragment;
   s32 fragmentIndex;
 
   FieldEffect_InitializeSlots();
-  work = (struct FieldFxScene *)gEffectWork;
+  work = (struct FieldEffectScene *)gEffectWork;
   Shop_SaveAndTintFieldPalette(0x202108);
   position.x = PIXELS(504);
   position.y = PIXELS(24);
@@ -2479,32 +2480,32 @@ u32 gAltmillerCave_PulseScales[] = {
 
 /// The two men from Tolbi walk in to Babi.
 s32 gAltmillerCave_GuardsArrivePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, -PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(64), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, -PIXELS(64)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 /// Babi and the two men walk out of the room, each by his own path.
 s32 gAltmillerCave_SecondGuardLeavePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(48), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_FirstGuardLeavePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, PIXELS(16)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2513,12 +2514,12 @@ s32 gAltmillerCave_FirstGuardLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(32), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_BabiLeavePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2527,7 +2528,7 @@ s32 gAltmillerCave_BabiLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 

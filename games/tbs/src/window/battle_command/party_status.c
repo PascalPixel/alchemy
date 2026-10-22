@@ -174,7 +174,7 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
   u32 recoloured;
 
   if (work->menuState == 0) {
-    Dma_Set((const void *)Palette_GetBasicObjColors(),
+    Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(14, 0), DMA_COPY16(16), REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
   }
@@ -309,11 +309,11 @@ void PartyStatus_Draw(s32 flags) {
     s32 current;
 
     if (hp == 0)
-      UiWork_SetParamNibble(2);
+      UiWork_SetParameterNibble(2);
     else if (hp <= hpMax / 4)
-      UiWork_SetParamNibble(4);
+      UiWork_SetParameterNibble(4);
     else
-      UiWork_SetParamNibble(15);
+      UiWork_SetParameterNibble(15);
     // The numbers' tiles take BG palette 14 in the field and 5 in battle
     // (UiRenderWork.level); the name keeps palette 15.
     work->level = 14;
@@ -324,7 +324,7 @@ void PartyStatus_Draw(s32 flags) {
     work->level = 15;
     UiText_DrawStringAtOffset(unit->name, window,
                               (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    UiWork_SetParamNibble(15);
+    UiWork_SetParameterNibble(15);
     if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
       current = unit->hp;

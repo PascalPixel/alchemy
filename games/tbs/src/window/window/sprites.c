@@ -100,15 +100,15 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
         break;
       case TEXT_STYLE_POP:
         output->active = UI_SPRITE_POP;
-        output->animStep = 8;
+        output->animationStep = 8;
         break;
       case TEXT_STYLE_SPIN:
         output->active = UI_SPRITE_SPIN;
-        output->animStep = 0;
+        output->animationStep = 0;
         break;
       case TEXT_STYLE_WOBBLE:
         output->active = UI_SPRITE_WOBBLE;
-        output->animStep = 0;
+        output->animationStep = 0;
         break;
       }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -181,7 +181,7 @@ struct SpriteOutput {
   u16 x;     ///< screen pixels, where the motion is centred
   u16 y;     ///< screen pixels, where the motion is centred
   u16 unk0a;
-  u16 animStep; ///< step of its motion's animation
+  u16 animationStep; ///< step of its motion's animation
   u8 index;
   u8 sentinel;              ///< depth slot it is drawn at
   struct CursorSprite attr; ///< the sprite cell queued each frame
@@ -193,8 +193,8 @@ STATIC_ASSERT(offsetof(struct SpriteOutput, y) ==
               offsetof(struct RenderOutput, y));
 STATIC_ASSERT(offsetof(struct SpriteOutput, active) ==
               offsetof(struct RenderOutput, active));
-STATIC_ASSERT(offsetof(struct SpriteOutput, animStep) ==
-              offsetof(struct RenderOutput, animStep));
+STATIC_ASSERT(offsetof(struct SpriteOutput, animationStep) ==
+              offsetof(struct RenderOutput, animationStep));
 STATIC_ASSERT(offsetof(struct SpriteOutput, index) ==
               offsetof(struct RenderOutput, index));
 STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
@@ -428,18 +428,18 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
 
   switch ((u8)output->active) {
   case UI_SPRITE_SWELL:
-    scale = gUi_BounceScales[output->animStep++ & 31];
+    scale = gUi_BounceScales[output->animationStep++ & 31];
     break;
   case UI_SPRITE_SWELL_HALF:
-    scale = gUi_BounceScales[output->animStep++ & 31] >> 1;
+    scale = gUi_BounceScales[output->animationStep++ & 31] >> 1;
     break;
   case UI_SPRITE_SHRINK:
-    if (output->animStep <= 7)
-      scale = gUi_BounceScales[output->animStep++ * 2 + 16];
+    if (output->animationStep <= 7)
+      scale = gUi_BounceScales[output->animationStep++ * 2 + 16];
     break;
   case UI_SPRITE_SHRINK_HALF:
-    if (output->animStep <= 7)
-      scale = gUi_BounceScales[output->animStep++ * 2 + 16] >> 1;
+    if (output->animationStep <= 7)
+      scale = gUi_BounceScales[output->animationStep++ * 2 + 16] >> 1;
     break;
   }
   if (scale == 256) {
@@ -491,7 +491,7 @@ void UiWork_AnimateSpriteSlots(void) {
       struct CursorSprite *sprite = &output->attr;
 
       if (window->effect == UI_WINDOW_EFFECT_SWELL) {
-        output->animStep = 2;
+        output->animationStep = 2;
         output->active = UI_SPRITE_PULSE;
       }
       switch (output->active) {
@@ -528,9 +528,9 @@ void UiWork_AnimateSpriteSlots(void) {
         }
         break;
       case UI_SPRITE_POP:
-        // Double size (512 in 8.8) for animStep frames, which UiText_DrawGlyph
-        // starts at 8.
-        if (output->animStep == 0) {
+        // Double size (512 in 8.8) for animationStep frames, which
+        // UiText_DrawGlyph starts at 8.
+        if (output->animationStep == 0) {
           sprite->affineIndex = 0;
           sprite->affine = 0;
           sprite->x = output->x;
@@ -544,15 +544,15 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->affine = 3;
         sprite->x = output->x - 5;
         sprite->y = output->y - 5;
-        output->animStep--;
+        output->animationStep--;
         break;
       case UI_SPRITE_SPIN:
-        // animStep is the angle, 65536 a turn: 768 a frame, a turn in about
-        // 85 frames, while the sprite circles its place.
+        // animationStep is the angle, 65536 a turn: 768 a frame, a turn in
+        // about 85 frames, while the sprite circles its place.
         effect.scaleX = 256;
         effect.scaleY = 256;
-        output->animStep += 768;
-        effect.angle = output->animStep;
+        output->animationStep += 768;
+        effect.angle = output->animationStep;
         sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
         sprite->affine = 1;
         sprite->x = output->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
@@ -561,30 +561,34 @@ void UiWork_AnimateSpriteSlots(void) {
       case UI_SPRITE_WOBBLE:
         // One step of the 20 of gUiSprite_WobbleOffsets every other frame.
         if (gFrameTick & 1)
-          output->animStep++;
+          output->animationStep++;
         sprite->x =
-            output->x + gUiSprite_WobbleOffsets[output->animStep % 20][0];
-        sprite->y =
-            output->y + gUiSprite_WobbleOffsets[output->animStep % 20][1] - 2;
+            output->x + gUiSprite_WobbleOffsets[output->animationStep % 20][0];
+        sprite->y = output->y +
+                    gUiSprite_WobbleOffsets[output->animationStep % 20][1] - 2;
         break;
       case UI_SPRITE_HOP_UP:
-        output->animStep++;
-        sprite->y = output->y - gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->y =
+            output->y - gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case UI_SPRITE_HOP_DOWN:
       case UI_SPRITE_HOP_DOWN_2:
       case UI_SPRITE_HOP_DOWN_3:
-        output->animStep++;
-        sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->y =
+            output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case UI_SPRITE_HOP_DOWN_LEFT:
-        output->animStep++;
-        sprite->x = output->x - gUiSprite_BounceOffsets[output->animStep & 15];
-        sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->x =
+            output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->y =
+            output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case UI_SPRITE_PULSE:
-        // 1.25 times (320 in 8.8) for animStep frames, then its own size.
-        if (output->animStep != 0) {
+        // 1.25 times (320 in 8.8) for animationStep frames, then its own size.
+        if (output->animationStep != 0) {
           effect.scaleX = 320;
           effect.scaleY = 320;
           effect.angle = 0;
@@ -592,7 +596,7 @@ void UiWork_AnimateSpriteSlots(void) {
           sprite->affine = 3;
           sprite->x = output->x - 8;
           sprite->y = output->y - 8;
-          output->animStep--;
+          output->animationStep--;
           break;
         }
         sprite->affineIndex = 0;

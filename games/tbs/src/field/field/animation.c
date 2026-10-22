@@ -85,8 +85,9 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     end = (u8 *)buffer + size;
     if (index > 4)
       index = 0;
-    // Values above 0xdf (palettes 14 and 15, which Palette_LoadBasicObjColors
-    // does not load) are kept; only the basic palettes' colours change.
+    // Values above 0xdf (palettes 14 and 15, which
+    // Palette_LoadBasicSpriteColors does not load) are kept; only the basic
+    // palettes' colours change.
     colorMap = gResourceSlot_ConversionTables[index];
     for (; pixels < end; pixels++) {
       u32 colorIndex = *pixels;
@@ -124,7 +125,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
   for (i = 0; i < sprite->count; i++) {
     struct AnimationEntry *layer = sprite->entries[i];
     struct AnimationMetadata *metadata =
-        Resource_GetMetadataRecordFar(layer->animId);
+        Resource_GetMetadataRecordFar(layer->animationId);
     void **frames;
 
     if (metadata->width == 0)
@@ -143,7 +144,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
     // slot loaded under its id (ResourceSlot_Load).
     frames = metadata->frames;
     if (frames == 0)
-      frames = (void **)Animation_LookupValueByKey(layer->animId);
+      frames = (void **)Animation_LookupValueByKey(layer->animationId);
 
     layer->kind = metadata->drawKind;
     layer->frames = frames;
@@ -153,7 +154,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
     // until an animation is selected on it.
     layer->frame = 0xff;
     layer->script = 0;
-    layer->pos = 0;
+    layer->scriptOffset = 0;
   }
 
   return 0;
@@ -168,12 +169,12 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer) {
   struct AnimationMetadata *metadata;
 
   if (layer != NULL) {
-    metadata = Resource_GetMetadataRecordFar(layer->animId);
+    metadata = Resource_GetMetadataRecordFar(layer->animationId);
     if (metadata->width != 0) {
       // Keep the layer inactive until an animation script is selected.
       frames = metadata->frames;
       if (frames == 0)
-        frames = (void **)Animation_LookupValueByKey(layer->animId);
+        frames = (void **)Animation_LookupValueByKey(layer->animationId);
       layer->kind = metadata->drawKind;
       layer->scripts = metadata->animation;
       layer->frames = frames;
@@ -181,7 +182,7 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer) {
       zero = 0;
       layer->frame = 0xff;
       layer->script = (u8 *)zero;
-      layer->pos = zero;
+      layer->scriptOffset = zero;
     }
   }
 }
@@ -298,14 +299,14 @@ void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
 
   keepPlace = 0x80 & animation;
   if (layer->scripts != 0) {
-    metadata = Resource_GetMetadataRecordFar(layer->animId);
+    metadata = Resource_GetMetadataRecordFar(layer->animationId);
     if (animation < metadata->animationCount) {
       scriptAddress = (s32)layer->scripts[animation];
       layer->kind = metadata->drawKind;
       layer->script = (u8 *)scriptAddress;
       layer->step = ANIMATION_NORMAL_STEP;
       if (keepPlace == 0) {
-        layer->pos = keepPlace;
+        layer->scriptOffset = keepPlace;
         layer->timer = keepPlace;
       }
     }
@@ -341,14 +342,14 @@ s32 AnimationObject_SelectAnimation(struct AnimationObject *sprite,
       s32 selectedAnimation;
 
       if (layer != 0 && layer->scripts != 0) {
-        metadata = Resource_GetMetadataRecordFar(layer->animId);
+        metadata = Resource_GetMetadataRecordFar(layer->animationId);
         if (animation < metadata->animationCount) {
           selectedAnimation = (s32)layer->scripts[animation];
           layer->kind = metadata->drawKind;
           layer->script = (u8 *)selectedAnimation;
           layer->step = ANIMATION_NORMAL_STEP;
           if (keepPlace == 0) {
-            layer->pos = 0;
+            layer->scriptOffset = 0;
             layer->timer = 0;
           }
           if (i == 0) {
@@ -443,7 +444,7 @@ void ObjectSystem_Configure(s32 mode) {
   // Load the sprites' basic colours, clear both pools, then load the shared
   // shadow (128 bytes: the two 8x8 tiles of a 16x8, 256-colour sprite) and
   // the tile uploader.
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   Dma_Fill32Cell(zero, 0, sprites,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
   Dma_Fill32Cell(zero, 0, layers,
@@ -489,7 +490,7 @@ struct AnimationEntry *Animation_AllocateLayer(s32 id) {
       frames = (void **)*(s32 *)&metadata->frames;
 #endif
       layer = found;
-      layer->animId = id;
+      layer->animationId = id;
       if (frames == 0)
         frames = (void **)Animation_LookupValueByKey(id);
 
@@ -499,9 +500,9 @@ struct AnimationEntry *Animation_AllocateLayer(s32 id) {
       layer->mode = metadata->frameCodec;
       layer->frame = 0xff;
       layer->script = scripts[0];
-      layer->pos = 0;
+      layer->scriptOffset = 0;
       layer->kind = metadata->drawKind;
-      layer->param = 0;
+      layer->colorMode = 0;
     }
   }
   return layer;

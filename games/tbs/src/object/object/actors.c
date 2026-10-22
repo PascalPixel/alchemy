@@ -297,7 +297,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     struct AnimationEntry *meta =
         (struct AnimationEntry *)ResourceMetadata_RegisterFar(object->animation,
                                                               23);
-    meta->param = SPRITE_COLOR_HIDDEN;
+    meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
   ((struct MapScrollWork *)gMapWork[0])->origin = &camera->x;

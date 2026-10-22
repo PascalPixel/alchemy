@@ -296,7 +296,7 @@ enum KalayTunnelActor {
 };
 
 /// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
-enum { PUDDLE_ANIM_FROZEN = 5 };
+enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
 /// passages (place flags) while the party stays in the tunnel's scenes.
@@ -1400,7 +1400,7 @@ static void Kalay_PrepareTunnel(void) {
     if (GameFlag_IsSet(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       Actor_Get(ACTOR_PUDDLE);
       column = 9;
-      Engine_ActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_FROZEN);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 14);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 45);
       {
@@ -2408,25 +2408,25 @@ s32 gKalay_TileStepByFacing[] = {
 };
 
 s32 gKalay_TourGroupWalkScript[] = {
-    SC_ARG(2), SC_MOVE_BY(-PIXELS(80), 0, 0), SC_SYNC,
-    SC_ARG(1), SC_SET(SW_TIMER, 1),           SC_WAIT(1),
+    SC_ANIMATION(2), SC_MOVE_BY(-PIXELS(80), 0, 0), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_TIMER, 1),           SC_WAIT(1),
     SC_END,
 };
 
 s32 gKalay_TourGroupLeaveScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(-PIXELS(72), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(100), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(100), 0, 0),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_TIMER, 1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(192), 0, PIXELS(222)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
@@ -2440,36 +2440,36 @@ s32 gKalay_TouristFidgetScript[] = {
 };
 
 s32 gKalay_GuideCountScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(228), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(212), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(192), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(178), 0, PIXELS(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gKalay_GuidePaceScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(164), 0, PIXELS(278)),
     SC_SYNC,
     SC_MOVE(PIXELS(182), 0, PIXELS(304)),
@@ -2478,7 +2478,7 @@ s32 gKalay_GuidePaceScript[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(246), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, 0xd000),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
@@ -2493,10 +2493,10 @@ s32 gKalay_HeadGuideStopScript[] = {
     SC_SET(SW_VELOCITY_Y, 0),
     SC_SET(SW_VELOCITY_Z, 0),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(184), 0, PIXELS(294)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
@@ -2511,10 +2511,10 @@ s32 gKalay_SecondGuideStopScript[] = {
     SC_SET(SW_VELOCITY_Y, 0),
     SC_SET(SW_VELOCITY_Z, 0),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(198), 0, PIXELS(300)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
@@ -2522,10 +2522,10 @@ s32 gKalay_SecondGuideStopScript[] = {
 };
 
 s32 gKalay_HeadGuideReturnScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(178), 0, PIXELS(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_SET(SW_TIMER, 0),
     SC_WAIT(1),
@@ -2533,14 +2533,14 @@ s32 gKalay_HeadGuideReturnScript[] = {
 };
 
 s32 gKalay_SecondGuideReturnScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(255), 0, PIXELS(289)),
     SC_SYNC,
     SC_MOVE(PIXELS(265), 0, PIXELS(280)),
     SC_SYNC,
     SC_MOVE(PIXELS(284), 0, PIXELS(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_SET(SW_TIMER, 0),
     SC_WAIT(1),
@@ -2553,10 +2553,10 @@ s32 gKalay_PartyFidgetScript[] = {
 };
 
 s32 gKalay_PartyGatherScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(388), 0, PIXELS(300)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
@@ -2988,7 +2988,7 @@ u16 gKalay_DoorCellSteps[] = {
     MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim gKalay_DoorCells[] = {
+struct MapCellAnimation gKalay_DoorCells[] = {
     {gKalay_DoorCellSteps, 36, 10}, {gKalay_DoorCellSteps, 57, 7},
     {gKalay_DoorCellSteps, 57, 11}, {gKalay_DoorCellSteps, 57, 23},
     {gKalay_DoorCellSteps, 52, 25}, {gKalay_DoorCellSteps, 39, 14},

@@ -19,7 +19,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *copy;
   struct FieldActor *previous;
   struct AnimationObject *resource;
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct FieldActor **cursor;
   struct FieldActor **list;
   struct EffectSlot *effect;
@@ -59,7 +59,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   // Eight afterimages of the same sprite at 15/16 size, each closing half
   // the distance to the one before it every frame, sharing one VRAM cache
   // entry, as in Djinn_RunBattleStartHop.
-  kind = djinni->sprite->entries[0]->animId;
+  kind = djinni->sprite->entries[0]->animationId;
   resource = NULL;
   previous = djinni;
   cursor = copies;
@@ -137,7 +137,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
 
     nextState = MERCURY_DROPLET_LAST_FALL;
     slotState = (s8 *)scene;
-    slotState += offsetof(struct FieldFxScene, effects) +
+    slotState += offsetof(struct FieldEffectScene, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = MERCURY_PARTICLE_MAX - 1;
     do {

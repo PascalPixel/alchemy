@@ -119,8 +119,8 @@ gBlendLayers:
 	.global gVBlankHook
 gVBlankHook:
 	.space 0x00000004
-	.global gObjAffineCount
-gObjAffineCount:
+	.global gSpriteAffineCount
+gSpriteAffineCount:
 	.space 0x00000004
 	.global gKeysDirection
 gKeysDirection:
@@ -160,8 +160,8 @@ gSchedulerReady:
 	.else
 	.space 0x0000000c
 	.endif
-	.global gObjAffineMatrices
-gObjAffineMatrices:
+	.global gSpriteAffineMatrices
+gSpriteAffineMatrices:
 	.space 0x00000100
 	.global gFrameCount
 gFrameCount:
@@ -222,8 +222,8 @@ gSelectionWorkspace:
 	.global gSelectionWork
 gSelectionWork:
 	.space 0x00000008
-	.global gBattleBgFxWork
-gBattleBgFxWork:
+	.global gBattleBgEffectWork
+gBattleBgEffectWork:
 	.space 0x00000014
 	.global gEventWork
 gEventWork:
@@ -252,8 +252,8 @@ gActorEffectWork:
 	.global gBattleDisplayWork
 gBattleDisplayWork:
 	.space 0x00000008
-	.global gBattleFxWork
-gBattleFxWork:
+	.global gBattleEffectWork
+gBattleEffectWork:
 	.space 0x0000000c
 	.global gDisp
 gDisp:

@@ -38,7 +38,7 @@ enum CaveActor {
   ACTOR_HAMMET
 };
 
-enum { PUDDLE_ANIM_FROZEN = 5 };
+enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 enum { GATE_PILLAR_PRIORITY = 3 };
 

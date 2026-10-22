@@ -16,7 +16,7 @@ struct Effect05Object {
   u8 reserved2c[4];
   s32 speed; ///< speed limit, 16.16 fixed-point pixels per frame
   u8 reserved34[0x1c];
-  struct WaveFxSprite *sprite;
+  struct WaveEffectSprite *sprite;
   u8 reserved54;
   u8 flag; ///< motionFlags: 2 falls, 0 free flight
   u8 reserved56[8];
@@ -27,8 +27,8 @@ struct Effect05Object {
   void (*callback)(union FieldObject *fieldObject); ///< per-frame update
 };
 
-/// The effect scene (struct FieldFxScene, gEffectWork) as Douse reads it;
-/// the notes give the FieldFxScene fields at the same offsets.
+/// The effect scene (struct FieldEffectScene, gEffectWork) as Douse reads it;
+/// the notes give the FieldEffectScene fields at the same offsets.
 struct Effect05State {
   s32 angle;             ///< 1/65536 turns: the way the caster faces
   s32 x, y, z;           ///< the ground under the orb's destination
@@ -141,14 +141,15 @@ void FieldEffect_RunDouse(void) {
   AudioCommand_PlayFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->initialized == 0) {
-    work->x = target->pos.x;
-    work->z = target->pos.z;
+    work->x = target->position.x;
+    work->z = target->position.z;
     Vector_AddPolarOffset(16 << 16, work->angle,
                           (struct EffectVector *)&work->x);
     work->y = Map_GetTerrainHeightFar(0, work->x, work->z);
   }
   from = &start;
-  SET_POSITION(from, target->pos.x, target->pos.y + (16 << 16), target->pos.z);
+  SET_POSITION(from, target->position.x, target->position.y + (16 << 16),
+               target->position.z);
   to = &end;
   to->x = work->x;
   y = work->y;

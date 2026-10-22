@@ -202,7 +202,7 @@ static s32 StagedActor_StopBlockedMotion(struct FieldActor *actor) {
   target = StagedActor_FindAtTile(&probe, actor);
   if (target != 0) {
     u32 i = 0;
-    s32 kind = target->sprite->entries[0]->animId;
+    s32 kind = target->sprite->entries[0]->animationId;
     s32 *kinds = gStagedActor_FootprintKinds;
 
     do {
@@ -259,7 +259,7 @@ static struct FieldActor *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
     if (actor == NULL)
       continue;
 #endif
-    kind = actor->sprite->entries[0]->animId;
+    kind = actor->sprite->entries[0]->animationId;
     for (j = 0; j < 6; j++) {
       if (kind == gStagedActor_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
@@ -579,7 +579,8 @@ UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   s32 dstZ;
 
   for (idx = 0; idx <= 5; idx++) {
-    if (actor->sprite->entries[0]->animId == gStagedActor_FootprintKinds[idx]) {
+    if (actor->sprite->entries[0]->animationId ==
+        gStagedActor_FootprintKinds[idx]) {
       probe.footprintIndex = idx;
       break;
     }

@@ -255,13 +255,13 @@ enum { TRIGGER_WEAPON_COUNTER = 10, TRIGGER_ARMOR_COUNTER = 11 };
 enum ImilAnimation {
   /// Lying in bed, only the head above the covers: the old man
   /// (SPRITE_OLD_MAN_WITH_CANE, spr_103.png) and the sick sellers.
-  IMIL_ANIM_LIE_IN_BED = 5,
-  IMIL_ANIM_SIT_UP = 7, ///< the old man sits up in bed
-  /// The old man lies back down, then IMIL_ANIM_LIE_IN_BED.
-  IMIL_ANIM_LIE_BACK = 8,
+  IMIL_ANIMATION_LIE_IN_BED = 5,
+  IMIL_ANIMATION_SIT_UP = 7, ///< the old man sits up in bed
+  /// The old man lies back down, then IMIL_ANIMATION_LIE_IN_BED.
+  IMIL_ANIMATION_LIE_BACK = 8,
   /// The strongman's knee bends, over and over (SPRITE_STRONGMAN,
   /// spr_116.png).
-  IMIL_ANIM_SQUATS = 9
+  IMIL_ANIMATION_SQUATS = 9
 };
 
 static void Imil_MeetMiaAtOldCouplesHouse(void);
@@ -423,7 +423,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                             IMIL_ANIM_SQUATS);
+                             IMIL_ANIMATION_SQUATS);
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilOneTwoThreeFour));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -437,7 +437,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                             IMIL_ANIM_SQUATS);
+                             IMIL_ANIMATION_SQUATS);
   }
 
   Engine_EventEnd();
@@ -462,11 +462,11 @@ static void Imil_TalkToOldMan(void) {
   } else {
     if (GameFlag_IsSet(FLAG_IMIL_MET_MIA) != 0) {
       Engine_EventStart();
-      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_SIT_UP);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
       Engine_MapAnimateCells(gImil_CellStepsA, 10, 69);
       Engine_EventSetMessage(MsgMercuryFeelMuchBetter);
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
-      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_BACK);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
       Map_AnimateCells(gImil_CellStepsB, 10, 69);
       Engine_EventEnd();
     } else {
@@ -832,7 +832,7 @@ s32 Imil_Initialize(void) {
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                             IMIL_ANIM_SQUATS);
+                             IMIL_ANIMATION_SQUATS);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_GameFlagClear(FLAG_IMIL_NO_FOOTPRINTS);
       Engine_GameFlagClear(FLAG_IMIL_FOOTPRINTS);
@@ -870,7 +870,7 @@ s32 Imil_Initialize(void) {
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MANS_BED), 0);
         Engine_ActorSetPosition(ACTOR_OLD_MAN, PIXELS(174), PIXELS(164));
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MAN), 0);
-        Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_IN_BED);
         Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(168), PIXELS(152));
         Object_GetById(ACTOR_OLD_WOMAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
@@ -909,9 +909,11 @@ s32 Imil_Initialize(void) {
       } else {
         Object_GetById(ACTOR_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_WEAPON_MERCHANT, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_WEAPON_MERCHANT,
+                                 IMIL_ANIMATION_LIE_IN_BED);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT,
+                                 IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (entrance == IMIL_INTERIORS_HOUSE_WEST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -930,7 +932,8 @@ s32 Imil_Initialize(void) {
         Object_GetById(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |= 4;
         Object_GetById(ACTOR_ITEM_MERCHANT)->scaleX = -Q16_ONE;
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT,
+                                 IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (entrance == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1017,7 +1020,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(MIA, 0, 40);
   Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_SIT_UP);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
   Map_AnimateCells(gImil_CellStepsA, 10, 69);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -1025,7 +1028,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_BACK);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
   Map_AnimateCells(gImil_CellStepsB, 10, 69);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
@@ -1186,7 +1189,7 @@ static void Imil_OldManBobsAndSpeaks(void) {
 }
 
 static void Imil_MiaCastsPlyOnOldMan(void) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
 
   Engine_PsynergyStart(ABILITY_PLY, 1);
   work = gEffectWork;
@@ -1699,7 +1702,7 @@ s32 gImil_ShiverScript[] = {
 };
 
 s32 gImil_OldWomanHurryScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(192)),
     SC_SYNC,
     SC_MOVE(PIXELS(136), 0, PIXELS(136)),
@@ -1707,15 +1710,15 @@ s32 gImil_OldWomanHurryScript[] = {
     SC_MOVE(PIXELS(149), 0, PIXELS(116)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_EAST),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gImil_LeaderStepAsideScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(155), 0, PIXELS(135)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, 0xd000),
     SC_END,
     SC_ADD(SW_SCALE_Y, 3 * Q16_ONE / 8),
@@ -1750,7 +1753,7 @@ s32 gImil_SparkScript[] = {
 };
 
 s32 gImil_MiaCheckRoomScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(177), 0, PIXELS(136)),
     SC_SYNC,
     SC_MOVE(PIXELS(161), 0, PIXELS(124)),
@@ -1760,12 +1763,12 @@ s32 gImil_MiaCheckRoomScript[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(135), 0, PIXELS(189)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gImil_MiaRunOutScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(165), 0, PIXELS(207)),
     SC_SYNC,
     SC_SET(0x23, 1),
@@ -1784,7 +1787,7 @@ s32 gImil_FaceTargetScript[] = {
 };
 
 s32 gImil_FollowMiaOutScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(132), 0, PIXELS(206)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

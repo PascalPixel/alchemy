@@ -16,7 +16,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s32 scale;
   s32 remaining;
   struct FieldActor *djinni;
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct FieldActor *leader;
   struct EffectSlot *effect;
   s8 *slotState;
@@ -110,7 +110,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     slotState = (s8 *)scene;
     nextState = MARS_SPARK_LEAVING;
-    slotState += offsetof(struct FieldFxScene, effects) +
+    slotState += offsetof(struct FieldEffectScene, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
     do {

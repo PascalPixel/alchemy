@@ -1559,7 +1559,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
       struct AnimationEntry *entry = sprite->entries[entryIndex];
 
       if (entry != 0 && entry->script != 0) {
-        entry->param = SPRITE_COLOR_RED_TINT;
+        entry->colorMode = SPRITE_COLOR_RED_TINT;
       }
     }
   }
@@ -2179,9 +2179,9 @@ static void Event_TalkAboutJourneyFromXian(void) {
 
 // clang-format off
 u32 gSanctum_LeaderCircleScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(5) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 2),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
     SC_LABEL(1),
     SC_MOVE(PIXELS(204), 0, PIXELS(188)),
     SC_SYNC,
@@ -2200,14 +2200,14 @@ u32 gSanctum_LeaderCircleScript[] = {
     SC_MOVE(PIXELS(192), 0, PIXELS(168)),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 u32 gSanctum_GaretCircleScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(5) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 2),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
     SC_LABEL(1),
     SC_MOVE(PIXELS(204), 0, PIXELS(156)),
     SC_SYNC,
@@ -2226,7 +2226,7 @@ u32 gSanctum_GaretCircleScript[] = {
     SC_MOVE(PIXELS(208), 0, PIXELS(168)),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

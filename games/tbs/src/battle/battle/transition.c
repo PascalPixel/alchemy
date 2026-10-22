@@ -284,7 +284,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   u32 column;
   s32 count;
   s32 id;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct BattleWork *battle;
   u16 *visibleUnits;
   s32 visibleCount;

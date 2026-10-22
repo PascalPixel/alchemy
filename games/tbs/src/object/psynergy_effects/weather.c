@@ -33,8 +33,9 @@ void FieldEffect_UpdateGroundParticles(void) {
     if (GameFlag_TestFar(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[5 * particle->timer];
-    x = (particle->posX - cameraX) / 0x10000 + *frame++;
-    y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
+    x = (particle->positionX - cameraX) / 0x10000 + *frame++;
+    y = (particle->positionZ - particle->positionY - cameraZ) / 0x10000 +
+        *frame++;
     if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
       particle->priority = 1;
       particle->x = x;
@@ -53,9 +54,9 @@ void FieldEffect_UpdateGroundParticles(void) {
       // ObjectMotion_SetHorizontalPositionWithTerrain (see the XXX there).
       x = leader[0] + (Random16() << 8) - 0x800000;
       y = leader[2] + (Random16() << 8) - 0x800000;
-      particle->posX = x;
-      particle->posZ = y;
-      particle->posY = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
+      particle->positionX = x;
+      particle->positionZ = y;
+      particle->positionY = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
       particle->timer = 16;
     }
   }
@@ -151,9 +152,9 @@ void FieldEffect_StartGroundParticles(void) {
     *words = 0xd400;
     x = leader[0];
     z = leader[2];
-    particle->posX = x;
-    particle->posZ = z;
-    particle->posY = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
+    particle->positionX = x;
+    particle->positionZ = z;
+    particle->positionY = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
     particle->timer = (i & 15) + 1;
     particle++;
   }
@@ -205,9 +206,9 @@ void FieldMotes_Update(void) {
       // further.
       firstJitterDraw = Random16();
       secondJitterDraw = Random16();
-      x = ((mote->posX - cameraX) >> 16) +
+      x = ((mote->positionX - cameraX) >> 16) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
-      y = ((mote->posZ - mote->posY - cameraZ) >> 16) - age;
+      y = ((mote->positionZ - mote->positionY - cameraZ) >> 16) - age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;
@@ -234,9 +235,9 @@ void FieldMotes_Update(void) {
 
       x = leader[0] + (Random16() << 8) - 0x800000;
       y = leader[2] + (Random16() << 8) - 0x800000;
-      mote->posZ = y;
-      mote->posX = x;
-      mote->posY = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
+      mote->positionZ = y;
+      mote->positionX = x;
+      mote->positionY = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
       mote->timer = 120;
       mote->delay = 0;
       spawned++;
@@ -280,9 +281,9 @@ void FieldMotes_Start(void) {
     *(s32 *)p = 0xd400;
     p = pos[0];
     z = pos[2];
-    mote->posX = (s32)p;
-    mote->posZ = z;
-    mote->posY = Map_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16) << 16;
+    mote->positionX = (s32)p;
+    mote->positionZ = z;
+    mote->positionY = Map_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16) << 16;
     mote->timer = (i & 15) + 1;
     mote++;
   }
@@ -340,9 +341,9 @@ void FieldEffect_UpdateSparkles(void) {
       frame = (const u16 *)&gFieldEffect_SparkleFrames[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
-      x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
+      x = ((sparkle->positionX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
-      sy = (sparkle->posZ - sparkle->posY - cameraZ) / 0x10000 +
+      sy = (sparkle->positionZ - sparkle->positionY - cameraZ) / 0x10000 +
            *(const s16 *)frame;
       frame++;
       if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {
@@ -373,9 +374,10 @@ void FieldEffect_UpdateSparkles(void) {
         // Map_GetTerrainHeight takes 16.16 pixels; the burst's first sparkle
         // reads it the same way (see the XXX in
         // ObjectMotion_SetHorizontalPositionWithTerrain).
-        sparkle->posX = spawnX;
-        sparkle->posZ = spawnZ;
-        sparkle->posY = Map_GetTerrainHeightFar(0, sx >> 16, sy >> 16) << 16;
+        sparkle->positionX = spawnX;
+        sparkle->positionZ = spawnZ;
+        sparkle->positionY = Map_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
+                             << 16;
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
         spawned++;
@@ -385,9 +387,10 @@ void FieldEffect_UpdateSparkles(void) {
         leader = map->origin;
         spawnX = leader[0] + (Random16() << 8) - 0x800000;
         spawnZ = leader[2] + (Random16() << 8) - 0x800000;
-        sparkle->posX = spawnX;
-        sparkle->posZ = spawnZ;
-        sparkle->posY = Map_GetTerrainHeightFar(0, sx >> 16, sy >> 16) << 16;
+        sparkle->positionX = spawnX;
+        sparkle->positionZ = spawnZ;
+        sparkle->positionY = Map_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
+                             << 16;
         sparkle->timer = 30;
         sparkle->delay = delay;
         spawned++;
@@ -440,9 +443,10 @@ void FieldEffect_InitializeSparkles(void) {
     *(u32 *)attr = 0xd400;
     attr = leader[0];
     z = leader[2];
-    sparkle->posX = clear;
-    sparkle->posZ = clear;
-    sparkle->posY = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
+    sparkle->positionX = clear;
+    sparkle->positionZ = clear;
+    sparkle->positionY = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16)
+                         << 16;
     sparkle->timer = (i & 15) + 1;
     i++;
     sparkle++;

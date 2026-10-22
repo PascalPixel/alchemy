@@ -75,7 +75,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
   // (91) and Jupiter (93) 9 (the scenes' Djinni placements show which
   // sprite is which element). They share one VRAM cache entry.
-  sprite = djinni->sprite->entries[0]->animId;
+  sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
   if (sprite == 90)
     tint = 2;
@@ -292,7 +292,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 /// Scheduler callback: updates the 24 effect slots.
 void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateSceneSlots(); }
 
-/// Allocates and clears the effect slots (HEAP_SLOT_FX) and starts their
+/// Allocates and clears the effect slots (HEAP_SLOT_EFFECT) and starts their
 /// update callback. The block is a whole effect scene, gEffectWork, the slot
 /// a Psynergy effect's scene also takes. Called by the Djinn joining effects
 /// (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's scene;
@@ -300,8 +300,9 @@ void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateSceneSlots(); }
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(struct FieldFxScene));
-  Dma_Fill32(0, work, sizeof(struct FieldFxScene));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_EFFECT,
+                                   sizeof(struct FieldEffectScene));
+  Dma_Fill32(0, work, sizeof(struct FieldEffectScene));
   // 3200 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
   Scheduler_AddOrUpdateCallback(FieldEffect_UpdateAllSlots, 3200);
 }
@@ -310,7 +311,7 @@ void FieldEffect_InitializeSlots(void) {
 /// use and releases their heap block, gEffectWork with it. Then waits a
 /// frame. Pairs with FieldEffect_InitializeSlots.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
   struct EffectSlot *effect;
   s32 i;
 
@@ -320,7 +321,7 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
     if (effect->active != 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_EFFECT);
   WaitFrames(1);
 }
 

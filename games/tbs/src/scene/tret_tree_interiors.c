@@ -1180,34 +1180,34 @@ const s32 *gEffectScripts[] = {
 /// The party gathers in front of Tret before the battle (Event_FightTret),
 /// each walking to its own place.
 s32 gTretTreeInteriors_LeaderGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(80)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gTretTreeInteriors_GaretGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(148), 0, PIXELS(90)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gTretTreeInteriors_IvanGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(182), 0, PIXELS(90)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gTretTreeInteriors_MiaGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(104)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
@@ -1230,7 +1230,7 @@ s32 gTretTreeInteriors_FaceSinksActions[] = {
 
 /// Garet, Ivan and Mia walk back to the leader and are put away.
 s32 gTretTreeInteriors_RejoinLeaderActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(80)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

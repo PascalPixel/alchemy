@@ -807,37 +807,37 @@ const s32 *gEffectScripts[] = {
 
 s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(152)),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepWest[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(120), 0, PIXELS(152)),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepEast[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(152), 0, PIXELS(152)),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

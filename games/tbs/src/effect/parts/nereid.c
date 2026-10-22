@@ -240,8 +240,8 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
 
       // The targets bounce and flash white on frames 36, 48, 60 and 72,
       // getting their colours back 6 frames later. Each bounce starts at 4.5
-      // pixels a frame up under the gravity ObjMotRst also gives a unit
-      // (0xab85, about 0.67 pixel a frame each frame).
+      // pixels a frame up under the gravity BattleMotion_ReturnToSpot also
+      // gives a unit (0xab85, about 0.67 pixel a frame each frame).
       if (frame <= 79) {
         EFFECT_FOR_EACH_TARGET(k, work->effect) {
           if (frame > 29) {

@@ -439,7 +439,7 @@ void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
   if (object != NULL && (object->kind & 0xf) == OBJECT_SPRITE_ONE) {
     sprite = object->target.child;
     if (animationId >= 0) {
-      sprite->entries[0]->animId = animationId;
+      sprite->entries[0]->animationId = animationId;
       Animation_InitializeObjects(sprite);
     }
   }

@@ -654,19 +654,19 @@ struct MapTilePosition {
   s32 x, y;
 };
 
-/// Copies the block numbers of a rectangle of cells from (srcX, srcY) to
+/// Copies the block numbers of a rectangle of cells from (sourceX, sourceY) to
 /// (dstX, dstY), width by height cells, keeping each destination's
 /// attributes, and redraws the copied cells that are on screen. It does what
 /// Map_CopyCellIndexRect does, with the destination before the size.
 ///
 /// Called by Map_PlayMetatileCopySequence, and by about 40 scene scripts
 /// through Map_CopyMetatileIndicesRectFar (Engine_MapCopyCellsTo).
-void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
+void Map_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
   /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
    * schedule of the cell loop; as a plain body (the offset computed once, two
    * word stores), 96 of 141 instructions differ in tbs-en. */
-  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
   struct MapTilePosition visibleLayers[3];
@@ -820,14 +820,14 @@ void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 ///< the cell's attributes
 
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from
-/// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell
-/// lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go to
-/// that layer's BG map in VRAM too. Called by about 15 scene scripts through
+/// (sourceX, sourceY) to (dstX, dstY), width by height cells. Where a copied
+/// cell lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go
+/// to that layer's BG map in VRAM too. Called by about 15 scene scripts through
 /// Map_CopyMetatileCellsRectFar (Engine_MapCopyCells).
-void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y = dstY;
-  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[y * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
   struct MapTilePosition visibleLayers[3];
@@ -939,12 +939,12 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/// Copies only the attributes of a rectangle of cells, from (srcX, srcY) to
-/// (dstX, dstY), width by height cells, keeping each destination cell's
+/// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
+/// to (dstX, dstY), width by height cells, keeping each destination cell's
 /// block number. Nothing is redrawn: the attributes (flags, collision code and
 /// shape) do not show. Called by about 65 scene scripts through
 /// Map_CopyCellAttributeRectFar (Engine_MapCopyCellAttributes).
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *destinationCells = MAP_CELLS;
   u32 *sourceCells = destinationCells;
@@ -952,7 +952,7 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   u16 columnIndex;
 
   destinationCells += (dstY << 7) + dstX;
-  sourceCells += (srcY << 7) + srcX;
+  sourceCells += (sourceY << 7) + sourceX;
 
   for (rowIndex = 0; rowIndex < height; rowIndex++) {
     u32 *destinationCell = destinationCells + (rowIndex << 7);
@@ -966,18 +966,18 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/// Copies only the block numbers of a rectangle of cells, from (srcX, srcY)
-/// to (dstX, dstY), width by height cells, keeping each destination cell's
-/// attributes; cells in a visible area update the BG maps too. Called by
+/// Copies only the block numbers of a rectangle of cells, from (sourceX,
+/// sourceY) to (dstX, dstY), width by height cells, keeping each destination
+/// cell's attributes; cells in a visible area update the BG maps too. Called by
 /// seven scene scripts through Map_CopyCellIndexRectFar
 /// (Engine_MapCopyCellsLayered).
-void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                           s32 dstY) {
+void Map_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
+                           s32 dstX, s32 dstY) {
   /* FAKEMATCH(temporary): the word and index temporaries set the registers and
    * the 36-byte frame; as a plain body (the offset computed once, two word
    * stores), 94 of 142 instructions differ in tbs-en. */
   s32 y;
-  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[dstY * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
   struct MapTilePosition visibleLayers[3];

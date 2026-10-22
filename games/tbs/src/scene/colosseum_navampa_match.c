@@ -907,7 +907,7 @@ static void Event_ReachArena(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
   Actor_WalkToAndWait(OPPONENT, 1520, 192);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
-  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
@@ -1098,7 +1098,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   actor = Object_GetById(SCALE_PAN_EAST);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(PRIZE_B, ITEM_HUNTERS_SWORD);
@@ -1250,9 +1250,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventStart();
   Actor_SetPosition(OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
-    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_ARMS_RAISED);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
   } else {
-    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_DEFEATED);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_DEFEATED);
   }
   Actor_SetActionScript(OPPONENT, gColosseumNavampaMatch_OpponentAfterBattle);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1504), PIXELS(192));
@@ -1907,7 +1907,7 @@ static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
   s32 handler;
 
   gColosso_LetteringMode = mode;
-  gColosso_LetteringParam = (parameter << 4);
+  gColosso_LetteringParameter = (parameter << 4);
 
   {
     s32 priority = TASK_PRIORITY_SCENE;
@@ -2705,29 +2705,29 @@ s16 gColossoLetteringScriptWon[] = {
 s16 gColosso_MarkerSlot = -1;
 
 s32 gColosso_OpponentFinishScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(6),
     SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
-    SC_ARG(10),
+    SC_ANIMATION(10),
     SC_WAIT(150),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gColosseumNavampaMatch_PlaceScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(6),
     SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
-    SC_ARG(28),
+    SC_ANIMATION(28),
     SC_WAIT(150),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };

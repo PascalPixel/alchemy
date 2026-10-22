@@ -63,9 +63,9 @@ void BattlePresentation_UpdateCamera(void) {
     transition->frames--;
   }
 
-  focus = camera->pos;
-  if (camera->followPos != 0) {
-    focus = camera->followPos;
+  focus = camera->focus;
+  if (camera->followPosition != 0) {
+    focus = camera->followPosition;
   }
 
   Render_ResetTransformState();

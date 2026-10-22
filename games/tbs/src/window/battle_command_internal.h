@@ -367,7 +367,7 @@ struct SelectionEntry {
   /// icon. unused is never read.
   u16 resource, unused;
   /// Screen pixels: the sprite's top left before the pulse moves it.
-  s32 posX, posY;
+  s32 positionX, positionY;
   s32 kind; ///< its command: MsgCommandName + kind names it
 };
 

@@ -361,7 +361,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   result = 0;
   icon = *(struct RenderOutput **)((u8 *)menu + iconOffset);
   icon->active = ICON_SHOWN;
-  icon->animStep = result;
+  icon->animationStep = result;
   menu->cursorIcon->active = ICON_HIDDEN;
   counts = (u8 *)menu + ((u8 *)menu->tabCounts - (u8 *)menu->tabIndex);
   ownerIndex = *(s8 *)((u8 *)menu + tabOffset);
@@ -693,7 +693,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
                                                PSYNERGY_SHORTCUT_OWNER_SHIFT)
                                        ->name,
                                    window, 80, 8);
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 0, 8);
   }
@@ -771,7 +771,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
         Unit_GetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
             ->name,
         window, 80, 8);
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 24, 8);
   }
@@ -1073,12 +1073,12 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
           BattleAction_Get(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
-        UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
+        UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
       } else if (PsynergyMenu_IsActionRestricted(
                      OWNER_ACTION_ID_MASK & menu->psynergies[cursor]) != 0) {
-        UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
+        UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
       } else {
-        UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+        UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
       }
 
       UiText_DrawCharacterAtOffsetFar(
@@ -1086,7 +1086,7 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
           window, PSYNERGY_NAME_X, row * 16 + 8);
       UiText_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
                                    row * 16 + 8);
-      UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+      UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
 
       row++;
       cursor++;
@@ -1169,7 +1169,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           // Animate the selected icon: 9 is UI_SPRITE_SWELL, in depth slot
           // 250, as in ItemMenu_RunList.
           icon->active = 9;
-          icon->animStep = 0;
+          icon->animationStep = 0;
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->ownerCount; i++) {

@@ -677,7 +677,7 @@ form a table of contents. The functions are declared in
 - **ability kind**: the low four bits of the ability's `flags`
   (`ABILITY_KIND_MASK`, `enum AbilityKind`). It chooses the formula each
   target goes through. The **effect kind** in `actflags.tsv` is unrelated and
-  chooses only the animation (`enum BattleFxKind`).
+  chooses only the animation (`enum BattleEffectKind`).
 - **power**: the `power` column of `actions.tsv`. What it counts depends on
   the ability kind. A unit's **Power** and **Resist**, capitalized as the
   status screen writes them, are its per-element stats.
@@ -696,7 +696,7 @@ form a table of contents. The functions are declared in
   ability, its element, its targets with their distances and rolls, its
   **outcome** (`enum BattlePlanStaging`, how it is staged) and its
   **presentation flags** (the `actflags.tsv` row: `STAGING_*`).
-- **battle object**: a unit's figure on the battlefield (`struct BattleObj`,
+- **battle object**: a unit's figure on the battlefield (`struct BattleObject`,
   `BattleObject_Get`). Its **records** are its sprites; the Kraken and the Fusion
   Dragon are drawn in two parts and have two (`SPRITE_WITH_SECOND_PART_A`,
   `SPRITE_WITH_SECOND_PART_B`).
@@ -709,7 +709,7 @@ form a table of contents. The functions are declared in
 
 The parts give the same locals the same names: `battle` or `work` for
 `gBattleWork`, `unitId`, `unit` for its `struct BattleUnit`, `battleObject`
-for its `struct BattleObj`, `object` for that object's
+for its `struct BattleObject`, `object` for that object's
 `struct MotionObject`, `record` for one of its sprites, and `plan`.
 
 ## Function prefixes

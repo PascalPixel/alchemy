@@ -9,7 +9,7 @@ struct BattleEffectArgument;
 struct BattleSummonState;
 struct BattleTransitionEntry;
 struct BattleAct;
-struct BattleObj;
+struct BattleObject;
 struct BattlePlan;
 struct FixedPointPosition;
 struct MotionObject;
@@ -97,7 +97,7 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId);
 #endif
 s32 BattleUnit_GetWeaponKind(s32 itemId);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
-void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
+void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y);
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y);
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions);
@@ -111,14 +111,14 @@ void BattleUnit_RefreshPlacement(void);
 s32 BattlePlacement_ContainsId(s16 *list, s32 place);
 void BattleObject_UpdateSpritePriorities(void);
 #ifdef UBFIX
-void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject);
+void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject);
 #else
-s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject);
+s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject);
 #endif
 #ifdef UBFIX
-void BattleStatusIcon_Cycle(struct BattleObj *battleObject);
+void BattleStatusIcon_Cycle(struct BattleObject *battleObject);
 #else
-s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject);
+s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject);
 #endif
 #ifdef UBFIX
 void BattlePresentation_SetActorModeAndAction(s32 unitId);
@@ -127,7 +127,7 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId);
 #endif
 void ReleaseBattleObjectRecords(s32 unitId);
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
-struct BattleObj *BattleObject_Get(s32 unitId);
+struct BattleObject *BattleObject_Get(s32 unitId);
 void ResetMotionRecordGroup(void *recordGroup);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
 s32 BattleObject_MarkForRelease(s32 unitId);
@@ -145,11 +145,12 @@ s32 Camera_ApplyTransformByFlag(void);
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected);
 void *GetMotionRecord(struct MotionObject *object, s32 recordIndex);
 void Camera_InitializeDefaultTransform(void);
-void ObjMotRst(s32 unitId);
+void BattleMotion_ReturnToSpot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 unitId);
-void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
-                                      struct BattleObj *endSlot, s32 progress);
-void BattleMotion_SetObjectPosition(struct BattleObj *battleObject);
+void BattleMotion_InterpolatePosition(struct BattleObject *startSlot,
+                                      struct BattleObject *endSlot,
+                                      s32 progress);
+void BattleMotion_SetObjectPosition(struct BattleObject *battleObject);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId);
 void BattleMotion_InitializeObject(s32 unitId);
 void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant);

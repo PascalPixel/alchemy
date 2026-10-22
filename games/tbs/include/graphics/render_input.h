@@ -78,7 +78,7 @@ struct RenderOutput {
   u16 x;                     ///< screen pixels
   u16 y;                     ///< screen pixels
   u16 unk0a;                 ///< not named by TBS code
-  u16 animStep;              ///< step of its motion's animation
+  u16 animationStep;         ///< step of its motion's animation
   s8 index;    ///< VRAM cache slot, or a glyph's tile after glyphTiles
   u8 sentinel; ///< depth slot it is drawn at (254 for glyphs)
   /// The depth queue's link: with oam it is the sprite entry queued each
@@ -96,7 +96,7 @@ struct RenderOutputList {
 STATIC_ASSERT(sizeof(struct RenderOutputList) == 8);
 STATIC_ASSERT(offsetof(struct RenderOutputList, tailLink) == 4);
 
-STATIC_ASSERT(offsetof(struct RenderOutput, animStep) == 0x0c);
+STATIC_ASSERT(offsetof(struct RenderOutput, animationStep) == 0x0c);
 
 STATIC_ASSERT(offsetof(struct RenderOutput, sentinel) == 0x0f);
 STATIC_ASSERT(offsetof(struct RenderOutput, oam) == 0x14);

@@ -2952,18 +2952,18 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void) {
 /// At Kalay, as the crew's talk of the delay ends: Kaja walks off and is
 /// hidden.
 const s32 gTolbiShipDeck_KajaLeavesActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(202), 0, PIXELS(600)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 /// At the same moment the captain steps aside and turns west.
 const s32 gTolbiShipDeck_CaptainStepsAsideActions[] = {
-    SC_WAIT(20), SC_ARG(2), SC_MOVE(PIXELS(162), 0, PIXELS(666)),
-    SC_SYNC,     SC_ARG(1), SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(20), SC_ANIMATION(2), SC_MOVE(PIXELS(162), 0, PIXELS(666)),
+    SC_SYNC,     SC_ANIMATION(1), SC_SET(SW_FACING, FACING_WEST),
     SC_END,
 };
 
@@ -2978,7 +2978,7 @@ const s32 gTolbiShipDeck_SquashAndStretchActions[] = {
 /// monster runs in, leaps over the rail onto the deck and goes below by the
 /// first door.
 const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(140), 0, PIXELS(586)),
     SC_SYNC,
     SC_SE(SE_HIGH_JUMP),
@@ -2999,21 +2999,21 @@ const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
 /// Sean on guard at sea, pacing between two spots on the deck and looking
 /// out at each.
 const s32 gTolbiShipDeck_SeanPacesActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(228), 0, PIXELS(521)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_WAIT(40),
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_WAIT(40),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(204), 0, PIXELS(521)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
     SC_WAIT(40),
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -3021,34 +3021,34 @@ const s32 gTolbiShipDeck_SeanPacesActions[] = {
 /// Ouranos on guard at sea, walking the four corners of a square on the deck
 /// and looking out at each.
 const s32 gTolbiShipDeck_OuranosPatrolsActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(672)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
     SC_WAIT(50),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(672)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
     SC_WAIT(70),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(636)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_SOUTH + FACING_STEP),
     SC_WAIT(30),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(636)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
@@ -3086,7 +3086,7 @@ const s32 gTolbiShipDeck_LookAroundActions[] = {
 /// SEA_SPLASH: it swells from 7/10 of its size for 24 frames, then
 /// is hidden.
 const s32 gTolbiShipDeck_SwellActions[] = {
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_SCALE_X, 0xb333),
     SC_SET(SW_SCALE_Y, 0xb333),
     SC_WAIT(1),
@@ -3129,10 +3129,10 @@ const s32 gTolbiShipDeck_HopActions[] = {
 /// At Tolbi, a passenger who rowed walks away once they have spoken, and is
 /// hidden.
 const s32 gTolbiShipDeck_RowerLeavesActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(82), 0, PIXELS(656)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
@@ -3140,14 +3140,14 @@ const s32 gTolbiShipDeck_RowerLeavesActions[] = {
 /// Back from the island, Sean, Ouranos and the tour guide go below by the
 /// first door, one after another.
 const s32 gTolbiShipDeck_GoBelowActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(186), 0, PIXELS(604)),
     SC_SYNC,
     SC_MOVE(PIXELS(216), 0, PIXELS(604)),
     SC_SYNC,
     SC_MOVE(PIXELS(216), 0, PIXELS(586)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,

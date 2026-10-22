@@ -66,8 +66,9 @@ struct MotionObject {
 /// A sprite of an animation record, as battle objects set its palette and
 /// drawing priority: the start of an AnimationEntry.
 struct SpriteEntry {
-  u8 unk00[5]; ///< AnimationEntry's animId, timer and kind
-  u8 palette;  ///< AnimationEntry.param, the SpriteColorMode; BattleObj.palette
+  u8 unk00[5]; ///< AnimationEntry's animationId, timer and kind
+  u8 palette;  ///< AnimationEntry.colorMode, the SpriteColorMode;
+               ///< BattleObject.palette
   /// AnimationEntry.priority: the body and weapon 1, the status icon 3, and
   /// the effect sprite 0, or 9 to hide it while the unit is off the ground.
   u8 priority;

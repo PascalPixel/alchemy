@@ -54,7 +54,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  cursor = &gBattleFxWork[1];
+  cursor = &gBattleEffectWork[1];
   canvas = cursor[0];
   work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];

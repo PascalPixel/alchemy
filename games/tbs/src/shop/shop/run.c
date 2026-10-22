@@ -128,7 +128,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
                                       keeperId))
            ->animation)
           ->entries[0]
-          ->animId;
+          ->animationId;
   // The shopkeeper's portrait window, or an empty one off the left edge when
   // there is no portrait.
   window = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);

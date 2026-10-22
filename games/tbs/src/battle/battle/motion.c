@@ -16,10 +16,10 @@
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
 /// staging code, the auto battle, BattleTarget_Execute and the Quake effect.
-void ObjMotRst(s32 unitId) {
+void BattleMotion_ReturnToSpot(s32 unitId) {
   s32 z;
   s32 stopped;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct MotionObject *object;
 
   battleObject = BattleObject_Get(unitId);
@@ -46,7 +46,7 @@ void ObjMotRst(s32 unitId) {
 /// as far out as its spot, with a hop, in POSE_STANDING. Called by
 /// BattleEscape_PlayRun and BattlePresentation_RunEscape.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct MotionObject *object;
 
   battleObject = BattleObject_Get(unitId);
@@ -66,8 +66,9 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
 /// Sends the unit of startSlot leaping progress percent of the way toward
 /// the unit of endSlot, in POSE_LEAP. Also clears REG_BLDCNT. Nothing in the
 /// source calls it.
-void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
-                                      struct BattleObj *endSlot, s32 progress) {
+void BattleMotion_InterpolatePosition(struct BattleObject *startSlot,
+                                      struct BattleObject *endSlot,
+                                      s32 progress) {
   s32 zStep;
   s32 startX;
   s32 x;
@@ -95,7 +96,7 @@ void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
 }
 
 /// Sends a unit's object back to its spot. Nothing in the source calls it.
-void BattleMotion_SetObjectPosition(struct BattleObj *battleObject) {
+void BattleMotion_SetObjectPosition(struct BattleObject *battleObject) {
   struct MotionObject *object = battleObject->object;
 
   object->acceleration = 0x20000;
@@ -112,7 +113,7 @@ void BattleMotion_SetObjectPosition(struct BattleObj *battleObject) {
 /// BattlePresentation_RunPlainAttack.
 void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   u32 scaledX;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct MotionObject *object;
 
   battleObject = BattleObject_Get(unitId);
@@ -135,7 +136,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
 /// centre, in POSE_DAMAGE. Only an unnamed overlay veneer in
 /// BATTLE.S reaches it, and nothing in the source calls that.
 void BattleMotion_InitializeObject(s32 unitId) {
-  struct BattleObj *battleObject = BattleObject_Get(unitId);
+  struct BattleObject *battleObject = BattleObject_Get(unitId);
   struct MotionObject *object = battleObject->object;
 
   object->acceleration = 128 << 9;
@@ -157,7 +158,7 @@ void BattleMotion_InitializeObject(s32 unitId) {
 /// the effects, by the EFFECT_STRIKE_TARGET macro of effect_internal.h and
 /// directly.
 void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct MotionObject *object;
   s32 targetX;
   s32 anchorX;
@@ -190,8 +191,8 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 /// Bind, burst scene, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
-  struct BattleObj *actorSlot = BattleObject_Get(actorId);
-  struct BattleObj *targetSlot = BattleObject_Get(targetId);
+  struct BattleObject *actorSlot = BattleObject_Get(actorId);
+  struct BattleObject *targetSlot = BattleObject_Get(targetId);
   struct MotionObject *object = actorSlot->object;
   struct MotionObject *target = targetSlot->object;
   s32 percent = 75;
@@ -244,7 +245,7 @@ void BattleMotion_ReservedNoOp83B0() {}
 /// where they have one, and hands it to BattleMotion_ReservedNoOp83B0,
 /// which does nothing. Nothing in the source calls it.
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
-  struct BattleObj *secondSlot;
+  struct BattleObject *secondSlot;
   struct MotionObject *first;
   struct MotionObject *second;
   s32 x1;
@@ -283,7 +284,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
 /// The hit flash's sprite layer, sprite 283: a star burst that grows and
 /// breaks apart over ten frames (graphics/sprite/spr_283.png).
-#define HIT_FLASH_ANIM 0x11b
+#define HIT_FLASH_ANIMATION 0x11b
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
 /// single-sprite object takes it. Nothing in the source calls it.
@@ -296,7 +297,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
   if ((object != NULL) &&
       ((RECORDS_KIND_MASK & object->recordStorageKind) == RECORDS_SINGLE)) {
     effectHandle =
-        ResourceMetadata_RegisterFar(object->records, HIT_FLASH_ANIM);
+        ResourceMetadata_RegisterFar(object->records, HIT_FLASH_ANIMATION);
     if (effectHandle != 0) {
       effect = (struct AnimationEntry *)effectHandle;
       Animation_SetWorkEntryFar(effect, 1);

@@ -389,9 +389,9 @@ Prototypes are in `games/tbs/include/unit/object/`.
   `games/tbs/src/game/actions.tsv`, named by `enum FieldKind`
   (`unit/object/psynergy_effects.h`), `FIELD_KIND_MOVE` (1) to
   `FIELD_KIND_AVOID` (16). Whirlwind and Gale share `FIELD_KIND_WHIRLWIND`.
-- **effect scene**: `struct FieldFxScene` (`field/fx_scene.h`), the work of
+- **effect scene**: `struct FieldEffectScene` (`field/fx_scene.h`), the work of
   the field effect playing: the ability, its field kind (`fieldKind`), its
-  caster and target, and 24 effect slots. It is `HEAP_SLOT_FX`, reached as
+  caster and target, and 24 effect slots. It is `HEAP_SLOT_EFFECT`, reached as
   `gEffectWork`. Local name `scene`.
 - **effect slot**: `struct EffectSlot`, one particle an effect moves and draws.
 - **marker**: a chest or Psynergy Stone the map places at one of its marked

@@ -50,7 +50,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   struct Point2D wave;
   struct Point2D drift;
   struct MotionObject *object;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct EffectStep *point;
   struct EffectStep *spark;
   struct EffectStep *mark;

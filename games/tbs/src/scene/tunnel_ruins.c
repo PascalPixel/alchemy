@@ -1835,9 +1835,9 @@ s32 gTunnelRuins_StretchScript[] = {
 
 /// Douse: splashes on the pillar from frame 35 for 130 frames.
 s32 gTunnelRuins_DouseSplashScript[] = {
-    SC_WAIT(35),  SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
-    SC_WAIT(130), SC_SET(SW_HOOK, 0),
-    SC_ARG(2),    SC_END,
+    SC_WAIT(35),     SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
+    SC_WAIT(130),    SC_SET(SW_HOOK, 0),
+    SC_ANIMATION(2), SC_END,
 };
 
 u16 gTunnelRuins_DoorOpenSteps[] = {

@@ -38,10 +38,10 @@ void FieldEffect_StartWindowHBlankDma(void) {
 /// line, or, when that is 0, edges moving from left x0 and right y0 to left
 /// x1 and right y1 down the run.
 struct TransitionSpan {
-  u16 cnt; ///< lines; 0 for an unused run
+  u16 count; ///< lines; 0 for an unused run
   /// The (left << 8 | right) pair every line of the run takes, or 0 for the
   /// sloped edges below.
-  u16 val;
+  u16 value;
   u8 x0; ///< screen pixels: the left edge on the run's first line
   u8 x1; ///< screen pixels: the left edge the run moves toward
   u8 y0; ///< screen pixels: the right edge on the run's first line
@@ -194,8 +194,8 @@ void DisplayTransition_UpdateScanlineTable(void) {
     // Three runs of lines, each one fixed edge pair or a slope between two.
     for (i = 0; i < 3; i++) {
       span = &shape->spans[i];
-      lineCount = span->cnt;
-      right = span->val;
+      lineCount = span->count;
+      right = span->value;
       if (lineCount != 0) {
         if (right != 0) {
           for (k = 0; k < lineCount; k++) {

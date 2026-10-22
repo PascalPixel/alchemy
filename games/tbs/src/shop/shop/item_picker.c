@@ -170,7 +170,7 @@ s32 Shop_SelectUse(s32 unitId) {
       Shop_PlaceCursor(window, x, y);
       shop->mode = 3;
       Shop_DrawUseItem(priceWindow, unitId, slot);
-      Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
+      Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
     }
 
     WaitFrames(1);

@@ -128,8 +128,9 @@ enum GondowanCaveActor {
   /// the cave floor (its render)
   ACTOR_PILLAR,
   /// Stands in for the pillar once it has dropped in; out of sight at first.
-  /// It is drawn in the stump's sprite, splashing in (STUMP_ANIM_SPLASH) and
-  /// on later visits afloat (STUMP_ANIM_SINK).
+  /// It is drawn in the stump's sprite, splashing in (STUMP_ANIMATION_SPLASH)
+  /// and
+  /// on later visits afloat (STUMP_ANIMATION_SINK).
   /// ★ Named from what the player sees: the pillar's top in the water, after
   /// the splash it drops in with (its render)
   ACTOR_DROPPED_PILLAR,
@@ -412,7 +413,7 @@ static void Event_MovePillar(void) {
 
     Map_CopyCellAttributes(108, 17, 1, 1, destinationCellX, destinationCellZ);
     WAIT(8);
-    GondowanCave_PlaceDroppedPillar(STUMP_ANIM_SPLASH);
+    GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
     SE(SE_CAST);
     FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
@@ -489,10 +490,10 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = 0;
   actor->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(SE_CAST);
-  OBJECT_MODE(actorId, STUMP_ANIM_SPLASH);
+  OBJECT_MODE(actorId, STUMP_ANIMATION_SPLASH);
   Map_WaitForShakeToSettle();
   WAIT(10);
-  OBJECT_MODE(actorId, STUMP_ANIM_SINK);
+  OBJECT_MODE(actorId, STUMP_ANIMATION_SINK);
 }
 
 /// Unused: an empty function nothing calls.
@@ -522,11 +523,11 @@ s32 Scene_Initialize(void) {
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       OBJECT_POSITION_SET(ACTOR_STUMP, 440, 308);
-      OBJECT_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
+      OBJECT_MODE(ACTOR_STUMP, STUMP_ANIMATION_SINK);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
-      GondowanCave_PlaceDroppedPillar(STUMP_ANIM_SINK);
+      GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SINK);
     }
     actor = Actor_Get(ACTOR_BOULDER_GAP);
     Engine_ActorSetSpriteFlags(actor, 0);

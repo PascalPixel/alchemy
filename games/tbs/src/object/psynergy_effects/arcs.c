@@ -93,7 +93,7 @@ struct ArcSprite {
 /// FieldEffect_End waits for the last to end (at most 30
 /// frames).
 void FieldEffect_SpawnScaledArcObjects(struct FieldActor *linked) {
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
   struct FieldActor *source = scene->mainObject;
   struct FieldActor *arcs[2];
   struct FieldActor *arc;

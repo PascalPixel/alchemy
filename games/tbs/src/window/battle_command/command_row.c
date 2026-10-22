@@ -110,10 +110,10 @@ s32 Menu_RunCommandRow(s32 mode) {
   if (entryIndex < selectionUi->iconCount) {
     do {
       s32 x = (entryIndex - selectionUi->iconCount) * 24;
-      selectionUi->entries[entryIndex].posX = x + 155;
+      selectionUi->entries[entryIndex].positionX = x + 155;
       if (mode != COMMAND_ROW_PARTY)
-        selectionUi->entries[entryIndex].posX = x + WINDOW_X * 8 - 5;
-      selectionUi->entries[entryIndex].posY = 136;
+        selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
+      selectionUi->entries[entryIndex].positionY = 136;
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
@@ -234,12 +234,12 @@ s32 Menu_RunCommandRow(s32 mode) {
       if (entryIndex == selectionUi->selectedIndex) {
         entry->sprite.oam.f.affineIndex = selectionUi->affineIndex;
         entry->sprite.oam.f.affine = 3;
-        entry->sprite.oam.f.x = entry->posX + pulseScale * 7 / 512 - 14;
-        entry->sprite.oam.f.y = entry->posY + pulseScale * 3 / 256 - 20;
+        entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
+        entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
         Runtime_PushSlotEntry(entry, 0xf1);
       } else {
-        entry->sprite.oam.f.x = entry->posX;
-        entry->sprite.oam.f.y = entry->posY;
+        entry->sprite.oam.f.x = entry->positionX;
+        entry->sprite.oam.f.y = entry->positionY;
         entry->sprite.oam.f.affineIndex = 0;
         entry->sprite.oam.f.affine = 0;
       }

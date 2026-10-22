@@ -43,7 +43,7 @@ FarCall_RuntimeTable:
 	export AffineMatrix_BuildForEffectFar, AffineMatrix_BuildForEffect
 	export Runtime_PushSlotEntryFar, Runtime_PushSlotEntry
 	export Ui_LoadWindowGraphicsFar, Ui_LoadWindowGraphics
-	overlay_veneer Palette_LoadBasicObjColors
+	overlay_veneer Palette_LoadBasicSpriteColors
 	overlay_veneer Render_ResetTransformState
 	overlay_veneer SceneTransform_ResetMatrix
 	overlay_veneer Transform_Push

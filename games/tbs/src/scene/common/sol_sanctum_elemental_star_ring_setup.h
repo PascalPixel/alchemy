@@ -22,7 +22,7 @@ enum { SOL_SANCTUM_RING_MAX = 10 };
 /// One floating light: its actor, its drift and its pulsing scale, and where it
 /// is while hidden.
 struct SolSanctumRingEntry {
-  struct FieldActor *obj;
+  struct FieldActor *actor;
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
@@ -68,7 +68,7 @@ static void SolSanctum_UpdateRing(void) {
     s32 z;
     u8 hold;
 
-    obj = entry->obj;
+    obj = entry->actor;
     speedX = entry->speedX;
     speedY = entry->speedY;
     speedZ = entry->speedZ;
@@ -204,7 +204,7 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
       {
         u8 *flags = &light->sprite->flags;
 
-        entry->obj = (struct FieldActor *)light;
+        entry->actor = (struct FieldActor *)light;
         *flags = cleared;
       }
       light->motionFlags = cleared;

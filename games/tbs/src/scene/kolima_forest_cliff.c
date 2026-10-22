@@ -80,11 +80,11 @@ static void KolimaForestCliff_PushLog(void) {
     if (result.actorSlot == ACTOR_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
       struct FieldActor *actor;
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_ROLL_WEST);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Engine_ActorSetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Engine_EventWait(30);
       Engine_AudioPlayCue(SE_240);
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_DROP_IN);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Object_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);

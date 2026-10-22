@@ -19,8 +19,8 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
         struct AnimationObject *animation = object->animation;
         struct AnimationEntry *entry = animation->entries[0];
 
-        if (entry->animId == 200) {
-          entry->param = value;
+        if (entry->animationId == 200) {
+          entry->colorMode = value;
           animation->dirty = kind;
         }
       }
@@ -132,14 +132,14 @@ void FieldEffect_RunReveal(void) {
 /// (FieldEvent_RunTypeHandler) and before Mind Read starts its own colours.
 void ResetSceneTransitionEffect(void) {
 #ifdef UBFIX
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   struct DisplayTransitionState *scene = gDisplayTransition;
   struct FieldWork *state = (struct FieldWork *)gEventWork;
 #else
   // Named slots avoid stepping outside gEffectWork. They add 8 bytes to this
   // function in the forced native EN build (0xe8 -> 0xf0).
-  struct FieldFxScene **cell = &gEffectWork;
-  struct FieldFxScene *work = *cell;
+  struct FieldEffectScene **cell = &gEffectWork;
+  struct FieldEffectScene *work = *cell;
   struct DisplayTransitionState *scene =
       *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);

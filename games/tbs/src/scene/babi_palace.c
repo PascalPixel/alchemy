@@ -7,7 +7,7 @@
 ///   (gBabiPalace_DoorCells, BabiPalace_LeaveThroughAnimatedDoor).
 /// - SceneId_BabiPalace, the palace's rooms on one map, joined by exits into
 ///   the same scene and by doors that open by the map's tile animation
-///   channels (enum BabiPalaceDoorAnim, BabiPalace_LeaveThroughDoor). One
+///   channels (enum BabiPalaceDoorAnimation, BabiPalace_LeaveThroughDoor). One
 ///   door leads to Babi's scholars (BABI_PALACE_TO_VALE_INTERIORS_INN, held by
 ///   vale_interiors_inn.c) and one into the Colosseum Tunnel
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
@@ -260,10 +260,10 @@ enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 /// scene entry pauses them, so every door is drawn shut; the recording of
 /// BabiPalace_LeaveThroughDoor shows one swing open
 /// (https://alchemy.pascalpixel.com/places/babi-palace/events/BabiPalace_LeaveThroughDoor.gif).
-enum BabiPalaceDoorAnim {
-  BABI_PALACE_MEETING_ROOM_DOOR_ANIM = 1, ///< the throne room's door
-  BABI_PALACE_OTHER_DOORS_ANIM = 2,       ///< every door without its own
-  BABI_PALACE_OVEN_ROOM_DOOR_ANIM = 4     ///< the oven room's door
+enum BabiPalaceDoorAnimation {
+  BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION = 1, ///< the throne room's door
+  BABI_PALACE_OTHER_DOORS_ANIMATION = 2,       ///< every door without its own
+  BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION = 4     ///< the oven room's door
 };
 
 /// The leader's animations in the big bedroom's bed, after the four shared
@@ -303,9 +303,9 @@ static inline void BabiPalace_WalkIntoLeader(s32 member) {
 }
 
 static inline void BabiPalace_CloseDoors(void) {
-  Map_SetLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIM);
-  Map_SetLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIM);
-  Map_SetLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIM);
+  Map_SetLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
+  Map_SetLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIMATION);
+  Map_SetLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
 }
 
 /// After a night in the palace's beds: the party's HP and PP are full,
@@ -2322,16 +2322,16 @@ static void BabiPalace_LeaveThroughDoor(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   if (work->touchedTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
-    Map_ClearLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIM);
+    Map_ClearLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
     Event_Wait(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
     if (work->touchedTrigger == BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM) {
-      Map_ClearLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIM);
+      Map_ClearLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
       Event_Wait(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     } else {
-      Map_ClearLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIM);
+      Map_ClearLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIMATION);
       Event_Wait(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     }
@@ -2511,7 +2511,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       }
       // After Colosso Babi lies in his bed, with no shadow
       // (https://alchemy.pascalpixel.com/places/babi-palace_colosso-over/map-18.png).
-      Actor_SetAnimation(ACTOR_BABI, BABI_ANIM_IN_BED);
+      Actor_SetAnimation(ACTOR_BABI, BABI_ANIMATION_IN_BED);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_BABI), 0);
     } else if (GameFlag_IsSet(FLAG_BABI_SAVED) &&
                !GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {

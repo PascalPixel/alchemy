@@ -172,11 +172,11 @@ enum {
   ANIMATION_FEIZHI_CROUCH = 5,
   /// SPRITE_TURNING_ROCK's mossy rock (spr_293.png's frame 1); its first
   /// animations show frame 0, a purple glow.
-  TURNING_ROCK_ANIM_MOSSY = 2,
+  TURNING_ROCK_ANIMATION_MOSSY = 2,
   ANIMATION_HSU_STRUGGLE = 5,
   ANIMATION_MONK_MEDITATE = 5,
-  PUDDLE_ANIM_FROZEN = 5,
-  SPROUT_ANIM_GROWN = 4
+  PUDDLE_ANIMATION_FROZEN = 5,
+  SPROUT_ANIMATION_GROWN = 4
 };
 
 /// Map triggers that the events below refer to.
@@ -915,7 +915,7 @@ s32 Scene_Initialize(void) {
     Engine_ActorSetAnimation(ACTOR_MEDITATING_MONK, ANIMATION_MONK_MEDITATE);
     Engine_ActorSetAnimation(ACTOR_MONK_SENSING_ANXIETY,
                              ANIMATION_MONK_MEDITATE);
-    Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIM_MOSSY);
+    Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIMATION_MOSSY);
     Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
     if (Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
@@ -935,11 +935,11 @@ s32 Scene_Initialize(void) {
     Object_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIMATION_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
     if (Engine_GameFlagIsSet(FLAG_SPROUT_GROWN)) {
-      Engine_ActorSetAnimation(ACTOR_PLANT, SPROUT_ANIM_GROWN);
+      Engine_ActorSetAnimation(ACTOR_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
     if (gGameState.entrance ==
@@ -1013,7 +1013,7 @@ s32 gAlpineCrossing_WorkerPlacementScript[] = {
 
 /// Feizhi's run down the path toward Hsu, walking, then standing.
 s32 gAlpineCrossing_FeizhiPath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(392), 0, PIXELS(232)),
     SC_SYNC,
     SC_MOVE(PIXELS(376), 0, PIXELS(232)),
@@ -1026,13 +1026,13 @@ s32 gAlpineCrossing_FeizhiPath[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(296), 0, PIXELS(344)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 /// The party leader follows Feizhi most of the way.
 s32 gAlpineCrossing_LeaderPath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(392), 0, PIXELS(232)),
     SC_SYNC,
     SC_MOVE(PIXELS(376), 0, PIXELS(232)),
@@ -1043,20 +1043,20 @@ s32 gAlpineCrossing_LeaderPath[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(328), 0, PIXELS(328)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 /// Hsu, pinned under the boulder, struggles now and then.
 s32 gAlpineCrossing_HsuStruggle[] = {
-    SC_ARG(ANIMATION_STAND),
-    SC_ARG(ANIMATION_HSU_STRUGGLE),
+    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_HSU_STRUGGLE),
     SC_WAIT(240),
-    SC_ARG(ANIMATION_STAND),
-    SC_ARG(ANIMATION_HSU_STRUGGLE),
+    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_HSU_STRUGGLE),
     SC_WAIT(60),
-    SC_ARG(ANIMATION_STAND),
-    SC_ARG(ANIMATION_HSU_STRUGGLE),
+    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_HSU_STRUGGLE),
     SC_WAIT(300),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_END,

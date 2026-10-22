@@ -5,7 +5,7 @@
 #include "effect_slot.h"
 
 struct ArcEffectObject;
-struct FieldFxDefinition;
+struct FieldEffectDefinition;
 struct DescendingOrbitObject;
 struct DispatchObject;
 struct DisplayTransitionState;
@@ -13,7 +13,7 @@ struct Effect05Object;
 struct EffectDescriptor;
 struct EffectSlot;
 struct EffectVector;
-struct EffectObj;
+struct EffectObject;
 struct FacingObject;
 struct FieldActor;
 struct MotionObject;
@@ -222,7 +222,8 @@ void Marker_SetActorPosition(s32 id, s32 x, s32 z);
 
 void Marker_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
-struct EffectObj *FieldEffect_StartRandomParticleEmitter(s32 actor, s32 item);
+struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 actor,
+                                                            s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
@@ -272,7 +273,7 @@ void FadeOverlay_DrawMarks(void);
 void FieldEffect_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);
 void FadeOverlay_Resume(void);
-struct FieldFxDefinition *FieldEffect_FindDefinition(u32 id);
+struct FieldEffectDefinition *FieldEffect_FindDefinition(u32 id);
 s32 FieldEffect_GetAnimationValue(s32 id);
 s32 FieldEffect_GetResourceId(u32 id);
 s32 FieldEffect_GetFlags(s32 id);

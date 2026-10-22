@@ -10,10 +10,10 @@ extern u8 IwramClearWords[];
 /// 256 depth slots sprites are linked into. Called by WaitFrames after each
 /// VBlank.
 void Render_ResetFrame(void) {
-  gObjAffineCount = 0;
+  gSpriteAffineCount = 0;
   // IwramClearWords(destination, bytes): 0x400 bytes are the 256 slot heads.
   // It zeroes r2 itself, so the third argument is never read.
-  _call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount),
+  _call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gSpriteAffineCount),
                (u32)IwramClearWords);
 }
 
@@ -37,14 +37,14 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   s32 angle;
   u8 index;
 
-  index = gObjAffineCount;
+  index = gSpriteAffineCount;
   xScale = (s16)source->scaleX;
   yScale = (s16)source->scaleY;
   angle = source->angle;
   if (index >= OBJ_AFFINE_MATRIX_COUNT)
     return 0;
 
-  matrix = &gObjAffineMatrices[index];
+  matrix = &gSpriteAffineMatrices[index];
   coefficient = matrix->coefficients;
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
     // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
@@ -76,7 +76,7 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
     *coefficient = cosine / yScale;
   }
 
-  gObjAffineCount = index + 1;
+  gSpriteAffineCount = index + 1;
   return index;
 }
 

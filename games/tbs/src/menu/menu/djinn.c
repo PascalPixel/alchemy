@@ -205,7 +205,7 @@ s32 DjinnMenu_RunScreen(void) {
   menu = gMenuWork;
   cursor = menu->cursor;
   cursor->active = ICON_HIDDEN;
-  cursor->animStep = 0;
+  cursor->animationStep = 0;
   Menu_OpenBackdropScreen();
   WaitFrames(1);
   step = DJINN_STEP_SELECT_DJINN;
@@ -500,7 +500,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 0x1000));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
-  Dma_Set((const void *)Palette_GetBasicObjColors(),
+  Dma_Set((const void *)Palette_GetBasicSpriteColors(),
           (void *)&BG_PLTT_COLOR(5, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
@@ -641,7 +641,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
         // Colour 2 when not set; colour 4 over it when it is neither set nor
         // ready to set, that is recovering (or held by a summon).
         if ((entries[listIndex] & DJINN_ENTRY_IS_SET) == 0)
-          UiWork_SetParamNibbleFar(2);
+          UiWork_SetParameterNibbleFar(2);
         canChangeState = 0;
         if (Djinn_IsReadyFar((entries[listIndex] & DJINN_ENTRY_OWNER) >> 8,
                              (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5,
@@ -651,7 +651,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
                               entries[listIndex] & DJINN_ENTRY_INDEX))
           canChangeState = 1;
         if (!canChangeState)
-          UiWork_SetParamNibbleFar(4);
+          UiWork_SetParameterNibbleFar(4);
         UiWindow_SetTilemapEntryFar(
             menu->listWindow,
             ((entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5) +
@@ -664,7 +664,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
                 (entries[listIndex] & DJINN_ENTRY_INDEX),
             menu->listWindow, row * 56 + 16, lineIndex * 8 + 16);
         lineIndex++;
-        UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+        UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
       }
     }
   }
@@ -1893,11 +1893,11 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
       UiIcon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
                                       actions[first] & OWNER_ACTION_ID_MASK);
       if (actions[first] & 0x8000)
-        UiWork_SetParamNibbleFar(4);
+        UiWork_SetParameterNibbleFar(4);
       else if (actions[first] & 0x4000)
-        UiWork_SetParamNibbleFar(2);
+        UiWork_SetParameterNibbleFar(2);
       else
-        UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+        UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
       UiText_DrawCharacterAtOffsetFar(
           MsgAbilityName + (actions[first] & OWNER_ACTION_ID_MASK), window,
           x * 8 + 16, (y + line * 2) * 8 + 8);
@@ -1905,7 +1905,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
                                    window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
     UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window,
                                     x * 8 + DJINN_PREVIEW_PP_X, y * 8);
     if (previewMode != 3) {
@@ -1913,13 +1913,13 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
 
       lines = 0;
       if (gained) {
-        UiWork_SetParamNibbleFar(4);
+        UiWork_SetParameterNibbleFar(4);
         UiText_DrawCharacterAtOffsetFar(MsgPsynergyGained, window, x * 8,
                                         y * 8 + 88);
         lines = 1;
       }
       if (lost) {
-        UiWork_SetParamNibbleFar(2);
+        UiWork_SetParameterNibbleFar(2);
         UiText_DrawCharacterAtOffsetFar(MsgPsynergyLost, window, x * 8,
                                         (y + lines) * 8 + 88);
         lines++;
@@ -1927,7 +1927,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
       if (lines == 0)
         UiText_DrawCharacterAtOffsetFar(MsgPsynergyUnchanged, window, x * 8,
                                         y * 8 + 88);
-      UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+      UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
       UiWindow_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
     ((struct UiWork *)gWindowWork[0])->dirty = 1;

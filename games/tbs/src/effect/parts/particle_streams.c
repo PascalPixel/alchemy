@@ -161,7 +161,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   s32 frame;
   s32 i;
 
-  cache = &gBattleFxWork[1];
+  cache = &gBattleEffectWork[1];
   canvas = cache[0];
   work = cache[-1];
 

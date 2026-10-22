@@ -442,7 +442,7 @@ void Map_ShowWorldMap(s32 picture) {
   struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
   s32 resource = (s32)&ResourceId_WorldMapPicture;
   struct MapAnimation *layer;
-  u8 savedFlags[sizeof(mapState->anim) / sizeof(mapState->anim[0])];
+  u8 savedFlags[sizeof(mapState->animations) / sizeof(mapState->animations[0])];
   s32 i;
   u8 *graphics;
   s32 savedStatus;
@@ -455,7 +455,7 @@ void Map_ShowWorldMap(s32 picture) {
   work->transitionFrames = 6;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  layer = mapState->anim;
+  layer = mapState->animations;
   for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
     savedFlags[i] = layer->paused;
     layer->paused = 1;
@@ -493,7 +493,7 @@ void Map_ShowWorldMap(s32 picture) {
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Map_LoadAreaGraphicsFar();
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
-  layer = mapState->anim;
+  layer = mapState->animations;
   for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
     layer->paused = savedFlags[i];
     layer++;

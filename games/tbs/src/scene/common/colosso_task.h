@@ -58,7 +58,7 @@ enum ColossoLetteringPicture {
 };
 
 /// How Colosso_UpdateLettering lays a picture out (gColosso_LetteringMode);
-/// gColosso_LetteringParam picks the second half of a picture.
+/// gColosso_LetteringParameter picks the second half of a picture.
 enum ColossoLetteringShape {
   /// Four 32x16 pieces in a row: Match 1 to 3, Lend a Hand.
   COLOSSO_SHAPE_TITLE = 1,
@@ -76,7 +76,7 @@ extern s16 gColosso_LetteringTimer;
 extern s16 gColosso_ModeMoveTarget;
 extern s16 gColosso_ModeMoveDuration;
 extern s16 gColosso_LetteringMode;
-extern s16 gColosso_LetteringParam;
+extern s16 gColosso_LetteringParameter;
 extern s32 gColosso_LetteringPosition;
 extern s16 *gColosso_LetteringScript;
 
@@ -231,7 +231,7 @@ commands:
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr | 0x700;
-        *write++ = 0xf400 | (tile + gColosso_LetteringParam);
+        *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
         Runtime_PushSlotEntry(sprite++, 236);
       }
       tile += 8;
@@ -252,7 +252,7 @@ commands:
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr | 0x700;
-        *write++ = 0xf400 | (tile + gColosso_LetteringParam);
+        *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
         Runtime_PushSlotEntry(sprite++, 236);
       }
       tile += 8;
@@ -268,7 +268,7 @@ commands:
       x = left & 511;
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gColosso_LetteringParam);
+      *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
       Runtime_PushSlotEntry(sprite, 236);
     }
     break;
@@ -281,7 +281,7 @@ commands:
       x = left & 511;
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gColosso_LetteringParam);
+      *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
       Runtime_PushSlotEntry(sprite, 236);
     }
     break;

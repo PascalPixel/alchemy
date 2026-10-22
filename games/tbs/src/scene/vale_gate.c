@@ -2005,7 +2005,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_131);
@@ -2153,24 +2153,24 @@ u8 gValeGate_UnusedPaletteSteps[] = {
 };
 
 s32 gValeGate_ChargedUpStrongmanActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(214), 0, PIXELS(721)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(40),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_MOTION, 3),
     SC_SET(SW_VELOCITY_Y, PIXELS(8)),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(214), 0, PIXELS(763)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_SecondTravelerLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(12)),
     SC_MOVE(PIXELS(114), PIXELS(144), PIXELS(360)),
@@ -2182,7 +2182,7 @@ s32 gValeGate_SecondTravelerLeapActions[] = {
 
 s32 gValeGate_FirstTravelerLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(12)),
     SC_MOVE(PIXELS(114), PIXELS(144), PIXELS(343)),
@@ -2194,7 +2194,7 @@ s32 gValeGate_FirstTravelerLeapActions[] = {
 
 s32 gValeGate_LeaderActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(PIXELS(82), PIXELS(144), PIXELS(343)),
@@ -2206,7 +2206,7 @@ s32 gValeGate_LeaderActions[] = {
 
 s32 gValeGate_StormGaretLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(PIXELS(82), PIXELS(144), PIXELS(360)),
@@ -2217,25 +2217,25 @@ s32 gValeGate_StormGaretLeapActions[] = {
 };
 
 s32 gValeGate_FirstTravelerBounceActions[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_MOVE(PIXELS(65), 0, PIXELS(328)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(6)),
     SC_MOVE(PIXELS(31), 0, PIXELS(338)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
@@ -2245,23 +2245,23 @@ s32 gValeGate_FirstTravelerBounceActions[] = {
 };
 
 s32 gValeGate_SecondTravelerBounceActions[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SET(SW_VELOCITY_Y, PIXELS(6)),
     SC_MOVE(PIXELS(63), 0, PIXELS(374)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SET(SW_VELOCITY_Y, PIXELS(7)),
     SC_MOVE(PIXELS(17), 0, PIXELS(338)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
@@ -2306,7 +2306,7 @@ s32 gValeGate_FarewellChaseActions[] = {
 };
 
 s32 gValeGate_FarewellFirstChildActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(137), 0, PIXELS(639)),
     SC_SYNC,
     SC_MOVE(PIXELS(122), 0, PIXELS(692)),
@@ -2314,15 +2314,15 @@ s32 gValeGate_FarewellFirstChildActions[] = {
     SC_MOVE(PIXELS(141), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(6) / 5),
-    SC_SET(SW_ACCEL, PIXELS(3) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 5),
     SC_MOVE(PIXELS(148), 0, PIXELS(770)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_FarewellSecondChildActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(137), 0, PIXELS(639)),
     SC_SYNC,
     SC_MOVE(PIXELS(122), 0, PIXELS(692)),
@@ -2330,15 +2330,15 @@ s32 gValeGate_FarewellSecondChildActions[] = {
     SC_MOVE(PIXELS(141), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(6) / 5),
-    SC_SET(SW_ACCEL, PIXELS(3) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 5),
     SC_MOVE(PIXELS(164), 0, PIXELS(758)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_PartyDepartureActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(216), 0, PIXELS(854)),
     SC_SYNC,
     SC_MOVE(PIXELS(215), 0, PIXELS(921)),
@@ -2349,54 +2349,54 @@ s32 gValeGate_PartyDepartureActions[] = {
 
 s32 gValeGate_HutOwnerSearchActions[] = {
     SC_SET(SW_SPEED, PIXELS(1) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 20),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 20),
     SC_SET(SW_COLLISION, 3),
     SC_LABEL(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
 };
 
 s32 gValeGate_AideRunActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(148), 0, PIXELS(758)),
     SC_SYNC,
     SC_MOVE(PIXELS(128), 0, PIXELS(709)),
     SC_SYNC,
     SC_MOVE(PIXELS(129), 0, PIXELS(647)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValeGate_LeaderStepActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(774)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_StormGaretStepActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(790)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

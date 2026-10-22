@@ -21,7 +21,7 @@ s32 SceneActor_FindNearestFloatingPlatform(void) {
   do {
     struct FieldActor *actor = *slot++;
     if (actor != 0) {
-      if (actor->sprite->entries[0]->animId == SPRITE_FLOATING_PLATFORM) {
+      if (actor->sprite->entries[0]->animationId == SPRITE_FLOATING_PLATFORM) {
         s32 dist = FixedPoint_Distance(
             (const u8 *)origin + offsetof(struct FieldActor, x),
             (const u8 *)actor + offsetof(struct FieldActor, x));

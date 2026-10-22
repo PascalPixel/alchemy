@@ -27,7 +27,7 @@ FarCall_WindowTable:
 	export UiText_DrawNumberFar, UiText_DrawNumber
 	export UiText_DrawNumberAtOffsetFar, UiText_DrawNumberAtOffset
 	export UiText_DrawNumberInWindowFar, UiText_DrawNumberInWindow
-	export UiWork_SetParamNibbleFar, UiWork_SetParamNibble
+	export UiWork_SetParameterNibbleFar, UiWork_SetParameterNibble
 	overlay_veneer UiWork_SetRenderWord
 	export RenderOutput_CreateFar, RenderOutput_Create
 	export RenderOutput_CreateFromResourceFar, RenderOutput_CreateFromResource

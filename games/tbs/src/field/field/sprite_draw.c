@@ -89,21 +89,21 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
     // 33 of 544 instructions differ in tbs-en.
   read_command:
     if ((s16)layer->timer <= 0) {
-      frame = layer->script[layer->pos++];
-      arg = layer->script[layer->pos++];
+      frame = layer->script[layer->scriptOffset++];
+      arg = layer->script[layer->scriptOffset++];
       switch (frame) {
       case ANIMATION_COMMAND_PLAY:
         Animation_SetWorkEntry(layer, arg);
         animation->lastNo = arg;
         break;
       case ANIMATION_COMMAND_JUMP:
-        layer->pos = arg;
+        layer->scriptOffset = arg;
         break;
       case ANIMATION_COMMAND_WAIT:
         layer->timer += arg << 4;
         break;
       case ANIMATION_COMMAND_HOLD:
-        layer->pos -= 2;
+        layer->scriptOffset -= 2;
         goto framed;
       case ANIMATION_COMMAND_SET_KIND:
         layer->kind = arg;
@@ -248,11 +248,11 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
       if (layer->mode == SPRITE_FRAME_TYPE01) {
         Resource_DecodeType01(layer->frames[layer->frame], pixels);
       } else if (layer->mode == SPRITE_FRAME_LZ) {
-        if (layer->param != 0) {
+        if (layer->colorMode != 0) {
           unpacked = MemAlloc(0x400);
           decodeFrame(
               Resource_DecompressLz(layer->frames[layer->frame], unpacked),
-              pixels, layer->param);
+              pixels, layer->colorMode);
           MemFree(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->frames[layer->frame], pixels);
@@ -261,7 +261,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
           }
         }
       } else {
-        decodeFrame(layer->frames[layer->frame], pixels, layer->param);
+        decodeFrame(layer->frames[layer->frame], pixels, layer->colorMode);
       }
     }
 
@@ -620,8 +620,8 @@ void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
       u32 remaining = count;
       do {
         struct AnimationEntry *layer = *entry++;
-        if (layer->param != SPRITE_COLOR_HIDDEN)
-          layer->param = value;
+        if (layer->colorMode != SPRITE_COLOR_HIDDEN)
+          layer->colorMode = value;
         remaining--;
       } while (remaining != 0);
     }

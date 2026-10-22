@@ -34,7 +34,7 @@ typedef void (*BattleFxHandler)(struct BattleEffectArgument *effect);
 /// Effect kinds: the kind an ability's gBattle_ActionFlags entry selects, by
 /// the handler that plays it; a later kind that shares a handler adds its
 /// number. Kinds without a handler have no name.
-enum BattleFxKind {
+enum BattleEffectKind {
   BATTLE_EFFECT_NONE = 0, ///< no effect: the dispatcher only clears the variant
   BATTLE_EFFECT_QUAKE = 1,
   BATTLE_EFFECT_SPIRE = 2,

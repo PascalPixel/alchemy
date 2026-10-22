@@ -273,10 +273,10 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     UiWindow_DrawDividerLine(win, 0, 8, 19, 8);
     // "R: Psynergy Gained" stands out in colour 2 when the Psynergy changes.
     if (gained != 0 || lost != 0)
-      UiWork_SetParamNibble(2);
+      UiWork_SetParameterNibble(2);
     UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win,
                                  DJINN_PREVIEW_HELP_X, 64);
-    UiWork_SetParamNibble(15);
+    UiWork_SetParameterNibble(15);
   }
 
   if (page > 0) {
@@ -303,11 +303,11 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       Ui_CreateOutputFromResourceSlot(win, 0, visibleRow * 16 - 4,
                                       changedAbilities[i] & ACTION_ID_MASK);
       if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_GAINED) != 0)
-        UiWork_SetParamNibble(4);
+        UiWork_SetParameterNibble(4);
       else if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_LOST) != 0)
-        UiWork_SetParamNibble(2);
+        UiWork_SetParameterNibble(2);
       else
-        UiWork_SetParamNibble(15);
+        UiWork_SetParameterNibble(15);
 
       UiText_DrawCharacterAtOffset((changedAbilities[i] & ACTION_ID_MASK) +
                                        MsgAbilityName,
@@ -320,20 +320,20 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     }
 
     if (gained != 0) {
-      UiWork_SetParamNibble(4);
+      UiWork_SetParameterNibble(4);
       UiText_DrawCharacterAtOffset(MsgPsynergyGained, win, 32, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
-      UiWork_SetParamNibble(2);
+      UiWork_SetParameterNibble(2);
       UiText_DrawCharacterAtOffset(MsgPsynergyLost, win, 32,
                                    summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
       UiText_DrawCharacterAtOffset(MsgPsynergyUnchanged, win, 32, 80);
-    UiWork_SetParamNibble(15);
-    UiWork_SetParamNibble(15);
+    UiWork_SetParameterNibble(15);
+    UiWork_SetParameterNibble(15);
     UiWindow_DrawDividerLine(win, 0, 10, 19, 10);
   }
 

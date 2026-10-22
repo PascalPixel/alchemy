@@ -12,10 +12,11 @@
 /// (WorldMap_StartStillView) suspends it. Moves each channel's cursor and timer
 /// in the map work.
 void MapAnimation_Update(void) {
-  // Each channel is written (mapState->anim + channelIndex): as
-  // mapState->anim[channelIndex], 78 of 119 instructions differ in tbs-en, and
-  // a channel pointer swaps ip and lr. The retries stay gotos: as an inner
-  // for (;;) loop with continue and break, loop.c reshapes the channel loop.
+  // Each channel is written (mapState->animations + channelIndex): as
+  // mapState->animations[channelIndex], 78 of 119 instructions differ in
+  // tbs-en, and a channel pointer swaps ip and lr. The retries stay gotos: as
+  // an inner for (;;) loop with continue and break, loop.c reshapes the channel
+  // loop.
   struct MapState *mapState = gMapWork[0];
   u32 channelIndex;
 
@@ -26,18 +27,18 @@ void MapAnimation_Update(void) {
     u32 destinationTile;
 
     // A channel with no script, or paused by a scene, keeps its place.
-    if ((mapState->anim + channelIndex)->start == NULL ||
-        (mapState->anim + channelIndex)->paused != 0)
+    if ((mapState->animations + channelIndex)->start == NULL ||
+        (mapState->animations + channelIndex)->paused != 0)
       continue;
     // While the wait lasts the channel only counts down; when it is over,
     // commands run in this same frame until one sets a new wait or stops.
   next:
-    if ((mapState->anim + channelIndex)->timer == 0) {
-      commands = (mapState->anim + channelIndex)->cursor;
+    if ((mapState->animations + channelIndex)->timer == 0) {
+      commands = (mapState->animations + channelIndex)->cursor;
       sourceTileOrOpcode = *commands++;
       if (sourceTileOrOpcode == 0xffff) {
-        (mapState->anim + channelIndex)->cursor =
-            (mapState->anim + channelIndex)->start;
+        (mapState->animations + channelIndex)->cursor =
+            (mapState->animations + channelIndex)->start;
         goto next;
       }
       // 0xfeff leaves the cursor on itself, so the channel stays stopped
@@ -46,14 +47,14 @@ void MapAnimation_Update(void) {
       if ((sourceTileOrOpcode & 0xff00) == 0xfe00) {
         if ((sourceTileOrOpcode & 0xff) == 0xff)
           continue;
-        (mapState->anim + channelIndex)->cursor =
-            (mapState->anim + channelIndex)->start +
+        (mapState->animations + channelIndex)->cursor =
+            (mapState->animations + channelIndex)->start +
             (sourceTileOrOpcode & 0xff) * 2;
         goto next;
       }
       tileCount = *commands++;
       destinationTile = commands[0];
-      (mapState->anim + channelIndex)->timer = commands[1];
+      (mapState->animations + channelIndex)->timer = commands[1];
       // A source tile from 0x600 (0x200 for 64-byte tiles) is read from
       // RAM: both bases put tile 0x600 (0x200) at 0x02028000, the start of
       // gMapLayerData. A lower one is copied within VRAM. The count is in
@@ -78,10 +79,10 @@ void MapAnimation_Update(void) {
                   (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
       }
       // A copy with a wait of 0 lets the next command run at once.
-      (mapState->anim + channelIndex)->cursor += 4;
+      (mapState->animations + channelIndex)->cursor += 4;
       goto next;
     } else {
-      (mapState->anim + channelIndex)->timer--;
+      (mapState->animations + channelIndex)->timer--;
     }
   }
 }
@@ -91,7 +92,7 @@ void MapAnimation_Update(void) {
 /// Map_ClearLayerEntryFlagFar.
 void Map_ClearLayerEntryFlag(u32 channelIndex) {
   struct MapState *mapState = gMapWork[0];
-  struct MapAnimation *channel = &mapState->anim[channelIndex];
+  struct MapAnimation *channel = &mapState->animations[channelIndex];
 
   channel->paused = 0;
 }
@@ -101,7 +102,7 @@ void Map_ClearLayerEntryFlag(u32 channelIndex) {
 /// Map_SetLayerEntryFlagFar.
 void Map_SetLayerEntryFlag(u32 channelIndex) {
   struct MapState *mapState = gMapWork[0];
-  struct MapAnimation *channel = &mapState->anim[channelIndex];
+  struct MapAnimation *channel = &mapState->animations[channelIndex];
 
   channel->paused = 1;
 }
@@ -118,7 +119,7 @@ void MapAnimation_StartChannels(const u16 *script) {
 
   mapState = gMapWork[0];
   channelsStarted = 0;
-  Dma_Fill32(0, mapState->anim, sizeof(mapState->anim));
+  Dma_Fill32(0, mapState->animations, sizeof(mapState->animations));
   // Each channel's script starts just after its marker and runs on through
   // the rest of the stream; the scan steps over the halfwords between
   // markers. Only the low four bits pick the channel, so a marker for 16 or
@@ -131,7 +132,7 @@ void MapAnimation_StartChannels(const u16 *script) {
       u32 paused = 0;
       if (marker & 0x80)
         paused = 1;
-      channel = &mapState->anim[channelIndex];
+      channel = &mapState->animations[channelIndex];
       channel->start = script;
       channel->cursor = script;
       channel->timer = 0;

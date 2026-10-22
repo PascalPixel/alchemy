@@ -65,7 +65,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   struct EffectPosition screen;
   BlitterPair draw;
 
-  cursor = gBattleFxWork;
+  cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_SpawnObjects(8, 0x177, 1);
@@ -409,7 +409,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame >= 161 && frame <= 223) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame > i * 8 + 160) {
-          struct BattleObj *slot =
+          struct BattleObject *slot =
               GetBattleObjectSlotFar(work->effect->actors[i]);
           struct MotionObject *object = slot->object;
           void *record;

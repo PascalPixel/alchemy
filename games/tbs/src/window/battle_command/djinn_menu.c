@@ -253,9 +253,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
                                    (s32)((encodedDjinn & 0xf00) >> 8) + 0x5001,
                                    0, j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
-            UiWork_SetParamNibble(4);
+            UiWork_SetParameterNibble(4);
           } else if (encodedDjinn & DJINN_ENTRY_STANDBY) {
-            UiWork_SetParamNibble(2);
+            UiWork_SetParameterNibble(2);
           }
           UiText_DrawCharacterAtOffset(
               (s32)(((encodedDjinn & 0xf00) >> 8) * 20 +
@@ -268,7 +268,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
                       DJINN_ENTRY_RECOVERY_SHIFT),
                 TURNS_DIGITS, listWindow, TURNS_X, j * 16);
           }
-          UiWork_SetParamNibble(15);
+          UiWork_SetParameterNibble(15);
           j++;
           if (j >= BATTLE_LIST_ROWS) {
             break;

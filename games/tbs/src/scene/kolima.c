@@ -1658,21 +1658,21 @@ static void Kolima_RestoreBridgeState(void) {
 /// Where Garet, Ivan and Mia walk on into the silent village and the way each
 /// turns (Kolima_WitnessForestCurse).
 s32 gKolima_GaretWalksIn[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(97), 0, PIXELS(221)),
-    SC_SYNC,   SC_SET(SW_FACING, FACING_NORTHEAST),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(97), 0, PIXELS(221)),
+    SC_SYNC,         SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolima_IvanWalksIn[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(101), 0, PIXELS(268)),
-    SC_SYNC,   SC_SET(SW_FACING, FACING_EAST),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(101), 0, PIXELS(268)),
+    SC_SYNC,         SC_SET(SW_FACING, FACING_EAST),
+    SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolima_MiaWalksIn[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(78), 0, PIXELS(247)),
-    SC_SYNC,   SC_SET(SW_FACING, FACING_NORTH),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(78), 0, PIXELS(247)),
+    SC_SYNC,         SC_SET(SW_FACING, FACING_NORTH),
+    SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolima_PartySquashActions[] = {
@@ -1712,7 +1712,7 @@ s32 gKolima_ProtectiveFieldGrowActions[] = {
 };
 
 s32 gKolima_ProtectiveFieldShrinkActions[] = {
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_ADD(SW_Z, -PIXELS(1) / 10),
     SC_ADD(SW_SCALE_X, -3 * Q16_ONE / 200),
     SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 200),

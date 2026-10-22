@@ -124,7 +124,7 @@ s32 Shop_SelectSell(s32 unitId) {
         Shop_DrawItemPrice(priceWindow, itemId,
                            Shop_SalePrice(unit->inventory[slot]),
                            SHOP_PRICE_KIND_SELL);
-        Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
+        Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
       }
 
       if ((gKeysPressed & KEY_A) != 0) {

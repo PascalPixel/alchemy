@@ -212,7 +212,7 @@ void BattleObject_DestroyTemporaryObject(s32 unitId) {
 s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 #endif
   struct BattleUnit *enemy;
-  struct BattleObj *slot;
+  struct BattleObject *slot;
 
   enemy = Unit_GetFar(unitId);
   if (enemy->side == BATTLE_UNIT_ENEMY) {

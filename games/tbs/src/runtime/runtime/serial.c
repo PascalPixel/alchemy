@@ -72,7 +72,7 @@ void SerialRuntime_Initialize(void) {
   gLinkExchangeState = 0;
   gSerialSendSource = 0;
   gSerialSendSize = 0;
-  gSerialReceiveDest = 0;
+  gSerialReceiveDestination = 0;
   gSerialReceivedSize = 0;
   LinkBattle_ResetTransferState();
   IRQ_UNLOCK(interruptEnable);
@@ -499,11 +499,11 @@ s32 SerialRuntime_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
 
-  if (gSerialReceiveDest != 0)
+  if (gSerialReceiveDestination != 0)
     return -1;
   IRQ_LOCK(savedInterruptMaster);
   state->status = 0x81;
-  gSerialReceiveDest = (s32)destination;
+  gSerialReceiveDestination = (s32)destination;
   gSerialReceivedSize = 0;
   state->active = 1;
   gSerialBlockSequence = 0;
@@ -526,7 +526,7 @@ s32 SerialRuntime_StartReceive(void *destination) {
   }
 
 SERIAL_DEFINE_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
-SERIAL_DEFINE_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDest)
+SERIAL_DEFINE_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDestination)
 
 /// Waits until both the send and the receive have finished, giving up after
 /// 600000 frames. Reached through the far-call table.
@@ -534,7 +534,7 @@ void SerialRuntime_WaitForTransfers(void) {
   u32 count;
 
   count = 0;
-  while (gSerialSendSource != 0 || gSerialReceiveDest != 0) {
+  while (gSerialSendSource != 0 || gSerialReceiveDestination != 0) {
     WaitFrames(1);
     count++;
     if (count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
@@ -551,7 +551,7 @@ s32 SerialRuntime_GetActiveTransfers(void) {
   if (gSerialSendSource != 0) {
     flags = 1;
   }
-  if (gSerialReceiveDest != 0) {
+  if (gSerialReceiveDestination != 0) {
     flags |= 2;
   }
   return flags;
@@ -568,7 +568,7 @@ struct OneCell {
 /// acknowledges each block's sequence number; when the sender sees an
 /// acknowledgement behind its own count it rewinds and sends the missed
 /// blocks again. A finished send or receive clears gSerialSendSource or
-/// gSerialReceiveDest.
+/// gSerialReceiveDestination.
 void SerialRuntime_StepBlockTransfer(void) {
   /* FAKEMATCH(volatile): gSerialSendSize and gSerialBlockSequence are volatile
    * (serial_runtime.h), so each access is its own load or store; as plain
@@ -593,7 +593,7 @@ void SerialRuntime_StepBlockTransfer(void) {
   // Receiving advances only when the peer presents the expected sequence.
   // peerFlags is the sender's block kind, an enum SerialSendState.
   {
-    s32 *receive = &gSerialReceiveDest;
+    s32 *receive = &gSerialReceiveDestination;
     s32 dest = *receive;
     if (dest != 0) {
       if (own->flags == SERIAL_RECEIVE_ACTIVE &&
@@ -679,12 +679,12 @@ void SerialRuntime_StepBlockTransfer(void) {
   // block; the receive ends once the partner has seen that
   if (own->flags == SERIAL_RECEIVE_DONE) {
     if (peer->peerFlags != SERIAL_SEND_LAST) {
-      gSerialReceiveDest = 0;
+      gSerialReceiveDestination = 0;
       own->flags = SERIAL_RECEIVE_IDLE;
     }
   } else {
     own->flags = SERIAL_RECEIVE_IDLE;
-    if (gSerialReceiveDest != 0)
+    if (gSerialReceiveDestination != 0)
       own->flags = SERIAL_RECEIVE_ACTIVE;
   }
 }
@@ -735,7 +735,7 @@ restart:
         SerialTest_Delay();
       } while (tick >= 0);
     }
-    if (gSerialReceiveDest == 0) {
+    if (gSerialReceiveDestination == 0) {
       Dma_Set(gMapCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(0xa0),
               REG_DMA3);
       goto restart;

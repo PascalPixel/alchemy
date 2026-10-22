@@ -64,7 +64,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   s32 frame;
   s32 i;
 
-  cursor = gBattleFxWork;
+  cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
@@ -219,7 +219,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the effect's animation objects in gBattleFxWork's objects.
+/// Creates the effect's animation objects in gBattleEffectWork's objects.
 ///
 /// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.

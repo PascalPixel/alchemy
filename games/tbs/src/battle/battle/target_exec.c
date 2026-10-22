@@ -305,7 +305,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       // (the anchors are 16.16 fixed point).
       Enemy_Update();
       {
-        struct BattleObj *battleObject;
+        struct BattleObject *battleObject;
 
         battleObject = BattleObject_Get(newUnitId);
         BattleObject_Make(battleObject, newUnitId,
@@ -320,7 +320,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
 
         enemyCount = BattleEnemy_List(enemyIds);
         for (i = 0; i < enemyCount; i++)
-          ObjMotRst((u16)enemyIds[i]);
+          BattleMotion_ReturnToSpot((u16)enemyIds[i]);
       }
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, newUnitId);
       if (abilityId != ABILITY_SPEED_SURGE)

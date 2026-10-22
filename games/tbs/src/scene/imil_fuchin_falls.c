@@ -1728,7 +1728,7 @@ static void Fuchin_SearchDragonStatue(void) {
 /// The dragon statue room goes dark again when Reveal ends. That happens in
 /// Fuchin Falls Cave only before the eye is set.
 static void Fuchin_EndRevealLighting(void) {
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct DisplayTransitionState *state;
 
   if (gGameState.entrance <=

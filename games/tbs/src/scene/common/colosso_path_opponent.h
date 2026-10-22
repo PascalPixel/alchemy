@@ -52,8 +52,8 @@ static void Colosso_UpdatePathOpponent(void) {
     return;
   }
   if (rec->mode == PATH_RECORDER_PLAY) {
-    x = work->path[(s16)rec->pos++];
-    z = work->path[(s16)rec->pos++];
+    x = work->path[(s16)rec->pathIndex++];
+    z = work->path[(s16)rec->pathIndex++];
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
@@ -109,13 +109,13 @@ static void Colosso_UpdatePathOpponent(void) {
   } else if (rec->mode == PATH_RECORDER_RECORD) {
     x = obj->x.part.pixel;
     z = obj->z.part.pixel;
-    work->path[(s16)rec->pos++] = x;
-    work->path[(s16)rec->pos++] = z;
-    if ((s16)rec->pos == 0x383e) {
-      work->path[(s16)rec->pos++] = 0;
-      work->path[(s16)rec->pos] = 0;
+    work->path[(s16)rec->pathIndex++] = x;
+    work->path[(s16)rec->pathIndex++] = z;
+    if ((s16)rec->pathIndex == 0x383e) {
+      work->path[(s16)rec->pathIndex++] = 0;
+      work->path[(s16)rec->pathIndex] = 0;
       rec->actor = work->gauge.opponentActor;
-      rec->pos = 0;
+      rec->pathIndex = 0;
       rec->mode = PATH_RECORDER_PLAY;
     }
   }

@@ -1151,7 +1151,7 @@ BabiLighthouse_FindActorAhead(struct FieldActor *actor) {
 /// effect's childOption, so that once Carry lets go the effect waits for the
 /// pillar to bounce up and land, and rings it with dust (carry.c).
 static void BabiLighthouse_LandCarriedPillarInDust(void) {
-  ((struct FieldFxScene *)gEffectWork)->childOption = 1;
+  ((struct FieldEffectScene *)gEffectWork)->childOption = 1;
 }
 
 /// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its

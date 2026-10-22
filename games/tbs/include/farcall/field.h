@@ -124,8 +124,8 @@ void Map_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
 /// Copies the block numbers of a rectangle of cells, keeping the destination's
 /// attributes, and redraws what's on screen; the destination comes before the
 /// size.
-void Map_CopyMetatileIndicesRectFar(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y,
-                                    u32 width, u32 height);
+void Map_CopyMetatileIndicesRectFar(s32 sourceX, s32 sourceY, u32 dst_x,
+                                    u32 dst_y, u32 width, u32 height);
 /// Restarts tile animation channel `no` by clearing its paused byte.
 void Map_ClearLayerEntryFlagFar(u32 no);
 /// Pauses tile animation channel `no` by setting its paused byte.
@@ -143,15 +143,15 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 y);
 /// Copies a rectangle of cells whole, block numbers and attributes, and draws
 /// the copied cells that are in view.
-void Map_CopyMetatileCellsRectFar(s32 srcX, s32 srcY, s32 width, s32 height,
-                                  s32 dst_x, s32 dst_y);
+void Map_CopyMetatileCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
+                                  s32 height, s32 dst_x, s32 dst_y);
 /// Copies only the attributes (flags, collision and shape) of a rectangle of
 /// cells. Nothing is redrawn, since attributes don't show.
-void Map_CopyCellAttributeRectFar(s32 srcX, s32 srcY, s32 width, s32 height,
-                                  s32 dst_x, s32 dst_y);
+void Map_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
+                                  s32 height, s32 dst_x, s32 dst_y);
 /// Copies only the block numbers of a rectangle of cells, the size before the
 /// destination, and redraws the cells in view.
-void Map_CopyCellIndexRectFar(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width, s32 height,
                               s32 dst_x, s32 dst_y);
 /// Puts world map tile (x / 16, y / 16) into the tile grid at
 /// (px / 16, py / 16), drawing it at once when it's next to the view.

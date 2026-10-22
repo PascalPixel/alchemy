@@ -16,12 +16,12 @@ struct SelectionSprite {
   u8 affine : 2;                ///< 0 plain, 1 affine, 3 affine at double size
   u8 mode : 2;                  ///< 0 normal, 1 semi-transparent, 2 OBJ window
   u8 mosaic : 1;
-  u8 colors : 1; ///< 1 for 256 colours
-  u8 shape : 2;  ///< 0 square, 1 wide, 2 tall
-  u16 x : 9;     ///< screen pixels
-  u16 param : 5; ///< the affine matrix
-  u16 size : 2;  ///< with shape, the sprite's size
-  u16 tile : 10; ///< first sprite tile in VRAM
+  u8 colors : 1;  ///< 1 for 256 colours
+  u8 shape : 2;   ///< 0 square, 1 wide, 2 tall
+  u16 x : 9;      ///< screen pixels
+  u16 matrix : 5; ///< the affine matrix
+  u16 size : 2;   ///< with shape, the sprite's size
+  u16 tile : 10;  ///< first sprite tile in VRAM
   u16 priority : 2;
   u16 palette : 4; ///< 16-colour palette
 };
@@ -29,8 +29,8 @@ struct SelectionSprite {
 /// An icon of the selection screen: its list links, the entry it shows, its
 /// place and its slide toward a target, its zoom and its sprite.
 struct SelectionNode {
-  struct SelectionNode *prev; ///< the icon before it in its row
-  struct SelectionNode *next; ///< the icon after it in its row
+  struct SelectionNode *previous; ///< the icon before it in its row
+  struct SelectionNode *next;     ///< the icon after it in its row
   u16 base;    ///< the entry's id, as listed in SelectionScreen.bases
   u16 kind;    ///< the entry's kind, as listed in SelectionScreen.kinds; 0 free
   u16 slot;    ///< VRAM cache slot of its picture

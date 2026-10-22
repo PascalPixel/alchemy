@@ -70,7 +70,7 @@ s32 Shop_SelectRepair(s32 unitId) {
         repairCost = Shop_RepairPrice(unit->inventory[slot]);
         Shop_DrawItemPrice(priceWindow, itemId, repairCost,
                            SHOP_PRICE_KIND_REPAIR);
-        Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
+        Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
       }
       if ((gKeysPressed & KEY_A) != 0) {
         AudioCommand_PlayFar(SE_MENU_CONFIRM);

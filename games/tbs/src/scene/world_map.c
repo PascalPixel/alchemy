@@ -311,11 +311,11 @@ enum WorldMapTrigger {
 enum { ROWING_BALANCE_OFF_COURSE = 11 };
 
 /// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge's drawbridge is down.
-enum { WORLD_MAP_BRIDGE_ANIM_LOWERED = 2 };
+enum { WORLD_MAP_BRIDGE_ANIMATION_LOWERED = 2 };
 
 /// The falling rock's animations (spr_216.png): it tumbles as it falls, then
 /// shatters where it lands.
-enum { FALLING_ROCK_ANIM_TUMBLE = 2, FALLING_ROCK_ANIM_SHATTER = 3 };
+enum { FALLING_ROCK_ANIMATION_TUMBLE = 2, FALLING_ROCK_ANIMATION_SHATTER = 3 };
 
 /// The actors of Hammet's caravan leaving Vault
 /// (gWorldMapPlacementsHammetsCaravan, WORLD_MAP_HAMMETS_CARAVAN_LEAVES),
@@ -560,7 +560,7 @@ static s32 WorldMap_SetUpKolimaBridge(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   WorldMap_AlignToMap(interpreter);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
-    Object_SetMode(actor, WORLD_MAP_BRIDGE_ANIM_LOWERED);
+    Object_SetMode(actor, WORLD_MAP_BRIDGE_ANIMATION_LOWERED);
   }
   return 1;
 }
@@ -1213,7 +1213,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   actor->y.fixed = PIXELS(64);
   actor->sprite->rotation = 0xf000;
   Engine_ActorSetSpriteFlags(actor, 0);
-  Object_SetMode(actor, FALLING_ROCK_ANIM_TUMBLE);
+  Object_SetMode(actor, FALLING_ROCK_ANIMATION_TUMBLE);
   Engine_TaskWait(1);
   spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
@@ -1389,7 +1389,7 @@ static void WorldMap_UpdateFallingRock(void) {
     actor->y.fixed = PIXELS(10);
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
       Event_PlayCue(SE_145);
-      Object_SetMode(actor, FALLING_ROCK_ANIM_SHATTER);
+      Object_SetMode(actor, FALLING_ROCK_ANIMATION_SHATTER);
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       actor->timer = 1;
     }
@@ -2625,7 +2625,7 @@ static void Event_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 /// Reached by the first phase of Douse on the storm (ACTOR_STORM) while it
 /// holds the party in the air (FLAG_SCENE_TEMP_F0).
 static void Event_StartDousingStorm(void) {
-  ((struct FieldFxScene *)gEffectWork)->childOption = 1;
+  ((struct FieldEffectScene *)gEffectWork)->childOption = 1;
 }
 
 /// Douse on the storm: the party comes down and the battle with what is in it
@@ -2857,7 +2857,7 @@ s32 gCaravanFirstWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2866,23 +2866,23 @@ s32 gCaravanFirstWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5864), 0, PIXELS(1624)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gCaravanFirstWagonDeparts[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5868), 0, PIXELS(1624)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_POSITION(PIXELS(5656), 0, PIXELS(1800)),
     SC_END,
 };
 
 s32 gCaravanFirstWagonReturns[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
@@ -2892,7 +2892,7 @@ s32 gCaravanFirstWagonReturns[] = {
 s32 gCaravanWagonHeadsNorth[] = {
     SC_POSITION(PIXELS(5868), 0, PIXELS(1704)),
     SC_WAIT(1),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5872), 0, PIXELS(1528)),
     SC_SYNC,
     SC_MOVE(PIXELS(5880), 0, PIXELS(1352)),
@@ -2906,7 +2906,7 @@ s32 gCaravanSecondWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2915,23 +2915,23 @@ s32 gCaravanSecondWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5832), 0, PIXELS(1640)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gCaravanSecondWagonDeparts[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1640)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_POSITION(PIXELS(5640), 0, PIXELS(1768)),
     SC_END,
 };
 
 s32 gCaravanSecondWagonReturns[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5640), 0, PIXELS(1795)),
     SC_SYNC,
     SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
@@ -2945,7 +2945,7 @@ s32 gCaravanThirdWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2954,23 +2954,23 @@ s32 gCaravanThirdWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5832), 0, PIXELS(1624)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gCaravanThirdWagonDeparts[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1624)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_POSITION(PIXELS(5656), 0, PIXELS(1768)),
     SC_END,
 };
 
 s32 gCaravanThirdWagonReturns[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5656), 0, PIXELS(1795)),
     SC_SYNC,
     SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
@@ -2984,7 +2984,7 @@ s32 gCaravanFourthWagonArrives[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(1),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5848), 0, PIXELS(1544)),
     SC_SYNC,
     SC_MOVE(PIXELS(5795), 0, PIXELS(1544)),
@@ -2993,25 +2993,25 @@ s32 gCaravanFourthWagonArrives[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(5832), 0, PIXELS(1608)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gCaravanFourthWagonDeparts[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1608)),
     SC_SYNC,
     SC_MOVE(PIXELS(5868), 0, PIXELS(1736)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_POSITION(PIXELS(5672), 0, PIXELS(1768)),
     SC_END,
 };
 
 s32 gCaravanFourthWagonReturns[] = {
-    SC_ARG(3), SC_MOVE(PIXELS(5672), 0, PIXELS(1795)),
-    SC_SYNC,   SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
+    SC_ANIMATION(3), SC_MOVE(PIXELS(5672), 0, PIXELS(1795)),
+    SC_SYNC,         SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 
@@ -3030,19 +3030,19 @@ s32 gCaravanRockGuideScript[] = {
 
 s32 gBlackOrbLeaderScript[] = {
     SC_SET(SW_TIMER, 0),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(6008), 0, PIXELS(3400)),
     SC_SYNC,
     SC_MOVE(PIXELS(6020), 0, PIXELS(3400)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEndingAlexWalk[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
     SC_MOVE(PIXELS(7576), 0, PIXELS(3464)),
@@ -3055,14 +3055,14 @@ s32 gEndingAlexWalk[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(7752), 0, PIXELS(3496)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEndingKradenWalk[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
     SC_MOVE(PIXELS(7576), 0, PIXELS(3464)),
@@ -3073,7 +3073,7 @@ s32 gEndingKradenWalk[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(7704), 0, PIXELS(3512)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
     SC_END,
@@ -3081,7 +3081,7 @@ s32 gEndingKradenWalk[] = {
 
 s32 gEndingJennaWalk[] = {
     SC_SET(SW_TIMER, 0),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
     SC_MOVE(PIXELS(7576), 0, PIXELS(3464)),
@@ -3092,7 +3092,7 @@ s32 gEndingJennaWalk[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(7688), 0, PIXELS(3528)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_SET(SW_FACING, FACING_EAST),
     SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
@@ -3105,7 +3105,7 @@ s32 gQuakeDustScript[] = {
 };
 
 s32 gCrossingShipSailsWest[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
     SC_LOOP(40, SC_TOP),
@@ -3118,7 +3118,7 @@ s32 gCrossingShipSailsWest[] = {
 };
 
 s32 gCrossingShipVeersNorth[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(PIXELS(-8), 0, PIXELS(-2)),
     SC_SYNC,
     SC_LOOP(40, SC_TOP),

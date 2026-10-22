@@ -139,7 +139,7 @@ MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
                                      offsetof(struct FieldActor, sprite));
     struct AnimationEntry *entry = sprite->entries[0];
 
-    entry->param = ((gFrameCount >> 1) & 1) * 7;
+    entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
     sprite->dirty = 1;
   }
   return 1;

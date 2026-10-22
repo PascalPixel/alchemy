@@ -421,7 +421,7 @@ enum {
   ANIMATION_HURT_LYING = 5,
   /// A light's sparkle, flickering between its two largest pictures
   /// (spr_284.tsv).
-  PARTICLE_ANIM_FLICKER = 7
+  PARTICLE_ANIMATION_FLICKER = 7
 };
 
 /// An animation timer step for Object_SetActionById, in sixteenths of a frame
@@ -980,7 +980,7 @@ static struct FieldActor *VenusLighthouse_CreateLight(s32 x, s32 z,
   effect->speed = PIXELS(1);
   effect->acceleration = PIXELS(1);
   Engine_ActorSetSpriteFlags(effect, 0);
-  Object_SetMode(effect, PARTICLE_ANIM_FLICKER);
+  Object_SetMode(effect, PARTICLE_ANIMATION_FLICKER);
   effect->motionFlags = 0;
   effect->y.fixed = 0;
   effect->collisionFlags = 0;
@@ -2899,7 +2899,7 @@ s32 VenusLighthouse_Initialize(void) {
         Engine_ActorSetSpritePriority(ACTOR_GATE_PILLAR, 3);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Map_CopyCellAttributes(45, 45, 1, 1, 46, 45);
-        Engine_ActorSetAnimation(ACTOR_GATE_EFFECT, PARTICLE_ANIM_FLICKER);
+        Engine_ActorSetAnimation(ACTOR_GATE_EFFECT, PARTICLE_ANIMATION_FLICKER);
         Engine_ActorSetSpritePriority(ACTOR_GATE_EFFECT, 1);
         actor = Object_GetById(ACTOR_GATE_EFFECT);
         actor->collisionFlags = 0;
@@ -3035,7 +3035,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetAnimation(ACTOR_SWITCH_GATE_EFFECT,
-                                 PARTICLE_ANIM_FLICKER);
+                                 PARTICLE_ANIMATION_FLICKER);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SWITCH_GATE_EFFECT), 0);
         Engine_ActorSetSpritePriority(ACTOR_SWITCH_GATE_EFFECT, 1);
         actor = Object_GetById(ACTOR_SWITCH_GATE_EFFECT);
@@ -3213,7 +3213,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR + 3, 3);
         Engine_ActorSetAnimation(ACTOR_SOCKET_GATE_EFFECT,
-                                 PARTICLE_ANIM_FLICKER);
+                                 PARTICLE_ANIMATION_FLICKER);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOCKET_GATE_EFFECT), 0);
         Engine_ActorSetSpritePriority(ACTOR_SOCKET_GATE_EFFECT, 1);
         actor = Object_GetById(ACTOR_SOCKET_GATE_EFFECT);
@@ -3747,7 +3747,7 @@ static s32 VenusLighthouse_RouteLight(struct ScriptInterpreter *interpreter) {
   // XXX: the paths end only on sockets, so a pillar is likely always there;
   // a light over an empty socket would read through a null pillar.
   sprite = pillar->sprite;
-  if (sprite->entries[0]->animId == SPRITE_SPIRAL_PILLAR) {
+  if (sprite->entries[0]->animationId == SPRITE_SPIRAL_PILLAR) {
     s32 velocityX = light->velocityX;
     s32 speedX = velocityX < 0 ? -velocityX : velocityX;
     s32 velocityZ = light->velocityZ;
@@ -3953,7 +3953,7 @@ s32 gVenusGreyPillarScript[] = {
 /// (Event_JumpDown): he swells and shrinks ten times, flashing
 /// (VenusLighthouse_PulseChildEffect).
 s32 gVenusLeaderDazedScript[] = {
-    SC_ARG(12),
+    SC_ANIMATION(12),
     SC_SET(SW_HOOK, (s32)VenusLighthouse_PulseChildEffect),
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, 11 * Q16_ONE / 10),
@@ -4004,32 +4004,32 @@ s32 gVenusSprayScript[] = {
 
 /// The object scripts that give a spiral pillar its piece of track.
 s32 gVenusTrackNorthSouthScript[] = {
-    SC_ARG(TRACK_NORTH_SOUTH),
+    SC_ANIMATION(TRACK_NORTH_SOUTH),
     SC_END,
 };
 
 s32 gVenusTrackNorthWestScript[] = {
-    SC_ARG(TRACK_NORTH_WEST),
+    SC_ANIMATION(TRACK_NORTH_WEST),
     SC_END,
 };
 
 s32 gVenusTrackNorthEastScript[] = {
-    SC_ARG(TRACK_NORTH_EAST),
+    SC_ANIMATION(TRACK_NORTH_EAST),
     SC_END,
 };
 
 s32 gVenusTrackWestEastScript[] = {
-    SC_ARG(TRACK_WEST_EAST),
+    SC_ANIMATION(TRACK_WEST_EAST),
     SC_END,
 };
 
 s32 gVenusTrackSouthEastScript[] = {
-    SC_ARG(TRACK_SOUTH_EAST),
+    SC_ANIMATION(TRACK_SOUTH_EAST),
     SC_END,
 };
 
 s32 gVenusTrackSouthWestScript[] = {
-    SC_ARG(TRACK_SOUTH_WEST),
+    SC_ANIMATION(TRACK_SOUTH_WEST),
     SC_END,
 };
 
@@ -4038,7 +4038,7 @@ s32 gVenusTrackSouthWestScript[] = {
 /// it).
 s32 gVenusSecondFloorLightToGate[] = {
     SC_CALL(VenusLighthouse_ClearScriptedSpriteFlags),
-    SC_ARG(7),
+    SC_ANIMATION(7),
     SC_SET(SW_SPEED, PIXELS(1)),
     SC_SET(SW_HOOK, (s32)VenusLighthouse_TrailLight),
     SC_MOVE(PIXELS(760), 0, PIXELS(728)),

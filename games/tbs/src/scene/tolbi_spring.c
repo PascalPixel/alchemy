@@ -923,8 +923,8 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
     do {
       struct AnimationEntry *entry = *entries++;
 
-      if (entry->param != colorVariant) {
-        entry->param = colorVariant;
+      if (entry->colorMode != colorVariant) {
+        entry->colorMode = colorVariant;
         {
           u32 frame = entry->frame;
 

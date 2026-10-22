@@ -952,11 +952,11 @@ s32 gValeInteriorsShops_FaceTargetScript[] = {
 
 s32 gValeInteriorsShops_FatherPacingScript[] = {
     SC_SET(SW_SPEED, PIXELS(3) / 5),
-    SC_SET(SW_ACCEL, PIXELS(3) / 10),
-    SC_ARG(2),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 10),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(784), 0, PIXELS(405)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(40),
     SC_LABEL(1),
     SC_ADD(SW_FACING, -1024),
@@ -967,10 +967,10 @@ s32 gValeInteriorsShops_FatherPacingScript[] = {
     SC_ADD(SW_FACING, -1024),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(3)),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(819), 0, PIXELS(405)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_LABEL(2),
     SC_ADD(SW_FACING, -2048),
     SC_WAIT(1),
@@ -980,10 +980,10 @@ s32 gValeInteriorsShops_FatherPacingScript[] = {
 };
 
 s32 gValeInteriorsShops_PartyLeavesScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(808), 0, PIXELS(508)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,

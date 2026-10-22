@@ -14,7 +14,7 @@
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct EffectSlot *effect;
   s32 scale;
   s32 remainingParticles;
@@ -178,9 +178,9 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    position.x = owner->pos.x;
-    position.y = owner->pos.y + 0x140000;
-    position.z = owner->pos.z;
+    position.x = owner->position.x;
+    position.y = owner->position.y + 0x140000;
+    position.z = owner->position.z;
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;

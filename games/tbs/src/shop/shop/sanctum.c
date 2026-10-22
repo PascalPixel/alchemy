@@ -60,7 +60,7 @@ s32 Shop_CountUnits(void) {
 /// `messageId` stands among the revive service's lines. Each service's lines
 /// are a run in the same order, from MsgReviveService, MsgCurePoisonService,
 /// MsgExorcismService and MsgRemoveCurseService.
-s32 Shop_MsgByMode(s32 messageId) {
+s32 Shop_MessageByMode(s32 messageId) {
   s8 serviceKind = ((struct ShopRuntime *)gMenuWork)->partyAction;
 
   if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
@@ -76,7 +76,7 @@ s32 Shop_MsgByMode(s32 messageId) {
 }
 
 /// Shows the keeper's line `messageId`, moved to the current service's
-/// (Shop_MsgByMode), and waits for its window, one more frame included: the
+/// (Shop_MessageByMode), and waits for its window, one more frame included: the
 /// sanctum's UiMessage_ShowAndWait.
 void UiMessage_ShowResolvedAndWait(s32 messageId) {
   s32 portraitResource;
@@ -84,7 +84,7 @@ void UiMessage_ShowResolvedAndWait(s32 messageId) {
   portraitResource = FieldEffect_GetResourceIdFar(
       ((struct ShopRuntime *)gMenuWork)->keeperResource);
   UiWork_FinalizePendingCoreFar();
-  messageId = Shop_MsgByMode(messageId);
+  messageId = Shop_MessageByMode(messageId);
   UiText_OpenMessageWindowFar(messageId, 5, 0,
                               (portraitResource << 0x10) | 0x22);
   while (UiWork_IsCompleteFar() == 0) {
@@ -106,7 +106,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->active;
   portraitResource = FieldEffect_GetResourceIdFar(shop->keeperResource);
-  messageId = Shop_MsgByMode(messageId);
+  messageId = Shop_MessageByMode(messageId);
   (*cursorSlot)->active = 13;
   UiWork_FinalizePendingCoreFar();
   UiText_OpenMessageWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
@@ -137,7 +137,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
                                              Object_GetByIdFar(unitId))
                   ->animation)
             ->entries[0]
-            ->animId;
+            ->animationId;
     shop->keeperResource = keeperAnimationId;
   }
 
@@ -258,7 +258,7 @@ s32 Sanctum_RunPartyService(void) {
       Shop_PlaceCursor(listWindow, memberIndex * 24 - 12, 0);
       shop->mode = 3;
       Shop_HiliteUnit(listWindow, memberIndex);
-      Shop_DrawSelectMsg(priceWindow, unitId);
+      Shop_DrawSelectMessage(priceWindow, unitId);
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
@@ -381,7 +381,7 @@ void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
 /// Draws in `target` the member's fee for the current service (its cost line
 /// with the donation filled in), or the line that the member needs no
 /// treatment. Called by Sanctum_RunPartyService each time the cursor moves.
-void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
+void Shop_DrawSelectMessage(struct UiWindow *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
 
@@ -394,7 +394,7 @@ void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
     } else {
       serviceOrMessage = MsgNoHealingNeeded;
     }
-    serviceOrMessage = Shop_MsgByMode(serviceOrMessage);
+    serviceOrMessage = Shop_MessageByMode(serviceOrMessage);
     UiWork_PushValueSlotFar(donation, MESSAGE_ARGUMENT_NUMBER);
     UiText_DrawResourceFar(serviceOrMessage, target, 0, 0);
   }

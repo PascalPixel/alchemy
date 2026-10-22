@@ -109,11 +109,11 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           sprites[i].oam.f.tile = glyph;
 
           if ((action->flags & ACTION_USABLE_IN_BATTLE) == 0) {
-            UiWork_SetParamNibble(4);
+            UiWork_SetParameterNibble(4);
           } else if (action->ppCost > unit->pp) {
-            UiWork_SetParamNibble(2);
+            UiWork_SetParameterNibble(2);
           } else if (unit->psySeal != 0) {
-            UiWork_SetParamNibble(9);
+            UiWork_SetParameterNibble(9);
           }
 
           // The name and cost take BG palette 5 (UiRenderWork.level).
@@ -121,7 +121,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           UiText_DrawCharacterAtOffset(encodedAction + MsgAbilityName, window,
                                        16, i * 16);
           UiText_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
-          UiWork_SetParamNibble(15);
+          UiWork_SetParameterNibble(15);
           work->level = 15;
 
           // Element 4 is none: no element icon.

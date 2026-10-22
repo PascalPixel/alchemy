@@ -28,7 +28,7 @@
 ///
 /// SceneId_BilibinCaveIce holds the cave's one puzzle of several steps, built
 /// from fires, torches and puddles that Frost freezes into ice pillars and the
-/// heat of a fire or a torch melts back (PUDDLE_ANIM_MELT). While
+/// heat of a fire or a torch melts back (PUDDLE_ANIMATION_MELT). While
 /// ACTOR_ICE_ROOM_FIRE burns, Frost on the puddle beside it only melts back;
 /// Douse puts the fire out (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and the
 /// puddle freezes into a pillar drawn underfoot, which the party walks over.
@@ -107,7 +107,8 @@ enum {
 /// Actors of SceneId_BilibinCaveRapier, numbered by the rows of
 /// gBilibinCaveRapierPlacements.
 enum {
-  /// A torch west of the fire, cold (TORCH_ANIM_UNLIT) where its twin burns.
+  /// A torch west of the fire, cold (TORCH_ANIMATION_UNLIT) where its twin
+  /// burns.
   /// ★ Named from what the player sees: a golden torch on its stand, its bowl
   /// grey with ash, places/bilibin-cave-rapier/map-5.png (its render)
   ACTOR_RAPIER_ROOM_WEST_TORCH = 8,
@@ -154,12 +155,13 @@ enum {
   /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
   /// render)
   ACTOR_THIRD_PUDDLE = 17,
-  /// Five ice pillars, 18 to 22 (PUDDLE_ANIM_PILLAR); nothing acts on them.
+  /// Five ice pillars, 18 to 22 (PUDDLE_ANIMATION_PILLAR); nothing acts on
+  /// them.
   /// ★ Named from what the player sees: tall pillars of pale blue ice (its
   /// render)
   ACTOR_FIRST_ICE_PILLAR = 18,
   /// Four pieces of ice, 23 to 26, held at the second step of freezing
-  /// (PUDDLE_ANIM_LOW_ICE); nothing acts on them.
+  /// (PUDDLE_ANIMATION_LOW_ICE); nothing acts on them.
   /// ★ Named from what the player sees: low, jagged lumps of pale blue ice
   /// (its render)
   ACTOR_FIRST_LOW_ICE = 23
@@ -288,7 +290,7 @@ static void Event_DouseIceRoomFire(void) {
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   Engine_EventWait(40);
   // Match the replacement's drawing priority to its collision cell.
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIM_FREEZE);
+  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
   Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
   Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Engine_ActorSetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
@@ -304,7 +306,7 @@ static inline void BilibinCave_MeltFrostBack(s32 actor) {
   Engine_ActorSetChildValue(actor, 0);
   Engine_EventWait(40);
   Engine_AudioPlayCue(SE_HIDDEN_PASSAGE_OPEN);
-  Engine_ActorSetAnimationAndWait(actor, PUDDLE_ANIM_MELT);
+  Engine_ActorSetAnimationAndWait(actor, PUDDLE_ANIMATION_MELT);
   Engine_EventEnd();
 }
 
@@ -357,7 +359,8 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       Engine_EventWait(40);
       Event_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
-      Engine_ActorSetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIM_MELT);
+      Engine_ActorSetAnimationAndWait(ACTOR_THIRD_PUDDLE,
+                                      PUDDLE_ANIMATION_MELT);
       Map_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
       Map_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
       Engine_EventEnd();
@@ -369,7 +372,8 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       Engine_EventWait(40);
       Event_PlayCue(SE_220);
       destinationCellX = 36;
-      Engine_ActorSetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIM_FREEZE);
+      Engine_ActorSetAnimationAndWait(ACTOR_THIRD_PUDDLE,
+                                      PUDDLE_ANIMATION_FREEZE);
       Map_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
       Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
       Engine_EventEnd();
@@ -432,8 +436,8 @@ static void BilibinCave_RestoreRapierRoom(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, TORCH_ANIM_UNLIT);
-  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, TORCH_ANIM_LIT);
+  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, TORCH_ANIMATION_UNLIT);
+  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, TORCH_ANIMATION_LIT);
 
   if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
     Engine_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
@@ -466,21 +470,21 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 1);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 2);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 3);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR, PUDDLE_ANIM_PILLAR);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 1, PUDDLE_ANIM_PILLAR);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 2, PUDDLE_ANIM_PILLAR);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 3, PUDDLE_ANIM_PILLAR);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 4, PUDDLE_ANIM_PILLAR);
-  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE, PUDDLE_ANIM_LOW_ICE);
-  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 1, PUDDLE_ANIM_LOW_ICE);
-  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 2, PUDDLE_ANIM_LOW_ICE);
-  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 3, PUDDLE_ANIM_LOW_ICE);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH, TORCH_ANIM_LIT);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 1, TORCH_ANIM_LIT);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 2, TORCH_ANIM_LIT);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 3, TORCH_ANIM_LIT);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 4, TORCH_ANIM_LIT);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 5, TORCH_ANIM_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR, PUDDLE_ANIMATION_PILLAR);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 1, PUDDLE_ANIMATION_PILLAR);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 2, PUDDLE_ANIMATION_PILLAR);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 3, PUDDLE_ANIMATION_PILLAR);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 4, PUDDLE_ANIMATION_PILLAR);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE, PUDDLE_ANIMATION_LOW_ICE);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 1, PUDDLE_ANIMATION_LOW_ICE);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 2, PUDDLE_ANIMATION_LOW_ICE);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 3, PUDDLE_ANIMATION_LOW_ICE);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH, TORCH_ANIMATION_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 1);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 2);
@@ -499,7 +503,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   // Restore the surface exposed by Douse, including its collision and priority.
   if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
-    Engine_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIM_PILLAR);
+    Engine_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
     Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
     Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -509,18 +513,18 @@ static void BilibinCave_RestoreIceRoom(void) {
     Engine_ActorSetAnimation(ACTOR_ICE_ROOM_FIRE, 2);
     actor = Actor_Get(ACTOR_ICE_ROOM_FIRE);
     Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIM_PUDDLE);
+    Engine_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   }
   // Rebuild the Frost target and return moved actors to their saved cells.
-  Engine_ActorSetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIM_PUDDLE);
+  Engine_ActorSetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) != 0) {
     destinationCellX = 36;
-    Engine_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIM_PUDDLE);
+    Engine_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
     Map_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
     Map_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
   } else {
     destinationCellX = 36;
-    Engine_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIM_PILLAR);
+    Engine_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     Map_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
     Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }

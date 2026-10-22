@@ -18,9 +18,9 @@
 /// KolimaForestFloodgate_CheckLogFits also treats as taken.
 ///
 /// Flipping the switch from high water opens the floodgate: the water bursts
-/// through in spray (SPLASH_ANIM_BURST), the top lines of the screen shake
+/// through in spray (SPLASH_ANIMATION_BURST), the top lines of the screen shake
 /// and the river falls; flipping it back closes the gate in churning spray
-/// (SPLASH_ANIM_CHURN) and the river rises
+/// (SPLASH_ANIMATION_CHURN) and the river rises
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 ///
 /// Open questions: none.
@@ -265,7 +265,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     Map_CopyCells(67, 34, 2, 5, 79, 25);
     Engine_TaskWait(6);
     Map_CopyCells(69, 34, 2, 5, 79, 25);
-    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIM_BURST);
+    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_BURST);
     Engine_AudioPlayCue(SE_240);
     Engine_TaskWait(6);
     Map_CopyCells(71, 34, 2, 5, 79, 25);
@@ -289,7 +289,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     Engine_TaskWait(30);
     Map_CopyCells(65, 45, 2, 4, 15, 28);
     Map_CopyCells(71, 50, 2, 5, 79, 25);
-    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIM_CHURN);
+    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_CHURN);
     Engine_AudioPlayCue(SE_230);
     Engine_TaskWait(6);
     Map_CopyCells(69, 50, 2, 5, 79, 25);

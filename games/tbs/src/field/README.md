@@ -126,7 +126,7 @@ unused, and shows 251 as an ordinary frame.
 When any layer's frame changes, `Sprite_ComposeAnimationFrame` redraws the
 sprite: it decodes each layer's frame into one pixel buffer in priority order,
 adds an outline if asked, and uploads the result to the sprite's tiles in
-video memory. A layer's colour mode (`AnimationEntry.param`) can run its
+video memory. A layer's colour mode (`AnimationEntry.colorMode`) can run its
 pixels through a 256-byte table: one of the five
 `gResourceSlot_ConversionTables`, then the four of `gRuntime_ByteRemapTable`.
 The first remap table also recolours the command icons
@@ -134,8 +134,8 @@ The first remap table also recolours the command icons
 
 A battle unit's sprite shows how layers combine. `BattleObject_SpawnObjectsForList`
 (`../battle/battle/objects.c`) gives Isaac's sprite three layers: his body
-(`BattleObj.resource`) and his weapon (`BattleObj.overlay`) at priority 1, and
-the 64 by 64 sprite 510 (`BattleObj.effect`) at priority 0. The two at priority
+(`BattleObject.resource`) and his weapon (`BattleObject.overlay`) at priority 1, and
+the 64 by 64 sprite 510 (`BattleObject.effect`) at priority 0. The two at priority
 1 are drawn in layer order, so the weapon lies over the body; the layer at
 priority 0 is drawn first, so its ellipse lies under his feet. The body and the
 weapon play scripts with the same frame numbers, so each change of pose

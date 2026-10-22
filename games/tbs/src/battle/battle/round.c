@@ -80,18 +80,18 @@ void Camera_ConfigureScene(s32 verticalOffset) {
 
   // Positions are 16.16 pixels and angles 1/65536 turns: the focus 5
   // pixels up, a quarter turn of yaw, 750 pixels away.
-  camera->pos[1] = 160 << 11;
-  camera->pos[0] = 0;
-  camera->pos[2] = 0;
+  camera->focus[1] = 160 << 11;
+  camera->focus[0] = 0;
+  camera->focus[2] = 0;
   transition->targetYaw = 128 << 7;
   camera->yaw = 128 << 7;
   camera->pitch = 244 << 8;
-  camera->followPos = 0;
+  camera->followPosition = 0;
   camera->distance = 0x02ee0000;
   camera->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&camera->pos[0]);
+  SceneTransform_ApplyPosition(&camera->focus[0]);
   SceneTransform_ApplyYaw((s16)camera->yaw);
   SceneTransform_ApplyPitch((s16)camera->pitch);
 

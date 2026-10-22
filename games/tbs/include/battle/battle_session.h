@@ -15,7 +15,7 @@ struct SpriteEntry;
 /// animations, its anchor spot and scale, and the conditions it shows.
 /// BattleWork.slots holds the 14, reached by unit id through BattleObject_Get;
 /// BattleObject_Make fills one in when the unit is placed.
-struct BattleObj {
+struct BattleObject {
   struct MotionObject *object; ///< NULL once released
   u16 resource;                ///< the unit's sprite
   u16 overlay;   ///< a second sprite drawn over it, the weapon; 0 for none
@@ -80,11 +80,11 @@ struct BattleSpoils {
   u16 items[4];
 };
 
-STATIC_ASSERT(sizeof(struct BattleObj) == 0x2c);
-STATIC_ASSERT(offsetof(struct BattleObj, anchorX) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleObj, activeConditions) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleObj, cycleTimer) == 0x1f);
-STATIC_ASSERT(offsetof(struct BattleObj, active) == 0x28);
+STATIC_ASSERT(sizeof(struct BattleObject) == 0x2c);
+STATIC_ASSERT(offsetof(struct BattleObject, anchorX) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleObject, activeConditions) == 0x1c);
+STATIC_ASSERT(offsetof(struct BattleObject, cycleTimer) == 0x1f);
+STATIC_ASSERT(offsetof(struct BattleObject, active) == 0x28);
 
 STATIC_ASSERT(sizeof(struct BattleActionRecord) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, priority) == 0x04);

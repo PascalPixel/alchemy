@@ -1,33 +1,35 @@
 /// @file
-/// The first and last rooms of Goma Cave (SceneId_GomaCaveStream and
-/// SceneId_GomaCaveBridge), the cave in the Goma Range that the
-/// mayor of Vault tells the party to pass through on the way to Bilibin.
+/// The first and last rooms of Goma Cave, the cave in the Goma Range between
+/// Vault and Bilibin: SceneId_GomaCaveStream and SceneId_GomaCaveBridge, both
+/// under the area name Goma Cave. The getters give SceneId_GomaCaveBridge its
+/// own tables and any other scene SceneId_GomaCaveStream's; the two share one
+/// exit table.
 ///
-/// - Goma Cave, SceneId_GomaCaveStream, where a stream runs the length of the
-/// room. The party
+/// - SceneId_GomaCaveStream, the room a stream runs the length of. The party
 ///   walks in from the Goma Cave Entrance
-///   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at the bottom of the room. A
-///   stump answers Move: pushed to column 24, it spins in place, leaps away,
-///   lands with a shake and a ring of dust and lies flat underfoot, and the
-///   cells where it lands change (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, a story
-///   flag, so it stays there for good). A chest holds Power Bread. Exits lead
-///   back to the Goma Cave Entrance, into the room of two pillars
-///   (goma_cave_pillar.c; GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and
-///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST) and north into
-///   SceneId_GomaCaveBridge (GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE).
-///   GOMA_CAVE_STREAM_TO_VALE_GATE, on collision code 1, leads to Vale
-///   (SceneId_ValeGate, vale_gate.c), and Vale's VALE_GATE_TO_GOMA_CAVE_STREAM
-///   leads back in at GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives
-///   without the place name. No exit leads to entrance 99.
-/// - Goma Cave, SceneId_GomaCaveBridge, the way out, where a wooden bridge
-/// crosses the river.
-///   It has no actors and only its two exits: back south into
-///   SceneId_GomaCaveStream (GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM) and out onto
-///   the world map (GOMA_CAVE_BRIDGE_TO_WORLD_MAP), toward Bilibin; the world
-///   map leads back in at GOMA_CAVE_BRIDGE_FROM_WORLD_MAP.
+///   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at its bottom. A stump answers
+///   Move: once it stands on column 24 it spins in place, leaps, lands with a
+///   shake and a ring of dust, then hops on into the water with a splash and
+///   sinks until its top shows, and the cells where it lies change
+///   (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, a story flag, so it stays there for
+///   good). A chest holds Power Bread. Exits lead back to the Goma Cave
+///   Entrance, into the room of two pillars (goma_cave_pillar.c;
+///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and _EAST) and north into
+///   SceneId_GomaCaveBridge. GOMA_CAVE_STREAM_TO_VALE_GATE, on collision code
+///   1, leads to Vale (SceneId_ValeGate), and Vale's
+///   VALE_GATE_TO_GOMA_CAVE_STREAM leads back in at
+///   GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives without the place name.
+/// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
+///   river. It has no actors and only its two exits: back south into
+///   SceneId_GomaCaveStream and out onto the world map toward Bilibin
+///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 ///
-/// The getters give SceneId_GomaCaveBridge its own tables; any other scene
-/// takes SceneId_GomaCaveStream's.
+/// Open questions:
+/// - XXX: where on the map collision code 1, the way to Vale, lies, and whether
+///   the player can reach it; a render of the room's collision codes would
+///   settle it.
+/// - XXX: what SE_188 and SE_141, as the stump lands, sound like; a recording
+///   of the leap would name them.
 #include "game_state.h"
 #include "unit/scene/goma_cave_waterway.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -62,33 +64,38 @@
 /// SceneId_GomaCaveStream's actors, numbering its placement rows from
 /// ACTOR_FIRST_PLACED.
 enum GomaCaveWaterwayActor {
-  /// The stump Move pushes, as Garet calls the one at the Goma
-  /// Cave Entrance: "Our Psynergy isn't strong enough to free that stump."
+  /// The stump Move pushes, as Garet calls the one at the Goma Cave Entrance.
+  /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
+  /// free that stump." (MsgGomaNoUsePsynergy)
   ACTOR_STUMP = ACTOR_FIRST_PLACED
 };
 
-// Forward declarations.
-static void GomaCaveWaterway_LeapStump(s32 no);
+/// SceneId_GomaCaveStream's entrance that no exit names, standing the leader
+/// just east of the stump, facing it. Only the debug scene selector, which
+/// warps to any entrance by number, reaches it.
+enum { ENTRANCE_BESIDE_STUMP = 99 };
+
+static void GomaCaveWaterway_LeapStump(s32 stumpId);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_GomaCaveBridge) {
-    return gGomaCaveWaterwayEntrances2;
+    return gGomaCaveBridgeEntrances;
   }
-  return gGomaCaveWaterwayEntrancesOther;
+  return gGomaCaveStreamEntrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) { return gGomaCaveWaterwayExits; }
+const u32 *Scene_GetExits(void) { return gGomaCaveStreamAndBridgeExits; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_GomaCaveBridge) {
-    return gGomaCaveWaterwayPlacements2;
+    return gGomaCaveBridgePlacements;
   }
-  return gGomaCaveWaterwayPlacementsOther;
+  return gGomaCaveStreamPlacements;
 }
 
 /// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
@@ -113,9 +120,9 @@ static void Event_MoveStump(void) {
 
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_GomaCaveBridge) {
-    return gGomaCaveWaterwayEvents2;
+    return gGomaCaveBridgeEvents;
   }
-  return gGomaCaveWaterwayEventsOther;
+  return gGomaCaveStreamEvents;
 }
 
 /// Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
@@ -131,13 +138,13 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance == GOMA_CAVE_STREAM_FROM_VALE_GATE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else {
-      Object_GetById(ACTOR_STUMP)->collisionFlags |= 16;
+      Object_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
         Engine_ActorSetPosition(ACTOR_STUMP, PIXELS(346), PIXELS(292));
         stump = Object_GetById(ACTOR_STUMP);
         Engine_ActorSetSpriteFlags(stump, 0);
         Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(ACTOR_STUMP, 2);
+        OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -155,63 +162,65 @@ static void GomaCaveWaterway_SpinStump(union FieldObject *object) {
 #include "common/object_waitdown.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
-/// then comes to rest a little further on.
-static void GomaCaveWaterway_LeapStump(s32 no) {
-  struct FieldActor *work;
-  u32 cnt;
-  struct Vector3 vec;
-  struct EffectOptions opt;
+/// then hops on into the water with a splash and sinks (STUMP_ANIM_SPLASH).
+static void GomaCaveWaterway_LeapStump(s32 stumpId) {
+  struct FieldActor *stump;
+  u32 i;
+  struct Vector3 dir;
+  struct EffectOptions options;
 
-  work = Object_GetById(no);
-  work->motionFlags = 0;
-  for (cnt = 0; cnt < 18; cnt++) {
+  stump = Object_GetById(stumpId);
+  stump->motionFlags = 0;
+  for (i = 0; i < 18; i++) {
     Engine_TaskWait(1);
-    work->sprite->rotation -= 256;
-    work->x.fixed -= Trig_Cos(work->sprite->rotation) / 2;
-    work->targetX = ACTOR_NO_TARGET;
+    stump->sprite->rotation -= 256;
+    stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
+    stump->targetX = ACTOR_NO_TARGET;
   }
-  work->update = GomaCaveWaterway_SpinStump;
-  OBJ_SPEED(no, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetDestination(no, 376, 288);
-  work->gravity = 0xcccc;
-  work->motionFlags = 3;
-  work->terrainId = 0;
-  Engine_ActorWaitForMove(no);
-  SceneActor_WaitObjectBelowHeight(work, 0);
+  stump->update = GomaCaveWaterway_SpinStump;
+  OBJ_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetDestination(stumpId, 376, 288);
+  stump->gravity = 4 * PIXELS(1) / 5;
+  stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  stump->terrainId = 0;
+  Engine_ActorWaitForMove(stumpId);
+  SceneActor_WaitObjectBelowHeight(stump, 0);
   Engine_AudioPlayCue(SE_188);
-  Map_SetShake(0x50000, 0x50000, 0x10000);
+  Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Engine_AudioPlayCue(SE_141);
-  Map_SetShake(-1, -1, 0xe666);
-  for (cnt = 0; cnt < 17; cnt++) {
-    vec.x = Trig_Cos(cnt << 12);
-    vec.y = 0;
-    vec.z = Trig_Sin(cnt << 12);
-    vec.x -= vec.x / 4;
-    vec.z -= vec.z / 2;
-    FieldFx_Spawn(work->x.fixed, work->y.fixed, work->z.fixed, vec.x, vec.y,
-                  vec.z, 0, NULL);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  for (i = 0; i < 17; i++) {
+    dir.x = Trig_Cos(i << 12);
+    dir.y = 0;
+    dir.z = Trig_Sin(i << 12);
+    dir.x -= dir.x / 4;
+    dir.z -= dir.z / 2;
+    FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x, dir.y,
+                  dir.z, 0, NULL);
   }
-  work->velocityY = 0x50000;
-  Actor_SetDestination(no, 346, 292);
-  Engine_ActorWaitForMove(no);
-  SceneActor_WaitObjectBelowHeight(work, 0);
+  stump->velocityY = PIXELS(5);
+  Actor_SetDestination(stumpId, 346, 292);
+  Engine_ActorWaitForMove(stumpId);
+  SceneActor_WaitObjectBelowHeight(stump, 0);
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
 #ifdef UBFIX
-  work->update = NULL;
+  stump->update = NULL;
 #else
-  *(u32 *)&work->update = 0;
+  *(u32 *)&stump->update = 0;
 #endif
-  work->sprite->rotation = 0x1000;
-  opt.type = 214;
-  opt.startScaleX = 0x8000;
-  opt.startScaleY = 0xcccc;
-  opt.targetScaleX = 0x18000;
-  opt.targetScaleY = 0x13333;
-  FieldFx_Spawn(work->x.fixed, work->y.fixed, work->z.fixed, 0, 0, 0, 0x1c0000,
-                &opt);
+  stump->sprite->rotation = 0x1000;
+  options.type = SPRITE_SPLASH;
+  options.startScaleX = Q16_ONE / 2;
+  options.startScaleY = 4 * Q16_ONE / 5;
+  options.targetScaleX = 3 * Q16_ONE / 2;
+  options.targetScaleY = 6 * Q16_ONE / 5;
+  FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
+                EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                    EFFECT_SCALE_TO_TARGET,
+                &options);
   Engine_AudioPlayCue(SE_CAST);
-  OBJ_MODE(no, 3);
+  OBJ_MODE(stumpId, STUMP_ANIM_SPLASH);
   Map_WaitForShakeToSettle();
 }
 
@@ -236,7 +245,7 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
-struct SceneEntrance gGomaCaveWaterwayEntrancesOther[] = {
+struct SceneEntrance gGomaCaveStreamEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE, CONDITION_ALWAYS, 376, 0, 776,
@@ -249,11 +258,12 @@ struct SceneEntrance gGomaCaveWaterwayEntrancesOther[] = {
      FACING_SOUTH, 0, 88, 8, 664, 832, 0},
     {GOMA_CAVE_STREAM_FROM_VALE_GATE, CONDITION_ALWAYS, 614, 0, 848,
      FACING_NORTH, 0, 480, 605, 720, 900, 0},
-    {99, CONDITION_ALWAYS, 424, 0, 280, FACING_WEST, 0, 88, 8, 664, 832, 0},
+    {ENTRANCE_BESIDE_STUMP, CONDITION_ALWAYS, 424, 0, 280, FACING_WEST, 0, 88,
+     8, 664, 832, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gGomaCaveWaterwayEntrances2[] = {
+struct SceneEntrance gGomaCaveBridgeEntrances[] = {
     {GOMA_CAVE_BRIDGE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 154, 0, 350,
      FACING_NORTH, 0, 16, 48, 632, 360, 0},
     {GOMA_CAVE_BRIDGE_FROM_WORLD_MAP, CONDITION_ALWAYS, 552, 0, 312,
@@ -261,7 +271,7 @@ struct SceneEntrance gGomaCaveWaterwayEntrances2[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gGomaCaveWaterwayExits[] = {
+u32 gGomaCaveStreamAndBridgeExits[] = {
     SCENE_EXITS(GomaCaveStream),
     SCENE_EXIT(GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE, GomaCaveEntrance,
                GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM),
@@ -282,18 +292,18 @@ u32 gGomaCaveWaterwayExits[] = {
 };
 
 // clang-format off
-struct ScenePlacement gGomaCaveWaterwayPlacementsOther[] = {
+struct ScenePlacement gGomaCaveStreamPlacements[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 // clang-format on
 
-struct ScenePlacement gGomaCaveWaterwayPlacements2[] = {
+struct ScenePlacement gGomaCaveBridgePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gGomaCaveWaterwayEventsOther[] = {
+struct SceneEvent gGomaCaveStreamEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_VALE_GATE},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE},
     {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 6, CONDITION_ALWAYS,
@@ -307,7 +317,7 @@ struct SceneEvent gGomaCaveWaterwayEventsOther[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gGomaCaveWaterwayEvents2[] = {
+struct SceneEvent gGomaCaveBridgeEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_WORLD_MAP},
     {SCENE_EVENTS_END},

@@ -226,7 +226,7 @@ sell.
 
 ```mermaid
 flowchart LR
-    item["item id"] -->|"gItem_ArtifactSlotTable"| slot{"0?"}
+    item["item id"] -->|"gItem_ArtifactSlotTable"| slot{{"0?"}}
     slot -->|yes| plain["an ordinary item:<br/>no counter"]
     slot -->|"n"| counter["counter n - 1 of<br/>gItemCounters, 0 to 99"]
 ```

@@ -155,11 +155,11 @@ a scene orders its rows from the latest story state to the default.
 ```mermaid
 flowchart TD
     action["An action: talk, touch, search,<br/>item, Psynergy or a raised value"] --> row["Next row of the event table"]
-    row --> fits{"Kind and trigger fit?"}
+    row --> fits{{"Kind and trigger fit?"}}
     fits -->|no| row
-    fits -->|yes| named{"A search on a named target<br/>that finds no mimic?"}
+    fits -->|yes| named{{"A search on a named target<br/>that finds no mimic?"}}
     named -->|yes| take["Take it; Field_SearchTile<br/>tests the condition afterwards"]
-    named -->|no| cond{"Condition holds?"}
+    named -->|no| cond{{"Condition holds?"}}
     cond -->|no| row
     cond -->|yes| run["Take it"]
 ```

@@ -146,7 +146,7 @@ write them in `map.inc`.
 packs each stream exactly as Camelot's packer did.
 
 ```mermaid
-flowchart LR
+flowchart TB
     tsv["NAME.tsv"] -->|"ags-graphics: the FORM"| raw["NAME.FORM"]
     raw -->|"the lz codec"| packed["NAME.FORM.lz"]
     patch["NAME_patch.tsv"] -.->|"the byte the packer saw"| packed

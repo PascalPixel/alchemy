@@ -17,9 +17,9 @@ request, and then handles the requests one at a time in a fixed order.
 ```mermaid
 flowchart TD
     load["Field_RunScene: load the map,<br/>the overlay's events, entrances<br/>and placements, the scene's initialization"] --> walk
-    walk["walk: the leader's control script,<br/>Field_ProcessStep once a frame"] --> count{"Field_CountRequests<br/>above zero?"}
+    walk["walk: the leader's control script,<br/>Field_ProcessStep once a frame"] --> count{{"Field_CountRequests<br/>above zero?"}}
     count -->|no| walk
-    count -->|yes| exit{"exit raised?"}
+    count -->|yes| exit{{"exit raised?"}}
     exit -->|yes| next["Scene_TakeExit:<br/>the next scene"]
     exit -->|no| handle["handle the first raised request<br/>in the fixed order"]
     handle --> count

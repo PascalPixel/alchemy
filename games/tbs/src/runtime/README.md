@@ -17,13 +17,10 @@ never returns.
 ```mermaid
 flowchart TD
     header["Cartridge header"] --> entry["System_Entry (system/entry.s):<br/>IRQ and system stacks"]
-    entry --> init["System_Initialize"]
-    init --> clear["stop HBlank DMA, wait states,<br/>clear IWRAM up to Ram_IwramHeapEnd"]
-    clear --> heap["Runtime_InitializeHeap"]
-    heap --> iwram["Runtime_InstallIwramAndIrqs:<br/>resident runtime and dispatcher"]
+    entry --> init["System_Initialize: stop HBlank DMA, wait states,<br/>clear IWRAM up to Ram_IwramHeapEnd"]
+    init --> iwram["Runtime_InitializeHeap, then Runtime_InstallIwramAndIrqs:<br/>resident runtime and dispatcher"]
     iwram --> rest["build stamp, window graphics,<br/>System_VBlankHandler, soft-reset keys,<br/>sound driver, VRAM cache, task table"]
-    rest --> wait["wait ten frames"]
-    wait --> run["Game_RunFar: one scene after another"]
+    rest --> run["wait ten frames, then Game_RunFar:<br/>one scene after another"]
 ```
 
 The cartridge header jumps to `System_Entry`
@@ -59,7 +56,7 @@ sequenceDiagram
     W->>W: Render_BuildOamList into HEAP_SLOT_FRAME_SCRATCH,<br/>set gFrameRenderPending
     W->>W: halt (swi 2)
     V->>V: link payloads, music fades, screen fade
-    V->>V: if gFrameRenderPending: OAM, gBgScroll,<br/>queued writes; clear the flag
+    V->>V: if gFrameRenderPending: OAM, gBgScroll,<br/>queued writes, then clear the flag
     V->>V: gVBlankHook once
     V->>S: Scheduler_RunPass(SCHEDULER_KEY_VBLANK)
     V->>V: keypad, gVBlankDone, sound mix
@@ -157,13 +154,11 @@ and waits `SLEEP_WAKE_FRAMES`. Nothing sleeps while `gSleepDisabled` is set.
 its tasks and the VBlank work always start with the same room.
 
 ```mermaid
-block-beta
-    columns 1
-    top["top of IWRAM: IRQ and system stacks"]
-    frame["Ram_FrameWaitStackTop (0x03007a00):<br/>where WaitFrames runs its frames"]
-    room["512 bytes for the frame loop, tasks and VBlank work"]
-    heapend["Ram_IwramHeapEnd (0x03007800)"]
-    heap["IWRAM heap, growing up from gIwramHeap"]
+flowchart TB
+    top["top of IWRAM: IRQ and system stacks"] ~~~ frame["Ram_FrameWaitStackTop (0x03007a00):<br/>where WaitFrames runs its frames"]
+    frame ~~~ room["512 bytes for the frame loop, tasks and VBlank work"]
+    room ~~~ heapend["Ram_IwramHeapEnd (0x03007800)"]
+    heapend ~~~ heap["IWRAM heap, growing up from gIwramHeap"]
 ```
 
 The system stack runs from the top of IWRAM down to the end of the IWRAM heap,
@@ -200,13 +195,16 @@ The heap hands out blocks that last until the code that took them releases
 them, from two pools that each grow like a stack.
 
 ```mermaid
-block-beta
-    columns 2
-    iw["IWRAM pool: gIwramHeap up to Ram_IwramHeapEnd"]:1
-    ew["EWRAM pool: gEwramHeap up to the end of EWRAM"]:1
-    iwb["blocks, oldest first, then the next free address"]:1
-    ewb["blocks, oldest first, then the next free address"]:1
-    slots["gWorkSlot: the two next-free addresses, then 62 named slots (enum HeapSlot)"]:2
+flowchart TB
+    subgraph iw["IWRAM pool"]
+        iwb["gIwramHeap up to Ram_IwramHeapEnd:<br/>blocks, oldest first,<br/>then the next free address"]
+    end
+    subgraph ew["EWRAM pool"]
+        ewb["gEwramHeap up to the end of EWRAM:<br/>blocks, oldest first,<br/>then the next free address"]
+    end
+    slots["gWorkSlot: the two next-free addresses, then 62 named slots (enum HeapSlot)"]
+    iw ~~~ slots
+    ew ~~~ slots
 ```
 
 The heap hands out memory from two pools, one in IWRAM from `gIwramHeap` up to
@@ -336,7 +334,7 @@ sequenceDiagram
     participant F as Flash
     S->>F: write the new copy, sequence + 1, to a random free sector
     S->>F: invalidate the old copy
-    Note over S,F: a power loss between the two leaves two good copies;<br/>SaveState_InitializeWorkspace keeps the higher sequence
+    Note over S,F: a power loss between the two leaves two good copies,<br/>and SaveState_InitializeWorkspace keeps the higher sequence
 ```
 
 The cartridge's flash has 16 sectors of 4 KB, each holding one record: a

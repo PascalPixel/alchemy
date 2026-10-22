@@ -5,7 +5,7 @@ flowchart LR
     game["Game code"] -->|"AudioCommand_Play(cue)"| cue["Cue layer<br/>sound.c"]
     vblank["System_VBlankHandler,<br/>once a frame"] -->|"steps the music's ramps"| cue
     vblank -->|"SoundDriver_EnterMixer"| mixer["Mixer frame,<br/>resident in IWRAM"]
-    subgraph players["MusicPlayer2000's eight players"]
+    subgraph players["Eight players"]
         direction LR
         fanfare["0: fanfare, cues 80 to 99"]
         music["1: music, cues below 80"]
@@ -33,15 +33,15 @@ table or a control.
 ```mermaid
 flowchart TD
     play["AudioCommand_Play(cue)"] --> mask["keep the low 12 bits"]
-    mask --> fade{"AUDIO_CUE_FADE_BGM?"}
+    mask --> fade{{"AUDIO_CUE_FADE_BGM?"}}
     fade -->|yes| fadeout["fade the music out over 112 frames"]
-    fade -->|no| slot3{"AUDIO_CUE_FADE_SLOT3?"}
+    fade -->|no| slot3{{"AUDIO_CUE_FADE_SLOT3?"}}
     slot3 -->|yes| fade3["fade player 3 out over 48 frames"]
-    slot3 -->|no| song{"100 or more?"}
+    slot3 -->|no| song{{"100 or more?"}}
     song -->|yes| row["start the song table's row<br/>on the player it names"]
-    song -->|no| jingle{"80 or more?"}
+    song -->|no| jingle{{"80 or more?"}}
     jingle -->|yes| fanfare["silence the music,<br/>play the fanfare on player 0"]
-    jingle -->|no| same{"AUDIO_CUE_KEEP_BGM, or<br/>the music already chosen?"}
+    jingle -->|no| same{{"AUDIO_CUE_KEEP_BGM, or<br/>the music already chosen?"}}
     same -->|yes| nothing["do nothing"]
     same -->|no| music["load the mixer record,<br/>start the music on player 1"]
 ```

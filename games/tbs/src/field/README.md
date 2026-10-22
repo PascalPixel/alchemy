@@ -22,11 +22,11 @@ the player's control all act.
 ```mermaid
 flowchart TD
     start["Object_UpdateAllThumb:<br/>the next object with a script"] --> hook["call its hook, if it has one"]
-    hook --> paused{"paused?"}
+    hook --> paused{{"paused?"}}
     paused -->|yes| next["next object"]
-    paused -->|no| wait{"wait is not zero?"}
+    paused -->|no| wait{{"wait is not zero?"}}
     wait -->|yes| count["count the wait down"] --> move
-    wait -->|no| word{"command word above 63?"}
+    wait -->|no| word{{"command word above 63?"}}
     word -->|yes| skip["step over it: a label"] --> word
     word -->|no| run["run gScriptObject_CommandTable[word]"]
     run -->|returns 1| word
@@ -262,15 +262,15 @@ follows.
 
 ```mermaid
 flowchart TD
-    probe["Map_CheckObjectStep(object, point)"] --> map{"a map loaded?"}
+    probe["Map_CheckObjectStep(object, point)"] --> map{{"a map loaded?"}}
     map -->|no| open["MAP_STEP_OPEN"]
     map -->|yes| cell["the cell under the point,<br/>in the layer terrainId names"]
-    cell --> wall{"MAP_CELL_WALL?"}
+    cell --> wall{{"MAP_CELL_WALL?"}}
     wall -->|yes| w["MAP_STEP_WALL"]
     wall -->|no| height["the shape's height function<br/>gives the ground there"]
-    height --> high{"more than 8 pixels up?"}
+    height --> high{{"more than 8 pixels up?"}}
     high -->|yes| h["MAP_STEP_TOO_HIGH"]
-    high -->|no| low{"more than 12 pixels down?"}
+    high -->|no| low{{"more than 12 pixels down?"}}
     low -->|yes| l["MAP_STEP_TOO_LOW"]
     low -->|no| open
 ```

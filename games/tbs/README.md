@@ -17,7 +17,7 @@ game runs.
 ```mermaid
 flowchart TD
     start["Game_Run(mode): the first scene,<br/>the title unless in debug mode"] --> clean["stop HBlank DMA, drop the tasks<br/>and handlers, empty the heap"]
-    clean --> kind{"scene from SCENE_BLANK up?"}
+    clean --> kind{{"scene from SCENE_BLANK up?"}}
     kind -->|"no: a field scene"| field["Scene_ResetFlagsOnEnter, music,<br/>Scene_LoadOverlay, Field_RunScene"]
     field --> exit["Scene_TakeExit:<br/>the next scene and entrance"]
     kind -->|"yes: a battle or minigame"| battle["Battle_RunEncounterFar,<br/>RunLuckyDice or RunReelGame"]
@@ -134,7 +134,7 @@ party appears.
 ```mermaid
 flowchart LR
     kind["the exit's kind,<br/>from Field_RunScene"] --> rows["the scene's rows in<br/>the overlay's exit table"]
-    rows --> match{"kind matches, and for<br/>SCENE_EXIT_IF its flag is clear?"}
+    rows --> match{{"kind matches, and for<br/>SCENE_EXIT_IF its flag is clear?"}}
     match -->|"no: the next row"| rows
     match -->|yes| next["gGameState.scene<br/>and gGameState.entrance"]
 ```

@@ -119,7 +119,7 @@ An overlay is a place's code, unpacked into one fixed 32 KB area of EWRAM, and
 it meets the main image only through two tables of stubs.
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph ovl["Overlay, at gOverlayArea"]
         entry["Entry table: six stubs"]
         code["Overlay code"]

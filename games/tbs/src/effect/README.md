@@ -149,14 +149,14 @@ every effect draws with.
 
 ```mermaid
 flowchart TD
-    flags["plan->presentationFlags"] --> scene{"STAGING_SCENE?"}
+    flags["plan->presentationFlags"] --> scene{{"STAGING_SCENE?"}}
     scene -->|yes| sceneFx["BattleFx_RunSceneEffect:<br/>a summon's scene"]
-    scene -->|no| range{"STAGING_BY_ID_RANGE?"}
+    scene -->|no| range{{"STAGING_BY_ID_RANGE?"}}
     range -->|no| table["BattleFx_RunTableEffect:<br/>gBattleFx_EffectHandlers"]
     range -->|yes| byId["BattleFx_DispatchByIdRange"]
-    byId --> impact{"kind 100 to 135?"}
+    byId --> impact{{"kind 100 to 135?"}}
     impact -->|yes| cast["BattleFx_RunCastingImpact(kind - 100)"]
-    impact -->|no| ring{"kind 200 and up?"}
+    impact -->|no| ring{{"kind 200 and up?"}}
     ring -->|yes| rings["the ring and spark scenes"]
     ring -->|no| beams["the beam sequences"]
 ```
@@ -351,10 +351,10 @@ point.
 ```mermaid
 flowchart TD
     prologue["1. prologue: entry words,<br/>BattleFx_Mask for COMPOSITE_ADDITIVE,<br/>mirroring set-up"] --> vclip["2. vertical clip<br/>(COMPOSITE_CLIP_Y only)"]
-    vclip --> rows{"rows left?"}
+    vclip --> rows{{"rows left?"}}
     rows -->|no| exit["5. exit"]
     rows -->|yes| cols["3. column set-up:<br/>width mask, or clip words"]
-    cols --> colsLeft{"columns left?"}
+    cols --> colsLeft{{"columns left?"}}
     colsLeft -->|no| exit
     colsLeft -->|yes| loop["4. row loop: leading run,<br/>8 pixels a pass, trailing run"]
     loop --> exit
@@ -619,7 +619,7 @@ Judgment's scene replaces the battle's display and runs in two parts, a
 gathering and a sweep, each with its own frame clock.
 
 ```mermaid
-flowchart LR
+flowchart TB
     gather["gathering,<br/>JUDGMENT_GATHER_FRAMES"] --> aerial["sweep frame 0:<br/>aerial view"]
     aerial --> beach["150: beach"]
     beach --> forest["214: forest"]
@@ -685,7 +685,7 @@ strike moves the user itself at the first target.
 ```mermaid
 flowchart TD
     frame["each frame"] --> move["move and draw every launched shot"]
-    move --> passed{"a shot passed<br/>its target's x?"}
+    move --> passed{{"a shot passed<br/>its target's x?"}}
     passed -->|"yes, once"| hit["start a hit flash, throw sparks,<br/>shake the camera, the target reels"]
     passed -->|no| rest
     hit --> rest["draw the flashes;<br/>move the sparks and fireball trails"]

@@ -40,7 +40,7 @@ Artifacts and Repair.
 ```mermaid
 flowchart TD
     scene["the scene's keeper"] -->|"Shop_Run(stockRow, keeper)"| row["stock row<br/>sStockTable"]
-    row --> first{"FLAG_SHOP_ARTIFACTS_STOCKED<br/>+ stockRow set?"}
+    row --> first{{"FLAG_SHOP_ARTIFACTS_STOCKED<br/>+ stockRow set?"}}
     first -->|no| add["ShopStock_AddArtifacts:<br/>one more on each artifact's counter"]
     first -->|yes| counter["the counter's four icons"]
     add --> counter
@@ -48,7 +48,7 @@ flowchart TD
     counter -->|SHOP_ACTION_SELL| sell["Sell: Inventory_Discard"]
     counter -->|SHOP_ACTION_ARTIFACTS| art["Artifacts: every item of the<br/>shop's type with a counter above 0"]
     counter -->|SHOP_ACTION_REPAIR| repair["Repair"]
-    buy --> ticket{"credit reaches the<br/>next ticket's cost?"}
+    buy --> ticket{{"credit reaches the<br/>next ticket's cost?"}}
     ticket -->|yes| gift["a Game Ticket"]
 ```
 

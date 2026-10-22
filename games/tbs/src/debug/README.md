@@ -14,8 +14,8 @@ Only the debug scene selector leads to the rooms, and only the debug mode the
 retail game never turns on opens it.
 
 ```mermaid
-flowchart LR
-    start["Start menu opened with B held"] --> mode{"gDebugMode set?"}
+flowchart TB
+    start["Start menu opened with B held"] --> mode{{"gDebugMode set?"}}
     mode -->|no| menu["the Start menu"]
     mode -->|yes| sel["Menu_RunSelection:<br/>any scene and entrance by number"]
     sel --> rows["scene table rows TestRoom0 to TestRoom7,<br/>IncreaseItemAndLevel, MenuTest"]

@@ -18,19 +18,6 @@ detail behind each step. The field menu's four screens are in
 One block of the heap, `struct UiRenderWork`, holds all of the window
 system's state from a scene's setup to the next scene change.
 
-```mermaid
-flowchart LR
-    tilemap["tilemap<br/>32 by 20 tiles"] --> windows["windows<br/>WINDOW_COUNT slots"]
-    windows --> channels["channels<br/>3"]
-    channels --> outputs["outputs, freeOutputs<br/>64 render outputs"]
-    outputs --> tiles["tileAttributes,<br/>tileCursor, alt"]
-    tiles --> style["mode, menuState,<br/>channel style"]
-    style --> entries["entries<br/>decoded-text ring"]
-    entries --> args["values, names<br/>8 arguments"]
-    args --> portraits["resourceIds, outputIds<br/>2 portraits"]
-    portraits --> voice["speakerVoiceSound,<br/>speech flags"]
-```
-
 `struct UiRenderWork` is allocated in heap slot `HEAP_SLOT_WINDOW` by
 `UiWork_InitializeWithResourceCounters` for the field and by
 `UiWork_Initialize` for battle, and lasts until the next scene change. In
@@ -435,6 +422,8 @@ in every edition, and nothing reads them.
   editions gave up four windows when they doubled the ring; the code shows
   only the counts each edition uses, and only Camelot's sources could say how
   they were chosen.
+- XXX (picture): the work block, its fields drawn to scale in the Japanese
+  and the international layouts.
 - XXX (picture): the decoded-text ring, its codes drawn as a message is
   decoded into it and typed out.
 - XXX (picture): render outputs, a window's letters, portrait and page arrow

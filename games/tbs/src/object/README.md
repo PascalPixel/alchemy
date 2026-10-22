@@ -101,13 +101,13 @@ one starting in Goma Cave.
 
 ```mermaid
 flowchart TD
-    step["Field_ProcessStep: the leader moved"] --> off{"FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_PLACE,<br/>zone 0, Cloak, or rate 0?"}
+    step["Field_ProcessStep: the leader moved"] --> off{{"FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_PLACE,<br/>zone 0, Cloak, or rate 0?"}}
     off -->|yes| none["no battle"]
     off -->|no| rate["add 5 to the rate for each level, up to five,<br/>the party is above the zone's level"]
-    rate --> avoid{"Avoid active and the party above the zone?"}
+    rate --> avoid{{"Avoid active and the party above the zone?"}}
     avoid -->|yes| none
     avoid -->|no| add["add the step, grown by the rate and bias<br/>and scaled by the speed, to encounterSteps"]
-    add --> reached{"encounterSteps reached the threshold?"}
+    add --> reached{{"encounterSteps reached the threshold?"}}
     reached -->|no| none
     reached -->|yes| group["draw one of the zone's eight groups by weight,<br/>pick the music, raise battle"]
 ```

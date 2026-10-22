@@ -69,7 +69,7 @@ by a channel, a few characters a frame.
 ![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
 ```mermaid
-flowchart LR
+flowchart TB
     msg["message symbol<br/>(MsgGameSaved)"] --> decode["UiText_BuildRenderEntries:<br/>Huffman trees, arguments, articles"]
     decode --> ring["work->entries:<br/>the decoded-text ring"]
     ring --> channel["UiText_QueueRenderEntries:<br/>one of three channels"]

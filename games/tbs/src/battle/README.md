@@ -27,9 +27,9 @@ flowchart TD
     plan["BattleCommand_BuildPlan<br/>announces the next action"] --> stage
     stage["BattlePresentation_DispatchAction<br/>stages it and runs its effect"] --> exec
     exec["BattleTargetExec,<br/>once a target"] --> turnend
-    turnend["turn_end.c closes the turn"] --> more{"another action<br/>this round?"}
+    turnend["turn_end.c closes the turn"] --> more{{"another action<br/>this round?"}}
     more -->|yes| plan
-    more -->|no| over{"a side beaten,<br/>or the party fled?"}
+    more -->|no| over{{"a side beaten,<br/>or the party fled?"}}
     over -->|no| gather
     over -->|yes| spoils["spoils.c: coins, experience,<br/>items and level ups"]
 ```
@@ -302,7 +302,7 @@ own, chosen by ability id in `BattleCommand_BuildPlan`.
 or healing, its added effect, and the events that show them.
 
 ```mermaid
-flowchart LR
+flowchart TB
     p1["1. copy the target,<br/>distance, affinity, Power"] --> p2["2. Djinn bonus,<br/>effect roll"]
     p2 --> p3["3. an enemy<br/>calls an ally"] --> p4["4. effects that change<br/>the damage step"]
     p4 --> p5["5. damage or healing,<br/>by the ability kind"] --> p6["6. the added effect"]

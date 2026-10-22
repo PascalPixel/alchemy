@@ -49,6 +49,11 @@ enum SpriteId {
   /// ★ Named from what the player sees: a tree stump (its render)
   SPRITE_STUMP = 0xd4,
   SPRITE_DUST_PUFF = 222, ///< a puff of dust kicked up where an actor stands
+  /// ★ Named from what the player sees: a wooden crate (spr_223.png)
+  SPRITE_CRATE = 0xdf,
+  /// ★ Named from what the player sees: a snowman with a red cap and a green
+  /// scarf (spr_234.png)
+  SPRITE_SNOWMAN = 0xea,
   /// The statues of Mercury Lighthouse.
   /// ★ Named from what the player sees: a blue statue of a woman holding a
   /// jar (its render)

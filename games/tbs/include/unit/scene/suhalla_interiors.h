@@ -3,8 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
-
-struct SceneRegion;
+#include "field_runtime.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);

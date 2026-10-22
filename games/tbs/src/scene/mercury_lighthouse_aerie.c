@@ -242,8 +242,8 @@ s32 MercuryLighthouseAerie_Initialize(void) {
                                0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3),
                                0);
-    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -0x10000;
-    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -0x10000;
+    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
+    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
     if (gGameState.entrance == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
@@ -303,8 +303,8 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Camera_SetSpeed(0xcccc, 0x1999);
   Camera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
   Engine_CameraWaitForMove();
-  ColorBuffer_ApplySource(0x10000, 0);
-  ColorBuffer_ApplyTarget(0x10005, 0);
+  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
   Engine_ColorBufferInterpolate(50);
   Engine_EventWait(50);
   ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -319,7 +319,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_ActorSetAnimation(IVAN, 19);
   Engine_ActorSetAnimation(MIA, 19);
   Engine_EventWait(10);
-  ColorBuffer_ApplyTarget(0x10000, 0);
+  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(30);
   Engine_EventWait(30);
   Engine_EventWait(80);
@@ -1327,7 +1327,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
   Engine_ActorSetAnimation(MIA, 0x10);
-  Actor_Get(MIA)->scaleX = -0x10000;
+  Actor_Get(MIA)->scaleX = -Q16_ONE;
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -1465,7 +1465,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Object_GetById(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
   Object_GetById(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Engine_CameraSetSpeed(0xcccc, 0x1999);
+  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(128), -1, PIXELS(184), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
@@ -1861,7 +1861,7 @@ struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { JENNA, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(160), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0xf4, CONDITION_ALWAYS, 7,
+    { 0xf4, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(304), PIXELS(40), PIXELS(144), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1873,17 +1873,17 @@ struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
         PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(440), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(472), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(504), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(104), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(136), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(168), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_KRADEN, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(152), FACING_EAST, TALK_KEEP_FACING, 0 },

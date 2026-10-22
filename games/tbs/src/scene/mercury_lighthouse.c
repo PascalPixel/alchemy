@@ -413,9 +413,9 @@ const struct ScenePlacement *MercuryLighthouse_GetPlacements(void) {
 }
 
 /// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
-/// there: touching trigger 21 keeps rising sparks appearing on the pillar.
-static void MercuryLighthouse_SpawnTimedRiseEffect(void) {
-  MercuryLighthouse_SparkleAtLeader();
+/// there: touching trigger 21 keeps blue ripples spreading from the leader.
+static void MercuryLighthouse_RippleWhileInPool(void) {
+  MercuryLighthouse_RippleAroundLeader();
 }
 
 /// MercuryLighthouseLower, touching trigger 31 or 32: the raised pillar is let
@@ -460,7 +460,7 @@ const struct SceneEvent *MercuryLighthouse_GetEvents(void) {
   return gMercuryLighthouseEventsOther;
 }
 
-#include "common/mercury_lighthouse_risedrop.h"
+#include "common/mercury_lighthouse_passage.h"
 
 /// MercuryLighthouseUpper, walking north into trigger 53: the leader rises
 /// through MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST (the
@@ -625,8 +625,8 @@ static void MercuryLighthouse_OpenGateWithMovedPillar(void) {
   s32 row;
   struct FieldActor *pillar;
 
-  column = Object_GetById(ACTOR_GATE_STATUE)->x.fixed / 0x100000;
-  row = Object_GetById(ACTOR_GATE_STATUE)->z.fixed / 0x100000;
+  column = Object_GetById(ACTOR_GATE_STATUE)->x.fixed / PIXELS(16);
+  row = Object_GetById(ACTOR_GATE_STATUE)->z.fixed / PIXELS(16);
   Engine_EventBegin();
   if (column == 5 && row == 13) {
     Object_GetById(ACTOR_GATE_STATUE)->y.fixed += 0xfffe0000;
@@ -948,8 +948,8 @@ static void MercuryLighthouse_PushStairSwitchPillar(void) {
 /// on the switch at (10, 23), it sinks two pixels and the stair gate opens for
 /// good.
 static void MercuryLighthouse_OpenStairGateWithMovedPillar(void) {
-  s32 column = Object_GetById(ACTOR_FALLEN_STATUE)->x.fixed / 0x100000;
-  s32 row = Object_GetById(ACTOR_FALLEN_STATUE)->z.fixed / 0x100000;
+  s32 column = Object_GetById(ACTOR_FALLEN_STATUE)->x.fixed / PIXELS(16);
+  s32 row = Object_GetById(ACTOR_FALLEN_STATUE)->z.fixed / PIXELS(16);
 
   Engine_EventBegin();
   if (column == 10 && row == 23) {
@@ -1131,8 +1131,8 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
   s32 cellX;
   s32 cellZ;
 
-  cellX = Object_GetById(ACTOR_SLIDING_STATUE)->x.fixed / 0x100000;
-  cellZ = Object_GetById(ACTOR_SLIDING_STATUE)->z.fixed / 0x100000;
+  cellX = Object_GetById(ACTOR_SLIDING_STATUE)->x.fixed / PIXELS(16);
+  cellZ = Object_GetById(ACTOR_SLIDING_STATUE)->z.fixed / PIXELS(16);
   Engine_CameraSetSpeed(0x50000, 0xa000);
   Engine_CameraMoveTo(PIXELS(816), -1, PIXELS(712), 1);
   Engine_CameraWaitForMove();
@@ -1335,7 +1335,7 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
     }
   }
   // The last statue also determines whether the crossing cell is open.
-  column = Object_GetById(ACTOR_LAST_CROSSING_STATUE)->x.fixed / 0x100000;
+  column = Object_GetById(ACTOR_LAST_CROSSING_STATUE)->x.fixed / PIXELS(16);
   if (column == 57) {
     Engine_GameFlagSet(FLAG_LAST_ROW_STATUE_WEST);
     Engine_GameFlagClear(FLAG_LAST_ROW_STATUE_EAST);
@@ -1358,7 +1358,7 @@ static void MercuryLighthouse_OpenMovedStatueCrossing(void) {
   s32 column;
 
   Engine_EventBegin();
-  column = Object_GetById(ACTOR_GAP_STATUE)->x.fixed / 0x100000;
+  column = Object_GetById(ACTOR_GAP_STATUE)->x.fixed / PIXELS(16);
   if (column == 28) {
     Engine_GameFlagSet(FLAG_PASSAGE_STATUE_MOVED);
     {
@@ -1412,7 +1412,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
 
   Engine_EventBegin();
   Actor_SetSpeed(MIA, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_EventSetMessage(MsgImilSomebodyHere);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_WalkToAndWait(MIA, 840, 648);
@@ -1420,7 +1420,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Actor_FaceDirection(MIA, FACING_WEST, 20);
   Engine_ActorSetAnimation(MIA, 16);
   mia = Object_GetById(MIA);
-  mia->scaleX = -0x10000;
+  mia->scaleX = -Q16_ONE;
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorSetAnimation(MIA, ANIM_STAND);
@@ -1612,7 +1612,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     MercuryLighthouse_MiaCastsPlyOnEntrance();
     Engine_EventWait(50);
     Engine_AudioPlayCue(SE_131);
-    ColorBuffer_ApplySource(0x10000, 0);
+    ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
     ColorBuffer_ApplyTarget(0x207e9f, 0);
     Engine_ColorBufferInterpolate(10);
     Engine_TaskWait(1);
@@ -1730,7 +1730,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   effectOptions = &options;
   effectOptions->priority = 1;
   effectOptions->palette = 5;
-  effectOptions->type = 0x11e;
+  effectOptions->type = SPRITE_GLINT;
   effectOptions->script = gMercuryLighthouse_SparkBurstScript;
   for (frame = 0; frame <= 47; frame++) {
     if (frame <= 31)
@@ -1781,7 +1781,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   effectOptions = &options;
   effectOptions->priority = 1;
   effectOptions->palette = 5;
-  effectOptions->type = 0x11e;
+  effectOptions->type = SPRITE_GLINT;
   effectOptions->script = gMercuryLighthouse_SparkBurstScript;
   zero = 0;
   wave = zero;
@@ -1873,7 +1873,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Engine_EventWait(30);
   // After Saturos the leader goes alone; the first time Mia leads the party.
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 824, 232);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 232);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 208);
@@ -1885,8 +1885,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     MercuryLighthouse_RaiseActorWithSparks(ACTOR_PARTY_LEADER);
     Engine_EventWait(60);
     Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
-    ColorBuffer_ApplySource(0x10000, 0);
-    ColorBuffer_ApplyTarget(0x10005, 0);
+    ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);
     ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -1896,7 +1896,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
         MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE);
     Engine_EventEnd();
   } else {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_SetSpeed(GARET, 0xcccc, 0x6666);
     Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
     Actor_SetSpeed(MIA, 0xcccc, 0x6666);
@@ -1966,9 +1966,9 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_WalkToAndWait(IVAN, 792, 200);
     Engine_EventWait(30);
     MercuryLighthouse_RaiseActorWithSparks(IVAN);
-    ColorBuffer_ApplySource(0x10000, 0);
+    ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
     Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
-    ColorBuffer_ApplyTarget(0x10005, 0);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);
     ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -2560,7 +2560,7 @@ s32 MercuryLighthouse_Initialize(void) {
       Engine_ActorSetPosition(MIA, 0, 0);
       DisplayBlend_SuspendScript();
       Io_Write16(0, &REG_BLDCNT);
-      Object_GetById(ACTOR_EAST_APPROACH_STATUE)->scaleX = -0x10000;
+      Object_GetById(ACTOR_EAST_APPROACH_STATUE)->scaleX = -Q16_ONE;
       Engine_ActorSetSpritePriority(ACTOR_FIRST_VISITOR, 1);
       Engine_ActorSetSpritePriority(ACTOR_FIRST_VISITOR + 1, 1);
       Engine_ActorSetSpritePriority(ACTOR_FIRST_VISITOR + 2, 1);
@@ -2600,7 +2600,7 @@ s32 MercuryLighthouse_Initialize(void) {
         Engine_ActorSetSpritePriority(ACTOR_FIRST_VISITOR + 1, 1);
         Engine_ActorSetSpritePriority(ACTOR_FIRST_VISITOR + 2, 1);
       }
-      Object_GetById(ACTOR_EAST_APPROACH_STATUE)->scaleX = -0x10000;
+      Object_GetById(ACTOR_EAST_APPROACH_STATUE)->scaleX = -Q16_ONE;
       // Until Mia has hurried here from Imil (FLAG_IMIL_MET_MIA, set in
       // imil.c), she is not here and the door stays shut.
       if (!Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA)) {
@@ -2650,7 +2650,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 questionMessage;
   struct FieldActor *leader;
 
-  pillarColumn = Actor_Get(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / 0x100000;
+  pillarColumn = Actor_Get(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / PIXELS(16);
   if (pillarColumn != 48) {
     return;
   }
@@ -2866,19 +2866,19 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
 
 #include "common/mercury_lighthouse_lights.h"
 
-/// Creates the rising effect at the source actor and sets its sprite priority.
-static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
+/// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames.
+static void MercuryLighthouse_SpawnRipple(struct FieldActor *source) {
   struct FieldActor *effect;
   struct AnimationObject *sprite;
 
-  effect = Engine_ObjectCreate(24, source->x.fixed, source->y.fixed,
+  effect = Engine_ObjectCreate(SPRITE_RIPPLE, source->x.fixed, source->y.fixed,
                                source->z.fixed);
   if (effect == 0) {
     return;
   }
 
   sprite = effect->sprite;
-  Engine_ObjectSetScript(effect, gMercuryLighthouse_RiseScript);
+  Engine_ObjectSetScript(effect, gMercuryLighthouse_RippleScript);
 
   effect->motionFlags = 0;
   effect->terrainId = 1;
@@ -2935,7 +2935,7 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gMercuryLighthouse_RiseScript[] = {
+s32 gMercuryLighthouse_RippleScript[] = {
     SC_WAIT(30),
     SC_FREE,
 };
@@ -2972,17 +2972,17 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gMercuryLighthouse_SparkBurstScript[] = {
-    SC_SET(SW_SCALE_Y, 0x10000),
-    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, Q16_ONE),
     SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 0xa000),
-    SC_SET(SW_SCALE_X, 0xa000),
+    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
     SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 0x4000),
-    SC_SET(SW_SCALE_X, 0x4000),
+    SC_SET(SW_SCALE_Y, Q16_ONE / 4),
+    SC_SET(SW_SCALE_X, Q16_ONE / 4),
     SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 0xa000),
-    SC_SET(SW_SCALE_X, 0xa000),
+    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
     SC_WAIT(6),
     SC_LOOP(4, SC_TOP),
     SC_WAIT(1),
@@ -3187,23 +3187,23 @@ struct ScenePlacement gMercuryLighthouseLowerPlacements[] = {
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe4, CONDITION_ALWAYS, 7,
+    { 0xe4, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(672), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe4, CONDITION_ALWAYS, 7,
+    { 0xe4, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(704), 0, PIXELS(272), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe5, CONDITION_ALWAYS, 7,
+    { 0xe5, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(744), 0, PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe6, CONDITION_ALWAYS, 7,
+    { 0xe6, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(648), 0, PIXELS(299), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gMercuryLighthouseMiddlePlacements[] = {
-    { 0xe5, CONDITION_ALWAYS, 7,
+    { 0xe5, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(152), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe6, CONDITION_ALWAYS, 7,
+    { 0xe6, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(184), 0, PIXELS(587), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe4, CONDITION_ALWAYS, 7,
+    { 0xe4, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(704), 0, PIXELS(672), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3217,15 +3217,15 @@ struct ScenePlacement gMercuryLighthouseUpperPlacements[] = {
         PIXELS(200), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLUE_STATUE, FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL, ACTOR_STAND,
         PIXELS(808), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe4, CONDITION_ALWAYS, 7,
+    { 0xe4, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(816), 0, PIXELS(544), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe5, CONDITION_ALWAYS, 7,
+    { 0xe5, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(872), 0, PIXELS(576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe6, CONDITION_ALWAYS, 7,
+    { 0xe6, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(760), 0, PIXELS(635), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe6, CONDITION_ALWAYS, 7,
+    { 0xe6, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(776), 0, PIXELS(635), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe6, CONDITION_ALWAYS, 7,
+    { 0xe6, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(872), 0, PIXELS(635), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3255,7 +3255,7 @@ struct ScenePlacement gMercuryLighthouseExteriorPlacements[] = {
         PIXELS(888), 0, PIXELS(872), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(840), 0, PIXELS(600), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(856), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3287,8 +3287,8 @@ struct SceneEvent gMercuryLighthouseLowerEvents[] = {
     { EVENT_TOUCH, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ReleaseRaisedPillar) },
     { TOUCH_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
     { EVENT_TOUCH, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ReleaseRaisedPillar) },
-    { 0xa02, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
-    { EVENT_TOUCH, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_SpawnTimedRiseEffect) },
+    { TOUCH_WALKING | EVENT_TOUCH_QUICK, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
+    { EVENT_TOUCH, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RippleWhileInPool) },
     { TOUCH_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
     { EVENT_TOUCH, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RaiseTouchedPillar) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_EnterRisingPassage) },

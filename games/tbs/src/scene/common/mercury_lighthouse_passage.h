@@ -17,7 +17,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 #else
   v->update = (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
 #endif
-  v->speed = 0x3333;
+  v->speed = PIXELS(1) / 5;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -31,19 +31,21 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   Engine_EventEnd();
 }
 
-/// Unused: the leader moves north with the passages' sound and vanishes, then
-/// is put at pixel (8 * a0 + 8, 0).
-static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 a0) {
+/// Unused: the leader steps 8 pixels north with the passages' sound and
+/// vanishes, then is put at x 8 * column + 8, z 0, with no exit and no end to
+/// the event; nothing in either overlay calls it. XXX: likely an early form of
+/// LeaveThroughPassage, because it plays the same sound and steps the same way.
+static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct FieldActor *record;
 
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_228);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(record, 0);
   Engine_EventWait(8);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, ((a0 << 19) + 0x80000), 0);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, ((column << 19) + PIXELS(8)), 0);
   Engine_EventWait(30);
 }

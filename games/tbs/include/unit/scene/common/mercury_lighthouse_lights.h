@@ -12,8 +12,8 @@ struct MercuryLighthouseLights {
   /// pool spends one.
   s32 levels;
   s32 terrainCode; ///< the pool's collision code, the floor's region
-  /// Frames to the next sparkle at trigger 21, 10 to 39; a hop zeroes it.
-  s32 sparkTimer;
+  /// Frames to the next ripple at trigger 21, 10 to 39; a hop zeroes it.
+  s32 rippleTimer;
   /// 16.16 fixed-point pixels: the centre of the column's cell, where a
   /// sinking leader is put back.
   s32 targetX;

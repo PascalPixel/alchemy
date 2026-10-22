@@ -193,6 +193,18 @@ enum CenteredMessageMode {
   CENTERED_MESSAGE_WINDOW = 1
 };
 
+/// The flags UiText_ShowPositionedMessageAndWait takes. Without
+/// POSITIONED_MESSAGE_LOWER or POSITIONED_MESSAGE_LOWEST the window goes above
+/// or below the player's character, away from where it stands on screen.
+enum PositionedMessageFlag {
+  POSITIONED_MESSAGE_ZOOM = 1,      ///< the window zooms open and shut
+  POSITIONED_MESSAGE_BUSY = 2,      ///< the window work is busy while it shows
+  POSITIONED_MESSAGE_KEEP_OPEN = 4, ///< the window is left open
+  POSITIONED_MESSAGE_LOWER = 8,     ///< 4 tiles below the top rows' centre
+  POSITIONED_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
+  POSITIONED_MESSAGE_LOWEST = 0x40 ///< 12 tiles below the top rows' centre
+};
+
 /// The system menu's entries, as Menu_RunWorkspaceSelectionLoop returns them
 /// (counted from Save your quest even when only Change settings shows).
 enum SystemMenuEntry {

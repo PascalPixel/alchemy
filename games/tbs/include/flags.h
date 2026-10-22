@@ -784,10 +784,10 @@
 /// ★ Named from the game: "His wrathful side turned the people of Kolima into
 /// trees." (MsgKolimaWatchOutItsHappeningAgain)
 #define FLAG_KOLIMA_CURSE_WITNESSED 0x843
-/// Kolima Bridge fell apart in front of the leader the first time the party
-/// stepped onto it after the curse was lifted. The bridge is drawn broken from
-/// then on, and its piece of the world map changes with it.
-#define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847
+/// The villager at Kolima Bridge has let its drawbridge down across the river,
+/// the first time the party stepped onto it after the curse was lifted. The
+/// bridge is drawn down from then on, and its piece of the world map with it.
+#define FLAG_KOLIMA_BRIDGE_LOWERED 0x847
 
 // Kolima Forest
 /// Catch took the clearing's Nut.

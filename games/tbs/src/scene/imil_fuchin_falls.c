@@ -69,14 +69,12 @@
 ///
 /// Open questions:
 /// - XXX: why walking north into the third room's trigger 24 floats the fourth
-///   log south (Fuchin_ThirdRoom_MoveFourthLogSouthFromLowerStop); the room's
-///   map around that cell, or a recording of the push, would settle it.
-/// - XXX: why the crates the dragon statue's room and the third room place
-///   (SPRITE_CRATE, child value 15) show nothing in the renders; a render of
-///   those rooms' sprites alone would settle it.
-/// - XXX: what the log sounds SE_241 and SE_289, the dust's SE_136 and the
-///   eye's SE_182 are; a recording of a log push and of the eye being set
-///   would let them be named in songs.h.
+///   log 80 pixels south (Fuchin_ThirdRoom_MoveFourthLogSouthFromLowerStop),
+///   where the third log's matching trigger 19 floats it 80 pixels north;
+///   triggers 21 to 24 are one column of cells (columns 10 to 12, rows 40 to
+///   43 of map_064's grid_collision.tsv), so it is likely a slip in the table,
+///   and a recording of the push from the cells south of it would settle it
+///   (the renderer's event recording follows an exit out of the room instead).
 /// - XXX (picture): the log rooms' rebuild, each log's track cells rewritten
 ///   as its place flags change, drawn over the room's collision map.
 
@@ -150,9 +148,8 @@ enum ImilFuchinFallsActor {
   /// A crate (SPRITE_CRATE) in the dragon statue's room, the sprite of the
   /// third room's two foreground pieces (Fuchin_CreateForegroundActor); on
   /// entry ImilFuchinFalls_PrepareRoom stills it at floor height and draws it
-  /// at sprite priority 1 with child value 15, as those are drawn. XXX: why
-  /// the room's renders show no crate where it stands; a render of the
-  /// room's sprites alone would settle whether child value 15 hides it.
+  /// at sprite priority 1 in SPRITE_COLOR_HIDDEN, as those are drawn, so
+  /// every pixel is transparent and the player never sees it.
   ACTOR_DRAGON_ROOM_FOREGROUND = ACTOR_FIRST_PLACED
 };
 
@@ -919,7 +916,8 @@ static void Fuchin_AnimateFourthLog(void) {
   Engine_ActorSetAnimation(ACTOR_FOURTH_LOG, 2);
 }
 
-/// Creates a stationary foreground actor with its palette and priority set.
+/// Creates a stationary actor at sprite priority 1, drawn hidden
+/// (SPRITE_COLOR_HIDDEN).
 static struct FieldActor *Fuchin_CreateForegroundActor(s32 x, s32 y, s32 z,
                                                        s32 resourceId) {
   struct FieldActor *actor = Engine_ObjectCreate(resourceId, x, y, z);
@@ -928,7 +926,7 @@ static struct FieldActor *Fuchin_CreateForegroundActor(s32 x, s32 y, s32 z,
     actor->sprite->image.priority = 1;
     actor->motionFlags = 0;
     Engine_ActorSetSpriteFlags(actor, 0);
-    ObjectGroup_SetChildValue(actor, 15);
+    ObjectGroup_SetChildValue(actor, SPRITE_COLOR_HIDDEN);
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     return actor;
   }
@@ -1390,7 +1388,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     actor->motionFlags = value;
     actor->y.fixed = value;
     Engine_ActorSetSpritePriority(ACTOR_DRAGON_ROOM_FOREGROUND, 1);
-    Actor_SetChildValue(ACTOR_DRAGON_ROOM_FOREGROUND, 15);
+    Actor_SetChildValue(ACTOR_DRAGON_ROOM_FOREGROUND, SPRITE_COLOR_HIDDEN);
     switch (gGameState.entrance) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
@@ -1541,10 +1539,11 @@ static void Fuchin_UpdateDustMotion(union FieldObject *raw) {
   object->scaleY += object->scaleRateY;
 }
 
-/// Selects the dust palette when its object script finishes looping.
+/// Hides the dust (SPRITE_COLOR_HIDDEN) when its object script finishes
+/// looping.
 static s32 Fuchin_SetDustPalette(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
-  ObjectGroup_SetChildValue(actor, 15);
+  ObjectGroup_SetChildValue(actor, SPRITE_COLOR_HIDDEN);
   return 0;
 }
 

@@ -19,20 +19,17 @@
 /// the holy trees protecting Kolima forest"), on trees and flowers and on
 /// logging; a jar holds a Lucky Medal and a barrel 7 coins.
 ///
-/// KolimaInteriors_Initialize opens with a window transition and draws one room
-/// in two ways: entered by its door from the village
-/// (KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH), or from behind, by the village
-/// doorway the leader steps south into
-/// (KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH) or from Kolima Tunnel
-/// (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL), when other cells are drawn and the
-/// father's family (ACTOR_FATHER_WITH_A_SECRET, ACTOR_WIFE_KEPT_FROM_THE_SECRET
-/// and ACTOR_CHILD_TOLD_THE_SECRET) is put out of sight.
-///
-/// Open questions:
-/// - XXX: whether the room drawn when it is entered from behind is the
-///   father's house seen another way or a different room sharing its place on
-///   the map; a render from KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH and from
-///   KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL would settle it.
+/// KolimaInteriors_Initialize opens with a window transition and draws one of
+/// two rooms into the same place on the map. Entered by its door from the
+/// village (KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH), it is the father's
+/// house, with its bookcase and rug and the father's family
+/// (ACTOR_FATHER_WITH_A_SECRET, ACTOR_WIFE_KEPT_FROM_THE_SECRET and
+/// ACTOR_CHILD_TOLD_THE_SECRET; places/kolima-interiors_cursed/map-7.png).
+/// Entered from behind, by the village doorway the leader steps south into
+/// (KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH) or up the ladder from Kolima
+/// Tunnel (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL), other cells are copied in and
+/// it is a storeroom of crates and sacks with the ladder down in its floor, and
+/// the family is put out of sight (places/kolima-interiors_cursed/map-8.png).
 
 #include "game_state.h"
 #include "flags.h"

@@ -28,12 +28,12 @@
 /// the party. Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg
 /// soup and omelettes in the ovens, and a book called "All About Items".
 /// BilibinInteriors_Initialize opens the rooms with a window around the leader
-/// and draws one diner at a fixed sprite priority.
-///
-/// Open questions:
-/// - XXX: why BILIBIN_DINER alone is drawn at a fixed priority, never by the
-///   cell under it; a render of the restaurant's table with and without it
-///   would show what it fixes.
+/// and draws one diner, BILIBIN_DINER, at a fixed sprite priority. He stands
+/// at the north edge of the restaurant's table, on cell (7, 49), which alone
+/// of the diners' cells gives an object standing on it priority 3 (map_032's
+/// grid_metatile.tsv). Taken from that cell, his priority would put him behind
+/// the middle layer (`BG2`, priority 2 in this map); the fixed priority 2
+/// draws him in front of it, as the other diners are.
 
 #include "unit/scene/bilibin_interiors.h"
 #include "flags.h"

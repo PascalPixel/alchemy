@@ -13,8 +13,8 @@
 /// two ways in, and their events choose the exit by the side the leader comes
 /// from: the Bilibin Barricade from the west or the east, and Kolima Bridge,
 /// Kalay Docks, Gondowan Passage and Lalivero from the north or the south.
-/// Kolima Bridge's actor shows the broken bridge once
-/// FLAG_KOLIMA_BRIDGE_COLLAPSED is set.
+/// Kolima Bridge's actor shows the drawbridge let down once
+/// FLAG_KOLIMA_BRIDGE_LOWERED is set.
 ///
 /// It holds what the party meets on the map itself. Vine, Corona and Hail, a
 /// Venus, a Mars and a Mercury Djinni, stand on the map and, talked to or
@@ -319,8 +319,8 @@ enum WorldMapTrigger {
 /// Ship off course to the island.
 enum { ROWING_BALANCE_OFF_COURSE = 11 };
 
-/// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge has fallen.
-enum { WORLD_MAP_BRIDGE_ANIM_BROKEN = 2 };
+/// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge's drawbridge is down.
+enum { WORLD_MAP_BRIDGE_ANIM_LOWERED = 2 };
 
 /// The falling rock's animations (spr_216.png): it tumbles as it falls, then
 /// shatters where it lands.
@@ -553,13 +553,13 @@ const struct SceneRegion *WorldMap_GetRegions(void) { return NULL; }
 const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
 /// Kolima Bridge's object script (gWorldMapKolimaBridgeScript): it turns with
-/// the map and shows the broken bridge once FLAG_KOLIMA_BRIDGE_COLLAPSED is
+/// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
 /// set.
 static s32 WorldMap_SetUpKolimaBridge(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   WorldMap_AlignToMap(interpreter);
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_COLLAPSED) != 0) {
-    Object_SetMode(actor, WORLD_MAP_BRIDGE_ANIM_BROKEN);
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
+    Object_SetMode(actor, WORLD_MAP_BRIDGE_ANIM_LOWERED);
   }
   return 1;
 }

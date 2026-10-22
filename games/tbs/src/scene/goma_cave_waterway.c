@@ -15,21 +15,18 @@
 ///   good). A chest holds Power Bread. Exits lead back to the Goma Cave
 ///   Entrance, into the room of two pillars (goma_cave_pillar.c;
 ///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and _EAST) and north into
-///   SceneId_GomaCaveBridge. GOMA_CAVE_STREAM_TO_VALE_GATE, on collision code
-///   1, leads to Vale (SceneId_ValeGate), and Vale's
-///   VALE_GATE_TO_GOMA_CAVE_STREAM leads back in at
-///   GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives without the place name.
+///   SceneId_GomaCaveBridge. Vale's VALE_GATE_TO_GOMA_CAVE_STREAM leads in at
+///   GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives without the place name in
+///   a passage walled off from the rest of the room, its own camera box with
+///   a chest at its north end (its render,
+///   places/goma-cave-stream/map-5.png). Its only way out is the collision
+///   code 1 cell at its south tip, cell (38, 55) in map_023's
+///   grid_collision.tsv, two cells south of the arrival, which leads back to
+///   Vale (GOMA_CAVE_STREAM_TO_VALE_GATE).
 /// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
 ///   river. It has no actors and only its two exits: back south into
 ///   SceneId_GomaCaveStream and out onto the world map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
-///
-/// Open questions:
-/// - XXX: where on the map collision code 1, the way to Vale, lies, and whether
-///   the player can reach it; a render of the room's collision codes would
-///   settle it.
-/// - XXX: what SE_188 and SE_141, as the stump lands, sound like; a recording
-///   of the leap would name them.
 #include "game_state.h"
 #include "unit/scene/goma_cave_waterway.h"
 #include "unit/scene/common/effect_spawn.h"

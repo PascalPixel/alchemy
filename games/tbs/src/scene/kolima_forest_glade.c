@@ -11,9 +11,9 @@
 /// FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
 /// Vale's Nut had been caught this one was never placed.
 ///
-/// Open questions:
-/// - XXX: what the map's name, Glade, rests on; a render of
-///   SceneId_KolimaForestGlade would show whether a clearing sets it apart.
+/// The scene's name, Glade, is ours, for what sets the map apart: open grass
+/// and stumps ringed by trees, with no cliff or river
+/// (places/kolima-forest-glade_cursed/map-0.png).
 
 #include "battle_effect_runtime.h"
 #include "flags.h"

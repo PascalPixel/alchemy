@@ -32,13 +32,10 @@
 /// Switch's map (SceneId_KolimaForestFloodgate).
 ///
 /// Open questions:
-/// - XXX: what each of KolimaForestTree_PlayGesture's twelve gestures shows on
-///   Tret's and Laurel's faces (animations 1 to 10 of SPRITE_TRET_RAISED and
-///   SPRITE_LAUREL); a render of the faces' animations would name them as an
-///   enum.
-/// - XXX: why Tret and Laurel each have a blank actor that only selects whose
-///   face KolimaForestTree_PlayGesture moves, likely left from a version where
-///   those actors were drawn; nothing in the overlay settles it.
+/// - XXX (no evidence): why Tret and Laurel each have a blank actor that only
+///   selects whose face KolimaForestTree_PlayGesture moves, likely left from a
+///   version where those actors were drawn; the ROM keeps no such version, and
+///   nothing reads the actors but that function.
 /// - XXX (picture): the forest's colours returning as Tret is healed
 ///   (KolimaForestTree_UpdateHealingPalette), from KolimaPalette_Curse's
 ///   colours to the healthy ones.
@@ -120,6 +117,24 @@ static void KolimaForestTree_RejectHermesWater(void);
 static void KolimaForestTree_RestoreTret(void);
 static void KolimaForestTree_SpawnRejectionSpark(void);
 static void KolimaForestTree_UpdateHealingPalette(void);
+/// The face gestures KolimaForestTree_PlayGesture plays, each from the face
+/// with its eyes open. Laurel has only the first six, and the wrathful ones,
+/// on Tret's wrathful face, are never asked for here.
+enum KolimaForestTreeGesture {
+  FACE_GESTURE_CLOSE_EYES = 0,
+  FACE_GESTURE_OPEN_EYES = 1,
+  FACE_GESTURE_LOOK_LEFT = 2,
+  FACE_GESTURE_LOOK_RIGHT = 3,
+  FACE_GESTURE_BLINK = 4, ///< twice
+  FACE_GESTURE_HALF_CLOSE_EYES = 5,
+  FACE_GESTURE_WRATHFUL_CLOSE_EYES = 6,
+  FACE_GESTURE_WRATHFUL_OPEN_EYES = 7,
+  FACE_GESTURE_WRATHFUL_LOOK_RIGHT = 8,
+  FACE_GESTURE_WRATHFUL_LOOK_LEFT = 9,
+  FACE_GESTURE_WRATHFUL_BLINK = 10,
+  FACE_GESTURE_WRATHFUL_STARE = 11 ///< as FACE_GESTURE_WRATHFUL_OPEN_EYES
+};
+
 static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture);
 static void KolimaForestTree_SpawnOrbitSparks(void);
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
@@ -174,7 +189,7 @@ const struct SceneEvent *KolimaForestTree_GetEvents(void) {
 /// party, and Laurel says, "We shall protect the forest from now on."
 static void KolimaForestTree_TalkToLaurel(void) {
   Engine_EventBegin();
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgKolimaForestKolimaAlive);
     Engine_EventShowMessage(ACTOR_LAUREL, 0);
@@ -184,21 +199,21 @@ static void KolimaForestTree_TalkToLaurel(void) {
   } else {
     Engine_EventSetMessage(MsgKolimaWho);
     Engine_EventShowMessageAndWait(ACTOR_LAUREL, 0, 20);
-    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 0);
+    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
     Engine_EventWait(60);
-    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 1);
+    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
     Engine_EventShowMessageAndWait(ACTOR_LAUREL, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_EventWait(40);
     Engine_EventShowMessage(ACTOR_LAUREL, 0);
-    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 0);
+    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
     Engine_EventWait(80);
     Engine_EventShowMessageAndWait(ACTOR_LAUREL, 0, 20);
-    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 1);
+    KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
     Engine_EventShowMessageAndWait(ACTOR_LAUREL, 0, 20);
     Engine_GameFlagSet(FLAG_MET_LAUREL);
   }
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 0);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
   Engine_EventEnd();
 }
 
@@ -213,16 +228,16 @@ static void KolimaForestTree_TalkToTret(void) {
 
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+    KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
     Engine_EventSetMessage(MsgKolimaNowHaveSuchPowerAxe);
     Event_ShowMessage(ACTOR_TRET, 0);
-    KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 0);
+    KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
   } else {
     if (GameFlag_IsSet(FLAG_TRET_DEFEATED) != 0) {
-      KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+      KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
       Engine_EventSetMessage(MsgKolimaSilence2);
       Event_ShowMessage(ACTOR_TRET, 0);
-      KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 0);
+      KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
       waterOwner = PartyInventory_FindOwner(ITEM_HERMES_WATER);
       if (waterOwner != -1) {
         u16 *stateSlot = &gEventWork->unk172;
@@ -314,7 +329,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Camera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
   Event_PlayCue(SE_IMPACT);
   leader->velocityY = PIXELS(5);
@@ -328,7 +343,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
     Engine_TaskWait(1);
   } while (leader->velocityY <= 0);
   Event_PlayCue(SE_161);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Engine_EventWait(120);
   Engine_TaskRemoveCallback(KolimaForestTree_SpawnRejectionSpark);
   Engine_TaskWait(40);
@@ -474,7 +489,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Camera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_EventWait(40);
   Event_PlayCue(MUS_007);
   // Tret and Laurel discover that their powers have returned.
@@ -485,11 +500,11 @@ static void KolimaForestTree_RestoreTret(void) {
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   KolimaForestTree_FaceParty(FACING_NORTH, 20);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(20);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -499,27 +514,27 @@ static void KolimaForestTree_RestoreTret(void) {
   Camera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_SOUTHWEST, 20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Engine_EventWait(20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 0);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_EventWait(20);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -551,7 +566,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Camera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 0);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
   Engine_EventWait(20);
   KolimaPalette_Restore(0);
   Engine_ColorBufferInterpolate(1);
@@ -574,7 +589,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_EventWait(10);
   Engine_EventSetMessage(MsgKolimaShouldDoPeopleKolimaCursed);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
@@ -595,7 +610,7 @@ static void KolimaForestTree_RestoreTret(void) {
     gEventWork->message += 1;
   }
   Event_ShowMessage(GARET, 0);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 4);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   // Explain the curse and how the falling Psynergy Stones changed the forest.
   Engine_EventSetMessage(MsgKolimaWasIndeedAngryPeopleHad);
@@ -604,31 +619,32 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_NodTogether();
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 4);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 0);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 5);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK,
+                               FACE_GESTURE_HALF_CLOSE_EYES);
   Engine_EventWait(60);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 5);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_HALF_CLOSE_EYES);
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_TRET, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -636,19 +652,19 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessage(GARET, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | IVAN, 0);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 4);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 0);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
   Engine_EventWait(20);
   KolimaPalette_Restore(0);
   Engine_ColorBufferInterpolate(1);
@@ -671,7 +687,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 4);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -688,20 +704,20 @@ static void KolimaForestTree_RestoreTret(void) {
   Engine_EventWait(60);
   KolimaPalette_Restore(0);
   Engine_ColorBufferInterpolate(40);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 4);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
@@ -711,11 +727,11 @@ static void KolimaForestTree_RestoreTret(void) {
     gEventWork->message += 1;
   }
   Engine_EventWait(10);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 2);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
   Engine_EventWait(20);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 3);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
   Engine_EventWait(40);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 1);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -731,13 +747,13 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_SetActionScript(MIA, finalActions);
   }
   Actor_RunActionScriptAndWait(IVAN, finalActions);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 4);
-  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, 4);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgKolimaOweGreatDebtHaveSaved);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 4);
-  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, 4);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -784,8 +800,8 @@ s32 KolimaForestTree_Initialize(void) {
   laurelBlank->y.fixed = PIXELS(28);
   tretsWrathfulSide->motionFlags = 0;
   tretsWrathfulSide->y.fixed = PIXELS(28);
-  Engine_ActorSetAnimation(ACTOR_LAUREL, 3);
-  Engine_ActorSetAnimation(ACTOR_TRET, 3);
+  Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
+  Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
   Object_GetById(ACTOR_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
   Object_GetById(ACTOR_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
   Object_GetById(ACTOR_TRET_BLANK)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -870,82 +886,85 @@ static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 actorId,
 static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
   if (blankActorId == ACTOR_TRET_BLANK) {
     switch (gesture) {
-    case 0:
-      Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    case FACE_GESTURE_CLOSE_EYES:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_TRET, 3);
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
       break;
-    case 1:
-      Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    case FACE_GESTURE_OPEN_EYES:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       break;
-    case 2:
-      Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    case FACE_GESTURE_LOOK_LEFT:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_TRET, 5);
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
       break;
-    case 3:
-      Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    case FACE_GESTURE_LOOK_RIGHT:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_TRET, 4);
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
       break;
-    case 4:
-      KolimaForestTree_AlternateFaceFrames(ACTOR_TRET, 1, 3);
+    case FACE_GESTURE_BLINK:
+      KolimaForestTree_AlternateFaceFrames(ACTOR_TRET, TRET_FACE_OPEN,
+                                           TRET_FACE_CLOSED);
       break;
-    case 5:
-      Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    case FACE_GESTURE_HALF_CLOSE_EYES:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_TRET, 2);
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
       break;
-    case 6:
-      Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    case FACE_GESTURE_WRATHFUL_CLOSE_EYES:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_TRET, 8);
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
       break;
-    case 8:
-      Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    case FACE_GESTURE_WRATHFUL_LOOK_RIGHT:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_TRET, 9);
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
       break;
-    case 9:
-      Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    case FACE_GESTURE_WRATHFUL_LOOK_LEFT:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_TRET, 10);
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
       break;
-    case 10:
-      KolimaForestTree_AlternateFaceFrames(ACTOR_TRET, 6, 8);
+    case FACE_GESTURE_WRATHFUL_BLINK:
+      KolimaForestTree_AlternateFaceFrames(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN,
+                                           TRET_FACE_WRATHFUL_CLOSED);
       break;
-    case 7:
-    case 11:
-      Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    case FACE_GESTURE_WRATHFUL_OPEN_EYES:
+    case FACE_GESTURE_WRATHFUL_STARE:
+      Engine_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       break;
     }
   } else {
     switch (gesture) {
-    case 0:
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 1);
+    case FACE_GESTURE_CLOSE_EYES:
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 3);
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
       break;
-    case 1:
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 1);
+    case FACE_GESTURE_OPEN_EYES:
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       break;
-    case 2:
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 1);
+    case FACE_GESTURE_LOOK_LEFT:
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 5);
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_LEFT);
       break;
-    case 3:
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 1);
+    case FACE_GESTURE_LOOK_RIGHT:
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 4);
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_RIGHT);
       break;
-    case 4:
-      KolimaForestTree_AlternateFaceFrames(ACTOR_LAUREL, 1, 3);
+    case FACE_GESTURE_BLINK:
+      KolimaForestTree_AlternateFaceFrames(ACTOR_LAUREL, LAUREL_FACE_OPEN,
+                                           LAUREL_FACE_CLOSED);
       break;
-    case 5:
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 1);
+    case FACE_GESTURE_HALF_CLOSE_EYES:
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       Engine_TaskWait(6);
-      Engine_ActorSetAnimation(ACTOR_LAUREL, 2);
+      Engine_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_HALF_CLOSED);
       break;
     }
   }

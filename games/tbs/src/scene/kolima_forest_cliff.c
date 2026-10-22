@@ -9,11 +9,9 @@
 ///
 /// FLAG_SCENE_TEMP_01: the log is in the river, until the party next comes in.
 ///
-/// Open questions:
-/// - XXX: what the map's name, Cliff, rests on; a render of
-///   SceneId_KolimaForestCliff would show whether a cliff sets it apart.
-/// - XXX: what SE_240, as the log falls in, sounds like; a recording would
-///   name it.
+/// The scene's name, Cliff, is ours, for what sets the map apart: a rock cliff
+/// runs across its north side above the river and the logs
+/// (places/kolima-forest-cliff_cursed/map-0.png).
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -80,11 +78,11 @@ static void KolimaForestCliff_PushLog(void) {
     if (result.actorSlot == ACTOR_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
       struct FieldActor *actor;
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, 3);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_ROLL_WEST);
       Engine_ActorSetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Engine_EventWait(30);
       Engine_AudioPlayCue(SE_240);
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, 8);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_DROP_IN);
       Object_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);

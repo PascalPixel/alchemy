@@ -1,18 +1,22 @@
 /// @file
-/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes,
-/// Tret's branches, between the rooms of SceneId_TretTreeInteriors
-/// (tret_tree_interiors.c), where the story is told. This scene has no story
-/// event and tests no story flag.
+/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes:
+/// out on Tret's branches, under open sky
+/// (places/tret-tree-branch/map-0.png), between the rooms of
+/// SceneId_TretTreeInteriors (tret_tree_interiors.c), where the story is told.
+/// This scene has no story event and tests no story flag.
 ///
 /// Its eight exits (TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST and
 /// the seven after it) lead back into SceneId_TretTreeInteriors; walking into
 /// one for two frames (EVENT_TOUCH_QUICK) plays the exit sound and leaves at
 /// once, the touch cells having the exits' own numbers. Touch cells 10 to 15
-/// move the
-/// leader and the camera five or six cells north or south in one step, with no
-/// walk. Breeze, a Jupiter Djinni, stands here until it has joined the party:
-/// its own flag (FLAG_DJINNI_0 + DJINNI_BREEZE) removes its placement. Talking
-/// to it starts a battle with it.
+/// lie in pairs at the top and bottom of the vines that hang from one branch
+/// to the one below (cells (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20)
+/// and (40, 26) in map_047's grid_collision.tsv): each moves the leader and the
+/// camera five or six cells north or south in one step, up or down its vine,
+/// with no walk. Each vine has codes of its own, so 12 and 13 repeat 10's and
+/// 11's events for the second vine. Breeze, a Jupiter Djinni, stands here until
+/// it has joined the party: its own flag (FLAG_DJINNI_0 + DJINNI_BREEZE)
+/// removes its placement. Talking to it starts a battle with it.
 ///
 /// The setup opens the scene with a backdrop fade, blends BG1 over the rest of
 /// the screen and splits BG3's scroll at a scanline that follows the map's
@@ -22,15 +26,9 @@
 /// a link-cable input exchange no table reaches.
 ///
 /// Open questions:
-/// - XXX: whether the scene is out on Tret's branches, as its name says; a
-///   render of SceneId_TretTreeBranch would settle it.
-/// - XXX: what the player sees at touch cells 10 to 15, which move the leader
-///   five or six cells at once, likely a climb or a drop between branches; a
-///   recording of each would settle it, and why each of 10 and 11 has a twin
-///   (12, 13) with its own copy of the event.
 /// - XXX (picture): BG3 split at the scanline
-/// TretTreeBranch_UpdateBg3ScrollSplit
-///   computes, drifting above and scrolling with the map below.
+///   TretTreeBranch_UpdateBg3ScrollSplit computes, drifting above and
+///   scrolling with the map below.
 
 #include "unit/scene/tret_tree_branch.h"
 #include "unit/object/object.h"

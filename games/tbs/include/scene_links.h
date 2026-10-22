@@ -1740,9 +1740,9 @@ enum {
 enum {
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-  MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_FROM_STATUE =
-      3, ///< ★ Named from what the player sees: the large pool crossed on
-         ///< rising water pillars (its render)
+  MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE =
+      3, ///< ★ Named from what the player sees: the large pool crossed under
+         ///< golden rings of light (its render)
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
   MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE =
       5, ///< ★ Named from what the player sees: the room with three waterfalls
@@ -1750,7 +1750,7 @@ enum {
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH = 6,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST = 7,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_UPPER = 8,
-  MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATER_PILLARS =
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL =
       9, ///< ★ Named from what the player sees: the room where a statue blocks
          ///< Mia until Move pushes it aside (its render)
   MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS =
@@ -1763,7 +1763,7 @@ enum {
 enum {
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-  MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_TO_STATUE =
+  MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE =
       3, ///< ★ Named from what the player sees: the room where a statue blocks
          ///< Mia until Move pushes it aside (its render)
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST =
@@ -1777,9 +1777,9 @@ enum {
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE =
       8, ///< ★ Named from what the player sees: the hole the leader drops
          ///< through to the ground floor (its render)
-  MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATER_PILLARS =
-      9, ///< ★ Named from what the player sees: the large pool crossed on
-         ///< rising water pillars (its render)
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL =
+      9, ///< ★ Named from what the player sees: the large pool crossed under
+         ///< golden rings of light (its render)
   MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS =
       10, ///< ★ Named from what the player sees: the room with three waterfalls
           ///< over a grating (its render)

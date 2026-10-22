@@ -146,8 +146,8 @@ extern char SceneId_ImilFallsCave;
 /// door, where the Lizard Man blocks Mia (its render)
 extern char SceneId_MercuryLighthouseEntrance;
 /// ★ Named from what the player sees: the first rooms of the climb above the
-/// ground floor, the pool of water pillars and the pipes, where Mia joins (its
-/// render)
+/// ground floor, the pool crossed under rings of light and the pipes, where
+/// Mia joins (its render)
 extern char SceneId_MercuryLighthouseLower;
 /// ★ Named from what the player sees: the middle of the climb, with the gate
 /// held open by a statue, the pipe maze and Sleet's room (its render)

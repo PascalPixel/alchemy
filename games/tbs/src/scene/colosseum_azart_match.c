@@ -581,7 +581,7 @@ static void Event_ReachArena(void) {
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
   Actor_WalkToAndWait(OPPONENT, 1312, 192);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LUNGE);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;

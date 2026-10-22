@@ -27,12 +27,12 @@ extern struct SceneEvent gAltinOther_Events[];
 extern struct SceneEvent gAltinVillage_Events[];
 extern struct SceneEvent gAltinHouses_Events[];
 extern u16 gAltinVillage_SanctumDoorCells[];
-extern u16 gAltinVillage_DoorCellsA[];
-extern u16 gAltinVillage_DoorCellsF[];
-extern u16 gAltinVillage_DoorCellsG[];
-extern u16 gAltinVillage_DoorCellsC[];
-extern u16 gAltinVillage_DoorCellsD[];
-extern u16 gAltinVillage_DoorCellsE[];
+extern u16 gAltinVillage_SouthwestDoorCells[];
+extern u16 gAltinVillage_SoutheastDoorCells[];
+extern u16 gAltinVillage_EastDoorCells[];
+extern u16 gAltinVillage_NorthwestDoorCells[];
+extern u16 gAltinVillage_NorthAndWestDoorCells[];
+extern u16 gAltinVillage_NortheastDoorCells[];
 extern struct MapCellAnim gAltinVillage_Doors[];
 
 #endif

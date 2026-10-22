@@ -50,6 +50,18 @@
 /// statues are beaten they also speak of a girl from Xian who asked after
 /// young warriors and bought up the soaked goods, of the landslide on Silk
 /// Road, and of a small temple west of the mine, Lama Temple.
+///
+/// Open questions:
+///
+/// - XXX: why the north door (ALTIN_TO_ALTIN_INTERIORS_NORTH) also redraws
+///   two cells at (8, 17), far from its own at (39, 17) (Village_EnterDoor); a
+///   render of the village before and after the door opens would show what
+///   they are.
+/// - XXX: the water beast's spray is sprite 222, which sprite_ids.h names
+///   SPRITE_DUST_PUFF; whether the spray is that puff in another palette (child
+///   values 3 and 7) would be settled by a render of the beast spitting.
+/// - XXX: what the water beast's child value 2 and the crates' 15 show; the
+///   sprite groups' parts in a render would settle it.
 
 #include "game_state.h"
 #include "version.h"
@@ -153,10 +165,11 @@ enum AltinVillageActor {
   /// ★ Named from the game: "Oh, no! What will I do if all my merchandise is
   /// soaked?" (MsgAltinWillDoIfMyMerchandise)
   ACTOR_FLOODED_ITEM_MERCHANT,
-  /// Three ground sprites drawn under the party.
-  ACTOR_FIRST_GROUND_SPRITE,
-  ACTOR_SECOND_GROUND_SPRITE,
-  ACTOR_THIRD_GROUND_SPRITE
+  /// Three crates, drawn under the actors and never a target.
+  /// ★ Named from what the player sees: a wooden crate (spr_223.png)
+  ACTOR_FIRST_CRATE,
+  ACTOR_SECOND_CRATE,
+  ACTOR_THIRD_CRATE
 };
 
 /// The houses' actors, numbering the rows of gAltinHouses_Placements, named as
@@ -396,8 +409,13 @@ static void Village_TalkToThirstyOldWoman(void) {
       Camera_GetEventObject()->motionFlags = 0;
       Camera_SetSpeed(0x10000, 0x2000);
       Camera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
-      // 0x4000 is south as a facing, but this call takes an actor number.
+      // BUG: FACING_SOUTH's value is passed as an actor number. No actor has
+      // it, so the leader does not turn south toward the beast.
+#ifdef BUGFIX
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+#else
       Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
+#endif
       Actor_FaceDirection(ACTOR_THIRSTY_OLD_WOMAN, FACING_SOUTH - FACING_STEP,
                           0);
       Engine_CameraWaitForMove();
@@ -625,8 +643,7 @@ static void Village_EnterDoor(void) {
     Engine_EventWait(4);
   } else {
     Event_PlayCue(SE_DOOR_OPEN);
-    // XXX: the fourth door (ALTIN_TO_ALTIN_INTERIORS_NORTH) also redraws two
-    // cells at (8, 17), far from it; what they show would settle why.
+    // The north door also redraws two cells at (8, 17), far from its own.
     if (doorIndex == ALTIN_TO_ALTIN_INTERIORS_NORTH - FIRST_DOOR_TRIGGER) {
       Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
@@ -823,22 +840,19 @@ static void Village_ApplyWaterLevel(void) {
     Actor_SetPosition(ACTOR_STONE_STATUE, PIXELS(360), PIXELS(168));
   }
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_STATUE), 0);
-  // Keep the three ground sprites below the party before redrawing.
-  Actor_SetChildValue(ACTOR_FIRST_GROUND_SPRITE, 15);
-  Engine_ActorSetChildValue(ACTOR_SECOND_GROUND_SPRITE, 15);
-  Actor_SetChildValue(ACTOR_THIRD_GROUND_SPRITE, 15);
-  Object_GetById(ACTOR_FIRST_GROUND_SPRITE)->collisionFlags |= 8;
-  Object_GetById(ACTOR_SECOND_GROUND_SPRITE)->collisionFlags |= 8;
-  Object_GetById(ACTOR_THIRD_GROUND_SPRITE)->collisionFlags |= 8;
-  Object_GetById(ACTOR_FIRST_GROUND_SPRITE)->priorityFlags |=
-      ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(ACTOR_SECOND_GROUND_SPRITE)->priorityFlags |=
-      ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(ACTOR_THIRD_GROUND_SPRITE)->priorityFlags |=
-      ACTOR_PRIORITY_UNDERFOOT;
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_GROUND_SPRITE, 1);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_GROUND_SPRITE, 1);
-  Engine_ActorSetSpritePriority(ACTOR_THIRD_GROUND_SPRITE, 1);
+  // Draw the three crates under the actors before redrawing.
+  Actor_SetChildValue(ACTOR_FIRST_CRATE, 15);
+  Engine_ActorSetChildValue(ACTOR_SECOND_CRATE, 15);
+  Actor_SetChildValue(ACTOR_THIRD_CRATE, 15);
+  Object_GetById(ACTOR_FIRST_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Object_GetById(ACTOR_SECOND_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Object_GetById(ACTOR_THIRD_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Object_GetById(ACTOR_FIRST_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(ACTOR_SECOND_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(ACTOR_THIRD_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_CRATE, 1);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_CRATE, 1);
+  Engine_ActorSetSpritePriority(ACTOR_THIRD_CRATE, 1);
   // Redraw at the leader after the map and object state are ready.
   Engine_TaskWait(1);
   Engine_EventBegin();
@@ -870,15 +884,15 @@ static void Houses_PlaceSheltering(void) {
         FACING_NORTHWEST + FACING_STEP;
   } else {
     actor = Object_GetById(ACTOR_WEAPON_MERCHANT);
-    actor->collisionFlags |= 4;
+    actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
   actor = Object_GetById(ACTOR_ARMOR_MERCHANT);
   if (actor != 0) {
-    actor->collisionFlags |= 4;
+    actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
   actor = Object_GetById(ACTOR_ITEM_MERCHANT);
   if (actor != 0) {
-    actor->collisionFlags |= 4;
+    actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
 }
 
@@ -1124,8 +1138,8 @@ struct ScenePlacement gAltinVillage_Placements[] = {
     {SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
      PIXELS(246), 0, PIXELS(186), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY,
      0},
-    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3, PIXELS(58), 0, PIXELS(206),
-     FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
+    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER_NEAR, PIXELS(58),
+     0, PIXELS(206), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(104), 0,
      PIXELS(286), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0},
     {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(41), 0,
@@ -1137,20 +1151,22 @@ struct ScenePlacement gAltinVillage_Placements[] = {
      PIXELS(461), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(350), 0,
      PIXELS(286), FACING_NORTH, TALK_FACE_PARTY, 0},
-    {0xbe, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(60), 0, PIXELS(474),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+    {SPRITE_WATER_BEAST, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(60), 0,
+     PIXELS(474), FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
     {SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(344), 0,
      PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0},
     {SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(88), 0,
      PIXELS(397), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(422), 0,
      PIXELS(208), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {0xdf, CONDITION_ALWAYS, 7, PIXELS(452), 0, PIXELS(216), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
-    {0xdf, CONDITION_ALWAYS, 7, PIXELS(332), 0, PIXELS(360), FACING_SOUTH,
-     TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {0xdf, CONDITION_ALWAYS, 7, PIXELS(332), 0, PIXELS(396), FACING_SOUTH,
-     TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_RESET_ACTION, PIXELS(452), 0,
+     PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_RESET_ACTION, PIXELS(332), 0,
+     PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING,
+     PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_RESET_ACTION, PIXELS(332), 0,
+     PIXELS(396), FACING_SOUTH, TALK_KEEP_FACING,
+     PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SCENE_TABLE_END},
 };
 
@@ -1160,7 +1176,7 @@ struct ScenePlacement gAltinHouses_Placements[] = {
         TALK_FACE_PARTY, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(456), 0, PIXELS(182), FACING_WEST + FACING_STEP, 3,
+    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(456), 0, PIXELS(182), FACING_WEST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH,
         0},
     {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(376), 0, PIXELS(120),
         FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
@@ -1168,7 +1184,7 @@ struct ScenePlacement gAltinHouses_Placements[] = {
         TALK_FACE_PARTY_AND_BACK, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND, PIXELS(669), 0, PIXELS(128), FACING_EAST + FACING_STEP,
         TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_GIRL_WITH_PIGTAILS, 0x0, ACTOR_STAND, PIXELS(604), 0, PIXELS(145), FACING_SOUTHEAST + FACING_STEP, 3, 0},
+    {SPRITE_GIRL_WITH_PIGTAILS, 0x0, ACTOR_STAND, PIXELS(604), 0, PIXELS(145), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH, 0},
     {SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(263), 0, PIXELS(436), FACING_SOUTH + FACING_STEP,
         TALK_FACE_PARTY, 0},
     {SPRITE_WOMAN_WITH_PONYTAIL, 0x0, ACTOR_STAND, PIXELS(520), 0, PIXELS(454), FACING_SOUTH + FACING_STEP,
@@ -1177,7 +1193,7 @@ struct ScenePlacement gAltinHouses_Placements[] = {
         TALK_FACE_PARTY, 0},
     {SPRITE_MAN_WITH_DARK_HAIR, 0x0, ACTOR_STAND, PIXELS(103), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_IN_PINK_APRON, 0x0, 3, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
+    {SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_WANDER_NEAR, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_COOK, 0x0, (s32)gAltinHouses_CookScript, PIXELS(350), 0, PIXELS(746),
         FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
@@ -1396,37 +1412,37 @@ u16 gAltinVillage_SanctumDoorCells[] = {
     MAP_CELL_STEPS_END,
 };
 
-u16 gAltinVillage_DoorCellsA[] = {
+u16 gAltinVillage_SouthwestDoorCells[] = {
     MAP_CELL_STEP(35, 48, 2, 2, 5),
     MAP_CELL_STEP(33, 48, 2, 2, 5),
     MAP_CELL_STEPS_END,
 };
 
-u16 gAltinVillage_DoorCellsF[] = {
+u16 gAltinVillage_SoutheastDoorCells[] = {
     MAP_CELL_STEP(35, 35, 2, 2, 5),
     MAP_CELL_STEP(33, 35, 2, 2, 5),
     MAP_CELL_STEPS_END,
 };
 
-u16 gAltinVillage_DoorCellsG[] = {
+u16 gAltinVillage_EastDoorCells[] = {
     MAP_CELL_STEP(35, 46, 2, 2, 5),
     MAP_CELL_STEP(33, 46, 2, 2, 5),
     MAP_CELL_STEPS_END,
 };
 
-u16 gAltinVillage_DoorCellsC[] = {
+u16 gAltinVillage_NorthwestDoorCells[] = {
     MAP_CELL_STEP(35, 50, 2, 2, 5),
     MAP_CELL_STEP(33, 50, 2, 2, 5),
     MAP_CELL_STEPS_END,
 };
 
-u16 gAltinVillage_DoorCellsD[] = {
+u16 gAltinVillage_NorthAndWestDoorCells[] = {
     MAP_CELL_STEP(35, 33, 2, 2, 5),
     MAP_CELL_STEP(33, 33, 2, 2, 5),
     MAP_CELL_STEPS_END,
 };
 
-u16 gAltinVillage_DoorCellsE[] = {
+u16 gAltinVillage_NortheastDoorCells[] = {
     MAP_CELL_STEP(35, 52, 2, 2, 5),
     MAP_CELL_STEP(33, 52, 2, 2, 5),
     MAP_CELL_STEPS_END,
@@ -1434,8 +1450,12 @@ u16 gAltinVillage_DoorCellsE[] = {
 
 /// Each door trigger's opening picture and cell, from trigger 2.
 struct MapCellAnim gAltinVillage_Doors[] = {
-    {gAltinVillage_DoorCellsA, 41, 5},  {gAltinVillage_SanctumDoorCells, 51, 6},
-    {gAltinVillage_DoorCellsC, 57, 17}, {gAltinVillage_DoorCellsD, 39, 17},
-    {gAltinVillage_DoorCellsE, 48, 25}, {gAltinVillage_DoorCellsF, 59, 9},
-    {gAltinVillage_DoorCellsG, 42, 23}, {gAltinVillage_DoorCellsD, 41, 27},
+    {gAltinVillage_SouthwestDoorCells, 41, 5},
+    {gAltinVillage_SanctumDoorCells, 51, 6},
+    {gAltinVillage_NorthwestDoorCells, 57, 17},
+    {gAltinVillage_NorthAndWestDoorCells, 39, 17},
+    {gAltinVillage_NortheastDoorCells, 48, 25},
+    {gAltinVillage_SoutheastDoorCells, 59, 9},
+    {gAltinVillage_EastDoorCells, 42, 23},
+    {gAltinVillage_NorthAndWestDoorCells, 41, 27},
 };

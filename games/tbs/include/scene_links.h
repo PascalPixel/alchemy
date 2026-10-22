@@ -6043,8 +6043,9 @@ enum {
 /// SceneId_LemurianShip's entrances.
 enum {
   LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE = 1,
-  /// In no table row and led to by no exit; arriving by it hands the leader the
-  /// Black Orb. XXX: what arrives that way is not known.
+  /// In no table row and led to by no exit: only the debug scene selector,
+  /// which warps to any entrance from 0 to 99, reaches it. Arriving by it hands
+  /// the leader the Black Orb.
   LEMURIAN_SHIP_WITH_BLACK_ORB = 99,
 };
 /// SceneId_LemurianShip's exits.

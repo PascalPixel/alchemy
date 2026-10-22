@@ -22,10 +22,11 @@
 ///
 /// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
 ///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into
-///   the hold (touch cell 11) has Ouranos, a warrior bound for Colosso who
-///   "can't stand water", threaten to go ashore, and he and his friend Sean
-///   go to make the captain sail (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The
-///   crew's talk of the delay plays here (touch cell 10) if it has not on
+///   the hold (TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS) has Ouranos, a warrior
+///   bound for Colosso who "can't stand water", threaten to go ashore, and he
+///   and his friend Sean go to make the captain sail
+///   (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The crew's talk of the delay
+///   plays here (TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW) if it has not on
 ///   deck. In the captain's quarters the warriors and passengers press the
 ///   captain, who has just decided to sail
 ///   (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL); Ouranos and Sean offer to guard
@@ -90,6 +91,14 @@
 /// A travelling healer opens a Sanctum in the hold. At Tolbi
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
 /// their own placements.
+///
+/// Open questions:
+/// - XXX: what MUS_017, MUS_028, MUS_063, SE_181, SE_188 and SE_214 sound
+///   like; hearing each where these cutscenes play it would name it in
+///   songs.h.
+/// - XXX (picture): the rowing deck's seats: the eight oarsmen two by two,
+///   the four seats the chosen passengers take, and the oar beside each,
+///   labelled by seat.
 
 #include "script.h"
 #include "flags.h"
@@ -312,6 +321,21 @@ enum TolbiShipRowingDeckActor {
   /// The monsters of each attack (gTolbiShipInteriors_FirstAttackMonsters and
   /// the two after it).
   ROWING_FIRST_MONSTER = ROWING_FIRST_OAR + 8
+};
+
+/// The touch cells and searched containers below decks whose events are
+/// more than an exit.
+enum TolbiShipInteriorsCell {
+  /// The rowing deck's stairs up to the hold, barred while monsters are
+  /// aboard.
+  TOLBI_SHIP_INTERIORS_CELL_ROWING_DECK_STAIRS = 4,
+  /// In the captain's quarters, where the crew's talk of the delay plays.
+  TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW = 10,
+  /// Inside the hold, where Ouranos threatens to go ashore.
+  TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS = 11,
+  TOLBI_SHIP_INTERIORS_CRATE_HOLD_BARREL = 100,
+  TOLBI_SHIP_INTERIORS_HOLD_BARREL = 101,
+  TOLBI_SHIP_INTERIORS_QUARTERS_JAR = 102
 };
 
 /// A speaker: the actor, and in the top four bits where the message window
@@ -909,7 +933,8 @@ static void TolbiShipInteriors_AskSweatingPassengerToRow(void) {
 static void TolbiShipInteriors_AskLadyToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     Engine_EventBegin();
-    Engine_ActorSetAttachedEffect(SEA_HOLD_LADY, 0x102);
+    Engine_ActorSetAttachedEffect(SEA_HOLD_LADY, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     Engine_EventSetMessage(MsgTolbiShipDontFeelDontTalkMe);
     Engine_EventShowMessage(SEA_HOLD_LADY, 0);
@@ -1450,9 +1475,9 @@ static void TolbiShipInteriors_TurnBackFromStairs(void) {
   }
 }
 
-/// Below decks at Kalay, once the warriors have gone to the captain (touch
-/// cell 10): the captain, Kaja and the crewman wonder what could have happened
-/// to the replacement ship, as on deck
+/// Below decks at Kalay, once the warriors have gone to the captain
+/// (TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW): the captain, Kaja and the crewman
+/// wonder what could have happened to the replacement ship, as on deck
 /// (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
@@ -1487,11 +1512,11 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   Engine_EventEnd();
 }
 
-/// In the hold at Kalay, once the tour group has left Kalay (touch cell 11):
-/// Ouranos threatens to go ashore if the ship doesn't sail. The second guide
-/// can't say when it will, so Sean and Ouranos set off to make the captain set
-/// sail, and the guide ("I don't want any violence!") hurries after them past
-/// the party.
+/// In the hold at Kalay, once the tour group has left Kalay
+/// (TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS): Ouranos threatens to go ashore if
+/// the ship doesn't sail. The second guide can't say when it will, so Sean and
+/// Ouranos set off to make the captain set sail, and the guide ("I don't want
+/// any violence!") hurries after them past the party.
 static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   s32 guideSpeaker;
   s32 seanSpeaker;
@@ -1521,7 +1546,8 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     Actor_ShowEmote(HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Engine_ActorStartRepeatedMotion(HOLD_SEAN, 3);
     TolbiShipInteriors_Say(seanSpeaker);
-    Actor_SetAttachedEffect(HOLD_SECOND_GUIDE, 0x102);
+    Actor_SetAttachedEffect(HOLD_SECOND_GUIDE,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(HOLD_SECOND_GUIDE, 3);
     TolbiShipInteriors_Say(guideSpeaker);
@@ -1691,7 +1717,8 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ActorSetAnimation(QUARTERS_KAJA, 3);
   TolbiShipInteriors_Say(QUARTERS_KAJA);
   Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTH + FACING_STEP, 0);
-  Actor_SetAttachedEffect(QUARTERS_SECOND_GUIDE, 0x102);
+  Actor_SetAttachedEffect(QUARTERS_SECOND_GUIDE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorJump(QUARTERS_SECOND_GUIDE, 2, 20);
   TolbiShipInteriors_Say(QUARTERS_SECOND_GUIDE);
   Engine_ActorSetAnimationAndWait(QUARTERS_KAJA, 3);
@@ -1783,7 +1810,8 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
-  Actor_SetAttachedEffect(QUARTERS_CAPTAIN, 0x102);
+  Actor_SetAttachedEffect(QUARTERS_CAPTAIN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorJump(QUARTERS_CAPTAIN, 4, 40);
   Engine_ActorStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
   Event_ShowMessage(captainSpeech, 0);
@@ -2925,7 +2953,8 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     Event_ShowMessageAndWait(KAJA_ROWING_SPEAKER, 0, 40);
     Engine_ActorShowEmote(ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     TolbiShipInteriors_Say(KAJA_ROWING_SPEAKER);
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Actor_ShowEmote(ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Engine_ActorStartRepeatedMotion(ROWING_KAJA, 2);
@@ -3121,10 +3150,14 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     Engine_EventWait(opt);
     break;
   case SHIP_SHOW_PARTY_EMOTE:
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(GARET, 0x102);
-    Actor_SetAttachedEffect(IVAN, 0x102);
-    Actor_SetAttachedEffect(MIA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(IVAN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(MIA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(opt);
     break;
   case SHIP_HIDE_FIRST_OARSMEN:
@@ -3726,7 +3759,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_PlayCue(MUS_063);
   GameFlag_Set(FLAG_KEEP_MUSIC);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   TolbiShipInteriors_Turn(MIA, FACING_SOUTHWEST);
   // The party notices the rocking, then turns to the crew for an explanation.
@@ -3766,10 +3799,14 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Engine_ActorStartRepeatedMotion(secondRower, 1);
   Engine_ActorStartRepeatedMotion(thirdRower, 1);
   Engine_ActorRunRepeatedMotion(ROWING_FIRST_OARSMAN + 3, 1);
-  Actor_SetAttachedEffect(firstRower, 0x102);
-  Actor_SetAttachedEffect(secondRower, 0x102);
-  Actor_SetAttachedEffect(thirdRower, 0x102);
-  Actor_SetAttachedEffect(ROWING_FIRST_OARSMAN + 3, 0x102);
+  Actor_SetAttachedEffect(firstRower,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(secondRower,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(thirdRower,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ROWING_FIRST_OARSMAN + 3,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWER_POSE, firstRower, 0);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESTORE_ROWER_POSE, secondRower, 1);
@@ -4482,21 +4519,21 @@ struct ScenePlacement gTolbiShipInteriors_RowingDeckPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(410), 0, PIXELS(174), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(470), 0, PIXELS(174), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(410), 0, PIXELS(206), FACING_EAST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(470), 0, PIXELS(206), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(410), 0, PIXELS(286), FACING_EAST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(470), 0, PIXELS(286), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(410), 0, PIXELS(316), FACING_EAST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbc, CONDITION_ALWAYS, 7,
+    { SPRITE_RESTING_OAR, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(470), 0, PIXELS(316), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
@@ -4514,31 +4551,31 @@ struct ScenePlacement gTolbiShipInteriors_PartyFollowerPlacements[] = {
 
 /// The monsters of each attack, beside the seats.
 struct ScenePlacement gTolbiShipInteriors_FirstAttackMonsters[] = {
-    { 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gTolbiShipInteriors_SecondAttackMonsters[] = {
-    { 0xc4, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xc4, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xc6, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_LIZARD_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gTolbiShipInteriors_ThirdAttackMonsters[] = {
-    { 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xc5, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLUE_WINGED_MONSTER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -4546,7 +4583,7 @@ struct ScenePlacement gTolbiShipInteriors_ThirdAttackMonsters[] = {
 /// The cargo hold, and the cutscenes.
 struct SceneEvent gTolbiShipInteriors_EventsOther[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CRATE_HOLD_TO_TOLBI_SHIP_DECK },
-    { SEARCH(SEARCH_BARREL), 100, 0xf92, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), TOLBI_SHIP_INTERIORS_CRATE_HOLD_BARREL, FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
@@ -4554,7 +4591,7 @@ struct SceneEvent gTolbiShipInteriors_EventsOther[] = {
 struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK },
-    { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
+    { EVENT_TOUCH, TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
     { EVENT_TALK, HOLD_WARRIOR, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToWaitingWarrior) },
     { EVENT_TALK, HOLD_TICKET_GRUMBLER, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsApparentlyWeCantTakeSilkRoad) },
     { EVENT_TALK, HOLD_TICKET_GRUMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd) },
@@ -4575,7 +4612,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), HOLD_HEALER, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsEvenThoughImOpposedToViolence) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), HOLD_HEALER, FLAG_TOLBI_SHIP_REACHED_TOLBI, MSGNO(MsgTolbiShipInteriorsICantRowButIAm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMadeItToColossoIn) },
-    { SEARCH(SEARCH_BARREL), 101, 0xf93, FIND_COINS(23) },
+    { SEARCH(SEARCH_BARREL), TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { SCENE_EVENTS_END },
 };
 
@@ -4612,7 +4649,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCanJustMoveRightAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_SECOND_GUIDE, FLAG_TOLBI_SHIP_ROWER_CHOSEN, MSGNO(MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCarefulNowWatchOutDontMake) },
-    { SEARCH(SEARCH_BARREL), 101, 0xf93, FIND_COINS(23) },
+    { SEARCH(SEARCH_BARREL), TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { SCENE_EVENTS_END },
 };
 
@@ -4640,7 +4677,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_TICKET_GRUMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsJustDontMakeMeFaceThat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSoAnyoneKnowIfThereAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOhhThatsCreepy) },
-    { SEARCH(SEARCH_BARREL), 101, 0xf93, FIND_COINS(23) },
+    { SEARCH(SEARCH_BARREL), TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { SCENE_EVENTS_END },
 };
 
@@ -4666,9 +4703,9 @@ struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThatThingCouldntHaveGottenLost) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWouldSteal) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipDoesntLeaveSoon) },
-    { EVENT_TOUCH, 10, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT_SCRIPT(TolbiShipInteriors_WatchCrewWonderAtDelay) },
+    { EVENT_TOUCH, TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT_SCRIPT(TolbiShipInteriors_WatchCrewWonderAtDelay) },
     { USE_ITEM_ON_ACTOR(ITEM_ANCHOR_CHARM), QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, EVENT_SCRIPT(TolbiShipInteriors_ReturnLuckyAnchor) },
-    { 0xc423, 102, 0xf94, FIND_ITEM(ITEM_NUT) },
+    { 0xc423, 102, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 
@@ -4679,7 +4716,7 @@ struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEventsAtIsland[] = {
     { EVENT_TALK, QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWindsDirectionAndTheHigh) },
-    { SEARCH(SEARCH_JAR), 102, 0xf94, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_JAR), TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 
@@ -4688,7 +4725,7 @@ struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEventsArrived[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK },
     { EVENT_TALK, QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
-    { SEARCH(SEARCH_JAR), 102, 0xf94, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_JAR), TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 
@@ -4732,7 +4769,7 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEvents[] = {
 /// The rowing deck while monsters are aboard: talking to one
 /// (ROWING_FIRST_MONSTER and the two after it) fights it.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEventsMonstersAboard[] = {
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TurnBackFromStairs) },
+    { EVENT_TOUCH, TOLBI_SHIP_INTERIORS_CELL_ROWING_DECK_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TurnBackFromStairs) },
     { EVENT_TALK, ROWING_FIRST_MONSTER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightRowingDeckMonsters) },
     { EVENT_TALK, ROWING_FIRST_MONSTER + 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightRowingDeckMonsters) },
     { EVENT_TALK, ROWING_FIRST_MONSTER + 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightRowingDeckMonsters) },

@@ -97,6 +97,13 @@ DMA reads one page throughout the frame while the next is built.
 
 ![Isaac walking and running on the world map, the ground tilting away towards the horizon](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
+The world map runs in display mode 2, which has only the two affine
+backgrounds. Pulled apart, the ground is `BG3`, the middle map layer of
+mountains and forest is `BG2`, and the towns and the party are sprites drawn
+flat over both.
+
+![The world map pulled apart into its layers: the ground on BG3 at the back, the mountains and forest on BG2, both tilted line by line, and the towns and the party as sprites in front](https://alchemy.pascalpixel.com/guides/field/world-map-layers-3d.gif)
+
 When a menu or event starts on the world map, `WorldMap_BeginStillView` draws
 the current affine frame into ordinary tiles on `BG1` and switches the display
 to `DISPCNT_MODE_0`, in which no background is affine; `Map_LoadAreaGraphics`

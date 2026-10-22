@@ -103,6 +103,21 @@ scale it:
 kind's formula, the fall-off tables and the added effects, worked through for
 Avalanche, Cure and Ragnarok.
 
+## The battle's picture
+
+A battle is drawn on three backgrounds and the sprites. The battlefield is
+`BG2`, an affine plane in perspective (`BATTLE_BACKGROUND_PLANE`):
+`BattleCamera_SetRange` builds a page of per-line values, and an HBlank DMA
+gives every line from 0 to 135 its own `BG2CNT` and scale, so the plane stops
+above the status window and turns with the camera's yaw. Outside the time
+commands are chosen (`FLAG_CHOOSING_COMMANDS`), its top 16 lines are left off.
+`BG1` holds the same picture flat. An effect that needs `BG2` for its canvas
+switches the background to that flat picture (`BATTLE_BACKGROUND_FLAT`), whose
+horizontal scroll follows the camera. `BG0` holds the windows, and the units
+are sprites.
+
+![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
+
 ## Effects
 
 `BattlePresentation_DispatchAction` starts the effect through one of three

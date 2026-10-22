@@ -23,13 +23,14 @@ s32 BattleEffectDeadCheck(s32 effect) {
 }
 
 // The target's checks, effect and messages
-/// A stat stage changes the stat by an eighth of it (UnitCalc), from half at
-/// the lowest to one and a half at the highest.
+/// A stat stage changes the stat by an eighth of it (Unit_Calculate), from half
+/// at the lowest to one and a half at the highest.
 #define STAT_STAGE_MIN -4
 #define STAT_STAGE_MAX 4
 /// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
 #define AGILITY_STAGE_DOUBLED 8
-/// A Resistance stage adds 20 to the resistance to every element (UnitCalc).
+/// A Resistance stage adds 20 to the resistance to every element
+/// (Unit_Calculate).
 #define RESISTANCE_PER_STAGE 20
 
 // The turns a stat change or a status lasts. A status, or a lowered stat but
@@ -95,8 +96,8 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// Nothing is shown here: each step queues battle events (the names and
 /// numbers a message needs, the message, the target's reactions) that
 /// BattleEvent_Playback then plays in order. The units themselves change at
-/// once: UnitCalcFar recalculates a unit's stats from its stages, and
-/// UnitRatioFar its HP and PP gauges after either changes.
+/// once: Unit_CalculateFar recalculates a unit's stats from its stages, and
+/// Unit_UpdateRatiosFar its HP and PP gauges after either changes.
 ///
 /// Called for each target in turn by BattleEvent_Playback (an action with an
 /// effect) and BattlePresentation_RunActorEntries (one without). Changes the
@@ -178,8 +179,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   critical = plan->targetCritical[slot];
 
   ability = BattleActGet(abilityId);
-  actor = UnitGetFar(actorId);
-  target = UnitGetFar(targetId);
+  actor = Unit_GetFar(actorId);
+  target = Unit_GetFar(targetId);
   Iwram_CopyWords(savedTarget, target, unitSize);
 
   // The target's distance from the aimed position: every damage and
@@ -282,7 +283,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       suffix = BattleEnemy_ClaimNameLetter(classId, 1);
       if (suffix & 0x8000)
         BattleEnemy_LetterFirstOfClass(classId);
-      BattleUnitSetFar(newUnitId, classId, suffix & 0x7fff);
+      BattleUnit_SetFar(newUnitId, classId, suffix & 0x7fff);
       // Fill a removed enemy's place in the list, or append the newcomer.
       {
         s32 i;
@@ -465,7 +466,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
       damageDealt = target->hp - hp;
       target->hp = hp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
@@ -494,7 +495,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
       damageDealt = target->pp - pp;
       target->pp = pp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
@@ -526,7 +527,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       }
       damageDealt = target->hp - newHp;
       target->hp = newHp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
@@ -552,7 +553,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         pp = 0;
       BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
       target->pp = pp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
@@ -651,7 +652,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
       damageDealt = target->hp - newHp;
       target->hp = newHp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
@@ -677,7 +678,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         PUSH_MESSAGE(MsgPpRecover);
       }
       target->pp = pp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
@@ -715,7 +716,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
         damageDealt = target->hp - newHp;
         target->hp = newHp;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         break;
       }
       BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
@@ -848,7 +849,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         PUSH_MESSAGE(MsgHpRecover);
       }
       target->hp = newHp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
@@ -874,18 +875,18 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         PUSH_MESSAGE(MsgPpRecover);
       }
       target->pp = newPp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
     }
 
     // The stat changes. The amount shown is how much the stat itself moved,
-    // measured against the saved copy once UnitCalc has recalculated it, so
-    // a stage already at its limit shows 0; the turns start again either
+    // measured against the saved copy once Unit_Calculate has recalculated it,
+    // so a stage already at its limit shows 0; the turns start again either
     // way. Zephyr and Vine set Agility's stage outright.
     case ABILITY_EFFECT_AGILITY_UP:
       target->agilityStage = AGILITY_STAGE_DOUBLED;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->agi - savedTarget->agi);
       PUSH_MESSAGE(MsgAgiUp);
       break;
@@ -893,7 +894,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_AGILITY_DOWN:
       target->agilityStage = STAT_STAGE_MIN;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->agi - target->agi);
       PUSH_MESSAGE(MsgAgiDown);
       break;
@@ -901,7 +902,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_ATTACK_DOWN:
       target->attackStage -= 1;
       CLAMP_STAT_STAGE(target->attackStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->atk - target->atk);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
@@ -910,7 +911,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_ATTACK_DOWN_2:
       target->attackStage -= 2;
       CLAMP_STAT_STAGE(target->attackStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->atk - target->atk);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
@@ -919,7 +920,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_ATTACK_UP:
       target->attackStage += 1;
       CLAMP_STAT_STAGE(target->attackStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->atk - savedTarget->atk);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
@@ -928,7 +929,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_ATTACK_UP_2:
       target->attackStage += 2;
       CLAMP_STAT_STAGE(target->attackStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->atk - savedTarget->atk);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
@@ -937,7 +938,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_DEFENSE_DOWN:
       target->defenseStage -= 1;
       CLAMP_STAT_STAGE(target->defenseStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->def - target->def);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
@@ -946,7 +947,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_DEFENSE_DOWN_2:
       target->defenseStage -= 2;
       CLAMP_STAT_STAGE(target->defenseStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, savedTarget->def - target->def);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
@@ -955,7 +956,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_DEFENSE_UP:
       target->defenseStage += 1;
       CLAMP_STAT_STAGE(target->defenseStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->def - savedTarget->def);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
@@ -964,7 +965,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_DEFENSE_UP_2:
       target->defenseStage += 2;
       CLAMP_STAT_STAGE(target->defenseStage);
-      UnitCalcFar(targetId);
+      Unit_CalculateFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->def - savedTarget->def);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
@@ -977,7 +978,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       PUSH_MESSAGE(MsgRevived);
       target->hp = target->maxHp;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
 
     case ABILITY_EFFECT_REVIVE_HALF:
@@ -985,7 +986,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       PUSH_MESSAGE(MsgRevived);
       target->hp = target->maxHp / 2;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
 
     case ABILITY_EFFECT_REVIVE_80:
@@ -993,7 +994,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       PUSH_MESSAGE(MsgRevived);
       target->hp = target->maxHp * 8 / 10;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
 
     case ABILITY_EFFECT_CURE_POISON:
@@ -1106,7 +1107,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       else
         PUSH_MESSAGE(MsgSpiritDrain);
       target->hp = 0;
-      UnitRatioFar(targetId);
+      Unit_UpdateRatiosFar(targetId);
       break;
 
     case ABILITY_EFFECT_REGENERATE:
@@ -1143,7 +1144,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         PUSH_MESSAGE(MsgHpRecover);
       }
       actor->hp = newHp;
-      UnitRatioFar(actorId);
+      Unit_UpdateRatiosFar(actorId);
       break;
     }
 
@@ -1168,7 +1169,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         PUSH_MESSAGE(MsgPpRecover);
       }
       actor->pp = newPp;
-      UnitRatioFar(actorId);
+      Unit_UpdateRatiosFar(actorId);
       break;
     }
 
@@ -1296,7 +1297,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     PUSH_MESSAGE(MsgWakes);
   }
   MemFree(savedTarget);
-  UnitCalcFar(targetId);
+  Unit_CalculateFar(targetId);
   // The party's status is drawn now, not through the queue.
   PartyStatusDrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)

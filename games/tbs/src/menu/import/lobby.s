@@ -32,7 +32,7 @@
 	.set import.UiText_DrawQuantity, 1
 	.set import.SaveState_ProcessSelectedSlot, 1
 	.set import.Djinn_GetRecoveryTable, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1

@@ -10,7 +10,7 @@
 #define DJINN_ENTRY_SET (-0x8000)
 
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element) {
-  struct OwnerDjinnState *state = UnitGet(owner);
+  struct OwnerDjinnState *state = Unit_Get(owner);
   s32 count = 0;
   s32 row;
   s32 bit;

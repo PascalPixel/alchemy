@@ -11,7 +11,7 @@
 /// counter near its end recover sooner; a chance above 100 always ends it.
 /// Called by the turn-end Tick functions below, each with its own bias.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
 
   if (turns <= 5) {
     // 0x28f is 65536 / 100 rounded down, scaling the percentage to a 16-bit
@@ -28,7 +28,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 /// attackTurns when a lowered Attack recovers early (bias 30). Called by
 /// Battle_ProcessRoundEnd, which then shows `MsgAtkNormal`.
 s32 BattleUnit_TickAttackModifier(s32 unitId) {
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
 
   if (unit->attackTurns != 0) {
     s32 cleared;
@@ -54,7 +54,7 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
 /// clears both when a lowered stat recovers early.
 #define DEFINE_TICK_MODIFIER(name, counter, level)                             \
   s32 name(s32 unitId) {                                                       \
-    struct BattleUnit *state = UnitGetFar(unitId);                             \
+    struct BattleUnit *state = Unit_GetFar(unitId);                            \
                                                                                \
     if (state->counter != 0) {                                                 \
       state->counter--;                                                        \
@@ -84,7 +84,7 @@ DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
 /// clears it and returns 1 when the status ends early at `bias`.
 #define DEFINE_TICK_STATUS(name, counter, bias)                                \
   s32 name(s32 unitId) {                                                       \
-    struct BattleUnit *state = UnitGetFar(unitId);                             \
+    struct BattleUnit *state = Unit_GetFar(unitId);                            \
     if (state->counter != 0) {                                                 \
       state->counter--;                                                        \
       if (state->counter == 0)                                                 \
@@ -104,7 +104,7 @@ DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
 /// Counts down confusion, which may end early at bias 60;
 /// Battle_ProcessRoundEnd shows `MsgConscious` when it returns 1.
 s32 BattleUnit_TickConfusion(s32 unitId) {
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   // XXX: BattleUnit.confusion is declared s8 but counted down here as a u8,
   // unlike the statuses DEFINE_TICK_STATUS ticks; a read that sign-extends it
   // elsewhere would settle its type.
@@ -143,7 +143,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   s32 sealCounter;
   struct BattleUnit *unit;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   sealCounter = unit->psySeal;
   turns = sealCounter & 0xFF;
   if (turns != 0) {
@@ -173,7 +173,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
 /// Counts down BattleUnit.refrain and returns 1 when it runs out; it never
 /// ends early. Battle_ProcessRoundEnd then shows `MsgRefrainEnd`.
 s32 BattleUnit_TickRefrain(s32 unitId) {
-  u8 *turns = &UnitGetFar(unitId)->refrain;
+  u8 *turns = &Unit_GetFar(unitId)->refrain;
   if (*turns != 0) {
     (*turns)--;
     if (*turns == 0) {
@@ -186,7 +186,7 @@ s32 BattleUnit_TickRefrain(s32 unitId) {
 /// Counts down Reflect and returns 1 when it runs out; it never ends early.
 /// Battle_ProcessRoundEnd then shows `MsgReflectEnd`.
 s32 BattleUnit_TickReflect(s32 unitId) {
-  u8 *turns = (u8 *)&UnitGetFar(unitId)->reflect;
+  u8 *turns = (u8 *)&Unit_GetFar(unitId)->reflect;
   if (*turns != 0) {
     (*turns)--;
     if (*turns == 0) {
@@ -200,7 +200,7 @@ s32 BattleUnit_TickReflect(s32 unitId) {
 /// it runs out; unlike the other stats it never ends early.
 /// Battle_ProcessRoundEnd then shows `MsgAgiNormal`.
 s32 BattleUnit_TickAgilityModifier(s32 unitId) {
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   u8 *turns = &unit->agilityTurns;
   if (*turns != 0) {
     (*turns)--;
@@ -216,9 +216,9 @@ s32 BattleUnit_TickAgilityModifier(s32 unitId) {
 /// turns reach 0, and returns 1 when any was set.
 /// A Djinni counts down only while its owner has HP; one that is set is taken
 /// off the party's recovery list and its owner's stats worked out again
-/// (UnitCalc). Called once at the end of every battle by Battle_RunEncounter,
-/// and outside battle by Field_ProcessStep as the party walks, by the Djinn
-/// menu's tutorial and by DjinnRecovery_TickTwenty.
+/// (Unit_Calculate). Called once at the end of every battle by
+/// Battle_RunEncounter, and outside battle by Field_ProcessStep as the party
+/// walks, by the Djinn menu's tutorial and by DjinnRecovery_TickTwenty.
 s32 DjinnRecovery_Tick(void) {
   struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
@@ -236,7 +236,7 @@ s32 DjinnRecovery_Tick(void) {
   if (index < initialCount) {
     timedEntry = list->entries;
     do {
-      if (timedEntry->turns > 0 && UnitGetFar(timedEntry->unitId)->hp != 0) {
+      if (timedEntry->turns > 0 && Unit_GetFar(timedEntry->unitId)->hp != 0) {
         timedEntry->turns--;
       }
       index++;
@@ -254,7 +254,7 @@ s32 DjinnRecovery_Tick(void) {
 
         Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
         DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
-        UnitCalcFar(id);
+        Unit_CalculateFar(id);
         removed = 1;
       } else {
         expiredEntry++;
@@ -323,7 +323,7 @@ s32 Battle_ProcessRoundEnd(void) {
       do {
         if (timedEntry->turns > 0 &&
             BattleObject_Get(timedEntry->unitId) != 0 &&
-            UnitGetFar(timedEntry->unitId)->hp != 0) {
+            Unit_GetFar(timedEntry->unitId)->hp != 0) {
           timedEntry->turns--;
         }
         recoveryIndex++;
@@ -364,7 +364,7 @@ s32 Battle_ProcessRoundEnd(void) {
             Djinn_ActivateFar(unitId, element, expiredEntry->index);
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
-            UnitCalcFar(unitId);
+            Unit_CalculateFar(unitId);
             ElementGlow_Play(unitId, element, GLOW_BURST, 0);
             BattleEvent_WaitForReady();
           }
@@ -400,7 +400,7 @@ s32 Battle_ProcessRoundEnd(void) {
         s32 hpAmount;
         s32 ppAmount;
         s32 unitId = unitIds[unitIndex];
-        struct BattleUnit *unit = UnitGetFar(unitId);
+        struct BattleUnit *unit = Unit_GetFar(unitId);
 
         if (unit->ready != 0) {
           unit->ready--;
@@ -526,8 +526,9 @@ s32 Battle_ProcessRoundEnd(void) {
 /// boost, the haunt's damage, poison and the Grim Reaper.
 /// Called by BattlePresentation_DispatchAction after every action, with the
 /// action's plan. Changes the side's Djinn recovery list, the actor's
-/// elementLevels, HP and grimReaper, and works out its stats again (UnitCalc);
-/// the messages are queued and played at once (BattleEvent_DispatchQueued).
+/// elementLevels, HP and grimReaper, and works out its stats again
+/// (Unit_Calculate); the messages are queued and played at once
+/// (BattleEvent_DispatchQueued).
 #ifdef UBFIX
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
 #else
@@ -546,7 +547,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   // is the opponent's for an enemy unit id.
   unitId = plan->actorId;
   battleContinues = 0;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                (unitId < 0 || unitId > ALLY_MAX)))
               ->list;
@@ -613,7 +614,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     s32 mostOfOneElement;
     s32 i;
     // The summon's boost: the element it used most Djinn of rises to that
-    // many levels (elementLevels), and each element's power that UnitCalc
+    // many levels (elementLevels), and each element's power that Unit_Calculate
     // then raises is announced against a copy taken before.
     mostOfOneElement = 0;
     before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
@@ -629,7 +630,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         unit->elementLevels[strongestElement] < mostOfOneElement) {
       unit->elementLevels[strongestElement] = mostOfOneElement;
     }
-    UnitCalcFar(unitId);
+    Unit_CalculateFar(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
@@ -733,5 +734,5 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     }
     BattleEvent_DispatchQueued();
   }
-  UnitCalcFar(unitId);
+  Unit_CalculateFar(unitId);
 }

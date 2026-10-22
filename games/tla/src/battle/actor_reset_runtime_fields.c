@@ -20,7 +20,7 @@ s32 BattleActor_ResetRuntimeFields(s32 actor) {
   s32 count;
   u8 zero;
 
-  state = UnitGet(actor);
+  state = Unit_Get(actor);
   zero = 0;
   count = 3;
   cursor = state + 0x12f;
@@ -54,6 +54,6 @@ s32 BattleActor_ResetRuntimeFields(s32 actor) {
   state[0x147] = 0;
   state[0x148] = 0;
 
-  UnitCalcFar(actor);
+  Unit_CalculateFar(actor);
   return BattleUnit_BuildStatusFlags(actor, BattleObject_Get(actor));
 }

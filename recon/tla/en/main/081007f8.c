@@ -26,10 +26,10 @@ struct InventoryMenuState {
 };
 
 struct BattleAct *BattleActGet(s32 action);
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 s32 BattleRecoveryCalc(s32 value, s32 selector, s32 multiplier);
-void UnitRatioFar(s32 unitId);
-void UnitCalcFar(s32 unitId);
+void Unit_UpdateRatiosFar(s32 unitId);
+void Unit_CalculateFar(s32 unitId);
 u32 Random16(void);
 void UiText_DrawQuantity(s32 slot, s32 digits);
 
@@ -55,9 +55,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   partyResultShown = 0;
 
   if (targetId == 9)
-    target = UnitGet(gPartyState.currentOwner);
+    target = Unit_Get(gPartyState.currentOwner);
   else
-    target = UnitGet(targetId);
+    target = Unit_Get(targetId);
 
   /* FAKEMATCH(dead code): the dead test loads effect->range ahead of the
    * count guard, as in The Broken Seal's twin; as plain code, 84 of 501
@@ -68,7 +68,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == 0xff) {
       targetId = menu->ownerIds[targetIndex];
-      target = UnitGet(targetId);
+      target = Unit_Get(targetId);
     }
 
     amount = effect->power;
@@ -78,7 +78,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         if (effect->element != 4) {
           s32 elementIndex;
 
-          caster = UnitGet(sourceId);
+          caster = Unit_Get(sourceId);
           elementIndex = effect->element;
           elementPower = caster->element[elementIndex].power;
         } else
@@ -103,7 +103,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           } else if (partyResultShown == 0) {
             messageOffset = 1;
           }
-          UnitRatioFar(targetId);
+          Unit_UpdateRatiosFar(targetId);
           changed = 1;
           if (effect->range == 0xff) {
             partyResultShown = 1;
@@ -173,7 +173,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = 6;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
         if (effect->range == 0xff) {
           partyResultShown = 1;
@@ -207,7 +207,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = 1;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
       }
       break;
@@ -225,7 +225,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = 6;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
       }
       break;
@@ -233,7 +233,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
         target->hp = target->maxHp;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
           messageOffset = 0xc;
@@ -245,7 +245,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->maxHp / 2;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = 0xc;
       } else if (partyResultShown == 0) {
@@ -256,7 +256,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
         target->hp = target->maxHp * 7 / 10;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = 0xc;
       } else if (partyResultShown == 0) {
@@ -286,7 +286,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   }
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++)
-    UnitCalcFar(menu->ownerIds[targetIndex]);
+    Unit_CalculateFar(menu->ownerIds[targetIndex]);
   menu->messageOffset = messageOffset;
   return 0;
 }

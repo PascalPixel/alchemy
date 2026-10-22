@@ -193,9 +193,9 @@ s32 Shop_OpenDebugShop(s32 unused) {
   Inventory_EquipFar(
       ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | ITEM_MURAMASA));
   Inventory_AddItemFar(IVAN, ITEM_BONE);
-  UnitGetFar(MIA)->poison = 1;
-  UnitGetFar(JENNA)->poison = 1;
-  UnitGetFar(IVAN)->haunt = 1;
+  Unit_GetFar(MIA)->poison = 1;
+  Unit_GetFar(JENNA)->poison = 1;
+  Unit_GetFar(IVAN)->haunt = 1;
   Shop_Run(SHOP_DEBUG_STOCK_ROW, 0x1e);
   return 0;
 }

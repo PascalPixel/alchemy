@@ -354,9 +354,9 @@ Func_0810106c:
 	adds r4, r0, #0
 	ldrb r0, [r6]
 	str r4, [sp, #0]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldrb r0, [r5]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r2, [r7, #20]
 	movs r3, #13
 	strb r3, [r2, #5]
@@ -536,9 +536,9 @@ Func_0810106c:
 	adds r4, r0, #0
 	ldrb r0, [r6]
 	str r4, [sp, #0]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldrb r0, [r5]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	movs r1, #192
 	lsls r1, r1, #1
 	adds r3, r7, r1
@@ -650,7 +650,7 @@ Func_0810106c:
 	adds r4, r0, #0
 	ldrb r0, [r6]
 	str r4, [sp, #0]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r2, [r7, #20]
 	movs r3, #13
 	strb r3, [r2, #5]

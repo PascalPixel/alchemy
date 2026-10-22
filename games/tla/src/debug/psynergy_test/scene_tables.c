@@ -29,7 +29,7 @@ void UiWork_FinalizePendingCore(void);
 void UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 UiWork_IsComplete(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
-void UnitCalc(s32);
+void Unit_Calculate(s32);
 s32 Unit_AddPp(s32, s32);
 void GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
@@ -135,9 +135,9 @@ void Func_020001e0(void) {}
 
 void Func_020001e4(void) {
   UiText_ShowPositionedMessageAndWait((s32)MsgYouWentUp, 1);
-  Unit_LevelUpTo(4, ((u8 *)UnitGet(4))[15] + 10);
-  Unit_LevelUpTo(5, ((u8 *)UnitGet(5))[15] + 10);
-  Unit_LevelUpTo(6, ((u8 *)UnitGet(6))[15] + 10);
+  Unit_LevelUpTo(4, ((u8 *)Unit_Get(4))[15] + 10);
+  Unit_LevelUpTo(5, ((u8 *)Unit_Get(5))[15] + 10);
+  Unit_LevelUpTo(6, ((u8 *)Unit_Get(6))[15] + 10);
 }
 
 void Func_02000224(void) {
@@ -149,9 +149,9 @@ void Func_02000224(void) {
     Inventory_AddItem(4, 228);
     Inventory_AddItem(4, 229);
   }
-  UnitCalc(4);
-  UnitCalc(5);
-  UnitCalc(6);
+  Unit_Calculate(4);
+  Unit_Calculate(5);
+  Unit_Calculate(6);
 }
 
 static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
@@ -170,16 +170,16 @@ void Func_0200026c(void) {
   Unit_AddPp(4, -50);
   Unit_AddPp(5, -40);
   Unit_AddPp(6, -35);
-  state = UnitGet(4);
+  state = Unit_Get(4);
   state[0x131] = 1;
   state += 0x140;
   *state = 1;
-  state = UnitGet(5);
+  state = Unit_Get(5);
   state[0x130] = 1;
   state[0x131] = 2;
-  UnitCalc(4);
-  UnitCalc(5);
-  UnitCalc(6);
+  Unit_Calculate(4);
+  Unit_Calculate(5);
+  Unit_Calculate(6);
 }
 
 void Func_020002f4(s32 owner, s32 element, s32 djinn, s32 activate) {
@@ -211,9 +211,9 @@ void Func_02000330(void) {
   Func_020002f4(6, 1, 3, 1);
   Func_020002f4(6, 1, 4, 1);
   Func_020002f4(6, 1, 5, 1);
-  UnitCalc(4);
-  UnitCalc(5);
-  UnitCalc(6);
+  Unit_Calculate(4);
+  Unit_Calculate(5);
+  Unit_Calculate(6);
 }
 
 void Func_02000444(void) { Object_GetById(4)->terrainId = 2; }

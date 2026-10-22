@@ -1599,7 +1599,7 @@ Func_02000cd0:
 	cmp r5, #14
 	bgt .L_020090f8
 	movs r0, #4
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, .L_020090f4
 	ldrh r2, [r0, r6]
 	ands r3, r2

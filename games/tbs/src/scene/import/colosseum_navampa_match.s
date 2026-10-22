@@ -45,7 +45,7 @@
 	.set import.ItemIcon_LoadTilesFar, 1
 	.set import.PartyTalkMenu_Choose, 1
 	.set import.Resource_LoadFixedBlockBIntoFreeSlot, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Inventory_AddItem, 1
 	.set import.Inventory_Equip, 1
 	.set import.Engine_GameFlagIsSet, 1

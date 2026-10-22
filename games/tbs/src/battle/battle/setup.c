@@ -213,7 +213,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
     s32 remaining;
 
     do {
-      unit = UnitGetFar(owners[i]);
+      unit = Unit_GetFar(owners[i]);
 
       // The four element levels, cleared from the last.
       level = (u8 *)&unit->elementLevels[ELEMENT_COUNT - 1];
@@ -246,7 +246,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->agilityStage = 0;
       unit->challenge = 0;
 
-      UnitCalcFar(owners[i]);
+      Unit_CalculateFar(owners[i]);
       i++;
     } while (i < count);
   }
@@ -363,7 +363,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
       s32 partySlot;
 
       for (partySlot = 0; partySlot < partySize; partySlot++) {
-        struct BattleUnit *member = UnitGetFar(partyMembers[partySlot]);
+        struct BattleUnit *member = Unit_GetFar(partyMembers[partySlot]);
 
         totals[element] += member->djinnOwnedCounts[element];
       }

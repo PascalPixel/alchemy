@@ -628,7 +628,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MESSAGE_PROTAGONIST_NAME:
             // A unit's name is 15 bytes, widened here to codes.
-            nameBytes = UnitGetFar(gGameState.selectedActor)->name;
+            nameBytes = Unit_GetFar(gGameState.selectedActor)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -642,9 +642,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             no = decode(&reader) - 1;
-            nameBytes =
-                UnitGetFar(UiText_LookupArgument(MESSAGE_ARGUMENT_ACTOR, clear))
-                    ->name;
+            nameBytes = Unit_GetFar(UiText_LookupArgument(
+                                        MESSAGE_ARGUMENT_ACTOR, clear))
+                            ->name;
             nameOutput = name;
             j = 0;
             do {
@@ -658,7 +658,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
-            nameBytes = UnitGetFar(argument)->name;
+            nameBytes = Unit_GetFar(argument)->name;
             nameOutput = name;
             j = 0;
             do {
@@ -1072,7 +1072,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = UnitGetFar(gGameState.selectedActor)->name;
+            nameBytes = Unit_GetFar(gGameState.selectedActor)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1085,7 +1085,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
-            unit = UnitGetFar(
+            unit = Unit_GetFar(
                 UiText_LookupArgument(MESSAGE_ARGUMENT_ACTOR, clear));
             // In battle a unit of class 122 is called Mystery Man and one of
             // class 125 Mystery Woman (MsgMysteryPersonName and the next).
@@ -1113,7 +1113,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
-            nameBytes = UnitGetFar(argument)->name;
+            nameBytes = Unit_GetFar(argument)->name;
             nameOutput = name;
             j = 0;
             do {

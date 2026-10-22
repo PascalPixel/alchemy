@@ -45,7 +45,7 @@ struct PsynergyMenuState {
   u8 mode;
 };
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
@@ -91,7 +91,7 @@ s32 Func_080fd000(u16 *ownerIds) {
   result = 0;
   shown = 0;
   menu->mode = result;
-  unit = UnitGet(ownerIds[selection]);
+  unit = Unit_Get(ownerIds[selection]);
   if (UiWindow_UpdateOrCreate(&menu->psynergyWindow, 13, 3, 17, 10, 2))
     Menu_SpawnIconEntries(menu, menu->psynergyWindow);
   if (UiWindow_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
@@ -102,7 +102,7 @@ s32 Func_080fd000(u16 *ownerIds) {
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
       window = menu->statusWindow;
-      unit = UnitGet(ownerIds[selection]);
+      unit = Unit_Get(ownerIds[selection]);
       PsynergyMenu_RefreshOwnerPsynergy(ownerIds[selection]);
       Func_080f8170(window, ownerIds[selection], 0, 0);
       Func_080fd55c(menu->shortcutWindow, ownerIds[selection]);

@@ -14,8 +14,8 @@
 	.set import.Engine_ActorSetSpriteFlags, 1
 	.set import.Engine_ObjectSetBlendMode, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UnitGet, 1
-	.set import.UnitCalc, 1
+	.set import.Unit_Get, 1
+	.set import.Unit_Calculate, 1
 	.set import.PartyInventory_FindOwner, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

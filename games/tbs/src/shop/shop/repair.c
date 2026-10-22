@@ -43,7 +43,7 @@ s32 Shop_SelectRepair(s32 unitId) {
   s32 y;
 
   shop = gMenuWork;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   priceWindow =
       UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, UI_WINDOW_INSTANT);
@@ -137,7 +137,7 @@ s32 Shop_SelectRepair(s32 unitId) {
 /// Shop_SelectRepair.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);

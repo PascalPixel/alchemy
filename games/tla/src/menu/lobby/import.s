@@ -66,10 +66,10 @@ Func_0200193c:
 	.thumb_func
 Func_02001944:
 	overlay_veneer Scheduler_SetTaskFlagsFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

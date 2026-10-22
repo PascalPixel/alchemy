@@ -16,7 +16,7 @@ Func_0812561c:
 	ldrb r0, [r0]
 	str r1, [sp, #4]
 	mov r8, r0
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r8
 	str r0, [sp, #8]
 	cmp r2, #7
@@ -259,7 +259,7 @@ Func_0812561c:
 	cmp r6, #3
 	ble .L_081257da
 	mov r0, r8
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	movs r6, #0
 	movs r7, #72
 .L_08125804:
@@ -535,7 +535,7 @@ Func_0812561c:
 	cmp r3, #0
 	beq .L_08125a76
 	mov r0, r8
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 .L_08125a76:
 	add sp, #32
 	pop {r3, r5, r6, r7}

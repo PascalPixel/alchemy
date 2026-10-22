@@ -96,7 +96,7 @@ Func_02000878:
 	b .L_02008a2c
 .L_02008940:
 	ldr r0, [sp, #4]
-	bl UnitGet
+	bl Unit_Get
 	ldr r1, [sp, #0]
 	ldr r0, [sp, #4]
 	bl Inventory_GetQuantity
@@ -132,7 +132,7 @@ Func_02000878:
 	ldr r0, [sp, #4]
 	bl Unit_RefreshPsynergy
 	ldr r0, [sp, #4]
-	bl UnitCalc
+	bl Unit_Calculate
 	adds r0, r6, #0
 	bl PartyInventory_Add
 	adds r7, r0, #0

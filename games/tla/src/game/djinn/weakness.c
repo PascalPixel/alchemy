@@ -134,7 +134,7 @@ u32 BattleRandomPercent(void);
 // As The Broken Seal's function of the same name, with effects 90 and 91 added.
 s32 BattleEffect_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
-  u8 *state = UnitGet(target);
+  u8 *state = Unit_Get(target);
   struct BattleUnit *unit = (struct BattleUnit *)state;
   s32 attempts = 1;
   s32 score;

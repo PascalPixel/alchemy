@@ -435,7 +435,7 @@ s32 CharacterSelector_RunRearrange(void) {
   redraw = 1;
   result = 0;
   page = menu->page;
-  UnitGetFar(menu->ownerIds[ownerIndex]);
+  Unit_GetFar(menu->ownerIds[ownerIndex]);
   for (rowIndex = 0; rowIndex < 4; rowIndex++) {
     menu->rowX[rowIndex] = 130 + rowIndex * 32;
     menu->rowY[rowIndex] = 128;
@@ -463,7 +463,7 @@ s32 CharacterSelector_RunRearrange(void) {
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, // "A: Details"
                                       menu->selectorWindow, 0, 8);
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
-      UnitGetFar(menu->ownerIds[ownerIndex]);
+      Unit_GetFar(menu->ownerIds[ownerIndex]);
       page = (page + 3) % 3;
       Menu_CreateWindowAndEntryObjects(menu->ownerIds[ownerIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
@@ -542,7 +542,7 @@ s32 PsynergyMenu_SelectOwner(void) {
   s32 result;
   s32 rowIndex;
 
-  UnitGetFar(menu->ownerTable[ownerIndex]);
+  Unit_GetFar(menu->ownerTable[ownerIndex]);
   RenderOutput_RedrawSavedRectFar(menu->messageWindow);
   UiText_DrawCharacterAtOffsetFar(MsgChooseCharacter, menu->messageWindow, 0,
                                   0);
@@ -552,7 +552,7 @@ s32 PsynergyMenu_SelectOwner(void) {
     if (redraw) {
       redraw = 0;
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
-      UnitGetFar(menu->ownerTable[ownerIndex]);
+      Unit_GetFar(menu->ownerTable[ownerIndex]);
       page = (page + 3) % 3;
       Menu_CreateWindowAndEntryObjects(menu->ownerTable[ownerIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerTable[ownerIndex]);
@@ -560,7 +560,7 @@ s32 PsynergyMenu_SelectOwner(void) {
         menu->rowPositions[rowIndex] = 30;
       menu->rowPositions[ownerIndex] = 26;
       menu->psynergyCount = PsynergyMenu_CollectActions(
-          UnitGetFar(menu->ownerTable[ownerIndex]), (u16 *)menu->psynergies,
+          Unit_GetFar(menu->ownerTable[ownerIndex]), (u16 *)menu->psynergies,
           PSYNERGY_LIST_ALL);
       PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
       Menu_PlaceEntryObjectsInGrid(96, 96, 8);
@@ -760,7 +760,7 @@ s32 CharacterMenu_SelectCommand(void) {
 
   // One member's page at a time; L and R start the next.
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
-    UnitGetFar(menu->selectedIds[0]);
+    Unit_GetFar(menu->selectedIds[0]);
     CharacterMenu_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
                                      1);
     count = CharacterMenu_BuildAvailability(entries, 1, menu->selectedIds[0]);
@@ -974,7 +974,7 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
     messageVariant++;
   }
   if (messageVariant == 1) {
-    struct BattleUnit *owner = UnitGetFar(menu->selectedIds[0]);
+    struct BattleUnit *owner = Unit_GetFar(menu->selectedIds[0]);
 
     if (owner->level == 99) {
       messageVariant = 8; // "These are your experience points."
@@ -1012,7 +1012,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
     hasDjinn = 1;
   else
     hasDjinn = 0;
-  unit = UnitGetFar(ownerId);
+  unit = Unit_GetFar(ownerId);
   // The Djinn row, in tiles: higher on the full page (mode 1), which has the
   // elemental rows below it.
   if ((mode & 0xff) == 1)
@@ -1131,7 +1131,7 @@ void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags) {
   struct BattleUnit *unit;
 
   menu = gMenuWork;
-  unit = UnitGetFar(ownerId);
+  unit = Unit_GetFar(ownerId);
   menu->cursor->active = ICON_SHOWN;
   flags &= 0x100;
   if (flags == 0) {
@@ -1182,7 +1182,7 @@ s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId) {
   s32 count;
   s32 poison;
 
-  unit = UnitGetFar(ownerId);
+  unit = Unit_GetFar(ownerId);
   for (ailmentIndex = 4; ailmentIndex >= 0; ailmentIndex--)
     ailments[ailmentIndex] = 0;
 
@@ -1224,7 +1224,7 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index) {
   s32 pageCount;
   s32 selected;
 
-  unitBits = (s32)UnitGetFar(menu->paneOwner[index]);
+  unitBits = (s32)Unit_GetFar(menu->paneOwner[index]);
   itemCount = menu->itemCount;
   selected = menu->selectedIndexByOwner[menu->paneOwner[index]];
   if ((selected + 1) > itemCount) {
@@ -1432,7 +1432,7 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
 
   (void)unused;
 
-  owner = UnitGetFar(menu->ownerIds[0]);
+  owner = Unit_GetFar(menu->ownerIds[0]);
 
   RenderOutput_RedrawSavedRectFar(window);
 
@@ -1546,7 +1546,7 @@ s32 PsynergyMenu_SelectAction(void) {
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
-        UnitGetFar(menu->ownerIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
+        Unit_GetFar(menu->ownerIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
     WaitFrames(1);
     Menu_BuildPageResult(&state, 0);
     PsynergyMenu_DrawPreparedPsynergyIcons(menu->statusWindow,
@@ -1626,7 +1626,7 @@ s32 PsynergyMenu_ActionReturnTrue(void) { return 1; }
 void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 ownerId) {
   struct PsynergyMenuState *menu = gMenuWork;
 
-  UnitGetFar(ownerId);
+  Unit_GetFar(ownerId);
   ItemMenu_HideAllIcons();
   PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
 }
@@ -1739,7 +1739,7 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
   u32 rowIndex;
   s32 message;
 
-  unit = UnitGetFar(menu->paneOwner[0]);
+  unit = Unit_GetFar(menu->paneOwner[0]);
   UiWindow_ClearInteriorTilesFar(window, 128, 8, 224, 96);
   firstEntry = state->page * PAGE_ROWS;
   rowCount = (u8)(state->entryCount - firstEntry);
@@ -1797,7 +1797,7 @@ s32 ItemMenu_SelectItem(void) {
     s32 ownerId = menu->paneOwner[0];
 
     result = 0;
-    UnitGetFar(menu->ownerIds[ownerId]);
+    Unit_GetFar(menu->ownerIds[ownerId]);
   }
   UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, STATUS_EQUIP_WINDOW_WIDTH,
                           10, 2);
@@ -1823,7 +1823,7 @@ s32 ItemMenu_SelectItem(void) {
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
-    owner = UnitGetFar(menu->paneOwner[0]);
+    owner = Unit_GetFar(menu->paneOwner[0]);
     for (iconIndex = 0; iconIndex <= 14; iconIndex++)
       savedInventory[iconIndex] = owner->inventory[iconIndex];
     menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
@@ -1988,7 +1988,7 @@ void ItemMenu_DrawCategory(struct UiWindow *window, s32 ownerId, s32 mode) {
   struct InventoryMenuState *menu = gMenuWork;
   u16 *items;
 
-  UnitGetFar(ownerId);
+  Unit_GetFar(ownerId);
   ItemMenu_PosCategory();
   ItemMenu_HideAllIcons();
   UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels, window, 0, 0);

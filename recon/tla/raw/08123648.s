@@ -164,7 +164,7 @@ Func_08123648:
 	bne .L_08123786
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	ldr r4, [sp, #0]

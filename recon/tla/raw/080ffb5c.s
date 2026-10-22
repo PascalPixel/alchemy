@@ -23,7 +23,7 @@ PsynergyMenu_DrawListPage:
 	ldrb r0, [r3]
 	adds r5, r2, #0
 	sub sp, #8
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #4]
 	mov r0, r8
 	bl RenderOutput_RedrawSavedRectFar

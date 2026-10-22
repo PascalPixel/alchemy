@@ -12,7 +12,7 @@
 	.set import.Engine_ObjectSetBlendMode, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapWaitWorkValuesBelow256, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Item_Get, 1
 	.set import.Inventory_AddItem, 1
 	.set import.Inventory_Equip, 1

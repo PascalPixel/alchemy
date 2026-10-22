@@ -238,14 +238,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
       command = &commands[commandIndex];
       actorId = actors[commandIndex];
-      // UB: UnitGetFar returns a pointer, not the cast's doubleword result.
+      // UB: Unit_GetFar returns a pointer, not the cast's doubleword result.
 #ifdef UBFIX
-      unit = UnitGetFar(actorId);
+      unit = Unit_GetFar(actorId);
 #else
       /* FAKEMATCH(wrapper): called as returning a doubleword, which sets r1,
-       * so sched2 loads i * 2 first; as UnitGetFar(actorId), 1 of 1727
+       * so sched2 loads i * 2 first; as Unit_GetFar(actorId), 1 of 1727
        * instructions differ in tbs-en. */
-      unit = (struct BattleUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
+      unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_GetFar)(actorId);
 #endif
       // The member's row starts on Attack; its portrait shows at the left.
       gLinkCountdownWork->commandActor = actorId;

@@ -387,7 +387,7 @@ result rounds down.
 
 A unit's Power and Resist come from its element levels
 (`gElement_PowerResistByLevel`) or, for an enemy, its element preset, with
-the equipment's added by `UnitCalc`. A Resistance stage adds 20 Resist in
+the equipment's added by `Unit_Calculate`. A Resistance stage adds 20 Resist in
 every element (`RESISTANCE_PER_STAGE`). A summon's boost, applied at the end
 of the summoner's turn, raises the element it spent most Djinn of by 10, 30,
 60 or 100 Power for one to four Djinn (`BattleUnit_ProcessTurnEnd`).
@@ -653,7 +653,7 @@ form a table of contents. The functions are declared in
 
 - **unit**, **unit id**: everyone in a fight. Party members keep their
   character numbers as unit ids, up to `ALLY_MAX`, and enemies take ids from
-  `FIRST_ENEMY_UNIT`. `UnitGetFar` returns a unit's `struct BattleUnit`: its
+  `FIRST_ENEMY_UNIT`. `Unit_GetFar` returns a unit's `struct BattleUnit`: its
   HP, PP, stats, statuses, stat stages and a Power and a Resist in each
   element (`BattleUnit.element`).
 - **ability**, **ability id**: anything a unit does on its turn, from Attack

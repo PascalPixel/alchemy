@@ -247,7 +247,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   s32 letterCount = 0;
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
-  u8 *originalName = UnitGetFar(member)->name;
+  u8 *originalName = Unit_GetFar(member)->name;
   struct UiRenderWork *render = UI_WORK;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
@@ -523,7 +523,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   s32 letterCount = 0;
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
-  u8 *originalName = UnitGetFar(member)->name;
+  u8 *originalName = Unit_GetFar(member)->name;
   struct UiRenderWork *render = UI_WORK;
   s32 textDirty = 1;
   s32 cursorDirty = 1;

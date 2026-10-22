@@ -611,7 +611,7 @@ static void GomaCaveEntrance_GiveShamansRod(void) {
   s32 id;
 
   id = ITEM_SHAMANS_ROD;
-  member = UnitGet(IVAN);
+  member = Unit_Get(IVAN);
   tries = 0;
 retry:
   if (++tries > 1000) {

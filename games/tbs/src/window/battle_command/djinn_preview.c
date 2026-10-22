@@ -122,7 +122,7 @@ s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
 /// abilities after the change (unchanged ones in colour 15, new ones in
 /// colour 4) and then those it would lose (colour 2), and *pageCount is set
 /// to their number (at least 1).
-/// The Djinni is toggled and the unit recalculated (UnitCalcFar) only to
+/// The Djinni is toggled and the unit recalculated (Unit_CalculateFar) only to
 /// measure: the unit is restored from a copy before it returns.
 /// Battle_SelectAbility calls it as the cursor moves.
 struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
@@ -193,7 +193,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     }
   }
 
-  unit = UnitGetFar(owner);
+  unit = Unit_GetFar(owner);
   if (win != 0)
     UiWork_Finalize(win, 1);
 
@@ -221,7 +221,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     Djinn_DeactivateFar(owner, element, djinnIndex);
   else
     Djinn_ActivateFar(owner, element, djinnIndex);
-  UnitCalcFar(owner);
+  Unit_CalculateFar(owner);
 
   abilityCount =
       DjinnMenu_ListChangedDjinn(savedUnit->actionSlots, unit->actionSlots,

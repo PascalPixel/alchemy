@@ -45,7 +45,7 @@ struct DefeatBattleWork {
   struct DefeatSpoils spoils;
 };
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct EnemyDefinition *Enemy_GetDefinitionFar(s32 id);
@@ -99,7 +99,7 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   s32 itemPriority;
   s32 slot;
 
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)

@@ -42,7 +42,7 @@ struct ShopUnit {
 // Unnamed in the catalog yet: 4699, 4723 and 4862 take placeholders here.
 extern u8 Msg04699[], Msg04723[], Msg04862[];
 
-struct ShopUnit *UnitGet(s32 unitId);
+struct ShopUnit *Unit_Get(s32 unitId);
 void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 s32 Inventory_CountFar(s32 unitId);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
@@ -65,7 +65,7 @@ void Func_081084f4(s32 message);
 
 s32 Func_08109cac(s32 unitId) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = UnitGet(unitId);
+  struct ShopUnit *unit = Unit_Get(unitId);
   s32 inventoryCount = 1;
   s32 slot = 0;
   void *priceWindow = UiWindow_CreateFar(15, 8, 15, 4, 2);

@@ -2777,7 +2777,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_GameFlagSet(FLAG_DJINNI_0 + DJINNI_FIZZ);
   Djinn_AddToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Djinn_Activate(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
-  UnitCalc(MIA);
+  Unit_Calculate(MIA);
   Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -2907,7 +2907,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
     s32 inventorySlot = Inventory_Find(owner, oldItem);
 
     if (inventorySlot != -1) {
-      UnitGet(owner)->inventory[inventorySlot] = newItem;
+      Unit_Get(owner)->inventory[inventorySlot] = newItem;
     }
   }
 }

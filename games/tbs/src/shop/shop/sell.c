@@ -98,7 +98,7 @@ s32 Shop_SelectSell(s32 unitId) {
   s32 x;
 
   shop = gMenuWork;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   priceWindow =
       UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, UI_WINDOW_INSTANT);
@@ -200,7 +200,7 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   s32 slot;
   struct RenderOutput *icon;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   x = 8;
   y = 0;
   if (window != 0) {
@@ -246,7 +246,7 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   struct BattleUnit *unit;
 
   shop = gMenuWork;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
   unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
@@ -278,7 +278,7 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
 /// it, and the shops of its type may sell it again.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   u8 rare = item->flags & ITEM_RARE;

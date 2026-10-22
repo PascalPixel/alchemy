@@ -130,7 +130,7 @@ s32 Item_GetEquippedElement(s32 owner) {
   struct ItemDefinition *item;
   struct BattleUnit *unit;
 
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   if (unit->classIndex == CLASS_INDEX_ENEMY)
     return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
@@ -299,7 +299,7 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   // Restore's psySeal and confusion reads and Cure All's haunt read go
   // through the byte view; as unit fields, each zero test merges with its
   // neighbour's into one halfword or word load.
-  struct BattleUnit *unit = UnitGet(target);
+  struct BattleUnit *unit = Unit_Get(target);
   s32 attempts = 1;
   s32 score;
   s32 attempt;

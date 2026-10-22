@@ -36,7 +36,7 @@ struct ItemAnimation {
 
 extern char MsgItemBroke;
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 void Func_08138008(struct BattlePresentationWork *work);
@@ -134,7 +134,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
        targetOrFadeIndex++)
     ObjMotRst(work.actors[targetOrFadeIndex]);
 
-  unit = UnitGet(selection->unitId);
+  unit = Unit_Get(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
   itemDefinition = Item_Get(inventoryEntry);
   if (itemDefinition->useType == 1) {

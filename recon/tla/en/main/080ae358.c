@@ -3,7 +3,7 @@
 // moves the last djinn of the owner holding most to the one holding least.
 // The transfer's result reuses the sum (a fresh local is not copied to r2,
 // differ 4), and the sum is cleared before the counts' address is formed
-// (differ 4 after it). Remaining: after UnitGet the native restores the
+// (differ 4 after it). Remaining: after Unit_Get the native restores the
 // lowest sum from the stack (ldr r4, [sp]) before it doubles the counts'
 // offset (lsls r3, r3, #1); this doubles first (equal priority, the shift
 // has a dependent). An asm tied to the sum lowers the restore's priority
@@ -30,7 +30,7 @@ void Func_080ae358(void) {
 
     for (i = 0; i < count; i++) {
       s32 owner = gPartyState.activeOwners[i];
-      struct OwnerDjinnState *unit = UnitGet(owner);
+      struct OwnerDjinnState *unit = Unit_Get(owner);
       u8 *counts;
       s32 j;
 

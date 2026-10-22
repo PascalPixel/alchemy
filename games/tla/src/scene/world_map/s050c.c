@@ -49,7 +49,7 @@ void Func_0200050c(void) {
       register struct PartyState *state asm("r2") = &gPartyState;
 
       __asm__ __volatile__("" : "+r"(state));
-      pp += ((struct BattleUnit *)UnitGet(state->activeOwners[i]))->pp;
+      pp += ((struct BattleUnit *)Unit_Get(state->activeOwners[i]))->pp;
     }
     i++;
     if (i < count)

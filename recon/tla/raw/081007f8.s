@@ -39,7 +39,7 @@ BattleEffect_ApplyToTargets:
 .L_0810083c:
 	mov r0, r10
 .L_0810083e:
-	bl UnitGet
+	bl Unit_Get
 	adds r5, r0, #0
 	mov r0, r11
 	ldrb r2, [r0, #8]
@@ -67,7 +67,7 @@ BattleEffect_ApplyToTargets:
 	ldrh r3, [r4, r3]
 	mov r10, r3
 	mov r0, r10
-	bl UnitGet
+	bl Unit_Get
 	adds r5, r0, #0
 .L_0810087c:
 	mov r0, r11
@@ -106,7 +106,7 @@ BattleEffect_ApplyToTargets:
 	cmp r3, #4
 	beq .L_081008e4
 	ldr r0, [sp, #12]
-	bl UnitGet
+	bl Unit_Get
 	mov r4, r11
 	ldrb r3, [r4, #2]
 	lsls r3, r3, #2
@@ -169,7 +169,7 @@ BattleEffect_ApplyToTargets:
 	movs r7, #1
 .L_08100942:
 	mov r0, r10
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	movs r3, #1
 	mov r4, r11
 	mov r9, r3
@@ -315,7 +315,7 @@ BattleEffect_ApplyToTargets:
 	movs r7, #6
 .L_08100a5c:
 	mov r0, r10
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	movs r3, #1
 	mov r4, r11
 	mov r9, r3
@@ -477,7 +477,7 @@ BattleEffect_ApplyToTargets:
 	movs r7, #6
 .L_08100bfc:
 	mov r0, r10
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	movs r3, #1
 	mov r9, r3
 	b .L_08100ca6
@@ -489,7 +489,7 @@ BattleEffect_ApplyToTargets:
 	ldrh r3, [r5, #52]
 	mov r0, r10
 	strh r3, [r5, #56]
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	movs r0, #1
 	mov r1, r8
 	mov r9, r0
@@ -531,7 +531,7 @@ BattleEffect_ApplyToTargets:
 	strh r0, [r5, #56]
 	mov r0, r10
 .L_08100c66:
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	mov r0, r8
 	cmp r0, #0
 	bne .L_08100ca6
@@ -620,7 +620,7 @@ BattleEffect_ApplyToTargets:
 	lsls r1, r1, #2
 	adds r3, r3, r1
 	ldrh r0, [r2, r3]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r3, [sp, #0]
 	adds r3, #1
 	lsls r3, r3, #24

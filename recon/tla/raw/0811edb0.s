@@ -190,7 +190,7 @@ Func_0811edb0:
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	mov r1, r8
 	movs r7, #8
 	ldrsh r3, [r1, r7]

@@ -161,7 +161,7 @@ Func_0811c710:
 	adds r6, r5, #0
 	adds r6, #128
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	cmp r3, #0
@@ -189,7 +189,7 @@ Func_0811c710:
 	adds r6, r3, r1
 .L_0811c882:
 	adds r0, r5, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	cmp r3, #0

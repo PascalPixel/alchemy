@@ -48,7 +48,7 @@ extern char MsgActorUsesItem;
 extern char MsgUseItemQuestion;
 
 s32 Party_CountActiveOwnersFar(void);
-struct ItemUnit *UnitGet(s32 owner);
+struct ItemUnit *Unit_Get(s32 owner);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
 struct ItemTrigger *Event_FindFacingTrigger(s32 item);
 void GameFlag_ClearBit(s32 flag);
@@ -94,7 +94,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
     if (actor == 15) {
       actor = 0;
       for (i = 0; i < count; i++) {
-        obj = UnitGet(gPartyState.activeOwners[i]);
+        obj = Unit_Get(gPartyState.activeOwners[i]);
         matches = 0;
         for (j = 0; j < 15; j++) {
           if ((obj->inventory[j] & 0x1ff) == itemId)
@@ -107,7 +107,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
         }
       }
     } else {
-      obj = UnitGet(actor);
+      obj = Unit_Get(actor);
       for (j = 0; j < 15; j++) {
         if ((obj->inventory[j] & 0x1ff) == itemId)
           best++;

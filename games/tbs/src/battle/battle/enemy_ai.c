@@ -83,7 +83,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
     return selectedAction;
   }
 
-  unit = UnitGetFar(request->unitId);
+  unit = Unit_GetFar(request->unitId);
   needsChoice = itemsAllowed = 1;
   failedChoices = 0;
   // ACTION_STRATEGY_NEXT_PICK's first pick is place 0, and

@@ -126,9 +126,9 @@ void BattleUnit_ResetGuardLevels(void) {
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     struct BattleUnit *unit;
 
-    unit = UnitGetFar(unitIds[unitIndex]);
+    unit = Unit_GetFar(unitIds[unitIndex]);
     unit->guardLevel = 0;
-    UnitCalcFar(unitIds[unitIndex]);
+    Unit_CalculateFar(unitIds[unitIndex]);
   }
 }
 
@@ -160,13 +160,13 @@ s32 BattleEscape_CheckSuccess(void) {
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
     levelTotal = 0;
     for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
-      levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
+      levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
     }
     chance += levelTotal * 500 / livingCount;
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
+      levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
     }
     chance -= levelTotal * 500 / livingCount;
     // A roll from 0 to 9999 against the chance.
@@ -198,7 +198,7 @@ s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-    struct BattleUnit *unit = UnitGetFar(unitIds[unitIndex]);
+    struct BattleUnit *unit = Unit_GetFar(unitIds[unitIndex]);
     s32 copyIndex;
 
     // Once for each of the member's actions this round (actionEntryCount):
@@ -284,7 +284,7 @@ s32 BattlePresentation_BuildOpponentEntries(
   for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
        shuffleOrUnitIndex++) {
     s32 unitId = unitIds[shuffleOrUnitIndex];
-    struct BattleUnit *unit = UnitGetFar(unitId);
+    struct BattleUnit *unit = Unit_GetFar(unitId);
     s32 copyIndex;
 
     for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {
@@ -338,7 +338,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
 
       // parameter: the Djinni's element in bits 8 to 11, its number below.
       // The unit lookup's result is unused.
-      UnitGetFar(entry->unitId);
+      Unit_GetFar(entry->unitId);
       action = BattleActGet(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
                                                   entry->parameter & 0xff));
       if (action->effect == ABILITY_EFFECT_DEFEND ||
@@ -697,7 +697,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
     do {
       if (action->command == COMMAND_DEFEND ||
           action->command == COMMAND_DEFEND2) {
-        unit = UnitGetFar(action->unitId);
+        unit = Unit_GetFar(action->unitId);
         // Half the damage, or a tenth.
         unit->guardLevel = action->command == COMMAND_DEFEND
                                ? GUARD_DEFEND

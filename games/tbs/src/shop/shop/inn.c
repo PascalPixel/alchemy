@@ -33,7 +33,7 @@ s32 Inn_RoomPrice(s32 innId) {
   s32 memberIndex;
 
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-    if (UnitGetFar(shop->partyMemberIds[memberIndex])->hp != 0)
+    if (Unit_GetFar(shop->partyMemberIds[memberIndex])->hp != 0)
       guestCount++;
   }
   return pricePerGuest * guestCount;
@@ -119,11 +119,11 @@ void Inn_PlaySleep(s32 roomPrice) {
   Party_AdjustCoinsFar(-roomPrice);
 
   for (memberIndex = 0; memberIndex < memberCount; memberIndex++) {
-    unit = UnitGetFar(partyMemberIds[memberIndex]);
+    unit = Unit_GetFar(partyMemberIds[memberIndex]);
     if (unit->hp != 0) {
       unit->hp = unit->maxHp;
       unit->pp = unit->maxPp;
-      UnitRatioFar(partyMemberIds[memberIndex]);
+      Unit_UpdateRatiosFar(partyMemberIds[memberIndex]);
     }
   }
 

@@ -4,7 +4,7 @@
 #include "battle_work.h"
 #include "ram_buffer.h"
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 u32 BattleRandomFar(void);
 
 /// Picks a random living target on one side: the party (target codes 0x100 +
@@ -22,12 +22,12 @@ s32 Func_0811f4d4(s32 party) {
 
   if (party != 0) {
     for (i = 0; work->partyUnits[i] != 255; i++) {
-      if (work->partyUnits[i] != 254 && UnitGet(work->partyUnits[i])->hp != 0)
+      if (work->partyUnits[i] != 254 && Unit_Get(work->partyUnits[i])->hp != 0)
         targets[count++] = i | 0x100;
     }
   } else {
     for (i = 0; work->enemyIds[i] != 255; i++) {
-      if (work->enemyIds[i] != 254 && UnitGet(work->enemyIds[i])->hp != 0)
+      if (work->enemyIds[i] != 254 && Unit_Get(work->enemyIds[i])->hp != 0)
         targets[count++] = i | 0x180;
     }
   }
@@ -43,25 +43,25 @@ s32 Func_0811f4d4(s32 party) {
 s32 Func_0811f5a4(u32 unitId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u32 best = unitId;
-  s32 bestAttack = UnitGet(unitId)->atk;
+  s32 bestAttack = Unit_Get(unitId)->atk;
   s32 i;
   s32 id;
 
   if (unitId <= 7) {
     for (i = 0; (id = work->partyUnits[i]) != 255; i++) {
-      if (id != 254 && UnitGet(id)->hp != 0) {
-        if (best == unitId || (id != unitId && UnitGet(id)->atk > bestAttack)) {
+      if (id != 254 && Unit_Get(id)->hp != 0) {
+        if (best == unitId || (id != unitId && Unit_Get(id)->atk > bestAttack)) {
           best = id;
-          bestAttack = UnitGet(best)->atk;
+          bestAttack = Unit_Get(best)->atk;
         }
       }
     }
   } else {
     for (i = 0; (id = work->enemyIds[i]) != 255; i++) {
-      if (id != 254 && UnitGet(id)->hp != 0) {
-        if (best == unitId || (id != unitId && UnitGet(id)->atk > bestAttack)) {
+      if (id != 254 && Unit_Get(id)->hp != 0) {
+        if (best == unitId || (id != unitId && Unit_Get(id)->atk > bestAttack)) {
           best = id;
-          bestAttack = UnitGet(best)->atk;
+          bestAttack = Unit_Get(best)->atk;
         }
       }
     }

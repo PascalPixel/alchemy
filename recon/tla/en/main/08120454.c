@@ -481,8 +481,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   crit = plan->targetCritical[slot];
 
   action = BattleActGet(abilityId);
-  actor = UnitGet(aid);
-  target = UnitGet(tid);
+  actor = Unit_Get(aid);
+  target = Unit_Get(tid);
   Iwram_CopyWords(bak, target, size);
   switch (target->enemyId) {
   case 221:
@@ -601,7 +601,7 @@ power_end:
         if (chg & 0x8000)
           BattleEnemy_LetterFirstOfClass(cls);
       }
-      BattleUnitSetFar(ent, cls, chg & 0x7fff);
+      BattleUnit_SetFar(ent, cls, chg & 0x7fff);
       if (action->effect == 87) {
         work->queueCount--;
         work->queueHead = (work->queueHead + 1) % 2;
@@ -720,9 +720,9 @@ power_end:
 
           atk = actor->atk;
           if (abilityId == 312 || abilityId == 316) {
-            atk = ((struct BattleUnit *)UnitGet(plan->actorId))->atk;
+            atk = ((struct BattleUnit *)Unit_Get(plan->actorId))->atk;
             if (abilityId == 312)
-              atk += ((struct BattleUnit *)UnitGet(plan->actorId2))->atk / 4;
+              atk += ((struct BattleUnit *)Unit_Get(plan->actorId2))->atk / 4;
           }
           dmg = BattleAtkCalc(atk, scale, ap, bonus);
         }
@@ -796,7 +796,7 @@ power_end:
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->hp - hp;
       target->hp = hp;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
@@ -835,7 +835,7 @@ power_end:
       BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->pp - pp;
       target->pp = pp;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
@@ -865,7 +865,7 @@ power_end:
       }
       dealt = target->hp - cur;
       target->hp = cur;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
@@ -898,7 +898,7 @@ power_end:
         pp = 0;
       BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, tid);
       target->pp = pp;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
@@ -1051,7 +1051,7 @@ power_end:
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->hp - cur;
       target->hp = cur;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
@@ -1076,7 +1076,7 @@ power_end:
         MESSAGE_PUSH(MsgPpRecover);
       }
       target->pp = pp;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
@@ -1133,7 +1133,7 @@ power_end:
           BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, tid);
         dealt = target->hp - cur;
         target->hp = cur;
-        UnitRatioFar(tid);
+        Unit_UpdateRatiosFar(tid);
         break;
       }
       BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, tid);
@@ -1299,7 +1299,7 @@ power_end:
         MESSAGE_PUSH(MsgHpRecover);
       }
       target->hp = heal;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
@@ -1350,14 +1350,14 @@ power_end:
         MESSAGE_PUSH(MsgPpRecover);
       }
       target->pp = heal;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
     }
 
     case 59:
       target->agilityStage = 8;
       target->agilityTurns = 5;
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->agi - bak->agi);
       MESSAGE_PUSH(MsgAgiUp);
       break;
@@ -1371,7 +1371,7 @@ power_end:
         *am = v;
       }
       target->agilityTurns = 5;
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, bak->agi - target->agi);
       MESSAGE_PUSH(MsgAgiDown);
       break;
@@ -1379,7 +1379,7 @@ power_end:
     case 9:
       target->attackStage -= 1;
       STEP_LIM(target->attackStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, bak->atk - target->atk);
       MESSAGE_PUSH(MsgAtkDown);
       target->attackTurns = 7;
@@ -1388,7 +1388,7 @@ power_end:
     case 8:
       target->attackStage -= 2;
       STEP_LIM(target->attackStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, bak->atk - target->atk);
       MESSAGE_PUSH(MsgAtkDown);
       target->attackTurns = 7;
@@ -1397,7 +1397,7 @@ power_end:
     case 7:
       target->attackStage += 1;
       STEP_LIM(target->attackStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->atk - bak->atk);
       MESSAGE_PUSH(MsgAtkUp);
       target->attackTurns = 7;
@@ -1406,7 +1406,7 @@ power_end:
     case 6:
       target->attackStage += 2;
       STEP_LIM(target->attackStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->atk - bak->atk);
       MESSAGE_PUSH(MsgAtkUp);
       target->attackTurns = 7;
@@ -1415,7 +1415,7 @@ power_end:
     case 13:
       target->defenseStage -= 1;
       STEP_LIM(target->defenseStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, bak->def - target->def);
       MESSAGE_PUSH(MsgDefDown);
       target->defenseTurns = 7;
@@ -1424,7 +1424,7 @@ power_end:
     case 12:
       target->defenseStage -= 2;
       STEP_LIM(target->defenseStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, bak->def - target->def);
       MESSAGE_PUSH(MsgDefDown);
       target->defenseTurns = 7;
@@ -1433,7 +1433,7 @@ power_end:
     case 11:
       target->defenseStage += 1;
       STEP_LIM(target->defenseStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->def - bak->def);
       MESSAGE_PUSH(MsgDefUp);
       target->defenseTurns = 7;
@@ -1442,7 +1442,7 @@ power_end:
     case 10:
       target->defenseStage += 2;
       STEP_LIM(target->defenseStage);
-      UnitCalcFar(tid);
+      Unit_CalculateFar(tid);
       BattleEvPush(BATTLE_EVENT_NUMBER, target->def - bak->def);
       MESSAGE_PUSH(MsgDefUp);
       target->defenseTurns = 7;
@@ -1453,7 +1453,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
 
     case 56:
@@ -1461,7 +1461,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp / 2;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
 
     case 57:
@@ -1469,7 +1469,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp * 8 / 10;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
 
     case 73:
@@ -1477,7 +1477,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = (s16)(target->maxHp * 6 / 10);
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
 
     case 3:
@@ -1577,7 +1577,7 @@ power_end:
       else
         MESSAGE_PUSH(MsgSpiritDrain);
       target->hp = 0;
-      UnitRatioFar(tid);
+      Unit_UpdateRatiosFar(tid);
       break;
 
     case 29:
@@ -1610,7 +1610,7 @@ power_end:
         MESSAGE_PUSH(MsgHpRecover);
       }
       actor->hp = dmg;
-      UnitRatioFar(aid);
+      Unit_UpdateRatiosFar(aid);
       break;
 
     case 32: {
@@ -1633,7 +1633,7 @@ power_end:
         MESSAGE_PUSH(MsgPpRecover);
       }
       actor->pp = heal;
-      UnitRatioFar(aid);
+      Unit_UpdateRatiosFar(aid);
       break;
     }
 
@@ -1796,7 +1796,7 @@ done:
       }
   }
   MemFree(bak);
-  UnitCalcFar(tid);
+  Unit_CalculateFar(tid);
   PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
   if (target->hp != 0)
     BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, tid);

@@ -58,7 +58,7 @@ Func_080fdad4:
 	ldr r1, [sp, #16]
 	str r4, [sp, #8]
 	ldrb r0, [r1, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #155
 	str r0, [sp, #48]
 	lsls r2, r2, #2
@@ -593,7 +593,7 @@ Func_080fdad4:
 	adds r3, r7, r1
 	strb r2, [r3]
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #226
 	lsls r2, r2, #1
 	adds r1, r7, r2

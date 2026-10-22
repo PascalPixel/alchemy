@@ -34,7 +34,7 @@ void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page,
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
                                   s32 y);
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 struct BattleAct *BattleActGet(s32 action);
 extern u8 MsgAbilityName;
 extern u8 MsgShortcutHelp[];
@@ -76,7 +76,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   if (visibleCount > row) {
     cursor = firstEntry * 2 + 0x1c4;
     do {
-      owner = UnitGet(menu->ownerIds[0]);
+      owner = Unit_Get(menu->ownerIds[0]);
       ability = BattleActGet(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {

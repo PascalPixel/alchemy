@@ -20,7 +20,7 @@ struct FieldObject {
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustCoinsFar(s32);
-void UnitRatioFar(s32);
+void Unit_UpdateRatiosFar(s32);
 void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
@@ -38,11 +38,11 @@ void Inn_PlaySleep(s32 roomPrice) {
   Party_AdjustCoinsFar(-roomPrice);
 
   for (index = 0; index < count; index++) {
-    object = UnitGet(objects[index]);
+    object = Unit_Get(objects[index]);
     if (object->x != 0) {
       object->x = object->savedX;
       object->y = object->savedY;
-      UnitRatioFar(objects[index]);
+      Unit_UpdateRatiosFar(objects[index]);
     }
   }
 

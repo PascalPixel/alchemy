@@ -26,7 +26,7 @@ Func_0804a134:
 	bl VramCache_AllocEntry
 	str r0, [sp, #52]
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #42
 	str r0, [sp, #48]
 	str r3, [sp, #0]

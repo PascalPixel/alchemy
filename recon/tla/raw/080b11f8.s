@@ -16,7 +16,7 @@ Func_080b11f8:
 	movs r6, #4
 .L_080b120e:
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #14
 	adds r0, #216
 .L_080b1218:
@@ -31,7 +31,7 @@ Func_080b11f8:
 	bl Unit_UpdateClass
 	adds r0, r6, #0
 	adds r6, #1
-	bl UnitCalc
+	bl Unit_Calculate
 	cmp r6, #7
 	ble .L_080b120e
 	ldr r1, .L_080b1278

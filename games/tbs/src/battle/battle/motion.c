@@ -164,7 +164,7 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 
   battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
-  if (UnitGetFar(unitId)->classId != ENEMY_FUSION_DRAGON) {
+  if (Unit_GetFar(unitId)->classId != ENEMY_FUSION_DRAGON) {
     object->acceleration = gBattleMotion_VariantAcceleration[variant];
     object->speedLimit = gBattleMotion_VariantSpeedLimit[variant];
     // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
@@ -342,7 +342,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   Camera_ApplyTransformByFlag();
   projectedHeight = Render_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectedHeight, record->scale);
-  if (BattleClass_IsSmall(UnitGetFar(unitId)->classId) != 0)
+  if (BattleClass_IsSmall(Unit_GetFar(unitId)->classId) != 0)
     projectedHeight = Iwram_MulQ16(spriteScale, 24);
   else
     projectedHeight = Iwram_MulQ16(spriteScale, 48);
@@ -358,10 +358,10 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;
 
-  classId = UnitGetFar(unitId)->classId;
+  classId = Unit_GetFar(unitId)->classId;
   height = (u8)BattleClass_GetEffectHeight(classId) << 16;
   if (height == 0) {
-    classId = UnitGetFar(unitId)->classId;
+    classId = Unit_GetFar(unitId)->classId;
     if (BattleClass_IsSmall(classId) != 0) {
       height = 0x180000;
     } else {

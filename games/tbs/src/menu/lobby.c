@@ -493,7 +493,7 @@ static s32 LinkLobby_ReportDisconnection(void) {
 }
 
 /// Receives the partner's three member records into units 0x80 to 0x82 (the
-/// battle's enemies, by UnitGet) and its Djinn recovery table into the enemy
+/// battle's enemies, by Unit_Get) and its Djinn recovery table into the enemy
 /// side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
 /// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
 /// BattleUnit name holds. Returns how many records hold a member, or -1 when
@@ -584,7 +584,7 @@ next:
     goto second;
   }
   // The partner's members become this battle's enemies 0x80 to 0x82.
-  record = (u8 *)UnitGet(slot + 128);
+  record = (u8 *)Unit_Get(slot + 128);
   tries = 0;
   if ((transferResult = SerialRuntime_BeginReceive(record)) == -1) {
     goto failed;
@@ -708,7 +708,7 @@ static s32 LinkLobby_SendPartyRecords(void) {
      * the send failure inside the loop and gives the copy's argument order;
      * as a plain block, 3 of 255 instructions differ in tbs-en. */
     do {
-      Iwram_CopyWords(heap, UnitGet(ownerIds[i]), size);
+      Iwram_CopyWords(heap, Unit_Get(ownerIds[i]), size);
       heap[0x12a] = 2;
       // As a u8, i - 128 is 0x80 + i: this member's unit on the partner's
       // side.

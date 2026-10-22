@@ -2317,7 +2317,7 @@ Func_0200242c:
 	lsls r2, r2, #2
 	adds r3, r5, r2
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a500
@@ -2405,7 +2405,7 @@ Func_0200242c:
 	lsls r0, r0, #2
 	adds r3, r5, r0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a5a8
@@ -2484,7 +2484,7 @@ Func_0200242c:
 	lsls r0, r0, #2
 	adds r3, r5, r0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a90c

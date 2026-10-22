@@ -30,8 +30,8 @@ extern char MsgPreviewStatLabel[], MsgClassName[], MsgAbilityName[],
     MsgPsynergyPp[], MsgPsynergyGained[], MsgPsynergyLost[],
     MsgPsynergyUnchanged[];
 
-struct BattleUnit *UnitGet(s32 owner);
-void UnitCalcFar(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
+void Unit_CalculateFar(s32 owner);
 void *MemAlloc(s32 size);
 void MemFree(void *block);
 struct BattleAct *BattleActGet(s32 actionId);
@@ -69,7 +69,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   u16 actions[48];
   struct DjinnMenuWork *menu;
 
-  unit = UnitGet(ownerId);
+  unit = Unit_Get(ownerId);
   menu = Ram_HeapSlots->menuRuntime;
   giveElement = menu->pairElement[removePairSlot];
   giveIndex = menu->pairIndex[removePairSlot];
@@ -127,8 +127,8 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
     break;
   }
 
-  UnitCalcFar(ownerId);
-  unit = UnitGet(ownerId);
+  Unit_CalculateFar(ownerId);
+  unit = Unit_Get(ownerId);
 
   if (page == 0) {
     s32 label;

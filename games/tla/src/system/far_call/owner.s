@@ -9,10 +9,10 @@ Unit_AddHpFar:
 	.thumb_func
 Unit_AddPpFar:
 	overlay_veneer Unit_AddPp
-	.global UnitRatioFar
+	.global Unit_UpdateRatiosFar
 	.thumb_func
-UnitRatioFar:
-	overlay_veneer UnitRatio
+Unit_UpdateRatiosFar:
+	overlay_veneer Unit_UpdateRatios
 	.global Unit_SetHpFar
 	.thumb_func
 Unit_SetHpFar:
@@ -21,9 +21,9 @@ Unit_SetHpFar:
 	.thumb_func
 Unit_SetPpFar:
 	overlay_veneer Unit_SetPp
-	.global BattleUnitSetFar
+	.global BattleUnit_SetFar
 	.thumb_func
-BattleUnitSetFar:
+BattleUnit_SetFar:
 	overlay_veneer Func_080afbec
 	.global Party_CountActiveOwnersFar
 	.thumb_func

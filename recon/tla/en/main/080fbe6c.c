@@ -56,7 +56,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
                                   s32 y);
 void UiText_DrawStringAtOffsetFar(void *text, void *window, s32 x, s32 y);
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 GameFlag_Test(s32 flag);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
@@ -106,10 +106,10 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
         if (mode == 0)
           UiText_DrawNumberInWindowFar(targetCount + value + 1, 2, window, 80,
                                        24);
-        UiText_DrawStringAtOffsetFar(UnitGet(menu->paneOwner[0]), window, 16,
+        UiText_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), window, 16,
                                      16);
         if (mode == 0)
-          UiText_DrawStringAtOffsetFar(UnitGet(menu->paneOwner[1]), window, 80,
+          UiText_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[1]), window, 80,
                                        16);
       }
       if (gInput.pressed & 1) {

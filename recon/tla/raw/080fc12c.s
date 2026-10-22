@@ -40,7 +40,7 @@ Func_080fc12c:
 	adds r3, r6, r2
 	ldrb r0, [r3]
 	adds r6, #240
-	bl UnitGet
+	bl Unit_Get
 	ldr r1, [r6]
 	movs r2, #16
 	movs r3, #0

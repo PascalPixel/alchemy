@@ -26,7 +26,7 @@ Func_0811d9cc:
 	movs r0, #0
 	b .L_0811ddb2
 .L_0811d9f8:
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -280,7 +280,7 @@ Func_0811d9cc:
 	strb r3, [r7]
 	strb r4, [r5]
 	ldrb r0, [r7]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #165
 	lsls r1, r1, #1
 	adds r3, r0, r1

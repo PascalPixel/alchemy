@@ -359,7 +359,7 @@ Func_080fc6bc:
 	ldr r1, [sp, #16]
 	strb r5, [r7, r1]
 	ldrb r0, [r6, r4]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #226
 	lsls r2, r2, #1
 	adds r1, r7, r2
@@ -419,7 +419,7 @@ Func_080fc6bc:
 	lsls r6, r6, #2
 	adds r3, r4, r6
 	ldrb r0, [r1, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #226
 	lsls r2, r2, #1
 	adds r5, r7, r2

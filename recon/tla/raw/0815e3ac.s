@@ -28,7 +28,7 @@ Func_0815e3ac:
 	ldr r3, [r3]
 	str r3, [sp, #28]
 	ldr r0, [r5, #8]
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #24]
 	movs r0, #1
 	bl WaitFrames

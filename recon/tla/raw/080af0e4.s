@@ -6,7 +6,7 @@ Func_080af0e4:
 	push {r5, r6, r7, lr}
 	adds r5, r1, #0
 	adds r7, r0, #0
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, .L_080af114
 	adds r6, r0, #0
 	lsls r5, r5, #1
@@ -51,7 +51,7 @@ Func_080af0e4:
 	.4byte 0x00000000
 .L_080af13c:
 	adds r0, r7, #0
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #2
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

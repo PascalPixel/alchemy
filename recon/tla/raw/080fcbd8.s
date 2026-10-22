@@ -68,7 +68,7 @@ Func_080fcbd8:
 	adds r2, #22
 	adds r3, r7, r2
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #133
 	lsls r2, r2, #2
 	adds r3, r7, r2
@@ -293,7 +293,7 @@ Func_080fcbd8:
 	bl Unit_AddPpFar
 .L_080fce20:
 	ldrb r0, [r5]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	cmp r11, r9
 	beq .L_080fce66
 	ldrb r1, [r6]

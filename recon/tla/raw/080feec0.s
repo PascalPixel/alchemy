@@ -74,7 +74,7 @@ Func_080feec0:
 .L_080fef4c:
 	ldr r4, [sp, #8]
 	ldrb r0, [r4]
-	bl UnitGet
+	bl Unit_Get
 	ldr r0, [sp, #8]
 	movs r2, #1
 	ldrb r1, [r0]

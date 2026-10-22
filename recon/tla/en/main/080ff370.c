@@ -30,7 +30,7 @@ extern const u8 gMenu_LvString[];
 extern const u8 gMenu_SlashString[];
 
 s32 Party_SumDjinnCountsFar(s32 owner);
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
@@ -60,7 +60,7 @@ void Func_080ff370(s32 window, s32 ownerId, s32 mode) {
     hasDjinn = 1;
   else
     hasDjinn = 0;
-  unit = UnitGet(ownerId);
+  unit = Unit_Get(ownerId);
   if ((mode & 0xff) == 1)
     djinnRow = 7;
   else

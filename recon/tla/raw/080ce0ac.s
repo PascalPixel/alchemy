@@ -47,7 +47,7 @@ Func_080ce0ac:
 	adds r5, r3, r2
 .L_080ce102:
 	ldrb r0, [r5]
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #0
 	adds r0, #216
 	movs r1, #14
@@ -76,7 +76,7 @@ Func_080ce0ac:
 	b .L_080ce15a
 .L_080ce136:
 	mov r0, r10
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #128
 	lsls r4, r4, #1
 	adds r4, #255

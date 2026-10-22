@@ -42,7 +42,7 @@ extern u8 MsgGoesDown[];
 extern u8 MsgStrengthExhausted[];
 extern u8 MsgReaperCalls[];
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void Djinn_DeactivateFar(s32 unitId, s32 element, s32 index);
 u32 BattleEventRuntime_Reset(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);
@@ -63,7 +63,7 @@ void Func_0812561c(struct BattlePlan *plan) {
 
   unitId = plan->actorId;
   battleContinues = 0;
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   if (unitId <= 7 ||
       ((struct BattleWork *)Ram_HeapSlots->battleWork)->twoSided != 0) {
     list = &Djinn_GetRecoveryTableFar(unitId > 7)->list;
@@ -137,7 +137,7 @@ void Func_0812561c(struct BattlePlan *plan) {
       if (unit->elementLevels[i] < counts[i])
         unit->elementLevels[i] = counts[i];
     }
-    UnitCalcFar(unitId);
+    Unit_CalculateFar(unitId);
     for (i = 0; i <= 3; i++) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
@@ -230,5 +230,5 @@ void Func_0812561c(struct BattlePlan *plan) {
     BattleEv_DispatchQueued();
   }
   if (BattleObject_Get(unitId)->object != 0)
-    UnitCalcFar(unitId);
+    Unit_CalculateFar(unitId);
 }

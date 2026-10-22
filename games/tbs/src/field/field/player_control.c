@@ -437,7 +437,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
     s32 action;
 
     action = 9;
-    if (UnitGetFar(gGameState.selectedActor)->hp == 0)
+    if (Unit_GetFar(gGameState.selectedActor)->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {

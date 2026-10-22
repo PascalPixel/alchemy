@@ -28,7 +28,7 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_08038348(s32 a, s32 b);
 s32 Inventory_Remove(s32 owner, s32 slot);
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 void Djinn_ActivateOfferedForParty(void);
 void Func_080ae16c(s32 mode);
 
@@ -85,7 +85,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   }
 
   for (owner = 0; owner < count; owner++) {
-    struct SavedUnit *unit = UnitGet(owner);
+    struct SavedUnit *unit = Unit_Get(owner);
     u16 *inventory;
 
     memcpy(name, &units[owner], 15);
@@ -102,7 +102,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
           ;
       }
     }
-    UnitCalc(owner);
+    Unit_Calculate(owner);
   }
   Djinn_ActivateOfferedForParty();
   Func_080ae16c(1);

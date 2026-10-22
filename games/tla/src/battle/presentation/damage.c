@@ -34,7 +34,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     context[3] = 0;
   }
 
-  character = UnitGet(unitId);
+  character = Unit_Get(unitId);
   character->hp -= damage;
   if (character->hp < 0)
     character->hp = 0;
@@ -85,7 +85,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct BattleObjectAnimation *animation;
   struct AnimationEntry *entry;
 
-  if (((struct BattleUnit *)UnitGet(unitId))->hp <= 0) {
+  if (((struct BattleUnit *)Unit_Get(unitId))->hp <= 0) {
     animation = BattleObject_Get(unitId)->object->records;
     Animation_ApplyChildArgumentFar(animation, 5);
     entry = animation->entry;
@@ -103,7 +103,7 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   s32 livingCount;
 
   targetId = action->target;
-  if (((struct BattleUnit *)UnitGet(targetId))->hp != 0) {
+  if (((struct BattleUnit *)Unit_Get(targetId))->hp != 0) {
     return targetId;
   }
 

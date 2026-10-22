@@ -400,7 +400,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       if ((s32)index <= ALLY_MAX)
         id = index;
       object = BattleObject_Get(id);
-      if (UnitGetFar(id)->classId != ENEMY_FUSION_DRAGON)
+      if (Unit_GetFar(id)->classId != ENEMY_FUSION_DRAGON)
         object->scale = 0xb333;
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,

@@ -16,7 +16,7 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 s32 Party_FindOwnerWithActionFar(s32 action);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 
 /// The pressed keys, read again at each test.
 #define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
@@ -149,14 +149,14 @@ done:
       }
     }
     pp = 500;
-    ((struct BattleUnit *)UnitGet(4))->pp = pp;
-    ((struct BattleUnit *)UnitGet(5))->pp = pp;
-    ((struct BattleUnit *)UnitGet(6))->pp = pp;
-    ((struct BattleUnit *)UnitGet(7))->pp = pp;
-    ((struct BattleUnit *)UnitGet(4))->maxPp = pp;
-    ((struct BattleUnit *)UnitGet(5))->maxPp = pp;
-    ((struct BattleUnit *)UnitGet(6))->maxPp = pp;
-    ((struct BattleUnit *)UnitGet(7))->maxPp = pp;
+    ((struct BattleUnit *)Unit_Get(4))->pp = pp;
+    ((struct BattleUnit *)Unit_Get(5))->pp = pp;
+    ((struct BattleUnit *)Unit_Get(6))->pp = pp;
+    ((struct BattleUnit *)Unit_Get(7))->pp = pp;
+    ((struct BattleUnit *)Unit_Get(4))->maxPp = pp;
+    ((struct BattleUnit *)Unit_Get(5))->maxPp = pp;
+    ((struct BattleUnit *)Unit_Get(6))->maxPp = pp;
+    ((struct BattleUnit *)Unit_Get(7))->maxPp = pp;
   }
   return result;
 }

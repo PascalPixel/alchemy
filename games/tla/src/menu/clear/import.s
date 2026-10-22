@@ -62,10 +62,10 @@ Func_02002228:
 	.thumb_func
 SerialRuntime_BeginReceive:
 	overlay_veneer Party_CheckFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -196,10 +196,10 @@ Func_02002330:
 	.thumb_func
 Djinn_GetRecoveryTable:
 	overlay_veneer Djinn_GetRecoveryTableFar
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
+Unit_Calculate:
+	overlay_veneer Unit_CalculateFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:

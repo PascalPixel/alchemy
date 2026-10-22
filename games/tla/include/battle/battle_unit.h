@@ -169,8 +169,8 @@ enum BattleActionUse {
 struct BattleUnit {
   u8 name[0x0f];      ///< one byte a character, ending in 0
   u8 level;           ///< 1 to 99 for a character
-  s16 baseHp;         ///< before equipment, Djinn and class (UnitCalc)
-  s16 basePp;         ///< before equipment, Djinn and class (UnitCalc)
+  s16 baseHp;         ///< before equipment, Djinn and class (Unit_Calculate)
+  s16 basePp;         ///< before equipment, Djinn and class (Unit_Calculate)
   s16 hpGauge;        ///< hp / maxHp in 0..0x4000; 1 while any HP remains
   s16 ppGauge;        ///< pp / maxPp in 0..0x4000; 1 while any PP remains
   u16 baseAttack;     ///< before equipment, Djinn, class and stages
@@ -185,20 +185,20 @@ struct BattleUnit {
   /// element preset, a character's from its element levels
   /// (Unit_CalcBaseElements).
   struct BattleElementStats baseElement[4];
-  s16 maxHp;           ///< maximum HP (UnitCalc)
-  s16 maxPp;           ///< maximum PP (UnitCalc)
+  s16 maxHp;           ///< maximum HP (Unit_Calculate)
+  s16 maxPp;           ///< maximum PP (Unit_Calculate)
   s16 hp;              ///< current HP, 0 when downed
   s16 pp;              ///< current PP
-  u16 atk;             ///< Attack (UnitCalc)
-  u16 def;             ///< Defense (UnitCalc)
-  u16 agi;             ///< Agility (UnitCalc)
-  u8 luck;             ///< Luck (UnitCalc)
-  u8 actionEntryCount; ///< actions each round (UnitCalc)
+  u16 atk;             ///< Attack (Unit_Calculate)
+  u16 def;             ///< Defense (Unit_Calculate)
+  u16 agi;             ///< Agility (Unit_Calculate)
+  u8 luck;             ///< Luck (Unit_Calculate)
+  u8 actionEntryCount; ///< actions each round (Unit_Calculate)
   u8 hpRegen;          ///< HP regained at each turn's end
   u8 ppRegen;          ///< PP regained at each turn's end
   u8 unk046[2];        ///< Not named by any TLA C.
   /// Power and resistance in each element after equipment, element levels
-  /// and Resistance stages (UnitCalc).
+  /// and Resistance stages (Unit_Calculate).
   struct BattleElementStats element[4];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's. An empty entry is 0.
@@ -213,7 +213,7 @@ struct BattleUnit {
   u32 djinnActive[4];
   u8 djinnOwnedCounts[4];  ///< the Djinn held in each element
   u8 djinnActiveCounts[4]; ///< the Djinn set in each element
-  u32 rewards;             ///< 0 for an enemy (the BattleUnitSet draft)
+  u32 rewards;             ///< 0 for an enemy (the BattleUnit_Set draft)
   u32 experience;          ///< a character's experience points
   /// Written with the character's id at a new game, and read as one (ISAAC,
   /// GARET...) by the battle presentation.
@@ -222,7 +222,7 @@ struct BattleUnit {
   /// marks an enemy, and code throughout tests it to tell the two apart.
   u8 classIndex;
   /// BATTLE_UNIT_ABSENT (0), BATTLE_UNIT_ENEMY (1) or BATTLE_UNIT_PARTY (2).
-  /// Enemies 9 to 66 and 369 to 377 are put on side 2 (the BattleUnitSet
+  /// Enemies 9 to 66 and 369 to 377 are put on side 2 (the BattleUnit_Set
   /// draft).
   u8 side;
   /// 0 to 4: each guard effect raises it to its own level and no lower;
@@ -257,8 +257,8 @@ struct BattleUnit {
   s8 reflect;    ///< Reflect's turns left, 7 when cast
   u8 haunt;      ///< set while an evil spirit grips the unit
   u8 grimReaper; ///< the Grim Reaper's countdown, 7 when cursed
-  /// The totals of equipment effects 23 (unleash chance) and 24 that UnitCalc
-  /// sums.
+  /// The totals of equipment effects 23 (unleash chance) and 24 that
+  /// Unit_Calculate sums.
   // TBS never reads them back.
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
@@ -268,7 +268,7 @@ struct BattleUnit {
   s8 agilityStage; ///< the Agility stage, -4 to 8 (twice the Agility)
   s8 challenge;    ///< set by the challenge effect
   u8 unk149;       ///< Not named by any TLA C.
-  /// The unit's id: an enemy's (the BattleUnitSet draft), and a character's
+  /// The unit's id: an enemy's (the BattleUnit_Set draft), and a character's
   /// (0 to 7) for Unit_UpdateClass and the experience table.
   u16 enemyId;
 };

@@ -183,7 +183,7 @@ u32 SaveState_BuildSummaryHeader(void) {
   }
   gGameState.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = UnitGetFar(gGameState.selectedActor);
+  leader = Unit_GetFar(gGameState.selectedActor);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)

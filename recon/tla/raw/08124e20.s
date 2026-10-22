@@ -54,7 +54,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_08124e98
 	ldrb r0, [r5, #2]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -148,7 +148,7 @@ Func_08124e20:
 	adds r0, r5, #0
 	bl DjinnRecovery_RemoveFar
 	adds r0, r5, #0
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	adds r0, r5, #0
 	bl BattleParty_IsUnitListed
 	cmp r0, #0
@@ -245,7 +245,7 @@ Func_08124e20:
 	ldrh r6, [r1, r3]
 	movs r5, #162
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #68
 	adds r7, r0, #0
 	adds r3, #255

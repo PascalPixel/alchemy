@@ -66,10 +66,10 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_02004b80:
 	overlay_veneer Runtime_PushSlotEntryFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

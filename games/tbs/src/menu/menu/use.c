@@ -30,7 +30,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct BattleUnit *unit;
   struct ItemDefinition *item;
 
-  unit = UnitGetFar(ownerId);
+  unit = Unit_GetFar(ownerId);
   menu = gMenuWork;
   itemId = ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
@@ -85,9 +85,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   partyResultShown = 0;
 
   if (targetId != MENU_TARGET_WHOLE_PARTY)
-    target = UnitGetFar(targetId);
+    target = Unit_GetFar(targetId);
   else
-    target = UnitGetFar(0);
+    target = Unit_GetFar(0);
 
   /* FAKEMATCH(dead): a test that is never true (partyResultShown is still
    * 0), which emits nothing but loads effect->range ahead of the loop's count
@@ -99,7 +99,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == ABILITY_RANGE_ALL) {
       targetId = menu->ownerIds[targetIndex];
-      target = UnitGetFar(targetId);
+      target = Unit_GetFar(targetId);
     }
 
     // The ability kind first; the result messages are enum ItemUseResult.
@@ -110,7 +110,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         if (effect->element != ELEMENT_NONE) {
           s32 elementIndex;
 
-          caster = UnitGetFar(sourceId);
+          caster = Unit_GetFar(sourceId);
           elementIndex = effect->element;
           elementPower = caster->element[elementIndex].power;
         } else
@@ -135,7 +135,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           } else if (partyResultShown == 0) {
             messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
           }
-          UnitRatioFar(targetId);
+          Unit_UpdateRatiosFar(targetId);
           changed = 1;
           if (effect->range == ABILITY_RANGE_ALL) {
             partyResultShown = 1;
@@ -208,7 +208,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
         if (effect->range == ABILITY_RANGE_ALL) {
           partyResultShown = 1;
@@ -244,7 +244,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
       }
       break;
@@ -262,7 +262,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
       }
       break;
@@ -270,7 +270,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
         target->hp = target->maxHp;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
@@ -285,7 +285,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->maxHp / 2;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
@@ -296,7 +296,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
         target->hp = target->maxHp * 7 / 10;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
@@ -326,7 +326,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   }
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++)
-    UnitCalcFar(menu->ownerIds[targetIndex]);
+    Unit_CalculateFar(menu->ownerIds[targetIndex]);
   menu->messageOffset = messageOffset;
   return 0;
 }

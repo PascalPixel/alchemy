@@ -31,12 +31,12 @@ struct ItemHead *Item_Get(s32 item);
 s32 Func_080d295c(s32 mode);
 void UiWork_FinalizePendingCoreFar(void);
 void Item_AdjustCounterFar(s32 item, s32 delta);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 Inventory_GetQuantityFar(s32 member, s32 slot);
 s32 Inventory_CountItemFar(s32 member, s32 item);
 void Inventory_DiscardFar(s32 member, s32 slot);
 void Unit_RefreshPsynergyFar(s32 member);
-void UnitCalcFar(s32 member);
+void Unit_CalculateFar(s32 member);
 void Audio_PlayCue(s32 cue);
 
 s32 PartyInventory_GiveItem(s32 item) {
@@ -76,7 +76,7 @@ s32 PartyInventory_GiveItem(s32 item) {
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemDropPrompt + 2, 1);
         goto done;
       }
-      UnitGet(member);
+      Unit_Get(member);
       count = Inventory_GetQuantityFar(member, slot);
       if (Inventory_CountItemFar(member, item) > 29) {
         UiText_DrawQuantity(member, 1);
@@ -87,7 +87,7 @@ s32 PartyInventory_GiveItem(s32 item) {
       for (i = 0; i < count; i++)
         Inventory_DiscardFar(member, slot);
       Unit_RefreshPsynergyFar(member);
-      UnitCalcFar(member);
+      Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
       Audio_PlayCue(83);
       if (owner == gPartyState.currentOwner) {

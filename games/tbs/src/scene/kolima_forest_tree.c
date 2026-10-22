@@ -1053,7 +1053,7 @@ static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
     s32 inventorySlot = Inventory_Find(owner, oldItemId);
 
     if (inventorySlot != -1) {
-      UnitGet(owner)->inventory[inventorySlot] = newItemId;
+      Unit_Get(owner)->inventory[inventorySlot] = newItemId;
     }
   }
 }

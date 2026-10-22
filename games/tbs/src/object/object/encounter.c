@@ -183,7 +183,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     // battles in the Sol Sanctum once she nears level 4 (158). XXX: likely a
     // cap on training before the journey, because it can act nowhere else.
     if (GameFlag_TestFar(5) != 0) {
-      level = UnitGetFar(5)->experience;
+      level = Unit_GetFar(5)->experience;
       if (level > 130)
         return 0;
     }

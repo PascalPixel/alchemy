@@ -3,7 +3,7 @@
 #include "battle_type.h"
 
 s32 BattleUnit_KeepsOneHp(s32 unitId) {
-  struct BattleUnit *unit = UnitGet(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
 
   if (unit->enemyId == 110 || unit->enemyId == 113)
     return 1;

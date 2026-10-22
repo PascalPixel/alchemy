@@ -12,7 +12,7 @@ Func_0812824c:
 	push {r7}
 	adds r5, r0, #0
 	mov r11, r1
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r6, [r3, #36]

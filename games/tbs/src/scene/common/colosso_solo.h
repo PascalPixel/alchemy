@@ -96,7 +96,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Party_AddActiveOwner(id);
   gGameState.selectedActor = id;
   Engine_CameraFollowActor(id, 0);
-  unit = UnitGet(id);
+  unit = Unit_Get(id);
   unit->hp = unit->maxHp;
   unit->pp = unit->maxPp;
   unit->poison = 0;

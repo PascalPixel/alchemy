@@ -50,7 +50,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   // FieldObject_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
   object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = SummonSlot_RegisterActorSprites(unitId);
 
@@ -318,7 +318,7 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 
       spacing = 25;
       if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-        actor = UnitGetFar(actorIds[index]);
+        actor = Unit_GetFar(actorIds[index]);
         spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
         // The first place keeps -80 whatever its class.
         if (actor->classId == ENEMY_FUSION_DRAGON ||
@@ -331,7 +331,7 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
     zPositions[index] = z;
     spacing = 25;
     if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-      struct BattleUnit *actor = UnitGetFar(actorIds[index]);
+      struct BattleUnit *actor = Unit_GetFar(actorIds[index]);
 
       spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
     }
@@ -347,7 +347,7 @@ s32 EnemySlotGet(void) {
 
   for (enemySlot = 0; enemySlot < ENEMY_BATTLE_SIZE; enemySlot++) {
     unitId = enemySlot + FIRST_ENEMY_UNIT;
-    if (UnitGetFar(unitId)->side == BATTLE_UNIT_ABSENT)
+    if (Unit_GetFar(unitId)->side == BATTLE_UNIT_ABSENT)
       break;
   }
   if (enemySlot == ENEMY_BATTLE_SIZE)

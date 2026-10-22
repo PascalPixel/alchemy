@@ -78,10 +78,10 @@ Render_ProjectPoint:
 	.thumb_func
 QueueIoWriteDelay2:
 	overlay_veneer QueueIoWriteDelay2Far
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

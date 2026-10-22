@@ -60,7 +60,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 }
 
 s32 Unit_GetElementLevel(s32 owner, s32 index) {
-  struct OwnerInventoryState *state = UnitGet(owner);
+  struct OwnerInventoryState *state = Unit_Get(owner);
   s32 values[4];
   s32 result = 0;
 

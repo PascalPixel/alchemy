@@ -156,7 +156,7 @@ Func_0200039c:
 	bgt .L_de_02008508
 	mov r0, r8
 	adds r0, #128
-	bl UnitGet
+	bl Unit_Get
 	adds r6, r0, #0
 	bl SerialRuntime_BeginReceive
 	movs r3, #1
@@ -369,7 +369,7 @@ Func_0200039c:
 	bgt .L_020084ec
 	mov r0, r8
 	adds r0, #128
-	bl UnitGet
+	bl Unit_Get
 	adds r6, r0, #0
 	bl SerialRuntime_BeginReceive
 	movs r3, #1
@@ -505,7 +505,7 @@ Func_02000578:
 	movs r3, #0
 	ldrh r0, [r1, r5]
 	mov r10, r3
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #170
 	adds r1, r0, #0
 	ldr r3, .L_020087b0

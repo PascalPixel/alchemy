@@ -32,7 +32,7 @@ s32 Inventory_AddItem(s32 owner, s32 item);
 void Inventory_Equip(s32 owner, s32 slot);
 struct OwnerStart *Character_GetDefinition(s32 index);
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 
 void Party_InitCharacters(void) {
   struct OwnerInventoryState *state;
@@ -45,7 +45,7 @@ void Party_InitCharacters(void) {
   u8 *name;
 
   for (owner = 0; owner <= 7; owner++) {
-    state = UnitGet(owner);
+    state = Unit_Get(owner);
     Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, nameBuf);
     name = ((struct OwnerName *)state)->name;
     name[0] = nameBuf[0];
@@ -63,7 +63,7 @@ void Party_InitCharacters(void) {
 
   if (*remote != -1) {
     do {
-      state = UnitGet(*remote);
+      state = Unit_Get(*remote);
       if (state != 0) {
         {
           s32 id = *remote;
@@ -88,7 +88,7 @@ void Party_InitCharacters(void) {
         ((struct OwnerName *)state)->hpRatio = 0x4000;
         Unit_LevelUpTo(*remote, start->level);
         Unit_UpdateClass(*remote);
-        UnitCalc(*remote);
+        Unit_Calculate(*remote);
       }
       remote++;
     } while (*remote != -1);

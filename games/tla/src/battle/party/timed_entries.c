@@ -29,7 +29,7 @@ extern char MsgHpFull;
 u32 BattleEventRuntime_Reset(void);
 
 s32 sub_08124af8(s32 id) {
-  struct BattleUnit *unit = UnitGet(id);
+  struct BattleUnit *unit = Unit_Get(id);
   u8 *count = &unit->refrain;
 
   if (*count != 0) {
@@ -63,7 +63,7 @@ s32 sub_08124af8(s32 id) {
         BattleEvPush(4, (u32)&MsgHpRecover);
       }
       unit->hp = hp;
-      UnitRatioFar(id);
+      Unit_UpdateRatiosFar(id);
     }
     BattleEv_DispatchQueued();
     if (--unit->refrain == 0)
@@ -73,7 +73,7 @@ s32 sub_08124af8(s32 id) {
 }
 
 s32 BattleUnit_TickReflect(s32 id) {
-  u8 *value = (u8 *)&((struct BattleUnit *)UnitGet(id))->reflect;
+  u8 *value = (u8 *)&((struct BattleUnit *)Unit_Get(id))->reflect;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
@@ -84,7 +84,7 @@ s32 BattleUnit_TickReflect(s32 id) {
 }
 
 s32 BattleUnit_TickAgilityModifier(s32 id) {
-  struct BattleUnit *unit = UnitGet(id);
+  struct BattleUnit *unit = Unit_Get(id);
   u8 *value = &unit->agilityTurns;
   if (*value != 0) {
     (*value)--;
@@ -112,7 +112,7 @@ s32 DjinnRecovery_Tick(void) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 &&
-          ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
       }
       index++;
@@ -128,7 +128,7 @@ s32 DjinnRecovery_Tick(void) {
 
         Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
         DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
-        UnitCalcFar(id);
+        Unit_CalculateFar(id);
         removed = 1;
       } else {
         expiredEntry++;
@@ -181,7 +181,7 @@ s32 Func_08124cc4(s32 side) {
     do {
       if (timedEntry->turns > 0 &&
           BattleParty_IsUnitListed(timedEntry->unitId) &&
-          ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
         result = 1;
       }
@@ -222,7 +222,7 @@ s32 Func_08124cc4(s32 side) {
           element = entry->element;
           Djinn_ActivateFar(id, element, entry->index);
           DjinnRecovery_RemoveFar(id, entry->element, entry->index);
-          UnitCalcFar(id);
+          Unit_CalculateFar(id);
           if (BattleParty_IsUnitListed(id))
             Func_08127308(id, element, 3, 0);
           BattleEventRuntime_WaitForReady();

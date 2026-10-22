@@ -517,7 +517,7 @@ Func_0804bc08:
 	ldrh r2, [r2, r3]
 	adds r0, r2, #0
 	str r2, [sp, #64]
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #192
 	str r0, [sp, #72]
 	lsls r3, r3, #18

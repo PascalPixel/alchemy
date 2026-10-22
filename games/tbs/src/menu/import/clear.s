@@ -37,7 +37,7 @@
 	.set import.Menu_RunConfirmSelection, 1
 	.set import.Graphics_ExpandVramTilesByColorTable, 1
 	.set import.Link_DrawShiftedTilePair, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Item_Get, 1
 	.set import.GameState_InitDefaults, 1
 	.set import.Engine_GameFlagIsSet, 1

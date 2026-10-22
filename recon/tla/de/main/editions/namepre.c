@@ -23,7 +23,7 @@ s32 LinkBattle_ReceiveParty(void) {
   named_count = 0;
   index = 0;
   while (index <= 2) {
-    name_entry = UnitGet(index + 128);
+    name_entry = Unit_Get(index + 128);
     if (SerialRuntime_BeginReceive(name_entry) == -1) {
       break;
     }

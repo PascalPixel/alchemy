@@ -908,7 +908,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   starCount = 0;
-  inventoryEntry = UnitGet(1)->inventory;
+  inventoryEntry = Unit_Get(1)->inventory;
   remainingSlots = 14;
   do {
     u32 item = *inventoryEntry & 0x1ff;

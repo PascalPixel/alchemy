@@ -44,7 +44,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     unitId = unitIds[place];
     if (unitId == BATTLE_UNIT_REMOVED)
       continue;
-    if (requireLivingUnit && UnitGetFar(unitId)->hp == 0)
+    if (requireLivingUnit && Unit_GetFar(unitId)->hp == 0)
       continue;
     positions[count++] = place | sideTag;
   }
@@ -75,7 +75,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
         do {
           value = entry[slot];
           if (value != BATTLE_UNIT_REMOVED) {
-            if (UnitGetFar(value)->hp != 0) {
+            if (Unit_GetFar(value)->hp != 0) {
               positions[count] = index | PLACE_PARTY;
               count++;
             }
@@ -402,7 +402,7 @@ scan_complete:
 
   // Keep the candidates the ability would affect, in place.
   for (targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
-    unit = UnitGetFar(unitIds[targetIndex]);
+    unit = Unit_GetFar(unitIds[targetIndex]);
     CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
     if (applies != 0) {
       unitIds[targetCount] = unitIds[targetIndex];
@@ -416,7 +416,7 @@ scan_complete:
 
   if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
       ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-           UnitGetFar(actorId)->classId))
+           Unit_GetFar(actorId)->classId))
               ->targetStrategy != STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <=
           ABILITY_KIND_DAMAGE - ABILITY_KIND_ATTACK) {
@@ -428,10 +428,10 @@ scan_complete:
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
            innerIndex++) {
-        thisUnit = UnitGetFar(unitIds[innerIndex]);
-        nextUnit = UnitGetFar(unitIds[innerIndex + 1]);
+        thisUnit = Unit_GetFar(unitIds[innerIndex]);
+        nextUnit = Unit_GetFar(unitIds[innerIndex + 1]);
         if (((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-                 UnitGetFar(actorId)->classId))
+                 Unit_GetFar(actorId)->classId))
                 ->targetStrategy == STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;

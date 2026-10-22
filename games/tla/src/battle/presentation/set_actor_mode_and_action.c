@@ -119,7 +119,7 @@ s32 BattlePres_SetActorModeAndAction(s32 id) {
   struct BattleUnit *state;
   s32 value;
 
-  state = UnitGet(id);
+  state = Unit_Get(id);
   value = 1;
   if (state->hp != 0) {
     if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)

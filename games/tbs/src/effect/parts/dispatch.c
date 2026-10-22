@@ -196,12 +196,12 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect) {
     for (i = 0; i != 6; i++) {
       s32 id = i + 128;
 
-      if (UnitGetFar(id)->hp > 0)
+      if (Unit_GetFar(id)->hp > 0)
         list[count++] = id;
     }
   } else {
     for (i = 0; i != 8; i++) {
-      if (UnitGetFar(i)->hp > 0)
+      if (Unit_GetFar(i)->hp > 0)
         list[count++] = i;
     }
   }

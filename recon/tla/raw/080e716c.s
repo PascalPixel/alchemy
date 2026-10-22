@@ -22,7 +22,7 @@ Func_080e716c:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r5, r0, #0
 	movs r0, #79
 	bl Object_GetById

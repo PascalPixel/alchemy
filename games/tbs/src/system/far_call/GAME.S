@@ -5,8 +5,8 @@
 	.global FarCall_GameTable
 FarCall_GameTable:
 	export Djinn_GetRecoveryTableFar, Djinn_GetRecoveryTable
-	export UnitGetFar, UnitGet
-	export UnitCalcFar, UnitCalc
+	export Unit_GetFar, Unit_Get
+	export Unit_CalculateFar, Unit_Calculate
 	export Item_GetDirectFar, Item_GetDirect
 	export Shop_GetSelectionState, Inventory_GetQuantity
 	export Inventory_AddItemFar, Inventory_AddItem
@@ -41,10 +41,10 @@ FarCall_GameTable:
 	overlay_veneer Game_Restart
 	export Unit_AddHpFar, Unit_AddHp
 	export Unit_AddPpFar, Unit_AddPp
-	export UnitRatioFar, UnitRatio
+	export Unit_UpdateRatiosFar, Unit_UpdateRatios
 	export Unit_SetHpFar, Unit_SetHp
 	overlay_veneer Unit_SetPp
-	export BattleUnitSetFar, BattleUnitSet
+	export BattleUnit_SetFar, BattleUnit_Set
 	export Party_CountActiveOwnersFar, Party_CountActiveOwners
 	export Party_AddActiveOwnerFar, Party_AddActiveOwner
 	export Party_ListActiveOwnersFar, Party_ListActiveOwners

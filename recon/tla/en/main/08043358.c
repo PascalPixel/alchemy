@@ -38,7 +38,7 @@ s32 SaveState_BuildSummaryHeader(void) {
   SAVE_GAME_WORDS->playTime = gFrameWaitCount;
   gData_02001000 = gFrameWaitCount;
   gPartyState.unk244[6] = gAutoSleepEnabled;
-  owner = UnitGet(gPartyState.currentOwner);
+  owner = Unit_Get(gPartyState.currentOwner);
   destination = summary->name;
   source = owner->name;
   for (i = 11; i >= 0; i--)

@@ -32,7 +32,7 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
   return count;
 }
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 
 /// As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
 s32 Func_0811a39c(s32 groups, u16 *dst) {
@@ -45,7 +45,7 @@ s32 Func_0811a39c(s32 groups, u16 *dst) {
   if (groups & 1) {
     for (i = 0; order->partyUnits[i] != 255; i++) {
       if (order->partyUnits[i] != 254 &&
-          UnitGet(order->partyUnits[i])->hp != 0) {
+          Unit_Get(order->partyUnits[i])->hp != 0) {
         if (dst != NULL)
           *dst++ = order->partyUnits[i];
         count++;
@@ -54,7 +54,7 @@ s32 Func_0811a39c(s32 groups, u16 *dst) {
   }
   if (groups & 2) {
     for (i = 0; order->enemyIds[i] != 255; i++) {
-      if (order->enemyIds[i] != 254 && UnitGet(order->enemyIds[i])->hp != 0) {
+      if (order->enemyIds[i] != 254 && Unit_Get(order->enemyIds[i])->hp != 0) {
         if (dst != NULL)
           *dst++ = order->enemyIds[i];
         count++;

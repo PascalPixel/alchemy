@@ -2099,7 +2099,7 @@ Func_02001ed0:
 	cmp r5, #14
 	bgt .L_ja_0200aa18
 	movs r0, #4
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, .L_ja_0200aa14
 	ldrh r2, [r0, r6]
 	ands r3, r2
@@ -3469,7 +3469,7 @@ Func_02001ed0:
 	cmp r5, #14
 	bgt .L_0200aa18
 	movs r0, #4
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, .L_0200aa14
 	ldrh r2, [r0, r6]
 	ands r3, r2

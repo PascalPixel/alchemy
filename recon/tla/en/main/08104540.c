@@ -102,7 +102,7 @@ s32 Func_08104540(void) {
   counts[1] = counts[0] = 1;
   listedActions = Runtime_BumpAllocateAlternatePool(96);
   saved = Runtime_BumpAllocateAlternatePool(332);
-  unit = UnitGet(menu->shownOwner[0]);
+  unit = Unit_Get(menu->shownOwner[0]);
   counts[1] = counts[0] = OwnerAction_DiffSlots(
       unit->actionSlots, unit->actionSlots, listedActions, &gained, &lost);
   MemFree(saved);

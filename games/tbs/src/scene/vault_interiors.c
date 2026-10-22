@@ -2418,7 +2418,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
 /// Counts the Venus Djinn Ivan holds, which he gives back before he leaves the
 /// party.
 static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
-  return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
+  return Unit_Get(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
 
 #include "common/vault_djinn.h"

@@ -194,7 +194,7 @@ s32 Field_RunScene(s32 entrance) {
               AudioCommand_PlayFar(MUS_DEFEAT);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
                                                      1);
-              vitals = UnitGetFar(gGameState.selectedActor);
+              vitals = Unit_GetFar(gGameState.selectedActor);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
               gGameState.scene = gGameState.savedScene;

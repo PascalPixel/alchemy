@@ -26,7 +26,7 @@ BattleObject_Make:
 	bl Func_080200c0
 	mov r8, r0
 	mov r0, r9
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #0
 	mov r10, r0
 	mov r0, r9

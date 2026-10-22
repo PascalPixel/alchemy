@@ -87,7 +87,7 @@ s32 Item_GetEquippedElement(s32 id) {
   struct ItemDefinition *item;
   struct BattleUnit *unit;
 
-  unit = UnitGet(id);
+  unit = Unit_Get(id);
   if (unit->classIndex == 0)
     return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1: weapon.

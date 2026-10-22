@@ -19,7 +19,7 @@ struct ShopWork {
   s8 partyAction;
 };
 
-void *UnitGet(s32 unitId);
+void *Unit_Get(s32 unitId);
 s32 Inventory_FindFar(s32 unitId, s32 item_id);
 extern u8 MsgYouHave[], MsgShopNoneInStock[];
 
@@ -39,7 +39,7 @@ void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId) {
   s32 slot;
   s32 quantityOffset;
 
-  unitBytes = (u8 *)UnitGet(unitId);
+  unitBytes = (u8 *)Unit_Get(unitId);
   if (window != 0) {
     RenderOutput_PrepareForRedrawFar(window);
     slot = Inventory_FindFar(unitId, itemId);
@@ -81,7 +81,7 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
   s32 result;
 
   shop = Ram_HeapSlots->menuRuntime;
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   item = Item_Get(itemId);
   result = 1;
   if (item->flags & 0x10) {

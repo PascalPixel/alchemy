@@ -100,10 +100,10 @@ u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 
 /// Raises one owner's level by amount, then recalculates that unit.
 static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
-  struct BattleUnit *unit = UnitGet(ownerId);
+  struct BattleUnit *unit = Unit_Get(ownerId);
 
   Unit_LevelUpTo(ownerId, unit->level + amount);
-  UnitCalc(ownerId);
+  Unit_Calculate(ownerId);
 }
 
 /// Applies the level change to the owners returned by the active-party service
@@ -135,7 +135,7 @@ static void ItemLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = UnitGet(gGameState.selectedActor);
+  unit = Unit_Get(gGameState.selectedActor);
   window = UiWindow_Create(0, 0, 30, 9, 2);
 
   messageId = MsgDebugRaiseEveryonesLevel;
@@ -173,10 +173,10 @@ static void ItemLevel_RunLevelEditor(void) {
       Engine_TaskWait(1);
       UiWork_Finalize(window, 1);
 
-      UnitCalc(ISAAC);
-      UnitCalc(GARET);
-      UnitCalc(MIA);
-      UnitCalc(IVAN);
+      Unit_Calculate(ISAAC);
+      Unit_Calculate(GARET);
+      Unit_Calculate(MIA);
+      Unit_Calculate(IVAN);
       return;
     }
 

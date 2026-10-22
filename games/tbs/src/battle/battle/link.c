@@ -49,7 +49,7 @@ s32 LinkBattle_ReceiveParty(void) {
   memberCount = 0;
   partySlot = 0;
   while (partySlot < LINK_PARTY_SIZE) {
-    opponent = UnitGetFar(partySlot + FIRST_ENEMY_UNIT);
+    opponent = Unit_GetFar(partySlot + FIRST_ENEMY_UNIT);
     if (SerialRuntime_BeginReceive(opponent) == -1) {
       break;
     }
@@ -128,7 +128,7 @@ s32 LinkBattle_SendParty(void) {
   // The members, each marked as the opponent's.
   count = BattleParty_PrepareActiveOwners(owners);
   for (i = 0; i < count; i++) {
-    Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
+    Iwram_CopyWords(buffer, Unit_GetFar(owners[i]), size);
     ((struct BattleUnit *)buffer)->side = BATTLE_UNIT_PARTY;
     // FIRST_ENEMY_UNIT + i, in a byte.
     work->ownerSlots[owners[i]] = i - FIRST_ENEMY_UNIT;

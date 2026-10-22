@@ -168,7 +168,7 @@ void Event_SetSceneEvents(const struct SceneEvent *events) {
 /// announce too). Called by six scene scripts as a character joins (Vale,
 /// the Vault, Goma Cave and Mercury Lighthouse among them).
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
-  UnitGetFar(unit);
+  Unit_GetFar(unit);
   Party_AddActiveOwnerFar(unit);
   if (announce != 0) {
     Party_ShowJoinedMessageFar(unit, announce);
@@ -225,7 +225,7 @@ void Party_RemoveOwnerRestored(s32 unit) {
 
   Party_RemoveActiveOwnerFar(unit);
   Event_ClearInvalidPackedValues();
-  vitals = UnitGetFar(unit);
+  vitals = Unit_GetFar(unit);
   vitals->hp = vitals->maxHp;
   vitals->pp = vitals->maxPp;
   Unit_UpdateGauges(vitals);
@@ -234,12 +234,12 @@ void Party_RemoveOwnerRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountActiveOwnersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = UnitGetFar(gGameState.activeOwners[partyIndex]);
+    vitals = Unit_GetFar(gGameState.activeOwners[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = UnitGetFar(gGameState.selectedActor);
+    vitals = Unit_GetFar(gGameState.selectedActor);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -326,7 +326,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     } else {
       // A carried item was picked: drop it (the whole stack) and take the new
       // one.
-      UnitGetFar(member);
+      Unit_GetFar(member);
       {
         /* FAKEMATCH(temporary): the slot copied to a block local loads before
          * the member; as Shop_GetSelectionState(member, slot), 2 of 181

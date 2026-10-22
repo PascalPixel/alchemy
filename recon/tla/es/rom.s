@@ -1137,10 +1137,10 @@ Unit_AddHpFar:
 Unit_AddPpFar:
 	.incbin "baserom.gba", 0x000b60c8, 0x00000008
 	.section .rom.000b60d0, "ax"
-	.global UnitRatioFar
-	.type UnitRatioFar, %function
+	.global Unit_UpdateRatiosFar
+	.type Unit_UpdateRatiosFar, %function
 	.thumb_func
-UnitRatioFar:
+Unit_UpdateRatiosFar:
 	.incbin "baserom.gba", 0x000b60d0, 0x00000008
 	.section .rom.000b60d8, "ax"
 	.global Unit_SetHpFar
@@ -1155,10 +1155,10 @@ Unit_SetHpFar:
 Unit_SetPpFar:
 	.incbin "baserom.gba", 0x000b60e0, 0x00000008
 	.section .rom.000b60e8, "ax"
-	.global BattleUnitSetFar
-	.type BattleUnitSetFar, %function
+	.global BattleUnit_SetFar
+	.type BattleUnit_SetFar, %function
 	.thumb_func
-BattleUnitSetFar:
+BattleUnit_SetFar:
 	.incbin "baserom.gba", 0x000b60e8, 0x00000008
 	.section .rom.000b60f0, "ax"
 	.global Party_CountActiveOwnersFar
@@ -1505,10 +1505,10 @@ PartyInventory_DiscardFar:
 	.section .rom.000b63f6, "ax"
 	.incbin "baserom.gba", 0x000b63f6, 0x00000002
 	.section .rom.000b63f8, "ax"
-	.global UnitCalc
-	.type UnitCalc, %function
+	.global Unit_Calculate
+	.type Unit_Calculate, %function
 	.thumb_func
-UnitCalc:
+Unit_Calculate:
 	.incbin "baserom.gba", 0x000b63f8, 0x000007f4
 	.section .rom.000b6bec, "ax"
 	.global GameFlag_RefreshLureCap

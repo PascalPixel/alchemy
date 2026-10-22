@@ -4,9 +4,9 @@
 
 #include "../game_internal.h"
 
-/// The running totals UnitCalc builds a unit's stats in. Each call takes a
-/// block from EWRAM first (Runtime_BumpAllocateAlternatePool) and frees it
-/// with MemFree before returning; only UnitCalc reads it.
+/// The running totals Unit_Calculate builds a unit's stats in. Each call takes
+/// a block from EWRAM first (Runtime_BumpAllocateAlternatePool) and frees it
+/// with MemFree before returning; only Unit_Calculate reads it.
 struct StatWork {
   s32 hp;            ///< maximum HP
   s32 pp;            ///< maximum PP
@@ -43,7 +43,7 @@ void Game_Restart(void) {
 /// (DjinnRecovery_Tick, BattleSummon_UpdateAvailability, the link battle).
 void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
-    return UnitGet(0x83);
+    return Unit_Get(0x83);
   }
   return &gGameState.unk008[4];
 }
@@ -62,7 +62,7 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += UnitGet(gGameState.activeOwners[partyIndex])->level;
+    totalLevels += Unit_Get(gGameState.activeOwners[partyIndex])->level;
   }
   totalLevels = totalLevels / partySize;
   return totalLevels;
@@ -71,8 +71,8 @@ u32 Party_GetAverageLevel(void) {
 /// Returns the unit record of `owner`: ISAAC to PIERS are the playable
 /// characters in the game state, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
-/// bank calls it, through GAME.S as UnitGetFar.
-struct BattleUnit *UnitGet(u32 owner) {
+/// bank calls it, through GAME.S as Unit_GetFar.
+struct BattleUnit *Unit_Get(u32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
 
@@ -108,7 +108,7 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 
   recordIndex = selector - ENEMY_CLASS_FIRST;
   // BUG: the table has 165 rows, but only rows past 249 are refused, so 165 to
-  // 249 read the tables after it. BattleUnitSet refuses them itself.
+  // 249 read the tables after it. BattleUnit_Set refuses them itself.
 #ifdef BUGFIX
   if (recordIndex > 164U) {
 #else
@@ -149,7 +149,7 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.
-void UnitCalc(s32 owner) {
+void Unit_Calculate(s32 owner) {
   struct StatWork *stats;
   struct BattleUnit *unit;
   s32 index, effectIndex, elementIndex;
@@ -162,7 +162,7 @@ void UnitCalc(s32 owner) {
 
   // Start with the unit's base stats and elemental power/resistance.
   stats = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
   stats->atk = unit->baseAttack;
@@ -179,8 +179,8 @@ void UnitCalc(s32 owner) {
 
   // A gauge is HP or PP as a fraction of its maximum, 0x4000 full. When
   // either no longer gives its stat to within 1 (the stat was written
-  // without UnitRatio), both gauges are reset to full and the unit's HP and
-  // PP refilled, before the fractions carry over to the new maxima.
+  // without Unit_UpdateRatios), both gauges are reset to full and the unit's HP
+  // and PP refilled, before the fractions carry over to the new maxima.
   if (UNIT_STAT_DIFF(unit->maxHp * unit->hpGauge / 0x4000, unit->hp) > 1 ||
       UNIT_STAT_DIFF(unit->maxPp * unit->ppGauge / 0x4000, unit->pp) > 1) {
     unit->hpGauge = 0x4000;
@@ -463,7 +463,7 @@ void GameFlag_RefreshLureCap(void) {
     struct BattleUnit *unit;
     s32 inventorySlot;
 
-    unit = UnitGet(gGameState.activeOwners[partyIndex]);
+    unit = Unit_Get(gGameState.activeOwners[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct ItemEffect *effect;
@@ -625,9 +625,9 @@ void Party_BeginChildhood(void) {
   Unit_UpdateClass(ISAAC);
   Unit_UpdateClass(GARET);
   Unit_UpdateClass(JENNA);
-  UnitCalc(ISAAC);
-  UnitCalc(GARET);
-  UnitCalc(JENNA);
+  Unit_Calculate(ISAAC);
+  Unit_Calculate(GARET);
+  Unit_Calculate(JENNA);
 }
 
 /// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
@@ -643,12 +643,12 @@ void Party_EndChildhood(void) {
   GameFlag_ClearBit(FLAG_ISAAC_WEARS_TUNIC);
   GameFlag_SetBit(0x901);
   Unit_UpdateClass(JENNA);
-  UnitCalc(JENNA);
+  Unit_Calculate(JENNA);
   GameFlag_ClearBit(FLAG_KEEP_MUSIC_HELD);
   GameFlag_SetBit(FLAG_KEEP_MUSIC);
 
   for (owner = 0; owner <= 1; owner++) {
-    struct BattleUnit *unit = UnitGet(owner);
+    struct BattleUnit *unit = Unit_Get(owner);
     s32 slot;
 
     unit->hp = unit->maxHp;
@@ -664,7 +664,7 @@ void Party_EndChildhood(void) {
     }
 
     Unit_UpdateClass(owner);
-    UnitCalc(owner);
+    Unit_Calculate(owner);
   }
 
   Unit_LearnPsynergy(ISAAC, ABILITY_MOVE);
@@ -686,7 +686,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountActiveOwners();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = UnitGet(gGameState.activeOwners[partyIndex]);
+    unit = Unit_Get(gGameState.activeOwners[partyIndex]);
 
     unit->hp = unit->maxHp;
     unit->pp = unit->maxPp;
@@ -731,7 +731,7 @@ void Party_RestorePpOfLitElements(void) {
       continue;
     }
 
-    unit = UnitGet(ownerId);
+    unit = Unit_Get(ownerId);
     unit->pp = unit->maxPp;
     Unit_UpdateGauges(unit);
   }
@@ -741,12 +741,13 @@ void Party_RestorePpOfLitElements(void) {
 UNUSED void Unit_RatioNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so
-/// that UnitCalc keeps the same fractions. Called after anything that writes
-/// HP or PP directly: Unit_AddHp, the inn, the sanctum, item use, battle.
-void UnitRatio(s32 owner) {
+/// that Unit_Calculate keeps the same fractions. Called after anything that
+/// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
+/// battle.
+void Unit_UpdateRatios(s32 owner) {
   struct BattleUnit *unit;
 
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   Unit_UpdateGauges(unit);
 }
 
@@ -788,7 +789,7 @@ void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
 /// gauges and returns the new HP. Called by battle's round end, poison and
 /// regeneration, and by the field's damage floors and status damage.
 s32 Unit_AddHp(s32 owner, s32 delta) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 currentHp = unit->hp;
   s32 maximumHp = unit->maxHp;
   s32 value = currentHp + delta;
@@ -796,7 +797,7 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumHp);
   unit->hp = result;
-  UnitRatio(owner);
+  Unit_UpdateRatios(owner);
   return unit->hp;
 }
 
@@ -805,7 +806,7 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 /// in battle and from the menu, by PP recovery at the end of a battle round,
 /// and by the debug menu.
 s16 Unit_AddPp(s32 owner, s32 delta) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 currentPp = unit->pp;
   s32 maximumPp = unit->maxPp;
   s32 value = currentPp + delta;
@@ -813,7 +814,7 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumPp);
   unit->pp = result;
-  UnitRatio(owner);
+  Unit_UpdateRatios(owner);
   return unit->pp;
 }
 

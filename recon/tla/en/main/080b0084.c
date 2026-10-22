@@ -34,7 +34,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
 u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
-  struct BattleUnit *state = (struct BattleUnit *)UnitGet(owner);
+  struct BattleUnit *state = (struct BattleUnit *)Unit_Get(owner);
   u32 index;
   s32 values[4];
   s32 i;

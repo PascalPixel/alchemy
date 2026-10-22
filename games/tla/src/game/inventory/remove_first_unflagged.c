@@ -10,7 +10,7 @@
 #include "inventory.h"
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner) {
-  struct OwnerInventoryState *state = UnitGet(owner);
+  struct OwnerInventoryState *state = Unit_Get(owner);
   s32 result = 0;
   s32 i;
 

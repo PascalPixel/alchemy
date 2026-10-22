@@ -91,7 +91,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (actor == 15) {
       actor = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-        unit = UnitGetFar(gGameState.activeOwners[partyIndex]);
+        unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
           if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
@@ -104,7 +104,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         }
       }
     } else {
-      unit = UnitGetFar(actor);
+      unit = Unit_GetFar(actor);
       for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
         if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
           mostMatchingSlots++;

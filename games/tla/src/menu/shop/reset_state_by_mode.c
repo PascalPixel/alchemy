@@ -16,10 +16,10 @@
 void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
   struct BattleUnit *unit;
 
-  unit = UnitGet(id);
+  unit = Unit_Get(id);
   if (mode == 0) {
     unit->hp = unit->maxHp;
-    UnitRatioFar(id);
+    Unit_UpdateRatiosFar(id);
   } else if (mode == 1) {
     unit->poison = 0;
   } else if (mode == 2) {
@@ -31,7 +31,7 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
       if (unit->inventory[i] & 0x200) {
         if (Item_Get(unit->inventory[i])[3] & 1) {
           unit->inventory[i] ^= 0x200;
-          UnitCalcFar(id);
+          Unit_CalculateFar(id);
         }
       }
     }

@@ -95,7 +95,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   UiWork_SetAltFlagAndClearTable(1);
   listWindow = UiWindow_Create(21, 9, 9, 11, 6);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  unit = UnitGetFar(owner);
+  unit = Unit_GetFar(owner);
 
   // Pack Djinn state and recovery turns before paging the selection list.
   for (element = 0; element <= 3; element++) {

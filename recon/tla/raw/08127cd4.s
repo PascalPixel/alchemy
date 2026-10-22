@@ -403,7 +403,7 @@ Func_08127cd4:
 	.4byte IwramClearWords
 .L_08127fc8:
 	adds r0, r7, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #166
 	lsls r1, r1, #1
 	adds r7, #1
@@ -442,9 +442,9 @@ Func_08127cd4:
 	ldrh r1, [r5]
 	ands r2, r4
 	adds r0, r6, #0
-	bl BattleUnitSetFar
+	bl BattleUnit_SetFar
 	adds r0, r6, #0
-	bl UnitGet
+	bl Unit_Get
 	ldr r1, [sp, #32]
 	mov r8, r0
 	cmp r1, #0

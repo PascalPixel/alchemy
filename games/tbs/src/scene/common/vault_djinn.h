@@ -18,10 +18,10 @@ static void Vault_ReturnIsaacsDjinni(void) {
 static s32 Vault_ReturnIsaacsDjinni(void) {
 #endif
   DjinnRecovery_TickTwenty();
-  if ((UnitGet(IVAN)->djinnAvailable[ELEMENT_VENUS] & 1) != 0) {
+  if ((Unit_Get(IVAN)->djinnAvailable[ELEMENT_VENUS] & 1) != 0) {
     Djinn_Transfer(IVAN, ELEMENT_VENUS, 0, ISAAC);
     Engine_AudioPlayCue(SE_RECOVERY);
-    UnitCalc(ISAAC);
-    UnitCalc(IVAN);
+    Unit_Calculate(ISAAC);
+    Unit_Calculate(IVAN);
   }
 }

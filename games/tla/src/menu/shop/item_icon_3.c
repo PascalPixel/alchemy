@@ -1,7 +1,7 @@
 #include "item_icon.h"
 
 void Func_0810bf98(s16 *window, s32 x, s32 y, s32 owner) {
-  u8 *unit = UnitGet(owner);
+  u8 *unit = Unit_Get(owner);
   s32 left = window[6] * 8 + x + 8;
   s32 top = window[7] * 8 + y + 8;
   s32 i;

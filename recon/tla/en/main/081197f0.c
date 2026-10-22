@@ -135,7 +135,7 @@ s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Func_08120060(s32 x, s32 y);
 void BattlePres_ClearLinkPayload(void);
-s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
+s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32 slot, s32 kind);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
@@ -403,7 +403,7 @@ won_scripted:
       if (battle->defeated != 0) {
         Audio_PlayCue(58);
         if (battle->defeatState <= 1) {
-          BattleUnitSetFar(128, battle->enemyClasses[battle->firstDefeated],
+          BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                            26);
           UiWork_ClearValueNameTablesFar();
           UiText_DrawQuantity(128, 1);

@@ -281,7 +281,7 @@ BattleEvent_Playback:
 	ldr r0, [r5]
 	bl BattleActor_ResetRuntimeFields
 	ldr r0, [r5]
-	bl UnitGet
+	bl Unit_Get
 	movs r5, #0
 	adds r6, r0, #0
 	b .L_08122f6e
@@ -719,7 +719,7 @@ BattleEvent_Playback:
 	lsls r0, r0, #1
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #165
 	lsls r1, r1, #1
 	adds r3, r0, r1
@@ -760,7 +760,7 @@ BattleEvent_Playback:
 	lsls r1, r1, #1
 	adds r3, r7, r1
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #165
 	lsls r2, r2, #1
 	adds r3, r0, r2

@@ -56,7 +56,7 @@ Func_0811de78:
 	lsls r5, r6, #1
 .L_0811dee2:
 	ldrsh r0, [r7, r5]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #60
 	adds r2, r0, #0
 	adds r1, #255

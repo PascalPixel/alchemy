@@ -56,7 +56,7 @@ void Func_02001b04(s32 clearStatus) {
       /* FAKEMATCH: the barrier loads the party state before the owner list's
        * offset, as in the main image's Func_080ae16c (differ 2 without). */
       asm volatile("");
-      member = UnitGet(party->activeOwners[n]);
+      member = Unit_Get(party->activeOwners[n]);
     }
     maxHp = member->hp = member->maxHp;
     member->hpGauge = Vitals_Clamp((maxHp << 14) / maxHp);

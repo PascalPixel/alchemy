@@ -94,7 +94,7 @@ Func_080fd968:
 	adds r3, #22
 	add r3, r10
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r10
 	ldrh r3, [r6, r2]
 	adds r5, r0, #0

@@ -407,7 +407,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     Runtime_PushSlotEntry((s32 *)&cursorSprite, 241);
 
     if (redraw != 0) {
-      unit = UnitGetFar(owner);
+      unit = Unit_GetFar(owner);
 #if TBS_PATCH_1
       UiWindow_MarkVisibleTileAttributes();
 #endif
@@ -690,7 +690,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         unit->attackStage = 0;
         unit->defenseStage = 0;
         unit->agilityStage = 0;
-        UnitCalcFar(owner);
+        Unit_CalculateFar(owner);
         attackDelta -= unit->atk;
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;

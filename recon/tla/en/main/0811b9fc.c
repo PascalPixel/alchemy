@@ -53,7 +53,7 @@ struct TlaSpriteRecord {
   struct SpriteEntry *entries[1];
 };
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 s32 BattleStatusIcon_Cycle(struct TlaBattleObj *slot);
 
 static inline struct TlaBattleObj *BattleObject_GetInline(s32 unitId) {
@@ -136,7 +136,7 @@ void Func_0811b9fc(void) {
       case 1:
         record = object->records;
         record->image.priority = partyPriority;
-        if (UnitGet(unitIds[unitIndex])->guardLevel == 4)
+        if (Unit_Get(unitIds[unitIndex])->guardLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;
@@ -164,7 +164,7 @@ void Func_0811b9fc(void) {
       case 1:
         record = object->records;
         record->image.priority = enemyPriority;
-        if (UnitGet(unitIds[unitIndex])->guardLevel == 4)
+        if (Unit_Get(unitIds[unitIndex])->guardLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;

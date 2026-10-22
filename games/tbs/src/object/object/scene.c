@@ -104,14 +104,14 @@ void Scene_ReturnFromBattle(s32 result) {
   gGameState.sceneChangeReason = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = UnitGetFar(gGameState.selectedActor);
+    unit = Unit_GetFar(gGameState.selectedActor);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
     }
     if (GameFlag_TestFar(FLAG_CHILDHOOD)) {
       for (i = 0; i < 2; i++) {
-        unit = UnitGetFar(i);
+        unit = Unit_GetFar(i);
         unit->hp = unit->maxHp;
         unit->pp = unit->maxPp;
         Unit_UpdateGauges(unit);

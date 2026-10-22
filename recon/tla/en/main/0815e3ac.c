@@ -94,7 +94,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
@@ -150,7 +150,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   kind = effect->kind;
-  unit = UnitGet(effect->actor);
+  unit = Unit_Get(effect->actor);
 
   // Setup: the display, the tile map on BG1, the blitters for the side.
   WaitFrames(1);

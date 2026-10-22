@@ -47,7 +47,7 @@ s32 BattlePres_ShowDefendMessage(s16 *script) {
   struct BattleUnit *unit;
 
   objectId = *script;
-  unit = UnitGet(objectId);
+  unit = Unit_Get(objectId);
   if (BattleObject_IsValidId(objectId) < 0) {
     return -1;
   }

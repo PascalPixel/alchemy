@@ -1,11 +1,11 @@
 #include "owner_state.h"
 
-void UnitRatio(s32);
+void Unit_UpdateRatios(s32);
 
 /// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
 /// gauges and returns the new PP.
 s16 Unit_AddPp(s32 owner, s32 delta) {
-  struct BattleUnit *state = UnitGet(owner);
+  struct BattleUnit *state = Unit_Get(owner);
   s32 cur = state->pp;
   s32 max = state->maxPp;
   s32 value = cur + delta;
@@ -19,6 +19,6 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
       result = value;
   }
   state->pp = result;
-  UnitRatio(owner);
+  Unit_UpdateRatios(owner);
   return state->pp;
 }

@@ -203,7 +203,7 @@ void BattleEvent_Playback(void) {
             events->actorId = events->queue.operands[eventIndex];
             BattleEnemy_RecordDefeat(events->actorId, events->flags);
             BattleObject_ResetRuntimeFields(events->actorId);
-            unit = UnitGetFar(events->actorId);
+            unit = Unit_GetFar(events->actorId);
             for (recordIndex = 0;
                  (record =
                       GetMotionRecord(BattleObject_Get(events->actorId)->object,
@@ -334,7 +334,7 @@ void BattleEvent_Playback(void) {
 
         if (events->timer == 0 && events->flags != 0) {
           s32 kind = BattleClass_GetDefeatSoundKind(
-              UnitGetFar(events->actorId)->classId);
+              Unit_GetFar(events->actorId)->classId);
 
           if (kind >= 0) {
             kind--;
@@ -348,7 +348,7 @@ void BattleEvent_Playback(void) {
           events->timer = 0;
         if (events->timer == 0) {
           s32 kind = BattleClass_GetDefeatSoundKind(
-              UnitGetFar(events->actorId)->classId);
+              Unit_GetFar(events->actorId)->classId);
 
           if (kind >= 0)
             AudioCommand_PlayFar(SE_146 + kind);

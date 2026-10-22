@@ -31,7 +31,7 @@ GameFlag_RefreshLureCap:
 .L_080adc22:
 	mov r2, r9
 	ldrb r0, [r2]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #216
 	adds r7, r0, #0
 	movs r1, #14

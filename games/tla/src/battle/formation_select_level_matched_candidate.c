@@ -13,7 +13,7 @@ struct FormationCandidate {
 /// The enemy flags (0x600 + id) cleared before every search.
 extern const u16 Data_08130c5c[];
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 u8 GameFlag_GetByte(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -40,7 +40,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
     candidateOrUnitIndex = unitCount;
     do {
-      u8 level = UnitGet(*unitCursor)->level;
+      u8 level = Unit_Get(*unitCursor)->level;
 
       candidateOrUnitIndex--;
       unitCursor++;

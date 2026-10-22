@@ -59,7 +59,7 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   kind = effect->kind;
   work->effect = effect;
-  unit = UnitGetFar(effect->actor);
+  unit = Unit_GetFar(effect->actor);
   WaitFrames(1);
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_SetupCanvasTileMap();

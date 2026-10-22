@@ -26,10 +26,10 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -114,10 +114,10 @@ Func_02000e04:
 	.thumb_func
 Func_02000e0c:
 	overlay_veneer Func_08038318
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
+Unit_Calculate:
+	overlay_veneer Unit_CalculateFar
 	.global Inventory_AddItem
 	.thumb_func
 Inventory_AddItem:

@@ -44,7 +44,7 @@ Func_080b1088:
 	mov r10, r1
 .L_080b10d2:
 	mov r0, r10
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r0, #0
 	adds r2, r7, #0
 	adds r2, #216
@@ -142,7 +142,7 @@ Func_080b1088:
 	mov r0, r10
 	bl Unit_UpdateClass
 	mov r0, r10
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r2, #1
 	add r10, r2
 	mov r3, r10

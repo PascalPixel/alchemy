@@ -4,7 +4,7 @@
 s32 Unit_AddPp();
 
 static __inline__ s32 Owner_GetPpRatio(s32 owner) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
 
   if (unit->maxPp <= 0)
     return 0;
@@ -20,7 +20,7 @@ s32 Func_080adc90(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = UnitGet(gPartyState.activeOwners[i]);
+    struct BattleUnit *unit = Unit_Get(gPartyState.activeOwners[i]);
 
     pp += unit->pp;
     max += unit->maxPp;

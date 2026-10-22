@@ -166,7 +166,7 @@ extern void *gBattleFxWork[];
 #endif
 #ifndef OWN_gBattleOwnerStates
 /// The HEAP_SLOT_LINK_OWNER_STATES work slot: the six enemy battle units,
-/// BATTLE_UNIT_SIZE bytes each, that UnitGet returns for unit ids 128 to 133
+/// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
 extern u8 *gBattleOwnerStates;
 #endif

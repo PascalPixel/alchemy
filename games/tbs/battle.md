@@ -53,7 +53,7 @@ Everyone in a fight is a unit, and everything a unit can do on its turn is an
 ability, one row number across three tables.
 
 Party members keep their character numbers as unit ids, and enemies take ids
-from `FIRST_ENEMY_UNIT`. `UnitGetFar` returns a unit's `struct BattleUnit`,
+from `FIRST_ENEMY_UNIT`. `Unit_GetFar` returns a unit's `struct BattleUnit`,
 with its HP, PP, stats, statuses and a Power and a Resist in each element.
 
 An ability runs from Attack to Quake, a Djinni, a summon, an item's use or an

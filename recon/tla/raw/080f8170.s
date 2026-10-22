@@ -22,7 +22,7 @@ Func_080f8170:
 	mov r11, r1
 	mov r0, r11
 	mov r9, r3
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, [sp, #24]
 	mov r10, r0
 	lsls r3, r3, #1
@@ -283,7 +283,7 @@ Func_080f8170:
 	bl Inventory_EquipFar
 .L_080f83bc:
 	mov r0, r11
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	movs r1, #241
 	movs r3, #0
 	lsls r1, r1, #8
@@ -402,7 +402,7 @@ Func_080f8170:
 	bl Inventory_EquipFar
 .L_080f84b6:
 	mov r0, r11
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r0, r10
 	mov r1, r8
 	adds r2, r7, #0

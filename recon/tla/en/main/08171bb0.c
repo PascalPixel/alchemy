@@ -120,7 +120,7 @@ extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
 extern s32 gCameraSceneParameters[];
 
-u8 *UnitGet(s32 unit);
+u8 *Unit_Get(s32 unit);
 void Render_ProjectVertices(const u8 *vertices, void *projected, s32 count);
 void SceneTransform_ApplyPosition(void *position);
 
@@ -159,7 +159,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
-  unit = UnitGet(effect->actors[0]);
+  unit = Unit_Get(effect->actors[0]);
   BattleEffect_BeginCanvasLayer(0);
   if (mode <= 1) {
     frames = 38;

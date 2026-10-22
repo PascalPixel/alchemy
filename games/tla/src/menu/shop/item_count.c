@@ -46,7 +46,7 @@ struct ShopUnit {
   u16 inventory[15];
 };
 
-void *UnitGet(s32 unitId);
+void *Unit_Get(s32 unitId);
 s32 Shop_GetSellPrice(s32 item_id);
 s32 Inventory_GetQuantityFar(s32 unitId, s32 slot);
 void Func_081084f4(s32 messageId);
@@ -79,7 +79,7 @@ s32 Func_0810a03c(s32 unitId, s32 slot) {
   struct ShopUnit *unit;
 
   shop = Ram_HeapSlots->menuRuntime;
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   item = Item_Get(unit->inventory[slot]);
   result = 1;
   price = Shop_GetSellPrice(unit->inventory[slot]);

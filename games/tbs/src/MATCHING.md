@@ -455,7 +455,7 @@ macros whose exact shape decides the code.
 
 The rules code reads party members and element tables in two ways each.
 
-- A unit is `UnitGet(owner)`, or from other banks `UnitGetFar(owner)`, the
+- A unit is `Unit_Get(owner)`, or from other banks `Unit_GetFar(owner)`, the
   far call that reaches it.
 - An element pair array is `s16 [4][2]` where the matching code indexes it,
   or goes through `struct BattleElementStats` with `UBFIX`.

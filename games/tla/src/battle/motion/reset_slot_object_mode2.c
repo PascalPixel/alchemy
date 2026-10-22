@@ -171,7 +171,7 @@ s32 Func_0811c2b4(s32 slot, s32 *screen) {
   return 0;
 }
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 
 s32 Func_0811c314(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
@@ -180,7 +180,7 @@ s32 Func_0811c314(s32 slot, s32 *screen) {
 
   Camera_ApplyTransformByFlag();
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
-  if (BattleClass_IsSmall(*(u16 *)((u8 *)UnitGet(slot) + 0x14a)) != 0)
+  if (BattleClass_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
     screen[1] -= Iwram_MulQ16(scale, 24);
   else
     screen[1] -= Iwram_MulQ16(scale, 48);

@@ -66,7 +66,7 @@ Func_08104540:
 	add r3, r10
 	adds r6, r0, #0
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r1, r0, #0
 	add r2, sp, #64
 	adds r1, #88

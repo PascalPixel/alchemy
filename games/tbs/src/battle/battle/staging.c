@@ -31,7 +31,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   fled = 0;
   if (request->unitId == BATTLE_UNIT_LIST_END)
     return 0;
-  unit = UnitGetFar(request->unitId);
+  unit = Unit_GetFar(request->unitId);
   if (unit->hp == 0)
     return -1;
   // An enemy settles its ability now, at its turn.
@@ -151,7 +151,7 @@ s32 BattlePresentation_BuildTargetList(struct BattlePlan *plan,
     inputTarget = plan->targetIds;
     outputTarget = effect->actors;
     do {
-      if (UnitGetFar(*inputTarget)->hp != 0 ||
+      if (Unit_GetFar(*inputTarget)->hp != 0 ||
           (plan->presentationFlags & STAGING_ON_DOWNED)) {
         livingTargets++;
         *outputTarget++ = *inputTarget;
@@ -217,7 +217,7 @@ s32 BattlePresentation_RunEscape(struct BattlePlan *plan) {
           BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, (u16 *)unitIds) - 1;
 
       while (index != -1) {
-        struct BattleUnit *unit = UnitGetFar(unitIds[index]);
+        struct BattleUnit *unit = Unit_GetFar(unitIds[index]);
 
         if (unit->stun == 0 && unit->sleep == 0) {
           BattleMotion_SetupEscapeObject(unitIds[index]);
@@ -519,8 +519,8 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
   if (work.effect.kind == STAGING_KIND_SEVERE_BLOW)
     PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
 
-  unit = UnitGetFar(work.effect.actor);
-  UnitGetFar(work.effect.actors[0]);
+  unit = Unit_GetFar(work.effect.actor);
+  Unit_GetFar(work.effect.actors[0]);
   critical = plan->targetCritical[0];
   missed = plan->targetMultiplier[0] == 0;
 
@@ -663,8 +663,8 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattlePlan *input,
 
   BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
   BattlePresentation_BuildTargetList(savedInput, &work.effect);
-  UnitGetFar(work.effect.actor);
-  UnitGetFar(savedInput->targetIds[0]);
+  Unit_GetFar(work.effect.actor);
+  Unit_GetFar(savedInput->targetIds[0]);
 
   missed = flags & 2;
   animation = GetMotionRecord(BattleObject_Get(savedInput->actorId)->object, 0);
@@ -792,7 +792,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
     ObjMotRst(work.effect.actors[targetOrFadeIndex]);
 
   // Spend the item, by its use type.
-  unit = UnitGetFar(selection->unitId);
+  unit = Unit_GetFar(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
   itemDefinition = Item_GetDirectFar(inventoryEntry);
   if (itemDefinition->useType == ITEM_USE_CONSUMED) {
@@ -997,7 +997,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   s32 listTerminator;
   s32 flashesRemaining;
 
-  UnitGetFar(unitId);
+  Unit_GetFar(unitId);
   ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                     POSE_DAMAGE);
 
@@ -1041,7 +1041,7 @@ void BattleObject_RemoveFromLists(s32 unitId) {
 
   // The party's list.
   battle = gBattleWork;
-  UnitGetFar(unitId)->side = BATTLE_UNIT_ABSENT;
+  Unit_GetFar(unitId)->side = BATTLE_UNIT_ABSENT;
   for (partyIndex = 0;; partyIndex++) {
     if (battle->partyUnits[partyIndex] == unitId) {
       battle->partyUnits[partyIndex] = BATTLE_UNIT_REMOVED;
@@ -1093,7 +1093,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
   struct AnimationEntry *entry;
   s32 recordCount;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   recordCount = 0;
   while ((record = GetMotionRecord(BattleObject_Get(unitId)->object,
                                    recordCount)) != 0) {

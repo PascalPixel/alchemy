@@ -22,7 +22,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
   struct BattleUnit *creature;
   struct BattleObj *runtime;
 
-  creature = UnitGet(arg0);
+  creature = Unit_Get(arg0);
   if (creature->side == 1) {
     Unit_SetHpFar(creature, 0);
     BattleActor_RemoveFromLists(arg0);

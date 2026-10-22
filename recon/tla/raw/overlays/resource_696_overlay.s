@@ -1139,7 +1139,7 @@ Func_0200290c:
 	ldrsh r5, [r7, r1]
 	adds r7, #2
 	adds r0, r5, #0
-	bl UnitGet
+	bl Unit_Get
 	adds r6, r0, #0
 	movs r5, #0
 	adds r6, #216

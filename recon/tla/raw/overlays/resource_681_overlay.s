@@ -7459,7 +7459,7 @@ Func_02004280:
 	adds r2, #50
 	adds r3, r1, r2
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r2, r0, #0
 	movs r5, #0
 	adds r2, #13

@@ -1091,7 +1091,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   for (i = 0; i != 4; i++) {
-    struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+    struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
         ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
     struct PasswordStats *stats = &owner->stats;
 
@@ -1153,7 +1153,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 39;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
 
       for (n = 0; n != 15; n++) {
@@ -1176,7 +1176,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 107;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
       s32 m;
 

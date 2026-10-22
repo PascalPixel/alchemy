@@ -13,7 +13,7 @@
 #include "battle_unit.h"
 
 struct BattleSummonState *Djinn_GetRecoveryTableFar(s32 owner);
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 
 void Func_08118f6c(void) {
   u8 totals[4];
@@ -32,7 +32,7 @@ void Func_08118f6c(void) {
       s32 partySlot;
 
       for (partySlot = 0; partySlot < partySize; partySlot++) {
-        struct BattleUnit *member = UnitGet(partyMembers[partySlot]);
+        struct BattleUnit *member = Unit_Get(partyMembers[partySlot]);
 
         totals[element] += member->djinnOwnedCounts[element];
       }

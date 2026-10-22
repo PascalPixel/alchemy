@@ -222,7 +222,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 /// Counts the Venus Djinn that must leave Ivan before he leaves the party.
 static int Vault_GetIvanVenusDjinnCount(void) {
-  return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
+  return Unit_Get(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
 
 #include "common/vault_djinn.h"

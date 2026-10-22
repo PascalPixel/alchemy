@@ -21,7 +21,7 @@ s32 BattleEnemyList(s16 *unit_ids) {
     id = 0x80;
     limit += 0x80;
     for (; id < limit; id++) {
-      if (((struct BattleUnit *)UnitGet(id))->side != 0) {
+      if (((struct BattleUnit *)Unit_Get(id))->side != 0) {
         *output = id;
         listed++;
         output++;
@@ -62,7 +62,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = ((struct BattleUnit *)UnitGet(unitId))->hp;
+        hp = ((struct BattleUnit *)Unit_Get(unitId))->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -79,7 +79,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
     enemyLimit = enemyCapacity + 0x80;
     if (remaining < enemyLimit) {
       do {
-        unit = UnitGet(remaining);
+        unit = Unit_Get(remaining);
         if (unit->side != 0 && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;
@@ -131,7 +131,7 @@ s32 Func_0811a24c(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = ((struct BattleUnit *)UnitGet(unitId))->hp;
+        hp = ((struct BattleUnit *)Unit_Get(unitId))->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -148,7 +148,7 @@ s32 Func_0811a24c(s32 sideMask, u16 *unitIds) {
     enemyLimit = enemyCapacity + 0x80;
     if (remaining < enemyLimit) {
       do {
-        unit = UnitGet(remaining);
+        unit = Unit_Get(remaining);
         if (unit->side != 0 && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;

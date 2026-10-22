@@ -20,7 +20,7 @@ void BattleMotion_FlashHit(s32 id) {
   s32 target;
   s32 remaining;
 
-  UnitGet(id);
+  Unit_Get(id);
   Object_SetMode(BattleObject_Get(id)->object, 5);
 
   selected = selection;

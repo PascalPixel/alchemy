@@ -39,7 +39,7 @@ extern u8 Data_0200ff6c[][28];
 extern struct SnapshotVitals Data_0200ffec[];
 extern u8 Data_0812a16c[];
 
-struct SnapshotUnit *UnitGet(s32 unitId);
+struct SnapshotUnit *Unit_Get(s32 unitId);
 u32 BattleParty_IsUnitListed(u32 id);
 
 void Func_0811843c(void) {
@@ -50,7 +50,7 @@ void Func_0811843c(void) {
   u8 *ids = Data_0812a16c;
 
   for (i = 0; i <= 4; i++) {
-    struct SnapshotUnit *unit = UnitGet(ids[i]);
+    struct SnapshotUnit *unit = Unit_Get(ids[i]);
 
     snap->listed[i] = 0;
     if (BattleParty_IsUnitListed(ids[i])) {

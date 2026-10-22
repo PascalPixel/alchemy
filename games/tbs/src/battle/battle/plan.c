@@ -106,7 +106,7 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
 /// extra blows, critical hit or advance hit roll; then how it is staged.
 s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
                             struct BattlePlan *plan) {
-  struct BattleUnit *actor = UnitGetFar(request->unitId);
+  struct BattleUnit *actor = Unit_GetFar(request->unitId);
   struct BattleWork *battle = gBattleWork;
   s32 selectedTargetId;
   s32 abilityId;
@@ -177,7 +177,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
             targetId = battle->enemyIds[place];
             if (targetId == BATTLE_UNIT_REMOVED)
               continue;
-            if (!includeDowned && UnitGetFar(targetId)->hp == 0)
+            if (!includeDowned && Unit_GetFar(targetId)->hp == 0)
               continue;
             plan->targetMultiplier[targetCount] = 1;
             plan->targetOffset[targetCount] = place - aimedPlace;
@@ -189,7 +189,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
             targetId = battle->partyUnits[place];
             if (targetId == BATTLE_UNIT_REMOVED)
               continue;
-            if (!includeDowned && UnitGetFar(targetId)->hp == 0)
+            if (!includeDowned && Unit_GetFar(targetId)->hp == 0)
               continue;
             plan->targetMultiplier[targetCount] = 1;
             plan->targetOffset[targetCount] = place - aimedPlace;
@@ -356,7 +356,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     if (canCast) {
       plan->failure = PLAN_FAILURE_NONE;
       actor->pp -= ability->ppCost;
-      UnitRatioFar(request->unitId);
+      Unit_UpdateRatiosFar(request->unitId);
       CLAMP(actor->pp, 0, actor->maxPp);
     }
   } break;
@@ -506,7 +506,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         DjinnRecovery_RemoveFar(request->unitId,
                                 DJINN_ELEMENT(request->parameter),
                                 DJINN_INDEX(request->parameter));
-        UnitCalcFar(request->unitId);
+        Unit_CalculateFar(request->unitId);
         BattleEvent_Reset();
         BattleEvent_SchedulePhase(30);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, request->unitId);
@@ -609,7 +609,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // Plan a normal attack.
   //----------------------------------------------------------------------
   if (abilityId == ABILITY_ATTACK) {
-    struct BattleUnit *target = UnitGetFar(plan->targetIds[0]);
+    struct BattleUnit *target = Unit_GetFar(plan->targetIds[0]);
 
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);

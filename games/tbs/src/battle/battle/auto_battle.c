@@ -26,11 +26,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   // The party's actions. The four lookups' results are never used.
   partyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   for (index = 0; index != PARTY_BATTLE_SIZE; index++)
-    UnitGetFar(index);
+    Unit_GetFar(index);
   for (index = 0; index < partyCount; index++) {
     s32 unitId = unitIds[index];
 
-    unit = UnitGetFar(unitId);
+    unit = Unit_GetFar(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
     entry->priority = unit->agi;
@@ -48,7 +48,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   for (index = 0; index < enemyCount; index++) {
     s32 unitId = unitIds[index];
 
-    unit = UnitGetFar(unitId);
+    unit = Unit_GetFar(unitId);
     entry->unitId = unitId;
     entry->priority = unit->agi >> 1;
     if (entry->priority != 0)
@@ -96,7 +96,7 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
   struct BattleUnit *actor;
 
   actorId = action->unitId;
-  actor = UnitGetFar(actorId);
+  actor = Unit_GetFar(actorId);
   if (actor->hp == 0)
     return -1;
 
@@ -195,7 +195,7 @@ s32 BattlePresentation_ShowDefendMessage(
   struct BattleUnit *unit;
 
   unitId = action->unitId;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   if (BattleObject_IsValidId(unitId) < 0) {
     return -1;
   }
@@ -289,14 +289,14 @@ s32 BattlePresentation_RunPairedUnitTransition(
     u32 count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + FIRST_ENEMY_UNIT;
-      if (UnitGetFar(unit)->hp > 0) {
+      if (Unit_GetFar(unit)->hp > 0) {
         visibleUnits[livingCount++] = unit;
       }
     }
   } else {
     u32 count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      if (UnitGetFar(index)->hp > 0) {
+      if (Unit_GetFar(index)->hp > 0) {
         visibleUnits[livingCount++] = index;
       }
     }
@@ -362,8 +362,8 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
 
   // Lookups whose results are unused, and a roll that only advances the
   // random sequence.
-  UnitGetFar(work.effect.actor);
-  UnitGetFar(work.effect.actors[0]);
+  Unit_GetFar(work.effect.actor);
+  Unit_GetFar(work.effect.actors[0]);
   Random16();
   UiWork_PushValueSlotFar(work.effect.actor, VALUE_UNIT_NAME);
   UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
@@ -493,7 +493,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     context[3] = 0;
   }
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   unit->hp -= damage;
   if (unit->hp < 0)
     unit->hp = 0;
@@ -540,7 +540,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
   struct AnimationObject *object;
-  if (UnitGetFar(unitId)->hp <= 0) {
+  if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
     object = BattleObject_Get(unitId)->object->records;
     AnimationObjects_SelectAnimationFar(object, POSE_DAMAGE);
@@ -567,7 +567,7 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   s32 livingCount;
 
   targetId = action->target;
-  if (UnitGetFar(targetId)->hp != 0) {
+  if (Unit_GetFar(targetId)->hp != 0) {
     return targetId;
   }
 

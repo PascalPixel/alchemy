@@ -93,7 +93,7 @@ void Func_0811c074(s32 id, s32 variant) {
 
   slot = BattleObject_Get(id);
   object = slot->object;
-  enemyId = ((struct BattleUnit *)UnitGet(id))->enemyId;
+  enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376) {
     object->acceleration = Data_0812cbb0[variant];
     object->speedLimit = Data_0812cbd8[variant];

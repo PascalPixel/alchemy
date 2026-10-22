@@ -35,7 +35,7 @@ extern char ResourceId_01fa, ResourceId_0202;
 extern const s8 gNameEntry_CaretWave[];
 extern const u8 gNameEntry_KeyboardTilemap[];
 
-u8 *UnitGet(s32 owner);
+u8 *Unit_Get(s32 owner);
 void Ui_LoadWindowGraphics(void);
 void Func_0803f9c0(s32 glow, s32 sub);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
@@ -66,7 +66,7 @@ s32 Func_08044558(s32 member) {
   s32 letterCount = 0;
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
-  u8 *originalName = UnitGet(member);
+  u8 *originalName = Unit_Get(member);
   struct UiRenderWork *render =
       (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   s32 textDirty = 1;

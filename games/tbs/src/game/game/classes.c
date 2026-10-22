@@ -70,7 +70,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 /// Called by the two status screens to show the element levels, and by
 /// Battle_IsReviveEffect.
 s32 Unit_GetElementLevel(s32 owner, s32 element) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 elementLevels[4];
   s32 result = 0;
 
@@ -97,7 +97,7 @@ s32 Enemy_GetAttackElement(struct BattleUnit *unit) {
 // Writes a unit's base power and resistance in each element: an enemy's come
 // from its preset, a character's from its element levels, as the value of
 // gElement_PowerResistByLevel for the whole level (0 to 15) plus the level's
-// tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnitSet
+// tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnit_Set
 // and Unit_UpdateClass, which both ignore the result.
 #ifdef UBFIX
 void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination) {
@@ -108,7 +108,7 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
   // (as void, the two return instructions differ: 4 in tbs-en), and the
   // destination is the array view, which keeps the table address added
   // after the first store (the typed fields differ by 2 in tbs-en).
-  struct BattleUnit *state = UnitGet(owner);
+  struct BattleUnit *state = Unit_Get(owner);
   u32 index;
   s32 values[4];
   s32 i;
@@ -241,7 +241,7 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 /// standby, at the prologue's start and end, at a new game and around the
 /// Colosso's inventory snapshot.
 void Unit_UpdateClass(s32 ownerId) {
-  struct BattleUnit *owner = UnitGet(ownerId);
+  struct BattleUnit *owner = Unit_Get(ownerId);
 
   owner->classIndex =
       Class_Determine(owner->classId, (u8 *)owner->djinnAvailable);

@@ -5,15 +5,15 @@
 /// to recover and the summon flags, or an enemy record read as one for the
 /// enemy side.
 void *Djinn_GetRecoveryTableFar(s32 arg0);
-#ifndef OWN_UnitGetFar
+#ifndef OWN_Unit_GetFar
 /// Returns the unit record of a playable character or of an enemy in the
 /// current battle, or NULL for anything else; nearly every bank reads units
 /// this way.
-struct BattleUnit *UnitGetFar(u32 owner);
+struct BattleUnit *Unit_GetFar(u32 owner);
 #endif
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,
 /// class and battle stat levels, keeping its HP and PP at the same fraction.
-void UnitCalcFar(s32 owner);
+void Unit_CalculateFar(s32 owner);
 /// Returns an item's definition; an inventory entry may be passed, and its
 /// equipped and quantity bits are ignored.
 struct ItemDefinition *Item_GetDirectFar(s32 item);
@@ -87,14 +87,14 @@ s32 Unit_AddHpFar(s32 owner, s32 delta);
 /// gauges and returns the new PP.
 s16 Unit_AddPpFar(s32 owner, s32 delta);
 /// Recomputes the unit's HP and PP gauges from its current HP and PP, after
-/// something writes them directly, so UnitCalc keeps the same fractions.
-void UnitRatioFar(s32 owner_id);
+/// something writes them directly, so Unit_Calculate keeps the same fractions.
+void Unit_UpdateRatiosFar(s32 owner_id);
 /// Sets the unit's HP, kept between 0 and its maximum, and updates its gauges.
 void Unit_SetHpFar(struct BattleUnit *unit, s32 hp);
 /// Fills an enemy battle unit from an enemy's definition: stats, name with its
 /// suffix letter, items, rewards and elements. Returns 0 for an id out of
 /// range, 1 otherwise.
-s32 BattleUnitSetFar(s32 unitId, s32 enemyId, s32 suffix);
+s32 BattleUnit_SetFar(s32 unitId, s32 enemyId, s32 suffix);
 /// Returns the size of the party, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountActiveOwnersFar(void);
 /// Adds a character to the end of the party when one joins, setting its flag,

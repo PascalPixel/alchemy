@@ -57,7 +57,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   objOff = combinedOffset + 516;
   objId = *(u16 *)(menu + objOff);
-  objPtr = UnitGetFar(objId);
+  objPtr = Unit_GetFar(objId);
   p456 = menu + 452;
   badge = PsynergyMenu_CollectActions(objPtr, p456, 2);
   *(u8 *)(menu + 532) = (u8)badge;

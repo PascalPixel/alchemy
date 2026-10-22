@@ -22,7 +22,7 @@ struct InventoryMenuState {
 
 extern char MsgItemName[];
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void Func_08038288(s32 mode, s32 item, s32 slot, s32 flags);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
 void UiText_DrawStringAtOffsetFar(void *string, s32 window, s32 x, s32 y);
@@ -38,7 +38,7 @@ void ItemMenu_DrawItemHead(void) {
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;
   UiIcon_PrepareObject(menu->selectedItemIcon);
-  UiText_DrawStringAtOffsetFar(UnitGet(menu->paneOwner[0]), menu->messageWindow,
+  UiText_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), menu->messageWindow,
                                16, 0);
   UiText_DrawCharacterAtOffsetFar((menu->selectedItems[0] & 0x1ff) +
                                       (s32)MsgItemName,

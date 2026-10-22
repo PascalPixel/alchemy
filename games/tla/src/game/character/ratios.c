@@ -1,14 +1,14 @@
 #include "owner_state.h"
 #include "fixed_math.h"
 
-void UnitRatio(s32 ownerId) {
+void Unit_UpdateRatios(s32 ownerId) {
   s32 first;
   s32 second;
   s32 firstValue;
   s32 secondValue;
   struct BattleUnit *owner;
 
-  owner = UnitGet(ownerId);
+  owner = Unit_Get(ownerId);
   first = (owner->hp << 14) / owner->maxHp;
   firstValue = 0x4000;
   if (first <= 0x4000) {

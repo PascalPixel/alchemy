@@ -98,7 +98,7 @@ enum ItemEffectKind {
   ITEM_EFFECT_ADD_MARS_RESIST,
   ITEM_EFFECT_ADD_JUPITER_RESIST,
   ITEM_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
-  ITEM_EFFECT_24,                 ///< summed by UnitCalc; TBS never reads it
+  ITEM_EFFECT_24, ///< summed by Unit_Calculate; TBS never reads it
   /// "The curse can be removed": sets RESTRAINT_REMOVABLE, which lifts
   /// RESTRAINT_BOUND.
   ITEM_EFFECT_CURSE_REMOVABLE,

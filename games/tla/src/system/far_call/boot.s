@@ -385,10 +385,10 @@ SerialRuntime_StepBlockTransferFar:
 	.thumb_func
 Scheduler_SetTaskFlagsFar:
 	overlay_veneer Scheduler_SetTaskFlags
-	.global UnitGetFar
+	.global Unit_GetFar
 	.thumb_func
-UnitGetFar:
-	overlay_veneer UnitGet
+Unit_GetFar:
+	overlay_veneer Unit_Get
 	.global GameFlag_TestFar
 	.thumb_func
 GameFlag_TestFar:

@@ -53,7 +53,7 @@ s32 Party_FindOwnerWithAction(s32 action) {
 }
 
 s32 Unit_KnowsAction(s32 owner, s32 value) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   struct OwnerActionSlot *entry;
   s32 index = 0;
   s32 mask = OWNER_ACTION_ID_MASK;

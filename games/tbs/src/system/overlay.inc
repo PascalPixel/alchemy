@@ -191,8 +191,8 @@
 	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
 @ Game bank (far_call/GAME.S)
 	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
-	import UnitGet, UnitGetFar
-	import UnitCalc, UnitCalcFar
+	import Unit_Get, Unit_GetFar
+	import Unit_Calculate, Unit_CalculateFar
 	import Engine_DebugGetItem, Item_GetDirectFar
 	import Item_Get, Item_GetDirectFar
 	import Inventory_AddItem, Inventory_AddItemFar
@@ -212,7 +212,7 @@
 	import GameFlag_SetByte, GameFlag_SetByteFar
 	import Unit_AddHp, Unit_AddHpFar
 	import Unit_AddPp, Unit_AddPpFar
-	import Engine_OwnerRecalculateRatios, UnitRatioFar
+	import Engine_OwnerRecalculateRatios, Unit_UpdateRatiosFar
 	import GetPartyMemberCount, Party_CountActiveOwnersFar
 	import Party_CountActiveOwners, Party_CountActiveOwnersFar
 	import Party_AddActiveOwner, Party_AddActiveOwnerFar

@@ -27,7 +27,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   }
   count = Party_CountActiveOwnersFar();
   for (i = 0; i < count; i++) {
-    unit = UnitGet(gPartyState.activeOwners[i]);
+    unit = Unit_Get(gPartyState.activeOwners[i]);
     if (!scaled) {
       value = amount;
     } else {
@@ -56,7 +56,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
     remaining = count;
 
     do {
-      u8 *object = (u8 *)UnitGet(*entry);
+      u8 *object = (u8 *)Unit_Get(*entry);
       s32 amount;
 
       switch ((s8)object[0x131]) {

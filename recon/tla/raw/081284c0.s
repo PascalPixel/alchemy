@@ -59,7 +59,7 @@ Func_081284c0:
 	ldrh r3, [r3, r0]
 	adds r0, r3, #0
 	str r3, [sp, #4]
-	bl UnitGet
+	bl Unit_Get
 	ldr r2, [sp, #8]
 	ldr r3, [sp, #20]
 	mov r10, r0

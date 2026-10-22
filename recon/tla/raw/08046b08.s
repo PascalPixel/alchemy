@@ -1223,7 +1223,7 @@ Func_08046b08:
 	bl .L_0804846e
 .L_0804746c:
 	ldr r0, [sp, #144]
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #64]
 	ldr r0, [sp, #92]
 	cmp r0, #0
@@ -3127,7 +3127,7 @@ Func_08046b08:
 	adds r3, r2, r1
 	strb r7, [r3]
 	ldr r0, [sp, #144]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r2, [sp, #64]
 	mov r4, r10
 	ldrh r3, [r2, #60]

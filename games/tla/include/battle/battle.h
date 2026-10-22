@@ -154,7 +154,7 @@ void Object_Destroy(struct DispatchObject *work);
 void ObjectMotion_SnapToTerrain(void *object);
 s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Owner_RecalculateStatsFar
-void UnitCalcFar(s32);
+void Unit_CalculateFar(s32);
 #endif
 s32 Party_CountActiveOwnersFar(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,

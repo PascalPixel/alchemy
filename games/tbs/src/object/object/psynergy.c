@@ -81,7 +81,7 @@ s32 Field_UsePsynergy(u32 code) {
   // A party member pays the PP.
   if (userId <= ALLY_MAX) {
     ppCost = BattleActGet(abilityId)->ppCost;
-    if (UnitGetFar(userId)->pp < ppCost) {
+    if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its exit back (the scene and
       // entrance it chose stay in the game state).

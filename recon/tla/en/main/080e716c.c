@@ -29,7 +29,7 @@ struct DropEvent {
 
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 PartyInventory_FindRoomFar(s32 item);
 void Func_080d3b28(s32 id, s32 item);
 void BattleEffect_DropObjectAtAnchor(s32 id);
@@ -48,7 +48,7 @@ void Func_080e716c(void) {
   asm("");
   anchor = work->anchor;
   event = Ram_HeapSlots->eventWork;
-  unit = UnitGet(gPartyState.currentOwner);
+  unit = Unit_Get(gPartyState.currentOwner);
 
   object = Object_GetById(id);
   if (object == NULL) {

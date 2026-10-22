@@ -52,7 +52,7 @@ extern u32 gCameraSceneParameters[];
 
 void *Runtime_AllocateHeapBlock(s32 block, s32 size);
 void Runtime_ReleaseHeapBlock(s32 block);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
 void WaitFrames(s32 frames);

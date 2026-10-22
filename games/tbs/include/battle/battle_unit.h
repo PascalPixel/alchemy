@@ -190,8 +190,8 @@ enum TargetMode {
 enum RestraintFlag {
   RESTRAINT_BOUND = 0x01,       ///< the unit is bound
   RESTRAINT_CURSED_ITEM = 0x02, ///< a cursed item is equipped
-  RESTRAINT_KEEP_BOUND = 0x04,  ///< keeps RESTRAINT_BOUND through UnitCalc
-  /// ITEM_EFFECT_CURSE_REMOVABLE: UnitCalc clears it again with
+  RESTRAINT_KEEP_BOUND = 0x04, ///< keeps RESTRAINT_BOUND through Unit_Calculate
+  /// ITEM_EFFECT_CURSE_REMOVABLE: Unit_Calculate clears it again with
   /// RESTRAINT_BOUND.
   RESTRAINT_REMOVABLE = 0x08
 };
@@ -249,12 +249,12 @@ enum BattleActionUse {
 /// Djinn and ailments.
 struct BattleUnit {
   /// The name, one byte a character, ending in 0. An enemy's is its message
-  /// name cut to 14 characters, with the suffix letter BattleUnitSet is given
+  /// name cut to 14 characters, with the suffix letter BattleUnit_Set is given
   /// (a digit in Japanese); name[14] is always 0.
   u8 name[0x0f];
   u8 level;        ///< 1 to 99 for a character
-  s16 baseHp;      ///< before equipment, Djinn and class (UnitCalc)
-  s16 basePp;      ///< before equipment, Djinn and class (UnitCalc)
+  s16 baseHp;      ///< before equipment, Djinn and class (Unit_Calculate)
+  s16 basePp;      ///< before equipment, Djinn and class (Unit_Calculate)
   s16 hpGauge;     ///< hp / maxHp in 0..0x4000; 1 while any HP remains
   s16 ppGauge;     ///< pp / maxPp in 0..0x4000; 1 while any PP remains
   u16 baseAttack;  ///< before equipment, Djinn, class and stages
@@ -271,25 +271,25 @@ struct BattleUnit {
   /// element preset, a character's from its element levels
   /// (Unit_CalcBaseElements).
   struct BattleElementStats baseElement[ELEMENT_COUNT];
-  s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
-  s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
+  s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
+  s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
   s16 hp;    ///< current HP, 0 when downed
   s16 pp;    ///< current PP
-  u16 atk;   ///< Attack, 0 to 999 (UnitCalc)
-  u16 def;   ///< Defense, 0 to 999 (UnitCalc)
+  u16 atk;   ///< Attack, 0 to 999 (Unit_Calculate)
+  u16 def;   ///< Defense, 0 to 999 (Unit_Calculate)
   u16 agi;   ///< Agility, 0 to 999: the order of the round's actions
-  u8 luck;   ///< 0 to 99 (UnitCalc)
+  u8 luck;   ///< 0 to 99 (Unit_Calculate)
   /// Actions each round, 0 to 2: baseActionCount, one more while ready, and
-  /// the equipment's extra turns (UnitCalc). Each gives the unit a place in
-  /// the round's queue.
+  /// the equipment's extra turns (Unit_Calculate). Each gives the unit a place
+  /// in the round's queue.
   u8 actionEntryCount;
-  u8 hpRegen; ///< HP regained at each turn's end (UnitCalc)
-  /// PP regained at each turn's end, 0 to 200 (UnitCalc): 4 more once the
+  u8 hpRegen; ///< HP regained at each turn's end (Unit_Calculate)
+  /// PP regained at each turn's end, 0 to 200 (Unit_Calculate): 4 more once the
   /// lighthouse of the character's element is lit.
   u8 ppRegen;
   u8 unk046[2]; ///< Not named by any TBS code.
   /// Power and resistance in each element, 0 to 200, after equipment, a
-  /// summon's boost and Resistance stages (UnitCalc).
+  /// summon's boost and Resistance stages (Unit_Calculate).
   struct BattleElementStats element[ELEMENT_COUNT];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's (Unit_RefreshPsynergy). An empty entry is 0.
@@ -313,30 +313,30 @@ struct BattleUnit {
   u32 rewards;
   u32 experience; ///< a character's experience points
   /// Who the unit is: a character's id (ISAAC to JENNA, below 8) or an
-  /// enemy's id (BattleUnitSet). The class tables are indexed by classIndex.
+  /// enemy's id (BattleUnit_Set). The class tables are indexed by classIndex.
   u8 classId;
   /// The character's class, worked out from its Djinn (Unit_UpdateClass);
   /// CLASS_INDEX_ENEMY marks an enemy, and code throughout tests it to tell
   /// the two apart.
   u8 classIndex;
   /// enum BattleUnitPresence. The Djinn the party fights are enemies put on
-  /// BATTLE_UNIT_PARTY (BattleUnitSet).
+  /// BATTLE_UNIT_PARTY (BattleUnit_Set).
   u8 side;
   /// GUARD_DEFEND or GUARD_TOTAL_DEFENSE while the unit guards, else 0.
   s8 guardLevel;
   /// A summon's boost to its summoner's power in each element: at the end of
   /// the summoner's turn, the element the summon spent the most Djinn of
   /// rises to that many (BattleUnit_ProcessTurnEnd), and n adds
-  /// (n * n + n) * 5 power (UnitCalc). Cleared at the battle's start, on
+  /// (n * n + n) * 5 power (Unit_Calculate). Cleared at the battle's start, on
   /// going down and by Break.
   s8 elementLevels[ELEMENT_COUNT];
-  /// The curse: RestraintFlag bits. UnitCalc rebuilds RESTRAINT_BOUND and
+  /// The curse: RestraintFlag bits. Unit_Calculate rebuilds RESTRAINT_BOUND and
   /// RESTRAINT_CURSED_ITEM from the equipment. A bound unit loses one action in
   /// four, except Defend (BattleCommand_BuildPlan); any bit set shows the curse
   /// in the status screens and lets the sanctum remove it.
   s8 restraint;
   s8 poison; ///< POISON_NORMAL or POISON_DEADLY, 0 for none
-  /// Each stat change: the turns it has left, and its stage (UnitCalc: an
+  /// Each stat change: the turns it has left, and its stage (Unit_Calculate: an
   /// eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
   /// Stages run -4 to 4 and last 7 turns; a lowered one may recover sooner at
   /// the end of a turn.
@@ -368,10 +368,10 @@ struct BattleUnit {
   /// end; at 0 the unit falls.
   u8 grimReaper;
   /// The totals of ITEM_EFFECT_ADD_UNLEASH_CHANCE and ITEM_EFFECT_24 that
-  /// UnitCalc sums; TBS never reads them back
+  /// Unit_Calculate sums; TBS never reads them back
   u8 equipBonus[2];
   /// Kite's extra action: 2 when cast, down one at each turn's end; while
-  /// nonzero UnitCalc gives the unit one more action a round.
+  /// nonzero Unit_Calculate gives the unit one more action a round.
   u8 ready;
   u8 immobile;     ///< set by ABILITY_EFFECT_GROUND: the next action is lost
   u8 agilityTurns; ///< the Agility change's turns left, 5 when cast

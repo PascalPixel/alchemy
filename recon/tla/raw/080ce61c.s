@@ -320,7 +320,7 @@ Func_080ce61c:
 	bl BattleActGet
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl UnitGet
+	bl Unit_Get
 	ldrb r1, [r5, #9]
 	movs r2, #58
 	ldrsh r3, [r0, r2]

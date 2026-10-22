@@ -19,7 +19,7 @@ s32 BattleAtkCalc(s32 amount, s32 reduction, s32 adjustment, s32 selector);
 s32 BattlePowerCalc(s32 value, s32 selector, s32 multiplier);
 s32 BattleRecoveryCalc(s32 value, s32 selector, s32 multiplier);
 s16 Unit_AddPpFar(s32 unit, s32 amount);
-s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
+s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
 s32 BattleEffectDeadCheck(s32 effect);
 
 #endif

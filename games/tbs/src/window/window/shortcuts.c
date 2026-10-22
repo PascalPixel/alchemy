@@ -265,7 +265,7 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
     u32 ability;
 
     owner = ownerIds[i];
-    unit = UnitGetFar(owner);
+    unit = Unit_GetFar(owner);
     for (slotIndex = 0; slotIndex < (s32)(sizeof(unit->actionSlots) /
                                           sizeof(unit->actionSlots[0]));
          slotIndex++) {

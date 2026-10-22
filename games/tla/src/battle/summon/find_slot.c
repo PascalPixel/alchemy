@@ -7,7 +7,7 @@ s32 EnemySlotGet(void) {
 
   for (i = 0; i <= 5; i++) {
     id = i + 0x80;
-    if (((u8 *)UnitGet(id))[0x12A] == 0)
+    if (((u8 *)Unit_Get(id))[0x12A] == 0)
       break;
   }
   if (i == 6)

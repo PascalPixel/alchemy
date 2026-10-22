@@ -117,7 +117,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
     candidateOrUnitIndex = unitCount;
     do {
-      u8 level = UnitGetFar(*unitCursor)->level;
+      u8 level = Unit_GetFar(*unitCursor)->level;
 
       candidateOrUnitIndex--;
       unitCursor++;
@@ -196,8 +196,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 /// A level is worth 9.7 HP, 1.5 PP, 12.3 Attack, 3.3 Defense, 5.1 Agility and
 /// 15 power in each element; HP and PP are capped at 9999, the other stats at
 /// 999 and power at 200. Changes the unit's base stats and level and works
-/// out its stats again (UnitCalc). Called by BattleFormation_BuildEnemyList
-/// for each enemy of a monster battle.
+/// out its stats again (Unit_Calculate). Called by
+/// BattleFormation_BuildEnemyList for each enemy of a monster battle.
 #ifdef UBFIX
 void BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 #else
@@ -210,7 +210,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   s32 element;
 
   base = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
-  unit = UnitGetFar(owner);
+  unit = Unit_GetFar(owner);
   Iwram_CopyWords(base, &unit->baseHp, sizeof(struct BattleBaseStats));
 
   value = unit->baseHp;
@@ -254,14 +254,14 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   }
 
   unit->level += levels;
-  UnitCalcFar(owner);
+  Unit_CalculateFar(owner);
   MemFree(base);
 }
 
 /// Gives an enemy of the class its name letter, which tells it from others of
-/// its kind, and returns the letter's number for BattleUnitSetFar.
+/// its kind, and returns the letter's number for BattleUnit_SetFar.
 /// The letters are digits from 1 abroad and the alphabet in Japanese. The
-/// class's first enemy gets ENEMY_NAME_SUFFIX_COUNT, which BattleUnitSetFar
+/// class's first enemy gets ENEMY_NAME_SUFFIX_COUNT, which BattleUnit_SetFar
 /// takes as no letter. Its second gets letter 1 with bit 15 (0x8001), telling
 /// the caller to give the first letter 0 (BattleEnemy_LetterFirstOfClass);
 /// later ones take the next free letter, wrapping. Returns -1 when five classes
@@ -332,7 +332,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   s32 suffixIndex;
   s32 classId;
 
-  unit = UnitGetFar(actorId);
+  unit = Unit_GetFar(actorId);
   if (unit->classIndex != CLASS_INDEX_ENEMY)
     return;
 
@@ -376,7 +376,7 @@ s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
   enemyIndex = 0;
   firstSuffix = LIST_MARKER_CHAR;
   for (; enemyIndex <= 5; enemyIndex++) {
-    unit = UnitGetFar(enemyIndex + FIRST_ENEMY_UNIT);
+    unit = Unit_GetFar(enemyIndex + FIRST_ENEMY_UNIT);
     nameByte = unit->side;
     if (nameByte != BATTLE_UNIT_ENEMY)
       continue;
@@ -614,7 +614,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   for (memberOrEnemyIndex = FIRST_ENEMY_UNIT;
        memberOrEnemyIndex < FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE;
        memberOrEnemyIndex++)
-    Iwram_ClearWords(UnitGetFar(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
+    Iwram_ClearWords(Unit_GetFar(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
   if (enemyClasses[0] == 0)
@@ -628,9 +628,9 @@ assign_enemy:
 
     if (suffixCode & 0x8000)
       BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
-    BattleUnitSetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                     enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
-    UnitGetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
+    BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
+    Unit_GetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
                               levelAdjustment);

@@ -50,7 +50,7 @@ void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void Func_080426e0(struct UiWindow *window, u32 flags);
 void UiWindow_BuildLayoutBounds(s32 flags);
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
-struct StatusUnit *UnitGet(s32 owner);
+struct StatusUnit *Unit_Get(s32 owner);
 void Func_08041f70(s32 nibble);
 void UiText_DrawPrefixedNumberAtOffset(s32 value, struct UiWindow *window,
                                        s32 x, s32 y, s32 kind);
@@ -121,7 +121,7 @@ void PartyStatusDraw(s32 flags) {
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
-    struct StatusUnit *unit = UnitGet(members[i]);
+    struct StatusUnit *unit = Unit_Get(members[i]);
     s32 hp = unit->hp;
     s32 maxHp = unit->maxHp;
     s32 barLength;

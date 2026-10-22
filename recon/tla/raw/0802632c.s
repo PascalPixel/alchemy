@@ -411,7 +411,7 @@ Func_0802632c:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	movs r5, #9

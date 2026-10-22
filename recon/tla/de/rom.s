@@ -1075,10 +1075,10 @@ Func_080ad0b8:
 	.section .rom.000ba3f6, "ax"
 	.incbin "baserom.gba", 0x000ba3f6, 0x00000002
 	.section .rom.000ba3f8, "ax"
-	.global UnitCalc
-	.type UnitCalc, %function
+	.global Unit_Calculate
+	.type Unit_Calculate, %function
 	.thumb_func
-UnitCalc:
+Unit_Calculate:
 	.incbin "baserom.gba", 0x000ba3f8, 0x000007f4
 	.section .rom.000babec, "ax"
 	.global GameFlag_RefreshLureCap

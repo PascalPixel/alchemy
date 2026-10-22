@@ -165,7 +165,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
     // R shortcut and start again.
     case PSYNERGY_STEP_LIST:
       WaitFrames(1);
-      UnitGetFar(menu->ownerIds[0]);
+      Unit_GetFar(menu->ownerIds[0]);
       step = PSYNERGY_STEP_OWNER;
       if (menu->psynergyCount != 0) {
         {
@@ -266,7 +266,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         action = BattleActGet(menu->paneAction[0] & OWNER_ACTION_ID_MASK);
         Unit_AddPpFar(menu->ownerIds[0], -action->ppCost);
       }
-      UnitCalcFar(menu->ownerIds[0]);
+      Unit_CalculateFar(menu->ownerIds[0]);
       if (useResult != -1) {
         Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->ownerIds[1], 0,
                                   STATUS_PANEL_EXPERIENCE);
@@ -377,7 +377,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   tableOffset = ownerOffset + ((u8 *)menu->ownerTable - (u8 *)menu);
   ownerId = *(u16 *)((u8 *)menu + tableOffset);
-  unit = UnitGetFar(ownerId);
+  unit = Unit_GetFar(ownerId);
   actions = menu->psynergies;
   actionCount = PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   menu->psynergyCount = actionCount;
@@ -417,7 +417,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   result = 0;
   shown = 0;
   menu->mode = result;
-  unit = UnitGetFar(ownerIds[selection]);
+  unit = Unit_GetFar(ownerIds[selection]);
   if (UiWindow_UpdateOrCreate(&menu->psynergyWindow, 13, 3, 17, 10, 2))
     Menu_SpawnIconEntries((struct InventoryMenuState *)menu,
                           menu->psynergyWindow);
@@ -431,7 +431,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       redraw = 0;
       selection = (ownerCount + selection) % ownerCount;
       window = menu->statusWindow;
-      unit = UnitGetFar(ownerIds[selection]);
+      unit = Unit_GetFar(ownerIds[selection]);
       PsynergyMenu_RefreshOwnerPsynergy(ownerIds[selection]);
       Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0,
                                 STATUS_PANEL_EXPERIENCE);
@@ -512,7 +512,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   struct BattleUnit *owner;
 
   menu = gMenuWork;
-  owner = UnitGetFar(ownerId);
+  owner = Unit_GetFar(ownerId);
   psynergies = menu->psynergies;
   menu->psynergyCount =
       PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
@@ -551,13 +551,13 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   redraw = 1;
   result = 0;
   shown = 0;
-  UnitGetFar(menu->ownerTable[menu->tabIndex[0]]);
+  Unit_GetFar(menu->ownerTable[menu->tabIndex[0]]);
   UiMenu_SlideCursor(selection * 24 - 10, 16);
   while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
       selection = (selection + count) % count;
-      UnitGetFar(menu->ownerTable[selection]);
+      Unit_GetFar(menu->ownerTable[selection]);
       // The marker over the member, three tiles a member. Nothing in TBS
       // stores paneIcon[1], so it is still NULL from UiWindow_InitializeWork:
       // these writes go to the BIOS area at address 0, which ignores them,
@@ -668,7 +668,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(
-          UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+          Unit_GetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
               ->name,
           window, 80, 0);
   } else {
@@ -688,10 +688,10 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
                             MESSAGE_ARGUMENT_ABILITY);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      UiText_DrawStringAtOffsetFar(
-          UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
-              ->name,
-          window, 80, 8);
+      UiText_DrawStringAtOffsetFar(Unit_GetFar(gGameState.secondShortcut >>
+                                               PSYNERGY_SHORTCUT_OWNER_SHIFT)
+                                       ->name,
+                                   window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 0, 8);
@@ -736,7 +736,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 0);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+        Unit_GetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
             ->name,
         window, 80, 0);
   } else {
@@ -767,7 +767,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 8);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+        Unit_GetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
             ->name,
         window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
@@ -943,7 +943,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
   s32 selectedIndex;
   s32 ownerId;
 
-  unitBits = (s32)UnitGetFar(menu->ownerIds[index]);
+  unitBits = (s32)Unit_GetFar(menu->ownerIds[index]);
   entryCount = menu->psynergyCount;
   ownerId = menu->ownerIds[index];
   selectedIndex = menu->selectedIndexByOwner[ownerId];
@@ -1067,7 +1067,7 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
   if (visibleCount > row) {
     cursor = firstEntry;
     do {
-      owner = UnitGetFar(menu->ownerIds[0]);
+      owner = Unit_GetFar(menu->ownerIds[0]);
       ability = BattleActGet(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
@@ -1131,7 +1131,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   done = 0;
 
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
-    owner = UnitGetFar(menu->ownerIds[paneIndex]);
+    owner = Unit_GetFar(menu->ownerIds[paneIndex]);
     if (menu->mode != PSYNERGY_MODE_USE) {
       menu->psynergyCount = PsynergyMenu_CollectActions(
           owner, menu->psynergies, PSYNERGY_LIST_SHORTCUTS);
@@ -1273,7 +1273,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           menu->selectedOwner = menu->ownerTable[member];
           menu->ownerIds[0] = menu->ownerTable[member];
           menu->psynergyCount = PsynergyMenu_CollectActions(
-              UnitGetFar(menu->ownerIds[0]), menu->psynergies, listMode);
+              Unit_GetFar(menu->ownerIds[0]), menu->psynergies, listMode);
         } while (menu->psynergyCount == 0);
         menu->tabIndex[paneIndex] = member;
         for (i = 0; i < 4; i++) {

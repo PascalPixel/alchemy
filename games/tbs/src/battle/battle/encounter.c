@@ -9,7 +9,7 @@
 #define ENCOUNTER_FLED 999
 
 /// The six enemy units, BATTLE_UNIT_SIZE bytes each: the
-/// HEAP_SLOT_LINK_OWNER_STATES work slot, gBattleOwnerStates, which UnitGet
+/// HEAP_SLOT_LINK_OWNER_STATES work slot, gBattleOwnerStates, which Unit_Get
 /// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
 /// link lobby passes the opponent's party to the battle in a copy of this block
 /// (menu/lobby.c).
@@ -304,7 +304,7 @@ won:
   // Name the defeat ("X has been downed!" or "X's party goes down!") after
   // the first enemy class to fall, then hand out the spoils. Unit 128 is
   // rewritten as that class to carry the name, bare: letter 26 is past every
-  // edition's last (BattleUnitSet). DEFEAT_BY_PARTY_MEMBER shows no line.
+  // edition's last (BattleUnit_Set). DEFEAT_BY_PARTY_MEMBER shows no line.
   Battle_ClearSerialTransferPayload();
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->twoSided != 0)
@@ -312,8 +312,8 @@ won:
     if (battle->spoils.defeated != 0) {
       AudioCommand_PlayFar(MUS_VICTORY);
       if (battle->defeatState <= DEFEAT_SEVERAL) {
-        BattleUnitSetFar(FIRST_ENEMY_UNIT,
-                         battle->enemyClasses[battle->firstDefeated], 26);
+        BattleUnit_SetFar(FIRST_ENEMY_UNIT,
+                          battle->enemyClasses[battle->firstDefeated], 26);
         UiWork_ClearValueNameTablesFar();
         UiWork_PushValueSlotFar(FIRST_ENEMY_UNIT, VALUE_UNIT_NAME);
         UiText_ShowMessageAndWaitCoreFar(battle->defeatState + MsgDowned);
@@ -398,7 +398,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    UnitGetFar(owner)->side = BATTLE_UNIT_PARTY;
+    Unit_GetFar(owner)->side = BATTLE_UNIT_PARTY;
   }
 
   if (owners != 0)
@@ -428,7 +428,7 @@ s32 BattleEnemyList(s16 *unitIds) {
     id = FIRST_ENEMY_UNIT;
     lastId += FIRST_ENEMY_UNIT;
     for (; id < lastId; id += 1) {
-      if (UnitGetFar(id)->side != BATTLE_UNIT_ABSENT) {
+      if (Unit_GetFar(id)->side != BATTLE_UNIT_ABSENT) {
         *output = id;
         listed += 1;
         output += 1;
@@ -477,7 +477,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = UnitGetFar(unitId)->hp;
+        hp = Unit_GetFar(unitId)->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -495,7 +495,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
     lastEnemy = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < lastEnemy) {
       do {
-        unit = UnitGetFar(remaining);
+        unit = Unit_GetFar(remaining);
         if ((unit->side != BATTLE_UNIT_ABSENT) && (unit->hp > 0)) {
           if (output != NULL) {
             *output = remaining;

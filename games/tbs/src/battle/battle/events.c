@@ -11,7 +11,7 @@
 /// Reached through the BATTLE_EVENT_DEFEAT event, from
 /// BattleEvent_DispatchQueued and BattleEvent_Playback. Clears the unit's
 /// element levels, poison, stat stages and their turns, every status, its
-/// equipment bonuses, ready, immobile and challenge; UnitCalcFar then
+/// equipment bonuses, ready, immobile and challenge; Unit_CalculateFar then
 /// recomputes its stats, and BattleUnit_BuildStatusFlags its battle object's
 /// status flags.
 #ifdef UBFIX
@@ -22,7 +22,7 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
   struct BattleUnit *unit;
   s32 element;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   for (element = ELEMENT_COUNT - 1; element >= 0; element--)
     unit->elementLevels[element] = 0;
 
@@ -51,7 +51,7 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
   unit->agilityStage = 0;
   unit->challenge = 0;
 
-  UnitCalcFar(unitId);
+  Unit_CalculateFar(unitId);
   BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
 }
 
@@ -213,7 +213,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
   struct BattleUnit *enemy;
   struct BattleObj *slot;
 
-  enemy = UnitGetFar(unitId);
+  enemy = Unit_GetFar(unitId);
   if (enemy->side == BATTLE_UNIT_ENEMY) {
     Unit_SetHpFar(enemy, 0);
     BattleObject_RemoveFromLists(unitId);

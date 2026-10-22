@@ -8,8 +8,8 @@ extern const u8 gData_02000744[];
 /// The pressed keys, read again at each test.
 #define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
-u8 *UnitGet(s32 owner);
-void UnitCalc(s32 owner);
+u8 *Unit_Get(s32 owner);
+void Unit_Calculate(s32 owner);
 void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawResource(s32 msg, void *window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRect(void *window);
@@ -41,7 +41,7 @@ void Func_020001a8(void) {
   s32 flag;
   s32 msg;
 
-  record = UnitGet(gPartyState.currentOwner);
+  record = Unit_Get(gPartyState.currentOwner);
   win = UiWindow_Create(0, 0, 30, 9, 2);
 
   msg = (s32)MsgRaiseEveryoneS;
@@ -81,10 +81,10 @@ void Func_020001a8(void) {
       WaitFrames(1);
       UiWork_Finalize(win, 1);
 
-      UnitCalc(0);
-      UnitCalc(1);
-      UnitCalc(3);
-      UnitCalc(2);
+      Unit_Calculate(0);
+      Unit_Calculate(1);
+      Unit_Calculate(3);
+      Unit_Calculate(2);
       return;
     }
 

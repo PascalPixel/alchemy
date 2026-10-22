@@ -25,7 +25,7 @@ struct MenuPageResult {
   s32 selected;
 };
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 
 s32 Menu_BuildPageResult(struct MenuPageResult *result, s32 index) {
   struct MenuOwnerWork *menu = Ram_HeapSlots->menuRuntime;
@@ -36,7 +36,7 @@ s32 Menu_BuildPageResult(struct MenuPageResult *result, s32 index) {
   s32 row;
   s32 pages;
 
-  owner = UnitGet(menu->owners[index]);
+  owner = Unit_Get(menu->owners[index]);
   count = menu->count;
   value = menu->selected[menu->owners[index]];
 

@@ -68,7 +68,7 @@ struct PsynergyMenuState {
 
 extern u8 MsgAbilityDescription[];
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080f8ab4(s32 x, s32 y);
@@ -100,12 +100,12 @@ s32 Func_080fd2e8(s32 browseOnly) {
   count = menu->ownerCount;
   result = 0;
   shown = 0;
-  UnitGet(menu->ownerIds[menu->tabIndex[0]]);
+  Unit_Get(menu->ownerIds[menu->tabIndex[0]]);
   redraw = 2;
   Func_080f8ab4(selection * 24 - 10, 16);
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
-      UnitGet(menu->ownerIds[selection]);
+      Unit_Get(menu->ownerIds[selection]);
       icon = menu->rowCursor;
       column = (selection % 4) * 3;
       icon->oam.x = icon->x = (menu->rowWindow->x + column) * 8 - 2;

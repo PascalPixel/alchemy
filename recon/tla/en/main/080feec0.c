@@ -40,7 +40,7 @@ s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
 s32 Party_SumDjinnCountsFar(s32 owner);
 void Func_080f8ab4(s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void Func_080ff370(s32 window, s32 ownerId, s32 mode);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -90,7 +90,7 @@ s32 Func_080feec0(void) {
   Func_080f8ab4(-10, 88);
 
   while (done == 0 && !GameFlag_Test(0x150)) {
-    UnitGet(menu->selectedIds[0]);
+    Unit_Get(menu->selectedIds[0]);
     Func_080ff370(window, menu->selectedIds[0], 1);
     count = CharacterMenu_BuildAvailability(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;

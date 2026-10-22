@@ -635,7 +635,7 @@ UiText_BuildRenderEntries:
 	lsls r0, r0, #2
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	add r1, sp, #84
 	adds r2, r1, #0
 	movs r4, #0
@@ -656,7 +656,7 @@ UiText_BuildRenderEntries:
 	subs r5, r0, #1
 	movs r0, #1
 	bl Func_0803cd08
-	bl UnitGet
+	bl Unit_Get
 	add r1, sp, #84
 	adds r2, r1, #0
 	movs r4, #0
@@ -683,7 +683,7 @@ UiText_BuildRenderEntries:
 	.2byte 0xf800
 	subs r2, r0, #1
 	adds r0, r2, #0
-	bl UnitGet
+	bl Unit_Get
 	add r1, sp, #84
 	adds r2, r1, #0
 	movs r4, #0
@@ -715,7 +715,7 @@ UiText_BuildRenderEntries:
 	.2byte 0xf800
 	subs r2, r0, #1
 	adds r0, r2, #0
-	bl UnitGet
+	bl Unit_Get
 	adds r5, r0, #0
 	mov r0, r10
 	mov lr, r9

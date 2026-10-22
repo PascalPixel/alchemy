@@ -32,7 +32,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   s32 bit;
   s32 classId;
 
-  actor = UnitGet(actorId);
+  actor = Unit_Get(actorId);
   if (actor->unavailable != 0)
     return;
 
@@ -66,7 +66,7 @@ s32 BattleEnemy_LetterFirstOfClass(s32 enemyId) {
   objectIndex = 0;
   marker = LIST_MARKER_CHAR;
 scan_objects:
-  summon = UnitGet(objectIndex + 0x80);
+  summon = Unit_Get(objectIndex + 0x80);
   occupied = summon->side;
   if (occupied != 1)
     goto next_object;

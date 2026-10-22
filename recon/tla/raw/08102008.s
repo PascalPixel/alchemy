@@ -522,7 +522,7 @@ Func_08102008:
 	adds r3, r3, r4
 	ldrh r0, [r1, r3]
 	ldr r6, [r1, #16]
-	bl UnitGet
+	bl Unit_Get
 	movs r7, #42
 	adds r5, r0, #0
 	adds r0, r6, #0
@@ -930,7 +930,7 @@ Func_08102008:
 	movs r0, #4
 	bl DjinnRecovery_AddStandbyFar
 	movs r0, #4
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	movs r7, #2
 	b .L_08102b02
 .L_08102788:
@@ -1438,7 +1438,7 @@ Func_08102008:
 	ldr r4, [sp, #8]
 	ldr r0, [sp, #32]
 	str r4, [sp, #8]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r1, r11
 	ldr r4, [sp, #8]
 	cmp r1, #0
@@ -1672,7 +1672,7 @@ Func_08102008:
 	bl DjinnRecovery_AddStandbyFar
 .L_08102d58:
 	adds r0, r6, #0
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r4, [sp, #8]
 .L_08102d60:
 	ldr r7, [sp, #64]

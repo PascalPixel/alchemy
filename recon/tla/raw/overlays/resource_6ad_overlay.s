@@ -3261,7 +3261,7 @@ Func_02002800:
 	lsls r1, r1, #2
 	adds r3, r5, r1
 	ldrb r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	ldrh r3, [r0, #56]
 	lsls r2, r5, #1
 	mov r1, sp
@@ -3298,7 +3298,7 @@ Func_02002800:
 	ldrb r0, [r1, r2]
 	mov r10, r1
 	mov r8, r2
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #56
 	ldrsh r3, [r0, r4]
 	cmp r3, #0

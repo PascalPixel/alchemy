@@ -92,12 +92,12 @@ Func_0811ea0c:
 	str r0, [sp, #4]
 	mov r1, r8
 	ldr r0, [r1, #8]
-	bl UnitGet
+	bl Unit_Get
 	mov r3, r8
 	adds r6, r0, #0
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, [sp, #16]
 	ldr r1, [sp, #16]
 	adds r3, #45
@@ -183,7 +183,7 @@ Func_0811ea0c:
 	ldr r3, [sp, #16]
 	mov r11, r0
 	ldrb r0, [r3, #2]
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #165
 	lsls r4, r4, #1
 	adds r3, r0, r4

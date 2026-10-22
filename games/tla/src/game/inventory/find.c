@@ -1,7 +1,7 @@
 #include "inventory.h"
 
 s32 Inventory_Find(s32 owner, s32 item_id) {
-  struct OwnerInventoryState *inv = UnitGet(owner);
+  struct OwnerInventoryState *inv = Unit_Get(owner);
   s32 slot;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {

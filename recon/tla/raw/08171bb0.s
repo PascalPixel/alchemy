@@ -27,7 +27,7 @@ Func_08171bb0:
 	str r3, [sp, #60]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #52]
 	movs r0, #0
 	bl BattleEffect_BeginCanvasLayer

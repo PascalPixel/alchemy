@@ -18,7 +18,7 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_GetResourceDimensionsFar(u8 *message, s32 *left, s32 *top,
                                      s32 *width, s32 *height);
 void UiText_DrawQuantity(s32 item, s32 digits);
-void *UnitGet(s32 unit);
+void *Unit_Get(s32 unit);
 void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 
 s32 Func_080fd55c(s32 window) {
@@ -39,7 +39,7 @@ s32 Func_080fd55c(s32 window) {
     UiText_DrawQuantity(gPartyState.packedEvents[0] & 0x3ff, 4);
     UiText_DrawCharacterAtOffsetFar((s32)Msg01016, window, 0, 0);
     UiText_DrawStringAtOffsetFar(
-        (s32)UnitGet(gPartyState.packedEvents[0] >> 10), window, 80, 0);
+        (s32)Unit_Get(gPartyState.packedEvents[0] >> 10), window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar((s32)Msg01014, window, 0, 0);
   }
@@ -50,7 +50,7 @@ s32 Func_080fd55c(s32 window) {
     UiText_DrawQuantity(gPartyState.packedEvents[1] & 0x3ff, 4);
     UiText_DrawCharacterAtOffsetFar((s32)Msg01017, window, 0, 8);
     UiText_DrawStringAtOffsetFar(
-        (s32)UnitGet(gPartyState.packedEvents[1] >> 10), window, 80, 8);
+        (s32)Unit_Get(gPartyState.packedEvents[1] >> 10), window, 80, 8);
   } else {
     UiText_DrawCharacterAtOffsetFar((s32)Msg01015, window, 0, 8);
   }

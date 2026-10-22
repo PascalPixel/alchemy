@@ -15,7 +15,7 @@
 #include "ram_buffer.h"
 #include "system.h"
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void Func_08122514(struct BattleActionRecord *entry, s32 mode);
 
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
@@ -52,7 +52,7 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
   for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
        shuffleOrUnitIndex++) {
     s32 unitId = unitIds[shuffleOrUnitIndex];
-    struct BattleUnit *unit = UnitGet(unitId);
+    struct BattleUnit *unit = Unit_Get(unitId);
     s32 copyIndex;
 
     for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {

@@ -9,7 +9,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void UiWork_ClearValueNameTablesFar(void);
 extern u8 gData_03001ae8[];
 s32 BattlePres_ShowDefendMessage(s16 *);
@@ -24,7 +24,7 @@ s32 BattlePres_RunAction(s16 *action) {
   u8 *actor;
 
   actorId = action[0];
-  actor = UnitGet(actorId);
+  actor = Unit_Get(actorId);
   if (*(s16 *)(actor + 0x38) == 0)
     return -1;
 

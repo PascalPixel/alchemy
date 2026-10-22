@@ -33,8 +33,8 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   if (BattleObject_IsValidId(work.actors[0]) < 0)
     return -1;
 
-  UnitGet(work.actor);
-  UnitGet(work.actors[0]);
+  Unit_Get(work.actor);
+  Unit_Get(work.actors[0]);
   Random16();
   UiText_DrawQuantity(work.actor, 1);
   UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);

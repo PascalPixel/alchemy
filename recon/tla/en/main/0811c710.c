@@ -74,13 +74,13 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     u32 count = BattleParty_ListLivingUnits(2, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + 0x80;
-      if (((struct BattleUnit *)UnitGet(unit))->hp > 0)
+      if (((struct BattleUnit *)Unit_Get(unit))->hp > 0)
         visibleUnits[livingCount++] = unit;
     }
   } else {
     u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      if (((struct BattleUnit *)UnitGet(index))->hp > 0)
+      if (((struct BattleUnit *)Unit_Get(index))->hp > 0)
         visibleUnits[livingCount++] = index;
     }
   }

@@ -95,7 +95,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
     Unit_LevelUpToFar(owner, gDebug_PartyPresets[row].level);
 
     // Start from no Djinn and no abilities.
-    member = (struct BattleUnit *)UnitGetFar(owner);
+    member = (struct BattleUnit *)Unit_GetFar(owner);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       member->djinnOwnedCounts[i] = 0;
       member->djinnActiveCounts[i] = 0;
@@ -154,7 +154,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
-  struct BattleUnit *unit = UnitGetFar(0);
+  struct BattleUnit *unit = Unit_GetFar(0);
   s32 i;
   s32 index;
   struct UiWindow *messageWindow;
@@ -312,7 +312,7 @@ restart:
       // in Battle_RunEncounter).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetBitFar(FLAG_LINK_BATTLE);
-      UnitCalcFar(0);
+      Unit_CalculateFar(0);
       gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetBitFar(FLAG_DJINN_LESSON);

@@ -150,7 +150,7 @@ Func_080ae410:
 	mov r11, r3
 .L_080ae530:
 	adds r0, r7, #0
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r9
 	mov r3, r8
 	adds r5, r0, #0
@@ -210,7 +210,7 @@ Func_080ae410:
 	cmp r6, #0
 	bge .L_080ae57e
 	adds r0, r7, #0
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r1, #166
 	lsls r1, r1, #1
 	adds r7, #1

@@ -42,7 +42,7 @@ Func_0811ddd8:
 	cmp r0, #0
 	beq .L_0811de4c
 	ldrb r0, [r5]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	ldr r1, [sp, #0]

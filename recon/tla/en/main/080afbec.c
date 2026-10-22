@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 219 (one reordered pair), 2026-10-18: The Broken
-// Seal's BattleUnitSet (games/tbs/src/game/game.c) on this game's enemy
+// Seal's BattleUnit_Set (games/tbs/src/game/game.c) on this game's enemy
 // records: fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`
 // and its suffix number; enemies 9 to 66 and 369 to 377 fight on side 2.
 // Message 1068 ("???", then the enemy names) is called MsgEnemyName here as
@@ -33,10 +33,10 @@ struct EnemyRecord {
 extern const u8 gEnemy_DefinitionTable[];
 extern u8 MsgEnemyName[];
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
 void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *elements);
-void UnitCalc(s32 unitId);
+void Unit_Calculate(s32 unitId);
 
 s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
@@ -54,7 +54,7 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
     return 0;
   if (index > 992)
     return 0;
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   {
     /* FAKEMATCH: the entry taken first puts its pool load ahead of the size,
      * where the native issues it (differ 4 without) */
@@ -103,7 +103,7 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   unit->classIndex = 0;
   unit->enemyId = enemyId;
   Unit_CalcBaseElements(unitId, unit->baseElement);
-  UnitCalc(unitId);
+  Unit_Calculate(unitId);
   unit->side = 1;
   if ((u16)(unit->enemyId - 9) <= 57)
     unit->side = 2;

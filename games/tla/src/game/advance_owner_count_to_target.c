@@ -7,7 +7,7 @@
 
 struct LevelUpResult;
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
-void UnitCalc(s32);
+void Unit_Calculate(s32);
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 
 /// Levels the owner up once its experience reaches the next level's threshold;
@@ -15,7 +15,7 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
   struct BattleUnit *owner;
 
-  owner = (struct BattleUnit *)UnitGet(owner_id);
+  owner = (struct BattleUnit *)Unit_Get(owner_id);
   /* FAKEMATCH: the barrier loads the level before the experience field's offset
    * is started; plain, the offset comes first (one reordered pair, differ 2).
    */
@@ -33,11 +33,11 @@ struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
 /// lv: target level.
 void Unit_LevelUpTo(s32 unit, s32 lv) {
   u8 res[16]; // Receives struct LevelUpResult (unused).
-  s32 cur = ((struct BattleUnit *)UnitGet(unit))->level;
+  s32 cur = ((struct BattleUnit *)Unit_Get(unit))->level;
 
   while (cur < lv) {
     Owner_LevelUp(unit, (struct LevelUpResult *)res);
     cur++;
   }
-  UnitCalc(unit);
+  Unit_Calculate(unit);
 }

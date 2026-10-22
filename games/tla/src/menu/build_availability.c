@@ -8,7 +8,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
   s32 count;
   s32 mode;
 
-  state = UnitGet(id);
+  state = Unit_Get(id);
   zero = 0;
   for (i = 4; i >= 0; i--)
     output[i] = zero;

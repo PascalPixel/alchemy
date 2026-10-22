@@ -20,7 +20,7 @@ Func_0812381c:
 	movs r4, #0
 	ldrsh r0, [r3, r4]
 	mov r10, r2
-	bl UnitGet
+	bl Unit_Get
 	mov r1, sp
 	mov r2, sp
 	adds r1, #20
@@ -571,7 +571,7 @@ Func_0812381c:
 	ldr r3, [r4]
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	ldr r2, [sp, #12]
 	ldr r1, [r2]
 	movs r4, #58
@@ -1022,7 +1022,7 @@ Func_0812381c:
 	ldr r3, [r2]
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	bl BattleEventRuntime_Reset
 	movs r0, #30
 	bl BattleEventRuntime_SchedulePhase
@@ -1350,7 +1350,7 @@ Func_0812381c:
 	mov r2, r11
 	ldr r3, [r2]
 	ldrb r0, [r3, #3]
-	bl UnitGet
+	bl Unit_Get
 	mov r3, r11
 	ldr r2, [r3]
 	mov r4, r10

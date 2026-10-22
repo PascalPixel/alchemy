@@ -55,7 +55,7 @@ Func_080fcf5c:
 	lsls r5, r5, #2
 	adds r3, r6, r5
 	ldrh r0, [r7, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #226
 	lsls r3, r3, #1
 	adds r6, r7, r3

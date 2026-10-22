@@ -72,7 +72,7 @@ s32 EnemyCheck(s32 classId) {
 s32 SummonSlot_RegisterActorSprites(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 needsSingleSlot = BattleClass_IsSmall(unit->classId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
    * spritePart a copy of its register (mov r4, r10); as an s32 set to 0, 1 of
@@ -219,7 +219,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   s32 slot;
   s32 weaponSprite;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   slot = Inventory_FindEquippedFar(unitId, EQUIP_WEAPON);
   weaponSprite = 0;
   if (slot >= 0) {

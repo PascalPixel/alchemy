@@ -141,7 +141,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
 
   created = 0;
   state = gMenuWork;
-  unit = UnitGetFar(owner);
+  unit = Unit_GetFar(owner);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
@@ -229,7 +229,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);
-    UnitCalcFar(owner);
+    Unit_CalculateFar(owner);
     UiText_DrawStatComparison(unit, backup, window);
     Owner_Copy(unit, backup);
     MemFree(backup);

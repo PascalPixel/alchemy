@@ -18,7 +18,7 @@ Func_080464dc:
 	mov r10, r4
 	mov r8, r2
 	str r3, [sp, #60]
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #56]
 	mov r1, r10
 	ldr r0, [r1]
@@ -99,7 +99,7 @@ Func_080464dc:
 	bl Djinn_ActivateFar
 .L_080465a2:
 	adds r0, r7, #0
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #56]
 	add r2, sp, #64

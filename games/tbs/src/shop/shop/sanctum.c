@@ -8,7 +8,7 @@
 /// 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a level to
 /// remove a curse. Called by the member choice and its fee line.
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
-  u8 level = UnitGetFar(unitId)->level;
+  u8 level = Unit_GetFar(unitId)->level;
   s32 donation = 0;
 
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
@@ -28,7 +28,7 @@ s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
 /// for removing a curse. Called by the member choice, its count, its highlight
 /// and its fee line.
 s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 eligible = 0;
 
   if ((serviceKind == SANCTUM_SERVICE_REVIVE && unit->hp <= 0) ||
@@ -326,16 +326,16 @@ s32 Sanctum_RunPartyService(void) {
 
 /// Applies sanctum service `serviceKind` to member `unitId`: full HP for a
 /// revive, poison or the haunting cleared, or every cursed item taken off
-/// (UnitCalc then rebuilds the curse bits from what is still equipped). With
-/// no cursed item equipped, removing a curse changes nothing, whatever
+/// (Unit_Calculate then rebuilds the curse bits from what is still equipped).
+/// With no cursed item equipped, removing a curse changes nothing, whatever
 /// restraint bits Shop_CanServe saw. Called by Sanctum_RunPartyService.
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   struct BattleUnit *unit;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
     unit->hp = unit->maxHp;
-    UnitRatioFar(unitId);
+    Unit_UpdateRatiosFar(unitId);
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     unit->poison = 0;
   } else if (serviceKind == SANCTUM_SERVICE_EXORCISE) {
@@ -348,7 +348,7 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
         if (Item_GetDirectFar(unit->inventory[inventorySlot])->flags &
             ITEM_CURSED) {
           unit->inventory[inventorySlot] ^= INVENTORY_EQUIPPED;
-          UnitCalcFar(unitId);
+          Unit_CalculateFar(unitId);
         }
       }
     }

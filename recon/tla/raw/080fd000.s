@@ -35,7 +35,7 @@ Func_080fd000:
 	adds r5, r7, #0
 	lsls r3, r3, #1
 	ldrh r0, [r3, r0]
-	bl UnitGet
+	bl Unit_Get
 	adds r5, #36
 	movs r3, #10
 	movs r6, #2
@@ -94,7 +94,7 @@ Func_080fd000:
 	lsls r3, r3, #1
 	ldrh r0, [r3, r1]
 	ldr r5, [r7, #40]
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, [sp, #20]
 	mov r2, r8
 	lsls r3, r3, #1

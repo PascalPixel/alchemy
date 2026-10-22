@@ -76,7 +76,7 @@ extern u8 MsgShortcutHelp[], MsgChangeCharacterHelp[];
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 s32 GameFlag_Test(s32 flag);
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 s32 Func_080fd80c(struct MenuResult *result, s32 index);
@@ -130,7 +130,7 @@ s32 Func_080fdad4(s32 paneIndex) {
   done = 0;
 
   while (done == 0 && !GameFlag_Test(0x150)) {
-    owner = UnitGet(menu->ownerIds[paneIndex]);
+    owner = Unit_Get(menu->ownerIds[paneIndex]);
     if (menu->mode != 0)
       menu->psynergyCount = Func_080fd6f0(owner, menu->psynergies, 1);
     else
@@ -254,7 +254,7 @@ s32 Func_080fdad4(s32 paneIndex) {
           member = (member + ownerCount) % ownerCount;
           menu->selectedOwner = menu->ownerTable[member];
           menu->ownerIds[0] = menu->ownerTable[member];
-          menu->psynergyCount = Func_080fd6f0(UnitGet(menu->ownerIds[0]),
+          menu->psynergyCount = Func_080fd6f0(Unit_Get(menu->ownerIds[0]),
                                               menu->psynergies, listMode);
         } while (menu->psynergyCount == 0);
         menu->tabIndex[paneIndex] = member;

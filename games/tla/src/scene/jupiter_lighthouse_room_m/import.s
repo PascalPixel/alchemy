@@ -66,10 +66,10 @@ Func_020046b4:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -246,10 +246,10 @@ UiText_ShowPositionedMessageAndWait:
 	.thumb_func
 Func_02004784:
 	overlay_veneer Func_08038348
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
+Unit_Calculate:
+	overlay_veneer Unit_CalculateFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:

@@ -70,10 +70,10 @@ BattleTargetExec:
 	bl BattleActGet
 	str r0, [sp, #84]
 	ldr r0, [sp, #76]
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #80]
 	mov r0, r10
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #166
 	mov r8, r0
 	ldr r3, .L_081207bc
@@ -501,7 +501,7 @@ BattleTargetExec:
 	adds r1, r5, #0
 	ands r2, r7
 	mov r0, r9
-	bl BattleUnitSetFar
+	bl BattleUnit_SetFar
 	ldr r1, [sp, #84]
 	ldrb r3, [r1, #3]
 	cmp r3, #87
@@ -887,13 +887,13 @@ BattleTargetExec:
 .L_08120b1a:
 	ldr r2, [sp, #92]
 	ldrb r0, [r2]
-	bl UnitGet
+	bl Unit_Get
 	ldrh r5, [r0, #60]
 	cmp r11, r6
 	bne .L_08120b36
 	ldr r3, [sp, #92]
 	ldrb r0, [r3, #2]
-	bl UnitGet
+	bl Unit_Get
 	ldrh r3, [r0, #60]
 	lsrs r3, r3, #2
 	adds r5, r5, r3
@@ -1237,7 +1237,7 @@ BattleTargetExec:
 	str r3, [sp, #48]
 	mov r3, r8
 	strh r6, [r3, #58]
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	b .L_08121480
 .L_08120dce:
 	ldr r4, [sp, #84]
@@ -1319,7 +1319,7 @@ BattleTargetExec:
 	str r3, [sp, #48]
 	mov r0, r10
 	strh r6, [r5, #56]
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	b .L_08121480
 .L_08120e74:
 	movs r0, #44
@@ -1941,7 +1941,7 @@ BattleTargetExec:
 	strh r6, [r2, #58]
 .L_081212fc:
 	mov r0, r10
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	b .L_08121480
 .L_08121304:
 	movs r3, #44
@@ -2094,7 +2094,7 @@ BattleTargetExec:
 	str r3, [sp, #48]
 	mov r0, r10
 	strh r6, [r2, #56]
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	b .L_08121480
 .L_08121430:
 	.4byte gHpDmgTable5
@@ -2688,7 +2688,7 @@ BattleTargetExec:
 	movs r3, #5
 	strb r3, [r2]
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r3, r8
 	adds r3, #64
 	ldrh r1, [r3]
@@ -2712,7 +2712,7 @@ BattleTargetExec:
 	movs r3, #5
 	strb r3, [r2]
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r3, [sp, #20]
 	movs r0, #1
 	adds r3, #64
@@ -2748,7 +2748,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121a0c:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r0, [sp, #20]
 	mov r2, r8
 	ldrh r3, [r2, #60]
@@ -2788,7 +2788,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121a5e:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r5, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r0, #60]
@@ -2828,7 +2828,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121ab0:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r4, [sp, #20]
 	mov r2, r8
 	ldrh r1, [r2, #60]
@@ -2868,7 +2868,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121b02:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r2, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r2, #60]
@@ -2908,7 +2908,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121b54:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r5, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r0, #62]
@@ -2948,7 +2948,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121ba6:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r2, [sp, #20]
 	mov r4, r8
 	ldrh r1, [r2, #62]
@@ -2988,7 +2988,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121bf8:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r2, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r2, #62]
@@ -3048,7 +3048,7 @@ BattleTargetExec:
 	strb r3, [r2]
 .L_08121c70:
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r0, [sp, #20]
 	mov r5, r8
 	ldrh r3, [r0, #62]
@@ -3101,7 +3101,7 @@ BattleTargetExec:
 	asrs r2, r2, #1
 	mov r3, r8
 	strh r2, [r3, #56]
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	b .L_081223ba
 .L_08121ce4:
 	mov r5, r8
@@ -3500,7 +3500,7 @@ BattleTargetExec:
 	strh r3, [r4, #56]
 .L_08121fe4:
 	mov r0, r10
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	b .L_081223ba
 .L_08121fec:
 	.4byte 0x00000cbf
@@ -3646,7 +3646,7 @@ BattleTargetExec:
 	strh r5, [r3, #58]
 .L_0812210a:
 	ldr r0, [sp, #76]
-	bl UnitRatioFar
+	bl Unit_UpdateRatiosFar
 	b .L_081223ba
 .L_08122112:
 	ldr r0, [sp, #48]
@@ -4073,7 +4073,7 @@ BattleTargetExec:
 	ldr r0, [sp, #20]
 	bl MemFree
 	mov r0, r10
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]

@@ -35,7 +35,7 @@ struct FormationBattleWork {
   u8 unk868;
 };
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 s32 GameFlag_Test(s32 flag);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
 s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n);
@@ -188,7 +188,7 @@ s32 Func_08127cd4(s32 recordId) {
   battle->defeatState = 0;
   for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134;
        memberOrEnemyIndex++)
-    Iwram_ClearWords(UnitGet(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
+    Iwram_ClearWords(Unit_Get(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
   if (enemyClasses[0] == 0)
@@ -202,9 +202,9 @@ assign_enemy:
 
     if (suffixCode & 0x8000)
       BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
-    BattleUnitSetFar(memberOrEnemyIndex + 128,
+    BattleUnit_SetFar(memberOrEnemyIndex + 128,
                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
-    unit = UnitGet(memberOrEnemyIndex + 128);
+    unit = Unit_Get(memberOrEnemyIndex + 128);
     if (levelAdjustment != 0)
       Func_0812786c(memberOrEnemyIndex + 128, levelAdjustment);
     else if (!GameFlag_Test(0x173) && GameFlag_Test(46))

@@ -869,7 +869,7 @@ Func_081197f0:
 	adds r3, #16
 	ldrh r1, [r1, r3]
 	movs r0, #128
-	bl BattleUnitSetFar
+	bl BattleUnit_SetFar
 	bl UiWork_ClearValueNameTablesFar
 	movs r0, #128
 	movs r1, #1

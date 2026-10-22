@@ -35,7 +35,7 @@ extern struct Snapshot Data_0200ff58;
 extern u8 Data_0200ff6c[][28];
 extern u8 Data_0812a16c[];
 
-struct SnapshotUnit *UnitGet(s32 unitId);
+struct SnapshotUnit *Unit_Get(s32 unitId);
 u32 BattleParty_IsUnitListed(u32 id);
 void Unit_SetHpFar(struct SnapshotUnit *unit, s32 hp);
 void Unit_SetPpFar(struct SnapshotUnit *unit, s32 pp);
@@ -47,7 +47,7 @@ void Func_081185c4(void) {
   u8 (*copies)[28] = Data_0200ff6c;
 
   for (i = 0; i <= 4; i++) {
-    struct SnapshotUnit *unit = UnitGet(Data_0812a16c[i]);
+    struct SnapshotUnit *unit = Unit_Get(Data_0812a16c[i]);
 
     if (BattleParty_IsUnitListed(Data_0812a16c[i]) &&
         snap->listed[i] != 0) {

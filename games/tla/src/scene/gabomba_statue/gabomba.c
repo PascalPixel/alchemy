@@ -10,7 +10,7 @@ extern u32 gData_02005ccc[];
 extern u32 gData_02005d24[];
 extern u32 gData_02005d8c[];
 struct ObjectRuntime *Object_GetById(s32 id);
-u8 *UnitGet(s32 owner);
+u8 *Unit_Get(s32 owner);
 void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02005724(s32 id, s32 target);

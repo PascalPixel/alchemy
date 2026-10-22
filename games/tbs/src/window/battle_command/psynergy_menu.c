@@ -45,7 +45,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
   iconCount = BATTLE_LIST_ROWS;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);

@@ -1,7 +1,7 @@
 // Near miss, differ 10 of 164: the psynergy menu's list page (each ability's
 // name, PP cost and range, "no Psynergy" when empty, then the owner's name,
 // class and level), ☀️'s PsynergyMenu_DrawListPage in
-// games/tbs/src/menu/menu.c, rewritten with ⚓️'s calls (UnitGet,
+// games/tbs/src/menu/menu.c, rewritten with ⚓️'s calls (Unit_Get,
 // RenderOutput_RedrawSavedRectFar, BattleActGet, the far text routines), its
 // work-block offsets (list 0x1c4, count 0x214, owner 0x216) and its numbered
 // messages. Instruction order only: the entry's halfword load against the
@@ -40,7 +40,7 @@ extern u8 Msg04124[]; // "PP" (MsgPsynergyPp)
 extern u8 Msg04126[]; // "You have no Psynergy." (MsgNoPsynergy)
 extern const u8 gMenu_LvString[];
 
-u8 *UnitGet(s32 owner);
+u8 *Unit_Get(s32 owner);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 struct BattleAct *BattleActGet(s32 action);
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y);
@@ -66,7 +66,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 
   (void)unused;
 
-  owner = UnitGet(menu->ownerIds[0]);
+  owner = Unit_Get(menu->ownerIds[0]);
 
   RenderOutput_RedrawSavedRectFar(window);
 

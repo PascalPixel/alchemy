@@ -64,7 +64,7 @@ struct InventoryMenuState {
 
 extern const u8 gUi_LvString[];
 
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 s32 UiWindow_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 mode);
 void WaitFrames(s32 frames);
@@ -84,7 +84,7 @@ void *MemAlloc(s32 size);
 void MemFree(void *block);
 void Unit_UpdateClassFar(s32 owner);
 void Inventory_EquipFar(s32 owner, s32 slot);
-void UnitCalcFar(s32 owner);
+void Unit_CalculateFar(s32 owner);
 void UiWindow_SetTilemapEntryFar(struct RenderInput *window, s32 entry, s32 x,
                                  s32 y, s32 mode);
 void UiText_DrawStatComparison(struct BattleUnit *unit,
@@ -106,7 +106,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
 
   created = 0;
   state = (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   item = unit->inventory[slot];
   def = Item_Get(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
@@ -183,7 +183,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     } else {
       Inventory_EquipFar(owner, slot);
     }
-    UnitCalcFar(owner);
+    Unit_CalculateFar(owner);
     UiWindow_SetTilemapEntryFar(window, 0xf12a, 3, 5, 0);
     value = unit->classIndex + MESSAGE_CLASS_NAME;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 48);
@@ -216,7 +216,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);
-    UnitCalcFar(owner);
+    Unit_CalculateFar(owner);
     UiText_DrawStatComparison(unit, backup, window);
     Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
     MemFree(backup);

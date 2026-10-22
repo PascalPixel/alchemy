@@ -156,7 +156,7 @@ void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 #else
 s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 #endif
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s8 poison = unit->poison;
   u32 flags = 0;
 
@@ -302,7 +302,7 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
   struct BattleUnit *unit;
   s32 pose;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   pose = POSE_STANDING;
   if (unit->hp != 0) {
     if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)

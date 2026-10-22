@@ -128,7 +128,7 @@ copied into RAM, which weaves them into 128 by 128 cell words, 64 KB from the
 start of `Ram_MapCellBuffer`. The first two planes are saved to a temporary
 buffer first, since the cell words overwrite them.
 
-![Goma Cave's grid as Tile_ConvertMap leaves it, taken back apart into its three planes, each cropped to the three layers' windows at three pixels a cell: the collision codes, nearly all open ground with a few event and wall cells; the shapes, outlining the rock rims; and the blocks, the ground layer's window full of different blocks and the others mostly one block. Beside them four by three cells around the leader with each cell's word written over it in hex, the shape in its top byte and the block in its low bits](https://alchemy.pascalpixel.com/guides/map/grid-planes.png)
+![Goma Cave's grid as Tile_ConvertMap leaves it, taken back apart into its three planes, each cropped to the three layers' windows at three pixels a cell: the collision codes, nearly all open ground with a few event and wall cells; the shapes, outlining the rock rims; and the blocks, the ground and middle layers' windows full of different blocks and the overhead layer's nearly empty. Beside them four by three cells around the leader with each cell's word written over it in hex, the shape in its top byte and the block in its low bits](https://alchemy.pascalpixel.com/guides/map/grid-planes.png)
 
 `gMapCellBuffer` itself is 32 KB, so the cells run on through
 `gActorSpriteSlots` and `gDecodeBuffer`, and neither can hold anything else

@@ -19,8 +19,8 @@
 ///   and Mercury Lighthouse's scripted battles). Back from it
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN), Mia nods to
 ///   the leader and goes on into the lighthouse
-///   (FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE); cell code 10 by the doorway brings
-///   the party back to
+///   (FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA); cell code 10 by the doorway
+///   brings the party back to
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, so this plays
 ///   even if the party wandered off. Six statues line the way to the doorway.
 /// - The pool. An inscription (cell code 1) reads `He who honors the heart of
@@ -452,7 +452,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   switch (gGameState.entrance) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man scene.
-    if (!GameFlag_IsSet(FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE))
+    if (!GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
       Engine_EventRequestExit(
           MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN);
     // Both doorway entrances mirror the east side's statues.
@@ -669,7 +669,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 /// Mercury Lighthouse, the doorway, at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, back from the
 /// Lizard Man battle, once: Mia nods to the leader and goes on into the
-/// lighthouse. Sets FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE.
+/// lighthouse. Sets FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA.
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   struct FieldActor *actor;
 
@@ -697,7 +697,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorWaitForMove(MIA);
     Actor_SetPosition(MIA, 0, 0);
-    GameFlag_Set(FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE);
+    GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA);
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     Engine_EventEnd();

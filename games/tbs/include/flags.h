@@ -1023,12 +1023,12 @@
 /// learned the word Psynergy, and her Ply has opened the door for her to go in.
 /// Afterwards she is gone from outside and the statue stays moved.
 /// ★ Named from its area name: Mercury Lighthouse
-#define FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE 0x871
+#define FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA 0x871
 /// Back from the battle with the Lizard Man on the lighthouse's ground floor,
 /// Mia has nodded to the leader and gone on deeper into the lighthouse. Until
 /// then, coming in by the door replays the Lizard Man blocking her way.
 /// ★ Named from its area name: Mercury Lighthouse
-#define FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE 0x872
+#define FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA 0x872
 /// Move has pushed aside the second statue that blocked Mia, and she has
 /// joined the party with Fizz, a Mercury Djinni. Afterwards she is gone from
 /// that spot and the statue stays where it was pushed.

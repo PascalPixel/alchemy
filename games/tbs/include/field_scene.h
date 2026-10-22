@@ -38,6 +38,9 @@ enum { FACING_STEP = 0x1000 };
 enum {
   SCENE_TABLE_END = -1, ///< in the first column, ends a table
   CONDITION_ALWAYS = -1,
+  /// A placement's condition that Scene_AssignViewFlags replaces with whether
+  /// the actor lies within the map's view bounds, in the scenes that call it.
+  CONDITION_IN_VIEW = 0,
   CONDITION_FLAG_SET = 0x1000 ///< the flag must be set, not clear
 };
 

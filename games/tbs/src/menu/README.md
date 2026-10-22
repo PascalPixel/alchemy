@@ -208,6 +208,8 @@ The Status screen shows one member at a time: a row to pick the member,
 then a page of their condition, Djinn and elemental Power and Resist, a page
 of their Psynergy and a page of their equipment.
 
+![The Status screen in Xian, one step at a time. First the member row: the hand picks Isaac from the party at the top, and his summary fills the window below, with the four Djinn figures, one for each element, standing in it. A opens his status page: his Djinn, Power and Resist for each element, the Djinn figures now a little higher. A again opens his Psynergy page: Cure, Cure Well, Move, Quake and Earthquake, each with its PP cost. A again opens his equipment page: Broad Sword, Bronze Helm, Bronze Shield and Adept's Clothes; on these last two pages the Djinn figures are moved off the top of the screen. A on the equipment page goes back round to the status page, B on any page goes back to the member row, and L and R switch to another member.](https://alchemy.pascalpixel.com/illustrations/menu/status-pages.svg)
+
 The game's own help line says how to move about it: A turns to the next page
 and L and R switch to the next member. When the party has Djinn, a row of
 four Djinn figures, one for each element, stands under the member row and a
@@ -381,9 +383,9 @@ comment markers.
 Screen and prefix names follow what each screen shows in the English
 release. The menu's two flags are named from what sets and tests them, and
 the sort orders from the item types they list. The pictures' game crops come
-from renders of a tbs-en build in Xian (the Psynergy, Djinn and status panel
-screens) and of Isaac's bag on the Item screen; their numbers are the ones
-those renders read from memory.
+from renders of a tbs-en build in Xian (the Psynergy, Djinn, Status and
+status panel screens) and of Isaac's bag on the Item screen; their numbers
+are the ones those renders read from memory.
 
 Every view of the menu work names only what its own screen reads and writes;
 its `unk` byte runs are the bytes other screens' views use, and the screen
@@ -403,6 +405,3 @@ last BIOS instruction fetched; as a width that is over 30, so
   (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
   and every test are in the menu's own code, so nothing in the ROM needs it to
   be a flag, and only Camelot's sources could say why it is one.
-- XXX (picture): the Status screen's member row and three pages, as an
-  illustration; the earlier render carried outlines and labels drawn over the
-  game, and a clean render of each page would serve as its crops.

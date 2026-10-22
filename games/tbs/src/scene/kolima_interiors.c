@@ -27,6 +27,12 @@
 /// (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL), when other cells are drawn and the
 /// father's family (ACTOR_FATHER_WITH_A_SECRET, ACTOR_WIFE_KEPT_FROM_THE_SECRET
 /// and ACTOR_CHILD_TOLD_THE_SECRET) is put out of sight.
+///
+/// Open questions:
+/// - XXX: whether the room drawn when it is entered from behind is the
+///   father's house seen another way or a different room sharing its place on
+///   the map; a render from KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH and from
+///   KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL would settle it.
 
 #include "game_state.h"
 #include "flags.h"
@@ -50,15 +56,27 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
+/// Kolima's shops and inn, as Engine_ShopOpen and Engine_InnOpen number them.
+enum {
+  KOLIMA_WEAPON_SHOP = 13,
+  KOLIMA_ARMOR_SHOP = 14,
+  KOLIMA_ITEM_SHOP = 15,
+  KOLIMA_INN = 3
+};
+
 /// The residents, numbering gKolimaInteriors_Placements' rows from
 /// ACTOR_FIRST_PLACED. Their notes quote what they say once the curse is
 /// lifted.
 enum KolimaInteriorActor {
-  /// An old man with a cane. "I heard that traveling warriors from the Goma
+  /// An old man with a cane.
+  /// ★ Named from the game: "I heard that traveling warriors from the Goma
   /// Range saved the village."
+  /// (MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom)
   ACTOR_OLD_MAN_HEARD_OF_WARRIORS = ACTOR_FIRST_PLACED,
-  /// An old woman. "Big, strong warriors with great beards freed Kolima from
-  /// the curse."
+  /// An old woman.
+  /// ★ Named from the game: "Big, strong warriors with great beards freed
+  /// Kolima from the curse."
+  /// (MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards)
   ACTOR_OLD_WOMAN_BEARDED_WARRIORS,
   /// The father with a secret, a burly grey-haired man: "You saved Kolima? Wow!
   /// That makes me want to tell you a secret!" His thoughts: "It's hidden deep
@@ -74,13 +92,17 @@ enum KolimaInteriorActor {
   /// ★ Named from the game: "Daddy told me his secret."
   /// (MsgKolimaInteriorsDaddyToldMeHisSecret)
   ACTOR_CHILD_TOLD_THE_SECRET,
-  /// A strongman, stocky and muscular. "I'm never going to use an axe again."
+  /// A strongman, stocky and muscular.
+  /// ★ Named from the game: "I'm never going to use an axe again."
+  /// (MsgKolimaInteriorsImNeverGoingToUseAn)
   ACTOR_LUMBERJACK_FATHER,
-  /// His daughter, a woman with long fair hair. "Dad, will you please go back
-  /// to being a lumberjack?"
+  /// His daughter, a woman with long fair hair.
+  /// ★ Named from the game: "Dad, will you please go back to being a
+  /// lumberjack?" (MsgKolimaInteriorsDadWillYouPleaseGoBack)
   ACTOR_LUMBERJACKS_DAUGHTER,
-  /// His son, a small boy with fair hair. "Dad! How are we going to eat if you
-  /// don't work?"
+  /// His son, a small boy with fair hair.
+  /// ★ Named from the game: "Dad! How are we going to eat if you don't work?"
+  /// (MsgKolimaInteriorsDadHowAreWeGoingTo)
   ACTOR_LUMBERJACKS_HUNGRY_SON,
   /// ★ Named from the game: "I used to carve weapons out of wood."
   /// (MsgKolimaInteriorsIUsedToCarveWeaponsOut)
@@ -93,16 +115,18 @@ enum KolimaInteriorActor {
   ACTOR_ITEM_MERCHANT,
   /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_INNKEEPER,
-  /// A woman in a pink dress and an apron. "With no more work here, Kolima can
-  /// go back to being a quiet little village." As a tree: "How am I supposed to
-  /// charge people for their rooms if I'm a tree!?"
+  /// A woman in a pink dress and an apron.
+  /// ★ Named from the game: "With no more work here, Kolima can go back to
+  /// being a quiet little village."
+  /// (MsgKolimaInteriorsWithNoMoreWorkHereKolima)
   ACTOR_VILLAGER_QUIET_VILLAGE,
-  /// A strongman, stocky and muscular. "I've been a lumberjack for years, but
-  /// I've never seen anything like this. I think I'll go home to my family in
-  /// Imil." As a tree: "I never should have tried to cut that tree down."
+  /// A strongman, stocky and muscular.
+  /// ★ Named from the game: "I've been a lumberjack for years"
+  /// (MsgKolimaInteriorsIveBeenALumberjackForYears)
   ACTOR_LUMBERJACK_FROM_IMIL,
-  /// A man carrying a pack. "I'm only a merchant, but I got turned into a tree
-  /// just for staying here."
+  /// A man carrying a pack.
+  /// ★ Named from the game: "I'm only a merchant, but I got turned into a
+  /// tree just for staying here." (MsgKolimaInteriorsImOnlyAMerchantButI)
   ACTOR_MERCHANT_GUEST,
   ACTOR_FIRST_VILLAGER = ACTOR_OLD_MAN_HEARD_OF_WARRIORS,
   ACTOR_LAST_VILLAGER = ACTOR_MERCHANT_GUEST
@@ -127,7 +151,7 @@ KolimaInteriors_TurnVillagersIntoTrees(struct ScenePlacement *placement) {
     placement->talkFacing = talkFacing;
     placement->behavior = behavior;
     placement->sprite = treeSprite;
-    // The two residents drawn with sprite 0x6b take the other tree sprite.
+    // The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the small tree.
     if (villagerIndex == ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
         villagerIndex == ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
       placement->sprite = alternateTreeSprite;
@@ -166,7 +190,7 @@ static void KolimaInteriors_TalkToWeaponMerchant(void) {
 
   Engine_EventBegin();
   if (FACING_IS_NORTH(facing)) {
-    Engine_ShopOpen(13, ACTOR_WEAPON_MERCHANT);
+    Engine_ShopOpen(KOLIMA_WEAPON_SHOP, ACTOR_WEAPON_MERCHANT);
   } else {
     Engine_EventSetMessage(MsgKolimaFuchinTempleOnOtherSide);
     Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
@@ -182,7 +206,7 @@ static void KolimaInteriors_TalkToArmorMerchant(void) {
 
   Engine_EventBegin();
   if (FACING_IS_NORTH(facing)) {
-    Engine_ShopOpen(14, ACTOR_ARMOR_MERCHANT);
+    Engine_ShopOpen(KOLIMA_ARMOR_SHOP, ACTOR_ARMOR_MERCHANT);
   } else {
     Engine_EventSetMessage(MsgKolimaGrandBridgeAcrossRiverPride);
     Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
@@ -197,7 +221,7 @@ static void KolimaInteriors_TalkToItemMerchant(void) {
 
   Engine_EventBegin();
   if (FACING_IS_NORTH(facing)) {
-    Engine_ShopOpen(15, ACTOR_ITEM_MERCHANT);
+    Engine_ShopOpen(KOLIMA_ITEM_SHOP, ACTOR_ITEM_MERCHANT);
   } else {
     Engine_EventSetMessage(MsgKolimaWhenWasTreeLearnedAppreciate);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
@@ -214,7 +238,7 @@ static void KolimaInteriors_TalkToInnkeeper(void) {
   Engine_EventBegin();
 
   if (FACING_IS_NORTH(facing)) {
-    Engine_InnOpen(3, ACTOR_INNKEEPER);
+    Engine_InnOpen(KOLIMA_INN, ACTOR_INNKEEPER);
   } else {
     Engine_EventSetMessage(MsgKolimaTheySayMccoyHaltedConstruction);
     Engine_EventShowMessage(ACTOR_INNKEEPER, 0);
@@ -237,7 +261,8 @@ s32 KolimaInteriors_Initialize(void) {
   s32 actorId;
   u32 entrance;
 
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
   // The residents remain visible as trees, with their sprite flags cleared.
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {

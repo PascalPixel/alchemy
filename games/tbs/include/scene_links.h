@@ -3103,34 +3103,34 @@ enum {
 enum {
   HAMMET_PALACE_GROUNDS_TO_KALAY = 1,
   HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE = 2,
-  HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM = 5,
+  HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM = 5,
 };
 
 /// SceneId_HammetPalace's entrances.
 enum {
   HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS = 1,
-  HAMMET_PALACE_ENTRANCE_HALL_FROM_WEST_WING =
+  HAMMET_PALACE_ENTRANCE_ROOM_FROM_WEST_WING =
       2, ///< ★ Named from what the player sees: the hall inside the front door,
          ///< with a red carpet and two fountains (its render)
-  HAMMET_PALACE_ENTRANCE_HALL_FROM_EAST_WING =
+  HAMMET_PALACE_ENTRANCE_ROOM_FROM_EAST_WING =
       3, ///< ★ Named from what the player sees: the hall inside the front door,
          ///< with a red carpet and two fountains (its render)
-  HAMMET_PALACE_ENTRANCE_HALL_FROM_THRONE_ROOM =
+  HAMMET_PALACE_ENTRANCE_ROOM_FROM_LAYANAS_ROOM =
       4, ///< ★ Named from what the player sees: the hall inside the front door,
          ///< with a red carpet and two fountains (its render)
-  HAMMET_PALACE_ENTRANCE_HALL_FROM_LANDING =
+  HAMMET_PALACE_ENTRANCE_ROOM_FROM_LANDING =
       5, ///< ★ Named from what the player sees: the hall inside the front door,
          ///< with a red carpet and two fountains (its render)
-  HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_HALL =
+  HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_ROOM =
       6, ///< ★ Named from what the player sees: the sitting room and bedroom
          ///< beyond the hall's west door (its render)
-  HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_HALL =
+  HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_ROOM =
       7, ///< ★ Named from what the player sees: the bedroom, kitchen and stairs
          ///< beyond the hall's east door (its render)
   HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR =
       8, ///< ★ Named from what the player sees: the bedroom, kitchen and stairs
          ///< beyond the hall's east door (its render)
-  HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL =
+  HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM =
       9, ///< ★ Named from what the player sees: the room with two thrones on a
          ///< red dais where Layana sits (its render)
   HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING =
@@ -3140,41 +3140,41 @@ enum {
   HAMMET_PALACE_BEDROOM_FROM_LANDING =
       12, ///< ★ Named from what the player sees: the room of two beds and a
           ///< round table off the landing (its render)
-  HAMMET_PALACE_LANDING_FROM_ENTRANCE_HALL =
+  HAMMET_PALACE_LANDING_FROM_ENTRANCE_ROOM =
       13, ///< ★ Named from what the player sees: the small room at the other
           ///< end of the hall's stairs, with one door (its render)
   HAMMET_PALACE_LANDING_FROM_BEDROOM =
       14, ///< ★ Named from what the player sees: the small room at the other
           ///< end of the hall's stairs, with one door (its render)
-  HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS =
+  HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS =
       20, ///< ★ Named from what the player sees: the room with two thrones on a
           ///< red dais where Layana sits (its render)
 };
 /// SceneId_HammetPalace's exits.
 enum {
   HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS = 1,
-  HAMMET_PALACE_ENTRANCE_HALL_TO_WEST_WING =
+  HAMMET_PALACE_ENTRANCE_ROOM_TO_WEST_WING =
       2, ///< ★ Named from what the player sees: the sitting room and bedroom
          ///< beyond the hall's west door (its render)
-  HAMMET_PALACE_ENTRANCE_HALL_TO_EAST_WING =
+  HAMMET_PALACE_ENTRANCE_ROOM_TO_EAST_WING =
       3, ///< ★ Named from what the player sees: the bedroom, kitchen and stairs
          ///< beyond the hall's east door (its render)
-  HAMMET_PALACE_ENTRANCE_HALL_TO_THRONE_ROOM =
+  HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM =
       4, ///< ★ Named from what the player sees: the room with two thrones on a
          ///< red dais where Layana sits (its render)
-  HAMMET_PALACE_ENTRANCE_HALL_TO_LANDING =
+  HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING =
       5, ///< ★ Named from what the player sees: the small room at the other end
          ///< of the hall's stairs, with one door (its render)
-  HAMMET_PALACE_WEST_WING_TO_ENTRANCE_HALL =
+  HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM =
       6, ///< ★ Named from what the player sees: the hall inside the front door,
          ///< with a red carpet and two fountains (its render)
-  HAMMET_PALACE_EAST_WING_TO_ENTRANCE_HALL =
+  HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM =
       7, ///< ★ Named from what the player sees: the hall inside the front door,
          ///< with a red carpet and two fountains (its render)
   HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR =
       8, ///< ★ Named from the game: "underground passage"
          ///< (MsgHammetPalaceILeftTheDoorToThe)
-  HAMMET_PALACE_THRONE_ROOM_TO_ENTRANCE_HALL =
+  HAMMET_PALACE_LAYANAS_ROOM_TO_ENTRANCE_ROOM =
       9, ///< ★ Named from what the player sees: the hall inside the front door,
          ///< with a red carpet and two fountains (its render)
   HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING =
@@ -3184,7 +3184,7 @@ enum {
   HAMMET_PALACE_BEDROOM_TO_LANDING =
       12, ///< ★ Named from what the player sees: the small room at the other
           ///< end of the hall's stairs, with one door (its render)
-  HAMMET_PALACE_LANDING_TO_ENTRANCE_HALL =
+  HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM =
       13, ///< ★ Named from what the player sees: the hall inside the front
           ///< door, with a red carpet and two fountains (its render)
   HAMMET_PALACE_LANDING_TO_BEDROOM =

@@ -36,9 +36,9 @@
 ///   stayed in Vault to look for Hammet's stolen rod, the Shaman's Rod, and
 ///   recovered it. Ivan learns that Hammet is still a prisoner in Lunpa,
 ///   insists that his friends hear everything, and the guards take everyone in
-///   to Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM, to
-///   HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS). Afterwards they say
-///   the soldiers of Kalay will rescue Hammet themselves, as Layana asked.
+///   to Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
+///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS). Afterwards they
+///   say the soldiers of Kalay will rescue Hammet themselves, as Layana asked.
 ///   Walking into the door (trigger 2) opens it into the palace
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE); HAMMET_PALACE_GROUNDS_TO_KALAY
 ///   leads back to town.
@@ -1553,7 +1553,7 @@ static void Kalay_AlternateGuidesPacing(void) {
 /// tanned and grown, and learn that he does not know Hammet is a prisoner in
 /// Lunpa. Ivan insists his friends hear everything, and the guards open the
 /// door and take the party in to Lady Layana
-/// (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM).
+/// (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM).
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct FieldActor *actor;
 
@@ -1730,7 +1730,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM);
+  Engine_EventRequestExit(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
   Engine_EventEnd();
 }
 
@@ -2660,8 +2660,9 @@ u32 gKalay_Exits[] = {
                KALAY_FROM_HAMMET_PALACE_GROUNDS),
     SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE, HammetPalace,
                HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS),
-    SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM, HammetPalace,
-               HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS),
+    SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM,
+               HammetPalace,
+               HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
     SCENE_EXITS(KalayTunnelEntrance),
     SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE, KalayTunnelCave,
                KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE),

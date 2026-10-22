@@ -28,8 +28,8 @@ enum AudioCueControl {
   AUDIO_CUE_START_SILENT = 0x1000, ///< music fades in over 64 frames
   AUDIO_CUE_FADE_BGM = 17, ///< fades the music out over 112 frames, once
   AUDIO_CUE_KEEP_BGM = 18, ///< keeps the music that is playing
-  /// Fades player 3 out over 48 frames; also SE_289's number, so SE_289
-  /// never plays.
+  /// Fades player 3 out over 48 frames; also the number of the song table's
+  /// row 289, so that row never plays.
   AUDIO_CUE_FADE_SLOT3 = 0x121,
   /// Cues from here to AUDIO_SONG_FIRST are fanfares; those below are music,
   /// but for AUDIO_CUE_FADE_BGM and AUDIO_CUE_KEEP_BGM.
@@ -66,8 +66,8 @@ extern struct SoundPlayer gMusicPlayerFanfare;
 extern struct SoundPlayer
     gSound_Player3; ///< the player AUDIO_CUE_FADE_SLOT3 fades
 /// The cue from AUDIO_SONG_FIRST up each player last started, by player, not
-/// a volume: cues below it are not recorded, and SE_289 clears entry 3.
-/// Nothing in TBS reads it.
+/// a volume: cues below it are not recorded, and AUDIO_CUE_FADE_SLOT3 clears
+/// entry 3. Nothing in TBS reads it.
 extern u16 gMusicPlayerVolumes[8];
 /// VBlanks after a fanfare starts before the music waits for its end; held
 /// at 1 until the fanfare's player stops, then 0.

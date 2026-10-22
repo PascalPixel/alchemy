@@ -100,7 +100,8 @@ frames (16 steps 7 frames apart), once until the next music starts, and
 records `MUS_SILENCE`, a song with no tracks, as the music playing, so a
 later cue for the faded music starts it again. `AUDIO_CUE_KEEP_BGM` keeps
 the music that is playing. `AUDIO_CUE_FADE_SLOT3` fades player 3 out over
-48 frames; it is also `SE_289`'s number, so `SE_289` never plays.
+48 frames; it is also the number of the song table's row 289, so that row
+never plays.
 
 A cue for the music already chosen does nothing, even when that song has
 ended, so a scene names its music on every entry without restarting it.

@@ -42,6 +42,7 @@
 #include "field_scene.h"
 #include "map_scroll.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
@@ -100,7 +101,7 @@ s32 Title_Run(void) {
     // The credits: DisplayScroll_RunSlideshow, through the scroll far-call
     // table.
     ScrollFar_Entry00(0);
-    Engine_AudioPlayCue(MUS_017);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
     Fade_ToBlack(60);
     Fade_Wait();
     Engine_EventWait(240);
@@ -125,7 +126,7 @@ s32 Title_Run(void) {
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
         if (PaletteFar_Entry00(1) == 0) {
-          Engine_AudioPlayCue(MUS_017);
+          Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
           Fade_ToBlack(30);
           Fade_Wait();
           waitFrames = 0;
@@ -148,9 +149,9 @@ s32 Title_Run(void) {
     PaletteFar_Entry00(0);
     Party_EndChildhood();
     Event_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
-    Engine_AudioPlayCue(MUS_017);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   }
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   Fade_Wait();
   Engine_EventWait(60);

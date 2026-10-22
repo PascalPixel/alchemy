@@ -497,7 +497,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
-  AudioCommand_PlayFar(SE_289);
+  AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 

@@ -98,6 +98,7 @@
 #include "script.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "macros.h"
 #include "game_state.h"
 #include "unit/import.h"
@@ -1882,7 +1883,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(QUARTERS_KAJA, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP, 0);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(QUARTERS_CREWMAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(QUARTERS_CREWMAN, 488, 686);
   Actor_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP, 0);

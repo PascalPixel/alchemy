@@ -103,6 +103,7 @@
 #include "fx_scene.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and the two
 /// men from Tolbi who come looking for him.
@@ -944,7 +945,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Engine_EventWait(60);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   actor->sprite->rotation = 0;
   Engine_ActorJump(ACTOR_INVISIBLE_BABI, 10, 70);
   // Flicker between sprite priorities before replacing invisible Babi.
@@ -1648,7 +1649,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_EventWait(30);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   }
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1924,7 +1925,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);

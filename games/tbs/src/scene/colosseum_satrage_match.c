@@ -107,6 +107,7 @@
 #include "colosso_gauge.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "macros.h"
 
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES 120
@@ -1061,7 +1062,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Engine_ActorDestroy(WALL_ATTENDANT);
     Engine_ActorDestroy(BOARD_WALK_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_AudioPlayCue(MUS_017);
+      Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumSatrageMatch_ShowRoundStartLettering(2);
@@ -1540,7 +1541,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     Engine_TaskWait(1);
   }
 
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Engine_AudioPlayCue(SE_236);
@@ -1597,7 +1598,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   }
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }

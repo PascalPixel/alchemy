@@ -404,8 +404,8 @@ s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
 /// Starts an actor's action script: an enum ActorBehavior, or the script
 /// itself.
 void ObjectMotion_SetActionCallbackFar(struct ObjectRuntime *object, s32 kind);
-/// Plays SE_298 and then sound_id (SE_289 for -1), and remembers sound_id to
-/// play again later.
+/// Plays SE_298 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and remembers
+/// sound_id to play again later.
 void FieldFx_SetQueuedSoundAndPlayFar(s32 sound_id);
 /// Plays the sound FieldFx_SetQueuedSoundAndPlay remembered, if any.
 void FieldFx_PlayQueuedSoundFar(void);

@@ -300,11 +300,11 @@ struct SceneInteractionEntry {
 extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
 
 /// Chooses the current scene's field music (gGameState.cue) from the first rule
-/// matching the scene or its group and the entrance; MUS_018 when none does.
-/// Called by Game_Run on entering each field scene, before
+/// matching the scene or its group and the entrance; AUDIO_CUE_KEEP_BGM when
+/// none does. Called by Game_Run on entering each field scene, before
 /// Audio_PlayCueFromEventWork plays it.
 void Scene_ResolveInteractionResult(void) {
-  s16 music = MUS_018;
+  s16 music = AUDIO_CUE_KEEP_BGM;
   s16 scene = gGameState.scene;
   s16 entrance = gGameState.entrance;
   s16 group = gGameState.sceneGroup;
@@ -464,7 +464,7 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
 /// Chooses the battle music for slot of zone (gGameState.sceneCue).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-/// last before it. Link battles always use MUS_018. Called by
+/// last before it. Link battles always use AUDIO_CUE_KEEP_BGM. Called by
 /// Encounter_SelectEnemyGroup for a random battle, by the battle requests
 /// (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle with
 /// zone 0) and by the scene event runner (events.c).
@@ -477,7 +477,7 @@ void FieldFx_SelectBattleCue(s32 zone, s32 slot) {
   u16 value;
 
   if (GameFlag_TestFar(FLAG_LINK_BATTLE)) {
-    music = MUS_018;
+    music = AUDIO_CUE_KEEP_BGM;
   } else {
     for (;;) {
       value = *table++;

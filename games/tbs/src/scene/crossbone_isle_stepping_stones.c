@@ -81,6 +81,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "event.h"
 #include "macros.h"
 
@@ -783,7 +784,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
     Engine_TaskWait(1);
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove both scroll callbacks.
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   if (Engine_GameFlagIsSet(WATER_RAISED_FLAG) == 0) {
     Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
     Map_CopyCellsTo(32, 32, 64, 0, 32, 32);

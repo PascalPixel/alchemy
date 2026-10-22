@@ -142,6 +142,7 @@
 #include "battle_unit.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "macros.h"
 
 #if TBS_PATCH_1
@@ -517,7 +518,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Engine_AudioPlayCue(SE_289);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
     Engine_EventRequestExit(
@@ -1116,7 +1117,7 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   Map_CopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
   Map_CopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
   Map_CopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   options.palette = 5;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
@@ -1901,7 +1902,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     } while ((u32)particleIndex <= 31);
     wave = (wave + 1);
   } while ((u32)wave <= 3);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   FieldFx_PlayQueuedSound();

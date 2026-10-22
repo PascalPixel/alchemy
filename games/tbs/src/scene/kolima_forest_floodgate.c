@@ -59,6 +59,7 @@
 #include "map_scroll.h"
 #include "macros.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 #include "heap_state.h"
 
@@ -322,7 +323,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   if (*gKolimaForestFloodgateLayout == 0) {
     Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 19);
     Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);

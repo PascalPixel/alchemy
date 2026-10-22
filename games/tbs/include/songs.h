@@ -49,10 +49,6 @@
 #define MUS_009 9
 /// Field music of Tolbi before the Colosso.
 #define MUS_010 10
-/// not a song: fades the music out (AUDIO_CUE_FADE_BGM)
-#define MUS_017 17
-/// not a song: keeps the music (AUDIO_CUE_KEEP_BGM)
-#define MUS_018 18
 /// a song with no tracks: silence
 #define MUS_SILENCE 19
 /// Field music of Sol Sanctum.
@@ -580,8 +576,6 @@
 /// scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
 #define SE_STOP_SLOT3 288
-/// not a sound: fades player 3 out (AUDIO_CUE_FADE_SLOT3)
-#define SE_289 289
 /// An effect pair spawned in the eruption at Sol Sanctum.
 #define SE_292 292
 /// Played before each queued scene sound (FieldFx_SetQueuedSoundAndPlay).

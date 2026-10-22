@@ -120,6 +120,7 @@
 #include "io_reg.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 
 /// The placed actors, numbering each scene's placement rows from
@@ -264,7 +265,7 @@ const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
 
 /// Lets the log settle before rebuilding its room's collision cells.
 static inline void Fuchin_FinishLogMove(void (*rebuildLogs)(void)) {
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_TaskWait(2);
   rebuildLogs();
 }
@@ -276,7 +277,7 @@ static void Fuchin_FirstRoom_MoveFirstLogEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, 112, 0);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, 112, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_01);
   Engine_TaskWait(2);
   Fuchin_RebuildEntranceLogs();
@@ -292,7 +293,7 @@ static void Fuchin_FirstRoom_MoveFirstLogWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, offset, 0);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, offset, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_01);
   Engine_TaskWait(2);
   Fuchin_RebuildEntranceLogs();
@@ -304,7 +305,7 @@ static void Fuchin_FirstRoom_MoveFirstLogWest(void) {
 static void Fuchin_FirstRoom_MoveSecondLogSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, 64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_02);
   Engine_TaskWait(2);
   Fuchin_RebuildEntranceLogs();
@@ -316,7 +317,7 @@ static void Fuchin_FirstRoom_MoveSecondLogSouth(void) {
 static void Fuchin_FirstRoom_MoveSecondLogNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, -64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_02);
   Engine_TaskWait(2);
   Fuchin_RebuildEntranceLogs();
@@ -328,7 +329,7 @@ static void Fuchin_FirstRoom_MoveSecondLogNorth(void) {
 static void Fuchin_FirstRoom_MoveThirdLogSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_03);
   Engine_TaskWait(2);
   Fuchin_RebuildEntranceLogs();
@@ -340,7 +341,7 @@ static void Fuchin_FirstRoom_MoveThirdLogSouth(void) {
 static void Fuchin_FirstRoom_MoveThirdLogNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_03);
   Engine_TaskWait(2);
   Fuchin_RebuildEntranceLogs();
@@ -352,7 +353,7 @@ static void Fuchin_FirstRoom_MoveThirdLogNorth(void) {
 static void Fuchin_SecondRoom_MoveFirstLogToEastEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, 144, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_04);
   Engine_TaskWait(2);
   Fuchin_RebuildZephyrRoomLogs();
@@ -364,7 +365,7 @@ static void Fuchin_SecondRoom_MoveFirstLogToEastEnd(void) {
 static void Fuchin_SecondRoom_MoveFirstLogToWestEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, -144, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_05);
   Engine_TaskWait(2);
@@ -377,7 +378,7 @@ static void Fuchin_SecondRoom_MoveFirstLogToWestEnd(void) {
 static void Fuchin_SecondRoom_NudgeFirstLogWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, -14, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_05);
   Engine_TaskWait(2);
   Fuchin_RebuildZephyrRoomLogs();
@@ -408,7 +409,7 @@ static void Fuchin_SecondRoom_MoveFirstLogEast(void) {
 static void Fuchin_SecondRoom_MoveSecondLogSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, 64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_06);
   Engine_TaskWait(2);
   Fuchin_RebuildZephyrRoomLogs();
@@ -420,7 +421,7 @@ static void Fuchin_SecondRoom_MoveSecondLogSouth(void) {
 static void Fuchin_SecondRoom_MoveSecondLogNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, -64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_06);
   Engine_TaskWait(2);
   Fuchin_RebuildZephyrRoomLogs();
@@ -433,7 +434,7 @@ static void Fuchin_SecondRoom_MoveThirdLogSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 144);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 128);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_07);
   Engine_TaskWait(2);
   Fuchin_RebuildZephyrRoomLogs();
@@ -449,7 +450,7 @@ static void Fuchin_SecondRoom_MoveThirdLogNorth(void) {
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, depth);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, depth);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -80);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_07);
   Engine_TaskWait(2);
   Fuchin_RebuildZephyrRoomLogs();
@@ -525,7 +526,7 @@ static void Fuchin_ThirdRoom_MoveFirstLogEastFromWestEnd(void) {
 static void Fuchin_ThirdRoom_MoveSecondLogWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, -32, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_0A);
   Engine_TaskWait(2);
   Fuchin_RebuildDragonsEyeRoomLogs();
@@ -537,7 +538,7 @@ static void Fuchin_ThirdRoom_MoveSecondLogWest(void) {
 static void Fuchin_ThirdRoom_MoveSecondLogEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, 32, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0A);
   Engine_TaskWait(2);
   Fuchin_RebuildDragonsEyeRoomLogs();
@@ -605,7 +606,7 @@ static void Fuchin_ThirdRoom_MoveThirdLogSouthFromNorthEnd(void) {
 static void Fuchin_ThirdRoom_NudgeThirdLogNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -16);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_0B);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0C);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0D);
@@ -650,7 +651,7 @@ static void Fuchin_ThirdRoom_MoveThirdLogSouthFromUpperStop(void) {
 static void Fuchin_ThirdRoom_MoveThirdLogNorthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_0B);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0D);
   Engine_TaskWait(2);
@@ -663,7 +664,7 @@ static void Fuchin_ThirdRoom_MoveThirdLogNorthFromMiddle(void) {
 static void Fuchin_ThirdRoom_MoveThirdLogSouthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0B);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0C);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0D);
@@ -678,7 +679,7 @@ static void Fuchin_ThirdRoom_MoveThirdLogSouthFromMiddle(void) {
 static void Fuchin_ThirdRoom_MoveThirdLogNorthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -80);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_0B);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0C);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0D);
@@ -693,7 +694,7 @@ static void Fuchin_ThirdRoom_MoveThirdLogNorthFromLowerStop(void) {
 static void Fuchin_ThirdRoom_MoveThirdLogSouthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0B);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0C);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_0D);
@@ -756,7 +757,7 @@ static void Fuchin_ThirdRoom_MoveFourthLogSouthFromNorthEnd(void) {
 static void Fuchin_ThirdRoom_NudgeFourthLogNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, -16);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_0F);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_10);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_11);
@@ -771,7 +772,7 @@ static void Fuchin_ThirdRoom_NudgeFourthLogNorth(void) {
 static void Fuchin_ThirdRoom_MoveFourthLogSouthFromUpperStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 112);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Fuchin_ClearFourthLogStops();
   Engine_TaskWait(2);
   Fuchin_RebuildDragonsEyeRoomLogs();
@@ -783,7 +784,7 @@ static void Fuchin_ThirdRoom_MoveFourthLogSouthFromUpperStop(void) {
 static void Fuchin_ThirdRoom_MoveFourthLogSouthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 64);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Fuchin_ClearFourthLogStops();
   Engine_TaskWait(2);
   Fuchin_RebuildDragonsEyeRoomLogs();
@@ -801,7 +802,7 @@ static void Fuchin_ThirdRoom_MoveFourthLogSouthFromMiddle(void) {
 static void Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 80);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Fuchin_ClearFourthLogStops();
   Engine_TaskWait(2);
   Fuchin_RebuildDragonsEyeRoomLogs();
@@ -814,7 +815,7 @@ static void Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
 static void Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLastStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 48);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Fuchin_ClearFourthLogStops();
   Engine_TaskWait(2);
   Fuchin_RebuildDragonsEyeRoomLogs();
@@ -826,7 +827,7 @@ static void Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLastStop(void) {
 static void Fuchin_FourthRoom_MoveFirstLogSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, 0, 112);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_13);
   Engine_TaskWait(2);
   Fuchin_RebuildArcticBladeRoomLogs();
@@ -838,7 +839,7 @@ static void Fuchin_FourthRoom_MoveFirstLogSouth(void) {
 static void Fuchin_FourthRoom_MoveFirstLogNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_LOG, 0, -112);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_13);
   Engine_TaskWait(2);
   Fuchin_RebuildArcticBladeRoomLogs();
@@ -851,7 +852,7 @@ static void Fuchin_FourthRoom_MoveFirstLogNorth(void) {
 static void Fuchin_FourthRoom_MoveSecondLogWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, -128, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_14);
   Engine_TaskWait(2);
   Fuchin_RebuildArcticBladeRoomLogs();
@@ -863,7 +864,7 @@ static void Fuchin_FourthRoom_MoveSecondLogWest(void) {
 static void Fuchin_FourthRoom_MoveSecondLogEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_LOG, 128, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_14);
   Engine_TaskWait(2);
   Fuchin_RebuildArcticBladeRoomLogs();
@@ -875,7 +876,7 @@ static void Fuchin_FourthRoom_MoveSecondLogEast(void) {
 static void Fuchin_FourthRoom_MoveThirdLogEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, 160, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_15);
   Engine_TaskWait(2);
   Fuchin_RebuildArcticBladeRoomLogs();
@@ -887,7 +888,7 @@ static void Fuchin_FourthRoom_MoveThirdLogEast(void) {
 static void Fuchin_FourthRoom_MoveThirdLogWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_LOG, -160, 0);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_GameFlagClear(FLAG_PLACE_TEMP_15);
   Engine_TaskWait(2);
   Fuchin_RebuildArcticBladeRoomLogs();

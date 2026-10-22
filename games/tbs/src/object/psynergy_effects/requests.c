@@ -90,15 +90,15 @@ void Event_RequestDestination(u16 scene, u16 entrance) {
   work->exit = 999;
 }
 
-/// Plays SE_298, then soundId (SE_289 for -1), and remembers
+/// Plays SE_298, then soundId (AUDIO_CUE_FADE_SLOT3 for -1), and remembers
 /// soundId for FieldFx_PlayQueuedSound in the field work's queuedSound;
-/// -1 is remembered as none, so it plays SE_289 now and nothing later.
-/// About 30 scenes reach it through the far alias, and the ground particles
-/// (weather.c) queue SE_170 with it.
+/// -1 is remembered as none, so it plays AUDIO_CUE_FADE_SLOT3 now and nothing
+/// later. About 30 scenes reach it through the far alias, and the ground
+/// particles (weather.c) queue SE_170 with it.
 void FieldFx_SetQueuedSoundAndPlay(s32 soundId) {
   ((struct FieldWork *)gEventWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
-    soundId = SE_289;
+    soundId = AUDIO_CUE_FADE_SLOT3;
   }
   AudioCommand_PlayFar(SE_298);
   AudioCommand_PlayFar(soundId);

@@ -78,6 +78,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
@@ -247,7 +248,7 @@ static void Event_BagVenusStar(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
@@ -350,7 +351,7 @@ static void Event_BagMercuryStar(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
@@ -466,7 +467,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
@@ -484,7 +485,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   struct FieldActor *leader;
 
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 231, 490);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
@@ -1251,7 +1252,7 @@ static void Event_TakeMarsStar(void) {
       Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
   Engine_EventWait(20);

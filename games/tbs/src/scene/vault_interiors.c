@@ -95,6 +95,7 @@
 #include "fixed_math.h"
 #include "macros.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 #if TBS_PATCH_3
 #define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(451)
@@ -2215,8 +2216,8 @@ s32 Scene_Initialize(void) {
     Map_CopyCellsTo(54, 2, 44, 81, 2, 8);
     Engine_EventBegin();
     // The loft: emptied chests after the thieves are jailed; else the tied-up
-    // villager lies tied, groaning to MUS_017, or the thieves wait for a
-    // rematch.
+    // villager lies tied, groaning to AUDIO_CUE_FADE_BGM, or the thieves wait
+    // for a rematch.
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Engine_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIM_WALK);
       Engine_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIM_WALK);
@@ -2232,7 +2233,7 @@ s32 Scene_Initialize(void) {
     }
     Engine_ActorSetAnimation(ACTOR_TIED_UP_VILLAGER, 7);
     VaultInteriors_OpenWindowTransition();
-    Engine_AudioPlayCue(MUS_017);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
     Engine_EventSetMessage(MsgVaultUhnnUhnn);
     VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 10);
     Engine_EventEnd();

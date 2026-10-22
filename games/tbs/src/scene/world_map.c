@@ -137,6 +137,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 
 static s32 WorldMap_AlignToMap(struct ScriptInterpreter *interpreter);
@@ -1085,7 +1086,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_EventWait(20);
   Actor_RunActionScriptAndWait(ACTOR_CARAVAN_FIRST_WAGON + 3,
                                gCaravanFourthWagonArrives);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   spriteActor = Object_GetById(ACTOR_PARTY_LEADER);
   if (spriteActor != 0) {
     Actor_SetPosition(GARET, spriteActor->x.fixed, spriteActor->z.fixed);
@@ -1119,7 +1120,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 10);
   Actor_RunActionScriptAndWait(ACTOR_CARAVAN_FIRST_WAGON + 3,
                                gCaravanFourthWagonDeparts);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventWait(20);
   WorldMap_EndEvent();
   Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON, ANIM_STAND);
@@ -1187,7 +1188,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   // The ground shakes, and a rock falls beside Hammet and his man.
   WorldMap_ShakeCameraOverCaravan();
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 0);
@@ -1306,7 +1307,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Object_RefreshSelectorById(ACTOR_CARAVAN_FIRST_WAGON + 3);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   Engine_CameraWaitForMove();
@@ -1820,7 +1821,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5544, 2158);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5608, 2168);
   Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_STAND);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventWait(20);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
   Engine_TaskWait(1);
@@ -1840,7 +1841,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5490, 2136);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5480, 2104);
   Actor_SetPosition(ACTOR_KALAY_WAGON, 0, 0);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventWait(40);
   Camera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2305,7 +2306,7 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 2);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 60);
   Map_LoadDefaultCellsAndUpdateBlock();
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   ColorBuffer_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);

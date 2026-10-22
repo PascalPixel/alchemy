@@ -118,6 +118,7 @@
 #include "field_runtime.h"
 #include "map_scroll.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 // The rooms' floor switches, each set once flipped from its first position;
 // they are place flags, kept until the party leaves the mine.
@@ -699,7 +700,7 @@ static void AltinPeak_DrainFirstWater(void) {
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventWait(30);
   Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
@@ -735,7 +736,7 @@ static void AltinPeak_DrainSecondWater(void) {
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventWait(30);
   Map_CopyCells(77, 41, 16, 4, 77, 28);
@@ -772,7 +773,7 @@ static void AltinPeak_DrainThirdWater(void) {
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventWait(30);
   Map_CopyCellsTo(103, 14, 103, 17, 4, 3);
@@ -917,7 +918,7 @@ static void AltinPeak_ForceLogOver(void) {
   Event_PlayCue(SE_141);
   Map_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Event_Wait(10);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_Wait(20);
 
@@ -964,7 +965,7 @@ static void AltinPeak_ForceLogOver(void) {
   Event_PlayCue(SE_183);
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Event_Wait(20);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   AltinPeak_RunBoulderChase(5);
   Event_End();
@@ -1059,7 +1060,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   } while (boulder->timer == 0);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   shadow->x.fixed = PIXELS(786);
   shadow->update = NULL;
@@ -1084,7 +1085,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Engine_EventWait(80);
   Engine_TaskRemoveCallback(AltinPeak_SpawnDebris);
   Engine_EventWait(60);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Return Garet to the party if the warning sign brought him into the scene.
   Engine_EventWait(120);
@@ -2242,7 +2243,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_PlayCue(SE_190);
   Actor_SetChildValue(ACTOR_STATUE, SPRITE_COLOR_WHITE);
   Engine_EventWait(10);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);

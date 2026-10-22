@@ -310,7 +310,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_TaskWait(1);
   Event_PlayCue(SE_141);
   Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();

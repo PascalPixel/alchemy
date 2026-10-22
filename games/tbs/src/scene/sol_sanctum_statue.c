@@ -83,6 +83,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "ability_ids.h"
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
@@ -1163,7 +1164,7 @@ static void Event_CenterStatueMoved(void) {
         Engine_EventWait(30);
         Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
         Engine_EventWait(40);
-        Engine_AudioPlayCue(SE_289);
+        Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
         Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_EventWait(10);
         Map_SetShake(-1, -1, 9 * Q16_ONE / 10);

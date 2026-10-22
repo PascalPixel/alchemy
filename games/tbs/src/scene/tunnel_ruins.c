@@ -96,6 +96,7 @@
 #include "field_runtime.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "event.h"
 #include "item_ids.h"
 
@@ -1022,7 +1023,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
   Object_GetById(ACTOR_BALANCE_EAST)->y.fixed =
       gTunnelRuins_BalanceHeights[Object_GetById(ACTOR_BALANCE_EAST)->timer];
   if (wait != 0) {
-    Engine_AudioPlayCue(SE_289);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   }
   for (i = 0; i < 5; i++) {
     if (Object_GetById(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE < 0 &&

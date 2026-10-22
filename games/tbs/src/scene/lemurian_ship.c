@@ -67,6 +67,7 @@
 #include "objcmd.h"
 #include "item_ids.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "flags.h"
 
 #if TBS_PATCH_3
@@ -485,7 +486,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);

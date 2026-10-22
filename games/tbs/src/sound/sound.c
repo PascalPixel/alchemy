@@ -60,10 +60,10 @@ void AudioCommand_Play(s32 id) {
     gMusicFadeRequested++;
     gAudioSecondaryState = MUS_SILENCE;
   } else if (id == AUDIO_CUE_FADE_SLOT3) {
-    // The cue is also SE_289's number, so playing SE_289 fades player 3 out
-    // over 48 frames (16 steps of 3) and never starts SE_289. Only sound
-    // effects record their cue in gMusicPlayerVolumes; player 3's is 0 after
-    // this fade.
+    // The cue is also the number of the song table's row 289, so it fades
+    // player 3 out over 48 frames (16 steps of 3) and that row never plays.
+    // Only sound effects record their cue in gMusicPlayerVolumes; player 3's
+    // is 0 after this fade.
     gMusicPlayerVolumes[3] = 0;
     MusicPlayer_FadeOut(&gSound_Player3, 3);
   } else if (id >= AUDIO_SONG_FIRST) {

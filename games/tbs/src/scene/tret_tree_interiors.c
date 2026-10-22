@@ -95,6 +95,7 @@
 #include "character_ids.h"
 #include "map_scroll.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "event.h"
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
@@ -389,7 +390,7 @@ static void Event_FightTret(void) {
 
   hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
   EV_BEGIN();
-  SE(MUS_017);
+  SE(AUDIO_CUE_FADE_BGM);
   MESSAGE_SET(MsgTretHmHrooom);
   Engine_EventShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   SE(MUS_029);
@@ -490,7 +491,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
       ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindOwner(ITEM_HERMES_WATER);
-  SE(MUS_017);
+  SE(AUDIO_CUE_FADE_BGM);
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   OBJ_SPEED(GARET, 0xcccc, 0x6666);
@@ -1027,7 +1028,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
     // Each wave also plays the closing sound.
     // fall through
   case 44:
-    SE(SE_289);
+    SE(AUDIO_CUE_FADE_SLOT3);
     /* FAKEMATCH(temporary): the counter pointer taken again, so it is dead
      * across the spark loop; as one pointer taken at the top, 17 of 110
      * instructions differ in tbs-en. */

@@ -136,6 +136,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 /// Kalay's actors (Kalay), numbering the rows of gKalay_TownPlacements from
 /// ACTOR_FIRST_PLACED, then the tour group, which
@@ -674,7 +675,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetPosition(ACTOR_FIRST_TOURIST + 6, PIXELS(332), PIXELS(264));
     Actor_SetPosition(ACTOR_OURANOS, PIXELS(332), PIXELS(280));
     Actor_SetPosition(ACTOR_SECOND_GUIDE, PIXELS(364), PIXELS(272));
-    Event_PlayCue(MUS_017);
+    Event_PlayCue(AUDIO_CUE_FADE_BGM);
     Ui_SetMessageVoiceFromActor(ACTOR_HEAD_GUIDE);
     UiText_ShowCenteredMessage(MsgKalayOkListeningLets, 1, 0);
     Event_PlayCue(MUS_009);
@@ -1102,7 +1103,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 5);
     Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 6);
     Engine_ActorDestroy(ACTOR_OURANOS);
-    Event_PlayCue(MUS_017);
+    Event_PlayCue(AUDIO_CUE_FADE_BGM);
     if (work->touchedTrigger == 9) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1797,7 +1798,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetSpeed(ACTOR_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 300);
   Engine_ActorSetAnimation(ACTOR_WAGON, 0);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventWait(40);
   Actor_SetSpeed(ACTOR_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetPosition(ACTOR_BUNZA, PIXELS(439), PIXELS(306));
@@ -2048,7 +2049,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetSpeed(ACTOR_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 500);
   Actor_WalkTo(ACTOR_WAGON, 440, 600);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   work = gEventWork;
   work->transitionFrames = 24;
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

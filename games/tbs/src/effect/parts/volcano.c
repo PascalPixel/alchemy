@@ -24,7 +24,7 @@
 /// and keeps spitting more, and each eruption knocks the targets back.
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
-/// Storm (BATTLE_FX_VOLCANO).
+/// Storm (BATTLE_EFFECT_VOLCANO).
 ///
 /// The battle shows the damage on frame 16. Volcano and Lava Shower are red,
 /// Pyroclasm and Magma Storm orange, and those two also swing the camera round

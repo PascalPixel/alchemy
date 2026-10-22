@@ -23,7 +23,7 @@
 /// A huge sword drops onto the first target amid charging flashes, dust and
 /// sparks.
 ///
-/// Abilities: Titan Blade (BATTLE_FX_TITAN_BLADE).
+/// Abilities: Titan Blade (BATTLE_EFFECT_TITAN_BLADE).
 ///
 /// Dust rises at the target's feet from frame 28 while a pillar of fire scrolls
 /// over it; the sword drops in, holds, sinks and plunges after frame 60. A ring

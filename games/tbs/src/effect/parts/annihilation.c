@@ -9,7 +9,7 @@
 /// The user closes on the first target and fire bursts from it in a shower of
 /// shards.
 ///
-/// Abilities: Annihilation (BATTLE_FX_ANNIHILATION).
+/// Abilities: Annihilation (BATTLE_EFFECT_ANNIHILATION).
 ///
 /// Its frames play out like this:
 ///

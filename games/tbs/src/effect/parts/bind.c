@@ -112,7 +112,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
 /// A triangle of light spins and shrinks onto the first target for 64 frames,
 /// then a rune stands on the target; the battle shows the result on frame 64.
 ///
-/// Abilities: Bind (BATTLE_FX_BIND); Luff (BATTLE_FX_BIND_218).
+/// Abilities: Bind (BATTLE_EFFECT_BIND); Luff (BATTLE_EFFECT_BIND_218).
 ///
 /// When effect->prelude is 1 a Jupiter Djinni first appears over the first
 /// target, sways and rises away. The canvas darkens a little faster every 16
@@ -297,7 +297,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
 /// BattleEffect_RunBind without the Djinni, with the user stepping up to the
 /// first target on frame 46.
 ///
-/// Abilities: none (BATTLE_FX_UNUSED_TRIANGLE_STRIKE).
+/// Abilities: none (BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE).
 ///
 /// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which
 /// holds the same point as Bind's (gBind_Vertex). Changes the same state as

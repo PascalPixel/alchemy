@@ -398,270 +398,285 @@ u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 
 /// The effect handlers, indexed by effect kind minus one, which
-/// BattleEffect_RunTableEffect calls; BATTLE_FX_NONE is no effect, for which it
-/// only clears effect->variant.
+/// BattleEffect_RunTableEffect calls; BATTLE_EFFECT_NONE is no effect, for
+/// which it only clears effect->variant.
 ///
 /// Each handler is named for the first ability, by ability id, whose entry in
 /// gBattle_ActionFlags (battle/actflags.tsv) selects its kind, with that
-/// ability's English name (MsgAbilityName + id): BATTLE_FX_QUAKE is Quake,
+/// ability's English name (MsgAbilityName + id): BATTLE_EFFECT_QUAKE is Quake,
 /// Earthquake and Quake Sphere, so BattleEffect_RunQuake. A handler several
 /// kinds share takes the name of its lowest kind's first ability, and a name
-/// another handler has already taken passes to the next ability (BATTLE_FX_NOVA
-/// is BattleEffect_RunNova, as its first ability is a second Blast). Kinds that
-/// no ability uses keep descriptive names. Each row gives the kind's name, the
-/// part of effect.c that defines its handler and its first ability; the
-/// handler's own comment there lists every ability that reaches it.
-BattleFxHandler gBattleEffect_EffectHandlers[BATTLE_FX_KIND_COUNT - 1] = {
-    [BATTLE_FX_QUAKE - 1] = BattleEffect_RunQuake,     // quake.c: Quake
-    [BATTLE_FX_SPIRE - 1] = BattleEffect_RunSpire,     // spire.c: Spire
-    [BATTLE_FX_GAIA - 1] = BattleEffect_RunGaia,       // gaia.c: Gaia
-    [BATTLE_FX_GROWTH - 1] = BattleEffect_RunGrowth,   // growth.c: Growth
-    [BATTLE_FX_THORN - 1] = BattleEffect_RunThorn,     // growth.c: Thorn
-    [BATTLE_FX_FROST - 1] = BattleEffect_RunFrost,     // frost.c: Frost
-    [BATTLE_FX_ICE - 1] = BattleEffect_RunIce,         // falling.c: Ice
-    [BATTLE_FX_PRISM - 1] = BattleEffect_RunPrism,     // prism.c: Prism
-    [BATTLE_FX_DOUSE - 1] = BattleEffect_RunDouse,     // falling.c: Douse
-    [BATTLE_FX_FROTH - 1] = BattleEffect_RunFroth,     // vortices.c: Froth
-    [BATTLE_FX_FLARE - 1] = BattleEffect_RunFlare,     // flare.c: Flare
-    [BATTLE_FX_FIRE - 1] = BattleEffect_RunFire,       // fire.c: Fire
-    [BATTLE_FX_VOLCANO - 1] = BattleEffect_RunVolcano, // volcano.c: Volcano
-    [BATTLE_FX_BLAST - 1] = BattleEffect_RunBlast,     // eruption.c: Blast
-    [BATTLE_FX_NOVA - 1] = BattleEffect_RunNova,       // plasma.c: Blast
-    [BATTLE_FX_BOLT - 1] = BattleEffect_RunBolt,       // bolt.c: Bolt
-    [BATTLE_FX_RAY - 1] = BattleEffect_RunRay,         // ray.c: Ray
-    [BATTLE_FX_PLASMA - 1] = BattleEffect_RunPlasma,   // plasma.c: Plasma
-    [BATTLE_FX_SLASH - 1] = BattleEffect_RunSlash,     // projectiles.c: Slash
-    [BATTLE_FX_WHIRLWIND - 1] =
-        BattleEffect_RunWhirlwind,               // vortices.c: Whirlwind
-    [BATTLE_FX_CURE - 1] = BattleEffect_RunCure, // healing.c: Cure
-    [BATTLE_FX_PLY - 1] = BattleEffect_RunPly,   // healing.c: Ply
-    [BATTLE_FX_WISH - 1] = BattleEffect_RunWish, // healing.c: Wish
-    [BATTLE_FX_CURE_POISON - 1] =
-        BattleEffect_RunCurePoison,                  // healing.c: Cure Poison
-    [BATTLE_FX_REVIVE - 1] = BattleEffect_RunRevive, // djinn_beams.c: Revive
-    [BATTLE_FX_IMPACT - 1] = BattleEffect_RunImpact, // stat_change.c: Impact
-    [BATTLE_FX_DULL - 1] = BattleEffect_RunDull,     // stat_change.c: Dull
-    [BATTLE_FX_GUARD - 1] = BattleEffect_RunGuard,   // stat_change.c: Guard
-    [BATTLE_FX_IMPAIR - 1] = BattleEffect_RunImpair, // stat_change.c: Impair
-    [BATTLE_FX_WARD - 1] = BattleEffect_RunWard,     // stat_change.c: Ward
-    [BATTLE_FX_WEAKEN - 1] = BattleEffect_RunWeaken, // stat_change.c: Weaken
-    [BATTLE_FX_TAINT - 1] = BattleEffect_RunTaint,   // target_motes.c: Taint
-    [BATTLE_FX_DELUDE - 1] = BattleEffect_RunDelude, // target_motes.c: Delude
-    [BATTLE_FX_UNUSED_ORBITING_SPIRALS - 1] =
-        BattleEffect_RunUnusedOrbitingSpirals, // planet_diver.c
-    [BATTLE_FX_HEARTRENDER - 1] =
-        BattleEffect_RunHeartrender, // target_motes.c: Heartrender
-    [BATTLE_FX_PARALYZE - 1] =
-        BattleEffect_RunParalyze,                  // target_motes.c: Paralyze
-    [BATTLE_FX_SLEEP - 1] = BattleEffect_RunSleep, // target_motes.c: Sleep
-    [BATTLE_FX_BIND - 1] = BattleEffect_RunBind,   // bind.c: Bind
-    [BATTLE_FX_HAUNT - 1] = BattleEffect_RunHaunt, // planet_diver.c: Haunt
-    [BATTLE_FX_CONDEMN - 1] = BattleEffect_RunCondemn,  // condemn.c: Condemn
-    [BATTLE_FX_CURSE - 1] = BattleEffect_RunCurse,      // target_motes.c: Curse
-    [BATTLE_FX_DRAIN - 1] = BattleEffect_RunDrain,      // drain.c: Drain
-    [BATTLE_FX_BREAK - 1] = BattleEffect_RunBreak,      // drain.c: Break
-    [BATTLE_FX_WISH_44 - 1] = BattleEffect_RunWish,     // healing.c: Wish
-    [BATTLE_FX_WISH_45 - 1] = BattleEffect_RunWish,     // healing.c: Wish
-    [BATTLE_FX_IMPACT_46 - 1] = BattleEffect_RunImpact, // stat_change.c: Impact
-    [BATTLE_FX_IMPAIR_47 - 1] = BattleEffect_RunImpair, // stat_change.c: Impair
-    [BATTLE_FX_DRAGON_CLOUD - 1] =
-        BattleEffect_RunDragonCloud, // dragon_cloud.c: Dragon Cloud
-    [BATTLE_FX_DEMON_NIGHT - 1] =
-        BattleEffect_RunDemonNight, // gathering_lights.c: Demon Night
-    [BATTLE_FX_HELM_SPLITTER - 1] =
-        BattleEffect_RunHelmSplitter, // helm_splitter.c: Helm Splitter
-    [BATTLE_FX_QUICK_STRIKE - 1] =
-        BattleEffect_RunQuickStrike, // thrash.c: Quick Strike
-    [BATTLE_FX_DEATH_PLUNGE - 1] =
-        BattleEffect_RunDeathPlunge, // death_plunge.c: Death Plunge
-    [BATTLE_FX_SHURIKEN - 1] =
-        BattleEffect_RunShuriken, // projectiles.c: Shuriken
-    [BATTLE_FX_ANNIHILATION - 1] =
-        BattleEffect_RunAnnihilation, // annihilation.c: Annihilation
-    [BATTLE_FX_PUNJI - 1] = BattleEffect_RunPunji, // growth.c: Punji
-    [BATTLE_FX_CUTTING_EDGE - 1] =
-        BattleEffect_RunCuttingEdge, // projectiles.c: Cutting Edge
-    [BATTLE_FX_RAGNAROK - 1] = BattleEffect_RunRagnarok, // ragnarok.c: Ragnarok
-    [BATTLE_FX_HEAT_WAVE - 1] =
-        BattleEffect_RunHeatWave, // projectiles.c: Heat Wave
-    [BATTLE_FX_PLANET_DIVER - 1] =
-        BattleEffect_RunPlanetDiver, // planet_diver.c: Planet Diver
-    [BATTLE_FX_TITAN_BLADE - 1] =
-        BattleEffect_RunTitanBlade, // titan_blade.c: Titan Blade
-    [BATTLE_FX_SHINING_STAR - 1] =
-        BattleEffect_RunShiningStar, // stars.c: Shining Star
-    [BATTLE_FX_BLIZZARD - 1] =
-        BattleEffect_RunBlizzard, // projectiles.c: Blizzard
-    [BATTLE_FX_DEMON_FIRE - 1] =
-        BattleEffect_RunDemonFire, // target_motes.c: Demon Fire
-    [BATTLE_FX_VORPAL_SLASH - 1] =
-        BattleEffect_RunVorpalSlash,               // thrash.c: Vorpal Slash
-    [BATTLE_FX_DROWN - 1] = BattleEffect_RunDrown, // target_motes.c: Drown
-    [BATTLE_FX_UNUSED_TRIANGLE_STRIKE - 1] =
-        BattleEffect_RunUnusedTriangleStrike, // bind.c
-    [BATTLE_FX_ASTRAL_BLAST - 1] =
-        BattleEffect_RunAstralBlast,                   // stars.c: Astral Blast
-    [BATTLE_FX_GRANITE - 1] = BattleEffect_RunGranite, // stat_change.c: Granite
-    [BATTLE_FX_REVIVE_201 - 1] =
-        BattleEffect_RunRevive,                      // djinn_beams.c: Revive
-    [BATTLE_FX_VINE - 1] = BattleEffect_RunVine,     // growth.c: Vine
-    [BATTLE_FX_GROUND - 1] = BattleEffect_RunGround, // hail.c: Ground
-    [BATTLE_FX_PLY_204 - 1] = BattleEffect_RunPly,   // healing.c: Ply
-    [BATTLE_FX_SLEET - 1] = BattleEffect_RunSleet,   // projectiles.c: Sleet
-    [BATTLE_FX_WISH_206 - 1] = BattleEffect_RunWish, // healing.c: Wish
-    [BATTLE_FX_HAIL - 1] = BattleEffect_RunHail,     // hail.c: Hail
-    [BATTLE_FX_TONIC - 1] = BattleEffect_RunTonic,   // healing.c: Tonic
-    [BATTLE_FX_DEW - 1] = BattleEffect_RunDew,       // djinn_beams.c: Dew
-    [BATTLE_FX_IMPACT_210 - 1] =
+/// another handler has already taken passes to the next ability
+/// (BATTLE_EFFECT_NOVA is BattleEffect_RunNova, as its first ability is a
+/// second Blast). Kinds that no ability uses keep descriptive names. Each row
+/// gives the kind's name, the part of effect.c that defines its handler and its
+/// first ability; the handler's own comment there lists every ability that
+/// reaches it.
+BattleFxHandler gBattleEffect_EffectHandlers[BATTLE_EFFECT_KIND_COUNT - 1] = {
+    [BATTLE_EFFECT_QUAKE - 1] = BattleEffect_RunQuake,     // quake.c: Quake
+    [BATTLE_EFFECT_SPIRE - 1] = BattleEffect_RunSpire,     // spire.c: Spire
+    [BATTLE_EFFECT_GAIA - 1] = BattleEffect_RunGaia,       // gaia.c: Gaia
+    [BATTLE_EFFECT_GROWTH - 1] = BattleEffect_RunGrowth,   // growth.c: Growth
+    [BATTLE_EFFECT_THORN - 1] = BattleEffect_RunThorn,     // growth.c: Thorn
+    [BATTLE_EFFECT_FROST - 1] = BattleEffect_RunFrost,     // frost.c: Frost
+    [BATTLE_EFFECT_ICE - 1] = BattleEffect_RunIce,         // falling.c: Ice
+    [BATTLE_EFFECT_PRISM - 1] = BattleEffect_RunPrism,     // prism.c: Prism
+    [BATTLE_EFFECT_DOUSE - 1] = BattleEffect_RunDouse,     // falling.c: Douse
+    [BATTLE_EFFECT_FROTH - 1] = BattleEffect_RunFroth,     // vortices.c: Froth
+    [BATTLE_EFFECT_FLARE - 1] = BattleEffect_RunFlare,     // flare.c: Flare
+    [BATTLE_EFFECT_FIRE - 1] = BattleEffect_RunFire,       // fire.c: Fire
+    [BATTLE_EFFECT_VOLCANO - 1] = BattleEffect_RunVolcano, // volcano.c: Volcano
+    [BATTLE_EFFECT_BLAST - 1] = BattleEffect_RunBlast,     // eruption.c: Blast
+    [BATTLE_EFFECT_NOVA - 1] = BattleEffect_RunNova,       // plasma.c: Blast
+    [BATTLE_EFFECT_BOLT - 1] = BattleEffect_RunBolt,       // bolt.c: Bolt
+    [BATTLE_EFFECT_RAY - 1] = BattleEffect_RunRay,         // ray.c: Ray
+    [BATTLE_EFFECT_PLASMA - 1] = BattleEffect_RunPlasma,   // plasma.c: Plasma
+    [BATTLE_EFFECT_SLASH - 1] = BattleEffect_RunSlash, // projectiles.c: Slash
+    [BATTLE_EFFECT_WHIRLWIND - 1] =
+        BattleEffect_RunWhirlwind,                   // vortices.c: Whirlwind
+    [BATTLE_EFFECT_CURE - 1] = BattleEffect_RunCure, // healing.c: Cure
+    [BATTLE_EFFECT_PLY - 1] = BattleEffect_RunPly,   // healing.c: Ply
+    [BATTLE_EFFECT_WISH - 1] = BattleEffect_RunWish, // healing.c: Wish
+    [BATTLE_EFFECT_CURE_POISON - 1] =
+        BattleEffect_RunCurePoison, // healing.c: Cure Poison
+    [BATTLE_EFFECT_REVIVE - 1] =
+        BattleEffect_RunRevive, // djinn_beams.c: Revive
+    [BATTLE_EFFECT_IMPACT - 1] =
         BattleEffect_RunImpact,                        // stat_change.c: Impact
-    [BATTLE_FX_GUARD_211 - 1] = BattleEffect_RunGuard, // stat_change.c: Guard
-    [BATTLE_FX_PSY_CRYSTAL - 1] =
-        BattleEffect_RunPsyCrystal,                  // healing.c: Psy Crystal
-    [BATTLE_FX_FLASH - 1] = BattleEffect_RunFlash,   // stat_change.c: Flash
-    [BATTLE_FX_TORCH - 1] = BattleEffect_RunTorch,   // torch.c: Torch
-    [BATTLE_FX_WARD_215 - 1] = BattleEffect_RunWard, // stat_change.c: Ward
-    [BATTLE_FX_ZEPHYR - 1] = BattleEffect_RunZephyr, // stat_change.c: Zephyr
-    [BATTLE_FX_KITE - 1] = BattleEffect_RunKite,     // torch.c: Kite
-    [BATTLE_FX_BIND_218 - 1] = BattleEffect_RunBind, // bind.c: Bind
-    [BATTLE_FX_GUST - 1] = BattleEffect_RunGust,     // burst_scene.c: Gust
-    [BATTLE_FX_VENUS - 1] = BattleEffect_RunVenus,   // djinn_attacks.c: Venus
-    [BATTLE_FX_MERCURY - 1] =
-        BattleEffect_RunMercury,                 // djinn_attacks.c: Mercury
-    [BATTLE_FX_MARS - 1] = BattleEffect_RunMars, // djinn_attacks.c: Mars
-    [BATTLE_FX_JUPITER - 1] =
-        BattleEffect_RunJupiter, // djinn_attacks.c: Jupiter
-    [BATTLE_FX_SONIC_WAVE - 1] =
-        BattleEffect_RunSonicWave,                   // streaks.c: Sonic Wave
-    [BATTLE_FX_SHRIEK - 1] = BattleEffect_RunShriek, // streaks.c: Shriek
-    [BATTLE_FX_BANSHEE_HOWL - 1] =
-        BattleEffect_RunBansheeHowl, // streaks.c: Banshee Howl
-    [BATTLE_FX_CRAZY_VOICE - 1] =
-        BattleEffect_RunCrazyVoice, // projectiles.c: Crazy Voice
-    [BATTLE_FX_WAR_CRY - 1] = BattleEffect_RunWarCry, // streaks.c: War Cry
-    [BATTLE_FX_WICKED_HOWL - 1] =
-        BattleEffect_RunWickedHowl, // streaks.c: Wicked Howl
-    [BATTLE_FX_WING_BEAT - 1] =
-        BattleEffect_RunWingBeat, // projectiles.c: Wing Beat
-    [BATTLE_FX_WING_FLUTTER - 1] =
-        BattleEffect_RunWingFlutter, // projectiles.c: Wing Flutter
-    [BATTLE_FX_RUMBLE - 1] =
-        BattleEffect_RunRumble, // gathering_lights.c: Rumble
-    [BATTLE_FX_BONE_CHILLER - 1] =
-        BattleEffect_RunBoneChiller, // lobbed_shells.c: Bone Chiller
-    [BATTLE_FX_GUST_310 - 1] = BattleEffect_RunGust, // burst_scene.c: Gust
-    [BATTLE_FX_BONE_CHARGE - 1] =
-        BattleEffect_RunBoneCharge, // rushing_strike.c: Bone Charge
-    [BATTLE_FX_MYSTIC_FLAME - 1] =
-        BattleEffect_RunMysticFlame, // target_motes.c: Mystic Flame
-    [BATTLE_FX_NUMBING_STING - 1] =
-        BattleEffect_RunNumbingSting, // target_strike.c: Numbing Sting
-    [BATTLE_FX_BRUTE_FORCE - 1] =
-        BattleEffect_RunBruteForce, // rushing_strike.c: Brute Force
-    [BATTLE_FX_STICKY_GOO - 1] =
-        BattleEffect_RunStickyGoo, // lobbed_shells.c: Sticky Goo
-    [BATTLE_FX_CANNIBAL_FANG - 1] =
-        BattleEffect_RunCannibalFang, // target_strike.c: Cannibal Fang
-    [BATTLE_FX_BEAR_CLAW - 1] =
-        BattleEffect_RunBearClaw, // burst_scene.c: Bear Claw
-    [BATTLE_FX_POISONOUS_BITE - 1] =
-        BattleEffect_RunPoisonousBite, // target_strike.c: Poisonous Bite
-    [BATTLE_FX_FLYING_ATTACK - 1] =
-        BattleEffect_RunFlyingAttack, // burst_scene.c: Flying Attack
-    [BATTLE_FX_UNDEAD_SWORD - 1] =
-        BattleEffect_RunUndeadSword, // undead_sword.c: Undead Sword
-    [BATTLE_FX_RANSACK - 1] = BattleEffect_RunRansack, // burst_scene.c: Ransack
-    [BATTLE_FX_STICKY_POISON - 1] =
-        BattleEffect_RunStickyPoison, // lobbed_shells.c: Sticky Poison
-    [BATTLE_FX_POISONOUS_BITE_323 - 1] =
-        BattleEffect_RunPoisonousBite, // target_strike.c: Poisonous Bite
-    [BATTLE_FX_ELECTRIC_BITE - 1] =
-        BattleEffect_RunElectricBite, // target_strike.c: Electric Bite
-    [BATTLE_FX_POISON_TAIL - 1] =
-        BattleEffect_RunPoisonTail, // target_strike.c: Poison Tail
-    [BATTLE_FX_ONSLAUGHT - 1] =
-        BattleEffect_RunOnslaught, // rushing_strike.c: Onslaught
-    [BATTLE_FX_VAMPIRIC_FANG - 1] =
-        BattleEffect_RunVampiricFang, // target_strike.c: Vampiric Fang
-    [BATTLE_FX_BACTERIA_RUSH - 1] =
-        BattleEffect_RunBacteriaRush, // burst_scene.c: Bacteria Rush
-    [BATTLE_FX_FLYING_ATTACK_329 - 1] =
-        BattleEffect_RunFlyingAttack, // burst_scene.c: Flying Attack
-    [BATTLE_FX_ROTTEN_BLOOD - 1] =
-        BattleEffect_RunRottenBlood, // lobbed_shells.c: Rotten Blood
-    [BATTLE_FX_DOUBLE_FANG - 1] =
-        BattleEffect_RunDoubleFang, // target_strike.c: Double Fang
-    [BATTLE_FX_MORTAL_BLOW - 1] =
-        BattleEffect_RunMortalBlow, // target_strike.c: Mortal Blow
-    [BATTLE_FX_FREEBITE_RUSH - 1] =
-        BattleEffect_RunFreebiteRush, // burst_scene.c: Freebite Rush
-    [BATTLE_FX_TWIN_BEAKS - 1] =
-        BattleEffect_RunTwinBeaks, // target_strike.c: Twin Beaks
-    [BATTLE_FX_RABID_FANG - 1] =
-        BattleEffect_RunRabidFang, // target_strike.c: Rabid Fang
-    [BATTLE_FX_ACID_BITE - 1] =
-        BattleEffect_RunAcidBite, // target_strike.c: Acid Bite
-    [BATTLE_FX_DYNAMITE - 1] = BattleEffect_RunDynamite, // plasma.c: Dynamite
-    [BATTLE_FX_HEADBUTT - 1] =
-        BattleEffect_RunHeadbutt, // rushing_strike.c: Headbutt
-    [BATTLE_FX_POISON_INK - 1] =
-        BattleEffect_RunPoisonInk, // lobbed_shells.c: Poison Ink
-    [BATTLE_FX_BEAR_CLAW_342 - 1] =
-        BattleEffect_RunBearClaw, // burst_scene.c: Bear Claw
-    [BATTLE_FX_RANSACK_343 - 1] =
-        BattleEffect_RunRansack, // burst_scene.c: Ransack
-    [BATTLE_FX_SOOTHING_STAR - 1] =
-        BattleEffect_RunSoothingStar, // streaks.c: Soothing Star
-    [BATTLE_FX_SPIDER_WEB - 1] =
-        BattleEffect_RunSpiderWeb, // spider_web.c: Spider Web
-    [BATTLE_FX_HEARTRENDER_346 - 1] =
+    [BATTLE_EFFECT_DULL - 1] = BattleEffect_RunDull,   // stat_change.c: Dull
+    [BATTLE_EFFECT_GUARD - 1] = BattleEffect_RunGuard, // stat_change.c: Guard
+    [BATTLE_EFFECT_IMPAIR - 1] =
+        BattleEffect_RunImpair,                      // stat_change.c: Impair
+    [BATTLE_EFFECT_WARD - 1] = BattleEffect_RunWard, // stat_change.c: Ward
+    [BATTLE_EFFECT_WEAKEN - 1] =
+        BattleEffect_RunWeaken,                        // stat_change.c: Weaken
+    [BATTLE_EFFECT_TAINT - 1] = BattleEffect_RunTaint, // target_motes.c: Taint
+    [BATTLE_EFFECT_DELUDE - 1] =
+        BattleEffect_RunDelude, // target_motes.c: Delude
+    [BATTLE_EFFECT_UNUSED_ORBITING_SPIRALS - 1] =
+        BattleEffect_RunUnusedOrbitingSpirals, // planet_diver.c
+    [BATTLE_EFFECT_HEARTRENDER - 1] =
         BattleEffect_RunHeartrender, // target_motes.c: Heartrender
-    [BATTLE_FX_MAD_SPATTER - 1] =
+    [BATTLE_EFFECT_PARALYZE - 1] =
+        BattleEffect_RunParalyze, // target_motes.c: Paralyze
+    [BATTLE_EFFECT_SLEEP - 1] = BattleEffect_RunSleep, // target_motes.c: Sleep
+    [BATTLE_EFFECT_BIND - 1] = BattleEffect_RunBind,   // bind.c: Bind
+    [BATTLE_EFFECT_HAUNT - 1] = BattleEffect_RunHaunt, // planet_diver.c: Haunt
+    [BATTLE_EFFECT_CONDEMN - 1] = BattleEffect_RunCondemn, // condemn.c: Condemn
+    [BATTLE_EFFECT_CURSE - 1] = BattleEffect_RunCurse,  // target_motes.c: Curse
+    [BATTLE_EFFECT_DRAIN - 1] = BattleEffect_RunDrain,  // drain.c: Drain
+    [BATTLE_EFFECT_BREAK - 1] = BattleEffect_RunBreak,  // drain.c: Break
+    [BATTLE_EFFECT_WISH_44 - 1] = BattleEffect_RunWish, // healing.c: Wish
+    [BATTLE_EFFECT_WISH_45 - 1] = BattleEffect_RunWish, // healing.c: Wish
+    [BATTLE_EFFECT_IMPACT_46 - 1] =
+        BattleEffect_RunImpact, // stat_change.c: Impact
+    [BATTLE_EFFECT_IMPAIR_47 - 1] =
+        BattleEffect_RunImpair, // stat_change.c: Impair
+    [BATTLE_EFFECT_DRAGON_CLOUD - 1] =
+        BattleEffect_RunDragonCloud, // dragon_cloud.c: Dragon Cloud
+    [BATTLE_EFFECT_DEMON_NIGHT - 1] =
+        BattleEffect_RunDemonNight, // gathering_lights.c: Demon Night
+    [BATTLE_EFFECT_HELM_SPLITTER - 1] =
+        BattleEffect_RunHelmSplitter, // helm_splitter.c: Helm Splitter
+    [BATTLE_EFFECT_QUICK_STRIKE - 1] =
+        BattleEffect_RunQuickStrike, // thrash.c: Quick Strike
+    [BATTLE_EFFECT_DEATH_PLUNGE - 1] =
+        BattleEffect_RunDeathPlunge, // death_plunge.c: Death Plunge
+    [BATTLE_EFFECT_SHURIKEN - 1] =
+        BattleEffect_RunShuriken, // projectiles.c: Shuriken
+    [BATTLE_EFFECT_ANNIHILATION - 1] =
+        BattleEffect_RunAnnihilation, // annihilation.c: Annihilation
+    [BATTLE_EFFECT_PUNJI - 1] = BattleEffect_RunPunji, // growth.c: Punji
+    [BATTLE_EFFECT_CUTTING_EDGE - 1] =
+        BattleEffect_RunCuttingEdge, // projectiles.c: Cutting Edge
+    [BATTLE_EFFECT_RAGNAROK - 1] =
+        BattleEffect_RunRagnarok, // ragnarok.c: Ragnarok
+    [BATTLE_EFFECT_HEAT_WAVE - 1] =
+        BattleEffect_RunHeatWave, // projectiles.c: Heat Wave
+    [BATTLE_EFFECT_PLANET_DIVER - 1] =
+        BattleEffect_RunPlanetDiver, // planet_diver.c: Planet Diver
+    [BATTLE_EFFECT_TITAN_BLADE - 1] =
+        BattleEffect_RunTitanBlade, // titan_blade.c: Titan Blade
+    [BATTLE_EFFECT_SHINING_STAR - 1] =
+        BattleEffect_RunShiningStar, // stars.c: Shining Star
+    [BATTLE_EFFECT_BLIZZARD - 1] =
+        BattleEffect_RunBlizzard, // projectiles.c: Blizzard
+    [BATTLE_EFFECT_DEMON_FIRE - 1] =
+        BattleEffect_RunDemonFire, // target_motes.c: Demon Fire
+    [BATTLE_EFFECT_VORPAL_SLASH - 1] =
+        BattleEffect_RunVorpalSlash,                   // thrash.c: Vorpal Slash
+    [BATTLE_EFFECT_DROWN - 1] = BattleEffect_RunDrown, // target_motes.c: Drown
+    [BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE - 1] =
+        BattleEffect_RunUnusedTriangleStrike, // bind.c
+    [BATTLE_EFFECT_ASTRAL_BLAST - 1] =
+        BattleEffect_RunAstralBlast, // stars.c: Astral Blast
+    [BATTLE_EFFECT_GRANITE - 1] =
+        BattleEffect_RunGranite, // stat_change.c: Granite
+    [BATTLE_EFFECT_REVIVE_201 - 1] =
+        BattleEffect_RunRevive,                      // djinn_beams.c: Revive
+    [BATTLE_EFFECT_VINE - 1] = BattleEffect_RunVine, // growth.c: Vine
+    [BATTLE_EFFECT_GROUND - 1] = BattleEffect_RunGround, // hail.c: Ground
+    [BATTLE_EFFECT_PLY_204 - 1] = BattleEffect_RunPly,   // healing.c: Ply
+    [BATTLE_EFFECT_SLEET - 1] = BattleEffect_RunSleet,   // projectiles.c: Sleet
+    [BATTLE_EFFECT_WISH_206 - 1] = BattleEffect_RunWish, // healing.c: Wish
+    [BATTLE_EFFECT_HAIL - 1] = BattleEffect_RunHail,     // hail.c: Hail
+    [BATTLE_EFFECT_TONIC - 1] = BattleEffect_RunTonic,   // healing.c: Tonic
+    [BATTLE_EFFECT_DEW - 1] = BattleEffect_RunDew,       // djinn_beams.c: Dew
+    [BATTLE_EFFECT_IMPACT_210 - 1] =
+        BattleEffect_RunImpact, // stat_change.c: Impact
+    [BATTLE_EFFECT_GUARD_211 - 1] =
+        BattleEffect_RunGuard, // stat_change.c: Guard
+    [BATTLE_EFFECT_PSY_CRYSTAL - 1] =
+        BattleEffect_RunPsyCrystal,                    // healing.c: Psy Crystal
+    [BATTLE_EFFECT_FLASH - 1] = BattleEffect_RunFlash, // stat_change.c: Flash
+    [BATTLE_EFFECT_TORCH - 1] = BattleEffect_RunTorch, // torch.c: Torch
+    [BATTLE_EFFECT_WARD_215 - 1] = BattleEffect_RunWard, // stat_change.c: Ward
+    [BATTLE_EFFECT_ZEPHYR - 1] =
+        BattleEffect_RunZephyr,                      // stat_change.c: Zephyr
+    [BATTLE_EFFECT_KITE - 1] = BattleEffect_RunKite, // torch.c: Kite
+    [BATTLE_EFFECT_BIND_218 - 1] = BattleEffect_RunBind, // bind.c: Bind
+    [BATTLE_EFFECT_GUST - 1] = BattleEffect_RunGust,     // burst_scene.c: Gust
+    [BATTLE_EFFECT_VENUS - 1] = BattleEffect_RunVenus, // djinn_attacks.c: Venus
+    [BATTLE_EFFECT_MERCURY - 1] =
+        BattleEffect_RunMercury,                     // djinn_attacks.c: Mercury
+    [BATTLE_EFFECT_MARS - 1] = BattleEffect_RunMars, // djinn_attacks.c: Mars
+    [BATTLE_EFFECT_JUPITER - 1] =
+        BattleEffect_RunJupiter, // djinn_attacks.c: Jupiter
+    [BATTLE_EFFECT_SONIC_WAVE - 1] =
+        BattleEffect_RunSonicWave, // streaks.c: Sonic Wave
+    [BATTLE_EFFECT_SHRIEK - 1] = BattleEffect_RunShriek, // streaks.c: Shriek
+    [BATTLE_EFFECT_BANSHEE_HOWL - 1] =
+        BattleEffect_RunBansheeHowl, // streaks.c: Banshee Howl
+    [BATTLE_EFFECT_CRAZY_VOICE - 1] =
+        BattleEffect_RunCrazyVoice, // projectiles.c: Crazy Voice
+    [BATTLE_EFFECT_WAR_CRY - 1] = BattleEffect_RunWarCry, // streaks.c: War Cry
+    [BATTLE_EFFECT_WICKED_HOWL - 1] =
+        BattleEffect_RunWickedHowl, // streaks.c: Wicked Howl
+    [BATTLE_EFFECT_WING_BEAT - 1] =
+        BattleEffect_RunWingBeat, // projectiles.c: Wing Beat
+    [BATTLE_EFFECT_WING_FLUTTER - 1] =
+        BattleEffect_RunWingFlutter, // projectiles.c: Wing Flutter
+    [BATTLE_EFFECT_RUMBLE - 1] =
+        BattleEffect_RunRumble, // gathering_lights.c: Rumble
+    [BATTLE_EFFECT_BONE_CHILLER - 1] =
+        BattleEffect_RunBoneChiller, // lobbed_shells.c: Bone Chiller
+    [BATTLE_EFFECT_GUST_310 - 1] = BattleEffect_RunGust, // burst_scene.c: Gust
+    [BATTLE_EFFECT_BONE_CHARGE - 1] =
+        BattleEffect_RunBoneCharge, // rushing_strike.c: Bone Charge
+    [BATTLE_EFFECT_MYSTIC_FLAME - 1] =
+        BattleEffect_RunMysticFlame, // target_motes.c: Mystic Flame
+    [BATTLE_EFFECT_NUMBING_STING - 1] =
+        BattleEffect_RunNumbingSting, // target_strike.c: Numbing Sting
+    [BATTLE_EFFECT_BRUTE_FORCE - 1] =
+        BattleEffect_RunBruteForce, // rushing_strike.c: Brute Force
+    [BATTLE_EFFECT_STICKY_GOO - 1] =
+        BattleEffect_RunStickyGoo, // lobbed_shells.c: Sticky Goo
+    [BATTLE_EFFECT_CANNIBAL_FANG - 1] =
+        BattleEffect_RunCannibalFang, // target_strike.c: Cannibal Fang
+    [BATTLE_EFFECT_BEAR_CLAW - 1] =
+        BattleEffect_RunBearClaw, // burst_scene.c: Bear Claw
+    [BATTLE_EFFECT_POISONOUS_BITE - 1] =
+        BattleEffect_RunPoisonousBite, // target_strike.c: Poisonous Bite
+    [BATTLE_EFFECT_FLYING_ATTACK - 1] =
+        BattleEffect_RunFlyingAttack, // burst_scene.c: Flying Attack
+    [BATTLE_EFFECT_UNDEAD_SWORD - 1] =
+        BattleEffect_RunUndeadSword, // undead_sword.c: Undead Sword
+    [BATTLE_EFFECT_RANSACK - 1] =
+        BattleEffect_RunRansack, // burst_scene.c: Ransack
+    [BATTLE_EFFECT_STICKY_POISON - 1] =
+        BattleEffect_RunStickyPoison, // lobbed_shells.c: Sticky Poison
+    [BATTLE_EFFECT_POISONOUS_BITE_323 - 1] =
+        BattleEffect_RunPoisonousBite, // target_strike.c: Poisonous Bite
+    [BATTLE_EFFECT_ELECTRIC_BITE - 1] =
+        BattleEffect_RunElectricBite, // target_strike.c: Electric Bite
+    [BATTLE_EFFECT_POISON_TAIL - 1] =
+        BattleEffect_RunPoisonTail, // target_strike.c: Poison Tail
+    [BATTLE_EFFECT_ONSLAUGHT - 1] =
+        BattleEffect_RunOnslaught, // rushing_strike.c: Onslaught
+    [BATTLE_EFFECT_VAMPIRIC_FANG - 1] =
+        BattleEffect_RunVampiricFang, // target_strike.c: Vampiric Fang
+    [BATTLE_EFFECT_BACTERIA_RUSH - 1] =
+        BattleEffect_RunBacteriaRush, // burst_scene.c: Bacteria Rush
+    [BATTLE_EFFECT_FLYING_ATTACK_329 - 1] =
+        BattleEffect_RunFlyingAttack, // burst_scene.c: Flying Attack
+    [BATTLE_EFFECT_ROTTEN_BLOOD - 1] =
+        BattleEffect_RunRottenBlood, // lobbed_shells.c: Rotten Blood
+    [BATTLE_EFFECT_DOUBLE_FANG - 1] =
+        BattleEffect_RunDoubleFang, // target_strike.c: Double Fang
+    [BATTLE_EFFECT_MORTAL_BLOW - 1] =
+        BattleEffect_RunMortalBlow, // target_strike.c: Mortal Blow
+    [BATTLE_EFFECT_FREEBITE_RUSH - 1] =
+        BattleEffect_RunFreebiteRush, // burst_scene.c: Freebite Rush
+    [BATTLE_EFFECT_TWIN_BEAKS - 1] =
+        BattleEffect_RunTwinBeaks, // target_strike.c: Twin Beaks
+    [BATTLE_EFFECT_RABID_FANG - 1] =
+        BattleEffect_RunRabidFang, // target_strike.c: Rabid Fang
+    [BATTLE_EFFECT_ACID_BITE - 1] =
+        BattleEffect_RunAcidBite, // target_strike.c: Acid Bite
+    [BATTLE_EFFECT_DYNAMITE - 1] =
+        BattleEffect_RunDynamite, // plasma.c: Dynamite
+    [BATTLE_EFFECT_HEADBUTT - 1] =
+        BattleEffect_RunHeadbutt, // rushing_strike.c: Headbutt
+    [BATTLE_EFFECT_POISON_INK - 1] =
+        BattleEffect_RunPoisonInk, // lobbed_shells.c: Poison Ink
+    [BATTLE_EFFECT_BEAR_CLAW_342 - 1] =
+        BattleEffect_RunBearClaw, // burst_scene.c: Bear Claw
+    [BATTLE_EFFECT_RANSACK_343 - 1] =
+        BattleEffect_RunRansack, // burst_scene.c: Ransack
+    [BATTLE_EFFECT_SOOTHING_STAR - 1] =
+        BattleEffect_RunSoothingStar, // streaks.c: Soothing Star
+    [BATTLE_EFFECT_SPIDER_WEB - 1] =
+        BattleEffect_RunSpiderWeb, // spider_web.c: Spider Web
+    [BATTLE_EFFECT_HEARTRENDER_346 - 1] =
+        BattleEffect_RunHeartrender, // target_motes.c: Heartrender
+    [BATTLE_EFFECT_MAD_SPATTER - 1] =
         BattleEffect_RunMadSpatter, // lobbed_shells.c: Mad Spatter
-    [BATTLE_FX_SPASM - 1] = BattleEffect_RunSpasm, // mirrored_wall.c: Spasm
-    [BATTLE_FX_SLEEP_STAR - 1] =
+    [BATTLE_EFFECT_SPASM - 1] = BattleEffect_RunSpasm, // mirrored_wall.c: Spasm
+    [BATTLE_EFFECT_SLEEP_STAR - 1] =
         BattleEffect_RunSleepStar, // streaks.c: Sleep Star
-    [BATTLE_FX_DECOMPOSE - 1] =
+    [BATTLE_EFFECT_DECOMPOSE - 1] =
         BattleEffect_RunDecompose, // lobbed_shells.c: Decompose
-    [BATTLE_FX_HAUNTING - 1] =
+    [BATTLE_EFFECT_HAUNTING - 1] =
         BattleEffect_RunHaunting, // gathering_lights.c: Haunting
-    [BATTLE_FX_CURE_352 - 1] = BattleEffect_RunCure, // healing.c: Cure
-    [BATTLE_FX_BERSERK - 1] =
+    [BATTLE_EFFECT_CURE_352 - 1] = BattleEffect_RunCure, // healing.c: Cure
+    [BATTLE_EFFECT_BERSERK - 1] =
         BattleEffect_RunBerserk, // mirrored_wall.c: Berserk
-    [BATTLE_FX_CURSE_354 - 1] = BattleEffect_RunCurse, // target_motes.c: Curse
-    [BATTLE_FX_SMOKE_BOMB - 1] =
+    [BATTLE_EFFECT_CURSE_354 - 1] =
+        BattleEffect_RunCurse, // target_motes.c: Curse
+    [BATTLE_EFFECT_SMOKE_BOMB - 1] =
         BattleEffect_RunSmokeBomb, // eruption.c: Smoke Bomb
-    [BATTLE_FX_WING_STROKE - 1] =
+    [BATTLE_EFFECT_WING_STROKE - 1] =
         BattleEffect_RunWingStroke, // projectiles.c: Wing Stroke
-    [BATTLE_FX_POISON_BEAT - 1] =
+    [BATTLE_EFFECT_POISON_BEAT - 1] =
         BattleEffect_RunPoisonBeat, // spider_web.c: Poison Beat
-    [BATTLE_FX_SPINNING_BEAT - 1] =
+    [BATTLE_EFFECT_SPINNING_BEAT - 1] =
         BattleEffect_RunSpinningBeat, // spider_web.c: Spinning Beat
-    [BATTLE_FX_OUTER_SPACE - 1] =
+    [BATTLE_EFFECT_OUTER_SPACE - 1] =
         BattleEffect_RunOuterSpace, // particle_streams.c: Outer Space
-    [BATTLE_FX_DRAGON_DRIVER - 1] =
+    [BATTLE_EFFECT_DRAGON_DRIVER - 1] =
         BattleEffect_RunDragonDriver, // tiamat.c: Dragon Driver
-    [BATTLE_FX_DRAIN_FANG - 1] =
+    [BATTLE_EFFECT_DRAIN_FANG - 1] =
         BattleEffect_RunDrainFang, // target_strike.c: Drain Fang
-    [BATTLE_FX_UNUSED_SEVERE_BLOW_LEAP - 1] =
-        BattleEffect_RunUnusedSevereBlowLeap,        // thrash.c
-    [BATTLE_FX_THRASH - 1] = BattleEffect_RunThrash, // thrash.c: Thrash
-    [BATTLE_FX_RECOVERY - 1] =
+    [BATTLE_EFFECT_UNUSED_SEVERE_BLOW_LEAP - 1] =
+        BattleEffect_RunUnusedSevereBlowLeap,            // thrash.c
+    [BATTLE_EFFECT_THRASH - 1] = BattleEffect_RunThrash, // thrash.c: Thrash
+    [BATTLE_EFFECT_RECOVERY - 1] =
         BattleEffect_RunRecovery, // mirrored_wall.c: Recovery
-    [BATTLE_FX_FIRE_BLESSING - 1] =
+    [BATTLE_EFFECT_FIRE_BLESSING - 1] =
         BattleEffect_RunFireBlessing, // burst_shower.c: Fire Blessing
-    [BATTLE_FX_WATER_BLESSING - 1] =
+    [BATTLE_EFFECT_WATER_BLESSING - 1] =
         BattleEffect_RunWaterBlessing, // burst_shower.c: Water Blessing
-    [BATTLE_FX_ICE_BLESSING - 1] =
+    [BATTLE_EFFECT_ICE_BLESSING - 1] =
         BattleEffect_RunIceBlessing, // projectiles.c: Ice Blessing
-    [BATTLE_FX_DARK_BLESSING - 1] =
+    [BATTLE_EFFECT_DARK_BLESSING - 1] =
         BattleEffect_RunDarkBlessing, // burst_shower.c: Dark Blessing
-    [BATTLE_FX_ACID_BLESSING - 1] =
+    [BATTLE_EFFECT_ACID_BLESSING - 1] =
         BattleEffect_RunAcidBlessing, // burst_shower.c: Dark Blessing
-    [BATTLE_FX_STORM_BLESSING - 1] =
+    [BATTLE_EFFECT_STORM_BLESSING - 1] =
         BattleEffect_RunStormBlessing, // burst_shower.c: Storm Blessing
-    [BATTLE_FX_EVIL_BLESSING - 1] =
+    [BATTLE_EFFECT_EVIL_BLESSING - 1] =
         BattleEffect_RunEvilBlessing, // burst_shower.c: Evil Blessing
-    [BATTLE_FX_DEADLY_GAS - 1] =
+    [BATTLE_EFFECT_DEADLY_GAS - 1] =
         BattleEffect_RunDeadlyGas, // burst_shower.c: Deadly Gas
 };
 

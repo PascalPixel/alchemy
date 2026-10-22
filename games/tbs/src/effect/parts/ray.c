@@ -12,7 +12,7 @@
 /// Four bolts close in, turning towards the centre for 16 frames and
 /// scattering sparks from their roots; the sparks fly on until frame 64.
 ///
-/// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_FX_RAY).
+/// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_EFFECT_RAY).
 ///
 /// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
 /// REG_BG2X, sets work->shakeFrames over the first 16 frames.

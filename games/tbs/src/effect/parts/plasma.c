@@ -25,7 +25,7 @@
 /// shows the damage on frame 32.
 ///
 /// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
-/// Thunderstorm (BATTLE_FX_PLASMA).
+/// Thunderstorm (BATTLE_EFFECT_PLASMA).
 ///
 /// effect->variant picks how many pillars (gPlasma_Counts), how many sparks
 /// each throws and how long the screen shakes (gPlasma_Sparks); for Spark
@@ -202,13 +202,13 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
 /// (priority 1).
 ///
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
-/// (BATTLE_FX_NOVA).
+/// (BATTLE_EFFECT_NOVA).
 void BattleEffect_RunNova(struct BattleEffectArgument *effect) {
   BattleEffect_RunSparkGroups(effect, SPARK_GROUPS_NOVA);
 }
 /// Orange bursts go off at (60, 64), with the canvas in front (priority 0).
 ///
-/// Abilities: Dynamite (BATTLE_FX_DYNAMITE).
+/// Abilities: Dynamite (BATTLE_EFFECT_DYNAMITE).
 void BattleEffect_RunDynamite(struct BattleEffectArgument *effect) {
   BattleEffect_RunSparkGroups(effect, SPARK_GROUPS_DYNAMITE);
 }

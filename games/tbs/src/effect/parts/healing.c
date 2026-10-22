@@ -33,30 +33,31 @@ enum HealingMotesMode {
 /// centred on the first target.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water
-/// (BATTLE_FX_PLY); Fizz (BATTLE_FX_PLY_204).
+/// (BATTLE_EFFECT_PLY); Fizz (BATTLE_EFFECT_PLY_204).
 void BattleEffect_RunPly(struct BattleEffectArgument *effect) {
   BattleEffect_RunHealingMotes(effect, HEALING_MODE_PLY);
 }
 /// Healing motes tumble in on each target from all around it.
 ///
-/// Abilities: Wish, Wish Well, Pure Wish (BATTLE_FX_WISH); Regenerate
-/// (BATTLE_FX_WISH_44); Reflect (BATTLE_FX_WISH_45); Spritz
-/// (BATTLE_FX_WISH_206).
+/// Abilities: Wish, Wish Well, Pure Wish (BATTLE_EFFECT_WISH); Regenerate
+/// (BATTLE_EFFECT_WISH_44); Reflect (BATTLE_EFFECT_WISH_45); Spritz
+/// (BATTLE_EFFECT_WISH_206).
 void BattleEffect_RunWish(struct BattleEffectArgument *effect) {
   BattleEffect_RunHealingMotes(effect, HEALING_MODE_WISH);
 }
 /// A ring of healing motes below each target closes in on it, in the blast
 /// sheet's colours.
 ///
-/// Abilities: Cure, Cure Well, Potent Cure, Corn (BATTLE_FX_CURE); Worms
-/// (BATTLE_FX_CURE_352).
+/// Abilities: Cure, Cure Well, Potent Cure, Corn (BATTLE_EFFECT_CURE); Worms
+/// (BATTLE_EFFECT_CURE_352).
 void BattleEffect_RunCure(struct BattleEffectArgument *effect) {
   BattleEffect_RunHealingMotes(effect, HEALING_MODE_CURE);
 }
 /// Sparkles twinkle around each target, four more a frame, and go out one by
 /// one instead of closing in.
 ///
-/// Abilities: Cure Poison, Restore, Antidote, Elixir (BATTLE_FX_CURE_POISON).
+/// Abilities: Cure Poison, Restore, Antidote, Elixir
+/// (BATTLE_EFFECT_CURE_POISON).
 ///
 /// Cure Poison and Antidote play HEALING_MODE_CURE_POISON; Restore and Elixir,
 /// the stronger variant, play HEALING_MODE_RESTORE, whose sparkles also turn
@@ -78,14 +79,14 @@ BattleEffect_RunUnusedRestoreMotes(struct BattleEffectArgument *effect) {
 /// Sparkles twinkle around each target, turning on two axes, and go out one by
 /// one; the runner plays HEALING_MODE_TONIC exactly as HEALING_MODE_RESTORE.
 ///
-/// Abilities: Tonic (BATTLE_FX_TONIC).
+/// Abilities: Tonic (BATTLE_EFFECT_TONIC).
 void BattleEffect_RunTonic(struct BattleEffectArgument *effect) {
   BattleEffect_RunHealingMotes(effect, HEALING_MODE_TONIC);
 }
 /// Healing motes gather around each target in the Mars Djinni palette; with a
 /// prelude, a Mars Djinni appears first.
 ///
-/// Abilities: Psy Crystal, Adept Ring, Ember (BATTLE_FX_PSY_CRYSTAL).
+/// Abilities: Psy Crystal, Adept Ring, Ember (BATTLE_EFFECT_PSY_CRYSTAL).
 void BattleEffect_RunPsyCrystal(struct BattleEffectArgument *effect) {
   BattleEffect_RunHealingMotes(effect, HEALING_MODE_PSY_CRYSTAL);
 }

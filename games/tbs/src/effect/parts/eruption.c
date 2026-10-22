@@ -14,7 +14,7 @@ enum EruptionMode {
 /// A fountain of grey motes and puffs of smoke bursts up beside the targets and
 /// falls back, flashing each target.
 ///
-/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_FX_SMOKE_BOMB).
+/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_EFFECT_SMOKE_BOMB).
 ///
 /// It always uses Mad Blast's row of gEruption_Counts: 32 motes, 16 puffs, 80
 /// frames.
@@ -24,7 +24,7 @@ void BattleEffect_RunSmokeBomb(struct BattleEffectArgument *effect) {
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
 ///
-/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_FX_BLAST).
+/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_EFFECT_BLAST).
 void BattleEffect_RunBlast(struct BattleEffectArgument *effect) {
   BattleEffect_RunEruption(effect, ERUPTION_BLAST);
 }

@@ -14,7 +14,7 @@ struct BattleFxScene {
   u8 unk710[0xe4];
 };
 
-#define BATTLE_FX_SLOT 224
+#define BATTLE_EFFECT_SLOT 224
 
 void BattleEffect_UpdateAllSlots(void) {
   struct BattleFxScene *scene;
@@ -35,7 +35,7 @@ void BattleEffect_InitializeSlots(void) {
   void *work;
 
   work =
-      Runtime_AllocateHeapBlock(BATTLE_FX_SLOT, sizeof(struct BattleFxScene));
+      Runtime_AllocateHeapBlock(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene));
   Scheduler_AddOrUpdateCallback((s32)BattleEffect_UpdateAllSlots, 1152);
 }
@@ -53,7 +53,7 @@ void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
     if (slot->active != 0)
       BattleEffect_ClearOwnedSlot(slot);
   }
-  Runtime_ReleaseHeapBlock(BATTLE_FX_SLOT);
+  Runtime_ReleaseHeapBlock(BATTLE_EFFECT_SLOT);
   WaitFrames(1);
 }
 

@@ -9,7 +9,7 @@
 /// Ice shards burst up from each target in turn, 20 frames apart, tinting the
 /// target as they go, and fall away below line 112.
 ///
-/// Abilities: Break (BATTLE_FX_BREAK).
+/// Abilities: Break (BATTLE_EFFECT_BREAK).
 ///
 /// Target n's 128 shards are PARTICLES n * 128 onwards, screen positions on
 /// the half-width canvas in 16.16; a shard's variant counts its frames and is
@@ -131,7 +131,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 /// Motes of light burst from each target in turn, 20 frames apart, and are
 /// pulled into the centre of the user's body.
 ///
-/// Abilities: Drain, Psy Drain (BATTLE_FX_DRAIN).
+/// Abilities: Drain, Psy Drain (BATTLE_EFFECT_DRAIN).
 ///
 /// Each target flashes in its damage pose for 42 frames as its motes burst, and
 /// the user glows from frame 40 until 20 frames before the end. Target n's

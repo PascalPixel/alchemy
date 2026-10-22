@@ -14,15 +14,15 @@
 /// Motes drift down over each target and a column of light falls on it, in the
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
 ///
-/// Abilities: Revive, Water of Life (BATTLE_FX_REVIVE); Quartz
-/// (BATTLE_FX_REVIVE_201).
+/// Abilities: Revive, Water of Life (BATTLE_EFFECT_REVIVE); Quartz
+/// (BATTLE_EFFECT_REVIVE_201).
 void BattleEffect_RunRevive(struct BattleEffectArgument *effect) {
   BattleEffect_RunDjinnBeams(effect, ELEMENT_VENUS);
 }
 /// Dew plays Revive's beams of light in the Mercury Djinni's colours, and with
 /// a prelude a Mercury Djinni appears first.
 ///
-/// Abilities: Dew (BATTLE_FX_DEW).
+/// Abilities: Dew (BATTLE_EFFECT_DEW).
 void BattleEffect_RunDew(struct BattleEffectArgument *effect) {
   BattleEffect_RunDjinnBeams(effect, ELEMENT_MERCURY);
 }

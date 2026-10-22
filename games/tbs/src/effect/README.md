@@ -37,7 +37,7 @@ macros in `battle/battle_internal.h` name its fields:
 | 19 | `STAGING_VIEW_REVERSED` | the camera turns right round |
 
 Quake, Earthquake and Quake Sphere read `0x001`, `0x1001` and `0x2001`: the
-kind `BATTLE_FX_QUAKE` at `EFFECT_VARIANT_BASIC`, `EFFECT_VARIANT_STRONGER` and
+kind `BATTLE_EFFECT_QUAKE` at `EFFECT_VARIANT_BASIC`, `EFFECT_VARIANT_STRONGER` and
 `EFFECT_VARIANT_STRONGEST`. Ramses reads `0x8001`, the scene
 `SCENE_EFFECT_RAMSES`, and Meltdown `0x4079`, a kind dispatched by its range.
 The plan changes the word in three cases: a double or triple blow raises the
@@ -51,7 +51,7 @@ Astral Blast and Dragon Driver.
 The effect kind picks only what the player watches. The formula the targets
 take is the ability kind, in `game/actions.tsv`, which
 [Battles](../battle/README.md) explains: Quake's ability kind is
-`ABILITY_KIND_DAMAGE` and its effect kind `BATTLE_FX_QUAKE`.
+`ABILITY_KIND_DAMAGE` and its effect kind `BATTLE_EFFECT_QUAKE`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -60,16 +60,16 @@ take is the ability kind, in `game/actions.tsv`, which
 | `EFFECT_VARIANT_STRONGEST` | 2 | Quake Sphere, Deluge, Pure Ply |
 | `EFFECT_SIDE_ENEMIES` | 0 | the targets are enemies |
 | `EFFECT_SIDE_PARTY` | 1 | the targets are the party |
-| `BATTLE_FX_NONE` | 0 | no effect: the dispatcher only clears the variant |
-| `BATTLE_FX_QUAKE` | 1 | the first kind of the handler table |
+| `BATTLE_EFFECT_NONE` | 0 | no effect: the dispatcher only clears the variant |
+| `BATTLE_EFFECT_QUAKE` | 1 | the first kind of the handler table |
 
 ### The handler table
 
 An ordinary effect kind indexes `gBattleEffect_EffectHandlers` (`effect_table.c`),
-whose rows start at `BATTLE_FX_QUAKE`, the first kind after `BATTLE_FX_NONE`:
+whose rows start at `BATTLE_EFFECT_QUAKE`, the first kind after `BATTLE_EFFECT_NONE`:
 
 ```c
-[BATTLE_FX_QUAKE - 1] = BattleEffect_RunQuake, // quake.c: Quake
+[BATTLE_EFFECT_QUAKE - 1] = BattleEffect_RunQuake, // quake.c: Quake
 ```
 
 Each row's comment names the part that defines the handler and the first
@@ -80,10 +80,10 @@ empty row. Abilities whose rows give the same kind and variant play the same
 effect.
 
 A handler is named for the first ability, by id, whose row selects its kind,
-under the English release's name: the first row to select `BATTLE_FX_QUAKE` is
+under the English release's name: the first row to select `BATTLE_EFFECT_QUAKE` is
 Quake's, so its handler is `BattleEffect_RunQuake`. A handler several kinds share
 takes the name of its lowest kind's first ability, and a name another handler
-has already taken passes to the next ability: `BATTLE_FX_NOVA` plays through
+has already taken passes to the next ability: `BATTLE_EFFECT_NOVA` plays through
 `BattleEffect_RunNova` because its first ability is the second Blast (ability 57),
 the first having taken `BattleEffect_RunBlast`. The three handlers no ability
 reaches are named from what they draw. Searching the code for a move's English
@@ -104,7 +104,7 @@ ability's recording beside its handler and reports a line it cannot match:
 
 ```c
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
-/// (BATTLE_FX_GAIA).
+/// (BATTLE_EFFECT_GAIA).
 ```
 
 It starts with `Abilities: ` and ends with a full stop. Between them are one or
@@ -119,14 +119,14 @@ its list. Names keep their rows' order, groups follow their effects' values,
 spaces:
 
 ```c
-/// Abilities: Heartrender (BATTLE_FX_HEARTRENDER_346); none
-/// (BATTLE_FX_HEARTRENDER).
+/// Abilities: Heartrender (BATTLE_EFFECT_HEARTRENDER_346); none
+/// (BATTLE_EFFECT_HEARTRENDER).
 ```
 
 The effect is an enumerator, never a number, and its prefix says how it is
 reached:
 
-- `BATTLE_FX_` (`enum BattleFxKind`): a row of the handler table;
+- `BATTLE_EFFECT_` (`enum BattleFxKind`): a row of the handler table;
 - `SCENE_EFFECT_` (`enum SceneEffectKind`): a row with `STAGING_SCENE`;
 - `CASTING_IMPACT_` (`enum CastingImpact`, in
   [`casting_impact.c`](parts/casting_impact.c)): a row with
@@ -174,7 +174,7 @@ three heap slots, runs the effect and releases them in reverse:
 | `HEAP_SLOT_BATTLE_CANVAS` | 40 | the canvas (`CANVAS_BYTES`) |
 
 - `BattleEffect_RunTableEffect` ([`dispatch.c`](parts/dispatch.c)) sets
-  `work->effect` and calls the kind's handler. `BATTLE_FX_NONE` plays nothing
+  `work->effect` and calls the kind's handler. `BATTLE_EFFECT_NONE` plays nothing
   and only resets the variant.
 - `BattleEffect_RunSceneEffect` (`dispatch.c`) switches on `enum SceneEffectKind`
   to the twelve summons' scenes, and leaves setting `work->effect` to each.
@@ -483,7 +483,7 @@ variant or by the mode a family's runner is passed.
 ![Isaac casts Avalanche at Ivan, and the same wall comes out wide enough to reach Isaac, with bigger rocks tumbling down all across it.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
 
 The simplest share it through the variant alone: Gaia, Rockfall and the others
-in Gaia's reach line play `BATTLE_FX_GAIA`, and `BattleEffect_RunGaia`
+in Gaia's reach line play `BATTLE_EFFECT_GAIA`, and `BattleEffect_RunGaia`
 ([`gaia.c`](parts/gaia.c)) sets `REG_BG2PA` so that `BG2` stretches the canvas
 1.25 times across at `EFFECT_VARIANT_BASIC`, 1.5 times at
 `EFFECT_VARIANT_STRONGER`, and twice, as the canvas layer left it, at
@@ -599,7 +599,7 @@ target.
 The four summons that need one Djinni draw a small Djinni of their element and
 throw flames at the targets.
 
-The four are ordinary effect kinds, `BATTLE_FX_VENUS` to `BATTLE_FX_JUPITER`,
+The four are ordinary effect kinds, `BATTLE_EFFECT_VENUS` to `BATTLE_EFFECT_JUPITER`,
 in [`djinn_attacks.c`](parts/djinn_attacks.c). Each draws a small Djinni of its
 element on the canvas and throws flames at the targets: `MERCURY_FLAMES`
 fired across, `JUPITER_FLAMEBALLS` falling from the top right,
@@ -938,7 +938,7 @@ only with a kind from an `actflags.tsv` row, through the plan's
 the auto battle passes kind 0, and a critical hit's offset applies only to
 plain attacks, which are dispatched by id range. No row names any of the three
 kinds. The Lost Age keeps the same three handlers at the same kinds, and its
-row for Severe Blow names `BATTLE_FX_UNUSED_SEVERE_BLOW_LEAP`: there Severe Blow
+row for Severe Blow names `BATTLE_EFFECT_UNUSED_SEVERE_BLOW_LEAP`: there Severe Blow
 is the leap, where here it plays a casting impact.
 
 A plain attack's kind is 1 or 4 for the party (`BattleCommand_BuildPlan`) and

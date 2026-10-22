@@ -8,8 +8,8 @@
 /// variant grows with a double or triple blow, and each strike fills the
 /// canvas with light.
 ///
-/// Abilities: Gust (BATTLE_FX_GUST); Rapid Smash, Sonic Smash, Slice
-/// (BATTLE_FX_GUST_310).
+/// Abilities: Gust (BATTLE_EFFECT_GUST); Rapid Smash, Sonic Smash, Slice
+/// (BATTLE_EFFECT_GUST_310).
 void BattleEffect_RunGust(struct BattleEffectArgument *effect) {
   if (effect->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunBurstScene(effect, BURST_SCENE_GUST);
@@ -24,29 +24,30 @@ void BattleEffect_RunGust(struct BattleEffectArgument *effect) {
 
 /// The user strikes the first target five times.
 ///
-/// Abilities: Bear Claw (BATTLE_FX_BEAR_CLAW); Counterstrike
-/// (BATTLE_FX_BEAR_CLAW_342).
+/// Abilities: Bear Claw (BATTLE_EFFECT_BEAR_CLAW); Counterstrike
+/// (BATTLE_EFFECT_BEAR_CLAW_342).
 void BattleEffect_RunBearClaw(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
 }
 
 /// Ransack plays the same five strikes as Bear Claw.
 ///
-/// Abilities: Ransack (BATTLE_FX_RANSACK); Mad Dash (BATTLE_FX_RANSACK_343).
+/// Abilities: Ransack (BATTLE_EFFECT_RANSACK); Mad Dash
+/// (BATTLE_EFFECT_RANSACK_343).
 void BattleEffect_RunRansack(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
 }
 
 /// Seven strikes land on the first target in the lime palette.
 ///
-/// Abilities: Bacteria Rush (BATTLE_FX_BACTERIA_RUSH).
+/// Abilities: Bacteria Rush (BATTLE_EFFECT_BACTERIA_RUSH).
 void BattleEffect_RunBacteriaRush(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstScene(effect, BURST_SCENE_BACTERIA_RUSH);
 }
 
 /// Nine strikes land on the first target in the blue palette.
 ///
-/// Abilities: Freebite Rush (BATTLE_FX_FREEBITE_RUSH).
+/// Abilities: Freebite Rush (BATTLE_EFFECT_FREEBITE_RUSH).
 void BattleEffect_RunFreebiteRush(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstScene(effect, BURST_SCENE_FREEBITE_RUSH);
 }
@@ -54,8 +55,8 @@ void BattleEffect_RunFreebiteRush(struct BattleEffectArgument *effect) {
 /// One, two or three strikes land on the first target as the variant grows
 /// with a double or triple blow.
 ///
-/// Abilities: Flying Attack (BATTLE_FX_FLYING_ATTACK); Swift Strike
-/// (BATTLE_FX_FLYING_ATTACK_329).
+/// Abilities: Flying Attack (BATTLE_EFFECT_FLYING_ATTACK); Swift Strike
+/// (BATTLE_EFFECT_FLYING_ATTACK_329).
 void BattleEffect_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK);

@@ -42,7 +42,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// shatter into puffs of sparkle, flashing and shaking each target as they
 /// land.
 ///
-/// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_FX_ICE).
+/// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_EFFECT_ICE).
 ///
 /// The canvas shows only inside a slanted band of window 0, so the shards
 /// stream out of the sky above the targets. effect->variant picks the size of
@@ -266,7 +266,7 @@ struct BoltSparkBuffer {
 /// bursting into a fountain of falling sparks where it lands, while the targets
 /// flash.
 ///
-/// Abilities: Douse, Drench, Deluge (BATTLE_FX_DOUSE).
+/// Abilities: Douse, Drench, Deluge (BATTLE_EFFECT_DOUSE).
 ///
 /// Like the falling shards, the canvas shows only inside a slanted band of
 /// window 0. effect->variant picks the volley from gFalling_Counts: 6 bolts of

@@ -38,17 +38,17 @@ struct DualColumn {
 
 /// Vines grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_FX_GROWTH).
+/// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_EFFECT_GROWTH).
 void BattleEffect_RunGrowth(struct BattleEffectArgument *effect) {
   BattleEffect_RunGrowingColumns(effect, GROWING_COLUMNS_VINES);
 }
 /// Green pillars grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_FX_PUNJI).
+/// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_EFFECT_PUNJI).
 ///
 /// Punji Strike's row of actflags.tsv gives the stronger variant, as Punji
 /// Trap's does,
-/// so no ability plays BATTLE_FX_PUNJI's strongest variant.
+/// so no ability plays BATTLE_EFFECT_PUNJI's strongest variant.
 void BattleEffect_RunPunji(struct BattleEffectArgument *effect) {
   BattleEffect_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
 }
@@ -324,7 +324,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
 /// Sixteen green vines grow from the middle of the row of targets, 2 frames
 /// apart, and shrink back.
 ///
-/// Abilities: Vine (BATTLE_FX_VINE).
+/// Abilities: Vine (BATTLE_EFFECT_VINE).
 ///
 /// Vine i appears on frame 2i + 5 and grows 4 pixels a frame up to 32,
 /// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
@@ -427,7 +427,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
 /// Thorns burst from the ground one every 8 frames, throwing up dust from
 /// their roots.
 ///
-/// Abilities: Thorn, Briar, Nettle (BATTLE_FX_THORN).
+/// Abilities: Thorn, Briar, Nettle (BATTLE_EFFECT_THORN).
 ///
 /// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
 /// of dust on each of its first two frames; on frame 8i + 12 the targets

@@ -15,7 +15,7 @@
 /// waves of water rise along the bottom of the screen; the canvas fades out
 /// over the last 16 frames.
 ///
-/// Abilities: Hail (BATTLE_FX_HAIL).
+/// Abilities: Hail (BATTLE_EFFECT_HAIL).
 ///
 /// The 64 chips start together and are let go four a frame from frame 4,
 /// alternately mirrored; the battle shows the damage on frame 8. The chips live
@@ -177,7 +177,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 /// After a Venus Djinni enters, six rocks rise from the user shedding chips,
 /// swirl, and home in on the first target, each hitting it as it lands.
 ///
-/// Abilities: Ground (BATTLE_FX_GROUND).
+/// Abilities: Ground (BATTLE_EFFECT_GROUND).
 ///
 /// A rock's variant is 1 while it flies and 0 once it has hit; the chips are
 /// particles 32 to 63, four for each rock, each with its picture in velocityX

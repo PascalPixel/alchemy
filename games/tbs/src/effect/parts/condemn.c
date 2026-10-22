@@ -17,7 +17,7 @@
 /// shatters in a white flash into a burst of larger pieces and the target is
 /// knocked back, bouncing on frame 120.
 ///
-/// Abilities: Condemn (BATTLE_FX_CONDEMN).
+/// Abilities: Condemn (BATTLE_EFFECT_CONDEMN).
 ///
 /// The effect layer ripples throughout.
 ///

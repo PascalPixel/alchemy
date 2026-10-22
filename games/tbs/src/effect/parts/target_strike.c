@@ -34,79 +34,79 @@ enum {
 
 /// One slash strikes the first target among glints, in lightning colours.
 ///
-/// Abilities: Numbing Sting (BATTLE_FX_NUMBING_STING).
+/// Abilities: Numbing Sting (BATTLE_EFFECT_NUMBING_STING).
 void BattleEffect_RunNumbingSting(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect,
                                TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
 /// Three ember columns strike the first target and drain it into the user.
 ///
-/// Abilities: Cannibal Fang (BATTLE_FX_CANNIBAL_FANG).
+/// Abilities: Cannibal Fang (BATTLE_EFFECT_CANNIBAL_FANG).
 void BattleEffect_RunCannibalFang(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
 }
 /// One lime column strikes the first target, with smoke.
 ///
-/// Abilities: Poisonous Bite (BATTLE_FX_POISONOUS_BITE); Poison Fang
-/// (BATTLE_FX_POISONOUS_BITE_323).
+/// Abilities: Poisonous Bite (BATTLE_EFFECT_POISONOUS_BITE); Poison Fang
+/// (BATTLE_EFFECT_POISONOUS_BITE_323).
 void BattleEffect_RunPoisonousBite(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
 }
 /// One column strikes the first target, with smoke, in Mars Djinn colours.
 ///
-/// Abilities: Rabid Fang (BATTLE_FX_RABID_FANG).
+/// Abilities: Rabid Fang (BATTLE_EFFECT_RABID_FANG).
 void BattleEffect_RunRabidFang(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN);
 }
 /// Three lightning columns strike the first target among glints.
 ///
-/// Abilities: Electric Bite (BATTLE_FX_ELECTRIC_BITE).
+/// Abilities: Electric Bite (BATTLE_EFFECT_ELECTRIC_BITE).
 void BattleEffect_RunElectricBite(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect,
                                TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
 }
 /// One lime slash strikes the first target, with smoke.
 ///
-/// Abilities: Poison Tail (BATTLE_FX_POISON_TAIL).
+/// Abilities: Poison Tail (BATTLE_EFFECT_POISON_TAIL).
 void BattleEffect_RunPoisonTail(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
 /// Three columns strike the first target and drain it, in Mars Djinn colours.
 ///
-/// Abilities: Vampiric Fang (BATTLE_FX_VAMPIRIC_FANG).
+/// Abilities: Vampiric Fang (BATTLE_EFFECT_VAMPIRIC_FANG).
 void BattleEffect_RunVampiricFang(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS);
 }
 /// Two blue columns strike the first target, with sparks.
 ///
-/// Abilities: Double Fang (BATTLE_FX_DOUBLE_FANG).
+/// Abilities: Double Fang (BATTLE_EFFECT_DOUBLE_FANG).
 void BattleEffect_RunDoubleFang(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS);
 }
 /// One heavy slash strikes the first target, with sparks, in Mars Djinn
 /// colours.
 ///
-/// Abilities: Mortal Blow (BATTLE_FX_MORTAL_BLOW).
+/// Abilities: Mortal Blow (BATTLE_EFFECT_MORTAL_BLOW).
 void BattleEffect_RunMortalBlow(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
 }
 /// Two slashes strike the first target, with sparks, in lightning colours.
 ///
-/// Abilities: Twin Beaks (BATTLE_FX_TWIN_BEAKS).
+/// Abilities: Twin Beaks (BATTLE_EFFECT_TWIN_BEAKS).
 void BattleEffect_RunTwinBeaks(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect,
                                TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
 }
 /// Three pink columns strike the first target, with smoke.
 ///
-/// Abilities: Acid Bite (BATTLE_FX_ACID_BITE).
+/// Abilities: Acid Bite (BATTLE_EFFECT_ACID_BITE).
 void BattleEffect_RunAcidBite(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS);
 }
 /// Three additive columns strike the first target and drain it with large
 /// motes, in Mars Djinn colours.
 ///
-/// Abilities: Drain Fang (BATTLE_FX_DRAIN_FANG).
+/// Abilities: Drain Fang (BATTLE_EFFECT_DRAIN_FANG).
 void BattleEffect_RunDrainFang(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetStrike(effect,
                                TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS);

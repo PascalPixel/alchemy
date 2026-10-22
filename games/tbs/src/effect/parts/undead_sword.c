@@ -12,7 +12,7 @@
 /// again, scattering 16 sparks that drift upward; the target is struck on frame
 /// 10.
 ///
-/// Abilities: Undead Sword (BATTLE_FX_UNDEAD_SWORD).
+/// Abilities: Undead Sword (BATTLE_EFFECT_UNDEAD_SWORD).
 ///
 /// The effect runs 54 frames. BG2 is moved so that the canvas's centre line
 /// stands on the target. The sparks are work->particles 0 to 15, variant their

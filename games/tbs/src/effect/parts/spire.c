@@ -16,7 +16,7 @@
 /// Boulders drop along the row of targets, centred on it, and shatter into
 /// tumbling shards, hitting every target as each lands.
 ///
-/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_FX_SPIRE).
+/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_EFFECT_SPIRE).
 ///
 /// The boulders are work->particles, of which only y and its speed move; their
 /// shards are PARTICLES, SPIRE_SHARDS for each boulder. Each transfer clears

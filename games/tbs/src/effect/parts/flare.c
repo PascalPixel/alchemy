@@ -9,7 +9,7 @@
 /// Nine flames rise one after another, 4 frames apart, along half an ellipse,
 /// over 80 frames.
 ///
-/// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_FX_FLARE).
+/// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_EFFECT_FLARE).
 ///
 /// Each target flashes red in turn, 8 frames apart from frame 16. Writes
 /// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer

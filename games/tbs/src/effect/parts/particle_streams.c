@@ -68,7 +68,7 @@ void BattleEffect_RunMeteor(struct BattleEffectArgument *effect) {
 /// The user leaps up, and two objects rise out of a dissolving starfield and
 /// burst into embers and flashes, in the lightning bolt's colours.
 ///
-/// Abilities: Outer Space (BATTLE_FX_OUTER_SPACE).
+/// Abilities: Outer Space (BATTLE_EFFECT_OUTER_SPACE).
 void BattleEffect_RunOuterSpace(struct BattleEffectArgument *effect) {
   BattleEffect_RunParticleStreams(effect, PARTICLE_STREAMS_OUTER_SPACE);
 }

@@ -17,7 +17,7 @@
 /// up through it and the targets are battered, then narrows away again.
 ///
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
-/// (BATTLE_FX_GAIA).
+/// (BATTLE_EFFECT_GAIA).
 ///
 /// The wall is symmetric: its left half is drawn, then mirrored for the right.
 /// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,

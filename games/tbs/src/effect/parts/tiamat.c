@@ -16,7 +16,7 @@ enum PaletteParticlesMode {
 /// Embers rise from the ground while sparks and flashes fly from the user's
 /// side, in the LightningBolt colours.
 ///
-/// Abilities: Dragon Driver (BATTLE_FX_DRAGON_DRIVER).
+/// Abilities: Dragon Driver (BATTLE_EFFECT_DRAGON_DRIVER).
 void BattleEffect_RunDragonDriver(struct BattleEffectArgument *effect) {
   BattleEffect_RunPaletteParticles(effect, PALETTE_PARTICLES_DRAGON_DRIVER);
 }

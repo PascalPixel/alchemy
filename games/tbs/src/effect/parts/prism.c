@@ -12,7 +12,7 @@
 /// shaking the screen; the battle shows the damage 80 frames before the end,
 /// and the canvas darkens away over the last 8.
 ///
-/// Abilities: Prism, Hail Prism, Freeze Prism (BATTLE_FX_PRISM).
+/// Abilities: Prism, Hail Prism, Freeze Prism (BATTLE_EFFECT_PRISM).
 ///
 /// effect->variant picks the volley from gPrism_Counts (crystals and frames: 1
 /// in 110, 4 in 134, 12 in 166); for Freeze Prism the camera also swings round

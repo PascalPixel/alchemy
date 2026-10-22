@@ -24,7 +24,7 @@ enum {
 
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
 ///
-/// Abilities: Bolt, Flash Bolt, Blue Bolt (BATTLE_FX_BOLT).
+/// Abilities: Bolt, Flash Bolt, Blue Bolt (BATTLE_EFFECT_BOLT).
 ///
 /// Target i's turn starts on frame 8i with a flash of the canvas. The bolt
 /// drops from the top, 64 pixels a frame down to y 104, and the screen shakes

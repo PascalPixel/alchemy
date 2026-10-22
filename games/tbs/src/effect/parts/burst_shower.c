@@ -40,27 +40,27 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
 /// The user fires a stream of flash bursts at the targets, one a frame, each
 /// towards a random point near a target.
 ///
-/// Abilities: Fire Blessing (BATTLE_FX_FIRE_BLESSING).
+/// Abilities: Fire Blessing (BATTLE_EFFECT_FIRE_BLESSING).
 void BattleEffect_RunFireBlessing(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
 }
 /// The user fires a stream of bursts at the targets in the water-spray palette.
 ///
-/// Abilities: Water Blessing (BATTLE_FX_WATER_BLESSING).
+/// Abilities: Water Blessing (BATTLE_EFFECT_WATER_BLESSING).
 void BattleEffect_RunWaterBlessing(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
 }
 /// The user fires a stream of grey bursts at the targets, which turn solid
 /// black and stay so.
 ///
-/// Abilities: Dark Blessing (BATTLE_FX_DARK_BLESSING).
+/// Abilities: Dark Blessing (BATTLE_EFFECT_DARK_BLESSING).
 void BattleEffect_RunDarkBlessing(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
 }
 /// The user fires a stream of pink bursts at the targets, from 16 pixels
 /// higher than usual.
 ///
-/// Abilities: Dark Blessing, Acid Blessing (BATTLE_FX_ACID_BLESSING).
+/// Abilities: Dark Blessing, Acid Blessing (BATTLE_EFFECT_ACID_BLESSING).
 void BattleEffect_RunAcidBlessing(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
 }
@@ -68,21 +68,21 @@ void BattleEffect_RunAcidBlessing(struct BattleEffectArgument *effect) {
 /// bolt flickers through three pictures in front of the user, and the targets
 /// flash in turn without being knocked back.
 ///
-/// Abilities: Storm Blessing (BATTLE_FX_STORM_BLESSING).
+/// Abilities: Storm Blessing (BATTLE_EFFECT_STORM_BLESSING).
 void BattleEffect_RunStormBlessing(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
 }
 /// The user fires a stream of demon faces at the targets, from 16 pixels in
 /// front of it.
 ///
-/// Abilities: Evil Blessing (BATTLE_FX_EVIL_BLESSING).
+/// Abilities: Evil Blessing (BATTLE_EFFECT_EVIL_BLESSING).
 void BattleEffect_RunEvilBlessing(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
 }
 /// The user fires a stream of Mars-coloured bursts at the targets, from 28
 /// pixels in front of it.
 ///
-/// Abilities: Deadly Gas (BATTLE_FX_DEADLY_GAS).
+/// Abilities: Deadly Gas (BATTLE_EFFECT_DEADLY_GAS).
 void BattleEffect_RunDeadlyGas(struct BattleEffectArgument *effect) {
   BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
 }

@@ -30,7 +30,7 @@ enum TargetMotesMode {
 
 /// Lime smoke swirls in on each target, or pink smoke for a stronger variant.
 ///
-/// Abilities: Taint, Poison (BATTLE_FX_TAINT).
+/// Abilities: Taint, Poison (BATTLE_EFFECT_TAINT).
 void BattleEffect_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunTargetMotes(effect, TARGET_MOTES_TAINT);
@@ -48,39 +48,39 @@ BattleEffect_RunUnusedPinkSmoke(struct BattleEffectArgument *effect) {
 
 /// Cyan smoke rises around each target.
 ///
-/// Abilities: Delude, Confuse, Mist (BATTLE_FX_DELUDE).
+/// Abilities: Delude, Confuse, Mist (BATTLE_EFFECT_DELUDE).
 void BattleEffect_RunDelude(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetMotes(effect, TARGET_MOTES_DELUDE);
 }
 /// Smoke rises around each target, and glints sparkle near it.
 ///
-/// Abilities: Paralyze (BATTLE_FX_PARALYZE).
+/// Abilities: Paralyze (BATTLE_EFFECT_PARALYZE).
 void BattleEffect_RunParalyze(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetMotes(effect, TARGET_MOTES_PARALYZE);
 }
 /// Hearts close in on each target, turning as they come.
 ///
-/// Abilities: Heartrender (BATTLE_FX_HEARTRENDER_346); none
-/// (BATTLE_FX_HEARTRENDER).
+/// Abilities: Heartrender (BATTLE_EFFECT_HEARTRENDER_346); none
+/// (BATTLE_EFFECT_HEARTRENDER).
 void BattleEffect_RunHeartrender(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetMotes(effect, TARGET_MOTES_HEARTRENDER);
 }
 /// Glowing orbs spiral in on each target.
 ///
-/// Abilities: Mystic Flame (BATTLE_FX_MYSTIC_FLAME).
+/// Abilities: Mystic Flame (BATTLE_EFFECT_MYSTIC_FLAME).
 void BattleEffect_RunMysticFlame(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetMotes(effect, TARGET_MOTES_MYSTIC_FLAME);
 }
 /// Glowing orbs in Mars Djinn colours rise around each target, and then the
 /// user steps up to the first target and strikes it.
 ///
-/// Abilities: Demon Fire (BATTLE_FX_DEMON_FIRE).
+/// Abilities: Demon Fire (BATTLE_EFFECT_DEMON_FIRE).
 void BattleEffect_RunDemonFire(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetMotes(effect, TARGET_MOTES_DEMON_FIRE);
 }
 /// Thirty-two vortex motes spiral in on each target.
 ///
-/// Abilities: Drown (BATTLE_FX_DROWN).
+/// Abilities: Drown (BATTLE_EFFECT_DROWN).
 void BattleEffect_RunDrown(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetMotes(effect, TARGET_MOTES_DROWN);
 }
@@ -374,7 +374,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 /// its damage pose in turn from frame 64, and the battle shows the result on
 /// frame 80.
 ///
-/// Abilities: Sleep (BATTLE_FX_SLEEP).
+/// Abilities: Sleep (BATTLE_EFFECT_SLEEP).
 ///
 /// It lasts SLEEP_FRAMES. PARTICLES 0 to 31 are the sheep, canvas pixels in
 /// 16.16; only the first twelve fall. Loads the sheep palette into the first
@@ -491,7 +491,8 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 /// 72 frames each, over a marker at its feet; the battle shows the result on
 /// frame 32.
 ///
-/// Abilities: Curse (BATTLE_FX_CURSE); Lucid Prophecy (BATTLE_FX_CURSE_354).
+/// Abilities: Curse (BATTLE_EFFECT_CURSE); Lucid Prophecy
+/// (BATTLE_EFFECT_CURSE_354).
 ///
 /// Lasts 32 frames a target plus 32, so with one target the flame is cut off
 /// after 64 frames. work->particles' variants, 0 to 63, give each flame its

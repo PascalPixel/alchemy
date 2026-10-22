@@ -42,7 +42,7 @@ struct ImpactChip {
 /// The user flashes and leaps into the air, turns into a ball of fire, falls
 /// onto the first target and bursts into chips that bounce on the ground.
 ///
-/// Abilities: Planet Diver (BATTLE_FX_PLANET_DIVER).
+/// Abilities: Planet Diver (BATTLE_EFFECT_PLANET_DIVER).
 ///
 /// The ball falls towards the middle of the field, from whichever side the
 /// user stands on; actors[0] is where it lands, and effect->side picks the
@@ -245,7 +245,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
 
 /// Skulls close in on each target in turn.
 ///
-/// Abilities: Haunt (BATTLE_FX_HAUNT).
+/// Abilities: Haunt (BATTLE_EFFECT_HAUNT).
 ///
 /// Around each target, 32 frames apart, eight skulls appear one every 4 frames,
 /// scattered up to 64 pixels away, and close in on a point 20 pixels above the
@@ -386,7 +386,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 /// the centre; each target would take its damage pose 32 frames into its
 /// turn.
 ///
-/// Abilities: none (BATTLE_FX_UNUSED_ORBITING_SPIRALS).
+/// Abilities: none (BATTLE_EFFECT_UNUSED_ORBITING_SPIRALS).
 ///
 /// The effect layer ripples throughout, through
 /// BattleEffect_ArmBg2AffineHBlankDma, which it adds and removes. It never lets

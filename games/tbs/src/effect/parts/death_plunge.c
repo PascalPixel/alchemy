@@ -32,7 +32,7 @@
 /// upside down in the air; on frame 54 the target is hit and both bounce back,
 /// while flashes burst from the user and rise in a widening ring.
 ///
-/// Abilities: Death Plunge (BATTLE_FX_DEATH_PLUNGE).
+/// Abilities: Death Plunge (BATTLE_EFFECT_DEATH_PLUNGE).
 void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

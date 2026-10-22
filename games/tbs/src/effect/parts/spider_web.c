@@ -19,13 +19,13 @@ enum SwirlSwipeMode {
 
 /// A lime swirl sweeps across the first target and knocks it back.
 ///
-/// Abilities: Poison Beat (BATTLE_FX_POISON_BEAT).
+/// Abilities: Poison Beat (BATTLE_EFFECT_POISON_BEAT).
 void BattleEffect_RunPoisonBeat(struct BattleEffectArgument *effect) {
   BattleEffect_RunSwirlSwipe(effect, SWIRL_SWIPE_POISON_BEAT);
 }
 /// A magenta swirl sweeps across the first target and throws it into the air.
 ///
-/// Abilities: Spinning Beat (BATTLE_FX_SPINNING_BEAT).
+/// Abilities: Spinning Beat (BATTLE_EFFECT_SPINNING_BEAT).
 void BattleEffect_RunSpinningBeat(struct BattleEffectArgument *effect) {
   BattleEffect_RunSwirlSwipe(effect, SWIRL_SWIPE_SPINNING_BEAT);
 }
@@ -145,7 +145,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 /// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
 /// around the point between the first and last target.
 ///
-/// Abilities: Spider Web (BATTLE_FX_SPIDER_WEB).
+/// Abilities: Spider Web (BATTLE_EFFECT_SPIDER_WEB).
 ///
 /// It fades in over 8 frames; the targets flash on frame 10, the battle shows
 /// the damage on frame 32, and it fades out from frame 54.

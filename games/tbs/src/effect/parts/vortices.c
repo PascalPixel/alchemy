@@ -21,7 +21,7 @@
 /// in a burst, flashing and knocking back its target, while the camera swings
 /// round over frames 17 to 63.
 ///
-/// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_FX_FROTH).
+/// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_EFFECT_FROTH).
 ///
 /// effect->variant picks the volley from gVortices_Counts (motes and frames)
 /// and how hard the screen shakes.
@@ -176,7 +176,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
 /// 16, and the battle shows the damage on frame 32.
 ///
 /// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane
-/// (BATTLE_FX_WHIRLWIND).
+/// (BATTLE_EFFECT_WHIRLWIND).
 ///
 /// effect->variant picks the shape from gVortices_Shapes: how many tornadoes,
 /// how far they sway and how hard the screen shakes.

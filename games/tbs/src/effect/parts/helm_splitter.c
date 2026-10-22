@@ -25,7 +25,7 @@
 /// frame 18 the target flashes and reels and 16 sparks scatter, bouncing off
 /// the ground.
 ///
-/// Abilities: Helm Splitter (BATTLE_FX_HELM_SPLITTER).
+/// Abilities: Helm Splitter (BATTLE_EFFECT_HELM_SPLITTER).
 void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

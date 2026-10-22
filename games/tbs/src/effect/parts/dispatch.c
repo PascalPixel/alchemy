@@ -110,7 +110,7 @@ void BattleEffect_RunSceneEffect(struct BattleEffectArgument *effect) {
 /// (battle/auto_battle.c).
 ///
 /// Sets work->effect before the handler runs, which every handler and
-/// callback reads the effect through. BATTLE_FX_NONE is no effect and only
+/// callback reads the effect through. BATTLE_EFFECT_NONE is no effect and only
 /// clears effect->variant.
 void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
   s32 kind;
@@ -124,7 +124,7 @@ void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   work->effect = effect;
   kind = effect->kind;
-  if (kind == BATTLE_FX_NONE)
+  if (kind == BATTLE_EFFECT_NONE)
     effect->variant = EFFECT_VARIANT_BASIC;
   else
     gBattleEffect_EffectHandlers[kind - 1](effect);

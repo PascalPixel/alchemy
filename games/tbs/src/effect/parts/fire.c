@@ -11,7 +11,7 @@
 /// targets, turning towards them 48 frames after they appear, and each one that
 /// hits the ground shows an impact flare for 12 frames as its target flinches.
 ///
-/// Abilities: Fire, Fireball, Inferno (BATTLE_FX_FIRE).
+/// Abilities: Fire, Fireball, Inferno (BATTLE_EFFECT_FIRE).
 ///
 /// The camera swings round over frames 17 to 79, and the battle shows the
 /// damage 24 frames before the end.

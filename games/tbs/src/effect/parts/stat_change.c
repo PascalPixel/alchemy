@@ -26,45 +26,46 @@ enum StatReductionMode {
 /// Light swirls into each target and bursts, then a dagger appears in Mars
 /// colours.
 ///
-/// Abilities: Impact, High Impact, Demon Spear, Angel Spear (BATTLE_FX_IMPACT);
-/// Forge (BATTLE_FX_IMPACT_210); none (BATTLE_FX_IMPACT_46).
+/// Abilities: Impact, High Impact, Demon Spear, Angel Spear
+/// (BATTLE_EFFECT_IMPACT); Forge (BATTLE_EFFECT_IMPACT_210); none
+/// (BATTLE_EFFECT_IMPACT_46).
 void BattleEffect_RunImpact(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatBoost(effect, STAT_BOOST_IMPACT);
 }
 /// Light swirls into each target and bursts, then a shield appears in Mars
 /// colours.
 ///
-/// Abilities: Guard, Protect, Guardian, Protector (BATTLE_FX_GUARD); Corona
-/// (BATTLE_FX_GUARD_211).
+/// Abilities: Guard, Protect, Guardian, Protector (BATTLE_EFFECT_GUARD); Corona
+/// (BATTLE_EFFECT_GUARD_211).
 void BattleEffect_RunGuard(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatBoost(effect, STAT_BOOST_GUARD);
 }
 /// Light swirls into each target and bursts, then a shield appears in Jupiter
 /// colours.
 ///
-/// Abilities: Ward, Resist, Magic Shell, Magic Shield (BATTLE_FX_WARD); Breeze
-/// (BATTLE_FX_WARD_215).
+/// Abilities: Ward, Resist, Magic Shell, Magic Shield (BATTLE_EFFECT_WARD);
+/// Breeze (BATTLE_EFFECT_WARD_215).
 void BattleEffect_RunWard(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatBoost(effect, STAT_BOOST_WARD);
 }
 /// Light swirls into each target and bursts, then a violet streak appears in
 /// Venus colours.
 ///
-/// Abilities: Granite (BATTLE_FX_GRANITE).
+/// Abilities: Granite (BATTLE_EFFECT_GRANITE).
 void BattleEffect_RunGranite(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatBoost(effect, STAT_BOOST_GRANITE);
 }
 /// Light swirls into each target and bursts, then a violet streak appears in
 /// Mars colours.
 ///
-/// Abilities: Flash (BATTLE_FX_FLASH).
+/// Abilities: Flash (BATTLE_EFFECT_FLASH).
 void BattleEffect_RunFlash(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatBoost(effect, STAT_BOOST_FLASH);
 }
 /// Light swirls into each target and bursts, then a wisp appears in the colours
 /// already loaded, as this is the one boost that keeps the palette.
 ///
-/// Abilities: Zephyr (BATTLE_FX_ZEPHYR).
+/// Abilities: Zephyr (BATTLE_EFFECT_ZEPHYR).
 void BattleEffect_RunZephyr(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatBoost(effect, STAT_BOOST_ZEPHYR);
 }
@@ -401,15 +402,15 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 /// A dagger appears over each target and breaks into shards that fade through
 /// darker copies, in the pink burst's colours.
 ///
-/// Abilities: Dull, Blunt (BATTLE_FX_DULL).
+/// Abilities: Dull, Blunt (BATTLE_EFFECT_DULL).
 void BattleEffect_RunDull(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatReduction(effect, STAT_REDUCTION_DULL);
 }
 /// A shield appears over each target and breaks into shards that fade through
 /// darker copies, in the glow orb's colours.
 ///
-/// Abilities: Impair, Debilitate (BATTLE_FX_IMPAIR); none
-/// (BATTLE_FX_IMPAIR_47).
+/// Abilities: Impair, Debilitate (BATTLE_EFFECT_IMPAIR); none
+/// (BATTLE_EFFECT_IMPAIR_47).
 ///
 /// Meltdown's casting impact (CASTING_IMPACT_IMPACT_MELTDOWN) also ends by
 /// calling it.
@@ -419,7 +420,7 @@ void BattleEffect_RunImpair(struct BattleEffectArgument *effect) {
 /// A shield appears over each target and breaks into fading shards, in the pink
 /// burst's colours.
 ///
-/// Abilities: Weaken, Enfeeble (BATTLE_FX_WEAKEN).
+/// Abilities: Weaken, Enfeeble (BATTLE_EFFECT_WEAKEN).
 void BattleEffect_RunWeaken(struct BattleEffectArgument *effect) {
   BattleEffect_RunStatReduction(effect, STAT_REDUCTION_WEAKEN);
 }

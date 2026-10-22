@@ -68,7 +68,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// to the left; each flame shatters into 32 motes after 5 frames, hitting
 /// every target.
 ///
-/// Abilities: Mercury (BATTLE_FX_MERCURY).
+/// Abilities: Mercury (BATTLE_EFFECT_MERCURY).
 ///
 /// work->particles 0 to 4 hold the flames, variant -1 until launched and then
 /// counting the frames since; Ram_MapCellBuffer takes the blue flame sheet
@@ -209,7 +209,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 /// right to the bottom left, 4 frames apart; each shatters into 32 motes below
 /// line 95, hitting every target.
 ///
-/// Abilities: Jupiter (BATTLE_FX_JUPITER).
+/// Abilities: Jupiter (BATTLE_EFFECT_JUPITER).
 ///
 /// work->particles holds the flameballs. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
@@ -354,7 +354,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 /// from the ground one after another, each bursting into motes and hitting
 /// every target.
 ///
-/// Abilities: Venus (BATTLE_FX_VENUS).
+/// Abilities: Venus (BATTLE_EFFECT_VENUS).
 ///
 /// work->particles holds the columns. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
@@ -477,7 +477,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
 /// A glowing orb flares, the small Mars Djinni dives to the ground, and nine
 /// flames erupt in a row while embers rise.
 ///
-/// Abilities: Mars (BATTLE_FX_MARS).
+/// Abilities: Mars (BATTLE_EFFECT_MARS).
 ///
 /// The scene runs for 112 frames:
 ///

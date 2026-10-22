@@ -28,7 +28,7 @@ struct RockWallHeights {
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
 ///
-/// Abilities: Quake, Earthquake, Quake Sphere (BATTLE_FX_QUAKE).
+/// Abilities: Quake, Earthquake, Quake Sphere (BATTLE_EFFECT_QUAKE).
 ///
 /// Each pillar is capped with a strip of ground cut from the background.
 ///

@@ -1,7 +1,7 @@
-// Draft of BattleFx_RunHurricane, effect kind 105 (Hurricane), written from the
+// Draft of BattleEffect_RunHurricane, effect kind 105 (Hurricane), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunJupiter 0.513, call order
-// BattleFx_RunPlasma 0.600). It ends without closing the canvas
+// BattleEffect_RunJupiter 0.513, call order
+// BattleEffect_RunPlasma 0.600). It ends without closing the canvas
 // layer: it clears the canvas and hands it to SummonFx_RunCanvasEffect
 // mode 3.
 
@@ -19,7 +19,7 @@
 // PARTICLES[i].field with no pointer                                218
 // the streak loop, and the splash loop, indexed (&work->particles[i])
 // rather than stepped                                               218
-// HI through an inline helper (BattleFx_RunStoneJustice's device)               212
+// HI through an inline helper (BattleEffect_RunStoneJustice's device)               212
 
 #include "types.h"
 #include "io_reg.h"
@@ -54,10 +54,10 @@ extern char ResourceId_CyanPalette;
 extern char ResourceId_SmokeSheet;
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
-void BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_BuildBlitter, packed
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
@@ -68,7 +68,7 @@ void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
 void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SummonFx_RunCanvasMode3(struct BattleEffectArgument *effect);
 void Audio_PlayCue(s32 cue);
@@ -85,7 +85,7 @@ void Audio_PlayCue(s32 cue);
 // Frame loop (68 frames): 64 streaks start above the screen at frame 0 and
 // fall in turn, one more each frame; a streak that falls below line 48
 // starts its splash.
-void BattleFx_RunHurricane(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -97,16 +97,16 @@ void BattleFx_RunHurricane(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  BattleFx_LoadBlitter(104,
+  BattleEffect_LoadBlitter(104,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CyanPalette), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   REG_BG2X = (64 - position.x) << 8;
 
@@ -159,7 +159,7 @@ void BattleFx_RunHurricane(struct BattleEffectArgument *effect) {
         blit(canvas,
              work->sheet + SPLASH_OFFSET + splash->variant / 4 * SPLASH_SIZE,
              HI(splash->x) - 12, HI(splash->y) - 32, 24, 48);
-        BattleFxKernels_IntegrateVector2(splash, 56, -0x4000);
+        BattleEffectKernels_IntegrateVector2(splash, 56, -0x4000);
         splash->variant++;
       }
     }
@@ -209,11 +209,11 @@ void BattleFx_RunHurricane(struct BattleEffectArgument *effect) {
   }
 
   // Clear the canvas and its characters and hand the layer over.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   SummonFx_RunCanvasMode3(effect);
 }

@@ -73,11 +73,12 @@
 ///
 /// Loads the dusk clouds as the battle backdrop (BattleBackground_LoadFar),
 /// and for the dusk part sets view->busy and moves gProjection.centerY to
-/// 240 (BattleFx_SetupBlendedDisplay puts the centre back). Spawns the nine
+/// 240 (BattleEffect_SetupBlendedDisplay puts the centre back). Spawns the nine
 /// formation objects and releases them at the end; the closing
-/// BattleFx_RunImpactBurst builds and frees its own blitters and transfer and
-/// overwrites work->particles and PARTICLES 0 to 63. Closes the canvas layer.
-void BattleFx_RunThor(struct BattleEffectArgument *effect) {
+/// BattleEffect_RunImpactBurst builds and frees its own blitters and transfer
+/// and overwrites work->particles and PARTICLES 0 to 63. Closes the canvas
+/// layer.
+void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   // The three lines' end points, in pairs: x and z on a plane, 96 being its
   // centre. One line runs across at z 135 and two meet at (96, 32).
   static s16 points[6][2] = {
@@ -138,7 +139,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     }
   }
 
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -150,18 +151,18 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   // The dusk clouds scroll a pixel every other frame; busy keeps the battle
   // camera off BG1's scroll meanwhile.
   view->busy = 1;
-  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval,
+  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceScrollOnInterval,
                                 EFFECT_CALLBACK_ORDER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY;
-  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
                            (s32)&ResourceId_DuskCloudsBackdrop, 0);
   // The projection centre moves down to line 240 for the dusk part;
-  // BattleFx_SetupBlendedDisplay puts it back.
+  // BattleEffect_SetupBlendedDisplay puts it back.
   gProjection.centerY = 240;
-  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -318,7 +319,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         drawAlt(canvas,
                 work->sheet +
                     (level * THOR_DIMMED_DOT_BYTES +
-                     gBattleFx_MoteCells[dotSize - 1]) +
+                     gBattleEffect_MoteCells[dotSize - 1]) +
                     dimmedOffset,
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
@@ -376,12 +377,12 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   // formation, throwing sparks, then violet bolts strike again and again while
   // the formation is pushed back in smoke, ending in an impact burst.
   view->busy = 0;
-  Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
-  BattleFx_SetupBlendedDisplay();
-  BattleFx_SelectLivingTargets(work->effect);
+  Scheduler_RemoveCallback(BattleEffect_AdvanceScrollOnInterval);
+  BattleEffect_SetupBlendedDisplay();
+  BattleEffect_SelectLivingTargets(work->effect);
   // Nine objects of resource 0x173, the formation (SUMMON_FORMATION_THOR),
   // released at the end.
-  BattleFx_SpawnObjects(9, 0x173, 1);
+  BattleEffect_SpawnObjects(9, 0x173, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
@@ -408,7 +409,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       THOR_PARTICLES[i].variant = 0;
     }
     // XXX: nothing in Thor reads these 16 particles, and
-    // BattleFx_RunImpactBurst overwrites them; what they were for is open,
+    // BattleEffect_RunImpactBurst overwrites them; what they were for is open,
     // and the Lost Age's twin of this scene may show it.
     for (i = 0; i != 16; i++) {
       work->particles[i].x = (Random16() & 31) - 16;
@@ -607,8 +608,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
           formationSpeedX = formationSpeedX * 60 / 64;
           formationSpeedY = formationSpeedY * 60 / 64;
         }
-        BattleFx_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
-                                       formationY);
+        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
+                                           formationY);
       }
       // Frames 16 to 143: three puffs of smoke a frame around the
       // formation, from the first three glint cells, placed and flipped at
@@ -620,15 +621,15 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
           s32 glint = i & 3;
           s32 angle = Random16() & 0xffff;
           s32 x = (((Trig_Sin(angle) * 8)) >> 16) + formationScreenX -
-                  (gBattleFx_GlintCellWidths[glint] >> 1);
+                  (gBattleEffect_GlintCellWidths[glint] >> 1);
           s32 y = ((Trig_Cos(angle) * 40) >> 16) -
-                  (gBattleFx_GlintCellHeights[glint] >> 1);
+                  (gBattleEffect_GlintCellHeights[glint] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               3 | gThor_SmokeFlips[Random16() & 3], 2);
           EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[glint], x,
-              y + 56, gBattleFx_GlintCellWidths[glint],
-              gBattleFx_GlintCellHeights[glint]);
+              canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[glint], x,
+              y + 56, gBattleEffect_GlintCellWidths[glint],
+              gBattleEffect_GlintCellHeights[glint]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }
       }
@@ -641,13 +642,13 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     }
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-    BattleFx_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
+    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef THOR_PARTICLES

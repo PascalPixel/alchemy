@@ -42,7 +42,7 @@ struct FieldEffect {
   u8 unk66[2];   ///< not named by this view
   s32 countdown; ///< no TLA code names it
   /// Called each frame while the effect is live: the spawner sets
-  /// BattleFx_UpdateObjectMotionScaleAndLinkedAngle, or options.update.
+  /// BattleEffect_UpdateObjectMotionScaleAndLinkedAngle, or options.update.
   void (*update)(union FieldObject *object);
 };
 
@@ -103,7 +103,8 @@ STATIC_ASSERT(offsetof(struct EffectOptions, update) == 0x24);
 void Effect_SetPriority(struct FieldEffect *effect, s32 priority);
 struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);
 struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
+void BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(
+    union FieldObject *object);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
                   const struct EffectOptions *options);

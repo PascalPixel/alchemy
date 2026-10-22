@@ -44,11 +44,11 @@ Func_0815f16c:
 .L_0815f1b8:
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleFx_BeginTiledCanvas
+	bl BattleEffect_BeginTiledCanvas
 	b .L_0815f1c8
 .L_0815f1c2:
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 .L_0815f1c8:
 	ldr r3, .L_0815f208
 	movs r2, #128
@@ -872,7 +872,7 @@ Func_0815f16c:
 	ldr r0, [r5, #4]
 	adds r1, r2, #0
 	str r2, [sp, #84]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r5, #238
 	ldr r3, [sp, #120]
 	lsls r5, r5, #7
@@ -1162,7 +1162,7 @@ Func_0815f16c:
 .L_0815faf8:
 	.4byte 0x00000100
 .L_0815fafc:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815fb00:
 	.4byte gData_08197410
 .L_0815fb04:
@@ -1397,13 +1397,13 @@ Func_0815f16c:
 	bne .L_0815fcc0
 	ldr r0, [sp, #128]
 	movs r1, #9
-	bl BattleFx_RunProjectileVolley
+	bl BattleEffect_RunProjectileVolley
 .L_0815fcc0:
 	ldr r3, [sp, #124]
 	cmp r3, #54
 	bne .L_0815fccc
 	ldr r0, [sp, #128]
-	bl BattleFx_RunMysticFlame
+	bl BattleEffect_RunMysticFlame
 .L_0815fccc:
 	ldr r5, [sp, #124]
 	cmp r5, #56
@@ -1412,7 +1412,7 @@ Func_0815f16c:
 .L_0815fcd6:
 	ldr r0, [sp, #128]
 	movs r1, #8
-	bl BattleFx_RunProjectileVolley
+	bl BattleEffect_RunProjectileVolley
 	bl .L_081638ac
 .L_0815fce2:
 	adds r0, r7, #0
@@ -1458,7 +1458,7 @@ Func_0815f16c:
 	str r3, [r2, #24]
 	ldr r0, [sp, #128]
 	movs r1, #2
-	bl BattleFx_RunSparkGroups
+	bl BattleEffect_RunSparkGroups
 	bl .L_081638ac
 .L_0815fd4a:
 	movs r1, #240
@@ -1591,7 +1591,7 @@ Func_0815f16c:
 .L_0815fe50:
 	.4byte Palette_StepFadeTransfer
 .L_0815fe54:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815fe58:
 	bl Random16
 	ands r0, r6
@@ -2165,7 +2165,7 @@ Func_0815f16c:
 .L_081602a4:
 	.4byte Data_02016000
 .L_081602a8:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_081602ac:
 	ldr r2, [sp, #124]
 	cmp r2, #41
@@ -2741,7 +2741,7 @@ Func_0815f16c:
 .L_081607ba:
 	mov r0, r8
 	movs r1, #62
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	mov r0, r8
 	ldr r3, [r0, #24]
 	subs r3, #2
@@ -2813,7 +2813,7 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #62
 	ldr r2, .L_08160ad4
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	subs r3, #1
 	str r3, [r7, #24]
@@ -3002,7 +3002,7 @@ Func_0815f16c:
 	movs r1, #62
 	adds r0, r7, #0
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r1, [sp, #112]
 	mov r3, r11
 	adds r3, #22
@@ -3123,7 +3123,7 @@ Func_0815f16c:
 	adds r0, r5, #0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -3415,7 +3415,7 @@ Func_0815f16c:
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r5, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r0, #1
 	add r11, r0
 	mov r1, r11
@@ -3519,7 +3519,7 @@ Func_0815f16c:
 	ldr r0, [r3, #4]
 	ldr r1, [sp, #84]
 	add r11, r5
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	mov r0, r11
 	cmp r0, #3
 	bne .L_08160d26
@@ -3574,7 +3574,7 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #60
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]
@@ -3654,7 +3654,7 @@ Func_0815f16c:
 .L_08160ee2:
 	movs r1, #19
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #8
 	negs r5, r5
 	add r5, r9
@@ -3793,7 +3793,7 @@ Func_0815f16c:
 	movs r1, #19
 	mov r10, r2
 	adds r5, r5, r3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r6, #24
 	mov r0, r10
 	str r0, [sp, #4]
@@ -3815,7 +3815,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r1, r10
 	str r1, [sp, #4]
 	str r6, [sp, #0]
@@ -3986,7 +3986,7 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #60
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]
@@ -4274,7 +4274,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	movs r1, #35
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -4503,7 +4503,7 @@ Func_0815f16c:
 	ldr r2, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r2, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	bl .L_0816342a
 .L_0816157e:
 	ldr r3, [sp, #124]
@@ -4533,7 +4533,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [sp, #12]
 	lsls r5, r6, #3
 	ldr r2, [r3]
@@ -4566,7 +4566,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #7
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r2, sp
 	adds r2, #240
 	str r2, [sp, #12]
@@ -4589,7 +4589,7 @@ Func_0815f16c:
 	ldr r1, [sp, #128]
 	ldr r0, [r1, #4]
 	ldr r1, [sp, #84]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 .L_0816162e:
 	ldr r3, [sp, #124]
 	subs r3, #97
@@ -4664,7 +4664,7 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #64
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]
@@ -4703,7 +4703,7 @@ Func_0815f16c:
 	bne .L_08161744
 	movs r0, #104
 	movs r1, #35
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0816174c
 .L_08161714:
 	.4byte gMapCellBuffer
@@ -4732,7 +4732,7 @@ Func_0815f16c:
 .L_08161744:
 	movs r0, #104
 	movs r1, #39
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0816174c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -4890,7 +4890,7 @@ Func_0815f16c:
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r5, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	bl .L_0816342a
 .L_0816187c:
 	ldr r0, [sp, #124]
@@ -4944,7 +4944,7 @@ Func_0815f16c:
 	bne .L_08161904
 	movs r0, #104
 	movs r1, #35
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0816190c
 	.2byte 0x0000
 .L_081618ec:
@@ -4962,7 +4962,7 @@ Func_0815f16c:
 .L_08161904:
 	movs r0, #104
 	movs r1, #39
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0816190c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -5188,7 +5188,7 @@ Func_0815f16c:
 	ldr r3, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r3, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	bl .L_0816342a
 	.2byte 0x0000
 .L_08161ac4:
@@ -5912,7 +5912,7 @@ Func_0815f16c:
 	ldr r0, .L_081620f0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	b .L_08162058
 .L_08162030:
 	ldr r2, [sp, #112]
@@ -5933,7 +5933,7 @@ Func_0815f16c:
 	lsls r2, r2, #7
 	ldr r0, .L_081620f0
 	movs r1, #64
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_08162058:
 	ldr r3, [sp, #112]
 	cmp r3, #11
@@ -6125,7 +6125,7 @@ Func_0815f16c:
 	str r1, [sp, #4]
 	lsls r2, r2, #10
 	movs r1, #1
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r5, .L_081622b0
 	ldr r6, .L_081622b4
 	movs r3, #0
@@ -6209,7 +6209,7 @@ Func_0815f16c:
 	lsls r2, r2, #6
 	adds r0, r6, #0
 	movs r1, #64
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	ldr r2, [r6, #8]
 	adds r3, r3, r2
@@ -6352,7 +6352,7 @@ Func_0815f16c:
 	lsls r3, r3, #12
 	str r1, [sp, #4]
 	movs r1, #1
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	movs r0, #134
 	bl Audio_PlayCue
 	movs r5, #238
@@ -6453,7 +6453,7 @@ Func_0815f16c:
 	adds r0, r6, #0
 	lsls r2, r2, #8
 	movs r1, #63
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #8]
 	ldr r2, [r6, #20]
 	adds r3, r3, r2
@@ -6630,7 +6630,7 @@ Func_0815f16c:
 	ldr r0, [r3, #4]
 	ldr r1, [sp, #84]
 	add r11, r5
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	mov r0, r11
 	cmp r0, #3
 	bne .L_08162526
@@ -6973,7 +6973,7 @@ Func_0815f16c:
 	bl Func_0818caa8
 	movs r0, #188
 	movs r1, #15
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	bl .L_0816342a
 .L_081628ba:
 	ldr r3, [sp, #124]
@@ -7964,11 +7964,11 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #62
 	mov r2, r8
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	adds r0, r7, #0
 	movs r1, #62
 	mov r2, r8
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]
@@ -8089,7 +8089,7 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #58
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]
@@ -8195,7 +8195,7 @@ Func_0815f16c:
 	lsls r2, r3
 	adds r0, r7, #0
 	movs r1, #60
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	movs r2, #1
 	adds r3, #1
@@ -8306,11 +8306,11 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #62
 	mov r2, r8
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	adds r0, r7, #0
 	movs r1, #62
 	mov r2, r8
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]
@@ -8407,7 +8407,7 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #60
 	lsls r2, r2, #3
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	b .L_08163418
 .L_081633fc:
 	.4byte gMapCellBuffer
@@ -8422,7 +8422,7 @@ Func_0815f16c:
 	adds r0, r7, #0
 	movs r1, #60
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_08163418:
 	ldr r3, [r7, #24]
 	adds r3, #1
@@ -8553,7 +8553,7 @@ Func_0815f16c:
 	str r3, [sp, #4]
 	movs r2, #0
 	movs r3, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r1, [sp, #128]
 	movs r3, #4
 	movs r5, #36
@@ -9014,7 +9014,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 .L_081638ac:
 	add sp, #264
 	pop {r3, r5, r6, r7}
@@ -9031,6 +9031,6 @@ Func_0815f16c:
 .L_081638c4:
 	.4byte Palette_StepFadeTransfer
 .L_081638c8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081638cc:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma

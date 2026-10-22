@@ -1,7 +1,7 @@
-// Draft of Func_0814ea58, the body behind BattleFx_RunDrain (mode 0, or 1 when
-// the variant is not 0) and BattleFx_RunTrueCollide (mode 2).
+// Draft of Func_0814ea58, the body behind BattleEffect_RunDrain (mode 0, or 1 when
+// the variant is not 0) and BattleEffect_RunTrueCollide (mode 2).
 
-// Twin: The Broken Seal's BattleFx_RunDrain (effect.c), rebuilt
+// Twin: The Broken Seal's BattleEffect_RunDrain (effect.c), rebuilt
 // around a mode. Mode 0 is The Broken Seal's variant 0 (the ice palette)
 // and mode 1 its other variants (the blast palette). Mode 2 is new: it
 // draws a 10-pixel disc (Func_0815b510) instead of the particle sheet,
@@ -9,8 +9,8 @@
 // blending and trails at 50 instead of darkening. The mote size comes from
 // Data_081982f4 by mode (6, 6, 10) where The Broken Seal draws 6.
 // ResourceId_BlastSheet and ResourceId_VioletPaletteC are rows 0x184 and
-// 0x165 of directory.s (assets BattleFx_BlastSheet and
-// BattleFx_VioletPaletteC), not yet named there.
+// 0x165 of directory.s (assets BattleEffect_BlastSheet and
+// BattleEffect_VioletPaletteC), not yet named there.
 
 // Draft: differ 246 of 479 (draft 481).
 
@@ -55,20 +55,20 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_0815b510(u8 *map, s32 size, s32 scale);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
-// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -81,7 +81,7 @@ extern char ResourceId_IceBlockSheet;
 extern char ResourceId_BlastSheet;
 extern char ResourceId_VioletPaletteC;
 extern u8 Data_081982f4[];   // the mote size by mode
-extern u16 gData_08197410[]; // gBattleFx_MoteCells
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 
 // Motes of light burst out of each target in turn, 20 frames apart, and
 // are drawn into the user.
@@ -110,7 +110,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   if (mode == 2)
     Func_0815b510(sheet, 10, 0x10000);
   else
@@ -155,7 +155,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 2) {
     // A violet ramp from color 1, blended 16:6, with a trail.
@@ -172,7 +172,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 3;
     work->transferValue = 0x04040404;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
@@ -210,11 +210,11 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
             if (mode == 2) {
               draw(canvas, sheet, screen.x - size / 2, screen.y - size, size,
                    size * 2);
-              BattleFxKernels_IntegrateVector3(mote, 61, 0);
+              BattleEffectKernels_IntegrateVector3(mote, 61, 0);
             } else {
               draw(canvas, sheet + gData_08197410[size - 1],
                    screen.x - size / 2, screen.y - size, size, size * 2);
-              BattleFxKernels_IntegrateVector3(mote, 62, 0);
+              BattleEffectKernels_IntegrateVector3(mote, 62, 0);
             }
 
             // Home in on the user once ten frames out.
@@ -242,7 +242,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunIris, decompiled from the listing: differ 4932 of 5364
+// Draft of BattleEffect_RunIris, decompiled from the listing: differ 4932 of 5364
 // (draft 5319), the same 257 calls and control flow; allocation differs.
 
 #include "types.h"
@@ -28,11 +28,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -51,18 +51,18 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -78,12 +78,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -214,7 +214,7 @@ extern const u8 Data_0819a160[];
 struct IrisSprite *Func_0815b290(s32 width, s32 height, u32 shape, s32 mode);
 struct IrisSprite *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
-void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Resource_DecodeType01(const void *source, void *destination);
 void Palette_LoadBasicObjColors(void);
@@ -224,10 +224,10 @@ void Func_08164b2c(s32 red, s32 green, s32 blue);
 void Func_08191958(u8 side, u8 speed, void (*midpoint)(void));
 void Func_0819253c(void);
 void Func_08191cc4(void);
-void BattleFx_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale);
+void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale);
 void Func_08192648(u32 frame, s32 x, s32 y, s32 small);
 void Func_0819273c(s32 halfWidth, s32 x, s32 height);
-void BattleFx_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color);
+void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color);
 void SceneTransform_ResetMatrix(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
@@ -352,7 +352,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 // of sprites and bursts into sparks; drops fall and splash in rings; pillars
 // of light climb, the scene fills with rising motes, rays turn about the
 // centre, and the screen whitens as she heals the party.
-void BattleFx_RunIris(struct BattleEffectArgument *effect) {
+void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   struct IrisSparks *sparks;
   struct IrisSprite **objects;
   s32 frame;
@@ -524,13 +524,13 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
   savedScroll = gBgScroll[1].x;
   camera = Ram_HeapSlots->cameraWork;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0x2000);
+  BattleEffect_BeginCanvasLayer(0x2000);
   Func_0813ba50();
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 2) = 0;
   work->transferMode = 0;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   REG_DISPCNT = 0x7741;
   REG_BG2CNT = 0x784;
   REG_BG2PA = 0x80;
@@ -553,8 +553,8 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
     camera[27] = 0x4000;
   else
     camera[27] = 0xc000;
-  BattleFx_LoadBlitter(SLOT_BLITTER, 19);
-  BattleFx_LoadBlitter(SLOT_ALT, 3);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  BattleEffect_LoadBlitter(SLOT_ALT, 3);
   draw[0] = Ram_HeapSlots->unk64[1];
   draw[1] = Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress(0x134, Data_02010578, 0, 0);
@@ -580,7 +580,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
         if (frame <= 386) {
           for (i = 0; i != 16; i++)
             ResourceObject_ReleaseFar(work->objects[i]);
-          BattleFx_SelectLivingTargets(work->effect);
+          BattleEffect_SelectLivingTargets(work->effect);
           Palette_LoadBasicObjColors();
           for (i = 0; i != work->effect->count; i++)
             Func_0814cd48(work->effect->actors[i], -1, 5, -1, 0);
@@ -642,7 +642,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame <= 175) {
-      BattleFx_LoadBlitter(SLOT_ALT, 3);
+      BattleEffect_LoadBlitter(SLOT_ALT, 3);
       draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = SCENE->streaks[i];
@@ -820,7 +820,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
       if (frame == 386) {
         for (i = 0; i != 16; i++)
           ResourceObject_ReleaseFar(work->objects[i]);
-        BattleFx_SelectLivingTargets(work->effect);
+        BattleEffect_SelectLivingTargets(work->effect);
         Palette_LoadBasicObjColors();
         for (i = 0; i != work->effect->count; i++)
           Func_0814cd48(work->effect->actors[i], -1, 5, -1, 0);
@@ -935,7 +935,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
         }
       }
     }
-    BattleFx_LoadBlitter(SLOT_ALT, 3);
+    BattleEffect_LoadBlitter(SLOT_ALT, 3);
     if ((u32)(frame - 240) <= 127 && !(frame & 15)) {
       s32 v = (240 - frame) / 16;
 
@@ -1091,8 +1091,8 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
         off += (i + 14) * (i + 14) * 2;
       }
       Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
-      BattleFx_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);
-      BattleFx_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64, 0x10000);
+      BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);
+      BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64, 0x10000);
       dst = work->sheet + 0x2010;
       for (i = 0; i != 64; i++) {
         for (j = 0; j != 32; j++) {
@@ -1240,14 +1240,14 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      BattleFx_DrawDiagonalCanvasLine(0, 127, frame - 512, shade);
+      BattleEffect_DrawDiagonalCanvasLine(0, 127, frame - 512, shade);
     }
     if ((u32)(frame - 522) <= 209) {
       s16 shade = 732 - frame;
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      BattleFx_DrawDiagonalCanvasLine(0,
+      BattleEffect_DrawDiagonalCanvasLine(0,
                     (Iwram_MulQ16((frame - 521) << 16, 0x400) + 0x7b0000) >> 16,
                     frame - 521, shade);
     }
@@ -1256,7 +1256,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      BattleFx_DrawDiagonalCanvasLine((0x40000 - Iwram_MulQ16((frame - 530) << 16, 0x400)) >> 16,
+      BattleEffect_DrawDiagonalCanvasLine((0x40000 - Iwram_MulQ16((frame - 530) << 16, 0x400)) >> 16,
                     127, frame - 530, shade);
     }
     if ((u32)(frame - 535) <= 209) {
@@ -1264,7 +1264,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      BattleFx_DrawDiagonalCanvasLine(0,
+      BattleEffect_DrawDiagonalCanvasLine(0,
                     (Iwram_MulQ16((frame - 534) << 16, 0x600) + 0x780000) >> 16,
                     frame - 534, shade);
     }
@@ -1273,7 +1273,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      BattleFx_DrawDiagonalCanvasLine((0x60000 - Iwram_MulQ16((frame - 553) << 16, 0x600)) >> 16,
+      BattleEffect_DrawDiagonalCanvasLine((0x60000 - Iwram_MulQ16((frame - 553) << 16, 0x600)) >> 16,
                     127, frame - 553, shade);
     }
 
@@ -1306,7 +1306,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 755) <= 2 || frame == 781)
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
     if (frame == 754) {
-      BattleFx_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32, 0x10000);
+      BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32, 0x10000);
       Func_0815b434(work->sheet + 0x1c10, 32, 0x10000);
       for (i = 0; i != 32; i++) {
         Dma_Set(work->sheet + 0x1c10 + i * 16, work->sheet + 0x1810 + i * 32,
@@ -1472,6 +1472,6 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScroll;
   for (i = 0; i != 36; i++)
     ResourceObject_ReleaseFar(objects[i]);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

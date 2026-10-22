@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Sleep (kind 37).
-	.global BattleFx_RunSleep
+	.global BattleEffect_RunSleep
 	.thumb_func
-BattleFx_RunSleep:
+BattleEffect_RunSleep:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunSleep:
 	ldr r1, [r5, #96]
 	str r2, [sp, #8]
 	str r1, [sp, #20]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0814af20
 	movs r2, #128
 	lsls r2, r2, #19
@@ -44,7 +44,7 @@ BattleFx_RunSleep:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r4, [r5, #104]
 	movs r0, #188
 	movs r1, #47
@@ -56,7 +56,7 @@ BattleFx_RunSleep:
 .L_0814af24:
 	.4byte 0x000000e3
 .L_0814af28:
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	movs r7, #0
@@ -316,7 +316,7 @@ BattleFx_RunSleep:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -330,7 +330,7 @@ BattleFx_RunSleep:
 .L_0814b150:
 	.4byte 0xffe00000
 .L_0814b154:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814b158:
 	.4byte 0x007fffff
 .L_0814b15c:

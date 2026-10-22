@@ -256,7 +256,7 @@ Func_080e74d8:
 	movs r1, #63
 	ldr r2, .L_080e7800
 .L_080e76fa:
-	bl BattleFx_IntegrateVector3
+	bl BattleEffect_IntegrateVector3
 	ldr r3, [r5, #24]
 .L_080e7700:
 	adds r3, #1

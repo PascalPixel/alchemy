@@ -18,7 +18,7 @@ void WaitFrames(s32 frames);
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
-void BattleFx_DropObjectAtAnchor(s32 id) {
+void BattleEffect_DropObjectAtAnchor(s32 id) {
   struct ModeEvent *event = Ram_HeapSlots->eventWork;
   s32 incoming = id;
   struct ObjectRuntime **slot;

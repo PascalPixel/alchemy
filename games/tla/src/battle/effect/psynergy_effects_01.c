@@ -15,9 +15,9 @@ void Func_080e68d0(void);
 void Func_080e7844(void);
 void Func_080e9af4(void);
 void Func_080e74d8(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
 /// Effect 26 cast on a target: runs the effect, ignoring the target.
-void BattleFx_CallEffect26(void) { Func_080e3d04(); }
+void BattleEffect_CallEffect26(void) { Func_080e3d04(); }

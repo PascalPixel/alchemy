@@ -1,10 +1,10 @@
 // First draft, differ 472 of 549: Func_0814b9e8, the body of three effect
-// kinds through BattleFx_RunBalm (mode 0), BattleFx_RunTinder (mode 1) and
-// BattleFx_RunPhoenix (mode 2) in games/tla/src/battle/effect/render_mode_entry.c.
+// kinds through BattleEffect_RunBalm (mode 0), BattleEffect_RunTinder (mode 1) and
+// BattleEffect_RunPhoenix (mode 2) in games/tla/src/battle/effect/render_mode_entry.c.
 
 // New in The Lost Age: no ☀️ function has this body (shape twin
-// BattleFx_RunPlanetDiver 0.471, structure twin
-// BattleFx_RunDragonCloud 0.494). Written from the listing on
+// BattleEffect_RunPlanetDiver 0.471, structure twin
+// BattleEffect_RunDragonCloud 0.494). Written from the listing on
 // ☀️'s canvas skeleton: the canvas preparer Func_0815585c for modes 0 and
 // 1, a Djinn circling over the canvas when the effect has a prelude, and
 // sixteen textured 64x64 quads drawn through ⚓️'s render jobs
@@ -89,12 +89,12 @@ extern s32 gCameraSceneParameters[]; // unsized: sized, word 4 folds
 extern const s8 gData_08199210[];    // a quad's four corners, x y z for each
 extern const u8 gData_08199340[];    // the quad's face
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);               // ☀️ ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);          // ☀️ BattleEvent_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *anchor,
@@ -133,7 +133,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
 
   // The mode's canvas, sheets and palette.
   if (mode == QUADS_MERCURY) {
@@ -159,17 +159,17 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Centre the canvas on the anchor; a copy blitter, or an additive one for
   // side 1.
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - anchor[0]) << 8;
   if (effect->side == 0)
-    BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER_COPY << 4 | COMPOSITE_CLIP_X |
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_COPY << 4 | COMPOSITE_CLIP_X |
                                     COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   else
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -288,6 +288,6 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

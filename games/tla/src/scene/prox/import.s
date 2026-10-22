@@ -419,19 +419,19 @@ Func_0200459c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Func_020045a4
 	.thumb_func
 Func_020045a4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
-	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
@@ -450,10 +450,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -591,7 +591,7 @@ Func_02004614:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87d0
 	.else
-	overlay_veneer BattleFx_StepVector3Far
+	overlay_veneer BattleEffect_StepVector3Far
 	.endif
 	.endif
 	.global Func_0200461c

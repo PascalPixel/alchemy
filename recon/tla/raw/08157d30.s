@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Venus (kind 280).
-	.global BattleFx_RunVenus
+	.global BattleEffect_RunVenus
 	.thumb_func
-BattleFx_RunVenus:
+BattleEffect_RunVenus:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunVenus:
 	ldr r2, [r5, #100]
 	movs r0, #0
 	str r2, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_08157d98
 	movs r2, #128
 	lsls r2, r2, #19
@@ -30,10 +30,10 @@ BattleFx_RunVenus:
 	strh r3, [r2]
 	movs r1, #27
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r1, #3
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	adds r5, #188
 	ldr r5, [r5]
@@ -346,7 +346,7 @@ BattleFx_RunVenus:
 	adds r0, r5, #0
 	movs r1, #62
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -387,7 +387,7 @@ BattleFx_RunVenus:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #44
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -398,7 +398,7 @@ BattleFx_RunVenus:
 .L_08158054:
 	.4byte 0x00000130
 .L_08158058:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815805c:
 	.4byte Data_02010018
 .L_08158060:

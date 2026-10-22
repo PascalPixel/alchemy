@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
-	.global BattleFx_DecodeFrameCode
-BattleFx_DecodeFrameCode:
-	.global BattleFx_DecodeFrame
+	.global BattleEffect_DecodeFrameCode
+BattleEffect_DecodeFrameCode:
+	.global BattleEffect_DecodeFrame
 	.thumb_func
-BattleFx_DecodeFrame:
+BattleEffect_DecodeFrame:
 	bx	pc
 AlchemyUncredited_080c93ce:
 	.2byte	0x0200

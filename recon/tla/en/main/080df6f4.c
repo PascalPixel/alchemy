@@ -1,5 +1,5 @@
 // Near miss, differ 4 of 130 (2026-10-15): ☀️'s FieldFx_RunCarry (the
-// item-break macro around BattleFx_SpawnItemBreakMode1), the same body as draft
+// item-break macro around BattleEffect_SpawnItemBreakMode1), the same body as draft
 // 080ddea8 and the same two pairs in the fragment loop. Replaces the earlier
 // draft at differ 95.
 #include "types.h"
@@ -19,9 +19,9 @@ struct ScatterPosition {
 extern const s32 gData_080f0e78[];
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-struct ObjectRuntime *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
+struct ObjectRuntime *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                    s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
@@ -42,8 +42,8 @@ void Func_080df6f4(void) {
   pos.y = work->y + 0x100000;
   pos.z = work->z;
   pair[0] =
-      BattleFx_SpawnItemBreakMode1(pos.x + 0x200000, pos.y, pos.z, 0x8000);
-  pair[1] = BattleFx_SpawnItemBreakMode1(pos.x - 0x200000, pos.y, pos.z, 0);
+      BattleEffect_SpawnItemBreakMode1(pos.x + 0x200000, pos.y, pos.z, 0x8000);
+  pair[1] = BattleEffect_SpawnItemBreakMode1(pos.x - 0x200000, pos.y, pos.z, 0);
 
   WaitFrames(15);
   walk = pair;
@@ -73,5 +73,5 @@ void Func_080df6f4(void) {
 
   Object_Destroy(pair[0]);
   Object_Destroy(pair[1]);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

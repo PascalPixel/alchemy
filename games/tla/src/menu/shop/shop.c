@@ -117,20 +117,20 @@ void Shop_RestoreSceneTiles(s32 layer) {
   Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368(layer, 1);
-  BattleFx_ApplyColorToSourceBufferFar(16);
+  BattleEffect_ApplyColorToSourceBufferFar(16);
 #else
-  BattleFx_ApplyColorToTargetBufferFar(layer, 1);
-  BattleFx_StartBufferInterpolationFar(16);
+  BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
+  BattleEffect_StartBufferInterpolationFar(16);
 #endif
 }
 
 void Shop_InitEffect(void) {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368((s32)Ram_HeapSlots->eventWork + 0x222, 1);
-  BattleFx_ApplyColorToSourceBufferFar(16);
+  BattleEffect_ApplyColorToSourceBufferFar(16);
 #else
-  BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->eventWork + 0x222,
+  BattleEffect_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->eventWork + 0x222,
                                        1);
-  BattleFx_StartBufferInterpolationFar(16);
+  BattleEffect_StartBufferInterpolationFar(16);
 #endif
 }

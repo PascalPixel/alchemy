@@ -28,14 +28,14 @@ struct EffectChild {
 #include "ram_buffer.h"
 
 void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
+void *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude,
                                                 s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 
 void FieldFx_RunLiftOnTarget(void) {
   struct BattleEffectScene *scene;
@@ -56,7 +56,7 @@ void FieldFx_RunLiftOnTarget(void) {
   BattleEffect_InitializeSharedScene();
   *(void **)((u8 *)mainObject + 0x68) = child;
   ObjectDispatch_InitializeFar((struct DispatchObject *)mainObject,
-                               (u32)(gBattleFx_CommonParticleScript + 12));
+                               (u32)(gBattleEffect_CommonParticleScript + 12));
 
   x = scene->x;
   position[0] = x;
@@ -64,8 +64,8 @@ void FieldFx_RunLiftOnTarget(void) {
   position[1] = y;
   z = scene->z;
   position[2] = z;
-  anchors[0] = BattleFx_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
-  anchors[1] = BattleFx_SpawnItemBreakMode3(position[0] - 0x200000, position[1],
+  anchors[0] = BattleEffect_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
+  anchors[1] = BattleEffect_SpawnItemBreakMode3(position[0] - 0x200000, position[1],
                                             position[2], 0);
 
   WaitFrames(15);
@@ -93,5 +93,5 @@ void FieldFx_RunLiftOnTarget(void) {
 
   UpdateRisingParticleBurst(anchors[0]);
   UpdateRisingParticleBurst(anchors[1]);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

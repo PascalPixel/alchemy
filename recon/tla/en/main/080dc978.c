@@ -30,9 +30,9 @@ struct WaveFxWork {
 extern u32 gFrameCount;
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_AdvanceHueCycle(void);
-void BattleFx_ApplyColorToTargetBuffer(s32 colors, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleEffect_AdvanceHueCycle(void);
+void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 void Ui_FillBank15PaletteGrey(void);
 void Func_080dcb44(void);
 
@@ -49,10 +49,10 @@ void Func_080dc978(s32 id, s32 value) {
   /* FAKEMATCH: four estimated bytes that place the literal pool. */
   asm("");
   BattleEffect_InitializeSharedScene();
-  BattleFx_AdvanceHueCycle();
-  BattleFx_ApplyColorToTargetBuffer(
+  BattleEffect_AdvanceHueCycle();
+  BattleEffect_ApplyColorToTargetBuffer(
       (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
-  BattleFx_StartBufferInterpolation(8);
+  BattleEffect_StartBufferInterpolation(8);
   Ui_FillBank15PaletteGrey();
   Scheduler_AddOrUpdateCallback((SchedulerCallback)Func_080dcb44, 0x480);
 }

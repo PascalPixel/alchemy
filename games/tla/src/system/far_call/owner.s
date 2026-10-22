@@ -52,7 +52,7 @@ Item_GetEquippedElementFar:
 	.global BattleHitCheck
 	.thumb_func
 BattleHitCheck:
-	overlay_veneer BattleFx_RollSuccess
+	overlay_veneer BattleEffect_RollSuccess
 	.global BattleAtkCalc
 	.thumb_func
 BattleAtkCalc:

@@ -268,7 +268,7 @@ Func_080e92b4:
 	cmp r1, #0
 	beq .L_080e9502
 	adds r0, r1, #0
-	bl BattleFx_GetObjectPriority
+	bl BattleEffect_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r1, #13
@@ -285,12 +285,12 @@ Func_080e92b4:
 	cmp r7, r2
 	bgt .L_080e94f8
 	ldr r0, [sp, #76]
-	bl BattleFx_GetObjectDepth
+	bl BattleEffect_GetObjectDepth
 	adds r0, #15
 	b .L_080e9500
 .L_080e94f8:
 	ldr r0, [sp, #76]
-	bl BattleFx_GetObjectDepth
+	bl BattleEffect_GetObjectDepth
 	subs r0, #15
 .L_080e9500:
 	strh r0, [r5, #30]
@@ -478,7 +478,7 @@ Func_080e92b4:
 	ldrb r1, [r2, #20]
 	ldr r0, [sp, #20]
 	ldrb r2, [r2, #21]
-	bl BattleFx_ShiftRowsDown
+	bl BattleEffect_ShiftRowsDown
 .L_080e966e:
 	ldr r3, [sp, #56]
 	mov r0, r11
@@ -641,7 +641,7 @@ Func_080e92b4:
 	lsls r0, r0, #1
 	bl Audio_PlayCue
 	bl Func_080e8c9c
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	ldr r0, [sp, #72]
 	bl Resource_ResetEntry
 .L_080e97a6:

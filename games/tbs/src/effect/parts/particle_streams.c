@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-/// The particle streams' modes (BattleFx_RunParticleStreams).
+/// The particle streams' modes (BattleEffect_RunParticleStreams).
 enum ParticleStreamsMode {
   PARTICLE_STREAMS_METEOR,     ///< one spawned object rises
   PARTICLE_STREAMS_OUTER_SPACE ///< the user leaps, and two animated objects
@@ -14,8 +14,8 @@ enum ParticleStreamsMode {
 /// Adds per-channel steps to background colours 1 to 63, capped at 31.
 ///
 /// Called once a frame to whiten the colours over a few frames: by
-/// BattleFx_RunParticleStreams from frame 36 of its burst, and by Tiamat's
-/// BattleFx_RunPaletteParticles. Rewrites background palette RAM.
+/// BattleEffect_RunParticleStreams from frame 36 of its burst, and by Tiamat's
+/// BattleEffect_RunPaletteParticles. Rewrites background palette RAM.
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   u16 *color = (u16 *)&BG_PLTT[1];
   s32 i;
@@ -43,10 +43,10 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// changes line by line.
 ///
 /// Runs each frame as a scheduler callback (order 0x4fe) that
-/// BattleFx_RunParticleStreams adds for its rise and removes after it; the
+/// BattleEffect_RunParticleStreams adds for its rise and removes after it; the
 /// rise rewrites the 160 colours, its heat lines, every frame. Stops DMA 0
 /// and sets it up again, so the table is read from line 0.
-void BattleFx_ArmPaletteHBlankDma(void) {
+void BattleEffect_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
@@ -59,18 +59,18 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 ///
 /// Abilities: Meteor (SCENE_EFFECT_METEOR).
 ///
-/// BattleFx_RunSceneEffect also plays it for a scene effect of 0, which no
+/// BattleEffect_RunSceneEffect also plays it for a scene effect of 0, which no
 /// row selects.
-void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticleStreams(effect, PARTICLE_STREAMS_METEOR);
+void BattleEffect_RunMeteor(struct BattleEffectArgument *effect) {
+  BattleEffect_RunParticleStreams(effect, PARTICLE_STREAMS_METEOR);
 }
 
 /// The user leaps up, and two objects rise out of a dissolving starfield and
 /// burst into embers and flashes, in the lightning bolt's colours.
 ///
 /// Abilities: Outer Space (BATTLE_FX_OUTER_SPACE).
-void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticleStreams(effect, PARTICLE_STREAMS_OUTER_SPACE);
+void BattleEffect_RunOuterSpace(struct BattleEffectArgument *effect) {
+  BattleEffect_RunParticleStreams(effect, PARTICLE_STREAMS_OUTER_SPACE);
 }
 
 /// The burst's embers, 512 in PARTICLES after its 128 flashes.
@@ -94,20 +94,20 @@ void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
 /// rise's motes (0 to 31) and flames (32 to 47), then the burst's screen motes
 /// (0 to 63), in whole pixels.
 ///
-/// Called by BattleFx_RunMeteor and BattleFx_RunOuterSpace.
+/// Called by BattleEffect_RunMeteor and BattleEffect_RunOuterSpace.
 /// The rise shows Ram_MapCellBuffer on BG1 through
-/// BattleFx_FlushPendingGraphicsTransfer, scrolls BG2 with
-/// BattleFx_AdvanceBg2OnInterval and colours the backdrop with
-/// BattleFx_ArmPaletteHBlankDma, and removes all three after; it sets the
+/// BattleEffect_FlushPendingGraphicsTransfer, scrolls BG2 with
+/// BattleEffect_AdvanceBg2OnInterval and colours the backdrop with
+/// BattleEffect_ArmPaletteHBlankDma, and removes all three after; it sets the
 /// background view's active flag while it runs. The projection centre moves
 /// down to line 240 from the dissolve on, until the burst's
-/// BattleFx_SetupBlendedDisplay puts it back at line 120; the burst's shake
-/// then keeps it within 4 pixels of (120, 120) until BattleFx_EndCanvasLayer
-/// puts it back there at the end. The burst sets BG2 back to the half-scale
-/// canvas and ends the canvas layer. Releases the formation objects it
-/// spawned (Outer Space's on frame 48 of the burst).
-void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
-                                 s32 mode) {
+/// BattleEffect_SetupBlendedDisplay puts it back at line 120; the burst's shake
+/// then keeps it within 4 pixels of (120, 120) until
+/// BattleEffect_EndCanvasLayer puts it back there at the end. The burst sets
+/// BG2 back to the half-scale canvas and ends the canvas layer. Releases the
+/// formation objects it spawned (Outer Space's on frame 48 of the burst).
+void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
+                                     s32 mode) {
   volatile u32 fill;
   u8 offsets[128];
   void **cache;
@@ -187,16 +187,16 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   } else {
     direction = -1;
   }
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_ConfigureEffectDisplay();
   // The backdrop and colour 1 go black: the wipe below
   // sweeps the canvas to colour 1, top to bottom.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   // The rising formation: two animated objects in Outer Space, otherwise one
   // spawned object.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
@@ -212,7 +212,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       }
     }
   } else {
-    BattleFx_SpawnObjects(1, 381, 3);
+    BattleEffect_SpawnObjects(1, 381, 3);
   }
   // The starfield: load the flame sheet (and in Outer Space the bolt's
   // palette), fill the screen map, give palette entries 128 to 190 random
@@ -248,7 +248,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 y = Random16() & 127;
     s32 shade = (Random16() & 63) + 64;
 
-    // The tiled canvas byte for (x, y), as BattleFx_WipeCanvas gives it.
+    // The tiled canvas byte for (x, y), as BattleEffect_WipeCanvas gives it.
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
@@ -256,7 +256,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   // in ragged columns, each lagging by one of 128 random offsets of 0 to 63
   // rows. The erased band grows faster every frame until it passes row 191.
   gProjection.centerY = 240;
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
   // Every second frame BG2's reference point (20.8 fixed point) moves half a
   // pixel across, the way direction says, and one pixel down.
   work->bg2x = 0;
@@ -265,8 +265,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceBg2OnInterval, 0x4ff);
-  Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceBg2OnInterval, 0x4ff);
+  Scheduler_AddOrUpdateCallback(BattleEffect_FlushPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   for (i = 0; i != 128; i++)
     offsets[i] = Random16() & 63;
@@ -314,13 +314,13 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
-    BattleFx_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7, EFFECT_CLIP_BOUNDS,
-                          COMPOSITE_MAX);
+    BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7, EFFECT_CLIP_BOUNDS,
+                              COMPOSITE_MAX);
     draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening effects write theirs).
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmPaletteHBlankDma, 0x4fe);
+    Scheduler_AddOrUpdateCallback(BattleEffect_ArmPaletteHBlankDma, 0x4fe);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
     presentation->active = 1;
     work->frame = 0;
@@ -369,7 +369,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         asm("" : : "r"(hold));
       }
       // The heat lines, the 160 backdrop colours that
-      // BattleFx_ArmPaletteHBlankDma streams in one per scanline: black on
+      // BattleEffect_ArmPaletteHBlankDma streams in one per scanline: black on
       // lines 0 to 14 and 135 to 159, and between them a ramp, blue first
       // and then green, that brightens as the rise goes on: a line's level
       // is (line - 16) / 4 plus a level every 4 frames, its blue that less
@@ -506,9 +506,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
     WaitFrames(1);
     presentation->active = 0;
-    Scheduler_RemoveCallback(BattleFx_AdvanceBg2OnInterval);
-    Scheduler_RemoveCallback(BattleFx_ArmPaletteHBlankDma);
-    Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_AdvanceBg2OnInterval);
+    Scheduler_RemoveCallback(BattleEffect_ArmPaletteHBlankDma);
+    Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
     gBgScroll[1].x = savedX;
     gBgScroll[1].y = savedY;
   }
@@ -517,7 +517,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   // half-scale display, load the blast
   // sheet and seed 32 screen motes, 128 flashes and 512 embers, the flashes
   // and embers leaving the origin with random velocities.
-  BattleFx_SetupBlendedDisplay();
+  BattleEffect_SetupBlendedDisplay();
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
@@ -599,15 +599,16 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           point.depth = 799;
         // Mote size 9 at depth 160, one smaller every 64 units further.
         // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
-        // cell is read from gBattleFx_MoteCells[-1], the last halfword of the
-        // blitter template, which ends at the table (BattleFx_BuildBlitter).
-        // No UBFIX form yet.
+        // cell is read from gBattleEffect_MoteCells[-1], the last halfword of
+        // the blitter template, which ends at the table
+        // (BattleEffect_BuildBlitter). No UBFIX form yet.
         size = 9 - (point.depth - 160) / 64;
-        draw(canvas,
-             work->sheet +
-                 (gBattleFx_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-                 PARTICLE_STREAMS_MOTE_CELLS,
-             point.x - size / 2, point.y - size, size, size * 2);
+        draw(
+            canvas,
+            work->sheet +
+                (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
+                PARTICLE_STREAMS_MOTE_CELLS,
+            point.x - size / 2, point.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
           ember->x = 0;
@@ -629,7 +630,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
       draw(canvas,
            work->sheet +
-               (gBattleFx_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
+               (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
                PARTICLE_STREAMS_MOTE_CELLS,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
@@ -695,11 +696,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     Camera_ApplyShake(8, 8);
     EFFECT_PRESENT_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   if (mode == PARTICLE_STREAMS_METEOR)
     ResourceObject_ReleaseFar(work->objects[0]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef PARTICLE_STREAMS_EMBERS

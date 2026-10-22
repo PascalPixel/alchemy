@@ -776,7 +776,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->presentationFlags |= STAGING_ON_DOWNED;
     // When Annihilation's instant death lands on its first target, the
     // variant becomes 1: the burst then shows its second picture and plays a
-    // sound (BattleFx_RunAnnihilation).
+    // sound (BattleEffect_RunAnnihilation).
     if (abilityId == ABILITY_ANNIHILATION && plan->targetHit[0] != 0)
       plan->presentationFlags |= 1 << STAGING_VARIANT_SHIFT;
   }

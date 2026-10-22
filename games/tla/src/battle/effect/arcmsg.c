@@ -37,10 +37,10 @@ void Func_080cb8a4(void);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
 
-/// The caster during Avoid (BattleFx_RunEffect16): sheds a pair of falling
+/// The caster during Avoid (BattleEffect_RunEffect16): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
 // As ☀️'s function of the same name.
-void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
+void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
   s16 phase;
   s32 elapsedFrames;
   struct PartyState *party;
@@ -97,7 +97,7 @@ void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
 
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
-void BattleFx_RunEffect16(void) {
+void BattleEffect_RunEffect16(void) {
   struct ArcScene *scene;
   struct ArcEffectObject *object;
   struct ArcGroup *group;
@@ -139,7 +139,7 @@ void BattleFx_RunEffect16(void) {
     gPartyState.avoidDistance = 0x09600000;
     gPartyState.avoidByItem = GameFlag_Test(0x145);
     Animation_ApplyChildValuesFar(object, 0);
-    object->callback = BattleFx_UpdatePairedArcSpawner;
+    object->callback = BattleEffect_UpdatePairedArcSpawner;
     object->phase = zero;
     object->step = zero;
   }

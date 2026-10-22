@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunGround, effect kind 203: the Venus Djinn's rock toss.
+// Draft of BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
 
 // On screen: the background slowly takes on the portal's colours from
 // frame 17. Six rocks leave the caster one after another, every two
@@ -19,10 +19,10 @@
 // Teardown: the callback and the blitter are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunGround (kind 203 there
+// Port of The Broken Seal's BattleEffect_RunGround (kind 203 there
 // too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
 // callback order, no work->effect store, the canvas preparer's packed
-// arguments, and the chips' blitter built by BattleFx_BuildBlitter
+// arguments, and the chips' blitter built by BattleEffect_BuildBlitter
 // directly. Other editions place a differently built version; only the
 // English listing was compared.
 
@@ -53,7 +53,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -81,16 +81,16 @@ extern const u8 Data_08198531[];
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 // Steps the background colours one shade toward a resource's palette.
 void Func_0815f0a0(s32 resource);
-// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleFx_BuildBlitter itself.
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
+// BattleEffect_BuildBlitter itself.
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
@@ -101,9 +101,9 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *camera, void *eye);
 // Closes the canvas layer.
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
 // An actor's recoil motion, through a far call.
@@ -114,7 +114,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 
-void BattleFx_RunGround(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -132,15 +132,15 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Func_0815585c(effect, PREPARE(0, effect->side, 2), screen, otherPoint);
   REG_BLDALPHA = 0x1010;
   if (effect->side == 1)
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         COMPOSITE_FLIP_X));
   else
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
@@ -148,7 +148,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
                              work->sheet + 0x65c0, 1, 1);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The rocks start at the caster, 66 high, flung out to the side away
   // from the caster with a random lift and drift.
@@ -183,12 +183,12 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       if (frame > 16)
         y = y - frame * 2 + 32;
       if (effect->side == 1)
-        BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+        BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
                                                  COMPOSITE_CLIP_Y |
                                                  COMPOSITE_FLIP_X));
       else
-        BattleFx_LoadBlitter(
+        BattleEffect_LoadBlitter(
             HEAP_BLITTER_ALTERNATE,
             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
       if (frame <= 3)
@@ -290,7 +290,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

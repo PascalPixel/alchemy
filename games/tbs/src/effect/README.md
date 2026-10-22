@@ -29,7 +29,7 @@ macros in `battle/battle_internal.h` name its fields:
 | --- | --- | --- |
 | 0 to 11 | `STAGING_KIND_MASK` | the effect kind, 0 for none |
 | 12, 13 | `STAGING_VARIANT_MASK` | the variant, the ability's strength |
-| 14 | `STAGING_BY_ID_RANGE` | the kind goes to `BattleFx_DispatchByIdRange` |
+| 14 | `STAGING_BY_ID_RANGE` | the kind goes to `BattleEffect_DispatchByIdRange` |
 | 15 | `STAGING_SCENE` | the kind is a summon's scene, an `enum SceneEffectKind` |
 | 16 | `STAGING_ON_DOWNED` | shown on downed targets too |
 | 17 | `STAGING_OTHER_SIDE` | played from the other side |
@@ -65,11 +65,11 @@ take is the ability kind, in `game/actions.tsv`, which
 
 ### The handler table
 
-An ordinary effect kind indexes `gBattleFx_EffectHandlers` (`effect_table.c`),
+An ordinary effect kind indexes `gBattleEffect_EffectHandlers` (`effect_table.c`),
 whose rows start at `BATTLE_FX_QUAKE`, the first kind after `BATTLE_FX_NONE`:
 
 ```c
-[BATTLE_FX_QUAKE - 1] = BattleFx_RunQuake, // quake.c: Quake
+[BATTLE_FX_QUAKE - 1] = BattleEffect_RunQuake, // quake.c: Quake
 ```
 
 Each row's comment names the part that defines the handler and the first
@@ -81,18 +81,18 @@ effect.
 
 A handler is named for the first ability, by id, whose row selects its kind,
 under the English release's name: the first row to select `BATTLE_FX_QUAKE` is
-Quake's, so its handler is `BattleFx_RunQuake`. A handler several kinds share
+Quake's, so its handler is `BattleEffect_RunQuake`. A handler several kinds share
 takes the name of its lowest kind's first ability, and a name another handler
 has already taken passes to the next ability: `BATTLE_FX_NOVA` plays through
-`BattleFx_RunNova` because its first ability is the second Blast (ability 57),
-the first having taken `BattleFx_RunBlast`. The three handlers no ability
+`BattleEffect_RunNova` because its first ability is the second Blast (ability 57),
+the first having taken `BattleEffect_RunBlast`. The three handlers no ability
 reaches are named from what they draw. Searching the code for a move's English
 name therefore finds its handler.
 
 Many kinds belong to a family that one runner draws, and the mode it is passed
 picks the member. The kind's handler is then a two-line function that calls the
-runner: `BattleFx_RunCure` calls
-`BattleFx_RunHealingMotes(effect, HEALING_MODE_CURE)`.
+runner: `BattleEffect_RunCure` calls
+`BattleEffect_RunHealingMotes(effect, HEALING_MODE_CURE)`.
 [Effect families](#effect-families) lists the runners.
 
 ### Reach lines
@@ -150,12 +150,12 @@ every effect draws with.
 ```mermaid
 flowchart TD
     flags["plan->presentationFlags"] --> scene{{"STAGING_SCENE?"}}
-    scene -->|yes| sceneFx["BattleFx_RunSceneEffect:<br/>a summon's scene"]
+    scene -->|yes| sceneFx["BattleEffect_RunSceneEffect:<br/>a summon's scene"]
     scene -->|no| range{{"STAGING_BY_ID_RANGE?"}}
-    range -->|no| table["BattleFx_RunTableEffect:<br/>gBattleFx_EffectHandlers"]
-    range -->|yes| byId["BattleFx_DispatchByIdRange"]
+    range -->|no| table["BattleEffect_RunTableEffect:<br/>gBattleEffect_EffectHandlers"]
+    range -->|yes| byId["BattleEffect_DispatchByIdRange"]
     byId --> impact{{"kind 100 to 135?"}}
-    impact -->|yes| cast["BattleFx_RunCastingImpact(kind - 100)"]
+    impact -->|yes| cast["BattleEffect_RunCastingImpact(kind - 100)"]
     impact -->|no| ring{{"kind 200 and up?"}}
     ring -->|yes| rings["the ring and spark scenes"]
     ring -->|no| beams["the beam sequences"]
@@ -173,15 +173,15 @@ three heap slots, runs the effect and releases them in reverse:
 | `HEAP_SLOT_BATTLE_EFFECT` | 39 | the work block, `struct BattleEffectWork` |
 | `HEAP_SLOT_BATTLE_CANVAS` | 40 | the canvas (`CANVAS_BYTES`) |
 
-- `BattleFx_RunTableEffect` ([`dispatch.c`](parts/dispatch.c)) sets
+- `BattleEffect_RunTableEffect` ([`dispatch.c`](parts/dispatch.c)) sets
   `work->effect` and calls the kind's handler. `BATTLE_FX_NONE` plays nothing
   and only resets the variant.
-- `BattleFx_RunSceneEffect` (`dispatch.c`) switches on `enum SceneEffectKind`
+- `BattleEffect_RunSceneEffect` (`dispatch.c`) switches on `enum SceneEffectKind`
   to the twelve summons' scenes, and leaves setting `work->effect` to each.
   `SCENE_EFFECT_NONE`, which no row selects, plays Meteor's scene.
-- `BattleFx_DispatchByIdRange` ([`positions.c`](parts/positions.c)) splits by
+- `BattleEffect_DispatchByIdRange` ([`positions.c`](parts/positions.c)) splits by
   the kind's range: 100 to 135 are the casting impacts
-  (`BattleFx_RunCastingImpact`, given the kind less 100), 200 and up the ring
+  (`BattleEffect_RunCastingImpact`, given the kind less 100), 200 and up the ring
   and spark scenes, and every other kind the beam sequences. Its sheet slot is
   `0x60e` bytes, from EWRAM first.
 
@@ -201,8 +201,8 @@ spark scene at 201 to 205.
 | --- | --- | --- |
 | `MOTE_SET_BYTES` | 770 | one set of the ten mote pictures |
 | `EFFECT_KIND_CRITICAL_OFFSET` | 200 | added to an attack's kind for a critical hit |
-| casting impacts | kinds 100 to 135 | `BattleFx_RunCastingImpact`, given the kind less 100 |
-| ring and spark scenes | kinds 200 and up | through `BattleFx_DispatchByIdRange` |
+| casting impacts | kinds 100 to 135 | `BattleEffect_RunCastingImpact`, given the kind less 100 |
+| ring and spark scenes | kinds 200 and up | through `BattleEffect_DispatchByIdRange` |
 
 ## The canvas
 
@@ -213,7 +213,7 @@ Most effects draw into one canvas, a 128 by 128 picture of palette levels that
 
 The canvas is 128 by 128 pixels at one byte each, stored as the hardware
 stores a 256-colour background, 16 by 16 tiles of 8 by 8 pixels.
-`BattleFx_BeginCanvasLayer` ([`canvas.c`](parts/canvas.c)) makes `BG2`, the
+`BattleEffect_BeginCanvasLayer` ([`canvas.c`](parts/canvas.c)) makes `BG2`, the
 layer the hardware can scale and rotate, show the canvas from character block
 1, alpha-blended over the battle inside the effect windows and stretched to
 twice its width so that it spans the screen; it waits five frames of its own
@@ -251,7 +251,7 @@ then clears, fades or darkens what the canvas keeps for the next frame.
 
 An effect never writes video memory itself. It draws a frame, then
 `EFFECT_PRESENT_FRAME` sets `work->transferPending` and waits a frame. The
-scheduler callback `BattleFx_ProcessPendingGraphicsTransfer`, which
+scheduler callback `BattleEffect_ProcessPendingGraphicsTransfer`, which
 `EFFECT_START_TRANSFER` adds, copies the canvas into character block 1 and then
 treats what is left in the canvas as `work->transferMode` says
 (`enum CanvasTransferMode`, in `battle/battle_effect_work.h`), with
@@ -259,7 +259,7 @@ treats what is left in the canvas as `work->transferMode` says
 
 The picture plays Heat Wave six times, writing a mode over
 `work->transferMode` and `transferValue` each time
-`BattleFx_ProcessPendingGraphicsTransfer` runs, and shows the canvas each run
+`BattleEffect_ProcessPendingGraphicsTransfer` runs, and shows the canvas each run
 presented, read from its heap block as the copy starts. The volley presents
 78 canvases in every run, its `total` of frames, and draws the same pictures
 in the same places, since the transfer draws no random numbers. A trail lasts
@@ -273,15 +273,15 @@ fades or darkens.
 
 The usual end of a canvas effect, `EFFECT_FINISH_CANVAS`, removes the transfer
 callback before anything it reads is freed, then frees the two blitters and
-closes the layer (`BattleFx_EndCanvasLayer`). A handler's comment mentions its
+closes the layer (`BattleEffect_EndCanvasLayer`). A handler's comment mentions its
 ending only when it differs.
 
 Two kinds of effect use `BG1` as well. The beam sequences and the ring and
-spark scenes call `BattleFx_SetupCanvasTileMap`, which shows the canvas on `BG1`
+spark scenes call `BattleEffect_SetupCanvasTileMap`, which shows the canvas on `BG1`
 at its own size instead of on `BG2`. The particle streams of Meteor and Outer
-Space (`BattleFx_RunParticleStreams`, [`particle_streams.c`](parts/particle_streams.c))
+Space (`BattleEffect_RunParticleStreams`, [`particle_streams.c`](parts/particle_streams.c))
 draw a full-screen picture into `Ram_MapCellBuffer` while their formation
-rises, shown on `BG1` through `BattleFx_FlushPendingGraphicsTransfer`, which
+rises, shown on `BG1` through `BattleEffect_FlushPendingGraphicsTransfer`, which
 copies `0x7800` bytes into character block 2; their burst then switches back to
 the blended half-scale canvas on `BG2`.
 
@@ -350,7 +350,7 @@ point.
 
 ```mermaid
 flowchart TD
-    prologue["1. prologue: entry words,<br/>BattleFx_Mask for COMPOSITE_ADDITIVE,<br/>mirroring set-up"] --> vclip["2. vertical clip<br/>(COMPOSITE_CLIP_Y only)"]
+    prologue["1. prologue: entry words,<br/>BattleEffect_Mask for COMPOSITE_ADDITIVE,<br/>mirroring set-up"] --> vclip["2. vertical clip<br/>(COMPOSITE_CLIP_Y only)"]
     vclip --> rows{{"rows left?"}}
     rows -->|no| exit["5. exit"]
     rows -->|yes| cols["3. column set-up:<br/>width mask, or clip words"]
@@ -366,20 +366,20 @@ picture may be mirrored across (`COMPOSITE_FLIP_X`) or up and down
 `COMPOSITE_CLIP_Y`), and combined with the canvas in one of four modes
 (`battle/battle_effect.h`).
 
-`BattleFx_BuildBlitter` ([`blitter.c`](parts/blitter.c)) writes an ARM routine
+`BattleEffect_BuildBlitter` ([`blitter.c`](parts/blitter.c)) writes an ARM routine
 for exactly one combination of canvas size, mirroring, clip and mode while the
 game runs, into a heap slot, which the heap places in IWRAM when it fits and
 in EWRAM otherwise. `EFFECT_LOAD_BLITTER` builds one for the 128 by 128
 canvas. An effect usually holds its two as a `BlitterPair`, `[0]` in
 `HEAP_SLOT_BLITTER` and `[1]` in `HEAP_SLOT_BLITTER_ALTERNATE`;
-`BattleFx_FetchRectangleBlitters` ([`mirrored_wall.c`](parts/mirrored_wall.c))
+`BattleEffect_FetchRectangleBlitters` ([`mirrored_wall.c`](parts/mirrored_wall.c))
 builds the usual pair, clipped on all four sides, `[0]` in `COMPOSITE_MAX` and
 `[1]` in `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
 targets' side. The battle's star field (`battle/battle/star_field.c`) and
 `object/colorfx.c` reach the builder from other banks through
-`BattleFx_BuildBlitterFar` (`system/far_call/EFFECT.S`).
+`BattleEffect_BuildBlitterFar` (`system/far_call/EFFECT.S`).
 
-The builder walks a template of ARM words, `BattleFx_Composite`, and splices in
+The builder walks a template of ARM words, `BattleEffect_Composite`, and splices in
 the pixel fragments of the mode asked for, from
 [`battle_effect_composite.s`](battle_effect_composite.s) and
 [`battle_effect_composite_color.s`](battle_effect_composite_color.s), whose
@@ -388,13 +388,13 @@ copied, some chosen by the flags, and some have a number added: the canvas
 width or height, or a branch distance. The routine has five blocks:
 
 1. The prologue: three entry words; for `COMPOSITE_ADDITIVE`, the three words
-   of `BattleFx_Mask`, which puts `0x40` in each byte of a register so that a
+   of `BattleEffect_Mask`, which puts `0x40` in each byte of a register so that a
    sum reaching it can be capped; then the set-up for the mirroring.
 2. The vertical clip, only when the routine clips top and bottom.
 3. The column set-up: a test that skips everything when no rows are left;
    then either a mask that wraps x round the canvas width or, when clipping
    left and right, the clip words, two of which take the width as an ARM
-   immediate from `gBattleFx_BitOperands` ([`effect_bits.c`](effect_bits.c),
+   immediate from `gBattleEffect_BitOperands` ([`effect_bits.c`](effect_bits.c),
    the rotated-immediate encoding of each power of two from 1 to 32,768); and
    a second test that skips everything when no columns are left.
 4. The row loop: a leading run pixel by pixel up to the first 8-pixel
@@ -407,7 +407,7 @@ patched when the walk reaches their target; backward branches are written at
 once. The walk runs twice: once only counting words, then into a heap block of
 exactly that size. A slot that already holds a block keeps it whatever its
 size, and the new routine is written over it, so a caller releases the slot
-first when the new routine may be longer. `BattleFx_BuildBlitter` returns
+first when the new routine may be longer. `BattleEffect_BuildBlitter` returns
 whether the walk ended just past the template's last word, and no caller reads
 the result.
 
@@ -440,10 +440,10 @@ tiled canvas. The pictures are indexed PNGs in
 
 The build's `ags-graphics` turns it into `rock_wall.gbapal`, its colours as the
 hardware stores them, and `rock_wall.bitmap.lz`, its pixels LZ-packed;
-`rock_wall.s` joins them, palette first, as `BattleFx_RockWallSheet`, and the
-`BattleFx` group of the resource directory (`system/resource/directory.s`)
+`rock_wall.s` joins them, palette first, as `BattleEffect_RockWallSheet`, and the
+`BattleEffect` group of the resource directory (`system/resource/directory.s`)
 gives it the id `ResourceId_RockWallSheet`. Effects ask for a picture by id,
-never by label. `BattleFx_RunQuake` ([`quake.c`](parts/quake.c)) loads it with
+never by label. `BattleEffect_RunQuake` ([`quake.c`](parts/quake.c)) loads it with
 `Resource_LoadAndDecompress`, whose two flags send the palette to the first 64
 background colours and the pixels to `work->sheet` at `QUAKE_WALL_CELLS`.
 
@@ -483,7 +483,7 @@ variant or by the mode a family's runner is passed.
 ![Isaac casts Avalanche at Ivan, and the same wall comes out wide enough to reach Isaac, with bigger rocks tumbling down all across it.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
 
 The simplest share it through the variant alone: Gaia, Rockfall and the others
-in Gaia's reach line play `BATTLE_FX_GAIA`, and `BattleFx_RunGaia`
+in Gaia's reach line play `BATTLE_FX_GAIA`, and `BattleEffect_RunGaia`
 ([`gaia.c`](parts/gaia.c)) sets `REG_BG2PA` so that `BG2` stretches the canvas
 1.25 times across at `EFFECT_VARIANT_BASIC`, 1.5 times at
 `EFFECT_VARIANT_STRONGER`, and twice, as the canvas layer left it, at
@@ -498,23 +498,23 @@ The largest:
 
 | Runner | Part | What it draws |
 | --- | --- | --- |
-| `BattleFx_RunTargetStrike` | [`target_strike.c`](parts/target_strike.c) | repeated slashes or columns of light on the first target |
-| `BattleFx_RunProjectileVolley` | [`projectiles.c`](parts/projectiles.c) | shots that fly from the user and burst on each target |
-| `BattleFx_RunLobbedShells` | [`lobbed_shells.c`](parts/lobbed_shells.c) | shells lobbed at each target in turn, bursting into smoke |
-| `BattleFx_RunBurstShower` | [`burst_shower.c`](parts/burst_shower.c) | a shower of bursts at random points near the targets |
-| `BattleFx_RunTargetMotes` | [`target_motes.c`](parts/target_motes.c) | smoke, hearts or orbs turning around each target |
-| `BattleFx_RunStatBoost` | [`stat_change.c`](parts/stat_change.c) | flares that swirl into each target and burst |
-| `BattleFx_RunStatReduction` | [`stat_change.c`](parts/stat_change.c) | a dagger or shield over each target that shatters |
-| `BattleFx_RunHealingMotes` | [`healing.c`](parts/healing.c) | healing motes swirling in to each target |
-| `BattleFx_RunStreakVolley` | [`streaks.c`](parts/streaks.c) | streaks fired from above the user at each target |
-| `BattleFx_RunRushingStrike` | [`rushing_strike.c`](parts/rushing_strike.c) | the user rushes at the first target and strikes |
-| `BattleFx_RunBurstScene` | [`burst_scene.c`](parts/burst_scene.c) | a flurry of strikes on the first target |
-| `BattleFx_RunGrowingColumns` | [`growth.c`](parts/growth.c) | vines or green pillars growing from the ground |
-| `BattleFx_RunSparkGroups` | [`plasma.c`](parts/plasma.c) | flashes and bouncing sparks in one or three bursts |
-| `BattleFx_RunDjinnBeams` | [`djinn_beams.c`](parts/djinn_beams.c) | a Djinni appears, then columns of light fall on the targets; passed an element rather than a mode |
+| `BattleEffect_RunTargetStrike` | [`target_strike.c`](parts/target_strike.c) | repeated slashes or columns of light on the first target |
+| `BattleEffect_RunProjectileVolley` | [`projectiles.c`](parts/projectiles.c) | shots that fly from the user and burst on each target |
+| `BattleEffect_RunLobbedShells` | [`lobbed_shells.c`](parts/lobbed_shells.c) | shells lobbed at each target in turn, bursting into smoke |
+| `BattleEffect_RunBurstShower` | [`burst_shower.c`](parts/burst_shower.c) | a shower of bursts at random points near the targets |
+| `BattleEffect_RunTargetMotes` | [`target_motes.c`](parts/target_motes.c) | smoke, hearts or orbs turning around each target |
+| `BattleEffect_RunStatBoost` | [`stat_change.c`](parts/stat_change.c) | flares that swirl into each target and burst |
+| `BattleEffect_RunStatReduction` | [`stat_change.c`](parts/stat_change.c) | a dagger or shield over each target that shatters |
+| `BattleEffect_RunHealingMotes` | [`healing.c`](parts/healing.c) | healing motes swirling in to each target |
+| `BattleEffect_RunStreakVolley` | [`streaks.c`](parts/streaks.c) | streaks fired from above the user at each target |
+| `BattleEffect_RunRushingStrike` | [`rushing_strike.c`](parts/rushing_strike.c) | the user rushes at the first target and strikes |
+| `BattleEffect_RunBurstScene` | [`burst_scene.c`](parts/burst_scene.c) | a flurry of strikes on the first target |
+| `BattleEffect_RunGrowingColumns` | [`growth.c`](parts/growth.c) | vines or green pillars growing from the ground |
+| `BattleEffect_RunSparkGroups` | [`plasma.c`](parts/plasma.c) | flashes and bouncing sparks in one or three bursts |
+| `BattleEffect_RunDjinnBeams` | [`djinn_beams.c`](parts/djinn_beams.c) | a Djinni appears, then columns of light fall on the targets; passed an element rather than a mode |
 
-Smaller runners, such as `BattleFx_RunMirroredWall` and
-`BattleFx_RunGatheringLights`, have two or three members each. The sections
+Smaller runners, such as `BattleEffect_RunMirroredWall` and
+`BattleEffect_RunGatheringLights`, have two or three members each. The sections
 below cover the families whose shared state is easier to follow told as a whole
 than piece by piece in the code.
 
@@ -526,7 +526,7 @@ The prelude is a Djinni's entrance that some effects play first, when
 ```mermaid
 sequenceDiagram
     participant E as Effect handler
-    participant D as BattleFx_RunDjinniEntrance
+    participant D as BattleEffect_RunDjinniEntrance
     participant C as Canvas layer
     E->>E: effect->prelude is 1?
     E->>D: play the entrance
@@ -538,7 +538,7 @@ sequenceDiagram
 ```
 
 The effects that test it (in `bind.c`, `burst_scene.c`, `djinn_beams.c`,
-`projectiles.c` and `stat_change.c`) first play `BattleFx_RunDjinniEntrance`
+`projectiles.c` and `stat_change.c`) first play `BattleEffect_RunDjinniEntrance`
 ([`projectiles.c`](parts/projectiles.c)): sparks gather into a Djinni that
 sways and, in its long form (`DJINNI_ENTRANCE_LONG`), bursts into motes. It
 opens the canvas layer, leaves it open and cleared, and the effect that
@@ -554,7 +554,7 @@ eight Djinn and many weapons' unleashes.
 
 The attacks of eight Djinn (Bane, Smog, Mist, Fever, Flint, Scorch, Squall and
 Sap) and many weapons' unleashes, such as Terra Strike, Meltdown and Asura, are
-casting impacts: `BattleFx_RunCastingImpact`
+casting impacts: `BattleEffect_RunCastingImpact`
 ([`casting_impact.c`](parts/casting_impact.c)), passed the kind less 100 as an
 `enum CastingImpact`. Each runs in four phases, marked in the code:
 
@@ -574,7 +574,7 @@ casting impacts: `BattleFx_RunCastingImpact`
    first six frames. The damage shows on frame 3, the heavy impact sounds on
    frame 4, and the target is knocked back on frame 6 and flashes on frames 6
    and 14.
-4. The release, or for Meltdown a hand-over to `BattleFx_RunImpair`, a stat
+4. The release, or for Meltdown a hand-over to `BattleEffect_RunImpair`, a stat
    reduction.
 
 `work->particles` holds the gathering sparks and then 32 scattering sparks
@@ -709,7 +709,7 @@ trail's `variant` is its life. [Particles](#particles) shows Heat Wave's
 volley in both pools.
 
 A rushing strike ([`rushing_strike.c`](parts/rushing_strike.c)) moves the user
-at the first target with `BattleFx_SetApproachMotion` (`projectiles.c`), strikes
+at the first target with `BattleEffect_SetApproachMotion` (`projectiles.c`), strikes
 on `RUSHING_STRIKE_FRAME`, flares a ring and scatters
 `RUSHING_STRIKE_SPARK_COUNT` sparks, over `RUSHING_STRIKE_FRAMES` in all. Its
 burst picture is stored as its top half, drawn again upside down beneath
@@ -739,7 +739,7 @@ higher variants; Fire ([`fire.c`](parts/fire.c)) sends embers out of the user
 that hang and then home in on the targets; Frost ([`frost.c`](parts/frost.c))
 spirals motes around the target while ice columns spring up, then bursts them;
 and Blast and Smoke Bomb ([`eruption.c`](parts/eruption.c),
-`BattleFx_RunEruption`) burst a fountain of motes and smoke beside the
+`BattleEffect_RunEruption`) burst a fountain of motes and smoke beside the
 targets. Each marks a particle's state in its own way, as its comments say:
 Flare's negative `variant` is the wait before a flame starts, Fire's -1 an
 ember in flight.
@@ -756,7 +756,7 @@ each target in turn.
 
 ![Isaac casts Cure on Ivan, fighting beside him against a Vermin, and a ring of glittering light gathers on the ground around Ivan and closes in on him until he flashes white.](https://alchemy.pascalpixel.com/abilities/cure.gif)
 
-The seven are modes of `BattleFx_RunHealingMotes`
+The seven are modes of `BattleEffect_RunHealingMotes`
 ([`healing.c`](parts/healing.c), `enum HealingMotesMode`): Ply, Wish, Cure,
 Cure Poison's two (`HEALING_MODE_CURE_POISON` and `HEALING_MODE_RESTORE`), Tonic
 and Psy Crystal. Each target gets a swarm of motes around a point 40 pixels
@@ -782,7 +782,7 @@ target's slots.
 A target strike plays repeated slashes or columns of light on the first
 target, for monster attacks such as Cannibal Fang, Poison Tail and Twin Beaks.
 
-These attacks are styles of `BattleFx_RunTargetStrike`
+These attacks are styles of `BattleEffect_RunTargetStrike`
 ([`target_strike.c`](parts/target_strike.c)). A style
 (`enum TargetStrikeStyle`, twelve of them) gives its strike kind
 (`STRIKE_KIND_SLASH`, a sideways slash, or `STRIKE_KIND_COLUMN`, a column of
@@ -858,7 +858,7 @@ it, and they sit in the ROM in the order of the functions that use them.
 | [`effect_internal.h`](effect_internal.h) | the includes, macros and helpers every part shares |
 | `parts/*.c` | the effects, in 66 parts |
 | [`effect_table.c`](effect_table.c) | the effects' tables in the order the code uses them (picture cells, sizes, offsets, frame lists) and the handler table |
-| [`effect_bits.c`](effect_bits.c) | `gBattleFx_BitOperands` |
+| [`effect_bits.c`](effect_bits.c) | `gBattleEffect_BitOperands` |
 | [`battle_effect_composite.s`](battle_effect_composite.s), [`battle_effect_composite_color.s`](battle_effect_composite_color.s) | the template and fragments blitters are built from |
 
 The headers are in `include/unit/effect/`: [`effect.h`](../../include/unit/effect/effect.h)
@@ -903,7 +903,7 @@ The same locals have the same names in every handler:
 
 ## Function prefixes
 
-Functions are named `BattleFx_` unless they act on one thing the engine names
+Functions are named `BattleEffect_` unless they act on one thing the engine names
 elsewhere, which keeps its own prefix. Helpers private to one part start with
 their family's name, like the `CastingImpact_` ones in `casting_impact.c`.
 Where a site keeps an unusual spelling to match, [Matching](../MATCHING.md)
@@ -911,7 +911,7 @@ lists it.
 
 | Prefix | What it acts on |
 | --- | --- |
-| `BattleFx_` | the effects, their entry points, the canvas, blitters and pictures |
+| `BattleEffect_` | the effects, their entry points, the canvas, blitters and pictures |
 | `Camera_`, `Palette_`, `Graphics_`, `Display_`, `Resource_` | the engine's camera, palettes, graphics, display and resources |
 | `EffectStep_`, `EffectPosition_` | a particle, and a position an effect works out |
 | `BattleUnit_` | a unit's height and place on screen |
@@ -930,9 +930,9 @@ read the effect's work block, its canvas in character block 1 and
 `PARTICLES` after every frame.
 
 Three handlers are unused, and are named from what they draw:
-`BattleFx_RunUnusedOrbitingSpirals` (`planet_diver.c`),
-`BattleFx_RunUnusedTriangleStrike` (`bind.c`) and
-`BattleFx_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is reached
+`BattleEffect_RunUnusedOrbitingSpirals` (`planet_diver.c`),
+`BattleEffect_RunUnusedTriangleStrike` (`bind.c`) and
+`BattleEffect_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is reached
 only with a kind from an `actflags.tsv` row, through the plan's
 `presentationFlags`: the plan changes only the variant and the staging bits,
 the auto battle passes kind 0, and a critical hit's offset applies only to
@@ -968,7 +968,7 @@ largest range any effect reserves is 1,024 particles, 28 KB
 (`gathering_lights.c`, `helm_splitter.c`, `lobbed_shells.c`, `neptune.c`,
 `nereid.c`, `plasma.c`, `projectiles.c` and `target_strike.c`).
 
-`BattleFx_DispatchByIdRange` sizes its sheet slot `0x60e` bytes. The largest
+`BattleEffect_DispatchByIdRange` sizes its sheet slot `0x60e` bytes. The largest
 picture its three runners decode there is `ParticleSpritesD`'s ten flare cells,
 2 by 2 to 20 by 20 pixels, 1,540 bytes (`2 * MOTE_SET_BYTES`); the slot's last
 10 bytes are never written.

@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunGaia, effect kind 3: a wall of rock rises and sinks.
+// Draft of BattleEffect_RunGaia, effect kind 3: a wall of rock rises and sinks.
 
 // On screen: the background darkens, the ground in front of the caster
 // heaves up in a mound (frames 0-81), then a wall of rock grows out of it,
@@ -22,7 +22,7 @@
 // Teardown: the callback, both blitters and the rock objects are released
 // and the canvas layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunGaia (kind 3 there too),
+// Port of The Broken Seal's BattleEffect_RunGaia (kind 3 there too),
 // with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
 // callback order, no work->effect store, and the rock object's flags at
 // 0x1a.
@@ -51,7 +51,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -115,14 +115,14 @@ extern u16 gData_08197410[];
 // ☀️'s gRisingWall_UnitScale.
 extern struct Scale Data_08196e44;
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
-void BattleFx_EndCanvasLayer(void);
-// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
+void BattleEffect_EndCanvasLayer(void);
+// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // Copies the canvas to VRAM when a transfer is pending.
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -147,7 +147,7 @@ void Func_08158ce0(s32 randomMask, s32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
-void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -168,7 +168,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
 
   // The larger variants stretch the wall wider: BG2 at 1.25 and 1.5.
   if (effect->variant == 0)
@@ -256,10 +256,10 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     }
   }
   // Two max blitters, the second mirrored for the right half.
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                       COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -268,7 +268,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // A rock's x is its column, y counts down from 128 by z, velocityX cycles
   // 1 to 12 as its animation step, and variant is its wait before it flies.
@@ -463,10 +463,10 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   for (i = 0; i != ROCK_COUNT; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

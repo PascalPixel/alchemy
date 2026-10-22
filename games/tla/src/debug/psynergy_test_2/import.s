@@ -199,6 +199,6 @@ Func_02000600:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87d0
 	.else
-	overlay_veneer BattleFx_StepVector3Far
+	overlay_veneer BattleEffect_StepVector3Far
 	.endif
 	.endif

@@ -89,7 +89,7 @@ void ObjectSystem_UpdateCameraFixed(void);
 // Spanish and Italian builds use different names for these two far calls,
 // as in shop.c.
 void Func_080c8368(s32, s32);
-void BattleFx_ApplyColorToSourceBufferFar(s32);
+void BattleEffect_ApplyColorToSourceBufferFar(s32);
 #endif
 
 void Graphics_EnableObjLayerAndCallbacks(void) {
@@ -99,10 +99,10 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
   Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368(0x10000, 1);
-  BattleFx_ApplyColorToSourceBufferFar(1);
+  BattleEffect_ApplyColorToSourceBufferFar(1);
 #else
-  BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
-  BattleFx_StartBufferInterpolationFar(1);
+  BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
+  BattleEffect_StartBufferInterpolationFar(1);
 #endif
   WaitFrames(1);
   dispcnt = REG_DISPCNT;

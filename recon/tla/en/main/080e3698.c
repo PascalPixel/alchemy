@@ -3,7 +3,7 @@
 // WaitFrames' 1 before the z copy; here a row later and earlier. The saved
 // facing as an s32 measured 4, as a u16 or s16 local 84.
 // An event sequence that spins an actor up and back down. The camera
-// stops following, the actor takes BattleFx_SpinObject as its update, and a
+// stops following, the actor takes BattleEffect_SpinObject as its update, and a
 // stretched object 280 rides six units below it while for 128 frames the
 // actor rises and falls 96 units on a cosine and circles its start on a
 // 32-unit cosine radius, turning 0x400 a frame. It then lands where it
@@ -26,7 +26,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
 void EventRuntime_Wait(s32 frames);
 void Object_Destroy(struct ObjectRuntime *object);
 void Camera_FollowActor(s32 actor, s32 mode);
-void BattleFx_SpinObject(void);
+void BattleEffect_SpinObject(void);
 
 void Func_080e3698(s32 actor) {
   struct ObjectRuntime *object = Object_GetById(actor);
@@ -40,7 +40,7 @@ void Func_080e3698(s32 actor) {
 
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   object->motionFlags = 0;
-  object->update = BattleFx_SpinObject;
+  object->update = BattleEffect_SpinObject;
   ring = Object_Spawn(280, object->x, object->y, object->z);
   Object_SetMode(ring, 2);
   ring->scaleX = 0x18000;

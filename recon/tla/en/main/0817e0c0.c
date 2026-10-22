@@ -1,8 +1,8 @@
 // Draft (tla-en): listing 601 instructions, draft 600, common 530, differ 141.
 // The body of effect kinds 311, 314, 326, 339, 433 and 457 (variant_j.c's
-// BattleFx_RunBoneCharge to BattleFx_RunLivingArmor pass modes 4, 1, 2, 3, 4 and 5). Written
+// BattleEffect_RunBoneCharge to BattleEffect_RunLivingArmor pass modes 4, 1, 2, 3, 4 and 5). Written
 // from the listing on ☀️'s skeleton; its nearest ☀️ shape is
-// BattleFx_RunRushingStrike (0.54), which is no twin.
+// BattleEffect_RunRushingStrike (0.54), which is no twin.
 // Written 2026-10-15 (lane N2). The frame matches (texture sp+44, the
 // blitter pair sp+52, screen sp+60, caster sp+72, target sp+84; mode,
 // canvas, frame, camera and the spark cels spilled at sp+40 down to sp+24).
@@ -32,7 +32,7 @@
 // 2026-10-19 (run 33): work declared before canvas (the native loads canvas
 // into r2 and work into r1 for r9): 145 to 141.
 // Resources 0x134 (Resource_Data134), 0xc2 (Resource_Data0C2), 0x181
-// (Resource_Data181), 0x13e (BattleFx_FlashBurstSheet), 0x186, 0x17d,
+// (Resource_Data181), 0x13e (BattleEffect_FlashBurstSheet), 0x186, 0x17d,
 // 0x17f, 0x184 and 0x148 need names in system/resource/directory.s when
 // this is adopted.
 #include "battle_effect.h"
@@ -109,12 +109,12 @@ extern const s32 Data_081994b8[];
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
 extern const u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
-void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
+void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ProjectBattler(
@@ -133,14 +133,14 @@ void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A lunge. The caster runs 80 percent of the way to the target in ten
 // frames behind a glowing streak (a 32x32 flare and its reflection); on
@@ -172,9 +172,9 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   s32 brightness;
   s32 resource;
 
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
 
@@ -207,10 +207,10 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The caster lunges at the target.
-  BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
+  BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
   ObjectDispatch_SetAnimationSpeedFar(
       GetBattleObjectSlotFar(effect->actor)->object, 48);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
@@ -339,7 +339,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
           screen.x >>= 1;
           draw[i & 1](canvas, sparkCels + gData_08197410[size - 1],
                       screen.x - size / 2, screen.y - size, size, size * 2);
-          BattleFxKernels_IntegrateVector3(spark, 60, -0x200);
+          BattleEffectKernels_IntegrateVector3(spark, 60, -0x200);
           spark->variant--;
         }
       }
@@ -358,7 +358,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
             screen.x >>= 1;
             draw[0](canvas, work->sheet + 0x800 + (cel << 11), screen.x - 16,
                     screen.y - 32, 32, 64);
-            BattleFxKernels_IntegrateVector3(burst, 60, 0x2000);
+            BattleEffectKernels_IntegrateVector3(burst, 60, 0x2000);
             burst->variant++;
           }
         }
@@ -371,8 +371,8 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

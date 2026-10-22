@@ -5,14 +5,14 @@
 #include "palbuf.h"
 #include "edition.h"
 
-void BattleFx_ApplyColorToTargetBuffer(s32 colors, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 void GameFlag_ClearBit(s32 flag);
 
 void GameFlag_SetBit(s32 flag);
 
 // The Spanish and Italian far-call tables reach this function under another
-// slot's name (BattleFx_GetObjectPriority); those two editions keep it on their
+// slot's name (BattleEffect_GetObjectPriority); those two editions keep it on their
 // scaffold (S4).
 #if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void Field_BeginColorTransition(s32 frames, s32 color) {
@@ -26,9 +26,9 @@ void Field_BeginColorTransition(s32 frames, s32 color) {
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
   Dma_Set(buffers->target, buffers->current,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
-  BattleFx_ApplyColorToTargetBuffer(0x200000 | color, 1);
+  BattleEffect_ApplyColorToTargetBuffer(0x200000 | color, 1);
   GameFlag_SetBit(0x108);
-  BattleFx_StartBufferInterpolation(frames);
+  BattleEffect_StartBufferInterpolation(frames);
 }
 #endif
 
@@ -36,11 +36,11 @@ void Field_BeginPaletteTransition(s32 frames) {
   u8 *state = Ram_HeapSlots->eventWork;
   s32 colors = (s32)(state + 0x222);
 
-  BattleFx_ApplyColorToTargetBuffer(colors, 2);
+  BattleEffect_ApplyColorToTargetBuffer(colors, 2);
   if (*(s8 *)(state + 0xca4) != 0)
-    BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
+    BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
   else
-    BattleFx_ApplyColorToTargetBuffer(colors, 1);
+    BattleEffect_ApplyColorToTargetBuffer(colors, 1);
   GameFlag_ClearBit(0x108);
-  BattleFx_StartBufferInterpolation(frames);
+  BattleEffect_StartBufferInterpolation(frames);
 }

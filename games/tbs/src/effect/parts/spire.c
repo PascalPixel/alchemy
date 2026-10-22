@@ -24,7 +24,7 @@
 ///
 /// effect: the targets; its variant picks the number of boulders
 ///         (gSpire_RockCounts: 1, 3 or 5).
-void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;

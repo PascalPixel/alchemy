@@ -8,7 +8,7 @@ void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent) {
   struct BattleObj *slot;
   struct MotionObject *object;

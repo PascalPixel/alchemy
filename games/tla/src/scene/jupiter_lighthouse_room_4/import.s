@@ -302,10 +302,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -342,10 +342,10 @@ Func_02001ed8:
 	.thumb_func
 Func_02001ee0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif
@@ -354,10 +354,10 @@ Func_02001ee0:
 	.thumb_func
 Func_02001ee8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectTickModeFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectTickModeFar
 	.else
 	overlay_veneer Func_080c8830
 	.endif

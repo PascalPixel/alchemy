@@ -14,7 +14,7 @@
 /// Called once a frame, so a palette arrives in at most 31 frames: by the
 /// casting impacts, Ragnarok, the Titan Blade and Ground (hail.c). Reads
 /// and rewrites background palette RAM.
-void BattleFx_StepPaletteToResource(s32 resourceId) {
+void BattleEffect_StepPaletteToResource(s32 resourceId) {
   u16 target[64];
   u16 *color = (u16 *)BG_PLTT;
   s32 i;
@@ -51,7 +51,7 @@ static inline void CastingImpact_LoadResource(const void *id, void *dest,
                                               s32 skip, s32 copy) {
   /* FAKEMATCH(wrapper): the orb's load through this helper, so the packing
    * loads Ram_MapCellBuffer again; as a direct call in
-   * BattleFx_RunCastingImpact, 75 of 3070 instructions differ in tbs-en. */
+   * BattleEffect_RunCastingImpact, 75 of 3070 instructions differ in tbs-en. */
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
@@ -59,8 +59,8 @@ static inline void CastingImpact_LoadResource(const void *id, void *dest,
 static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
                                           s32 height) {
   /* FAKEMATCH(wrapper): the orb's packing through this helper, which loads
-   * the buffer's address last; as a direct call in BattleFx_RunCastingImpact,
-   * 72 of 3070 instructions differ in tbs-en. */
+   * the buffer's address last; as a direct call in
+   * BattleEffect_RunCastingImpact, 72 of 3070 instructions differ in tbs-en. */
   Graphics_PackTileRows(src, dest, width, height);
 }
 
@@ -70,7 +70,8 @@ static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
                                            DrawRectangle *draw) {
   /* FAKEMATCH(wrapper): four draws through this helper, which keeps the
    * frame at 184 bytes and loads the image's address late; as direct calls in
-   * BattleFx_RunCastingImpact, 468 of 3070 instructions differ in tbs-en. */
+   * BattleEffect_RunCastingImpact, 468 of 3070 instructions differ in tbs-en.
+   */
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
@@ -79,7 +80,7 @@ static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
                                                s32 x, s32 y, s32 width,
                                                DrawRectangle *draw) {
   /* FAKEMATCH(wrapper): the flame's draw through this helper, a call of its
-   * own; as a direct call with 64 in BattleFx_RunCastingImpact, merged into
+   * own; as a direct call with 64 in BattleEffect_RunCastingImpact, merged into
    * another draw's call, 61 of 3070 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, width * 2);
 }
@@ -92,7 +93,7 @@ static inline void CastingImpact_DrawScrolledImage(void *canvas,
                                                    DrawRectangle *draw) {
   /* FAKEMATCH(wrapper): the column's lower tile through this helper, which
    * subtracts the scroll inside it; as a direct call in
-   * BattleFx_RunCastingImpact, 29 of 3070 instructions differ in tbs-en. */
+   * BattleEffect_RunCastingImpact, 29 of 3070 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
@@ -103,14 +104,14 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
                                                   DrawRectangle *draw) {
   /* FAKEMATCH(wrapper): two draws through this helper, which loads the
    * image's address last; as direct blitter calls with 91 in
-   * BattleFx_RunCastingImpact, 8 of 3070 instructions differ in tbs-en. */
+   * BattleEffect_RunCastingImpact, 8 of 3070 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, 91);
 }
 
 /// Clears the prelude image, stops its callbacks and releases its blitters
 /// before the next effect takes over.
 ///
-/// Called by BattleFx_RunCastingImpact for the impacts that hand off after
+/// Called by BattleEffect_RunCastingImpact for the impacts that hand off after
 /// the gathering (15, 17, 24, 26 and Severe Blow); Meltdown's end does the
 /// same inline. Clears the canvas and its VRAM (character block 1) and
 /// work->effect->prelude, removes Palette_StepFadeTransfer and the canvas
@@ -121,7 +122,7 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   work->effect->prelude = 0;
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
 }
 
@@ -224,18 +225,19 @@ enum CastingImpact {
 /// (CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME); none
 /// (CASTING_IMPACT_IMPACT_UNUSED_COMETS).
 ///
-/// Called only by BattleFx_DispatchByIdRange (positions.c), for effect kinds
-/// 100 to 135. The phases, the hand-offs and the particle ranges are in the
-/// folder README under "Effect families". Opens the canvas layer (tiled for
+/// Called only by BattleEffect_DispatchByIdRange (positions.c), for effect
+/// kinds 100 to 135. The phases, the hand-offs and the particle ranges are in
+/// the folder README under "Effect families". Opens the canvas layer (tiled for
 /// Terra Strike, Mortal Danger and Asura), writes the background palette,
 /// BG2's scale and reference and REG_BLDALPHA, holds the caster still while
-/// the sparks gather, and adds BattleFx_ArmBg2AffineHBlankDma for the waving
-/// impacts; it releases all of them before it returns, or hands them on.
+/// the sparks gather, and adds BattleEffect_ArmBg2AffineHBlankDma for the
+/// waving impacts; it releases all of them before it returns, or hands them on.
 ///
 /// mode: the impact, an enum CastingImpact (the effect kind less 100). The
 ///       tests on mode 100 never hold, as the dispatcher passes only
 ///       CastingImpact values.
-void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   void **slots;
   void **slot;
   s32 alive;
@@ -289,9 +291,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER ||
       mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE ||
       mode == CASTING_IMPACT_IMPACT_ASURA) {
-    BattleFx_BeginTiledCanvas(0);
+    BattleEffect_BeginTiledCanvas(0);
   } else {
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -424,7 +426,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   /* FAKEMATCH(temporary): the results named by pointers set inside their
    * calls; as &targetPos, &casterPos and blitters used directly, 69 of 3070
@@ -433,9 +435,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
                                       targetScreen = &targetPos);
   EffectPosition_ProjectScaledBattler(work->effect->actor,
                                       casterScreen = &casterPos);
-  BattleFx_FetchRectangleBlitters(work->effect->side, drawPair = blitters);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, drawPair = blitters);
   // The background palette fade over 24 frames (Palette_StepFadeTransfer,
-  // added by BattleFx_BeginCanvasLayer).
+  // added by BattleEffect_BeginCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
   casterActor = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -581,15 +583,15 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     CastingImpact_EndPrelude(work, canvas);
     ObjectDispatch_SelectAnimationFar(casterActor, POSE_CAST);
     if (mode == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS) {
-      BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_BLIZZARD);
+      BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_BLIZZARD);
     }
     if (mode == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME) {
-      BattleFx_RunMysticFlame(effect);
+      BattleEffect_RunMysticFlame(effect);
     }
     if (mode != CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
       return;
     }
-    BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_IMPACT_COMETS);
+    BattleEffect_RunProjectileVolley(effect, PROJECTILE_VOLLEY_IMPACT_COMETS);
     return;
   }
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)casterActor, 16);
@@ -597,12 +599,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   casterActor->acceleration = savedAcceleration;
   casterActor->verticalMotionStrength = savedVerticalStrength;
   // Severe Blow, with the caster's motion back, clears the canvas and hands
-  // off to BattleFx_RunSparkGroups' rising sparks, with
+  // off to BattleEffect_RunSparkGroups' rising sparks, with
   // SPARK_GROUPS_SEVERE_BLOW.
   if (mode == CASTING_IMPACT_IMPACT_SEVERE_BLOW) {
     CastingImpact_EndPrelude(work, canvas);
     effect->variant = SPARK_GROUPS_SEVERE_BLOW;
-    BattleFx_RunSparkGroups(effect, SPARK_GROUPS_RISING);
+    BattleEffect_RunSparkGroups(effect, SPARK_GROUPS_RISING);
     return;
   }
 
@@ -692,7 +694,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       mode == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
       mode == CASTING_IMPACT_IMPACT_MURK ||
       mode == CASTING_IMPACT_IMPACT_BLINDING_SMOG) {
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+    Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
                                   EFFECT_CALLBACK_ORDER);
   }
 
@@ -735,7 +737,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   while (frame != duration) {
     // BG2 wave table: BG2X for each scanline. It is built for every impact
     // but Mortal Danger and Asura, and shows only for the six waving impacts,
-    // for which BattleFx_ArmBg2AffineHBlankDma was added above.
+    // for which BattleEffect_ArmBg2AffineHBlankDma was added above.
     if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       if (mode != CASTING_IMPACT_IMPACT_ASURA) {
         s32 base;
@@ -779,51 +781,51 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     // listed keep the faded one.
     switch (mode) {
     case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
       break;
     case CASTING_IMPACT_IMPACT_AQUA_SOCK:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
       break;
     case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_RuneSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_RuneSheet);
       break;
     case CASTING_IMPACT_IMPACT_TERRA_STRIKE:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
       break;
     case CASTING_IMPACT_IMPACT_BANE:
     case CASTING_IMPACT_IMPACT_DEADLY_POISON:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
       break;
     case CASTING_IMPACT_IMPACT_BAD_OMEN:
     case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
     case CASTING_IMPACT_IMPACT_ACID_BATH:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
       break;
     case CASTING_IMPACT_IMPACT_LIFE_LEECH:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
       break;
     case CASTING_IMPACT_IMPACT_PSY_LEECH:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
       break;
     case CASTING_IMPACT_IMPACT_MIST:
     case CASTING_IMPACT_IMPACT_MURK:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_TanPalette);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
       break;
     case CASTING_IMPACT_IMPACT_SMOG:
     case CASTING_IMPACT_IMPACT_BLINDING_SMOG:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_CyanPalette);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
       break;
     case CASTING_IMPACT_IMPACT_FEVER:
     case CASTING_IMPACT_IMPACT_BROIL:
     case CASTING_IMPACT_IMPACT_HEAT_MIRAGE:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
       break;
     case CASTING_IMPACT_IMPACT_POISON_CLOUD:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_LimePalette);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_LimePalette);
       break;
     case CASTING_IMPACT_IMPACT_SCORCH:
     case CASTING_IMPACT_IMPACT_BARRAGE:
-      BattleFx_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
       break;
     }
     // The orb on frames 4 to 15, at the target's x but the caster's height
@@ -898,7 +900,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
             s32 size = (i & 1) + 6;
             EffectPosition_ProjectPoint(step, &projected);
             projected.x >>= 1;
-            blitters[0](canvas, sprites + gBattleFx_MoteCells[size - 1],
+            blitters[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
                         projected.x - (u32)size / 2, projected.y - size, size,
                         size * 2);
             EffectStep_AdvanceWithGravity3D(step, 62, 0);
@@ -917,7 +919,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_MELTDOWN) {
-      // Draw nothing; finish with BattleFx_RunImpair.
+      // Draw nothing; finish with BattleEffect_RunImpair.
     } else if (mode == CASTING_IMPACT_IMPACT_SQUALL ||
                mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE) {
       // Two 24x104 bolts strike the target from frame 6 to 19, three frames
@@ -947,11 +949,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
           imageX <<= 3;
           imageX >>= 16;
           imageX += targetScreen->x / 2;
-          imageX -= gBattleFx_GlintCellWidths[image] / 2;
+          imageX -= gBattleEffect_GlintCellWidths[image] / 2;
           imageY = Trig_Cos(angle);
           imageY <<= 5;
           imageY >>= 16;
-          imageY -= gBattleFx_GlintCellHeights[image] / 2;
+          imageY -= gBattleEffect_GlintCellHeights[image] / 2;
           EFFECT_RELEASE_BLITTERS();
           drawFlags = Random16();
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -959,11 +961,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
                                   EFFECT_CLIP_BOUNDS,
                               COMPOSITE_MAX);
           ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[image], imageX,
-              imageY + 56, gBattleFx_GlintCellWidths[image],
-              gBattleFx_GlintCellHeights[image]);
+              canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[image],
+              imageX, imageY + 56, gBattleEffect_GlintCellWidths[image],
+              gBattleEffect_GlintCellHeights[image]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-          BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
+          BattleEffect_FetchRectangleBlitters(work->effect->side, blitters);
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
@@ -1029,7 +1031,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
+      BattleEffect_FetchRectangleBlitters(work->effect->side, blitters);
     } else if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
       s32 height;
       EFFECT_RELEASE_BLITTERS();
@@ -1051,7 +1053,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
                                 height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       }
-      BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
+      BattleEffect_FetchRectangleBlitters(work->effect->side, blitters);
     } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
       // From frame 6 a tornado of three stacked 40x32 strips stands over the
       // target, cycling three pictures of two frames each; from frame 16 it
@@ -1221,7 +1223,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         if (frame >= i + 6 && frame < i + 18) {
           s32 image = (frame - i - 6) / 2;
           s32 imageX =
-              targetScreen->x / 2 - gBattleFx_PuffArcCellWidths[image] / 2;
+              targetScreen->x / 2 - gBattleEffect_PuffArcCellWidths[image] / 2;
           s32 mirrored;
           if (i & 1)
             imageX += (1 + i) / 2 * 3;
@@ -1233,11 +1235,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
             if (((i - 1) & 3) > 1)
               mirrored = 1;
           }
-          blitters[mirrored](canvas,
-                             Ram_MapCellBuffer + gBattleFx_PuffArcCells[image],
-                             imageX, gBattleFx_PuffArcCellBiasY[image] + 48,
-                             gBattleFx_PuffArcCellWidths[image],
-                             gBattleFx_PuffArcCellHeights[image]);
+          blitters[mirrored](
+              canvas, Ram_MapCellBuffer + gBattleEffect_PuffArcCells[image],
+              imageX, gBattleEffect_PuffArcCellBiasY[image] + 48,
+              gBattleEffect_PuffArcCellWidths[image],
+              gBattleEffect_PuffArcCellHeights[image]);
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_FROST_BITE) {
@@ -1437,9 +1439,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     Iwram_ClearWords(canvas, CANVAS_BYTES);
     work->effect->prelude = 0;
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
-    BattleFx_RunImpair(effect);
+    BattleEffect_RunImpair(effect);
   } else {
     if (mode == CASTING_IMPACT_IMPACT_MIST ||
         mode == CASTING_IMPACT_IMPACT_FEVER ||
@@ -1447,7 +1449,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         mode == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
         mode == CASTING_IMPACT_IMPACT_BLINDING_SMOG ||
         mode == CASTING_IMPACT_IMPACT_MURK) {
-      Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+      Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
     }
     EFFECT_FINISH_CANVAS();
   }

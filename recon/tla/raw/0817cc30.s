@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Ocean Fist (kind 447).
-	.global BattleFx_RunOceanFist
+	.global BattleEffect_RunOceanFist
 	.thumb_func
-BattleFx_RunOceanFist:
+BattleEffect_RunOceanFist:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_RunOceanFist:
 	str r3, [sp, #20]
 	bl Func_0813ba50
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0817cc9c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -35,7 +35,7 @@ BattleFx_RunOceanFist:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #16]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r0, .L_0817cca4
 	adds r1, r5, #0
 	movs r2, #1
@@ -160,7 +160,7 @@ BattleFx_RunOceanFist:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 .L_0817cd7c:
 	mov r2, r11
 	cmp r2, #38
@@ -333,7 +333,7 @@ BattleFx_RunOceanFist:
 	adds r0, r5, #0
 	movs r1, #62
 	ldr r2, .L_0817d058
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r0, [r5, #24]
 .L_0817cec6:
 	adds r6, r0, #1
@@ -525,7 +525,7 @@ BattleFx_RunOceanFist:
 .L_0817d044:
 	.4byte IwramCopyWords
 .L_0817d048:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817d04c:
 	.4byte Data_02010018
 .L_0817d050:
@@ -562,7 +562,7 @@ BattleFx_RunOceanFist:
 	adds r0, r5, #0
 	movs r1, #62
 	lsls r2, r2, #7
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	b .L_0817d0aa
 .L_0817d098:
 	ldr r3, .L_0817d16c
@@ -572,7 +572,7 @@ BattleFx_RunOceanFist:
 	ldr r2, [r3, r2]
 	adds r0, r5, #0
 	movs r1, #62
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_0817d0aa:
 	ldr r3, [r5, #24]
 	adds r3, #1
@@ -661,7 +661,7 @@ BattleFx_RunOceanFist:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -673,4 +673,4 @@ BattleFx_RunOceanFist:
 .L_0817d16c:
 	.4byte Data_081994a8
 .L_0817d170:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

@@ -240,13 +240,13 @@ Func_080ce0ac:
 	adds r6, #182
 	adds r0, r5, #0
 	movs r1, #0
-	bl BattleFx_LoadActionEffectResources
+	bl BattleEffect_LoadActionEffectResources
 	add r6, r8
 	movs r2, #0
 	movs r5, #1
 	mov r8, r2
 	strb r5, [r6]
-	bl BattleFx_Run
+	bl BattleEffect_Run
 	mov r3, r8
 	strb r3, [r6]
 	bl BattleEffect_CleanupSceneObjects

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Torch (kind 214).
-	.global BattleFx_RunTorch
+	.global BattleEffect_RunTorch
 	.thumb_func
-BattleFx_RunTorch:
+BattleEffect_RunTorch:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -21,7 +21,7 @@ BattleFx_RunTorch:
 	movs r0, #128
 	lsls r0, r0, #6
 	str r3, [sp, #16]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r2, [sp, #20]
 	movs r3, #70
 	ldr r1, [r2, #4]
@@ -45,7 +45,7 @@ BattleFx_RunTorch:
 	ldr r3, [sp, #20]
 	add r1, sp, #24
 	ldr r0, [r3, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10
@@ -250,13 +250,13 @@ BattleFx_RunTorch:
 .L_08163aa0:
 	.4byte 0x00001000
 .L_08163aa4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08163aa8:
 	.4byte IwramFillWords + 0x74
 .L_08163aac:
 	.4byte Data_02010002
 .L_08163ab0:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_08163ab4:
 	.4byte 0x04000208
 .L_08163ab8:
@@ -399,7 +399,7 @@ BattleFx_RunTorch:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -418,6 +418,6 @@ BattleFx_RunTorch:
 .L_08163bf4:
 	.4byte Data_02010002
 .L_08163bf8:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_08163bfc:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

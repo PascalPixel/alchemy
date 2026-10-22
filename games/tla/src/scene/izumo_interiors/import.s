@@ -147,7 +147,7 @@ Func_02002294:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8490
 	.else
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.endif
 	.endif
 	.global Func_0200229c
@@ -159,17 +159,17 @@ Func_0200229c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_020022a4
 	.thumb_func
 Func_020022a4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.endif
@@ -178,10 +178,10 @@ Func_020022a4:
 	.thumb_func
 Func_020022ac:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.endif
@@ -251,7 +251,7 @@ Func_020022e4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87f8
 	.else
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.endif
 	.endif
 	.global Func_020022ec
@@ -263,31 +263,31 @@ Func_020022ec:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.endif
 	.endif
 	.global Func_020022f4
 	.thumb_func
 Func_020022f4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
-	overlay_veneer BattleFx_WaitForArcGroupsFar
+	overlay_veneer BattleEffect_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_020022fc
 	.thumb_func
 Func_020022fc:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
-	overlay_veneer BattleFx_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectTickModeFar
 	.endif
 	.endif
 	.global Func_02002304

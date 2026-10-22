@@ -147,6 +147,6 @@ Func_080e3698:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e37d8:
-	.4byte BattleFx_SpinObject
+	.4byte BattleEffect_SpinObject
 .L_080e37dc:
 	.4byte 0xfffa0000

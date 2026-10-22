@@ -1,11 +1,11 @@
 // Near miss of Func_081539d0, an unused effect (no caller): differ 14 of
 // 272 (draft 272).
 
-// Twin: The Broken Seal's BattleFx_RunSwirlingStars (effect.c), call for
+// Twin: The Broken Seal's BattleEffect_RunSwirlingStars (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
 // blocks as Ram_HeapSlots fields and orders the callback 0xc80.
 // ResourceId_StarDotSheet is row 0x14f of directory.s (asset
-// BattleFx_StarDotSheet), not yet named there.
+// BattleEffect_StarDotSheet), not yet named there.
 
 // Left: seven reordered pairs, each the native placing a load one row
 // earlier (the particle base before the blitter call, the second loop's
@@ -31,20 +31,20 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair);                // BattleFx_FetchRectangleBlitters
+    DrawRectangle *pair);                // BattleEffect_FetchRectangleBlitters
 void Func_080150e4(s32 angle);           // SceneTransform_ApplyRoll
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
 #define STARS ((struct EffectStep *)Ram_MapCellBuffer)
 
 extern char ResourceId_StarDotSheet;
-extern u16 gData_08197410[]; // gBattleFx_MoteCells
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
@@ -65,9 +65,9 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
-  BattleFx_FetchRectangleBlitters(effect->side ^ 1, draw);
+  BattleEffect_FetchRectangleBlitters(effect->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
     star->x = ((Random16() & 0xff) - 127) << 16;
@@ -80,7 +80,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   record[0] = 0;
   record[1] = 160 << 15;
   record[2] = 0;
@@ -126,7 +126,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
         draw[0](canvas,
                 work->sheet + ((i & 3) * 770 + gData_08197410[size - 1]),
                 pos.x - size / 2, pos.y - size, size, size * 2);
-        BattleFxKernels_IntegrateVector3(star, 60, 0);
+        BattleEffectKernels_IntegrateVector3(star, 60, 0);
 
         // Thirty frames in, the star is drawn toward the center.
         if (frame > i / 4 + 30) {
@@ -143,8 +143,8 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

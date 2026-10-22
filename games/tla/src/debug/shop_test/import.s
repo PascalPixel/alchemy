@@ -252,10 +252,10 @@ Func_02000e20:
 	.thumb_func
 Func_02000e28:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	overlay_veneer Func_080c83e0
 	.endif

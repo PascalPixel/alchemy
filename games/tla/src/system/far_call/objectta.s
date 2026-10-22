@@ -21,10 +21,10 @@ DisplayScroll_InitializeHBlankDmaFar:
 	.thumb_func
 DisplayScroll_DisarmHBlankDmaFar:
 	overlay_veneer Func_080d64b8
-	.global BattleFx_PlayCueAndStartEmitterOnTargetFar
+	.global BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.thumb_func
-BattleFx_PlayCueAndStartEmitterOnTargetFar:
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTarget
+BattleEffect_PlayCueAndStartEmitterOnTargetFar:
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTarget
 	.global Func_080c83d8
 	.thumb_func
 Func_080c83d8:
@@ -32,7 +32,7 @@ Func_080c83d8:
 	.global Func_080c83e0
 	.thumb_func
 Func_080c83e0:
-	overlay_veneer BattleFx_StartEffectObject22
+	overlay_veneer BattleEffect_StartEffectObject22
 	.global ObjectEvent_GetObjectFar
 	.thumb_func
 ObjectEvent_GetObjectFar:
@@ -100,7 +100,7 @@ Func_080c8460:
 	.global Func_080c8468
 	.thumb_func
 Func_080c8468:
-	overlay_veneer BattleFx_StartFadeOverlay
+	overlay_veneer BattleEffect_StartFadeOverlay
 	.global Func_080c8470
 	.thumb_func
 Func_080c8470:
@@ -125,14 +125,14 @@ Func_080c8490:
 	.thumb_func
 Field_DispatchTypeHandlerFar:
 	overlay_veneer Field_DispatchTypeHandler
-	.global BattleFx_LoadActionEffectResourcesFar
+	.global BattleEffect_LoadActionEffectResourcesFar
 	.thumb_func
-BattleFx_LoadActionEffectResourcesFar:
-	overlay_veneer BattleFx_LoadActionEffectResources
-	.global BattleFx_SetupObjectPairFar
+BattleEffect_LoadActionEffectResourcesFar:
+	overlay_veneer BattleEffect_LoadActionEffectResources
+	.global BattleEffect_SetupObjectPairFar
 	.thumb_func
-BattleFx_SetupObjectPairFar:
-	overlay_veneer BattleFx_SetupObjectPair
+BattleEffect_SetupObjectPairFar:
+	overlay_veneer BattleEffect_SetupObjectPair
 	.global EffectRuntime_StopCurrentObjectFar
 	.thumb_func
 EffectRuntime_StopCurrentObjectFar:
@@ -161,9 +161,9 @@ BattleEffect_ResolvePendingActionsFar:
 BattleEffect_ResolvePendingActionsFar:
 	overlay_veneer EventRuntime_ResolvePendingActions
 .else
-	.global BattleFx_PrepareBufferInterpolationFar
+	.global BattleEffect_PrepareBufferInterpolationFar
 	.thumb_func
-BattleFx_PrepareBufferInterpolationFar:
-	overlay_veneer BattleFx_PrepareBufferInterpolation
+BattleEffect_PrepareBufferInterpolationFar:
+	overlay_veneer BattleEffect_PrepareBufferInterpolation
 .endif
 .endif

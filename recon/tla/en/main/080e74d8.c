@@ -133,9 +133,9 @@ void Func_080e74d8(void) {
         if ((u32)particle->age < 20) {
           EffectSprite_DrawAtWorldPosition(&work->sprites[i], particle);
           if (i & 1)
-            BattleFx_IntegrateVector3(&particle->x, 63, 0x8000);
+            BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
           else
-            BattleFx_IntegrateVector3(&particle->x, 63, -0xa000);
+            BattleEffect_IntegrateVector3(&particle->x, 63, -0xa000);
         }
         if (++particle->age == 20)
           particle->age = -1;

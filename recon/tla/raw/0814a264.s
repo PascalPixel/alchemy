@@ -2,9 +2,9 @@
 	.thumb
 @ Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma Storm
 @ (kind 13).
-	.global BattleFx_RunVolcano
+	.global BattleEffect_RunVolcano
 	.thumb_func
-BattleFx_RunVolcano:
+BattleEffect_RunVolcano:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunVolcano:
 	str r1, [sp, #40]
 	ldr r3, [r3, #100]
 	str r3, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0814a2c8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -82,14 +82,14 @@ BattleFx_RunVolcano:
 .L_0814a2fe:
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #52]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r7, sp
@@ -452,7 +452,7 @@ BattleFx_RunVolcano:
 .L_0814a5e0:
 	.4byte Data_08197a23
 .L_0814a5e4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814a5e8:
 	.4byte Data_08197a20
 .L_0814a5ec:
@@ -664,7 +664,7 @@ BattleFx_RunVolcano:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0814a7a4
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -682,4 +682,4 @@ BattleFx_RunVolcano:
 .L_0814a7a0:
 	.4byte gData_08197410
 .L_0814a7a4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

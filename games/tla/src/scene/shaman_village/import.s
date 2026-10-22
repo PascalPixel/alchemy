@@ -398,10 +398,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -491,7 +491,7 @@ Func_02004a54:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87f8
 	.else
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.endif
 	.endif
 	.global Func_02004a5c
@@ -503,31 +503,31 @@ Func_02004a5c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.endif
 	.endif
 	.global Func_02004a64
 	.thumb_func
 Func_02004a64:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
-	overlay_veneer BattleFx_WaitForArcGroupsFar
+	overlay_veneer BattleEffect_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_02004a6c
 	.thumb_func
 Func_02004a6c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
-	overlay_veneer BattleFx_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectTickModeFar
 	.endif
 	.endif
 	.global Func_02004a74

@@ -270,10 +270,10 @@ Func_02000eec:
 	.thumb_func
 Func_02000ef4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif
@@ -282,10 +282,10 @@ Func_02000ef4:
 	.thumb_func
 Func_02000efc:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StepVector3Far
+	overlay_veneer BattleEffect_StepVector3Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StepVector3Far
+	overlay_veneer BattleEffect_StepVector3Far
 	.else
 	overlay_veneer Func_080c87f0
 	.endif

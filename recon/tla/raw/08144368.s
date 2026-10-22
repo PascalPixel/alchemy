@@ -2,9 +2,9 @@
 	.thumb
 @ Abilities: none; kind 34 is used by no ability. Named for The Broken Seal's
 @ twin.
-	.global BattleFx_RunOrbitingSpirals
+	.global BattleEffect_RunOrbitingSpirals
 	.thumb_func
-BattleFx_RunOrbitingSpirals:
+BattleEffect_RunOrbitingSpirals:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -21,7 +21,7 @@ BattleFx_RunOrbitingSpirals:
 	ldr r2, [r5, #96]
 	movs r0, #0
 	str r2, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_081443cc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -37,12 +37,12 @@ BattleFx_RunOrbitingSpirals:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #31
 	movs r0, #188
 	str r3, [sp, #36]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r1, sp
@@ -312,7 +312,7 @@ BattleFx_RunOrbitingSpirals:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -321,9 +321,9 @@ BattleFx_RunOrbitingSpirals:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_081445e8:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_081445ec:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081445f0:
 	.4byte 0xffff9800
 .L_081445f4:

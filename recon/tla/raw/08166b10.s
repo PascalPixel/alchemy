@@ -23,7 +23,7 @@ Func_08166b10:
 	str r1, [sp, #36]
 	ldr r2, [r5, #100]
 	str r2, [sp, #20]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_08166b78
 	movs r2, #128
 	lsls r2, r2, #19
@@ -42,12 +42,12 @@ Func_08166b10:
 	asrs r3, r3, #1
 	movs r0, #104
 	str r3, [sp, #16]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r6, [r5, #104]
 	movs r0, #188
 	movs r1, #35
 	str r6, [sp, #24]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r0, [sp, #44]
@@ -383,7 +383,7 @@ Func_08166b10:
 	subs r3, r0, #1
 	b .L_08166e30
 .L_08166e10:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08166e14:
 	.4byte Data_02010018
 .L_08166e18:
@@ -800,7 +800,7 @@ Func_08166b10:
 	adds r0, r7, #0
 	movs r1, #64
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r7, #24]
 	ldr r6, [r7, #4]
 	movs r1, #216
@@ -958,7 +958,7 @@ Func_08166b10:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -975,4 +975,4 @@ Func_08166b10:
 .L_08167294:
 	.4byte 0x3f3f3f3f
 .L_08167298:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

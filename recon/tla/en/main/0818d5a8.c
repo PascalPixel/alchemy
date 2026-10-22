@@ -1,7 +1,7 @@
 // Draft, differ 481 of 927 (draft 930 instructions, no device): the body
-// of the leaping strike family (BattleFx_RunPlanetDiver mode 0 and
-// BattleFx_RunPlanetary mode 1 in summon_modes_7.c), written from the listing
-// on The Broken Seal's canvas skeleton (twin BattleFx_RunPlanetDiver 0.53 by
+// of the leaping strike family (BattleEffect_RunPlanetDiver mode 0 and
+// BattleEffect_RunPlanetary mode 1 in summon_modes_7.c), written from the listing
+// on The Broken Seal's canvas skeleton (twin BattleEffect_RunPlanetDiver 0.53 by
 // shape and call order: the caster object leaps, lands and slides as there)
 // with the ARM model renderer for mode 1's claw, rings and pillars. The native
 // frame is 92 bytes: effect sp+68, mode sp+64, work sp+60, canvas sp+56, draw
@@ -67,10 +67,10 @@ extern const u8 Data_08199e68[];
 extern const s8 Data_08199e6c[];
 
 void Func_0813ba50(void);
-void BattleFx_BeginCanvasLayer(s32 layer);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_LoadBlitter(s32 slot, s32 value);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_LoadBlitter(s32 slot, s32 value);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -85,7 +85,7 @@ void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
@@ -99,14 +99,14 @@ void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 
-// The leaping strike family (BattleFx_RunPlanetDiver is mode 0, BattleFx_RunPlanetary mode
+// The leaping strike family (BattleEffect_RunPlanetDiver is mode 0, BattleEffect_RunPlanetary mode
 // 1; effect kinds 60 and 128). The caster flashes and sixteen flames ring
 // it (frames 2-15), leaps up at frame 4 and comes down on the target at
 // frame 16, sliding to it over the frames after; on landing 256 sparks
@@ -138,7 +138,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   Func_0813ba50();
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
@@ -158,16 +158,16 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   // The blitter faces the caster's side.
   if (effect->side == 0)
-    BattleFx_LoadBlitter(104, 1 << 4 | 3);
+    BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   else
-    BattleFx_LoadBlitter(104, 1 << 4 | 7);
+    BattleEffect_LoadBlitter(104, 1 << 4 | 7);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   if (mode == 0)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   for (i = 0; i != 256; i++)
     Data_02016000[i].variant = 0;
 
@@ -388,7 +388,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == 1 && frame == 50) {
       Func_081180e8(134);
       for (i = 0; i != effect->count; i++)
-        BattleFx_StartActorMotion(effect->actors[i], 1, 0x40000, 0x100000,
+        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x100000,
                                   0x10000, 250);
     }
 
@@ -397,7 +397,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0; i != 256; i++) {
       if (spark->variant > 0) {
         spark->variant--;
-        BattleFxKernels_IntegrateVector2(spark, 56, 0x2000);
+        BattleEffectKernels_IntegrateVector2(spark, 56, 0x2000);
         if (spark->y > 112 << 16) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((u32)spark->x < 127 << 16 && spark->y >= 0) {
@@ -417,7 +417,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

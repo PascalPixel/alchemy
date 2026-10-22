@@ -1,5 +1,5 @@
 // Near miss, differ 8 (four reordered rows, same instructions): the twin of The
-// Broken Seal's BattleFx_SpawnDescendingArcParticles with this game's sprite
+// Broken Seal's BattleEffect_SpawnDescendingArcParticles with this game's sprite
 // layout (resource 16, active 17, animation 26) and tile slot (0x710). The
 // listing stores the leader to its stack slot before the loop registers are
 // set, loads the pooled zero before it builds 0x6666, stores the tile word and
@@ -9,8 +9,8 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-void BattleFx_UpdateDescendingParticleNegativeArc(void);
-void BattleFx_UpdateDescendingParticlePositiveArc(void);
+void BattleEffect_UpdateDescendingParticleNegativeArc(void);
+void BattleEffect_UpdateDescendingParticlePositiveArc(void);
 
 struct ArcFrame {
   u8 padding00[22];
@@ -107,8 +107,8 @@ void Func_080e1024(struct ArcObject *source) {
     sprite->size = 2;
     sprite->frame->visible = zero;
   }
-  objects[0]->callback = (void *)BattleFx_UpdateDescendingParticleNegativeArc;
+  objects[0]->callback = (void *)BattleEffect_UpdateDescendingParticleNegativeArc;
   objects[0]->sprite->attr.byte.variant = 0;
-  objects[1]->callback = (void *)BattleFx_UpdateDescendingParticlePositiveArc;
+  objects[1]->callback = (void *)BattleEffect_UpdateDescendingParticlePositiveArc;
   objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Zagan (scene kind 13).
-	.global BattleFx_RunZagan
+	.global BattleEffect_RunZagan
 	.thumb_func
-BattleFx_RunZagan:
+BattleEffect_RunZagan:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -32,7 +32,7 @@ BattleFx_RunZagan:
 	str r3, [sp, #40]
 	bl Func_0813ba50
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	bl Func_08179e6c
 	movs r3, #239
 	lsls r3, r3, #7
@@ -58,7 +58,7 @@ BattleFx_RunZagan:
 	adds r3, #240
 	add r3, r10
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #152
@@ -185,7 +185,7 @@ BattleFx_RunZagan:
 	adds r1, r6, #0
 	movs r0, #0
 	str r6, [sp, #36]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10
@@ -213,7 +213,7 @@ BattleFx_RunZagan:
 	adds r3, #240
 	add r3, r10
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #128
@@ -221,7 +221,7 @@ BattleFx_RunZagan:
 	adds r1, #146
 	movs r2, #1
 	movs r0, #12
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r2, #128
 	ldr r1, [sp, #16]
 	ldr r3, .L_0814c0d0
@@ -252,7 +252,7 @@ BattleFx_RunZagan:
 .L_0814c0d4:
 	.4byte gBgScroll
 .L_0814c0d8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814c0dc:
 	.4byte gCameraSceneParameters
 .L_0814c0e0:
@@ -1314,7 +1314,7 @@ BattleFx_RunZagan:
 	bl ResourceObject_ReleaseFar
 	cmp r7, #12
 	bne .L_0814c8d6
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #100
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1347,4 +1347,4 @@ BattleFx_RunZagan:
 .L_0814c920:
 	.4byte gCameraSceneParameters
 .L_0814c924:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

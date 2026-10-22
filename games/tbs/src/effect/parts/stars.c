@@ -23,7 +23,7 @@
 /// animation (2, at speed 48, three times the usual, and does not set it
 /// back), turns the camera's yaw, sends the target back with its motion
 /// fields and sets work->shakeFrames.
-void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
 #ifndef UBFIX
   struct EffectPosition base;
@@ -57,7 +57,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
@@ -69,7 +69,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -216,7 +216,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
 /// in 16.16, each variant the frame it starts. Rebuilds the background ramp
 /// each frame (Graphics_UpdatePhasePalette, after loading the rune palette)
 /// and sets work->shakeFrames at each bounce.
-void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
+void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -242,7 +242,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   graphics = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
@@ -252,7 +252,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;

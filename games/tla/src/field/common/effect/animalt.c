@@ -10,29 +10,29 @@
 #include "effect_step.h"
 
 void EffectStep_RunAnimationMode9(struct EffectStep *step) {
-  BattleFx_RunBurstScene(step, 9);
+  BattleEffect_RunBurstScene(step, 9);
 }
 
 void EffectStep_RunAnimationMode12(struct EffectStep *step) {
-  BattleFx_RunBurstScene(step, 12);
+  BattleEffect_RunBurstScene(step, 12);
 }
 
 void EffectStep_RunAnimationMode10(struct EffectStep *step) {
-  BattleFx_RunBurstScene(step, 10);
+  BattleEffect_RunBurstScene(step, 10);
 }
 
 void EffectStep_RunAnimationMode11(struct EffectStep *step) {
-  BattleFx_RunBurstScene(step, 11);
+  BattleEffect_RunBurstScene(step, 11);
 }
 
 void EffectStep_RunAnimationMode6Or7Or8B(struct EffectStep *step) {
   if (step->variant == 0) {
-    BattleFx_RunBurstScene(step, 6);
+    BattleEffect_RunBurstScene(step, 6);
     return;
   }
   if (step->variant == 1) {
-    BattleFx_RunBurstScene(step, 7);
+    BattleEffect_RunBurstScene(step, 7);
     return;
   }
-  BattleFx_RunBurstScene(step, 8);
+  BattleEffect_RunBurstScene(step, 8);
 }

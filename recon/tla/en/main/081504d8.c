@@ -1,13 +1,13 @@
 // Near miss of SummonFx_RunCanvasEffect, the body behind the four wrappers of
 // summon_canvas_modes.c.
 
-// Twin: The Broken Seal's BattleFx_RunStatReduction (effect.c), call for
+// Twin: The Broken Seal's BattleEffect_RunStatReduction (effect.c), call for
 // call. The Lost Age adds mode 3 (the dagger in the glow palette), reads
 // the effect from its argument, takes its heap blocks as Ram_HeapSlots
 // fields and orders the callback 0xc80. Resources not yet named in
-// directory.s, by row and asset: 0x15f BattleFx_DaggerSheet, 0x15e
-// BattleFx_ShieldSheet, 0x17f BattleFx_PinkBurstSheet, 0x17b
-// BattleFx_GlowOrbSheet and 0x160 BattleFx_PaletteRampImage.
+// directory.s, by row and asset: 0x15f BattleEffect_DaggerSheet, 0x15e
+// BattleEffect_ShieldSheet, 0x17f BattleEffect_PinkBurstSheet, 0x17b
+// BattleEffect_GlowOrbSheet and 0x160 BattleEffect_PaletteRampImage.
 
 // Near miss: differ 62 of 553 (draft 553; 2026-10-19, was 70 with 551).
 
@@ -47,14 +47,14 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair);                // BattleFx_FetchRectangleBlitters
+    DrawRectangle *pair);                // BattleEffect_FetchRectangleBlitters
 void Func_081180e8(s32 phase);           // BattleEventRuntime_BeginPhaseFar
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
 #define SHARDS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -96,7 +96,7 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BG2PA = 0x100;
   if (mode == 0 || mode == 3)
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
@@ -166,10 +166,10 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  BattleFx_FetchRectangleBlitters(effect->side, draw = callbacks);
+  BattleEffect_FetchRectangleBlitters(effect->side, draw = callbacks);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != effect->count * 4 + 64; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -234,7 +234,7 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
                              (level * RAMP_SIZE + Data_081974dc[cell]) +
                              RAMP_IMAGE,
                          x, y, Data_081974f4[cell], Data_08197500[cell]);
-            BattleFxKernels_IntegrateVector3(shard, 60, 0);
+            BattleEffectKernels_IntegrateVector3(shard, 60, 0);
           }
         }
       }
@@ -243,8 +243,8 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

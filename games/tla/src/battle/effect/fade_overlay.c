@@ -13,7 +13,7 @@ void Func_080d1840(void);
 /// Clears the overlay tiles to colour 1, sets the blend registers and starts
 /// Func_080d1840 at priority 0x480 on a 28-byte work block whose last word is
 /// the object (the selected owner's when none is given).
-void BattleFx_StartFadeOverlay(void *object) {
+void BattleEffect_StartFadeOverlay(void *object) {
   u32 *work;
   u8 *tiles;
   volatile u32 fill;

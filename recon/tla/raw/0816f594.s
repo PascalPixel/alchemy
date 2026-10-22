@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Radiant Fire (kind 110).
-	.global BattleFx_RunRadiantFire
+	.global BattleEffect_RunRadiantFire
 	.thumb_func
-BattleFx_RunRadiantFire:
+BattleEffect_RunRadiantFire:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunRadiantFire:
 	movs r0, #0
 	str r2, [sp, #24]
 	mov r9, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0816f5f8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -28,7 +28,7 @@ BattleFx_RunRadiantFire:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r1, #184
 	lsls r1, r1, #5
 	add r1, r9
@@ -210,7 +210,7 @@ BattleFx_RunRadiantFire:
 	ldr r0, [r2, #8]
 	movs r3, #80
 	movs r2, #8
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 .L_0816f750:
 	ldr r4, [sp, #20]
 	cmp r4, #8
@@ -409,7 +409,7 @@ BattleFx_RunRadiantFire:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #48
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -418,7 +418,7 @@ BattleFx_RunRadiantFire:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816f908:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816f90c:
 	.4byte gMapCellBuffer
 .L_0816f910:

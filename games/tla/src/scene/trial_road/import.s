@@ -349,7 +349,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_02005918
 	.thumb_func
 Func_02005918:
-	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:
@@ -454,10 +454,10 @@ Func_020059c0:
 	.thumb_func
 Func_020059c8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_FindNearestObjectFar
+	overlay_veneer BattleEffect_FindNearestObjectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_FindNearestObjectFar
+	overlay_veneer BattleEffect_FindNearestObjectFar
 	.else
 	overlay_veneer Func_080c82e8
 	.endif
@@ -514,10 +514,10 @@ Func_020059e8:
 	.thumb_func
 Func_020059f0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif

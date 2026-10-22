@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Azul (scene kind 22).
-	.global BattleFx_RunAzul
+	.global BattleEffect_RunAzul
 	.thumb_func
-BattleFx_RunAzul:
+BattleEffect_RunAzul:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunAzul:
 	ldr r6, [r5, #100]
 	bl Func_0813ba50
 	movs r0, #3
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0815ce50
 	movs r2, #128
 	lsls r2, r2, #19
@@ -30,7 +30,7 @@ BattleFx_RunAzul:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r2, [r5, #104]
 	adds r1, r6, #0
 	str r2, [sp, #68]
@@ -44,7 +44,7 @@ BattleFx_RunAzul:
 	adds r6, #240
 	adds r3, r4, r6
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r7, [sp, #76]
 	movs r0, #239
 	movs r1, #238
@@ -165,7 +165,7 @@ BattleFx_RunAzul:
 	lsls r1, r1, #2
 	movs r0, #12
 	movs r2, #1
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r2, #238
 	ldr r1, [sp, #76]
 	lsls r2, r2, #7
@@ -267,9 +267,9 @@ BattleFx_RunAzul:
 .L_0815cff8:
 	.4byte 0x00001010
 .L_0815cffc:
-	.4byte BattleFx_ArmPaletteHBlankDma
+	.4byte BattleEffect_ArmPaletteHBlankDma
 .L_0815d000:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815d004:
 	.4byte IwramCopyWords
 .L_0815d008:
@@ -675,7 +675,7 @@ BattleFx_RunAzul:
 	adds r0, r5, #0
 	movs r1, #63
 	ldr r2, .L_0815d378
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_0815d324:
 	movs r0, #1
@@ -890,7 +890,7 @@ BattleFx_RunAzul:
 	movs r1, #1
 	movs r3, #0
 	movs r2, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	movs r3, #0
 	str r3, [r5, #72]
 	movs r3, #1
@@ -1595,7 +1595,7 @@ BattleFx_RunAzul:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	mov r4, r9
 	str r6, [r4, #72]
 .L_0815d9fa:
@@ -1773,7 +1773,7 @@ BattleFx_RunAzul:
 	adds r0, r5, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	movs r3, #8
 	mov r0, r8
 	subs r3, r3, r0
@@ -1969,7 +1969,7 @@ BattleFx_RunAzul:
 	bhi .L_0815dd86
 	movs r0, #188
 	movs r1, #7
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -2303,7 +2303,7 @@ BattleFx_RunAzul:
 	adds r0, r5, #0
 	movs r1, #63
 	lsls r2, r2, #9
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #4]
 	movs r0, #192
 	lsls r0, r0, #15
@@ -2481,7 +2481,7 @@ BattleFx_RunAzul:
 	mov r4, r8
 	cmp r4, #28
 	bne .L_0815e100
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2525,6 +2525,6 @@ BattleFx_RunAzul:
 .L_0815e164:
 	.4byte 0x04000208
 .L_0815e168:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815e16c:
-	.4byte BattleFx_ArmPaletteHBlankDma
+	.4byte BattleEffect_ArmPaletteHBlankDma

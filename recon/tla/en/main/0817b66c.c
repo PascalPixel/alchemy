@@ -1,6 +1,6 @@
 // Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
 // Effect kind 76, written from the listing (☀️'s nearest shapes are
-// BattleFx_RunUndeadSword, 0.55, and BattleFx_RunEruption; neither is
+// BattleEffect_RunUndeadSword, 0.55, and BattleEffect_RunEruption; neither is
 // a twin). The shape matches; what is left is the arm9tdmi scheduling
 // leftover.
 // In this draft: BG2PA's 0x100 pinned to r3 behind a one-pass block (as
@@ -27,7 +27,7 @@
 // alchemy permute (22 minutes over three runs): differ 16 at best.
 // 2026-10-15 (lane N2): rewritten with the work struct, named constants
 // and comments; the same 326 instructions and differ 16.
-// Resource 0x139 (BattleFx_CrossedDaggersSheet) needs its name in
+// Resource 0x139 (BattleEffect_CrossedDaggersSheet) needs its name in
 // system/resource/directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -66,7 +66,7 @@ extern s32 gCameraSceneParameters[];
 extern const u8 gData_08199450[];
 extern const u8 gData_08199474[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
@@ -79,7 +79,7 @@ void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
@@ -88,14 +88,14 @@ void Func_0801521c(s32 scale);
 void Func_080150e4(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // Crossed daggers. The canvas is moved over the target. Eight daggers rise
 // spinning from below it, and the target is struck eight times, six frames
@@ -103,7 +103,7 @@ void BattleFx_EndCanvasLayer(void);
 // knocks it up. At frame 80 the daggers turn point down in a fan above the
 // target and plunge into it; the last strike, at frame 90, starts the
 // result phase.
-void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct DaggerTexture texture;
@@ -115,13 +115,13 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
   s32 i;
   s32 strikeFrame;
 
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
                              1, 1);
   work->transferMode = 1;
   work->transferValue = 0;
   REG_BLDCNT = 0;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Centre the canvas's x 64 on the target.
   GetBattleObjectSlotFar(effect->actors[0]);
@@ -166,14 +166,14 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
         work->shakeFrames = 4;
         Audio_PlayCue(133);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
       }
     }
     if (frame == DAGGER_LAST_HIT) {
       work->shakeFrames = 4;
       Func_081180e8(134);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 10);
-      BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
     }
 
     // One textured quad, drawn once for each dagger.
@@ -210,9 +210,9 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
       Render_TransformVertices(gData_08199474, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
-        BattleFxKernels_IntegrateVector3(dagger, 64, 0);
+        BattleEffectKernels_IntegrateVector3(dagger, 64, 0);
       else
-        BattleFxKernels_IntegrateVector3(dagger, 64, -0x1000);
+        BattleEffectKernels_IntegrateVector3(dagger, 64, -0x1000);
     }
     MemFree(quad);
     MemFree(vertices);
@@ -225,6 +225,6 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

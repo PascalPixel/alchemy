@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Fire Puppet (kind 82).
-	.global BattleFx_RunFirePuppet
+	.global BattleEffect_RunFirePuppet
 	.thumb_func
-BattleFx_RunFirePuppet:
+BattleEffect_RunFirePuppet:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,19 +23,19 @@ BattleFx_RunFirePuppet:
 	ldr r2, [r3, #48]
 	str r2, [sp, #52]
 	ldr r5, [r3, #100]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r0, [sp, #68]
 	ldr r3, [r0, #4]
 	cmp r3, #0
 	bne .L_0817bdc4
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0817bdcc
 .L_0817bdc4:
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0817bdcc:
 	ldr r3, .L_0817be0c
 	movs r2, #128
@@ -70,7 +70,7 @@ BattleFx_RunFirePuppet:
 .L_0817be0c:
 	.4byte 0x00001010
 .L_0817be10:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817be14:
 	str r3, [sp, #44]
 	ldr r0, [sp, #64]
@@ -240,7 +240,7 @@ BattleFx_RunFirePuppet:
 	lsls r2, r2, #10
 	adds r3, r6, #0
 	str r6, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r3, [sp, #68]
 	movs r2, #5
 	ldrsh r0, [r5, r3]
@@ -580,7 +580,7 @@ BattleFx_RunFirePuppet:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817c278
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #92
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -611,4 +611,4 @@ BattleFx_RunFirePuppet:
 .L_0817c274:
 	.4byte Data_081991e0
 .L_0817c278:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

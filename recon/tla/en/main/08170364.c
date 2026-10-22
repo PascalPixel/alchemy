@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunMegaera, decompiled from the listing: differ 1274 of
+// Draft of BattleEffect_RunMegaera, decompiled from the listing: differ 1274 of
 // 1152 (draft 1136), the same 90 calls and control flow; allocation differs.
 
 #include "types.h"
@@ -28,11 +28,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -51,18 +51,18 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -78,12 +78,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -133,7 +133,7 @@ extern const u8 Data_08198bf8[];
 // sparks; a whirl of flame turns over the field from 64 while smoke rises,
 // and at 108 Megaera (eleven objects) swoops in across the targets in a
 // trail of sparkles. Holding A or B after frame 10 skips to the swoop.
-void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -154,9 +154,9 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
   Func_0813ba50();
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, (void **)blitters);
+  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x3800, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
@@ -170,7 +170,7 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
                              gData_02014000 + 0x2e16, 0, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;
   }
@@ -192,7 +192,7 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
   }
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
   WaitFrames(1);
 
   for (frame = 0; frame != 170; frame++) {
@@ -214,12 +214,12 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
       y = 0x480000;
       velocityX = 0x90000;
       velocityY = -0x20000;
-      BattleFx_SpawnObjects(2, 657, 2);
+      BattleEffect_SpawnObjects(2, 657, 2);
     }
     if (frame == 108) {
       ResourceObject_ReleaseFar(work->objects[0]);
       ResourceObject_ReleaseFar(work->objects[1]);
-      BattleFx_SpawnObjects(11, 656, 2);
+      BattleEffect_SpawnObjects(11, 656, 2);
     }
 
     // Megaera swoops, trailing sparkles.
@@ -289,7 +289,7 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
           blitters[i & 1](canvas,
                           work->sheet + 0x4800 + ((p->variant / 4) << 11),
                           HI(p->x) - 16, HI(p->y) - 32, 32, 64);
-          BattleFxKernels_IntegrateVector2(p, 62, -0x4000);
+          BattleEffectKernels_IntegrateVector2(p, 62, -0x4000);
         }
         p->variant++;
         if (frame == 108) {
@@ -335,7 +335,7 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
         size = Data_0819745e[k];
         blitters[0](canvas, Data_02016e16 + Data_0819744c[k],
                     HI(p->x) - size / 2, HI(p->y) - size / 2, size, size);
-        BattleFxKernels_IntegrateVector2(p, 58, 0);
+        BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
           p->velocityX += -0x800;
           p->velocityY += 0x1000;
@@ -422,7 +422,7 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
           Runtime_ReleaseHeapBlock(188);
         }
       }
-      BattleFx_LoadBlitter(188, 3);
+      BattleEffect_LoadBlitter(188, 3);
       blitters[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       if (frame <= 69) {
         for (i = 0, p = sparks; i != 512; i++, p++) {
@@ -435,7 +435,7 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
           blitters[p->velocityY > 0](canvas, sprites + gData_08197410[size - 1],
                                      HI(p->x) - size / 2, HI(p->y) - size, size,
                                      size * 2);
-          BattleFxKernels_IntegrateVector2(p, 62, 0x4000);
+          BattleEffectKernels_IntegrateVector2(p, 62, 0x4000);
           p->variant++;
           if (p->velocityY > 0 && HI(p->y) > 104) {
             p->variant = -1;
@@ -448,12 +448,12 @@ void BattleFx_RunMegaera(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   Func_0816467c(4, x, y);
   for (i = 0; i != 11; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

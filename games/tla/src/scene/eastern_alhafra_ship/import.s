@@ -251,7 +251,7 @@ Func_02003278:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87f8
 	.else
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.endif
 	.endif
 	.global Func_02003280
@@ -263,31 +263,31 @@ Func_02003280:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.endif
 	.endif
 	.global Func_02003288
 	.thumb_func
 Func_02003288:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
-	overlay_veneer BattleFx_WaitForArcGroupsFar
+	overlay_veneer BattleEffect_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_02003290
 	.thumb_func
 Func_02003290:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
-	overlay_veneer BattleFx_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectTickModeFar
 	.endif
 	.endif
 	.global Func_02003298

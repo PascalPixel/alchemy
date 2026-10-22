@@ -29,7 +29,7 @@ s32 Shop_MsgByMode(s32 value) {
   return value;
 }
 
-s32 BattleFx_GetResourceIdFar(u16 id);
+s32 BattleEffect_GetResourceIdFar(u16 id);
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32 message, s32 a, s32 b, s32 c);
 s32 UiWork_IsCompleteFar(void);
@@ -49,7 +49,7 @@ void Func_0810a9ac(s32 value) {
   shop = Ram_HeapSlots->menuRuntime;
   asm volatile("");
   message = value;
-  portrait = BattleFx_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
+  portrait = BattleEffect_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
   UiWork_FinalizePendingCoreFar();
   message = Shop_MsgByMode(message);
   UiText_OpenMessageWindowFar(message, 5, 0, (portrait << 16) | 0x22);
@@ -77,7 +77,7 @@ void Func_0810a9fc(s32 message) {
   shop = Ram_HeapSlots->menuRuntime;
   anchor = &shop->cursorAnchor;
   saved = (*anchor)[5];
-  portrait = BattleFx_GetResourceIdFar(shop->keeperResource);
+  portrait = BattleEffect_GetResourceIdFar(shop->keeperResource);
   message = Shop_MsgByMode(message);
   (*anchor)[5] = 13;
   UiWork_FinalizePendingCoreFar();

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global BattleFx_RunSparkGroups
+	.global BattleEffect_RunSparkGroups
 	.thumb_func
-BattleFx_RunSparkGroups:
+BattleEffect_RunSparkGroups:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,7 +26,7 @@ BattleFx_RunSparkGroups:
 	cmp r3, #0
 	bne .L_08149be6
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	movs r5, #48
 	movs r4, #60
 	str r4, [sp, #28]
@@ -37,7 +37,7 @@ BattleFx_RunSparkGroups:
 	cmp r1, #1
 	bne .L_08149c16
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	movs r5, #238
 	ldr r4, [sp, #48]
 	lsls r5, r5, #7
@@ -58,7 +58,7 @@ BattleFx_RunSparkGroups:
 	b .L_08149c38
 .L_08149c16:
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	mov r2, r10
 	add r5, sp, #64
 	ldr r0, [r2, #8]
@@ -83,7 +83,7 @@ BattleFx_RunSparkGroups:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #20]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r4, [sp, #48]
 	movs r5, #224
 	lsls r5, r5, #3
@@ -566,7 +566,7 @@ BattleFx_RunSparkGroups:
 .L_08149ffc:
 	.4byte gMapCellBuffer
 .L_0814a000:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814a004:
 	.4byte 0x1ffffffb
 .L_0814a008:
@@ -682,7 +682,7 @@ BattleFx_RunSparkGroups:
 	movs r1, #60
 	adds r2, r7, #0
 	adds r0, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	ldr r2, [r6, #4]
 	movs r1, #216
@@ -854,7 +854,7 @@ BattleFx_RunSparkGroups:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -876,4 +876,4 @@ BattleFx_RunSparkGroups:
 .L_0814a25c:
 	.4byte gData_08197410
 .L_0814a260:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

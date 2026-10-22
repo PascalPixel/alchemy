@@ -207,7 +207,7 @@ Func_080e09c0:
 	ldr r1, [r2, #12]
 	subs r7, #1
 	ldr r2, [r2, #16]
-	bl BattleFx_SpawnScatterParticle
+	bl BattleEffect_SpawnScatterParticle
 	cmp r7, #0
 	bge .L_080e0b6a
 	movs r0, #1
@@ -319,7 +319,7 @@ Func_080e09c0:
 	mov r0, r8
 	bl Object_Destroy
 .L_080e0c60:
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #16

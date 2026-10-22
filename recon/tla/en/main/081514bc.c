@@ -1,12 +1,12 @@
-// Draft of BattleFx_RunFrost, effect kind 6.
+// Draft of BattleEffect_RunFrost, effect kind 6.
 
-// Twin: The Broken Seal's BattleFx_RunFrost (effect.c), call for
+// Twin: The Broken Seal's BattleEffect_RunFrost (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
 // blocks as Ram_HeapSlots fields, orders the callback 0xc80, ends 50
 // frames after the burst (The Broken Seal: 75) and begins the results
 // with phase 133 (132). ResourceId_IceChipSheet and ResourceId_SparkleDots
-// are rows 0x17c and 0x17e of directory.s (assets BattleFx_IceChipSheet and
-// BattleFx_SparkleDots), not yet named there.
+// are rows 0x17c and 0x17e of directory.s (assets BattleEffect_IceChipSheet and
+// BattleEffect_SparkleDots), not yet named there.
 
 // Draft: differ 114 of 753 (draft 755).
 
@@ -33,12 +33,12 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+    DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -66,8 +66,8 @@ extern u8 Data_08198378[];  // gFrost_ColumnHeights
 extern u16 Data_0819838c[]; // gFrost_ChipCells
 extern u8 Data_0819837b[];  // gFrost_ChipWidths
 extern u8 Data_08198383[];  // gFrost_ChipHeights
-extern u16 Data_0819744c[]; // gBattleFx_PuffCells
-extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
+extern u16 Data_0819744c[]; // gBattleEffect_PuffCells
+extern u8 Data_0819745e[];  // gBattleEffect_PuffSizes
 
 // Motes swirl up around the targets while ice pillars rise one by one;
 // then everything bursts.
@@ -79,7 +79,7 @@ extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
 // from below, and smoke rises half a pixel a frame through the height the
 // motes and chips cover. The variant chooses the number of motes and
 // pillars and the frame of the burst.
-void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -98,11 +98,11 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   dots = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
-  BattleFx_FetchRectangleBlitters(0, draw = pair);
+  BattleEffect_FetchRectangleBlitters(0, draw = pair);
 
   // A mote: x holds its angle, z its radius, y its height.
   for (i = 0; i != 64; i++) {
@@ -115,7 +115,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (effect->side == 1)
     REG_BG2X = -0x7000;
 
@@ -291,6 +291,6 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

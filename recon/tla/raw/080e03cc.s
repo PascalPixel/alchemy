@@ -263,7 +263,7 @@ Func_080e03cc:
 	blt .L_080e058a
 	adds r0, r6, #0
 	bl Object_Destroy
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080e05fe:
 	add sp, #40
 	pop {r3, r5, r6, r7}

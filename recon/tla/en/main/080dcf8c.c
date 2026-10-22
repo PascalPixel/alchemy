@@ -36,7 +36,7 @@ extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
 
-void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source) {
+void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source) {
   struct ItemBreakFragmentSource *target;
   struct ItemBreakFragmentPosition position;
   struct ItemBreakFragmentObject *object;
@@ -73,6 +73,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source) {
     Object_SetMode(object, 0);
     object->field5e = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                 (u32)gBattleFx_CommonParticleScript);
+                                 (u32)gBattleEffect_CommonParticleScript);
   }
 }

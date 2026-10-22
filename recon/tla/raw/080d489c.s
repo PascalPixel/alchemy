@@ -108,7 +108,7 @@ Func_080d489c:
 .L_080d4968:
 	.4byte gData_080f341c
 .L_080d496c:
-	.4byte BattleFx_CopyLinkedObjectPosition
+	.4byte BattleEffect_CopyLinkedObjectPosition
 .L_080d4970:
 	ldr r3, [r7, #80]
 	ldrb r1, [r6, #9]

@@ -29,8 +29,8 @@ s32 EventRuntime_ExecutePackedAction(u32 packed) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 255;
   }
-  BattleFx_LoadActionEffectResources(action, 0);
-  BattleFx_SetupObjectPair(EventRuntime_GetControlledOwner(), target);
+  BattleEffect_LoadActionEffectResources(action, 0);
+  BattleEffect_SetupObjectPair(EventRuntime_GetControlledOwner(), target);
   EventRuntime_RunPendingEvent(first, mode, target);
   FieldEvent_RunTypeHandler();
   EffectRuntime_StopCurrentObject();

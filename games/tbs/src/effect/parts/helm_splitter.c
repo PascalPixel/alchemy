@@ -9,7 +9,7 @@
 //   PARTICLES, whose 1024 slots are cleared first.
 // - The impact burst plays a flash with large and small sparks and three
 //   fragments, while the effect's objects settle into one of the formations
-//   of BattleFx_PlaceFormationObjects. Large sparks and the fragments use
+//   of BattleEffect_PlaceFormationObjects. Large sparks and the fragments use
 //   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
 //   large sparks), small sparks PARTICLES.
 
@@ -26,7 +26,7 @@
 /// the ground.
 ///
 /// Abilities: Helm Splitter (BATTLE_FX_HELM_SPLITTER).
-void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -50,7 +50,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + HELM_SPLITTER_STAR_CELLS, 1, 0);
-  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // Free the spark pool before moving the user: the pointer walks the
@@ -183,12 +183,12 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
 ///
 /// Each summon that ends in an impact burst keeps its objects in its own
 /// formation, every frame while it plays and then through
-/// BattleFx_RunImpactBurst. Places the objects through
+/// BattleEffect_RunImpactBurst. Places the objects through
 /// Object_ApplyProjectedPlacementFar and changes nothing else.
 ///
 /// formation: the summon's layout (enum SummonFormation); any other value
 ///            places nothing.
-void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
+void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale largeScale = {{{0x14000, 0x14000}}};
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
@@ -252,17 +252,17 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// effect's objects in formation for the first 36 frames.
 ///
 /// The close of four summons: Thor, Nereid, Cybele and Tiamat's
-/// BattleFx_RunPaletteParticles call it once their own frames are over, each
-/// with its own formation. Builds and frees both blitters, starts and stops
-/// the canvas transfer, sets REG_BG2PA, REG_BG2X and REG_BLDCNT, loads
+/// BattleEffect_RunPaletteParticles call it once their own frames are over,
+/// each with its own formation. Builds and frees both blitters, starts and
+/// stops the canvas transfer, sets REG_BG2PA, REG_BG2X and REG_BLDCNT, loads
 /// pictures into the sheet slot and work->sheet and overwrites
 /// work->particles 0 to 63 and PARTICLES 0 to 63. It leaves the canvas's
 /// VRAM cleared; ending the canvas layer is left to the caller.
 ///
-/// formation: the layout for BattleFx_PlaceFormationObjects.
+/// formation: the layout for BattleEffect_PlaceFormationObjects.
 /// x, y: the formation's origin in 16.16 pixels; the burst is drawn 40 pixels
 /// right of x, halved for the wide canvas.
-void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
+void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -432,12 +432,12 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
     }
 
     if (frame <= 35)
-      BattleFx_PlaceFormationObjects(formation, orgX, y);
+      BattleEffect_PlaceFormationObjects(formation, orgX, y);
     EFFECT_PRESENT_FRAME(work);
   }
 
   // Clear the canvas in VRAM (character block 1), so nothing is left on BG2.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_RELEASE_BLITTERS();
 }

@@ -14,7 +14,7 @@ extern const s32 *gData_080f3978[];
 struct FieldActor *Object_GetById(s32 id);
 struct FieldEffect *Func_080200c0(s32 type, s32 x, s32 y, s32 z);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
+void BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 
 void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -37,7 +37,7 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                                gData_080f3978[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   sprite->nextFrame = 0;
-  effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;

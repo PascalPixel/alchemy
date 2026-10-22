@@ -25,7 +25,7 @@ Func_08173aac:
 	str r2, [sp, #28]
 	ldr r3, [r3, #48]
 	str r3, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_08173b14
 	movs r2, #128
 	lsls r2, r2, #19
@@ -678,7 +678,7 @@ Func_08173aac:
 	movs r7, #36
 	ldrsh r1, [r6, r7]
 	movs r3, #80
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 	movs r0, #41
 	str r0, [sp, #32]
 	b .L_08174094
@@ -803,12 +803,12 @@ Func_08173aac:
 .L_08174100:
 	movs r0, #104
 	movs r1, #7
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0817412e
 .L_0817410a:
 	movs r0, #104
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0817412e
 .L_08174114:
 	ldr r7, [sp, #56]
@@ -817,12 +817,12 @@ Func_08173aac:
 	bne .L_08174126
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0817412e
 .L_08174126:
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0817412e:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -936,9 +936,9 @@ Func_08173aac:
 .L_08174200:
 	.4byte 0x00000134
 .L_08174204:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_08174208:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817420c:
 	adds r1, #2
 	adds r2, #2
@@ -1177,7 +1177,7 @@ Func_08173aac:
 	adds r0, r5, #0
 	movs r1, #60
 	lsls r2, r2, #3
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -2694,7 +2694,7 @@ Func_08173aac:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_081752f0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -2749,7 +2749,7 @@ Func_08173aac:
 	movs r1, #62
 	movs r2, #0
 	adds r0, r5, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	ldr r1, .L_081752f4
 	subs r3, #1
@@ -3061,7 +3061,7 @@ Func_08173aac:
 	adds r0, r5, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_081752e0:
 	movs r3, #1
 	add r8, r3
@@ -3239,7 +3239,7 @@ Func_08173aac:
 	adds r0, r5, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_08175458:
 	movs r4, #1
 	add r8, r4
@@ -3434,7 +3434,7 @@ Func_08173aac:
 	lsls r2, r2, #4
 	adds r0, r5, #0
 	movs r1, #63
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #4]
 	movs r2, #208
 	lsls r2, r2, #15
@@ -4611,7 +4611,7 @@ Func_08173aac:
 .L_08175f44:
 	ldr r0, .L_08175f70
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #272
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -4628,6 +4628,6 @@ Func_08173aac:
 .L_08175f68:
 	.4byte gCameraSceneParameters
 .L_08175f6c:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_08175f70:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

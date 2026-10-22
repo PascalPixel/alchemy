@@ -39,13 +39,13 @@ enum SlashSheetCell {
 /// falling ones; PARTICLES holds 24 trail particles for each gathering blade,
 /// with their rotations in ATALANTA_MATRICES. The formation is nine objects in
 /// work->objects, released between the parts. Loads the violet sky into BG1
-/// and scrolls it with BattleFx_AdvanceScrollOnInterval during the gathering,
-/// holding view->busy; restores gBgScroll[1].x and gives BG1 back with
-/// BattleFx_SetupBlendedDisplay between the parts. Leaves the ember sheet in
-/// Ram_MapCellBuffer.
+/// and scrolls it with BattleEffect_AdvanceScrollOnInterval during the
+/// gathering, holding view->busy; restores gBgScroll[1].x and gives BG1 back
+/// with BattleEffect_SetupBlendedDisplay between the parts. Leaves the ember
+/// sheet in Ram_MapCellBuffer.
 ///
 /// effect: the targets.
-void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
   struct SpritePlacement position;
@@ -78,16 +78,16 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from
   // the top, so the screen goes black before the formation is spawned.
   EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP);
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
+  BattleEffect_SelectLivingTargets(work->effect);
   // The formation: nine objects from resource object 370, sprite priority 1.
-  BattleFx_SpawnObjects(9, 370, 1);
+  BattleEffect_SpawnObjects(9, 370, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
@@ -99,7 +99,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   draw[0] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER];
   draw[1] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
   // The projection centre moves down to line 240 for the gathering;
-  // BattleFx_SetupBlendedDisplay puts it back at 120 between the parts.
+  // BattleEffect_SetupBlendedDisplay puts it back at 120 between the parts.
   gProjection.centerY = 240;
   WaitFrames(1);
   // The violet sky scrolls one pixel left every four frames.
@@ -109,10 +109,10 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval,
+  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceScrollOnInterval,
                                 EFFECT_CALLBACK_ORDER);
   view->busy = 1;
-  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(16);
   pathX = 0;
   pathY = 0;
@@ -263,7 +263,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
               screen.y = screen.y + y + 16;
 #endif
               trail->x -= 4;
-              draw[1](canvas, sheet + gBattleFx_MoteCells[4], screen.x - 2,
+              draw[1](canvas, sheet + gBattleEffect_MoteCells[4], screen.x - 2,
                       screen.y - 5, 5, 10);
             }
           }
@@ -275,10 +275,10 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   // Between the parts: stop the scroll, give BG1 back to the battle, release
   // the formation and load the ember streak sheet into the map cell buffer
   // for the flames.
-  Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
+  Scheduler_RemoveCallback(BattleEffect_AdvanceScrollOnInterval);
   view->busy = 0;
   gBgScroll[1].x = scrollX;
-  BattleFx_SetupBlendedDisplay();
+  BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 9; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   REG_BG2PA = Q_8_8(0.5);
@@ -324,19 +324,19 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
 
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gBattleFx_PuffArcCellWidths[cell];
+            width = gBattleEffect_PuffArcCellWidths[cell];
             draw[i & 1](canvas,
-                        Ram_MapCellBuffer + gBattleFx_PuffArcCells[cell],
+                        Ram_MapCellBuffer + gBattleEffect_PuffArcCells[cell],
                         slash->x - (width >> 1) - 8,
-                        slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,
-                        gBattleFx_PuffArcCellHeights[cell]);
+                        slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40,
+                        width, gBattleEffect_PuffArcCellHeights[cell]);
 #else
             draw[i & 1](
-                canvas, Ram_MapCellBuffer + gBattleFx_PuffArcCells[cell],
-                slash->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1) -
-                    8,
-                slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,
-                gBattleFx_PuffArcCellHeights[cell]);
+                canvas, Ram_MapCellBuffer + gBattleEffect_PuffArcCells[cell],
+                slash->x -
+                    ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1) - 8,
+                slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40, width,
+                gBattleEffect_PuffArcCellHeights[cell]);
 #endif
             if (slash->variant <= 11) {
               draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, slash->x + 4,

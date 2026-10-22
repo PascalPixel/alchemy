@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Light Surge (kind 120).
-	.global BattleFx_RunLightSurge
+	.global BattleEffect_RunLightSurge
 	.thumb_func
-BattleFx_RunLightSurge:
+BattleEffect_RunLightSurge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunLightSurge:
 	ldr r1, [r5, #96]
 	str r1, [sp, #60]
 	ldr r6, [r5, #100]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_08171494
 	movs r2, #128
 	lsls r2, r2, #19
@@ -30,7 +30,7 @@ BattleFx_RunLightSurge:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r2, [sp, #64]
 	movs r3, #184
 	lsls r3, r3, #5
@@ -291,7 +291,7 @@ BattleFx_RunLightSurge:
 .L_08171680:
 	.4byte IwramCopyWords
 .L_08171684:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08171688:
 	.4byte gMapCellBuffer
 .L_0817168c:
@@ -347,7 +347,7 @@ BattleFx_RunLightSurge:
 	movs r1, #19
 	movs r0, #188
 	mov r11, r3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r2, [sp, #36]
 	lsls r5, r5, #1
 	adds r5, r5, r2
@@ -377,7 +377,7 @@ BattleFx_RunLightSurge:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r0, r10
 	movs r4, #0
 	ldrsh r1, [r0, r4]
@@ -401,7 +401,7 @@ BattleFx_RunLightSurge:
 	ble .L_081717c2
 	movs r1, #27
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r2, r10
 	movs r0, #0
 	ldrsh r1, [r2, r0]
@@ -422,7 +422,7 @@ BattleFx_RunLightSurge:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #31
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r3, r10
 	movs r2, #0
 	ldrsh r1, [r3, r2]
@@ -897,7 +897,7 @@ BattleFx_RunLightSurge:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -908,4 +908,4 @@ BattleFx_RunLightSurge:
 .L_08171b6c:
 	.4byte Data_081991e0
 .L_08171b70:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

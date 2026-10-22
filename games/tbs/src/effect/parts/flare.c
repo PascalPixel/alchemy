@@ -18,7 +18,7 @@
 /// effect: the targets. Flare Wall, the stronger variant, adds a second flame
 ///         16 pixels above each one, and Flare Storm, the strongest, a third
 ///         32 pixels above (and longer trails).
-void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   u32 *slots;
   u32 *cursor;
   struct BattleEffectWork *work;
@@ -41,7 +41,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
@@ -87,7 +87,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_136);
   frame = 0;
@@ -100,7 +100,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
 
     // Each flame shows six pictures, 4 frames each, and goes out; the last
     // flame (delay -32) is out after frame 55. Each puff cell stands on its
-    // own baseline (gBattleFx_PuffArcCellBiasY) and is centred across x.
+    // own baseline (gBattleEffect_PuffArcCellBiasY) and is centred across x.
     i = 0;
     flame = work->particles;
     do {
@@ -108,43 +108,45 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
         cell = flame->variant / 4;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gBattleFx_PuffArcCellWidths[cell];
-        draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
+        width = gBattleEffect_PuffArcCellWidths[cell];
+        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
              flame->x - (width >> 1),
-             flame->y + gBattleFx_PuffArcCellBiasY[cell], width,
-             gBattleFx_PuffArcCellHeights[cell]);
+             flame->y + gBattleEffect_PuffArcCellBiasY[cell], width,
+             gBattleEffect_PuffArcCellHeights[cell]);
 #else
-        draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
-             flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
-             flame->y + gBattleFx_PuffArcCellBiasY[cell], width,
-             gBattleFx_PuffArcCellHeights[cell]);
+        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+             flame->x - ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
+             flame->y + gBattleEffect_PuffArcCellBiasY[cell], width,
+             gBattleEffect_PuffArcCellHeights[cell]);
 #endif
         if (work->effect->variant != EFFECT_VARIANT_BASIC) {
 #ifdef UBFIX
-          width = gBattleFx_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
+          width = gBattleEffect_PuffArcCellWidths[cell];
+          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
                flame->x - (width >> 1),
-               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 16, width,
-               gBattleFx_PuffArcCellHeights[cell]);
+               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, width,
+               gBattleEffect_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
-               flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
-               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 16, width,
-               gBattleFx_PuffArcCellHeights[cell]);
+          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+               flame->x -
+                   ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
+               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, width,
+               gBattleEffect_PuffArcCellHeights[cell]);
 #endif
         }
         if (work->effect->variant == EFFECT_VARIANT_STRONGEST) {
 #ifdef UBFIX
-          width = gBattleFx_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
+          width = gBattleEffect_PuffArcCellWidths[cell];
+          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
                flame->x - (width >> 1),
-               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 32, width,
-               gBattleFx_PuffArcCellHeights[cell]);
+               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, width,
+               gBattleEffect_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
-               flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
-               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 32, width,
-               gBattleFx_PuffArcCellHeights[cell]);
+          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+               flame->x -
+                   ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
+               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, width,
+               gBattleEffect_PuffArcCellHeights[cell]);
 #endif
         }
       }
@@ -166,8 +168,8 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
     frame += 1;
   } while (frame != 80);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 /// Lists the indices within indexRadius of where currentValue sits in values,
@@ -176,8 +178,8 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
 ///
 /// Only the first indexRadius * 2 + 1 values are searched, and with no match
 /// the window centres on index 0. Changes nothing but output. Nothing calls it.
-UNUSED s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
-                                           s16 *output) {
+UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
+                                               s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;
   s32 outputCount = 0;
   s32 centerIndex = 0;

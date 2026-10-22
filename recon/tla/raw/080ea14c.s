@@ -792,7 +792,7 @@ Func_080ea14c:
 	bl EventRuntime_Wait
 	ldr r0, .L_080ea7bc
 	bl Scheduler_RemoveCallback
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	ldr r0, [sp, #32]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #28]

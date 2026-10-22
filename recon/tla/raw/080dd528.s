@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_StartItemBreak
+	.global BattleEffect_StartItemBreak
 	.thumb_func
-BattleFx_StartItemBreak:
+BattleEffect_StartItemBreak:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -129,6 +129,6 @@ BattleFx_StartItemBreak:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080dd634:
-	.4byte BattleFx_UpdateItemBreakFragment
+	.4byte BattleEffect_UpdateItemBreakFragment
 .L_080dd638:
 	.4byte gData_080f0e78

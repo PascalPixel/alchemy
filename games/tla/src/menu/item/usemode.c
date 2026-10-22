@@ -5,7 +5,7 @@
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 struct ItemDefinition *Item_Get(s32);
-s32 BattleFx_HasTriggerFar(s32);
+s32 BattleEffect_HasTriggerFar(s32);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // Spanish and Italian builds use a different name for this far call,
 // as in shop.c.
@@ -25,7 +25,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   if (Func_080c8500(masked) != 0) {
 #else
-  if (BattleFx_HasTriggerFar(masked) != 0) {
+  if (BattleEffect_HasTriggerFar(masked) != 0) {
 #endif
     return 0;
   }

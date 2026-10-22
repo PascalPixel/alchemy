@@ -12,144 +12,144 @@ struct FxRunWork {
 };
 
 struct BattleEffectArgument;
-void BattleFx_RunMeteor(struct BattleEffectArgument *effect);
-void BattleFx_RunRamses(s32 *arg);
-void BattleFx_RunNereid(s32 *arg);
-void BattleFx_RunKirin(s32 *arg);
-void BattleFx_RunAtalanta(s32 *arg);
-void BattleFx_RunCybele(s32 *arg);
-void BattleFx_RunNeptune(s32 *arg);
-void BattleFx_RunTiamat(s32 *arg);
-void BattleFx_RunProcne(s32 *arg);
-void BattleFx_RunJudgment(s32 *arg);
-void BattleFx_RunBoreas(s32 *arg);
-void BattleFx_RunThor(s32 *arg);
-void BattleFx_RunZagan(s32 *arg);
-void BattleFx_RunMegaera(s32 *arg);
-void BattleFx_RunFlora(s32 *arg);
-void BattleFx_RunMoloch(s32 *arg);
-void BattleFx_RunUlysses(s32 *arg);
-void BattleFx_RunHaures(s32 *arg);
-void BattleFx_RunEclipse(s32 *arg);
-void BattleFx_RunCoatlicue(s32 *arg);
-void BattleFx_RunDaedalus(s32 *arg);
-void BattleFx_RunAzul(s32 *arg);
-void BattleFx_RunCatastrophe(s32 *arg);
-void BattleFx_RunCharon(s32 *arg);
-void BattleFx_RunIris(s32 *arg);
-void BattleFx_RunDaedalusAlt(s32 *arg);
-void BattleFx_RunTrident(s32 *arg);
-void BattleFx_RunCruelRuin(s32 *arg);
-void BattleFx_RunMeteorBlow(s32 *arg);
+void BattleEffect_RunMeteor(struct BattleEffectArgument *effect);
+void BattleEffect_RunRamses(s32 *arg);
+void BattleEffect_RunNereid(s32 *arg);
+void BattleEffect_RunKirin(s32 *arg);
+void BattleEffect_RunAtalanta(s32 *arg);
+void BattleEffect_RunCybele(s32 *arg);
+void BattleEffect_RunNeptune(s32 *arg);
+void BattleEffect_RunTiamat(s32 *arg);
+void BattleEffect_RunProcne(s32 *arg);
+void BattleEffect_RunJudgment(s32 *arg);
+void BattleEffect_RunBoreas(s32 *arg);
+void BattleEffect_RunThor(s32 *arg);
+void BattleEffect_RunZagan(s32 *arg);
+void BattleEffect_RunMegaera(s32 *arg);
+void BattleEffect_RunFlora(s32 *arg);
+void BattleEffect_RunMoloch(s32 *arg);
+void BattleEffect_RunUlysses(s32 *arg);
+void BattleEffect_RunHaures(s32 *arg);
+void BattleEffect_RunEclipse(s32 *arg);
+void BattleEffect_RunCoatlicue(s32 *arg);
+void BattleEffect_RunDaedalus(s32 *arg);
+void BattleEffect_RunAzul(s32 *arg);
+void BattleEffect_RunCatastrophe(s32 *arg);
+void BattleEffect_RunCharon(s32 *arg);
+void BattleEffect_RunIris(s32 *arg);
+void BattleEffect_RunDaedalusAlt(s32 *arg);
+void BattleEffect_RunTrident(s32 *arg);
+void BattleEffect_RunCruelRuin(s32 *arg);
+void BattleEffect_RunMeteorBlow(s32 *arg);
 
 extern void (*gData_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];
 
 /// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
 /// with the effect's three work blocks taken.
-void BattleFx_RunSceneEffect(s32 *arg) {
+void BattleEffect_RunSceneEffect(s32 *arg) {
   struct FxRunWork *work;
 
   Runtime_AllocateHeapBlock(100, 0x302);
   Runtime_AllocateHeapBlock(92, 0x7b7c);
   Runtime_AllocateHeapBlock(96, 0x4000);
   /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0
-   * offset is started, as in BattleFx_RunTableEffect (differ 2 without it). */
+   * offset is started, as in BattleEffect_RunTableEffect (differ 2 without it). */
   do {
     work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   } while (0);
   work->script = arg;
   work->active = 1;
   if (*arg == 0) {
-    BattleFx_RunMeteor((struct BattleEffectArgument *)arg);
+    BattleEffect_RunMeteor((struct BattleEffectArgument *)arg);
   } else {
     switch (*arg) {
     case 1:
-      BattleFx_RunRamses(arg);
+      BattleEffect_RunRamses(arg);
       break;
     case 2:
-      BattleFx_RunNereid(arg);
+      BattleEffect_RunNereid(arg);
       break;
     case 3:
-      BattleFx_RunKirin(arg);
+      BattleEffect_RunKirin(arg);
       break;
     case 4:
-      BattleFx_RunAtalanta(arg);
+      BattleEffect_RunAtalanta(arg);
       break;
     case 5:
-      BattleFx_RunCybele(arg);
+      BattleEffect_RunCybele(arg);
       break;
     case 6:
-      BattleFx_RunNeptune(arg);
+      BattleEffect_RunNeptune(arg);
       break;
     case 7:
-      BattleFx_RunTiamat(arg);
+      BattleEffect_RunTiamat(arg);
       break;
     case 8:
-      BattleFx_RunProcne(arg);
+      BattleEffect_RunProcne(arg);
       break;
     case 9:
-      BattleFx_RunJudgment(arg);
+      BattleEffect_RunJudgment(arg);
       break;
     case 10:
-      BattleFx_RunBoreas(arg);
+      BattleEffect_RunBoreas(arg);
       break;
     case 11:
-      BattleFx_RunMeteor((struct BattleEffectArgument *)arg);
+      BattleEffect_RunMeteor((struct BattleEffectArgument *)arg);
       break;
     case 12:
-      BattleFx_RunThor(arg);
+      BattleEffect_RunThor(arg);
       break;
     case 13:
-      BattleFx_RunZagan(arg);
+      BattleEffect_RunZagan(arg);
       break;
     case 14:
-      BattleFx_RunMegaera(arg);
+      BattleEffect_RunMegaera(arg);
       break;
     case 15:
-      BattleFx_RunFlora(arg);
+      BattleEffect_RunFlora(arg);
       break;
     case 16:
-      BattleFx_RunMoloch(arg);
+      BattleEffect_RunMoloch(arg);
       break;
     case 17:
-      BattleFx_RunUlysses(arg);
+      BattleEffect_RunUlysses(arg);
       break;
     case 18:
-      BattleFx_RunHaures(arg);
+      BattleEffect_RunHaures(arg);
       break;
     case 19:
-      BattleFx_RunEclipse(arg);
+      BattleEffect_RunEclipse(arg);
       break;
     case 20:
-      BattleFx_RunCoatlicue(arg);
+      BattleEffect_RunCoatlicue(arg);
       break;
     case 21:
-      BattleFx_RunDaedalus(arg);
+      BattleEffect_RunDaedalus(arg);
       break;
     case 22:
-      BattleFx_RunAzul(arg);
+      BattleEffect_RunAzul(arg);
       break;
     case 23:
-      BattleFx_RunCatastrophe(arg);
+      BattleEffect_RunCatastrophe(arg);
       break;
     case 24:
-      BattleFx_RunCharon(arg);
+      BattleEffect_RunCharon(arg);
       break;
     case 25:
-      BattleFx_RunIris(arg);
+      BattleEffect_RunIris(arg);
       break;
     case 26:
-      BattleFx_RunDaedalusAlt(arg);
+      BattleEffect_RunDaedalusAlt(arg);
       break;
     case 27:
-      BattleFx_RunTrident(arg);
+      BattleEffect_RunTrident(arg);
       break;
     case 28:
-      BattleFx_RunCruelRuin(arg);
+      BattleEffect_RunCruelRuin(arg);
       break;
     case 29:
-      BattleFx_RunMeteorBlow(arg);
+      BattleEffect_RunMeteorBlow(arg);
       break;
     }
   }
@@ -160,7 +160,7 @@ void BattleFx_RunSceneEffect(s32 *arg) {
 
 /// Runs one battle effect script: takes the effect's three work blocks, calls
 /// the handler its first word selects, then gives the blocks back.
-void BattleFx_RunTableEffect(s32 *script) {
+void BattleEffect_RunTableEffect(s32 *script) {
   struct FxRunWork *work;
 
   Runtime_AllocateHeapBlock(100, 0x302);
@@ -183,7 +183,7 @@ void BattleFx_RunTableEffect(s32 *script) {
   Runtime_ReleaseHeapBlock(100);
 }
 
-void BattleFx_BuildWindowEdgeTable(void) {
+void BattleEffect_BuildWindowEdgeTable(void) {
   u16 *edge;
   u16 *line;
   u8 *inset;

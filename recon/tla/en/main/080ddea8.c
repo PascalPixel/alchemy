@@ -4,10 +4,10 @@
 // before it loads work->y and starts the object id (movs r0, #209) before it
 // loads work->z; this loads both first. A block-local lift, a split y and every
 // single barrier position measured the same or worse. The lift forced through
-// an empty asm and pinned to r0, as in BattleFx_UpdateShrinkingOrbitObject,
+// an empty asm and pinned to r0, as in BattleEffect_UpdateShrinkingOrbitObject,
 // orders the y copy (differ 9); the id's first byte forced the same way then
 // reallocates the whole function (differ 83). 080df6f4 is the same body around
-// BattleFx_SpawnItemBreakMode1.
+// BattleEffect_SpawnItemBreakMode1.
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
@@ -25,9 +25,9 @@ struct ScatterPosition {
 extern const s32 gData_080f0e78[];
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-struct ObjectRuntime *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
+struct ObjectRuntime *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                    s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
@@ -48,8 +48,8 @@ void Func_080ddea8(void) {
   pos.y = work->y + 0x100000;
   pos.z = work->z;
   pair[0] =
-      BattleFx_SpawnItemBreakMode3(pos.x + 0x200000, pos.y, pos.z, 0x8000);
-  pair[1] = BattleFx_SpawnItemBreakMode3(pos.x - 0x200000, pos.y, pos.z, 0);
+      BattleEffect_SpawnItemBreakMode3(pos.x + 0x200000, pos.y, pos.z, 0x8000);
+  pair[1] = BattleEffect_SpawnItemBreakMode3(pos.x - 0x200000, pos.y, pos.z, 0);
 
   WaitFrames(15);
   walk = pair;
@@ -79,5 +79,5 @@ void Func_080ddea8(void) {
 
   Object_Destroy(pair[0]);
   Object_Destroy(pair[1]);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

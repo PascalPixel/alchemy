@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Geode (kind 253).
-	.global BattleFx_RunGeode
+	.global BattleEffect_RunGeode
 	.thumb_func
-BattleFx_RunGeode:
+BattleEffect_RunGeode:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunGeode:
 	str r2, [sp, #76]
 	ldr r3, [r3]
 	str r3, [sp, #64]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, [sp, #84]
 	add r2, sp, #128
 	ldr r1, [r3, #4]
@@ -51,7 +51,7 @@ BattleFx_RunGeode:
 	bne .L_0816c76c
 	movs r0, #104
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0816c774
 	.2byte 0x0000
 .L_0816c764:
@@ -61,7 +61,7 @@ BattleFx_RunGeode:
 .L_0816c76c:
 	movs r0, #104
 	movs r1, #7
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0816c774:
 	movs r5, #192
 	lsls r5, r5, #18
@@ -101,7 +101,7 @@ BattleFx_RunGeode:
 .L_0816c7bc:
 	.4byte 0x00000000
 .L_0816c7c0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816c7c4:
 	adds r1, #255
 	ldr r0, .L_0816c924
@@ -474,9 +474,9 @@ BattleFx_RunGeode:
 .L_0816ca9c:
 	.4byte 0x04000208
 .L_0816caa0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816caa4:
-	.4byte BattleFx_ProcessPendingBlock2Transfer
+	.4byte BattleEffect_ProcessPendingBlock2Transfer
 .L_0816caa8:
 	.4byte IwramClearWords
 .L_0816caac:
@@ -687,9 +687,9 @@ BattleFx_RunGeode:
 .L_0816cc38:
 	.4byte Display_ApplyBg2Affine
 .L_0816cc3c:
-	.4byte BattleFx_ProcessPendingBlock2Transfer
+	.4byte BattleEffect_ProcessPendingBlock2Transfer
 .L_0816cc40:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816cc44:
 	.4byte gIoWriteQueue
 .L_0816cc48:
@@ -1277,7 +1277,7 @@ BattleFx_RunGeode:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816d12c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #152
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1311,4 +1311,4 @@ BattleFx_RunGeode:
 .L_0816d128:
 	.4byte 0xfff84000
 .L_0816d12c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

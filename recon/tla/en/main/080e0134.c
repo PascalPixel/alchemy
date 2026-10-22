@@ -23,7 +23,7 @@ struct FallbackScene {
 };
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(struct ObjectRuntime *object);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *pos);
@@ -64,7 +64,7 @@ void Func_080e0134(void) {
     obj->x = from.x + (to.x - from.x) * step / 10;
     obj->y = from.y + (to.y - from.y) * step / 10;
     obj->z = from.z + (to.z - from.z) * step / 10;
-    scale = BattleFx_Interpolate(0x10000, 0x4000, step);
+    scale = BattleEffect_Interpolate(0x10000, 0x4000, step);
     obj->scaleX = scale;
     obj->scaleY = scale;
     WaitFrames(1);
@@ -103,5 +103,5 @@ void Func_080e0134(void) {
   Object_Destroy(obj);
   WaitFrames(4);
   WaitFrames(30);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

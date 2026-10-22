@@ -9,7 +9,7 @@ void EventRuntime_PrepareCurrentObject(void);
 void WaitFrames(s32 frames);
 void Func_080d46a4(s32 a0, s32 a1);
 
-void BattleFx_RunVisibilityTransition(void) {
+void BattleEffect_RunVisibilityTransition(void) {
   struct PartyState *party;
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {

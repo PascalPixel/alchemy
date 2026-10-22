@@ -47,10 +47,10 @@ SceneEvent_FindActiveRecordFar:
 	.thumb_func
 Func_080c8968:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_LoadBufferPalette
+	overlay_veneer BattleEffect_LoadBufferPalette
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_LoadBufferPalette
+	overlay_veneer BattleEffect_LoadBufferPalette
 .else
 	overlay_veneer Func_080d1760
 .endif

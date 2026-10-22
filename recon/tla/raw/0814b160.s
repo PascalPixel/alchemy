@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
-	.global BattleFx_RunCurse
+	.global BattleEffect_RunCurse
 	.thumb_func
-BattleFx_RunCurse:
+BattleEffect_RunCurse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunCurse:
 	movs r0, #1
 	ldr r1, [r5, #92]
 	str r1, [sp, #20]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0814b1bc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -59,7 +59,7 @@ BattleFx_RunCurse:
 .L_0814b1cc:
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r0, [sp, #20]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -238,7 +238,7 @@ BattleFx_RunCurse:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -248,4 +248,4 @@ BattleFx_RunCurse:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0814b34c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

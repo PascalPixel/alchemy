@@ -49,10 +49,10 @@ void Camera_WorldToScreen(struct SpinVector *position);
 void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(void *record, u32 value);
 u32 Random16(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 void ObjectGroup_ApplyRandomChildValues(struct SpinObject *owner);
-void BattleFx_AdvanceAngleWithRamp(struct SpinObject *object);
-void BattleFx_UpdateDescendingObject(struct SpinObject *obj);
+void BattleEffect_AdvanceAngleWithRamp(struct SpinObject *object);
+void BattleEffect_UpdateDescendingObject(struct SpinObject *obj);
 void Func_080e0cec(struct EffectSlot *slot);
 
 void FieldFx_RunRetreat(void) {
@@ -78,13 +78,13 @@ void FieldFx_RunRetreat(void) {
   Audio_PlayCue(220);
   Animation_ApplyChildValuesFar(obj, 0);
   Object_SetMode(obj, 3);
-  obj->update = BattleFx_AdvanceAngleWithRamp;
+  obj->update = BattleEffect_AdvanceAngleWithRamp;
   obj->timer = 0;
   WaitFrames(70);
 
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   obj->motionFlags = 0;
-  obj->update = BattleFx_UpdateDescendingObject;
+  obj->update = BattleEffect_UpdateDescendingObject;
   obj->targetX = EFFECT_NO_TARGET;
   pos.x = obj->x;
   pos.y = obj->y;
@@ -119,7 +119,7 @@ void FieldFx_RunRetreat(void) {
     slot++;
   } while (i < SLOT_MAX);
   WaitFrames(40);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
   obj->fall = 0;
   obj->y = obj->floor;
   WaitFrames(10);

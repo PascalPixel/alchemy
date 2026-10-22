@@ -26,7 +26,7 @@
 /// effect: the targets; the variant widens the wall: narrowest for Gaia and
 ///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
 ///         Gaia and Avalanche.
-void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void **cursor;
@@ -50,10 +50,10 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
 
   // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
-  // or 1.5 times, or twice as BattleFx_BeginCanvasLayer left it.
+  // or 1.5 times, or twice as BattleEffect_BeginCanvasLayer left it.
   if (work->effect->variant == EFFECT_VARIANT_BASIC)
     REG_BG2PA = Q_8_8(0.8);
   else if (work->effect->variant == EFFECT_VARIANT_STRONGER)
@@ -355,11 +355,11 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef GAIA_WALL_TOP_CELLS

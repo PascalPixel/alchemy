@@ -11,7 +11,7 @@ enum {
   QUAKE_TIMING_SHAKE        ///< how far the screen shakes
 };
 
-/// The peak heights of Quake's rock pillars: BattleFx_RunQuake copies its
+/// The peak heights of Quake's rock pillars: BattleEffect_RunQuake copies its
 /// static table into a local of this type before the frame loop, and only
 /// the first three columns are drawn.
 struct RockWallHeights {
@@ -37,7 +37,7 @@ struct RockWallHeights {
 /// vertical velocity and gravity; arms work->shakeFrames.
 ///
 /// effect: the targets; variant picks the row of gQuake_Timings.
-void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
+void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   static s32 wallHeights[4] = {
       -32,
       -32,
@@ -66,7 +66,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   // The canvas at its own width, opaque: the pillars hide what is behind.
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;

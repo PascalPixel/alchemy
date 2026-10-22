@@ -1,6 +1,6 @@
 // Draft, differ 6 of 120 (one device; 16 without it): summon 25's change of backdrop
 // behind the wipe (Func_08191958's midpoint). The colour loop takes The
-// Broken Seal's matched channel form (BattleFx_RunGaia's darkening:
+// Broken Seal's matched channel form (BattleEffect_RunGaia's darkening:
 // blue and green through (u16)color shifts, which agscc does in halfword
 // mode, so the 31 they are masked with comes from the pool; red as
 // red = 31; red &= color).

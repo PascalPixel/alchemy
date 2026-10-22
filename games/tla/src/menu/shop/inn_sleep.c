@@ -59,7 +59,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   state->delay = 60;
   WaitFrames(20);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  BattleFx_SetPrimaryBufferValueFar();
+  BattleEffect_SetPrimaryBufferValueFar();
 #else
   Event_FinishScreenTransitionFar();
 #endif

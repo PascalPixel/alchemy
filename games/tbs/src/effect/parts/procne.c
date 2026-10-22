@@ -38,7 +38,7 @@
 /// back to 120, and sets work->shakeFrames on each comet. It spawns the nine
 /// objects of the block on frame 160 and releases them before closing the
 /// canvas.
-void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
+void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void *canvas;
@@ -81,7 +81,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
 
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
@@ -300,8 +300,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
                                (s32)&ResourceId_VioletSkyBackdrop, 0);
       BattlePresentation_ConfigurePaletteFadeFar(
           BATTLE_BACKGROUND_FLAT, (s32)&ResourceId_VioletSkyBackdrop, 8);
-      BattleFx_SelectLivingTargets(work->effect);
-      BattleFx_SpawnObjects(9, 376, 2);
+      BattleEffect_SelectLivingTargets(work->effect);
+      BattleEffect_SpawnObjects(9, 376, 2);
 
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
@@ -437,7 +437,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
 
           if (alive > 0) {
             span = alive / 10 + 1;
-            draw[1](canvas, graphics + gBattleFx_MoteCells[span - 1],
+            draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
                     (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                     span, span * 2);
           }
@@ -593,7 +593,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
 
   gProjection.centerX = 120;
 
-  BattleFx_SetupBlendedDisplay();
+  BattleEffect_SetupBlendedDisplay();
 
   index = 0;
   do {

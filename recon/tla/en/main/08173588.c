@@ -1,9 +1,9 @@
 // Draft of Func_08173588, the body of effect kinds 240 (Rime, mode 0) and
-// 238 (Haze, mode 1) through BattleFx_RunRime and BattleFx_RunHaze, written from
+// 238 (Haze, mode 1) through BattleEffect_RunRime and BattleEffect_RunHaze, written from
 // the listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunUndeadSword 0.470, call order
-// BattleFx_RunDragonCloud 0.456). Func_0815585c, the canvas
-// preparer (The Broken Seal's BattleFx_RunDjinniEntrance, reworked),
+// BattleEffect_RunUndeadSword 0.470, call order
+// BattleEffect_RunDragonCloud 0.456). Func_0815585c, the canvas
+// preparer (The Broken Seal's BattleEffect_RunDjinniEntrance, reworked),
 // fills the centre and base points; its prototype here is read from the
 // calls.
 
@@ -76,17 +76,17 @@ extern const u16 gData_08199340[]; // a textured square
 extern const u16 gData_08199210[]; // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_BuildBlitter, packed
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
+void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Func_0815585c(struct BattleEffectArgument *effect, s32 placement,
-                   s32 *center, s32 *base); // BattleFx_RunDjinniEntrance
+                   s32 *center, s32 *base); // BattleEffect_RunDjinniEntrance
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -128,7 +128,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   if (mode == 0) {
     s32 row;
     s32 column;
@@ -161,15 +161,15 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - center[0]) << 8;
   if (effect->side == 0)
-    BattleFx_LoadBlitter(104,
+    BattleEffect_LoadBlitter(104,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                              COMPOSITE_FLIP_X));
   else
-    BattleFx_LoadBlitter(104,
+    BattleEffect_LoadBlitter(104,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -286,6 +286,6 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

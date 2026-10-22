@@ -60,7 +60,7 @@ void IoWriteQueue_FlushPending(void);
 /// variable while disabling and restoring interrupts.
 /* FAKEMATCH: the count goes through count_ as in IO_WRITE_QUEUE_PUSH (see its
  * tag): written as q->count, ElementGlow_Play and
- * BattleFx_RunJudgment, its users, are among the sections that
+ * BattleEffect_RunJudgment, its users, are among the sections that
  * differ. */
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                  \
   {                                                                            \

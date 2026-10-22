@@ -1,10 +1,10 @@
 // Near miss, differ 213 of 563.
 
-// Twin: The Broken Seal's BattleFx_RunDouse (effect kind 9 in both
+// Twin: The Broken Seal's BattleEffect_RunDouse (effect kind 9 in both
 // games), ported as is apart from ⚓️'s calling conventions: the effect read
-// from the argument, the heap blocks as Ram_HeapSlots fields, BattleFx_LoadBlitter
-// with ⚓️'s mode numbers, BattleFx_ArmWin0HBlankDma for the WIN0 HBlank DMA, callback
-// order 0xc80, results phase 133 and BattleFxKernels_IntegrateVector2 for
+// from the argument, the heap blocks as Ram_HeapSlots fields, BattleEffect_LoadBlitter
+// with ⚓️'s mode numbers, BattleEffect_ArmWin0HBlankDma for the WIN0 HBlank DMA, callback
+// order 0xc80, results phase 133 and BattleEffectKernels_IntegrateVector2 for
 // EffectStep_AdvanceWithGravity2D.
 
 // Left: register choice in the drop and spark loops (the native reloads the
@@ -50,26 +50,26 @@ extern u8 Data_08197527[];
 #define DROP_SPACING(variant) Data_08197527[(variant) * 4 + 2]
 #define FRAME_COUNT(variant) Data_08197527[(variant) * 4 + 3]
 
-// The splash's cell for each size from 1 to 6 (gBattleFx_FlareCells).
+// The splash's cell for each size from 1 to 6 (gBattleEffect_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_ParticleSpritesD;
 extern u16 gMapCellBuffer[];
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
-void BattleFx_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
+void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 u32 Random16(void);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -89,7 +89,7 @@ void WaitFrames(s32 frames);
 // after the line table. A variant of -1 is a drop still falling or a free
 // droplet.
 
-void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   void **heapCache;
   struct BattleEffectWork *work;
   void *canvas;
@@ -107,7 +107,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   canvas = heapCache[24];
 
   // Set up the canvas, the drop pictures and the droplets.
-  BattleFx_BeginCanvasLayer(0x2001);
+  BattleEffect_BeginCanvasLayer(0x2001);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + 0x604, 1, 1);
@@ -118,9 +118,9 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   REG_WININ = 0x3337;
 
   // Drops draw at their maximum; droplets add their light.
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
   drawDrop = heapCache[26];
-  BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
   drawSplash = heapCache[47];
 
@@ -170,7 +170,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   }
 
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma, CALLBACK_ORDER);
   if (effect->variant == 0) {
     work->transferMode = 1;
     work->transferValue = 0;
@@ -181,7 +181,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
     if (frame == FRAME_COUNT(effect->variant) - 64)
@@ -246,7 +246,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
         drawSplash(canvas, work->sheet + Data_08197424[size - 1],
                    ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
                    size * 2, size * 2);
-        BattleFxKernels_IntegrateVector2(splash, 60, 0x2000);
+        BattleEffectKernels_IntegrateVector2(splash, 60, 0x2000);
         splash->variant--;
       }
     }
@@ -256,10 +256,10 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
   Func_0813ba50();
 }

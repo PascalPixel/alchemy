@@ -1,10 +1,10 @@
 // Near miss, differ 69 of 355 (the draft has 356).
 
-// Effect kind 39. Twin: The Broken Seal's BattleFx_RunHaunt, ported
+// Effect kind 39. Twin: The Broken Seal's BattleEffect_RunHaunt, ported
 // call for call. The Lost Age's changes: work and canvas read directly, the
 // camera read again each frame; the skull sheet unpacked with its palette by
 // Resource_LoadAndDecompress and the pink burst palette copied after it;
-// BattleFx_FetchRectangleBlitters for the max and additive pair; both callbacks
+// BattleEffect_FetchRectangleBlitters for the max and additive pair; both callbacks
 // at 0xc80; the effect runs count * 32 + 64 frames (96 there) and begins the
 // results at frame 92 (96 there); the actor loops read the effect argument.
 
@@ -39,16 +39,16 @@
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);      // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void BattleFx_ArmBg2AffineHBlankDma(void); // BattleFx_ArmBg2AffineHBlankDma
+void BattleEffect_ArmBg2AffineHBlankDma(void); // BattleEffect_ArmBg2AffineHBlankDma
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyPitch(s32 angle);
 void Audio_PlayCue(s32 cue);
@@ -64,7 +64,7 @@ extern char ResourceId_PinkBurstSheet;
 // appear one every four frames from all around, up to 64 pixels away, and
 // close in on a point 20 pixels above the target while the view of them
 // turns; the background waves line by line throughout.
-void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   s32 k;
   struct EffectPosition pos;
   s32 point[3];
@@ -81,15 +81,15 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   // Set up: the skull sheet with its palette, the pink burst palette, the
   // max and additive blitters, the wave's HBlank DMA and a transfer that
   // fades the canvas by 4 each frame.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
-  BattleFx_FetchRectangleBlitters(0, draw);
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
+  BattleEffect_FetchRectangleBlitters(0, draw);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 3;
   work->transferValue = 0x04040404;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Scatter every skull up to 64 pixels from its centre.
   for (i = 0; i != 512; i++) {
@@ -163,9 +163,9 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

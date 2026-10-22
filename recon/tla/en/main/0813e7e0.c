@@ -2,7 +2,7 @@
 
 // No twin: an unused ⚓️ function that no handler or caller reaches. Its
 // set-up is 0813eb70's (The Broken Seal's
-// BattleFx_RunShatteringOpening): the same BG2 canvas, tile map,
+// BattleEffect_RunShatteringOpening): the same BG2 canvas, tile map,
 // clears and blitters. After running Func_08191530 on the effect it holds
 // the battle background on screen, fading its colours up from black over 64
 // frames, until A is pressed; B starts the fade again. It reads as a viewer
@@ -51,9 +51,9 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The battle background's id.
 #define BACKGROUND(battle) (*(u16 *)(battle)->unk670)
 
-void BattleFx_ClearActorTimers(void); // BattleFx_ClearActorTimers
+void BattleEffect_ClearActorTimers(void); // BattleEffect_ClearActorTimers
 void Func_08191530(struct BattleEffectArgument *effect);
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -101,8 +101,8 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   work->framesSinceTransfer = 1;
   Func_08191530(effect);
 
-  // Make BG2 a 128x128 canvas, as BattleFx_BeginCanvasLayer does.
-  BattleFx_ClearActorTimers();
+  // Make BG2 a 128x128 canvas, as BattleEffect_BeginCanvasLayer does.
+  BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = 32;
   BattlePresentation_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
@@ -139,9 +139,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
-  BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
@@ -172,7 +172,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   // Put the background and the display back.
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Func_0814cd48(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;

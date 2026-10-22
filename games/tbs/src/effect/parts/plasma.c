@@ -36,7 +36,7 @@
 /// loads the violet palette into the first 64 background colours (the
 /// strongest variant keeps the lightning pillar sheet's), scrolls the camera
 /// (the strongest variant) and sets work->shakeFrames at each strike.
-void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;
   void **cursor;
@@ -57,7 +57,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -203,14 +203,14 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
 /// (BATTLE_FX_NOVA).
-void BattleFx_RunNova(struct BattleEffectArgument *effect) {
-  BattleFx_RunSparkGroups(effect, SPARK_GROUPS_NOVA);
+void BattleEffect_RunNova(struct BattleEffectArgument *effect) {
+  BattleEffect_RunSparkGroups(effect, SPARK_GROUPS_NOVA);
 }
 /// Orange bursts go off at (60, 64), with the canvas in front (priority 0).
 ///
 /// Abilities: Dynamite (BATTLE_FX_DYNAMITE).
-void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
-  BattleFx_RunSparkGroups(effect, SPARK_GROUPS_DYNAMITE);
+void BattleEffect_RunDynamite(struct BattleEffectArgument *effect) {
+  BattleEffect_RunSparkGroups(effect, SPARK_GROUPS_DYNAMITE);
 }
 #define SPARK_GROUPS_FLASHES 16     ///< flashes kept per burst
 #define SPARK_GROUPS_SPACING 8      ///< frames between bursts
@@ -227,10 +227,11 @@ void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
 /// on frame 4.
 /// mode: where the bursts go off (enum SparkGroupsMode).
 ///
-/// Called by BattleFx_RunNova and BattleFx_RunDynamite, and with
-/// SPARK_GROUPS_RISING by BattleFx_RunCastingImpact for Severe Blow and by
-/// BattleFx_RunThrash and BattleFx_RunUnusedSevereBlowLeap in thrash.c, which
-/// set effect->variant first (SPARK_GROUPS_SEVERE_BLOW or SPARK_GROUPS_THRASH).
+/// Called by BattleEffect_RunNova and BattleEffect_RunDynamite, and with
+/// SPARK_GROUPS_RISING by BattleEffect_RunCastingImpact for Severe Blow and by
+/// BattleEffect_RunThrash and BattleEffect_RunUnusedSevereBlowLeap in thrash.c,
+/// which set effect->variant first (SPARK_GROUPS_SEVERE_BLOW or
+/// SPARK_GROUPS_THRASH).
 ///
 /// work->particles hold the ring flashes, 16 for each burst; PARTICLES the
 /// sparks, one run of gPlasma_Shapes' count for each burst. Sets
@@ -238,7 +239,8 @@ void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
 /// colours, then the orange (Dynamite) or lightning (SPARK_GROUPS_RISING) one
 /// over it, scrolls the camera (the strongest variant) and sets
 /// work->shakeFrames at each burst.
-void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
+                                 s32 mode) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
   void **slots;
@@ -262,15 +264,15 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == SPARK_GROUPS_NOVA) {
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_BeginCanvasLayer(1);
     originX = 60;
     originY = 48;
   } else if (mode == SPARK_GROUPS_DYNAMITE) {
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
     originX = 60;
     originY = 64;
   } else {
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     originX = screenPosition.x / 2;
     originY = screenPosition.y + 48;

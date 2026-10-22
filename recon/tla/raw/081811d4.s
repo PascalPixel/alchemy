@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Vengeance (kind 126).
-	.global BattleFx_RunVengeance
+	.global BattleEffect_RunVengeance
 	.thumb_func
-BattleFx_RunVengeance:
+BattleEffect_RunVengeance:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -21,7 +21,7 @@ BattleFx_RunVengeance:
 	ldr r3, [r3, #96]
 	movs r5, #7
 	mov r8, r3
-	bl BattleFx_BeginTiledCanvas
+	bl BattleEffect_BeginTiledCanvas
 	ldr r3, .L_08181218
 	movs r2, #128
 	lsls r2, r2, #19
@@ -146,14 +146,14 @@ BattleFx_RunVengeance:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #40]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r4, [sp, #52]
 	movs r0, #239
 	movs r1, #238
@@ -246,7 +246,7 @@ BattleFx_RunVengeance:
 .L_081813a4:
 	.4byte 0x000000b0
 .L_081813a8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081813ac:
 	ldr r4, .L_0818146c
 	ldr r0, .L_08181470
@@ -613,7 +613,7 @@ BattleFx_RunVengeance:
 	movs r1, #1
 	lsls r3, r3, #12
 	str r2, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	movs r0, #133
 	bl Audio_PlayCue
 .L_0818165c:
@@ -955,14 +955,14 @@ BattleFx_RunVengeance:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #68
 	b .L_08181904
 	.2byte 0x0000
 .L_081818fc:
 	.4byte 0x00001088
 .L_08181900:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08181904:
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -33,7 +33,7 @@
 /// After frame 96 the rocks fall and bounce. Within a frame the order of the
 /// steps matters: later steps draw over earlier ones, and several of them
 /// consume random numbers.
-void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   // Every object of the scene takes this scale.
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   struct SpritePlacement position;
@@ -54,21 +54,21 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_ConfigureEffectDisplay();
   // A wipe to black (colour 1) hides the battle; the desert backdrop loads
   // behind it, and a second wipe clears the canvas to show it.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  BattleEffect_SelectLivingTargets(work->effect);
   // Nine objects of resource 379, the formation (0 to 6) and the orb (7 and
   // 8), then the six rocks from resource 390, each playing one of its three
   // animations.
-  BattleFx_SpawnObjects(9, 379, 2);
+  BattleEffect_SpawnObjects(9, 379, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct AnimationObject *object = ResourceObject_CreateFar(390);
 
@@ -92,7 +92,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
                            (s32)&ResourceId_DesertBackdrop, 0);
-  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);
@@ -119,7 +119,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   // Restart the background palette fade over 24 frames
-  // (Palette_StepFadeTransfer, added by BattleFx_BeginCanvasLayer).
+  // (Palette_StepFadeTransfer, added by BattleEffect_BeginCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -310,7 +310,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   // The battle shows the damage once the scene is over, and gets its own
   // background back.
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  BattleFx_SetupBlendedDisplay();
+  BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   EFFECT_FINISH_CANVAS();

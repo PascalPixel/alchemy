@@ -91,7 +91,7 @@ Func_080e716c:
 	add r3, r8
 	strh r5, [r3]
 	movs r0, #79
-	bl BattleFx_DropObjectAtAnchor
+	bl BattleEffect_DropObjectAtAnchor
 .L_080e7228:
 	pop {r3}
 	mov r8, r3

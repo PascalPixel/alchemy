@@ -64,8 +64,8 @@ void EventRuntime_End(void);
 struct ItemDefinitionView *Item_Get(s32 item);
 s32 Func_080d295c(s32 mode);
 void UiWork_FinalizePendingCoreFar(void);
-void BattleFx_LoadActionEffectResources(s32 action, s32 flags);
-void BattleFx_Run(void);
+void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
+void BattleEffect_Run(void);
 void BattleEffect_CleanupSceneObjects(void);
 void Inventory_RemoveFar(s32 actor, s32 slot);
 
@@ -168,9 +168,9 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
       UiText_DrawQuantity(actor, 1);
       UiText_DrawQuantity(itemId, 2);
       UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
-      BattleFx_LoadActionEffectResources(actionId, 0);
+      BattleEffect_LoadActionEffectResources(actionId, 0);
       runtime->resolvingAction = 1;
-      BattleFx_Run();
+      BattleEffect_Run();
       runtime->resolvingAction = 0;
       BattleEffect_CleanupSceneObjects();
 

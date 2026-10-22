@@ -36,7 +36,7 @@ void ColorBuffer_Brighten(void *source, s32 amount, void *destination,
 
 /// The frame callback that copies the effect canvas to BG character block 1
 /// when a transfer is pending, in the way the transfer mode asks for.
-void BattleFx_ProcessPendingGraphicsTransfer(void) {
+void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_HeapSlots->battleFxWork[1];
   u32 ime;
@@ -80,7 +80,7 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
 
 /// When a transfer is pending, copies the 0x1000-byte canvas at work 0x6780
 /// to the stamp's tiles (the pointer at work 0x7b74), then clears it.
-void BattleFx_ProcessPendingStampTransfer(void) {
+void BattleEffect_ProcessPendingStampTransfer(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   u32 ime;
   s32 *pending;
@@ -99,7 +99,7 @@ void BattleFx_ProcessPendingStampTransfer(void) {
 
 /// The same callback for the 0x7800-byte canvas in the map cell buffer, copied
 /// to BG character block 2.
-void BattleFx_FlushPendingGraphicsTransfer(void) {
+void BattleEffect_FlushPendingGraphicsTransfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_MapCellBuffer;
   u32 ime;
@@ -128,7 +128,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
       break;
     }
     /* FAKEMATCH: the dead read before the counter is set to 1, as in
-     * BattleFx_ProcessPendingGraphicsTransfer. */
+     * BattleEffect_ProcessPendingGraphicsTransfer. */
     (void)*(volatile s32 *)&work->framesSinceTransfer;
     work->framesSinceTransfer = 1;
   } else {
@@ -138,7 +138,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
 }
 
 /// The same for the canvas in the second effect work block.
-void BattleFx_ProcessPendingBlock2Transfer(void) {
+void BattleEffect_ProcessPendingBlock2Transfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source;
   u32 ime;
@@ -168,7 +168,7 @@ void BattleFx_ProcessPendingBlock2Transfer(void) {
       break;
     }
     /* FAKEMATCH: the dead read before the counter is set to 1, as in
-     * BattleFx_ProcessPendingGraphicsTransfer. */
+     * BattleEffect_ProcessPendingGraphicsTransfer. */
     (void)*(volatile s32 *)&work->framesSinceTransfer;
     work->framesSinceTransfer = 1;
   } else {

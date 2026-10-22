@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_effect.h"
 
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object) {
+void BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object) {
   s32 x;
   s32 velocityX;
   struct FieldSprite *sprite;

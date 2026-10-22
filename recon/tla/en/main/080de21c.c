@@ -6,7 +6,7 @@
 // start (sp + 24) and the last loop's r7 are set at other places.
 // effect04_entry.c's FieldFx_RunForceOnTarget declares it taking the effect argument.
 // Belongs between FieldFx_RunForceOnTarget and update_orbiting_particle_main.c's
-// BattleFx_UpdateOrbitingParticleMain.
+// BattleEffect_UpdateOrbitingParticleMain.
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -46,7 +46,7 @@ struct Effect04Vector {
 };
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 void Camera_WorldToScreen(struct Effect04Vector *position);
 void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(void *record, u32 value);
@@ -118,7 +118,7 @@ void Func_080de21c(void) {
   Vector_AddPolarOffset(0x80000, scene->angle, &pos);
   object = Object_Spawn(278, pos.x, pos.y, pos.z);
   if (object == NULL) {
-    BattleFx_PrepareBufferInterpolation();
+    BattleEffect_PrepareBufferInterpolation();
     return;
   }
   object->scaleY = 0x4000;
@@ -203,7 +203,7 @@ void Func_080de21c(void) {
     EventRuntime_RunPendingEvent(event, scene->firstObjectId,
                                  scene->secondObjectId);
   WaitFrames(10);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
   WaitFrames(20);
   if (marker != 96)
     Resource_ResetEntry(marker);

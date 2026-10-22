@@ -18,7 +18,7 @@
 void Func_080d7524(s32 element);
 s32 Encounter_GetDjinnEnemyGroup(s32 djinn);
 void Encounter_ResolveWorldMapZoneAndBackdrop(s32 *position);
-void BattleFx_SelectBattleCue(s32 cue, s32 mode);
+void BattleEffect_SelectBattleCue(s32 cue, s32 mode);
 
 extern s8 gData_02001000[];
 
@@ -46,5 +46,5 @@ void Func_080d2b4c(u32 flags, u32 djinn) {
   if (*(s8 *)(work + 394) == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &ObjectTable_Get(EventRuntime_GetControlledOwner())->x);
-  BattleFx_SelectBattleCue(0, 0);
+  BattleEffect_SelectBattleCue(0, 0);
 }

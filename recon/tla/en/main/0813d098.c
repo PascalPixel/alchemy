@@ -1,6 +1,6 @@
 // Draft, differ 1668 of 1864 (20 instructions short).
 
-// Twin: The Broken Seal's BattleFx_RunTwelveMode, rebuilt by ⚓️ for 21 modes
+// Twin: The Broken Seal's BattleEffect_RunTwelveMode, rebuilt by ⚓️ for 21 modes
 // (19 handler-table wrappers, kinds 117 and 386-458). The skeleton, the
 // record table and the strike, column, wisp, mote, spark and glint parts
 // are the twin's; ⚓️ adds:
@@ -86,14 +86,14 @@ extern u16 Data_081975ee[];
 extern u8 Data_081975fa[];
 extern u8 Data_08197600[];
 
-// The glint pictures (gBattleFx_GlintCellWidths, Heights, Offsets) and
+// The glint pictures (gBattleEffect_GlintCellWidths, Heights, Offsets) and
 // their flips (gTargetStrike_GlintDrawFlags).
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern u16 gData_08197486[];
 extern u8 Data_08197605[];
 
-// The mote's cell for each size (gBattleFx_MoteCells).
+// The mote's cell for each size (gBattleEffect_MoteCells).
 extern u16 gData_08197410[];
 
 // The star model and its four projected corners.
@@ -138,11 +138,11 @@ struct ModelDraw {
   s32 tail;
 };
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleFx_BuildBlitter
+                   s32 mode); // BattleEffect_BuildBlitter
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -152,9 +152,9 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -202,9 +202,9 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   if (mode == 8)
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
   else
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   if (mode == 8) {
     work->fadeFrames = 24;
@@ -323,7 +323,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     work->transferValue = 50;
   else
     work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Aim at the middle of the first target.
   EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
@@ -351,7 +351,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           targetPosition.y += (Random16() & 15) - 8;
         }
         if (effect->side == 1) {
-          BattleFx_LoadBlitter(SLOT_BLITTER,
+          BattleEffect_LoadBlitter(SLOT_BLITTER,
                         BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
           gBlitter(canvas, work->sheet + Data_081975ee[picture],
                    targetPosition.x / 2 - (Data_081975fa[picture] / 2) -
@@ -359,7 +359,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
                    targetPosition.y - (Data_081975e8[picture] / 2),
                    Data_081975e2[picture], Data_081975e8[picture]);
         } else {
-          BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+          BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
           gBlitter(canvas, work->sheet + Data_081975ee[picture],
                    targetPosition.x / 2 + (Data_081975fa[picture] / 2) - 8,
                    targetPosition.y - (Data_081975e8[picture] / 2),
@@ -529,9 +529,9 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
-    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = gBlitter;
-    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_ADDITIVE, CLIP));
+    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_ADDITIVE, CLIP));
     draw[1] = gBlitterAlternate;
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(effect->actor)->object;
@@ -546,7 +546,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
 
             draw[i & 1](canvas, work->sheet + picture * 1152 + 0x3200,
                         HI(step->x) - 12, HI(step->y) - 24, 24, 48);
-            BattleFxKernels_IntegrateVector2(step, 62, -0x400);
+            BattleEffectKernels_IntegrateVector2(step, 62, -0x400);
             step->variant++;
           }
         }
@@ -560,8 +560,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           if (step->variant >= 0 && step->variant <= 23) {
             draw[0](canvas, work->sheet + (step->variant / 4 << 11) + 0x3200,
                     HI(step->x) - 16, HI(step->y) - 32, 32, 64);
-            BattleFxKernels_IntegrateVector2(step, 62, -0x800);
-            BattleFxKernels_IntegrateVector2(step, 62, -0x800);
+            BattleEffectKernels_IntegrateVector2(step, 62, -0x800);
+            BattleEffectKernels_IntegrateVector2(step, 62, -0x800);
             step->variant++;
           }
         }
@@ -586,7 +586,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             draw[1](canvas, sheet + gData_08197410[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
-            BattleFxKernels_IntegrateVector3(step, 60, 0);
+            BattleEffectKernels_IntegrateVector3(step, 60, 0);
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x - step->x) >> 8;
@@ -613,7 +613,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           if (size >= 0) {
             EffectPosition_ProjectPoint((s32 *)step, &position);
             position.x >>= 1;
-            BattleFxKernels_IntegrateVector3(step, 60, 0);
+            BattleEffectKernels_IntegrateVector3(step, 60, 0);
             size >>= 3;
             size++;
             draw[1](canvas, sheet + gData_08197410[size - 1],
@@ -667,6 +667,6 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

@@ -22,17 +22,17 @@
 /// reaction, and the fire sheet slides off behind it. The battle shows the
 /// damage at the end.
 ///
-/// Reached through BattleFx_RunSceneEffect, whose sheet slot holds the mote
+/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
 /// sheet here. The sweep projects with gProjection.centerY at 240 and holds
 /// BG1's scroll from the battle camera; the rise gives BG1's x back and
-/// BattleFx_SetupBlendedDisplay puts the centre back at 120, which the rise's
-/// Camera_ApplyShake then moves while the screen shakes. The nine objects are
-/// released before the scene returns.
+/// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which the
+/// rise's Camera_ApplyShake then moves while the screen shakes. The nine
+/// objects are released before the scene returns.
 ///
 /// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
 /// burst motes, variant their frames left.
-void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
+void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
   void **cursor;
@@ -59,8 +59,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   // The backdrop and colour 1, which the first wipe fills the canvas with,
@@ -68,23 +68,23 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   // Setup: wipe the battle away from left to right, swap in the forest
   // backdrop and wipe back. Window 0 narrows to x 0 to 201; right of it only
   // window 1 applies, which shows no sprites, so the row rides in from
   // behind that edge until the rise opens window 0 again.
-  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleFx_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  BattleEffect_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
   gProjection.centerY = 240;
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
                            (s32)&ResourceId_ForestBackdrop, 0);
-  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(14);
@@ -247,7 +247,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
 
-          blit(canvas, sheet + gBattleFx_MoteCells[size - 1], fire->x,
+          blit(canvas, sheet + gBattleEffect_MoteCells[size - 1], fire->x,
                Q_16_16_TO_INT(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
@@ -298,7 +298,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   // the background, and clear the hit marks and the burst motes.
   gBgScroll[1].x = savedX;
   control->busy = 0;
-  BattleFx_SetupBlendedDisplay();
+  BattleEffect_SetupBlendedDisplay();
   REG_WIN0H = WIN_RANGE(0, 240);
 
   i = 0;

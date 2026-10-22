@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Helm Splitter, Skull Splitter (kind 51).
-	.global BattleFx_RunHelmSplitter
+	.global BattleEffect_RunHelmSplitter
 	.thumb_func
-BattleFx_RunHelmSplitter:
+BattleEffect_RunHelmSplitter:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunHelmSplitter:
 	movs r0, #1
 	str r3, [sp, #16]
 	mov r11, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_08188d08
 	movs r2, #128
 	lsls r2, r2, #19
@@ -130,7 +130,7 @@ BattleFx_RunHelmSplitter:
 	mov r1, r10
 	ldr r0, [r1, #4]
 	add r1, sp, #20
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r2, #0
 	mov r3, r11
 	mov r8, r2
@@ -450,7 +450,7 @@ BattleFx_RunHelmSplitter:
 	movs r1, #60
 	adds r0, r5, #0
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #4]
 	movs r1, #208
 	lsls r1, r1, #15
@@ -512,7 +512,7 @@ BattleFx_RunHelmSplitter:
 .L_08189098:
 	.4byte IwramCopyWords
 .L_0818909c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081890a0:
 	.4byte gData_08199d40
 .L_081890a4:
@@ -582,7 +582,7 @@ BattleFx_RunHelmSplitter:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -591,4 +591,4 @@ BattleFx_RunHelmSplitter:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_08189144:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

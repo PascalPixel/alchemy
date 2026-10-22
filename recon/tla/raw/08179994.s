@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Juggle, Heat Juggle, Fiery Juggle (kind 78).
-	.global BattleFx_RunJuggle
+	.global BattleEffect_RunJuggle
 	.thumb_func
-BattleFx_RunJuggle:
+BattleEffect_RunJuggle:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunJuggle:
 	ldr r3, [r3, #100]
 	movs r0, #1
 	str r3, [sp, #52]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_081799f4
 	movs r2, #128
 	lsls r2, r2, #19
@@ -69,7 +69,7 @@ BattleFx_RunJuggle:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #48]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r8
@@ -493,7 +493,7 @@ BattleFx_RunJuggle:
 .L_08179d60:
 	.4byte IwramCopyWords
 .L_08179d64:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08179d68:
 	.4byte Data_02010018
 .L_08179d6c:
@@ -561,7 +561,7 @@ BattleFx_RunJuggle:
 	adds r0, r6, #0
 	movs r1, #60
 	ldr r2, .L_08179e64
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	subs r3, #1
 	str r3, [r6, #24]
@@ -603,7 +603,7 @@ BattleFx_RunJuggle:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08179e68
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -621,4 +621,4 @@ BattleFx_RunJuggle:
 .L_08179e64:
 	.4byte 0xffffc000
 .L_08179e68:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

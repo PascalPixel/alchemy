@@ -33,7 +33,7 @@
 ///
 /// Leaves effect->variant at EFFECT_VARIANT_STRONGER, and the user in its
 /// action pose with its animation back at the usual speed.
-void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -53,9 +53,9 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   // effect or the battle reads it afterwards; the Lost Age's Ragnarok may show.
   effect->variant = EFFECT_VARIANT_STRONGER;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleFx_FetchRectangleBlitters(work->effect->side, blit);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, blit);
   // The user takes its leap pose and animates fast until the end: an
   // animation step of 48, three times the usual 16.
   ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
@@ -168,7 +168,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
 
     // From frame 17 the palette fades towards the blast colours.
     if (frame > 16) {
-      BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
 
     // The two columns, from frames 16 and 24: a 12-frame shake and the
@@ -245,7 +245,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
                 // the brighter pixel or add.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                cell = sheet + gBattleFx_MoteCells[size - 1];
+                cell = sheet + gBattleEffect_MoteCells[size - 1];
                 px -= size / 2;
                 py -= size;
                 blit[lane](canvas, cell, px, py, size, size * 2);

@@ -11,8 +11,8 @@
 extern u8 MsgYouHereTo[];
 
 void Animation_ApplyChildValues();
-void BattleFx_SnapScaleToFull();
-void BattleFx_StartItemBreak();
+void BattleEffect_SnapScaleToFull();
+void BattleEffect_StartItemBreak();
 void Field_BeginPaletteTransition();
 void Func_020013f8();
 void Func_02001430();
@@ -135,7 +135,7 @@ void Func_02000818(void) {
   Call2((void (*)())Func_020015c8, (s32)Object_GetById(21), 2);
   Call1((void (*)())Func_02001600, 201);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
-  effect = (struct ObjectRuntime *)Value1((s32 (*)())BattleFx_StartItemBreak,
+  effect = (struct ObjectRuntime *)Value1((s32 (*)())BattleEffect_StartItemBreak,
                                           (s32)object21);
   position[0] = object15->x;
   effect->linkedObject = object15;
@@ -144,7 +144,7 @@ void Func_02000818(void) {
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, 0xc000, (s32)position);
   Call4((void (*)())Func_020013f8, (s32)effect, position[0], position[1],
         position[2]);
-  Call1((void (*)())BattleFx_SnapScaleToFull, (s32)effect);
+  Call1((void (*)())BattleEffect_SnapScaleToFull, (s32)effect);
   Call2((void (*)())Func_020013f0, (s32)effect, 4);
   object15->update = Func_02001228;
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x6000, 0);

@@ -96,7 +96,7 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     context.side = 1;
   else
     context.side = 0;
-  BattleFx_RunSceneEffectFar((s32 *)&context);
+  BattleEffect_RunSceneEffectFar((s32 *)&context);
 
   WaitFrames(10);
   BattleObjPut();

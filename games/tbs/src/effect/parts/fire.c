@@ -23,7 +23,7 @@
 ///
 /// effect: the targets; variant picks the number of embers
 ///         (gFire_Counts): 16 for Fire, 32 for Fireball, 64 for Inferno.
-void BattleFx_RunFire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -45,9 +45,9 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (effect->side == 1)
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_BeginCanvasLayer(1);
   else
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -192,10 +192,10 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
   EFFECT_RELEASE_BLITTERS();
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef FIRE_EMBERS

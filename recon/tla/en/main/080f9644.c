@@ -154,7 +154,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->completionFlag = 1;
       }
       if (command == 0) {
-        if (BattleFx_HasTriggerFar(menu->selectedItem & 0x1ff) != 0) {
+        if (BattleEffect_HasTriggerFar(menu->selectedItem & 0x1ff) != 0) {
           done = 1;
           *ownerOut = menu->itemOwner;
           *targetOut = command;

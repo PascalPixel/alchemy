@@ -28,7 +28,7 @@
 #include "battle_effect_work.h"
 
 // The particle sheet's cell offsets by size (The Broken Seal's
-// gBattleFx_MoteCells).
+// gBattleEffect_MoteCells).
 extern u16 gData_08197410[];
 
 // Summon 25: draws one falling drop at (x, y), large (20x40) when small is 0

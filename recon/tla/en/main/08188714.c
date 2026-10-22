@@ -1,7 +1,7 @@
 // Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
-// BattleFx_RunDeathPlunge (effect.c, call order 0.675): the leap, the flip
+// BattleEffect_RunDeathPlunge (effect.c, call order 0.675): the leap, the flip
 // and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
-// spins the jaw quad of Triple Chomp (BattleFx_RunTripleChomp) at the target. The native
+// spins the jaw quad of Triple Chomp (BattleEffect_RunTripleChomp) at the target. The native
 // frame (104) holds effect at sp+56, work 52, canvas 48, frame 44, the blitter
 // pair at 36 and 40, the target 32, the user's and the target's heights at 28
 // and 24, the target's screen position's address at 20 and the user's action
@@ -38,7 +38,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -74,9 +74,9 @@ extern s32 gData_08199210[];
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 s32 BattleUnit_GetEffectHeightFar(s32 objectId);
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-void BattleFx_LoadBlitter(s32 slot, s32 packed);
+void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void EffectPosition_ProjectBattler(
@@ -87,7 +87,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
@@ -103,8 +103,8 @@ void Audio_PlayCue(s32 cue);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // Death Plunge (effect kind 53): the user runs nine tenths of the way to the
 // target, and both leap; at frame 11 they turn upside down, lifted by their
@@ -116,7 +116,7 @@ void BattleFx_ProcessPendingGraphicsTransfer(void);
 // 32 sparks burst from the target at frame 56 (of which the first 16 are
 // drawn), and Triple Chomp's jaw closes on the target twice, at 45 and 135
 // degrees, growing and fading from frame 56.
-void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -144,7 +144,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
 
   // Set up the canvas, the flash sheet, the jaw's texture and a clipped MAX
   // blitter.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
@@ -153,18 +153,18 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
                     Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                     128);
     work->transferValue = 50;
-    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                   BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
     REG_BLDALPHA = 0x1010;
   } else {
     work->transferMode = 2;
     work->transferValue = 75;
-    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                   BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
   }
   work->transferMode = 2;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   // The user runs nine tenths of the way to the target.
   first = GetBattleObjectSlotFar(effect->actor);
@@ -265,7 +265,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
         if (spark->variant >= 0 && spark->variant <= 23) {
           draw[0](canvas, work->sheet + ((spark->variant / 4) << 11),
                   HI(spark->x) - 16, HI(spark->y) - 32, 32, 64);
-          BattleFxKernels_IntegrateVector2(spark, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
         }
         spark->variant++;
       }
@@ -333,7 +333,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

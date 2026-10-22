@@ -20,7 +20,7 @@ struct InventoryMenuState {
 #define COMMAND_AVAILABLE 1
 
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
-s32 BattleFx_HasTriggerFar(s32 item);
+s32 BattleEffect_HasTriggerFar(s32 item);
 
 void ItemMenu_BuildCommands(s8 *commandStates) {
   struct InventoryMenuState *menu;
@@ -68,7 +68,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     }
   }
 
-  if (BattleFx_HasTriggerFar(menu->selectedItem & 0x1ff) != 0)
+  if (BattleEffect_HasTriggerFar(menu->selectedItem & 0x1ff) != 0)
     commandStates[0] = COMMAND_AVAILABLE;
 
   if (menu->partyCount <= 1)

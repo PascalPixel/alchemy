@@ -1,9 +1,9 @@
-// Draft, differ 360 of 1632 (1628 here): BattleFx_RunNeptune, summon 6
-// (BattleFx_RunSceneEffect's case 6, actflags 0x8006), The Broken Seal's
-// BattleFx_RunNeptune as The Lost Age reworked it.
+// Draft, differ 360 of 1632 (1628 here): BattleEffect_RunNeptune, summon 6
+// (BattleEffect_RunSceneEffect's case 6, actflags 0x8006), The Broken Seal's
+// BattleEffect_RunNeptune as The Lost Age reworked it.
 
-// Twin: ☀️ BattleFx_RunNeptune (games/tbs/src/effect/effect.c), with The
-// Lost Age's changes: no BattleFx_SpawnObjects; instead its own object build
+// Twin: ☀️ BattleEffect_RunNeptune (games/tbs/src/effect/effect.c), with The
+// Lost Age's changes: no BattleEffect_SpawnObjects; instead its own object build
 // (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
 // Resource_DecodeType01 into the map cell buffer, eight
 // Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
@@ -98,21 +98,21 @@ extern u32 gCameraSceneParameters[];
 extern struct Scale Data_08196e8c; // the serpent's scale
 extern u16 Data_08197424[];        // the sparkle cells by size
 extern s32 Data_08198aec[];        // the spray's four gravities
-extern u16 gData_08197410[];       // ☀️ gBattleFx_MoteCells
+extern u16 gData_08197410[];       // ☀️ gBattleEffect_MoteCells
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_08163c2c(s32 mode, s32 value);        // Func_08163c2c
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
-void BattleFx_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 attributes,
                                    u32 mode);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
-                   s32 width); // BattleFx_DrawClippedCanvasLine
-void Func_0814cca8(void);      // BattleFx_SetupBlendedDisplay
+                   s32 width); // BattleEffect_DrawClippedCanvasLine
+void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
@@ -120,17 +120,17 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 void Palette_LoadBasicObjColors(void);
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
-void BattleFx_BuildWindowEdgeTable(void);
+void BattleEffect_BuildWindowEdgeTable(void);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
 // Summon 6: at dusk the window opens on a sea; a great serpent rises out of
@@ -145,7 +145,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 // a ring of sparks; the sea rolls along the bottom all the while. Act two
 // (144 frames): a flame pillar falls on each target 16 frames apart, splashing
 // sparks where it lands and striking that target; results at frame 96.
-void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
+void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   s32 position[4];
   s32 target[3];
   void *canvas;
@@ -182,18 +182,18 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
 
   // Open the canvas over a dark backdrop; BG2 is drawn at half scale
   // below the line the IRQ handler picks.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Func_0813ba50();
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0xc80);
   Runtime_SetIrqHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   REG_WININ = 0x2137;
   Func_08163c2c(1, 0);
   REG_WIN0H = 0xf0f0;
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
   // Build the serpent: its palette, its tiles, and eight sprites.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   {
@@ -236,9 +236,9 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   transition[4] = 1;
-  BattleFx_LoadBlitter(104, 3);
+  BattleEffect_LoadBlitter(104, 3);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(188, 19);
+  BattleEffect_LoadBlitter(188, 19);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_BG2CNT = 0x784;
 
@@ -290,12 +290,12 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         for (k = 0; k != 128; k++)
           noise[k] = Random16() & 63;
         *phase = 0;
-        Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEffect_BuildWindowEdgeTable, 0xc80);
       }
       *phase += openStep;
       openStep += 3;
       if (frame == 15)
-        Scheduler_RemoveCallback(BattleFx_BuildWindowEdgeTable);
+        Scheduler_RemoveCallback(BattleEffect_BuildWindowEdgeTable);
     }
 
     // The serpent rises, slows, then glides back right and settles.
@@ -506,7 +506,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           drawSpray(canvas, cells + gData_08197410[k - 1],
                     HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k,
                     k * 2);
-          BattleFxKernels_IntegrateVector2(&PARTICLES[i], 62,
+          BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
                                            Data_08198aec[i & m]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104)
@@ -613,7 +613,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         s32 y;
 
         PARTICLES[i].variant--;
-        BattleFxKernels_IntegrateVector2(&PARTICLES[i], 60, 0x4000);
+        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, 0x4000);
         y = PARTICLES[i].y >> 16;
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
@@ -634,8 +634,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
 
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

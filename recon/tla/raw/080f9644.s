@@ -165,7 +165,7 @@ Func_080f9644:
 	adds r0, #255
 	ands r0, r3
 	mov r10, r2
-	bl BattleFx_HasTriggerFar
+	bl BattleEffect_HasTriggerFar
 	cmp r0, #0
 	beq .L_080f97ec
 	movs r3, #1

@@ -31,9 +31,9 @@ extern s32 gGameState[];
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 struct Target *Object_GetById(s32);
 void Camera_WorldToScreen(struct Vec *);
-void BattleFx_ClearOwnedSlot(struct Actor *);
+void BattleEffect_ClearOwnedSlot(struct Actor *);
 
-void BattleFx_RunAngledApproachPhases(struct Actor *actor) {
+void BattleEffect_RunAngledApproachPhases(struct Actor *actor) {
   struct Target *target;
   struct Vec pos;
 
@@ -73,7 +73,7 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor) {
       actor->phase += 1;
     }
   } else if (actor->phase == 4) {
-    BattleFx_ClearOwnedSlot(actor);
+    BattleEffect_ClearOwnedSlot(actor);
   }
   pos.x = actor->x;
   pos.z = actor->z;

@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 49 (one reordered pair): the twin of The Broken Seal's
-// BattleFx_UpdateDescendingParticlePositiveArc, on object_runtime.h's fields.
+// BattleEffect_UpdateDescendingParticlePositiveArc, on object_runtime.h's fields.
 // The listing loads the 0xfffe0000 literal before source->x (ldr r4, =-0x20000;
 // ldr r3, [r6, #8]); this loads source->x first. Measured: without the party
 // pointer and its one-pass block, differ 4 (particle->terrainHeight is also
@@ -16,7 +16,7 @@
 
 void Object_Destroy(struct ObjectRuntime *object);
 
-void BattleFx_UpdateDescendingParticlePositiveArc(
+void BattleEffect_UpdateDescendingParticlePositiveArc(
     struct ObjectRuntime *particle) {
   struct ObjectRuntime *source;
   s32 y;

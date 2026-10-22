@@ -9,8 +9,8 @@
 
 struct BattleEffectArgument;
 
-/// BattleFx_BuildBlitter's flags: which edges the built blitter clips at and
-/// how it mirrors the picture.
+/// BattleEffect_BuildBlitter's flags: which edges the built blitter clips at
+/// and how it mirrors the picture.
 enum {
   /// Skips columns outside the canvas; without it a width mask wraps x.
   COMPOSITE_CLIP_X = 1,
@@ -19,7 +19,7 @@ enum {
   COMPOSITE_FLIP_Y = 8, ///< mirrors the picture top to bottom
   COMPOSITE_FLIP = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
 };
-/// BattleFx_BuildBlitter's modes: how a picture's pixels combine with the
+/// BattleEffect_BuildBlitter's modes: how a picture's pixels combine with the
 /// canvas's (the fragments in battle_effect_composite.s).
 enum {
   COMPOSITE_COPY,        ///< writes every pixel
@@ -28,7 +28,7 @@ enum {
   COMPOSITE_ADDITIVE     ///< adds the two, capped at 63
 };
 
-/// A blitter BattleFx_BuildBlitter writes into a heap slot: it draws a
+/// A blitter BattleEffect_BuildBlitter writes into a heap slot: it draws a
 /// width by height picture from source onto the destination canvas with its
 /// top left at (x, y), in pixels.
 typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,

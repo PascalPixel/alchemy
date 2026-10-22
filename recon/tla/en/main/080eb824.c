@@ -23,7 +23,7 @@
 // Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
 // 64x64 canvas copied into the sprite's tiles, and a map from each canvas
 // pixel (row by row) to its place in the tiles. Func_080eb6a0 draws the
-// sprite and Func_080eb594 uploads the canvas each frame; BattleFx_EndCanvasSprite ends
+// sprite and Func_080eb594 uploads the canvas each frame; BattleEffect_EndCanvasSprite ends
 // it.
 void Func_080eb824(void) {
   u8 *windowTiles = Ram_HeapSlots->windowTiles;

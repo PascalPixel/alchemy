@@ -18,7 +18,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct BurstParticleVector *position);
 void *Object_Spawn(s32 id, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(void *object, u32 script);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 // Far call to the target classifier Func_080237c8. English and Japanese name
 // its slot Func_08020330; in the others that name is a later slot, and the
 // one at 0x08020330 is Func_080237c8Far.
@@ -96,7 +96,7 @@ void Func_080dda30(s32 unused) {
     WaitFrames(10);
     Audio_PlayCue(126);
   }
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }
 #endif
 
@@ -128,5 +128,5 @@ void FieldFx_RunGrowth(void) {
     entryCount--;
   } while (entryCount >= 0);
   WaitFrames(30);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

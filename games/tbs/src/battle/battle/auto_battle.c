@@ -315,7 +315,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   } else {
     context.effect.side = EFFECT_SIDE_ENEMIES;
   }
-  BattleFx_RunSceneEffectFar(&context.effect);
+  BattleEffect_RunSceneEffectFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
@@ -380,7 +380,7 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
   work.effect.prelude = 0;
 
   WaitFrames(4);
-  BattleFx_DispatchByIdRangeFar(&work.effect);
+  BattleEffect_DispatchByIdRangeFar(&work.effect);
   ObjMotRst(work.effect.actors[0]);
   ObjMotRst(work.effect.actor);
   return 0;
@@ -455,15 +455,15 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   do {
     work.effect.kind = ELEMENT_VENUS;
     work.effect.variant = 0;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_MERCURY;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_MARS;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_JUPITER;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
-    BattleFx_RunTableEffectFar(&work.effect);
+    BattleEffect_RunTableEffectFar(&work.effect);
     ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)

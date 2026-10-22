@@ -1,9 +1,9 @@
-// Draft of BattleFx_RunCool, effect kind 75 (Cool), The Broken Seal's
-// BattleFx_RunUndeadSword as The Lost Age reworked it (structure twin
+// Draft of BattleEffect_RunCool, effect kind 75 (Cool), The Broken Seal's
+// BattleEffect_RunUndeadSword as The Lost Age reworked it (structure twin
 // 0.772): the two columns became up to ten leaning ice columns, three
 // more for each level of the spell, each with its own start, height and
 // lean; the columns' blitters are loaded once a frame through
-// Func_08196404 (BattleFx_BuildBlitter) itself; and the sparks wait for
+// Func_08196404 (BattleEffect_BuildBlitter) itself; and the sparks wait for
 // the columns.
 
 // Listing 471 instructions, draft 469, differ 164.
@@ -63,12 +63,12 @@ extern u16 Data_08198bce[];
 extern u16 Data_08198bdc[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);                       // BattleFx_BuildBlitter
-void BattleFx_FetchRectangleBlitters(
+                  u32 mode);                       // BattleEffect_BuildBlitter
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
@@ -78,7 +78,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Audio_PlayCue(s32 cue);
 
@@ -94,7 +94,7 @@ void Audio_PlayCue(s32 cue);
 // target two frames in, and sinks 10 pixels a frame from frame 32 + 4 per
 // level. The columns are drawn with max blitters until frame 24 on the
 // higher levels, with additive ones otherwise.
-void BattleFx_RunCool(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 stagger;
@@ -107,7 +107,7 @@ void BattleFx_RunCool(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CE, work->sheet, 0, 0);
@@ -117,7 +117,7 @@ void BattleFx_RunCool(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   stagger = effect->variant * 4;
   sinkFrame = stagger + 32;
 
@@ -214,7 +214,7 @@ void BattleFx_RunCool(struct BattleEffectArgument *effect) {
 
     // Spark i rises from frame 8 + 2i through seven pictures, three frames
     // apiece; past the first 16 they wait until the columns sink.
-    BattleFx_FetchRectangleBlitters(effect->side, draw);
+    BattleEffect_FetchRectangleBlitters(effect->side, draw);
     spark = work->particles;
     for (i = 0; i != effect->variant * 4 + 8; i++, spark++) {
       if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&
@@ -230,7 +230,7 @@ void BattleFx_RunCool(struct BattleEffectArgument *effect) {
         draw[0](canvas, work->sheet + Data_08198bce[cell] + SPARK_OFFSET,
                 x - size / 2, y - size / 2, size, size);
         spark->variant++;
-        BattleFxKernels_IntegrateVector2(spark, 62, -0x2000);
+        BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
       }
     }
     Runtime_ReleaseHeapBlock(188);
@@ -242,6 +242,6 @@ void BattleFx_RunCool(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

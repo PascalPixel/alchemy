@@ -5,7 +5,7 @@
 // more spill slot, 411 instructions against 409); the work and the anchor
 // take each other's registers (the native keeps the work in r8 and the
 // anchor in sl), and the order follows from there. Belongs between
-// fall.c's FieldFx_RunDouseOnTarget and particles.c's BattleFx_SpawnFallingParticles.
+// fall.c's FieldFx_RunDouseOnTarget and particles.c's BattleEffect_SpawnFallingParticles.
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
@@ -53,8 +53,8 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle,
 s32 Func_08020330(struct ObjectRuntime *object);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-void BattleFx_LandFallingObject(struct ObjectRuntime *object);
-void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *object);
+void BattleEffect_LandFallingObject(struct ObjectRuntime *object);
+void BattleEffect_UpdateDriftingFallObject(struct ObjectRuntime *object);
 
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
@@ -159,7 +159,7 @@ void FieldFx_RunDouse(void) {
         } else {
           mote->terrainHeight = pos.y - (32 << 16);
         }
-        mote->update = (void (*)(void))BattleFx_LandFallingObject;
+        mote->update = (void (*)(void))BattleEffect_LandFallingObject;
         mote->motionFlags = 2;
         mote->priorityFlags = 5;
       }
@@ -185,7 +185,7 @@ void FieldFx_RunDouse(void) {
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
       mote = Object_Spawn(672, pos.x, pos.y, pos.z);
       if (mote != 0) {
-        mote->update = (void (*)(void))BattleFx_UpdateDriftingFallObject;
+        mote->update = (void (*)(void))BattleEffect_UpdateDriftingFallObject;
         mote->motionFlags = 0;
         ((struct Effect05Sprite *)mote->animation)->mode = 2;
         Object_SetMode(mote, 8);
@@ -225,5 +225,5 @@ void FieldFx_RunDouse(void) {
     i++;
   } while (i < steps);
   Object_Destroy((struct DispatchObject *)orb);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

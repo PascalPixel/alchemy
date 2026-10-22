@@ -1,9 +1,9 @@
-// Draft of BattleFx_RunSoulShatter, effect kind 115 (Soul Shatter), The Broken
-// Seal's BattleFx_RunUndeadSword as The Lost Age reworked it (structure
+// Draft of BattleEffect_RunSoulShatter, effect kind 115 (Soul Shatter), The Broken
+// Seal's BattleEffect_RunUndeadSword as The Lost Age reworked it (structure
 // twin 0.703): the same two mirrored halves of a column and the same
 // sixteen sparks, over a longer effect in which the target is thrown up
 // and 32 motes of its soul drift back into the user (pulled as
-// BattleFx_RunNirvana's orb is).
+// BattleEffect_RunNirvana's orb is).
 
 // Listing 589 instructions, draft 587, differ 176.
 // Left: the spark blitter choice. The native computes the mirror choice
@@ -62,17 +62,17 @@ extern char ResourceId_OrangePaletteB;
 // the spark pictures by stage.
 extern u16 Data_08198b5e[];
 extern u16 Data_08198b6c[];
-// The Broken Seal's gBattleFx_MoteCells: spark cells of the
+// The Broken Seal's gBattleEffect_MoteCells: spark cells of the
 // Data134 sheet, by size - 1.
 extern u16 gData_08197410[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);                       // BattleFx_BuildBlitter
-void BattleFx_FetchRectangleBlitters(
+                  u32 mode);                       // BattleEffect_BuildBlitter
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);          // ObjectGroup_UpdateMembers
@@ -84,9 +84,9 @@ void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *position);
 void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Audio_PlayCue(s32 cue);
 
@@ -101,7 +101,7 @@ void Audio_PlayCue(s32 cue);
 // frame, stands at 80 pixels (drawn with max blitters) and sinks from
 // frame 80; the target is thrown up at frame 10 and comes down at frame
 // 80.
-void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -117,7 +117,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x0c10;
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
@@ -128,7 +128,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   position.x /= 2;
@@ -224,7 +224,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
 
     // The sparks: from frame 8, two more each frame, through seven
     // pictures three frames apiece; one in four is drawn mirrored.
-    BattleFx_FetchRectangleBlitters(effect->side, draw);
+    BattleEffect_FetchRectangleBlitters(effect->side, draw);
     spark = work->particles;
     for (i = 0; i != SPARKS; i++, spark++) {
       if (frame >= i / 2 + 8 && spark->variant <= 28) {
@@ -241,7 +241,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
         draw[mirror](canvas, work->sheet + Data_08198b5e[cell] + SPARK_OFFSET,
                      x - size / 2, y - size / 2, size, size);
         spark->variant++;
-        BattleFxKernels_IntegrateVector2(spark, 62, -0x2000);
+        BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
       }
     }
 
@@ -267,7 +267,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
           EffectPosition_ProjectPoint(&mote->x, &screen);
           draw[0](canvas, sheet + gData_08197410[size - 1],
                   (screen.x >> 1) - size / 2, screen.y - size, size, size * 2);
-          BattleFxKernels_IntegrateVector3(mote, 62, 0);
+          BattleEffectKernels_IntegrateVector3(mote, 62, 0);
           if (frame > i + 32) {
             mote->velocityX += (user->x - mote->x) >> 7;
             mote->velocityY += (user->y + userHalfHeight - mote->y) >> 7;
@@ -296,6 +296,6 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

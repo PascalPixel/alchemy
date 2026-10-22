@@ -8,7 +8,7 @@ struct TimedObject {
   void *update;
 };
 
-void BattleFx_AgeAndCueAtEighty(struct TimedObject *object) {
+void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   if (object->age == 80) {
     object->update = 0;
     Audio_PlayCue(136);

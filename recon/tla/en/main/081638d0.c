@@ -1,7 +1,7 @@
-// Draft, differ 6 of 354: BattleFx_RunTorch, effect kind 214, The Broken Seal's
-// BattleFx_RunTorch.
+// Draft, differ 6 of 354: BattleEffect_RunTorch, effect kind 214, The Broken Seal's
+// BattleEffect_RunTorch.
 
-// Twin: ☀️ BattleFx_RunTorch (games/tbs/src/effect/effect.c), ported
+// Twin: ☀️ BattleEffect_RunTorch (games/tbs/src/effect/effect.c), ported
 // with The Lost Age's changes: the canvas set up through Func_0815585c
 // (kind | side << 4 | anchor << 5), 80 frames where ☀️ has 96 (the fade out
 // from frame 72), and a hit at frame 48 (results phase, eight frames of shake,
@@ -71,20 +71,20 @@
 
 #define PHASE_RESULTS 134
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
-                   s32 *screenY); // BattleFx_RunDjinniEntrance
-void BattleFx_FetchRectangleBlitters(
+                   s32 *screenY); // BattleEffect_RunDjinniEntrance
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_ArmBg2AffineHBlankDma(void); // BattleFx_ArmBg2AffineHBlankDma
+    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_ArmBg2AffineHBlankDma(void); // BattleEffect_ArmBg2AffineHBlankDma
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // A disc of rings rises on BG2 over the target's side, its colour ramp
 // cycling outward one ring a frame while each scanline sways on a sine wave.
@@ -94,7 +94,7 @@ void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 // per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
 // rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
 // camera. At frame 48 the target is struck; from frame 72 the disc fades.
-void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenX[3];
@@ -126,7 +126,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
 
   // Open the canvas on BG2 over the target's side.
-  BattleFx_BeginCanvasLayer(0x2000);
+  BattleEffect_BeginCanvasLayer(0x2000);
   Func_0815585c(effect, 6 | effect->side << 4 | 2 << 5, screenX, screenY);
   {
     /* FAKEMATCH: the native loads the BG2CNT halfword from the pool before it
@@ -141,10 +141,10 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   }
   REG_BLDALPHA = 0x1000;
   REG_BG2PA = 0xaa;
-  BattleFx_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The distance map, one quarter at a time mirrored into the other three,
   // the centre an eighth lower than the middle so the disc leans back.
@@ -200,7 +200,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   // offsets move it.
   draw[0](canvas, work->sheet, 0, 0, DISC_SIZE, DISC_SIZE);
   work->transferPending = 1;
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
 
   for (frame = 0; frame != RIPPLE_FRAMES; frame++) {
     // Fade in, and the sway grows with the frame.
@@ -243,9 +243,9 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

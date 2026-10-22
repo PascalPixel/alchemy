@@ -1,15 +1,15 @@
 // Near miss, differ 70 of 511.
 
-// The body of four effect kinds (BattleFx_RunDemonNight and the next three
-// wrappers pass modes 0 to 3). Twin: The Broken Seal's BattleFx_RunMemberBurst,
+// The body of four effect kinds (BattleEffect_RunDemonNight and the next three
+// wrappers pass modes 0 to 3). Twin: The Broken Seal's BattleEffect_RunMemberBurst,
 // whose modes 0 to 2 these are; The Lost Age adds mode 3 and reworks the
 // effect: the picture unpacked by Resource_LoadAndDecompress, the palette for
 // mode 0 or 3 the pink burst's, Func_0815b634 in mode 3,
-// BattleFx_FetchRectangleBlitters for the caster's side; the background's wave
-// moves BG1 (BattleFx_ArmBg1HBlankDma arms its HBlank DMA) by an amplitude that swells and
+// BattleEffect_FetchRectangleBlitters for the caster's side; the background's wave
+// moves BG1 (BattleEffect_ArmBg1HBlankDma arms its HBlank DMA) by an amplitude that swells and
 // dies over the effect; motes are pulled twice as hard across (x and z) and
 // freed once they cross their target, not once they are near it; in mode 3 each
-// arrival pushes the target back (BattleFx_StartActorMotion) with a cue on
+// arrival pushes the target back (BattleEffect_StartActorMotion) with a cue on
 // every other mote. The edition level is "struct": the other editions'
 // scaffolds hold this function in another shape; check them before adopting.
 
@@ -48,21 +48,21 @@
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);      // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void BattleFx_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
+void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 void Func_0815b634(void); // mode 3 only
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Audio_PlayCue(s32 cue);
 
@@ -100,7 +100,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up: the mote picture, the mode's palette, and the max and additive
   // blitters for the caster's side.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_MemberBurstImage, work->sheet, 0,
                              0);
   if (mode == 0 || mode == 3)
@@ -112,7 +112,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
   if (mode == 3)
     Func_0815b634();
-  BattleFx_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(effect->side, draw);
 
   // The motes start at the caster's body height and scatter every way at up
   // to two pixels a frame.
@@ -135,10 +135,10 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg1HBlankDma, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg1HBlankDma, 0xc80);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(146);
 
   for (frame = 0; frame != Data_08197864[mode * 2 + 1] + effect->count * 20;
@@ -196,7 +196,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
             pos.x >>= 1;
             draw[0](canvas, work->sheet + i % 3 * MOTE_CELL, pos.x - 10,
                     pos.y - 16, 20, 32);
-            BattleFxKernels_IntegrateVector3(mote, 62, 0);
+            BattleEffectKernels_IntegrateVector3(mote, 62, 0);
 
             // Thirty frames on, the mote is pulled toward the middle of its
             // target's body.
@@ -227,7 +227,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
               if (crossed) {
                 mote->variant = -1;
                 if (mode == 3) {
-                  BattleFx_StartActorMotion(effect->actors[k], 1, 0x20000,
+                  BattleEffect_StartActorMotion(effect->actors[k], 1, 0x20000,
                                             0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)
                     Audio_PlayCue(134);
@@ -243,9 +243,9 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleFx_ArmBg1HBlankDma);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ArmBg1HBlankDma);
+  BattleEffect_EndCanvasLayer();
 }

@@ -1,7 +1,7 @@
 // Draft (tla-en): listing 535 instructions, draft 537, common 388, differ 296.
-// The body of effect kinds 465 and 466 (summon_modes_2.c's BattleFx_RunDjinnStun
-// and BattleFx_RunMysticCall pass modes 0 and 1). The Lost Age's rework of ☀️'s
-// BattleFx_RunSwirlingStars (structure 0.70): the same four rotations by
+// The body of effect kinds 465 and 466 (summon_modes_2.c's BattleEffect_RunDjinnStun
+// and BattleEffect_RunMysticCall pass modes 0 and 1). The Lost Age's rework of ☀️'s
+// BattleEffect_RunSwirlingStars (structure 0.70): the same four rotations by
 // star and the same depth-sized cels, one swarm per target.
 // Written 2026-10-15 (lane N2) from the listing and the twin.
 // Left:
@@ -16,7 +16,7 @@
 // - the star count, frames and flash calls follow from those slots.
 // Measured: the first draft 338; the arrival test grouped as two range
 // pairs, so both fold to one unsigned compare each as in the native: 296.
-// Resource 0x184 (BattleFx_BlastSheet) and the Djinn sheets 0x154, 0x150
+// Resource 0x184 (BattleEffect_BlastSheet) and the Djinn sheets 0x154, 0x150
 // and 0x152 need names in system/resource/directory.s when this is
 // adopted.
 #include "battle_effect.h"
@@ -48,8 +48,8 @@ extern char ResourceId_JupiterDjinnSheet;
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
 extern const u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_LoadBlitter(s32 slot, s32 blitter);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -61,7 +61,7 @@ void Func_0815f0a0(s32 resourceId);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SceneTransform_ApplyPosition(const s32 *position);
 void Transform_Push(void);
@@ -73,8 +73,8 @@ void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // Swarms of stars over the targets. Each target gets a swarm, eight frames
 // after the one before: its stars burst from a point that rises out of it,
@@ -98,12 +98,12 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
   s32 member;
   s32 i;
 
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, 7));
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, 7));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 0)
     frames = effect->count * 8 + 38;
@@ -111,7 +111,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     frames = 72;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != frames; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -192,7 +192,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
       Render_ResetTransformState();
       Transform_SetLookAt(camera, camera + 3);
       if (frame >= start + 4 && start < 44)
-        BattleFxKernels_IntegrateVector3(point, 64, 0);
+        BattleEffectKernels_IntegrateVector3(point, 64, 0);
       SceneTransform_ApplyPosition(&point->x);
 
       star =
@@ -227,7 +227,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
           size = 9 - (screen.depth - 250) / 64;
           draw(canvas, sparkCels + gData_08197410[size - 1],
                screen.x - size / 2, screen.y - size, size, size * 2);
-          BattleFxKernels_IntegrateVector3(star, 60, 0);
+          BattleEffectKernels_IntegrateVector3(star, 60, 0);
 
           // The pull back into the point; a star within 2047 of it across
           // the floor is gone.
@@ -255,7 +255,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -28,22 +28,22 @@ Func_0813cb34:
 	cmp r1, #0
 	bne .L_0813cb6a
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	b .L_0813cb70
 .L_0813cb6a:
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 .L_0813cb70:
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r2, [r5, #104]
 	movs r1, #27
 	movs r0, #188
 	str r2, [sp, #28]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	movs r3, #0
@@ -347,7 +347,7 @@ Func_0813cb34:
 	ldr r2, .L_0813cea8
 	adds r0, r6, #0
 	movs r1, #62
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r6, #4]
 	ldr r2, .L_0813ceac
 	cmp r3, r2
@@ -361,7 +361,7 @@ Func_0813cb34:
 	adds r0, r6, #0
 	movs r1, #62
 	lsls r2, r2, #3
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_0813ce0a:
 	mov r3, r10
 	cmp r3, #1
@@ -439,7 +439,7 @@ Func_0813cb34:
 .L_0813ce94:
 	.4byte IwramCopyWords
 .L_0813ce98:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813ce9c:
 	.4byte gMapCellBuffer
 .L_0813cea0:
@@ -532,7 +532,7 @@ Func_0813cb34:
 	bl SummonFx_RunCanvasMode1
 	b .L_0813cf60
 .L_0813cf5c:
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 .L_0813cf60:
 	add sp, #68
 	pop {r3, r5, r6, r7}
@@ -543,7 +543,7 @@ Func_0813cb34:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0813cf70:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813cf74:
 	.4byte IwramClearWords
 .L_0813cf78:

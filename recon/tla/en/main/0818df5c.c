@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunMeteorBlow, decompiled from the listing: differ 1767 of
+// Draft of BattleEffect_RunMeteorBlow, decompiled from the listing: differ 1767 of
 // 1556 (draft 1577), the same 113 calls and control flow; allocation differs.
 
 #include "types.h"
@@ -28,11 +28,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -51,18 +51,18 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -78,12 +78,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -109,7 +109,7 @@ struct MeteorStar {
 
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010018[];         // the shards' variants, 28 bytes apart
-extern const u16 gData_08197410[]; // gBattleFx_MoteCells
+extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const s32 Data_08196f20[2];
 extern const u8 Data_08199e70[];
 extern const u8 Data_08199e77[];
@@ -126,8 +126,8 @@ extern const u8 Data_08198ec4[];
 extern const u8 Data_08198cac[];
 extern s32 gCameraSceneParameters[];
 
-void BattleFx_FlushPendingGraphicsTransfer(void);
-void BattleFx_ArmMeteorBlowPaletteDma(void);
+void BattleEffect_FlushPendingGraphicsTransfer(void);
+void BattleEffect_ArmMeteorBlowPaletteDma(void);
 void Func_0813ba50(void);
 void Func_08163c2c(s32 mode, s32 value);
 void Graphics_LoadGreyRamp(void);
@@ -143,7 +143,7 @@ void ResourceObject_ReleaseFar(void *object);
 
 // Meteor Blow: the caster soars through a field of stars and comes down as a
 // burning meteor that shatters on the targets.
-void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -181,15 +181,15 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0x2000);
+  BattleEffect_BeginCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
   Func_0813ba50();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 3200);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Func_08163c2c(0, 0);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress(0xaf, work->sheet, 1, 1);
   Resource_LoadAndDecompress(0xcd, work->sheet + 0x2000, 1, 1);
   Iwram_CopyWords(sprites, work->sheet + 0x1c2, 30);
@@ -199,15 +199,15 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   Iwram_FillWords(gMapCellBuffer, 0x8000, 0x01010101);
   Iwram_CopyWords((void *)0x06008000, gMapCellBuffer, 0x7800);
-  BattleFx_SelectLivingTargets(work->effect);
-  BattleFx_SpawnObjects(1, 0x28a, 1);
+  BattleEffect_SelectLivingTargets(work->effect);
+  BattleEffect_SpawnObjects(1, 0x28a, 1);
   REG_BLDCNT = 0;
   REG_BG2PA = 0x100;
   REG_BG1CNT = 0x1f81;
   REG_BG2CNT = 0x2787;
   Iwram_FillWords(canvas, 0x4000, 0);
   Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
-  Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer, 3200);
+  Scheduler_AddOrUpdateCallback(BattleEffect_FlushPendingGraphicsTransfer, 3200);
   REG_BLDCNT = 0x3f46;
   REG_BLDALPHA = 0x1010;
   triangles = work->sheet + 0x6340;
@@ -240,7 +240,7 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
   work->transferValue = 0x04040404;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmMeteorBlowPaletteDma, 0xcfe);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmMeteorBlowPaletteDma, 0xcfe);
   gBgScroll[1].x = 0;
   transition[4] = 1;
   for (i = 0; i != 256; i++) {
@@ -283,8 +283,8 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
     }
     if (frame == 116) {
-      Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
-      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 3200);
+      Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
+      Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
       IO_WRITE_QUEUE_PUSH(0x0400000c, 0x784, 0x20000);
     }
@@ -463,11 +463,11 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
   WaitFrames(1);
   transition[4] = 0;
-  Scheduler_RemoveCallback(BattleFx_ArmMeteorBlowPaletteDma);
+  Scheduler_RemoveCallback(BattleEffect_ArmMeteorBlowPaletteDma);
   if (frame <= 115) {
-    Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
   } else {
-    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   Func_0814cca8();
@@ -482,11 +482,11 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
   REG_WINOUT = 0x721;
   REG_WIN0V = 0x107c;
   REG_WIN1V = 0x88;
-  BattleFx_LoadBlitter(SLOT_BLITTER, 19);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 3200);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Resource_LoadAndDecompress(0x134, sprites, 0, 0);
   Resource_LoadAndDecompress(0x13e, work->sheet, 1, 0);
   Resource_LoadAndDecompress(0xda, work->sheet + 0x4000, 0, 0);
@@ -628,7 +628,7 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
         blit(canvas, sprites + gData_08197410[n - 1], HI(p->x) - n / 2,
              HI(p->y) - n, n, n * 2);
         p->variant--;
-        BattleFxKernels_IntegrateVector2(p, 56, 0x2000);
+        BattleEffectKernels_IntegrateVector2(p, 56, 0x2000);
       }
     }
     Func_08158ce0(8, 8);
@@ -637,8 +637,8 @@ void BattleFx_RunMeteorBlow(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   ResourceObject_ReleaseFar(work->objects[0]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

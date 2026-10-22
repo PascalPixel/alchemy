@@ -311,7 +311,7 @@ Func_020031f8:
 	.global Func_02003200
 	.thumb_func
 Func_02003200:
-	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -361,7 +361,7 @@ Func_02003248:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Func_02003250
@@ -373,19 +373,19 @@ Func_02003250:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_InitializeBuffersFar
 	.else
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.endif
 	.endif
 	.global Func_02003258
 	.thumb_func
 Func_02003258:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
-	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition

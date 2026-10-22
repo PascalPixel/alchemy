@@ -1,7 +1,7 @@
 // Draft: listing 760 instructions, draft 760, differ 510. No close ☀️ twin (call
-// order BattleFx_RunRamses 0.455): ⚓️'s own effect on ☀️'s
+// order BattleEffect_RunRamses 0.455): ⚓️'s own effect on ☀️'s
 // frame, with its rune and swords drawn as textured quads by ⚓️'s model
-// kernels, as in Triple Chomp (BattleFx_RunTripleChomp).
+// kernels, as in Triple Chomp (BattleEffect_RunTripleChomp).
 // The native frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
 // the blitter 32, graphics 28, the start's address 24, the vertices 20, the
 // texture's address 16, the sword's delay (16 * sword) at 12 and its sparks'
@@ -33,7 +33,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -79,8 +79,8 @@ extern s32 Data_08199200[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_LoadBlitter(s32 slot, s32 packed);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -88,13 +88,13 @@ void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
@@ -112,8 +112,8 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // Legend (effect kind 122): a fan of eight blades opens over the target for
 // 50 frames while a rune, mirrored from one corner, rises and turns behind
@@ -122,7 +122,7 @@ void BattleFx_ProcessPendingGraphicsTransfer(void);
 // at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
 // while a flash grows and fades where it lands. The effect lasts 86 frames
 // and 16 more for each further sword.
-void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
+void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -144,13 +144,13 @@ void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
   // Set up the canvas and a clipped MAX blitter, mirrored to face the
   // target; mirror the rune's corner into the sheet; load the sparks, the
   // sword and the flash.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   if (effect->side == 0)
-    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                   BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   else
-    BattleFx_LoadBlitter(
+    BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
         BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                 BLIT_ADDITIVE));
@@ -166,7 +166,7 @@ void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   for (frame = 0; frame != effect->variant * 16 + 86; frame++) {
     // Frame 0: the swords set out from 80 pixels above and beside the
@@ -203,7 +203,7 @@ void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
           Func_081180e8(144);
         else
           Audio_PlayCue(144);
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
         for (j = 0; j != 128; j++) {
@@ -253,7 +253,7 @@ void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
           step->y = 104 << 16;
           step->velocityY = -step->velocityY / 2;
         }
-        BattleFxKernels_IntegrateVector2(step, 62, 0x4000);
+        BattleEffectKernels_IntegrateVector2(step, 62, 0x4000);
         step->variant--;
       }
     }
@@ -360,7 +360,7 @@ void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

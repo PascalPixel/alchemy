@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Void Beam (kind 121).
-	.global BattleFx_RunVoidBeam
+	.global BattleEffect_RunVoidBeam
 	.thumb_func
-BattleFx_RunVoidBeam:
+BattleEffect_RunVoidBeam:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,7 +25,7 @@ BattleFx_RunVoidBeam:
 	str r2, [sp, #52]
 	ldr r3, [r3, #100]
 	str r3, [sp, #48]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, [sp, #72]
 	movs r4, #224
 	lsls r4, r4, #3
@@ -312,7 +312,7 @@ BattleFx_RunVoidBeam:
 .L_0817100c:
 	.4byte Camera_ApplyPhasedDelta
 .L_08171010:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08171014:
 	.4byte 0xffffff00
 .L_08171018:
@@ -835,7 +835,7 @@ BattleFx_RunVoidBeam:
 	bl Scheduler_RemoveCallback
 	ldr r0, .L_0817142c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #248
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -846,6 +846,6 @@ BattleFx_RunVoidBeam:
 .L_08171424:
 	.4byte 0xfffffd80
 .L_08171428:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817142c:
 	.4byte Camera_ApplyPhasedDelta

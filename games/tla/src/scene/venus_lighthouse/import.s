@@ -210,10 +210,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -251,7 +251,7 @@ Func_02001c7c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8490
 	.else
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.endif
 	.endif
 	.global Func_02001c84
@@ -263,17 +263,17 @@ Func_02001c84:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02001c8c
 	.thumb_func
 Func_02001c8c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.endif
@@ -282,10 +282,10 @@ Func_02001c8c:
 	.thumb_func
 Func_02001c94:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.endif

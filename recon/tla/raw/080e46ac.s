@@ -60,7 +60,7 @@ Func_080e46ac:
 	movs r2, #0
 	adds r0, r7, #0
 	movs r1, #60
-	bl BattleFx_IntegrateVector2
+	bl BattleEffect_IntegrateVector2
 	ldr r2, [r7, #24]
 .L_080e4726:
 	adds r3, r2, #1

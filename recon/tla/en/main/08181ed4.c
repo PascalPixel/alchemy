@@ -1,8 +1,8 @@
 // Draft (tla-en): listing 513 instructions, draft 513, common 442, differ 142.
 // The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
-// BattleFx_RunPurgatory, BattleFx_RunDjinnBlast and BattleFx_RunDjinnStorm pass modes 0, 2 and 1).
+// BattleEffect_RunPurgatory, BattleEffect_RunDjinnBlast and BattleEffect_RunDjinnStorm pass modes 0, 2 and 1).
 // Written from the listing on ☀️'s skeleton (2026-10-15, lane N2); its
-// nearest ☀️ shape is BattleFx_RunPlasma (0.50), which is no twin.
+// nearest ☀️ shape is BattleEffect_RunPlasma (0.50), which is no twin.
 // The statements, frame (texture sp+40, the blitter pair sp+48, midpoint
 // sp+56) and the instruction count match.
 // Left:
@@ -29,7 +29,7 @@
 // spill slots (the pair's address and spawned) remain. A pointer variable
 // for the blitter pair instead: 296. A second run from 142 (8 minutes)
 // reached 120 only by reading an uninitialized temporary: not taken.
-// Resources 0xc0 (BattleFx_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
+// Resources 0xc0 (BattleEffect_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
 // the Djinn sheets 0x154, 0x150 and 0x152 need names in
 // system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
@@ -92,8 +92,8 @@ extern const u16 gData_08197410[];
 extern const u8 gData_08198c6c[];
 extern const u8 Data_08198df8[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -105,7 +105,7 @@ void Func_08118088(s32 actor, s32 motion);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
@@ -120,8 +120,8 @@ void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A geyser between the targets. A textured column, its texture scrolling
 // upward, stands on the floor at the targets' midpoint, and drops burst
@@ -152,15 +152,15 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   s32 brightness;
   s32 spawned;
 
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   if (mode == 0)
     REG_BLDALPHA = 0x0c10;
   else
     REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   spawned = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   if (mode == 0) {
@@ -259,7 +259,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         s32 y;
 
         drop->variant--;
-        BattleFxKernels_IntegrateVector2(drop, 60, Data_08199660[mode]);
+        BattleEffectKernels_IntegrateVector2(drop, 60, Data_08199660[mode]);
         y = drop->y >> 16;
         if (y > 120) {
           drop->velocityY = -drop->velocityY / 2;
@@ -328,6 +328,6 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

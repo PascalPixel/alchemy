@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Atalanta (scene kind 4).
-	.global BattleFx_RunAtalanta
+	.global BattleEffect_RunAtalanta
 	.thumb_func
-BattleFx_RunAtalanta:
+BattleEffect_RunAtalanta:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -31,7 +31,7 @@ BattleFx_RunAtalanta:
 	ldrh r3, [r3, #4]
 	mov r9, r1
 	str r3, [sp, #36]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_08153f34
 	movs r2, #128
 	lsls r2, r2, #19
@@ -69,12 +69,12 @@ BattleFx_RunAtalanta:
 .L_08153f40:
 	.4byte gBgScroll
 .L_08153f44:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08153f48:
 	adds r3, #240
 	add r3, r9
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r3, [r5, #36]
 	movs r0, #237
 	lsls r0, r0, #3
@@ -168,10 +168,10 @@ BattleFx_RunAtalanta:
 	movs r1, #19
 	str r0, [sp, #52]
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r1, #3
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #104]
@@ -1250,7 +1250,7 @@ BattleFx_RunAtalanta:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #128
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1269,4 +1269,4 @@ BattleFx_RunAtalanta:
 .L_081548b0:
 	.4byte gData_0819746d
 .L_081548b4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

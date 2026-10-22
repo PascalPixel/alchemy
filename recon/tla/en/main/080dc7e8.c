@@ -51,14 +51,14 @@ struct CleanupMap {
   s32 z;
 };
 
-void BattleFx_ClearOwnedSlot(void *slot);
+void BattleEffect_ClearOwnedSlot(void *slot);
 void Func_080dc954(void);
-void BattleFx_WaitForArcGroups(void);
-void BattleFx_EndArcEffect(void);
+void BattleEffect_WaitForArcGroups(void);
+void BattleEffect_EndArcEffect(void);
 void WaitFrames(s32 frames);
 void Func_080dbb40(void);
 void Scheduler_RemoveCallback(void (*callback)(void));
-void BattleFx_UpdateAllEffectSlots(void);
+void BattleEffect_UpdateAllEffectSlots(void);
 void Event_NoOp(void);
 void Runtime_ReleaseHeapBlock(s32 slot);
 
@@ -75,7 +75,7 @@ void BattleEffect_CleanupSceneObjects(void) {
 
   for (i = 23; i >= 0; i--, slot++) {
     if (slot->owned)
-      BattleFx_ClearOwnedSlot(slot);
+      BattleEffect_ClearOwnedSlot(slot);
   }
   /* FAKEMATCH: a halfword 17 makes the first test cmp #17; blt as the native
    * (cmp #16; ble with the constant). */
@@ -84,8 +84,8 @@ void BattleEffect_CleanupSceneObjects(void) {
     Func_080dc954();
   if (event[0xcb6] != 0)
     return;
-  BattleFx_WaitForArcGroups();
-  BattleFx_EndArcEffect();
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   if (event[394] == 3 && block != NULL && block[0x2a01] != 0) {
     i = 0;
     do {
@@ -96,7 +96,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   }
   event[0xcb7] = 0;
   Func_080dbb40();
-  Scheduler_RemoveCallback(BattleFx_UpdateAllEffectSlots);
+  Scheduler_RemoveCallback(BattleEffect_UpdateAllEffectSlots);
   map->x = work->x;
   map->y = work->y;
   map->z = work->z;

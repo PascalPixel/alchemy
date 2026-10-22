@@ -25,10 +25,10 @@ struct CanvasWork {
 extern u32 gCameraSceneParameters[];
 
 void Audio_PlayCue(s32 cue);
-void BattleFx_ClearActorTimers(void);
+void BattleEffect_ClearActorTimers(void);
 void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
-void BattleFx_BeginCanvasLayer(s32 bg_control);
+void BattleEffect_BeginCanvasLayer(s32 bg_control);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
@@ -37,14 +37,14 @@ void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants
    * and the routine in a callee-saved register; called directly, 24
-   * instructions of BattleFx_OpenCanvasLayer differ in tla-en. */
+   * instructions of BattleEffect_OpenCanvasLayer differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 /// Opens the effect canvas layer: BG2 becomes a 2x-wide 128x128 canvas of
 /// 16x16 characters, blended over the battle background, whose palette
 /// starts fading.
-void BattleFx_OpenCanvasLayer(s32 bgControl) {
+void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -54,7 +54,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   s32 col;
   s32 offset;
 
-  BattleFx_ClearActorTimers();
+  BattleEffect_ClearActorTimers();
   display->secondMode = 1;
   WaitFrames(1);
   {
@@ -135,12 +135,12 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 }
 
-void BattleFx_BeginTiledCanvas(s32 bg_control) {
+void BattleEffect_BeginTiledCanvas(s32 bg_control) {
   s32 row;
   s32 col;
   s32 offset;
 
-  BattleFx_BeginCanvasLayer(bg_control);
+  BattleEffect_BeginCanvasLayer(bg_control);
   REG_BG2CNT = bg_control | 0x4784;
   offset = 0;
   for (row = 0; row != 16; row++) {
@@ -158,12 +158,12 @@ void BattleFx_BeginTiledCanvas(s32 bg_control) {
   }
 }
 
-void BattleFx_BeginTiledCanvasFilled(s32 bg_control) {
+void BattleEffect_BeginTiledCanvasFilled(s32 bg_control) {
   s32 row;
   s32 col;
   s32 offset;
 
-  BattleFx_BeginCanvasLayer(bg_control);
+  BattleEffect_BeginCanvasLayer(bg_control);
   REG_BG2CNT = bg_control | 0x4784;
   offset = 0;
   for (row = 0; row != 16; row++) {
@@ -183,7 +183,7 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control) {
 
 /// Closes the effect canvas layer: BG1 back where it was, BG2 and its
 /// characters cleared, then the background palette faded back in.
-void BattleFx_EndCanvasLayer(void) {
+void BattleEffect_EndCanvasLayer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
@@ -228,7 +228,7 @@ void BattleFx_EndCanvasLayer(void) {
 
 /// Hides the canvas layer: marks the background view, queues DISPCNT 0x1541,
 /// fades the background palette back and queues BG1's control word.
-void BattleFx_HideBg1AndRestoreBackdrop(void) {
+void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 

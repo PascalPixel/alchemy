@@ -1575,10 +1575,10 @@ Func_080c82a8:
 Func_080c82c0:
 	.incbin "baserom.gba", 0x000c82c0, 0x00000018
 	.section .rom.000c82d8, "ax"
-	.global BattleFx_FindNearestObjectFar
-	.type BattleFx_FindNearestObjectFar, %function
+	.global BattleEffect_FindNearestObjectFar
+	.type BattleEffect_FindNearestObjectFar, %function
 	.thumb_func
-BattleFx_FindNearestObjectFar:
+BattleEffect_FindNearestObjectFar:
 	.incbin "baserom.gba", 0x000c82d8, 0x00000008
 	.section .rom.000c82e0, "ax"
 	.global Func_080c82e0
@@ -1701,16 +1701,16 @@ Func_080c8480:
 Field_DispatchTypeHandlerFar:
 	.incbin "baserom.gba", 0x000c8498, 0x00000008
 	.section .rom.000c84a0, "ax"
-	.global BattleFx_LoadActionEffectResourcesFar
-	.type BattleFx_LoadActionEffectResourcesFar, %function
+	.global BattleEffect_LoadActionEffectResourcesFar
+	.type BattleEffect_LoadActionEffectResourcesFar, %function
 	.thumb_func
-BattleFx_LoadActionEffectResourcesFar:
+BattleEffect_LoadActionEffectResourcesFar:
 	.incbin "baserom.gba", 0x000c84a0, 0x00000008
 	.section .rom.000c84a8, "ax"
-	.global BattleFx_SetupObjectPairFar
-	.type BattleFx_SetupObjectPairFar, %function
+	.global BattleEffect_SetupObjectPairFar
+	.type BattleEffect_SetupObjectPairFar, %function
 	.thumb_func
-BattleFx_SetupObjectPairFar:
+BattleEffect_SetupObjectPairFar:
 	.incbin "baserom.gba", 0x000c84a8, 0x00000008
 	.section .rom.000c84b0, "ax"
 	.global EffectRuntime_StopCurrentObjectFar
@@ -1731,10 +1731,10 @@ BattleEffect_CleanupSceneObjectsFar:
 EventObject_InitializeFar:
 	.incbin "baserom.gba", 0x000c84c0, 0x00000010
 	.section .rom.000c84d0, "ax"
-	.global BattleFx_PrepareBufferInterpolationFar
-	.type BattleFx_PrepareBufferInterpolationFar, %function
+	.global BattleEffect_PrepareBufferInterpolationFar
+	.type BattleEffect_PrepareBufferInterpolationFar, %function
 	.thumb_func
-BattleFx_PrepareBufferInterpolationFar:
+BattleEffect_PrepareBufferInterpolationFar:
 	.incbin "baserom.gba", 0x000c84d0, 0x00000008
 	.section .rom.000c84d8, "ax"
 	.global EventRuntime_ResolveAllPendingActionsFar
@@ -1775,16 +1775,16 @@ Func_080c8500:
 	.section .rom.000c8520, "ax"
 	.incbin "baserom.gba", 0x000c8520, 0x00000008
 	.section .rom.000c8528, "ax"
-	.global BattleFx_StartItemBreakFar
-	.type BattleFx_StartItemBreakFar, %function
+	.global BattleEffect_StartItemBreakFar
+	.type BattleEffect_StartItemBreakFar, %function
 	.thumb_func
-BattleFx_StartItemBreakFar:
+BattleEffect_StartItemBreakFar:
 	.incbin "baserom.gba", 0x000c8528, 0x00000008
 	.section .rom.000c8530, "ax"
-	.global BattleFx_SnapScaleToFullFar
-	.type BattleFx_SnapScaleToFullFar, %function
+	.global BattleEffect_SnapScaleToFullFar
+	.type BattleEffect_SnapScaleToFullFar, %function
 	.thumb_func
-BattleFx_SnapScaleToFullFar:
+BattleEffect_SnapScaleToFullFar:
 	.incbin "baserom.gba", 0x000c8530, 0x00000008
 	.section .rom.000c8538, "ax"
 	.global UpdateRisingParticleBurstFar
@@ -1835,10 +1835,10 @@ Func_080c8580:
 EffectSlot_UpdateFar:
 	.incbin "baserom.gba", 0x000c8588, 0x00000038
 	.section .rom.000c85c8, "ax"
-	.global BattleFx_GetResourceIdFar
-	.type BattleFx_GetResourceIdFar, %function
+	.global BattleEffect_GetResourceIdFar
+	.type BattleEffect_GetResourceIdFar, %function
 	.thumb_func
-BattleFx_GetResourceIdFar:
+BattleEffect_GetResourceIdFar:
 	.incbin "baserom.gba", 0x000c85c8, 0x00000008
 	.section .rom.000c85d0, "ax"
 	.global Event_ClearInvalidPackedValuesFar
@@ -2105,10 +2105,10 @@ Func_080c87c8:
 Func_080c87d0:
 	.incbin "baserom.gba", 0x000c87d0, 0x00000010
 	.section .rom.000c87e0, "ax"
-	.global BattleFx_StepVector3Far
-	.type BattleFx_StepVector3Far, %function
+	.global BattleEffect_StepVector3Far
+	.type BattleEffect_StepVector3Far, %function
 	.thumb_func
-BattleFx_StepVector3Far:
+BattleEffect_StepVector3Far:
 	.incbin "baserom.gba", 0x000c87e0, 0x00000008
 	.section .rom.000c87e8, "ax"
 	.global Func_080c87e8
@@ -2135,28 +2135,28 @@ Func_080c87f8:
 Field_BeginPaletteTransitionFar:
 	.incbin "baserom.gba", 0x000c8800, 0x00000008
 	.section .rom.000c8808, "ax"
-	.global BattleFx_StartArcEffectFar
-	.type BattleFx_StartArcEffectFar, %function
+	.global BattleEffect_StartArcEffectFar
+	.type BattleEffect_StartArcEffectFar, %function
 	.thumb_func
-BattleFx_StartArcEffectFar:
+BattleEffect_StartArcEffectFar:
 	.incbin "baserom.gba", 0x000c8808, 0x00000008
 	.section .rom.000c8810, "ax"
-	.global BattleFx_EndArcEffectFar
-	.type BattleFx_EndArcEffectFar, %function
+	.global BattleEffect_EndArcEffectFar
+	.type BattleEffect_EndArcEffectFar, %function
 	.thumb_func
-BattleFx_EndArcEffectFar:
+BattleEffect_EndArcEffectFar:
 	.incbin "baserom.gba", 0x000c8810, 0x00000008
 	.section .rom.000c8818, "ax"
-	.global BattleFx_WaitForArcGroupsFar
-	.type BattleFx_WaitForArcGroupsFar, %function
+	.global BattleEffect_WaitForArcGroupsFar
+	.type BattleEffect_WaitForArcGroupsFar, %function
 	.thumb_func
-BattleFx_WaitForArcGroupsFar:
+BattleEffect_WaitForArcGroupsFar:
 	.incbin "baserom.gba", 0x000c8818, 0x00000008
 	.section .rom.000c8820, "ax"
-	.global BattleFx_SetObjectTickModeFar
-	.type BattleFx_SetObjectTickModeFar, %function
+	.global BattleEffect_SetObjectTickModeFar
+	.type BattleEffect_SetObjectTickModeFar, %function
 	.thumb_func
-BattleFx_SetObjectTickModeFar:
+BattleEffect_SetObjectTickModeFar:
 	.incbin "baserom.gba", 0x000c8820, 0x00000008
 	.section .rom.000c88c8, "ax"
 	.global Func_080c88c8
@@ -2165,8 +2165,8 @@ BattleFx_SetObjectTickModeFar:
 Func_080c88c8:
 	.incbin "baserom.gba", 0x000c88c8, 0x00000004
 	.section .rom.000c88cc, "ax"
-	.global BattleFx_DecodeFrameTranslationBase
-BattleFx_DecodeFrameTranslationBase:
+	.global BattleEffect_DecodeFrameTranslationBase
+BattleEffect_DecodeFrameTranslationBase:
 	.incbin "baserom.gba", 0x000c88cc, 0x00000004
 	.section .rom.000c88d0, "ax"
 	.global Func_080c88d0
@@ -2193,8 +2193,8 @@ Func_080c88e0:
 Func_080c88e8:
 	.incbin "baserom.gba", 0x000c88e8, 0x00000004
 	.section .rom.000c88ec, "ax"
-	.global BattleFx_DecodeFrameUnusedBase
-BattleFx_DecodeFrameUnusedBase:
+	.global BattleEffect_DecodeFrameUnusedBase
+BattleEffect_DecodeFrameUnusedBase:
 	.incbin "baserom.gba", 0x000c88ec, 0x00000004
 	.section .rom.000c88f0, "ax"
 	.global Func_080c88f0
@@ -2383,10 +2383,10 @@ Func_080ce458:
 Func_080cf050:
 	.incbin "baserom.gba", 0x000cf030, 0x00000080
 	.section .rom.000cf15c, "ax"
-	.global BattleFx_StartRandomParticleEmitter
-	.type BattleFx_StartRandomParticleEmitter, %function
+	.global BattleEffect_StartRandomParticleEmitter
+	.type BattleEffect_StartRandomParticleEmitter, %function
 	.thumb_func
-BattleFx_StartRandomParticleEmitter:
+BattleEffect_StartRandomParticleEmitter:
 	.incbin "baserom.gba", 0x000cf15c, 0x000001c4
 	.section .rom.000cf534, "ax"
 	.incbin "baserom.gba", 0x000cf534, 0x000001a8
@@ -2428,10 +2428,10 @@ DisplayTransition_FillTilemapAndSolidTile:
 BattlePalette_UpdateBlend:
 	.incbin "baserom.gba", 0x000d0c80, 0x0000017c
 	.section .rom.000d0dfc, "ax"
-	.global BattleFx_BuildBuffer
-	.type BattleFx_BuildBuffer, %function
+	.global BattleEffect_BuildBuffer
+	.type BattleEffect_BuildBuffer, %function
 	.thumb_func
-BattleFx_BuildBuffer:
+BattleEffect_BuildBuffer:
 	.incbin "baserom.gba", 0x000d0dfc, 0x00000868
 	.section .rom.000d1740, "ax"
 	.balign 4
@@ -2755,10 +2755,10 @@ Func_080dbb78:
 	.balign 4
 	.incbin "baserom.gba", 0x000dbe8c, 0x00000174
 	.section .rom.000dc3cc, "ax"
-	.global BattleFx_LoadActionEffectResources
-	.type BattleFx_LoadActionEffectResources, %function
+	.global BattleEffect_LoadActionEffectResources
+	.type BattleEffect_LoadActionEffectResources, %function
 	.thumb_func
-BattleFx_LoadActionEffectResources:
+BattleEffect_LoadActionEffectResources:
 	.incbin "baserom.gba", 0x000dc3cc, 0x0000021c
 	.section .rom.000dc694, "ax"
 	.global Func_080dc6d8
@@ -2802,10 +2802,10 @@ Func_080dd054:
 	.section .rom.000dd4e2, "ax"
 	.incbin "baserom.gba", 0x000dd4e2, 0x00000002
 	.section .rom.000dd4e4, "ax"
-	.global BattleFx_StartItemBreak
-	.type BattleFx_StartItemBreak, %function
+	.global BattleEffect_StartItemBreak
+	.type BattleEffect_StartItemBreak, %function
 	.thumb_func
-BattleFx_StartItemBreak:
+BattleEffect_StartItemBreak:
 	.incbin "baserom.gba", 0x000dd4e4, 0x00000114
 	.section .rom.000dd710, "ax"
 	.incbin "baserom.gba", 0x000dd710, 0x000000cc
@@ -2942,16 +2942,16 @@ Func_080e0cec:
 Func_080e1024:
 	.incbin "baserom.gba", 0x000e0fe0, 0x00000130
 	.section .rom.000e1404, "ax"
-	.global BattleFx_SpawnScaledArcObjects
-	.type BattleFx_SpawnScaledArcObjects, %function
+	.global BattleEffect_SpawnScaledArcObjects
+	.type BattleEffect_SpawnScaledArcObjects, %function
 	.thumb_func
-BattleFx_SpawnScaledArcObjects:
+BattleEffect_SpawnScaledArcObjects:
 	.incbin "baserom.gba", 0x000e1404, 0x000000c4
 	.section .rom.000e14c8, "ax"
-	.global BattleFx_UpdateArcEffect
-	.type BattleFx_UpdateArcEffect, %function
+	.global BattleEffect_UpdateArcEffect
+	.type BattleEffect_UpdateArcEffect, %function
 	.thumb_func
-BattleFx_UpdateArcEffect:
+BattleEffect_UpdateArcEffect:
 	.incbin "baserom.gba", 0x000e14c8, 0x000000f0
 	.section .rom.000e1634, "ax"
 	.incbin "baserom.gba", 0x000e1634, 0x000008ac
@@ -3459,8 +3459,8 @@ Func_0810aa80:
 	.section .rom.0010af34, "ax"
 	.incbin "baserom.gba", 0x0010af34, 0x00000128
 	.section .rom.0010b0cc, "ax"
-	.global BattleFx_UpdateRadialMotion
-BattleFx_UpdateRadialMotion:
+	.global BattleEffect_UpdateRadialMotion
+BattleEffect_UpdateRadialMotion:
 	.incbin "baserom.gba", 0x0010b0cc, 0x000000ac
 	.section .rom.0010b1c4, "ax"
 	.balign 4
@@ -3772,15 +3772,15 @@ Func_0812824c:
 	.section .rom.0013ba50, "ax"
 	.incbin "baserom.gba", 0x0013ba50, 0x000000e8
 	.section .rom.0013bbd8, "ax"
-	.global BattleFx_RunIce
-	.type BattleFx_RunIce, %function
+	.global BattleEffect_RunIce
+	.type BattleEffect_RunIce, %function
 	.thumb_func
-BattleFx_RunIce:
+BattleEffect_RunIce:
 	.incbin "baserom.gba", 0x0013bbd8, 0x000004e0
-	.global BattleFx_RunDouse
-	.type BattleFx_RunDouse, %function
+	.global BattleEffect_RunDouse
+	.type BattleEffect_RunDouse, %function
 	.thumb_func
-BattleFx_RunDouse:
+BattleEffect_RunDouse:
 	.incbin "baserom.gba", 0x0013c0b8, 0x000004f4
 	.section .rom.0013c5f4, "ax"
 	.balign 4
@@ -3837,15 +3837,15 @@ Func_0813f8d4:
 Func_0813fa88:
 	.incbin "baserom.gba", 0x0013fa88, 0x000002b8
 	.section .rom.0013fd84, "ax"
-	.global BattleFx_RunCruelRuin
-	.type BattleFx_RunCruelRuin, %function
+	.global BattleEffect_RunCruelRuin
+	.type BattleEffect_RunCruelRuin, %function
 	.thumb_func
-BattleFx_RunCruelRuin:
+BattleEffect_RunCruelRuin:
 	.incbin "baserom.gba", 0x0013fd84, 0x000017b8
-	.global BattleFx_RunEclipse
-	.type BattleFx_RunEclipse, %function
+	.global BattleEffect_RunEclipse
+	.type BattleEffect_RunEclipse, %function
 	.thumb_func
-BattleFx_RunEclipse:
+BattleEffect_RunEclipse:
 	.incbin "baserom.gba", 0x0014153c, 0x00001408
 	.section .rom.00142944, "ax"
 	.global Func_08142944
@@ -3863,10 +3863,10 @@ Func_08142944:
 Func_0814355c:
 	.incbin "baserom.gba", 0x0014355c, 0x00000084
 	.section .rom.001435e0, "ax"
-	.global BattleFx_BeginCanvasLayer
-	.type BattleFx_BeginCanvasLayer, %function
+	.global BattleEffect_BeginCanvasLayer
+	.type BattleEffect_BeginCanvasLayer, %function
 	.thumb_func
-BattleFx_BeginCanvasLayer:
+BattleEffect_BeginCanvasLayer:
 	.incbin "baserom.gba", 0x001435e0, 0x00000260
 	.section .rom.00143d80, "ax"
 	.incbin "baserom.gba", 0x00143d80, 0x00000134
@@ -3876,15 +3876,15 @@ BattleFx_BeginCanvasLayer:
 	.thumb_func
 Func_08143eb4:
 	.incbin "baserom.gba", 0x00143eb4, 0x00000190
-	.global BattleFx_RunHaunt
-	.type BattleFx_RunHaunt, %function
+	.global BattleEffect_RunHaunt
+	.type BattleEffect_RunHaunt, %function
 	.thumb_func
-BattleFx_RunHaunt:
+BattleEffect_RunHaunt:
 	.incbin "baserom.gba", 0x00144044, 0x00000324
-	.global BattleFx_RunOrbitingSpirals
-	.type BattleFx_RunOrbitingSpirals, %function
+	.global BattleEffect_RunOrbitingSpirals
+	.type BattleEffect_RunOrbitingSpirals, %function
 	.thumb_func
-BattleFx_RunOrbitingSpirals:
+BattleEffect_RunOrbitingSpirals:
 	.incbin "baserom.gba", 0x00144368, 0x00000290
 	.section .rom.00144628, "ax"
 	.balign 4
@@ -3907,36 +3907,36 @@ Func_08144b14:
 	.thumb_func
 Func_0814512c:
 	.incbin "baserom.gba", 0x0014512c, 0x00000658
-	.global BattleFx_RunCondemn
-	.type BattleFx_RunCondemn, %function
+	.global BattleEffect_RunCondemn
+	.type BattleEffect_RunCondemn, %function
 	.thumb_func
-BattleFx_RunCondemn:
+BattleEffect_RunCondemn:
 	.incbin "baserom.gba", 0x00145784, 0x000004e4
 	.section .rom.00145df8, "ax"
-	.global BattleFx_RunBind
-	.type BattleFx_RunBind, %function
+	.global BattleEffect_RunBind
+	.type BattleEffect_RunBind, %function
 	.thumb_func
-BattleFx_RunBind:
+BattleEffect_RunBind:
 	.incbin "baserom.gba", 0x00145df8, 0x00000484
-	.global BattleFx_RunTriangleStrike
-	.type BattleFx_RunTriangleStrike, %function
+	.global BattleEffect_RunTriangleStrike
+	.type BattleEffect_RunTriangleStrike, %function
 	.thumb_func
-BattleFx_RunTriangleStrike:
+BattleEffect_RunTriangleStrike:
 	.incbin "baserom.gba", 0x0014627c, 0x000003bc
-	.global BattleFx_RunAstralBlast
-	.type BattleFx_RunAstralBlast, %function
+	.global BattleEffect_RunAstralBlast
+	.type BattleEffect_RunAstralBlast, %function
 	.thumb_func
-BattleFx_RunAstralBlast:
+BattleEffect_RunAstralBlast:
 	.incbin "baserom.gba", 0x00146638, 0x00000434
-	.global BattleFx_RunShiningStar
-	.type BattleFx_RunShiningStar, %function
+	.global BattleEffect_RunShiningStar
+	.type BattleEffect_RunShiningStar, %function
 	.thumb_func
-BattleFx_RunShiningStar:
+BattleEffect_RunShiningStar:
 	.incbin "baserom.gba", 0x00146a6c, 0x00000394
-	.global BattleFx_RunProcne
-	.type BattleFx_RunProcne, %function
+	.global BattleEffect_RunProcne
+	.type BattleEffect_RunProcne, %function
 	.thumb_func
-BattleFx_RunProcne:
+BattleEffect_RunProcne:
 	.incbin "baserom.gba", 0x00146e00, 0x00000cd4
 	.section .rom.00147aec, "ax"
 	.balign 4
@@ -3945,60 +3945,60 @@ BattleFx_RunProcne:
 	.thumb_func
 Func_08147aec:
 	.incbin "baserom.gba", 0x00147aec, 0x0000096c
-	.global BattleFx_RunNereid
-	.type BattleFx_RunNereid, %function
+	.global BattleEffect_RunNereid
+	.type BattleEffect_RunNereid, %function
 	.thumb_func
-BattleFx_RunNereid:
+BattleEffect_RunNereid:
 	.incbin "baserom.gba", 0x00148458, 0x000005fc
-	.global BattleFx_RunFroth
-	.type BattleFx_RunFroth, %function
+	.global BattleEffect_RunFroth
+	.type BattleEffect_RunFroth, %function
 	.thumb_func
-BattleFx_RunFroth:
+BattleEffect_RunFroth:
 	.incbin "baserom.gba", 0x00148a54, 0x00000448
-	.global BattleFx_RunWhirlwind
-	.type BattleFx_RunWhirlwind, %function
+	.global BattleEffect_RunWhirlwind
+	.type BattleEffect_RunWhirlwind, %function
 	.thumb_func
-BattleFx_RunWhirlwind:
+BattleEffect_RunWhirlwind:
 	.incbin "baserom.gba", 0x00148e9c, 0x000003cc
-	.global BattleFx_RunPrism
-	.type BattleFx_RunPrism, %function
+	.global BattleEffect_RunPrism
+	.type BattleEffect_RunPrism, %function
 	.thumb_func
-BattleFx_RunPrism:
+BattleEffect_RunPrism:
 	.incbin "baserom.gba", 0x00149268, 0x0000052c
-	.global BattleFx_RunPlasma
-	.type BattleFx_RunPlasma, %function
+	.global BattleEffect_RunPlasma
+	.type BattleEffect_RunPlasma, %function
 	.thumb_func
-BattleFx_RunPlasma:
+BattleEffect_RunPlasma:
 	.incbin "baserom.gba", 0x00149794, 0x00000400
 	.section .rom.00149bac, "ax"
 	.balign 4
-	.global BattleFx_RunSparkGroups
-	.type BattleFx_RunSparkGroups, %function
+	.global BattleEffect_RunSparkGroups
+	.type BattleEffect_RunSparkGroups, %function
 	.thumb_func
-BattleFx_RunSparkGroups:
+BattleEffect_RunSparkGroups:
 	.incbin "baserom.gba", 0x00149bac, 0x000006b8
-	.global BattleFx_RunVolcano
-	.type BattleFx_RunVolcano, %function
+	.global BattleEffect_RunVolcano
+	.type BattleEffect_RunVolcano, %function
 	.thumb_func
-BattleFx_RunVolcano:
+BattleEffect_RunVolcano:
 	.incbin "baserom.gba", 0x0014a264, 0x00000544
 	.section .rom.0014a812, "ax"
 	.incbin "baserom.gba", 0x0014a812, 0x00000002
 	.section .rom.0014a814, "ax"
-	.global BattleFx_RunTargetMotes
-	.type BattleFx_RunTargetMotes, %function
+	.global BattleEffect_RunTargetMotes
+	.type BattleEffect_RunTargetMotes, %function
 	.thumb_func
-BattleFx_RunTargetMotes:
+BattleEffect_RunTargetMotes:
 	.incbin "baserom.gba", 0x0014a814, 0x000006a8
-	.global BattleFx_RunSleep
-	.type BattleFx_RunSleep, %function
+	.global BattleEffect_RunSleep
+	.type BattleEffect_RunSleep, %function
 	.thumb_func
-BattleFx_RunSleep:
+BattleEffect_RunSleep:
 	.incbin "baserom.gba", 0x0014aebc, 0x000002a4
-	.global BattleFx_RunCurse
-	.type BattleFx_RunCurse, %function
+	.global BattleEffect_RunCurse
+	.type BattleEffect_RunCurse, %function
 	.thumb_func
-BattleFx_RunCurse:
+BattleEffect_RunCurse:
 	.incbin "baserom.gba", 0x0014b160, 0x00000864
 	.section .rom.0014b9e8, "ax"
 	.balign 4
@@ -4007,10 +4007,10 @@ BattleFx_RunCurse:
 	.thumb_func
 Func_0814b9e8:
 	.incbin "baserom.gba", 0x0014b9e8, 0x000004f8
-	.global BattleFx_RunZagan
-	.type BattleFx_RunZagan, %function
+	.global BattleEffect_RunZagan
+	.type BattleEffect_RunZagan, %function
 	.thumb_func
-BattleFx_RunZagan:
+BattleEffect_RunZagan:
 	.incbin "baserom.gba", 0x0014bee0, 0x00000a48
 	.section .rom.0014cca8, "ax"
 	.balign 4
@@ -4023,20 +4023,20 @@ Func_0814cd48:
 	.incbin "baserom.gba", 0x0014cd48, 0x000000d8
 	.section .rom.0014ce30, "ax"
 	.balign 4
-	.global BattleFx_RunCybele
-	.type BattleFx_RunCybele, %function
+	.global BattleEffect_RunCybele
+	.type BattleEffect_RunCybele, %function
 	.thumb_func
-BattleFx_RunCybele:
+BattleEffect_RunCybele:
 	.incbin "baserom.gba", 0x0014ce30, 0x00000cd4
-	.global BattleFx_RunBoreas
-	.type BattleFx_RunBoreas, %function
+	.global BattleEffect_RunBoreas
+	.type BattleEffect_RunBoreas, %function
 	.thumb_func
-BattleFx_RunBoreas:
+BattleEffect_RunBoreas:
 	.incbin "baserom.gba", 0x0014db04, 0x00000c40
-	.global BattleFx_RunBreak
-	.type BattleFx_RunBreak, %function
+	.global BattleEffect_RunBreak
+	.type BattleEffect_RunBreak, %function
 	.thumb_func
-BattleFx_RunBreak:
+BattleEffect_RunBreak:
 	.incbin "baserom.gba", 0x0014e744, 0x000002f8
 	.section .rom.0014ea58, "ax"
 	.balign 4
@@ -4047,10 +4047,10 @@ Func_0814ea58:
 	.incbin "baserom.gba", 0x0014ea58, 0x00000430
 	.section .rom.0014ef44, "ax"
 	.balign 4
-	.global BattleFx_RunHealingMotes
-	.type BattleFx_RunHealingMotes, %function
+	.global BattleEffect_RunHealingMotes
+	.type BattleEffect_RunHealingMotes, %function
 	.thumb_func
-BattleFx_RunHealingMotes:
+BattleEffect_RunHealingMotes:
 	.incbin "baserom.gba", 0x0014ef44, 0x00000ac4
 	.section .rom.0014fab8, "ax"
 	.balign 4
@@ -4065,31 +4065,31 @@ Func_0814fab8:
 	.global SummonFx_RunCanvasEffect
 SummonFx_RunCanvasEffect:
 	.incbin "baserom.gba", 0x001504d8, 0x000004dc
-	.global BattleFx_RunFlare
-	.type BattleFx_RunFlare, %function
+	.global BattleEffect_RunFlare
+	.type BattleEffect_RunFlare, %function
 	.thumb_func
-BattleFx_RunFlare:
+BattleEffect_RunFlare:
 	.incbin "baserom.gba", 0x001509b4, 0x00000264
 	.section .rom.00150c74, "ax"
-	.global BattleFx_RunQuake
-	.type BattleFx_RunQuake, %function
+	.global BattleEffect_RunQuake
+	.type BattleEffect_RunQuake, %function
 	.thumb_func
-BattleFx_RunQuake:
+BattleEffect_RunQuake:
 	.incbin "baserom.gba", 0x00150c74, 0x000003cc
-	.global BattleFx_RunFire
-	.type BattleFx_RunFire, %function
+	.global BattleEffect_RunFire
+	.type BattleEffect_RunFire, %function
 	.thumb_func
-BattleFx_RunFire:
+BattleEffect_RunFire:
 	.incbin "baserom.gba", 0x00151040, 0x0000047c
-	.global BattleFx_RunFrost
-	.type BattleFx_RunFrost, %function
+	.global BattleEffect_RunFrost
+	.type BattleEffect_RunFrost, %function
 	.thumb_func
-BattleFx_RunFrost:
+BattleEffect_RunFrost:
 	.incbin "baserom.gba", 0x001514bc, 0x0000068c
-	.global BattleFx_RunRay
-	.type BattleFx_RunRay, %function
+	.global BattleEffect_RunRay
+	.type BattleEffect_RunRay, %function
 	.thumb_func
-BattleFx_RunRay:
+BattleEffect_RunRay:
 	.incbin "baserom.gba", 0x00151b48, 0x00000490
 	.section .rom.00151ff0, "ax"
 	.balign 4
@@ -4101,15 +4101,15 @@ Func_08151ff0:
 	.section .rom.0015265a, "ax"
 	.incbin "baserom.gba", 0x0015265a, 0x00000002
 	.section .rom.0015265c, "ax"
-	.global BattleFx_RunProjectileVolleyB
-	.type BattleFx_RunProjectileVolleyB, %function
+	.global BattleEffect_RunProjectileVolleyB
+	.type BattleEffect_RunProjectileVolleyB, %function
 	.thumb_func
-BattleFx_RunProjectileVolleyB:
+BattleEffect_RunProjectileVolleyB:
 	.incbin "baserom.gba", 0x0015265c, 0x00001860
-	.global BattleFx_RunAtalanta
-	.type BattleFx_RunAtalanta, %function
+	.global BattleEffect_RunAtalanta
+	.type BattleEffect_RunAtalanta, %function
 	.thumb_func
-BattleFx_RunAtalanta:
+BattleEffect_RunAtalanta:
 	.incbin "baserom.gba", 0x00153ebc, 0x000009fc
 	.section .rom.001548d0, "ax"
 	.balign 4
@@ -4119,20 +4119,20 @@ BattleFx_RunAtalanta:
 Func_081548d0:
 	.incbin "baserom.gba", 0x001548d0, 0x0000048c
 	.section .rom.00154d5c, "ax"
-	.global BattleFx_RunVine
-	.type BattleFx_RunVine, %function
+	.global BattleEffect_RunVine
+	.type BattleEffect_RunVine, %function
 	.thumb_func
-BattleFx_RunVine:
+BattleEffect_RunVine:
 	.incbin "baserom.gba", 0x00154d5c, 0x00000228
-	.global BattleFx_RunThorn
-	.type BattleFx_RunThorn, %function
+	.global BattleEffect_RunThorn
+	.type BattleEffect_RunThorn, %function
 	.thumb_func
-BattleFx_RunThorn:
+BattleEffect_RunThorn:
 	.incbin "baserom.gba", 0x00154f84, 0x000003f8
-	.global BattleFx_RunBolt
-	.type BattleFx_RunBolt, %function
+	.global BattleEffect_RunBolt
+	.type BattleEffect_RunBolt, %function
 	.thumb_func
-BattleFx_RunBolt:
+BattleEffect_RunBolt:
 	.incbin "baserom.gba", 0x0015537c, 0x000004e0
 	.section .rom.0015585c, "ax"
 	.global Func_0815585c
@@ -4143,76 +4143,76 @@ Func_0815585c:
 	.section .rom.0015613e, "ax"
 	.incbin "baserom.gba", 0x0015613e, 0x00000002
 	.section .rom.00156140, "ax"
-	.global BattleFx_RunProjectileVolley
-	.type BattleFx_RunProjectileVolley, %function
+	.global BattleEffect_RunProjectileVolley
+	.type BattleEffect_RunProjectileVolley, %function
 	.thumb_func
-BattleFx_RunProjectileVolley:
+BattleEffect_RunProjectileVolley:
 	.incbin "baserom.gba", 0x00156140, 0x000013a0
 	.section .rom.00157636, "ax"
 	.incbin "baserom.gba", 0x00157636, 0x00000002
-	.global BattleFx_RunMercury
-	.type BattleFx_RunMercury, %function
+	.global BattleEffect_RunMercury
+	.type BattleEffect_RunMercury, %function
 	.thumb_func
-BattleFx_RunMercury:
+BattleEffect_RunMercury:
 	.incbin "baserom.gba", 0x00157638, 0x00000398
-	.global BattleFx_RunJupiter
-	.type BattleFx_RunJupiter, %function
+	.global BattleEffect_RunJupiter
+	.type BattleEffect_RunJupiter, %function
 	.thumb_func
-BattleFx_RunJupiter:
+BattleEffect_RunJupiter:
 	.incbin "baserom.gba", 0x001579d0, 0x00000324
 	.section .rom.00157d30, "ax"
-	.global BattleFx_RunVenus
-	.type BattleFx_RunVenus, %function
+	.global BattleEffect_RunVenus
+	.type BattleEffect_RunVenus, %function
 	.thumb_func
-BattleFx_RunVenus:
+BattleEffect_RunVenus:
 	.incbin "baserom.gba", 0x00157d30, 0x0000033c
-	.global BattleFx_RunMars
-	.type BattleFx_RunMars, %function
+	.global BattleEffect_RunMars
+	.type BattleEffect_RunMars, %function
 	.thumb_func
-BattleFx_RunMars:
+BattleEffect_RunMars:
 	.incbin "baserom.gba", 0x0015806c, 0x000003c0
-	.global BattleFx_RunHail
-	.type BattleFx_RunHail, %function
+	.global BattleEffect_RunHail
+	.type BattleEffect_RunHail, %function
 	.thumb_func
-BattleFx_RunHail:
+BattleEffect_RunHail:
 	.incbin "baserom.gba", 0x0015842c, 0x000003b8
-	.global BattleFx_RunGround
-	.type BattleFx_RunGround, %function
+	.global BattleEffect_RunGround
+	.type BattleEffect_RunGround, %function
 	.thumb_func
-BattleFx_RunGround:
+BattleEffect_RunGround:
 	.incbin "baserom.gba", 0x001587e4, 0x00000584
 	.section .rom.00158dc8, "ax"
 	.balign 4
-	.global BattleFx_RunThor
-	.type BattleFx_RunThor, %function
+	.global BattleEffect_RunThor
+	.type BattleEffect_RunThor, %function
 	.thumb_func
-BattleFx_RunThor:
+BattleEffect_RunThor:
 	.incbin "baserom.gba", 0x00158dc8, 0x00000ee4
-	.global BattleFx_RunSpire
-	.type BattleFx_RunSpire, %function
+	.global BattleEffect_RunSpire
+	.type BattleEffect_RunSpire, %function
 	.thumb_func
-BattleFx_RunSpire:
+BattleEffect_RunSpire:
 	.incbin "baserom.gba", 0x00159cac, 0x00000398
 	.section .rom.0015a110, "ax"
-	.global BattleFx_RunBurstScene
-	.type BattleFx_RunBurstScene, %function
+	.global BattleEffect_RunBurstScene
+	.type BattleEffect_RunBurstScene, %function
 	.thumb_func
-BattleFx_RunBurstScene:
+BattleEffect_RunBurstScene:
 	.incbin "baserom.gba", 0x0015a110, 0x000008d4
-	.global BattleFx_RunGaia
-	.type BattleFx_RunGaia, %function
+	.global BattleEffect_RunGaia
+	.type BattleEffect_RunGaia, %function
 	.thumb_func
-BattleFx_RunGaia:
+BattleEffect_RunGaia:
 	.incbin "baserom.gba", 0x0015a9e4, 0x00000868
 	.section .rom.0015b290, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0015b290, 0x00000180
 	.section .rom.0015b434, "ax"
 	.incbin "baserom.gba", 0x0015b434, 0x00000330
-	.global BattleFx_RunUlysses
-	.type BattleFx_RunUlysses, %function
+	.global BattleEffect_RunUlysses
+	.type BattleEffect_RunUlysses, %function
 	.thumb_func
-BattleFx_RunUlysses:
+BattleEffect_RunUlysses:
 	.incbin "baserom.gba", 0x0015b764, 0x000011f4
 	.section .rom.0015c970, "ax"
 	.balign 4
@@ -4222,15 +4222,15 @@ BattleFx_RunUlysses:
 Func_0815c970:
 	.incbin "baserom.gba", 0x0015c970, 0x00000260
 	.section .rom.0015cbd0, "ax"
-	.global BattleFx_RunSpiderWeb
-	.type BattleFx_RunSpiderWeb, %function
+	.global BattleEffect_RunSpiderWeb
+	.type BattleEffect_RunSpiderWeb, %function
 	.thumb_func
-BattleFx_RunSpiderWeb:
+BattleEffect_RunSpiderWeb:
 	.incbin "baserom.gba", 0x0015cbd0, 0x00000218
-	.global BattleFx_RunAzul
-	.type BattleFx_RunAzul, %function
+	.global BattleEffect_RunAzul
+	.type BattleEffect_RunAzul, %function
 	.thumb_func
-BattleFx_RunAzul:
+BattleEffect_RunAzul:
 	.incbin "baserom.gba", 0x0015cde8, 0x00001388
 	.section .rom.0015e22c, "ax"
 	.incbin "baserom.gba", 0x0015e22c, 0x0000005c
@@ -4260,10 +4260,10 @@ Func_0815e9f4:
 	.thumb_func
 Func_0815f16c:
 	.incbin "baserom.gba", 0x0015f16c, 0x00004764
-	.global BattleFx_RunTorch
-	.type BattleFx_RunTorch, %function
+	.global BattleEffect_RunTorch
+	.type BattleEffect_RunTorch, %function
 	.thumb_func
-BattleFx_RunTorch:
+BattleEffect_RunTorch:
 	.incbin "baserom.gba", 0x001638d0, 0x00000330
 	.section .rom.00163c2c, "ax"
 	.balign 4
@@ -4274,23 +4274,23 @@ BattleFx_RunTorch:
 	.section .rom.00164c0a, "ax"
 	.incbin "baserom.gba", 0x00164c0a, 0x000000ba
 	.section .rom.00164cc4, "ax"
-	.global BattleFx_RunParticleStreams
-BattleFx_RunParticleStreams:
+	.global BattleEffect_RunParticleStreams
+BattleEffect_RunParticleStreams:
 	.incbin "baserom.gba", 0x00164cc4, 0x00000df0
-	.global BattleFx_RunRamses
-	.type BattleFx_RunRamses, %function
+	.global BattleEffect_RunRamses
+	.type BattleEffect_RunRamses, %function
 	.thumb_func
-BattleFx_RunRamses:
+BattleEffect_RunRamses:
 	.incbin "baserom.gba", 0x00165ab4, 0x00000728
-	.global BattleFx_RunAnnihilation
-	.type BattleFx_RunAnnihilation, %function
+	.global BattleEffect_RunAnnihilation
+	.type BattleEffect_RunAnnihilation, %function
 	.thumb_func
-BattleFx_RunAnnihilation:
+BattleEffect_RunAnnihilation:
 	.incbin "baserom.gba", 0x001661dc, 0x000003c8
-	.global BattleFx_RunRagnarok
-	.type BattleFx_RunRagnarok, %function
+	.global BattleEffect_RunRagnarok
+	.type BattleEffect_RunRagnarok, %function
 	.thumb_func
-BattleFx_RunRagnarok:
+BattleEffect_RunRagnarok:
 	.incbin "baserom.gba", 0x001665a4, 0x00000554
 	.section .rom.00166b10, "ax"
 	.balign 4
@@ -4299,36 +4299,36 @@ BattleFx_RunRagnarok:
 	.thumb_func
 Func_08166b10:
 	.incbin "baserom.gba", 0x00166b10, 0x0000078c
-	.global BattleFx_RunJudgment
-	.type BattleFx_RunJudgment, %function
+	.global BattleEffect_RunJudgment
+	.type BattleEffect_RunJudgment, %function
 	.thumb_func
-BattleFx_RunJudgment:
+BattleEffect_RunJudgment:
 	.incbin "baserom.gba", 0x0016729c, 0x000017a4
-	.global BattleFx_RunKirin
-	.type BattleFx_RunKirin, %function
+	.global BattleEffect_RunKirin
+	.type BattleEffect_RunKirin, %function
 	.thumb_func
-BattleFx_RunKirin:
+BattleEffect_RunKirin:
 	.incbin "baserom.gba", 0x00168a40, 0x00000970
 	.section .rom.001693d0, "ax"
-	.global BattleFx_RunNeptune
-	.type BattleFx_RunNeptune, %function
+	.global BattleEffect_RunNeptune
+	.type BattleEffect_RunNeptune, %function
 	.thumb_func
-BattleFx_RunNeptune:
+BattleEffect_RunNeptune:
 	.incbin "baserom.gba", 0x001693d0, 0x00000e48
 	.section .rom.0016a2d8, "ax"
 	.balign 4
 	.global Func_0816a2d8
 Func_0816a2d8:
 	.incbin "baserom.gba", 0x0016a2d8, 0x00000458
-	.global BattleFx_RunUndeadSword
-	.type BattleFx_RunUndeadSword, %function
+	.global BattleEffect_RunUndeadSword
+	.type BattleEffect_RunUndeadSword, %function
 	.thumb_func
-BattleFx_RunUndeadSword:
+BattleEffect_RunUndeadSword:
 	.incbin "baserom.gba", 0x0016a730, 0x000002d8
-	.global BattleFx_RunPlumeEdge
-	.type BattleFx_RunPlumeEdge, %function
+	.global BattleEffect_RunPlumeEdge
+	.type BattleEffect_RunPlumeEdge, %function
 	.thumb_func
-BattleFx_RunPlumeEdge:
+BattleEffect_RunPlumeEdge:
 	.incbin "baserom.gba", 0x0016aa08, 0x000004cc
 	.section .rom.0016aeec, "ax"
 	.balign 4
@@ -4340,40 +4340,40 @@ Func_0816aeec:
 	.global Func_0816b6ec
 Func_0816b6ec:
 	.incbin "baserom.gba", 0x0016b6ec, 0x00000584
-	.global BattleFx_RunDiamondBerg
-	.type BattleFx_RunDiamondBerg, %function
+	.global BattleEffect_RunDiamondBerg
+	.type BattleEffect_RunDiamondBerg, %function
 	.thumb_func
-BattleFx_RunDiamondBerg:
+BattleEffect_RunDiamondBerg:
 	.incbin "baserom.gba", 0x0016bc70, 0x00000604
-	.global BattleFx_RunCrystal
-	.type BattleFx_RunCrystal, %function
+	.global BattleEffect_RunCrystal
+	.type BattleEffect_RunCrystal, %function
 	.thumb_func
-BattleFx_RunCrystal:
+BattleEffect_RunCrystal:
 	.incbin "baserom.gba", 0x0016c274, 0x00000484
-	.global BattleFx_RunGeode
-	.type BattleFx_RunGeode, %function
+	.global BattleEffect_RunGeode
+	.type BattleEffect_RunGeode, %function
 	.thumb_func
-BattleFx_RunGeode:
+BattleEffect_RunGeode:
 	.incbin "baserom.gba", 0x0016c6f8, 0x00000a38
-	.global BattleFx_RunNirvana
-	.type BattleFx_RunNirvana, %function
+	.global BattleEffect_RunNirvana
+	.type BattleEffect_RunNirvana, %function
 	.thumb_func
-BattleFx_RunNirvana:
+BattleEffect_RunNirvana:
 	.incbin "baserom.gba", 0x0016d130, 0x000002a8
-	.global BattleFx_RunStoneJustice
-	.type BattleFx_RunStoneJustice, %function
+	.global BattleEffect_RunStoneJustice
+	.type BattleEffect_RunStoneJustice, %function
 	.thumb_func
-BattleFx_RunStoneJustice:
+BattleEffect_RunStoneJustice:
 	.incbin "baserom.gba", 0x0016d3d8, 0x0000034c
-	.global BattleFx_RunSoulShatter
-	.type BattleFx_RunSoulShatter, %function
+	.global BattleEffect_RunSoulShatter
+	.type BattleEffect_RunSoulShatter, %function
 	.thumb_func
-BattleFx_RunSoulShatter:
+BattleEffect_RunSoulShatter:
 	.incbin "baserom.gba", 0x0016d724, 0x0000052c
-	.global BattleFx_RunSerac
-	.type BattleFx_RunSerac, %function
+	.global BattleEffect_RunSerac
+	.type BattleEffect_RunSerac, %function
 	.thumb_func
-BattleFx_RunSerac:
+BattleEffect_RunSerac:
 	.incbin "baserom.gba", 0x0016dc50, 0x000009f4
 	.section .rom.0016e65c, "ax"
 	.balign 4
@@ -4381,45 +4381,45 @@ BattleFx_RunSerac:
 	.thumb_func
 Func_0816e65c:
 	.incbin "baserom.gba", 0x0016e65c, 0x000005fc
-	.global BattleFx_RunCool
-	.type BattleFx_RunCool, %function
+	.global BattleEffect_RunCool
+	.type BattleEffect_RunCool, %function
 	.thumb_func
-BattleFx_RunCool:
+BattleEffect_RunCool:
 	.incbin "baserom.gba", 0x0016ec58, 0x00000428
-	.global BattleFx_RunWyrdCurse
-	.type BattleFx_RunWyrdCurse, %function
+	.global BattleEffect_RunWyrdCurse
+	.type BattleEffect_RunWyrdCurse, %function
 	.thumb_func
-BattleFx_RunWyrdCurse:
+BattleEffect_RunWyrdCurse:
 	.incbin "baserom.gba", 0x0016f080, 0x00000514
-	.global BattleFx_RunRadiantFire
-	.type BattleFx_RunRadiantFire, %function
+	.global BattleEffect_RunRadiantFire
+	.type BattleEffect_RunRadiantFire, %function
 	.thumb_func
-BattleFx_RunRadiantFire:
+BattleEffect_RunRadiantFire:
 	.incbin "baserom.gba", 0x0016f594, 0x00000394
-	.global BattleFx_RunHurricane
-	.type BattleFx_RunHurricane, %function
+	.global BattleEffect_RunHurricane
+	.type BattleEffect_RunHurricane, %function
 	.thumb_func
-BattleFx_RunHurricane:
+BattleEffect_RunHurricane:
 	.incbin "baserom.gba", 0x0016f928, 0x00000368
 	.section .rom.0016fca8, "ax"
 	.balign 4
 	.global Func_0816fca8
 Func_0816fca8:
 	.incbin "baserom.gba", 0x0016fca8, 0x000006bc
-	.global BattleFx_RunMegaera
-	.type BattleFx_RunMegaera, %function
+	.global BattleEffect_RunMegaera
+	.type BattleEffect_RunMegaera, %function
 	.thumb_func
-BattleFx_RunMegaera:
+BattleEffect_RunMegaera:
 	.incbin "baserom.gba", 0x00170364, 0x00000a48
-	.global BattleFx_RunVoidBeam
-	.type BattleFx_RunVoidBeam, %function
+	.global BattleEffect_RunVoidBeam
+	.type BattleEffect_RunVoidBeam, %function
 	.thumb_func
-BattleFx_RunVoidBeam:
+BattleEffect_RunVoidBeam:
 	.incbin "baserom.gba", 0x00170dac, 0x00000684
-	.global BattleFx_RunLightSurge
-	.type BattleFx_RunLightSurge, %function
+	.global BattleEffect_RunLightSurge
+	.type BattleEffect_RunLightSurge, %function
 	.thumb_func
-BattleFx_RunLightSurge:
+BattleEffect_RunLightSurge:
 	.incbin "baserom.gba", 0x00171430, 0x00000744
 	.section .rom.00171bb0, "ax"
 	.balign 4
@@ -4441,83 +4441,83 @@ Func_08173588:
 	.global Func_08173aac
 Func_08173aac:
 	.incbin "baserom.gba", 0x00173aac, 0x000024c8
-	.global BattleFx_RunCharon
-	.type BattleFx_RunCharon, %function
+	.global BattleEffect_RunCharon
+	.type BattleEffect_RunCharon, %function
 	.thumb_func
-BattleFx_RunCharon:
+BattleEffect_RunCharon:
 	.incbin "baserom.gba", 0x00175f74, 0x0000270c
 	.section .rom.00178710, "ax"
 	.balign 4
-	.global BattleFx_RunRisingDragon
-	.type BattleFx_RunRisingDragon, %function
+	.global BattleEffect_RunRisingDragon
+	.type BattleEffect_RunRisingDragon, %function
 	.thumb_func
-BattleFx_RunRisingDragon:
+BattleEffect_RunRisingDragon:
 	.incbin "baserom.gba", 0x00178710, 0x000007d8
-	.global BattleFx_RunHeartbreak
-	.type BattleFx_RunHeartbreak, %function
+	.global BattleEffect_RunHeartbreak
+	.type BattleEffect_RunHeartbreak, %function
 	.thumb_func
-BattleFx_RunHeartbreak:
+BattleEffect_RunHeartbreak:
 	.incbin "baserom.gba", 0x00178ee8, 0x000004b0
-	.global BattleFx_RunRagingHeat
-	.type BattleFx_RunRagingHeat, %function
+	.global BattleEffect_RunRagingHeat
+	.type BattleEffect_RunRagingHeat, %function
 	.thumb_func
-BattleFx_RunRagingHeat:
+BattleEffect_RunRagingHeat:
 	.incbin "baserom.gba", 0x00179398, 0x00000600
-	.global BattleFx_RunJuggle
-	.type BattleFx_RunJuggle, %function
+	.global BattleEffect_RunJuggle
+	.type BattleEffect_RunJuggle, %function
 	.thumb_func
-BattleFx_RunJuggle:
+BattleEffect_RunJuggle:
 	.incbin "baserom.gba", 0x00179998, 0x00000584
-	.global BattleFx_RunFlora
-	.type BattleFx_RunFlora, %function
+	.global BattleEffect_RunFlora
+	.type BattleEffect_RunFlora, %function
 	.thumb_func
-BattleFx_RunFlora:
+BattleEffect_RunFlora:
 	.incbin "baserom.gba", 0x00179f1c, 0x000016bc
 	.section .rom.0017b670, "ax"
 	.balign 4
-	.global BattleFx_RunSabreDance
-	.type BattleFx_RunSabreDance, %function
+	.global BattleEffect_RunSabreDance
+	.type BattleEffect_RunSabreDance, %function
 	.thumb_func
-BattleFx_RunSabreDance:
+BattleEffect_RunSabreDance:
 	.incbin "baserom.gba", 0x0017b670, 0x00000304
 	.section .rom.0017b9bc, "ax"
 	.balign 4
-	.global BattleFx_RunBackstab
-	.type BattleFx_RunBackstab, %function
+	.global BattleEffect_RunBackstab
+	.type BattleEffect_RunBackstab, %function
 	.thumb_func
-BattleFx_RunBackstab:
+BattleEffect_RunBackstab:
 	.incbin "baserom.gba", 0x0017b9bc, 0x000003d0
-	.global BattleFx_RunFirePuppet
-	.type BattleFx_RunFirePuppet, %function
+	.global BattleEffect_RunFirePuppet
+	.type BattleEffect_RunFirePuppet, %function
 	.thumb_func
-BattleFx_RunFirePuppet:
+BattleEffect_RunFirePuppet:
 	.incbin "baserom.gba", 0x0017bd8c, 0x000004f4
-	.global BattleFx_RunWhiplash
-	.type BattleFx_RunWhiplash, %function
+	.global BattleEffect_RunWhiplash
+	.type BattleEffect_RunWhiplash, %function
 	.thumb_func
-BattleFx_RunWhiplash:
+BattleEffect_RunWhiplash:
 	.incbin "baserom.gba", 0x0017c280, 0x00000430
-	.global BattleFx_RunFume
-	.type BattleFx_RunFume, %function
+	.global BattleEffect_RunFume
+	.type BattleEffect_RunFume, %function
 	.thumb_func
-BattleFx_RunFume:
+BattleEffect_RunFume:
 	.incbin "baserom.gba", 0x0017c6b0, 0x00000584
-	.global BattleFx_RunOceanFist
-	.type BattleFx_RunOceanFist, %function
+	.global BattleEffect_RunOceanFist
+	.type BattleEffect_RunOceanFist, %function
 	.thumb_func
-BattleFx_RunOceanFist:
+BattleEffect_RunOceanFist:
 	.incbin "baserom.gba", 0x0017cc34, 0x00000544
-	.global BattleFx_RunStarMine
-	.type BattleFx_RunStarMine, %function
+	.global BattleEffect_RunStarMine
+	.type BattleEffect_RunStarMine, %function
 	.thumb_func
-BattleFx_RunStarMine:
+BattleEffect_RunStarMine:
 	.incbin "baserom.gba", 0x0017d178, 0x00000550
 	.section .rom.0017d728, "ax"
 	.balign 4
-	.global BattleFx_RunRisingDragonEnemy
-	.type BattleFx_RunRisingDragonEnemy, %function
+	.global BattleEffect_RunRisingDragonEnemy
+	.type BattleEffect_RunRisingDragonEnemy, %function
 	.thumb_func
-BattleFx_RunRisingDragonEnemy:
+BattleEffect_RunRisingDragonEnemy:
 	.incbin "baserom.gba", 0x0017d728, 0x00000954
 	.section .rom.0017e0c4, "ax"
 	.balign 4
@@ -4532,25 +4532,25 @@ Func_0817e0c0:
 Func_0817e698:
 	.incbin "baserom.gba", 0x0017e69c, 0x0000037c
 	.section .rom.0017ea5c, "ax"
-	.global BattleFx_RunDaedalus
-	.type BattleFx_RunDaedalus, %function
+	.global BattleEffect_RunDaedalus
+	.type BattleEffect_RunDaedalus, %function
 	.thumb_func
-BattleFx_RunDaedalus:
+BattleEffect_RunDaedalus:
 	.incbin "baserom.gba", 0x0017ea5c, 0x0000223c
-	.global BattleFx_RunDaedalusAlt
-	.type BattleFx_RunDaedalusAlt, %function
+	.global BattleEffect_RunDaedalusAlt
+	.type BattleEffect_RunDaedalusAlt, %function
 	.thumb_func
-BattleFx_RunDaedalusAlt:
+BattleEffect_RunDaedalusAlt:
 	.incbin "baserom.gba", 0x00180c98, 0x00000540
-	.global BattleFx_RunVengeance
-	.type BattleFx_RunVengeance, %function
+	.global BattleEffect_RunVengeance
+	.type BattleEffect_RunVengeance, %function
 	.thumb_func
-BattleFx_RunVengeance:
+BattleEffect_RunVengeance:
 	.incbin "baserom.gba", 0x001811d8, 0x0000073c
-	.global BattleFx_RunLifeShear
-	.type BattleFx_RunLifeShear, %function
+	.global BattleEffect_RunLifeShear
+	.type BattleEffect_RunLifeShear, %function
 	.thumb_func
-BattleFx_RunLifeShear:
+BattleEffect_RunLifeShear:
 	.incbin "baserom.gba", 0x00181914, 0x000005a0
 	.section .rom.00181ed8, "ax"
 	.balign 4
@@ -4569,40 +4569,40 @@ Func_081823a8:
 	.thumb_func
 Func_08182898:
 	.incbin "baserom.gba", 0x0018289c, 0x00000210
-	.global BattleFx_RunCoatlicue
-	.type BattleFx_RunCoatlicue, %function
+	.global BattleEffect_RunCoatlicue
+	.type BattleEffect_RunCoatlicue, %function
 	.thumb_func
-BattleFx_RunCoatlicue:
+BattleEffect_RunCoatlicue:
 	.incbin "baserom.gba", 0x00182aac, 0x00001954
-	.global BattleFx_RunCatastrophe
-	.type BattleFx_RunCatastrophe, %function
+	.global BattleEffect_RunCatastrophe
+	.type BattleEffect_RunCatastrophe, %function
 	.thumb_func
-BattleFx_RunCatastrophe:
+BattleEffect_RunCatastrophe:
 	.incbin "baserom.gba", 0x00184400, 0x00002a00
-	.global BattleFx_RunHaures
-	.type BattleFx_RunHaures, %function
+	.global BattleEffect_RunHaures
+	.type BattleEffect_RunHaures, %function
 	.thumb_func
-BattleFx_RunHaures:
+BattleEffect_RunHaures:
 	.incbin "baserom.gba", 0x00186e00, 0x00001918
-	.global BattleFx_RunDeathPlunge
-	.type BattleFx_RunDeathPlunge, %function
+	.global BattleEffect_RunDeathPlunge
+	.type BattleEffect_RunDeathPlunge, %function
 	.thumb_func
-BattleFx_RunDeathPlunge:
+BattleEffect_RunDeathPlunge:
 	.incbin "baserom.gba", 0x00188718, 0x0000059c
-	.global BattleFx_RunHelmSplitter
-	.type BattleFx_RunHelmSplitter, %function
+	.global BattleEffect_RunHelmSplitter
+	.type BattleEffect_RunHelmSplitter, %function
 	.thumb_func
-BattleFx_RunHelmSplitter:
+BattleEffect_RunHelmSplitter:
 	.incbin "baserom.gba", 0x00188cb4, 0x00000498
-	.global BattleFx_RunDragonCloud
-	.type BattleFx_RunDragonCloud, %function
+	.global BattleEffect_RunDragonCloud
+	.type BattleEffect_RunDragonCloud, %function
 	.thumb_func
-BattleFx_RunDragonCloud:
+BattleEffect_RunDragonCloud:
 	.incbin "baserom.gba", 0x0018914c, 0x000009cc
-	.global BattleFx_RunLegend
-	.type BattleFx_RunLegend, %function
+	.global BattleEffect_RunLegend
+	.type BattleEffect_RunLegend, %function
 	.thumb_func
-BattleFx_RunLegend:
+BattleEffect_RunLegend:
 	.incbin "baserom.gba", 0x00189b18, 0x000006dc
 	.section .rom.0018a224, "ax"
 	.balign 4
@@ -4614,10 +4614,10 @@ Func_0818a220:
 	.global Func_0818ad40
 Func_0818ad40:
 	.incbin "baserom.gba", 0x0018ad44, 0x00000b28
-	.global BattleFx_RunTripleChomp
-	.type BattleFx_RunTripleChomp, %function
+	.global BattleEffect_RunTripleChomp
+	.type BattleEffect_RunTripleChomp, %function
 	.thumb_func
-BattleFx_RunTripleChomp:
+BattleEffect_RunTripleChomp:
 	.incbin "baserom.gba", 0x0018b86c, 0x000003f8
 	.section .rom.0018bc9c, "ax"
 	.balign 4
@@ -4629,10 +4629,10 @@ Func_0818bc98:
 	.global Func_0818c7b8
 Func_0818c7b8:
 	.incbin "baserom.gba", 0x0018c7bc, 0x000003bc
-	.global BattleFx_RunTrident
-	.type BattleFx_RunTrident, %function
+	.global BattleEffect_RunTrident
+	.type BattleEffect_RunTrident, %function
 	.thumb_func
-BattleFx_RunTrident:
+BattleEffect_RunTrident:
 	.incbin "baserom.gba", 0x0018cb78, 0x00000a1c
 	.section .rom.0018d5ac, "ax"
 	.balign 4
@@ -4641,15 +4641,15 @@ Func_0818d5a8:
 	.incbin "baserom.gba", 0x0018d5ac, 0x00000854
 	.section .rom.0018de40, "ax"
 	.incbin "baserom.gba", 0x0018de40, 0x00000120
-	.global BattleFx_RunMeteorBlow
-	.type BattleFx_RunMeteorBlow, %function
+	.global BattleEffect_RunMeteorBlow
+	.type BattleEffect_RunMeteorBlow, %function
 	.thumb_func
-BattleFx_RunMeteorBlow:
+BattleEffect_RunMeteorBlow:
 	.incbin "baserom.gba", 0x0018df60, 0x00000e48
-	.global BattleFx_RunLiquifier
-	.type BattleFx_RunLiquifier, %function
+	.global BattleEffect_RunLiquifier
+	.type BattleEffect_RunLiquifier, %function
 	.thumb_func
-BattleFx_RunLiquifier:
+BattleEffect_RunLiquifier:
 	.incbin "baserom.gba", 0x0018eda8, 0x00000828
 	.section .rom.0018f624, "ax"
 	.balign 4
@@ -4658,30 +4658,30 @@ BattleFx_RunLiquifier:
 	.thumb_func
 Func_0818f620:
 	.incbin "baserom.gba", 0x0018f624, 0x000008dc
-	.global BattleFx_RunMegiddo
-	.type BattleFx_RunMegiddo, %function
+	.global BattleEffect_RunMegiddo
+	.type BattleEffect_RunMegiddo, %function
 	.thumb_func
-BattleFx_RunMegiddo:
+BattleEffect_RunMegiddo:
 	.incbin "baserom.gba", 0x0018ff00, 0x00000c78
-	.global BattleFx_RunOdyssey
-	.type BattleFx_RunOdyssey, %function
+	.global BattleEffect_RunOdyssey
+	.type BattleEffect_RunOdyssey, %function
 	.thumb_func
-BattleFx_RunOdyssey:
+BattleEffect_RunOdyssey:
 	.incbin "baserom.gba", 0x00190b78, 0x00000f6c
 	.section .rom.00191cc8, "ax"
 	.incbin "baserom.gba", 0x00191cc8, 0x0000009c
-	.global BattleFx_RunMoloch
-	.type BattleFx_RunMoloch, %function
+	.global BattleEffect_RunMoloch
+	.type BattleEffect_RunMoloch, %function
 	.thumb_func
-BattleFx_RunMoloch:
+BattleEffect_RunMoloch:
 	.incbin "baserom.gba", 0x00191d64, 0x00000ac8
 	.section .rom.00192850, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00192850, 0x00000450
-	.global BattleFx_RunIris
-	.type BattleFx_RunIris, %function
+	.global BattleEffect_RunIris
+	.type BattleEffect_RunIris, %function
 	.thumb_func
-BattleFx_RunIris:
+BattleEffect_RunIris:
 	.incbin "baserom.gba", 0x00192ca0, 0x00003750
 	.section .rom.00196408, "ax"
 	.global Func_08196404

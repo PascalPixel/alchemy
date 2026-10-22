@@ -1,6 +1,6 @@
 // Near miss, differ 4 of 148 (2026-10-15). The test inside The Broken
 // Seal's Field_FindNearbyPsynergyTarget (object.c), taken out into a
-// function of its own: ⚓️'s BattleFx_FindNearestObject
+// function of its own: ⚓️'s BattleEffect_FindNearestObject
 // (play_cue_and_start_emitter_on_target.c) calls it for each object, and
 // the per-animation limits come from a table (Field_GetPsynergyTargetRule) instead of ☀️'s
 // literals. Belongs after descriptor_range.c's Func_080cda84.

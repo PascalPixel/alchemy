@@ -185,9 +185,9 @@ ability's `actflags.tsv` row:
 
 | Entry point | Chosen by | What it runs |
 | --- | --- | --- |
-| `BattleFx_RunTableEffect` | neither bit | an ordinary effect kind, an index into `gBattleFx_EffectHandlers` |
-| `BattleFx_DispatchByIdRange` | `STAGING_BY_ID_RANGE` (`0x4000`) | casting impacts, beam sequences and ring and spark scenes, by the effect kind's range |
-| `BattleFx_RunSceneEffect` | `STAGING_SCENE` (`0x8000`) | the summons' scenes |
+| `BattleEffect_RunTableEffect` | neither bit | an ordinary effect kind, an index into `gBattleEffect_EffectHandlers` |
+| `BattleEffect_DispatchByIdRange` | `STAGING_BY_ID_RANGE` (`0x4000`) | casting impacts, beam sequences and ring and spark scenes, by the effect kind's range |
+| `BattleEffect_RunSceneEffect` | `STAGING_SCENE` (`0x8000`) | the summons' scenes |
 
 Each entry point takes three heap blocks (the sprite sheet, the work block
 and the canvas), runs the effect to its end and releases them in reverse
@@ -197,19 +197,19 @@ before it returns.
 
 Most effects draw into a canvas of 128 by 128 pixels, one byte each, which
 `BG2` shows blended over the battle and stretched to twice its width
-(`BattleFx_BeginCanvasLayer`). An effect copies pictures onto the canvas
-through blitters, ARM routines `BattleFx_BuildBlitter` assembles at run time
+(`BattleEffect_BeginCanvasLayer`). An effect copies pictures onto the canvas
+through blitters, ARM routines `BattleEffect_BuildBlitter` assembles at run time
 for one combination of size, mirroring, clipping and blend mode, and moves
 particles over it. It never writes video memory itself: it sets
 `transferPending` and waits, and the callback
-`BattleFx_ProcessPendingGraphicsTransfer` copies the canvas and then fades,
+`BattleEffect_ProcessPendingGraphicsTransfer` copies the canvas and then fades,
 clears or keeps the pixels left in it as the work block's transfer mode says.
 Canvas pixels are levels in a palette ramp, so fading them makes trails die
 away without per-particle bookkeeping.
 
 ![Isaac unleashes Flint at Ivan, and sparks close in on a point above Isaac while he hangs in mid-leap, a streak of light shoots down at Ivan, and a ring of light and a spray of sparks burst over him.](https://alchemy.pascalpixel.com/abilities/flint.gif)
 
-Flint is a casting impact, reached through `BattleFx_DispatchByIdRange`
+Flint is a casting impact, reached through `BattleEffect_DispatchByIdRange`
 (`src/effect/parts/casting_impact.c`): 64 sparks gather on the caster, `BG2`
 is moved so the impact sits over the target, and 32 scattering sparks follow
 the impact.
@@ -221,7 +221,7 @@ every random value after it.
 
 The twelve summons that need two or more Djinn are scenes, enumerated by
 `enum SceneEffectKind`. They take the same three blocks; unlike
-`BattleFx_RunTableEffect`, `BattleFx_RunSceneEffect` leaves setting
+`BattleEffect_RunTableEffect`, `BattleEffect_RunSceneEffect` leaves setting
 `work->effect` to each scene. The four summons that need one Djinni, Venus,
 Mercury, Mars and Jupiter, are ordinary effect kinds. A summon's damage
 (`ABILITY_KIND_SUMMON`) also adds 3 percent of the target's maximum HP to the
@@ -229,7 +229,7 @@ power for each Djinni it uses.
 
 ![Isaac summons Judgment: the screen goes dark, Judgment rises out of the clouds and strikes, and the scene clears to a wide landscape](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 
-`BattleFx_RunJudgment` (`src/effect/parts/judgment.c`) replaces the battle's
+`BattleEffect_RunJudgment` (`src/effect/parts/judgment.c`) replaces the battle's
 display with backdrops of its own and runs in two parts, each with its own
 frame clock (`JUDGMENT_GATHER_FRAMES`, `JUDGMENT_SWEEP_FRAMES`). The battle
 comes back near the end of the second part, and the damage is shown after

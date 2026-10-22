@@ -7,8 +7,8 @@
 /// Copies a w x h byte picture into an h x w one turned 90 degrees
 /// clockwise: the top row of src becomes the right column of dst.
 ///
-/// Called twice by BattleFx_RunMercury, to lay its blue flames on their side.
-/// Writes only dst.
+/// Called twice by BattleEffect_RunMercury, to lay its blue flames on their
+/// side. Writes only dst.
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;
   s32 x;
@@ -75,7 +75,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// before it is turned. Sets work->shakeFrames as each flame shatters.
 ///
 /// effect: the targets.
-void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -93,9 +93,9 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   draw = blit;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The flame pictures are the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;
@@ -216,7 +216,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
 /// work->shakeFrames as each ball lands.
 ///
 /// effect: the targets.
-void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -234,10 +234,10 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   draw = blit;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
@@ -361,7 +361,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 /// work->shakeFrames as each column appears.
 ///
 /// effect: the targets.
-void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -378,7 +378,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       COMPOSITE_MAX);
@@ -494,7 +494,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
 /// work->shakeFrames on the strike.
 ///
 /// effect: the targets.
-void BattleFx_RunMars(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -512,9 +512,9 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   draw = blitters;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);
@@ -600,17 +600,17 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
 
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-          width = gBattleFx_PuffArcCellWidths[cell];
-          blitters[0](canvas, work->sheet + gBattleFx_PuffArcCells[cell],
+          width = gBattleEffect_PuffArcCellWidths[cell];
+          blitters[0](canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
                       step->x - (width >> 1),
-                      step->y + gBattleFx_PuffArcCellBiasY[cell], width,
-                      gBattleFx_PuffArcCellHeights[cell]);
+                      step->y + gBattleEffect_PuffArcCellBiasY[cell], width,
+                      gBattleEffect_PuffArcCellHeights[cell]);
 #else
-          blitters[0](canvas, work->sheet + gBattleFx_PuffArcCells[cell],
-                      step->x -
-                          ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
-                      step->y + gBattleFx_PuffArcCellBiasY[cell], width,
-                      gBattleFx_PuffArcCellHeights[cell]);
+          blitters[0](
+              canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+              step->x - ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
+              step->y + gBattleEffect_PuffArcCellBiasY[cell], width,
+              gBattleEffect_PuffArcCellHeights[cell]);
 #endif
         }
         index++;
@@ -632,7 +632,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
 
         size = (index & 1) + 3;
         x = Q_16_16_TO_INT(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-        draw[1](canvas, sheet + gBattleFx_MoteCells[size - 1],
+        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                 x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
                 size * 2);
         EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);

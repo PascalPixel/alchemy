@@ -3,9 +3,9 @@
 	.balign 4
 @ Abilities: Rising Dragon (kind 450), the enemies' one; the Light Blade
 @ unleash Rising Dragon is kind 108.
-	.global BattleFx_RunRisingDragonEnemy
+	.global BattleEffect_RunRisingDragonEnemy
 	.thumb_func
-BattleFx_RunRisingDragonEnemy:
+BattleEffect_RunRisingDragonEnemy:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -27,10 +27,10 @@ BattleFx_RunRisingDragonEnemy:
 	str r2, [sp, #60]
 	bl Func_0813ba50
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r2, #128
 	str r3, [sp, #64]
@@ -66,7 +66,7 @@ BattleFx_RunRisingDragonEnemy:
 .L_0817d7a0:
 	.4byte 0x00001010
 .L_0817d7a4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817d7a8:
 	str r5, [sp, #52]
 	movs r4, #54
@@ -447,7 +447,7 @@ BattleFx_RunRisingDragonEnemy:
 	adds r4, #2
 	cmp r0, #128
 	bne .L_0817da62
-	bl BattleFx_BuildRepeatingTilemap
+	bl BattleEffect_BuildRepeatingTilemap
 	ldr r2, .L_0817db80
 	movs r3, #104
 	strh r3, [r2, #6]
@@ -962,7 +962,7 @@ BattleFx_RunRisingDragonEnemy:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_0817dfbc
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -1141,7 +1141,7 @@ BattleFx_RunRisingDragonEnemy:
 	adds r0, r5, #0
 	movs r1, #60
 	adds r2, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -1183,7 +1183,7 @@ BattleFx_RunRisingDragonEnemy:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817e074
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1192,4 +1192,4 @@ BattleFx_RunRisingDragonEnemy:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817e074:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

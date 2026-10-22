@@ -1,7 +1,7 @@
-// Draft of BattleFx_RunVine, effect kind 202: sixteen green vines spring up
+// Draft of BattleEffect_RunVine, effect kind 202: sixteen green vines spring up
 // around the middle of the targets, two frames apart, and sink back.
 
-// Twin: The Broken Seal's BattleFx_RunVine (effect.c), the same
+// Twin: The Broken Seal's BattleEffect_RunVine (effect.c), the same
 // kind; the Lost Age keeps its frame counts, cue and tables.
 // Listing 245 instructions, draft 245, differ 20 (28 without the tagged
 // BG2CNT pin).
@@ -10,7 +10,7 @@
 // effect sets BG2CNT itself; the canvas preparer takes its kind, side and
 // anchor packed into one word and fills two positions; the effect argument
 // is read directly, as the Lost Age never stores work->effect; blitters
-// load through BattleFx_LoadBlitter with the Lost Age's mode numbers (transparent
+// load through BattleEffect_LoadBlitter with the Lost Age's mode numbers (transparent
 // is 2); the callback order is 0xc80.
 
 // What remains (all order, no allocation):
@@ -40,7 +40,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 
-// Directory row 0x16b, BattleFx_GreenVineSheet: five 32x32 vine cels.
+// Directory row 0x16b, BattleEffect_GreenVineSheet: five 32x32 vine cels.
 extern char ResourceId_GreenVineSheet;
 
 // The Broken Seal's gGrowth_ColumnOffsets: each vine's x about the
@@ -49,13 +49,13 @@ extern const s8 Data_08198422[];
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+void BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
@@ -75,10 +75,10 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 #define PREPARE_KIND 4
 #define PREPARE_ANCHOR 4
 
-// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
-void BattleFx_RunVine(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;
@@ -100,7 +100,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   heap = Ram_HeapSlots;
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Func_0815585c(effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5,
                 &screen, &world);
   {
@@ -130,9 +130,9 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   REG_BG2X = (CANVAS_MIDDLE - first.x) << 8;
 
   // Odd vines draw mirrored.
-  BattleFx_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleEffect_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)heap->unk64[1];
-  BattleFx_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+  BattleEffect_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                          COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)heap->unkb8[1];
 
@@ -145,7 +145,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 
   work->transferMode = 1; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Each frame: vine i starts at frame i * 2 + 4, grows 4 pixels a frame up
   // to 32, and from frame i * 2 + 32 sinks 4 pixels a frame.
@@ -187,8 +187,8 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   } while (frame != VINE_FRAMES);
 
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

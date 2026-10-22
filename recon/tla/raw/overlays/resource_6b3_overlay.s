@@ -120,7 +120,7 @@ Func_02000158:
 	adds r0, r7, #0
 	movs r1, #0
 	mov r9, r1
-	bl BattleFx_GetResourceId
+	bl BattleEffect_GetResourceId
 	adds r3, r0, #0
 	movs r2, #4
 	lsls r3, r3, #16

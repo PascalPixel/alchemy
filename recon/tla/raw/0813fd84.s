@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Cruel Ruin (scene kind 28).
-	.global BattleFx_RunCruelRuin
+	.global BattleEffect_RunCruelRuin
 	.thumb_func
-BattleFx_RunCruelRuin:
+BattleEffect_RunCruelRuin:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -27,7 +27,7 @@ BattleFx_RunCruelRuin:
 	str r3, [sp, #108]
 	bl Func_0813ba50
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0813fdf4
 	movs r2, #128
 	lsls r2, r2, #19
@@ -35,7 +35,7 @@ BattleFx_RunCruelRuin:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -59,7 +59,7 @@ BattleFx_RunCruelRuin:
 .L_0813fdf4:
 	.4byte 0x00001010
 .L_0813fdf8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813fdfc:
 	.4byte gBgScroll
 .L_0813fe00:
@@ -168,7 +168,7 @@ BattleFx_RunCruelRuin:
 	adds r3, #240
 	add r3, r11
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r1, .L_0813ff48
 	movs r0, #1
 	movs r2, #0
@@ -189,7 +189,7 @@ BattleFx_RunCruelRuin:
 	str r5, [r3]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -1887,7 +1887,7 @@ BattleFx_RunCruelRuin:
 	bl Func_0815b434
 	movs r1, #19
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	lsrs r5, r7, #31
 	adds r5, r7, r5
 	asrs r5, r5, #1
@@ -1912,7 +1912,7 @@ BattleFx_RunCruelRuin:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r1, #192
 	str r5, [sp, #0]
 	str r7, [sp, #4]
@@ -2990,7 +2990,7 @@ BattleFx_RunCruelRuin:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #196
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -3029,4 +3029,4 @@ BattleFx_RunCruelRuin:
 .L_08141534:
 	.4byte Data_081976e0
 .L_08141538:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

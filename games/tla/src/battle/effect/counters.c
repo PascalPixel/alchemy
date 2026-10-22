@@ -8,7 +8,7 @@ struct BattleEffectCounterState {
 
 s32 Func_080caf6c(void) { return 0; }
 
-void BattleFx_ResetCounters(void) {
+void BattleEffect_ResetCounters(void) {
   s16 value;
   struct BattleEffectCounterState *state;
 
@@ -28,7 +28,7 @@ void BattleFx_ResetCounters(void) {
   state->counters[11] = 0;
 }
 
-s32 BattleFx_SumCounters(void) {
+s32 BattleEffect_SumCounters(void) {
   struct BattleEffectCounterState *state = Ram_HeapSlots->eventWork;
 
   return state->counters[0] + state->counters[1] + state->counters[2] +

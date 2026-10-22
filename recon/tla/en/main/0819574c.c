@@ -1,7 +1,7 @@
 // Near miss, differ 566 of 418 (draft 426 instructions, no device): an
 // unused solid renderer, the filled twin of Func_08196248 (same setup,
 // transform, corner copies and back-face test), written from the listing (no
-// caller in the image; twins12 BattleFx_RunMemberBeam 0.34). Corners are
+// caller in the image; twins12 BattleEffect_RunMemberBeam 0.34). Corners are
 // sorted by y with XOR swaps and each half of the triangle is filled along
 // 16.16 edge slopes from IwramRatioMulQ14; a pixel keeps the larger colour
 // (an unsigned compare, bcs, from the u8 pixel against the u8 colour).

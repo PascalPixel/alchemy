@@ -25,7 +25,7 @@
 ///
 /// effect: the user and the target; a nonzero variant gives the burst its
 /// second picture and a sound.
-void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -50,7 +50,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapCellBuffer;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burstPixels, 1,
@@ -79,7 +79,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   } while (i != 64);
 
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &origin);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
@@ -127,10 +127,10 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = 3 * (40 * 80);
       blitters[0](canvas, Ram_MapCellBuffer + strip + step * (40 * 80),
                   origin.x / 2 - 20, origin.y - 48, 40, 80);
-      // A busy delay before the blitter is freed (BattleFx_CallDoNothing).
+      // A busy delay before the blitter is freed (BattleEffect_CallDoNothing).
       // XXX: why it waits, as nothing here depends on the time; the Lost
       // Age's Annihilation would show whether it is a leftover.
-      BattleFx_CallDoNothing(10000);
+      BattleEffect_CallDoNothing(10000);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
     // The strike fills the canvas with level 63, a flash that the transfer
@@ -143,7 +143,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     // at 1/64 pixel a frame per frame. Pairs of shards alternate between the
     // brightest-wins and the additive blitter, both mirrored on side 1.
     if (frame > 3) {
-      BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
+      BattleEffect_FetchRectangleBlitters(work->effect->side, blitters);
       for (i = 0; i != 64; i++) {
         s32 life;
 
@@ -179,8 +179,8 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     Camera_ApplyShake(16, 16);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef ANNIHILATION_FRAMES

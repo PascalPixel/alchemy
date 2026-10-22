@@ -526,7 +526,7 @@ Func_02000818:
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	adds r0, r5, #0
-	bl BattleFx_StartItemBreak
+	bl BattleEffect_StartItemBreak
 	ldr r3, [r6, #8]
 	mov r5, sp
 	str r3, [r5]
@@ -549,7 +549,7 @@ Func_02000818:
 	mov r0, r8
 	bl Func_020013f8
 	mov r0, r8
-	bl BattleFx_SnapScaleToFull
+	bl BattleEffect_SnapScaleToFull
 	mov r0, r8
 	movs r1, #4
 	bl Func_020013f0

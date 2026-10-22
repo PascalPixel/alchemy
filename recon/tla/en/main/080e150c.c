@@ -6,7 +6,7 @@
 // tests are two compares in the native; written as one range test GCC folds
 // them to an unsigned compare (differ 116), so the negative age continues
 // apart here.
-// BattleFx_UpdateArcEffect, the arc effect's scheduler callback (heap
+// BattleEffect_UpdateArcEffect, the arc effect's scheduler callback (heap
 // slot 0xf8, arc_effect.h). For 32 frames after a group starts, its two arc
 // sprites rise from the target object by a pixel a frame and swell and shrink
 // with the sine of the age; the second is drawn a pixel lower, flipped
@@ -36,10 +36,10 @@ struct ArcWork {
 };
 
 void Camera_WorldToScreen(s32 *position);
-s32 BattleFx_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
 void Func_080eb01c(struct ArcSprite *sprite);
 
-void BattleFx_UpdateArcEffect(void) {
+void BattleEffect_UpdateArcEffect(void) {
   struct ArcWork *work = Ram_HeapSlots->block62;
   struct ObjectRuntime *target = work->target;
   s32 position[3];
@@ -68,9 +68,9 @@ void BattleFx_UpdateArcEffect(void) {
         sprite->scaleX = scale;
         sprite->scaleY = scale;
         if (i == 0) {
-          sprite->depth = BattleFx_GetObjectDepth(work->target) - 1;
+          sprite->depth = BattleEffect_GetObjectDepth(work->target) - 1;
         } else {
-          sprite->depth = BattleFx_GetObjectDepth(work->target) + 1;
+          sprite->depth = BattleEffect_GetObjectDepth(work->target) + 1;
           sprite->y += 0xffff0000;
           sprite->scaleY = -sprite->scaleY;
         }

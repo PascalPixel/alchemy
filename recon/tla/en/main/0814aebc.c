@@ -1,7 +1,7 @@
 // Near miss, differ 12 of 300 (effect kind 37, the bouncing sheep; 2026-10-19,
 // was 20).
 
-// ☀️ twin: BattleFx_RunSleep (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleEffect_RunSleep (games/tbs/src/effect/effect.c), shape
 // 0.776, structure 0.977. ⚓️'s changes: the canvas layer at priority 1; the
 // effect runs 98 frames where ☀️ runs 148; the sheep follow the middle of
 // the targets (Func_0815e22c) where ☀️ moves BG2 for side 1: the middle,
@@ -13,7 +13,7 @@
 // record, and drawB, drawA, scroll spilled in that order. Two tagged devices
 // put the argument's spill (str r0) before the 0x03000000 base and the
 // REG_BG2PA pool word before its address, and with them the literal pool's
-// branch lands after the second BattleFx_LoadBlitter call as the native's
+// branch lands after the second BattleEffect_LoadBlitter call as the native's
 // does. What is left: the canvas slot load and store one row apart, the
 // BLDCNT value's stack address before the BG2PA store, the sheep record's
 // pool load before the draw size 32, the transfer flag's offset built
@@ -22,7 +22,7 @@
 // Tried (differ):
 // trial 0's port with ☀️'s declaration order (2026-10-15)            42
 // the declaration order above                                        22
-// BattleFx_LoadBlitter declared returning s32 as ☀️'s LoadWork does         22
+// BattleEffect_LoadBlitter declared returning s32 as ☀️'s LoadWork does         22
 // the sheep in the gMapCellBuffer symbol (extern)                    56
 // the sheep through Ram_MapCellBuffer, a constant, as the tree's
 // ram_buffer.h writes the buffer                                   20
@@ -62,11 +62,11 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase);          // ☀️ BattleEvent_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815e22c(struct EffectPosition *middle); // the targets' middle
@@ -76,7 +76,7 @@ void Audio_PlayCue(s32 cue);
 // A flock of sheep cards drops in over the targets, one every four frames,
 // and bounces on the ground, tumbling through eight cels; at frame 80 the
 // next phase begins, and each target turns back to its own palette in turn.
-void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   struct EffectPosition middle;
@@ -102,7 +102,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   scroll = 0;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   {
     /* FAKEMATCH(fixed register, one-pass block): the BG2PA halfword pinned to
      * r3 and set behind a one-pass block, so its pool load comes before the
@@ -118,10 +118,10 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   drawA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_TRANSPARENT << 4 |
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_TRANSPARENT << 4 |
                                             COMPOSITE_CLIP_X |
                                             COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
   drawB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -149,7 +149,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   REG_BG2X = -middle.x << 8;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {
@@ -205,8 +205,8 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunRisingDragon, decompiled from the listing: differ 695 of
+// Draft of BattleEffect_RunRisingDragon, decompiled from the listing: differ 695 of
 // 884 (draft 877), the same 65 calls and control flow; allocation differs.
 // 2026-10-19 (run 33), from 773: the blitter as a pair (tagged below): 723;
 // blit declared before sprites and camera, then frame right after it, so
@@ -40,11 +40,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -63,18 +63,18 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -90,12 +90,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -117,7 +117,7 @@ extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCells
+extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const u8 gData_08199340[];  // a head's mesh
 extern const u8 Data_081991e0[];   // its corners
 
@@ -129,7 +129,7 @@ extern const u8 Data_081991e0[];   // its corners
 // from the caster and arcs onto the target, each a scrolling textured strip
 // of 33 segments with a clawed head; each strikes ten frames after the
 // last, scattering 32 sparks.
-void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
@@ -159,12 +159,12 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   if (effect->side == 0) {
-    BattleFx_LoadBlitter(SLOT_BLITTER,
+    BattleEffect_LoadBlitter(SLOT_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
-    BattleFx_LoadBlitter(SLOT_BLITTER,
+    BattleEffect_LoadBlitter(SLOT_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         COMPOSITE_FLIP_X));
   }
@@ -172,7 +172,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   endX[0] = 0;
   endX[1] = 0;
   endY[0] = 0;
@@ -232,11 +232,11 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
         } else {
           Audio_PlayCue(144);
         }
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
                                   0x40000, 150);
       } else {
         Func_081180e8(144);
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
                                   0x70000, 200);
       }
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
@@ -247,7 +247,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
 
         blit[0](canvas, sprites + gData_08197410[size - 1],
              HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
-        BattleFxKernels_IntegrateVector2(spark, 60, 0x1000);
+        BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
         spark->variant--;
       }
     }
@@ -400,6 +400,6 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   }
   ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

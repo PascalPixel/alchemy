@@ -36,7 +36,7 @@
 /// background colours (Eruption and Molten Bath keep the fire pillar sheet's),
 /// turns the camera's yaw (the strongest variant) and sets work->shakeFrames
 /// at each eruption.
-void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -55,7 +55,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
@@ -215,8 +215,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef VOLCANO_FRAMES

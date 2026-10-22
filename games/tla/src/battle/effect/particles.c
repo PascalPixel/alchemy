@@ -22,7 +22,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FallVector *pos);
 
 /// Each frame: one falling particle 8 to 24 pixels above the lifted object,
 /// 0 to 48 pixels out in a random direction.
-void BattleFx_SpawnFallingParticles(void) {
+void BattleEffect_SpawnFallingParticles(void) {
   struct ObjectRuntime *src;
   struct FallVector pos;
   struct ObjectRuntime *obj;
@@ -43,6 +43,6 @@ void BattleFx_SpawnFallingParticles(void) {
     Object_SetMode(obj, 0);
     ((struct ParticleTimer *)obj)->timer = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleFx_CommonParticleScript);
+                                 gBattleEffect_CommonParticleScript);
   }
 }

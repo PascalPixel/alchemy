@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Nirvana (kind 119).
-	.global BattleFx_RunNirvana
+	.global BattleEffect_RunNirvana
 	.thumb_func
-BattleFx_RunNirvana:
+BattleEffect_RunNirvana:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunNirvana:
 	str r2, [sp, #24]
 	ldr r3, [r6, #100]
 	str r3, [sp, #20]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	movs r2, #0
 	ldr r1, [sp, #20]
 	movs r3, #0
@@ -64,7 +64,7 @@ BattleFx_RunNirvana:
 	str r3, [r7, #16]
 	str r3, [r7, #20]
 	str r3, [r7, #24]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r6, [r6, #104]
 	movs r0, #239
 	lsls r0, r0, #7
@@ -240,7 +240,7 @@ BattleFx_RunNirvana:
 	adds r0, r7, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	mov r3, r9
 	cmp r3, #0
 	ble .L_0816d382
@@ -307,7 +307,7 @@ BattleFx_RunNirvana:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -323,6 +323,6 @@ BattleFx_RunNirvana:
 .L_0816d3cc:
 	.4byte IwramCopyWords
 .L_0816d3d0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816d3d4:
 	.4byte gData_08197410

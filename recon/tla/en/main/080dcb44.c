@@ -6,7 +6,7 @@
 // builds &from in sl first and copies it back (one instruction more, 291
 // against 290), and the orientation tests take r1 and r2 where the native
 // takes r0 and r1. Belongs between Func_080dcadc and hue.c's
-// BattleFx_ArmBg0HBlankDma.
+// BattleEffect_ArmBg0HBlankDma.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -53,16 +53,16 @@ struct WaveFxMetadata {
 };
 
 s32 Trig_Sin(s32 angle);
-void BattleFx_AdvanceHueCycle(void);
-void BattleFx_ApplyColorToTargetBuffer(u32 color, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleEffect_AdvanceHueCycle(void);
+void BattleEffect_ApplyColorToTargetBuffer(u32 color, s32 mode);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void BattleFx_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
+void BattleEffect_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
 struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id);
 struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s16 ArcTan2(s32 y, s32 x);
-void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
+void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
 
 // Each frame after the delay: rewrites the 160-line wave into the other
 // page, cycles the colour every other frame, and at counts 0, 8 and 16 of
@@ -91,12 +91,12 @@ void Func_080dcb44(void) {
   work->phase += 4;
   work->page ^= 1;
   if (work->page != 0) {
-    BattleFx_AdvanceHueCycle();
-    BattleFx_ApplyColorToTargetBuffer(
+    BattleEffect_AdvanceHueCycle();
+    BattleEffect_ApplyColorToTargetBuffer(
         (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
-    BattleFx_StartBufferInterpolation(1);
+    BattleEffect_StartBufferInterpolation(1);
   }
-  BattleFx_ApplyFlickerValue(Object_GetById(work->sourceId), 0);
+  BattleEffect_ApplyFlickerValue(Object_GetById(work->sourceId), 0);
 
   if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
     source = Object_GetById(work->sourceId);
@@ -129,7 +129,7 @@ void Func_080dcb44(void) {
         object->speedLimit = 0xa3d7;
         object->acceleration = 0xa3d7;
         object->angle = ArcTan2(from.z - to.z, from.x - to.x);
-        object->update = (void (*)(void))BattleFx_SetCallbackWhenTargetUnset;
+        object->update = (void (*)(void))BattleEffect_SetCallbackWhenTargetUnset;
         sprite->palette = 0;
         sprite->mode = 1;
         Object_SetPosition(object, from.x, from.y, from.z);

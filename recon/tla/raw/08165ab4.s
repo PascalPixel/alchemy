@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Ramses (scene kind 1).
-	.global BattleFx_RunRamses
+	.global BattleEffect_RunRamses
 	.thumb_func
-BattleFx_RunRamses:
+BattleEffect_RunRamses:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunRamses:
 	ldr r3, [r3, #100]
 	mov r11, r1
 	str r3, [sp, #48]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08165b20
 	movs r3, #160
@@ -48,7 +48,7 @@ BattleFx_RunRamses:
 	adds r3, #240
 	add r3, r11
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r1, #162
 	movs r2, #2
 	lsls r1, r1, #2
@@ -56,10 +56,10 @@ BattleFx_RunRamses:
 .L_08165b20:
 	.4byte 0x00000000
 .L_08165b24:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08165b28:
 	movs r0, #9
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r2, #13
 	negs r2, r2
 	movs r7, #0
@@ -98,14 +98,14 @@ BattleFx_RunRamses:
 	bne .L_08165b38
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #3
 	movs r0, #188
 	str r3, [sp, #72]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r6, sp
@@ -686,7 +686,7 @@ BattleFx_RunRamses:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_081661c8
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -831,7 +831,7 @@ BattleFx_RunRamses:
 	adds r0, r6, #0
 	movs r1, #62
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	subs r3, #1
 	str r3, [r6, #24]
@@ -889,7 +889,7 @@ BattleFx_RunRamses:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -910,4 +910,4 @@ BattleFx_RunRamses:
 .L_081661d4:
 	.4byte gInput
 .L_081661d8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Ragnarok (kind 58).
-	.global BattleFx_RunRagnarok
+	.global BattleEffect_RunRagnarok
 	.thumb_func
-BattleFx_RunRagnarok:
+BattleEffect_RunRagnarok:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -27,7 +27,7 @@ BattleFx_RunRagnarok:
 	ldr r0, [r0]
 	str r0, [sp, #36]
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_08166618
 	movs r2, #128
 	lsls r2, r2, #19
@@ -39,7 +39,7 @@ BattleFx_RunRagnarok:
 	ldr r0, [r3, #4]
 	adds r1, r5, #0
 	str r5, [sp, #28]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r1, #2
 	ldr r0, [sp, #36]
 	bl Object_SetMode
@@ -502,7 +502,7 @@ BattleFx_RunRagnarok:
 	adds r0, r6, #0
 	movs r1, #64
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	ldr r1, [r6, #4]
 	movs r0, #216
@@ -529,7 +529,7 @@ BattleFx_RunRagnarok:
 .L_081669ac:
 	.4byte gMapCellBuffer
 .L_081669b0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081669b4:
 	.4byte 0x00000184
 .L_081669b8:
@@ -674,7 +674,7 @@ BattleFx_RunRagnarok:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -688,4 +688,4 @@ BattleFx_RunRagnarok:
 .L_08166af0:
 	.4byte gData_08197410
 .L_08166af4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Wyrd Curse (kind 103).
-	.global BattleFx_RunWyrdCurse
+	.global BattleEffect_RunWyrdCurse
 	.thumb_func
-BattleFx_RunWyrdCurse:
+BattleEffect_RunWyrdCurse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunWyrdCurse:
 	ldr r3, [r3, #100]
 	movs r0, #1
 	str r3, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0816f0cc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -37,7 +37,7 @@ BattleFx_RunWyrdCurse:
 	bne .L_0816f0d4
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0816f0dc
 	.2byte 0x0000
 .L_0816f0cc:
@@ -47,7 +47,7 @@ BattleFx_RunWyrdCurse:
 .L_0816f0d4:
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0816f0dc:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -323,7 +323,7 @@ BattleFx_RunWyrdCurse:
 	adds r0, r5, #0
 	movs r1, #64
 	lsls r2, r2, #8
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r0, #6
 	ldrsh r3, [r5, r0]
 	cmp r3, #111
@@ -513,10 +513,10 @@ BattleFx_RunWyrdCurse:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_0816f4cc
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	b .L_0816f4d0
 .L_0816f494:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816f498:
 	.4byte IwramClearWords
 .L_0816f49c:
@@ -624,7 +624,7 @@ BattleFx_RunWyrdCurse:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816f590
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -634,4 +634,4 @@ BattleFx_RunWyrdCurse:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0816f590:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

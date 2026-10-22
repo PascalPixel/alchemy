@@ -5,13 +5,13 @@
 #include "../effect_internal.h"
 
 /// Sets BG2's horizontal scale back to one texel a pixel, for the lines above
-/// Graphics_SetBg2AffineScaleHalf's interrupt. BattleFx_RunNeptune schedules
-/// it as a frame callback for its first stage.
+/// Graphics_SetBg2AffineScaleHalf's interrupt. BattleEffect_RunNeptune
+/// schedules it as a frame callback for its first stage.
 void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
 /// Stretches BG2 to twice its width from the current line down.
-/// BattleFx_RunNeptune installs it as the VCount interrupt handler, on line 0
-/// and from frame 152 on line 96, for its first stage.
+/// BattleEffect_RunNeptune installs it as the VCount interrupt handler, on line
+/// 0 and from frame 152 on line 96, for its first stage.
 void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLAME_GROUND 112   ///< where the blue flames throw sparks
@@ -40,13 +40,13 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
 /// its frame 96.
 ///
-/// Reached through BattleFx_RunSceneEffect, whose sheet slot holds the mote
+/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
 /// sheet here. The first stage projects with gProjection.centerY at 240 and
 /// holds BG1's scroll from the battle camera; the second gives BG1's x back,
-/// removes the scale callback and interrupt, and BattleFx_SetupBlendedDisplay
-/// puts the centre back at 120, which its Camera_ApplyShake then moves while
-/// the screen shakes. The formation's objects are released before the scene
-/// returns.
+/// removes the scale callback and interrupt, and
+/// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which its
+/// Camera_ApplyShake then moves while the screen shakes. The formation's
+/// objects are released before the scene returns.
 ///
 /// In the first stage work->particles 0 to 31 are the converging flares, then
 /// from frame 222 0 to 63 the burst points; PARTICLES holds the spray
@@ -56,7 +56,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// The window's edge step, noise and scanline table use the map cell
 /// buffer's first 450 bytes on frames 0 to 15, over spray particles 0 to 16,
 /// which are already launched.
-void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
+void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;
   struct EffectPosition targetPosition;
@@ -92,8 +92,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
   particleSheet = (u8 *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
-  BattleFx_ConfigureEffectDisplay();
+  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the wipe fills the canvas with, are
   // black.
   PLTT_BACKDROP = 0;
@@ -103,15 +103,15 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, EFFECT_CALLBACK_ORDER);
   Runtime_SetIrqHandler(IRQ_VCOUNT, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
   // first 16 frames), swap in the dusk backdrop and load the pictures.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
-  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
-  BattleFx_SelectLivingTargets(work->effect);
-  BattleFx_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);
+  BattleEffect_SelectLivingTargets(work->effect);
+  BattleEffect_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
@@ -203,13 +203,13 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           noise[k] = Random16() & 63;
         }
         *phase = 0;
-        Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable,
+        Scheduler_AddOrUpdateCallback(BattleEffect_BuildWindowEdgeTable,
                                       EFFECT_CALLBACK_ORDER);
       }
       *phase += windowEdgeStep;
       windowEdgeStep += 3;
       if (frame == 15) {
-        Scheduler_RemoveCallback(BattleFx_BuildWindowEdgeTable);
+        Scheduler_RemoveCallback(BattleEffect_BuildWindowEdgeTable);
       }
     }
 
@@ -291,7 +291,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           s32 r = (i & 3) + 5;
           s = r * 2;
           blit[0](canvas,
-                  work->sheet + gBattleFx_FlareCells[r - 1] +
+                  work->sheet + gBattleEffect_FlareCells[r - 1] +
                       NEPTUNE_FLARE_SHEET,
                   fx - r, fy - r, s, s);
           flare->x += flare->velocityX;
@@ -330,7 +330,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
       for (i = 0; i != 64; i++) {
         // Two more burst points start each frame, as the smallest flare; one
         // that leaves the top restarts.
-        u16 *cells = gBattleFx_FlareCells;
+        u16 *cells = gBattleEffect_FlareCells;
         s32 r = 1;
         if (frame >= i / 2 + 222) {
           blit[0](canvas, work->sheet + cells[r - 1] + NEPTUNE_FLARE_SHEET,
@@ -376,8 +376,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         if (i & 1) {
           d = -d;
         }
-        BattleFx_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111, 63 - (d + 1) / 2,
-                                       w);
+        BattleEffect_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111,
+                                           63 - (d + 1) / 2, w);
       }
     }
 
@@ -390,7 +390,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         z = 4;
       }
       blit[1](canvas,
-              work->sheet + gBattleFx_FlareCells[z - 1] + NEPTUNE_FLARE_SHEET,
+              work->sheet + gBattleEffect_FlareCells[z - 1] +
+                  NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame >= 192 && frame < 200) {
@@ -400,7 +401,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         z = 6;
       }
       blit[1](canvas,
-              work->sheet + gBattleFx_FlareCells[z - 1] + NEPTUNE_FLARE_SHEET,
+              work->sheet + gBattleEffect_FlareCells[z - 1] +
+                  NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame > 199) {
@@ -411,7 +413,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         z = 8;
       }
       blit[1](canvas,
-              work->sheet + gBattleFx_FlareCells[z - 1] + NEPTUNE_FLARE_SHEET,
+              work->sheet + gBattleEffect_FlareCells[z - 1] +
+                  NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
       if (frame <= 213) {
         z = u / 4 + 1;
@@ -419,7 +422,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           z = 4;
         }
         blit[1](canvas,
-                work->sheet + gBattleFx_FlareCells[z - 1] + NEPTUNE_FLARE_SHEET,
+                work->sheet + gBattleEffect_FlareCells[z - 1] +
+                    NEPTUNE_FLARE_SHEET,
                 100 - z, 52 - z, z * 2, z * 2);
       }
     }
@@ -478,7 +482,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedBg1ScrollX;
   background->busy = 0;
   Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
-  BattleFx_SetupBlendedDisplay();
+  BattleEffect_SetupBlendedDisplay();
   Scheduler_RemoveCallback(Graphics_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);

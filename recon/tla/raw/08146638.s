@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Astral Blast (kind 68).
-	.global BattleFx_RunAstralBlast
+	.global BattleEffect_RunAstralBlast
 	.thumb_func
-BattleFx_RunAstralBlast:
+BattleEffect_RunAstralBlast:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -28,7 +28,7 @@ BattleFx_RunAstralBlast:
 	bl GetBattleObjectSlotFar
 	ldr r6, [r0]
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r0, .L_081469ac
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -51,7 +51,7 @@ BattleFx_RunAstralBlast:
 	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r0, [sp, #76]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -446,7 +446,7 @@ BattleFx_RunAstralBlast:
 .L_081469b4:
 	.4byte 0x00000134
 .L_081469b8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081469bc:
 	.4byte gMapCellBuffer
 .L_081469c0:
@@ -520,7 +520,7 @@ BattleFx_RunAstralBlast:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -530,4 +530,4 @@ BattleFx_RunAstralBlast:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08146a68:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

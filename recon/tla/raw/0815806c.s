@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Mars (kind 282).
-	.global BattleFx_RunMars
+	.global BattleEffect_RunMars
 	.thumb_func
-BattleFx_RunMars:
+BattleEffect_RunMars:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,13 +22,13 @@ BattleFx_RunMars:
 	ldr r3, [r3, #100]
 	movs r0, #0
 	str r3, [sp, #16]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	mov r2, sp
 	adds r2, #28
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #12]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r0, .L_081583f4
 	ldr r1, [sp, #16]
 	movs r2, #0
@@ -364,7 +364,7 @@ BattleFx_RunMars:
 	movs r1, #64
 	ldr r2, .L_08158424
 	adds r0, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r2, [r6, #8]
 	movs r1, #128
 	movs r4, #255
@@ -439,7 +439,7 @@ BattleFx_RunMars:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -455,7 +455,7 @@ BattleFx_RunMars:
 .L_081583fc:
 	.4byte 0x0000017b
 .L_08158400:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08158404:
 	.4byte gMapCellBuffer
 .L_08158408:

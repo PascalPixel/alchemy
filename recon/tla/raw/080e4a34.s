@@ -127,7 +127,7 @@ Func_080e4a34:
 	mov r5, r8
 	ldr r0, [r3, #16]
 	movs r1, #0
-	bl BattleFx_SetObjectTickMode
+	bl BattleEffect_SetObjectTickMode
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #16]
@@ -387,7 +387,7 @@ Func_080e4a34:
 	bl Resource_ResetEntry
 	ldr r0, [sp, #32]
 	bl Resource_ResetEntry
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080e4d60:
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

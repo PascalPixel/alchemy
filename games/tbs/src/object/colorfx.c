@@ -1115,9 +1115,9 @@ void ReelGame_Run(void) {
       }
     }
 
-    BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER, 8, 7, 3, 2);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER, 8, 7, 3, 2);
     draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-    BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 8, 7, 3, 3);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 8, 7, 3, 3);
     draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     Iwram_FillWords(canvas, size, 0);
     Dma_Set(canvas, (void *)REEL_CANVAS_TILES,

@@ -50,12 +50,12 @@ struct OrbTargetSprite {
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p);
-void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object);
+void BattleEffect_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object);
 void Func_080dfc3c(struct OrbitEffect *mote);
-void BattleFx_WanderAroundAnchor(struct OrbitEffect *mote);
-void BattleFx_AgeAndCueAtEighty(struct ObjectRuntime *object);
-void BattleFx_SetObjectTickMode(void *object, s32 mode);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_WanderAroundAnchor(struct OrbitEffect *mote);
+void BattleEffect_AgeAndCueAtEighty(struct ObjectRuntime *object);
+void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080db0b0(s32 objectId);
 void Func_08020340(struct ObjectRuntime *object);
 void Object_Destroy(struct ObjectRuntime *object);
@@ -137,7 +137,7 @@ void FieldFx_RunWhirlwind(void) {
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
     WaitFrames(20);
     if (target != 0)
-      target->update = (void (*)(void))BattleFx_ShrinkObjectScaleUntilHalf;
+      target->update = (void (*)(void))BattleEffect_ShrinkObjectScaleUntilHalf;
     for (step = 0; step <= 15; step++) {
       s32 distance;
 
@@ -188,7 +188,7 @@ void FieldFx_RunWhirlwind(void) {
         mote = (struct OrbitEffect *)Object_Spawn(MOTE_OBJECT, position.x,
                                                   position.y, position.z);
         if (mote != 0) {
-          mote->update = BattleFx_WanderAroundAnchor;
+          mote->update = BattleEffect_WanderAroundAnchor;
           mote->timer = pause;
           mote->pause = 0;
           mote->speed = 0x1999;
@@ -198,14 +198,14 @@ void FieldFx_RunWhirlwind(void) {
         pause -= 2;
       }
     }
-    BattleFx_SetObjectTickMode(scene->mainObject, 0);
-    BattleFx_PrepareBufferInterpolation();
+    BattleEffect_SetObjectTickMode(scene->mainObject, 0);
+    BattleEffect_PrepareBufferInterpolation();
     ((struct OrbitEffect *)orb)->timer = 0;
-    orb->update = (void (*)(void))BattleFx_AgeAndCueAtEighty;
+    orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty;
     Func_080db0b0(scene->secondObjectId);
     Func_08020340(orb);
     Object_Destroy(orb);
     break;
   }
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

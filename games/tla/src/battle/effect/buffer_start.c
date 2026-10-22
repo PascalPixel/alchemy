@@ -3,24 +3,24 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
-void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
+void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames);
 
-void BattleFx_StartBufferInterpolation(s32 mode) {
+void BattleEffect_StartBufferInterpolation(s32 mode) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
     buffers->duration = mode;
     buffers->step = 0;
-    BattleFx_InterpolateBuffers((s16 *)buffers->current, (s16 *)buffers->target,
+    BattleEffect_InterpolateBuffers((s16 *)buffers->current, (s16 *)buffers->target,
                                 (s16 *)buffers->delta, mode);
   }
 }
 
-void BattleFx_BuildBuffer(s32 mode, struct BattleEffectBuffers *source,
+void BattleEffect_BuildBuffer(s32 mode, struct BattleEffectBuffers *source,
                           u16 *destination, s32 half);
 
-void BattleFx_LoadBufferPalette(const u16 *colours) {
+void BattleEffect_LoadBufferPalette(const u16 *colours) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
@@ -31,6 +31,6 @@ void BattleFx_LoadBufferPalette(const u16 *colours) {
         Iwram_CopyWords;
 
     copy(buffers->palette, colours, 0x1c0);
-    BattleFx_BuildBuffer(0x10000, buffers, buffers->target, 1);
+    BattleEffect_BuildBuffer(0x10000, buffers, buffers->target, 1);
   }
 }

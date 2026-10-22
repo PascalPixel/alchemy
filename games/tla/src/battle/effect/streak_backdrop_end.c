@@ -4,15 +4,15 @@
 #include "mem.h"
 
 void Func_0813f8d4(void);
-void BattleFx_TransferHalvedCanvas(void);
-void BattleFx_DimBackgroundStep(void);
+void BattleEffect_TransferHalvedCanvas(void);
+void BattleEffect_DimBackgroundStep(void);
 
 /// Ends the light-streak backdrop: removes its three callbacks, clears the
 /// canvas in VRAM and frees heap blocks 96 and 92.
-void BattleFx_EndElementStreaks(void) {
+void BattleEffect_EndElementStreaks(void) {
   Scheduler_RemoveCallback(Func_0813f8d4);
-  Scheduler_RemoveCallback(BattleFx_TransferHalvedCanvas);
-  Scheduler_RemoveCallback(BattleFx_DimBackgroundStep);
+  Scheduler_RemoveCallback(BattleEffect_TransferHalvedCanvas);
+  Scheduler_RemoveCallback(BattleEffect_DimBackgroundStep);
   {
     s32 size = 0x4000;
 

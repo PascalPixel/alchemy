@@ -7,9 +7,10 @@
 /// Packs 288 rows of 40 bytes to half width, keeping every second byte
 /// (the bytes of the odd columns win).
 ///
-/// Called by BattleFx_RunRushingStrike and once by BattleFx_RunCastingImpact
-/// (through CastingImpact_PackRows), both to squeeze the yellow orb's
-/// 40-pixel-wide sheet into six 20x48 pictures. Writes only dst.
+/// Called by BattleEffect_RunRushingStrike and once by
+/// BattleEffect_RunCastingImpact (through CastingImpact_PackRows), both to
+/// squeeze the yellow orb's 40-pixel-wide sheet into six 20x48 pictures. Writes
+/// only dst.
 ///
 /// src: the rows to pack.
 /// dst: receives the packed rows, half the stride apart.
@@ -34,7 +35,7 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 #define RUSHING_STRIKE_SPARK_COUNT 64   ///< sparks
 #define RUSHING_STRIKE_RING_BYTES 0x3c0 ///< one 20x48 ring picture
 
-/// The rushing strike's sparks' palettes (BattleFx_RunRushingStrike), each
+/// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
 /// named for the effect that plays it.
 enum RushingStrikeMode {
   RUSHING_STRIKE_BONE_CHARGE, ///< the fire pillar's
@@ -46,26 +47,26 @@ enum RushingStrikeMode {
 /// Rushes the target and scatters sparks in the fire pillar palette.
 ///
 /// Abilities: Bone Charge (BATTLE_FX_BONE_CHARGE).
-void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_BONE_CHARGE);
+void BattleEffect_RunBoneCharge(struct BattleEffectArgument *effect) {
+  BattleEffect_RunRushingStrike(effect, RUSHING_STRIKE_BONE_CHARGE);
 }
 /// Rushes the target and scatters sparks in the ice-block palette.
 ///
 /// Abilities: Brute Force (BATTLE_FX_BRUTE_FORCE).
-void BattleFx_RunBruteForce(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_BRUTE_FORCE);
+void BattleEffect_RunBruteForce(struct BattleEffectArgument *effect) {
+  BattleEffect_RunRushingStrike(effect, RUSHING_STRIKE_BRUTE_FORCE);
 }
 /// Rushes the target and scatters sparks in the pink-burst palette.
 ///
 /// Abilities: Onslaught (BATTLE_FX_ONSLAUGHT).
-void BattleFx_RunOnslaught(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_ONSLAUGHT);
+void BattleEffect_RunOnslaught(struct BattleEffectArgument *effect) {
+  BattleEffect_RunRushingStrike(effect, RUSHING_STRIKE_ONSLAUGHT);
 }
 /// Rushes the target and scatters sparks in the blast palette.
 ///
 /// Abilities: Headbutt (BATTLE_FX_HEADBUTT).
-void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_HEADBUTT);
+void BattleEffect_RunHeadbutt(struct BattleEffectArgument *effect) {
+  BattleEffect_RunRushingStrike(effect, RUSHING_STRIKE_HEADBUTT);
 }
 #define RUSHING_STRIKE_FRAMES 60
 #define RUSHING_STRIKE_FRAME 10 ///< the user strikes
@@ -75,13 +76,14 @@ void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
 ///
 /// Called by the four wrappers above. work->particles holds the sparks, each
 /// variant its frames left; the six packed ring pictures go to
-/// Ram_MapCellBuffer. Moves the user with BattleFx_SetApproachMotion and does
-/// not bring it back. Copies the mode's palette over the first 128 bytes of
-/// BG palette RAM, sets work->shakeFrames on the strike.
+/// Ram_MapCellBuffer. Moves the user with BattleEffect_SetApproachMotion and
+/// does not bring it back. Copies the mode's palette over the first 128 bytes
+/// of BG palette RAM, sets work->shakeFrames on the strike.
 ///
 /// effect: the user and the targets.
 /// mode: the sparks' palette (enum RushingStrikeMode).
-void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -110,7 +112,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
 
   // The top half, and the bottom half flipped; mirrored on side 1.
   if (work->effect->side == 0) {
@@ -156,7 +158,8 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   // at the target (they fly towards the middle of the field). Spark i lives
   // 16 + i / 2 frames. In 16.16 pixels a frame: 0 to 16 across, -2 to 6 up
   // and up to 4 either way in depth.
-  BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
+  BattleEffect_SetApproachMotion(work->effect->actor, work->effect->actors[0],
+                                 10);
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &work->particles[i];

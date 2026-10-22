@@ -10,8 +10,8 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 
 /// Creates entryCount sprites of one resource in the effect work's object
 /// slots, each showing its own animation at the given priority (The Broken
-/// Seal's BattleFx_SpawnObjects).
-void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
+/// Seal's BattleEffect_SpawnObjects).
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   s32 entryIndex = 0;
@@ -32,12 +32,12 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   } while (entryIndex != entryCount);
 }
 
-void BattleFx_DoNothing(void) {}
+void BattleEffect_DoNothing(void) {}
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
-// The Broken Seal's BattleFx_ArmBg2AffineHBlankDma.
-void BattleFx_ArmBg2AffineHBlankDma(void) {
+// The Broken Seal's BattleEffect_ArmBg2AffineHBlankDma.
+void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;
@@ -59,8 +59,8 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
           (volatile u32 *)channel);
 }
 
-/// BattleFx_ArmBg2AffineHBlankDma for BG1HOFS and BG1VOFS: the line table moves layer 1.
-void BattleFx_ArmBg1HBlankDma(void) {
+/// BattleEffect_ArmBg2AffineHBlankDma for BG1HOFS and BG1VOFS: the line table moves layer 1.
+void BattleEffect_ArmBg1HBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;
@@ -68,13 +68,13 @@ void BattleFx_ArmBg1HBlankDma(void) {
   u32 io;
 
   /* FAKEMATCH: ⚓️ reads the control word before it starts the mask, as in
-   * BattleFx_ArmBg2AffineHBlankDma (differ 2 without) */
+   * BattleEffect_ArmBg2AffineHBlankDma (differ 2 without) */
   asm volatile("");
   channel[5] = control & 0xc5ff;
   channel[5] &= 0x7fff;
   io = 0x80;
   /* FAKEMATCH: ⚓️ starts the I/O base before the dummy read, as in
-   * BattleFx_ArmBg2AffineHBlankDma (differ 2 without) */
+   * BattleEffect_ArmBg2AffineHBlankDma (differ 2 without) */
   asm volatile("" : "+l"(io));
   (void)channel[5];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14), 0xa6600001,

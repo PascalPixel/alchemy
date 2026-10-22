@@ -1,12 +1,12 @@
-// Near miss of BattleFx_RunQuake, effect kind 1: differ 58 of 444 (draft 444).
+// Near miss of BattleEffect_RunQuake, effect kind 1: differ 58 of 444 (draft 444).
 
-// Twin: The Broken Seal's BattleFx_RunQuake (effect.c), call for call.
+// Twin: The Broken Seal's BattleEffect_RunQuake (effect.c), call for call.
 // The Lost Age reads the effect from its argument, takes its heap blocks as
-// Ram_HeapSlots fields, loads the blitter through BattleFx_LoadBlitter
+// Ram_HeapSlots fields, loads the blitter through BattleEffect_LoadBlitter
 // (BLIT_TRANSPARENT is 2 where COMPOSITE_TRANSPARENT is 1), orders the
 // callback 0xc80 and copies the background through a local "cells".
 // ResourceId_RockWallSheet is row 0x14e of directory.s (asset
-// BattleFx_RockWallSheet), not yet named there.
+// BattleEffect_RockWallSheet), not yet named there.
 
 // Left: the native sets the buffer (r5) and both band-loop counters (r6,
 // r7) before the first call and loads the map buffer again for
@@ -38,17 +38,17 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 
-// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -84,7 +84,7 @@ extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
 // pillar is launched upward, and a target that lands flashes; the camera
 // shakes all the while. The variant chooses the length, the rise time and
 // the shake.
-void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
+void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -104,7 +104,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BG2PA = 0x100; // no horizontal stretch
   REG_BLDCNT = 0;    // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
@@ -130,14 +130,14 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   } else {
     xOffset = 0;
   }
-  BattleFx_LoadBlitter(
+  BattleEffect_LoadBlitter(
       104, BLIT_MODE(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   for (member = 0; member != effect->count; member++)
     work->particles[member].variant = 0; // 1 once landed
   work->transferMode = 1;                // clear the canvas on each transfer
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   heights = Data_08196e1c;
   work->shakeFrames = 128;
   Audio_PlayCue(141);
@@ -212,7 +212,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

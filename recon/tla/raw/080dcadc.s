@@ -45,7 +45,7 @@ Func_080dcadc:
 .L_080dcb2c:
 	.4byte 0x00005294
 .L_080dcb30:
-	.4byte BattleFx_ArmBg0HBlankDma
+	.4byte BattleEffect_ArmBg0HBlankDma
 .L_080dcb34:
 	.4byte 0x050001e2
 .L_080dcb38:

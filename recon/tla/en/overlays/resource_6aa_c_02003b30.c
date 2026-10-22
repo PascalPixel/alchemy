@@ -42,7 +42,7 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Func_02004bd0(effect, gData_0200686c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(effect, 0);
-  effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocityX = velocityX;
   effect->velocityY = velocityY;
   effect->velocityZ = velocityZ;

@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunJupiter, effect kind 283: the Jupiter Djinn's fall.
+// Draft of BattleEffect_RunJupiter, effect kind 283: the Jupiter Djinn's fall.
 
 // On screen: a small Jupiter Djinn circles over the targets, 11.25 degrees
 // a frame, on a radius of 64 - 2 x frame pixels (half that across) that
@@ -18,7 +18,7 @@
 // Teardown: the callback and both blitters are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunJupiter (kind 253 there),
+// Port of The Broken Seal's BattleEffect_RunJupiter (kind 253 there),
 // with The Lost Age's heap slots and callback order and no work->effect
 // store.
 
@@ -61,15 +61,15 @@ extern const u16 gData_08197410[];
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
 // Fetches the max and additive blitters, flipped or not.
-void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -84,10 +84,10 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -104,10 +104,10 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   draw = blit;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
@@ -116,7 +116,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The balls start above the canvas to the right; no dot is alive yet.
   for (i = 0; i != 32; i++) {
@@ -185,7 +185,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
 
         draw[1](canvas, sheet + gData_08197410[size - 1], HI(dot->x) - size / 2,
                 HI(dot->y) - size, size, size * 2);
-        BattleFxKernels_IntegrateVector2(dot, 62, 0x2000);
+        BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
       }
     }
@@ -199,8 +199,8 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   } while (frame != 96);
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

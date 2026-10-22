@@ -59,12 +59,12 @@ extern const u8 gData_080f0e78[];
 extern u32 gData_0300122c;
 
 void BattleEffect_InitializeSharedScene(void);
-struct FxObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
-void BattleFx_PrepareBufferInterpolation(void);
+struct FxObject *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
+void BattleEffect_PrepareBufferInterpolation(void);
 void Object_SetPosition(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
 void ObjectGroup_ApplyRandomChildValues(void);
-void BattleFx_SpawnFallingParticles(void);
+void BattleEffect_SpawnFallingParticles(void);
 void Audio_PlayCue(s32 cue);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
@@ -76,7 +76,7 @@ struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object,
                                                 s32 magnitude, s32 angle);
 void Object_Destroy(struct FxObject *object);
-void BattleFx_SpawnRadialParticleRing(struct FxObject *object);
+void BattleEffect_SpawnRadialParticleRing(struct FxObject *object);
 
 static __inline__ s32 Object_ProbeRaised(struct FxObject *object,
                                          struct FxPosition *position) {
@@ -88,7 +88,7 @@ static __inline__ s32 Object_ProbeRaised(struct FxObject *object,
   return hit;
 }
 
-void BattleFx_SteerLiftedTarget(s32 targetId) {
+void BattleEffect_SteerLiftedTarget(s32 targetId) {
   struct EffectWork *work;
   struct FxObject *source;
   struct FxObject *target;
@@ -117,12 +117,12 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   p->x = work->x;
   p->y = work->y + 0x100000;
   p->z = work->z;
-  object = BattleFx_SpawnItemBreakMode1(p->x + 0x200000, p->y, p->z, 0x8000);
+  object = BattleEffect_SpawnItemBreakMode1(p->x + 0x200000, p->y, p->z, 0x8000);
   anchors[0] = object;
-  right = BattleFx_SpawnItemBreakMode1(p->x - 0x200000, p->y, p->z, 0);
+  right = BattleEffect_SpawnItemBreakMode1(p->x - 0x200000, p->y, p->z, 0);
   anchors[1] = right;
   if (anchors[0] == NULL || right == NULL) {
-    BattleFx_PrepareBufferInterpolation();
+    BattleEffect_PrepareBufferInterpolation();
     return;
   }
   WaitFrames(15);
@@ -138,7 +138,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   right->x = p->x - 0x100000;
   right->velocityX = 0;
   target->callback = ObjectGroup_ApplyRandomChildValues;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_SpawnFallingParticles, 0x480);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_SpawnFallingParticles, 0x480);
   Audio_PlayCue(130);
   target->flag = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
@@ -162,7 +162,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     WaitFrames(1);
     if ((gInput.pressed & 0x303) != 0)
       break;
-    angle = (u16)BattleFx_GetCycledTableWord(gInput.held);
+    angle = (u16)BattleEffect_GetCycledTableWord(gInput.held);
     if (angle == 0xffff) {
       position.x = target->x;
       position.y = target->y + 0x100000;
@@ -235,7 +235,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   }
   Object_SetMode(anchors[0], 4);
   Object_SetMode(anchors[1], 4);
-  Scheduler_RemoveCallback((u32)BattleFx_SpawnFallingParticles);
+  Scheduler_RemoveCallback((u32)BattleEffect_SpawnFallingParticles);
   Audio_PlayCue(135);
   WaitFrames(15);
   Audio_PlayCue(135);
@@ -283,10 +283,10 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     WaitFrames(1);
     for (i = 0; i < 90 && target->velocityY < 0; i++)
       WaitFrames(1);
-    BattleFx_SpawnRadialParticleRing(target);
-    BattleFx_PrepareBufferInterpolation();
+    BattleEffect_SpawnRadialParticleRing(target);
+    BattleEffect_PrepareBufferInterpolation();
     WaitFrames(30);
   } else {
-    BattleFx_PrepareBufferInterpolation();
+    BattleEffect_PrepareBufferInterpolation();
   }
 }

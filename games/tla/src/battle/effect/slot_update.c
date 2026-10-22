@@ -23,7 +23,7 @@ void EffectSlot_Update(struct EffectSlot *effect) {
       if (effect->updateMotion != 0)
         EffectSlot_UpdateMotion(effect);
       if (effect->render != 0)
-        BattleFx_DrawScaledObject(effect);
+        BattleEffect_DrawScaledObject(effect);
     }
   }
 }
@@ -33,7 +33,7 @@ struct ScaledSprite {
   s32 scale;
 };
 
-void BattleFx_DrawScaledObject(struct EffectSlot *object) {
+void BattleEffect_DrawScaledObject(struct EffectSlot *object) {
   struct ScaledSprite *sprite;
   s32 offset;
   s32 scale[2];

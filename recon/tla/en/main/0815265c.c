@@ -1,8 +1,8 @@
-// Draft of BattleFx_RunProjectileVolleyB, the body behind the 22 wrappers
+// Draft of BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
 // of projectile_volley_b.c (23 effect kinds, modes 0-24).
 
 // New in The Lost Age. Its nearest relative is The Broken Seal's
-// BattleFx_RunProjectileVolley (effect.c; shape 0.44, structure 0.53): the
+// BattleEffect_RunProjectileVolley (effect.c; shape 0.44, structure 0.53): the
 // same frame: a shot launched each frame from the user toward one target
 // after another, every live shot drawn and moved, the targets hit four
 // frames apart, and a fade over the last eight frames. The mode chooses
@@ -12,17 +12,17 @@
 // the user instead, mode 10 also draws motes into the user, mode 24 adds
 // glints around the targets, and modes 11, 14 and 18 hand over to
 // SummonFx_RunCanvasEffect at the end. Resources not yet named in
-// directory.s, by row and asset: 0x151 BattleFx_MarsDjinnSmallSheet,
-// 0x157 BattleFx_VenusDjinnSmallSheet, 0x11c
-// BattleFx_VioletLightningSheetA, 0xd7 Resource_Data0D7, 0x14d
-// BattleFx_BoulderSheet, 0x116 BattleFx_DemonFaceSheet, 0x16e
-// BattleFx_HeartSheet, 0x161 BattleFx_SmokeSheet, 0x13e
-// BattleFx_FlashBurstSheet, 0x12f BattleFx_WaterSpraySheet, 0x164
-// BattleFx_PinkPalette, 0x187 BattleFx_RockSpireSheet, 0x150
-// BattleFx_MarsDjinnSheet, 0x148 BattleFx_OrangePaletteB, 0x163
-// BattleFx_LimePalette, 0x166 BattleFx_CyanPalette, 0x184
-// BattleFx_BlastSheet, 0x190 BattleFx_BlueBeamSheet and 0xb9
-// BattleFx_EffectPalette01.
+// directory.s, by row and asset: 0x151 BattleEffect_MarsDjinnSmallSheet,
+// 0x157 BattleEffect_VenusDjinnSmallSheet, 0x11c
+// BattleEffect_VioletLightningSheetA, 0xd7 Resource_Data0D7, 0x14d
+// BattleEffect_BoulderSheet, 0x116 BattleEffect_DemonFaceSheet, 0x16e
+// BattleEffect_HeartSheet, 0x161 BattleEffect_SmokeSheet, 0x13e
+// BattleEffect_FlashBurstSheet, 0x12f BattleEffect_WaterSpraySheet, 0x164
+// BattleEffect_PinkPalette, 0x187 BattleEffect_RockSpireSheet, 0x150
+// BattleEffect_MarsDjinnSheet, 0x148 BattleEffect_OrangePaletteB, 0x163
+// BattleEffect_LimePalette, 0x166 BattleEffect_CyanPalette, 0x184
+// BattleEffect_BlastSheet, 0x190 BattleEffect_BlueBeamSheet and 0xb9
+// BattleEffect_EffectPalette01.
 
 // Draft: differ 2442 of 2239 (draft 2215), a first transcription of the
 // listing block by block. The frame is 244 bytes where the native's is 252
@@ -51,35 +51,35 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+    DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
-                   s32 mode); // BattleFx_BuildBlitter
+                   s32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleFx_RunDjinniEntrance
-void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+                   s32 *target);  // BattleEffect_RunDjinniEntrance
+void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void SummonFx_RunCanvasMode1(struct BattleEffectArgument *effect);
 void SummonFx_RunCanvasMode3(struct BattleEffectArgument *effect);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
-// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -125,10 +125,10 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_IceBlockSheet;
 extern char ResourceId_EffectPalette01;
-extern u16 gData_08197410[]; // gBattleFx_MoteCells
-extern u16 gData_08197486[]; // gBattleFx_GlintCells
-extern u8 gData_08197492[];  // gBattleFx_GlintCellWidths
-extern u8 gData_08197498[];  // gBattleFx_GlintCellHeights
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern u16 gData_08197486[]; // gBattleEffect_GlintCells
+extern u8 gData_08197492[];  // gBattleEffect_GlintCellWidths
+extern u8 gData_08197498[];  // gBattleEffect_GlintCellHeights
 extern u8 gData_0819749e[];  // gSpire_ShardWidths
 extern u8 gData_081974ad[];  // the shard heights
 extern u16 gData_081974bc[]; // gSpire_ShardCells
@@ -144,7 +144,7 @@ extern u8 Data_081983c8[];   // gTargetStrike_GlintDrawFlags
 // out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
 // are hit four frames apart and recoil; the blend fades out over the last
 // eight frames.
-void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
+void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                                    u32 mode) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -179,9 +179,9 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   sheet = Ram_HeapSlots->unk64[0];
   if (mode == 10 || mode == 11 || mode == 13 || mode == 14 || mode == 15 ||
       mode == 17 || mode == 18 || mode == 19)
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_BeginCanvasLayer(1);
   else
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
 
   // The prelude: a Djinni behind the user, Mars for modes 9, 22 and 24 and
   // Venus otherwise.
@@ -207,29 +207,29 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (effect->prelude == 1) {
     if (effect->side == 0) {
-      BattleFx_FetchRectangleBlitters(0, draw = pair);
+      BattleEffect_FetchRectangleBlitters(0, draw = pair);
     } else {
-      BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+      BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+      BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
       draw = pair;
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     }
   } else if (mode == 20) {
-    BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_TRANSPARENT, CLIP));
+    BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_TRANSPARENT, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
     draw = pair;
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     REG_BLDALPHA = 0x310;
   } else if (mode == 7 || mode == 21) {
-    BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
+    BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     draw = pair;
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   } else {
-    BattleFx_FetchRectangleBlitters(effect->side, draw = pair);
+    BattleEffect_FetchRectangleBlitters(effect->side, draw = pair);
   }
 
   // The pictures and the colors.
@@ -395,7 +395,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   for (i = 0; i != 64; i++)
     work->particles[i].variant = -1;
   if (mode == 8 || mode == 11 || mode == 14)
@@ -666,7 +666,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                 canvas, work->sheet + gData_08197486[cel], x, y,
                 gData_08197492[cel], gData_08197498[cel]);
             Runtime_ReleaseHeapBlock(188);
-            BattleFx_FetchRectangleBlitters(effect->side, draw);
+            BattleEffect_FetchRectangleBlitters(effect->side, draw);
           }
         }
       }
@@ -705,7 +705,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
           else
             Func_0814cd48(effect->actors[member], 7, 5, member, 3);
           if (mode != 11 && mode != 14)
-            BattleFx_StartActorMotion(effect->actors[member], 1, 0x10000,
+            BattleEffect_StartActorMotion(effect->actors[member], 1, 0x10000,
                                       0x40000, 0x20000, frame + 100);
         }
       }
@@ -733,7 +733,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
           screen.x >>= 1;
           pair[0](canvas, sheet + gData_08197410[5], screen.x - 3, screen.y - 6,
                   6, 12);
-          BattleFxKernels_IntegrateVector3(mote, 62, 0);
+          BattleEffectKernels_IntegrateVector3(mote, 62, 0);
           if (frame > i + 16) {
             x = mote->x;
             mote->velocityX += (object->x - x) >> 7;
@@ -752,7 +752,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   if (mode == 11 || mode == 14 || mode == 18) {
@@ -766,6 +766,6 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     else
       SummonFx_RunCanvasMode3(effect);
   } else {
-    BattleFx_EndCanvasLayer();
+    BattleEffect_EndCanvasLayer();
   }
 }

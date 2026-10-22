@@ -132,7 +132,7 @@ u32 BattleRandomPercent(void);
 /// luck or more shrugs off effects 18, 19, 26 to 28, 34, 80 and 82, and a
 /// character 82; effects 80 and 85 get three tries as 67 does.
 // As The Broken Seal's function of the same name, with effects 90 and 91 added.
-s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
+s32 BattleEffect_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
   u8 *state = UnitGet(target);
   struct BattleUnit *unit = (struct BattleUnit *)state;

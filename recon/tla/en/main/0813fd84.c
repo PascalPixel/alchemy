@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunCruelRuin, decompiled from the listing: differ 2715 of
+// Draft of BattleEffect_RunCruelRuin, decompiled from the listing: differ 2715 of
 // 2579 (draft 2630), the same 189 calls and control flow; allocation differs.
 
 #include "types.h"
@@ -28,11 +28,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -51,18 +51,18 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -78,12 +78,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -175,7 +175,7 @@ void MemFree(void *buffer);
 // Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
 // rains ruin in six blasts while the ground splits, then a black sphere
 // bursts over the foes.
-void BattleFx_RunCruelRuin(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -215,13 +215,13 @@ void BattleFx_RunCruelRuin(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   Func_0813ba50();
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_LoadBlitter(SLOT_BLITTER, 3);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   work->transferMode = 2;
   work->transferValue = 50;
   blit = Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 3200);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   savedScroll = gBgScroll[1].x;
   scrollX = 0;
   phase = 0;
@@ -253,13 +253,13 @@ void BattleFx_RunCruelRuin(struct BattleEffectArgument *effect) {
   actor[3] = 0;
   Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   gCameraSceneParameters[4] = 240;
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
   BattleBackground_LoadFar(1, 0x71, 0);
   transition[4] = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
-  BattleFx_LoadBlitter(SLOT_BLITTER, 3);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   blit = Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress(0x134, sprites, 0, 0);
   Resource_LoadAndDecompress(0xc2, gMapCellBuffer, 0, 0);
@@ -733,12 +733,12 @@ void BattleFx_RunCruelRuin(struct BattleEffectArgument *effect) {
           s32 half;
 
           Func_0815b434(work->sheet, r, 0x10000);
-          BattleFx_LoadBlitter(SLOT_ALT, 19);
+          BattleEffect_LoadBlitter(SLOT_ALT, 19);
           half = r / 2;
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet,
                                                    x - half, y, half, r);
           Runtime_ReleaseHeapBlock(SLOT_ALT);
-          BattleFx_LoadBlitter(SLOT_ALT, 23);
+          BattleEffect_LoadBlitter(SLOT_ALT, 23);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, x, y,
                                                    half, r);
           Runtime_ReleaseHeapBlock(SLOT_ALT);
@@ -1025,7 +1025,7 @@ void BattleFx_RunCruelRuin(struct BattleEffectArgument *effect) {
     }
   }
   Palette_LoadBasicObjColors();
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

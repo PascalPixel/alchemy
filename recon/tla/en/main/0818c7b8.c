@@ -1,5 +1,5 @@
 // Near miss: listing 303 instructions, draft 303, differ 16. No close ☀️
-// twin: the call order is BattleFx_RunTwoResource's (0.684), whose frame and
+// twin: the call order is BattleEffect_RunTwoResource's (0.684), whose frame and
 // one-blitter setup this shares, but the picture is ⚓️'s own.
 // Allocation and frame match (effect spilled to sp+8 because the blitter pair
 // holds r6 and r7; the cell buffer through a pointer the build
@@ -58,7 +58,7 @@ extern char ResourceId_GreyCrescentSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
 
-void BattleFx_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_BeginTiledCanvas(s32 bgControl);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode);
 void *Resource_GetTableEntry(s32 id);
@@ -69,13 +69,13 @@ void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
 // mode 1). The caster closes in on the target; from frame 8 a crescent is cut
@@ -99,7 +99,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up the canvas and a clipped MAX blitter, mirrored to face the target
   // and flipped upside down for Echo Cut.
-  BattleFx_BeginTiledCanvas(0);
+  BattleEffect_BeginTiledCanvas(0);
   if (mode == 0) {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
     if (effect->side != 0)
@@ -131,7 +131,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   // The caster closes in on the target.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, 0x40000);
@@ -149,7 +149,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
         Func_081180e8(144);
       else
         Func_081180e8(134);
-      BattleFx_StartActorMotion(effect->actors[0], 1, 0x40000, 0x100000,
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0x40000, 0x100000,
                                 0x40000, 250);
       work->shakeFrames = 4;
     }
@@ -209,7 +209,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

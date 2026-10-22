@@ -178,7 +178,7 @@ extern char ResourceId_ParticleSpritesA;
 /// A second shared particle sheet: the beam sequences, Bind, Death Plunge,
 /// Ice and Douse, the Neptune summon, the stat changes, and the slot machine.
 extern char ResourceId_ParticleSpritesD;
-/// Curse's flames (BattleFx_RunCurse).
+/// Curse's flames (BattleEffect_RunCurse).
 extern char ResourceId_FlameColumnSheet;
 /// Shared by the blessings' showers, the casting impact, Death Plunge, Dragon
 /// Cloud, Planet Diver, Plasma, Ragnarok, Tiamat and Titan Blade.
@@ -191,9 +191,10 @@ extern char ResourceId_CometSheetA;
 extern char ResourceId_CometSheetB;
 /// Cutting Edge's large comet, and one of Slash's.
 extern char ResourceId_CometSheetC;
-/// GROWING_COLUMNS_PILLARS, in BattleFx_RunGrowingColumns.
+/// GROWING_COLUMNS_PILLARS, in BattleEffect_RunGrowingColumns.
 extern char ResourceId_GreenPillarSheet;
-extern char ResourceId_VineSheet; ///< BattleFx_RunGrowingColumns' other modes.
+extern char
+    ResourceId_VineSheet; ///< BattleEffect_RunGrowingColumns' other modes.
 extern char ResourceId_StarDotSheet; ///< The swirling stars of orbiting.c.
 /// Borrowed mostly for its colours: by the showers, the casting impact,
 /// Rumble's lights, the healing motes, the lobbed shells, the walls, the
@@ -400,7 +401,7 @@ extern char ResourceId_BlueBeamSheet;
 /// Froth and Whirlwind, and the status motes.
 extern char ResourceId_VortexSheet;
 extern char ResourceId_LightningPillarSheet; ///< Plasma and the Thor summon.
-/// The shattering opening (BattleFx_RunShatteringOpening).
+/// The shattering opening (BattleEffect_RunShatteringOpening).
 extern char ResourceId_TileAnimationMask;
 extern char ResourceId_VioletPaletteA;  ///< Colours for Death Plunge.
 extern char ResourceId_RedPaletteA;     ///< Colours for Death Plunge.

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Ice, Ice Horn, Ice Missile (kind 7).
-	.global BattleFx_RunIce
+	.global BattleEffect_RunIce
 	.thumb_func
-BattleFx_RunIce:
+BattleEffect_RunIce:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_RunIce:
 	adds r0, #1
 	str r3, [sp, #16]
 	mov r9, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0813bc40
 	movs r2, #128
 	lsls r2, r2, #19
@@ -131,18 +131,18 @@ BattleFx_RunIce:
 	bne .L_0813bce6
 	movs r1, #18
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #2
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0813bcf6
 .L_0813bce6:
 	movs r1, #22
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #6
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0813bcf6:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -632,7 +632,7 @@ BattleFx_RunIce:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	bl Func_0813ba50
 	add sp, #36
 	pop {r3, r5, r6, r7}
@@ -643,9 +643,9 @@ BattleFx_RunIce:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0813c0a4:
-	.4byte BattleFx_ArmWin0HBlankDma
+	.4byte BattleEffect_ArmWin0HBlankDma
 .L_0813c0a8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813c0ac:
 	.4byte Data_08197521
 .L_0813c0b0:

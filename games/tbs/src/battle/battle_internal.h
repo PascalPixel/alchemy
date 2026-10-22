@@ -222,9 +222,9 @@ enum BattlePlanStaging {
 #define STAGING_KIND_MASK 0xfff
 #define STAGING_VARIANT_MASK 0x3000
 #define STAGING_VARIANT_SHIFT 12
-#define STAGING_BY_ID_RANGE 0x4000 ///< BattleFx_DispatchByIdRangeFar
-#define STAGING_SCENE 0x8000       ///< BattleFx_RunSceneEffectFar, actor's view
-#define STAGING_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
+#define STAGING_BY_ID_RANGE 0x4000 ///< BattleEffect_DispatchByIdRangeFar
+#define STAGING_SCENE 0x8000 ///< BattleEffect_RunSceneEffectFar, actor's view
+#define STAGING_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
 /// Plays the effect on the side opposite its targets. Unused: no row of
 /// actflags.tsv in either game sets it and no code adds it, so the flip in
 /// BattlePresentation_RunUnitTransition never happens.

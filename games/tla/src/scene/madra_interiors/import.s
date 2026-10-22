@@ -267,7 +267,7 @@ Func_02001e90:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8490
 	.else
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.endif
 	.endif
 	.global Func_02001e98
@@ -279,17 +279,17 @@ Func_02001e98:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02001ea0
 	.thumb_func
 Func_02001ea0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.endif
@@ -298,10 +298,10 @@ Func_02001ea0:
 	.thumb_func
 Func_02001ea8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.endif

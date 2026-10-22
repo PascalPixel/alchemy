@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Douse, Drench, Deluge (kind 9).
-	.global BattleFx_RunDouse
+	.global BattleEffect_RunDouse
 	.thumb_func
-BattleFx_RunDouse:
+BattleEffect_RunDouse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunDouse:
 	lsls r0, r0, #6
 	adds r0, #1
 	str r1, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0813c11c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -66,12 +66,12 @@ BattleFx_RunDouse:
 	strh r3, [r2]
 	movs r1, #18
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r0, [r5, #104]
 	movs r1, #2
 	str r0, [sp, #16]
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r3, .L_0813c164
@@ -592,7 +592,7 @@ BattleFx_RunDouse:
 	adds r0, r5, #0
 	movs r1, #60
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -636,7 +636,7 @@ BattleFx_RunDouse:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	bl Func_0813ba50
 	add sp, #36
 	pop {r3, r5, r6, r7}
@@ -647,9 +647,9 @@ BattleFx_RunDouse:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0813c594:
-	.4byte BattleFx_ArmWin0HBlankDma
+	.4byte BattleEffect_ArmWin0HBlankDma
 .L_0813c598:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813c59c:
 	.4byte Data_08197527
 .L_0813c5a0:

@@ -2,9 +2,9 @@
 	.thumb
 	.balign 4
 @ Abilities: Backstab (kind 77).
-	.global BattleFx_RunBackstab
+	.global BattleEffect_RunBackstab
 	.thumb_func
-BattleFx_RunBackstab:
+BattleEffect_RunBackstab:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -21,7 +21,7 @@ BattleFx_RunBackstab:
 	mov r9, r0
 	movs r0, #0
 	str r1, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0817ba1c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -43,7 +43,7 @@ BattleFx_RunBackstab:
 	bl Resource_LoadAndDecompress
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r2, [r5, #104]
 	movs r3, #2
 	str r2, [sp, #16]
@@ -197,7 +197,7 @@ BattleFx_RunBackstab:
 	adds r0, r5, #0
 	movs r1, #48
 	ldr r2, .L_0817bd7c
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -237,7 +237,7 @@ BattleFx_RunBackstab:
 	movs r2, #36
 	ldrsh r1, [r1, r2]
 	movs r2, #16
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 	ldr r4, [sp, #12]
 	movs r3, #224
 	lsls r3, r3, #11
@@ -370,7 +370,7 @@ BattleFx_RunBackstab:
 	movs r1, #1
 	lsls r2, r2, #12
 	lsls r3, r3, #13
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 .L_0817bcb6:
 	ldr r3, [sp, #24]
 	subs r3, #32
@@ -416,7 +416,7 @@ BattleFx_RunBackstab:
 	adds r0, r5, #0
 	movs r1, #56
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -458,7 +458,7 @@ BattleFx_RunBackstab:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -467,7 +467,7 @@ BattleFx_RunBackstab:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817bd78:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817bd7c:
 	.4byte 0xffffe000
 .L_0817bd80:

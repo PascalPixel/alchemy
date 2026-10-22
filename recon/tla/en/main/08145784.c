@@ -1,11 +1,11 @@
 // Near miss, differ 97 of 549 (the draft has 550).
 
-// Effect kind 40. Twin: The Broken Seal's BattleFx_RunCounterReveal, ported
+// Effect kind 40. Twin: The Broken Seal's BattleEffect_RunCounterReveal, ported
 // call for call and with its three devices (each measured here). The Lost
 // Age's changes: the effect runs 104 frames, not 132, every cue 8 to 16
 // frames earlier (jumps at 24 and 48, panels from 72); both pictures are
 // unpacked by Resource_LoadAndDecompress (the crescents into the map buffer);
-// the blitters are transparent (BattleFx_LoadBlitter, mode 2); both callbacks at
+// the blitters are transparent (BattleEffect_LoadBlitter, mode 2); both callbacks at
 // 0xc80; and the strike at frame 72 is Func_08118088 on the target with a
 // shake of 8 and the results phase 144, where The Broken Seal throws the
 // target by hand at 88 and drops it at 120; the screen shakes each frame.
@@ -46,15 +46,15 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);                   // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
+void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);                   // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                   // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
-void BattleFx_ArmBg2AffineHBlankDma(void);                      // BattleFx_ArmBg2AffineHBlankDma
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_ArmBg2AffineHBlankDma(void);                      // BattleEffect_ArmBg2AffineHBlankDma
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void Audio_PlayCue(s32 cue);
 
@@ -77,7 +77,7 @@ extern u8 gMapCellBuffer[];
 // again twice as it closes on the target, then splits into its panels one
 // after another with a white flash at frame 72, when the target is thrown
 // and the screen shakes. The background waves while the image fades.
-void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
@@ -104,21 +104,21 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   // Set up: half-and-half blending, the image with its palette, the crescent
   // panels into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
-  BattleFx_BeginTiledCanvas(0x2000);
+  BattleEffect_BeginTiledCanvas(0x2000);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, cells, 1, 0);
-  BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 1;
   work->transferValue = zero;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The image starts off to the side, above the field.
   visible = 1;
@@ -259,11 +259,11 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

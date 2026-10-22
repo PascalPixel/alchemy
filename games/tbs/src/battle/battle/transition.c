@@ -418,7 +418,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       presentation.effect.actors[presentation.effect.count] =
           BATTLE_UNIT_LIST_END;
       BattleObj_SpawnObjectsForList(presentation.effect.actors, 0);
-      BattleFx_RunShatteringOpeningFar(&presentation.effect);
+      BattleEffect_RunShatteringOpeningFar(&presentation.effect);
       BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
     }

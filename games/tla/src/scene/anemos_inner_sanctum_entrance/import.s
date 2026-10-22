@@ -211,7 +211,7 @@ Func_02000d1c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Func_02000d24
@@ -223,19 +223,19 @@ Func_02000d24:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_InitializeBuffersFar
 	.else
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.endif
 	.endif
 	.global Func_02000d2c
 	.thumb_func
 Func_02000d2c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
-	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
@@ -302,10 +302,10 @@ Func_02000d54:
 	.thumb_func
 Func_02000d5c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StepVector2Far
+	overlay_veneer BattleEffect_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

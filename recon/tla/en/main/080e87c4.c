@@ -21,7 +21,7 @@
 #include "canvas_sprite.h"
 #include "io_reg.h"
 
-// One mote: a position and a velocity (BattleFx_IntegrateVector3's vector)
+// One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
 // and a frame count, negative before it starts.
 struct BurstMote {
   s32 x;
@@ -56,7 +56,7 @@ s32 Resource_ResetEntry(u32 entry);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void Func_080eb298(struct EffectSprite *sprite, struct BurstMote *mote);
-void BattleFx_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
+void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_080e807c(void);
 extern char ResourceId_SparkleFade;
@@ -132,7 +132,7 @@ void Func_080e87c4(void) {
          * also keeps it, 36). */
         asm("");
         Func_080eb298(sprite, mote);
-        BattleFx_IntegrateVector3(&mote->x, 62, 0x8000);
+        BattleEffect_IntegrateVector3(&mote->x, 62, 0x8000);
       }
       mote->timer++;
     }

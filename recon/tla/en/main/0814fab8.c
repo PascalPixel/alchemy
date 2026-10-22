@@ -1,7 +1,7 @@
 // Draft of Func_0814fab8, the body behind the twelve wrappers of
 // stat_boost.c (17 effect kinds).
 
-// Twin: The Broken Seal's BattleFx_RunStatBoost (effect.c), grown from six
+// Twin: The Broken Seal's BattleEffect_RunStatBoost (effect.c), grown from six
 // modes to thirteen. The Lost Age:
 // - packs the prelude Djinni's element, side and anchor for
 // Func_0815585c (Venus for modes 3 and 6, Mercury for 7, 8 and 11,
@@ -11,14 +11,14 @@
 // - adds modes 6 and 11 (the palette stepping to a resource every four
 // frames), 8 and 12 (the violet streak; 12 draws a grey ramp for its
 // Djinni), 9 (the wisp in the Mars palette) and 7;
-// - calls BattleFx_BuildBlitter (Func_08196404) itself, MAX as mode 1 and
+// - calls BattleEffect_BuildBlitter (Func_08196404) itself, MAX as mode 1 and
 // ADDITIVE as 0, where The Broken Seal's modes are 2 and 3;
 // - plays the opening cue at frame 0 inside the loop.
 // Resources not yet named in directory.s, by row and asset: 0x137
-// BattleFx_ParticleSpritesD, 0x17b BattleFx_GlowOrbSheet, 0x174
-// BattleFx_VioletStreakSheet, 0x16a BattleFx_WispSheet, 0x15f
-// BattleFx_DaggerSheet, 0x15e BattleFx_ShieldSheet, 0x17f
-// BattleFx_PinkBurstSheet, 0xb9 BattleFx_EffectPalette01 and the Djinn
+// BattleEffect_ParticleSpritesD, 0x17b BattleEffect_GlowOrbSheet, 0x174
+// BattleEffect_VioletStreakSheet, 0x16a BattleEffect_WispSheet, 0x15f
+// BattleEffect_DaggerSheet, 0x15e BattleEffect_ShieldSheet, 0x17f
+// BattleEffect_PinkBurstSheet, 0xb9 BattleEffect_EffectPalette01 and the Djinn
 // sheets 0x150, 0x152, 0x154 and 0x156.
 
 // Draft: differ 341 of 1146 (draft 1145).
@@ -61,18 +61,18 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
-                   s32 mode); // BattleFx_BuildBlitter
+                   s32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleFx_RunDjinniEntrance
-void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
+                   s32 *target);  // BattleEffect_RunDjinniEntrance
+void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
 void Graphics_LoadGreyRamp(void);         // a grey ramp from color 1
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
@@ -128,7 +128,7 @@ extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_MercuryDjinnSheet;
 extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
-extern u16 Data_08197424[]; // gBattleFx_FlareCells
+extern u16 Data_08197424[]; // gBattleEffect_FlareCells
 
 // Lights gather around each target in turn, eight frames apart, turning as
 // they close in; at the center they burst, and the mode's picture plays
@@ -160,7 +160,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   start = 0;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
 
   // The prelude: the Djinni appears on the far side; origin receives where.
   if (effect->prelude == 1) {
@@ -284,7 +284,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   REG_BG2X = shift << 8;
   work->transferMode = 2;   // each transfer fades the canvas: a trail
   work->transferValue = 50; // to 1/2
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (effect->side == 1)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
@@ -456,6 +456,6 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

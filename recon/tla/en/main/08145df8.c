@@ -1,20 +1,20 @@
 // Near miss, differ 84 of 518.
 
 // Effect kinds 38 and 218. Twin: The Broken Seal's
-// BattleFx_RunBind, ported call for call; the body is
-// BattleFx_RunTriangleStrike's (TriangleStrike) with the prelude. The Lost
-// Age's changes are those of BattleFx_RunTriangleStrike, plus: the canvas is
+// BattleEffect_RunBind, ported call for call; the body is
+// BattleEffect_RunTriangleStrike's (TriangleStrike) with the prelude. The Lost
+// Age's changes are those of BattleEffect_RunTriangleStrike, plus: the canvas is
 // prepared by Func_0815585c (kind 3 | side << 4, then two three-word arrays)
-// where The Broken Seal calls BattleFx_RunDjinniEntrance(effect, 3, side, 0,
+// where The Broken Seal calls BattleEffect_RunDjinniEntrance(effect, 3, side, 0,
 // &x, &y); the Djinn sheet is unpacked with its palette; and the prelude's
-// blitter pair comes from BattleFx_FetchRectangleBlitters.
+// blitter pair comes from BattleEffect_FetchRectangleBlitters.
 
-// Left: order only, as in BattleFx_RunTriangleStrike: single swaps of a load with its
+// Left: order only, as in BattleEffect_RunTriangleStrike: single swaps of a load with its
 // neighbour.
 
 // Tried: the prelude arrays declared before the anchor, which gives the
 // native's slots (148, 136, then the anchor at 124): 104 -> 98; the
-// tagged heap pointer for the second blitter's read (see BattleFx_RunTriangleStrike)
+// tagged heap pointer for the second blitter's read (see BattleEffect_RunTriangleStrike)
 // 98 -> 84.
 
 #include "battle.h"
@@ -42,20 +42,20 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
 void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleFx_RunDjinniEntrance
+                   s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
 void Audio_PlayCue(s32 cue);
 
 extern char ResourceId_RuneSheet;
@@ -71,11 +71,11 @@ extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 #define CORNERS 3
 #define EDGE_STEPS 24 // flares drawn along each edge
 
-// Spinning triangle (kinds 38 and 218): as BattleFx_RunTriangleStrike, a triangle of
+// Spinning triangle (kinds 38 and 218): as BattleEffect_RunTriangleStrike, a triangle of
 // flares spins down onto the target and leaves the rune picture where it
 // lands; when the effect has a prelude, the Jupiter Djinn also circles
 // above its place for the first frames and rises away after frame 32.
-void BattleFx_RunBind(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   s32 origin[3];
   s32 originSize[3];
   struct EffectPosition anchor;
@@ -106,14 +106,14 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
    * the second blitter's read: spilled, it makes reload rebuild the
    * 0x03000000 base at that read (movs, lsls, adds #188) as the native does,
    * where agscc otherwise keeps the base in r5 across the second
-   * BattleFx_LoadBlitter. Measured (2026-10-15): TriangleStrike 94 -> 66,
+   * BattleEffect_LoadBlitter. Measured (2026-10-15): TriangleStrike 94 -> 66,
    * SpinningTriangle 98 -> 84; the pointer for both reads, 95 and 103. */
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, the
   // Djinn with its palette, and a transfer that fades the canvas by 4 each
   // frame.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   if (effect->prelude == 1)
     Func_0815585c(effect, effect->side << 4 | 3, origin, originSize);
   REG_BG2PA = 0x100;
@@ -125,7 +125,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
                              work->sheet + DJINN_SHEET, 1, 0);
   work->transferMode = 3;
   work->transferValue = 0x04040404;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The background is shifted so that the target stands at x = 64.
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
@@ -146,7 +146,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
 
       x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       y = ((Trig_Cos(frame << 11) << 2) >> 16) + origin[1] - 24;
-      BattleFx_FetchRectangleBlitters(effect->side, draw);
+      BattleEffect_FetchRectangleBlitters(effect->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + DJINN_SHEET, x, y, DJINN_SIZE, DJINN_SIZE);
@@ -158,9 +158,9 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
     }
 
     // A fresh pair of max blitters each frame, the second flipped.
-    BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     draw[1] = (DrawRectangle)heap->unkb8[1];
     if (frame > 16 && (frame & 15) == 0)
@@ -230,6 +230,6 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

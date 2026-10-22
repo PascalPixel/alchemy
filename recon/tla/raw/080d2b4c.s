@@ -82,7 +82,7 @@ Func_080d2b4c:
 .L_080d2bec:
 	movs r0, #0
 	movs r1, #0
-	bl BattleFx_SelectBattleCue
+	bl BattleEffect_SelectBattleCue
 .L_080d2bf4:
 	pop {r3, r5}
 	mov r8, r3

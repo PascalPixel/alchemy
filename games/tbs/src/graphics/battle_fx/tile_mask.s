@@ -1,7 +1,7 @@
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
-	.global BattleFx_TileAnimationMask
-BattleFx_TileAnimationMask:
+	.global BattleEffect_TileAnimationMask
+BattleEffect_TileAnimationMask:
 	.incbin "games/tbs/src/graphics/battle_fx/tile_mask_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/tile_mask.parts.lz"
 	.ifdef TBS_EDITION_EN

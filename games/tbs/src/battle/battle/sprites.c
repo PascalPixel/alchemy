@@ -9,7 +9,7 @@
 /// Battle_RunEncounter as the battle is set up, by
 /// BattlePresentation_DispatchAction, BattlePresentation_RunUnitTransition,
 /// the auto battle and BattleTargetExec after a call for help, and through
-/// the far stub BattleObjPutFar by BattleFx_RunParticleStreams.
+/// the far stub BattleObjPutFar by BattleEffect_RunParticleStreams.
 void BattleObjPut(void) {
   s16 unitIds[14];
 

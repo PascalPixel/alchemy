@@ -34,7 +34,7 @@ Func_080df6f4:
 	movs r3, #128
 	str r2, [r5, #8]
 	lsls r3, r3, #8
-	bl BattleFx_SpawnItemBreakMode1
+	bl BattleEffect_SpawnItemBreakMode1
 	ldr r3, .L_080df818
 	str r0, [sp, #0]
 	ldr r0, [r5]
@@ -42,7 +42,7 @@ Func_080df6f4:
 	adds r0, r0, r3
 	ldr r2, [r5, #8]
 	movs r3, #0
-	bl BattleFx_SpawnItemBreakMode1
+	bl BattleEffect_SpawnItemBreakMode1
 	str r0, [sp, #4]
 	movs r0, #15
 	mov r11, sp
@@ -129,7 +129,7 @@ Func_080df6f4:
 	mov r3, r11
 	ldr r0, [r3, #4]
 	bl Object_Destroy
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	add sp, #20
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -17,11 +17,11 @@ struct PsynergyMenuState {
 
 struct BattleAct *BattleActGet(s32 action);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach BattleFx_HasMatchingEvent5
+// The Spanish and Italian far-call tables reach BattleEffect_HasMatchingEvent5
 // through this stub (as selrow.c).
 s32 Func_080c84f8(s32 type);
 #else
-s32 BattleFx_HasMatchingEvent5Far(s32 type);
+s32 BattleEffect_HasMatchingEvent5Far(s32 type);
 #endif
 
 /// How the selected psynergy is used: 0 acts at once, 1 picks a target,
@@ -44,7 +44,7 @@ s32 Func_080fcf14(void) {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   if (Func_080c84f8(psynergy->type) != 0)
 #else
-  if (BattleFx_HasMatchingEvent5Far(psynergy->type) != 0)
+  if (BattleEffect_HasMatchingEvent5Far(psynergy->type) != 0)
 #endif
     return 0;
   ret = 2;

@@ -21,12 +21,12 @@
 ///
 /// The effect layer ripples throughout.
 ///
-/// Opens the tiled canvas (BattleFx_BeginTiledCanvas) and adds
-/// BattleFx_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
+/// Opens the tiled canvas (BattleEffect_BeginTiledCanvas) and adds
+/// BattleEffect_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
 /// the burst's pieces into Ram_MapCellBuffer; moves the target's object; and
 /// reloads the battle backdrop on BG1 before it closes the layer. It never
 /// calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
-void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -50,7 +50,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
    * setup calls; as the literal 0, 31 of 580 instructions differ in tbs-en. */
   zero = 0;
   work->effect = effect;
-  BattleFx_BeginTiledCanvas(0);
+  BattleEffect_BeginTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -72,7 +72,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
@@ -252,11 +252,11 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   // character blocks 2 and 3, its palettes darkened to level 24.
   // XXX: why it is reloaded, when nothing in this effect writes those
   // blocks; a VRAM view after the panel breaks would show what it repairs.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT, gBattleWork->background, 24);
   EFFECT_RELEASE_BLITTERS();
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef CONDEMN_FRAMES

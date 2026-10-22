@@ -249,7 +249,7 @@ Func_0811c710:
 	movs r3, #0
 .L_0811c8f2:
 	str r3, [r0, #4]
-	bl BattleFx_RunSceneEffectFar
+	bl BattleEffect_RunSceneEffectFar
 	movs r0, #10
 	bl WaitFrames
 	bl BattleObjPut

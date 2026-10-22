@@ -1,5 +1,5 @@
 	.section .rodata
-@ Effect tables and object scripts after gBattleFx_CyclePatternWords, in
+@ Effect tables and object scripts after gBattleEffect_CyclePatternWords, in
 @ the order of The Broken Seal's object/fxdata.c. Object scripts are words
 @ in this game's command numbers: 0x00 wait, 0x01 sync, 0x0d loop,
 @ 0x16 set, 0x17 add, 0x26 free, 0x2e call; a label is 0x80000000 | n << 16
@@ -7,19 +7,19 @@
 
 @ A copy of The Broken Seal's gWorldMap_CursorDirectionAngles: the
 @ direction of each pad state in eight ways, 0xffff for none
-	.global gBattleFx_EightWayHeadingWords
-gBattleFx_EightWayHeadingWords:
+	.global gBattleEffect_EightWayHeadingWords
+gBattleEffect_EightWayHeadingWords:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff
 	.2byte 0xc000, 0xe000, 0xa000, 0xc000
 	.2byte 0x4000, 0x2000, 0x6000, 0x4000
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff
 
-@ A copy of The Broken Seal's gBattleFx_QuadrantModes
+@ A copy of The Broken Seal's gBattleEffect_QuadrantModes
 	.global Data_080f0ee4
 Data_080f0ee4:
 	.byte 3, 1, 2, 1
 
-@ The Broken Seal's gBattleFx_BurstParticleObjectScript: wait 60 frames
+@ The Broken Seal's gBattleEffect_BurstParticleObjectScript: wait 60 frames
 @ and free
 	.global gData_080f0ee8
 gData_080f0ee8:
@@ -29,7 +29,7 @@ gData_080f0ee8:
 @ quadrant modes, which no code reads
 	.byte 3, 1, 2, 1
 
-@ The Broken Seal's gBattleFx_HeavyImpactScript: sync, call Func_080de154,
+@ The Broken Seal's gBattleEffect_HeavyImpactScript: sync, call Func_080de154,
 @ free
 	.global gData_080f0ef8
 gData_080f0ef8:
@@ -45,9 +45,9 @@ gData_080f0ef8:
 	.4byte 0x00, 128
 	.4byte 0x26
 
-@ A copy of The Broken Seal's gBattleFx_RandomChildValues
-	.global gBattleFx_RandomChildValues
-gBattleFx_RandomChildValues:
+@ A copy of The Broken Seal's gBattleEffect_RandomChildValues
+	.global gBattleEffect_RandomChildValues
+gBattleEffect_RandomChildValues:
 	.byte 0, 0, 1, 2, 3, 4, 5, 6
 
 @ Read by Func_080e1678: eight offsets in 16.16 fixed point

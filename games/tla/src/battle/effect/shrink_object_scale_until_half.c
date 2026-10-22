@@ -15,7 +15,7 @@
 
 s32 FieldFx_RunWhirlwind();
 
-void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object) {
+void BattleEffect_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object) {
   s32 scale;
 
   scale = object->scaleX - 0x80;

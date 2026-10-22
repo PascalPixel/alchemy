@@ -210,7 +210,7 @@ BattleEffect_UpdatePhasedRadialParticle:
 	cmp r0, #0
 	bne .L_080d7f6a
 	adds r0, r7, #0
-	bl BattleFx_ClearOwnedSlot
+	bl BattleEffect_ClearOwnedSlot
 .L_080d7f6a:
 	add sp, #12
 	pop {r3, r5, r6}

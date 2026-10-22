@@ -51,10 +51,10 @@ Func_0815e3ac:
 	bne .L_0815e428
 	movs r1, #11
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #27
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0815e464
 	.2byte 0x0000
 .L_0815e424:
@@ -62,10 +62,10 @@ Func_0815e3ac:
 .L_0815e428:
 	movs r1, #15
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #31
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0815e464
 .L_0815e43a:
 	ldr r0, [sp, #52]
@@ -74,18 +74,18 @@ Func_0815e3ac:
 	bne .L_0815e454
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0815e464
 .L_0815e454:
 	movs r1, #7
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0815e464:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -248,7 +248,7 @@ Func_0815e3ac:
 .L_0815e5b0:
 	.4byte gMapCellBuffer
 .L_0815e5b4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815e5b8:
 	ldr r5, [sp, #16]
 	movs r3, #32
@@ -406,7 +406,7 @@ Func_0815e3ac:
 	movs r1, #1
 	lsls r2, r2, #9
 	lsls r3, r3, #11
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	b .L_0815e704
 .L_0815e6f8:
 	ldr r5, [sp, #52]
@@ -734,7 +734,7 @@ Func_0815e3ac:
 	adds r0, r7, #0
 	movs r1, #60
 	ldr r2, .L_0815e9e8
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r7, #24]
 	subs r3, #1
 	str r3, [r7, #24]
@@ -770,7 +770,7 @@ Func_0815e3ac:
 	ldr r3, .L_0815e9f0
 	mov r0, r9
 	strh r0, [r3, #6]
-	bl BattleFx_HideBg1AndRestoreBackdrop
+	bl BattleEffect_HideBg1AndRestoreBackdrop
 	add sp, #100
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -793,6 +793,6 @@ Func_0815e3ac:
 .L_0815e9e8:
 	.4byte 0xfffffc00
 .L_0815e9ec:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815e9f0:
 	.4byte gBgScroll

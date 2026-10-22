@@ -1,14 +1,14 @@
 // Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
-// BattleFx_RunBlast) and 380 (mode 1, through BattleFx_RunSmokeBomb).
+// BattleEffect_RunBlast) and 380 (mode 1, through BattleEffect_RunSmokeBomb).
 
-// Twin: The Broken Seal's BattleFx_RunEruption (effect.c), call for
+// Twin: The Broken Seal's BattleEffect_RunEruption (effect.c), call for
 // call. The Lost Age blends BG1 and BG2 at 16:16, reads the effect from its
 // argument, takes its heap blocks as Ram_HeapSlots fields, loads its
-// blitter through BattleFx_LoadBlitter (BLIT_MAX 1 where COMPOSITE_MAX is 2),
+// blitter through BattleEffect_LoadBlitter (BLIT_MAX 1 where COMPOSITE_MAX is 2),
 // orders the callback 0xc80 and keeps the puff sizes as halfwords.
 // ResourceId_BlastSheet and ResourceId_FireStreakSheet are rows 0x184 and
-// 0x159 of directory.s (assets BattleFx_BlastSheet and
-// BattleFx_FireStreakSheet), not yet named there.
+// 0x159 of directory.s (assets BattleEffect_BlastSheet and
+// BattleEffect_FireStreakSheet), not yet named there.
 
 // Near miss: differ 18 of 464 (draft 464, 2026-10-18), all order residue:
 // pairs where the native issues a pool load or a constant one slot earlier
@@ -21,7 +21,7 @@
 // offset four bytes off (frame 52 for 56).
 // - the blitter as a pair, as The Broken Seal's twin (tagged): 22.
 // - greedy declaration-order sweep, two passes: no gain.
-// Tried (2026-10-18): BattleFx_LoadBlitter returning s32, as defined (22 ->
+// Tried (2026-10-18): BattleEffect_LoadBlitter returning s32, as defined (22 ->
 // 20); the BLDALPHA halfword pinned in a one-pass block (20 -> 18); an
 // empty asm before the heap reads (20: the effect's copy to sl moves too);
 // alchemy permute 5 minutes (nothing below 20).
@@ -44,20 +44,20 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -71,7 +71,7 @@ enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 extern char ResourceId_BlastSheet;
 extern char ResourceId_FireStreakSheet;
 extern u8 Data_081983a2[][3]; // gEruption_Counts
-extern u16 gData_08197410[];  // gBattleFx_MoteCells
+extern u16 gData_08197410[];  // gBattleEffect_MoteCells
 extern u16 Data_081983ac[];   // gEruption_PuffCells
 extern u16 Data_081983ba[];   // gEruption_PuffSizes
 
@@ -101,7 +101,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   {
     /* FAKEMATCH: the native loads the BLDALPHA halfword from the pool before
      * it starts the register's address; pinned to r3 in a one-pass block it
@@ -158,11 +158,11 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != Data_081983a2[variant][FIELD_FRAMES]; frame++) {
     struct BattleCamera *camera;
@@ -194,7 +194,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
                 work->sheet + (gData_08197410[size - 1] + (i & 1) * 770) +
                     MOTE_SHEET,
                 screen.x - size / 2, screen.y - size, size, size * 2);
-        BattleFxKernels_IntegrateVector3(mote, 64, -0x2000);
+        BattleEffectKernels_IntegrateVector3(mote, 64, -0x2000);
       }
     }
 
@@ -217,7 +217,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
           }
           if (puff->variant <= 20)
             puff->variant++;
-          BattleFxKernels_IntegrateVector3(puff, 64, -0x2000);
+          BattleEffectKernels_IntegrateVector3(puff, 64, -0x2000);
         }
       }
     }
@@ -244,7 +244,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

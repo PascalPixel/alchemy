@@ -19,7 +19,7 @@ enum {
 };
 
 /// Where the bolt pictures start in the sheet: after the six glints that open
-/// the tornado sheet (gBattleFx_GlintCells), over its tornado strips.
+/// the tornado sheet (gBattleEffect_GlintCells), over its tornado strips.
 #define BOLT_CELLS 0xc56
 
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
@@ -39,7 +39,7 @@ enum {
 ///
 /// effect: the targets; variant picks the row of gBolt_Counts
 ///         and the glints' blend.
-void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -57,7 +57,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   // The tornado sheet only for its glints.
@@ -145,21 +145,23 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
                      gBolt_Counts[work->effect->variant][BOLT_GLINT_SPREAD];
           s32 spread =
               gBolt_Counts[work->effect->variant][BOLT_GLINT_SPREAD] - drop + 1;
-          s32 y = screen.y - drop - (gBattleFx_GlintCellHeights[kind] >> 1) + 8;
+          s32 y =
+              screen.y - drop - (gBattleEffect_GlintCellHeights[kind] >> 1) + 8;
           u32 random = Random16();
           s32 x = screen.x;
 
           x += random % spread;
           x -= spread / 2;
-          x -= (gBattleFx_GlintCellWidths[kind] >> 1);
+          x -= (gBattleEffect_GlintCellWidths[kind] >> 1);
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               gBolt_GlintFlips[Random16() & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               gBolt_GlintModes[work->effect->variant]);
-          BOLT_GLINT_BLITTER(canvas, work->sheet + gBattleFx_GlintCells[kind],
-                             x, y, gBattleFx_GlintCellWidths[kind],
-                             gBattleFx_GlintCellHeights[kind]);
+          BOLT_GLINT_BLITTER(canvas,
+                             work->sheet + gBattleEffect_GlintCells[kind], x, y,
+                             gBattleEffect_GlintCellWidths[kind],
+                             gBattleEffect_GlintCellHeights[kind]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }
       }

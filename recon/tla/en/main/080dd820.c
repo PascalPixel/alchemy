@@ -26,11 +26,11 @@ struct RevealEvent {
   s16 centreY;
 };
 
-void BattleFx_RunBusyWaitDelay(s32 value);
+void BattleEffect_RunBusyWaitDelay(s32 value);
 void DisplayTransition_InitializeBattleEffectState(s32 mode);
-void BattleFx_ApplyColorToSourceBuffer(u32 value, s32 enabled);
-void BattleFx_ApplyColorToTargetBuffer(u32 value, s32 enabled);
-void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleEffect_ApplyColorToSourceBuffer(u32 value, s32 enabled);
+void BattleEffect_ApplyColorToTargetBuffer(u32 value, s32 enabled);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
@@ -54,16 +54,16 @@ void Func_080dd820(void) {
   void *pending;
   s32 frame;
 
-  BattleFx_RunBusyWaitDelay(6);
+  BattleEffect_RunBusyWaitDelay(6);
   event = Ram_HeapSlots->eventWork;
   DisplayTransition_InitializeBattleEffectState(FIELD_FX_REVEAL);
   transition = Ram_HeapSlots->displayTransition;
   caster = scene->mainObject;
   transition->centreX = caster->x;
   transition->centreY = caster->z - caster->y;
-  BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
-  BattleFx_StartBufferInterpolation(1);
+  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
+  BattleEffect_StartBufferInterpolation(1);
   event->active = 0;
   WaitFrames(1);
 

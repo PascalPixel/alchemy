@@ -348,7 +348,7 @@ Func_080ccec8:
 	strb r3, [r2]
 	movs r0, #104
 	adds r1, r7, #0
-	bl BattleFx_SelectBattleCue
+	bl BattleEffect_SelectBattleCue
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, #14
@@ -410,7 +410,7 @@ Func_080ccec8:
 .L_080cd21c:
 	movs r1, #0
 	mov r0, r10
-	bl BattleFx_StartRandomParticleEmitter
+	bl BattleEffect_StartRandomParticleEmitter
 	adds r6, r0, #0
 	movs r0, #30
 	bl WaitFrames
@@ -481,7 +481,7 @@ Func_080ccec8:
 .L_080cd2b8:
 	mov r0, r10
 	adds r1, r7, #0
-	bl BattleFx_StartRandomParticleEmitter
+	bl BattleEffect_StartRandomParticleEmitter
 	adds r6, r0, #0
 	movs r0, #30
 	bl WaitFrames
@@ -629,7 +629,7 @@ Func_080ccec8:
 	cmp r3, r2
 	blt .L_080cd420
 	mov r0, r11
-	bl BattleFx_GetFlags
+	bl BattleEffect_GetFlags
 	adds r5, r0, #0
 	bl Random16
 	ldr r3, .L_080cd4c4
@@ -805,7 +805,7 @@ Func_080ccec8:
 	adds r5, r5, r1
 	movs r2, #0
 	ldrsh r0, [r5, r2]
-	bl BattleFx_ResumeObject
+	bl BattleEffect_ResumeObject
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255

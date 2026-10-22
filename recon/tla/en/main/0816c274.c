@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunCrystal, decompiled from the listing: differ 168 of
+// Draft of BattleEffect_RunCrystal, decompiled from the listing: differ 168 of
 // 491 (draft 491), same calls and control flow.
 // Left (2026-10-19): the loop counter i takes sl where the native has r8
 // (the disc, shard and flash loops, about 40 rows); the disc loop's
@@ -51,12 +51,12 @@ struct BattleObjectPosition {
   s32 x;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(
-    void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -107,7 +107,7 @@ extern u32 gCameraSceneParameters[];
 // shards, one every two frames, drift up from around the target, pulsing in
 // size and jittering until they settle, and the targets flash at frames 64,
 // 68, ... before the scene fades out from frame 96.
-void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
@@ -137,7 +137,7 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
   Func_0816ae40(work->sheet, gData_02014000, 64, 64);
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   Func_0815585c(effect, ((effect->side ^ 1) << 4) | 32, center, other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 0);
@@ -145,15 +145,15 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
   REG_BLDALPHA = 0x100e;
   if (effect->side == 1) {
-    BattleFx_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+    BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   } else {
-    BattleFx_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+    BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                   COMPOSITE_FLIP_X);
   }
   draw[0] = BLITTER;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   // camera and target declared here take their pseudos after the centre
   // pointer's, which gives the native's stack slots (differ 186 with them
   // at the top).
@@ -274,7 +274,7 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
       WaitFrames(1);
     }
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

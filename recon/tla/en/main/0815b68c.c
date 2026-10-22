@@ -25,7 +25,7 @@ extern const struct PlacementScale gData_08196e4c;
 
 s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
 
-// A frame callback of summon 17 (BattleFx_RunUlysses adds and removes it): places
+// A frame callback of summon 17 (BattleEffect_RunUlysses adds and removes it): places
 // effect object 7 at the last particle's point (x across, y in depth) at a
 // scale of one, moves the particle by its velocity (its depth speed grows
 // for 20 frames, then shrinks, and its sideways speed grows from frame 12),

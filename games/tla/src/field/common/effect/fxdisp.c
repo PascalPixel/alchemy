@@ -45,7 +45,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 }
 #endif
 
-void BattleFx_ProbeKeysForExtendedActor(void) {
+void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleFxWorkTail *work;
   struct BattleEffectArgument *effect;
 
@@ -64,11 +64,11 @@ void BattleFx_ProbeKeysForExtendedActor(void) {
 }
 
 void Func_0815f16c(struct BattleEffectArgument *effect, s32 index);
-void BattleFx_RunCanvasModeByCount(struct BattleEffectArgument *effect);
+void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect);
 void Func_0815e9f4(struct BattleEffectArgument *effect);
 void Func_0815e3ac(struct BattleEffectArgument *effect);
 
-void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
+void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   struct BattleFxWorkTail *work;
   s32 kind;
   s32 value;
@@ -89,7 +89,7 @@ void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
   if ((u32)value <= 100) {
     Func_0815f16c(effect, value);
   } else if (kind == 210 || kind == 10) {
-    BattleFx_RunCanvasModeByCount(effect);
+    BattleEffect_RunCanvasModeByCount(effect);
   } else if (kind > 199) {
     Func_0815e9f4(effect);
   } else {

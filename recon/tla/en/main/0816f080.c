@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunWyrdCurse, decompiled from the listing: differ 395
+// Draft of BattleEffect_RunWyrdCurse, decompiled from the listing: differ 395
 // of 568 (draft 563), the same 47 calls and control flow. The glow's mirror
 // loop runs to size / 2 with its right-hand columns written from size, so
 // it keeps the native's six row pointers stepping by two; the last
@@ -32,11 +32,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -59,7 +59,7 @@ void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -78,7 +78,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_Data0D8;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCells
+extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const s8 Data_08198bea[];   // the drops' bounce speeds
 extern const u8 Data_08199244[];   // the glow's and the splashes' mesh
 extern const u8 gData_08199210[];  // its four corners
@@ -100,7 +100,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 // its weight to the glow (the last particle), which grows over the target
 // and fades from frame 64. From frame 64 six splashes, four frames apart,
 // rise from the drops, and from frame 80 the target is struck six times.
-void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
+void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
@@ -115,20 +115,20 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
   if (effect->side == 0) {
-    BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
+    BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
   } else {
-    BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
   }
   draw = BLITTER;
   work->transferMode = 2;
   work->transferValue = 50;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   caster = *GetBattleObjectSlotFar(effect->actor);
   Iwram_ClearWords((void *)BG_PLTT, 128);
   for (i = 0; i != 63; i++) {
@@ -194,7 +194,7 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
 
           draw(canvas, sprites + gData_08197410[size - 1],
                HI(drop->x) - size / 2, HI(drop->y) - size, size, size * 2);
-          BattleFxKernels_IntegrateVector2(drop, 64, 0x8000);
+          BattleEffectKernels_IntegrateVector2(drop, 64, 0x8000);
           if (HI(drop->y) > 111) {
             drop->variant = 1;
             drop->velocityX = ((Random16() & 31) - 16) << 12;
@@ -254,7 +254,7 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyPitch(-0x4000);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);
-        BattleFxKernels_IntegrateVector2(drop, 60, -0x8000);
+        BattleEffectKernels_IntegrateVector2(drop, 60, -0x8000);
       }
     }
     MemFree(model);
@@ -282,6 +282,6 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
   }
   ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

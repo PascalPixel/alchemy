@@ -1,14 +1,14 @@
 // Draft, differ 679 of 718 (the draft has 719).
 
 // The body of ten effect kinds (the wrappers in series_d.c pass modes 0 to
-// 9). Twin: The Broken Seal's BattleFx_RunSevenMode (shape 0.67), rebuilt
+// 9). Twin: The Broken Seal's BattleEffect_RunSevenMode (shape 0.67), rebuilt
 // by The Lost Age: three more modes; a four-byte record per mode
 // (Data_08197880: shards or smoke, the shots' blitter, shots per target,
 // frames) where The Broken Seal has two bytes and fixed counts; up to four
 // shots per target, each with its own start; mode 7 prepares a canvas with
 // Func_0815585c and sets BG2CNT; the shots' height by mode; the pictures and
 // palettes unpacked by Resource_LoadAndDecompress; the pair from
-// BattleFx_FetchRectangleBlitters; modes 4 and 7 clear the canvas each frame
+// BattleEffect_FetchRectangleBlitters; modes 4 and 7 clear the canvas each frame
 // with blending off; modes 3 and 5 clear both canvases and run a summon canvas
 // effect (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
 
@@ -46,20 +46,20 @@
 #define BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void);         // Palette_StepFadeTransfer
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleFx_RunDjinniEntrance
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+                   s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SummonFx_RunCanvasMode1(void *action);
 void SummonFx_RunCanvasMode3(void *action);
@@ -118,11 +118,11 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   // Set up: the canvas (mode 7 with its prelude), the gold shells and the
   // smoke with their palettes, then the mode's palette.
   if (mode == 7) {
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
     Func_0815585c(effect, effect->side << 4 | 0x44, preludeOrigin, preludeSize);
     REG_BG2CNT = 0x785;
   } else {
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,
@@ -183,7 +183,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
   // The blitter pair for the caster's side; modes 4 and 7 clear the canvas
   // each frame and turn blending off, the others fade it to three quarters.
-  BattleFx_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(effect->side, draw);
   if (mode == 4 || mode == 7) {
     work->transferMode = 1;
     work->transferValue = 0;
@@ -192,7 +192,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08197880[mode * 4 + RECORD_FRAMES] + effect->count * 8;
   Audio_PlayCue(103);
 
@@ -232,7 +232,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
                   canvas, work->sheet + step * 768, position.x - 12,
                   position.y - 24, 24, 32);
             if (shot->variant == 0)
-              BattleFxKernels_IntegrateVector3(shot, 63, -0x8000);
+              BattleEffectKernels_IntegrateVector3(shot, 63, -0x8000);
             if (shot->y < 0) {
               s32 count;
               s32 n;
@@ -289,9 +289,9 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
                      Data_081978a8[picture], Data_081978ba[picture]);
         }
         if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0)
-          BattleFxKernels_IntegrateVector3(burst, 62, 0x800);
+          BattleEffectKernels_IntegrateVector3(burst, 62, 0x800);
         else
-          BattleFxKernels_IntegrateVector3(burst, 62, -0x8000);
+          BattleEffectKernels_IntegrateVector3(burst, 62, -0x8000);
         burst->variant++;
       }
     }
@@ -301,7 +301,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
 
@@ -315,6 +315,6 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     else
       SummonFx_RunCanvasMode3(effect);
   } else {
-    BattleFx_EndCanvasLayer();
+    BattleEffect_EndCanvasLayer();
   }
 }

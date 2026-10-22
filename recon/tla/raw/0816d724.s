@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Soul Shatter (kind 115).
-	.global BattleFx_RunSoulShatter
+	.global BattleEffect_RunSoulShatter
 	.thumb_func
-BattleFx_RunSoulShatter:
+BattleEffect_RunSoulShatter:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunSoulShatter:
 	ldr r3, [r3, #100]
 	movs r0, #1
 	str r3, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0816d78c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -369,7 +369,7 @@ BattleFx_RunSoulShatter:
 .L_0816da0c:
 	.4byte IwramCopyWords
 .L_0816da10:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816da14:
 	movs r0, #104
 	movs r1, #7
@@ -407,7 +407,7 @@ BattleFx_RunSoulShatter:
 	ldr r3, [sp, #36]
 	ldr r1, [sp, #12]
 	ldr r0, [r3, #4]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r4, #0
 	mov r8, r4
 	mov r5, r11
@@ -467,7 +467,7 @@ BattleFx_RunSoulShatter:
 	str r3, [r5, #24]
 	movs r1, #62
 	ldr r2, .L_0816dc44
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_0816dad6:
 	movs r2, #1
 	add r8, r2
@@ -538,7 +538,7 @@ BattleFx_RunSoulShatter:
 	adds r0, r6, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	mov r3, r8
 	adds r3, #32
 	cmp r9, r3
@@ -636,7 +636,7 @@ BattleFx_RunSoulShatter:
 .L_0816dc24:
 	ldr r0, .L_0816dc4c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -653,4 +653,4 @@ BattleFx_RunSoulShatter:
 .L_0816dc48:
 	.4byte gData_08197410
 .L_0816dc4c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

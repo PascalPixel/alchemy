@@ -22,7 +22,7 @@ Func_0814b350:
 	str r1, [sp, #64]
 	ldr r3, [r3, #100]
 	str r3, [sp, #56]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r2, [sp, #68]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -44,7 +44,7 @@ Func_0814b350:
 	eors r0, r3
 	adds r1, r6, #0
 	str r6, [sp, #52]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r0, [r5, #8]
 	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
@@ -286,7 +286,7 @@ Func_0814b350:
 .L_0814b59c:
 	.4byte 0x00000134
 .L_0814b5a0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814b5a4:
 	adds r0, r7, #0
 	bl SceneTransform_ApplyPitch
@@ -347,7 +347,7 @@ Func_0814b350:
 	adds r0, r6, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	mov r3, r10
 	adds r3, #30
 	cmp r9, r3
@@ -783,7 +783,7 @@ Func_0814b350:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #168
 	b .L_0814b9b8
 .L_0814b99c:
@@ -799,7 +799,7 @@ Func_0814b350:
 .L_0814b9b0:
 	.4byte Data_0819745e
 .L_0814b9b4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814b9b8:
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -115,7 +115,7 @@ Func_080d1f20:
 	subs r2, #6
 	strh r3, [r2]
 	movs r1, #0
-	bl BattleFx_ApplyColorToSourceBuffer
+	bl BattleEffect_ApplyColorToSourceBuffer
 	movs r0, #128
 	lsls r0, r0, #9
 	b .L_080d203c
@@ -145,9 +145,9 @@ Func_080d1f20:
 .L_080d203c:
 	adds r0, #8
 	movs r1, #0
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r0, #24
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 	ldrh r3, [r5]
 	ldr r2, .L_080d205c
 	movs r7, #120

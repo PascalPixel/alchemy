@@ -1,7 +1,7 @@
 // Draft (tla-en): listing 552 instructions, draft 556, common 396, differ 316.
 // Effect kind 78, written from the listing on ☀️'s skeleton; its nearest ☀️
-// shapes are BattleFx_RunPlasma (0.49) and
-// BattleFx_RunHelmSplitter (0.67 by calls), neither a twin.
+// shapes are BattleEffect_RunPlasma (0.49) and
+// BattleEffect_RunHelmSplitter (0.67 by calls), neither a twin.
 // Written 2026-10-15 (lane N2).
 // Left:
 // - the native frame is 120 bytes, here 124: one more spill slot, so
@@ -16,8 +16,8 @@
 // loop and the speed's +127 folded into its first assignment: 316;
 // work->particles in place of the ring pointer, frame declared first:
 // 320 (frame stays 124).
-// Resources 0xeb (BattleFx_SmallFlameSheet) and 0x148
-// (BattleFx_OrangePaletteB) need names in system/resource/directory.s
+// Resources 0xeb (BattleEffect_SmallFlameSheet) and 0x148
+// (BattleEffect_OrangePaletteB) need names in system/resource/directory.s
 // when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -63,8 +63,8 @@ extern const u8 Data_0819940c[][7];
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
 extern const u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -85,14 +85,14 @@ void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A ring of small flames. The flames circle the caster in a ring that rises
 // over its head from frame 8, each turning its own way through four cels.
@@ -101,7 +101,7 @@ void BattleFx_EndCanvasLayer(void);
 // sparks burst from each, and the screen shakes. The variant sets the
 // ring's rise, its flames and sparks and the shake; variant 2 also takes
 // the orange palette.
-void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   struct EffectPosition caster;
   struct EffectPosition midpoint;
   s32 vector[3];
@@ -118,7 +118,7 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
   s32 i;
   s32 member;
 
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
                              1);
@@ -127,10 +127,10 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   lift = 0;
   {
     s32 *life = Data_02010018;
@@ -243,7 +243,7 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
           draw[i & 1](canvas, sparkCels + gData_08197410[size - 1],
                       HI(spark->x) - size / 2, HI(spark->y) - size, size,
                       size * 2);
-          BattleFxKernels_IntegrateVector2(spark, 60, -0x4000);
+          BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
           spark->variant--;
         }
       }
@@ -258,6 +258,6 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

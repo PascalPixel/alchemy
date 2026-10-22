@@ -397,11 +397,11 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     // the targets' events from the frame the blow lands.
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (plan->presentationFlags & STAGING_SCENE)
-      BattleFx_RunSceneEffectFar(&work.effect);
+      BattleEffect_RunSceneEffectFar(&work.effect);
     else if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-      BattleFx_DispatchByIdRangeFar(&work.effect);
+      BattleEffect_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_RunTableEffectFar(&work.effect);
+      BattleEffect_RunTableEffectFar(&work.effect);
     BattleEvent_WaitForReady();
   }
 
@@ -602,9 +602,9 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (work.effect.kind != 0) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-        BattleFx_DispatchByIdRangeFar(&work.effect);
+        BattleEffect_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_RunTableEffectFar(&work.effect);
+        BattleEffect_RunTableEffectFar(&work.effect);
     }
     BattleEvent_WaitForReady();
     // After a critical hit every unit is shown again and the zoom ends.
@@ -688,7 +688,7 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattlePlan *input,
     WaitFrames(10);
     ObjMotRst(savedInput->targetIds[0]);
   } else {
-    BattleFx_DispatchByIdRangeFar(&work.effect);
+    BattleEffect_DispatchByIdRangeFar(&work.effect);
     BattleEvent_DispatchQueued();
     ObjMotRst(savedInput->targetIds[0]);
   }
@@ -779,9 +779,9 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
     if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-      BattleFx_DispatchByIdRangeFar(&work.effect);
+      BattleEffect_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_RunTableEffectFar(&work.effect);
+      BattleEffect_RunTableEffectFar(&work.effect);
   } else {
     WaitFrames(60);
   }
@@ -971,9 +971,9 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (work.effect.kind) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-        BattleFx_DispatchByIdRangeFar(&work.effect);
+        BattleEffect_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_RunTableEffectFar(&work.effect);
+        BattleEffect_RunTableEffectFar(&work.effect);
     } else {
       BattlePresentation_RestorePalette();
     }

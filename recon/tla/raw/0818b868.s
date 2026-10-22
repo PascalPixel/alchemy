@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Triple Chomp (kind 426).
-	.global BattleFx_RunTripleChomp
+	.global BattleEffect_RunTripleChomp
 	.thumb_func
-BattleFx_RunTripleChomp:
+BattleEffect_RunTripleChomp:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunTripleChomp:
 	str r1, [sp, #52]
 	ldr r2, [r5, #100]
 	str r2, [sp, #36]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0818b8cc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -55,14 +55,14 @@ BattleFx_RunTripleChomp:
 .L_0818b8cc:
 	.4byte 0x00001010
 .L_0818b8d0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0818b8d4:
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 	movs r0, #8
 	bl WaitFrames
 	movs r1, #23
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r0, .L_0818bc20
 	ldr r1, .L_0818bc24
@@ -251,7 +251,7 @@ BattleFx_RunTripleChomp:
 	lsls r3, r3, #12
 	movs r1, #1
 	lsls r2, r2, #10
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r1, [sp, #60]
 	movs r5, #8
 	movs r3, #36
@@ -390,7 +390,7 @@ BattleFx_RunTripleChomp:
 	adds r0, r7, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r4, [sp, #8]
 	mov r2, r11
 	ldrh r1, [r2, r4]
@@ -411,7 +411,7 @@ BattleFx_RunTripleChomp:
 	adds r0, r7, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r7, #24]
 	subs r3, #1
 	str r3, [r7, #24]
@@ -451,7 +451,7 @@ BattleFx_RunTripleChomp:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0818bc5c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #84
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -490,4 +490,4 @@ BattleFx_RunTripleChomp:
 .L_0818bc58:
 	.4byte gData_08197410
 .L_0818bc5c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

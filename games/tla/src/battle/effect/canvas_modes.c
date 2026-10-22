@@ -15,16 +15,16 @@
 #define ObjectDispatch_SetAnimationSpeedFar                                 \
   ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_SetAnimationSpeedFar)
 
-void BattleFx_RunCanvasModeByCount(s32 *effect) {
+void BattleEffect_RunCanvasModeByCount(s32 *effect) {
   if (*effect > 199)
     Func_0818f620(effect, 2);
   else
     Func_0818f620(effect, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleFx_RunCanvasMode0, Func_0818f620, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunCanvasMode0, Func_0818f620, 0)
 
-void BattleFx_RunCanvasMode3WithAction(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCanvasMode3WithAction(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;

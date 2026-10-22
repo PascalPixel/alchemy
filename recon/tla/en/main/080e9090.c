@@ -1,5 +1,5 @@
 // Near miss, differ 90 of 202 (2026-10-15, written from the listing; ☀️ has no
-// twin). Kind 27's BattleFx_RunViewSway (view_sway.c) is the same sway along the
+// twin). Kind 27's BattleEffect_RunViewSway (view_sway.c) is the same sway along the
 // other axis. What remains: the ROM's frame is 32 bytes and this one 28; the
 // ROM keeps a copy of the shake phase in its own slot for the object loop and
 // walks the objects and offsets with pointers that loop.c starts there, so
@@ -17,7 +17,7 @@
 #include "fixed_math.h"
 #include "view_move.h"
 
-// Field Psynergy kind 19 (BattleFx_Run's case 19).
+// Field Psynergy kind 19 (BattleEffect_Run's case 19).
 
 #define VIEW_MOVE_WORK_SIZE 0x2154
 
@@ -50,8 +50,8 @@ struct ObjectSprite {
 };
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_SetObjectTickMode(void *object, s32 mode);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
@@ -74,7 +74,7 @@ void Func_080e9090(void) {
   s32 frames;
 
   BattleEffect_InitializeSharedScene();
-  BattleFx_SetObjectTickMode(scene->mainObject, 0);
+  BattleEffect_SetObjectTickMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   WaitFrames(10);
@@ -144,6 +144,6 @@ void Func_080e9090(void) {
 
   Func_080e8c9c();
   ViewMove_RestoreNearbySprites();
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
 }

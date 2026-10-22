@@ -1,15 +1,15 @@
 // Draft of Func_081548d0, the body of a two-kind family: vines (mode 0) or
 // green pillars (mode 1) shoot up out of the ground, left and right in
 // turn four frames apart, each throwing up dust at its root. The number of
-// columns grows with the strength. Its wrappers BattleFx_RunGrowth (mode 0) and
-// BattleFx_RunPunji (mode 1) are C in fxmoded.c.
+// columns grows with the strength. Its wrappers BattleEffect_RunGrowth (mode 0) and
+// BattleEffect_RunPunji (mode 1) are C in fxmoded.c.
 
-// Twin: The Broken Seal's BattleFx_RunGrowingColumns (effect.c), with the same
+// Twin: The Broken Seal's BattleEffect_RunGrowingColumns (effect.c), with the same
 // tables, frame counts and fade.
 // Listing 514 instructions, draft 515, differ 237.
 
 // Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), blitters load through BattleFx_LoadBlitter with
+// Age never stores work->effect), blitters load through BattleEffect_LoadBlitter with
 // the Lost Age's mode numbers, the callback order is 0xc80 and the cue is
 // 133 where the twin has 132. The puff scan walks a plain pointer: the
 // twin's tagged reuse of length as the pointer is not the Lost Age's form.
@@ -50,7 +50,7 @@
 // The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
 #define PUFFS ((struct EffectStep *)Ram_MapCellBuffer)
 
-// Directory rows 0x144 BattleFx_GreenPillarSheet and 0x145 BattleFx_VineSheet.
+// Directory rows 0x144 BattleEffect_GreenPillarSheet and 0x145 BattleEffect_VineSheet.
 extern char ResourceId_GreenPillarSheet;
 extern char ResourceId_VineSheet;
 
@@ -67,10 +67,10 @@ extern u16 Data_08198414[]; // _PuffCells
 extern s8 Data_08198405[];  // _PuffWidths
 extern u8 Data_0819840c[];  // _PuffHeights
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void);
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -100,7 +100,7 @@ struct DualColumn {
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
 #define CUE_COLUMN 133
 
-// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
 void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
@@ -135,7 +135,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
   // 112 pixels right for the other side.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   if (mode == 1) {
@@ -148,9 +148,9 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
     REG_BG2X = -0x7000;
   }
   // Odd columns draw mirrored.
-  BattleFx_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleEffect_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   rectangle[0] = Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+  BattleEffect_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                          COMPOSITE_FLIP_X);
   secondSlot = Ram_HeapSlots->unkb8[1];
   /* FAKEMATCH: the columns draw through a second pointer to the pair,
@@ -188,7 +188,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = 1; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   frame = 0;
   if (duration != 0) {
@@ -326,8 +326,8 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
     } while (frame != duration);
   }
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

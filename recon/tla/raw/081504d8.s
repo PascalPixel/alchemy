@@ -20,7 +20,7 @@ SummonFx_RunCanvasEffect:
 	movs r0, #0
 	ldr r3, [r3, #96]
 	str r3, [sp, #48]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	movs r2, #128
 	ldr r3, .L_08150528
 	lsls r2, r2, #19
@@ -269,7 +269,7 @@ SummonFx_RunCanvasEffect:
 	ldr r0, [r5, #4]
 	adds r1, #64
 	str r1, [sp, #32]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r3, [sp, #52]
 	movs r5, #239
 	lsls r5, r5, #7
@@ -429,7 +429,7 @@ SummonFx_RunCanvasEffect:
 .L_08150814:
 	.4byte 0xfff00000
 .L_08150818:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815081c:
 	mov r3, r8
 	cmp r3, #23
@@ -558,7 +558,7 @@ SummonFx_RunCanvasEffect:
 	adds r0, r7, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	movs r1, #1
 	add r9, r1
 	mov r2, r9
@@ -617,7 +617,7 @@ SummonFx_RunCanvasEffect:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #108
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -635,4 +635,4 @@ SummonFx_RunCanvasEffect:
 .L_081509ac:
 	.4byte Data_08197500
 .L_081509b0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

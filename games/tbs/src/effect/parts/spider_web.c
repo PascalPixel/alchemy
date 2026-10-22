@@ -10,7 +10,7 @@
 // - The spider web spreads four mirrored quarters of a web over the targets
 //   and fades it in and out.
 
-/// The swirl swipe's modes (BattleFx_RunSwirlSwipe), each named for the
+/// The swirl swipe's modes (BattleEffect_RunSwirlSwipe), each named for the
 /// effect that plays it.
 enum SwirlSwipeMode {
   SWIRL_SWIPE_POISON_BEAT,  ///< lime; the target recoils at once, 48 frames
@@ -20,29 +20,29 @@ enum SwirlSwipeMode {
 /// A lime swirl sweeps across the first target and knocks it back.
 ///
 /// Abilities: Poison Beat (BATTLE_FX_POISON_BEAT).
-void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunSwirlSwipe(effect, SWIRL_SWIPE_POISON_BEAT);
+void BattleEffect_RunPoisonBeat(struct BattleEffectArgument *effect) {
+  BattleEffect_RunSwirlSwipe(effect, SWIRL_SWIPE_POISON_BEAT);
 }
 /// A magenta swirl sweeps across the first target and throws it into the air.
 ///
 /// Abilities: Spinning Beat (BATTLE_FX_SPINNING_BEAT).
-void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunSwirlSwipe(effect, SWIRL_SWIPE_SPINNING_BEAT);
+void BattleEffect_RunSpinningBeat(struct BattleEffectArgument *effect) {
+  BattleEffect_RunSwirlSwipe(effect, SWIRL_SWIPE_SPINNING_BEAT);
 }
 /// A swirl sweeps across the first target from the user's side in six images of
 /// four frames each: the first four from the swirl sheet, the last two from the
 /// tail sheet. The swipe lands on frame 8.
 ///
-/// Called by BattleFx_RunPoisonBeat and BattleFx_RunSpinningBeat. Decodes
-/// the tail sheet into Ram_MapCellBuffer, moves BG2X so the swipe crosses
-/// the target, and sets work->shakeFrames on the hit; Poison Beat loads its
-/// lime colours over the first 64 of the background palette, and the battle
+/// Called by BattleEffect_RunPoisonBeat and BattleEffect_RunSpinningBeat.
+/// Decodes the tail sheet into Ram_MapCellBuffer, moves BG2X so the swipe
+/// crosses the target, and sets work->shakeFrames on the hit; Poison Beat loads
+/// its lime colours over the first 64 of the background palette, and the battle
 /// shows its damage at once as the target recoils; in Spinning Beat the
 /// target flashes, its object is thrown up on frame 13 and the battle shows
 /// the damage as it lands on frame 65.
 ///
 /// mode: the swipe (enum SwirlSwipeMode).
-void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   struct MotionObject *object;
@@ -152,7 +152,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 ///
 /// Builds and frees its blitter four times a frame, one for each quarter's
 /// flip.
-void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition first;
   struct EffectPosition last;
   void *canvas;
@@ -174,7 +174,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   canvas = *(void **)size;
   work = *(struct BattleEffectWork **)(size - 4);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(2);
+  BattleEffect_BeginCanvasLayer(2);
   transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
   *(u16 *)transparent = 0x1000; // REG_BLDALPHA: invisible to start with
@@ -231,8 +231,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);
   // Finish: the blitter was freed each time it drew.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef SPIDER_WEB_FRAMES

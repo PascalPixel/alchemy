@@ -196,9 +196,9 @@ extern u16 gBattleFormation_LevelMatchedEnemies[];
 /// and then its scenes, ended by 0; a scene not listed takes the last backdrop
 /// (Battle_SelectSceneBackdrop).
 extern s32 gBattle_BackdropScenes[];
-/// The template BattleFx_BuildBlitter walks word by word to write a blitter
+/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
 /// (battle_effect_composite.s); none of it runs where it is.
-extern const u32 BattleFx_Composite[];
+extern const u32 BattleEffect_Composite[];
 /// The message voice's rate by message speed option: 1, 3, then 10
 /// (Ui_SetMessageVoiceFromActor).
 extern u8 gUi_RenderResultValues[];

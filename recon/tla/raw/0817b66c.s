@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Sabre Dance (kind 76).
-	.global BattleFx_RunSabreDance
+	.global BattleEffect_RunSabreDance
 	.thumb_func
-BattleFx_RunSabreDance:
+BattleEffect_RunSabreDance:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -18,7 +18,7 @@ BattleFx_RunSabreDance:
 	movs r0, #0
 	sub sp, #32
 	mov r10, r3
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_0817b718
@@ -89,7 +89,7 @@ BattleFx_RunSabreDance:
 .L_0817b718:
 	.4byte 0x00000139
 .L_0817b71c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817b720:
 	bl Random16
 	movs r3, #63
@@ -172,7 +172,7 @@ BattleFx_RunSabreDance:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 .L_0817b7ce:
 	adds r7, #1
 	adds r5, #6
@@ -209,7 +209,7 @@ BattleFx_RunSabreDance:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 .L_0817b81c:
 	movs r0, #32
 	bl Runtime_BumpAllocateAlternatePool
@@ -299,13 +299,13 @@ BattleFx_RunSabreDance:
 	adds r0, r5, #0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	b .L_0817b8ea
 .L_0817b8e0:
 	adds r0, r5, #0
 	movs r1, #64
 	ldr r2, .L_0817b968
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_0817b8ea:
 	adds r7, #1
 	adds r5, #28
@@ -340,7 +340,7 @@ BattleFx_RunSabreDance:
 .L_0817b930:
 	ldr r0, .L_0817b96c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -367,4 +367,4 @@ BattleFx_RunSabreDance:
 .L_0817b968:
 	.4byte 0xfffff000
 .L_0817b96c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

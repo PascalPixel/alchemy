@@ -24,7 +24,7 @@
 /// first 64 background colours and sets REG_BLDALPHA, the camera's yaw
 /// (Freeze Prism) and work->shakeFrames, and flashes the targets at each
 /// shatter.
-void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
   struct BattleEffectWork *work;
@@ -44,10 +44,10 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
-  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   // Trails keep half of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
@@ -178,12 +178,12 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
 /// green and blue each sway with the frame, out of step by their phases
 /// (1/65536ths of a turn), so the effect shimmers through colours.
 ///
-/// Called each frame by BattleFx_RunBind and BattleFx_RunUnusedTriangleStrike
-/// (bind.c), BattleFx_RunShiningStar (stars.c) and BattleFx_RunThor
-/// (thor.c), which all pass phases a third of a turn apart (0xaaab, 0x5555
-/// and 0); Thor passes twice its frame, for a faster shimmer. Level n's
-/// channel is (n + sway) / 2, the sway up to 32 levels either way, clamped to
-/// 0 to 31. Rewrites background colours 1 to 64.
+/// Called each frame by BattleEffect_RunBind and
+/// BattleEffect_RunUnusedTriangleStrike (bind.c), BattleEffect_RunShiningStar
+/// (stars.c) and BattleEffect_RunThor (thor.c), which all pass phases a third
+/// of a turn apart (0xaaab, 0x5555 and 0); Thor passes twice its frame, for a
+/// faster shimmer. Level n's channel is (n + sway) / 2, the sway up to 32
+/// levels either way, clamped to 0 to 31. Rewrites background colours 1 to 64.
 ///
 /// XXX: the 64 entries, black first, are copied to colours 1 to 64, so each
 /// level shows in the colour one above it and colour 64, the first of

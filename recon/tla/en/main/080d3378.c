@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 94 (☀️'s BattleFx_SpawnBurstParticle): the native
+// Near miss, differ 2 of 94 (☀️'s BattleEffect_SpawnBurstParticle): the native
 // stores the cleared action (strh r5) before it starts the priority flags'
 // address (adds r0, r6, #0); sched2 here ranks the address first by one
 // (store cost 1 where the native's model fits 2). The rate is a variable as
@@ -28,7 +28,7 @@ struct ParticleSprite {
 };
 
 // Kicks up a dust puff (object 285) where source stands, as ☀️'s
-// BattleFx_SpawnBurstParticle.
+// BattleEffect_SpawnBurstParticle.
 void Func_080d3378(struct ObjectRuntime *source, s32 param) {
   struct ObjectRuntime *object;
   struct ParticleSprite *child;

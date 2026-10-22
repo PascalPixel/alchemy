@@ -27,7 +27,7 @@ void Func_080e4730(void);
 void Func_080e9db4(void);
 void Func_080e87c4(void);
 
-void BattleFx_FinishSceneAndReleaseHeapBlock(void);
+void BattleEffect_FinishSceneAndReleaseHeapBlock(void);
 
 /// unk26a from party_state.h.
 struct PartyPauseView {
@@ -35,13 +35,13 @@ struct PartyPauseView {
   s16 pausedObject;
 };
 
-void BattleFx_ClearChildValueOnMismatch(void) {
+void BattleEffect_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
   if (scene->fieldKind == 2) {
     struct PartyPauseView *party;
 
-    BattleFx_FinishSceneAndReleaseHeapBlock();
+    BattleEffect_FinishSceneAndReleaseHeapBlock();
     party = (struct PartyPauseView *)&gPartyState;
     /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field
      * offset; read as a plain field the offset's first half is scheduled ahead

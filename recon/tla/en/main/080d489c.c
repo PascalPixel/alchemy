@@ -1,5 +1,5 @@
 // Near miss, differ 6 of 106: The Broken Seal twin
-// (BattleFx_ConfigureLinkedObject) with this game's calls: with flags & 3
+// (BattleEffect_ConfigureLinkedObject) with this game's calls: with flags & 3
 // zero it destroys the object's linked effect; otherwise (mode 2, or when the
 // linked effect is outside animation 0x108) it creates effect object 264 at
 // the object and links it, mode 1 keeping it as the object's resource and
@@ -40,10 +40,10 @@ void ObjectDispatch_InitializeFar(struct LinkedEffectObject *object,
 void Object_SetMode(struct LinkedEffectObject *object, s32 mode);
 void Object_Destroy(struct LinkedEffectObject *object);
 s32 Object_IsOutsideAnimation108(struct LinkedEffectObject *object);
-void BattleFx_CopyLinkedObjectPosition(void);
+void BattleEffect_CopyLinkedObjectPosition(void);
 extern const u8 gData_080f341c[];
 
-void BattleFx_ConfigureLinkedObject(s32 id, s32 flags) {
+void BattleEffect_ConfigureLinkedObject(s32 id, s32 flags) {
   struct LinkedEffectObject *object = ObjectTable_Get(id);
   struct LinkedEffectObject *child;
   struct LinkedEffectVisual *visual;
@@ -88,7 +88,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags) {
 
   child->resourceId = id;
   child->value55 = 0;
-  child->callback = BattleFx_CopyLinkedObjectPosition;
+  child->callback = BattleEffect_CopyLinkedObjectPosition;
   visual = child->visual;
   visual->value26 = 0;
   child->resource = object;

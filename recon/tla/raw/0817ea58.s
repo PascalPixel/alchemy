@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Daedalus (scene kind 21).
-	.global BattleFx_RunDaedalus
+	.global BattleEffect_RunDaedalus
 	.thumb_func
-BattleFx_RunDaedalus:
+BattleEffect_RunDaedalus:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -29,12 +29,12 @@ BattleFx_RunDaedalus:
 	ldr r7, .L_0817eb0c
 	ldr r3, [r5, #36]
 	str r3, [sp, #128]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	bl Func_0813ba50
 	bl Func_08179e6c
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r2, #239
 	lsls r2, r2, #7
@@ -91,7 +91,7 @@ BattleFx_RunDaedalus:
 .L_0817eb0c:
 	.4byte 0xffe30000
 .L_0817eb10:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817eb14:
 	.4byte gBgScroll
 .L_0817eb18:
@@ -802,7 +802,7 @@ BattleFx_RunDaedalus:
 	str r0, [sp, #84]
 	ldr r1, [sp, #84]
 	movs r0, #0
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r3, #238
 	lsls r3, r3, #7
 	movs r2, #238
@@ -2581,7 +2581,7 @@ BattleFx_RunDaedalus:
 	adds r0, r5, #0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -2632,7 +2632,7 @@ BattleFx_RunDaedalus:
 	adds r0, r5, #0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -3856,7 +3856,7 @@ BattleFx_RunDaedalus:
 .L_081807f8:
 	adds r1, #255
 	movs r0, #1
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r5, #238
 	ldr r6, .L_08180a6c
 	movs r2, #0
@@ -4137,7 +4137,7 @@ BattleFx_RunDaedalus:
 	movs r2, #0
 	movs r3, #0
 	str r4, [sp, #8]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r3, [sp, #148]
 	movs r1, #7
 	ldrsh r0, [r5, r3]
@@ -4231,7 +4231,7 @@ BattleFx_RunDaedalus:
 	strh r3, [r2, #18]
 	movs r2, #0
 	str r4, [sp, #8]
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	mov r1, r9
 	ldr r3, [r1]
 	mov r7, r11
@@ -4371,7 +4371,7 @@ BattleFx_RunDaedalus:
 	adds r0, r5, #0
 	movs r1, #56
 	ldr r2, .L_08180c8c
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -4421,7 +4421,7 @@ BattleFx_RunDaedalus:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #268
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -4435,4 +4435,4 @@ BattleFx_RunDaedalus:
 .L_08180c8c:
 	.4byte 0xffffe000
 .L_08180c90:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

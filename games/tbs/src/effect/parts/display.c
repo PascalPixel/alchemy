@@ -14,7 +14,7 @@
 /// ends of Ice and Douse (falling.c). Writes BLDCNT, BLDALPHA, the window
 /// registers and WININ and WINOUT, queues DISPCNT for two frames later and
 /// waits one frame.
-void BattleFx_ConfigureEffectDisplay(void) {
+void BattleEffect_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
   // 14/16 of the top layer over all of the bottom, for when blending is on.
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
@@ -31,11 +31,11 @@ void BattleFx_ConfigureEffectDisplay(void) {
 /// Scrolls BG1 by (scrollStepX, scrollStepY) once every scrollInterval
 /// frames.
 ///
-/// Runs each frame as a scheduler callback added by BattleFx_RunAtalanta and
-/// BattleFx_RunThor, which set the work block's scroll fields first and
+/// Runs each frame as a scheduler callback added by BattleEffect_RunAtalanta
+/// and BattleEffect_RunThor, which set the work block's scroll fields first and
 /// remove it before they return. Counts work->scrollTimer and moves
 /// gBgScroll[1].
-void BattleFx_AdvanceScrollOnInterval(void) {
+void BattleEffect_AdvanceScrollOnInterval(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   u32 *timer = (u32 *)&work->scrollTimer;
 
@@ -52,9 +52,9 @@ void BattleFx_AdvanceScrollOnInterval(void) {
 /// it by (scrollStepX, scrollStepY).
 ///
 /// Runs each frame as a scheduler callback added by
-/// BattleFx_RunParticleStreams, which removes it before it returns. Counts
+/// BattleEffect_RunParticleStreams, which removes it before it returns. Counts
 /// work->scrollTimer.
-void BattleFx_AdvanceBg2OnInterval(void) {
+void BattleEffect_AdvanceBg2OnInterval(void) {
   s32 timer;
   struct BattleEffectWork *work;
 
@@ -75,11 +75,11 @@ void BattleFx_AdvanceBg2OnInterval(void) {
 /// PARTICLES (Ram_MapCellBuffer), so window 0's edges follow the per-line
 /// table the effect drew there.
 ///
-/// Runs each frame as a scheduler callback added by BattleFx_RunIce and
-/// BattleFx_RunDouse, which remove it before they return. Stopping the
+/// Runs each frame as a scheduler callback added by BattleEffect_RunIce and
+/// BattleEffect_RunDouse, which remove it before they return. Stopping the
 /// channel first makes each frame's transfer start again from the table's
 /// first line.
-void BattleFx_ArmWin0HBlankDma(void) {
+void BattleEffect_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
 
   Dma_Stop(channel);

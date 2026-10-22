@@ -4,12 +4,12 @@
 #include "stub.inc"
 	.global FarCall_EffectTable
 FarCall_EffectTable:
-	export BattleFx_BuildBlitterFar, BattleFx_BuildBlitter
-	export BattleFx_DispatchByIdRangeFar, BattleFx_DispatchByIdRange
-	export BattleFx_RunSceneEffectFar, BattleFx_RunSceneEffect
-	export BattleFx_RunTableEffectFar, BattleFx_RunTableEffect
-	export BattleFx_RunElementPillarFar, BattleFx_RunElementPillar
-	export BattleFx_RunShatteringOpeningFar, BattleFx_RunShatteringOpening
-	export BattleFx_RunElementBurstFar, BattleFx_RunElementBurst
-	export BattleFx_StartElementStreaksFar, BattleFx_StartElementStreaks
-	export BattleFx_EndElementStreaksFar, BattleFx_EndElementStreaks
+	export BattleEffect_BuildBlitterFar, BattleEffect_BuildBlitter
+	export BattleEffect_DispatchByIdRangeFar, BattleEffect_DispatchByIdRange
+	export BattleEffect_RunSceneEffectFar, BattleEffect_RunSceneEffect
+	export BattleEffect_RunTableEffectFar, BattleEffect_RunTableEffect
+	export BattleEffect_RunElementPillarFar, BattleEffect_RunElementPillar
+	export BattleEffect_RunShatteringOpeningFar, BattleEffect_RunShatteringOpening
+	export BattleEffect_RunElementBurstFar, BattleEffect_RunElementBurst
+	export BattleEffect_StartElementStreaksFar, BattleEffect_StartElementStreaks
+	export BattleEffect_EndElementStreaksFar, BattleEffect_EndElementStreaks

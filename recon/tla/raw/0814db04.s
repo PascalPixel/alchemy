@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Boreas (scene kind 10).
-	.global BattleFx_RunBoreas
+	.global BattleEffect_RunBoreas
 	.thumb_func
-BattleFx_RunBoreas:
+BattleEffect_RunBoreas:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,7 +26,7 @@ BattleFx_RunBoreas:
 	ldr r2, [r5, #100]
 	str r3, [sp, #24]
 	str r2, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_0814db74
 	movs r3, #160
@@ -63,7 +63,7 @@ BattleFx_RunBoreas:
 .L_0814db7c:
 	.4byte 0x0000f0f0
 .L_0814db80:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814db84:
 	strh r3, [r2]
 	ldr r2, [sp, #44]
@@ -81,12 +81,12 @@ BattleFx_RunBoreas:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r4, [r5, #104]
 	movs r1, #35
 	movs r0, #188
 	str r4, [sp, #36]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r2, .L_0814dc3c
 	ldr r5, [r5]
@@ -99,7 +99,7 @@ BattleFx_RunBoreas:
 	adds r7, #240
 	adds r3, r5, r7
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_0814dc40
@@ -111,7 +111,7 @@ BattleFx_RunBoreas:
 	adds r1, #255
 	movs r0, #9
 	movs r2, #1
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	ldr r3, .L_0814dc24
 	movs r2, #128
 	lsls r2, r2, #19
@@ -253,7 +253,7 @@ BattleFx_RunBoreas:
 .L_0814dd08:
 	.4byte Data_02010002
 .L_0814dd0c:
-	.4byte BattleFx_BuildWindowEdgeTable
+	.4byte BattleEffect_BuildWindowEdgeTable
 .L_0814dd10:
 	ldr r6, [sp, #40]
 	cmp r6, #103
@@ -1325,7 +1325,7 @@ BattleFx_RunBoreas:
 	adds r0, r6, #0
 	movs r1, #64
 	lsls r2, r2, #9
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r7, #6
 	ldrsh r3, [r6, r7]
 	cmp r3, #120
@@ -1572,7 +1572,7 @@ BattleFx_RunBoreas:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0814e740
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #336
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1581,4 +1581,4 @@ BattleFx_RunBoreas:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0814e740:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

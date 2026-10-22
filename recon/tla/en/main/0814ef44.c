@@ -1,7 +1,7 @@
-// Draft of BattleFx_RunHealingMotes, the body behind the eleven wrappers of
+// Draft of BattleEffect_RunHealingMotes, the body behind the eleven wrappers of
 // series_a.c (18 effect kinds).
 
-// Twin: The Broken Seal's BattleFx_RunHealingMotes (effect.c), grown from seven
+// Twin: The Broken Seal's BattleEffect_RunHealingMotes (effect.c), grown from seven
 // modes to fourteen. The Lost Age adds:
 // - a Djinni of any element for the prelude (Func_0815585c takes the
 // element, the side and the anchor packed into one word: Venus for
@@ -16,9 +16,9 @@
 // or 72, a later hit (frame 36, 24 or 41 by mode), and motes three
 // quarters as far apart.
 // Resources not yet named in directory.s, by row and asset: 0x17e
-// BattleFx_SparkleDots, 0x190 BattleFx_BlueBeamSheet, 0x177
-// BattleFx_IceShardSheet, 0x184 BattleFx_BlastSheet, 0x148
-// BattleFx_OrangePaletteB, 0x166 BattleFx_CyanPalette and the eight Djinn
+// BattleEffect_SparkleDots, 0x190 BattleEffect_BlueBeamSheet, 0x177
+// BattleEffect_IceShardSheet, 0x184 BattleEffect_BlastSheet, 0x148
+// BattleEffect_OrangePaletteB, 0x166 BattleEffect_CyanPalette and the eight Djinn
 // sheets 0x150-0x157.
 
 // Draft: differ 299 of 1243 (draft 1240).
@@ -56,19 +56,19 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_FetchRectangleBlitters(
+void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+    DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleFx_RunDjinniEntrance
-void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
+                   s32 *target);  // BattleEffect_RunDjinniEntrance
+void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
 
 // Func_0815585c's packed argument: the Djinni's element, the side, and
@@ -99,9 +99,9 @@ extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_JupiterDjinnSmallSheet;
-extern u16 gData_08197410[]; // gBattleFx_MoteCells
-extern u16 Data_0819744c[];  // gBattleFx_PuffCells
-extern u8 Data_0819745e[];   // gBattleFx_PuffSizes
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern u16 Data_0819744c[];  // gBattleEffect_PuffCells
+extern u8 Data_0819745e[];   // gBattleEffect_PuffSizes
 
 // Motes of light gather around each target in turn, eight frames apart,
 // turning as they close in on its middle; a healing chime sounds as they
@@ -114,7 +114,7 @@ extern u8 Data_0819745e[];   // gBattleFx_PuffSizes
 // 40 pixels above it, turn about it by the mode's axes, and close in two
 // pixels a frame (modes 3-5 let them fade instead, mode 7 throws them).
 // The variant chooses 32, 64 or 128 motes a target.
-void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
+void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 total;
@@ -138,7 +138,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   shift = 0;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   if (mode == 13)
     work->fadeFrames = 24;
 
@@ -219,7 +219,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   }
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + DJINNI_SHEET);
-  BattleFx_FetchRectangleBlitters(effect->side,
+  BattleEffect_FetchRectangleBlitters(effect->side,
                                   draw = blit); // [0] MAX, [1] ADDITIVE
 
   // Scatter the motes; the mode decides how, and how long the effect is.
@@ -336,7 +336,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     limit = 16;
   work->transferMode = 2;   // each transfer fades the canvas: a trail
   work->transferValue = 75; // to 3/4
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -495,8 +495,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

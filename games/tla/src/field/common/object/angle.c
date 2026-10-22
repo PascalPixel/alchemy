@@ -22,7 +22,7 @@ void Event_NoOp(void);
 // while (y > ground) { WaitFrames(1); if (++i >= 180) break; } agscc keeps
 // the test at the top and jumps back to it (differ 18), where the native has
 // the test copied below the body as loop rotation would place it.
-void BattleFx_RunRisingObjectSequence(s32 id, s32 mode, s32 particle) {
+void BattleEffect_RunRisingObjectSequence(s32 id, s32 mode, s32 particle) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 z = object->z;
   s32 x = (object->x & 0xfff00000) + 0x80000;

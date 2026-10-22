@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Diamond Berg (kind 84).
-	.global BattleFx_RunDiamondBerg
+	.global BattleEffect_RunDiamondBerg
 	.thumb_func
-BattleFx_RunDiamondBerg:
+BattleEffect_RunDiamondBerg:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunDiamondBerg:
 	str r1, [sp, #32]
 	ldr r2, [r6, #100]
 	mov r8, r2
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r3, .L_0816bcd8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -41,7 +41,7 @@ BattleFx_RunDiamondBerg:
 	asrs r3, r3, #1
 	movs r0, #104
 	str r3, [sp, #20]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r2, [sp, #36]
 	ldr r6, [r6, #104]
 	movs r3, #224
@@ -155,7 +155,7 @@ BattleFx_RunDiamondBerg:
 	movs r2, #36
 	ldrsh r1, [r1, r2]
 	movs r2, #8
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 .L_0816bdae:
 	mov r3, r9
 	cmp r3, #2
@@ -217,7 +217,7 @@ BattleFx_RunDiamondBerg:
 	movs r2, #36
 	ldrsh r1, [r1, r2]
 	movs r2, #16
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 	b .L_0816be64
 	.2byte 0x0000
 .L_0816be28:
@@ -233,7 +233,7 @@ BattleFx_RunDiamondBerg:
 .L_0816be3c:
 	.4byte 0x000000c2
 .L_0816be40:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816be44:
 	ldr r4, [sp, #40]
 	movs r1, #4
@@ -438,7 +438,7 @@ BattleFx_RunDiamondBerg:
 	adds r0, r7, #0
 	movs r1, #64
 	lsls r2, r2, #7
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r0, #6
 	ldrsh r3, [r7, r0]
 	cmp r3, #104
@@ -744,7 +744,7 @@ BattleFx_RunDiamondBerg:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -754,4 +754,4 @@ BattleFx_RunDiamondBerg:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0816c270:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

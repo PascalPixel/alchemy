@@ -1,16 +1,16 @@
-// Draft of BattleFx_RunBolt, effect kind 16: a bolt of lightning strikes each
+// Draft of BattleEffect_RunBolt, effect kind 16: a bolt of lightning strikes each
 // target in turn, eight frames apart, throwing sparks that bounce on the
 // ground and flashing glints of light around the target.
 
-// Twin: The Broken Seal's BattleFx_RunBolt (effect.c), the same
+// Twin: The Broken Seal's BattleEffect_RunBolt (effect.c), the same
 // kind, with the same tables, frame counts and cues.
 // Listing 552 instructions, draft 556, differ 144 (204 without the tagged
 // glint pointers).
 
 // Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), the blitter loads through BattleFx_LoadBlitter
+// Age never stores work->effect), the blitter loads through BattleEffect_LoadBlitter
 // with the Lost Age's mode numbers (max is 1), the glint blitter loads
-// through Func_08196404 (the twin's BattleFx_BuildBlitter), the callback
+// through Func_08196404 (the twin's BattleEffect_BuildBlitter), the callback
 // order is 0xc80.
 
 // What remains:
@@ -42,8 +42,8 @@
 // The sparks: 128 for each target at the map cell buffer.
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-// Directory rows 0x192 BattleFx_TornadoSheet (named), 0x188
-// BattleFx_LightningBoltSheet and 0x134 Resource_Data134 (named), the
+// Directory rows 0x192 BattleEffect_TornadoSheet (named), 0x188
+// BattleEffect_LightningBoltSheet and 0x134 Resource_Data134 (named), the
 // spark sprites the twin calls ParticleSpritesA.
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_LightningBoltSheet;
@@ -55,19 +55,19 @@ extern u8 Data_08198462[];
 // The Broken Seal's gBolt_GlintFlips and _GlintModes.
 extern u8 Data_0819846e[];
 extern u8 Data_08198472[];
-// The Broken Seal's gBattleFx_GlintCells, _GlintCellWidths and
-// _GlintCellHeights, and gBattleFx_MoteCells.
+// The Broken Seal's gBattleEffect_GlintCells, _GlintCellWidths and
+// _GlintCellHeights, and gBattleEffect_MoteCells.
 extern u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void);
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -84,7 +84,7 @@ void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *pos);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
 #define BOLT_INTERVAL 8
@@ -94,13 +94,13 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 #define CUE_THUNDER 138
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
 
-// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_MAX (1 << 4)
 
 // The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 
-void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -117,8 +117,8 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(1);
-  BattleFx_LoadBlitter(104, BLITTER_MAX | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_LoadBlitter(104, BLITTER_MAX | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
@@ -130,7 +130,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
     work->particles[j].variant = -1;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(CUE_THUNDER);
 
   for (frame = 0; frame != effect->count * BOLT_INTERVAL + 40; frame++) {
@@ -225,7 +225,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        BattleFxKernels_IntegrateVector2(spark, 60, 0x1000);
+        BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
         if (spark->y > GROUND_Y << 16) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < 127 << 16) && spark->y >= 0) {
@@ -245,7 +245,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

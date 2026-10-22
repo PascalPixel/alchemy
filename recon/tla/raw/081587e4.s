@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Ground (kind 203).
-	.global BattleFx_RunGround
+	.global BattleEffect_RunGround
 	.thumb_func
-BattleFx_RunGround:
+BattleEffect_RunGround:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunGround:
 	ldr r3, [r3, #48]
 	movs r0, #0
 	str r3, [sp, #32]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	ldr r2, [sp, #56]
 	movs r3, #64
 	ldr r1, [r2, #4]
@@ -46,7 +46,7 @@ BattleFx_RunGround:
 	bne .L_08158848
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08158850
 	.2byte 0x0000
 .L_08158844:
@@ -54,7 +54,7 @@ BattleFx_RunGround:
 .L_08158848:
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08158850:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -199,12 +199,12 @@ BattleFx_RunGround:
 	bne .L_0815897e
 	movs r0, #188
 	movs r1, #7
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08158986
 .L_0815897e:
 	movs r0, #188
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08158986:
 	ldr r2, [sp, #44]
 	cmp r2, #3
@@ -434,7 +434,7 @@ BattleFx_RunGround:
 .L_08158b40:
 	.4byte 0x00000157
 .L_08158b44:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08158b48:
 	.4byte Data_08198524
 .L_08158b4c:
@@ -620,7 +620,7 @@ BattleFx_RunGround:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -638,4 +638,4 @@ BattleFx_RunGround:
 .L_08158cd8:
 	.4byte 0x0013ffff
 .L_08158cdc:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

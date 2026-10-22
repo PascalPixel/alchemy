@@ -37,7 +37,7 @@ void WaitFrames(s32 frames);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void Object_Destroy(struct ObjectRuntime *object);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
   return from + (to - from) * step / 10;
@@ -127,5 +127,5 @@ void Func_080e03cc(void) {
     step++;
   } while (step < steps);
   Object_Destroy(object);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

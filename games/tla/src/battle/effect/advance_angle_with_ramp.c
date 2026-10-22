@@ -3,7 +3,7 @@
 #include "motobj.h"
 #include "object_runtime.h"
 
-void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object) {
+void BattleEffect_AdvanceAngleWithRamp(struct ObjectRuntime *object) {
   u32 step;
 
   step = object->action * 0x50;
@@ -15,7 +15,7 @@ void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object) {
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
 /// frame; released once its scale falls below 0x3000.
 // As ☀️'s FieldFx_UpdateDescendingObject.
-void BattleFx_UpdateDescendingObject(struct ObjectRuntime *obj) {
+void BattleEffect_UpdateDescendingObject(struct ObjectRuntime *obj) {
   u32 scale;
   u32 scaleX;
   /* FAKEMATCH(pin): the shrink step pinned to r1 and held by a volatile

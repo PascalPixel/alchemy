@@ -18,7 +18,7 @@ struct Cur {
 extern u8 gData_03001f2c[];
 
 u8 *BattleActGet(s32 action);
-s32 BattleFx_HasMatchingEvent5Far(u8 effect);
+s32 BattleEffect_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   void *menu = Ram_HeapSlots->menuRuntime;

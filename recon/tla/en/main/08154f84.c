@@ -1,14 +1,14 @@
-// Draft of BattleFx_RunThorn, effect kind 5: thorns burst out of the ground one
+// Draft of BattleEffect_RunThorn, effect kind 5: thorns burst out of the ground one
 // after another, eight frames apart, each throwing up two frames of dust.
 
-// Twin: The Broken Seal's BattleFx_RunThorn (effect.c), the same kind.
+// Twin: The Broken Seal's BattleEffect_RunThorn (effect.c), the same kind.
 // Listing 453 instructions, draft 453, differ 50 with two tagged devices
 // (the heap base barrier and the spelled-out lean); 61 with the barrier
 // removed, 84 with age stepped as its own induction variable instead of
 // the lean's spelling.
 
 // Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), blitters load through BattleFx_LoadBlitter with
+// Age never stores work->effect), blitters load through BattleEffect_LoadBlitter with
 // the Lost Age's mode numbers, the callback order is 0xc80 and the cues are
 // 133 where the twin has 132.
 
@@ -50,7 +50,7 @@
 // The dust puffs, 1024 particles at the map cell buffer.
 #define PUFFS ((struct EffectStep *)Ram_MapCellBuffer)
 
-// Directory row 0x13f, BattleFx_ThornSheet: the large thorn at 0, the
+// Directory row 0x13f, BattleEffect_ThornSheet: the large thorn at 0, the
 // small thorn at 0xf00 and the dust cels after them.
 extern char ResourceId_ThornSheet;
 
@@ -67,10 +67,10 @@ extern u8 Data_0819844c[];
 extern u16 Data_08198454[];
 extern s8 Data_08198445[];
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void);
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -90,10 +90,10 @@ void WaitFrames(s32 frames);
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
 #define CUE_THORN 133
 
-// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
-void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
+void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
@@ -117,7 +117,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0x1010;
@@ -125,14 +125,14 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  BattleFx_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleEffect_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw = ((DrawRectangle *)heap)[26];
-  BattleFx_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+  BattleEffect_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                          COMPOSITE_FLIP_X);
   drawFlip = ((DrawRectangle *)heap)[47];
   work->transferMode = 1; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08198442[effect->variant] * THORN_INTERVAL + 56;
 
   for (i = 0; i != PUFF_COUNT; i++) {
@@ -256,8 +256,8 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   }
 
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -1,4 +1,4 @@
-// Near miss, differ 43 of 239 (2026-10-18): BattleFx_LoadActionEffectResources,
+// Near miss, differ 43 of 239 (2026-10-18): BattleEffect_LoadActionEffectResources,
 // from ☀️'s function of the same name (games/tbs/src/object/psynergy_effects.c)
 // with ⚓️'s 0x7f4-byte effect work and seven lit scenes (SceneId_ symbols:
 // the listing loads each id from the pool). Left: the native loads the event
@@ -45,14 +45,14 @@ struct EffectWork {
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 struct BattleAct *BattleActGet(s32 actionId);
 s32 ResourceTable_CountFreeBlocks(void);
-void BattleFx_SetupObjectPair(s32 userId, s32 targetId);
-void BattleFx_StartArcEffect(void);
-void BattleFx_UpdateAllEffectSlots(void);
+void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
+void BattleEffect_StartArcEffect(void);
+void BattleEffect_UpdateAllEffectSlots(void);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 
 #define HEAP_SLOT_FX 224
 
-void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
+void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct EffectWork *work;
@@ -96,7 +96,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
     *((u8 *)work + 0x41) = 1;
   if (gPartyState.map == (s32)&SceneId_Ov6A6Room1)
     *((u8 *)work + 0x41) = 1;
-  BattleFx_SetupObjectPair(gPartyState.currentOwner, -1);
+  BattleEffect_SetupObjectPair(gPartyState.currentOwner, -1);
   if (work->animation != 8)
     event[0xca5] = 0;
   if (work->animation != 28)
@@ -106,6 +106,6 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   event[0xd33] = 0;
   event[0xd38] = 0;
   event[0xd30] = 255;
-  BattleFx_StartArcEffect();
-  Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0x480);
+  BattleEffect_StartArcEffect();
+  Scheduler_AddOrUpdateCallback(BattleEffect_UpdateAllEffectSlots, 0x480);
 }

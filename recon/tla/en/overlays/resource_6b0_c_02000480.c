@@ -56,7 +56,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                 gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
-  effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocityX = velocityX;
   effect->velocityY = velocityY;
   effect->velocityZ = velocityZ;

@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunSpiderWeb, effect kind 345: a spider web over the targets.
+// Draft of BattleEffect_RunSpiderWeb, effect kind 345: a spider web over the targets.
 
 // On screen: a web fades in over the targets, centred between the first
 // and the last, drawn as four 32-pixel quarters (the one picture flipped
@@ -16,7 +16,7 @@
 // prelude is cleared, the palette fade is removed, and
 // SummonFx_RunCanvasMode1 takes over (the canvas layer stays open).
 
-// Port of The Broken Seal's BattleFx_RunSpiderWeb (kind 345 there too),
+// Port of The Broken Seal's BattleEffect_RunSpiderWeb (kind 345 there too),
 // reworked in The Lost Age: the middle comes from Func_0815e22c, the
 // blitter mode is a constant, and the effect ends by chaining into the
 // summon canvas effect instead of closing the canvas.
@@ -32,7 +32,7 @@
 // Tried:
 // ☀️'s body, reworked as the listing shows, with ☀️'s device
 // (size first holding the blend register's address)      172 (trial 0)
-// plain, BattleFx_LoadBlitter returning s32                         166
+// plain, BattleEffect_LoadBlitter returning s32                         166
 // declaration order, a greedy sweep                          166
 // ☀️'s other device (the frame pinned to r9) does not apply:
 // the native frame is in r7
@@ -57,7 +57,7 @@
 #define HEAP_BLITTER 104
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -66,18 +66,18 @@ extern char ResourceId_SpiderWebSheet;
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
 // The middle between the first and the last target.
 void Func_0815e22c(struct EffectPosition *middle);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Steps the background palette fade.
 void Palette_StepFadeTransfer(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
-// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // Flashes an actor in a palette for some frames.
@@ -90,7 +90,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void SummonFx_RunCanvasMode1(void *action);
 
-void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition middle;
   void *canvas;
   struct BattleEffectWork *work;
@@ -102,7 +102,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleFx_BeginCanvasLayer(2);
+  BattleEffect_BeginCanvasLayer(2);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1000;
   Func_0815e22c(&middle);
@@ -111,7 +111,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(143);
   blend = &REG_BLDALPHA;
 
@@ -130,21 +130,21 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
     // The four quarters: the one picture as it is, mirrored, flipped, and
     // both.
-    BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
     ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 33, 41, size,
                                              size);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
     ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 64, 41, size,
                                              size);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_Y));
     ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 33, 72, size,
                                              size);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP));
     ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 64, 72, size,
                                              size);
@@ -164,7 +164,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   } while (frame != 63);
 
   // Teardown: clear both canvases and hand over to the summon canvas.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
   effect->prelude = 0;

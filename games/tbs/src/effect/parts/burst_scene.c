@@ -10,45 +10,45 @@
 ///
 /// Abilities: Gust (BATTLE_FX_GUST); Rapid Smash, Sonic Smash, Slice
 /// (BATTLE_FX_GUST_310).
-void BattleFx_RunGust(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGust(struct BattleEffectArgument *effect) {
   if (effect->variant == EFFECT_VARIANT_BASIC) {
-    BattleFx_RunBurstScene(effect, BURST_SCENE_GUST);
+    BattleEffect_RunBurstScene(effect, BURST_SCENE_GUST);
     return;
   }
   if (effect->variant == EFFECT_VARIANT_STRONGER) {
-    BattleFx_RunBurstScene(effect, BURST_SCENE_GUST_DOUBLE);
+    BattleEffect_RunBurstScene(effect, BURST_SCENE_GUST_DOUBLE);
     return;
   }
-  BattleFx_RunBurstScene(effect, BURST_SCENE_GUST_TRIPLE);
+  BattleEffect_RunBurstScene(effect, BURST_SCENE_GUST_TRIPLE);
 }
 
 /// The user strikes the first target five times.
 ///
 /// Abilities: Bear Claw (BATTLE_FX_BEAR_CLAW); Counterstrike
 /// (BATTLE_FX_BEAR_CLAW_342).
-void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
+void BattleEffect_RunBearClaw(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
 }
 
 /// Ransack plays the same five strikes as Bear Claw.
 ///
 /// Abilities: Ransack (BATTLE_FX_RANSACK); Mad Dash (BATTLE_FX_RANSACK_343).
-void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
+void BattleEffect_RunRansack(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
 }
 
 /// Seven strikes land on the first target in the lime palette.
 ///
 /// Abilities: Bacteria Rush (BATTLE_FX_BACTERIA_RUSH).
-void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, BURST_SCENE_BACTERIA_RUSH);
+void BattleEffect_RunBacteriaRush(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstScene(effect, BURST_SCENE_BACTERIA_RUSH);
 }
 
 /// Nine strikes land on the first target in the blue palette.
 ///
 /// Abilities: Freebite Rush (BATTLE_FX_FREEBITE_RUSH).
-void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, BURST_SCENE_FREEBITE_RUSH);
+void BattleEffect_RunFreebiteRush(struct BattleEffectArgument *effect) {
+  BattleEffect_RunBurstScene(effect, BURST_SCENE_FREEBITE_RUSH);
 }
 
 /// One, two or three strikes land on the first target as the variant grows
@@ -56,16 +56,16 @@ void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: Flying Attack (BATTLE_FX_FLYING_ATTACK); Swift Strike
 /// (BATTLE_FX_FLYING_ATTACK_329).
-void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == EFFECT_VARIANT_BASIC) {
-    BattleFx_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK);
+    BattleEffect_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK);
     return;
   }
   if (effect->variant == EFFECT_VARIANT_STRONGER) {
-    BattleFx_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_DOUBLE);
+    BattleEffect_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_DOUBLE);
     return;
   }
-  BattleFx_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_TRIPLE);
+  BattleEffect_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_TRIPLE);
 }
 
 /// The bytes of a gBurstScene_Records row, one row a mode.
@@ -104,7 +104,7 @@ enum BurstField {
 ///         Djinni over the user, the 84-frame entrance
 ///         (DJINNI_ENTRANCE_LONG).
 /// mode: the row of gBurstScene_Records (enum BurstSceneMode).
-void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
   struct EffectPosition screen;
@@ -129,12 +129,12 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   sprites = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
-                               work->effect->side, DJINNI_ANCHOR_OVER_USER,
-                               &screenX, &screenY);
+    BattleEffect_RunDjinniEntrance(
+        effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG, work->effect->side,
+        DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
@@ -313,8 +313,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
     Camera_ApplyShake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef BURST_SCENE_FLASH_CELLS

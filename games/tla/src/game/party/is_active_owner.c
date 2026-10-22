@@ -68,7 +68,7 @@ s32 Func_080ca5a0(s32 owner) {
 /// ownerOverride is set and flag 0x8df clear, else 50 when owner 4 is active,
 /// 750 when owner 0 is, 49 when owner 5 is, or 50.
 // As ☀️'s function of the same name.
-void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
+void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   s16 key = (zone << 4) + slot;
   const s16 *table = Data_080efd1c;
   u16 music;

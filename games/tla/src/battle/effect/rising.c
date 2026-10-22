@@ -84,7 +84,7 @@ void Func_08038248(s32 item);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Object_Destroy(struct ObjectRuntime *object);
 
-void BattleFx_StartEffectObject22(s32 item, s32 flags) {
+void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
   struct ObjectRuntime *owner =
       ObjectTable_Get(EventRuntime_GetControlledOwner());
   u8 *buffer = Runtime_AllocateHeapBlock(68, 0x608);

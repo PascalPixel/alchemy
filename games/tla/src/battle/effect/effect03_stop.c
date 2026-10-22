@@ -13,7 +13,7 @@ struct ResourceEntry {
 void FieldFx_RunPly(void);
 void EffectRuntime_StopCurrentObject();
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 struct ResourceEntry *Object_ReplaceResourceEntry(void *sprite,
                                                   struct ResourceEntry *last);
@@ -22,7 +22,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
 void Object_Destroy(struct ObjectRuntime *object);
 s32 Resource_ResetEntry(u32 entry);
-void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
+void BattleEffect_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
 void Func_080de8d0(struct ObjectRuntime *object);
 
 /// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
@@ -49,7 +49,7 @@ void FieldFx_RunPly(void) {
     if (object != 0) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
-      object->update = (void (*)(void))BattleFx_UpdateShrinkingOrbitObject;
+      object->update = (void (*)(void))BattleEffect_UpdateShrinkingOrbitObject;
       object->action = 120;
       object->unk66 = i << 13;
       object->motionFlags = 4;
@@ -112,5 +112,5 @@ void FieldFx_RunPly(void) {
     Resource_ResetEntry(marker);
   if (scene->finishCallback != 0)
     scene->finishCallback();
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

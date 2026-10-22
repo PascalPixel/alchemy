@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Kirin (scene kind 3).
-	.global BattleFx_RunKirin
+	.global BattleEffect_RunKirin
 	.thumb_func
-BattleFx_RunKirin:
+BattleEffect_RunKirin:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunKirin:
 	ldr r2, [r5, #100]
 	adds r5, #176
 	str r2, [sp, #68]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	bl Func_0813ba50
 	ldr r3, .L_08168aa8
 	movs r2, #128
@@ -59,12 +59,12 @@ BattleFx_RunKirin:
 .L_08168ab0:
 	.4byte 0x00000018
 .L_08168ab4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08168ab8:
 	lsls r1, r1, #2
 	movs r0, #9
 	movs r2, #1
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	ldr r2, .L_08168b1c
 	movs r3, #240
 	str r3, [r2, #16]
@@ -74,7 +74,7 @@ BattleFx_RunKirin:
 	adds r0, #240
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r3, .L_08168b14
 	movs r2, #128
 	lsls r2, r2, #19
@@ -196,7 +196,7 @@ BattleFx_RunKirin:
 	bne .L_08168b98
 	movs r0, #104
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -1206,7 +1206,7 @@ BattleFx_RunKirin:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #180
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1225,4 +1225,4 @@ BattleFx_RunKirin:
 .L_081693a8:
 	.4byte gData_08197410
 .L_081693ac:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

@@ -24,8 +24,8 @@ struct DescriptorEntry {
 extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
-void BattleFx_BeginTiledCanvas(s32 mode);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_BeginTiledCanvas(s32 mode);
+void BattleEffect_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
 void WaitFrames(s32 frames);
@@ -37,11 +37,11 @@ s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
 /// Abilities: Drain, Psy Drain (kind 42).
-void BattleFx_RunDrain(u8 *effect) {
+void BattleEffect_RunDrain(u8 *effect) {
   s32 value = *(s32 *)(effect + 24);
 
   Func_0814ea58(effect, (u32)(-value | value) >> 31);
 }
 
 /// Abilities: True Collide (kind 451).
-void BattleFx_RunTrueCollide(u8 *effect) { Func_0814ea58(effect, 2); }
+void BattleEffect_RunTrueCollide(u8 *effect) { Func_0814ea58(effect, 2); }

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Fire, Fireball, Inferno (kind 12).
-	.global BattleFx_RunFire
+	.global BattleEffect_RunFire
 	.thumb_func
-BattleFx_RunFire:
+BattleEffect_RunFire:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -28,11 +28,11 @@ BattleFx_RunFire:
 	cmp r3, #1
 	bne .L_08151076
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	b .L_0815107c
 .L_08151076:
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 .L_0815107c:
 	movs r1, #224
 	lsls r1, r1, #3
@@ -48,14 +48,14 @@ BattleFx_RunFire:
 	bl Resource_LoadAndDecompress
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #19
 	movs r0, #188
 	str r3, [sp, #36]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r5, sp
@@ -547,7 +547,7 @@ BattleFx_RunFire:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -558,7 +558,7 @@ BattleFx_RunFire:
 .L_08151498:
 	.4byte Camera_ApplyPhasedDelta
 .L_0815149c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081514a0:
 	.4byte Data_08198300
 .L_081514a4:

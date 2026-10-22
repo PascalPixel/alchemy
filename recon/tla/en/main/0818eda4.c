@@ -1,7 +1,7 @@
 // Draft, differ 809 of 895 (draft 874 instructions, no device): effect kind
 // 123, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleFx_RunTitanBlade 0.46, by call order
-// BattleFx_RunJupiter 0.50), with the ARM model renderer for its
+// (twins: BattleEffect_RunTitanBlade 0.46, by call order
+// BattleEffect_RunJupiter 0.50), with the ARM model renderer for its
 // flashes, shards, splashes and rings.
 // Every call, cue and table read is in the native's order; what is left is
 // the frame. The native frame is 92 bytes: from at sp+80, to at sp+68, the
@@ -64,10 +64,10 @@ extern const u8 Data_081991c0[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_08199210[];
 
-void BattleFx_BeginCanvasLayer(s32 layer);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -79,7 +79,7 @@ void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
@@ -90,7 +90,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
@@ -105,7 +105,7 @@ void Audio_PlayCue(s32 cue);
 //
 // The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
 // shard's roll); the map cell buffer is cleared but not drawn.
-void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
+void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   struct EffectPosition from;
   struct EffectPosition to;
   DrawRectangle draw[2];
@@ -124,9 +124,9 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   graphics = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, gData_02014000,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CB, work->sheet, 0, 0);
@@ -138,7 +138,7 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectBattler(effect->actor, &from);
   EffectPosition_ProjectBattler(effect->actors[0], &to);
 
@@ -200,7 +200,7 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
             draw[blend](canvas, graphics + gData_08197410[size - 1],
                         HI(step->x) - (size >> 1), HI(step->y) - size, size,
                         size * 2);
-            BattleFxKernels_IntegrateVector2(step, 64, 0);
+            BattleEffectKernels_IntegrateVector2(step, 64, 0);
           }
           step->variant++;
         }
@@ -234,7 +234,7 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
             draw[blend](canvas, graphics + gData_08197410[size - 1],
                         HI(step->x) - (size >> 1), HI(step->y) - size, size,
                         size * 2);
-            BattleFxKernels_IntegrateVector2(step, 64, 0);
+            BattleEffectKernels_IntegrateVector2(step, 64, 0);
           }
           step->variant++;
         }
@@ -350,7 +350,7 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
           Func_081180e8(144);
         else
           Audio_PlayCue(144);
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 5);
         work->shakeFrames = 4;
       }
@@ -364,8 +364,8 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

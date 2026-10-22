@@ -41,8 +41,8 @@ struct SparkWork {
 #define SPARK_LIFE 50
 #define PHASE_DONE 999
 
-s32 BattleFx_GetObjectDepth(struct ObjectRuntime *object);
-s32 BattleFx_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
@@ -52,7 +52,7 @@ void Func_080eb960(s32 objectId) {
   struct SparkWork *work =
       Runtime_AllocateHeapBlock(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
-  s32 depth = BattleFx_GetObjectDepth(object);
+  s32 depth = BattleEffect_GetObjectDepth(object);
   u16 angle = object->angle;
   s32 entry;
   s32 tiles;
@@ -75,8 +75,8 @@ void Func_080eb960(s32 objectId) {
     Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    sprite->depth = BattleFx_GetObjectDepth(object);
-    sprite->oam.priority = BattleFx_GetObjectPriority(object);
+    sprite->depth = BattleEffect_GetObjectDepth(object);
+    sprite->oam.priority = BattleEffect_GetObjectPriority(object);
     spark->age = -1;
   }
   object->scaleX = 0;

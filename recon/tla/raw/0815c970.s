@@ -21,7 +21,7 @@ Func_0815c970:
 	movs r0, #0
 	str r2, [sp, #12]
 	mov r11, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_BeginCanvasLayer
 	movs r3, #128
 	ldr r2, .L_0815c9b0
 	lsls r3, r3, #19
@@ -41,7 +41,7 @@ Func_0815c970:
 	movs r0, #104
 	movs r1, #39
 .L_0815c9b8:
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r6, [r5, #104]
 	movs r1, #224
 	lsls r1, r1, #3
@@ -275,7 +275,7 @@ Func_0815c970:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #28
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -294,7 +294,7 @@ Func_0815c970:
 .L_0815cbb4:
 	.4byte IwramCopyWords
 .L_0815cbb8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815cbbc:
 	.4byte gData_081986d4
 .L_0815cbc0:

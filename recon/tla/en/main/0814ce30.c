@@ -1,10 +1,10 @@
 // Near miss, differ 150 of 1490 (summon 5, the thorn vines), with one
 // tagged forced temporary (355 without).
 
-// ☀️ twin: BattleFx_RunCybele
+// ☀️ twin: BattleEffect_RunCybele
 // (games/tbs/src/effect/effect.c), shape 0.870, structure 0.986, ported line
 // for line: formation 645 spawned first, transparent blitters
-// BattleFx_LoadBlitter(104, 0x23) and (188, 0x27) and then max blitters (104,
+// BattleEffect_LoadBlitter(104, 0x23) and (188, 0x27) and then max blitters (104,
 // 0x13) and (188, 0x17) for the explosion, Iwram_ClearWords when A or B
 // skips, the camera from Ram_HeapSlots->cameraWork, shake (4, 4) in the
 // middle phase where ☀️ has (2, 2), and the effect argument for every
@@ -17,7 +17,7 @@
 // Tried (differ):
 // trial 2's port, no device (effects trial, 2026-10-15)              363
 // trial 2 with the forced temporary at the second explosion blitter   158
-// BattleFx_LoadBlitter declared returning s32 (plan 0c): with the temporary
+// BattleEffect_LoadBlitter declared returning s32 (plan 0c): with the temporary
 // 150, without it 355
 
 #include "types.h"
@@ -69,13 +69,13 @@ extern u8 Data_0819823e[];  // ☀️ gCybele_SparkSizes
 extern u16 Data_08198244[]; // ☀️ gCybele_EmberOffsets
 extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
-void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_BuildBlitter
-void BattleFx_SelectLivingTargets(
+void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
+void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
-void BattleFx_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
+void BattleEffect_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ☀️ PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ☀️ RunImpactBurst
 void Func_08118088(s32 actor, s32 motion);       // ☀️ ApplyVariantMotionFar
@@ -85,7 +85,7 @@ void *GetMotionRecordFar(void *object, s32 index);
 void Render_ResetTransformState(void);
 void ResourceObject_ReleaseFar(void *object);
 void Func_081180e8(s32 phase); // ☀️ BattleEvent_BeginPhaseFar
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
@@ -96,7 +96,7 @@ void ObjectGroup_TickMemberTimers(void);            // ☀️ ObjectGroup_TickMe
 // and lift them while the ground throws up debris; the picture is erased
 // dot by dot, the targets are dropped from on high, and each lands in an
 // explosion with a ring of embers. A or B skips to the drop.
-void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
@@ -115,7 +115,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   // picture is erased: eight shuffled runs of 0..127.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_SpawnObjects(8, FORMATION_THORN_VINES, 1);
+  BattleEffect_SpawnObjects(8, FORMATION_THORN_VINES, 1);
 
   order = Ram_MapCellBuffer;
   for (i = 0; i != 1024; i++)
@@ -135,21 +135,21 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
   // The canvas, unscaled and moved 32 pixels left, the vine sheet and two
   // transparent blitters, the second mirrored.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_BeginCanvasLayer(0);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                     COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   REG_BG2X = -0x2000;
 
   // The vines (particles 0-15): x, the root's y, growth speed and delay.
@@ -184,7 +184,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
 
   height = -(64 << 16);
   speed = 0;
@@ -243,7 +243,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           tall = Data_08198211[cel];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
-          BattleFxKernels_IntegrateVector2(thorn, 64, 0x1000);
+          BattleEffectKernels_IntegrateVector2(thorn, 64, 0x1000);
         }
       }
     }
@@ -474,7 +474,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + 0x1680, 1, 1);
-      BattleFx_LoadBlitter(HEAP_BLITTER,
+      BattleEffect_LoadBlitter(HEAP_BLITTER,
                     BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       /* FAKEMATCH: forced temporary: the blitter slot's address held across
@@ -484,7 +484,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       {
         void **slots = Ram_HeapSlots->unkb8;
 
-        BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+        BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                       BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                           COMPOSITE_FLIP_X);
         draw[1] = (DrawRectangle)slots[1];
@@ -494,7 +494,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       REG_BG2X = 0;
       work->transferMode = 2;
       work->transferValue = 75;
-      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+      Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(effect->actors[i])->object;
@@ -547,7 +547,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
-            BattleFxKernels_IntegrateVector2(ember, 60, 0x1000);
+            BattleEffectKernels_IntegrateVector2(ember, 60, 0x1000);
             ember->variant++;
           }
         }
@@ -565,7 +565,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   Func_081180e8(134);
@@ -573,5 +573,5 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   Func_0816467c(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

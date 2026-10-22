@@ -6,8 +6,8 @@
 // r0 to the top (differ 6); a one-pass block around the effect load is differ
 // 10; the work read through a macro at each use is differ 34; a pointer to the
 // effect slot is this same differ 4. The same one-pass block matches the two
-// neighbours without a frame (BattleFx_ProbeKeysForExtendedActor,
-// BattleFx_DispatchByIdRange in fxdisp.c).
+// neighbours without a frame (BattleEffect_ProbeKeysForExtendedActor,
+// BattleEffect_DispatchByIdRange in fxdisp.c).
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_effect_work.h"

@@ -1,6 +1,6 @@
 // Near miss, differ 61 of 477.
 
-// Twin: The Broken Seal's BattleFx_RunParticlePool, the body of two
+// Twin: The Broken Seal's BattleEffect_RunParticlePool, the body of two
 // effects there. ⚓️ adds a third mode: Slaver's green spray, thrown up in a
 // half-circle fan, falling back under gravity and bouncing on the
 // ground for 96 frames, which hands over to the Impair canvas effect at its
@@ -58,7 +58,7 @@ enum { POOL_SOOTHE, POOL_SLEEP, POOL_SLAVER };
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The mote's cell for each size from 1 to 6 (The Broken Seal's
-// gBattleFx_MoteCells).
+// gBattleEffect_MoteCells).
 extern u16 gData_08197410[];
 
 extern char ResourceId_Data134; // The Broken Seal's ParticleSpritesA
@@ -66,9 +66,9 @@ extern char ResourceId_OrangePaletteA;
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_GreenPalette;
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
@@ -76,7 +76,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 u32 Random16(void);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -126,15 +126,15 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
   if (mode == POOL_SOOTHE)
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_BeginCanvasLayer(0);
   else
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_BeginCanvasLayer(1);
 
   // Motes draw at their maximum; the second blitter, mirrored top to
   // bottom, is loaded but not used.
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                 BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -147,7 +147,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Launch every mote from the user in 16.16 fixed point, with a speed and
   // a direction of its own. Slaver throws them up, faster, in a half-circle
@@ -219,11 +219,11 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
         if (mode == POOL_SLAVER) {
-          BattleFxKernels_IntegrateVector3(mote, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector3(mote, 62, -0x2000);
           if (mote->y <= 0x4ffff)
             mote->velocityY = -mote->velocityY;
         } else {
-          BattleFxKernels_IntegrateVector3(mote, 62, 0x400);
+          BattleEffectKernels_IntegrateVector3(mote, 62, 0x400);
         }
         if (mode == POOL_SLEEP) {
           if (source->x < 0)
@@ -257,7 +257,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (mode == POOL_SLAVER) {
@@ -267,6 +267,6 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     SummonFx_RunCanvasMode1(effect);
   } else {
-    BattleFx_EndCanvasLayer();
+    BattleEffect_EndCanvasLayer();
   }
 }

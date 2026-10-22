@@ -10,7 +10,7 @@ extern const s32 gData_080f0e78[];
 
 /// Spawns a particle (kind 0x2a1) at x, y, z that hops off in a random
 /// direction 8 to 32 pixels away at 1 to 2 pixels a frame.
-struct ObjectRuntime *BattleFx_SpawnScatterParticle(s32 x, s32 y, s32 z) {
+struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
   struct ObjectRuntime *object = Object_Spawn(0x2a1, x, y, z);
   s32 magnitude;
 

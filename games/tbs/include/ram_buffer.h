@@ -25,7 +25,7 @@
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
 // IWRAM variables the code reaches as constants; German moves them 16 bytes
-// up. Only BattleFx_RunSpiderWeb takes the work slot table's address as
+// up. Only BattleEffect_RunSpiderWeb takes the work slot table's address as
 // Ram_WorkSlot; other code uses gWorkSlot (MATCHING.md).
 // The 16 bytes are space German alone reserves before gRenderSlotHeads
 // (system/iwram.s), so the test is on the language: French, Spanish and

@@ -194,13 +194,14 @@ void FieldObject_PlaceSceneActors(void) {
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
     flags = event & 0x800;
     event &= 0x7ff;
-    // event is unsigned, so events below DJINNI_0 fail the range test too.
-    if (event - DJINNI_0 <= 80 && gGameState.sceneChangeReason > 0) {
+    // event is unsigned: events below DJINNI_EVENT_0 fail the range test too.
+    if (event - DJINNI_EVENT_0 <= 80 && gGameState.sceneChangeReason > 0) {
       for (id = 8; id <= 65; id++) {
         struct ScenePlacement *desc = Scene_FindActorPlacement(id);
         struct ObjectRuntime *obj;
 
-        if (desc == NULL || desc->condition - FLAG_DJINNI_0 != event - DJINNI_0)
+        if (desc == NULL ||
+            desc->condition - FLAG_DJINNI_0 != event - DJINNI_EVENT_0)
           continue;
         obj = ObjectTable_Get(id);
         if (obj == NULL)
@@ -247,12 +248,12 @@ void Djinn_ResolvePendingEvent(s32 shown) {
   if (shown == 0) {
     if (kind == 0) {
       flag &= 0x7ff;
-      if (flag < DJINNI_0 || flag > DJINNI_0 + 80)
+      if (flag < DJINNI_EVENT_0 || flag > DJINNI_EVENT_0 + 80)
         return;
       // Won: the event waits for the call once the scene is shown.
       if (st->sceneChangeReason > 0 && st->sceneChangeReason != 999)
         return;
-      // DJINNI_0 + n less 172 is FLAG_DJINNI_HIDING_0 + n.
+      // DJINNI_EVENT_0 + n less 172 is FLAG_DJINNI_HIDING_0 + n.
       GameFlag_SetBitFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {
@@ -264,10 +265,10 @@ void Djinn_ResolvePendingEvent(s32 shown) {
   }
   if (kind == 0) {
     flag &= 0x7ff;
-    if (flag >= DJINNI_0 && flag <= DJINNI_0 + 80) {
+    if (flag >= DJINNI_EVENT_0 && flag <= DJINNI_EVENT_0 + 80) {
       flag &= 0x7ff;
       if (st->sceneChangeReason > 0) {
-        s32 djinni = flag - DJINNI_0;
+        s32 djinni = flag - DJINNI_EVENT_0;
         s32 element = djinni / 20;
         s32 index = djinni % 20;
         s32 actor;
@@ -275,7 +276,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
         for (actor = 8; actor <= 65; actor++) {
           struct ScenePlacement *found = Scene_FindActorPlacement(actor);
           if (found != 0 &&
-              found->condition - FLAG_DJINNI_0 == flag - DJINNI_0) {
+              found->condition - FLAG_DJINNI_0 == flag - DJINNI_EVENT_0) {
             WaitFrames(40);
             Djinn_JoinParty(actor, element, index);
             break;

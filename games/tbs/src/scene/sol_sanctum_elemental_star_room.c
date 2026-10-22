@@ -105,8 +105,8 @@ enum StarRoomActor {
   /// SolSanctumElementalStarRoom_EnterStarRoom, Felix in
   /// SolSanctumElementalStarRoom_DemandElementalStars).
   /// ★ Named from what the player sees: the shadow that grows on the platform
-  /// as Isaac comes in
-  /// (https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif)
+  /// as Isaac comes in (its render),
+  /// https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif
   ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,

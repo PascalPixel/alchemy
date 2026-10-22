@@ -30,6 +30,11 @@
 /// ★ Named from the game: "It must be hiding somewhere again"
 /// (MsgVaultHmmmItMustBeHidingSomewhere)
 #define FLAG_DJINNI_HIDING_0 128
+/// The system flags, after the party's and the Djinn's: what the field,
+/// battles and menus keep about their own working, shared with the scenes
+/// that set or test them, rather than the story's progress.
+#define FLAG_SYSTEM_FIRST 0x100
+#define FLAG_SYSTEM_LAST 0x1ff ///< the last of the 256 system flags
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing SE_STOP_SLOT3, once. The world map sets it after its lighthouse
 /// transition.

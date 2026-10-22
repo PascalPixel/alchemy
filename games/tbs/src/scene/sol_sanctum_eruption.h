@@ -11,8 +11,8 @@ enum CollapseActor {
   /// departing actor, whose own shadow is turned off
   /// (SolSanctumEruption_RaiseAndShrinkActor).
   /// ★ Named from what the player sees: the shadow that shrinks on the
-  /// platform as each of them rises away
-  /// (https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif)
+  /// platform as each of them rises away (its render),
+  /// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif
   ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,

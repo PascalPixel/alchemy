@@ -147,8 +147,8 @@ enum ValeInteriorsInnActor {
   /// outside the house only for Event_HurryToThePlaza, where it shakes, then
   /// flares up as its animation turns from flame to smoke, and rises 18 pixels
   /// as it shrinks away.
-  /// ★ Named from what the player sees: a small flame, then wisps of smoke
-  /// (spr_208.png)
+  /// ★ Named from what the player sees: a small flame, then wisps of smoke,
+  /// spr_208.png (its render)
   ACTOR_FLAME,
   /// A young man with brown hair who lost his father in the storm and means to
   /// be a smith. "My father also died in that storm three years ago."; once the

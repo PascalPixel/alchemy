@@ -116,9 +116,6 @@ enum LunpaActor {
   ACTOR_FLOATING_NUT
 };
 
-/// The last of the 66 actor slots, which Event_EnterDoor stills.
-enum { ACTOR_LAST_PLACED = 65 };
-
 /// The Lunpa Fortress Gates' placed actors, numbered in the order of
 /// gGatePlacements from ACTOR_FIRST_PLACED. Garet's row, the third, takes his
 /// own actor, GARET, as every row of a party member's sprite does.

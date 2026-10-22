@@ -1,13 +1,14 @@
 /// @file
-/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes.
-/// Tret, the holy tree of Kolima Forest, turned Kolima's people into trees; the
-/// party goes inside him to fight the evil within him, the story
-/// tret_tree_interiors.c (SceneId_TretTreeInteriors) tells. This scene has no
-/// story event and tests no story flag.
+/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes,
+/// Tret's branches, between the rooms of SceneId_TretTreeInteriors
+/// (tret_tree_interiors.c), where the story is told. This scene has no story
+/// event and tests no story flag.
 ///
 /// Its eight exits (TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST and
 /// the seven after it) lead back into SceneId_TretTreeInteriors; walking into
-/// one plays the exit sound and leaves at once. Touch cells 10 to 15 move the
+/// one for two frames (EVENT_TOUCH_QUICK) plays the exit sound and leaves at
+/// once, the touch cells having the exits' own numbers. Touch cells 10 to 15
+/// move the
 /// leader and the camera five or six cells north or south in one step, with no
 /// walk. Breeze, a Jupiter Djinni, stands here until it has joined the party:
 /// its own flag (FLAG_DJINNI_0 + DJINNI_BREEZE) removes its placement. Talking
@@ -19,6 +20,17 @@
 /// frames, below it BG3 scrolls with the map. Casting Reveal sets the blend and
 /// the window again as at entry. The overlay also keeps three unused hooks and
 /// a link-cable input exchange no table reaches.
+///
+/// Open questions:
+/// - XXX: whether the scene is out on Tret's branches, as its name says; a
+///   render of SceneId_TretTreeBranch would settle it.
+/// - XXX: what the player sees at touch cells 10 to 15, which move the leader
+///   five or six cells at once, likely a climb or a drop between branches; a
+///   recording of each would settle it, and why each of 10 and 11 has a twin
+///   (12, 13) with its own copy of the event.
+/// - XXX (picture): BG3 split at the scanline
+/// TretTreeBranch_UpdateBg3ScrollSplit
+///   computes, drifting above and scrolling with the map below.
 
 #include "unit/scene/tret_tree_branch.h"
 #include "unit/object/object.h"
@@ -337,14 +349,22 @@ struct ScenePlacement gTretTreeBranch_Placements[] = {
 // clang-format on
 
 struct SceneEvent gTretTreeBranch_Events[] = {
-    {0xa02, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {0xa02, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {0xa02, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {0xa02, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {0xa02, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {0xa02, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {0xa02, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {0xa02, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 1, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 2, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 3, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 4, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 5, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 6, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 7, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 8, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TakeTouchedExit)},
     {EVENT_TOUCH, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_ShiftSouthFiveCells)},
     {EVENT_TOUCH, 11, CONDITION_ALWAYS,

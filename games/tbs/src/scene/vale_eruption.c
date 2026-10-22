@@ -26,9 +26,7 @@
 /// entrance scene does (sol_sanctum_entrance.c).
 ///
 /// Open questions:
-/// - XXX: what animation 0, which the setup gives the six villagers at the
-///   back, shows; their sprites' animation tables under graphics/sprite would
-///   settle it.
+/// - None.
 
 #include "game_state.h"
 #include "unit/scene/vale_eruption.h"
@@ -144,12 +142,12 @@ static void Event_ReturnFromMtAleph(void) {
   const s32 *actionScript;
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER, 0);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, 0);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, 0);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 3, 0);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 4, 0);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, 0);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER, ANIM_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, ANIM_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, ANIM_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 3, ANIM_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 4, ANIM_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, ANIM_STILL);
   Actor_WalkToAndWait(ACTOR_GARETS_SISTER, 265, 487);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
   Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);

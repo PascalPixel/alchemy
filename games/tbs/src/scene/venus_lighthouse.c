@@ -163,9 +163,11 @@
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
 #define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
-// The Psynergy Stones of the first and fourth floors, taken until the party
-// leaves the climb.
+/// The first floor's Psynergy Stone, taken until the party leaves the climb.
+/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE 0x350
+/// The fourth floor's Psynergy Stone, as the first floor's.
+/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE 0x351
 
 /// The cells the floors' events answer, by floor; a number means one thing on

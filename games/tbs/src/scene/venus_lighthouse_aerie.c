@@ -179,7 +179,7 @@ enum {
 
 /// A child value that makes an actor blink rather than set its colour mode
 /// (Engine_ActorSetChildValue).
-enum { ACTOR_CHILD_BLINK = 0x100 };
+enum { CHILD_VALUE_BLINK = 0x100 };
 
 // The aerie's scene flags:
 // FLAG_SCENE_TEMP_34: Saturos and Menardi slide together as they fuse.
@@ -1779,8 +1779,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetChildValue(ACTOR_SATUROS, SPRITE_COLOR_WHITE);
   Actor_SetChildValue(ACTOR_MENARDI, SPRITE_COLOR_WHITE);
   Event_Wait(20);
-  Actor_SetChildValue(ACTOR_SATUROS, ACTOR_CHILD_BLINK);
-  Actor_SetChildValue(ACTOR_MENARDI, ACTOR_CHILD_BLINK);
+  Actor_SetChildValue(ACTOR_SATUROS, CHILD_VALUE_BLINK);
+  Actor_SetChildValue(ACTOR_MENARDI, CHILD_VALUE_BLINK);
   Event_Wait(20);
   VenusLighthouseAerie_FlashScreen();
   Actor_Jump(MIA, 2, 20);

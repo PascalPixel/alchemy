@@ -5106,7 +5106,7 @@ enum {
   TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH =
       8, ///< ★ Named from what the player sees: the second room with a pair of
          ///< stone pillars to push (its render)
-  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_BUSHES =
+  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_WHIRLWIND_ROOM =
       9, ///< ★ Named from what the player sees: the second room with a pair of
          ///< stone pillars to push (its render)
   TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH =
@@ -5115,13 +5115,13 @@ enum {
   TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH =
       11, ///< ★ Named from what the player sees: two stone pillars that sink
           ///< into the floor once moved onto their columns (its render)
-  TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_SECOND_PILLARS =
+  TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS =
       12, ///< ★ Named from what the player sees: the room of bushes that
           ///< Whirlwind blows away (its render)
-  TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_CORRIDOR =
+  TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_LONG_PASSAGE =
       13, ///< ★ Named from what the player sees: the room of bushes that
           ///< Whirlwind blows away (its render)
-  TUNNEL_RUINS_GREAT_STATUE_CORRIDOR_FROM_BUSHES =
+  TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_FROM_WHIRLWIND_ROOM =
       14, ///< ★ Named from what the player sees: a long narrow corridor (its
           ///< render)
   TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH = 15,
@@ -5155,7 +5155,7 @@ enum {
   TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_COLUMNS_NORTH =
       8, ///< ★ Named from what the player sees: the upper room of columns
          ///< standing in a pit, hopped across (its render)
-  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_BUSHES =
+  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_WHIRLWIND_ROOM =
       9, ///< ★ Named from what the player sees: the room of bushes that
          ///< Whirlwind blows away (its render)
   TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_NORTH =
@@ -5164,13 +5164,13 @@ enum {
   TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_SOUTH =
       11, ///< ★ Named from what the player sees: the lower room of columns
           ///< standing in a pit (its render)
-  TUNNEL_RUINS_GREAT_STATUE_BUSHES_TO_SECOND_PILLARS =
+  TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_TO_SECOND_PILLARS =
       12, ///< ★ Named from what the player sees: the second room with a pair of
           ///< stone pillars to push (its render)
-  TUNNEL_RUINS_GREAT_STATUE_BUSHES_TO_CORRIDOR =
+  TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_TO_LONG_PASSAGE =
       13, ///< ★ Named from what the player sees: a long narrow corridor (its
           ///< render)
-  TUNNEL_RUINS_GREAT_STATUE_CORRIDOR_TO_BUSHES =
+  TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_TO_WHIRLWIND_ROOM =
       14, ///< ★ Named from what the player sees: the room of bushes that
           ///< Whirlwind blows away (its render)
   TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 15,
@@ -5190,11 +5190,11 @@ enum {
   TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH = 5,
   TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 6,
   TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH = 7,
-  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST = 8,
-  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHWEST = 9,
-  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHEAST = 10,
-  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHEAST = 11,
-  TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST = 12,
+  TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHWEST = 8,
+  TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHWEST = 9,
+  TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHEAST = 10,
+  TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHEAST = 11,
+  TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST = 12,
   TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH = 13,
   TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST = 14,
   TUNNEL_RUINS_LADY_STATUES_TREE_DOOR_SOUTH = 15,
@@ -5204,11 +5204,11 @@ enum {
 /// SceneId_TunnelRuinsLadyStatues's exits.
 enum {
   TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH = 1,
-  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_NORTHWEST =
+  TUNNEL_RUINS_LADY_STATUES_TO_PATHS_NORTHWEST =
       2, ///< ★ Named from what the player sees: four raised walkways over a pit
          ///< (its render)
   TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 3,
-  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_NORTHEAST =
+  TUNNEL_RUINS_LADY_STATUES_TO_PATHS_NORTHEAST =
       4, ///< ★ Named from what the player sees: four raised walkways over a pit
          ///< (its render)
   TUNNEL_RUINS_LADY_STATUES_TO_BALANCE_SOUTH =
@@ -5217,16 +5217,16 @@ enum {
   TUNNEL_RUINS_LADY_STATUES_TO_DOUSE_PILLAR_SOUTH =
       6, ///< ★ Named from what the player sees: the room of a stone pillar that
          ///< Douse soaks (its render)
-  TUNNEL_RUINS_LADY_STATUES_TO_FALSE_STATUE_WEST =
+  TUNNEL_RUINS_LADY_STATUES_TO_REVEAL_STATUE_WEST =
       7, ///< ★ Named from what the player sees: the western room of a statue
          ///< that vanishes under Reveal (its render)
   TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_NORTH =
       8, ///< ★ Named from what the player sees: the room of five coloured
          ///< statues of a woman before a door (its render)
-  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_SOUTHWEST =
+  TUNNEL_RUINS_LADY_STATUES_TO_PATHS_SOUTHWEST =
       9, ///< ★ Named from what the player sees: four raised walkways over a pit
          ///< (its render)
-  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_SOUTHEAST =
+  TUNNEL_RUINS_LADY_STATUES_TO_PATHS_SOUTHEAST =
       10, ///< ★ Named from what the player sees: four raised walkways over a
           ///< pit (its render)
   TUNNEL_RUINS_LADY_STATUES_TO_TREE_DOOR_SOUTH =

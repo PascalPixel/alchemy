@@ -39,7 +39,7 @@
 	.set import.Link_DrawShiftedTilePair, 1
 	.set import.Unit_Get, 1
 	.set import.Item_Get, 1
-	.set import.GameState_InitDefaults, 1
+	.set import.GameState_InitializeDefaults, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.GameFlag_ClearBit, 1

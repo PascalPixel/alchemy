@@ -36,7 +36,7 @@ void Func_08108148(void);
 s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
-void BattleEffect_InitTilemapAndFlushQueue(void) {
+void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_BeginTiledCanvas(1);
   BattleEffect_EndCanvasLayer();
 }

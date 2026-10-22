@@ -62,10 +62,10 @@ Func_02001b8c:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Animation_SetIndexAndInitObjects
+	.global Animation_SetIndexAndInitializeObjects
 	.thumb_func
-Animation_SetIndexAndInitObjects:
-	overlay_veneer Animation_SetIndexAndInitObjectsFar
+Animation_SetIndexAndInitializeObjects:
+	overlay_veneer Animation_SetIndexAndInitializeObjectsFar
 	.global Func_02001ba4
 	.thumb_func
 Func_02001ba4:

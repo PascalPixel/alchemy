@@ -311,7 +311,7 @@ Func_080d82e0:
 .L_080d8594:
 	movs r0, #15
 	bl WaitFrames
-	bl Shop_InitEffectFar
+	bl Shop_InitializeEffectFar
 	bl BattleEffect_ClearActiveSlotsAndScheduleUpdates
 .L_080d85a2:
 	add sp, #12

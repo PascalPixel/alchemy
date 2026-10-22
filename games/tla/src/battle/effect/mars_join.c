@@ -36,7 +36,7 @@ void Camera_WorldToScreen(void *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(s32 object, s32 value);
 u32 Random16(void);
-void Shop_InitEffectFar(void);
+void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 void Object_Destroy(void *object);
 void BattleEffect_SetObjectAlternatingWords(u8 *object);
@@ -168,7 +168,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   WaitFrames(30);
-  Shop_InitEffectFar();
+  Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 

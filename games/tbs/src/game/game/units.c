@@ -32,7 +32,7 @@ struct StatWork {
 /// Starts a new game: clears the game state and restarts at the opening.
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_Restart(void) {
-  GameState_InitDefaults();
+  GameState_InitializeDefaults();
   Game_RunFar(0);
 }
 
@@ -486,8 +486,8 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// GameState_InitDefaults stores it as a new game's start stamp, and the save
-/// menu (SaveMenu_SelectSlot, SaveState_BuildSummaryHeader) and the file
+/// GameState_InitializeDefaults stores it as a new game's start stamp, and the
+/// save menu (SaveMenu_SelectSlot, SaveState_BuildSummaryHeader) and the file
 /// select screen compare saves with it.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;
@@ -532,9 +532,9 @@ u32 Runtime_GetBuildStampTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gSceneState on, which GameState_InitDefaults writes
-/// one byte through. gSceneState's 0x78 bytes and gInventorySnapshot's 0x8c
-/// come first, so unk104 is the first byte of gObjectSnapshots.
+/// A view of EWRAM from gSceneState on, which GameState_InitializeDefaults
+/// writes one byte through. gSceneState's 0x78 bytes and gInventorySnapshot's
+/// 0x8c come first, so unk104 is the first byte of gObjectSnapshots.
 struct SceneStateTail {
   u8 unk000[0x100]; ///< gSceneState, then most of gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
@@ -551,13 +551,14 @@ struct SceneStateTail {
 /// button layout, the message speed, the play time clock and the slot
 /// machine prize odds. Called by the file select screen's new game, by
 /// Game_Restart and Game_Run, and by the debug battle menu.
-void GameState_InitDefaults(void) {
+void GameState_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, scene work, flags and save metadata in DMA order:
   // 0xb0 words are gGameState up to the characters (owners, which
-  // Party_InitCharacters sets up); 0x3e1 words run from gSceneState through
-  // gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096 flags.
+  // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneState
+  // through gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096
+  // flags.
   zero = 0;
   START_DMA(&zero, &gGameState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
@@ -573,7 +574,7 @@ void GameState_InitDefaults(void) {
   START_DMA(&zero, gSaveStamp + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
-  Party_InitCharacters();
+  Party_InitializeCharacters();
   gGameState.aKeys = KEY_A;
   gGameState.bKeys = KEY_B;
   gGameState.selectKeys = KEY_SELECT;

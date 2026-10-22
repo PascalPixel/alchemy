@@ -99,7 +99,7 @@ FarCall_ObjectTable:
 	export FieldEffect_ResumeLightningFar, FieldEffect_ResumeLightning
 	export FieldEffect_StartBufferBlendFar, FieldEffect_StartBufferBlend
 	overlay_veneer FieldMotes_Start
-	export FieldEffect_InitSparklesFar, FieldEffect_InitSparkles
+	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
 	export DisplayTransition_InitializeBattleEffectStateFar, DisplayTransition_InitializeBattleEffectState
 	overlay_veneer DisplayTransition_InitializeState
 	overlay_veneer DisplayTransition_Start

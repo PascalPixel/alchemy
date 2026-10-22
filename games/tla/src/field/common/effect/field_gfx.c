@@ -55,7 +55,7 @@ s32 Func_08020190(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 #endif
 
-void FieldEffect_InitSparkles(void) {
+void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct DustWork);
   struct DustWork *work = Runtime_AllocateBlock(116, size);
   struct DustParticle *p = work->particles;

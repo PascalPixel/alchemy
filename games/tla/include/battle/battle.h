@@ -60,7 +60,7 @@ s32 BattlePres_WaitSync(void);
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
                                            s32 count);
 void BattleUnit_ResetGuardLevels(void);
-void Camera_InitDefaultTransform(void);
+void Camera_InitializeDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void FieldEffect_RunDouse(void);
 s32 BattleClass_IsSmall(s32 index);

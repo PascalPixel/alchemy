@@ -225,7 +225,7 @@ void Game_Run(s32 mode) {
     gGameState.scene = (s32)&SceneId_Clear;
     gGameState.entrance = CLEAR_FROM_SANCTUM;
   } else {
-    GameState_InitDefaultsFar();
+    GameState_InitializeDefaultsFar();
     gGameState.scene = (s32)&SceneId_Title;
     gGameState.entrance = TITLE_AFTER_RUN;
   }

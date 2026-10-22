@@ -187,7 +187,7 @@ Func_0810b1b4:
 	ldr r0, [r2, r3]
 	movs r1, #16
 	bl Animation_ApplyChildValueFar
-	bl Shop_InitEffect
+	bl Shop_InitializeEffect
 	movs r0, #30
 	bl WaitFrames
 	movs r3, #128

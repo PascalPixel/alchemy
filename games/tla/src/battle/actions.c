@@ -150,7 +150,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
 
 finish:
   GameFlag_ClearBit(363);
-  Camera_InitDefaultTransform();
+  Camera_InitializeDefaultTransform();
   Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
   return cnt;
 }

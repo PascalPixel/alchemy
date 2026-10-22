@@ -23,9 +23,9 @@ FarCall_GameTable:
 	export BattleAction_Get, BattleAction_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
 	export Unit_KnowsActionFar, Unit_KnowsAction
-	export GameState_InitDefaultsFar, GameState_InitDefaults
+	export GameState_InitializeDefaultsFar, GameState_InitializeDefaults
 	overlay_veneer Unit_CheckLevelUp
-	overlay_veneer Party_InitCharacters
+	overlay_veneer Party_InitializeCharacters
 	overlay_veneer Unit_LevelNoOp
 	export Unit_TryLevelUpFar, Unit_TryLevelUp
 	export GameFlag_TestFar, GameFlag_Test

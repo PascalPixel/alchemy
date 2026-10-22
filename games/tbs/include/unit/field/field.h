@@ -191,7 +191,7 @@ void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 s32 Animation_LookupValueByKey(s32 tag);
 s32 Animation_InitializeObjects(struct AnimationObject *sprite);
-void Animation_InitWorkFromMetadata(struct AnimationEntry *layer);
+void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer);
 s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id);
 void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer);
 void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index);
@@ -303,7 +303,8 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
                                          s32 animation, s32 step);
 void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
                                      u32 rotation);
-void Animation_SetIndexAndInitObjects(void *rawDispatchObject, s32 animationId);
+void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
+                                            s32 animationId);
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId);
 void ObjectDispatch_StartApproachLink(struct DispatchObject *object,

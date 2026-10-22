@@ -1,5 +1,5 @@
 // Draft, differ 65 of 81: overlay 679's sparkle setup, from the ⚓️ twin
-// FieldEffect_InitSparkles (field/common/effect/field_gfx.c) with the listing's
+// FieldEffect_InitializeSparkles (field/common/effect/field_gfx.c) with the listing's
 // sizes and constants. The native spills the size local to sp+0 and reuses it
 // as the attribute cursor in the loop (p in r7, i in r5, buf in r6); here buf
 // takes r8 and size r7. Tried: the twin's goto loop with a shared zero (66).

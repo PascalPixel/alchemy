@@ -6,7 +6,7 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 
-void PaletteFade_Init(void) {
+void PaletteFade_Initialize(void) {
   struct PaletteFade *buffer;
   s32 operation;
 

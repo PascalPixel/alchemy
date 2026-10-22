@@ -13,7 +13,7 @@ extern const void *gDisplayScroll_LineTable[];
 extern const u8 gDisplayScroll_GlyphWidths[96];
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
-void DisplayScroll_InitObjectTable(void);
+void DisplayScroll_InitializeObjectTable(void);
 s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment);
 
 #endif

@@ -203,7 +203,7 @@
 	import PartyInventory_Remove, PartyInventory_RemoveFar
 	import Inventory_Equip, Inventory_EquipFar
 	import Engine_DebugGetAbility, BattleAction_Get
-	import GameState_InitDefaults, GameState_InitDefaultsFar
+	import GameState_InitializeDefaults, GameState_InitializeDefaultsFar
 	import Engine_GameFlagIsSet, GameFlag_TestFar
 	import Engine_GameFlagSet, GameFlag_SetBitFar
 	import Engine_GameFlagClear, GameFlag_ClearBitFar
@@ -337,9 +337,9 @@
 	import FieldEffect_LastLightning, FieldEffect_LastLightningFar
 	import FieldEffect_ResumeLightning, FieldEffect_ResumeLightningFar
 	import FieldEffect_StartBufferBlend, FieldEffect_StartBufferBlendFar
-	import FieldEffect_InitSparkles, FieldEffect_InitSparklesFar
-	import InitializeSceneRecordBuffer, FieldEffect_InitSparklesFar
-	import Resource37c_FinalizeSetup, FieldEffect_InitSparklesFar
+	import FieldEffect_InitializeSparkles, FieldEffect_InitializeSparklesFar
+	import InitializeSceneRecordBuffer, FieldEffect_InitializeSparklesFar
+	import Resource37c_FinalizeSetup, FieldEffect_InitializeSparklesFar
 	import DisplayTransition_InitializeBattleEffectState, DisplayTransition_InitializeBattleEffectStateFar
 	import Engine_ColorBufferApplyTarget, ColorBuffer_SetTargetFar
 	import Engine_ColorBufferApplySource, ColorBuffer_SetSourceFar

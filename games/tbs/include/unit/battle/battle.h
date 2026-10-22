@@ -144,7 +144,7 @@ s32 Camera_ApplyTransformByFlag(void);
 #endif
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected);
 void *GetMotionRecord(struct MotionObject *object, s32 recordIndex);
-void Camera_InitDefaultTransform(void);
+void Camera_InitializeDefaultTransform(void);
 void ObjMotRst(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 unitId);
 void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,

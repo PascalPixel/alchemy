@@ -11,8 +11,9 @@
 /// next begins. Its tables are the .tsv files in this folder, built by the .s
 /// files beside them; README.md gives the words and prefixes. Where to start:
 ///
-///   Units           units.c: Unit_Get, Unit_Calculate, GameState_InitDefaults
-///   Items           inventory.c: Inventory_AddItem, Inventory_Equip,
+///   Units           units.c: Unit_Get, Unit_Calculate,
+///   GameState_InitializeDefaults Items           inventory.c:
+///   Inventory_AddItem, Inventory_Equip,
 ///                   PartyInventory_Add
 ///   Levels          levels.c: Unit_RefreshPsynergy, Unit_LevelUp
 ///   Flags           flags.c: GameFlag_Test, GameFlag_SetBit

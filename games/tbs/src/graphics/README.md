@@ -44,7 +44,7 @@ The palette fade moves every background and sprite colour a step a frame
 towards a target.
 
 The palette fade moves every colour a step at a time towards a target.
-`PaletteFade_Init` saves both palettes, 512 colours, as the starting
+`PaletteFade_Initialize` saves both palettes, 512 colours, as the starting
 components in the colour buffer's heap block and schedules
 `PaletteFade_Update`. `PaletteFade_Start` divides each component's distance
 to the target by the number of frames, keeping the remainder in the

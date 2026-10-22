@@ -11,7 +11,7 @@
 #include "animspr.h"
 #include "metadata_lookup.h"
 
-void Animation_InitWorkFromMetadata(struct AnimationEntry *work) {
+void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
   s32 value;
   s32 z;
   s32 animation;

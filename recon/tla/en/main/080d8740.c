@@ -60,7 +60,7 @@ void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 void EffectSlot_SetCallback(void *slot, void *callback);
 void EffectSlot_SetObjectMode(void *slot, s32 mode);
-void Shop_InitEffectFar(void);
+void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
 void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
@@ -182,6 +182,6 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   }
 
   WaitFrames(50);
-  Shop_InitEffectFar();
+  Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

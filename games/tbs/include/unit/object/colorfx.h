@@ -14,7 +14,7 @@ extern const u8 gReelGame_SymbolPrizes[];
 extern const u8 gReelGame_FrameSpriteX[];
 extern const u8 gReelGame_FrameSpriteY[];
 void ReelGame_RunFrame(void);
-void ReelGame_InitTitle(void);
+void ReelGame_InitializeTitle(void);
 void ReelGame_Run(void);
 void LzPack_ResetSlotBuckets(void);
 void LzPack_InsertSlotNode(s32 index);

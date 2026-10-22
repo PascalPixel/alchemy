@@ -104,7 +104,7 @@ void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object,
     object->target.child->value12 = value;
 }
 
-void Animation_SetIndexAndInitObjects(struct DispatchObject *object,
+void Animation_SetIndexAndInitializeObjects(struct DispatchObject *object,
                                       s32 index) {
   struct DispatchChild *child;
 

@@ -441,7 +441,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
 void BattleEffect_SetupBlendedDisplay(void);
 void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
                                s32 timerSlot, s32 timerFrames);
-void BattleEffect_InitTilemapAndFlushQueue(void);
+void BattleEffect_InitializeTilemapAndFlushQueue(void);
 
 // cybele.c
 void BattleEffect_RunCybele(struct BattleEffectArgument *effect);

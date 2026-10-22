@@ -240,7 +240,7 @@ Func_080d8740:
 	bge .L_080d8940
 	movs r0, #50
 	bl WaitFrames
-	bl Shop_InitEffectFar
+	bl Shop_InitializeEffectFar
 	bl BattleEffect_ClearActiveSlotsAndScheduleUpdates
 .L_080d8960:
 	add sp, #52

@@ -34,7 +34,7 @@ struct OwnerStart *Character_GetDefinition(s32 index);
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void Unit_Calculate(s32 owner);
 
-void Party_InitCharacters(void) {
+void Party_InitializeCharacters(void) {
   struct OwnerInventoryState *state;
   struct OwnerStart *start;
   u16 nameBuf[16];

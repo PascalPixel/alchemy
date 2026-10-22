@@ -12,7 +12,7 @@ struct EventWork1c4 {
 };
 
 struct ObjectRuntime *Object_GetById();
-void Animation_SetIndexAndInitObjects();
+void Animation_SetIndexAndInitializeObjects();
 void FieldEvent_WaitFrames();
 void Func_020001bc();
 void Func_02001bcc();
@@ -53,7 +53,7 @@ void Func_02001160(void) {
   Call1((void (*)())Func_02001c6c, (s32)MsgThisPlaceIs);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 24, 0x10000, 0x8000);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 25, 0x10000, 0x8000);
-  Call2((void (*)())Animation_SetIndexAndInitObjects, (s32)Object_GetById(12),
+  Call2((void (*)())Animation_SetIndexAndInitializeObjects, (s32)Object_GetById(12),
         56);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x1d8, 0x238);
   Call4((void (*)())Func_02001d0c, 12, -16, 0, 0xd000);

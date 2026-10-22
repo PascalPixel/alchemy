@@ -62,7 +62,7 @@ void AudioCommand_WaitForStateByteClear(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
-void Shop_InitEffect(void);
+void Shop_InitializeEffect(void);
 void Shop_ResetEffects(void);
 void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
@@ -146,7 +146,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
 
   Scheduler_RemoveCallback(Shop_ResetEffects);
   Func_08009280((s32)shop->partyMemberIcons[member], 16);
-  Shop_InitEffect();
+  Shop_InitializeEffect();
   WaitFrames(30);
   shop->cursor.anchor->active = savedKind;
 }

@@ -655,7 +655,7 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 /// Called by Battle_RunEncounter as the battle is set up and by
 /// BattlePresentation_BuildActions. Writes the camera's yaw, pitch,
 /// distance, position and eye, and the transform state.
-void Camera_InitDefaultTransform(void) {
+void Camera_InitializeDefaultTransform(void) {
   struct BattleCamera *camera = gCameraWork;
   struct FixedPointPosition eyeOffset;
 

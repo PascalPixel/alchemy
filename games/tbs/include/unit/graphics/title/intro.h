@@ -17,7 +17,7 @@ void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
 void PaletteFade_Update(void);
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                        s32 paletteHalf);
-void PaletteFade_Init(void);
+void PaletteFade_Initialize(void);
 void PaletteFade_Release(void);
 void PaletteFade_SetTarget(s32 mode, s32 paletteHalf);
 // UB: the early call implicitly returns int, but the definition returns void.

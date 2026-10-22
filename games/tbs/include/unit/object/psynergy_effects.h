@@ -262,7 +262,7 @@ void FieldEffect_StartGroundParticles(void);
 void FieldMotes_Update(void);
 void FieldMotes_Start(void);
 void FieldEffect_UpdateSparkles(void);
-void FieldEffect_InitSparkles(void);
+void FieldEffect_InitializeSparkles(void);
 void FieldEffect_StartLightning(void);
 void FieldEffect_StopLightning(void);
 void FieldEffect_LastLightning(void);

@@ -107,7 +107,7 @@ s32 Menu_OpenCharacterSelector(void) {
   UiWindow_InitializeWork(0);
 
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
-  Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
+  Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < CHARACTER_SELECTOR_OWNER_COUNT; index++)
     state->ownerY[index] = 30;
@@ -163,7 +163,7 @@ s32 StatusMenu_Run(void) {
   UiWindow_InitializeWork(0);
   state->page = CHARACTER_MENU_PAGE_STATUS;
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
-  Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
+  Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
 #if !TBS_PATCH_1
   Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
@@ -669,8 +669,8 @@ s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
 /// Sets up the Status menu's first screen: the cursor window with the party's
 /// figures, no other windows yet, and an 8 by 2 cursor grid. The parameters are
 /// not used.
-void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
-                                       s32 unused3) {
+void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
+                                             s32 unused2, s32 unused3) {
   struct CharacterMenuState *state;
 
   state = gMenuWork;

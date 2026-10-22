@@ -1,5 +1,5 @@
 // Near miss, differ 206 of 322, 2026-10-18, written from the listing and The
-// Broken Seal's GameState_InitDefaults (games/tbs/src/game/game.c): clears the
+// Broken Seal's GameState_InitializeDefaults (games/tbs/src/game/game.c): clears the
 // party state, the work block, the flags and the owners by DMA, builds the
 // characters, sets a new game's defaults (the button layout, Felix and Jenna
 // in the party, their first Psynergy, 200 coins, the message settings, the

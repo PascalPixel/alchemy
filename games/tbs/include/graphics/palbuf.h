@@ -12,7 +12,7 @@
 /// A colour buffer for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
 /// The title intro's form of HEAP_SLOT_PALETTE_BUFFER, allocated by
-/// PaletteFade_Init.
+/// PaletteFade_Initialize.
 struct PaletteFade {
   /// The source palette, RGB555: 256 BG colours, then 256 OBJ colours.
   u16 palette[512];

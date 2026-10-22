@@ -271,7 +271,7 @@ Func_081197f0:
 .L_08119a30:
 	movs r0, #9
 	bl UiWindow_CreateWithLayoutBoundsFar
-	bl Camera_InitDefaultTransform
+	bl Camera_InitializeDefaultTransform
 	bl BattleObject_Put
 	bl Func_081263c4
 	movs r3, #206

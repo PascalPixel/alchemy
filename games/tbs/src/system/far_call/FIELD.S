@@ -17,7 +17,7 @@ FarCall_FieldTable:
 	export ResourceMetadata_UnregisterFar, ResourceMetadata_Unregister
 	overlay_veneer ResourceMetadata_ReleaseSlot
 	export ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord
-	overlay_veneer Animation_InitWorkFromMetadata
+	overlay_veneer Animation_InitializeWorkFromMetadata
 	export Animation_SetWorkEntryFar, Animation_SetWorkEntry
 	export ObjectSystem_InitializeFar, ObjectSystem_Initialize
 	export ObjectDispatch_SelectAnimationFar, ObjectDispatch_SelectAnimation
@@ -68,7 +68,7 @@ FarCall_FieldTable:
 	export ObjectDispatch_SetChildBlendModeFar, ObjectDispatch_SetChildBlendMode
 	export Map_SetScreenShakeFar, Map_SetScreenShake
 	export Map_WaitForShakeToSettleFar, Map_WaitForShakeToSettle
-	overlay_veneer Animation_SetIndexAndInitObjects
+	overlay_veneer Animation_SetIndexAndInitializeObjects
 	export ObjectSystem_SuspendProjectionAndShowSpritesFar, ObjectSystem_SuspendProjectionAndShowSprites
 	export ObjectSystem_ResumeProjectionAndHideLayersFar, ObjectSystem_ResumeProjectionAndHideLayers
 	overlay_veneer ObjectDispatch_SetChildFixedScale

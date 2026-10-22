@@ -249,7 +249,7 @@ enum {
 
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void RenderOutput_ReleaseFree(struct RenderOutput *out);
-void RenderOutput_InitFreeList(void);
+void RenderOutput_InitializeFreeList(void);
 void UiWork_InitializeWithResourceCounters(void);
 void UiWork_Initialize(s32 loadGlyphTiles);
 void UiWork_UploadDirtyBlocks(void);
@@ -294,8 +294,8 @@ void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
 void UiWork_ResetCounters();
-void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
-void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles);
+void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void);
+void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles);
 void UiWork_FinalizeSharedSlot(void);
 void UiText_PrepareMessageWork(s32 argument);
 void UiText_ShowMessageAndWaitCore(s32 argument);

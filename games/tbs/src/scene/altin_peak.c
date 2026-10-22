@@ -1897,7 +1897,7 @@ static void AltinPeak_RestoreWestExitRoom(void) {
 
 /// Gives a new spray particle its look: standing still, on sprite priority 1
 /// and at 0.3 scale.
-static void AltinPeak_InitSpray(struct FieldActor *spray) {
+static void AltinPeak_InitializeSpray(struct FieldActor *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
   ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
@@ -1965,7 +1965,7 @@ static void AltinPeak_SpawnSpray(void) {
   spray->actor.timer = 30;
   spray->actor.work = 1;
   spray->effect.countdown = 20;
-  AltinPeak_InitSpray(&spray->actor);
+  AltinPeak_InitializeSpray(&spray->actor);
   spray->effect.update = AltinPeak_DriftSpray;
   Object_SetMode(&spray->actor, 1);
 }

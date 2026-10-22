@@ -31,7 +31,7 @@
 
 /// 0x78 bytes of EWRAM where scene overlays keep state of their own, such as
 /// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
-/// leaves it alone; GameState_InitDefaults clears it for a new game.
+/// leaves it alone; GameState_InitializeDefaults clears it for a new game.
 extern u8 gSceneState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.

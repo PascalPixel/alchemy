@@ -261,7 +261,7 @@ void DebugBattle_RunMenu(void) {
   s32 preset;
   s32 loadedPreset;
 
-  GameState_InitDefaultsFar();
+  GameState_InitializeDefaultsFar();
 restart:
   Ui_LoadWindowGraphics();
   DebugText_Clear();
@@ -301,7 +301,7 @@ restart:
           Battle_SetStart(BATTLE_START_DEBUG);
         }
         if (preset != loadedPreset) {
-          GameState_InitDefaultsFar();
+          GameState_InitializeDefaultsFar();
           DebugParty_LoadPreset(preset);
           loadedPreset = preset;
         }

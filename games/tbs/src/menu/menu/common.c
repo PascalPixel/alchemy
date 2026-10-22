@@ -505,7 +505,7 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// in it, hidden for now, as paneIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
-/// Menu_InitSelectorCursorAndEntries (the Status screen and the member
+/// Menu_InitializeSelectorCursorAndEntries (the Status screen and the member
 /// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
 /// figures.
 struct UiWindow *UiMenu_CreateCursor(void *source) {

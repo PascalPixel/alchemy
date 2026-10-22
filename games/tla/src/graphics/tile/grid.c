@@ -92,7 +92,7 @@ void Ui_SetGridColumnNumber(s32 slot, s32 no) {
 
     count--;
     *(u16 *)entry = no;
-    Animation_InitWorkFromMetadata(entry);
+    Animation_InitializeWorkFromMetadata(entry);
     base += 56;
   } while (count >= 0);
 }

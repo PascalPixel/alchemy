@@ -606,7 +606,7 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
     struct AnimationEntry *entry = spriteGroup->entries[layerIndex];
 
     entry->animId = spriteId;
-    Animation_InitWorkFromMetadata(entry);
+    Animation_InitializeWorkFromMetadata(entry);
     spriteGroup++;
   }
 }

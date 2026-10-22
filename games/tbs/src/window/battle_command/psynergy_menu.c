@@ -55,7 +55,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     s32 y = i * 2;
 
     iconSprite = &sprites[i];
-    MenuSprite_Init(sprites[i], MENU_SPRITE_SIZE_16);
+    MenuSprite_Initialize(sprites[i], MENU_SPRITE_SIZE_16);
     iconSprite->oam.f.x = window->x * 8 + 8;
     iconSprite->oam.f.y = (y + window->y) * 8 + 4;
   }

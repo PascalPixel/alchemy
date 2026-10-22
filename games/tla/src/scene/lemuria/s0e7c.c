@@ -8,7 +8,7 @@
 
 struct ObjectRuntime *Object_GetById();
 void ObjectMotion_ResetAndSetPosition();
-void Animation_SetIndexAndInitObjects();
+void Animation_SetIndexAndInitializeObjects();
 void FieldEvent_WaitFrames();
 void Func_020001bc();
 void Func_02001bcc();
@@ -42,7 +42,7 @@ void Func_02000e7c(s32 id) {
   Func_02001bcc();
   Call1((void (*)())Func_02001d04, 0);
   Call1((void (*)())Func_02001c6c, (s32)MsgOh2);
-  Call2((void (*)())Animation_SetIndexAndInitObjects, (s32)Object_GetById(12),
+  Call2((void (*)())Animation_SetIndexAndInitializeObjects, (s32)Object_GetById(12),
         56);
   if (id == 21) {
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x178, 0x3c8);
@@ -109,7 +109,7 @@ void Func_0200109c(void) {
   Func_02001bcc();
   Call1((void (*)())Func_02001d04, 0);
   Call1((void (*)())Func_02001c6c, (s32)MsgWhereAreYou);
-  Call2((void (*)())Animation_SetIndexAndInitObjects, (s32)Object_GetById(12),
+  Call2((void (*)())Animation_SetIndexAndInitializeObjects, (s32)Object_GetById(12),
         56);
   Call2((void (*)())Func_02001c94, 4, 0x4000);
   Call2((void (*)())ObjectMotion_SetActionVariant, 12, 1);

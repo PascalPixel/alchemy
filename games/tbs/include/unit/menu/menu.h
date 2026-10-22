@@ -189,8 +189,8 @@ s32 DjinnMenu_ShowCurrentList(void);
 s32 CharacterSelector_RunRearrange(void);
 s32 PsynergyMenu_SelectOwner(void);
 s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction);
-void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
-                                       s32 unused3);
+void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
+                                             s32 unused2, s32 unused3);
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
 s32 CharacterMenu_SelectCommand(void);
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,

@@ -522,7 +522,7 @@ void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
 
   UiText_LoadRemappedGlyph(&work->palette, icon, index * 16);
   work->entries[index].kind = icon;
-  MenuSprite_Init(entry->sprite, 0x80002000);
+  MenuSprite_Initialize(entry->sprite, 0x80002000);
   entry->sprite.oam.f.tile =
       Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }

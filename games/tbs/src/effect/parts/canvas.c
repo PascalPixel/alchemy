@@ -461,9 +461,10 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
 /// repeats across the screen with gaps.
 ///
 /// Called by BattleEffect_RunRay, BattleEffect_RunCondemn,
-/// BattleEffect_RunCastingImpact and BattleEffect_InitTilemapAndFlushQueue.
-/// Opens the layer through BattleEffect_BeginCanvasLayer, then rewrites BG2CNT
-/// and BG2's map in screen block 7.
+/// BattleEffect_RunCastingImpact and
+/// BattleEffect_InitializeTilemapAndFlushQueue. Opens the layer through
+/// BattleEffect_BeginCanvasLayer, then rewrites BG2CNT and BG2's map in screen
+/// block 7.
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleEffect_BeginTiledCanvas(s32 bgControl) {

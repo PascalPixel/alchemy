@@ -628,7 +628,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
-    FieldEffect_InitSparkles();
+    FieldEffect_InitializeSparkles();
     SolSanctumEruption_PlayHostageScene();
   }
   return 0;

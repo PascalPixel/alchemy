@@ -401,7 +401,7 @@ void FieldEffect_UpdateSparkles(void) {
 
 /// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
 /// clears the 32 sparkles.
-void FieldEffect_InitSparkles(void) {
+void FieldEffect_InitializeSparkles(void) {
   u32 size = 0x410;
   struct GroundParticleWork *work =
       Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES, size);

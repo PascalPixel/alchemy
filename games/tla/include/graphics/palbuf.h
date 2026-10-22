@@ -79,7 +79,7 @@ enum PaletteTransform {
 
 void Palette_Transform(u32 mode, u16 *source, u16 *destination, s32 half);
 
-void PaletteFade_Init(void);
+void PaletteFade_Initialize(void);
 void PaletteFade_Update(void);
 void PaletteFade_SetTarget(s32 index, s32 transform);
 void PaletteFade_SetBackdrop(s32 value);

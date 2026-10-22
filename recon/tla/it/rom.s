@@ -159,10 +159,10 @@ ResourceMetadata_ReleaseSlotFar:
 ResourceMetadata_ClearRecordFar:
 	.incbin "baserom.gba", 0x00020070, 0x00000008
 	.section .rom.00020078, "ax"
-	.global Animation_InitWorkFromMetadataFar
-	.type Animation_InitWorkFromMetadataFar, %function
+	.global Animation_InitializeWorkFromMetadataFar
+	.type Animation_InitializeWorkFromMetadataFar, %function
 	.thumb_func
-Animation_InitWorkFromMetadataFar:
+Animation_InitializeWorkFromMetadataFar:
 	.incbin "baserom.gba", 0x00020078, 0x00000008
 	.section .rom.00020180, "ax"
 	.incbin "baserom.gba", 0x00020180, 0x00000018
@@ -209,10 +209,10 @@ Func_080201d0:
 Func_080201d8:
 	.incbin "baserom.gba", 0x00020208, 0x00000008
 	.section .rom.00020238, "ax"
-	.global Animation_SetIndexAndInitObjectsFar
-	.type Animation_SetIndexAndInitObjectsFar, %function
+	.global Animation_SetIndexAndInitializeObjectsFar
+	.type Animation_SetIndexAndInitializeObjectsFar, %function
 	.thumb_func
-Animation_SetIndexAndInitObjectsFar:
+Animation_SetIndexAndInitializeObjectsFar:
 	.incbin "baserom.gba", 0x00020238, 0x00000008
 	.section .rom.00020240, "ax"
 	.global Func_08020240
@@ -4039,10 +4039,10 @@ Shop_FillSelectorFar:
 Shop_RestoreSceneTilesFar:
 	.incbin "baserom.gba", 0x00108058, 0x00000008
 	.section .rom.00108060, "ax"
-	.global Shop_InitEffectFar
-	.type Shop_InitEffectFar, %function
+	.global Shop_InitializeEffectFar
+	.type Shop_InitializeEffectFar, %function
 	.thumb_func
-Shop_InitEffectFar:
+Shop_InitializeEffectFar:
 	.incbin "baserom.gba", 0x00108060, 0x00000008
 	.section .rom.00108068, "ax"
 	.global Func_08108068

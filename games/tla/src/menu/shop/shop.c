@@ -124,7 +124,7 @@ void Shop_RestoreSceneTiles(s32 layer) {
 #endif
 }
 
-void Shop_InitEffect(void) {
+void Shop_InitializeEffect(void) {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368((s32)Ram_HeapSlots->eventWork + 0x222, 1);
   BattleEffect_ApplyColorToSourceBufferFar(16);

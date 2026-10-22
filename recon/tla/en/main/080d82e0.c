@@ -50,7 +50,7 @@ void Motion_SetVarCbAndRefresh();
 void Camera_WorldToScreen();
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32);
-void Shop_InitEffectFar(void);
+void Shop_InitializeEffectFar(void);
 void EffectSlot_Initialize();
 void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
@@ -276,7 +276,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   }
 
   WaitFrames(15);
-  Shop_InitEffectFar();
+  Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 

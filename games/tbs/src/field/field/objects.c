@@ -432,8 +432,8 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
 /// Gives a one-sprite object's first layer animation id animationId and
 /// restarts its layers.
 /// A negative animationId does nothing.
-void Animation_SetIndexAndInitObjects(void *rawDispatchObject,
-                                      s32 animationId) {
+void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
+                                            s32 animationId) {
   struct DispatchObject *object = rawDispatchObject;
   struct AnimationObject *sprite;
 

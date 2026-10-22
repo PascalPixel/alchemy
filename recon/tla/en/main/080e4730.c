@@ -43,7 +43,7 @@ void Func_080e43a4(void *source, void *buffer, s32 size);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
-void Animation_SetIndexAndInitObjectsFar(struct ObjectRuntime *object,
+void Animation_SetIndexAndInitializeObjectsFar(struct ObjectRuntime *object,
                                          s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void WaitFrames(s32 frames);
@@ -98,7 +98,7 @@ void Func_080e4730(void) {
   Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                       owner->z);
   party = gPartyState;
-  Animation_SetIndexAndInitObjectsFar(owner, *(s32 *)(party + 532));
+  Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
   animation = owner->animation;
   animation[5] &= 63;
   animation = owner->animation;

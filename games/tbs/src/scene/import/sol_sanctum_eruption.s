@@ -66,7 +66,7 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_EventGetViewCenter, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.FieldEffect_InitSparkles, 1
+	.set import.FieldEffect_InitializeSparkles, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Engine_EventOpenScreen, 1

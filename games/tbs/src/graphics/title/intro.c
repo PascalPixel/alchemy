@@ -325,7 +325,7 @@ s32 Title_ShowIntro(s32 prompt) {
   gOamCopyEnabled = result;
   gCpuLoadDisplayEnabled = result;
   Title_LoadIntroBackgrounds();
-  PaletteFade_Init();
+  PaletteFade_Initialize();
   PaletteFade_SetCurrent(RGB(2, 0, 0), PALETTE_HALVES_BOTH);
   // This screen supplies its own OAM list in VBlank. Keep the normal OAM
   // copy disabled until its sprite callback is removed at the white flash.
@@ -699,10 +699,10 @@ void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
   }
 }
 
-/// A task scheduled by PaletteFade_Init: steps the palette fade each frame,
-/// adding the step to every colour component until the fade is done, packs
-/// the components into the spare RGB555 copy of the palettes and queues both
-/// halves for VBlank.
+/// A task scheduled by PaletteFade_Initialize: steps the palette fade each
+/// frame, adding the step to every colour component until the fade is done,
+/// packs the components into the spare RGB555 copy of the palettes and queues
+/// both halves for VBlank.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = (struct PaletteFade *)gPaletteBufferWork;
   u16 *componentSteps = work->delta;
@@ -754,7 +754,7 @@ void PaletteFade_Update(void) {
 /// filters; the TINT, BLEND and SPLIT flags carry
 /// a colour in their low bits; anything else is the address of components to
 /// copy. `paletteHalf` is an enum PaletteHalf.
-/// Called by PaletteFade_Init and the palette fade's setters.
+/// Called by PaletteFade_Initialize and the palette fade's setters.
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                        s32 paletteHalf) {
   u32 colorIndex;
@@ -1012,7 +1012,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
 /// Allocates the palette fade, saves both hardware palettes in it as the
 /// starting colours and schedules PaletteFade_Update. Called by
 /// Title_ShowIntro.
-void PaletteFade_Init(void) {
+void PaletteFade_Initialize(void) {
   struct PaletteFade *buffer;
   s32 callbackPriority;
 

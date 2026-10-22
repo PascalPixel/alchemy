@@ -271,7 +271,7 @@ Func_080e4a34:
 	mov r5, r8
 	mov r0, r8
 	movs r1, #251
-	bl Animation_SetIndexAndInitObjectsFar
+	bl Animation_SetIndexAndInitializeObjectsFar
 	ldr r0, [r5, #80]
 	movs r2, #63
 	ldrb r1, [r0, #5]

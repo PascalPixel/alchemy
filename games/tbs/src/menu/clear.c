@@ -508,7 +508,7 @@ menu_top:;
     // Hidden button codes expand the list of names offered for a new game:
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
-    GameState_InitDefaults();
+    GameState_InitializeDefaults();
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
     v5 = 1;
     v7 = 0;

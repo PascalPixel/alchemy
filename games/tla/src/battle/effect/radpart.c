@@ -37,7 +37,7 @@ void Animation_ApplyChildValuesToRecordFar(void *object, u32 value);
 u32 Random16(void);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void Object_SetMode(void *object, s32 mode);
-void Shop_InitEffectFar(void);
+void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
@@ -101,7 +101,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   WaitFrames(40);
   Audio_PlayCue(164);
   WaitFrames(100);
-  Shop_InitEffectFar();
+  Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 

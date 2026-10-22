@@ -39,7 +39,7 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
 }
 
 /// Link all 64 outputs[] entries into the free list.
-void UiWork_InitFreeList(void) {
+void UiWork_InitializeFreeList(void) {
   s32 n;
   struct UiRenderWork *work;
   struct RenderOutput *out;

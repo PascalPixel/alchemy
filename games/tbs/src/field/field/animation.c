@@ -117,7 +117,7 @@ s32 Animation_LookupValueByKey(s32 tag) {
 /// Resets each layer of a sprite from its animation's metadata: its facing
 /// kind, frames, scripts and codec, with no frame shown and no script
 /// running. The first layer also sets the sprite's size, scale and offsets.
-/// Returns 0. Called by Animation_SetIndexAndInitObjects.
+/// Returns 0. Called by Animation_SetIndexAndInitializeObjects.
 s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
   s32 i;
 
@@ -162,7 +162,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
 /// Resets one animation layer from its animation's metadata, as
 /// Animation_InitializeObjects does for each layer. Called by the sprite
 /// viewer.
-void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
+void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer) {
   void **frames;
   s32 zero;
   struct AnimationMetadata *metadata;

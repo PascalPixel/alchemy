@@ -165,10 +165,10 @@ Func_080c8320:
 	.thumb_func
 Func_080c8328:
 .ifdef TLA_EDITION_ES
-	overlay_veneer FieldEffect_InitSparkles
+	overlay_veneer FieldEffect_InitializeSparkles
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer FieldEffect_InitSparkles
+	overlay_veneer FieldEffect_InitializeSparkles
 .else
 	overlay_veneer BattleEffect_StartBufferBlend
 .endif
@@ -186,7 +186,7 @@ Func_080c8338:
 .ifdef TLA_EDITION_IT
 	overlay_veneer DisplayTransition_InitializeState
 .else
-	overlay_veneer FieldEffect_InitSparkles
+	overlay_veneer FieldEffect_InitializeSparkles
 .endif
 .endif
 	.global Func_080c8340

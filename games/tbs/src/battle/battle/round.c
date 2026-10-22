@@ -711,7 +711,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
 finish:
   // The battle view again, turned toward the party's turn.
   GameFlag_ClearBitFar(FLAG_CHOOSING_COMMANDS);
-  Camera_InitDefaultTransform();
+  Camera_InitializeDefaultTransform();
   gTransitionWork->targetYaw = YAW_PARTY_TURN;
   return count;
 }

@@ -239,7 +239,7 @@ void FieldEffect_ResumeLightningFar(void);
 /// Vale's eruption shows.
 void FieldEffect_StartBufferBlendFar(s32 from, s32 to);
 /// Loads the sparkles' tiles and clears all 32.
-void FieldEffect_InitSparklesFar(void);
+void FieldEffect_InitializeSparklesFar(void);
 /// Starts a window transition in a mode at value 0, for the caller to move;
 /// Reveal and three scenes use it.
 void DisplayTransition_InitializeBattleEffectStateFar(s32 mode);

@@ -23,7 +23,7 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 void Unit_Calculate(s32 owner);
 void GameFlag_RefreshLureCap(void);
 u32 Runtime_GetBuildStampTime(void);
-void GameState_InitDefaults(void);
+void GameState_InitializeDefaults(void);
 void Party_BeginChildhood(void);
 void Party_EndChildhood(void);
 void Party_RestoreHpPp(s32 cureConditions);
@@ -72,7 +72,7 @@ s32 Unit_RefreshPsynergy(s32 owner);
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value);
 struct LevelUpResult *Unit_CheckLevelUp(s32 owner, struct LevelUpResult *gains);
 struct CharacterDefinition *Character_GetDefinition(s32 index);
-void Party_InitCharacters(void);
+void Party_InitializeCharacters(void);
 void Unit_LevelNoOp(void);
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains);

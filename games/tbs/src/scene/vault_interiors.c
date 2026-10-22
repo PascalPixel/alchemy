@@ -57,8 +57,6 @@
 /// - XXX: the suspects' route scripts keep lettered names
 ///   (gVaultInteriors_PairScriptA to _R); a recording of the chase, matching
 ///   each script to the stop it walks to, would let them be named.
-/// - XXX: SE_124, MUS_009, MUS_017, MUS_060 and MUS_061 have no proven names;
-///   a recording of the chase and the loft would settle them.
 
 #include "game_state.h"
 #include "flags.h"

@@ -65,13 +65,11 @@
 ///   at the inn back from Kalay, is for; whether it is solid, from the inn's
 ///   render with the actor outlined, would show if it holds the man's place
 ///   or blocks a way.
-/// - XXX: whether the talk row of Event_RemarkIsaacHasGrown, which tests
-///   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC where the Mind Read row tests
-///   FLAG_VALE_MAN_SAW_ISAAC_GROWN, is a slip; talking to the man before and
-///   after the innkeeper in a play-through would show which line plays.
-/// - XXX: what the actor animations beyond enum ActorAnimation that the scene
-///   sets (Isaac asleep in bed is 18) show; each sprite's animation table
-///   under graphics/sprite would settle it.
+/// - XXX (no evidence): whether the talk row of Event_RemarkIsaacHasGrown was
+///   meant to test FLAG_VALE_MAN_SAW_ISAAC_GROWN, as its Mind Read row does;
+///   the tables show only what plays (the same line either way, the script
+///   setting the man's flag only before the innkeeper's welcome), not what
+///   was intended.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -249,6 +247,22 @@ enum ValeInteriorsInnPlaceFlag {
   /// has grown.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   FLAG_VALE_MAN_SAW_ISAAC_GROWN = 0x301
+};
+
+/// Animations of Dora's and young Isaac's sprites beyond enum ActorAnimation,
+/// as their animation tables and frames under graphics/sprite draw them.
+enum ValeInteriorsInnAnimation {
+  ANIM_DORA_IN_BED = 10, ///< lying down, ill (spr_031.png)
+  /// Dora seen from behind, her head bowed and turned aside (spr_031.png).
+  ANIM_DORA_HEAD_TURNED = 11,
+  ANIM_DORA_HEAD_BOWED = 12, ///< seen from behind, her head bowed low
+  /// ANIM_DORA_HEAD_TURNED and ANIM_DORA_HEAD_BOWED in turn, twice.
+  ANIM_DORA_HEAD_SWAYING = 13,
+  /// Dora straightening, still seen from behind (spr_031.png).
+  ANIM_DORA_STRAIGHTEN = 14,
+  /// Young Isaac asleep, only his head on the pillow (spr_018.png).
+  ANIM_ISAAC_ASLEEP = 18,
+  ANIM_ISAAC_GET_UP = 19 ///< sitting up, then jumping out of bed
 };
 
 // FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit.
@@ -518,7 +532,7 @@ s32 ValeInteriorsInn_Initialize(void) {
           Map_ClearLayerEntryFlag(11);
           actor = Object_GetById(ACTOR_DORA);
           Engine_ActorSetSpriteFlags(actor, 0);
-          Engine_ActorSetAnimation(ACTOR_DORA, 10);
+          Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_IN_BED);
         }
       }
     } else {
@@ -592,9 +606,9 @@ static void Event_DoraWakesIsaac(void) {
   Engine_ActorSetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
   Engine_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
   Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
-  // Isaac lies asleep in bed (animation 18); his tunic is set beside him.
+  // Isaac lies asleep in bed; his tunic is set beside him.
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 18);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
   sprite->rotation = 1365;
   Object_GetById(ACTOR_TUNIC)->motionFlags = 0;
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_TUNIC), 0);
@@ -646,12 +660,12 @@ static void Event_DoraWakesIsaac(void) {
   Event_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  // Isaac gets out of bed (animation 19) and jumps down beside Dora.
+  // Isaac gets out of bed and jumps down beside Dora.
   Map_SetLayerEntryFlag(7);
   Engine_EventWait(20);
   Map_ClearLayerEntryFlag(8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_GET_UP);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 557, 679);
   Map_SetLayerEntryFlag(8);
   Map_ClearLayerEntryFlag(9);
@@ -911,8 +925,9 @@ static void Event_TalkToInnkeeper(void) {
 /// (ACTOR_MAN_ISAAC_HAS_GROWN) remarks how much Isaac has grown. Reached by
 /// talking to him while FLAG_VALE_INNKEEPER_WELCOMED_ISAAC is clear, or by Mind
 /// Read on him until FLAG_VALE_MAN_SAW_ISAAC_GROWN is set, which this sets.
-/// The talk row tests the innkeeper's flag, not this one, likely a slip in the
-/// table (an open question).
+/// The talk row tests the innkeeper's flag, not this one: after his welcome
+/// the row below plays the same line as a plain message, which leaves
+/// FLAG_VALE_MAN_SAW_ISAAC_GROWN clear for Mind Read to play this once.
 static void Event_RemarkIsaacHasGrown(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
@@ -972,7 +987,7 @@ static void Event_VisitSickDora(void) {
   Engine_ActorSetDestination(ACTOR_DORA, 584, 406);
   Map_SetLayerEntryFlag(11);
   Map_ClearLayerEntryFlag(12);
-  Engine_ActorSetAnimation(ACTOR_DORA, 12);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventWait(40);
@@ -981,19 +996,19 @@ static void Event_VisitSickDora(void) {
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 13);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_ActorSetAnimation(ACTOR_DORA, 11);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_TURNED);
   Engine_EventWait(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventWait(20);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 12);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ActorSetAnimation(ACTOR_DORA, 13);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
@@ -1026,7 +1041,7 @@ static void Event_VisitSickDora(void) {
   Engine_EventShowMessage(ACTOR_DORA, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 13);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
@@ -1042,7 +1057,7 @@ static void Event_VisitSickDora(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ActorSetAnimation(ACTOR_DORA, 14);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
   Engine_ActorMoveToAndWait(ACTOR_DORA, 586, 400);
   Engine_EventWait(40);
   Actor_WalkToAndWait(ACTOR_DORA, 580, 382);

@@ -65,9 +65,7 @@
 /// the water drops run as scene callbacks started by Scene_Initialize.
 ///
 /// Open questions:
-/// - XXX: SE_106, SE_155, SE_156, SE_163, SE_204 and SE_238 have no proven
-///   names; a recording of the switch, a pillar reaching its switch, a puddle
-///   freezing and a drop landing would settle them.
+/// - None.
 
 #include "game_state.h"
 #include "unit/field/field.h"

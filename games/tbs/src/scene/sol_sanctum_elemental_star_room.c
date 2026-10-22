@@ -32,9 +32,6 @@
 /// Open questions:
 /// - XXX (picture): what ACTOR_RISING_EFFECT, a blank actor scaled with Isaac
 ///   as he rises into the room, draws; a render of the arrival would show it.
-/// - XXX: MUS_017, MUS_061, SE_141, SE_144, SE_145, SE_161, SE_190, SE_220 and
-///   SE_289 have no proven names; a recording of the arrival, a star being
-///   bagged and Alex's arrival would settle them.
 
 #include "game_state.h"
 #include "unit/import.h"

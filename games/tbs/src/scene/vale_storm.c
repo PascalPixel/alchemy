@@ -48,17 +48,7 @@
 /// once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 ///
 /// Open questions:
-/// - XXX: why cell codes 11 and 12, the rows of
-///   Event_LeaveToValeInteriorsShopsWestBySecondDoor and
-///   Event_LeaveToValeInteriorsInnWest, open neighbouring cells of one door
-///   and walk the leader to the same spot, yet lead into different scenes; a
-///   recording of each from the path above and the path below would settle
-///   it.
-/// - XXX: what the actor animations 5 to 9 and 17 that the scene sets show,
-///   since enum ActorAnimation names only 1 to 4; each sprite's animation
-///   table under graphics/sprite would settle it.
-/// - XXX (picture): the Boulder's descent, with the camera following it down
-///   the river through the colour buffer's fades.
+/// - None.
 
 #include "script.h"
 #include "game_state.h"
@@ -201,6 +191,45 @@ enum StormNightActor {
   ACTOR_ELDER_EAST, ///< east of ACTOR_ELDER_WEST, and drawn as that elder is
   /// ★ Named from the game: "Go aid the elders!" (MsgValeGoAidElders)
   ACTOR_ELDER_WEST
+};
+
+/// Animations of the night's own sprites beyond enum ActorAnimation, as each
+/// sprite's animation table and frames under graphics/sprite draw them.
+enum StormNightAnimation {
+  /// Garet leaning into his chest to drag it (spr_019.png).
+  ANIM_GARET_DRAG = 5,
+  /// Kyle crouched at the bank, reaching out to Felix (spr_053.png).
+  ANIM_KYLE_REACH_OUT = 5,
+  /// Jenna's father and mother crouched at the bank, reaching out
+  /// (spr_059.png, spr_060.png).
+  ANIM_PARENT_REACH_OUT = 6,
+  /// The strongman fallen back on the ground (spr_116.png).
+  ANIM_STRONGMAN_SPRAWLED = 6,
+  /// Only Felix's hands above the water as he goes under (spr_036.png).
+  ANIM_FELIX_UNDER_WATER = 6,
+  /// Felix clinging on in the river, one arm reaching out (spr_036.png).
+  ANIM_FELIX_CLING = 7,
+  /// A bearded elder seen from behind, both arms raised against the Boulder
+  /// (spr_122.png).
+  ANIM_BEARDED_ELDER_HOLD_BACK = 5,
+  /// The young man seen from behind, both arms raised against the Boulder
+  /// (spr_108.png).
+  ANIM_YOUNG_ELDER_HOLD_BACK = 8,
+  /// The young man facing the player, his hands raised to his mouth to call
+  /// out (spr_108.png).
+  ANIM_YOUNG_ELDER_CALL_OUT = 9,
+  /// The strongman propped up on one hand, the two facing opposite ways; the
+  /// leader's heading picks one (spr_116.png).
+  ANIM_STRONGMAN_PROPPED_UP = 7,
+  ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY = 8,
+  // The poses frozen in the lightning as the Boulder comes down the river
+  // (ValeStorm_ShowBoulderSweepingDownriver).
+  ANIM_STRONGMAN_RUN = 5,    ///< in mid-stride (spr_116.png)
+  ANIM_DORA_RUN = 9,         ///< in mid-stride (spr_031.png)
+  ANIM_JENNA_RUN = 5,        ///< in mid-stride (spr_048.png)
+  ANIM_ISAAC_RECOIL = 17,    ///< arms flung out (spr_018.png)
+  ANIM_PARENT_RECOIL = 5,    ///< seen from behind, arms flung out
+  ANIM_FELIX_CLING_STILL = 8 ///< ANIM_FELIX_CLING's first frame held
 };
 
 /// Vale's place flags this scene keeps while the party is in Vale.
@@ -429,13 +458,13 @@ static void Event_LeaveToValeInteriorsShopsWest(void) {
   Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
-/// Opens a second door into the same house and goes in. In Vale on the stormy
-/// night, it leads to the room Event_LeaveToValeInteriorsShopsWest leads to.
-/// Reached by walking north into cell code 11; takes
-/// VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR, which also
-/// arrives at VALE_INTERIORS_SHOPS_FROM_VALE_WEST. The leader walks to the spot
-/// Event_LeaveToValeInteriorsInnWest walks him to.
-static void Event_LeaveToValeInteriorsShopsWestBySecondDoor(void) {
+/// Unused: its row answers cell code 11, which no cell of the stormy night's
+/// map (map/map_000) carries. It would have opened Isaac's door, as
+/// Event_LeaveToValeInteriorsInnWest does for code 12, walked the leader to the
+/// same spot and taken VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR into
+/// the house Event_LeaveToValeInteriorsShopsWest leads to
+/// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST).
+static void Event_UnusedLeaveToValeInteriorsShopsWestBySecondDoor(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
@@ -571,7 +600,8 @@ s32 ValeStorm_Initialize(void) {
       actor->work = 4;
       Actor_SetActionScript(ACTOR_EXHAUSTED_STRONGMAN, table);
     }
-    Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 6);
+    Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                             ANIM_STRONGMAN_SPRAWLED);
     Object_GetById(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Object_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
         ~ACTOR_PRIORITY_AUTOMATIC;
@@ -590,7 +620,7 @@ s32 ValeStorm_Initialize(void) {
     const s32 *table;
     Actor_SetPosition(ACTOR_KYLE, PIXELS(192), PIXELS(1214));
     Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
-    Engine_ActorSetAnimation(ACTOR_KYLE, 5);
+    Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
     {
       struct FieldActor *actor;
 
@@ -601,7 +631,7 @@ s32 ValeStorm_Initialize(void) {
     Actor_SetActionScript(ACTOR_KYLE, table);
     Actor_SetPosition(ACTOR_JENNAS_FATHER, PIXELS(227), PIXELS(1214));
     Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTH, 0);
-    Engine_ActorSetAnimation(ACTOR_JENNAS_FATHER, 6);
+    Engine_ActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
     {
       struct FieldActor *actor;
 
@@ -611,7 +641,7 @@ s32 ValeStorm_Initialize(void) {
     Actor_SetActionScript(ACTOR_JENNAS_FATHER, table);
     Actor_SetPosition(ACTOR_JENNAS_MOTHER, PIXELS(247), PIXELS(1214));
     Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTH, 0);
-    Engine_ActorSetAnimation(ACTOR_JENNAS_MOTHER, 6);
+    Engine_ActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
     {
       struct FieldActor *actor;
 
@@ -660,7 +690,7 @@ s32 ValeStorm_Initialize(void) {
   }
   // Garet drags his chest out of his house until he joins, then the chest
   // stands by the door.
-  Engine_ActorSetAnimation(ACTOR_FELIX, 7);
+  Engine_ActorSetAnimation(ACTOR_FELIX, ANIM_FELIX_CLING);
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(ACTOR_GARET,
@@ -670,7 +700,7 @@ s32 ValeStorm_Initialize(void) {
     Actor_WalkTo(ACTOR_GARET, 400, 619);
     Actor_WalkToAndWait(ACTOR_GARETS_CHEST, 424, 619);
     Engine_ActorSetAnimation(ACTOR_GARETS_CHEST, ANIM_WALK);
-    Engine_ActorSetAnimation(ACTOR_GARET, 5);
+    Engine_ActorSetAnimation(ACTOR_GARET, ANIM_GARET_DRAG);
     Engine_EventEnd();
   } else {
     Engine_EventBegin();
@@ -792,7 +822,7 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
   Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
   Engine_ActorSetAnimation(ACTOR_GARETS_CHEST, ANIM_WALK);
-  Engine_ActorSetAnimation(ACTOR_GARET, 5);
+  Engine_ActorSetAnimation(ACTOR_GARET, ANIM_GARET_DRAG);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
   GameFlag_Set(FLAG_SCENE_TEMP_05);
@@ -1425,10 +1455,10 @@ static void Event_WatchBoulderFall(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     // Show the four elders holding back the Boulder.
-    Engine_ActorSetAnimation(ACTOR_ELDER_EAST, 5);
-    Engine_ActorSetAnimation(ACTOR_ELDER_WEST, 5);
-    Engine_ActorSetAnimation(ACTOR_ELDER_FAR_EAST, 8);
-    Engine_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, 8);
+    Engine_ActorSetAnimation(ACTOR_ELDER_EAST, ANIM_BEARDED_ELDER_HOLD_BACK);
+    Engine_ActorSetAnimation(ACTOR_ELDER_WEST, ANIM_BEARDED_ELDER_HOLD_BACK);
+    Engine_ActorSetAnimation(ACTOR_ELDER_FAR_EAST, ANIM_YOUNG_ELDER_HOLD_BACK);
+    Engine_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_YOUNG_ELDER_HOLD_BACK);
     Actor_Get(ACTOR_ELDER_FAR_EAST)->scaleX = -Q16_ONE;
     Engine_ActorSetSpritePriority(ACTOR_ELDER_EAST, 2);
     Engine_ActorSetSpritePriority(ACTOR_ELDER_WEST, 2);
@@ -1522,7 +1552,7 @@ static void Event_WatchBoulderFall(void) {
                     0);
     Engine_ActorRunRepeatedMotion(ACTOR_ELDER_FAR_WEST, 2);
     Engine_ActorJump(ACTOR_ELDER_FAR_WEST, 4, 40);
-    Engine_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, 9);
+    Engine_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_YOUNG_ELDER_CALL_OUT);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_ELDER_FAR_WEST, 0, 20);
     Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
@@ -1624,7 +1654,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_KYLE, PIXELS(192), PIXELS(1214));
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
-  Engine_ActorSetAnimation(ACTOR_KYLE, 5);
+  Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
   {
     struct FieldActor *actor;
     s32 pulseDelay;
@@ -1638,7 +1668,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
   Actor_SetPosition(ACTOR_JENNAS_FATHER, PIXELS(227), PIXELS(1214));
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTH, 0);
-  Engine_ActorSetAnimation(ACTOR_JENNAS_FATHER, 6);
+  Engine_ActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   {
     struct FieldActor *actor;
     s32 pulseDelay;
@@ -1649,7 +1679,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   }
   Actor_SetPosition(ACTOR_JENNAS_MOTHER, PIXELS(250), PIXELS(1214));
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTH, 0);
-  Engine_ActorSetAnimation(ACTOR_JENNAS_MOTHER, 6);
+  Engine_ActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   {
     struct FieldActor *actor;
     s32 pulseDelay;
@@ -1697,7 +1727,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   Engine_EventWait(20);
   Engine_AudioPlayCue(SE_HEAVY_IMPACT);
   Engine_ActorJump(ACTOR_FELIX, 4, 0);
-  Engine_ActorSetAnimation(ACTOR_FELIX, 6);
+  Engine_ActorSetAnimation(ACTOR_FELIX, ANIM_FELIX_UNDER_WATER);
   Engine_EventWait(10);
   Engine_ActorSetPosition(ACTOR_FELIX, 0, 0);
   Engine_EventWait(60);
@@ -1755,7 +1785,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
     actor->velocityY = PIXELS(2);
   }
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_FELIX, 7);
+  Engine_ActorSetAnimation(ACTOR_FELIX, ANIM_FELIX_CLING);
   Engine_EventWait(20);
   FieldFx_PlayQueuedSound();
   Engine_EventWait(20);
@@ -1897,9 +1927,9 @@ static void ValeStorm_DoraGoesForHelp(void) {
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ActorSetAnimation(ACTOR_KYLE, 5);
-  Engine_ActorSetAnimation(ACTOR_JENNAS_FATHER, 6);
-  Engine_ActorSetAnimation(ACTOR_JENNAS_MOTHER, 6);
+  Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
+  Engine_ActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
+  Engine_ActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   villager = Actor_Get(ACTOR_KYLE);
   random = Engine_RandomNext();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
@@ -2026,7 +2056,7 @@ static void Event_TalkAboutSavingFelix(void) {
     Engine_EventShowMessageAndWait(ACTOR_KYLE, 0, 10);
   }
   Engine_ActorFaceDirection(ACTOR_KYLE, facing, 20);
-  Engine_ActorSetAnimation(ACTOR_KYLE, 5);
+  Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
   Engine_EventWait(10);
   {
     struct FieldActor *villager;
@@ -2189,7 +2219,9 @@ static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
 /// the family and Kyle in its path. Then the bank is redrawn without them,
 /// with the rocks the Boulder left, and the party stands at the spot of
 /// VALE_STORM_FROM_BOULDER_PASSED. Called by
-/// Event_BoulderSweepsThemAway.
+/// Event_BoulderSweepsThemAway, whose recording on the docs site
+/// (places/vale-storm/events/Event_BoulderSweepsThemAway.gif) shows the
+/// descent.
 static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   struct AnimationObject *actorVisual;
   struct AnimationObject *groupVisual;
@@ -2361,7 +2393,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Scheduler_RemoveCallback(ValeStorm_UpdatePulsingGlow);
   Actor_Stop(ACTOR_BOULDER);
   Task_Wait(1);
-  Actor_SetAnimation(ACTOR_BOULDER, 0);
+  Actor_SetAnimation(ACTOR_BOULDER, ANIM_STILL);
   groupActor->scaleX = 0x14000;
   groupActor->scaleY = 0x14000;
   groupVisual->offsetY = 2;
@@ -2374,22 +2406,22 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   actor->targetZ = resetValue;
   Task_Wait(1);
   // Stage the riverbank reactions between lightning flashes.
-  Actor_SetAnimation(ACTOR_FELIX, 8);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_FELIX_CLING_STILL);
   Actor_SetPosition(ACTOR_DORA, PIXELS(169), PIXELS(1264));
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
-  Actor_SetAnimation(ACTOR_DORA, 9);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_RUN);
   Actor_SetPosition(ACTOR_JENNA, PIXELS(151), PIXELS(1292));
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
-  Actor_SetAnimation(ACTOR_JENNA, 5);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_JENNA_RUN);
   Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(170), PIXELS(1313));
   Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_SOUTHWEST, 0);
-  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 5);
+  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_RUN);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(185), PIXELS(1333));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 17);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_RECOIL);
   Actor_SetPosition(ACTOR_GARET, PIXELS(169), PIXELS(1384));
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-  Actor_SetAnimation(ACTOR_GARET, 0);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STILL);
   Camera_MoveTo(PIXELS(166), 0, PIXELS(1337), 0);
   Engine_MapRedraw();
   actor->motionFlags = resetValue;
@@ -2414,7 +2446,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   groupActor->scaleY = Q16_ONE;
   groupActor->facing = FACING_NORTH + FACING_STEP;
   groupVisual->image.priority = 0;
-  Actor_SetAnimation(ACTOR_KYLE, 0);
+  Actor_SetAnimation(ACTOR_KYLE, ANIM_STILL);
   groupActor = Actor_Get(ACTOR_JENNAS_FATHER);
   groupVisual = groupActor->sprite;
   groupActor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2422,7 +2454,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   groupActor->scaleY = Q16_ONE;
   groupActor->facing = FACING_NORTHWEST + FACING_STEP;
   groupVisual->image.priority = 0;
-  Actor_SetAnimation(ACTOR_JENNAS_FATHER, 5);
+  Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_RECOIL);
   groupActor = Actor_Get(ACTOR_JENNAS_MOTHER);
   groupVisual = groupActor->sprite;
   groupActor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2430,7 +2462,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   groupActor->scaleY = Q16_ONE;
   groupActor->facing = FACING_NORTHWEST + FACING_STEP;
   groupVisual->image.priority = 0;
-  Actor_SetAnimation(ACTOR_JENNAS_MOTHER, 5);
+  Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
   groupActor = Actor_Get(ACTOR_BOULDER_GLOW);
   groupVisual = groupActor->sprite;
   ValeStorm_FlashLightning();
@@ -2472,7 +2504,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   // Restore the riverbank and the idle actor scripts.
   ValeStorm_RebuildRiverbank();
   Actor_SetPosition(ACTOR_DORA, PIXELS(165), PIXELS(1229));
-  Actor_SetAnimation(ACTOR_DORA, 1);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
   actor = Actor_Get(ACTOR_DORA);
   actor->facing = FACING_NORTHEAST;
   random = Random_Next();
@@ -2481,7 +2513,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   actor->work = 1;
   Actor_SetActionScript(ACTOR_DORA, departureActions);
   Actor_SetPosition(ACTOR_JENNA, PIXELS(165), PIXELS(1254));
-  Actor_SetAnimation(ACTOR_JENNA, 1);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   actor = Actor_Get(ACTOR_JENNA);
   actor->facing = FACING_NORTHEAST;
   random = Random_Next();
@@ -2489,7 +2521,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   actor->work = 2;
   Actor_SetActionScript(ACTOR_JENNA, departureActions);
   Actor_SetPosition(ACTOR_GARET, PIXELS(152), PIXELS(1285));
-  Actor_SetAnimation(ACTOR_GARET, 1);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   actor = Actor_Get(ACTOR_GARET);
   actor->facing = FACING_NORTHEAST;
   random = Random_Next();
@@ -2503,7 +2535,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->work = 4;
   Actor_SetActionScript(ACTOR_EXHAUSTED_STRONGMAN, departureActions);
-  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 6);
+  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_SPRAWLED);
   Object_GetById(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Object_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2512,7 +2544,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(181), PIXELS(1273));
   currentActor = Actor_Get(ACTOR_PARTY_LEADER);
   currentActor->facing = FACING_NORTHEAST;
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Camera_MoveTo(PIXELS(181), 0, PIXELS(1273), 0);
   Engine_MapRedraw();
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
@@ -2655,9 +2687,11 @@ static void Event_StrongmanTriesToGoForHelp(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Engine_EventWait(40);
     if ((s16)leader->facing >= 0) {
-      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 7);
+      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                               ANIM_STRONGMAN_PROPPED_UP);
     } else {
-      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 8);
+      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                               ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
     Engine_ActorRunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Engine_EventWait(20);
@@ -2665,7 +2699,8 @@ static void Event_StrongmanTriesToGoForHelp(void) {
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetActionScript(ACTOR_EXHAUSTED_STRONGMAN,
                           gValeStorm_SquashAndStretchScript);
-    Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 6);
+    Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                             ANIM_STRONGMAN_SPRAWLED);
   } else {
     Engine_ActorStop(ACTOR_EXHAUSTED_STRONGMAN);
     villager->scaleX = Q16_ONE;
@@ -2673,9 +2708,11 @@ static void Event_StrongmanTriesToGoForHelp(void) {
     Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_EAST + FACING_STEP,
                         0);
     if ((s16)leader->facing >= 0) {
-      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 7);
+      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                               ANIM_STRONGMAN_PROPPED_UP);
     } else {
-      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 8);
+      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                               ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeIllGo);
@@ -2686,9 +2723,11 @@ static void Event_StrongmanTriesToGoForHelp(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Engine_EventWait(40);
     if ((s16)leader->facing >= 0) {
-      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 7);
+      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                               ANIM_STRONGMAN_PROPPED_UP);
     } else {
-      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 8);
+      Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                               ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
     Engine_EventWait(2);
     Engine_ActorJump(ACTOR_EXHAUSTED_STRONGMAN, 2, 0);
@@ -2698,7 +2737,8 @@ static void Event_StrongmanTriesToGoForHelp(void) {
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetActionScript(ACTOR_EXHAUSTED_STRONGMAN,
                           gValeStorm_SquashAndStretchScript);
-    Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, 6);
+    Engine_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                             ANIM_STRONGMAN_SPRAWLED);
     GameFlag_Set(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO);
   }
   Engine_EventEnd();
@@ -3160,8 +3200,8 @@ s32 gValeStorm_SquashAndStretchScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The Boulder bounds down the river in nine steps. Each sets its step in work
-/// value 0x24, FieldActor.work, which ValeStorm_UpdatePulsingGlow reads and
+/// The Boulder bounds down the river in nine steps. Each sets its step in
+/// SW_WORK, which ValeStorm_UpdatePulsingGlow reads and
 /// ValeStorm_ShowBoulderSweepingDownriver waits on, and two of its landings
 /// start a shake countdown in SW_TIMER.
 s32 gValeStorm_BoulderRollsDownriver[] = {
@@ -3169,49 +3209,49 @@ s32 gValeStorm_BoulderRollsDownriver[] = {
     SC_SET(SW_SPEED, PIXELS(3)),
     SC_SET(SW_ACCEL, PIXELS(1)),
     SC_SET(SW_TIMER, 0),
-    SC_SET(0x24, 1),
+    SC_SET(SW_WORK, 1),
     SC_SET(SW_SCALE_X, 2 * Q16_ONE),
     SC_SET(SW_SCALE_Y, 2 * Q16_ONE),
     SC_MOVE(PIXELS(256), PIXELS(128), PIXELS(931)),
     SC_SYNC,
     SC_SE(SE_145),
     SC_SET(SW_TIMER, 60),
-    SC_SET(0x24, 2),
+    SC_SET(SW_WORK, 2),
     SC_MOVE(PIXELS(228), PIXELS(149), PIXELS(957)),
     SC_SYNC,
-    SC_SET(0x24, 3),
+    SC_SET(SW_WORK, 3),
     SC_MOVE(PIXELS(201), PIXELS(160), PIXELS(984)),
     SC_SYNC,
-    SC_SET(0x24, 4),
+    SC_SET(SW_WORK, 4),
     SC_MOVE(PIXELS(173), PIXELS(138), PIXELS(1011)),
     SC_SYNC,
-    SC_SET(0x24, 5),
+    SC_SET(SW_WORK, 5),
     SC_MOVE(PIXELS(146), PIXELS(96), PIXELS(1038)),
     SC_SYNC,
     SC_SE(SE_145),
     SC_SET(SW_SPEED, PIXELS(3) / 2),
     SC_SET(SW_ACCEL, PIXELS(1) / 2),
     SC_SET(SW_TIMER, 60),
-    SC_SET(0x24, 6),
+    SC_SET(SW_WORK, 6),
     SC_MOVE(PIXELS(161), PIXELS(107), PIXELS(1050)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(3) / 5),
-    SC_SET(0x24, 7),
+    SC_SET(SW_WORK, 7),
     SC_MOVE(PIXELS(177), PIXELS(96), PIXELS(1062)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(5) / 2),
     SC_SET(SW_ACCEL, PIXELS(4) / 5),
-    SC_SET(0x24, 8),
+    SC_SET(SW_WORK, 8),
     SC_MOVE(PIXELS(201), PIXELS(74), PIXELS(1074)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(3)),
     SC_SET(SW_ACCEL, PIXELS(1)),
-    SC_SET(0x24, 9),
+    SC_SET(SW_WORK, 9),
     SC_MOVE(PIXELS(225), -PIXELS(64), PIXELS(1086)),
     SC_SYNC,
     SC_SET(SW_TIMER, 0),
-    SC_SET(0x24, 0),
+    SC_SET(SW_WORK, 0),
     SC_END,
 };
 
@@ -3358,7 +3398,7 @@ struct SceneEvent gValeStorm_Events[] = {
     {TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_LeaveToValeInteriorsShopsWest)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriorsShopsWestBySecondDoor)},
+     EVENT_SCRIPT(Event_UnusedLeaveToValeInteriorsShopsWestBySecondDoor)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_LeaveToValeInteriorsInnWest)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,

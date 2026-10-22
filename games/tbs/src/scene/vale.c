@@ -63,14 +63,6 @@
 /// The TBS_PATCH_4 editions also set Dora's sprite priority before Kalay.
 ///
 /// Open questions:
-/// - XXX: whether the exit of the second door of Jenna's grandparents' house
-///   (Event_EnterJennasGrandparentsHouseBySecondDoor) is a slip in the exit
-///   table, since it leads into the room the other door does and no exit
-///   comes back to its own entrance; entering by it in a play-through would
-///   settle it.
-/// - XXX: what the actor animations beyond enum ActorAnimation that the scene
-///   sets (5, 10, 13, 16 and 17) show; each sprite's animation table under
-///   graphics/sprite would settle it.
 /// - XXX (picture): the opening's Psynergy, Garet's sprite cycling its
 ///   palettes while the hand of Move pushes the pillar and sheds sparkles.
 
@@ -348,6 +340,17 @@ enum ValeOpeningActor {
 /// The leader's animation of hammering on the roof, beyond enum
 /// ActorAnimation's.
 enum { ANIM_HAMMER = 11 };
+
+/// Animations of Dora's and Garet's sprites beyond enum ActorAnimation, as
+/// their animation tables and frames under graphics/sprite draw them.
+enum ValeAnimation {
+  ANIM_DORA_HANDS_UP = 7, ///< both hands raised (spr_031.png)
+  /// Only her head and hands showing, as she peeks back out (spr_031.png).
+  ANIM_DORA_PEEK = 8,
+  /// Garet throwing up his arms, then crouching, as he jumps in fright
+  /// (spr_001.png).
+  ANIM_GARET_STARTLED = 13
+};
 
 #include "common/object_staged_actor.h"
 
@@ -639,13 +642,13 @@ static void Event_EnterValeInteriorsShopsWest(void) {
   Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
-/// A second door in Vale into the house of Jenna's grandparents (touch cell
-/// 11): it opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR leads in,
-/// to the room ValeInteriorsShops enters from
-/// VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, whose door returns the party by the
-/// other door; no exit leads back to this door's entrance, which is likely a
-/// slip in the exit table (an open question).
-static void Event_EnterJennasGrandparentsHouseBySecondDoor(void) {
+/// Unused: its row answers cell code 11, which no cell of Vale's map
+/// (map/map_000, the stormy night's too) carries, as
+/// Event_UnusedLeaveToValeInteriorsShopsWestBySecondDoor in vale_storm.c. It
+/// would have opened Isaac's door, walked the leader to the spot before it and
+/// taken VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR into the house of
+/// Jenna's grandparents, whose way out returns by the other door.
+static void Event_UnusedEnterJennasGrandparentsHouseBySecondDoor(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
@@ -1260,7 +1263,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Engine_ActorJump(ACTOR_DORA, 4, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
-  Engine_ActorSetAnimation(ACTOR_DORA, 7);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HANDS_UP);
   Engine_EventWait(5);
   Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, GARET, 10, 14, 4, 14,
                                0);
@@ -1284,7 +1287,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
-  Engine_ActorSetAnimation(GARET, 13);
+  Engine_ActorSetAnimation(GARET, ANIM_GARET_STARTLED);
   Engine_ActorJump(GARET, 2, 5);
   Map_SetShake(0, PIXELS(4), Q16_ONE);
   Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
@@ -1294,7 +1297,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Engine_ActorSetAnimation(ACTOR_DORA, 8);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
   actor->scaleY = 0x8000;
   Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
   for (i = 0; i != 5; i++) {
@@ -1353,7 +1356,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ActorSetAnimation(GARET, 13);
+  Engine_ActorSetAnimation(GARET, ANIM_GARET_STARTLED);
   Engine_ActorJump(GARET, 2, 5);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
   Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -2069,7 +2072,7 @@ static void Event_MendingTheRoof(void) {
   // Garet trains his Psynergy: the hand of Move pushes the pillar, shedding
   // sparkles.
   Scene_BeginCutscenePsynergy();
-  Engine_ActorSetAnimation(GARET, 17);
+  Engine_ActorSetAnimation(GARET, ANIM_CAST_PSYNERGY);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | GARET, 0, 20);
   Event_PlayCue(SE_131);
   for (i = 0; i < 60; i++) {
@@ -2336,7 +2339,7 @@ static void Event_RoofMended(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
   Scene_BeginCutscenePsynergy();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   FieldScheduler_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_SCENE);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
@@ -2380,7 +2383,7 @@ static void Event_RoofMended(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 377, 843);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   Task_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_SCENE);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
@@ -2424,7 +2427,7 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   Task_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_SCENE);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
@@ -2653,7 +2656,7 @@ static void Event_RoofMended(void) {
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Engine_ActorJump(ACTOR_DORA, 4, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
-  Engine_ActorSetAnimation(ACTOR_DORA, 7);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HANDS_UP);
   Engine_EventWait(5);
   Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, GARET, 10, 14, 4, 14,
                                none);
@@ -2681,7 +2684,7 @@ static void Event_RoofMended(void) {
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
-  Engine_ActorSetAnimation(GARET, 13);
+  Engine_ActorSetAnimation(GARET, ANIM_GARET_STARTLED);
   Engine_ActorJump(GARET, 2, 5);
   Event_PlayCue(SE_143);
   Map_SetShake(0, PIXELS(4), Q16_ONE);
@@ -2692,7 +2695,7 @@ static void Event_RoofMended(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Engine_ActorSetAnimation(ACTOR_DORA, 8);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
   actor->scaleY = 0x8000;
   Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
   for (i = 0; i != 5; i++) {
@@ -2748,7 +2751,7 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ActorSetAnimation(GARET, 13);
+  Engine_ActorSetAnimation(GARET, ANIM_GARET_STARTLED);
   Engine_ActorJump(GARET, 2, 5);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
   Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -3607,7 +3610,7 @@ struct SceneEvent gVale_Events[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShopsWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseBySecondDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchThePuppies) },
@@ -3657,7 +3660,7 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShopsWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseBySecondDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchThePuppies) },
@@ -3710,7 +3713,7 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShopsWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseBySecondDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },

@@ -94,6 +94,9 @@ enum ScriptWork {
   /// FieldActor.timer, the parameter an action script reads; a scene's own
   /// scripts set it to 1 as they end, for the code that waits on them.
   SW_TIMER = 0x23,
+  /// FieldActor.work, scene scratch: a scene script sets it for the scene code
+  /// that reads or waits on it.
+  SW_WORK = 0x24,
   SW_HOOK = 0x26,
   SW_RISE_COUNTER = 0x27, ///< FieldActor.riseCounter, scene code's own byte
   SW_RISE_ENABLED = 0x28  ///< FieldActor.riseEnabled, scene code's own byte

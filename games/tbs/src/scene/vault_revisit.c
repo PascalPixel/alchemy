@@ -35,8 +35,6 @@
 /// - XXX: what the 3-by-3 block of cells Scene_Initialize copies from
 ///   (45, 41) to (8, 45) shows, which vault.c does not copy; a render of the
 ///   map before and after the copy would settle it.
-/// - XXX: SE_100, the bell's sound, is also the shop's repair sound
-///   (shop/repair.c); a recording of both would settle its name.
 
 #include "game_state.h"
 #include "djinn_ids.h"

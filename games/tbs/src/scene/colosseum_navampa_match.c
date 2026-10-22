@@ -10,8 +10,8 @@
 /// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
 /// Sidewalk Stage and another log-rolling area.
 /// ColosseumNavampaMatch_Initialize restores the stages from the group's flags
-/// (FLAG_PLACE_TEMP_60 to FLAG_PLACE_TEMP_69, and the stone's column in the
-/// byte of flags from FLAG_PLACE_TEMP_70) and sets up the visit its entrance
+/// (FLAG_PLANT_GROWN to FLAG_LONG_LOG_IN_PLACE, and the stone's column in the
+/// byte of flags from FLAG_STONE_COLUMN) and sets up the visit its entrance
 /// stands for:
 ///
 /// - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH, the tour
@@ -146,7 +146,8 @@ enum {
   ROCK = 14,
   /// The log-rolling area's three stones, "You can get through quickly by
   /// moving the logs and stones."; each settles where Move drops it
-  /// (Event_SettleStones, FLAG_SCENE_TEMP_14 to _16).
+  /// (Event_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and the two after
+  /// it).
   LOG_AREA_STONE_A = 15,
   LOG_AREA_STONE_B = 16,
   LOG_AREA_STONE_C = 17,
@@ -173,6 +174,30 @@ enum {
   /// The first of the three particles that rise from the sleeping Isaac after
   /// the last match (ColosseumNavampaMatch_SpawnPeriodicParticle).
   FIRST_SLEEP_PARTICLE = 41
+};
+
+/// The temporary flags that keep what the friends changed on the stages, for
+/// the race (ColosseumNavampaMatch_Initialize restores them), and the scales'
+/// state.
+enum {
+  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_60,       ///< by Growth, into a shortcut
+  FLAG_WALL_WEDGE_HALTED = FLAG_PLACE_TEMP_61, ///< by Halt on WALL_OPERATOR
+  FLAG_SCALES_FROZEN = FLAG_PLACE_TEMP_62,     ///< by Frost on FROST_TARGET
+  /// By Force on SIDEWALK_BLOCK: the belt carries no one any more.
+  FLAG_SIDEWALK_BLOCK_KNOCKED_OFF = FLAG_PLACE_TEMP_63,
+  /// Someone stands on the western pan, which has sunk (Event_StepOnScales).
+  FLAG_ON_SCALES = FLAG_PLACE_TEMP_67,
+  FLAG_WEIGHT_ON_SCALES =
+      FLAG_PLACE_TEMP_68, ///< SCALE_WEIGHT is on the western pan
+  FLAG_LONG_LOG_IN_PLACE =
+      FLAG_PLACE_TEMP_69, ///< at the east end (Event_RollLongLog)
+  /// The byte of flags that keeps STONE's column.
+  FLAG_STONE_COLUMN = FLAG_PLACE_TEMP_70,
+  /// Someone has reached the arena
+  /// (ColosseumNavampaMatch_CollectFinishEquipment).
+  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
+  /// LOG_AREA_STONE_A has settled; the next two flags are B's and C's.
+  FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };
 
 enum { PISTON_COUNT = 5 };
@@ -284,8 +309,8 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 }
 
 /// The Moving Sidewalk Stage's belt carries the party west. It's touch 11, and
-/// until FLAG_PLACE_TEMP_63 is set the belt carries the controlled actor and
-/// the camera west.
+/// until FLAG_SIDEWALK_BLOCK_KNOCKED_OFF is set the belt carries the controlled
+/// actor and the camera west.
 static void Event_RideMovingSidewalk(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
@@ -301,9 +326,9 @@ static void Event_RideMovingSidewalk(void) {
 }
 
 /// Growth on the plant on Colosseum Final 3's stages: it grows and opens a
-/// shortcut (FLAG_PLACE_TEMP_60).
+/// shortcut (FLAG_PLANT_GROWN).
 static void Event_GrowPlant(void) {
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_60);
+  Engine_GameFlagSet(FLAG_PLANT_GROWN);
   {
 
     Map_CopyCellAttributes(47, 61, 1, 4, 49, 61);
@@ -320,7 +345,7 @@ static inline void ColosseumNavampaMatch_MoveOnScales(struct FieldActor *pan,
 
 /// Frost on the target on the Scales of Justice's eastern pan: it freezes and
 /// the scales tip, the western pan down and the eastern pan up
-/// (FLAG_PLACE_TEMP_62).
+/// (FLAG_SCALES_FROZEN).
 static void Event_FreezeOnScales(void) {
   struct FieldActor *object;
 
@@ -334,14 +359,14 @@ static void Event_FreezeOnScales(void) {
   object = Object_GetById(SCALE_PAN_WEST);
   ColosseumNavampaMatch_MoveOnScales(object, PIXELS(4));
 
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_62);
+  Engine_GameFlagSet(FLAG_SCALES_FROZEN);
   Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
   Map_CopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
 /// Stepping onto the Scales of Justice's western pan, unless the scales are
 /// frozen: it sinks with the rider as the eastern pan rises
-/// (FLAG_PLACE_TEMP_67).
+/// (FLAG_ON_SCALES).
 static void Event_StepOnScales(void) {
   s32 actor;
   s32 lowered;
@@ -350,7 +375,7 @@ static void Event_StepOnScales(void) {
   u8 *flags;
 
   actor = gGameState.selectedActor;
-  lowered = GameFlag_IsSet(FLAG_PLACE_TEMP_62);
+  lowered = GameFlag_IsSet(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = Object_GetById(SCALE_PAN_WEST);
     if (log != NULL) {
@@ -374,7 +399,7 @@ static void Event_StepOnScales(void) {
     Engine_ActorSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     rider->terrainHeight = rider->y.fixed;
-    Engine_GameFlagSet(FLAG_PLACE_TEMP_67);
+    Engine_GameFlagSet(FLAG_ON_SCALES);
   }
 }
 
@@ -397,11 +422,11 @@ static void Event_StepOffScales(void) {
     Map_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   }
   Engine_TaskWait(2);
-  Engine_GameFlagClear(FLAG_PLACE_TEMP_67);
+  Engine_GameFlagClear(FLAG_ON_SCALES);
 }
 
 /// Move on the weight by the Scales of Justice: when it reaches the western
-/// pan, it sinks the pan and the eastern pan rises (FLAG_PLACE_TEMP_68).
+/// pan, it sinks the pan and the eastern pan rises (FLAG_WEIGHT_ON_SCALES).
 static void Event_SetWeightOnScales(void) {
   struct FieldActor *probe;
   struct FieldActor *log;
@@ -425,7 +450,7 @@ static void Event_SetWeightOnScales(void) {
       ColosseumNavampaMatch_MoveOnScales(upper, PIXELS(32));
       lower = Object_GetById(SCALE_PAN_WEST);
       ColosseumNavampaMatch_MoveOnScales(lower, PIXELS(4));
-      Engine_GameFlagSet(FLAG_PLACE_TEMP_68);
+      Engine_GameFlagSet(FLAG_WEIGHT_ON_SCALES);
       Map_CopyCellAttributes(15, 12, 1, 1, 13, z);
       Map_CopyCellAttributes(1, 25, 1, 1, x, z);
     }
@@ -440,7 +465,7 @@ static void Event_PushWeight(void) {
 }
 
 /// Move on the stone on Colosseum Final 3's stages, and after each push: its
-/// column is kept (the byte of flags from FLAG_PLACE_TEMP_70) and its cell
+/// column is kept (the byte of flags from FLAG_STONE_COLUMN) and its cell
 /// rebuilt.
 static void Event_MoveStone(void) {
   struct FieldActor *actor;
@@ -448,7 +473,7 @@ static void Event_MoveStone(void) {
 
   actor = Object_GetById(STONE);
   x = actor->x.fixed >> 20;
-  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_70, x);
+  FieldGameFlag_SetByte(FLAG_STONE_COLUMN, x);
   Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   Map_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
@@ -460,7 +485,8 @@ static void Event_IgnoreMove(void) {}
 static void Event_PushRock(void) { ColosseumNavampaMatch_PushActorAhead(); }
 
 /// Move on one of the log-rolling area's three stones, and each push there: a
-/// stone resting on the floor becomes a step (FLAG_SCENE_TEMP_14 to _16).
+/// stone resting on the floor becomes a step (FLAG_FIRST_LOG_AREA_STONE_SETTLED
+/// and the two after it).
 static void Event_SettleStones(void) {
   struct FieldActor *actor;
   s32 slot;
@@ -480,7 +506,8 @@ static void Event_SettleStones(void) {
       x2 = actor->x.fixed >> 20;
       z2 = actor->z.fixed >> 20;
       Map_CopyCellAttributes(83, 13, 1, 1, x2, z2 + 52);
-      Engine_GameFlagSet(slot - LOG_AREA_STONE_A + FLAG_SCENE_TEMP_14);
+      Engine_GameFlagSet(slot - LOG_AREA_STONE_A +
+                         FLAG_FIRST_LOG_AREA_STONE_SETTLED);
     }
   }
 }
@@ -544,7 +571,8 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 /// The long log carries the leader until something stops it. Walking into the
 /// log-rolling area's long log (trigger 23) rolls it, with the leader, the way
 /// the pad is held; at the east end it drops into place and the path is made
-/// (FLAG_PLACE_TEMP_69). Away from the log, a stone ahead is pushed instead.
+/// (FLAG_LONG_LOG_IN_PLACE). Away from the log, a stone ahead is pushed
+/// instead.
 static void Event_RollLongLog(void) {
   struct FieldActor *rider;
   struct FieldActor *log;
@@ -619,7 +647,7 @@ static void Event_RollLongLog(void) {
   Object_SetMode(log, mode);
   Engine_ObjectSetPosition(log, x, 0, z);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(actor, 2);
+  Engine_ActorSetAnimation(actor, ANIM_WALK);
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->viewCenter,
                              (s32)log);
@@ -633,8 +661,8 @@ static void Event_RollLongLog(void) {
   FieldObject_WaitForMove(log);
   // At the eastern end the log settles at the end of its stage.
   if (x >= PIXELS(1328)) {
-    GameFlag_Set(FLAG_PLACE_TEMP_69);
-    Engine_ActorSetAnimation(LONG_LOG, 3);
+    GameFlag_Set(FLAG_LONG_LOG_IN_PLACE);
+    Engine_ActorSetAnimation(LONG_LOG, ANIM_NOD);
     Actor_SetDestinationOffset(LONG_LOG, 18, 6);
     Engine_EventWait(30);
     Object_SetMode(log, 8);
@@ -672,7 +700,7 @@ static s32 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(
 }
 
 /// Force on the Moving Sidewalk Stage's block: it slides away and the belt
-/// carries no one any more (FLAG_PLACE_TEMP_63).
+/// carries no one any more (FLAG_SIDEWALK_BLOCK_KNOCKED_OFF).
 static void Event_ForceSidewalkBlock(void) {
   struct FieldActor *effect;
   s32 moveRate;
@@ -684,14 +712,14 @@ static void Event_ForceSidewalkBlock(void) {
   effect->speed = moveRate;
   Object_SetMode(effect, 2);
   Engine_ObjectSetScript(effect, gColossoSceneEventEffect);
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_63);
+  Engine_GameFlagSet(FLAG_SIDEWALK_BLOCK_KNOCKED_OFF);
 }
 
 /// Halt on the Wall Wedge's operator: the pistons stop at their next open
-/// pattern (FLAG_PLACE_TEMP_61).
+/// pattern (FLAG_WALL_WEDGE_HALTED).
 static void Event_HaltWall(void) {
   FieldFx_PauseObject(WALL_OPERATOR);
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_61);
+  Engine_GameFlagSet(FLAG_WALL_WEDGE_HALTED);
   Engine_TaskWait(10);
   while (gColossoSceneTaskStatus != 1 && gColossoSceneTaskStatus != 3)
     Engine_TaskWait(1);
@@ -812,7 +840,7 @@ ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
 /// Reaching Colosseum Final 3's arena: the leader takes a prize (the Claymore
 /// if first, the Hunter's Sword if second), and he and Navampa face off and
 /// fight; the battle's group follows who took the Claymore.
-/// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
+/// FLAG_ARENA_REACHED says the arena was already reached; the arena's touch
 /// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 place;
@@ -822,7 +850,8 @@ static void Event_ReachArena(void) {
   last = 4;
   ColosseumNavampaMatch_EmptyHook();
   Engine_EventBegin();
-  place = ColosseumNavampaMatch_CollectFinishEquipment(3, 17);
+  place = ColosseumNavampaMatch_CollectFinishEquipment(ITEM_CLAYMORE,
+                                                       ITEM_HUNTERS_SWORD);
   ColosseumNavampaMatch_WaitForRivalToFinish();
   for (i = 0; i < 10; i++) {
     Object_RefreshSelectorById(OPPONENT);
@@ -831,11 +860,11 @@ static void Event_ReachArena(void) {
   Actor_WalkTo(OPPONENT, 1528, 192);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
-  Engine_ActorSetAnimation(OPPONENT, 1);
+  Engine_ActorSetAnimation(OPPONENT, ANIM_STAND);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, OPPONENT, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(OPPONENT, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(OPPONENT, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
@@ -849,8 +878,10 @@ static void Event_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         last - place + 1);
   Battle_SetStart(BATTLE_START_SCENE);
-  Event_SetNextDestination((s32)&SceneId_ColosseumNavampaMatch, 4);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch, 5);
+  Event_SetNextDestination((s32)&SceneId_ColosseumNavampaMatch,
+                           COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
+  Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch,
+                             COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
@@ -940,7 +971,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     actor->y.fixed = PIXELS(32);
   }
 
-  column = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_70);
+  column = FieldGameFlag_GetByte(FLAG_STONE_COLUMN);
   if (column == 0) {
     column = 19;
   }
@@ -992,7 +1023,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(864) != 0) {
-    Engine_ActorSetAnimation(GROWTH_PLANT, 4);
+    Engine_ActorSetAnimation(GROWTH_PLANT, ANIM_SHAKE_HEAD);
     Map_CopyCellAttributes(47, 61, 1, 4, 49, 61);
   }
 
@@ -1255,14 +1286,14 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WalkToAndWait(IVAN, 1488, 176);
   Actor_WalkTo(GARET, 1520, 184);
   Actor_WalkToAndWait(IVAN, 1504, 176);
-  Engine_ActorSetAnimation(GARET, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTH, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(10);
   Object_LinkObjectAndSetCallback(IVAN, GARET);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(GARET, 4);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessage(MIA, 0);
   Object_LinkObjectAndSetCallback(GARET, MIA);
@@ -1339,9 +1370,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Object_LinkObjectAndSetCallback(GARET, IVAN);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, 0xc80);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimation(MIA, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(MIA, ANIM_NOD);
   Engine_EventWait(60);
   // The companions begin to leave, then discuss the sleeping leader off-screen.
   Actor_WalkTo(MIA, 1464, 200);
@@ -1351,7 +1382,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WalkToAndWait(GARET, 1512, 184);
   Actor_WalkTo(GARET, 1368, 184);
   Engine_ActorWaitForMove(MIA);
-  Engine_ActorSetAnimation(MIA, 1);
+  Engine_ActorSetAnimation(MIA, ANIM_STAND);
   Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
   Engine_EventWait(60);
   Actor_WalkToAndWait(MIA, 1432, 200);
@@ -1406,7 +1437,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteThirdFinals);
-  Engine_ActorSetAnimationAndWait(guideId, 3);
+  Engine_ActorSetAnimationAndWait(guideId, ANIM_NOD);
   Engine_EventShowMessage(guideId, 0);
   Engine_ActorRunRepeatedMotion(guideId, 2);
   Engine_EventShowMessage(guideId, 0);
@@ -1414,22 +1445,22 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Engine_EventShowMessage(guideId, 0);
   Engine_ActorRunRepeatedMotion(guideId, 2);
   Engine_EventShowMessage(guideId, 0);
-  Engine_ActorSetAnimation(MIA, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(GARET, 2);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(IVAN, 2);
+  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(MIA, 2);
+  Engine_ActorSetAnimation(MIA, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
@@ -1754,7 +1785,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
                                                       ATTACHED_EFFECT_ATTACH);
       Engine_EventWait(120);
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 #if !TBS_PATCH_3
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_REMOVE);
@@ -2067,7 +2098,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   u16 *itemActorId;
   s16 *linkedItemActor;
 
-  rivalFinishedFirst = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_11);
+  rivalFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
   actor = Object_GetById(gGameState.selectedActor);
   if (work->finishX < actor->x.fixed) {
     x = work->finishX + PIXELS(12);
@@ -2086,7 +2117,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   actor->acceleration = PIXELS(1) / 4;
   actor->speed = PIXELS(1);
   Engine_ObjectSetPosition(actor, x, 0, z);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
+  Engine_GameFlagSet(FLAG_ARENA_REACHED);
   Engine_ObjectSetScript(actor, gColosseumNavampaMatch_PlaceScript);
   while (*linkedItemActor != 0) {
     Engine_TaskWait(1);
@@ -2435,26 +2466,26 @@ s32 gColossoSceneTaskState = 0;
 struct SceneEvent gColosseumNavampaMatchEvents[] = {
     { TOUCH_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeightOrCheckAhead) },
-    { EVENT_TOUCH, 11, FLAG_PLACE_TEMP_63, EVENT_SCRIPT(Event_RideMovingSidewalk) },
+    { EVENT_TOUCH, 11, FLAG_SIDEWALK_BLOCK_KNOCKED_OFF, EVENT_SCRIPT(Event_RideMovingSidewalk) },
     { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), SCALE_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetWeightOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STONE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveStone) },
     { TOUCH_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
     { TOUCH_WALKING, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLongLog) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), LOG_AREA_STONE_A, FLAG_SCENE_TEMP_14, EVENT_SCRIPT(Event_SettleStones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), LOG_AREA_STONE_B, FLAG_SCENE_TEMP_15, EVENT_SCRIPT(Event_SettleStones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), LOG_AREA_STONE_C, FLAG_SCENE_TEMP_16, EVENT_SCRIPT(Event_SettleStones) },
-    { EVENT_TOUCH, 15, FLAG_PLACE_TEMP_67, EVENT_SCRIPT(Event_StepOnScales) },
-    { EVENT_TOUCH, 16, IF_FLAG_SET(FLAG_PLACE_TEMP_67), EVENT_SCRIPT(Event_StepOffScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT_SCRIPT(Event_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT_SCRIPT(Event_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT_SCRIPT(Event_SettleStones) },
+    { EVENT_TOUCH, 15, FLAG_ON_SCALES, EVENT_SCRIPT(Event_StepOnScales) },
+    { EVENT_TOUCH, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT_SCRIPT(Event_StepOffScales) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_10, EVENT_SCRIPT(Event_ReachArena) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_PLACE_TEMP_6A, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_CHEST), 102, FLAG_PLACE_TEMP_6B, FIND_ITEM(ITEM_NUT) },
     { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 103, FLAG_PLACE_TEMP_6C, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET, FLAG_PLACE_TEMP_62, EVENT_SCRIPT(Event_FreezeOnScales) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLACE_TEMP_60, EVENT_SCRIPT(Event_GrowPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), WALL_OPERATOR, FLAG_PLACE_TEMP_61, EVENT_SCRIPT(Event_HaltWall) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x50000000, SIDEWALK_BLOCK, FLAG_PLACE_TEMP_63, EVENT_SCRIPT(Event_ForceSidewalkBlock) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), FROST_TARGET, FLAG_SCALES_FROZEN, EVENT_SCRIPT(Event_FreezeOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(Event_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT_SCRIPT(Event_HaltWall) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_EFFECT_ACTS), SIDEWALK_BLOCK, FLAG_SIDEWALK_BLOCK_KNOCKED_OFF, EVENT_SCRIPT(Event_ForceSidewalkBlock) },
     { EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassNorthWallOpening) },
     { EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassSouthWallOpening) },
     { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },

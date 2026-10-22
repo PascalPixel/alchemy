@@ -9,8 +9,8 @@
 /// the Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and
 /// the Board Walk. Isaac comes here three times, each at its own entrance, and
 /// ColosseumSatrageMatch_Initialize restores the stages from the group's flags
-/// (FLAG_PLACE_TEMP_30 to FLAG_PLACE_TEMP_35, and the Mini-Maze pillars'
-/// columns in the bytes at FLAG_PLACE_TEMP_40, _48 and _50) before setting up
+/// (the flags from FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and
+/// the Mini-Maze pillars' columns in their bytes of flags) before setting up
 /// the visit its entrance stands for:
 ///
 /// - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST, the tour
@@ -96,8 +96,8 @@
 #include "songs.h"
 #include "macros.h"
 
-#define COLOSSEUM_SATRAGE_MATCH_PLATFORM_CYCLE_FRAMES 120
-#define COLOSSEUM_SATRAGE_MATCH_PLATFORM_CROSSING_FRAME 75
+#define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES 120
+#define COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME 75
 #define COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_FRAMES 600
 #define COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS 64
 
@@ -193,15 +193,13 @@ enum ColosseumSatrageMatchActor {
   FROST_TARGET_EAST,
   /// The shifting floor stage's four lifts, from west to east, which the
   /// lifts' operator runs.
-  COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM,
-  COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM =
-          COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM +
-      3,
+  COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT,
+  COLOSSEUM_SATRAGE_MATCH_LAST_LIFT = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 3,
   /// Four pieces in the lifts' sprite, lying on the Board Walk; nothing but
   /// ColosseumSatrageMatch_Initialize touches them.
-  BOARD_WALK_FIRST_PLATFORM,
+  BOARD_WALK_FIRST_LIFT_PIECE,
   /// Knocked down onto the Board Walk by Force on FORCE_TARGET.
-  FALLING_OBSTACLE = BOARD_WALK_FIRST_PLATFORM + 4,
+  FALLING_OBSTACLE = BOARD_WALK_FIRST_LIFT_PIECE + 4,
   /// "The operator of the lifts", as the shifting floor stage's attendant
   /// calls him: a young man with fair hair.
   LIFT_OPERATOR,
@@ -216,6 +214,26 @@ enum ColosseumSatrageMatchActor {
   BOARD_WALK_ATTENDANT,
   PRIZE_A, ///< the arena's Chain Mail and Cotton Shirt
   PRIZE_B
+};
+
+/// The temporary flags that keep what the friends changed on the stages, for
+/// the race (ColosseumSatrageMatch_Initialize restores them).
+enum {
+  FLAG_OBSTACLE_KNOCKED_DOWN =
+      FLAG_PLACE_TEMP_30,                       ///< by Force, on the Board Walk
+  FLAG_WEST_TARGET_FROZEN = FLAG_PLACE_TEMP_31, ///< by Frost
+  FLAG_EAST_TARGET_FROZEN = FLAG_PLACE_TEMP_32, ///< by Frost
+  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_33,        ///< by Growth, up The Wall
+  FLAG_LIFTS_HALTED = FLAG_PLACE_TEMP_34,       ///< by Halt on LIFT_OPERATOR
+  /// The stone pillar by The Wall stands at column 36.
+  FLAG_WALL_PILLAR_MOVED = FLAG_PLACE_TEMP_35,
+  /// The bytes of flags that keep the Mini-Maze's three pillars' columns.
+  FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN = FLAG_PLACE_TEMP_40,
+  FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN = FLAG_PLACE_TEMP_48,
+  FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN = FLAG_PLACE_TEMP_50,
+  /// Someone has reached the arena
+  /// (ColosseumSatrageMatch_ApproachFinishAndTakeItem).
+  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
 /// Sets the party leader's walking speed and acceleration.
@@ -253,7 +271,7 @@ static void Event_PushPillar(void) {
 }
 
 /// Move on the stone pillar by The Wall, and after each push: its cell is
-/// updated, and FLAG_PLACE_TEMP_35 keeps whether it stands at column 36.
+/// updated, and FLAG_WALL_PILLAR_MOVED keeps whether it stands at column 36.
 static void Event_UpdateMovedPillarCell(void) {
   struct FieldActor *obstacle;
   s32 column;
@@ -261,12 +279,12 @@ static void Event_UpdateMovedPillarCell(void) {
 
   obstacle = Object_GetById(WALL_PILLAR);
   if ((obstacle->x.fixed >> 20) == 36) {
-    Engine_GameFlagSet(FLAG_PLACE_TEMP_35);
+    Engine_GameFlagSet(FLAG_WALL_PILLAR_MOVED);
     column = 0x23;
     row = 0x4D;
     Map_CopyCellAttributes(0x23, 0x4E, 1, 1, column, row);
   } else {
-    Engine_GameFlagClear(FLAG_PLACE_TEMP_35);
+    Engine_GameFlagClear(FLAG_WALL_PILLAR_MOVED);
     column = 0x23;
     row = 0x4D;
     Map_CopyCellAttributes(0x22, 0x4D, 1, 1, column, row);
@@ -281,8 +299,8 @@ static void Event_PushPillarAndUpdateCells(void) {
 }
 
 /// Move on a stone pillar in the Mini-Maze, and after each push: the three
-/// pillars' columns are kept (the bytes at FLAG_PLACE_TEMP_40, _48 and _50)
-/// and their cells rebuilt.
+/// pillars' columns are kept (FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN and the two
+/// after it) and their cells rebuilt.
 static void Event_SaveMovedPillarColumns(void) {
 
   struct FieldActor *obstacle;
@@ -292,17 +310,17 @@ static void Event_SaveMovedPillarColumns(void) {
 
   obstacle = Object_GetById(MINI_MAZE_FIRST_PILLAR);
   column = obstacle->x.fixed >> 20;
-  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_40, column);
+  FieldGameFlag_SetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN, column);
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
   obstacle = Object_GetById(MINI_MAZE_FIRST_PILLAR + 1);
   column = obstacle->x.fixed >> 20;
-  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_48, column);
+  FieldGameFlag_SetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN, column);
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
   obstacle = Object_GetById(MINI_MAZE_FIRST_PILLAR + 2);
   column = obstacle->x.fixed >> 20;
-  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_50, column);
+  FieldGameFlag_SetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN, column);
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
 
@@ -315,7 +333,7 @@ static void Event_PrepareForce(void) {
 }
 
 /// Force on the target over the Board Walk: the obstacle spins down into place
-/// and the way past it opens (FLAG_PLACE_TEMP_30).
+/// and the way past it opens (FLAG_OBSTACLE_KNOCKED_DOWN).
 static void Event_KnockDownObstacle(void) {
   struct FieldActor *obstacle;
   s32 fallFrames;
@@ -326,7 +344,7 @@ static void Event_KnockDownObstacle(void) {
 
   obstacle = Object_GetById(FALLING_OBSTACLE);
   sprite = obstacle->sprite;
-  GameFlag_Set(FLAG_PLACE_TEMP_30);
+  GameFlag_Set(FLAG_OBSTACLE_KNOCKED_DOWN);
   obstacle->acceleration = 0x1999;
   obstacle->speed = 0x13333;
   Engine_AudioPlayCue(SE_227);
@@ -352,7 +370,7 @@ static void Event_KnockDownObstacle(void) {
 
     sprite->rotation = rotation;
   }
-  Engine_ActorSetAnimation(FALLING_OBSTACLE, 4);
+  Engine_ActorSetAnimation(FALLING_OBSTACLE, ANIM_SHAKE_HEAD);
   obstacle->x.fixed = PIXELS(336);
   obstacle->y.fixed = -PIXELS(8);
   obstacle->z.fixed = PIXELS(264);
@@ -364,11 +382,11 @@ static void Event_KnockDownObstacle(void) {
 }
 
 /// Frost on the Log-Rolling Stage's western target: it freezes and its crossing
-/// opens (FLAG_PLACE_TEMP_31).
+/// opens (FLAG_WEST_TARGET_FROZEN).
 static void Event_FreezeWestTarget(void) {
   struct FieldActor *obstacle;
 
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_31);
+  Engine_GameFlagSet(FLAG_WEST_TARGET_FROZEN);
   obstacle = Object_GetById(FROST_TARGET_WEST);
   obstacle->motionFlags = 0;
   {
@@ -378,11 +396,11 @@ static void Event_FreezeWestTarget(void) {
 }
 
 /// Frost on the Log-Rolling Stage's eastern target: it freezes and its crossing
-/// opens (FLAG_PLACE_TEMP_32).
+/// opens (FLAG_EAST_TARGET_FROZEN).
 static void Event_FreezeEastTarget(void) {
   struct FieldActor *obstacle;
 
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_32);
+  Engine_GameFlagSet(FLAG_EAST_TARGET_FROZEN);
   obstacle = Object_GetById(FROST_TARGET_EAST);
   obstacle->motionFlags = 0;
   {
@@ -392,9 +410,9 @@ static void Event_FreezeEastTarget(void) {
 }
 
 /// Growth on the plant by The Wall: it grows into a strip that can be climbed
-/// (FLAG_PLACE_TEMP_33).
+/// (FLAG_PLANT_GROWN).
 static void Event_GrowPlant(void) {
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_33);
+  Engine_GameFlagSet(FLAG_PLANT_GROWN);
   {
 
     Map_CopyCellAttributes(32, 37, 1, 4, 32, 77);
@@ -526,14 +544,14 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Object_SetMode(log, gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
   Engine_ObjectSetPosition(log, halfCellX, 0, halfCellZ);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(pusher, 2);
+  Engine_ActorSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_StartCamera(
       (struct DispatchObject *)((struct EventWork *)Runtime_AllocateBlock(
                                     HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
           ->viewCenter,
       (s32)log);
-  Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
+  Engine_ActorSetSpeed(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
   Object_SetMode(pusherActor, 2);
   Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
@@ -607,63 +625,62 @@ static UNUSED void ColosseumSatrageMatch_RollCenterLogSouth(void) {
 
 /// The shifting floor's callback: carries the selected actor on the lifts and
 /// alternates their routes every two seconds, until Halt stops the operator.
-static void ColosseumSatrageMatch_UpdateMovingPlatforms(void) {
-  s32 platformId;
+static void ColosseumSatrageMatch_UpdateLifts(void) {
+  s32 liftId;
   struct FieldActor *rider;
-  struct FieldActor *platform;
-  s32 platformX;
+  struct FieldActor *lift;
+  s32 liftX;
   s32 riderX;
   s32 deltaX;
-  s32 platformZ;
+  s32 liftZ;
   s32 riderZ;
   s32 deltaZ;
-  struct FieldActor *platformActor;
+  struct FieldActor *liftActor;
 
   rider = Object_GetById(gGameState.selectedActor);
   // Carry a rider only while both horizontal distances are less than ten
   // pixels.
-  for (platformId = COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM;
-       platformId <= COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM; platformId++) {
-    platform = Object_GetById(platformId);
-    platform->paused = 0;
-    platformX = platform->x.fixed;
+  for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
+       liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
+    lift = Object_GetById(liftId);
+    lift->paused = 0;
+    liftX = lift->x.fixed;
     riderX = rider->x.fixed;
-    deltaX = platformX - riderX;
+    deltaX = liftX - riderX;
     if (deltaX >= 0) {
       if (deltaX > 0x9ffff) {
         continue;
       }
     } else {
-      riderX -= platformX;
+      riderX -= liftX;
       if (riderX > 0x9ffff) {
         continue;
       }
     }
-    platformZ = platform->z.fixed;
+    liftZ = lift->z.fixed;
     riderZ = rider->z.fixed;
-    deltaZ = platformZ - riderZ;
+    deltaZ = liftZ - riderZ;
     if (deltaZ >= 0) {
       if (deltaZ > 0x9ffff) {
         continue;
       }
     } else {
-      riderZ -= platformZ;
+      riderZ -= liftZ;
       if (riderZ > 0x9ffff) {
         continue;
       }
     }
     if (GameFlag_IsSet(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
-      riderZ = platform->z.fixed;
+      riderZ = lift->z.fixed;
     } else {
       riderZ = rider->z.fixed;
-      deltaZ = platform->velocityZ;
+      deltaZ = lift->velocityZ;
       riderZ += deltaZ;
     }
     rider->z.fixed = riderZ;
   }
-  // The final platform's destination selects the collision tiles for the row.
-  if (gColosseumSatrageMatch_LiftTimer != 0 &&
-      platform->targetX == 0x80000000) {
+  // The final lift's destination selects the collision tiles for the row.
+  if (gColosseumSatrageMatch_LiftTimer != 0 && lift->targetX == 0x80000000) {
     if (gColosseumSatrageMatch_LiftPhase == 0) {
       Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
     } else {
@@ -677,65 +694,60 @@ static void ColosseumSatrageMatch_UpdateMovingPlatforms(void) {
   if (gColosseumSatrageMatch_LiftTimer == 0) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
-      platformActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM);
-      FieldObject_SetPosition(platformActor, PIXELS(936), 0, PIXELS(184));
-      platformActor =
-          Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM + 1);
-      FieldObject_SetPosition(platformActor, PIXELS(968), 0, PIXELS(248));
-      platformActor =
-          Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM + 2);
-      FieldObject_SetPosition(platformActor, PIXELS(1000), 0, PIXELS(184));
-      platformActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM);
-      FieldObject_SetPosition(platformActor, PIXELS(1032), 0, PIXELS(248));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
+      FieldObject_SetPosition(liftActor, PIXELS(936), 0, PIXELS(184));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
+      FieldObject_SetPosition(liftActor, PIXELS(968), 0, PIXELS(248));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
+      FieldObject_SetPosition(liftActor, PIXELS(1000), 0, PIXELS(184));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
+      FieldObject_SetPosition(liftActor, PIXELS(1032), 0, PIXELS(248));
       Engine_ActorSetAnimation(LIFT_OPERATOR, 11);
     } else {
-      platformActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM);
-      FieldObject_SetPosition(platformActor, PIXELS(936), 0, PIXELS(216));
-      platformActor =
-          Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM + 1);
-      FieldObject_SetPosition(platformActor, PIXELS(968), 0, PIXELS(216));
-      platformActor =
-          Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM + 2);
-      FieldObject_SetPosition(platformActor, PIXELS(1000), 0, PIXELS(216));
-      platformActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM);
-      FieldObject_SetPosition(platformActor, PIXELS(1032), 0, PIXELS(216));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
+      FieldObject_SetPosition(liftActor, PIXELS(936), 0, PIXELS(216));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
+      FieldObject_SetPosition(liftActor, PIXELS(968), 0, PIXELS(216));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
+      FieldObject_SetPosition(liftActor, PIXELS(1000), 0, PIXELS(216));
+      liftActor = Object_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
+      FieldObject_SetPosition(liftActor, PIXELS(1032), 0, PIXELS(216));
       Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
     }
   }
   gColosseumSatrageMatch_LiftTimer++;
   if ((u32)gColosseumSatrageMatch_LiftTimer >=
-      COLOSSEUM_SATRAGE_MATCH_PLATFORM_CYCLE_FRAMES) {
+      COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES) {
     if (GameFlag_IsSet(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
       gColosseumSatrageMatch_LiftTimer = 0;
     }
   }
 }
 
-/// Stops the moving-platform task and restores its starting row.
-static void ColosseumSatrageMatch_ResetMovingPlatforms(void) {
+/// Stops the moving-lift task and restores its starting row.
+static void ColosseumSatrageMatch_ResetLifts(void) {
   gColosseumSatrageMatch_LiftTimer = 0;
   gColosseumSatrageMatch_LiftPhase = 0;
-  Engine_TaskRemoveCallback(ColosseumSatrageMatch_UpdateMovingPlatforms);
-  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM, PIXELS(936),
+  Engine_TaskRemoveCallback(ColosseumSatrageMatch_UpdateLifts);
+  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, PIXELS(936),
                     PIXELS(216));
-  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM + 1, PIXELS(968),
+  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1, PIXELS(968),
                     PIXELS(216));
-  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM + 2, PIXELS(1000),
+  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2, PIXELS(1000),
                     PIXELS(216));
-  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM, PIXELS(1032),
+  Actor_SetPosition(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT, PIXELS(1032),
                     PIXELS(216));
   Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
 }
 
-/// Starts the moving-platform task and releases its pause flag.
-static void ColosseumSatrageMatch_StartMovingPlatforms(void) {
-  FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateMovingPlatforms,
-                             0xC85);
+/// Starts the moving-lift task and releases its pause flag.
+static void ColosseumSatrageMatch_StartLifts(void) {
+  FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts, 0xC85);
   Engine_GameFlagClear(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
 /// Waits for the demonstration's crossing phase, with a ten-second timeout.
-static void ColosseumSatrageMatch_WaitForPlatformCrossingPhase(void) {
+static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
   s32 elapsedFrames;
 
   Engine_TaskWait(10);
@@ -743,7 +755,7 @@ static void ColosseumSatrageMatch_WaitForPlatformCrossingPhase(void) {
   elapsedFrames = 0;
   while (gColosseumSatrageMatch_LiftPhase != 0 ||
          gColosseumSatrageMatch_LiftTimer !=
-             COLOSSEUM_SATRAGE_MATCH_PLATFORM_CROSSING_FRAME) {
+             COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME) {
     Engine_TaskWait(1);
     elapsedFrames++;
     if (elapsedFrames >= COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_FRAMES) {
@@ -753,10 +765,10 @@ static void ColosseumSatrageMatch_WaitForPlatformCrossingPhase(void) {
 }
 
 /// Halt on the shifting floor's lift operator: the lifts stop and leave a
-/// crossing (FLAG_PLACE_TEMP_34).
+/// crossing (FLAG_LIFTS_HALTED).
 static void Event_HaltLifts(void) {
   FieldFx_PauseObject(LIFT_OPERATOR);
-  Engine_GameFlagSet(FLAG_PLACE_TEMP_34);
+  Engine_GameFlagSet(FLAG_LIFTS_HALTED);
 
   if (gColosseumSatrageMatch_LiftPhase != 0) {
     gColosseumSatrageMatch_LiftTimer = 0;
@@ -765,7 +777,7 @@ static void Event_HaltLifts(void) {
   Engine_TaskWait(30);
   Engine_TaskWait(1);
 
-  Engine_TaskRemoveCallback(ColosseumSatrageMatch_UpdateMovingPlatforms);
+  Engine_TaskRemoveCallback(ColosseumSatrageMatch_UpdateLifts);
 
   Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
   Map_CopyCellAttributes(57, 11, 1, 1, 58, 11);
@@ -774,7 +786,7 @@ static void Event_HaltLifts(void) {
 /// Reaching Colosseum Final 2's arena: the leader takes a prize (the Chain Mail
 /// if first, the Cotton Shirt if second), and he and Satrage face off and
 /// fight; the battle's group follows who took the mail.
-/// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
+/// FLAG_ARENA_REACHED says the arena was already reached; the arena's touch
 /// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 rivalFinishedFirst;
@@ -784,7 +796,8 @@ static void Event_ReachArena(void) {
   resultBase = 2;
   SceneState_EmptyHook();
   Engine_EventBegin();
-  rivalFinishedFirst = ColosseumSatrageMatch_ApproachFinishAndTakeItem(77, 89);
+  rivalFinishedFirst = ColosseumSatrageMatch_ApproachFinishAndTakeItem(
+      ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   ColosseumSatrageMatch_WaitForRivalFinish();
   refreshCount = 9;
   do {
@@ -796,11 +809,11 @@ static void Event_ReachArena(void) {
   Actor_WalkTo(OPPONENT, 88, 256);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 256);
-  Engine_ActorSetAnimation(OPPONENT, 1);
+  Engine_ActorSetAnimation(OPPONENT, ANIM_STAND);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, OPPONENT, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(OPPONENT, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(OPPONENT, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
@@ -816,8 +829,10 @@ static void Event_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         resultBase - rivalFinishedFirst + 1);
   Battle_SetStart(BATTLE_START_SCENE);
-  Event_SetNextDestination((s32)&SceneId_ColosseumSatrageMatch, 4);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch, 5);
+  Event_SetNextDestination((s32)&SceneId_ColosseumSatrageMatch,
+                           COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
+  Event_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch,
+                             COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
@@ -862,7 +877,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 x;
   s32 obstacleId;
   s32 column;
-  s32 platformId;
+  s32 liftId;
   s32 columnOffset;
   s32 row;
   s32 zero;
@@ -872,7 +887,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   Map_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   Map_CopyCellAttributes(48, 10, 5, 6, 120, 10);
-  for (obstacleId = BOARD_WALK_FIRST_PLATFORM; obstacleId <= FALLING_OBSTACLE;
+  for (obstacleId = BOARD_WALK_FIRST_LIFT_PIECE; obstacleId <= FALLING_OBSTACLE;
        obstacleId++) {
     actor = Object_GetById(obstacleId);
     Object_SetMode(actor, 4);
@@ -881,7 +896,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     actor->priorityFlags = 2;
   }
   Object_GetById(FORCE_TARGET)->priorityFlags = 2;
-  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_30)) {
+  if (Engine_GameFlagIsSet(FLAG_OBSTACLE_KNOCKED_DOWN)) {
     actor = Object_GetById(FALLING_OBSTACLE);
     actor->x.fixed = PIXELS(336);
     actor->y.fixed = -PIXELS(8);
@@ -895,20 +910,20 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   Object_GetById(WALL_PILLAR)->priorityFlags = 2;
   zero = 0;
-  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_35)) {
+  if (Engine_GameFlagIsSet(FLAG_WALL_PILLAR_MOVED)) {
     Map_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }
-  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_33)) {
-    Engine_ActorSetAnimation(GROWTH_PLANT, 4);
+  if (Engine_GameFlagIsSet(FLAG_PLANT_GROWN)) {
+    Engine_ActorSetAnimation(GROWTH_PLANT, ANIM_SHAKE_HEAD);
     Map_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
-  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_31)) {
+  if (Engine_GameFlagIsSet(FLAG_WEST_TARGET_FROZEN)) {
     Object_GetById(FROST_TARGET_WEST)->motionFlags = zero;
     Object_GetById(FROST_TARGET_WEST)->priorityFlags = 2;
     Engine_ActorSetAnimation(FROST_TARGET_WEST, 5);
     Map_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
-  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_32)) {
+  if (Engine_GameFlagIsSet(FLAG_EAST_TARGET_FROZEN)) {
     Object_GetById(FROST_TARGET_EAST)->motionFlags = zero;
     Object_GetById(FROST_TARGET_EAST)->priorityFlags = 2;
     Engine_ActorSetAnimation(FROST_TARGET_EAST, 5);
@@ -926,7 +941,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   Map_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
   // Each Mini-Maze pillar returns to the column its place flag byte keeps.
-  x = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_40);
+  x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN);
   if (x == 0) {
     x = 73;
   }
@@ -935,7 +950,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-  x = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_48);
+  x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN);
   if (x == 0) {
     x = 76;
   }
@@ -944,7 +959,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-  x = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_50);
+  x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN);
   if (x == 0) {
     x = 79;
   }
@@ -955,14 +970,14 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
   ColosseumSatrageMatch_UpdateRollingLogCollision();
-  // A Halted controller leaves stationary platforms; otherwise resume the task.
+  // A Halted controller leaves the lifts standing; otherwise resume the task.
   Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
-  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_34)) {
-    for (platformId = COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM, row = 13,
+  if (Engine_GameFlagIsSet(FLAG_LIFTS_HALTED)) {
+    for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,
         columnOffset = 58;
-         platformId <= COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM;
-         platformId++, columnOffset += 2) {
-      actor = Object_GetById(platformId);
+         liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
+         liftId++, columnOffset += 2) {
+      actor = Object_GetById(liftId);
       actor->priorityFlags = 2;
       Object_SetMode(actor, 4);
       Map_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
@@ -970,17 +985,16 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
     FieldFx_PauseObject(LIFT_OPERATOR);
   } else {
-    for (platformId = COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM;
-         platformId <= COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM; platformId++) {
-      actor = Object_GetById(platformId);
+    for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
+         liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
+      actor = Object_GetById(liftId);
       actor->priorityFlags = 2;
       Object_SetMode(actor, 4);
       actor->speed = 0x8000;
       actor->acceleration = 0x3333;
     }
-    FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateMovingPlatforms,
-                               0xc85);
-    Scheduler_SetTaskFlags(ColosseumSatrageMatch_UpdateMovingPlatforms, 1);
+    FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts, 0xc85);
+    Scheduler_SetTaskFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
   Engine_ActorSetAnimation(OPPONENT, 9);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
@@ -1072,7 +1086,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteSecondFinals);
-  Engine_ActorSetAnimationAndWait(attendantId, 3);
+  Engine_ActorSetAnimationAndWait(attendantId, ANIM_NOD);
   Engine_EventShowMessage(attendantId, 0);
   Engine_ActorRunRepeatedMotion(attendantId, 2);
   Engine_EventShowMessage(attendantId, 0);
@@ -1081,22 +1095,22 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Engine_ActorRunRepeatedMotion(attendantId, 2);
   Engine_EventShowMessage(attendantId, 0);
   // Gather the companions into Isaac before the attendant returns to his post.
-  Engine_ActorSetAnimation(MIA, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(GARET, 2);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(IVAN, 2);
+  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(MIA, 2);
+  Engine_ActorSetAnimation(MIA, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
@@ -1172,7 +1186,7 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
     result = Colosso_GreetAtStage(attendant, 2);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoShiftingFloorStage);
-      ColosseumSatrageMatch_ResetMovingPlatforms();
+      ColosseumSatrageMatch_ResetLifts();
       Camera_SetSpeed(0x30000, 0x6000);
       Camera_MoveTo(PIXELS(984), -1, PIXELS(232), 1);
       Engine_CameraWaitForMove();
@@ -1180,14 +1194,14 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
        * show, which sets r1 before r0; as a direct call, 1 of 104
        * instructions differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE(attendant, 0);
-      ColosseumSatrageMatch_StartMovingPlatforms();
+      ColosseumSatrageMatch_StartLifts();
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 1080, 264);
       Engine_EventWait(15);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1080, 216);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1064, 216);
-      ColosseumSatrageMatch_WaitForPlatformCrossingPhase();
+      ColosseumSatrageMatch_WaitForLiftCrossingPhase();
       Engine_LeaderCheckAhead();
       Camera_MoveTo(-1, -1, -1, 0);
       Event_ShowMessage(attendant, 0);
@@ -1239,7 +1253,7 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
        * differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR(RIDING_LOG_SOUTH, -64, 0);
       Camera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Engine_EventWait(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 760, 232);
@@ -1291,7 +1305,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Field_ClimbUp();
     Camera_SetSpeed(0x4000, 0x800);
     Camera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x400000,
@@ -1345,8 +1359,8 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Object_SetMode(obstacle, 3);
   Engine_ObjectSetPosition(obstacle, column, 0, row);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(pusher, 2);
-  Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
+  Engine_ActorSetAnimation(pusher, ANIM_WALK);
+  Engine_ActorSetSpeed(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
   Object_SetMode(pusherActor, 2);
   Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
@@ -1640,7 +1654,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   u16 *itemActor;
   s16 *timer;
 
-  finishAlreadyReached = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_11);
+  finishAlreadyReached = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
 
   gameState = (u8 *)&gGameState;
   competitor = Object_GetById(((struct GameState *)gameState)->selectedActor);
@@ -1665,7 +1679,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   competitor->speed = PIXELS(1);
 
   Engine_ObjectSetPosition(competitor, x, 0, z);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
+  Engine_GameFlagSet(FLAG_ARENA_REACHED);
   Engine_ObjectSetScript(competitor, gColosseumSatrageMatch_ApproachScript);
 
   while (*timer != 0) {
@@ -2060,18 +2074,18 @@ struct SceneEvent gColosseumSatrageMatchEvents[] = {
     { SEARCH(SEARCH_CHEST), 101, FLAG_PLACE_TEMP_38, FIND_ITEM(ITEM_NUT) },
     { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 102, FLAG_PLACE_TEMP_39, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_CHEST), 104, FLAG_PLACE_TEMP_3B, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_WEST, FLAG_PLACE_TEMP_31, EVENT_SCRIPT(Event_FreezeWestTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_EAST, FLAG_PLACE_TEMP_32, EVENT_SCRIPT(Event_FreezeEastTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x10000000, FORCE_TARGET, FLAG_PLACE_TEMP_30, EVENT_SCRIPT(Event_PrepareForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), FORCE_TARGET, FLAG_PLACE_TEMP_30, EVENT_SCRIPT(Event_KnockDownObstacle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLACE_TEMP_33, EVENT_SCRIPT(Event_GrowPlant) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), FROST_TARGET_WEST, FLAG_WEST_TARGET_FROZEN, EVENT_SCRIPT(Event_FreezeWestTarget) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), FROST_TARGET_EAST, FLAG_EAST_TARGET_FROZEN, EVENT_SCRIPT(Event_FreezeEastTarget) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(Event_PrepareForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(Event_KnockDownObstacle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(Event_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UpdateMovedPillarCell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedPillarColumns) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedPillarColumns) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedPillarColumns) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), LIFT_OPERATOR, FLAG_PLACE_TEMP_34, EVENT_SCRIPT(Event_HaltLifts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), LIFT_OPERATOR, FLAG_LIFTS_HALTED, EVENT_SCRIPT(Event_HaltLifts) },
     { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { EVENT_TALK, MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMiniMazeAttendant) },
     { EVENT_TALK, SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToShiftingFloorAttendant) },

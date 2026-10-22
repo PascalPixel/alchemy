@@ -38,11 +38,11 @@ enum {
 };
 
 /// Plays a cue, the game's one way of playing a sound: a fade control, a sound
-/// effect, a fanfare or music, as the README's design section describes. The
-/// low 12 bits are the cue, AUDIO_CUE_START_SILENT the only flag read. Reached
-/// through the sound far-call table as AudioCommand_PlayFar from the whole
-/// game; it keeps the music's ramps and cue records (gAudioSecondaryState,
-/// gMusicRestoreDelay) up to date.
+/// effect, a fanfare or music, as the README's "What a cue number means"
+/// describes. The low 12 bits are the cue, AUDIO_CUE_START_SILENT the only flag
+/// read. Reached through the sound far-call table as AudioCommand_PlayFar from
+/// the whole game; it keeps the music's ramps and cue records
+/// (gAudioSecondaryState, gMusicRestoreDelay) up to date.
 void AudioCommand_Play(s32 id) {
   s32 flags;
   s32 player;
@@ -98,7 +98,8 @@ void AudioCommand_Play(s32 id) {
     // Music: the keep cue, or the music cue last chosen (gAudioSecondaryState),
     // changes nothing, so a scene may name its music on every entry; a song
     // that has ended is not started again. The three songs below take mixer
-    // record 3, the rest record 2 (the README's mixer design).
+    // record 3, the rest record 2 (the README's "The mixer's code is chosen per
+    // song").
     if (id == AUDIO_CUE_KEEP_BGM)
       return;
     if (id == gAudioSecondaryState)

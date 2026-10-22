@@ -14,6 +14,237 @@ steps. The windows, messages and icons the screens are drawn with are in
 (`Menu_RunTopSelection` in `window/window/selection.c`). The counters that
 share the menu work are in [Shops](../shop/README.md).
 
+## The menu work
+
+One heap block, the menu work, belongs to whichever screen is running, and
+each screen reads it through its own struct.
+
+```mermaid
+flowchart LR
+    slot["HEAP_SLOT_MENU<br/>2,672 bytes"]
+    slot --- item["InventoryMenuState<br/>Item screen, shared pieces"]
+    slot --- psy["PsynergyMenuState"]
+    slot --- status["CharacterMenuState"]
+    slot --- djinn["DjinnMenuWork"]
+    slot --- four["FourObjectMotionState"]
+    slot --- shop["ShopRuntime<br/>the counters"]
+```
+
+Only one screen's loop runs at a time, so the menu work belongs to that
+screen while it runs: each takes `HEAP_SLOT_MENU` as it opens and releases it
+before it returns. The views stay separate structs, as the views of a field
+object do in [Field](../field/README.md), because each
+is what its own screen's code matches with. The work has room for eight
+party members (`ownerIds`) and 32 listed entries (`entryIcons`, `items`). The
+counters take the same slot as `struct ShopRuntime`, and the save screen uses
+it for its sprites.
+
+The Djinn and Status screens also take blocks from the alternate pool: the
+Djinn screen's backdrop (`struct DjinnMenuBackdrop`), which saves the field
+tiles and palettes it covers, and the Status screen's copies of the first two
+background palettes and of the window tiles it draws over. Each puts them
+back and frees them before returning.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `HEAP_SLOT_MENU` | 55 | the heap slot of the menu work |
+| `MENU_WORK_SIZE` | `0xa70` (2,672) | the menu work's size in bytes |
+| `INVENTORY_SLOTS` | 15 | slots in a member's inventory |
+
+## The screens
+
+Each of the field menu's four icons opens a screen, a command loop over its
+own steps that returns a result to the field menu.
+
+```mermaid
+flowchart TD
+    field["Field menu icon<br/>FIELD_MENU_ id"] -->|"system/far_call/MENU.S"| run["the screen's Run function"]
+    run --> loop["command loop over its steps"]
+    loop -->|"backed out or Start"| back["-1: the icons come up again"]
+    loop -->|"Psynergy or an item for the field"| use["1: the menu closes"]
+    loop -->|"Djinn screen, always"| djinn["1: the field menu opens again"]
+```
+
+Each screen is entered from the field menu by its `FIELD_MENU_` id through
+`system/far_call/MENU.S`, runs a command loop over its steps, and returns a
+result to the field menu. Every screen but Djinn returns -1 when the player
+backs out or presses Start, and the field menu's icons come up again; the
+Psynergy and Item screens return 1 when Psynergy or an item is to be used on
+the field, which closes the menu. The Djinn screen always returns 1, which
+also opens the field menu again.
+
+| Icon | Value | Function | Part |
+| --- | --- | --- | --- |
+| `FIELD_MENU_PSYNERGY` | 1 | `PsynergyMenu_Run` | [`menu/psynergy.c`](menu/psynergy.c) |
+| `FIELD_MENU_DJINN` | 2 | `DjinnMenu_Run` | [`menu/djinn.c`](menu/djinn.c) |
+| `FIELD_MENU_ITEM` | 3 | `ItemMenu_Run` | [`menu/item.c`](menu/item.c) |
+| `FIELD_MENU_STATUS` | 4 | `StatusMenu_Run` | [`menu/status.c`](menu/status.c) |
+
+### The Psynergy screen
+
+The Psynergy screen chooses a member, one of their Psynergy and its target,
+and either uses it at once or hands it to the field.
+
+The **Psynergy** screen steps through `PSYNERGY_STEP_OWNER`, `_LIST`,
+`_CLASSIFY` (how the chosen Psynergy is used,
+`PsynergyMenu_ClassifySelectedPsynergy`), `_TARGET` and `_APPLY`. Psynergy
+used on a member takes effect at `_APPLY`; Psynergy that works on the field
+ends the screen with the field's Psynergy request. In its shortcut modes the
+same lists set the Psynergy the L or R button casts.
+
+### The Item screen
+
+The Item screen chooses a member, one of their items and a command, and
+carries the command out.
+
+![The Item screen in Vale at twice the GBA's size at two moments, each window outlined at the place and size its UiWindow gives, in tiles, and labelled with the InventoryMenuState member that points to it: with Isaac's items listed (MAINWINDOW with the party figures, MESSAGEWINDOW asking `Which item?`, STATUSWINDOW with his stats, LISTWINDOW with the Machete chosen, HELPWINDOW and INFOWINDOW describing the Machete), and with the Machete's commands up in LISTWINDOW](https://alchemy.pascalpixel.com/guides/menu/item-windows.png)
+
+The **Item** screen chooses a member (`ITEM_STEP_OWNER`), one of their items
+(`ITEM_STEP_ITEM`) and a command (`ITEM_STEP_COMMAND`): Use, Equip, Give,
+Drop, Remove or Details (`ITEM_STEP_INSPECT`). Giving chooses the receiver
+(`ITEM_STEP_TARGET`) and, when the receiver's bag is full, what they give back
+(`ITEM_STEP_TRADE`). Nothing sets `ITEM_STEP_IDLE` or `ITEM_STEP_QUANTITY`.
+Each window it draws is a `struct UiWindow` that its work,
+`struct InventoryMenuState`, keeps a pointer to: the party figures in
+`mainWindow`, the prompt in `messageWindow`, the member's stats in
+`statusWindow`, the items in `listWindow`, which holds the command grid once
+an item is chosen, the button help in `helpWindow` and the item's description
+in `infoWindow`.
+
+`ItemMenu_Run` returns 1 when an item is to be used outside the menu, with
+its owner, target and item id in its out parameters. Its steps are an enum
+in `menu/item.c`.
+
+| Step | Value | What the screen is doing |
+| --- | --- | --- |
+| `ITEM_STEP_OWNER` | 0 | choosing a member |
+| `ITEM_STEP_ITEM` | 1 | choosing one of their items |
+| `ITEM_STEP_USE` | 2 | Use |
+| `ITEM_STEP_EQUIP` | 3 | Equip |
+| `ITEM_STEP_GIVE` | 4 | Give |
+| `ITEM_STEP_DROP` | 5 | Drop |
+| `ITEM_STEP_TARGET` | 6 | Give: choosing whom to give it to |
+| `ITEM_STEP_TRADE` | 7 | the receiver is full: choosing what they give back |
+| `ITEM_STEP_IDLE` | 8 | nothing sets it |
+| `ITEM_STEP_COMMAND` | 9 | choosing a command |
+| `ITEM_STEP_INSPECT` | 10 | Details |
+| `ITEM_STEP_REMOVE` | 11 | Remove |
+| `ITEM_STEP_QUANTITY` | 12 | nothing sets it |
+
+### The Djinn screen
+
+The Djinn screen chooses a Djinni and sets it, puts it on standby, gives it
+away or trades it, after showing what the change would do.
+
+The **Djinn** screen chooses a Djinni (`DJINN_STEP_SELECT_DJINN`) and what to
+do with it (`DJINN_STEP_SELECT_ACTION`): set it, put it on standby, give it to
+another member or trade it for one of theirs, each with a confirm step and an
+apply step. Before a change is made,
+[`menu/djinn_preview.c`](menu/djinn_preview.c) shows the stats and Psynergy
+it leaves each member with, and checks that it keeps the members' Djinn
+counts even. Nothing sets `DJINN_STEP_RESERVED`. The
+screen types its messages at `MESSAGE_SPEED_FAST` and puts the player's speed
+back when it closes. Its choosers test Start themselves and return
+`DJINN_RESULT_START`, which ends the loop. `DjinnMenu_Run` also runs the
+Djinn tutorial, which the world map opens as `DjinnMenu_Open` when Flint
+joins; the tutorial's steps set `MESSAGE_SPEED_NORMAL` for their messages.
+
+The steps are an enum in `menu/djinn.c`, the results in `menu_internal.h`.
+
+| Step | Value | What the screen is doing |
+| --- | --- | --- |
+| `DJINN_STEP_HANDLE_RESULT` | 0 | after a chooser: a negative result closes the screen, any other goes back to choosing a Djinni |
+| `DJINN_STEP_RESERVED` | 1 | nothing sets it |
+| `DJINN_STEP_SELECT_DJINN` | 2 | choosing a Djinni |
+| `DJINN_STEP_SELECT_ACTION` | 3 | choosing what to do with it |
+| `DJINN_STEP_HANDLE_PAIR_RESULT` | 4 | after a second choice: back to the Djinn, or on to a trade's second Djinni or a gift's confirmation |
+| `DJINN_STEP_CONFIRM_SET`, `_STANDBY`, `_GIVE` | 5, 6, 7 | confirming a set, a standby or a gift |
+| `DJINN_STEP_SELECT_SECOND` | 8 | choosing the other Djinni of a trade |
+| `DJINN_STEP_CONFIRM_TRADE` | 9 | confirming a trade |
+| `DJINN_STEP_SHOW_STATUS` | 10 | showing the status of the chosen column's member |
+| `DJINN_STEP_APPLY_SET`, `_STANDBY`, `_GIVE`, `_TRADE` | 11 to 14 | making the change |
+| `DJINN_STEP_SHOW_HELP` | 15 | showing the help |
+| `DJINN_RESULT_START` | -2 | a chooser saw Start: the screen closes |
+
+### The Status screen
+
+The Status screen shows one member at a time, in three pages.
+
+The **Status** screen shows a member row and three pages: status, Psynergy
+and equipment. When the party has Djinn, it shows the row of four Djinn
+figures that `FourObjectMotion_` places and eases in and out
+([`menu/djinn_figures.c`](menu/djinn_figures.c)).
+
+`Menu_OpenCharacterSelector` ([`menu/status.c`](menu/status.c)) lets the
+player choose one party member over the field and returns the member's id, or
+-1. The Colosso scenes open it through `MENU.S`, and so does the debug test.
+
+## The status panel
+
+The status panel is the window on the Item and Psynergy screens that shows
+the chosen member and what a choice would do to them.
+
+`Menu_DrawOwnerStatusPanel` fills a window at tile (0, 5), 13 by 12 tiles, on
+the Item and Psynergy screens. It shows the member's name, up to two ailments
+or else the level, and the portrait, and below them what the low byte of its
+mode, an `enum StatusPanelKind`, asks for. With `STATUS_PANEL_LOWER_ONLY` it
+keeps the open window, the name and the ailments and redraws only the part
+below. The equipment panel equips the item on the real unit for a moment and
+restores the unit from a copy.
+
+| Kind | Value | Below the name |
+| --- | --- | --- |
+| `STATUS_PANEL_EXPERIENCE` | 0 | class, HP, PP and experience |
+| `STATUS_PANEL_EQUIP` | 2 | the stats with an item equipped, or removed; 3 draws the same |
+| `STATUS_PANEL_LEARN` | 4 | the Psynergy a Psynergy item teaches |
+| `STATUS_PANEL_CLASS` | 6 | class, HP and PP |
+| `STATUS_PANEL_STATS` | 8 | Attack, Defense, Agility and Luck |
+| `STATUS_PANEL_LOWER_ONLY` | `0x100` | flag: redraw only the part below the name and ailments |
+
+## Sorting items
+
+L and A on the Item screen's member row sort that member's items, each press
+moving on to the next of four orders.
+
+Pressing A while holding L on the Item screen's member row sorts that
+member's items, each press moving on to the next of the four orders in
+`menudata.c`, named by `enum ListSort`: the equipped items, then the items
+that aren't equipment, then the other equipment
+(`gMenu_ListOrderEquippedThenItems`); the equipped items, then the other
+equipment, then the rest (`gMenu_ListOrderEquippedThenEquipment`); the
+equipment first (`gMenu_ListOrderEquipmentFirst`); and the items that aren't
+equipment first (`gMenu_ListOrderItemsFirst`). An order lists item types a
+byte at a time; a type plus `LIST_ORDER_EQUIPPED` takes only the equipped
+items of that type, and `LIST_ORDER_END` ends the order.
+`InventoryMenu_SortByListOrder` sorts by an order, which
+`Menu_CopyListOrder` copies out of `menudata.c`; `enum ListSort` is in
+[`menu.h`](../../include/unit/menu/menu.h).
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `LIST_SORT_EQUIPPED_THEN_ITEMS` | 0 | `gMenu_ListOrderEquippedThenItems` |
+| `LIST_SORT_EQUIPPED_THEN_EQUIPMENT` | 1 | `gMenu_ListOrderEquippedThenEquipment` |
+| `LIST_SORT_EQUIPMENT_FIRST` | 2 | `gMenu_ListOrderEquipmentFirst` |
+| `LIST_SORT_ITEMS_FIRST` | 3 | `gMenu_ListOrderItemsFirst` |
+| `LIST_ORDER_EQUIPPED` | `0x80` | added to an item type: only the equipped items of that type |
+| `LIST_ORDER_END` | `0xff` | ends an order |
+
+## Design
+
+### Editions
+
+Where the editions lay a screen out differently, such as a column moved over
+for longer words, the value is a named macro chosen in one `#if` block near
+the top of its part or file, with a comment on what differs.
+
+## Limits
+
+- The menu work is 2,672 bytes, shared by every screen's view of it.
+- It has room for eight party members and 32 listed entries.
+- A member's inventory has `INVENTORY_SLOTS` (15) slots.
+- The title, file select and Battle Arena screens are overlays, loaded into
+  the overlay area ([System](../system/README.md)).
+
 ## Files
 
 | File | What it holds |
@@ -100,129 +331,6 @@ far-call tables and with the window folder, so renaming one crosses folders.
 [Matching](../MATCHING.md) explains the spellings some sites keep and the
 comment markers.
 
-## The menu work
-
-Only one screen's loop runs at a time, so the menu work belongs to that
-screen while it runs: each takes `HEAP_SLOT_MENU` as it opens and releases it
-before it returns. The views stay separate structs, as the views of a field
-object do in [Field](../field/README.md), because each
-is what its own screen's code matches with. The work has room for eight
-party members (`ownerIds`) and 32 listed entries (`entryIcons`, `items`). The
-counters take the same slot as `struct ShopRuntime`, and the save screen uses
-it for its sprites.
-
-The Djinn and Status screens also take blocks from the alternate pool: the
-Djinn screen's backdrop (`struct DjinnMenuBackdrop`), which saves the field
-tiles and palettes it covers, and the Status screen's copies of the first two
-background palettes and of the window tiles it draws over. Each puts them
-back and frees them before returning.
-
-## The screens
-
-Each screen is entered from the field menu by its `FIELD_MENU_` id through
-`system/far_call/MENU.S`, runs a command loop over its steps, and returns a
-result to the field menu. Every screen but Djinn returns -1 when the player backs out or presses
-Start, and the field menu's icons come up again; the Psynergy and Item
-screens return 1 when Psynergy or an item is to be used on the field, which
-closes the menu. The Djinn screen always returns 1, which also opens the
-field menu again.
-
-| Icon | Function | Part |
-| --- | --- | --- |
-| `FIELD_MENU_PSYNERGY` | `PsynergyMenu_Run` | [`menu/psynergy.c`](menu/psynergy.c) |
-| `FIELD_MENU_DJINN` | `DjinnMenu_Run` | [`menu/djinn.c`](menu/djinn.c) |
-| `FIELD_MENU_ITEM` | `ItemMenu_Run` | [`menu/item.c`](menu/item.c) |
-| `FIELD_MENU_STATUS` | `StatusMenu_Run` | [`menu/status.c`](menu/status.c) |
-
-The **Psynergy** screen steps through `PSYNERGY_STEP_OWNER`, `_LIST`,
-`_CLASSIFY` (how the chosen Psynergy is used,
-`PsynergyMenu_ClassifySelectedPsynergy`), `_TARGET` and `_APPLY`. Psynergy
-used on a member takes effect at `_APPLY`; Psynergy that works on the field
-ends the screen with the field's Psynergy request. In its shortcut modes the
-same lists set the Psynergy the L or R button casts.
-
-The **Item** screen chooses a member (`ITEM_STEP_OWNER`), one of their items
-(`ITEM_STEP_ITEM`) and a command (`ITEM_STEP_COMMAND`): Use, Equip, Give,
-Drop, Remove or Details (`ITEM_STEP_INSPECT`). Giving chooses the receiver
-(`ITEM_STEP_TARGET`) and, when the receiver's bag is full, what they give back
-(`ITEM_STEP_TRADE`). Nothing sets `ITEM_STEP_IDLE` or `ITEM_STEP_QUANTITY`.
-Each window it draws is a `struct UiWindow` that its work,
-`struct InventoryMenuState`, keeps a pointer to: the party figures in
-`mainWindow`, the prompt in `messageWindow`, the member's stats in
-`statusWindow`, the items in `listWindow`, which holds the command grid once
-an item is chosen, the button help in `helpWindow` and the item's description
-in `infoWindow`.
-
-![The Item screen in Vale at twice the GBA's size at two moments, each window outlined at the place and size its UiWindow gives, in tiles, and labelled with the InventoryMenuState member that points to it: with Isaac's items listed (MAINWINDOW with the party figures, MESSAGEWINDOW asking `Which item?`, STATUSWINDOW with his stats, LISTWINDOW with the Machete chosen, HELPWINDOW and INFOWINDOW describing the Machete), and with the Machete's commands up in LISTWINDOW](https://alchemy.pascalpixel.com/guides/menu/item-windows.png)
-
-The **Djinn** screen chooses a Djinni (`DJINN_STEP_SELECT_DJINN`) and what to
-do with it (`DJINN_STEP_SELECT_ACTION`): set it, put it on standby, give it to
-another member or trade it for one of theirs, each with a confirm step and an
-apply step. Before a change is made,
-[`menu/djinn_preview.c`](menu/djinn_preview.c) shows the stats and Psynergy
-it leaves each member with, and checks that it keeps the members' Djinn
-counts even. Nothing sets `DJINN_STEP_RESERVED`. The
-screen types its messages at `MESSAGE_SPEED_FAST` and puts the player's speed
-back when it closes. Its choosers test Start themselves and return
-`DJINN_RESULT_START`, which ends the loop. `DjinnMenu_Run` also runs the
-Djinn tutorial, which the world map opens as `DjinnMenu_Open` when Flint
-joins; the tutorial's steps set `MESSAGE_SPEED_NORMAL` for their messages.
-
-The **Status** screen shows a member row and three pages: status, Psynergy
-and equipment. When the party has Djinn, it shows the row of four Djinn
-figures that `FourObjectMotion_` places and eases in and out
-([`menu/djinn_figures.c`](menu/djinn_figures.c)).
-
-`Menu_OpenCharacterSelector` ([`menu/status.c`](menu/status.c)) lets the
-player choose one party member over the field and returns the member's id, or
--1. The Colosso scenes open it through `MENU.S`, and so does the debug test.
-
-## The status panel
-
-`Menu_DrawOwnerStatusPanel` fills a window at tile (0, 5), 13 by 12 tiles, on
-the Item and Psynergy screens. It shows the member's name, up to two ailments
-or else the level, and the portrait, and below them what its `enum
-StatusPanelKind` asks for:
-
-| Kind | Below the name |
-| --- | --- |
-| `STATUS_PANEL_EXPERIENCE` | class, HP, PP and experience |
-| `STATUS_PANEL_EQUIP` | the stats with an item equipped, or removed |
-| `STATUS_PANEL_LEARN` | the Psynergy a Psynergy item teaches |
-| `STATUS_PANEL_CLASS` | class, HP and PP |
-| `STATUS_PANEL_STATS` | Attack, Defense, Agility and Luck |
-
-With `STATUS_PANEL_LOWER_ONLY` it keeps the open window, the name and the
-ailments and redraws only the part below. The equipment panel equips the item
-on the real unit for a moment and restores the unit from a copy.
-
-## Sorting items
-
-Pressing A while holding L on the Item screen's member row sorts that
-member's items, each press moving on to the next of the four orders in
-`menudata.c`, named by `enum ListSort`: the equipped items, then the items
-that aren't equipment, then the other equipment
-(`gMenu_ListOrderEquippedThenItems`); the equipped items, then the other
-equipment, then the rest (`gMenu_ListOrderEquippedThenEquipment`); the
-equipment first (`gMenu_ListOrderEquipmentFirst`); and the items that aren't
-equipment first (`gMenu_ListOrderItemsFirst`). An order lists item types a
-byte at a time; a type plus `LIST_ORDER_EQUIPPED` takes only the equipped
-items of that type, and `LIST_ORDER_END` ends the order.
-
-## Editions
-
-Where the editions lay a screen out differently, such as a column moved over
-for longer words, the value is a named macro chosen in one `#if` block near
-the top of its part or file, with a comment on what differs.
-
-## Limits
-
-- The menu work is 2,672 bytes, shared by every screen's view of it.
-- It has room for eight party members and 32 listed entries.
-- A member's inventory has `INVENTORY_SLOTS` (15) slots.
-- The title, file select and Battle Arena screens are overlays, loaded into
-  the overlay area ([System](../system/README.md)).
-
 ## Evidence and open questions
 
 Screen and prefix names follow what each screen shows in the English
@@ -247,3 +355,11 @@ last BIOS instruction fetched; as a width that is over 30, so
   (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
   and every test are in the menu's own code, so nothing in the ROM needs it to
   be a flag, and only Camelot's sources could say why it is one.
+- XXX (picture): the Psynergy screen, its steps from member to target.
+- XXX (picture): the Djinn screen's preview of a change, beside the stats it
+  shows.
+- XXX (picture): the Status screen's three pages and the row of four Djinn
+  figures.
+- XXX (picture): the status panel's kinds, one window for each.
+- XXX (picture): sorting items, the Item screen's list in each of the four
+  orders.

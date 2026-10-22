@@ -11,6 +11,21 @@ by the banks of the main image, with one folder for each large bank.
 
 ## The main loop
 
+`Game_Run` runs one scene at a time from a clean runtime, for as long as the
+game runs.
+
+```mermaid
+flowchart TD
+    start["Game_Run(mode): the first scene,<br/>the title unless in debug mode"] --> clean["stop HBlank DMA, drop the tasks<br/>and handlers, empty the heap"]
+    clean --> kind{{"scene from SCENE_BLANK up?"}}
+    kind -->|"no: a field scene"| field["Scene_ResetFlagsOnEnter, music,<br/>Scene_LoadOverlay, Field_RunScene"]
+    field --> exit["Scene_TakeExit:<br/>the next scene and entrance"]
+    kind -->|"yes: a battle or minigame"| battle["Battle_RunEncounterFar,<br/>RunLuckyDice or RunReelGame"]
+    battle --> back["Scene_ReturnFromBattle:<br/>the scene to go back to"]
+    exit --> clean
+    back --> clean
+```
+
 `Game_Run`, in [object/scene.c](src/object/object/scene.c), is the game's
 main loop, and it never returns. `System_Initialize` calls it at power-on
 with `GAME_RUN_TITLE`, which makes the title (`SceneId_Title`) the first
@@ -44,7 +59,19 @@ afterwards. [Field objects](src/object/README.md) follows a field scene from
 `Field_RunScene` to its exit, including how a battle is chosen from the
 encounter zones in `encounter.tsv`.
 
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `GAME_RUN_TITLE` | 0 | start at the title, with a fresh game state |
+| `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `SceneId_ValeGate` |
+| `GAME_RUN_DEBUG_CLEAR` | 2 | in debug mode, start at the clear screen |
+| `SCENE_BLANK` | `0x1fb` | the first scene number with no row in the scene table |
+| `SCENE_REEL_GAME` | `0x1fc` | Lucky Wheels at Tolbi's spring |
+| `SCENE_LUCKY_DICE` | `0x1fd` | Lucky Dice at Tolbi's spring |
+| `SCENE_BATTLE` | `0x1fe` | a battle |
+
 ## Scenes and overlays
+
+A scene is its code, an overlay unpacked over the last scene's, and its map.
 
 A scene's code is an overlay, a compressed resource that `Resource_LoadCode`
 unpacks into `gOverlayArea`, 32 KB of EWRAM, when the scene loads. The next
@@ -59,7 +86,7 @@ table of the main-image functions it calls, reached through the far-call
 tables; overlays never call each other, and code several scenes need is
 compiled into each of them from `scene/common/`.
 [Scenes](src/scene/README.md) describes the tables and how to find an event,
-and [Engine](engine.md) the overlay's two tables.
+and [Engine](engine.md#overlays) the overlay's two tables.
 
 The other half of a scene is its map: three background layers with the
 actors drawn between them, and a grid of cells under them that says how high
@@ -68,6 +95,9 @@ the ground is, where it can be walked and which cells raise events.
 ![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
 
 ## The scene table and places
+
+The scene table gives each scene its overlay, its place, its variant and its
+map, and defines its id.
 
 The scene table, `gField_SceneTable` in [field/scenes.s](src/field/scenes.s),
 has a row for each of the 201 scenes, `struct SceneRecord`: the overlay's
@@ -88,7 +118,26 @@ The variant marks towns. A `SCENE_VARIANT_TOWN` scene, a town or one of its
 interiors, restores no PP, recovers no Djinn and does no poison damage as
 the party walks, Retreat is blocked there and Avoid doesn't wear off.
 
+| Name | Value | Meaning |
+| --- | --- | --- |
+| scenes | 201 | rows of `gField_SceneTable` |
+| overlays | 96 | the scenes' code, some shared by several scenes |
+| groups | 71 | places: their music, area name and kept flags |
+| `SCENE_VARIANT_FIELD` | 1 | every other scene: dungeons, the world map |
+| `SCENE_VARIANT_TOWN` | 2 | a town or one of its interiors |
+
 ## Entrances and exits
+
+An exit leads to a scene and an entrance, and the entrance decides where the
+party appears.
+
+```mermaid
+flowchart LR
+    kind["the exit's kind,<br/>from Field_RunScene"] --> rows["the scene's rows in<br/>the overlay's exit table"]
+    rows --> match{{"kind matches, and for<br/>SCENE_EXIT_IF its flag is clear?"}}
+    match -->|"no: the next row"| rows
+    match -->|yes| next["gGameState.scene<br/>and gGameState.entrance"]
+```
 
 [scene_links.h](include/scene_links.h) names every way between scenes. Each
 scene's entrances are named by where the party arrives from
@@ -105,12 +154,15 @@ play the part of a sequence that the previous scene sent the party to.
 
 ## Game flags
 
+The game flags are the saved bits that record how far the story has gone,
+with two ranges cleared for the scene code.
+
 The game flags are 4,096 bits in `gGameFlagBytes`, saved with the game and
 named in [flags.h](include/flags.h): the party and the Djinn first, then the
 system flags the engine shares, then the story flags, and most chest and
 find flags last, each place's in a section of its own. Eight flags starting at a multiple of 8 can
 also be read and written as a byte, which is how counters live among the
-flags. [Game rules](src/game/README.md) gives the layout and the calls.
+flags.
 
 Two ranges are cleared for the scene code, so that a scene never has to
 undo what it changed. `Scene_ResetFlagsOnEnter` clears the scene's own flags
@@ -134,6 +186,19 @@ code can never run, and its comment opens with `Unused:` and says why:
 answers a cell the party reaches only after crossing the cells where Garet
 joins, so its first test, `FLAG_VALE_STORM_GARET_JOINED`, always ends it.
 [Unused](unused.md) collects every such case.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `FLAG_DJINNI_0` | 48 | Flint's flag; each Djinni's is this plus its `DjinniId` |
+| `FLAG_KEEP_PARTY_POSITION` | `0x109` | keeps both cleared ranges, and the party where it was |
+| `FLAG_KEEP_MUSIC` | `0x11a` | keeps the music for one scene change |
+| `FLAG_KEEP_MUSIC_HELD` | `0x11b` | keeps the music for as long as it is set |
+| `FLAG_PLACE_VISITED(group)` | `0x180` + group | the place's marker on the world map screen |
+| `FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST` | `0x200` to `0x2ff` | the scene's 256 flags, cleared on every ordinary entrance |
+| `FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST` | `0x300` to `0x3ff` | the place's 256 flags, cleared on entering another group |
+
+[Game rules](src/game/README.md#the-game-flags) gives the layout and the
+calls.
 
 ## How scenes depend on the story
 
@@ -200,6 +265,9 @@ chosen by the entrance the last scene sent the party to.
 
 ## How the code is organised
 
+The code is divided as the main image is, into banks, with one folder for
+each large bank.
+
 The main image is the program the processor runs from the cartridge, and
 `main.ld` lays it out in fourteen banks, each at an address fixed per
 edition. Each bank begins with a far-call table of 8-byte jumps, one for
@@ -207,7 +275,9 @@ each function another bank calls, and a caller in another bank uses the
 function's `Far` name: `Game_Run`, in the `object` bank, starts a battle
 with `Battle_RunEncounterFar`. The nine large banks each have a folder, in
 the order the cartridge holds them: `runtime`, `field`, `window`, `game`,
-`object`, `menu`, `shop`, `battle` and `effect`. The five small banks'
+`object`, `menu`, `shop`, `battle` and `effect`.
+[System](src/system/README.md#why-the-program-is-cut-into-banks) explains
+why the program is cut into banks. The five small banks'
 code sits in the folder it belongs with. `graphics`, `map`, `sound` and
 `system` gather one kind of thing wherever it is linked, and `scene` and
 `debug` hold overlays. [`objects.tsv`](objects.tsv) lists every object in

@@ -5,7 +5,7 @@
 /// The heap's work slots and HeapState.
 ///
 /// The heap is two stacks of blocks, one in IWRAM and one in EWRAM; the
-/// runtime README's "The heap: two stacks of blocks" gives the allocators and
+/// runtime README's "The heap" gives the allocators and
 /// the lifetime rule. Every scene change resets both pools and clears every
 /// slot (Runtime_InitializeHeap, from the scene loop in object/scene.c), so
 /// no block outlives the scene, battle or minigame that took it.

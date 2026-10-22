@@ -10,6 +10,18 @@ complete examples of one.
 
 ## How the rooms are reached
 
+Only the debug scene selector leads to the rooms, and only the debug mode the
+retail game never turns on opens it.
+
+```mermaid
+flowchart TB
+    start["Start menu opened with B held"] --> mode{{"gDebugMode set?"}}
+    mode -->|no| menu["the Start menu"]
+    mode -->|yes| sel["Menu_RunSelection:<br/>any scene and entrance by number"]
+    sel --> rows["scene table rows TestRoom0 to TestRoom7,<br/>IncreaseItemAndLevel, MenuTest"]
+    rows --> ovl["the room's overlay"]
+```
+
 No exit, table or code of the game leads to them. Ten rows at the end of the
 scene table (`games/tbs/src/field/scenes.s`) run them: `TestRoom0` to
 `TestRoom7` all run the Djinn room's overlay, each on its own map, and
@@ -27,6 +39,120 @@ no symbol, so no code can branch to it, and the far-call table's own
 directory row is passed only to stubs that do nothing ([System](../system/README.md));
 the retail game therefore never turns debug mode on. [Unused](../../unused.md#debug-scenes) explains why the
 rooms count as reachable rather than unused.
+
+| Scene | Overlay | Room |
+| --- | --- | --- |
+| `TestRoom0` to `TestRoom7` | `0x3cc` | the Djinn room, each on its own map |
+| `IncreaseItemAndLevel` | `0x3cd` | the level and browser room |
+| `MenuTest` | `0x3ce` | the menu test room |
+
+## Setup on every visit
+
+Each room's first entry sets the room up every time the party walks in, so a
+second visit repeats what the first did.
+
+The Djinn room's (`Scene_RunEmptyScene`) does nothing. The level room's
+(`FieldScene_RunEntrySetup`) draws the level editor 1.6 times its size (1.7 in
+Japanese) and, outside Japanese, starts the emote testers' animations. The menu
+test room's (`CommandTable_ConfigureCommandList`) builds a test party: Jenna
+leaves, Garet, Mia and Ivan join, the shops' counters for their rare weapons
+and armour go up, and everyone is raised to level 30, Isaac to 50 outside
+Japanese; in Japanese the coins are set to 777777. Each visit therefore adds to
+the shops' stock again, but changes a level only if it is still below the
+target, because `Unit_LevelUpTo` only ever raises one. None of the rooms has
+exit regions, so each answers that entry with `SceneData_ReturnZero`.
+
+| Room | Setup entry | What it does |
+| --- | --- | --- |
+| Djinn room | `Scene_RunEmptyScene` | nothing |
+| Level room | `FieldScene_RunEntrySetup` | draws the level editor 1.6 times its size (1.7 in Japanese); outside Japanese, starts the emote testers |
+| Menu test room | `CommandTable_ConfigureCommandList` | builds the test party at level 30 (Isaac 50 outside Japanese) and raises the shops' rare-item counters |
+
+## The Djinn room
+
+The Djinn room places one Djinni of each element and lets the party take it
+again on every visit.
+
+Flint, Fizz, Forge and Gust stand as actors 8 to 11, each placed only while its
+Djinni's flag is clear. Talking to one calls `Djinn_JoinParty`, the same call
+the game uses, which plays the element's capture effect and gives that
+element's first Djinni to the member with the fewest Djinn. The room then
+clears the flag again (`Engine_GameFlagClear`), so the Djinni is placed again
+on the next visit. Those two calls are the room's whole import table.
+
+| Actor | Name | Djinni |
+| --- | --- | --- |
+| 8 | `ACTOR_FLINT` | Flint, Venus |
+| 9 | `ACTOR_FIZZ` | Fizz, Mercury |
+| 10 | `ACTOR_FORGE` | Forge, Mars |
+| 11 | `ACTOR_GUST` | Gust, Jupiter |
+
+## The level room
+
+The level room raises the party's levels and browses the game's items, icons,
+letters and abilities.
+
+![The level room in English at twice the GBA's size, with no map behind it, each actor on screen labelled with its number: the leader 0, the item browser 8, the level editor 11 and the ability browser 12](https://alchemy.pascalpixel.com/guides/debug/level-room.png)
+
+Actor 8 is the item browser, 9 the icon browser, 10 the glyph browser and 11
+the level editor; outside Japanese, 12 is the ability browser and 13 and 14
+test emotes. The level editor shows the leader's name and level under
+`Raise everyone's level.`, and raises the party five levels with Start or
+Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
+0 to 269, by one with Up and Down, `BROWSER_ROW_STEP` with Right and Left
+and `BROWSER_PAGE_STEP` with R and L, skips numbers whose item has no
+icon, and gives the chosen item to the first member with room.
+
+The room's event table differs by edition. The ability browser has an event
+only in English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French,
+Spanish and Italian keep its code and its actor. Force cast at the glyph
+browser runs a motion test in Japanese and shows the three character-set
+caption rows elsewhere. In every edition a `PSYNERGY_PHASE_BEFORE_CAST` event
+on that actor sets the effect's child mode, so Force's shot leaves it where it
+is.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `ITEM_COUNT` | 270 | the item browser's numbers, 0 to 269, wrapping |
+| `BROWSER_ROW_STEP` | 10 | numbers Right and Left move |
+| `BROWSER_PAGE_STEP` | 30 | numbers R and L move |
+
+## The menu test room
+
+The menu test room's actors run the shop, message and inventory tests with a
+ready-made party.
+
+![The menu test room at twice the GBA's size, with no map behind it, each actor labelled with its number: the leader 0, Garet 1, Ivan 2, Mia 3 and Jenna 5 in the first column, and the placed actors 8 to 17 beside them](https://alchemy.pascalpixel.com/guides/debug/menu-room.png)
+
+Talking to the party members runs tests: Garet raises the four to level 10,
+then 20 on the next talk, and so on (`gMenuTest_SlotOffsets`), which changes
+nothing until the target passes the 30 set on entry; Jenna hands out test
+equipment, Ivan consumables, and Mia opens the name entry screen for Isaac. The
+placed actors, from 8, open the picker a full party drops an item with, give
+out Djinn and treasure, wound and afflict Isaac and Garet, and run a preset
+shop (`Shop_OpenDebugShop`) with 200000 coins, broken equipment and afflicted
+members.
+
+Actors 16 and 17 changed most. In Japanese they are plain talk events: 16
+opens the character selector, whose choice nothing uses, and 17 an item
+browser. Everywhere else each has four `EVENT_TALK` rows that differ in the
+way the leader must face, written in bits 15 to 12 of the control word as
+sixteenths of a turn from east, with bit 10 asking for the facing. Most open a
+message browser that pages through one keeper's lines. To the south, 17 has no
+row in English; in German, Spanish, French and Italian it shows
+`MsgValeComeOnHurry` with no speaker.
+
+| Facing (bits 15 to 12) | Direction | Actor 16 | Actor 17 |
+| --- | --- | --- | --- |
+| `0xc` | north | the weapon shop's lines | the Warrior's weapon shop's lines |
+| `0x8` | west | the armour shop's lines | the Warrior's armour shop's lines |
+| `0x0` | east | the item shop's lines | the Warrior's item shop's lines |
+| `0x4` | south | the Sanctum's lines | no row in English; `MsgValeComeOnHurry` elsewhere |
+
+## Limits
+
+- Each room is an overlay in the same 32 KB overlay area as every scene.
+- The item browsers cover item numbers 0 to 269.
 
 ## Files
 
@@ -53,82 +179,6 @@ debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
 | `MenuTest_`, `DebugMenu_` | the message and shop test room (`test.c`) |
 | `SceneData_`, `Scene_`, `FieldScene_`, `CommandTable_` | the setup and region entries, which keep older names; the other four entries take the room's prefix (`TestRooms_GetEvents`) |
 
-## Design
-
-### Setup on every visit
-
-Each room's setup entry, its first, runs every time the party walks in. The
-Djinn room's (`Scene_RunEmptyScene`) does nothing. The level room's
-(`FieldScene_RunEntrySetup`) draws the level editor 1.6 times its size (1.7 in
-Japanese) and, outside Japanese, starts the emote testers' animations. The menu
-test room's (`CommandTable_ConfigureCommandList`) builds a test party: Jenna
-leaves, Garet, Mia and Ivan join, the shops' counters for their rare weapons
-and armour go up, and everyone is raised to level 30, Isaac to 50 outside
-Japanese; in Japanese the coins are set to 777777. Each visit therefore adds to
-the shops' stock again, but changes a level only if it is still below the
-target, because `Unit_LevelUpTo` only ever raises one. None of the rooms has
-exit regions, so each answers that entry with `SceneData_ReturnZero`.
-
-### The Djinn room
-
-Flint, Fizz, Forge and Gust stand as actors 8 to 11, each placed only while its
-Djinni's flag is clear. Talking to one calls `Djinn_JoinParty`, the same call
-the game uses, which plays the element's capture effect and gives that
-element's first Djinni to the member with the fewest Djinn. The room then
-clears the flag again (`Engine_GameFlagClear`), so the Djinni is placed again
-on the next visit. Those two calls are the room's whole import table.
-
-### The level room
-
-Actor 8 is the item browser, 9 the icon browser, 10 the glyph browser and 11
-the level editor; outside Japanese, 12 is the ability browser and 13 and 14
-test emotes. The level editor shows the leader's name and level under
-`Raise everyone's level.`, and raises the party five levels with Start or
-Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
-0 to 269, by one with Up and Down, `BROWSER_ROW_STEP` (ten) with Right and Left
-and `BROWSER_PAGE_STEP` (thirty) with R and L, skips numbers whose item has no
-icon, and gives the chosen item to the first member with room.
-
-![The level room in English at twice the GBA's size, with no map behind it, each actor on screen labelled with its number: the leader 0, the item browser 8, the level editor 11 and the ability browser 12](https://alchemy.pascalpixel.com/guides/debug/level-room.png)
-
-The room's event table differs by edition. The ability browser has an event
-only in English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French,
-Spanish and Italian keep its code and its actor. Force cast at the glyph
-browser runs a motion test in Japanese and shows the three character-set
-caption rows elsewhere. In every edition a `PSYNERGY_PHASE_BEFORE_CAST` event
-on that actor sets the effect's child mode, so Force's shot leaves it where it
-is.
-
-### The menu test room
-
-Talking to the party members runs tests: Garet raises the four to level 10,
-then 20 on the next talk, and so on (`gMenuTest_SlotOffsets`), which changes
-nothing until the target passes the 30 set on entry; Jenna hands out test
-equipment, Ivan consumables, and Mia opens the name entry screen for Isaac. The
-placed actors, from 8, open the picker a full party drops an item with, give
-out Djinn and treasure, wound and afflict Isaac and Garet, and run a preset
-shop (`Shop_OpenDebugShop`) with 200000 coins, broken equipment and afflicted
-members.
-
-![The menu test room at twice the GBA's size, with no map behind it, each actor labelled with its number: the leader 0, Garet 1, Ivan 2, Mia 3 and Jenna 5 in the first column, and the placed actors 8 to 17 beside them](https://alchemy.pascalpixel.com/guides/debug/menu-room.png)
-
-Actors 16 and 17 changed most. In Japanese they are plain talk events: 16
-opens the character selector, whose choice nothing uses, and 17 an item
-browser. Everywhere else each has four `EVENT_TALK` rows that differ in the
-way the leader must face, written in bits 15 to 12 of the control word as
-sixteenths of a turn from east (`0xc` north, `0x8` west, `0x0` east, `0x4`
-south), with bit 10 asking for the facing. Most open a message browser that
-pages through one keeper's lines: 16 has the weapon, armour and item shops to
-the north, west and east and the Sanctum to the south, and 17 the Warrior's
-weapon, armour and item shops the same ways. To the south, 17 has no row in
-English; in German, Spanish, French and Italian it shows `MsgValeComeOnHurry`
-with no speaker.
-
-## Limits
-
-- Each room is an overlay in the same 32 KB overlay area as every scene.
-- The item browsers cover item numbers 0 to 269.
-
 ## Evidence and open questions
 
 The game gives the rooms no names, so their scene ids (`TestRoom0` to
@@ -152,3 +202,5 @@ content, which is why one overlay serves them all.
   for; it fills a buffer nothing reads with 32 to 47 copies of a letter, so it
   changes nothing the code or the player can see, and whatever it once fed is
   gone from every edition.
+- XXX (picture): the setup entries' effect, the menu test room's party and
+  shop counters before and after a visit.

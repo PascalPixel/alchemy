@@ -18,7 +18,12 @@
 ///   hidden by Cloak, and goes back home once he is past
 ///   (PURSUER_AFTER_LEADER_FLAG while one is after him); Halt stops one where
 ///   it stands, and Reveal clears the translucent layer over the room while it
-///   lasts.
+///   lasts. Each statue's home and the stretch of floor that sets it after the
+///   leader are drawn over the room's render in
+///   https://alchemy.pascalpixel.com/places/crossbone-isle-statues/stretches.png:
+///   the first, second and fifth start from per-frame checks of the leader's
+///   cell, the third and fourth from touch triggers in the three cells around
+///   their homes and the three south of them.
 /// - SceneId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni,
 ///   hides. Five pillars to push or move with Move, a ladder and a puddle that
 ///   Frost freezes into a pillar of ice make a way across the room. The first
@@ -26,11 +31,6 @@
 ///   last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to _LAST_ESCAPE); there
 ///   it runs to whichever spot the leader steps toward unless Halt holds it.
 ///   Talked to while Halt holds it, Bane joins the party.
-///
-/// Open questions:
-/// - XXX (picture): the statues of CrossboneIsleStatues stepping out after the
-///   leader across their stretches, and going home, as one take-apart picture
-///   of the room.
 
 #include "game_state.h"
 #include "djinn_ids.h"

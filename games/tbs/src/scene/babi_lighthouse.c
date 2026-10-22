@@ -45,16 +45,6 @@
 /// through the open door shuts it behind the party
 /// (BabiLighthouse_CloseTruthDoor, FLAG_BEYOND_DOOR), and beyond it lies the
 /// Tunnel Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
-///
-/// Open questions:
-/// - XXX: what object 223 is, a translucent sprite drawn in front that
-///   BabiLighthouseLuff places by two of the pits the leader jumps into
-///   (BabiLighthouse_DropFromEastRoomPit) and where he arrives; a recording of
-///   the drop would settle it, and the same object stands in Mercury
-///   Lighthouse, Fuchin Temple and Crossbone Isle.
-/// - XXX: what animation 22 shows as the leader lands in
-///   BabiLighthouse_LandWithParticles; his sprite's animation table, or a
-///   recording of the landing, would settle a name in enum ActorAnimation.
 
 #include "game_state.h"
 #include "version.h"
@@ -199,6 +189,14 @@ enum {
   /// The party is on the far side of BabiLighthouseStoneDoor's stone door.
   FLAG_BEYOND_DOOR = 0x301
 };
+
+/// What OverlayObject_PrepareObject places at the far edge of a pit: a crate
+/// drawn solid black (SPRITE_COLOR_BLACK) and translucent in front of the
+/// actors, which shows the background through the leader where they overlap,
+/// so that he vanishes below the edge as he drops over it.
+/// ★ Named from what the player sees: the leader's body hidden as he drops into
+/// a pit, and shown when the mask is left out (its render)
+enum { PIT_MASK = SPRITE_CRATE };
 
 /// A chest searched while facing the given way.
 #define SEARCH_CHEST_FACING(facing)                                            \
@@ -439,22 +437,22 @@ static void BabiLighthouse_DropFromWestRoomEastPit(void) {
   Engine_EventEnd();
 }
 
-/// Walking south into the pit of BabiLighthouseLuff's east room: object 223 is
-/// placed by it, and the leader jumps in and drops into the south room.
+/// Walking south into the pit of BabiLighthouseLuff's east room: the pit mask
+/// is placed by it, and the leader jumps in and drops into the south room.
 static void BabiLighthouse_DropFromEastRoomPit(void) {
   Engine_EventBegin();
-  OverlayObject_PrepareObject(PIXELS(464), 0, PIXELS(290), 223);
+  OverlayObject_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
   BabiLighthouse_JumpIntoPit();
   Engine_EventRequestExit(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
   Engine_EventEnd();
 }
 
 /// Walking south into the southwest pit of BabiLighthouseLuff's west room:
-/// object 223 and a capped pillar are placed by it, and the leader jumps in and
-/// drops into the east room.
+/// the pit mask and a capped pillar are placed by it, and the leader jumps in
+/// and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
   Engine_EventBegin();
-  OverlayObject_PrepareObject(PIXELS(143), 0, PIXELS(290), 223);
+  OverlayObject_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
   OverlayObject_PrepareObject(PIXELS(121), 0, PIXELS(286),
                               SPRITE_CAPPED_PILLAR);
   BabiLighthouse_JumpIntoPit();
@@ -1413,19 +1411,19 @@ s32 BabiLighthouse_SetupScene(void) {
       }
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST:
-      OverlayObject_PrepareObject(PIXELS(440), 0, PIXELS(290), 223);
+      OverlayObject_PrepareObject(PIXELS(440), 0, PIXELS(290), PIT_MASK);
       Map_CopyCellAttributes(22, 13, 1, 1, 27, 13);
       BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST:
-      OverlayObject_PrepareObject(PIXELS(448), 0, PIXELS(290), 223);
+      OverlayObject_PrepareObject(PIXELS(448), 0, PIXELS(290), PIT_MASK);
       Map_CopyCellAttributes(22, 12, 1, 1, 28, 10);
       BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH:
-      OverlayObject_PrepareObject(PIXELS(232), 0, PIXELS(594), 223);
+      OverlayObject_PrepareObject(PIXELS(232), 0, PIXELS(594), PIT_MASK);
       Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
       BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST);

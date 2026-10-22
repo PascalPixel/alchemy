@@ -687,6 +687,12 @@ enum SpriteId {
   /// ★ Named from what the player sees: the wreck of a ship lying in the water
   /// (spr_501.png)
   SPRITE_SHIPWRECK = 0x1f5,
+  /// ★ Named from what the player sees: a wooden gangway with rails, laid from
+  /// the wharf over Babi's ship (spr_502.png)
+  SPRITE_GANGWAY = 0x1f6,
+  /// ★ Named from what the player sees: a drop of water that swells and bursts
+  /// into a ring of spray (spr_503.png)
+  SPRITE_WATER_DROP = 0x1f7,
   /// ★ Named from what the player sees: an island of green hills around a
   /// mountain (spr_504.png)
   SPRITE_WORLD_MAP_ISLAND = 0x1f8

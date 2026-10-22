@@ -31,11 +31,6 @@
 /// Two barrels hold an Elixir and a Smoke Bomb, a wardrobe a silk negligee
 /// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
 /// portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
-///
-/// Open questions:
-/// - XXX: what animations 2 and 5 of the reward chests show as a chest opens
-///   and as it shuts again for want of room; the chest sprite's animation
-///   table would settle names for them.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -145,6 +140,15 @@ enum McCoyPalaceActor {
   /// ★ Named from the game: "You may select a single item from among these
   /// four chests." (MsgBilibinYouMaySelectASingleItem)
   ACTOR_WATER_OF_LIFE_CHEST
+};
+
+/// Animations of the reward chests' sprite, SPRITE_CHEST, from its animation
+/// table (graphics/sprite/spr_020.tsv).
+enum {
+  CHEST_ANIM_OPEN_EMPTY = 2, ///< the lid up over an empty chest, held
+  /// The lid lifted on the treasure for six frames, then shut again (the
+  /// sprite's animation 1, closed).
+  CHEST_ANIM_PEEK_AND_SHUT = 5
 };
 
 /// The palace's temporary flags: the scene flags last until the party leaves
@@ -468,14 +472,14 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
       FieldFx_PlayCueAndStartEmitterOnTarget(0, chestActorId, itemId);
 
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
-    Engine_ActorSetAnimation(chestActorId, 2);
+    Engine_ActorSetAnimation(chestActorId, CHEST_ANIM_OPEN_EMPTY);
     Engine_GameFlagSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     Engine_GameFlagSet(chestFlag);
     Engine_GameFlagClear(FLAG_REWARD_OFFERED);
     Engine_GameFlagClear(FLAG_CHOOSING_REWARD);
   } else {
     Engine_AudioPlayCue(SE_125);
-    Engine_ActorSetAnimation(chestActorId, 5);
+    Engine_ActorSetAnimation(chestActorId, CHEST_ANIM_PEEK_AND_SHUT);
   }
 
   Engine_ObjectDispatchRelease((struct FieldActor *)emitterHandle);

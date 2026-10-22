@@ -27,15 +27,11 @@
 /// Helm.
 ///
 /// Open questions:
-/// - XXX: what the three cells at the north exit, given the attributes of cell
-///   (20, 23) after Venus Lighthouse, change; the map's collision codes, or a
-///   recording of the leader walking north there, would settle it.
-/// - XXX: why the first visit gives one of its five cells, at x 78, far
-///   from the soldiers, the same attributes; the map at that cell would
-///   settle it.
-/// - XXX: why the chest asks the leader to face west on the first visit and
-///   not on the second; a recording of both visits would show whether it can
-///   be opened from another side.
+/// - XXX (no evidence): why the first visit's event table opens the Warrior's
+///   Helm chest only facing west, from the foot of the vine east of it, when
+///   the second opens it from any side; the chest and the ground around it are
+///   the same on both visits (their renders), and nothing in the ROM records
+///   the reason.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -156,6 +152,10 @@ enum LaliveroActor {
 
 /// The door at trigger 6, into the Lalivero Sanctum, is a gate two cells wide.
 enum { GATE_TRIGGER = 6 };
+
+/// A cell of the wall along the town's south edge (MAP_CELL_WALL), whose
+/// attributes Lalivero_SetupScene copies onto cells the party may not cross.
+enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
 /// A chest searched while facing the given way.
 #define SEARCH_CHEST_FACING(facing)                                            \
@@ -872,21 +872,21 @@ s32 Lalivero_Initialize(void) {
   Engine_HeapRelease(HEAP_SLOT_GLYPH_TRANSFER);
 
   if (GameFlag_IsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
-    // A sign now stands at the north exit, and three cells there take the
-    // attributes of cell (20, 23). XXX: likely closing the way north, since
-    // the sign warns of danger and the townsfolk say the peninsula is flooded.
+    // A sign now stands at the north exit, and the three open cells of the
+    // gap in the north wall become wall, closing the way north.
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_NORTH_EXIT_SIGN), 0);
     Actor_Get(ACTOR_NORTH_EXIT_SIGN)->collisionFlags = 0;
-    Map_CopyCellAttributes(20, 23, 1, 1, 14, 4);
-    Map_CopyCellAttributes(20, 23, 1, 1, 15, 4);
-    Map_CopyCellAttributes(20, 23, 1, 1, 16, 4);
+    Map_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 14, 4);
+    Map_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 15, 4);
+    Map_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 16, 4);
     if (GameFlag_IsSet(FLAG_LALIVERO_WHARF_OPEN)) {
       Actor_SetPosition(ACTOR_WHARF_GUARD, PIXELS(56), PIXELS(184));
     }
   } else {
     // The first visit: the two soldiers lie on the ground, drawn under the
-    // party, and cells beside them take the attributes of cell (20, 23). The
-    // third cell, at x 78, is far from both soldiers.
+    // party with their own collision off, and the two cells each covers
+    // become wall instead. The third cell copied, at x 78, lies outside the
+    // town's 32 columns, where the camera never goes, and changes nothing.
     object = (union FieldObject *)Actor_Get(ACTOR_WEST_SOLDIER);
     object->actor.collisionFlags = 0;
     object->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

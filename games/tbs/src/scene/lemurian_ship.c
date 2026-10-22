@@ -5,9 +5,9 @@
 /// (Event_LeaveTheShip) returns there.
 ///
 /// LemurianShip_SetupScene sinks the ship's two map layers 90 pixels, puts the
-/// ship's pieces and the party at sprite priority 1, and starts the water's
-/// ripple (Ripple_Start), an HBlank DMA of per-line scroll offsets for BG3 that
-/// Reveal stops while it shows the scene. Arriving by
+/// two pieces of the gangway and the party at sprite priority 1, and starts the
+/// water's ripple (Ripple_Start), an HBlank DMA of per-line scroll offsets for
+/// BG3 that Reveal stops while it shows the scene. Arriving by
 /// LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug scene selector reaches,
 /// first gives the leader the Black Orb.
 ///
@@ -19,13 +19,6 @@
 /// party boards, the ship sails east as the curtains close (Curtain_Start), and
 /// the game goes to the clear screen by the title's TITLE_FROM_LEMURIAN_SHIP,
 /// keeping the music (FLAG_KEEP_MUSIC).
-///
-/// Open questions:
-/// - XXX: what sprite 0x1f6 shows, the two pieces placed over the water, of
-///   which the north one sails off with the ship; a render of the scene would
-///   settle a name in sprite_ids.h.
-/// - XXX: what sprite 0x1f7 shows, the drops of spray Ship_UpdateSwell
-///   creates; a recording of the ship rising would settle a name.
 
 #include "script.h"
 #include "version.h"
@@ -84,15 +77,16 @@ static void Ripple_Stop(void);
 static void Curtain_Start(void);
 
 enum {
-  SHIP_NORTH = ACTOR_FIRST_PLACED, ///< the ship, in two pieces of one sprite
-  SHIP_SOUTH
+  GANGWAY_NORTH =
+      ACTOR_FIRST_PLACED, ///< the gangway, in two pieces (SPRITE_GANGWAY)
+  GANGWAY_SOUTH
 };
 
 /// The deck height of a party member who has not yet boarded: the swell
 /// (Ship_UpdateSwell) moves only those who have.
 #define SHIP_NOT_ON_DECK (-0x10000)
 
-/// The sprite of a ship piece or a party actor.
+/// The sprite of a gangway piece or a party actor.
 // ACTOR_SPRITE reads actor->sprite through an s32, so each store reloads it as
 // the native does; read as the field, the two stores share one load.
 // UB: the s32 read aliases the pointer field. UBFIX reads the field itself.
@@ -117,7 +111,7 @@ const struct SceneRegion *LemurianShip_GetRegions(void) { return NULL; }
 
 const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
 
-/// The ship's two pieces; the party's own actors fill the first three rows.
+/// The gangway's two pieces; the party's own actors fill the first three rows.
 const struct ScenePlacement *LemurianShip_GetPlacements(void) {
   return gLemurianShipPlacements;
 }
@@ -264,7 +258,7 @@ static void Ship_UpdateSwell(void) {
     z += Random_Next() * 160;
     z += 0x1e0000;
     pos->z = z;
-    actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
+    actor = Object_Create(SPRITE_WATER_DROP, pos->x, pos->y, pos->z);
     if (actor != 0) {
       actor->update = Spray_Update;
       actor->timer = 60;
@@ -537,19 +531,20 @@ static void LemurianShip_SetSail(void) {
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(30);
   // The ship sails east and the curtains close: the sea's layer scrolls
-  // faster while the ship's north piece moves off, and the camera follows.
+  // faster while the gangway's north piece moves off with the ship, and the
+  // camera follows.
   Engine_AudioPlayCue(MUS_067);
   MusicCommand_SetPitchAndUpdateFrequency(240);
   Curtain_Start();
   Engine_EventWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
   scroll = gMapWork[0];
-  ship = Object_GetById(SHIP_NORTH);
+  ship = Object_GetById(GANGWAY_NORTH);
   ship->acceleration = 131;
   ship->speed = 0x20000;
   scroll->layers[MAP_LAYER_GROUND].speedX = -0x3000;
-  ObjectMotion_CommitPositionAndActivate(SHIP_NORTH, 60, 0);
+  ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
   scroll->layers[MAP_LAYER_GROUND].speedX = -0x6000;
-  ObjectMotion_CommitPositionAndActivate(SHIP_NORTH, 60, 0);
+  ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
   Engine_EventWait(80);
   Engine_EventWait(100);
   Engine_CameraSetSpeed(0x23333, 0x28f);
@@ -691,7 +686,7 @@ static void Event_RaiseTheShip(void) {
   LemurianShip_SetSail();
 }
 
-/// Sets the Lemurian ship's scene up: the ship sunk 90 pixels, its pieces and
+/// Sets the Lemurian ship's scene up: the ship sunk 90 pixels, the gangway and
 /// the party at sprite priority 1 over the layers' new priorities, and the
 /// ripple running. Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB first gives the
 /// leader the Black Orb.
@@ -707,17 +702,17 @@ s32 LemurianShip_SetupScene(void) {
   }
   ((struct EventWork *)gMapWork[19])->startTransition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Object_GetById(SHIP_NORTH)->collisionFlags = 0;
-  Object_GetById(SHIP_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(SHIP_SOUTH)->collisionFlags = 0;
-  Object_GetById(SHIP_SOUTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(GANGWAY_NORTH)->collisionFlags = 0;
+  Object_GetById(GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(GANGWAY_SOUTH)->collisionFlags = 0;
+  Object_GetById(GANGWAY_SOUTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
-    struct FieldActor *actor = Object_GetById(SHIP_NORTH);
+    struct FieldActor *actor = Object_GetById(GANGWAY_NORTH);
 
     SET_IMAGE_PRIORITY(actor, 1);
   }
   {
-    struct FieldActor *actor = Object_GetById(SHIP_SOUTH);
+    struct FieldActor *actor = Object_GetById(GANGWAY_SOUTH);
 
     SET_IMAGE_PRIORITY(actor, 1);
   }
@@ -986,9 +981,9 @@ struct ScenePlacement gLemurianShipPlacements[] = {
      0},
     {MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY,
      0},
-    {0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(248),
+    {SPRITE_GANGWAY, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(248),
      FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(312),
+    {SPRITE_GANGWAY, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(312),
      FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };

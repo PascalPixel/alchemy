@@ -22,12 +22,10 @@
 /// floats a Nut over the grounds until Catch takes it
 /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT). A dry well can be searched, and
 /// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin. From TBS_PATCH_3 on
-/// a patch of ivy (SPRITE_IVY) stands at (132, 388).
-///
-/// Open questions:
-/// - XXX: what the ivy added in TBS_PATCH_3 covers, since no event answers it;
-///   renders of the grounds in a patched and an unpatched edition would show
-///   what it hides or blocks.
+/// a patch of ivy (SPRITE_IVY) stands at (132, 388), over a dark opening at the
+/// foot of the cliff on the grounds' south edge, which the earlier editions
+/// show bare (renders of tbs-en and tbs-fr); no exit or event answers that
+/// opening, so the ivy only hides a way in that leads nowhere.
 
 #include "game_state.h"
 #include "scene_ids.h"

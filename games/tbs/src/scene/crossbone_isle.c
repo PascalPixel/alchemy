@@ -9,11 +9,12 @@
 ///
 /// - Crossbone Isle (SceneId_CrossboneIsle), the island itself, reached
 ///   from the world map (WORLD_MAP_TO_CROSSBONE_ISLE;
-///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows three
-///   ivies away for good (flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY,
-///   the first also opening a cell; a fourth's event is unused), Growth grows
-///   four plants so they can be crossed, for this visit only (four flags from
-///   FLAG_FIRST_PLANT_GROWN), two logs can be pushed, and a Nut circles until
+///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows two ivies
+///   away for good (flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the
+///   first also opening a cell; the second's and a fourth's events are
+///   unused), Growth grows three plants so they can be crossed, for this visit
+///   only (flags from FLAG_FIRST_PLANT_GROWN; the first plant's event is
+///   unused), two logs can be pushed, and a Nut circles until
 ///   Catch takes it (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the cave's
@@ -56,11 +57,6 @@
 /// Scene_Initialize restores each scene as its flags say: the ivy and plants on
 /// the island, the sliding logs' footprints, the corridor's sunk pillars and
 /// the chests the mimics leave.
-///
-/// Open questions:
-/// - XXX: whether the first plant and the second ivy, both placed at (0, 0),
-///   can be reached at all; a render of the island would show where they
-///   stand.
 
 #include "game_state.h"
 #include "version.h"
@@ -115,15 +111,17 @@ enum CrossboneIsleActor {
   /// ★ Named from what the player sees: two logs lying on the island's
   /// grass (its render)
   ACTOR_FIRST_ISLE_LOG,
-  /// The four plants Growth grows, crossable once grown for the
-  /// rest of the visit (four flags from FLAG_FIRST_PLANT_GROWN).
+  /// The four plants Growth grows, crossable once grown for the rest of the
+  /// visit (four flags from FLAG_FIRST_PLANT_GROWN). The first is placed at
+  /// the map's origin, off stage (Event_UnusedGrowFirstPlant).
   /// ★ Named from what the player sees: small sprouts on the cliff ledges
   /// (its render)
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_LOG + 2,
   /// The ivy Whirlwind blows away, one flag each from
-  /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one: the
-  /// fourth ivy's event and CrossboneIsle_RestoreIvy name ACTOR_FIRST_IVY + 3,
-  /// which the table leaves unplaced.
+  /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one, the
+  /// second at the map's origin, off stage (Event_UnusedBlowAwaySecondIvy):
+  /// the fourth ivy's event and CrossboneIsle_RestoreIvy name
+  /// ACTOR_FIRST_IVY + 3, which the table leaves unplaced.
   /// ★ Named from what the player sees: leafy ivy growing against the cliffs
   /// (its render)
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
@@ -624,9 +622,11 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   EV_END();
 }
 
-/// Growth on Crossbone Isle's first plant: it grows, and its cell can be
-/// crossed.
-static void Event_GrowFirstPlant(s32 actorId) {
+/// Unused: Growth on Crossbone Isle's first plant would grow it and let the
+/// party climb at (304, 368), but the placement table puts that plant at the
+/// map's origin, off stage in the forest's corner, where no cast can reach it
+/// and the player never sees it (its render).
+static void Event_UnusedGrowFirstPlant(s32 actorId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
   struct FieldActor *actor = Object_GetById(ACTOR_FIRST_PLANT);
@@ -694,8 +694,10 @@ static void Event_BlowAwayFirstIvy(void) {
   }
 }
 
-/// Whirlwind on Crossbone Isle's second ivy.
-static void Event_BlowAwaySecondIvy(void) {
+/// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
+/// good, but the placement table puts that ivy at the map's origin, off stage,
+/// where no cast can reach it and the player never sees it (its render).
+static void Event_UnusedBlowAwaySecondIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
 
@@ -2292,12 +2294,12 @@ struct SceneEvent gCrossboneIsle_CaveEntranceEvents[] = {
 
 struct SceneEvent gCrossboneIsle_IsleEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_FIRST_PLANT_GROWN, EVENT_SCRIPT(Event_GrowFirstPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_FIRST_PLANT_GROWN, EVENT_SCRIPT(Event_UnusedGrowFirstPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_FIRST_PLANT_GROWN + 1, EVENT_SCRIPT(Event_GrowSecondPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 2, FLAG_FIRST_PLANT_GROWN + 2, EVENT_SCRIPT(Event_GrowThirdPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 3, FLAG_FIRST_PLANT_GROWN + 3, EVENT_SCRIPT(Event_GrowFourthPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(Event_UnusedBlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_UnusedBlowAwayFourthIvy) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },

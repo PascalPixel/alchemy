@@ -54,6 +54,13 @@
 /// VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST clears FLAG_SHOW_LOCATION_NAME, so the
 /// place name is not shown again. The jar's row finds nothing on the stormy
 /// night, and after Kalay it is there only from the third patch on.
+///
+/// Open questions:
+/// - XXX: what Lift on the boulder by the fence (ACTOR_FENCE_BOULDER) shows,
+///   since its event row runs no script; casting Lift on it in a play-through
+///   would settle it.
+/// - XXX (picture): the stormy night's rockslide, the two rocks across the
+///   path and the cells around them blocked.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -95,6 +102,8 @@ enum ValeKradenActor {
   /// Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in Gondowan Cave. Its
   /// Lift row runs no script, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
   /// and the stormy night's events have no row for it.
+  /// ★ Named from the game: "did you lift the boulder?"
+  /// (MsgMountainIsaacDidLiftBoulder), said of the same sprite
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
   /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
@@ -930,7 +939,7 @@ s32 ValeKraden_Initialize(void) {
       actor->radius = collisionRadius;
     }
     Actor_SetActionScript(ACTOR_ROCKSLIDE_SURVIVOR,
-                          gValeKraden_RockslideSurvivorSwayActions);
+                          gValeKraden_RockslideSurvivorSquashes);
     if (Engine_GameFlagIsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
       Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     }
@@ -1145,8 +1154,9 @@ s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_END,
 };
 
-/// Alternates the survivor's width and height while he lies by the fence.
-s32 gValeKraden_RockslideSurvivorSwayActions[] = {
+/// The survivor squashes flat and recovers every 68 frames as he lies by the
+/// fence.
+s32 gValeKraden_RockslideSurvivorSquashes[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_ADD(SW_SCALE_X, Q16_ONE / 32),
     SC_WAIT(2),
@@ -1216,7 +1226,7 @@ struct ScenePlacement gValeKraden_Placements[] = {
         PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSwayActions,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSquashes,
         PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(92), 0, PIXELS(268), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },

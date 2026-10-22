@@ -1708,8 +1708,7 @@ static void Fuchin_ReadShadowInscription(void) {
 
 /// Searching the dragon statue in Fuchin Falls Cave (trigger 20): its burning
 /// red eyes once set, else its empty sockets; with the Dragon's Eye carried
-/// it then requests the field menu (the event work's unk172, FieldWork's
-/// menu), which opens as the search ends so that the eye can be used.
+/// it then opens the main menu as the search ends, so that the eye can be used.
 static void Fuchin_SearchDragonStatue(void) {
   Engine_EventBegin();
 
@@ -1718,7 +1717,7 @@ static void Fuchin_SearchDragonStatue(void) {
   } else {
     Engine_MessageShowCentered(MsgFuchinEyelessDragon, 1);
     if (PartyInventory_FindOwner(ITEM_DRAGONS_EYE) != -1) {
-      gEventWork->unk172 = 1;
+      gEventWork->requestedMenu = 1;
     }
   }
   Engine_EventEnd();

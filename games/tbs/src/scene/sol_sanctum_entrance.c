@@ -295,8 +295,8 @@ static void Event_OpenDoorAndEnter(void) {
 /// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
 /// both once the Small Jewel is set: "The right eye is sparkling, but there's a
 /// hole where the left eye should be." Once the first Small Jewel is found, and
-/// until it is set, it requests the field menu (the event work's unk172), which
-/// opens when the search ends so that the jewel can be used.
+/// until it is set, the main menu opens as the search ends, so that the jewel
+/// can be used.
 static void Event_InspectFirstMinotaurRelief(void) {
 
   Engine_EventBegin();
@@ -306,9 +306,9 @@ static void Event_InspectFirstMinotaurRelief(void) {
   } else {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
-      u16 *stateSlot = &gEventWork->unk172;
-      u16 value = 1;
-      *stateSlot = value;
+      u16 *menuRequest = &gEventWork->requestedMenu;
+      u16 open = 1;
+      *menuRequest = open;
     }
   }
 
@@ -374,7 +374,7 @@ static void Event_SetFirstSmallJewel(void) {
 
 /// Sol Sanctum, the second relief room: searching the second minotaur
 /// relief, as the first. Once the second Small Jewel is found,
-/// and until it is set, it requests the field menu.
+/// and until it is set, it opens the main menu.
 static void Event_InspectSecondMinotaurRelief(void) {
 
   struct EventWork *work;
@@ -389,9 +389,9 @@ static void Event_InspectSecondMinotaurRelief(void) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
     {
 
-      u16 *stateSlot = &work->unk172;
-      s32 one = 1;
-      *stateSlot = one;
+      u16 *menuRequest = &work->requestedMenu;
+      s32 open = 1;
+      *menuRequest = open;
     }
   } else {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);

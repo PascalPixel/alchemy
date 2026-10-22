@@ -235,7 +235,7 @@ void Colosso_AskDoneCheering(s32 id) {
   Engine_EventSetMessage(msg);
   Engine_EventOpenMessage(id, 0);
   gEventWork->choiceMessage = MsgColossoCheeringChoices;
-  gEventWork->unkcc4 = 4;
+  gEventWork->choiceWidth = 4;
   res = Engine_EventChooseYesNo(slot, 0);
   if (res == 0) {
     Engine_EventSetMessage(msg + 1);

@@ -797,7 +797,7 @@ static void TolbiShipInteriors_TalkToSeanInCaptainsQuarters(void) {
 /// The captain, by the voyage's stage: too late to hire mercenaries, then his
 /// bad luck at losing his lucky anchor, then uncertain what might happen, and
 /// under sail the news of an injured oarsman. After finding the Anchor Charm,
-/// talking to him also sets the event work's unk172 request.
+/// talking to him also opens the main menu, so that the charm can be returned.
 static void TolbiShipInteriors_TalkToCaptain(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
@@ -815,7 +815,7 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
     Event_ShowMessage(QUARTERS_CAPTAIN, 0);
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) == 0 &&
         GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
-      gEventWork->unk172 = 1;
+      gEventWork->requestedMenu = 1;
     }
   } else {
     Engine_EventSetMessage(MsgTolbiShipItsTooLateHireMercenaries);

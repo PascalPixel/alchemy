@@ -2014,8 +2014,8 @@ static void Event_IodemCallsLeaderBack(void) {
 
 /// Searching the wreck off Gateway Cave: "The wreckage of a ship scuttled off
 /// the coast." While Iodem waits for the Black Orb to be used
-/// (FLAG_SCENE_TEMP_34) it also requests the field menu (gEventWork->unk172),
-/// which opens as the search ends so that the orb can be used.
+/// (FLAG_SCENE_TEMP_34) the main menu opens as the search ends, so that the orb
+/// can be used.
 /// Reached by searching TRIGGER_SHIPWRECK.
 static void Event_SearchShipwreck(void) {
 
@@ -2025,7 +2025,7 @@ static void Event_SearchShipwreck(void) {
 #endif
   Engine_MessageShowCentered(MsgWorldMapWreckageShipScuttledOffCoast, 1);
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_34) != 0) {
-    gEventWork->unk172 = 1;
+    gEventWork->requestedMenu = 1;
   }
 #if !TBS_PATCH_3
   WorldMap_EndEvent();

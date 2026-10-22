@@ -229,7 +229,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
 /// (ACTOR_TRET_STAND_IN); until FLAG_TRET_DEFEATED Mind Read on him runs this
 /// too, with no effect of its own (trigger bit 10). Before the Tret Tree, he is
 /// silent and his wrathful side answers, the screen darkening around its words;
-/// after it he is silent, and if anyone carries Hermes' Water the item prompt
+/// after it he is silent, and if anyone carries Hermes' Water the main menu
 /// opens. Once the curse is lifted, no axe shall touch him again.
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterOwner;
@@ -248,10 +248,10 @@ static void KolimaForestTree_TalkToTret(void) {
       KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
       waterOwner = PartyInventory_FindOwner(ITEM_HERMES_WATER);
       if (waterOwner != -1) {
-        u16 *stateSlot = &gEventWork->unk172;
-        u16 requestPrompt = 1;
+        u16 *menuRequest = &gEventWork->requestedMenu;
+        u16 open = 1;
 
-        *stateSlot = requestPrompt;
+        *menuRequest = open;
       }
     } else {
       Engine_EventSetMessage(MsgKolimaSilence);

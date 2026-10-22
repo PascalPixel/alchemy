@@ -612,7 +612,7 @@ static void Event_RevealPassage(void) {
 }
 
 /// The dog barks; carrying a Bone before it has shown the passage lets the
-/// party give it one (gEventWork->unk172).
+/// party give it one: the main menu opens as the talk ends.
 static void Event_TalkToDog(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff2);
@@ -624,7 +624,7 @@ static void Event_TalkToDog(void) {
 
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    gEventWork->unk172 = 1;
+    gEventWork->requestedMenu = 1;
   }
 
   Engine_EventEnd();

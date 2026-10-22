@@ -568,10 +568,10 @@ static void Event_TalkToDogAfterCapture(void) {
   Engine_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    u16 *p = &gEventWork->unk172;
-    u16 value = 1;
+    u16 *menuRequest = &gEventWork->requestedMenu;
+    u16 open = 1;
 
-    *p = value;
+    *menuRequest = open;
   }
   Engine_EventEnd();
 }

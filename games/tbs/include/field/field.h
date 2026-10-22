@@ -240,21 +240,22 @@ extern const u8 gObjectMotion_TurnTowardLinkedScript[];
 extern const u8 gObjectMotion_VariantScripts[];
 // Lamakan Desert's heat gauge (HeatGauge_Start and HeatGauge_Draw).
 /// The gauge's tiles, packed (type 01).
-extern u8 gLamakanDesert_SandEffectTiles[];
+extern u8 gHeatGauge_Tiles[];
 /// The gauge's 16 colours, loaded as OBJ palette 14.
-extern const u16 gLamakanDesert_SandPalette[16];
-#ifndef OWN_LamakanDesert_SandPhase
+extern const u16 gHeatGauge_Palette[16];
+#ifndef OWN_HeatGauge_Held
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
-extern u16 gLamakanDesert_SandPhase;
+extern u16 gHeatGauge_Held;
 #endif
 /// The gauge's decoded tiles, which each frame's drawing starts from.
-extern u8 gLamakanDesert_SandTileBuffer[];
-#ifndef OWN_LamakanDesert_SandVramSlot
+extern u8 gHeatGauge_TileBuffer[];
+#ifndef OWN_HeatGauge_VramSlot
 /// The VRAM cache entry holding the gauge's tiles.
-extern u16 gLamakanDesert_SandVramSlot;
+extern u16 gHeatGauge_VramSlot;
 #endif
-/// The gauge's five sprites: four wide ones and a narrow cap at its right end.
-extern struct MenuSprite gLamakanDesert_SandWork[];
+/// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
+/// 16x16 cap at its foot.
+extern struct MenuSprite gHeatGauge_Sprites[];
 #ifndef OWN_Render_DecodeFrame
 /// The sprite frame decoder, ARM code run from a copy in
 /// HEAP_SLOT_FRAME_SCRATCH.

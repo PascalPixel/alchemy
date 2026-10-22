@@ -1750,7 +1750,7 @@ static void Event_MeetFlint(void) {
   WorldMap_EndEvent();
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS,
                   DJINNI_INDEX(DJINNI_FLINT));
-  Event_PlayCue(MUS_042);
+  Event_PlayCue(MUS_WORLD_MAP);
   Event_End();
   GameFlag_Clear(FLAG_DJINN_LESSON);
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);

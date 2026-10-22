@@ -73,9 +73,9 @@
 /// Field music of the caves: Goma Cave, Bilibin Cave, Imil Falls Cave, Vale
 /// Cave, Vault Cave, West Lunpa Cave, the Kalay Tunnel, Gondowan Cave and the
 /// Suhalla Gate.
-#define MUS_024 24
+#define MUS_CAVE 24
 /// Field music of the deserts: Lamakan Desert and Suhalla Desert.
-#define MUS_025 25
+#define MUS_DESERT 25
 /// Field music of Suhalla, and of Imil once Saturos is beaten at Mercury
 /// Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY).
 #define MUS_026 26
@@ -103,7 +103,7 @@
 /// Field music of the world map, and of Goma Cave's entrance, the Bilibin Cave
 /// entrance, the Alpine Crossing, Crossbone Isle, the Gondowan Passage and the
 /// Kalay Tunnel entrance; it also plays after Flint is met.
-#define MUS_042 42
+#define MUS_WORLD_MAP 42
 /// Field music of Venus Lighthouse.
 #define MUS_043 43
 /// The music of every battle gEncounter_BattleMusic lists no other song for.

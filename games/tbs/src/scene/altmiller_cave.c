@@ -1622,7 +1622,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
 
   // Gather the party around the invisible voice.
   GameFlag_Set(FLAG_MET_INVISIBLE_BABI);
-  Engine_AudioPlayCue(MUS_024);
+  Engine_AudioPlayCue(MUS_CAVE);
   Engine_EventBegin();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgAltmillerSee);

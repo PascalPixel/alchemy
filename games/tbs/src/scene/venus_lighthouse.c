@@ -73,11 +73,6 @@
 /// place group), so the floors stay solved between them. The FLAG_SCENE_TEMP_
 /// states last only until the next change of scene other than a return from
 /// battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
-///
-/// Open questions:
-/// - XXX: what the hidden chest VenusLighthouse_CreateOccludingPassageEffect
-///   places north of a socket changes on screen while a pillar sinks; a render
-///   of a pillar sinking into its socket with and without it would settle it.
 
 #include "script.h"
 #include "game_state.h"
@@ -485,11 +480,12 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-/// Creates an object drawn under the actors around it while a pillar sinks
-/// into its socket, so that the leader standing north of it is not hidden.
-/// It is a SPRITE_CHEST drawn in SPRITE_COLOR_HIDDEN, so it shows nothing
-/// itself. XXX: what it changes on screen; a render of a pillar sinking into
-/// its socket with and without it would settle it.
+/// Creates an object that keeps the leader on screen while a pillar sinks
+/// into its socket with him standing north of it, where the sinking code puts
+/// his sprite at priority 3. It is a SPRITE_CHEST drawn in
+/// SPRITE_COLOR_HIDDEN, so it shows nothing itself; in tbs-en, with this
+/// function returning at once, the leader vanishes for the 20 frames the
+/// pillar takes to go down, and with it he stays in view.
 static struct FieldActor *
 VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object;

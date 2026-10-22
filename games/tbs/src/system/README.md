@@ -279,6 +279,26 @@ can build from the names while the matching build keeps the numbers.
 - The IWRAM heap ends just below the frame wait's stack and the EWRAM heap at
   the end of EWRAM; `Runtime_AllocateHeapBlock` takes IWRAM first and EWRAM
   when IWRAM is full.
+- Nothing keeps either heap out of the buffers above its own space. The
+  allocators test only against the heap's end, and so does
+  `Runtime_GetRemainingIwram`, which `Battle_RunEncounter` calls around every
+  action and then ignores. In battle the IWRAM heap runs into the sound
+  driver's mixer: with the heap's next address at `0x0300667c`,
+  `Sprite_ComposeAnimationFrame` takes the 4 KB pixel buffer of a 64 by 64
+  sprite from `MemAlloc`, 1,660 bytes of it over `SoundDriver_Mixer`, and
+  clearing the buffer overwrites the mixer from its first word. Nothing
+  copies the mixer back, and nothing needs it: the VBlank handler mixes
+  through `SoundDriver_EnterMixer` and the resident code at
+  `IwramSoundMixEntry`, and through a whole battle neither
+  `AudioEngine_RunMixerTick` nor the code at `0x03007000` runs once. The
+  EWRAM heap runs into `gBgTileBuffer` the same way, to `0x02038e60` in the
+  field and `0x0203d960` in battle, where only the world map uses that
+  buffer; on the world map the heap reaches `0x02038004`, one word into it,
+  while the still map picture is open. These marks come from tbs-en played
+  in libmgba, the heap's next addresses read at every frame and every free:
+  a Goma Cave battle fought with A, and the field menu, the Item screen,
+  field Psynergy cast from the menu and directly, a shop, an inn, a talk,
+  the world map and its still picture, the credits and sleep mode.
 - A far-call table's entries keep their order, because code in other banks
   and overlays calls them by place.
 - The resource directory has 25 spare rows at its end.
@@ -302,15 +322,6 @@ to its symbol in each edition its `#if` selects.
 - XXX (no evidence): whether the 25 unused directory rows were left for later
   resources; they are empty in the ROM and nothing reads them, so they show
   only that they are spare.
-- XXX: whether the IWRAM heap ever grows into the sound mixer, which sits
-  inside the heap's range with 1,116 unnamed bytes after it. Nothing in
-  `heap.c` keeps it below: the allocators test against the heap's end, and
-  `Runtime_GetRemainingIwram`, which `Battle_RunEncounter` calls around every
-  action and then ignores, measures up to that end, so the game's own measure
-  counts the mixer as free. The heap has 20 KB below the mixer. The EWRAM heap
-  has the same shape: `ewram.s` gives it 32 KB, and the allocators let it run
-  on through `gBgTileBuffer`. The heaps' high-water marks from play would
-  settle either.
 - XXX (no evidence): why the directory's first 19 rows point at pieces of the program: the
   start of the ROM (`Rom_Start`, row 0), the directory itself (row 1), the
   build stamp (row 2), and from row 3 every bank's far-call table but the

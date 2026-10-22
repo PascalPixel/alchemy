@@ -6,43 +6,62 @@
 /// hotter than the sun, the heat at its maximum does tremendous damage, and
 /// Reveal finds the oases.
 ///
-/// Heat. LamakanDesert_Initialize sets a limit of 600 steps on every map and,
-/// on all but LamakanDesertCave, starts the heat gauge, a bar at the top of the
-/// screen (HeatGauge_Draw). Each moving frame on the sand adds a step
-/// (HeatGauge_CountStep, triggers 21 and 100 to 107). As the gauge passes a
-/// quarter, a half and three quarters, HeatGauge_RaiseQuarterTriggers sets
-/// FLAG_HEAT_QUARTER to FLAG_HEAT_THREE_QUARTERS and raises trigger 1, 2 or 3,
-/// and Garet, Ivan or Mia complains of the heat (ComplainAboutHeat). A full
-/// gauge raises trigger 20: the leader collapses at the map's nearest recovery
-/// point and gets up once the heat has drained (CollapseFromHeat).
+/// The heat is a count of steps on hazard ground (gGameState.hazardSteps):
+/// LamakanDesert_Initialize sets a limit of 600 on every map, at which the
+/// party loses a quarter of its HP, and on all but LamakanDesertCave starts the
+/// heat gauge, a bar at the top of the screen (HeatGauge_Draw). Each moving
+/// frame on the sand adds a step (HeatGauge_CountStep, cell codes 21 and 100 to
+/// 107). As the gauge passes a quarter, a half and three quarters,
+/// HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
+/// FLAG_HEAT_THREE_QUARTERS and raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to
+/// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, and Garet, Ivan or Mia complains
+/// of the heat (LamakanDesert_ComplainAboutHeat). Touching cell code 20, the
+/// leader collapses at the map's nearest recovery point and gets up once the
+/// heat has drained (LamakanDesert_CollapseFromHeat), and a running Reveal
+/// ends.
 ///
-/// Reveal. The desert hides its secrets under the sand: the pits of the Ant
-/// Lions, the Manticore, Smog, a Jupiter Djinni, and the chests and Psynergy
-/// Stones. Entry saves the map patches Reveal uncovers and hides all of them
-/// under a shimmering heat haze (Reveal_HideSecrets); Reveal brings them back
-/// and stops the haze (Reveal_ShowSecrets) until it wears off. Talking to Smog,
-/// in LamakanDesertSmog, adds the Djinni to the party.
+/// The desert hides its secrets under the sand: the pits of the Ant Lions, the
+/// Manticore, Smog, a Jupiter Djinni, and the chests and Psynergy Stones. Entry
+/// saves the map patches Reveal uncovers and hides all of them under a
+/// shimmering heat haze (Reveal_HideSecrets); Reveal brings them back and stops
+/// the haze (Reveal_ShowSecrets) until it wears off. Talking to Smog, in
+/// LamakanDesertSmog, adds the Djinni to the party.
 ///
-/// Hazards. Stepping by a pit (trigger 22) pulls the leader into it for a
-/// battle with an Ant Lion (FallIntoPit), and slopes of sand (trigger 30)
-/// carry the leader south (SlideDownDune).
+/// Stepping by a pit (cell code 22) pulls the leader into it for a battle with
+/// an Ant Lion (LamakanDesert_FallIntoPit), and slopes of sand
+/// (LAMAKAN_DESERT_CELL_SLOPE) carry the leader south
+/// (LamakanDesert_SlideDownDune).
 ///
-/// The Manticore. In LamakanDesertManticore, until it is beaten
+/// In LamakanDesertManticore, until it is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN), the Manticore rises out of the sand as the
-/// leader comes near (trigger 40, MeetManticore). Talking to it starts its
-/// battle, which ends at LamakanDesertManticore's
+/// leader comes near (cell code 40, LamakanDesert_MeetManticore). Talking to it
+/// starts its battle, which ends at LamakanDesertManticore's
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, and arriving there marks it
 /// beaten.
 ///
-/// Leaving. LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and
-/// LamakanDesertCave's LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the world
-/// map; LamakanDesertCave, a cave, has no heat gauge. Trigger 9 takes
+/// LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and LamakanDesertCave's
+/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the world map;
+/// LamakanDesertCave, a cave, has no heat gauge. Cell code 9 takes
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP and settles the fate of Master Hsu of Xian,
 /// trapped under boulders on his way back from Lama Temple: if the party has
 /// not freed him by then, leaving sets FLAG_HSU_RESCUED and
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, and in Xian, Feizhi then thanks Master Hama
 /// alone for freeing Hsu, instead of the party and Master Hama
 /// (xian_interiors.c).
+///
+/// Open questions:
+///
+/// - XXX: the heat gauge's data keeps names that call it sand
+///   (gLamakanDesert_SandPalette, _SandVramSlot, _SandWork, _SandTileBuffer
+///   and _SandPhase, which holds the gauge in place), defined in
+///   graphics/lamakan/sand.s and system/overlay/ovl_3a5.s; a render of the
+///   gauge would confirm what the palette and tiles draw before they are
+///   renamed there.
+/// - XXX: what the leader's animations 5 (pulled into a pit) and 18
+///   (collapsed) and object modes 6 and 7 (hopping down a slope's ledge) show;
+///   the party's sprite sheets would settle names for them.
+/// - XXX: where cell code 20 lies on the desert's maps, and so when the leader
+///   collapses from the heat; the maps' collision cells would settle it.
 
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -92,6 +111,15 @@
 
 static void HeatGauge_SetHeld(u16 held);
 
+/// The values HeatGauge_RaiseQuarterTriggers raises as the heat gauge passes
+/// each mark, and the cell code of the sand slopes.
+enum LamakanDesertTrigger {
+  LAMAKAN_DESERT_RAISED_HEAT_QUARTER = 1,
+  LAMAKAN_DESERT_RAISED_HEAT_HALF = 2,
+  LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS = 3,
+  LAMAKAN_DESERT_CELL_SLOPE = 30 ///< sand that carries the leader south
+};
+
 enum {
   /// FLAG_SCENE_TEMP_00: a collapse, a pit or the Manticore is under way.
   FLAG_DESERT_EVENT_RUNNING = FLAG_SCENE_TEMP_00,
@@ -101,24 +129,24 @@ enum {
   /// The heat gauge has passed a quarter, where the first complaints come.
   /// ★ Named from the game: "This desert is much hotter than I ever imagined"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_HEAT_QUARTER = 0x300,
+  FLAG_HEAT_QUARTER = FLAG_PLACE_TEMP_00,
   /// ★ Named from the game: "I can't keep my cool when it's this hot"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_HEAT_HALF = 0x301,
+  FLAG_HEAT_HALF = FLAG_PLACE_TEMP_01,
   /// ★ Named from the game: "I can't stand another minute of this!"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_HEAT_THREE_QUARTERS = 0x302,
+  FLAG_HEAT_THREE_QUARTERS = FLAG_PLACE_TEMP_02,
   /// Who has complained since the gauge last passed a mark: one per member,
   /// in the order of their actors.
   /// ★ Named from the game: "My feet are burning!"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_GARET_COMPLAINED = 0x303,
+  FLAG_GARET_COMPLAINED = FLAG_PLACE_TEMP_03,
   /// ★ Named from the game: "Just walking around here saps every ounce of my
   /// strength." (MsgMountainNorthAltinMineWestLama)
-  FLAG_IVAN_COMPLAINED = 0x304,
+  FLAG_IVAN_COMPLAINED = FLAG_PLACE_TEMP_04,
   /// ★ Named from the game: "My clothes are drenched in sweat!"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_MIA_COMPLAINED = 0x305
+  FLAG_MIA_COMPLAINED = FLAG_PLACE_TEMP_05
 };
 
 /// The actors, numbered in the order of each map's placement table from
@@ -149,7 +177,7 @@ enum {
 
 /// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
-static void TalkToSmog(void) {
+static void LamakanDesert_TalkToSmog(void) {
   Djinn_JoinParty(SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
@@ -183,7 +211,7 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
   params.startScaleY = 0xcccc;
   params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
   FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
-                0x00880001, &params);
+                EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
 #ifdef UBFIX
   return;
 #else
@@ -240,9 +268,10 @@ const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   return gLamakanDesertPlacementsOther;
 }
 
-/// Lamakan Desert, trigger 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If Master Hsu
-/// is still trapped, he is rescued without the party (see the file comment).
-static void LeaveForTheWorldMap(void) {
+/// Lamakan Desert, touching cell code 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
+/// Master Hsu is still trapped, he is rescued without the party (see the file
+/// comment).
+static void LamakanDesert_LeaveForTheWorldMap(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
     if (GameFlag_IsSet(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
@@ -413,7 +442,7 @@ static s32 Reveal_ShowSecrets(void) {
 /// The party fights the Manticore. In LamakanDesertManticore, talking to the
 /// Manticore starts its battle, which returns the party to
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
-static void FightManticore(void) {
+static void LamakanDesert_FightManticore(void) {
   Engine_ActorRunRepeatedMotion(MANTICORE, 2);
   Event_SetNextDestination((s32)&SceneId_LamakanDesertManticore,
                            LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
@@ -423,10 +452,10 @@ static void FightManticore(void) {
 }
 
 /// Garet, Ivan or Mia complains about the heat. In Lamakan Desert this is
-/// raised trigger 1, 2 or 3 as the heat gauge passes a quarter, a half and
-/// three quarters, and the one who speaks is picked at random (three tries for
-/// one who has not spoken yet).
-static void ComplainAboutHeat(s32 mark) {
+/// raised as LAMAKAN_DESERT_RAISED_HEAT_QUARTER to _THREE_QUARTERS as the heat
+/// gauge passes a quarter, a half and three quarters, and the one who speaks is
+/// picked at random (three tries for one who has not spoken yet).
+static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 quarter;
   s32 alreadySpoke;
@@ -456,9 +485,10 @@ static void ComplainAboutHeat(s32 mark) {
   Engine_EventEnd();
 }
 
-/// Every frame: raises triggers 1 to 3 as the gauge passes each quarter,
-/// and clears each mark and the complaints when the gauge drops back below
-/// it. Nothing is raised while Reveal is showing the pits.
+/// Every frame: raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to _THREE_QUARTERS as
+/// the gauge passes each quarter, and clears each mark and the complaints when
+/// the gauge drops back below it. Nothing is raised while Reveal is showing the
+/// pits.
 static void HeatGauge_RaiseQuarterTriggers(void) {
   struct EventWork *work = gEventWork;
   s32 percent = gGameState.hazardSteps * 100 / gGameState.hazardLimit;
@@ -485,20 +515,21 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   }
   if (GameFlag_IsSet(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
     GameFlag_Set(FLAG_HEAT_QUARTER);
-    work->raisedTrigger = 1;
+    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
   }
   if (GameFlag_IsSet(FLAG_HEAT_HALF) == 0 && percent > 49) {
     GameFlag_Set(FLAG_HEAT_HALF);
-    work->raisedTrigger = 2;
+    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_HALF;
   }
   if (GameFlag_IsSet(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
     GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
-    work->raisedTrigger = 3;
+    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
   }
 }
 
 /// The distance in whole pixels between two x, z positions.
-static s32 DistanceInPixels(s32 *firstPosition, s32 *secondPosition) {
+static s32 LamakanDesert_DistanceInPixels(s32 *firstPosition,
+                                          s32 *secondPosition) {
   s32 dx = (*secondPosition++ - *firstPosition++) >> 16;
   s32 dz = (*secondPosition - firstPosition[1]) >> 16;
   s32 squaredDeltaZ = dz * dz;
@@ -513,10 +544,10 @@ struct SafePoint {
   s32 z;
 };
 
-/// Lamakan Desert, trigger 20, raised when the heat gauge fills: the leader
-/// drops at the nearest recovery point of the map, lies collapsed while the
-/// gauge drains 5 steps a frame, then gets up.
-static void CollapseFromHeat(void) {
+/// Lamakan Desert, touching cell code 20: the leader drops at the nearest
+/// recovery point of the map, lies collapsed while the gauge drains 5 steps a
+/// frame, then gets up.
+static void LamakanDesert_CollapseFromHeat(void) {
   u8 *work;
   s32 frames;
   s32 best;
@@ -536,7 +567,7 @@ static void CollapseFromHeat(void) {
   struct EffectOptions options;
   struct EffectOptions puff;
   s16 *progress;
-  u16 *hold;
+  u16 *revealFrames;
   s32 zero;
 
   work = (u8 *)gEventWork;
@@ -546,10 +577,10 @@ static void CollapseFromHeat(void) {
   HeatGauge_SetHeld(1);
   if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
     count = 3;
-    points = gLamakanDesertRecoveryPoints1;
+    points = gLamakanDesertEast_RecoveryPoints;
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesertSmog) {
     count = 5;
-    points = gLamakanDesertRecoveryPoints2;
+    points = gLamakanDesertSmog_RecoveryPoints;
   } else {
     count = 2;
     points = gLamakanDesertRecoveryPointsOther;
@@ -561,8 +592,8 @@ static void CollapseFromHeat(void) {
   if (count != 0) {
     offset = 0;
     do {
-      distance = DistanceInPixels(&Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
-                                  (s32 *)point);
+      distance = LamakanDesert_DistanceInPixels(
+          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
       if (distance <= best) {
         best = distance;
         nearest = left - count;
@@ -601,14 +632,15 @@ static void CollapseFromHeat(void) {
   }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
-  hold = (u16 *)(work + 0xcba);
+  revealFrames = (u16 *)&((struct FieldWork *)work)->revealFrames;
   progress = &gGameState.hazardSteps;
   zero = 0;
-  // Hold the gauge in view until both the minimum delay and cooling finish.
+  // A running Reveal's countdown stays full while the leader lies collapsed,
+  // at least 60 frames and until the heat has drained.
   do {
     s32 held = 600;
 
-    *hold = held;
+    *revealFrames = held;
     frames--;
     if (*progress != 0) {
       *progress -= 5;
@@ -638,11 +670,12 @@ static void CollapseFromHeat(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
-  *(u16 *)(work + 0xcba) = frames;
+  // frames is 0 here, so a running Reveal ends as the leader gets up.
+  *(u16 *)&((struct FieldWork *)work)->revealFrames = frames;
   HeatGauge_SetHeld(0);
 }
 
-/// Lamakan Desert, walking on sand (triggers 21 and 100 to 107): each moving
+/// Lamakan Desert, walking on sand (cell codes 21 and 100 to 107): each moving
 /// frame adds a step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct FieldActor *actor;
@@ -653,11 +686,11 @@ static void HeatGauge_CountStep(void) {
   s32 phase;
   actor = Object_GetById(gGameState.selectedActor);
   event = gEventWork;
-  if (actor->targetX == 0x80000000) {
+  if (actor->targetX == ACTOR_NO_TARGET) {
     return;
   }
   gGameState.hazardSteps++;
-  if (event->touchedTrigger == 30) {
+  if (event->touchedTrigger == LAMAKAN_DESERT_CELL_SLOPE) {
     return;
   }
   if (actor->speed <= 0x10000) {
@@ -674,8 +707,8 @@ static void HeatGauge_CountStep(void) {
     } else {
       z = actor->z.fixed;
     }
-    FieldFx_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0, 0x880001,
-                  &params);
+    FieldFx_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0,
+                  EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
   } else {
     phase = gFrameCount & 7;
     if (phase != 0) {
@@ -688,14 +721,14 @@ static void HeatGauge_CountStep(void) {
     params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
     FieldFx_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed, 0,
                   ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase,
-                  0x880001, &params);
+                  EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
   }
 }
 
-/// Lamakan Desert, trigger 22, stepping near a hidden pit: the leader looks at
-/// the nearest pit, is pulled backwards into it and a battle with an Ant Lion
-/// begins.
-static void FallIntoPit(void) {
+/// Lamakan Desert, cell code 22, stepping near a hidden pit: the leader looks
+/// at the nearest pit, is pulled backwards into it and a battle with an Ant
+/// Lion begins.
+static void LamakanDesert_FallIntoPit(void) {
   struct FieldActor *target;
   struct FieldActor *actor;
   struct FieldActor *record;
@@ -772,9 +805,10 @@ static void FallIntoPit(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
 
-/// Lamakan Desert, trigger 30, on a slope of sand: the sand carries the leader
-/// south 1.5 pixels a frame, and at a ledge the leader hops down 8 pixels.
-static void SlideDownDune(void) {
+/// Lamakan Desert, on a slope of sand (LAMAKAN_DESERT_CELL_SLOPE): the sand
+/// carries the leader south 1.5 pixels a frame, and at a ledge the leader hops
+/// down 8 pixels.
+static void LamakanDesert_SlideDownDune(void) {
   struct FieldActor *center;
   s32 id;
   struct FieldActor *actor;
@@ -804,7 +838,7 @@ static void SlideDownDune(void) {
         0x60000;
     FieldFx_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
                   ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
-                  0x800000, &params);
+                  EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
     // Let the fall complete before returning to ordinary field movement.
@@ -847,15 +881,15 @@ static void SlideDownDune(void) {
   actor->z.fixed += 0x18000;
 }
 
-/// Lamakan Desert, trigger 40 in LamakanDesertManticore, until the Manticore is
-/// beaten: the leader stops and backs away as the Manticore rises out of the
+/// Lamakan Desert, cell code 40 in LamakanDesertManticore, until the Manticore
+/// is beaten: the leader stops and backs away as the Manticore rises out of the
 /// sand.
-static void MeetManticore(void) {
+static void LamakanDesert_MeetManticore(void) {
   s32 paused;
   struct FieldActor *record;
   struct FieldPosition backwardOffset;
   s32 holdFrames;
-  u16 *holdTimer;
+  u16 *revealFrames;
   u8 *eventBytes;
 
   eventBytes = (u8 *)gEventWork;
@@ -866,17 +900,19 @@ static void MeetManticore(void) {
       GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
       // Suspend heat accumulation while the leader notices the Manticore.
       HeatGauge_SetHeld(1);
-      holdTimer = (u16 *)(eventBytes + 0xcba);
-      holdFrames = 0x258;
-      *holdTimer = holdFrames;
+      // A running Reveal's countdown is refilled to 600 frames as the
+      // Manticore rises and again once it has.
+      revealFrames = (u16 *)&((struct FieldWork *)eventBytes)->revealFrames;
+      holdFrames = 600;
+      *revealFrames = holdFrames;
       record = Object_GetById(ACTOR_PARTY_LEADER);
       record->velocityX = paused;
       record = Object_GetById(ACTOR_PARTY_LEADER);
       record->velocityZ = paused;
       record = Actor_Get(ACTOR_PARTY_LEADER);
-      record->targetX = -0x80000000;
+      record->targetX = ACTOR_NO_TARGET;
       record = Actor_Get(ACTOR_PARTY_LEADER);
-      record->targetZ = -0x80000000;
+      record->targetZ = ACTOR_NO_TARGET;
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Actor_FaceActor(ACTOR_PARTY_LEADER, MANTICORE, 0);
       Engine_EventWait(40);
@@ -906,7 +942,7 @@ static void MeetManticore(void) {
       Actor_WalkToAndWait(MANTICORE, 168, 104);
       Actor_SetSpeed(MANTICORE, 0x8000, 0x4000);
       Actor_WalkToAndWait(MANTICORE, 168, 92);
-      *holdTimer = holdFrames;
+      *revealFrames = holdFrames;
       HeatGauge_SetHeld(0);
     }
   }
@@ -918,9 +954,9 @@ static void MeetManticore(void) {
 s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   s32 v5;
 
-  gGameState.hazardLimit = 0x258;
-  gGameState.hazardMode = 0;
-  gGameState.hazardDamage = 0x119;
+  gGameState.hazardLimit = 600;
+  gGameState.hazardMode = HAZARD_COUNT_ON_CELLS;
+  gGameState.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
   if (gGameState.scene == (s32)&SceneId_LamakanDesertCave) {
   } else {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1156,13 +1192,13 @@ const s32 gEffectScript2[] = {
 
 // clang-format off
 /// Each map's recovery points, as x, z pairs.
-const s32 gLamakanDesertRecoveryPoints1[] = {
+const s32 gLamakanDesertEast_RecoveryPoints[] = {
     PIXELS(384), PIXELS(128),
     PIXELS(288), PIXELS(688),
     PIXELS(608), PIXELS(720),
 };
 
-const s32 gLamakanDesertRecoveryPoints2[] = {
+const s32 gLamakanDesertSmog_RecoveryPoints[] = {
     PIXELS(704), PIXELS(96),
     PIXELS(448), PIXELS(464),
     PIXELS(832), PIXELS(592),
@@ -1289,14 +1325,14 @@ struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveForTheWorldMap) },
-    { EVENT_TOUCH, 20, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(CollapseFromHeat) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_LeaveForTheWorldMap) },
+    { EVENT_TOUCH, 20, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_CollapseFromHeat) },
     { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { EVENT_TOUCH, 22, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(FallIntoPit) },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SlideDownDune) },
-    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MeetManticore) },
-    { EVENT_TALK, MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(FightManticore) },
-    { EVENT_TALK, SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToSmog) },
+    { EVENT_TOUCH, 22, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
+    { EVENT_TOUCH, LAMAKAN_DESERT_CELL_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
+    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_MeetManticore) },
+    { EVENT_TALK, MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
+    { EVENT_TALK, SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
     { SEARCH(SEARCH_UNNAMED), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { SEARCH(SEARCH_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
@@ -1306,9 +1342,9 @@ struct SceneEvent gLamakanDesertEvents[] = {
     { SEARCH(SEARCH_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
-    { EVENT_RAISED, 1, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
-    { EVENT_RAISED, 2, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
-    { EVENT_RAISED, 3, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
+    { EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_QUARTER, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
+    { EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_HALF, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
+    { EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
     { EVENT_TOUCH, 100, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
     { EVENT_TOUCH, 101, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
     { EVENT_TOUCH, 102, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },

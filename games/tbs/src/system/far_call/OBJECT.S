@@ -57,7 +57,7 @@ FarCall_ObjectTable:
 	export FieldEvent_AskYesNoAndShowResponseFar, FieldEvent_AskYesNoAndShowResponse
 	overlay_veneer FieldEvent_EmptyCallback
 	overlay_veneer Event_ShowSpeakerMessage
-	overlay_veneer ObjectTable_CallRefreshHook
+	overlay_veneer Event_ForwardShowMessageAtPosition
 	overlay_veneer Event_ShowMessageAtPosition
 	export ObjectMotion_ArmCallbackFar, ObjectMotion_ArmCallback
 	overlay_veneer Object_ResetTargetAndSetMode1

@@ -348,8 +348,9 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
       gGameState.retreatScene = gGameState.scene;
       gGameState.retreatEntrance = gGameState.entrance;
     }
-    // Flags 0x80 to 0xdf last for one scene, even within a group.
-    for (flag = 0x80; flag <= 0xdf; flag++)
+    // The Djinn's hiding flags last for one scene, even within a group, and
+    // so do the 16 after them to 0xdf, which nothing else uses.
+    for (flag = FLAG_DJINNI_HIDING_0; flag <= 0xdf; flag++)
       GameFlag_ClearBitFar(flag);
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
     GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);

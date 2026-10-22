@@ -329,12 +329,13 @@ s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
 
 void FieldEvent_EmptyCallback(void) {}
 
-/// A speaker-message entry point retained by its overlay veneer, with no
-/// current scene caller. Records the speaker, waits for the message unless
-/// fast-forwarding, and advances the message index.
-/// XXX: this and Event_ShowMessageAtPosition apply a 32-unit offset and
-/// 312/220 limits before calling a window service that takes tiles. A caller
-/// establishing the intended position would settle its units and conversion.
+/// Unused: reached only through a bare veneer in system/far_call/OBJECT.S,
+/// which has no symbol, so no code can call it. It would record the speaker,
+/// open the message near it and wait unless fast-forwarding, then advance the
+/// message index. Like Event_ShowMessageAtPosition it moves the position 32
+/// away from the middle and clamps it to 8..312 and 20..220, ranges larger
+/// than the 240 by 160 screen, before passing it to a window service that
+/// takes tiles; with no caller, the units it expected can't be told.
 void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the native lookup discards its result and leaves pos unset.
 #ifdef UBFIX
@@ -406,15 +407,16 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   state->message++;
 }
 
-/// Retained by its overlay veneer; no current caller establishes the
-/// coordinates forwarded to Event_ShowMessageAtPosition.
-void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y) {
+/// Unused: reached only through a bare veneer in OBJECT.S; forwards its
+/// arguments to Event_ShowMessageAtPosition.
+void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
+                                        s32 y) {
   Event_ShowMessageAtPosition(unused0, unused1, x, y);
 }
 
-/// A retained coordinate-message entry point: waits for the message and
-/// advances the event's message index. Its placement units are unresolved,
-/// as in Event_ShowSpeakerMessage.
+/// Unused: reached only through a bare veneer in OBJECT.S. It would open the
+/// event's message at (x, y), wait for it and advance the message index; its
+/// units are as unknown as Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 py = y;

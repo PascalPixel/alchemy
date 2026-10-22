@@ -57,8 +57,9 @@ struct UiRenderWork {
   u16 messageStart;  ///< where the last decoded message began in entries
   u16 glyphResource; ///< VRAM cache slot of the page arrow; 99 when none
   u16 glyphTiles;    ///< first sprite tile of the glyph sheet (picture 95)
-  /// Not named by TBS code.
-  u8 unknownBeforeValues[RENDER_VALUE_TABLE_OFFSET - RENDER_COUNTER_OFFSET - 4];
+  /// Two bytes that align values to a word, in every edition; nothing reads
+  /// them.
+  u8 padding[RENDER_VALUE_TABLE_OFFSET - RENDER_COUNTER_OFFSET - 4];
   /// Message argument values (UiWork_PushValueSlot). A portrait's release
   /// writes its palette slot state at RENDER_PALETTE_TABLE_OFFSET, in here.
   u32 values[8];

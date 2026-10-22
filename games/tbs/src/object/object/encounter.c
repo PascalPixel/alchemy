@@ -177,10 +177,11 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     if (rate == 0)
       return 0;
     // Flag 5 is FLAG_IN_PARTY(JENNA): with Jenna in the party, there are no
-    // encounters while she has more than 130 experience points. XXX: why is
-    // unknown. Vale adds her with Garet (Event_RoofMended, scene/vale.c) and
-    // the debug battle's presets can add her (battle/battle/debug.c); her
-    // experience there, and where she leaves the party, would settle it.
+    // encounters while she has more than 130 experience points. She is in
+    // the party only from Vale (Event_RoofMended, scene/vale.c) to the Sol
+    // Sanctum's eruption, starting at level 1 with none, so this ends random
+    // battles in the Sol Sanctum once she nears level 4 (158). XXX: likely a
+    // cap on training before the journey, because it can act nowhere else.
     if (GameFlag_TestFar(5) != 0) {
       level = UnitGetFar(5)->experience;
       if (level > 130)

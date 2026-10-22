@@ -54,7 +54,7 @@ work block's layout, `struct ShopRuntime`, is in
 | `Shop_` | the shops' screens, and anything every counter shares |
 | `ShopCursor_` | the hand cursor |
 | `UiMessage_` | the keepers' messages: show, wait, choose |
-| `EventTable_` | the stock rows |
+| `ShopStock_` | the stock rows |
 | `Sanctum_` | the sanctum's services |
 | `Inn_` | the inn |
 | `BattleUnit_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
@@ -123,7 +123,7 @@ equipped and cursed; the smith takes it away for three hammer blows and hands
 it back mended.
 
 **Artifacts** are listed from every item of the shop's type whose stock
-counter is above zero. On a shop's first visit `EventTable_ApplyRowAbilities`
+counter is above zero. On a shop's first visit `ShopStock_AddArtifacts`
 adds one to the counter of each artifact in its row and sets
 `FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`, so a revisited shop adds nothing.
 Buying one takes one off its counter once the purchase is complete, and the
@@ -171,7 +171,7 @@ opens it:
 | 6 | Altin | 12 |
 | 7 | Kalay | 15 |
 | 8 | Lunpa | 20 |
-| 9 | none | 0 |
+| 9 | Tolbi (unused) | 0 |
 | 10 | Suhalla | 18 |
 | 11 | Lalivero | 25 |
 
@@ -215,22 +215,26 @@ the weapon shop's version, so one call site serves every shop type.
   (`Party_AdjustShopCredit`, `Party_AdjustShopGifts`), so every ticket after
   the 28th costs entry 28 of `sGameTicketCreditCosts`, and entry 29 is never
   read.
-- Inn row 9 has no inn and a price of 0.
+- Inn row 9, Tolbi's, has a price of 0 and no scene opens it: Tolbi's inns are
+  always full.
 
 ## Evidence and open questions
 
 The counters are named for what the player meets at them, the stock row's
 columns from what `shop/artifacts.c` reads from each, the actions and services
 from the choices their windows offer in the English release, and the inns
-from the town scenes that open them.
+from the town scenes that open them. The inn rows follow the order of the
+towns' area names in `gScene_AreaNameRules` (Vale 3, Vault 5, up to Lunpa 34,
+Suhalla 51 and Lalivero 55), and in that order row 9 falls where Tolbi (40)
+does: Tolbi is the one town with an inn door and no inn opened, since its inns
+are always full (`MsgTolbiInteriorsIsaacCheckedTheSignInnFull`), so its row
+costs nothing and nothing reads it. The stock rows' `ShopStock_` functions
+read and seed the stock table.
 
-- XXX: why Xian's rows are the warriors' shops (`shop->warriorShop`) by
-  number rather than by a column of the row.
-- XXX: `EventTable_ApplyRowAbilities` and the other `EventTable_` names say
-  less than the functions do, which read and seed the stock rows; better
-  names would reach `include/unit/shop/shop.h` too.
-- XXX: what inn row 9 was for; a town with an inn door and no inn row would
-  settle it.
+- XXX (no evidence): why Xian's rows are the warriors' shops
+  (`shop->warriorShop`) by number rather than by a column of the row; the
+  stock row's type column is an `s16` that could have carried it, and only
+  Camelot's sources could say why it doesn't.
 - XXX (picture): no picture yet takes a counter apart; the shop's stock row drawn beside
   the Buy and Artifacts lists it produces, before and after another town's
   first visit, would show the counters at work.

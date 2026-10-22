@@ -306,14 +306,14 @@ static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 // clang-format on
 
 /// Returns how many stock rows there are; Shop_Run refuses a row past them.
-s32 EventTable_GetRowLimit(void) { return SHOP_STOCK_ROWS; }
+s32 ShopStock_GetRowCount(void) { return SHOP_STOCK_ROWS; }
 
 /// Adds a shop's artifacts to the shared stock counters once, on its first
 /// visit, and sets the shop's flag (FLAG_SHOP_ARTIFACTS_STOCKED + row) to
 /// remember it. Called by Shop_Run as a shop opens. Each artifact adds one,
 /// so an item listed by two shops can be bought twice once both are
 /// visited.
-void EventTable_ApplyRowAbilities(s32 stockRow) {
+void ShopStock_AddArtifacts(s32 stockRow) {
   const s16 *stockEntries;
   const s16 *artifactCursor;
   s32 itemId;
@@ -342,7 +342,7 @@ void EventTable_ApplyRowAbilities(s32 stockRow) {
 
 /// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
 /// after, and returns how many. Called by Shop_Run for Buy.
-s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
+s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   const s16 *src;
   s16 *dst;
   s32 count;
@@ -369,6 +369,6 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
 
 /// Returns the shop's type from the last column of its stock row (enum
 /// ShopType). Called by Shop_Run.
-s32 EventTable_GetRowType(s32 stockRow) {
+s32 ShopStock_GetType(s32 stockRow) {
   return sStockTable[stockRow][SHOP_STOCK_TYPE];
 }

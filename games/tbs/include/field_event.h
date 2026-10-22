@@ -62,8 +62,8 @@ enum ActorAnimation {
   /// The arrivals and leavings of the animated exits (enum ExitStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
   /// seen side-on to full size facing the player, a leaving turns from his
-  /// back to side-on as he shrinks and is then hidden. The alternate pair
-  /// turns the other way.
+  /// back to side-on as he shrinks and is then hidden. The alternate pair has
+  /// its own drawings of the same turns.
   ///@{
   ANIM_LEADER_ARRIVE_ALTERNATE = 23,
   ANIM_LEADER_ARRIVE = 24,

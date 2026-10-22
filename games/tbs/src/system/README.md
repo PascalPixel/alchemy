@@ -291,9 +291,17 @@ the overlays by their directory number. `IwramIrqMain` and the other resident
 routines are named from their code. The fixed addresses come from the literals
 in the ROM's code.
 
-- XXX: whether Camelot linked the banks separately, which the fixed bank
-  starts suggest but don't prove.
-- XXX: whether the 25 unused directory rows were left for later resources.
+No build step compares a `FIXED_ADDRESS` literal with its symbol's linked
+address; `make modern` only builds with the name. A one-off comparison of all
+27 `FIXED_ADDRESS` uses with the six ☀️ linker maps found every literal equal
+to its symbol in each edition its `#if` selects.
+
+- XXX (no evidence): whether Camelot linked the banks separately; the fixed
+  bank starts and the tables are what a separate link needs, but one link
+  with fixed starts leaves the same bytes, so only Camelot's build could say.
+- XXX (no evidence): whether the 25 unused directory rows were left for later
+  resources; they are empty in the ROM and nothing reads them, so they show
+  only that they are spare.
 - XXX: whether the IWRAM heap ever grows into the sound mixer, which sits
   inside the heap's range with 1,116 unnamed bytes after it. Nothing in
   `heap.c` keeps it below: the allocators test against the heap's end, and
@@ -303,11 +311,7 @@ in the ROM's code.
   has the same shape: `ewram.s` gives it 32 KB, and the allocators let it run
   on through `gBgTileBuffer`. The heaps' high-water marks from play would
   settle either.
-- XXX: no build step compares a `FIXED_ADDRESS` literal with its symbol's
-  linked address; `make modern` only builds with the name. A one-off
-  comparison of all 27 `FIXED_ADDRESS` uses with the six ☀️ linker maps found
-  every literal equal to its symbol in each edition its `#if` selects.
-- XXX: why the directory's first 19 rows point at pieces of the program: the
+- XXX (no evidence): why the directory's first 19 rows point at pieces of the program: the
   start of the ROM (`Rom_Start`, row 0), the directory itself (row 1), the
   build stamp (row 2), and from row 3 every bank's far-call table but the
   runtime's, the sound and resource tables twice each. The build stamp is read
@@ -316,4 +320,5 @@ in the ROM's code.
   `RuntimeDispatch_ReturnZero`), from the title screen, Lucky Dice, the slot
   machine and the sprite viewer. Those calls look like a leftover of loading
   banks as resources (the comment in `menu/title.c` suggests as much), but
-  nothing proves it.
+  The Lost Age's stubs are empty too, and nothing in either ROM loads a bank
+  through its row, so only Camelot's sources could say.

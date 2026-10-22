@@ -44,10 +44,22 @@ void Field_ClearRequests(void) {
 s32 Field_CountRequests(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
+  // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
+  // FIELD_EVENT_PARTY_FELL (-1) on the frame a member falls to poison, and
+  // the action request is the cell's event code, 1 on a touch event 1's cells
+  // (154 maps have them); together they sum to 0, and both wait until another
+  // request breaks the tie, by which time a later cell's code may have
+  // replaced the action. BUGFIX tests each request instead.
+#ifdef BUGFIX
+  return work->action | work->pushTile | work->exit | work->menu |
+         work->examine | work->start | (s16)work->talk | work->tile |
+         work->battle | work->psynergy | work->item | work->event;
+#else
   return work->action + work->pushTile + work->exit + work->menu +
          work->examine + work->start + (s16)work->talk + work->tile +
          (s16)work->talk + work->battle + work->psynergy + work->item +
          work->event;
+#endif
 }
 
 /// Returns the collision code of the map cell 16 pixels ahead of the party

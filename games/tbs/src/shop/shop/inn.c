@@ -14,7 +14,10 @@ enum InnMessageId {
 };
 
 /// The coins a night costs each living guest, by inn: Vale, Vault, Bilibin,
-/// Kolima, Imil, Xian, Altin, Kalay, Lunpa, 9 (no inn), Suhalla, Lalivero.
+/// Kolima, Imil, Xian, Altin, Kalay, Lunpa, Tolbi, Suhalla, Lalivero, in the
+/// order of their area names. Unused: Tolbi's row, 9, costs nothing and no
+/// scene opens it, since Tolbi's inns are always full
+/// (MsgTolbiInteriorsIsaacCheckedTheSignInnFull).
 // clang-format off
 static const s8 sInnPricesPerGuest[12] = {
     2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25,

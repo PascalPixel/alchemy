@@ -201,8 +201,8 @@ that waits.
 
 `WaitFrames` must not be called from inside a task: the nested call would find
 its stack below the top again and overwrite `gSavedStack` and
-`gSavedStackSize`, which still hold the outer caller's frames. XXX: nothing
-guards against this, and whether any task does it isn't known.
+`gSavedStackSize`, which still hold the outer caller's frames. Nothing guards
+against this, and no task does it (below).
 
 ## The heap
 
@@ -371,7 +371,12 @@ above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups
 fourth), and `gSavedStack` is the last cell of the third, sized to reach the
 fourth. It could hold a stack that had run 2,640 bytes into the heap.
 
-- XXX: whether any task calls `WaitFrames`, which would overwrite the saved
-  stack; a trace of the `WaitFrames` calls made while a scheduler pass is
-  running would settle it.
-- XXX: what `RuntimeDispatch_` and the other reserved empty exports were for.
+No task calls `WaitFrames`. A call graph of the tbs-en build, its main image
+and every overlay, from each function the code hands to the scheduler, each
+object hook and each `SC_CALL` callback, finds no path of calls to it; the
+only matches were literal pools the disassembler read as calls.
+
+- XXX (no evidence): what the five empty exports after the fades
+  (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both
+  games, nothing calls them, and each is reached only through a bare veneer,
+  so no code shows what they were to do.

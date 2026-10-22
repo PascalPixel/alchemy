@@ -268,13 +268,18 @@ room the game leaves unnamed, what the player sees there (H3); its functions
 are named for what the player sees; its messages are linker symbols made from
 their English text. Overlay numbers are their rows of the resource directory.
 
-- XXX: many functions in `common/` keep older descriptive names
-  (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the scenes that call
-  them are humanized.
-- XXX: sounds without a proven name keep their numbers (`SE_188`).
-- XXX: what the exit styles' leaving animations 26 and 25 and arrivals 24 and
-  23 show (`enum ExitStyle`); a recording of an exit of each style would
-  settle it.
+Many functions in `common/` keep older descriptive names (`SceneActor_`,
+`OverlayObject_`, `FieldScene_`); each takes its name with the places that
+call it, as those places are humanized. A sound without a proven name keeps
+its number (`SE_188`), as `songs.h` says.
+
+The animated exits of `enum ExitStyle` play the leader's leaving and arrival
+animations, named in `enum ActorAnimation` from Isaac's sprite
+(`spr_000.tsv`, animations 23 to 26): an arrival grows from a small figure
+seen side-on to full size facing the player, and a leaving turns from his
+back to side-on as he shrinks and is then hidden. The alternate pair, which
+goes with `SE_STAIRS_DOWN`, has its own drawings of the same turns.
+
 - XXX (picture): the actors are labelled (above), but no picture yet marks each event
   cell by its collision code, which would show how the event table meets the
   map.

@@ -1,25 +1,25 @@
 # Matching
 
-```mermaid
-flowchart LR
-    write["Write the function in plain C"] --> compare["make compare-editions: each edition's SHA-1 against rom.sha1"]
-    compare -->|"all twelve print : OK"| pass["Still the original game"]
-    compare -->|"an edition fails"| find["Find the bytes: diff the object's assembly against a baseline, or alchemy-devtools diff"]
-    find -->|"reshape: another plain form or an equivalent spelling"| compare
-    find -->|"no plain form matches"| device["Keep a device, tagged FAKEMATCH(kind)"]
-    device --> compare
-```
+![How a function is matched. Write it in plain C. Build all twelve editions and compare each one's fingerprint with the one recorded for the original cartridge. If all twelve match, the C is the original game, byte for byte, and it is kept. If one does not, find the instructions that differ, by comparing the compiler's output with the original, and reshape the C: another plain way of writing the same thing, or an equivalent spelling. Then build and compare again. Only when no plain form matches is a steering device kept, tagged FAKEMATCH with how far the plain form is from matching.](https://alchemy.pascalpixel.com/illustrations/matching/loop.svg)
 
 Alchemy's C has to compile, with an old compiler, into exactly the
 instructions Camelot shipped.
 
-That takes some care. Two ways of writing the same thing in C can compile to
-different instructions, and now and then a function only matches in an odd
-shape until someone finds the plain one. When you're reading the source and a
-line looks stranger than it needs to be, the reason is usually written down
-here.
+A decompilation is a program written by hand, in readable C, that a compiler
+turns back into the very bytes on the cartridge. Matching is the work of
+getting there one function at a time: write the function the way a person
+would, build the game, and compare. That takes some care. Two ways of writing
+the same thing in C can compile to different instructions, and now and then a
+function only matches in an odd shape until someone finds the plain one. When
+you're reading the source and a line looks stranger than it needs to be, the
+reason is usually written down here.
 
 ## How a build is judged
+
+Each built edition is compared with the original cartridge by its
+fingerprint, and twelve matching fingerprints are a pass.
+
+![The build never sees the original cartridge, only its fingerprint: a SHA-1 hash, 40 characters long, recorded in rom.sha1. Each built edition is hashed the same way. When the English build of The Broken Seal comes out byte for byte the same as the cartridge, its fingerprint is identical, starting 5c4695205413, and the edition prints OK. Changing a single bit anywhere in its 8 MB, as a test, gives a completely different fingerprint, starting c214a5f65e8b. The fingerprint says whether the build is exact, never where it differs.](https://alchemy.pascalpixel.com/illustrations/matching/fingerprint.svg)
 
 `make compare-editions` builds all twelve editions and checks each ROM's
 SHA-1 hash against its line in `rom.sha1` (the `compare-%` rule in the
@@ -84,6 +84,8 @@ edition named. The kind says which device it is:
   the compiler places literal pools, the blocks of constants it puts among a
   function's code for the function to load.
 - `pin` is a variable fixed to a register.
+- `signature` is a function declared with a return or parameter type it
+  doesn't have, such as a `void` function typed `int`.
 
 A device is the last resort, used only after reshaping the code has failed,
 and taking one out again is part of humanizing, the passes that make matched C
@@ -120,6 +122,15 @@ each entry is an aligned 8-byte veneer, an `ldr r4`, a `bx r4` and the
 target's address, which the `overlay_veneer` macro writes out whole.
 
 ## Spellings that match at different sites
+
+![Two ways of writing the same thing in C, from a small test compiled with alchemy-gcc, the compiler the game is built with. Both keep the low ten bits of a random number. Written as Random16() and 0x3ff in one expression, the compiler copies the result aside, loads the mask from a constant and combines them: three instructions after the call. Written as a mask assigned first and then combined with Random16(), it shifts the number left and back right instead: two instructions. Both are correct C with the same result, but only the instructions the original cartridge has will match, so each place in the game keeps the spelling that gives them.](https://alchemy.pascalpixel.com/illustrations/matching/spellings.svg)
+
+A compiler does not translate C word for word. It looks at the whole
+function and picks instructions, and two lines that mean exactly the same
+thing can lead it to different choices, as the small test above shows. The
+original was compiled from one particular way of writing each line, so where
+the plain spelling gives different instructions, the matching C keeps the one
+that gives the original's.
 
 Each idea has one preferred spelling. Where a site matches only with a plain-C
 equivalent (an index or a pointer form, a macro or its expansion, a cast), that

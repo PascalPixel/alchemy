@@ -69,9 +69,16 @@
 /// ValeGate_Initialize hides the storm's Jenna by number without testing
 /// FLAG_VALE_STORM, and by day that number is his (a BUG, fixed by BUGFIX).
 ///
-/// Open questions:
-/// - XXX (picture): the Psynergy displays, a villager's sprite cycling its
-///   palettes while sparks rise and fall about him.
+/// A villager showing Psynergy (Event_DemonstratePsynergy by day,
+/// Event_BoyLiftsSmallRock on the stormy night) flashes white
+/// (ValeGate_FlashPsynergyPalette), then cycles through his colour modes while
+/// pairs of sparks rise and fall about him every 16 frames
+/// (ValeGate_CyclePsynergyPaletteAndSpawnEffects)
+/// (https://alchemy.pascalpixel.com/places/vale-gate/psynergy-display.gif: the
+/// strongman's display by day, the screen with him boxed beside the sprites
+/// alone and the 16 sprite palettes).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "flags.h"
@@ -1937,21 +1944,22 @@ static void ValeGate_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
   Engine_EventWait(frames);
 }
 
-/// A villager calling up Psynergy: palette 7 for two frames in four, and a
-/// pair of sparks every 16 frames.
+/// A villager calling up Psynergy: drawn SPRITE_COLOR_WHITE for two frames in
+/// four, and a pair of sparks every 16 frames.
 static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Engine_ObjectSetPartPalettes(actor, 7);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_WHITE);
   } else {
-    Engine_ObjectSetPartPalettes(actor, 0);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     ValeGate_SpawnEffectPair(actor);
   }
 }
 
-/// A villager using Psynergy: palettes 0 to 5 in turn, and a pair of sparks
-/// every 16 frames.
+/// A villager using Psynergy: colour modes SPRITE_COLOR_NORMAL to
+/// SPRITE_COLOR_BRG, the sprite and its five swaps of colour channels, in turn,
+/// and a pair of sparks every 16 frames.
 static void
 ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
@@ -1963,7 +1971,8 @@ ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycles the lifted rock through palettes 0 to 5, a step every second frame.
+/// Cycles the lifted rock through colour modes SPRITE_COLOR_NORMAL to
+/// SPRITE_COLOR_BRG, a step every second frame.
 static void ValeGate_CyclePsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);

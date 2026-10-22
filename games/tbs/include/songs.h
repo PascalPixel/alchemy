@@ -20,7 +20,7 @@
 /// Bilibin, the Bilibin Barricade, Kolima, Kolima Bridge, Kolima Forest and the
 /// Tret Tree once FLAG_KOLIMA_CURSE_LIFTED is set; of Tolbi and the Colosseum
 /// entrance after the Colosso (FLAG_COLOSSO_OVER); and of Lalivero once
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE is set. It also plays as Tret is
+/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED is set. It also plays as Tret is
 /// restored.
 #define MUS_001 1
 /// Field music of Bilibin, the Bilibin Barricade, Kolima, Kolima Bridge, the

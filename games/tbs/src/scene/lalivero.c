@@ -2,7 +2,7 @@
 /// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
 /// story brings the party here twice, and Lalivero_GetPlacements and
 /// Lalivero_GetEvents choose the town's people and events for each visit by
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE, set at Venus Lighthouse's aerie.
+/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
 /// On the first visit the party comes in from the world map with Iodem, and
 /// Event_WatchWoundedSoldiers plays once (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN):
@@ -181,7 +181,7 @@ const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
 /// The townsfolk, who stand differently once the party is back from Venus
 /// Lighthouse.
 const struct ScenePlacement *Lalivero_GetPlacements(void) {
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroPlacementsAfterLighthouse;
   }
   return gLaliveroPlacements;
@@ -819,7 +819,7 @@ static void Event_TurnBackToTheShip(void) {
 /// What the party can talk to, touch and search, which changes once they are
 /// back from Venus Lighthouse.
 const struct SceneEvent *Lalivero_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroEventsAfterLighthouse;
   }
   return gLaliveroEvents;
@@ -835,11 +835,11 @@ s32 Lalivero_Initialize(void) {
 
   // Coming back from the lighthouse switches the town to its later state.
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
-    GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
     GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
   if (gGameState.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
-    GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 24;
@@ -871,7 +871,7 @@ s32 Lalivero_Initialize(void) {
   Engine_VramLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
   Engine_HeapRelease(HEAP_SLOT_GLYPH_TRANSFER);
 
-  if (GameFlag_IsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
+  if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     // A sign now stands at the north exit, and the three open cells of the
     // gap in the north wall become wall, closing the way north.
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_NORTH_EXIT_SIGN), 0);

@@ -825,7 +825,7 @@
 /// Sheba's fall, as the party is taken to Lalivero. Lalivero and its buildings
 /// then read their tables for after the lighthouse.
 /// ★ Named from its area name: Venus Lighthouse
-#define FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE 0x9a7
+#define FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED 0x9a7
 /// Out of Gateway Cave, Iodem saw a ship off the coast at Idejima, took it for
 /// Babi's and handed over the Black Orb (WorldMap_RunBlackOrbScene). Back from
 /// Venus Lighthouse, it picks the version of the report to Faran that knows

@@ -2,7 +2,7 @@
 /// Lalivero, and Lalivero Sanctum for the Sanctum's rooms of LaliveroShops
 /// (LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST and LALIVERO_SHOPS_SANCTUM). Each
 /// scene has tables for before and after Venus Lighthouse, chosen by
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE, as the town's are (lalivero.c).
+/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's are (lalivero.c).
 ///
 /// SceneId_LaliveroShops holds the houses, the weapon, armor and item shops and
 /// the Sanctum. Each shopkeeper stands behind a counter and trades only with a
@@ -55,7 +55,7 @@
 #include "flags.h"
 static void LaliveroInteriors_TellFaranAboutJenna(void);
 
-/// An entrance that sets FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE. No exit leads to
+/// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED. No exit leads to
 /// it and the entrance table has no row for it: only the debug scene selector,
 /// which warps to any entrance from 0 to 99, reaches it.
 enum {
@@ -220,7 +220,7 @@ const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroInteriors_Exits; }
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
     // Faran's house and the inn.
-    if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHousePlacementsAfterLighthouse;
     }
     return gLaliveroInteriors_FaransHousePlacements;
@@ -248,7 +248,7 @@ static void Event_TalkToWeaponMerchant(s32 keeper) {
 
   if (side == FACING_NORTH) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Engine_EventSetMessage(MsgLaliveroWentOceanLook);
     Engine_EventShowMessage(keeper, 0);
   } else {
@@ -271,7 +271,7 @@ static void Event_TalkToWeaponMerchant(s32 keeper) {
 static void Event_TalkToArmorMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Engine_EventSetMessage(MsgLaliveroWantedSendShips);
     Engine_EventShowMessage(keeper, 0);
   } else {
@@ -285,7 +285,7 @@ static void Event_TalkToArmorMerchant(s32 keeper) {
 static void Event_TalkToItemMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Engine_EventSetMessage(MsgLaliveroImpossibleGoOcean);
     Engine_EventShowMessage(keeper, 0);
   } else {
@@ -299,7 +299,7 @@ static void Event_TalkToItemMerchant(s32 keeper) {
 static void Event_TalkToHealer(s32 healer) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_ConfirmAct(healer);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Engine_EventSetMessage(MsgLaliveroBabiLighthouseStruck);
     Engine_EventShowMessage(healer, 0);
   } else {
@@ -313,7 +313,7 @@ static void Event_TalkToHealer(s32 healer) {
 static void Event_TalkToInnkeeper(s32 innkeeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Engine_EventSetMessage(MsgLaliveroDidntKnowTime);
     Engine_EventShowMessage(innkeeper, 0);
   } else {
@@ -403,12 +403,12 @@ static void Event_LeaveBuilding(void) {
 /// after Venus Lighthouse.
 const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
-    if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHouseEventsAfterLighthouse;
     }
     return gLaliveroInteriors_FaransHouseEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroInteriors_ShopsEventsAfterLighthouse;
   }
   return gLaliveroInteriors_ShopsEvents;
@@ -826,7 +826,7 @@ s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
-    Engine_GameFlagSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+    Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

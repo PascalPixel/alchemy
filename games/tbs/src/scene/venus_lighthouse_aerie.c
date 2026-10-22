@@ -47,7 +47,7 @@
 /// - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP,
 ///   VenusLighthouseAerie_StageShebasFall): Sheba and Felix fall, and the party
 ///   is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE)
-///   with FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
+///   with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set.
 ///
 /// A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
@@ -2059,7 +2059,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
 
 /// Back from the world map (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP): stages the
 /// broken aerie for Sheba's fall and the party's escape, plays them, sets
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE and leaves for Lalivero
+/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED and leaves for Lalivero
 /// (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE).
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct FieldActor *leader;
@@ -2142,7 +2142,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   VenusLighthouseAerie_PlayShebasFall();
-  GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   Engine_EventRequestExit(VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE);
 }
 

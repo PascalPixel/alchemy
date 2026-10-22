@@ -4530,7 +4530,7 @@ enum {
   GONDOWAN_CAVE_FROM_WORLD_MAP_EAST = 1,
   GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH = 2,
   GONDOWAN_CAVE_FROM_WEST_PASSAGE = 3,
-  GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVERN =
+  GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVE =
       4, ///< ★ Named from what the player sees: the narrow passage with a pool
          ///< and a boulder that leads to the west way in (its render)
   GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH = 5,
@@ -4543,7 +4543,7 @@ enum {
   GONDOWAN_CAVE_TO_WEST_PASSAGE =
       3, ///< ★ Named from what the player sees: the narrow passage with a pool
          ///< and a boulder that leads to the west way in (its render)
-  GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVERN =
+  GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE =
       4, ///< ★ Named from what the player sees: the cavern of the east way in,
          ///< with the stump and the pillar (its render)
   GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH = 5,

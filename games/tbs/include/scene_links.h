@@ -3010,35 +3010,35 @@ enum {
   KALAY_INTERIORS_WEAPON_SHOP = 6,
   KALAY_INTERIORS_ARMOR_SHOP = 7,
   KALAY_INTERIORS_ARMOR_SHOP_COUNTER = 8,
-  KALAY_INTERIORS_INN_FROM_INN_CORRIDOR =
+  KALAY_INTERIORS_INN_FROM_INN_PASSAGE =
       9, ///< ★ Named from what the player sees: the inn's room with its
          ///< counter, dining tables and stairs (its render)
   KALAY_INTERIORS_INN = 10,
-  KALAY_INTERIORS_INN_CORRIDOR_FROM_INN =
+  KALAY_INTERIORS_INN_PASSAGE_FROM_INN =
       11, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST =
+  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST =
       12, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST =
+  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST =
       13, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST =
+  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST =
       14, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST =
+  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST =
       15, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the inn corridor's south side (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
 };
@@ -3052,35 +3052,35 @@ enum {
   KALAY_INTERIORS_WEAPON_SHOP_TO_KALAY = 6,
   KALAY_INTERIORS_ARMOR_SHOP_TO_KALAY = 7,
   KALAY_INTERIORS_ARMOR_SHOP_COUNTER_TO_KALAY = 8,
-  KALAY_INTERIORS_INN_TO_INN_CORRIDOR =
+  KALAY_INTERIORS_INN_TO_INN_PASSAGE =
       9, ///< ★ Named from what the player sees: the corridor at the foot of the
          ///< inn's stairs, lined with guest-room doors (its render)
   KALAY_INTERIORS_INN_TO_KALAY = 10,
-  KALAY_INTERIORS_INN_CORRIDOR_TO_INN =
+  KALAY_INTERIORS_INN_PASSAGE_TO_INN =
       11, ///< ★ Named from what the player sees: the inn's room with its
           ///< counter, dining tables and stairs (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHWEST =
+  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST =
       12, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHEAST =
+  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST =
       13, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHWEST =
+  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST =
       14, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
-  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHEAST =
+  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST =
       15, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the inn corridor's south side (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_CORRIDOR =
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
 };

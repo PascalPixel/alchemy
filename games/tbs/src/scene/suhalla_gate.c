@@ -38,11 +38,6 @@
 /// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's
 /// Psynergy Stone is kept in a place flag (FLAG_PLACE_TEMP_50), so it is back
 /// whenever the party returns from another place.
-///
-/// Open questions:
-/// - XXX: what Scene_Initialize stretches in SuhallaGateDew as actor 15, a
-///   number no row of its placement table reaches; a watch on that object as
-///   the scene loads would settle it.
 
 #include "game_state.h"
 #include "version.h"
@@ -181,8 +176,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// arriving from the south before Babi's audience changes cells by the passage;
 /// the Spanish, French and Italian editions also change cells around the
 /// wounded guards. In the second scene (SceneId_SuhallaGateDew) the five
-/// sprouts take their frames, actor 15 is stretched (the file's open
-/// questions ask what it is) and one cell changes.
+/// sprouts take their frames and one cell changes; its stretch of actor 15
+/// does nothing, as the comment at it says.
 s32 Scene_Initialize(void) {
   s32 scene;
 
@@ -230,7 +225,13 @@ s32 Scene_Initialize(void) {
     Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 2, SPROUT_ANIM_HALF_GROWN);
     Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIM_GROWN);
     Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIM_HALF_GROWN);
+    // UB: the scene places only actors up to ACTOR_DEW, so there is no actor
+    // 15 and Object_GetById returns NULL (watched in tbs-en as the scene
+    // loads from each of its entrances); the store goes to the BIOS, which
+    // ignores it.
+#ifndef UBFIX
     Object_GetById(15)->scaleY = 8 * Q16_ONE / 5;
+#endif
     Map_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   }
   return 0;

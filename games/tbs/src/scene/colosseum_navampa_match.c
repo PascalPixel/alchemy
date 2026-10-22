@@ -301,7 +301,8 @@ static void ColosseumNavampaMatch_ResetWallWedge(void) {
 
 /// Resumes cycling the Wall Wedge's pistons.
 static void ColosseumNavampaMatch_StartWallWedge(void) {
-  FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateWallWedge, 0xC80);
+  FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateWallWedge,
+                             TASK_PRIORITY_SCENE);
 }
 
 /// Waits, at most two seconds, for the Wall Wedge pattern its attendant's
@@ -936,7 +937,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   // Restore the scale pans, movable weight and supporting collision cells.
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateEastEndCollision,
-                             3200);
+                             TASK_PRIORITY_SCENE);
   Map_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
   Engine_ActorSetSpriteFlags(Object_GetById(FROST_TARGET), 0);
@@ -1032,7 +1033,8 @@ s32 ColosseumNavampaMatch_Initialize(void) {
       actor->motionFlags = 0;
       actor->y.fixed = PIXELS(32);
     }
-    FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateWallWedge, 3200);
+    FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateWallWedge,
+                               TASK_PRIORITY_SCENE);
   }
 
   if (Engine_GameFlagIsSet(864) != 0) {
@@ -1108,7 +1110,8 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:
-    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 3200);
+    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
+                               TASK_PRIORITY_SCENE);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -1343,24 +1346,24 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   particleCallback = ColosseumNavampaMatch_SpawnPeriodicParticle;
   // Time the small reunion effects to the companions' reactions.
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, 0xc80);
+  Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
   Engine_EventWait(5);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(55);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Task_AddCallback(particleCallback, 0xc80);
+  Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
   Engine_EventWait(20);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(40);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, 0xc80);
+  Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(25);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, 0xc80);
+  Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(25);
@@ -1371,7 +1374,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
   Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, 0xc80);
+  Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(25);
@@ -1382,7 +1385,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Object_LinkObjectAndSetCallback(MIA, IVAN);
   Object_LinkObjectAndSetCallback(GARET, IVAN);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, 0xc80);
+  Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(IVAN, ANIM_NOD);
   Engine_ActorSetAnimation(MIA, ANIM_NOD);
@@ -1494,10 +1497,10 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
 /// on the stages (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) he asks whether
 /// they are done cheering instead.
 static void Event_TalkToScalesAttendant(s32 guideId) {
-  struct FieldActor *pan1;
-  struct FieldActor *pan2;
-  struct FieldActor *back1;
-  struct FieldActor *back2;
+  struct FieldActor *westPan;
+  struct FieldActor *eastPan;
+  struct FieldActor *westPanAgain;
+  struct FieldActor *eastPanAgain;
   s32 promptResult;
 
   if (gGameState.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
@@ -1521,21 +1524,21 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
     Engine_EventShowMessage(guideId, 0);
     Colosso_HidePointer();
     Engine_TaskWait(2);
-    pan1 = Object_GetById(SCALE_PAN_WEST);
-    pan1->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(pan1, PIXELS(4));
-    pan2 = Object_GetById(SCALE_PAN_EAST);
-    pan2->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(pan2, PIXELS(32));
-    FieldObject_WaitForMove(pan2);
+    westPan = Object_GetById(SCALE_PAN_WEST);
+    westPan->motionFlags = 0;
+    ColosseumNavampaMatch_MoveOnScales(westPan, PIXELS(4));
+    eastPan = Object_GetById(SCALE_PAN_EAST);
+    eastPan->motionFlags = 0;
+    ColosseumNavampaMatch_MoveOnScales(eastPan, PIXELS(32));
+    FieldObject_WaitForMove(eastPan);
     Engine_EventWait(45);
-    back1 = Object_GetById(SCALE_PAN_WEST);
-    back1->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(back1, PIXELS(32));
-    back2 = Object_GetById(SCALE_PAN_EAST);
-    back2->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(back2, PIXELS(4));
-    FieldObject_WaitForMove(back2);
+    westPanAgain = Object_GetById(SCALE_PAN_WEST);
+    westPanAgain->motionFlags = 0;
+    ColosseumNavampaMatch_MoveOnScales(westPanAgain, PIXELS(32));
+    eastPanAgain = Object_GetById(SCALE_PAN_EAST);
+    eastPanAgain->motionFlags = 0;
+    ColosseumNavampaMatch_MoveOnScales(eastPanAgain, PIXELS(4));
+    FieldObject_WaitForMove(eastPanAgain);
     Engine_EventWait(15);
     Engine_EventShowMessage(guideId, 0);
     Colosso_ShowPointer(104, 68, 0);
@@ -1885,9 +1888,9 @@ static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
   gColosso_LetteringParam = (parameter << 4);
 
   {
-    s32 budget = 0xc80;
+    s32 priority = TASK_PRIORITY_SCENE;
     SchedulerCallback task = Colosso_UpdateLettering;
-    FieldScheduler_AddCallback(task, budget);
+    FieldScheduler_AddCallback(task, priority);
   }
 
   handler = (s32)gColossoLetteringScriptTitle;

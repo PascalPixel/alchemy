@@ -755,7 +755,8 @@ static void ColosseumSatrageMatch_ResetLifts(void) {
 
 /// Starts the moving-lift task and releases its pause flag.
 static void ColosseumSatrageMatch_StartLifts(void) {
-  FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts, 0xC85);
+  FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts,
+                             TASK_PRIORITY_SCENE + 5);
   Engine_GameFlagClear(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
@@ -864,8 +865,15 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Engine_EventBegin();
   Actor_SetPosition(OPPONENT, PIXELS(88), PIXELS(256));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(256));
+  // BUG: 0x4000 is FACING_SOUTH, passed where Actor_FaceActor takes an actor
+  // number; ObjectTable_Get has no actor past 0xbf, so neither turns.
+#ifdef BUGFIX
+  Actor_FaceDirection(OPPONENT, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+#else
   Actor_FaceActor(OPPONENT, 0x4000, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
+#endif
   if (result < 0) {
     Engine_ActorSetAnimation(OPPONENT, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
@@ -1006,7 +1014,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       actor->speed = 0x8000;
       actor->acceleration = 0x3333;
     }
-    FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts, 0xc85);
+    FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts,
+                               TASK_PRIORITY_SCENE + 5);
     Scheduler_SetTaskFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
   Engine_ActorSetAnimation(OPPONENT, 9);
@@ -1039,7 +1048,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     ColosseumSatrageMatch_StartRivalPath((s32)&ResourceId_RivalPathB);
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
-    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 0xc80);
+    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
+                               TASK_PRIORITY_SCENE);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -1445,7 +1455,7 @@ static void ColosseumSatrageMatch_StartLetteringAnimation(u32 mode,
   gColosso_LetteringParam = (tileVariant << 4);
 
   {
-    s32 priority = 0xc80;
+    s32 priority = TASK_PRIORITY_SCENE;
     FieldScheduler_AddCallback(Colosso_UpdateLettering, priority);
   }
 
@@ -1767,7 +1777,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
   work->gauge.vramBlock = vramSlot;
   Engine_VramLoad((s16)vramSlot, 512, graphics);
 
-  FieldScheduler_AddCallback(Colosso_DrawGauge, 0xc76);
+  FieldScheduler_AddCallback(Colosso_DrawGauge, TASK_PRIORITY_SCENE - 10);
 
   Runtime_BumpFree(graphics);
 }
@@ -1785,7 +1795,7 @@ static void ColosseumSatrageMatch_StartRivalPath(s32 pathResource) {
     recorder->still = 0;
     recorder->pos = 0;
   }
-  FieldScheduler_AddCallback(Colosso_UpdatePathRival, 0xc85);
+  FieldScheduler_AddCallback(Colosso_UpdatePathRival, TASK_PRIORITY_SCENE + 5);
 }
 
 #include "common/colosso_scene_state.h"

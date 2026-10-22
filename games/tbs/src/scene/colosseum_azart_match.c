@@ -250,7 +250,8 @@ static void ColosseumAzartMatch_ResetBrokenBridge(void) {
 /// Starts the bridge's repeating opening sequence.
 static void ColosseumAzartMatch_StartBrokenBridge(void) {
   gColosseumAzartMatch_Countdown = 66;
-  FieldScheduler_AddCallback(ColosseumAzartMatch_UpdateBrokenBridge, 0xC80);
+  FieldScheduler_AddCallback(ColosseumAzartMatch_UpdateBrokenBridge,
+                             TASK_PRIORITY_SCENE);
 }
 
 /// Waits for the crossing window, bounded by one bridge cycle.
@@ -625,8 +626,15 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Engine_EventBegin();
   Actor_SetPosition(OPPONENT, PIXELS(1320), PIXELS(192));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1288), PIXELS(192));
+  // BUG: 0x4000 is FACING_SOUTH, passed where Actor_FaceActor takes an actor
+  // number; ObjectTable_Get has no actor past 0xbf, so neither turns.
+#ifdef BUGFIX
+  Actor_FaceDirection(OPPONENT, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+#else
   Actor_FaceActor(OPPONENT, 0x4000, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
+#endif
   if (result < 0) {
     Engine_ActorSetAnimation(OPPONENT, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
@@ -688,7 +696,8 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor->motionFlags = 0;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
-  FieldScheduler_AddCallback(ColosseumAzartMatch_UpdateBrokenBridge, 0xc80);
+  FieldScheduler_AddCallback(ColosseumAzartMatch_UpdateBrokenBridge,
+                             TASK_PRIORITY_SCENE);
   actor = Object_GetById(GROWTH_PLANT);
   actor->terrainId = 1;
   zero = 0;
@@ -754,7 +763,8 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Colosso_StartRival((s32)&ResourceId_RivalPathA);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
-    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 0xc80);
+    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
+                               TASK_PRIORITY_SCENE);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -1177,7 +1187,7 @@ static void ColosseumAzartMatch_SelectPresentationScript(u32 mode, u32 param) {
   gColosso_LetteringMode = mode;
   gColosso_LetteringParam = (param << 4);
 
-  FieldScheduler_AddCallback(Colosso_UpdateLettering, 0xc80);
+  FieldScheduler_AddCallback(Colosso_UpdateLettering, TASK_PRIORITY_SCENE);
 
   script = gColosseumAzartMatch_LetteringTitle;
   if (mode == COLOSSO_SHAPE_DIGIT) {

@@ -259,7 +259,7 @@ static void AltmillerCave_ReleaseWallBurst(void);
 struct LightWheel {
   s16 phase;
   s16 ticks;
-  s16 unk04; ///< never read or written
+  s16 unused; ///< nothing reads or writes it
   u16 angle;
   u16 speed;
   /// How far the ring has turned since its last click.

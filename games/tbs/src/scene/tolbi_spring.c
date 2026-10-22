@@ -214,7 +214,7 @@ enum TolbiSpringSearchTarget {
 /// The tossed coin or medal: its last four positions for the trail, its
 /// velocity and the frames the prize rings still pull it.
 struct SpringTossMotion {
-  u8 unk00[2]; ///< never read or written, and sToss is static to this file
+  u8 unused[2]; ///< nothing reads or writes it
   s16 launchFrame;
   struct Vector3 trail[4]; ///< 16.16 fixed-point pixels
   struct Vector3 shadow;
@@ -952,8 +952,8 @@ static struct SpringTossMotion sToss;
 
 static s32 sTossKind;
 
-/// Unreferenced toss storage; removing it shifts the obstacle state.
-static s32 sTossUnknown[3] UNUSED;
+/// Three words nothing refers to; removing them would move the obstacle state.
+static s32 sTossUnused[3] UNUSED;
 
 static struct SpringObstacle sObstacles[4];
 

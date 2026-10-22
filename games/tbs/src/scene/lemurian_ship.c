@@ -572,8 +572,8 @@ struct RippleScrollWork {
   u16 pages[2][0x3c0]; ///< per page: 160 lines of BG3 x, y; the rest unused
   u8 page;             ///< the page the HBlank DMA shows; the other is built
   u8 mode;
-  u16 phase; ///< frames built so far, added to BG3's y
-  u8 unkf04[4];
+  u16 phase;        ///< frames built so far, added to BG3's y
+  u8 unused[4];     ///< zeroed with the block; nothing reads or writes it
   s32 frequency[2]; ///< x, y: 16.16 sine entries per frame and per row
   s32 step[2];      ///< x, y: 16.16 sine entries a line
   s32 amplitude[2]; ///< x, y: 16.16 scale on the sine, then divided by 256

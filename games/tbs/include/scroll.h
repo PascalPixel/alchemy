@@ -14,7 +14,7 @@ struct DisplayScrollWork {
   u8 page;      ///< the page the HBlank DMA shows; the other is built
   u8 mode;      ///< set at the start; not read by name
   u16 frame;    ///< frames built so far, added to BG3's y for the wave's phase
-  u8 unkf04[4]; ///< not named by TBS code
+  u8 unused[4]; ///< zeroed with the block; nothing reads or writes it
   s32 freqX;    ///< phase per frame and per BG3 row, 16.16 wave table entries
   s32 freqY;    ///< phase per frame and per BG3 row, 16.16 wave table entries
   s32 stepX;    ///< 16.16 wave table entries a scanline, 256 a cycle

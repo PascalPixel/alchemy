@@ -31,8 +31,10 @@ extern struct SceneEntrance gTolbiShipInteriors_Entrances[];
 extern u32 gTolbiShipInteriors_Exits[];
 extern struct ScenePlacement gTolbiShipInteriors_PlacementsNone[];
 extern struct ScenePlacement gTolbiShipInteriors_CaptainsQuartersPlacements[];
-extern struct ScenePlacement gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors[];
-extern struct ScenePlacement gTolbiShipInteriors_CaptainsQuartersPlacementsArrived[];
+extern struct ScenePlacement
+    gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors[];
+extern struct ScenePlacement
+    gTolbiShipInteriors_CaptainsQuartersPlacementsArrived[];
 extern struct ScenePlacement gTolbiShipInteriors_HoldPlacementsEmpty[];
 extern struct ScenePlacement gTolbiShipInteriors_HoldPlacements[];
 extern struct ScenePlacement gTolbiShipInteriors_HoldPlacementsAtSea[];

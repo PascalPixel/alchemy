@@ -17,8 +17,9 @@ enum SpriteId {
   /// counter, or that a scene draws an item's icon on, as for the Nuts that
   /// Catch takes.
   SPRITE_BLANK = 0x16,
-  /// Rings spreading out, grey in its first animation and blue in its second,
-  /// as Mercury Lighthouse's pools ripple around the leader.
+  /// Rings spreading out on water: where someone wades (the field's own
+  /// FIELD_SPRITE_RIPPLE), and around the leader at Mercury Lighthouse's pools,
+  /// grey in its first animation and blue in its second.
   /// ★ Named from what the player sees: rings spreading on water
   /// (spr_024.png)
   SPRITE_RIPPLE = 0x18,
@@ -32,10 +33,6 @@ enum SpriteId {
   /// night, and the Boulder of Mt. Aleph drawn at twice its size.
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   SPRITE_ROCK = 0xc8,
-  /// The ivy Whirlwind blows away, as in Vault Cave and Goma Cave.
-  /// ★ Named from what the player sees: a clump of leafy green ivy (its sprite
-  /// sheet, spr_248.png)
-  SPRITE_IVY = 0xf8,
   /// The lights that float about the Elemental Star Room.
   /// ★ Named from what the player sees: a small glowing blue-green light (its
   /// sprite sheet, spr_287.png)
@@ -105,11 +102,6 @@ enum SpriteId {
   /// ★ Named from the game: "It looks like it's trapped in the ivy."
   /// (MsgGomaNoUsePsynergy)
   SPRITE_IVY = 0xf8,
-  /// Rings that spread on water where someone wades, the sprite the field's
-  /// own wading uses as FIELD_SPRITE_RIPPLE.
-  /// ★ Named from what the player sees: rings spreading on water
-  /// (spr_024.png)
-  SPRITE_RIPPLE = 0x18,
   SPRITE_DUST_PUFF = 222, ///< a puff of dust kicked up where an actor stands
   /// ★ Named from what the player sees: a wooden crate (spr_223.png)
   SPRITE_CRATE = 0xdf,

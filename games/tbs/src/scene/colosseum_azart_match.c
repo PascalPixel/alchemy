@@ -9,7 +9,7 @@
 /// Lumber Water Crossing Area. Isaac comes here three times, each time at its
 /// own entrance, and ColosseumAzartMatch_Initialize blocks Retreat and sets up
 /// the visit that entrance stands for after restoring the stages from their
-/// temporary flags (FLAG_PIPES_MOVED, FLAG_PIPEWORKS_PILLAR_PUSHED,
+/// temporary flags (FLAG_PIPES_MOVED, FLAG_PIPEWORKS_PIPE_PUSHED,
 /// FLAG_PLANT_GROWN and the rock's column in FLAG_SECOND_ROCK_COLUMN), so that
 /// what the friends changed stays changed for the race.
 ///
@@ -159,9 +159,9 @@ enum {
   ROCK_A = 9,   ///< the Rock Challenge's three rocks
   ROCK_B = 10,
   ROCK_C = 11,
-  /// Pushed west to let water into the Pipeworks. A pillar, drawn as
-  /// mercury_lighthouse.c's ACTOR_CHANNEL_PILLAR_3.
-  PIPEWORKS_PILLAR = 12,
+  /// Pushed west to let water into the Pipeworks. A pipe section, drawn as
+  /// mercury_lighthouse.c's ACTOR_THIRD_PIPE.
+  PIPEWORKS_PIPE = 12,
   PIPE_WEST = 13, ///< the Pipeworks' two pipes, a kind of scale
   PIPE_EAST = 14,
   GROWTH_PLANT = 15,
@@ -184,7 +184,7 @@ enum {
 enum {
   FLAG_PIPES_MOVED =
       FLAG_PLACE_TEMP_01, ///< the Pipeworks' pipes, as water filled them
-  FLAG_PIPEWORKS_PILLAR_PUSHED = FLAG_PLACE_TEMP_02,
+  FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_PLACE_TEMP_02,
   FLAG_PLANT_GROWN =
       FLAG_PLACE_TEMP_03, ///< by Growth, before the Broken Bridge
   /// The byte of flags that keeps the Rock Challenge's second rock's column.
@@ -471,7 +471,7 @@ static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
 }
 
 /// Walking west into the Pipeworks' pillar pushes it: water runs into the
-/// channel, and the first time the pipes move (FLAG_PIPEWORKS_PILLAR_PUSHED,
+/// channel, and the first time the pipes move (FLAG_PIPEWORKS_PIPE_PUSHED,
 /// FLAG_PIPES_MOVED).
 static void Event_PushPipeworksPillar(void) {
   s32 leaderId;
@@ -481,8 +481,8 @@ static void Event_PushPipeworksPillar(void) {
 
   leaderId = gGameState.selectedActor;
   leader = Object_GetById(leaderId);
-  actor = Object_GetById(PIPEWORKS_PILLAR);
-  GameFlag_Set(FLAG_PIPEWORKS_PILLAR_PUSHED);
+  actor = Object_GetById(PIPEWORKS_PIPE);
+  GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
   Engine_EventBegin();
   Engine_ActorSetAnimation(leaderId, 8);
   Engine_EventWait(6);
@@ -718,7 +718,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(63, 25, 1, 3, col, 9);
-  if (Engine_GameFlagIsSet(FLAG_PIPEWORKS_PILLAR_PUSHED)) {
+  if (Engine_GameFlagIsSet(FLAG_PIPEWORKS_PIPE_PUSHED)) {
     Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
     Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
     Map_CopyCells(100, 29, 1, 3, 34, 38);
@@ -1707,7 +1707,7 @@ struct SceneEvent gColosseumAzartMatch_Events[] = {
     { TOUCH_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockOrCheckAhead) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
     { TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PILLAR_PUSHED, EVENT_SCRIPT(Event_PushPipeworksPillar) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT_SCRIPT(Event_PushPipeworksPillar) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },
     { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogEastWest) },

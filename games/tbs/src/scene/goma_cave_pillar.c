@@ -113,8 +113,6 @@ enum GomaCavePillarActor {
   /// The stump's shadow while it teeters at the edge: a crate's outline drawn
   /// solid black (SPRITE_COLOR_BLACK) and translucent, kept in the room's
   /// corner until then and put back there once the stump has fallen.
-  /// ★ Named from what the player sees: SPRITE_CRATE drawn as a
-  /// translucent black shape under the stump, spr_223.png (its render)
   ACTOR_STUMP_SHADOW,
   /// Forge, a Mars Djinni, until it joins the party.
   /// ★ Named from the game: "Forge" (MsgDjinnName)

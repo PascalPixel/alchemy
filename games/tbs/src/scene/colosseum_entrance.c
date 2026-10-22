@@ -245,11 +245,7 @@ enum ColosseumTrialActor {
 
 /// The flag bearers' animations (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, spr_165.tsv).
 enum FlagBearerAnimation {
-  /// ★ Named from what the player sees: a young man raising a red flag (its
-  /// render)
-  FLAG_BEARER_ANIM_RED_FLAG = 5, ///< raises a red flag: the warrior failed
-  /// ★ Named from what the player sees: a young man raising a white flag (its
-  /// render)
+  FLAG_BEARER_ANIM_RED_FLAG = 5,  ///< raises a red flag: the warrior failed
   FLAG_BEARER_ANIM_WHITE_FLAG = 6 ///< raises a white flag: he cleared it
 };
 

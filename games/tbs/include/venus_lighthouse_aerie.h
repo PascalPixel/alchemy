@@ -32,8 +32,8 @@ enum {
   /// ★ Named from what the player sees: the last of the round floating
   /// platforms (its render)
   ACTOR_LAST_PLATFORM = 17,
-  /// ★ Named from what the player sees: the round floating platform that rises
-  /// to the aerie (its render)
+  /// ★ Named from what the player sees: SPRITE_FLOATING_PLATFORM, the round
+  /// floating platform the six beside the aerie are drawn as (its render)
   ACTOR_RISING_PLATFORM = 18,
   /// ★ Named from the game: "Menardi!" (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_MENARDI = 19,
@@ -45,8 +45,6 @@ enum {
   /// A blank actor (SPRITE_BLANK) that runs across the floor under the Venus
   /// Star as Saturos throws it into the beacon, so that only its shadow shows,
   /// the star's shadow (a recording of the throw).
-  /// ★ Named from what the player sees: the Venus Star's shadow crossing the
-  /// floor as Saturos throws it (its render)
   ACTOR_STAR_CARRIER = 22,
   /// The orb the rising particles circle as the party is lifted away:
   /// SPRITE_BLUE_ORB drawn in SPRITE_COLOR_GBR, which turns its blue to green,

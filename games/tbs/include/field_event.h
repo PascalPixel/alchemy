@@ -58,7 +58,14 @@ enum ActorAnimation {
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
   ANIM_PUSH = 8,
-  ANIM_LEADER_LEAN_BACK = 22,  ///< leaning back, his head thrown back
+  /// The first frame of the leader's run, held: one leg forward, braced.
+  ANIM_LEADER_STRIDE = 16,
+  /// Lying collapsed on the ground; every party member's sheet maps this
+  /// number to such a pose (spr_000.png to spr_003.png).
+  ANIM_COLLAPSE = 19,
+  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  /// Spinning round once, then drawn blank (ANIM_CMD_BLANK).
+  ANIM_LEADER_SPIN_AWAY = 27,
   ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
 };
 

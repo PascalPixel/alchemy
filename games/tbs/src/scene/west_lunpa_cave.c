@@ -516,7 +516,8 @@ static void Reunion_Converse(void) {
   Engine_EventWait(20);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_LINKS_COMMOTION);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-  Actor_SetAttachedEffect(ACTOR_BUNZA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_BUNZA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_HAD_TO_KNOW);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   Actor_FaceActor(GARET, ACTOR_BUNZA, 0);

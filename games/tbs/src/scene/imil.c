@@ -358,7 +358,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Engine_EventSetMessage(MSGNO(MsgImilCountingAfterDeparture));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                            EMOTE_IN_FRONT | 2);
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
     Engine_EventWait(20);
@@ -371,7 +371,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Engine_EventSetMessage(MSGNO(MsgImilOneTwoThreeFour));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                            EMOTE_IN_FRONT | 2);
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
     Engine_EventWait(20);
@@ -429,7 +429,8 @@ static void Imil_TalkToOldMan(void) {
       Engine_EventWait(40);
       Engine_ActorJump(ACTOR_OLD_WOMAN, 2, 0);
       Engine_ActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
-      Engine_ActorSetAttachedEffect(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | 2);
+      Engine_ActorSetAttachedEffect(ACTOR_OLD_WOMAN, ATTACHED_EFFECT_IN_FRONT |
+                                                         ATTACHED_EFFECT_ONCE);
       Engine_EventWait(60);
       Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 10);
       Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -933,7 +934,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   table = gImil_BobScript;
   Actor_SetActionScript(ACTOR_OLD_MAN, table);
   Engine_EventWait(40);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   // Mia checks on the old man while the party enters the house.
@@ -1006,7 +1007,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   Actor_FaceDirection(MIA, 0, 10);
   Actor_SetSpeed(MIA, PIXELS(2), PIXELS(1));
@@ -1016,7 +1017,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessage(MIA, 0);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(MIA, 0, 40);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -1346,7 +1347,8 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
-  Actor_SetAttachedEffect(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_SECOND_APPRENTICE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            10);
@@ -1355,7 +1357,8 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_APPRENTICE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -1402,8 +1405,10 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 10);
-  Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_APPRENTICE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_SECOND_APPRENTICE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
   Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);

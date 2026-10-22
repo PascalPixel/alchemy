@@ -769,12 +769,14 @@ static void VenusLighthouse_LandWithRadialDust(void) {
                   velocity[0], velocity[1], velocity[2], 0x1090001, &options);
   }
   Event_PlayCue(SE_188);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   Map_SetShake(0x50000, 0x50000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   FieldFx_PlayQueuedSound();
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -1435,7 +1437,8 @@ static void Event_FallThroughFloor(void) {
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   Engine_EventWait(30);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
   {
@@ -3173,7 +3176,8 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   }
   // A drop uses the fall animation; solid terrain instead constrains each step.
   if (collision < 0) {
-    Engine_ActorSetAttachedEffect(actorId, EMOTE_IN_FRONT | 2);
+    Engine_ActorSetAttachedEffect(actorId, ATTACHED_EFFECT_IN_FRONT |
+                                               ATTACHED_EFFECT_ONCE);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + PIXELS(8));
     Object_SetMode(actor, 7);
@@ -3508,7 +3512,8 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_EventWait(30);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(24);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
   platform->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
@@ -3532,7 +3537,8 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   leader->terrainHeight += PIXELS(1);
   leader->motionFlags = 0;
   platform->motionFlags = 0;
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(40);
 #ifdef UBFIX

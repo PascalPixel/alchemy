@@ -1156,7 +1156,8 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 30);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -1298,7 +1299,8 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Actor_SetAttachedEffect(ACTOR_DORA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_DORA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -1316,7 +1318,8 @@ UNUSED static void Event_UnusedRoofMended(void) {
   actor = Actor_Get(GARET);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(GARET, 403, 827);
-  Actor_SetAttachedEffect(JENNA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(JENNA, FACING_NORTH, 20);
   Event_ShowMessageAndWait(JENNA, 0, 1);
   Engine_ActorWaitForMove(GARET);

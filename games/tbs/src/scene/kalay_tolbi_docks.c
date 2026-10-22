@@ -960,7 +960,8 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_ANGRY_YOUNG_MAN, ANIM_STAND);
   Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetAttachedEffect(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_TOUR_GUIDE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorStartRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
   Event_PlayCue(SE_155);
   Engine_EventWait(10);

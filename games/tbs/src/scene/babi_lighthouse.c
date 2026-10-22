@@ -265,12 +265,14 @@ static void BabiLighthouse_LandWithParticles(void) {
                   &options);
   }
   Engine_AudioPlayCue(SE_188);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   Map_SetShake(0x50000, 0x50000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
   Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   Engine_EventEnd();

@@ -1655,7 +1655,8 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_EventWait(30);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Actor_SetAttachedEffect(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_INVISIBLE_BABI,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);

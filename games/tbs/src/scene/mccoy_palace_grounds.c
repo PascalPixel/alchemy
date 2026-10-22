@@ -409,7 +409,8 @@ static void Event_GuardsArrestParty(void) {
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 314, 280);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 40);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
     Engine_ActorSetSpeed(ACTOR_EAST_GUARD, 0x10000, 0x8000);

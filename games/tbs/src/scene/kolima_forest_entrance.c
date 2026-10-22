@@ -662,7 +662,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceActorAndWait(2, 0xc000, 10);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   KolimaForestEntrance_ShowMessageAndWait(IVAN, 10);
-  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   KolimaForestEntrance_ShowMessageAndWait(GARET, 20);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);

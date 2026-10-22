@@ -811,7 +811,8 @@ static void Event_GuardsThrowLeaderOut(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
   Event_PlayCue(SE_LANDING_THUD);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_SCENE);
   Engine_EventWait(2);
   // A smaller second bounce ends with the guards' final warning.
@@ -820,7 +821,8 @@ static void Event_GuardsThrowLeaderOut(void) {
   while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
     Engine_EventWait(1);
   }
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);

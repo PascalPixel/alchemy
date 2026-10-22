@@ -978,7 +978,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   boulder = Actor_Get(ACTOR_FALLING_BOULDER);
   shadow = Actor_Get(ACTOR_BOULDER_SHADOW);
   rock = Actor_Get(ACTOR_STANDING_LOG);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
@@ -1021,7 +1022,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Map_SetShake(PIXELS(1), PIXELS(3), Q16_ONE);
   Engine_ActorSetSpritePriority(ACTOR_FALLING_BOULDER, 0);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // Send the leader first, then release the rolling object after its delay.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   leader->timer = 0;

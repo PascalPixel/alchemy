@@ -2373,7 +2373,8 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_SET((donpaMessage + 9));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
   WAIT(20);
-  Actor_SetAttachedEffect(TOADONPA_DODONPA, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(TOADONPA_DODONPA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   WAIT(80);
   Actor_SetAttachedEffect(TOADONPA_DODONPA, 0);
   OBJ_WALK(TOADONPA_DONPA, 496, 240);

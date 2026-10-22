@@ -205,7 +205,8 @@ enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_PLACE_TEMP_00 };
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct ScriptInterpreter *interpreter) {
-  Actor_SetAttachedEffect(ACTOR_INN_WORKER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_INN_WORKER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 

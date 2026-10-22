@@ -1125,7 +1125,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Camera_MoveTo(PIXELS(217), -1, PIXELS(176), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
   Engine_EventWait(10);
@@ -1146,7 +1147,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Engine_EventWait(60);
   Engine_ActorStartRepeatedMotion(GARET, 1);
-  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
 
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);

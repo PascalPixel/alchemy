@@ -1,76 +1,86 @@
 /// @file
-/// Lunpa Fortress (SceneId_LunpaFortressGroundFloor to
-/// SceneId_LunpaFortressToadonpa), Dodonpa's fortress above Lunpa. All four
-/// scenes have the game's area name Lunpa Fortress: the first two are the
-/// fortress, the third and fourth the cave below it, where Hammet is held.
+/// Lunpa Fortress, Dodonpa's fortress above Lunpa, where he holds Hammet for
+/// ransom, and the cave below it. Four scenes share this overlay and the area
+/// name Lunpa Fortress:
 ///
-/// Where it falls in the story: Dodonpa holds Master Hammet, the merchant lord
-/// of Kalay whose caravan Ivan traveled with, and keeps taking ransom from
-/// Kalay without freeing him. The party slips in from the Lunpa Fortress Gates
-/// (lunpa.c) under Cloak. Guards who see the uncloaked leader challenge the
-/// party and send them back out (LunpaFortress_GuardThrowsPartyOut,
-/// EXIT_THROWN_OUT to LUNPA_FORTRESS_GATES_AFTER_CAUGHT); each guard's
-/// watcher callback raises a TRIGGER_*_SPOTTED trigger, and the entrance the
-/// party arrives by decides which watchers run. Every return through the gates
-/// resets the fortress's puzzles and beaten guards.
+/// - LunpaFortressGroundFloor (SceneId_LunpaFortressGroundFloor): inside the
+///   door from the Lunpa Fortress Gates. An entrance guard, two sentries, the
+///   upper hall's guard and a patrolling guard keep watch; Dodonpa's men and
+///   the people of the fortress talk, and chests and a barrel hold an Elixir,
+///   a Lucky Medal, a Mythril Circlet, coins and a Vial.
+/// - LunpaFortressUpperFloor (SceneId_LunpaFortressUpperFloor): where Donpa
+///   sleeps. A patrolling pair and a hall patrol keep watch, three guards and
+///   then three more together fight the party as Brigands, the Cell Key hangs
+///   here, and Dodonpa's family and the women he brought here talk. After the
+///   rescue Donpa gives the party Tonic, a Mercury Djinni.
+/// - LunpaFortressCave (SceneId_LunpaFortressCave): the cave whose switches
+///   and passage plants hide, with a stack of crates to push into its hole.
+/// - LunpaFortressToadonpa (SceneId_LunpaFortressToadonpa): Hammet's cell,
+///   where Dodonpa frees Toadonpa on the party (Event_FindHammet) and Donpa
+///   judges him after the battle (Event_DonpaJudgesDodonpa), which sets
+///   FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
 ///
-/// - SceneId_LunpaFortressGroundFloor, inside the fortress door
-///   (LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES leads back out). An
-///   entrance guard, two sentries, a guard to the north-east and a patrolling
-///   guard keep watch. The people inside wonder where Dodonpa has gone, his men
-///   boast of the money Hammet brings, and a startled old man promises to keep
-///   quiet. Chests hold an Elixir, a Lucky Medal, a Mythril Circlet and 100
-///   coins, and a barrel a Vial.
-///   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH and _NORTH
-///   lead to LunpaFortressUpperFloor,
-///   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE down to
-///   LunpaFortressCave.
-/// - SceneId_LunpaFortressUpperFloor, where Donpa sleeps. A patrolling pair and
-///   a patrol to the east keep watch. Walking up to the west, east or hall
-///   guard starts a battle with a Brigand, and walking up to three guards
-///   together a battle with three (FLAG_LUNPA_FORTRESS_*_GUARD_BEATEN); beaten,
-///   two of them send the party down to the cave for Hammet. The Cell Key hangs
-///   here (Catch or talk, FLAG_LUNPA_FORTRESS_CELL_KEY); it opens the cell
-///   doors of all four scenes, each remembered in a place flag from 0x350.
-///   Donpa lies asleep, worn out, beside his attendant, who tells how he
-///   spoiled Dodonpa (place flag FLAG_PLACE_TEMP_13 once told); Dodonpa's
-///   family and the women he brought here talk.
-/// - SceneId_LunpaFortressCave, the cave, whose ways are hidden. Whirlwind
-///   blows away what covers two switches and a passage
-///   (FLAG_LUNPA_FORTRESS_*_PLANT_BLOWN_AWAY; FLAG_SCENE_TEMP_17 and _18 while
-///   the switches are covered), the switches show in the wall only while Reveal
-///   lasts, searching one then opens its passage
-///   (FLAG_LUNPA_FORTRESS_*_SWITCH_FLIPPED), and Move pushes a stack of crates
-///   onto its hole, where it sinks (FLAG_LUNPA_FORTRESS_CRATES_MOVED).
-///   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST, _NORTH and
-///   _NORTHWEST lead to LunpaFortressToadonpa.
-/// - SceneId_LunpaFortressToadonpa, deeper in the cave, where Hammet is held in
-///   a cell. A chest holds Power Bread. Walking into Hammet's cell (trigger 20,
-///   Event_FindHammet, FLAG_SCENE_TEMP_70) is the rescue: Hammet knows Ivan,
-///   Dodonpa arrives, gloats that Hammet is his money tree, pulls a lever and
-///   frees Toadonpa on them (FLAG_LUNPA_FORTRESS_TRAP_SEEN; a retry after a
-///   lost battle skips to the trap). The battle returns to
-///   LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE, where Event_DonpaJudgesDodonpa
-///   follows: Toadonpa has fallen on Dodonpa, the party argues over his
-///   punishment until his father Donpa arrives, has him locked up and asks the
-///   party to leave as they came, since Dodonpa's men would free him; he has
-///   spread a rumor that the intruders failed and fled. It sets
-///   FLAG_DODONPA_LOCKED_UP, which changes all of Lunpa, and place flag
-///   FLAG_PLACE_TEMP_01, and the party slips out with Hammet
-///   (LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES, the gates'
-///   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA). Coming back by
-///   LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST afterwards
-///   finds Dodonpa in his cell, and in LunpaFortressUpperFloor Donpa thanks the
-///   party and has his attendant show them his reward (place flag
-///   FLAG_PLACE_TEMP_14), Tonic, a Mercury Djinni, who joins when spoken to
-///   (FLAG_LUNPA_FORTRESS_REWARD_TAKEN).
+/// The getters choose by gGameState.scene; LunpaFortressCave and
+/// LunpaFortressToadonpa share one exit table. Every return through the Lunpa
+/// Fortress Gates (lunpa.c) clears the fortress's puzzle and beaten-guard
+/// flags, so the fortress starts over.
 ///
-/// Scene flags: FLAG_SCENE_TEMP_14 and _15, a guard has spotted the party;
-/// FLAG_SCENE_TEMP_24 and _25, the entrance guard or the sentries have thrown
-/// it out; FLAG_SCENE_TEMP_26 and _27, the startled old man has promised to
-/// keep quiet and has been startled. The overlay also holds a copy of West
-/// Lunpa Cave's exits and placements, which these scenes never read (XXX:
-/// why they are here is not known).
+/// The guards are the fortress's mechanism. A guard on screen sees the leader
+/// along his row or column, within six cells (LunpaFortress_CanGuardSeeLeader),
+/// unless Cloak is on, and each guard has a watcher, a callback that the
+/// entrance the party arrives by starts (LunpaFortress_InitializeGroundFloor,
+/// LunpaFortress_InitializeUpperFloor). A watcher that sees the leader raises
+/// one of the TRIGGER_*_SPOTTED events, whose script has the guard challenge
+/// the party and throw it out to the gates (LunpaFortress_GuardThrowsPartyOut,
+/// EXIT_THROWN_OUT). A cloaked leader within four cells of a patrolling guard
+/// makes the watcher request CLOAK_NEAR_GUARD. The patrolling guards walk
+/// action scripts (gFirstPatrolRoute and the others), stop while a menu,
+/// Psynergy or an item is in use, and drag MAP_LAYER_OVERHEAD along with them,
+/// shaking it by a pixel every frame; each has stretches of its rounds where
+/// it cannot see the leader. The guards who fight instead pick one of four
+/// challenges, by gLunpaFortressRandomPick, drawn on every entrance.
+///
+/// The Cell Key opens the cell doors of all four scenes, facing each door
+/// with it in the party, and each opened door is remembered in a place flag
+/// from FLAG_PLACE_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
+/// LunpaFortressCave, Whirlwind blows away the plants that hide two switches
+/// and a passage; the switches show in the wall only while Reveal lasts, and
+/// searching one opens its passage.
+///
+/// Scene flags:
+/// - FLAG_SCENE_TEMP_14: a guard has spotted the party; FLAG_SCENE_TEMP_15 is
+///   set beside it and never read.
+/// - FLAG_SCENE_TEMP_17 and FLAG_SCENE_TEMP_18: LunpaFortressCave's first and
+///   second switches are still hidden by their plants.
+/// - FLAG_SCENE_TEMP_24 and FLAG_SCENE_TEMP_25: the entrance guard or the
+///   sentries have thrown the party out.
+/// - FLAG_SCENE_TEMP_26 and FLAG_SCENE_TEMP_27: the startled old man has
+///   promised to keep quiet, and has been startled.
+/// - FLAG_SCENE_TEMP_70: Event_FindHammet is under way.
+///
+/// Place flags: FLAG_PLACE_TEMP_01 once Donpa has judged Dodonpa,
+/// FLAG_PLACE_TEMP_13 once his attendant has told of him, FLAG_PLACE_TEMP_14
+/// once she has shown his reward, and FLAG_PLACE_TEMP_50 to
+/// FLAG_PLACE_TEMP_5C for the opened cell doors.
+///
+/// Unused: four item pickups that set out an Arctic Blade, a Masamune, a
+/// Silver Blade and a Shamshir on LunpaFortressGroundFloor's first four rows,
+/// and copies of West Lunpa Cave's exits and placements, which these scenes
+/// never read.
+///
+/// Open questions:
+/// - XXX: what MAP_LAYER_OVERHEAD shows where the patrols drag it; likely the
+///   light each patrol carries, because its origin follows the guard. A render
+///   of LunpaFortressUpperFloor's west corridor would settle it.
+/// - XXX: what CAVE_INVISIBLE_ACTOR and the three invisible actors of
+///   LunpaFortressToadonpa stand in for; a render with their collision drawn
+///   would settle it.
+/// - XXX: what Engine_MapSetWorkFlagBits9To11's 0xe00 and 0xc00 choose for the
+///   passages and the rooms; reading the map work's bits 9 to 11 would settle
+///   it.
+/// - XXX (picture): LunpaFortressUpperFloor's west corridor taken apart, the
+///   patrolling pair with the overhead layer that follows them and the cells
+///   where they cannot see the leader.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -104,6 +114,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "songs.h"
+#include "fixed_math.h"
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorPlacements from ACTOR_FIRST_PLACED, past its first
@@ -247,10 +258,10 @@ enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 /// The first of the flags that remember which cell doors the Cell Key opened,
 /// per map: one for each door trigger from DOOR_TRIGGER_FIRST.
 enum {
-  TOADONPA_DOOR_FLAG = 0x350,
-  CAVE_DOOR_FLAG = 0x355,
-  UPPER_FLOOR_DOOR_FLAG = 0x358,
-  GROUND_FLOOR_DOOR_FLAG = 0x35a
+  TOADONPA_DOOR_FLAG = FLAG_PLACE_TEMP_50,
+  CAVE_DOOR_FLAG = FLAG_PLACE_TEMP_55,
+  UPPER_FLOOR_DOOR_FLAG = FLAG_PLACE_TEMP_58,
+  GROUND_FLOOR_DOOR_FLAG = FLAG_PLACE_TEMP_5A
 };
 
 /// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
@@ -311,8 +322,9 @@ const u32 *Scene_GetExits(void) {
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 sceneId = gGameState.scene;
 
+  // Unused: this overlay never runs for West Lunpa Cave, which has its own.
   if (sceneId == (s32)&SceneId_WestLunpaCave) {
-    return gLunpaFortressPlacementsWestLunpaCave;
+    return gLunpaFortressUnusedWestLunpaCavePlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressCave) {
     return gLunpaFortressCavePlacements;
@@ -367,7 +379,7 @@ static void Event_PushCrates(void) { StagedActor_AdvancePair(); }
 /// LunpaFortressCave, trigger 50: the crates, pushed onto their hole, slide in
 /// and sink.
 static void Event_CratesSink(void) {
-  OBJ_SPEED(CAVE_CRATES, 0x10000, 0x8000);
+  OBJ_SPEED(CAVE_CRATES, PIXELS(1), PIXELS(1) / 2);
   Actor_SetDestination(CAVE_CRATES, 248, 376);
   Engine_ActorWaitForMove(CAVE_CRATES);
   SE(SE_215);
@@ -383,8 +395,8 @@ static void Event_MoveCrates(void) {
 
   cratesActor = Actor_Get(CAVE_CRATES);
   if ((cratesActor->z.fixed >> 20) > 22) {
-    Map_SetShake(0x40000, 0x40000, 0x10000);
-    Map_SetShake(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     SE(SE_144);
     Map_CopyCellAttributes(15, 20, 1, 1, 15, 22);
     Map_CopyCellAttributes(17, 23, 1, 3, 15, 23);
@@ -427,8 +439,8 @@ static void Event_UnlockToadonpaDoor(void) {
     if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
       SE(SE_GATE_MOVE);
-      Map_SetShake(0x30000, 0x30000, 0x10000);
-      Map_SetShake(-1, -1, 0xe666);
+      Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       FLAG_SET(doorTrigger + (TOADONPA_DOOR_FLAG - DOOR_TRIGGER_FIRST));
     }
   }
@@ -464,8 +476,8 @@ static void Event_UnlockCaveDoor(void) {
     doorTrigger = fieldWork->touchedTrigger;
     LunpaFortress_OpenCaveDoor(doorTrigger - DOOR_TRIGGER_FIRST);
     SE(SE_GATE_MOVE);
-    Map_SetShake(0x30000, 0x30000, 0x10000);
-    Map_SetShake(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     FLAG_SET(doorTrigger + (CAVE_DOOR_FLAG - DOOR_TRIGGER_FIRST));
   }
 }
@@ -491,8 +503,8 @@ static void Event_UnlockUpperFloorDoor(void) {
     doorTrigger = fieldWork->touchedTrigger;
     LunpaFortress_OpenUpperFloorDoor(doorTrigger - DOOR_TRIGGER_FIRST);
     SE(SE_GATE_MOVE);
-    Map_SetShake(0x30000, 0x30000, 0x10000);
-    Map_SetShake(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     FLAG_SET(doorTrigger + (UPPER_FLOOR_DOOR_FLAG - DOOR_TRIGGER_FIRST));
   }
 }
@@ -522,8 +534,8 @@ static void Event_UnlockGroundFloorDoor(void) {
     doorTrigger = fieldWork->touchedTrigger;
     LunpaFortress_OpenGroundFloorDoor(doorTrigger - DOOR_TRIGGER_FIRST);
     SE(SE_GATE_MOVE);
-    Map_SetShake(0x30000, 0x30000, 0x10000);
-    Map_SetShake(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     FLAG_SET(doorTrigger + (GROUND_FLOOR_DOOR_FLAG - DOOR_TRIGGER_FIRST));
   }
 }
@@ -548,39 +560,44 @@ static void Event_SearchSealedDoor(void) {
 /// map's origin), because nothing else uses them.
 enum { FIRST_ITEM_DISPLAY_ACTOR = ACTOR_FIRST_PLACED };
 
-/// Unused: an Arctic Blade, a Masamune, a Silver Blade and a Shamshir set out
-/// on the four item display actors, each taken once, with
-/// FLAG_LUNPA_FORTRESS_ARCTIC_BLADE to FLAG_LUNPA_FORTRESS_SHAMSHIR.
-static void UNUSED LunpaFortress_TryCollectArcticBlade(void) {
+/// Unused: nothing calls this pickup or the three after it. Together they
+/// would set out an Arctic Blade, a Masamune, a Silver Blade and a Shamshir on
+/// the four display actors, each taken once (FLAG_LUNPA_FORTRESS_ARCTIC_BLADE
+/// to FLAG_LUNPA_FORTRESS_SHAMSHIR); this one takes the Arctic Blade.
+static void UNUSED LunpaFortress_UnusedTakeArcticBlade(void) {
   if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR,
                                             ITEM_ARCTIC_BLADE) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_ARCTIC_BLADE);
   }
 }
 
-static void UNUSED LunpaFortress_TryCollectMasamune(void) {
+/// Unused: the Masamune, on the second display actor.
+static void UNUSED LunpaFortress_UnusedTakeMasamune(void) {
   if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 1,
                                             ITEM_MASAMUNE) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MASAMUNE);
   }
 }
 
-static void UNUSED LunpaFortress_TryCollectSilverBlade(void) {
+/// Unused: the Silver Blade, on the third display actor.
+static void UNUSED LunpaFortress_UnusedTakeSilverBlade(void) {
   if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 2,
                                             ITEM_SILVER_BLADE) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SILVER_BLADE);
   }
 }
 
-static void UNUSED LunpaFortress_TryCollectShamshir(void) {
+/// Unused: the Shamshir, on the fourth display actor.
+static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
   if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 3,
                                             ITEM_SHAMSHIR) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SHAMSHIR);
   }
 }
 
-/// Gives the item an actor shows, with its effect; with no room for it, the
-/// actor shows the item is left behind. Returns whether it was given.
+/// Unused: called only by the four pickups above. Gives the item an actor
+/// shows, with its effect; with no room for it, the actor shows the item is
+/// left behind. Returns whether it was given.
 static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
@@ -809,7 +826,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       LunpaFortress_IsGuardNearViewCenter(UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(UPPER_FLOOR_HALL_PATROL) &&
           gGameState.cloaked != 0) {
-        SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), 0x2092);
+        SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), CLOAK_NEAR_GUARD);
         return;
       }
       if (gGameState.cloaked == 0) {
@@ -837,8 +854,8 @@ static void Event_HallPatrolThrowsPartyOut(void) {
 /// stretches of its rounds.
 static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / 0x100000;
-  s32 leaderTileX = leader->x.fixed / 0x100000;
+  s32 leaderTileZ = leader->z.fixed / PIXELS(16);
+  s32 leaderTileX = leader->x.fixed / PIXELS(16);
 
   if ((u32)(leaderTileX - 41) <= 3 && leaderTileZ > 25 && leaderTileZ <= 28) {
     return 1;
@@ -885,7 +902,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
       if (LunpaFortress_IsLeaderNearGuard(GROUND_FLOOR_PATROL_GUARD) &&
           gGameState.cloaked != 0) {
-        SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), 0x2092);
+        SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), CLOAK_NEAR_GUARD);
         return;
       }
       if (gGameState.cloaked == 0) {
@@ -912,8 +929,8 @@ static void Event_GroundFloorPatrolThrowsPartyOut(void) {
 /// Whether the leader is outside the upper hall the guard there watches.
 static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / 0x100000;
-  s32 leaderTileX = leader->x.fixed / 0x100000;
+  s32 leaderTileZ = leader->z.fixed / PIXELS(16);
+  s32 leaderTileX = leader->x.fixed / PIXELS(16);
 
   if (leaderTileX > 45 && leaderTileZ > 14 && leaderTileX <= 64 &&
       leaderTileZ <= 16) {
@@ -1011,10 +1028,10 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
 static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / 0x100000;
-  s32 guardTileX = guard->x.fixed / 0x100000;
-  s32 leaderTileZ = leader->z.fixed / 0x100000;
-  s32 leaderTileX = leader->x.fixed / 0x100000;
+  s32 guardTileZ = guard->z.fixed / PIXELS(16);
+  s32 guardTileX = guard->x.fixed / PIXELS(16);
+  s32 leaderTileZ = leader->z.fixed / PIXELS(16);
+  s32 leaderTileX = leader->x.fixed / PIXELS(16);
   s32 zDistance = guardTileZ - leaderTileZ;
 
   if (zDistance >= -6 && zDistance <= 6 && guardTileX - 1 < leaderTileX &&
@@ -1028,10 +1045,10 @@ static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
 static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / 0x100000;
-  s32 guardTileX = guard->x.fixed / 0x100000;
-  s32 leaderTileZ = leader->z.fixed / 0x100000;
-  s32 leaderTileX = leader->x.fixed / 0x100000;
+  s32 guardTileZ = guard->z.fixed / PIXELS(16);
+  s32 guardTileX = guard->x.fixed / PIXELS(16);
+  s32 leaderTileZ = leader->z.fixed / PIXELS(16);
+  s32 leaderTileX = leader->x.fixed / PIXELS(16);
   s32 xDistance = guardTileX - leaderTileX;
 
   if (xDistance < -6 || xDistance > 6) {
@@ -1064,10 +1081,10 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId) {
 static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / 0x100000;
-  s32 guardTileX = guard->x.fixed / 0x100000;
-  s32 leaderTileZ = leader->z.fixed / 0x100000;
-  s32 leaderTileX = leader->x.fixed / 0x100000;
+  s32 guardTileZ = guard->z.fixed / PIXELS(16);
+  s32 guardTileX = guard->x.fixed / PIXELS(16);
+  s32 leaderTileZ = leader->z.fixed / PIXELS(16);
+  s32 leaderTileX = leader->x.fixed / PIXELS(16);
   s32 xDistance = guardTileX - leaderTileX;
   s32 zDistance;
 
@@ -1090,10 +1107,10 @@ static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
 static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *viewCenter = Engine_EventGetViewCenter();
-  s32 guardTileX = guard->x.fixed / 0x100000;
-  s32 guardTileZ = guard->z.fixed / 0x100000;
-  s32 viewTileX = viewCenter->x.fixed / 0x100000;
-  s32 viewTileZ = viewCenter->z.fixed / 0x100000;
+  s32 guardTileX = guard->x.fixed / PIXELS(16);
+  s32 guardTileZ = guard->z.fixed / PIXELS(16);
+  s32 viewTileX = viewCenter->x.fixed / PIXELS(16);
+  s32 viewTileZ = viewCenter->z.fixed / PIXELS(16);
   s32 xDistance = guardTileX - viewTileX;
   s32 zDistance;
 
@@ -1117,8 +1134,8 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (Engine_GameFlagIsSet(GROUND_FLOOR_DOOR_FLAG + 1) == 0) {
-    s32 playerX = leader->x.fixed / 0x100000;
-    s32 playerZ = leader->z.fixed / 0x100000;
+    s32 playerX = leader->x.fixed / PIXELS(16);
+    s32 playerZ = leader->z.fixed / PIXELS(16);
 
     if (playerX == 43 && playerZ > 28 && playerZ <= 31) {
       s16 *touchedTrigger = &gEventWork->touchedTrigger;
@@ -1137,8 +1154,8 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (Engine_GameFlagIsSet(UPPER_FLOOR_DOOR_FLAG) == 0) {
-    s32 playerX = leader->x.fixed / 0x100000;
-    s32 playerZ = leader->z.fixed / 0x100000;
+    s32 playerX = leader->x.fixed / PIXELS(16);
+    s32 playerZ = leader->z.fixed / PIXELS(16);
 
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
         (leader->facing == 0xc000 || leader->facing == 0x4000)) {
@@ -1151,8 +1168,10 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
   }
 }
 
-/// Unused: the first patrol asks who the party is and sends them out.
-static void UNUSED LunpaFortress_FirstPatrolThrowsPartyOut(void) {
+/// Unused: nothing calls it; LunpaFortressUpperFloor's patrolling pair throws
+/// the party out through Event_PatrolPairThrowsPartyOut instead. The first
+/// patrol would stop, ask who the party is and send it out.
+static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   Actor_SetBuiltinAction(UPPER_FLOOR_FIRST_PATROL, ACTOR_ACTION_IDLE);
@@ -1605,11 +1624,11 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
     Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  OBJ_SPEED(IVAN, 0xb333, 0x5999);
+  OBJ_SPEED(IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJ_WALK(IVAN, 456, 192);
-  OBJ_SPEED(MIA, 0xb333, 0x5999);
+  OBJ_SPEED(MIA, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJ_WALK(MIA, 440, 184);
-  OBJ_SPEED(GARET, 0xb333, 0x5999);
+  OBJ_SPEED(GARET, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJ_WALK(GARET, 448, 240);
   Engine_ActorWaitForMove(IVAN);
   OBJ_FACE(IVAN, TOADONPA_HAMMET, 0);
@@ -1622,14 +1641,14 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
 
 /// Dodonpa's lever: the room shakes, the floor opens and everyone startles.
 static void LunpaFortress_ActivateLeverTrap(void) {
-  Map_SetShake(0x40000, 0x40000, 0x10000);
+  Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   SE(SE_141);
   WAIT(80);
   SE(SE_STOP_SLOT3);
   WAIT(5);
   SE(SE_145);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1646,8 +1665,8 @@ static void LunpaFortress_RevealMonster(void) {
   WAIT(60);
   MESSAGE_SET(MsgLunpaPrepareBecomeMonster);
   MESSAGE_PUT(TOADONPA_DODONPA, 0);
-  OBJ_SPEED(TOADONPA_BOSS, 0x10000, 0x8000);
-  OBJ_SPEED(TOADONPA_BOSS_PART, 0x10000, 0x8000);
+  OBJ_SPEED(TOADONPA_BOSS, PIXELS(1), PIXELS(1) / 2);
+  OBJ_SPEED(TOADONPA_BOSS_PART, PIXELS(1), PIXELS(1) / 2);
   OBJ_WALK(TOADONPA_BOSS, 472, 180);
   OBJ_WALK(TOADONPA_BOSS_PART, 472, 180);
   Engine_CameraFollowActor(TOADONPA_BOSS, 1);
@@ -1658,11 +1677,11 @@ static void LunpaFortress_RevealMonster(void) {
 
 /// The party spreads out and faces Toadonpa.
 static void LunpaFortress_PositionPartyForMonster(void) {
-  OBJ_SPEED(IVAN, 0x10000, 0x8000);
+  OBJ_SPEED(IVAN, PIXELS(1), PIXELS(1) / 2);
   OBJ_WALK(IVAN, 504, 216);
-  OBJ_SPEED(MIA, 0x10000, 0x8000);
+  OBJ_SPEED(MIA, PIXELS(1), PIXELS(1) / 2);
   OBJ_WALK(MIA, 440, 232);
-  OBJ_SPEED(GARET, 0x10000, 0x8000);
+  OBJ_SPEED(GARET, PIXELS(1), PIXELS(1) / 2);
   OBJ_WALK(GARET, 480, 224);
   Engine_ActorWaitForMove(GARET);
   OBJ_DIR(GARET, FACING_NORTH, 0);
@@ -1686,7 +1705,7 @@ static void Event_FindHammet(void) {
   EV_BEGIN();
   // A retry skips the introduction but repeats Dodonpa's trap and battle.
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_TRAP_SEEN) != 0) {
-    OBJ_SPEED(ACTOR_PARTY_LEADER, 32768, 16384);
+    OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
     OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
     LunpaFortress_GatherPartyAroundHammet();
@@ -1695,7 +1714,7 @@ static void Event_FindHammet(void) {
     Engine_ActorJump(TOADONPA_HAMMET, 4, 0);
     Engine_ActorSetSpriteFlags(Actor_Get(TOADONPA_HAMMET), 1);
     WAIT(30);
-    OBJ_SPEED(IVAN, 45875, 22937);
+    OBJ_SPEED(IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
     OBJ_WALK(IVAN, 464, 192);
     Engine_ActorWaitForMove(IVAN);
     WAIT(30);
@@ -1705,7 +1724,7 @@ static void Event_FindHammet(void) {
     OBJ_DIR(MIA, FACING_SOUTH, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
     OBJ_POS_SET(TOADONPA_DODONPA, 456, 320);
-    Camera_SetSpeed(131072, 16384);
+    Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     messageBase = MsgLunpaBackMoreGuess;
     MESSAGE_SET(messageBase);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
@@ -1754,11 +1773,11 @@ static void Event_FindHammet(void) {
     Engine_ActorSetSpriteFlags(Actor_Get(TOADONPA_HAMMET), 1);
     MESSAGE_SET(messageBase + 1);
     MESSAGE_PUT(TOADONPA_HAMMET, 0);
-    OBJ_SPEED(ACTOR_PARTY_LEADER, 32768, 16384);
+    OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
     OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
     LunpaFortress_GatherPartyAroundHammet();
-    OBJ_SPEED(IVAN, 45875, 22937);
+    OBJ_SPEED(IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
     OBJ_WALK(IVAN, 464, 192);
     Engine_ActorWaitForMove(IVAN);
     WAIT(30);
@@ -1775,7 +1794,7 @@ static void Event_FindHammet(void) {
     OBJ_MODE(IVAN, ANIM_STAND);
     Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 1);
     WAIT(20);
-    OBJ_SPEED(TOADONPA_HAMMET, 26214, 13107);
+    OBJ_SPEED(TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
     OBJ_WALK(TOADONPA_HAMMET, 520, 208);
     Engine_ActorWaitForMove(TOADONPA_HAMMET);
     OBJ_MODE(TOADONPA_HAMMET, 1);
@@ -1824,10 +1843,10 @@ static void Event_FindHammet(void) {
     OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     WAIT(30);
     SE(MUS_061);
-    Camera_SetSpeed(131072, 16384);
+    Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveToActor(TOADONPA_DODONPA, 1);
     Engine_CameraWaitForMove();
-    OBJ_SPEED(TOADONPA_DODONPA, 52428, 26214);
+    OBJ_SPEED(TOADONPA_DODONPA, PIXELS(4) / 5, PIXELS(2) / 5);
     OBJ_WALK(TOADONPA_DODONPA, 456, 304);
     Engine_CameraFollowActor(TOADONPA_DODONPA, 1);
     Engine_ActorWaitForMove(TOADONPA_DODONPA);
@@ -2080,10 +2099,10 @@ static void Event_DonpaJudgesDodonpa(void) {
     OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
     OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
   }
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  OBJ_SPEED(GARET, 0x8000, 0x4000);
-  OBJ_SPEED(MIA, 0x8000, 0x4000);
-  OBJ_SPEED(IVAN, 0x8000, 0x4000);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJ_SPEED(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJ_SPEED(MIA, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJ_SPEED(IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
   OBJ_WALK(GARET, 416, 216);
   Engine_ActorWaitForMove(GARET);
   OBJ_WALK(GARET, 416, 248);
@@ -2113,16 +2132,16 @@ static void Event_DonpaJudgesDodonpa(void) {
   SE(SE_226);
   OBJ_MODE(TOADONPA_DODONPA, 7);
   // Move the party and both monster parts together to free Dodonpa.
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 10, PIXELS(1) / 20);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -24, 0);
-  OBJ_SPEED(GARET, 0x1999, 0xccc);
+  OBJ_SPEED(GARET, PIXELS(1) / 10, PIXELS(1) / 20);
   Actor_SetDestinationOffset(GARET, -24, 0);
-  OBJ_SPEED(MIA, 0x1999, 0xccc);
+  OBJ_SPEED(MIA, PIXELS(1) / 10, PIXELS(1) / 20);
   Actor_SetDestinationOffset(MIA, -24, 0);
-  OBJ_SPEED(IVAN, 0x1999, 0xccc);
+  OBJ_SPEED(IVAN, PIXELS(1) / 10, PIXELS(1) / 20);
   Actor_SetDestinationOffset(IVAN, -24, 0);
-  OBJ_SPEED(TOADONPA_BOSS, 0x1999, 0xccc);
-  OBJ_SPEED(TOADONPA_BOSS_PART, 0x1999, 0xccc);
+  OBJ_SPEED(TOADONPA_BOSS, PIXELS(1) / 10, PIXELS(1) / 20);
+  OBJ_SPEED(TOADONPA_BOSS_PART, PIXELS(1) / 10, PIXELS(1) / 20);
   Actor_SetDestinationOffset(TOADONPA_BOSS, -24, 0);
   Actor_SetDestinationOffset(TOADONPA_BOSS_PART, -24, 0);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -2138,10 +2157,10 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_MODE(IVAN, ANIM_NOD);
   OBJ_MODE(MIA, ANIM_NOD);
   WAIT(100);
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 0xb333, 0x5999);
-  OBJ_SPEED(GARET, 0xb333, 0x5999);
-  OBJ_SPEED(IVAN, 0xb333, 0x5999);
-  OBJ_SPEED(MIA, 0xb333, 0x5999);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(7) / 10, PIXELS(7) / 20);
+  OBJ_SPEED(GARET, PIXELS(7) / 10, PIXELS(7) / 20);
+  OBJ_SPEED(IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
+  OBJ_SPEED(MIA, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJ_WALK(ACTOR_PARTY_LEADER, 456, 184);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -2305,7 +2324,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
   OBJ_FACE(TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
   OBJ_POS_SET(TOADONPA_DONPA, 456, 304);
-  OBJ_SPEED(TOADONPA_DONPA, 0x8000, 0x4000);
+  OBJ_SPEED(TOADONPA_DONPA, PIXELS(1) / 2, PIXELS(1) / 4);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     SE(MUS_SILENCE);
     MESSAGE_SET((punishmentMessage + 22));
@@ -2557,7 +2576,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorWaitForMove(MIA);
   OBJ_POS_SET(MIA, 0, 0);
   WAIT(30);
-  OBJ_SPEED(TOADONPA_HAMMET, 0x6666, 0x3333);
+  OBJ_SPEED(TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
   OBJ_WALK(TOADONPA_HAMMET, 472, 184);
   Engine_ActorWaitForMove(TOADONPA_HAMMET);
   OBJ_MODE(TOADONPA_HAMMET, 1);
@@ -2574,8 +2593,8 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_PUT(TOADONPA_DODONPA, 0);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   WAIT(30);
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  OBJ_SPEED(TOADONPA_HAMMET, 0x10000, 0x8000);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  OBJ_SPEED(TOADONPA_HAMMET, PIXELS(1), PIXELS(1) / 2);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   OBJ_WALK(ACTOR_PARTY_LEADER, 480, 248);
   WAIT(40);
@@ -2793,12 +2812,12 @@ static void Event_TalkToDonpa(void) {
       MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
       Engine_ActorRunRepeatedMotion(UPPER_FLOOR_DONPA, 1);
       WAIT(30);
-      OBJ_SPEED(UPPER_FLOOR_DONPA, 6553, 3276);
+      OBJ_SPEED(UPPER_FLOOR_DONPA, PIXELS(1) / 10, PIXELS(1) / 20);
       Actor_SetDestinationOffset(UPPER_FLOOR_DONPA, -4, 0);
       Engine_ActorWaitForMove(UPPER_FLOOR_DONPA);
       OBJ_MODE(UPPER_FLOOR_DONPA, 3);
       WAIT(60);
-      OBJ_SPEED(UPPER_FLOOR_DONPA, 13107, 6553);
+      OBJ_SPEED(UPPER_FLOOR_DONPA, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetDestinationOffset(UPPER_FLOOR_DONPA, -6, 0);
       OBJ_FACE(UPPER_FLOOR_DONPA, ACTOR_PARTY_LEADER, 0);
       Engine_ActorWaitForMove(UPPER_FLOOR_DONPA);
@@ -2811,7 +2830,7 @@ static void Event_TalkToDonpa(void) {
       WAIT(70);
       OBJ_MODE(UPPER_FLOOR_ATTENDANT, 3);
       WAIT(60);
-      OBJ_SPEED(UPPER_FLOOR_ATTENDANT, 26214, 13107);
+      OBJ_SPEED(UPPER_FLOOR_ATTENDANT, PIXELS(2) / 5, PIXELS(1) / 5);
       OBJ_WALK(UPPER_FLOOR_ATTENDANT, 880, 112);
       Engine_ActorWaitForMove(UPPER_FLOOR_ATTENDANT);
       OBJ_DIR(UPPER_FLOOR_ATTENDANT, FACING_NORTH + FACING_STEP, 0);
@@ -3021,7 +3040,7 @@ s32 Scene_Initialize(void) {
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    sceneActor->scaleX = 0xcccc;
+    sceneActor->scaleX = 4 * Q16_ONE / 5;
   }
   return 0;
 }
@@ -3175,8 +3194,8 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   keyActor = Actor_Get(UPPER_FLOOR_CELL_KEY);
   Engine_ActorSetSpriteFlags(Actor_Get(UPPER_FLOOR_CELL_KEY), 0);
   Engine_ActorSetSpritePriority(UPPER_FLOOR_CELL_KEY, 1);
-  keyActor->scaleX = 0xc000;
-  keyActor->scaleY = 0xc000;
+  keyActor->scaleX = 3 * Q16_ONE / 4;
+  keyActor->scaleY = 3 * Q16_ONE / 4;
 }
 
 /// Sets LunpaFortressCave up: the doors, the crates, the Whirlwind covers and
@@ -3230,7 +3249,7 @@ static void LunpaFortress_InitializeCave(void) {
   sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   sceneActor = Actor_Get(CAVE_CRATES);
   if (sceneActor != 0) {
-    sceneActor->collisionFlags |= 0x10;
+    sceneActor->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   }
   Engine_ActorSetSpriteFlags(Actor_Get(CAVE_INVISIBLE_ACTOR), 0);
   EV_END();
@@ -3325,8 +3344,8 @@ s32 gStagedActor_FootprintBounds[] __attribute__((section(".rodata"))) = {
 s32 gLunpaFortressRandomPick = 0;
 
 s32 gSecondPatrolRoute[] = {
-    SC_SET(SW_ACCEL, 0x11999),
-    SC_SET(SW_SPEED, 0x11999),
+    SC_SET(SW_ACCEL, PIXELS(11) / 10),
+    SC_SET(SW_SPEED, PIXELS(11) / 10),
     SC_ARG(2),
     SC_MOVE(PIXELS(192), 0, PIXELS(288)),
     SC_SYNC,
@@ -3338,8 +3357,8 @@ s32 gSecondPatrolRoute[] = {
 };
 
 s32 gFirstPatrolRoute[] = {
-    SC_SET(SW_ACCEL, 0x11999),
-    SC_SET(SW_SPEED, 0x11999),
+    SC_SET(SW_ACCEL, PIXELS(11) / 10),
+    SC_SET(SW_SPEED, PIXELS(11) / 10),
     SC_ARG(2),
     SC_MOVE(PIXELS(192), 0, PIXELS(192)),
     SC_SYNC,
@@ -3356,8 +3375,8 @@ s32 gDonpaSleeps[] = {
 };
 
 s32 gGroundFloorPatrolRoute[] = {
-    SC_SET(SW_ACCEL, 0x3333),
-    SC_SET(SW_SPEED, 0x9999),
+    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_SPEED, PIXELS(3) / 5),
     SC_ARG(2),
     SC_MOVE(PIXELS(808), 0, PIXELS(648)),
     SC_SYNC,
@@ -3392,8 +3411,8 @@ s32 gGroundFloorPatrolRoute[] = {
 };
 
 s32 gHallPatrolRoute[] = {
-    SC_SET(SW_ACCEL, 0x3333),
-    SC_SET(SW_SPEED, 0x9999),
+    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_SPEED, PIXELS(3) / 5),
     SC_ARG(2),
     SC_MOVE(PIXELS(920), 0, PIXELS(648)),
     SC_SYNC,
@@ -3497,8 +3516,8 @@ struct SceneEntrance gLunpaFortressEntrancesOther[] = {
     { SCENE_TABLE_END },
 };
 
-/// LunpaFortressGroundFloor's exits, after a copy of West Lunpa Cave's that these scenes
-/// never read.
+/// LunpaFortressGroundFloor's exits. Unused: its rows first copy West Lunpa
+/// Cave's, which no scene of this overlay reads.
 u32 gLunpaFortressExitsOther[] = {
     SCENE_EXITS(WestLunpaCave),
     SCENE_EXIT(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
@@ -3581,7 +3600,9 @@ struct ScenePlacement gLunpaFortressPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[] = {
+/// Unused: a copy of West Lunpa Cave's placements, taken only by a scene this
+/// overlay never runs for.
+struct ScenePlacement gLunpaFortressUnusedWestLunpaCavePlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3604,6 +3625,8 @@ struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[] = {
 };
 
 struct ScenePlacement gLunpaFortressGroundFloorPlacements[] = {
+    // Unused: four chests at the map's origin, the display actors of the
+    // unused sword pickups (FIRST_ITEM_DISPLAY_ACTOR).
     { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3698,7 +3721,7 @@ struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
         PIXELS(136), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0xbb, CONDITION_ALWAYS, 7,
+    { 0xbb, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(472), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(528), 0, PIXELS(216), FACING_WEST, TALK_KEEP_FACING, 0 },
@@ -3712,7 +3735,7 @@ struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_DONPA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x120, CONDITION_ALWAYS, 7,
+    { 0x120, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(464), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },

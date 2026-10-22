@@ -168,12 +168,12 @@ so its name carries `Unused`. In story order:
   the stage announcements.
 
 Most other `UNUSED` functions, in the overlays and in the main image, are
-helpers and empty functions, and they keep their names. A few more hold
-something the player would see but don't carry `Unused` in their names yet,
-among them `LunpaFortress_FirstPatrolThrowsPartyOut` (the first patrol asking
-who the party is and sending them out) and `LunpaFortress_TryCollectArcticBlade`
-and its three neighbours (four swords set out on display actors); each has its
-`Unused:` comment. Two copied cell animations in the overlays are unused
+helpers and empty functions, and they keep their names. Lunpa Fortress
+holds two that the player would see:
+`LunpaFortress_UnusedFirstPatrolThrowsPartyOut` (the first patrol asking who
+the party is and sending them out) and `LunpaFortress_UnusedTakeArcticBlade`
+and its three neighbours (four swords set out on chests at the map's
+origin). Two copied cell animations in the overlays are unused
 tables: `gSolSanctumEruption_UnusedStarCells` and
 `gTretTreeBranch_UnusedCellSteps`.
 

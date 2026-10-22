@@ -36,9 +36,9 @@
 ///   stayed in Vault to look for Hammet's stolen rod, the Shaman's Rod, and
 ///   recovered it. Ivan learns that Hammet is still a prisoner in Lunpa,
 ///   insists that his friends hear everything, and the guards take everyone in
-///   to Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM, to
-///   HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS). Afterwards they say
-///   the soldiers of Kalay will rescue Hammet themselves, as Layana asked.
+///   to Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
+///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS). Afterwards they
+///   say the soldiers of Kalay will rescue Hammet themselves, as Layana asked.
 ///   Walking into the door (trigger 2) opens it into the palace
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE); HAMMET_PALACE_GROUNDS_TO_KALAY
 ///   leads back to town.
@@ -1276,8 +1276,8 @@ static void Kalay_PrepareTunnelEntrance(void) {
 /// is set, and arriving from the treasure room
 /// (KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST and
 /// KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST) or by the stairs
-/// from the north-east room (KALAY_TUNNEL_PASSAGE_CORRIDOR_FROM_NORTHEAST_ROOM)
-/// starts SE_170.
+/// from the north-east room
+/// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts SE_170.
 static void Kalay_StartWindowTransition(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1291,7 +1291,7 @@ static void Kalay_StartWindowTransition(void) {
     Engine_TaskWait(1);
   }
   if (gGameState.entrance <=
-      KALAY_TUNNEL_PASSAGE_CORRIDOR_FROM_NORTHEAST_ROOM) {
+      KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
     FieldFx_SetQueuedSoundAndPlay(SE_170);
   }
 }
@@ -1553,7 +1553,7 @@ static void Kalay_AlternateGuidesPacing(void) {
 /// tanned and grown, and learn that he does not know Hammet is a prisoner in
 /// Lunpa. Ivan insists his friends hear everything, and the guards open the
 /// door and take the party in to Lady Layana
-/// (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM).
+/// (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM).
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct FieldActor *actor;
 
@@ -1730,7 +1730,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM);
+  Engine_EventRequestExit(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
   Engine_EventEnd();
 }
 
@@ -2607,9 +2607,9 @@ struct SceneEntrance gKalay_TunnelPassageEntrances[] = {
      CONDITION_ALWAYS, 296, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST,
      CONDITION_ALWAYS, 632, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {KALAY_TUNNEL_PASSAGE_CORRIDOR_FROM_NORTHEAST_ROOM, CONDITION_ALWAYS, 152,
+    {KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM, CONDITION_ALWAYS, 152,
      0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_CORRIDOR, CONDITION_ALWAYS, 568,
+    {KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_LONG_PATH, CONDITION_ALWAYS, 568,
      0, 152, FACING_SOUTH, 0, 390, 0, 630, 220, 0},
     {KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE, CONDITION_ALWAYS, 472, 0, 72,
      FACING_SOUTH, 0, 390, 0, 630, 220, 0},
@@ -2660,8 +2660,9 @@ u32 gKalay_Exits[] = {
                KALAY_FROM_HAMMET_PALACE_GROUNDS),
     SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE, HammetPalace,
                HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS),
-    SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM, HammetPalace,
-               HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS),
+    SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM,
+               HammetPalace,
+               HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
     SCENE_EXITS(KalayTunnelEntrance),
     SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE, KalayTunnelCave,
                KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE),
@@ -2681,12 +2682,12 @@ u32 gKalay_Exits[] = {
     SCENE_EXIT(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST,
                KalayTunnelTreasureRoom,
                KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST),
-    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_CORRIDOR_TO_NORTHEAST_ROOM,
+    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM,
                KalayTunnelPassage,
-               KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_CORRIDOR),
-    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_CORRIDOR,
+               KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_LONG_PATH),
+    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH,
                KalayTunnelPassage,
-               KALAY_TUNNEL_PASSAGE_CORRIDOR_FROM_NORTHEAST_ROOM),
+               KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM),
     SCENE_EXIT(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE, KalayTunnelCave,
                KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE),
     SCENE_EXITS(KalayTunnelTreasureRoom),
@@ -2905,8 +2906,8 @@ struct SceneEvent gKalay_TunnelCaveEvents[] = {
 struct SceneEvent gKalay_TunnelPassageEvents[] = {
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_CORRIDOR_TO_NORTHEAST_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_CORRIDOR },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
     { SCENE_EVENTS_END },
 };

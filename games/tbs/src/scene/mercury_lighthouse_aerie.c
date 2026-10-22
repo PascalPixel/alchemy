@@ -16,7 +16,7 @@
 ///   on to the next lighthouse with Jenna, Kraden and Felix, and fights the
 ///   party alone (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2), the light of
 ///   Mercury weakening his Psynergy.
-/// - Back from the battle (MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS,
+/// - Back from the battle (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE,
 ///   MercuryLighthouseAerie_AlexAppears): `Isaac, we got him!` Alex, the
 ///   apprentice Mia lost, appears and explains that Saturos, aligned with
 ///   Mars, the clan of fire, had his power bound by the lighthouse's water,
@@ -192,7 +192,7 @@ const struct SceneEvent *MercuryLighthouseAerie_GetEvents(void) {
 /// sit 50 pixels down; the first arrival
 /// (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) plays the party's arrival, the
 /// return from the battle with Saturos
-/// (MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS) Alex's scene, and
+/// (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) Alex's scene, and
 /// arriving by the lift
 /// (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves the lift
 /// up.
@@ -249,7 +249,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
         MercuryLighthouseAerie_PartyArrives();
       }
     } else if (gGameState.entrance ==
-               MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS) {
+               MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
       if (!Engine_GameFlagIsSet(FLAG_LIFT_UP)) {
         {
           struct MapLayerScroll *lift =
@@ -898,7 +898,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventEnd();
 }
 
-/// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS, back
+/// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, back
 /// from the battle, unless returning after another: Saturos is beaten, but not
 /// for long. "Isaac, we got him!" Alex appears and explains that the
 /// lighthouse bound Saturos' fire Psynergy and lent Mia endless power. Saturos
@@ -1835,7 +1835,7 @@ struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
      -1, -1, 0},
     {MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, CONDITION_ALWAYS, 8, 0, 8,
      FACING_SOUTH, 0, 0, 0, 608, 424, 0},
-    {MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS, CONDITION_ALWAYS, 8, 0, 8,
+    {MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, CONDITION_ALWAYS, 8, 0, 8,
      FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR,
      CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 0, 0, 608, 424, 0},

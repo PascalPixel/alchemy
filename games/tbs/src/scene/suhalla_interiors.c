@@ -530,11 +530,11 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// Sets Suhalla's buildings up as the party enters: the merchant and
 /// innkeeper behind their counters, and the two wounded soldiers lying in their
-/// beds. SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE sets
+/// beds. SUHALLA_INTERIORS_AFTER_BABI_SPOKE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
-  if (gGameState.entrance == SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE)
+  if (gGameState.entrance == SUHALLA_INTERIORS_AFTER_BABI_SPOKE)
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

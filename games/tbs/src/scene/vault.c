@@ -26,7 +26,7 @@
 ///   to wait in Vault (Event_IvanStaysBehind): he hands back any Venus Djinni
 ///   of Isaac's he holds and leaves the party. Coming back in by a gate
 ///   (VAULT_FROM_WORLD_MAP_SOUTH, or ENTRANCE_DEFAULT or
-///   VAULT_NORTH_GATE_UNUSED at the north gate) or out of the Vault Sanctum
+///   VAULT_NORTH_UNUSED at the north gate) or out of the Vault Sanctum
 ///   (VAULT_FROM_SANCTUM), Scene_Initialize has him greet the two and rejoin.
 /// - After the thieves are jailed, the townspeople thank the party, Ivan has
 ///   gone out to Lunpa to rescue Hammet, and the dog, given a Bone
@@ -904,7 +904,7 @@ s32 Scene_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
-  if (gGameState.entrance <= VAULT_NORTH_GATE_UNUSED) {
+  if (gGameState.entrance <= VAULT_NORTH_UNUSED) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
       if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -1262,8 +1262,8 @@ struct SceneEntrance gVault_Entrances[] = {
      -1, -1, 0},
     {VAULT_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
-    {VAULT_NORTH_GATE_UNUSED, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {VAULT_NORTH_UNUSED, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST, CONDITION_ALWAYS, 408, 0, 344,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_FROM_VAULT_INTERIORS_SOUTHEAST, CONDITION_ALWAYS, 312, 0, 328,

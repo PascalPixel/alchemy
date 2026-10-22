@@ -148,11 +148,11 @@ its light lifts the party away to the world map.
 
 ![Venus Lighthouse's beacon flares up on the world map](https://alchemy.pascalpixel.com/story/venus-lighthouse-lit.gif)
 
-That cut is the world map's. Arriving at `WORLD_MAP_VENUS_LIGHTHOUSE_LIT`,
+That cut is the world map's. Arriving at `WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT`,
 `WorldMap_Initialize` plays the lighthouse transition instead of letting the
 player walk, then sends the party straight back to
 `VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT`. Mercury Lighthouse used the same
-code with its own palette, from `WORLD_MAP_MERCURY_LIGHTHOUSE_LIT`. Back on
+code with its own palette, from `WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT`. Back on
 the aerie, Sheba falls and Felix leaps after her, and the party is taken to
 Lalivero.
 

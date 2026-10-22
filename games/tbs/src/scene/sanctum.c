@@ -56,7 +56,7 @@
 ///   through Vault later (vault_revisit.c): the statue has been polished, and
 ///   the healer worries about earthquakes on Mt. Aleph.
 /// - Sanctum, the name the game gives every other entrance, which leaves only
-///   SANCTUM_DJINNIS_HOUSE; no exit leads there, and it places nobody.
+///   SANCTUM_UNUSED; no exit leads there, and it places nobody.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -2239,7 +2239,7 @@ s32 gSanctum_ItemIconEndScript[] = {
 };
 
 struct SceneEntrance gSanctum_Entrances[] = {
-    { SANCTUM_DJINNIS_HOUSE, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { SANCTUM_UNUSED, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SANCTUM_FROM_VALE, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_VALE_UNUSED, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },

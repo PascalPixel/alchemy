@@ -215,12 +215,12 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// Sets Suhalla up as the party enters: the screen opens with the backdrop
 /// fade, and the sprout is drawn grown if Growth was used on it before a
-/// return that keeps the party's position. SUHALLA_AFTER_BABI_AUDIENCE sets
+/// return that keeps the party's position. SUHALLA_AFTER_BABI_SPOKE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
-  if (gGameState.entrance == SUHALLA_AFTER_BABI_AUDIENCE) {
+  if (gGameState.entrance == SUHALLA_AFTER_BABI_SPOKE) {
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 

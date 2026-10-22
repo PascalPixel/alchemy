@@ -55,10 +55,10 @@
 /// GOMA_CAVE_STREAM_FROM_VALE_GATE).
 ///
 /// Three debug entrances are in no entrance table and no exit leads to them:
-/// VALE_GATE_DEBUG_TRAVELERS_LEAVE replays the strangers' departure,
+/// VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE replays the strangers' departure,
 /// VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
 /// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST into Vale
-/// (SceneId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_PRESET sets a preset
+/// (SceneId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_FLAGS sets a preset
 /// of story flags and takes VALE_GATE_TO_BILIBIN
 /// (ValeGate_SetProgressFlagsAndExit).
 
@@ -912,11 +912,11 @@ static void Event_BlowAwayThirdIvy(void) {
 /// The scene's initialize entry. VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
 /// and takes VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST; VALE_GATE_FROM_SANCTUM
 /// runs Event_DepartForQuest; VALE_GATE_AFTER_TRAVELERS_BATTLE (and
-/// VALE_GATE_DEBUG_TRAVELERS_LEAVE) Event_TravelersLeaveAfterBattle; on the
-/// stormy night, once Garet has gone after Isaac (FLAG_VALE_STORM_GARET_LEFT),
-/// Event_MeetSurvivingTravelers. Once the boys have been sent back to the
-/// river, it removes the two strongmen who left to aid the elders, Jenna and
-/// the man who went with them.
+/// VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE) Event_TravelersLeaveAfterBattle; on
+/// the stormy night, once Garet has gone after Isaac
+/// (FLAG_VALE_STORM_GARET_LEFT), Event_MeetSurvivingTravelers. Once the boys
+/// have been sent back to the river, it removes the two strongmen who left to
+/// aid the elders, Jenna and the man who went with them.
 s32 ValeGate_Initialize(void) {
   struct FieldActor *actor;
   s32 flag;
@@ -936,10 +936,10 @@ s32 ValeGate_Initialize(void) {
     Engine_GameFlagSet(FLAG_CHILDHOOD);
     Engine_EventRequestExit(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
     return 0;
-  case VALE_GATE_DEBUG_STORY_PRESET:
+  case VALE_GATE_DEBUG_STORY_FLAGS:
     ValeGate_SetProgressFlagsAndExit();
     return 0;
-  case VALE_GATE_DEBUG_TRAVELERS_LEAVE:
+  case VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE:
     Event_TravelersLeaveAfterBattle();
     return 0;
   }
@@ -1401,8 +1401,8 @@ static void ValeGate_FightTravelers(void) {
 /// storm, and the storm, and the prologue, end.
 ///
 /// Called by ValeGate_Initialize from VALE_GATE_AFTER_TRAVELERS_BATTLE, after
-/// the battle, or VALE_GATE_DEBUG_TRAVELERS_LEAVE. Clears FLAG_VALE_STORM and
-/// takes VALE_GATE_TO_TITLE, to the title (SceneId_Title,
+/// the battle, or VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE. Clears
+/// FLAG_VALE_STORM and takes VALE_GATE_TO_TITLE, to the title (SceneId_Title,
 /// TITLE_FROM_VALE_GATE), which then opens on Vale three years later
 /// (menu/title.c).
 static void Event_TravelersLeaveAfterBattle(void) {
@@ -2006,7 +2006,7 @@ static void ValeGate_UpdateSmallRockPalette(void) {
   ValeGate_CyclePsynergyPalette(Object_GetById(ACTOR_STORM_SMALL_ROCK));
 }
 
-/// Arriving by VALE_GATE_DEBUG_STORY_PRESET: sets a preset of story flags,
+/// Arriving by VALE_GATE_DEBUG_STORY_FLAGS: sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_GATE_TO_BILIBIN.
 ///
 /// Called by ValeGate_Initialize. Sets FLAG_NO_ENCOUNTERS and
@@ -2338,7 +2338,7 @@ struct SceneEntrance gValeGate_Entrances[] = {
     { VALE_GATE_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_STREAM_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_GOMA_CAVE_STREAM_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_AFTER_TRAVELERS_BATTLE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };

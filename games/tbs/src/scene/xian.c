@@ -669,7 +669,7 @@ static void Xian_OpenDoorAndLeave(void) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps1, 81, 18);
     break;
-  case XIAN_TO_HSUS_HOUSE:
+  case XIAN_TO_HOUSE_NORTH:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps2, 83, 11);
     break;
@@ -968,7 +968,7 @@ struct SceneEntrance gXian_Entrances[] = {
      -1, -1, 0},
     {XIAN_FROM_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 344, 0, 328,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {XIAN_FROM_HSUS_HOUSE, CONDITION_ALWAYS, 376, 0, 216, FACING_SOUTH, 0, -1,
+    {XIAN_FROM_HOUSE_NORTH, CONDITION_ALWAYS, 376, 0, 216, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {XIAN_FROM_XIAN_INTERIORS_EAST, CONDITION_ALWAYS, 424, 0, 216, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
@@ -986,7 +986,7 @@ struct SceneEntrance gXian_Entrances[] = {
 u32 gXian_Exits[] = {
     SCENE_EXITS(Xian),
     SCENE_EXIT(XIAN_TO_HOUSE, XianInteriors, XIAN_INTERIORS_HOUSE),
-    SCENE_EXIT(XIAN_TO_HSUS_HOUSE, XianInteriors, XIAN_INTERIORS_HSUS_HOUSE),
+    SCENE_EXIT(XIAN_TO_HOUSE_NORTH, XianInteriors, XIAN_INTERIORS_HOUSE_NORTH),
     SCENE_EXIT(XIAN_TO_XIAN_INTERIORS_EAST, XianInteriors,
                XIAN_INTERIORS_FROM_XIAN_EAST),
     SCENE_EXIT(XIAN_TO_INN, XianInteriors, XIAN_INTERIORS_INN_SOUTH),

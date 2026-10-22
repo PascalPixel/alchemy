@@ -1,261 +1,167 @@
 # Scenes
 
-This folder holds The Broken Seal's scenes: the code and tables of every place
-the party can walk around in, one overlay each. A scene places the people and
-things of a map, says what happens when the party talks to someone, touches a
-spot, searches or uses Psynergy, and plays its cutscenes. The field engine (in
-`games/tbs/src/field` and `games/tbs/src/object`) runs the scene; the scene
-drives it through the engine's services.
-
-See also: [Field objects](../object/README.md), which runs a scene and its
-events; [Field](../field/README.md), the engine underneath; and
-[Maps](../map/README.md), the maps the scenes are set on.
+A scene overlay is the code and tables of one place: who stands where, what
+happens when the party talks to someone, touches a cell, searches, uses an
+item or Psynergy, and the cutscenes the place plays. [Field
+objects](../object/README.md) runs the scene and asks the overlay for these
+through six fixed entry points; the overlay drives the engine back through
+its import table. Each overlay has a generated page of its own, listed in
+[Places](../field/scenes.s) in story order, with its map and its events.
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
 | `<place>.c` | one scene overlay: its code, then its tables |
-| `<place>.h` | the scene's own names (actors, flags, structures), where it has any |
-| `entry/<place>.s` | the overlay's entry table: six veneers the engine calls |
-| `import/<place>.s` | the overlay's import table: the main-image functions it calls |
+| `<place>.h` | the overlay's own names (actors, flags, structures), where it has any |
+| `entry/<place>.s` | the entry table: six veneers the engine calls |
+| `import/<place>.s` | the import table: the main-image functions the overlay calls |
 | `common/*.h` | code that several overlays carry, each in its own copy (below) |
 
-The prototypes other files see are in `games/tbs/include/unit/scene/`. The
-command macros are in `games/tbs/include/event.h`, the engine's services in
-`field_event.h` and `field_service.h`, and the table formats in
-`field_scene.h`. The game's text is in `games/tbs/text`, one PO catalog per
-language.
+Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
+into the overlay area: `entry/<place>`, `<place>` and `import/<place>`; the
+rows' first column is the overlay's resource number. The scene table,
+`gField_SceneTable` in [`field/scenes.s`](../field/scenes.s), gives each
+scene its overlay, group, variant and map, and names it `SceneId_<Place>`;
+several scenes may share one overlay, and then share its file. A scene overlay
+is never split into parts (S3): its code is laid out by kind, entry points,
+then handlers, then tables, not by place.
 
-Each overlay is three objects in `games/tbs/objects.tsv`, linked in that order
-to run in the overlay area: `entry/<place>`, `<place>` and `import/<place>`. Its first
-column is the overlay's resource number. The scene table,
-`gField_SceneTable` in `games/tbs/src/field/scenes.s`, gives each scene its
-overlay, its group (the place it belongs to), its variant and its map, and names
-it `SceneId_<Place>`; several scenes may share one overlay (Bilibin's three,
-for one). A scene is one object: it has no parts.
+The table formats are in `games/tbs/include/field_scene.h`, the script
+commands in `event.h`, and the engine calls they are written over in
+`field_event.h`, `field_service.h` and `engine_call.h`. Prototypes other files
+see are in `games/tbs/include/unit/scene/`.
 
-## Words
+## Words and local names
 
-- **actor**: a field object a scene addresses by number. 0 to 7 are the
-  party's characters (`ACTOR_PARTY_LEADER` is 0, the one the player moves),
-  8 on are the placed actors (`ACTOR_FIRST_PLACED`).
-- **position**: 16.16 fixed point pixels, x across, y up and z down the map;
-  scenes write pixels (`PIXELS(n)`, or plain pixels to a command). A **cell**
-  is 16 by 16 pixels (`x >> 20`).
-- **facing**: one of eight headings, `FACING_EAST` through `FACING_NORTHEAST`,
-  clockwise as seen on the screen; underneath it's a 16-bit fraction of a turn.
-- **flags**: game flags, from `flags.h` where a name is proven: the party
-  and the Djinn first, then the system flags the engine shares, then the
-  story flags, and most chest and find flags last, each place's in its own
-  section. The scene's own flags (`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`) are
-  cleared on every ordinary entrance: they are written `FLAG_SCENE_TEMP_xx`,
-  and each scene says near its top (or beside a single use) what it keeps in
-  them. A place's flags (`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) belong to
-  the group of scenes of one place, which reuses the numbers: they are written
-  `FLAG_PLACE_TEMP_xx`, or by a name of the scene's own in its file where
-  one is proven (never in `flags.h`), and each scene says what it keeps in
-  them. A placement whose condition is 0 is placed only within the view
-  (`Scene_AssignViewFlags`); that 0 is no flag. `FLAG_KEEP_PARTY_POSITION` is
-  set when the party returns to where it was, as after a battle: a scene's
-  initialization skips its arrival cutscenes then.
-- **messages** are linker symbols written by bare name; `MSGNO(name)` is the
-  number, and a message's successor is the next line said.
-- **sounds** come from `songs.h`: `SE_` and `MUS_` names where the sound is
-  known, its number otherwise (`SE_188`).
-- **callbacks**: functions the scene adds with `FieldScheduler_AddCallback`
-  (at `TASK_PRIORITY_SCENE`), run once a frame until removed.
-- **update hooks**: an actor's `update`, run each frame with the actor.
+- **actor**: a field object a scene addresses by number. 0 to 7 are the party
+  (`ACTOR_PARTY_LEADER` is 0, the one the player moves), and the placed actors
+  start at `ACTOR_FIRST_PLACED` (8). Each scene names its own in an enum.
+- **position**: pixels, x east, y up and z south; the engine keeps them in
+  16.16 fixed point (`PIXELS(n)`), and a cell is 16 by 16 pixels.
+- **facing**: `enum Facing`, eight headings in 1/65536 turns from `FACING_EAST`
+  through `FACING_SOUTH` to `FACING_NORTHEAST`.
+- **condition**: a table row's test: `CONDITION_ALWAYS`, a flag that must be
+  clear, or `IF_FLAG_SET(flag)`.
+- **scene flags** and **place flags**: `FLAG_SCENE_TEMP_xx` and
+  `FLAG_PLACE_TEMP_xx`, the two ranges cleared for scene code (below). A place
+  flag with a proven meaning takes a name in the scene's own file, never in
+  `flags.h`.
+- **messages**: linker symbols written by bare name, `MSGNO(name)` their
+  number. A message's `msgctxt` in `games/tbs/text/en.po` is its name;
+  `MESSAGE_PUT` chooses the next message after showing one, so a line that
+  follows a named one has no name of its own.
+- **callback**: a function a scene adds with `FieldScheduler_AddCallback` at
+  `TASK_PRIORITY_SCENE`, run once a frame until removed.
+- **update hook**: an actor's `update`, run each frame with the actor.
 
-## Prefixes
+## Function prefixes
 
-A scene's functions are `<Place>_` (`Vault_`, `VaultRevisit_`,
-`ColosseumNavampaMatch_`) and say what the player sees, from the English release's names
-and text; an unknown keeps a placeholder. The shared helpers take their
-family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
-`StagedActor_`, and `FieldFx_` for the field effects); some still carry older
-descriptive names (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the
-scenes that call them are renamed with them.
-
-The spellings some sites keep to match (fields reached through `offsetof`,
-another struct's view of an actor, update hooks that return `s32`), and the
-comment markers, are in [Matching](../MATCHING.md).
+A scene's functions take its place's name (`Vault_`, `VaultRevisit_`,
+`ColosseumNavampaMatch_`) and say what the player sees; most functions an
+event table names are `Event_` instead. Shared helpers take their family's
+prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedActor_`, and
+`FieldFx_` for the field effects). Some keep older descriptive names
+(`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the scenes that call
+them are humanized. The spellings some sites keep to match (fields reached
+through `offsetof`, another struct's view of an actor, update hooks returning
+`s32`) are in [Matching](../MATCHING.md).
 
 ## Design
 
-### A scene is an overlay that answers six questions
+### The entry table
 
-Every scene is its own overlay, loaded into the same 32 KB overlay area when
-the party enters, so the game keeps only one place's code in memory at a
-time. The field engine knows nothing about a scene except its entry table:
-six veneers at the overlay's start, always in the same order, which it calls
-as functions (`struct SceneEntries`). Each returns one of the scene's tables,
-or runs its setup.
+The engine knows a scene only through six veneers at the start of its overlay,
+always in this order (`struct SceneEntries` in `field_runtime.h`):
 
-They are functions rather than pointers to tables so that a scene can answer
-differently as the story moves on: Vault's `Scene_GetEvents` returns
-`gVault_EventsAfterThieves` once the thieves are in jail, and the engine
-needs no notion of story state at all. The same goes for placements, whose
-rows carry conditions, and for exits, whose rows can depend on a flag.
+| Entry, as Vault names it | Returns or does |
+| --- | --- |
+| `Scene_Initialize` | the scene's setup, run once its actors exist |
+| `Scene_GetEntrances` | `struct SceneEntrance` rows |
+| `Scene_GetExits` | the exit table |
+| `Scene_GetPlacements` | `struct ScenePlacement` rows |
+| `Scene_GetEvents` | `struct SceneEvent` rows |
+| `Scene_GetRegions` | `struct SceneRegion` boxes, or `NULL` |
 
-### State that cleans itself up
+Because each is a function, it can choose its table by the story flags
+([World](../../world.md#scene-entries) gives Vault's example) and, in an
+overlay that serves several scenes, by `gGameState.scene`, as Babi
+Lighthouse's `Scene_GetRegions` does. Some overlays give the entries names of
+their own (`BabiLighthouse_GetExits`); only the order is fixed.
 
-A scene does not undo what it changed when the party leaves. Instead, two
-ranges of game flags are cleared for it on entry (`Scene_ResetFlagsOnEnter`,
-`games/tbs/src/object/object/scene.c`): the scene's own flags on every
-ordinary entrance, and the place's flags whenever the party enters a
-different group of scenes, the scenes of one place. So a scene keeps a
-moved crate or an opened door in a `FLAG_SCENE_TEMP_xx` flag, and it is put
-back the next time the party comes in; a place keeps what should last while
-the party is anywhere inside it in `FLAG_PLACE_TEMP_xx` flags, as Fuchin
-Falls Cave keeps where its logs float. When the party returns to where it
-was, as after a battle, `FLAG_KEEP_PARTY_POSITION` keeps both ranges, and a scene's
-initialization skips its arrival cutscenes.
-
-### Why shared code is copied into each scene
-
-An overlay can only call the main image, through its import table, because
-only one overlay is ever loaded (see [System](../system/README.md)). So code
-that several overlays need is in each of them, and the ROM holds several
-byte-for-byte copies of the same functions. Where the same code appears in
-several overlays it is written once, in `common/`, and each scene includes
-it at the place its bytes are, under the line `// Shared source is included
-here in ROM order.` Each header opens by saying which scenes include it. A
-header in `common/` is code, not declarations: including it twice in one
-scene would place it twice.
-
-The headers are named after the place or the job they share:
-
-| Headers | Scenes | What they hold |
-| --- | --- | --- |
-| `colosso_*.h`, `item_equip.h` | the sites of the Colosso finals matches (Colosseum Final 1, 2 and 3) | the friends' cheering spots, the stage guides, the race gauge, the rival's recorded path, the guide's pointer and the start lettering |
-| `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
-| `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
-| `kolima_*.h` | Kolima and its forest | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
-| `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
-| [`common/vale.h`](common/vale.h), [`common/world_map_linked_effects.h`](common/world_map_linked_effects.h) | Vale's scenes, the world map | the storm's door exits, the particles around a glowing actor |
-| `effect_*.h` | many | FieldFx_Spawn and the small effects it places, cutscene Psynergy |
-| `object_*.h` | many | actors: pushed blocks and rolling logs, the floating Nut, lookups by cell and distance, turning and waiting |
-| `map_panel.h`, [`common/scroll_initialize_hblank_dma.h`](common/scroll_initialize_hblank_dma.h) | Crossbone Isle and Kolima; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
-
-A helper that some of the scenes including its header never call is
-`UNUSED`, so that a current GCC does not warn in those scenes.
-
-A header named after one place may be shared further:
-[`common/colosso_item_icon.h`](common/colosso_item_icon.h) also draws
-Crossbone Isle's Red Key.
-
-Renaming a function in `common/` renames it in every scene that includes the
-header, and in the scene's entry table or event table when it is listed
-there.
-
-## How a scene runs
-
-`Field_RunScene` (`games/tbs/src/object/object/run_scene.c`) loads the map,
-then calls the overlay through its entry table, in this order:
-
-1. **events**: the event table, kept for the whole scene;
-2. **entrances**: where the party appears, by entrance number;
-3. **placements**: the actors to create;
-4. **initialize**: the scene's own setup, run once the actors exist: restore
-   what the flags say has happened, start callbacks, or play a cutscene and
-   take an exit straight away;
-5. **exits** are read when the party leaves (`Scene_TakeExit`), and the
-   sixth entry, **regions**, at every step: boxes in which the leader takes
-   an exit. Most scenes have none and return `NULL`.
-
-A scene that changes with the story returns another table from the same
-entry (see the design above).
-
-Then the party walks until something happens: an event runs, or the party
-takes an exit and the next scene is loaded.
+`Field_RunScene` asks for the events first and keeps them for the whole scene,
+then places the party at its entrance, creates the actors, and calls
+`Scene_Initialize`. The initialization restores what the flags say has
+happened, starts callbacks, or plays an arrival cutscene; it may take an exit
+at once. It skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the
+party is returning to where it stood, as after a battle. The exits are read
+only as the party leaves (`Scene_TakeExit`), and the regions at every step.
 
 ### The tables
 
-- **Entrances** (`struct SceneEntrance`): a position, a facing and the
-  camera's limits for each entrance number.
-- **Exits** (`SCENE_EXIT(exit, scene, entrance)`): the scene and entrance each
-  exit leads to; `SCENE_EXIT_IF` adds a flag.
-- **Placements** (`struct ScenePlacement`): a sprite, a condition, a
-  behaviour (`ACTOR_STAND`, `ACTOR_WANDER` or an object script), a position in
-  pixels, a facing and how the actor turns when spoken to. The rows whose
-  condition holds become actors from `ACTOR_FIRST_PLACED` on, in order.
-- **Events** (`struct SceneEvent`): a kind, a trigger, a condition and what
-  happens, ending with `SCENE_EVENTS_END`.
+- **Entrances** (`struct SceneEntrance`): for each entrance number, a flag
+  that must be set (or -1), a position, a facing and the camera's limits.
+- **Exits**: a header word per scene (`SCENE_EXITS(Place)`), then rows of
+  `SCENE_EXIT(exit, scene, entrance)` mapping an exit kind to a scene and
+  entrance named in `scene_links.h`, ended by `SCENE_EXITS_END`.
+  `SCENE_EXIT_IF` adds a flag, and the row is taken only while that flag is
+  clear. `SCENE_EXIT_TO_BATTLE` leads into a battle.
+- **Placements** (`struct ScenePlacement`): a sprite, a condition, a behaviour
+  (an `enum ActorBehavior` such as `ACTOR_STAND` or `ACTOR_WANDER`, or an
+  object script), a position, a facing and how the actor turns when spoken to.
+  The rows whose condition holds become actors from `ACTOR_FIRST_PLACED` on, in
+  order. A condition of 0 is no flag: `Scene_AssignViewFlags` replaces it with
+  whether the actor lies within the view.
+- **Regions** (`struct SceneRegion`): boxes in which the leader takes an exit
+  kind, each with a condition. Most scenes have none.
+- **Events** (`struct SceneEvent`): a control word (the kind and its detail), a
+  trigger, a condition and a value, ended by `SCENE_EVENTS_END`.
 
 An event's kind says what starts it and what its trigger is:
 
 | Kind | Started by | Trigger |
 | --- | --- | --- |
-| `EVENT_TALK` | talking to an actor | the actor's number |
-| `EVENT_TOUCH`, `TOUCH_WALKING_INTO(facing)` | stepping on, or walking into, a map cell | the cell's collision code |
-| `EVENT_EXIT` | walking off through an exit | the cell's collision code |
-| `SEARCH(target)` | the A button on a cell | the cell's collision code |
-| `PSYNERGY_ON_ACTOR(ability)` | Psynergy on an actor | the actor's number |
-| `PSYNERGY_IN_AREA(ability, phase)` | Psynergy anywhere in the scene | 0 |
+| `EVENT_TALK` | the A button on an actor | the actor's number |
+| `EVENT_TALK_HALTED` | talking to an actor Halt has stopped | the actor's number |
+| `EVENT_TOUCH`, `TOUCH_FACING(f)`, `TOUCH_WALKING_INTO(f)` | stepping onto a cell, facing a way, or pushing against it | the cell's collision code |
+| `EVENT_EXIT` | stepping onto a cell no touch event answers | the cell's collision code |
+| `SEARCH(target)` | the A button on what is ahead, when it is no actor | the cell's collision code |
+| `USE_ITEM(item)`, `USE_ITEM_ON_ACTOR(item)` | using an item | the cell's code or the actor's number |
+| `PSYNERGY_ON_ACTOR(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an actor, or anywhere | the actor's number, or 0 |
 | `EVENT_RAISED` | the scene's code raising a value | the value |
 
-A Psynergy event's phase (`enum PsynergyPhase` in `field_scene.h`) says when
-it runs around the effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
+A Psynergy event's phase (`enum PsynergyPhase`) says when it runs around the
+effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
 `PSYNERGY_PHASE_AFTER_CAST` after, and `PSYNERGY_PHASE_EFFECT_ACTS` from inside
-the effect, as Force strikes, Frost freezes or Reveal shows what's hidden.
-Reveal's scenes pair that last row with a `PSYNERGY_PHASE_EFFECT_ENDS` one that
-hides it all again as the colours come back, and Cloak's ending runs
-`PSYNERGY_PHASE_AFTER_END`.
+the effect, as Force strikes, Frost freezes or Reveal shows what is hidden.
+Reveal's scenes pair that row with a `PSYNERGY_PHASE_EFFECT_ENDS` one that
+hides it all again as the colours come back, and `PSYNERGY_PHASE_AFTER_END`
+runs when a Psynergy that runs out by itself, such as Cloak, has ended. [Field
+objects](../object/README.md#how-field-psynergy-reaches-its-effect) follows a
+cast through these.
 
-What happens is a message (`MSGNO(MsgName)`), a function
-(`EVENT_SCRIPT(Function)`), or for a search what is found (`FIND_ITEM`,
-`FIND_COINS`, `FIND_PSYNERGY_STONE`, `FIND_MESSAGE`). A condition is
-`CONDITION_ALWAYS`, a flag that must be clear, or `IF_FLAG_SET(flag)`.
+An event's value is a message (`MSGNO(name)`), a function
+(`EVENT_SCRIPT(function)`), the exit kind for an exit, or for a search what is
+found: `FIND_ITEM`, `FIND_COINS`, `FIND_PSYNERGY_STONE`, `FIND_MESSAGE` or
+`FIND_MIMIC`. Functions live above `0x10000` and messages below, which is how
+one word holds either.
 
-### Why does a row never run?
+### How an event is chosen
 
-`Scene_FindEvent` reads the event table from the top and runs the first row
-whose kind, trigger and condition fit, so a later row for the same actor or
-cell runs only where every earlier one's condition fails. A search on a named
-spot (`SEARCH(SEARCH_OVEN)` and the rest, everything but `SEARCH_UNNAMED`)
-is found whatever its condition, and `Field_SearchTile` tests the condition
-afterwards, so that an opened chest still says it's empty. That's why the
-three ovens that hide an item never show their dish once it's taken: the item
-row comes first under the same trigger and answers every time, and the leader
-finds the oven pitch dark inside. A row the game can't reach this way keeps a
-`// Unused:` tag in its table, and [Unused](../../unused.md) tells of every
-such find, place by place.
+`Scene_FindEvent` takes the first row that fits in kind, trigger and condition,
+so a scene lists the rows for one actor or cell from the latest story state to
+the default, and a row below one for the same actor or cell with no condition
+is never reached. A search on a
+named target (everything but `SEARCH_UNNAMED`) is returned whatever its
+condition, unless it finds a mimic, and `Field_SearchTile` tests the condition
+afterwards, so that an opened chest still says it is empty. Rows these rules
+make unreachable keep a `// Unused:` tag in their table, and
+[Unused](../../unused.md) describes every such case.
 
-## How to find a scene and an event in it
+### Scripts
 
-1. Find the place in `scenes.s`: its row gives the overlay's resource
-   number, and the rows of `objects.tsv` that begin with that number name its
-   files (`vault.c` for Vault). Scenes that share an overlay (`GomaCaveStream` and
-   `GomaCaveBridge`) share one file.
-2. To find what someone says, search `games/tbs/text/en.po` for the line; its
-   `msgctxt` is the message's linker name (`MsgVaultWelcomeToVaultTheTownAt`),
-   which the scene uses as written.
-3. The scene's event table names the function or message for each actor and
-   spot; its actors are numbered from `ACTOR_FIRST_PLACED` in the order of the
-   placement table.
-
-## How to change a line of dialogue
-
-Edit the line's `msgstr` in `games/tbs/text/en.po`; the build encodes the
-catalog into the English edition, so nothing in the scene changes. A message
-the code names, such as `MSGNO(MsgVaultWelcomeToVaultTheTownAt)`, is the
-entry whose `msgctxt` is that name. A message the code reaches as the one
-after a named one (`MsgName + n`, or the next line a `MESSAGE_PUT` says) has
-the `msgctxt` `message` and is found by its `msgid`: the named message's
-`msgid` plus n. Keep the control codes in braces and the `\n` line breaks the
-window needs (`{page_break}` starts a new page). The other five languages,
-`ja.po`, `de.po`, `es.po`, `fr.po` and `it.po`, are separate catalogs for
-their own editions: each has the same named messages under the same
-`msgctxt`, with its own `msgid` numbers, so change each language's
-`msgstr` by the `msgctxt`, or leave it and only English changes. Any text
-change makes that edition differ from the original cartridge, so it no longer
-compares OK.
-
-## How to write a scene
-
-Scenes are written in the commands of `event.h` and the services of
-`field_event.h`:
+A function an event names is a script written in the commands of `event.h`
+over the engine calls of `field_event.h`:
 
 ```c
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
@@ -266,48 +172,103 @@ static void Event_PatrolPairThrowsPartyOut(void) {
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   OBJ_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
   OBJ_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
   EV_END();
 }
 ```
 
-- `EV_BEGIN` and `EV_END` bracket a cutscene, in which the player does not
-  control the party. `WAIT(n)` waits n frames (60 a second).
-- `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it, spoken by an
-  actor; each `MESSAGE_PUT` moves on to the message after it.
-- Actors are moved by the names each scene's actor enum gives them:
-  `OBJ_POS_SET`, `OBJ_WALK`, `OBJ_SPEED`,
-  `OBJ_DIR`, `OBJ_FACE`, `OBJ_MODE` (an animation: `ANIM_STAND`, `ANIM_WALK`,
-  `ANIM_NOD`, `ANIM_SHAKE_HEAD`).
-- `FLAG_CHECK` and `FLAG_SET` test and set game flags; `SE(n)` plays a sound.
+`EV_BEGIN` stops the leader and makes it the speaker, and `EV_END` returns the
+camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
+`MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an actor.
+`OBJ_POS_SET`, `OBJ_WALK`, `OBJ_SPEED`, `OBJ_DIR`, `OBJ_FACE` and `OBJ_MODE`
+move, turn and animate actors by number (`OBJ_MODE` takes an `enum
+ActorAnimation` such as `ANIM_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
+game flags, and `SE(n)` plays a sound from `songs.h`.
 
-Names follow the rest of the project: readable C in English, as pret's
-decompilations write it, with pret's naming (`PascalCase` functions,
-`gName` globals).
+The script runs to its end before the scene loop looks at anything else, so a
+cutscene is straight-line code: each command that takes time waits inside
+itself. What must move meanwhile runs as object scripts, callbacks or update
+hooks.
+
+### State that cleans itself up
+
+A scene never undoes what it changed. `Scene_ResetFlagsOnEnter` clears the
+scene's 256 flags on every ordinary entrance and the place's 256 when the
+party enters another group ([the front page](../../README.md#game-flags)
+explains the ranges). So a scene keeps a pushed stone pillar or an opened door in a
+`FLAG_SCENE_TEMP_xx` flag and finds it back in place next time, and keeps what must
+survive moving between the place's scenes in a `FLAG_PLACE_TEMP_xx` flag, as
+Fuchin Falls Cave keeps where its logs float.
+Because the numbers are reused everywhere, each scene says near its top (or
+beside a single use) what it keeps in them.
+
+### Code shared between overlays
+
+Only one overlay is loaded at a time and it can call only the main image, so
+code several overlays need is compiled into each of them: the ROM holds
+byte-identical copies of the same functions. Such code is written once, in
+`common/`, and each scene includes the header at the point its bytes take in
+that overlay. A header in `common/` is code, not declarations: including it
+twice in one scene would place it twice.
+
+| Headers | Included by | What they hold |
+| --- | --- | --- |
+| `colosso_*.h`, `item_equip.h` | the three Colosso final matches (`colosseum_*_match.c`); `item_equip.h` also Goma Cave's entrance | the friends' cheering spots, the stage guides, the race gauge, the rival's recorded path, the start lettering |
+| `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
+| `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
+| `kolima_*.h` | Kolima Forest's scenes | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
+| `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
+| `vale.h`, `world_map_linked_effects.h` | Vale's gate and storm; Vale and the world map | the storm's door exits; the particles around a glowing actor |
+| `effect_*.h` | many | `FieldFx_Spawn` and the small effects it places, cutscene Psynergy |
+| `object_*.h` | many | actors: staged actors, lookups by cell and distance, turning and waiting |
+| `map_panel.h`, `scroll_initialize_hblank_dma.h` | Crossbone Isle's stepping stones and Kolima Forest's floodgate; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
+
+A header named after one place may be shared further: `colosso_item_icon.h`
+also draws Crossbone Isle's Red Key. A helper that some of the scenes including
+its header never call is `UNUSED`, so that a current GCC does not warn there.
+Renaming a function in `common/` renames it in every scene that includes the
+header.
+
+## How it fits with the rest of the game
+
+`Game_Run` unpacks the overlay into `gOverlayArea` (`Scene_LoadOverlay`) and
+`Field_RunScene` calls its entries; [Engine](../../engine.md#overlays)
+describes the entry and import tables and how the overlay is loaded. The scene
+table and how scenes depend on the story are on [the front
+page](../../README.md#the-scene-table-and-places). The maps the scenes are set
+on are in [Maps](../map/README.md), and the debug rooms, built the same way,
+in [Debug rooms](../debug/README.md).
+
+To find the code for a place, find its row in `field/scenes.s`: the overlay's
+resource number begins the rows of `objects.tsv` that name its files. To find
+what someone says, search `games/tbs/text/en.po` for the line; its `msgctxt`
+is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 ## Limits
 
-- An overlay is loaded into `gOverlayArea`, 32 KB of EWRAM
-  (`games/tbs/src/system/ewram.s`): its code, tables and RAM variables must
-  fit there.
-- An overlay calls the main image only through its import table, never
-  another overlay.
-- The field work holds 66 actor slots (`games/tbs/include/field_runtime.h`):
-  the party's 8, then the placed actors.
-- A scene has 256 flags of its own (`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`),
-  cleared on every ordinary entrance.
+- An overlay's code, tables and RAM variables must fit in `gOverlayArea`,
+  32 KB of EWRAM.
+- An overlay calls the main image only through its import table, never another
+  overlay.
+- 66 actor slots: the party's 8, then the placed actors.
+- 256 scene flags and 256 place flags, reused by every scene and place.
 
 ## Evidence and open questions
 
-A scene's name is its place's name in the English release, from the text its
-people say and the place names the game shows; its functions are named for
-what the player sees there; its messages are linker symbols made from their
-English text. Overlay numbers are their rows of the resource directory.
-
-Still unknown:
+A scene's name is its place's area name from `gScene_AreaNameRules`, or for a
+room the game leaves unnamed, what the player sees there (H3); its functions
+are named for what the player sees; its messages are linker symbols made from
+their English text. Overlay numbers are their rows of the resource directory.
 
 - XXX: many functions in `common/` keep older descriptive names
-  (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the
-  scenes that call them are renamed with them.
+  (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the scenes that call
+  them are humanized.
 - XXX: sounds without a proven name keep their numbers (`SE_188`).
+- XXX: what the exit styles' leaving animations 26 and 25 and arrivals 24 and
+  23 show (`enum ExitStyle`); a recording of an exit of each style would
+  settle it.
+- XXX: the guide has no picture. A frame of a scene with each actor labelled by
+  its placement row and actor number, and each event cell by its collision
+  code, would show how the tables meet the map.

@@ -48,6 +48,23 @@ enum SpriteId {
   SPRITE_STONE_PILLAR = 0xd3,
   /// ★ Named from what the player sees: a tree stump (its render)
   SPRITE_STUMP = 0xd4,
+  /// The hand Move reaches out with; Goma Cave's entrance and Vale place it
+  /// to push something in a cutscene.
+  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  SPRITE_MOVE_HAND = 0xd7,
+  /// The statues Move or a push slides in Bilibin and its Treasury.
+  /// ★ Named from what the player sees: a golden statue of a figure in a long
+  /// robe (spr_243.png)
+  SPRITE_GOLDEN_STATUE = 0xf3,
+  /// Ivy on a cliff or round a stump, which Whirlwind blows away.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  SPRITE_IVY = 0xf8,
+  /// Rings that spread on water where someone wades, the sprite the field's
+  /// own wading uses as FIELD_SPRITE_RIPPLE.
+  /// ★ Named from what the player sees: rings spreading on water
+  /// (spr_024.png)
+  SPRITE_RIPPLE = 0x18,
   SPRITE_DUST_PUFF = 222, ///< a puff of dust kicked up where an actor stands
   /// The statues of Mercury Lighthouse.
   /// ★ Named from what the player sees: a blue statue of a woman holding a
@@ -421,6 +438,13 @@ enum SpriteId {
   /// ★ Named from what the player sees: a man in a green cap and a green and
   /// yellow robe, carrying a pack on his back (spr_171.png)
   SPRITE_MAN_CARRYING_A_PACK = 0xab
+};
+
+/// SPRITE_STUMP's animations beyond its standing frame (spr_212.tsv).
+enum StumpAnimation {
+  /// Sinks until only its cut top shows, level with the ground or the water.
+  STUMP_ANIM_SINK = 2,
+  STUMP_ANIM_SPLASH = 3 ///< drops into water with a splash
 };
 
 #endif

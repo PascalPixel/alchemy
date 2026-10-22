@@ -130,7 +130,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     work->dirty = 1;
 
-    id = Localization_LookupEntryId(name);
+    id = UiText_GetSpeakerPortrait(name);
     UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
 
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
@@ -201,7 +201,7 @@ void Party_ShowJoinedMessage(s32 member) {
     UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
     UiGlyph_LoadEntryWithPalette(
-        Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(member)),
+        UiText_GetSpeakerPortrait(Party_LookupCharacterValueByFlag32(member)),
         0, &handle, &palette, 14, 0);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
@@ -256,8 +256,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     ((struct UiRenderWork *)work)->dirty = 1;
 
     UiGlyph_LoadEntryWithPalette(
-        Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)),
-        0, &handle1, &palette, 14, zero);
+        UiText_GetSpeakerPortrait(Party_LookupCharacterValueByFlag32(first)), 0,
+        &handle1, &palette, 14, zero);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
     p = entry1;
@@ -267,7 +267,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     entry2 = sprite2;
     UiGlyph_LoadEntryWithPalette(
-        Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(second)),
+        UiText_GetSpeakerPortrait(Party_LookupCharacterValueByFlag32(second)),
         0, &handle2, &palette, 15, zero);
     p = entry2;
     *p++ = zero;

@@ -334,7 +334,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                    sizeof(GlyphTransfer));
   offsets = Resource_GetTableEntry((s32)&ResourceId_Icons);
   // A number below 128 is the entry itself; the other speakers' portraits,
-  // numbered from 128 (Localization_LookupEntryId), are entries 16 on.
+  // numbered from 128 (UiText_GetSpeakerPortrait), are entries 16 on.
   if (icon <= 127)
     index = icon;
   else

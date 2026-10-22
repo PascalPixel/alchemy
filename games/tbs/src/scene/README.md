@@ -348,6 +348,25 @@ them are humanized. The spellings some sites keep to match (fields reached
 through `offsetof`, another struct's view of an actor, update hooks returning
 `s32`) are in [Matching](../MATCHING.md).
 
+A run of functions inside one overlay that is about one thing takes that
+thing's name, and a party member's or the leader's part in an event takes
+that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`):
+
+| Prefix | Overlay | What it acts on |
+| --- | --- | --- |
+| `Pillar_` | `alpine_crossing_lama_temple.c` | the pillar drawn in front of or behind the leader |
+| `Village_`, `Houses_` | `altin.c` | Altin's village outside, and its houses and inn inside |
+| `Beast_`, `Spray_` | `altin.c` | the hopping water beast and its spray |
+| `Water_` | `altin_peak.c` | the water layer flickering away |
+| `Entrance_` | `babi_lighthouse.c` | an unused division |
+| `SceneState_` | `colosseum_satrage_match.c`, `crossbone_isle_keys.c` | storing a raised-event trigger, and an empty hook |
+| `InnWorker_` | `lalivero_interiors.c` | the inn worker's sigh |
+| `Reveal_`, `HeatGauge_`, `Manticore_` | `lamakan_desert.c` | the secrets Reveal shows, the heat gauge and the Manticore |
+| `Ship_`, `ShipGlow_`, `OrbGlow_`, `Ripple_`, `Wave_`, `Curtain_` | `lemurian_ship.c` | the ship's swell and glows, the water's ripple and the closing curtains |
+| `TretPalette_` | `tret_tree_interiors.c` | the scene's tint |
+| `FloatingPillar_`, `Rubble_` | `venus_lighthouse.c` | the floating pillars and the rubble particles |
+| `Reunion_`, `WagonChoice_`, `Bunza_` | `west_lunpa_cave.c` | the reunion and the choice to ride Bunza's wagon |
+
 ## Evidence and open questions
 
 A scene's name is its place's area name from `gScene_AreaNameRules`, or for a

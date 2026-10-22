@@ -171,7 +171,7 @@
 	import RenderOutput_RedrawSavedRect, RenderOutput_RedrawSavedRectFar
 	import Engine_DebugClearWindow, RenderOutput_ClearListFar
 	import UiWindow_SetTilemapEntry, UiWindow_SetTilemapEntryFar
-	import Save_WriteSelectedSlot, Save_WriteSelectedSlotFar
+	import SaveMenu_WriteSelectedSlot, Save_WriteSelectedSlotFar
 	import SaveState_LoadRecordIntoWork, SaveState_LoadRecordIntoWorkFar
 	import SaveState_CopySlotPair, SaveState_CopySlotPairFar
 	import SaveState_DeleteSelectedSlot, SaveState_DeleteSelectedSlotFar

@@ -75,7 +75,7 @@ void SaveMenu_PlaceDjinnSprites(void);
 void SaveMenu_DrawDjinnCounts(struct UiWindow *win, struct SaveSummary *row);
 void SaveMenu_DrawFileSummary(struct UiWindow *win, struct SaveSummary *rec);
 s32 SaveMenu_SelectSlot(s32 file, s32 mode);
-s32 Save_WriteSelectedSlot(void);
+s32 SaveMenu_WriteSelectedSlot(void);
 s32 SaveState_LoadRecordIntoWork(s32 mode);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);

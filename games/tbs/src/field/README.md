@@ -544,6 +544,8 @@ and a part undefines its macros at its end.
 | `Curve_` | ground height functions |
 | `Ui_` | the debug sprite viewer |
 | `LuckyDice_` | the Lucky Dice minigame |
+| `ScriptObject_` | the overlap and wandering tests object scripts run |
+| `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |
 
 A few functions take the prefix of the one thing they act on
 (`Resource_DecompressLz`, `Camera_FollowLeaderInBounds`). Names other

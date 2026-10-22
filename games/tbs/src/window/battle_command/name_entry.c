@@ -263,7 +263,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   Ui_LoadWindowGraphics();
   keyboardWindow = (struct UiWindow *)UiWindow_Create(3, 6, 24, 9, 2);
   nameWindow = (struct UiWindow *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
-  UiWindow_CreateWithSideObject(Localization_LookupEntryId(member), 0, 3, 1);
+  UiWindow_CreateWithSideObject(UiText_GetSpeakerPortrait(member), 0, 3, 1);
   UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
   UiText_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
@@ -539,7 +539,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   Ui_LoadWindowGraphics();
   keyboardWindow = (struct UiWindow *)UiWindow_Create(3, 6, 24, 13, 2);
   nameWindow = (struct UiWindow *)UiWindow_Create(8, 3, 8, 3, 2);
-  UiWindow_CreateWithSideObject(Localization_LookupEntryId(member), 0, 3, 1);
+  UiWindow_CreateWithSideObject(UiText_GetSpeakerPortrait(member), 0, 3, 1);
   UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
   render->dirty = textDirty;

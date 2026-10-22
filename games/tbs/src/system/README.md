@@ -362,6 +362,8 @@ as constants. [Matching](../MATCHING.md) explains the markers in the code.
 | `System_` | the cartridge entry |
 | `Iwram` | the resident IWRAM code and its entry stubs (`IwramIrqMain`, `Iwram_Halt`, `IwramMulQ16`) |
 | `Bios_` | the BIOS calls |
+| `Dma_`, `Io_`, `Memory_` | DMA transfers, stops and fills (`system/dma.h`) and single register writes |
+| `ResourceTable_` | the table of the 512 resource blocks and who owns each |
 | `Resource_`, `ResourceId_` | the resource decoders and the directory's ids |
 | `Flash_`, `EraseFlash`, `ProgramFlash` | the flash library, named as pret names it |
 | `Runtime_`, `Sound_`, `ColorBuffer_`, `Render_` | things the engine names elsewhere |

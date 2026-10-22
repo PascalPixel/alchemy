@@ -316,14 +316,14 @@ calls these functions through the far-call table
 
 | Prefix | What it acts on |
 | --- | --- |
-| `Unit_`, `Unit_Get`, `Unit_Calculate`, `Unit_UpdateRatios` | one unit: stats, HP and PP, Psynergy, levels, elements |
+| `Unit_` | one unit: stats, HP and PP, Psynergy, levels, elements |
 | `Party_`, `GameState_`, `Game_` | the party and the game state |
 | `Item_`, `Inventory_`, `PartyInventory_`, `InventorySnapshot_`, `ItemCounter_`, `Equipment_` | items: one unit's inventory, the party's, the Colosso's snapshot, and the rare item counters |
 | `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
 | `GameFlag_` | the game flags |
 | `Djinn_`, `DjinnRecovery_` | the Djinn, and their recovery lists |
-| `Battle_`, `Battle_Random`, `BattleTarget_` | the battle arithmetic the battle folder calls |
-| `BattleUnit_Set` | filling an enemy unit at the start of a battle |
+| `Battle_`, `BattleTarget_` | the battle arithmetic the battle folder calls |
+| `BattleUnit_` (`BattleUnit_Set`) | filling an enemy unit at the start of a battle |
 | `Runtime_` | `Runtime_CopyBytesDirectional` and `Runtime_GetBuildStampTime`, which the engine names elsewhere |
 
 ## Evidence and open questions

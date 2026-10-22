@@ -510,6 +510,7 @@ names ending in `Far`, so renaming one touches other folders too.
 | `VramCache_` | the sprite VRAM cache |
 | `Scheduler_` | the task scheduler |
 | `Math_`, `Vector_` | square roots and polar offsets beside `Random16` and `ArcTan2` |
+| `FixedPoint_` | 16.16 and 8.8 arithmetic: a remainder, a product, a reciprocal and the distance between two positions |
 | `Transform_`, `SceneTransform_`, `Projection_` | the 3D transform and projection |
 | `NumberText_`, `DebugText_` | number text and the debug text screen |
 | `ColorBuffer_` | shading a buffer of pixels, keeping a copy |

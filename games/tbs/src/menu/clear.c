@@ -459,7 +459,7 @@ s32 SaveMenu_Run(void) {
       // Marks the file cleared (SaveSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
       gGameState.unk20f = 1;
-      v7 = Save_WriteSelectedSlot();
+      v7 = SaveMenu_WriteSelectedSlot();
       if (v7 == -1) {
         goto L_ask;
       }

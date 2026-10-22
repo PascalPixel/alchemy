@@ -27,7 +27,7 @@
 	.set import.Menu_SelectResourceLayout, 1
 	.set import.UiText_ShowCenteredMessage, 1
 	.set import.UiWindow_SetTilemapEntry, 1
-	.set import.Save_WriteSelectedSlot, 1
+	.set import.SaveMenu_WriteSelectedSlot, 1
 	.set import.SaveState_LoadRecordIntoWork, 1
 	.set import.SaveState_CopySlotPair, 1
 	.set import.SaveState_DeleteSelectedSlot, 1

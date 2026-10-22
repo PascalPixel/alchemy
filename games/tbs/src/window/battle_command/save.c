@@ -251,7 +251,7 @@ u32 SaveState_BuildSummaryHeader(void) {
 /// writes both halves of the save buffer, as records gSaveSlot and
 /// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
 /// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
-/// Save_WriteSelectedSlot it asks nothing and does not capture the object
+/// SaveMenu_WriteSelectedSlot it asks nothing and does not capture the object
 /// table first (SaveState_CaptureObjectTableFar).
 s16 SaveState_WriteCurrentSlotPair(void) {
   s16 file;
@@ -1201,7 +1201,7 @@ done:
 /// object table included, and makes it the current file. The question is "OK
 /// to save over this file?" Returns 0 (also when the player answers No), -1
 /// when cancelled, or a SAVE_ERROR_* after showing its message.
-s32 Save_WriteSelectedSlot(void) {
+s32 SaveMenu_WriteSelectedSlot(void) {
   s32 result;
   s32 file;
   s32 error;

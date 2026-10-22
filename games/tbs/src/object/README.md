@@ -418,6 +418,11 @@ Prototypes are in `games/tbs/include/unit/object/`.
 | `FieldEffect_` | field effects: a field kind's runner is named for its Psynergy (`FieldEffect_RunCatch`), and the small effects scenes spawn go through `FieldEffect_Spawn` |
 | `ColorBuffer_` | the colour buffer, which moves the palettes toward target colours |
 | `ReelGame_`, `LzPack_` | the slot machine, and the packer beside it |
+| `Actor_`, `Leader_`, `Motion_`, `FacingObject_`, `ObjectVisual_` | the actor commands scene scripts call (`actor_commands.c`): placing, walking, turning and posing an actor or the leader |
+| `EventObject_`, `ObjectEffect_` | the caster's casting pose and the context effects a Psynergy starts |
+| `ItemGift_` | the message for an item the party has just received |
+| `FadeOverlay_`, `RevealMarker_`, `FieldMotes_` | the fade overlay's marks beside the actor, a Reveal marker's sparkles and the floating motes |
+| `DisplayState_` | clearing the background bits `DisplayTransition_` turns on |
 
 Other functions keep the prefixes of the families they belong to elsewhere.
 Several structures are reached by more than one spelling (the field work, the

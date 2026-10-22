@@ -395,6 +395,11 @@ in `include/tbs_edition.h`.
 | `Party_` | the joined-party messages and the party's Psynergy list |
 | `UiTimedNotice_` | the area name shown near the top of the screen on arrival |
 | `DebugMenu_` | the debug menus |
+| `BattleLayout_` | the party status window's highlighted columns while commands are chosen |
+| `AffineEffect_`, `ResourceMenu_` | the command icon menus' pulsing icon and their position table |
+| `Link_` | the link countdown window and its page arrows |
+| `Color_` | scaling a colour's channels |
+| `UiRender_` | an empty function nothing calls |
 | `Resource_`, `RenderResource_`, `Graphics_`, `GraphicsPalette_`, `Vram_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
 
 The `Ui_` functions that remain have no family yet. Many of these names are

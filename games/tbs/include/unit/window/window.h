@@ -264,7 +264,7 @@ void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *outputs);
 void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
                                  u32 top, u32 right, u32 bottom);
-void RenderOutputList_UpdateTail(struct RenderOutputList *list);
+void RenderOutput_UpdateListTail(struct RenderOutputList *list);
 // RenderOutput_AppendToList is called from battle_command.c with no prototype
 // in scope: in one file its definition would come before RenderOutput_Create
 // and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61
@@ -362,7 +362,7 @@ s32 UiText_BuildRenderEntriesMode1(s32 arg0);
 void UiText_LookupMessage(struct TextReader *reader, s32 message);
 s32 UiText_DecodeSymbol(struct TextReader *reader);
 void UiWork_ClearPortraitSlots(void);
-s32 Localization_LookupEntryId(u32 value);
+s32 UiText_GetSpeakerPortrait(u32 value);
 struct UiWindow *UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x,
                                                s32 y);
 void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);

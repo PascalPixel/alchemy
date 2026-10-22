@@ -710,7 +710,7 @@ for its `struct BattleObj`, `object` for that object's
 | `BattleTarget_` | targets an enemy or a confused unit picks |
 | `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera, the palettes |
 | `BattleEvent_` | the event queue and its playback |
-| `BattleObject_`, `BattleObject_Get`, `BattleObject_Make`, `BattleObject_Put` | the battle objects |
+| `BattleObject_` | the battle objects |
 | `BattleMotion_` | their movements |
 | `BattlePlacement_` | where each place stands on the battlefield |
 | `BattleUnit_` | one unit's battle state: its guard, weapon sprite, status flags and turn-end counters |
@@ -721,6 +721,8 @@ for its `struct BattleObj`, `object` for that object's
 | `BattleSpoils_` | the items the enemies leave |
 | `BattleSummon_` | which summons the party's standby Djinn make available |
 | `BattleIntro_` | the message that announces the encounter |
+| `BattleBackground_`, `BattleCamera_` | the battle background and the perspective plane's zoom |
+| `SummonSlot_` | the enemy sprite slots a unit's battle sprite is loaded into |
 | `ElementGlow_` | a unit's elemental glow: the star field and the other glows |
 | `LinkBattle_` | link battles |
 | `DebugBattle_`, `DebugParty_` | the debug battle menu, its message viewer and the party presets |

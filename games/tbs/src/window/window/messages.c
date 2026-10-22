@@ -526,7 +526,7 @@ void UiWork_ClearPortraitSlots(void) {
 
 /// Returns the portrait of a character (ids below 20) or another speaker's
 /// sprite (128 and up for those), or -1 when it has none.
-s32 Localization_LookupEntryId(u32 value) {
+s32 UiText_GetSpeakerPortrait(u32 value) {
   s32 result = -1;
   s32 portraitIndex = 0;
 
@@ -580,7 +580,7 @@ struct UiWindow *UiWindow_CreateWithSideObject(s32 speaker, s32 portraitOption,
   void *work;
 
   work = gWindowWork[0];
-  if (Localization_LookupEntryId(speaker) == -1) {
+  if (UiText_GetSpeakerPortrait(speaker) == -1) {
     return 0;
   }
   negativeFour = -4;
@@ -610,7 +610,7 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 speaker) {
 
   state = UI_WORK;
   window = state->windows;
-  resourceId = Localization_LookupEntryId(speaker);
+  resourceId = UiText_GetSpeakerPortrait(speaker);
   if (resourceId == -1)
     return;
 

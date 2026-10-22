@@ -39,7 +39,7 @@ extern s32 gVenusLighthouseAerie_PartyHeadingAction[];
 extern struct SceneEntrance gVenusLighthouseAerieEntrances[];
 extern u32 gVenusLighthouseAerieExits[];
 extern struct ScenePlacement gVenusLighthouseAeriePlacements[];
-extern s32 gVenusLighthouseAerie_NearestActor;
+extern s32 gVenusLighthouseAerie_LandedPlatform;
 extern struct SceneEvent gVenusLighthouseAerieEvents[];
 extern s32 gVenusLighthouseAerie_BesideParticleScript[];
 

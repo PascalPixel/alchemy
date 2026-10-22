@@ -291,6 +291,7 @@ enum {
   FLAG_STAIRS_RAISED = FLAG_PLACE_TEMP_02,
   /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_RUNNING = FLAG_PLACE_TEMP_06,
+  /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_SHOWN =
       FLAG_PLACE_TEMP_07, ///< the camera has shown it start once
   /// MercuryLighthouseLower's first pipe piece has been pushed into place,
@@ -306,11 +307,16 @@ enum {
   /// (its render)
   FLAG_PIPE_3_JOINED = FLAG_PLACE_TEMP_12,
   /// Unused: cleared with the three, but nothing sets or tests it.
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_UNUSED_PIPE_4_JOINED = FLAG_PLACE_TEMP_13,
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_ROOM_PIPE_PUSHED = FLAG_PLACE_TEMP_18,
   /// The door switch pipe's column: each opens a different stone door.
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_AT_47 = FLAG_PLACE_TEMP_19,
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_AT_48 = FLAG_PLACE_TEMP_1A,
+  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_AT_53 = FLAG_PLACE_TEMP_1B,
   /// Two flags per statue of MercuryLighthouseUpper's row along the north wall,
   /// one for each column it can rest at, then the last statue's.

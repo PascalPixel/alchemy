@@ -154,6 +154,8 @@ enum XianActor {
   ACTOR_MIST,
   /// The first of three crates placed with SPRITE_CRATE, which Xian_Initialize
   /// hides (SPRITE_COLOR_HIDDEN): the player never sees them.
+  /// ★ Named from the game: "Strange... I don't remember all these crates being
+  /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_FIRST_CRATE
 };
 

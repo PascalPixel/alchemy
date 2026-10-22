@@ -154,7 +154,9 @@ enum MercuryLighthouseEntranceActor {
 
 /// Scene flags, kept while the party stays here.
 enum {
+  /// ★ Named from the game: "Mia" (MsgCharacterName)
   FLAG_MIA_GOES_IN_SEEN = FLAG_SCENE_TEMP_50,
+  /// ★ Named from its area name: Mercury Lighthouse
   FLAG_DROP_FROM_ABOVE_SEEN = FLAG_SCENE_TEMP_51,
   /// The Lizard Man has stepped into the leader's column.
   /// ★ Named from the game: "Lizard Man" (MsgEnemyName)

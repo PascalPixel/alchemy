@@ -300,10 +300,15 @@ enum { PUDDLE_ANIM_FROZEN = 5 };
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
 /// passages (place flags) while the party stays in the tunnel's scenes.
 enum KalayTunnelFlag {
-  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00, ///< the fade overlay
+  /// The fade overlay follows the leader.
+  /// ★ Named from its area name: Kalay Tunnel
+  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Each statue's particles have started their sound.
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
+  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
   /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_PLACE_TEMP_02,

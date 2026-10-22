@@ -155,6 +155,7 @@ enum {
 /// the palace's scene, the place flags until it leaves McCoy's Palace.
 enum {
   /// The captain has opened McCoy's door, so walking through it is silent.
+  /// ★ Named from its area name: McCoy's Palace
   FLAG_MCCOYS_DOOR_OPEN = FLAG_SCENE_TEMP_00,
   /// The party is choosing its reward among the four chests.
   /// ★ Named from the game: "You may select a single item from among these

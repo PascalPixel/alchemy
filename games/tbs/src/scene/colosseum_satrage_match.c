@@ -237,20 +237,34 @@ enum ColosseumSatrageMatchActor {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race (ColosseumSatrageMatch_Initialize restores them).
 enum {
+  /// ★ Named from the game: "This place is called the Board Walk."
+  /// (MsgColossoPlaceCalledBoard)
   FLAG_OBSTACLE_KNOCKED_DOWN =
       FLAG_PLACE_TEMP_30,                       ///< by Force, on the Board Walk
   FLAG_WEST_TARGET_FROZEN = FLAG_PLACE_TEMP_31, ///< by Frost
   FLAG_EAST_TARGET_FROZEN = FLAG_PLACE_TEMP_32, ///< by Frost
-  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_33,        ///< by Growth, up The Wall
-  FLAG_LIFTS_HALTED = FLAG_PLACE_TEMP_34,       ///< by Halt on LIFT_OPERATOR
+  /// ★ Named from the game: "Growth" (MsgAbilityName)
+  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_33, ///< by Growth, up The Wall
+  /// ★ Named from the game: "Halt" (MsgAbilityName)
+  FLAG_LIFTS_HALTED = FLAG_PLACE_TEMP_34, ///< by Halt on LIFT_OPERATOR
   /// The stone pillar by The Wall stands at column 36.
+  /// ★ Named from the game: "The fans just call this The Wall."
+  /// (MsgColossoFansJustCallWall)
   FLAG_WALL_PILLAR_MOVED = FLAG_PLACE_TEMP_35,
   /// The bytes of flags that keep the Mini-Maze's three pillars' columns.
+  /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
+  /// (MsgColossoStageDubbedMini)
   FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN = FLAG_PLACE_TEMP_40,
+  /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
+  /// (MsgColossoStageDubbedMini)
   FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN = FLAG_PLACE_TEMP_48,
+  /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
+  /// (MsgColossoStageDubbedMini)
   FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN = FLAG_PLACE_TEMP_50,
   /// Someone has reached the arena
   /// (ColosseumSatrageMatch_ApproachFinishAndTakeItem).
+  /// ★ Named from the game: "You must get through several stages before you
+  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 

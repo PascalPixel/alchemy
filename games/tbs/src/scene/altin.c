@@ -154,7 +154,11 @@ enum AltinVillageActor {
   /// ★ Named from what the player sees: crates, SPRITE_CRATE, where the drained
   /// village's render draws them (its render)
   ACTOR_FIRST_CRATE,
+  /// ★ Named from the game: "Strange... I don't remember all these crates being
+  /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_SECOND_CRATE,
+  /// ★ Named from the game: "Strange... I don't remember all these crates being
+  /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_THIRD_CRATE
 };
 

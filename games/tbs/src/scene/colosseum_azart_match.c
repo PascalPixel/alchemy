@@ -177,14 +177,23 @@ enum {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race (ColosseumAzartMatch_Initialize restores them).
 enum {
+  /// ★ Named from the game: "See the water pipes?"
+  /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPES_MOVED =
       FLAG_PLACE_TEMP_01, ///< the Pipeworks' pipes, as water filled them
+  /// ★ Named from the game: "This area is called the Pipeworks."
+  /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_PLACE_TEMP_02,
+  /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_PLANT_GROWN =
       FLAG_PLACE_TEMP_03, ///< by Growth, before the Broken Bridge
   /// The byte of flags that keeps the Rock Challenge's second rock's column.
+  /// ★ Named from the game: "They call this the Rock Challenge."
+  /// (MsgColossoCallRockChallenge)
   FLAG_SECOND_ROCK_COLUMN = FLAG_PLACE_TEMP_10,
   /// Someone has reached the arena (ColosseumAzartMatch_CollectFinishItem).
+  /// ★ Named from the game: "You must get through several stages before you
+  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 

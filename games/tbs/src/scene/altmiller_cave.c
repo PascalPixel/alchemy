@@ -202,6 +202,7 @@ enum {
   /// light around the party (its render)
   FLAG_DARK = FLAG_SCENE_TEMP_00,
   /// AltmillerCaveEntrance darkens by steps as the party walks in.
+  /// ★ Named from its area name: Altmiller Cave
   FLAG_DARKNESS_BY_STEPS = FLAG_SCENE_TEMP_01,
   /// Frost has frozen AltmillerCaveSquall's puddle.
   /// ★ Named from what the player sees: a small puddle of water in the middle

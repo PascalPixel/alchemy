@@ -195,23 +195,42 @@ enum {
 /// the race (ColosseumNavampaMatch_Initialize restores them), and the scales'
 /// state.
 enum {
-  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_60,       ///< by Growth, into a shortcut
+  /// ★ Named from the game: "Growth" (MsgAbilityName)
+  FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_60, ///< by Growth, into a shortcut
+  /// ★ Named from the game: "This place is called the Wall Wedge."
+  /// (MsgColossoPlaceCalledWall)
   FLAG_WALL_WEDGE_HALTED = FLAG_PLACE_TEMP_61, ///< by Halt on WALL_OPERATOR
-  FLAG_SCALES_FROZEN = FLAG_PLACE_TEMP_62,     ///< by Frost on FROST_TARGET
+  /// ★ Named from the game: "This stage is called the Scales of Justice."
+  /// (MsgColossoStageCalledScales)
+  FLAG_SCALES_FROZEN = FLAG_PLACE_TEMP_62, ///< by Frost on FROST_TARGET
   /// By Force on SIDEWALK_BLOCK: the belt carries no one any more.
+  /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
+  /// (MsgColossoCalledMovingSidewalkStage)
   FLAG_SIDEWALK_BLOCK_KNOCKED_OFF = FLAG_PLACE_TEMP_63,
   /// Someone stands on the western pan, which has sunk (Event_StepOnScales).
+  /// ★ Named from the game: "This stage is called the Scales of Justice."
+  /// (MsgColossoStageCalledScales)
   FLAG_ON_SCALES = FLAG_PLACE_TEMP_67,
+  /// ★ Named from the game: "This stage is called the Scales of Justice."
+  /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
       FLAG_PLACE_TEMP_68, ///< SCALE_WEIGHT is on the western pan
+  /// ★ Named from the game: "To get across the tank, you'll need to roll the
+  /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
       FLAG_PLACE_TEMP_69, ///< at the east end (Event_RollLongLog)
   /// The byte of flags that keeps STONE's column.
+  /// ★ Named from the game: "You can get through quickly by moving the logs and
+  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_STONE_COLUMN = FLAG_PLACE_TEMP_70,
   /// Someone has reached the arena
   /// (ColosseumNavampaMatch_CollectFinishEquipment).
+  /// ★ Named from the game: "You must get through several stages before you
+  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
   /// LOG_AREA_STONE_A has settled; the next two flags are B's and C's.
+  /// ★ Named from the game: "You can get through quickly by moving the logs and
+  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };
 

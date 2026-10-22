@@ -580,6 +580,7 @@
 #define FLAG_BABI_PALACE_BEDS_OPEN 0x969
 /// The party has slept in Babi's Palace once, talking it over the first night;
 /// later nights in its beds go straight to sleep.
+/// ★ Named from its area name: Babi's Palace
 #define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a
 /// The soldiers have come back from Altmiller Cave to Iodem without Babi, and
 /// Iodem has left for the colosseum in Babi's stead; he and the soldiers are
@@ -1120,6 +1121,8 @@
 // Suhalla Gate
 /// The soldier east of Suhalla Gate's passage has gasped that Venus Lighthouse
 /// was attacked by strange wanderers, then flickered and vanished for good.
+/// ★ Named from the game: "We can leave to the soldiers at the gate."
+/// (MsgSuhallaNowhereFound)
 #define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897
 /// Iodem has questioned the wounded guards at Suhalla Gate about the strange
 /// group that beat them, and the party is sent on after the attackers. The
@@ -1322,6 +1325,7 @@
 /// The first of the two stone pillars in TunnelRuinsLadyStatues' east room is
 /// pushed to the west of its row; the scene puts it back there on the next
 /// visit.
+/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
 /// The second of the two stone pillars in TunnelRuinsLadyStatues' east room
 /// is pushed to the west of its row.
@@ -1331,6 +1335,7 @@
 /// All five colored statues of a woman in TunnelRuinsLadyStatues stand on
 /// their marks, and the door before them is open; moving one off closes it
 /// again. Coming back into the room puts the statues back on their marks.
+/// ★ Named from its area name: Tunnel Ruins
 #define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
 /// The party has entered TunnelRuinsLadyStatues' room of four paths over a
 /// pit. XXX: no code of this game reads it; a reader would say what it
@@ -1470,9 +1475,11 @@
 #define FLAG_VALE_STORM_SENT_TO_PLAZA 0x87b
 /// The first of the two monsters that attack on the stormy night's paths has
 /// been fought, once; it also sets FLAG_VALE_STORM_MONSTER_FOUGHT.
+/// ★ Named from its area name: Vale
 #define FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT 0x87c
 /// As FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT, for the second monster on the
 /// paths.
+/// ★ Named from its area name: Vale
 #define FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT 0x87f
 
 // Vale, the village

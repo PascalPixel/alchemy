@@ -17,8 +17,11 @@ enum {
   /// ★ Named from what the player sees: four statues of a woman with a green
   /// wreath around the beacon, spr_258.png (its render)
   ACTOR_BEACON_STATUE_SOUTHWEST = 8,
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_BEACON_STATUE_NORTHWEST = 9,
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_BEACON_STATUE_NORTHEAST = 10,
+  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_BEACON_STATUE_SOUTHEAST = 11,
   /// Six round platforms (SPRITE_FLOATING_PLATFORM) the leader jumps across,
   /// each dipping under him as he lands, and the one that carries him up to
@@ -26,7 +29,11 @@ enum {
   /// ★ Named from what the player sees: round floating platforms
   /// in spr_242.png (its render)
   ACTOR_FIRST_PLATFORM = 12,
+  /// ★ Named from what the player sees: the last of the round floating
+  /// platforms (its render)
   ACTOR_LAST_PLATFORM = 17,
+  /// ★ Named from what the player sees: the round floating platform that rises
+  /// to the aerie (its render)
   ACTOR_RISING_PLATFORM = 18,
   /// ★ Named from the game: "Menardi!" (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_MENARDI = 19,

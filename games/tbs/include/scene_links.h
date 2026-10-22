@@ -105,6 +105,7 @@ enum {
   WORLD_MAP_FROM_CROSSBONE_ISLE = 76,
   /// Where one of the Suhalla Desert's storms sets the party down, still in
   /// the air, beside the world map's own storm.
+  /// ★ Named from its area name: Suhalla Desert
   WORLD_MAP_FROM_SUHALLA_DESERT_STORM = 77,
   /// Where a defeat returns after Iodem hands over the Black Orb: the orb is
   /// discarded and WORLD_MAP_TO_LUNPA_SUHALLA leads on.
@@ -305,7 +306,9 @@ enum {
   /// the second sets FLAG_CHILDHOOD, the third a preset of story flags
   /// (ValeGate_SetProgressFlagsAndExit).
   VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE = 97,
+  /// ★ Named from its area name: Vale
   VALE_GATE_DEBUG_CHILDHOOD = 98,
+  /// ★ Named from its area name: Vale
   VALE_GATE_DEBUG_STORY_FLAGS = 99,
 };
 /// SceneId_ValeGate's exits.
@@ -1341,7 +1344,9 @@ enum {
   KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE = 1,
   /// Two exits no event takes, back into this map
   /// (KOLIMA_FOREST_ENTRANCE_UNUSED).
+  /// ★ Named from its area name: Kolima Forest
   KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_A = 2,
+  /// ★ Named from its area name: Kolima Forest
   KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_B = 3,
   KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP = 4,
 };
@@ -1679,8 +1684,9 @@ enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN = 31,
   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH =
       60, ///< no exit leads here
-  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE =
-      99, ///< no exit leads here
+  /// No exit leads here.
+  /// ★ Named from its area name: Mercury Lighthouse
+  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE = 99,
 };
 /// SceneId_MercuryLighthouseEntrance's exits.
 enum {
@@ -3596,6 +3602,7 @@ enum {
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
   /// The middle of the room, facing south. No exit leads to it: only the debug
   /// scene selector, which warps to any entrance from 0 to 99, reaches it.
+  /// ★ Named from its area name: Crossbone Isle
   CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE = 99,
 };
 /// SceneId_CrossboneIsleFloatingLogs's exits.
@@ -4937,6 +4944,7 @@ enum {
   SUHALLA_FROM_HOUSE_NORTHEAST = 4,
   SUHALLA_FROM_HOUSE_EAST = 5,
   /// In the table at (120, 272), facing east, but led to by no exit.
+  /// ★ Named from its area name: Suhalla
   SUHALLA_SIXTH_UNUSED = 6,
   SUHALLA_FROM_WORLD_MAP = 10,
   /// In no table row and led to by no exit: arriving by it sets
@@ -6067,6 +6075,7 @@ enum {
   /// In no table row and led to by no exit: only the debug scene selector,
   /// which warps to any entrance from 0 to 99, reaches it. Arriving by it hands
   /// the leader the Black Orb.
+  /// ★ Named from the game: "You got the Black Orb." (MsgWorldMapLook)
   LEMURIAN_SHIP_WITH_BLACK_ORB = 99,
 };
 /// SceneId_LemurianShip's exits.

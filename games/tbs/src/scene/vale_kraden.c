@@ -56,9 +56,6 @@
 /// night, and after Kalay it is there only from the third patch on.
 ///
 /// Open questions:
-/// - XXX: what Lift on the boulder by the fence (ACTOR_FENCE_BOULDER) shows,
-///   since its event row runs no script; casting Lift on it in a play-through
-///   would settle it.
 /// - XXX (picture): the stormy night's rockslide, the two rocks across the
 ///   path and the cells around them blocked.
 
@@ -101,7 +98,10 @@ enum ValeKradenActor {
   /// A boulder by the fence, with the sprite of the boulder Lift raises at the
   /// Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in Gondowan Cave. Its
   /// Lift row runs no script, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
-  /// and the stormy night's events have no row for it.
+  /// and the stormy night's events have no row for it. Cast on it, Lift's two
+  /// hands close on it and burst into sparkles, the boulder stays where it is,
+  /// and no message follows, since the row answers the cast (render probe
+  /// kraden-lift, by day and after the party has left Vale).
   /// ★ Named from the game: "did you lift the boulder?"
   /// (MsgMountainIsaacDidLiftBoulder), said of the same sprite
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,

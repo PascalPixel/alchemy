@@ -68,6 +68,19 @@
 /// other puzzles are kept only within one visit (scene flags): Reveal shows a
 /// hidden path, Frost freezes a puddle into a pillar the party can climb, and
 /// Growth grows a sprout into a vine; a chest holds Power Bread.
+///
+/// Open questions:
+///
+/// - XXX: what Feizhi's animation 5, as she steps back from the freed Hsu, and
+///   the mossy rock's animation 2 show; the frames they pick in their sprites'
+///   sheets would settle names for them.
+/// - XXX: the mossy rock (sprite 0x125) and the boulder Lift raises (0x127)
+///   have no sprite names; their sheets (spr_293.png, spr_295.png) and the
+///   other scenes that place them would settle them.
+/// - XXX: what reaches Lama Temple's entrance 5, in front of the traveling
+///   healer, which no exit names; likely where the party wakes after it falls
+///   in battle, because Fuchin Temple's healer has an entrance 5 in the same
+///   place, and a battle lost after speaking to the healer would settle it.
 
 #include "script.h"
 #include "game_state.h"
@@ -97,9 +110,10 @@
 #include "field_effect.h"
 #include "songs.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
-#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE 0x350 ///< the temple's Psynergy Stone
+/// The temple's Psynergy Stone, a place flag: it refills once the party has
+/// been to another place.
+/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
+#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_PLACE_TEMP_50
 
 #define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
 #define SCENE_LAMA_TEMPLE ((s32)&SceneId_LamaTemple)
@@ -177,13 +191,15 @@ enum {
   FLAG_SPROUT_GROWN = FLAG_SCENE_TEMP_01
 };
 
+/// Animations of these scenes' own sprites beyond enum ActorAnimation, named
+/// by when the scenes play them.
 enum {
   ANIM_HAMA_PULL = 5,
   ANIM_FEIZHI_PULL = 6,
   ANIM_HSU_STRUGGLE = 5,
   ANIM_MONK_MEDITATE = 5,
-  ANIM_FROZEN = 5,
-  ANIM_GROWN = 4
+  PUDDLE_ANIM_FROZEN = 5,
+  SPROUT_ANIM_GROWN = 4
 };
 
 /// Map triggers that the events below refer to.
@@ -199,9 +215,6 @@ enum {
 /// The door of Hama's room, three cells wide and two high: each step copies
 /// the next door picture onto it for five frames.
 enum { DOOR_X = 67, DOOR_Y = 6 };
-
-/// A search made while facing the given way.
-#define SEARCH_FACING(facing) (EVENT_SEARCH | EVENT_TOUCH_FACING | (facing))
 
 /// The map object that draws the passage behind the mossy rock.
 enum { MAP_OBJECT_PASSAGE = 100 };
@@ -867,7 +880,7 @@ static void AlpineCrossing_PrepareFrost(void) {
 }
 
 /// Frost at the Alpine Crossing freezes the puddle into a pillar the party can
-/// climb: it stops blocking movement and moving, sorts itself against the
+/// climb: it can no longer be pushed or move, sorts itself against the
 /// leader each frame, and the cells beside it (and their copy at (20, 18))
 /// become walkable. Also run on entry while the pillar is already frozen.
 static void AlpineCrossing_FreezePuddle(void) {
@@ -876,7 +889,7 @@ static void AlpineCrossing_FreezePuddle(void) {
   // Stop the pillar and install its height-dependent drawing priority.
   Object_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags &=
       (u8)~ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(ACTOR_WATER_FOR_FROST)->collisionFlags &= 0xfd;
+  Object_GetById(ACTOR_WATER_FOR_FROST)->collisionFlags &= (u8)~ACTOR_PUSHABLE;
   Object_GetById(ACTOR_WATER_FOR_FROST)->motionFlags = 0;
 #ifdef UBFIX
   Object_GetById(ACTOR_WATER_FOR_FROST)->update = Pillar_SortAgainstLeader;
@@ -900,7 +913,7 @@ static void AlpineCrossing_FreezePuddle(void) {
 static void AlpineCrossing_GrowSprout(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
-  Object_GetById(ACTOR_PLANT)->collisionFlags = 254;
+  Object_GetById(ACTOR_PLANT)->collisionFlags = (u8)~ACTOR_SOLID;
   Engine_GameFlagSet(FLAG_SPROUT_GROWN);
   Engine_EventEnd();
 }
@@ -944,11 +957,11 @@ s32 Scene_Initialize(void) {
     Object_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_WATER_FOR_FROST, ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIM_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
     if (Engine_GameFlagIsSet(FLAG_SPROUT_GROWN)) {
-      Engine_ActorSetAnimation(ACTOR_PLANT, ANIM_GROWN);
+      Engine_ActorSetAnimation(ACTOR_PLANT, SPROUT_ANIM_GROWN);
       AlpineCrossing_GrowSprout();
     }
     if (gGameState.entrance ==

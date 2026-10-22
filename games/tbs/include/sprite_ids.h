@@ -37,6 +37,14 @@ enum SpriteId {
   /// ★ Named from what the player sees: a small glowing blue-green light (its
   /// sprite sheet, spr_287.png)
   SPRITE_FLOATING_LIGHT = 0x11f,
+  /// The apes of Mogall Forest, which Force brings out of their hiding places.
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  SPRITE_APE = 0xbf,
+  /// The water beasts that flood Altin and its mine, whose battles name them
+  /// Living Statues.
+  /// ★ Named from the game: "Are you the ones who defeated the water beasts?"
+  /// (MsgAltinOnesWhoDefeatedWaterBeasts)
+  SPRITE_WATER_BEAST = 0xbe,
   /// The statues of Sol Sanctum's statue room and Luna and Sol rooms.
   /// ★ Named from what the player sees: a winged statue holding a blue orb
   /// (its sprite sheet, spr_201.png)

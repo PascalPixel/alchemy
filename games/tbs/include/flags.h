@@ -483,6 +483,13 @@
 /// AltinPeakHydrosStatue's chest.
 /// ★ Named from the game: "Lifting Gem" (MsgItemName)
 #define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08
+/// AltinPeakPool's chest, a Mimic (FIND_MIMIC).
+/// ★ Named from the game: "really a Mimic!" (MsgChestWasMimic)
+#define FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN 0xef2
+/// Unused: the Herb chest in AltinPeakSecondWaterBeast's event table, past its
+/// end marker, where no lookup reaches.
+/// ★ Named from the game: "Herb" (MsgItemName)
+#define FLAG_ALTIN_PEAK_UNUSED_HERB 0xf05
 
 // Altmiller Cave
 /// The party has spoken with the unseen voice in Altmiller Cave, who cannot
@@ -661,6 +668,33 @@
 /// Catch has taken the Nut floating at the Kalay Tunnel Entrance.
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT 0xfd6
+/// A jar in the town.
+/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
+#define FLAG_KALAY_SLEEP_BOMB_JAR 0xf81
+/// A jar in the town.
+/// ★ Named from the game: "Vial" (MsgItemName)
+#define FLAG_KALAY_VIAL_JAR 0xf82
+/// The chest in KalayTunnelCave.
+/// ★ Named from the game: "Apple" (MsgItemName)
+#define FLAG_KALAY_TUNNEL_APPLE_CHEST 0xf22
+/// The chests of KalayTunnelTreasureRoom.
+/// ★ Named from the game: "Spirit Gloves" (MsgItemName)
+#define FLAG_KALAY_TUNNEL_SPIRIT_GLOVES_CHEST 0xf1c
+/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
+#define FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST 0xf1e
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST 0xf1f
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_KALAY_TUNNEL_COINS_CHEST 0xf20
+/// ★ Named from the game: "Potion" (MsgItemName)
+#define FLAG_KALAY_TUNNEL_POTION_CHEST 0xf21
+/// The containers of Kalay's houses.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_KALAY_INTERIORS_COINS_BARREL 0xf83
+/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
+#define FLAG_KALAY_INTERIORS_SMOKE_BOMB_OVEN 0xf84
+/// ★ Named from the game: "Elixir" (MsgItemName)
+#define FLAG_KALAY_INTERIORS_ELIXIR_BARREL 0xf85
 
 // Imil
 /// Mia's second apprentice told the party Mia went to the old couple's house.
@@ -737,6 +771,12 @@
 /// ★ Named from the game: "The Karagol is surrounded by land, so technically,
 /// it's not a real ocean." (MsgKalayIncredibleOcean)
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
+/// The chest on Tolbi Docks.
+/// ★ Named from the game: "Potion" (MsgItemName)
+#define FLAG_TOLBI_DOCKS_POTION_CHEST 0xf96
+/// The wooden box on Tolbi Docks.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_TOLBI_DOCKS_COINS_BOX 0xf95
 // Kolima
 /// The party has seen the curse fall on Kolima, in Kolima or in
 /// SceneId_KolimaForestEntrance, whichever it reached first: the sparkles rain
@@ -1021,6 +1061,16 @@
 /// FLAG_NYUNPA_ENLIGHTENED.
 /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
 #define FLAG_MOGALL_FOREST_KILLER_APE_BEATEN 0x89e
+/// Catch has taken the Nut floating over the river in Mogall Forest's first
+/// area.
+/// ★ Named from the game: "Nut" (MsgItemName)
+#define FLAG_MOGALL_FOREST_NUT_CAUGHT 0xfd4
+/// The chest in Mogall Forest's second area.
+/// ★ Named from the game: "Apple" (MsgItemName)
+#define FLAG_MOGALL_FOREST_APPLE_CHEST 0xf1b
+/// The chest in Mogall Forest's third area.
+/// ★ Named from the game: "Elven Shirt" (MsgItemName)
+#define FLAG_MOGALL_FOREST_ELVEN_SHIRT_CHEST 0xf1a
 // Suhalla
 /// Iodem has questioned the two wounded soldiers in a house in Suhalla, who
 /// lost Sheba in a sandstorm and warn that monsters cause the storms. Stepping
@@ -1630,6 +1680,12 @@
 /// ★ Named from the game: "Layana ordered the door to the underground path
 /// opened." (MsgHammetPalaceLayanaOrderedTheDoorToThe)
 #define FLAG_KALAY_TUNNEL_OPEN 0x915
+/// The palace's chest.
+/// ★ Named from the game: "Water Jacket" (MsgItemName)
+#define FLAG_HAMMET_PALACE_WATER_JACKET_CHEST 0xf86
+/// The palace's barrel.
+/// ★ Named from the game: "Nut" (MsgItemName)
+#define FLAG_HAMMET_PALACE_NUT_BARREL 0xf87
 
 // Fuchin Temple and Master Feh's school
 /// Nyunpa has died, enlightened, at Fuchin Temple. Mogall Forest sets it once
@@ -1688,6 +1744,15 @@
 /// ★ Named from the game: "Fuchin's Ki releases the mind's energy"
 /// (MsgXianYaTreeFell)
 #define FLAG_FEH_SAW_KI 0x89b
+/// A jar in FuchinTempleInteriors.
+/// ★ Named from the game: "Unicorn Ring" (MsgItemName)
+#define FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR 0xf68
+/// A barrel in FuchinTempleInteriors.
+/// ★ Named from the game: "Antidote" (MsgItemName)
+#define FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL 0xf69
+/// The jar in Master Hama's room in Lama Temple.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_HAMAS_ROOM_COINS_JAR 0xf6a
 
 // Crossbone Isle
 /// The four blue doors in a row, then the red door: each is set once a Blue

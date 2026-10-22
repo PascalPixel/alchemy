@@ -17,7 +17,7 @@ const struct SceneEvent *Scene_GetEvents(void);
 s32 ColosseumSatrageMatch_Initialize(void);
 // The native call precedes this definition; see MATCHING.md.
 #ifdef UBFIX
-void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
+void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
                                               s32 segments, s32 finishX,
                                               s32 finishZ, s32 firstItem,
                                               s32 secondItem);
@@ -41,7 +41,7 @@ extern s16 gColosseumSatrageMatch_LetteringTitle[];
 extern s16 gColosseumSatrageMatch_LetteringGo[];
 extern s16 gColosseumSatrageMatch_LetteringWon[];
 extern s16 gColosso_MarkerSlot;
-extern s32 gColosso_RivalFinishScript[];
+extern s32 gColosso_OpponentFinishScript[];
 extern s32 gColosseumSatrageMatch_ApproachScript[];
 
 #endif

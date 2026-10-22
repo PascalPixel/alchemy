@@ -67,6 +67,8 @@ enum MenuTestActor {
   /// The sprite of Vale's armor shopkeeper, 0x7d (vale_interiors_shops.c);
   /// opens
   /// the debug shop.
+  /// ★ Named from the game: "Ask me anything about armor."
+  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_SHOPKEEPER,
   /// Dora's sprite again: the sanctum's service menu, in French a Nut, and in
   /// Spanish and Italian `That IS dangerous!`

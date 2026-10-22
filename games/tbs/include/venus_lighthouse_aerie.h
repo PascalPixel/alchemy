@@ -54,10 +54,20 @@ enum {
   ACTOR_PARTICLE_SOURCE = 23,
   /// The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the
   /// bottom up; particles circle the lowest.
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_BEAM_BOTTOM = 24,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_BEAM_LOWER = 25,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_BEAM_MIDDLE = 26,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_BEAM_UPPER = 27,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_BEAM_TOP = 28
 };
 

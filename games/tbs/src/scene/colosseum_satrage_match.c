@@ -171,10 +171,10 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId);
 static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode);
 static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result);
 static void SceneState_EmptyHook(void);
-static void ColosseumSatrageMatch_WaitForRivalFinish(void);
+static void ColosseumSatrageMatch_WaitForOpponentFinish(void);
 static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
                                                            s32 secondItem);
-static void ColosseumSatrageMatch_StartRivalPath(s32 pathResource);
+static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource);
 static void ColosseumSatrageMatch_PushAdjacentObstacle(void);
 
 /// The second finals match's actors, numbered in the order of
@@ -240,8 +240,10 @@ enum {
   /// ★ Named from the game: "This place is called the Board Walk."
   /// (MsgColossoPlaceCalledBoard)
   FLAG_OBSTACLE_KNOCKED_DOWN =
-      FLAG_PLACE_TEMP_30,                       ///< by Force, on the Board Walk
+      FLAG_PLACE_TEMP_30, ///< by Force, on the Board Walk
+  /// ★ Named from the game: "Bestows Frost when equipped" (MsgItemPlainName)
   FLAG_WEST_TARGET_FROZEN = FLAG_PLACE_TEMP_31, ///< by Frost
+  /// ★ Named from the game: "Bestows Frost when equipped" (MsgItemPlainName)
   FLAG_EAST_TARGET_FROZEN = FLAG_PLACE_TEMP_32, ///< by Frost
   /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_PLANT_GROWN = FLAG_PLACE_TEMP_33, ///< by Growth, up The Wall
@@ -823,16 +825,16 @@ static void Event_HaltLifts(void) {
 /// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, which
 /// nothing in the game sets (colosseum_azart_match.c's Event_ReachArena).
 static void Event_ReachArena(void) {
-  s32 rivalFinishedFirst;
+  s32 opponentFinishedFirst;
   s32 refreshCount;
   s32 resultBase;
 
   resultBase = 2;
   SceneState_EmptyHook();
   Engine_EventBegin();
-  rivalFinishedFirst = ColosseumSatrageMatch_ApproachFinishAndTakeItem(
+  opponentFinishedFirst = ColosseumSatrageMatch_ApproachFinishAndTakeItem(
       ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
-  ColosseumSatrageMatch_WaitForRivalFinish();
+  ColosseumSatrageMatch_WaitForOpponentFinish();
   refreshCount = 9;
   do {
     Object_RefreshSelectorById(OPPONENT);
@@ -857,11 +859,11 @@ static void Event_ReachArena(void) {
   Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
-   * unfolded; as 3 - rivalFinishedFirst, which shares r5's 3 with
+   * unfolded; as 3 - opponentFinishedFirst, which shares r5's 3 with
    * Battle_SetStart(BATTLE_START_SCENE), 3 of 106 instructions differ in
    * tbs-en. */
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
-                                        resultBase - rivalFinishedFirst + 1);
+                                        resultBase - opponentFinishedFirst + 1);
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumSatrageMatch,
                            COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
@@ -1065,7 +1067,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
-    ColosseumSatrageMatch_StartRivalPath((s32)&ResourceId_RivalPathB);
+    ColosseumSatrageMatch_StartOpponentPath((s32)&ResourceId_OpponentPathB);
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
@@ -1619,13 +1621,13 @@ static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
 /// Retains the empty hook called before the finish sequence.
 static void SceneState_EmptyHook(void) {}
 
-/// Unused: marks the rival's path recorder finished (PATH_RECORDER_FINISHED);
-/// nothing calls it.
-static UNUSED void ColosseumSatrageMatch_MarkRivalFinished(void) {
+/// Unused: marks the opponent's path recorder finished
+/// (PATH_RECORDER_FINISHED); nothing calls it.
+static UNUSED void ColosseumSatrageMatch_MarkOpponentFinished(void) {
   ((struct PathRecorder *)gSceneState)->mode = PATH_RECORDER_FINISHED;
 }
 
-static void ColosseumSatrageMatch_WaitForRivalFinish(void) {
+static void ColosseumSatrageMatch_WaitForOpponentFinish(void) {
   s16 *mode = &((struct PathRecorder *)gSceneState)->mode;
 
   while (*mode != 9) {
@@ -1751,17 +1753,17 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   return finishAlreadyReached;
 }
 
-#include "common/colosso_path_rival.h"
+#include "common/colosso_path_opponent.h"
 
 /// Allocates the race work, records both competitors and installs the gauge
 /// task.
-void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
+void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
                                               s32 segments, s32 finishX,
                                               s32 finishZ, s32 firstItem,
                                               s32 secondItem) {
   struct ColossoRaceWork *work;
   struct FieldActor *leader;
-  struct FieldActor *rival;
+  struct FieldActor *opponent;
   void *graphics;
   s32 vramSlot;
 
@@ -1770,7 +1772,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
   graphics = Runtime_BumpAllocateAlternatePool(512);
 
   work->gauge.playerActor = leaderId;
-  work->gauge.rivalActor = rivalId;
+  work->gauge.opponentActor = opponentId;
   work->gauge.finishItemActorA = firstItem;
   work->gauge.finishItemActorB = secondItem;
   work->gauge.segments = segments;
@@ -1778,12 +1780,12 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
   work->gauge.finishZ = finishZ;
 
   leader = Object_GetById(leaderId);
-  rival = Object_GetById(rivalId);
+  opponent = Object_GetById(opponentId);
 
-  // Mirror the recorded rival start when this is a fresh race entrance.
+  // Mirror the recorded opponent start when this is a fresh race entrance.
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    rival->x.fixed = (finishX << 1) - leader->x.fixed;
-    rival->z.fixed = leader->z.fixed;
+    opponent->x.fixed = (finishX << 1) - leader->x.fixed;
+    opponent->z.fixed = leader->z.fixed;
   }
 
   work->gauge.level = 0;
@@ -1802,8 +1804,8 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
   Runtime_BumpFree(graphics);
 }
 
-/// Decodes the rival's recorded path and starts its playback task.
-static void ColosseumSatrageMatch_StartRivalPath(s32 pathResource) {
+/// Decodes the opponent's recorded path and starts its playback task.
+static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   struct ColossoRaceWork *work = WORK_SLOT(HEAP_SLOT_COLOSSO_RACE);
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
@@ -1811,11 +1813,12 @@ static void ColosseumSatrageMatch_StartRivalPath(s32 pathResource) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
-    recorder->actor = work->gauge.rivalActor;
+    recorder->actor = work->gauge.opponentActor;
     recorder->still = 0;
     recorder->pos = 0;
   }
-  FieldScheduler_AddCallback(Colosso_UpdatePathRival, TASK_PRIORITY_SCENE + 5);
+  FieldScheduler_AddCallback(Colosso_UpdatePathOpponent,
+                             TASK_PRIORITY_SCENE + 5);
 }
 
 #include "common/colosso_scene_state.h"
@@ -2179,7 +2182,7 @@ s16 gColosseumSatrageMatch_LetteringWon[] = {
 
 s16 gColosso_MarkerSlot = -1;
 
-s32 gColosso_RivalFinishScript[] = {
+s32 gColosso_OpponentFinishScript[] = {
     SC_ARG(2),
     SC_SYNC,
     SC_ARG(1),

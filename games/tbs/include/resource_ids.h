@@ -256,8 +256,8 @@ extern char ResourceId_PerspectiveDataA;
 /// The world map cells Map_InitializePerspectiveScene decodes into
 /// Ram_MapCellBuffer, and that the still views put back on their way out.
 extern char ResourceId_DefaultMapCells;
-/// Colosso's first rival's recorded path, played by the Azart match.
-extern char ResourceId_RivalPathA;
+/// Colosso's first opponent's recorded path, played by the Azart match.
+extern char ResourceId_OpponentPathA;
 /// The world map's tile animation channels (MapAnimation_StartChannels).
 extern char ResourceId_DefaultMapAnimation;
 /// The world map's block attributes, loaded with its default cells.
@@ -280,9 +280,9 @@ extern char ResourceId_WorldMapTilesG;   ///< Snowfield set, second tile set.
 extern char ResourceId_WorldMapTilesH;   ///< Snowfield set, third tile set.
 extern char ResourceId_WorldMapTilesI;   ///< Snowfield set, fourth tile set.
 extern char ResourceId_WorldMapTilesJ;   ///< Snowfield set, animation frames.
-/// The Satrage match's rival path (ColosseumSatrageMatch_StartRivalPath).
-extern char ResourceId_RivalPathB;
-extern char ResourceId_RivalPathC; ///< The Navampa match's rival path.
+/// The Satrage match's opponent path (ColosseumSatrageMatch_StartOpponentPath).
+extern char ResourceId_OpponentPathB;
+extern char ResourceId_OpponentPathC; ///< The Navampa match's opponent path.
 /// Colosso's lettering pictures, which Colosso_LoadLettering decodes with
 /// their colours for sprite palette 15.
 extern char ResourceId_Lettering;

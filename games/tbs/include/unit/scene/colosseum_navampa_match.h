@@ -38,7 +38,7 @@ extern s16 gColossoLetteringScriptTitle[];
 extern s16 gColossoLetteringScriptGo[];
 extern s16 gColossoLetteringScriptWon[];
 extern s16 gColosso_MarkerSlot;
-extern s32 gColosso_RivalFinishScript[];
+extern s32 gColosso_OpponentFinishScript[];
 extern s32 gColosseumNavampaMatch_PlaceScript[];
 
 #endif

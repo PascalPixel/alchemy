@@ -1,24 +1,24 @@
 /// @file
-/// Colosseum Final 1 and 3: setting up a race against the rival, with
-/// the race gauge at the top of the screen and the rival running a recorded
-/// path (colosso_path_rival.h).
+/// Colosseum Final 1 and 3: setting up a race against the opponent, with
+/// the race gauge at the top of the screen and the opponent running a recorded
+/// path (colosso_path_opponent.h).
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
 #include "flags.h"
 
 /// Starts the race gauge (struct ColossoRaceWork, in HEAP_SLOT_COLOSSO_RACE):
-/// Isaac and the rival as playerActor and rivalActor, a bar of segments pieces
-/// either side, and the finish at pixel (finishX, finishZ) in 16.16, where the
-/// two item actors stand. Unless the party returns to where it was, the rival
-/// is put opposite Isaac across x = finishX.
-void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
+/// Isaac and the opponent as playerActor and opponentActor, a bar of segments
+/// pieces either side, and the finish at pixel (finishX, finishZ) in 16.16,
+/// where the two item actors stand. Unless the party returns to where it was,
+/// the opponent is put opposite Isaac across x = finishX.
+void Colosso_StartRaceGauge(s32 playerActor, s32 opponentActor, s32 segments,
                             s32 finishX, s32 finishZ, s32 finishItemActorA,
                             s32 finishItemActorB) {
 
   struct ColossoRaceWork *work;
   struct FieldActor *player;
-  struct FieldActor *rival;
+  struct FieldActor *opponent;
   s32 handle;
   s32 pal;
 
@@ -27,7 +27,7 @@ void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
   handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
   work->gauge.playerActor = playerActor;
-  work->gauge.rivalActor = rivalActor;
+  work->gauge.opponentActor = opponentActor;
   work->gauge.finishItemActorA = finishItemActorA;
   work->gauge.finishItemActorB = finishItemActorB;
   work->gauge.segments = segments;
@@ -35,11 +35,11 @@ void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
   work->gauge.finishZ = finishZ;
 
   player = Object_GetById(playerActor);
-  rival = Object_GetById(rivalActor);
+  opponent = Object_GetById(opponentActor);
 
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    rival->x.fixed = (finishX << 1) - player->x.fixed;
-    rival->z.fixed = player->z.fixed;
+    opponent->x.fixed = (finishX << 1) - player->x.fixed;
+    opponent->z.fixed = player->z.fixed;
   }
 
   work->gauge.level = 0;
@@ -64,10 +64,10 @@ void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
   Runtime_BumpFree((void *)handle);
 }
 
-/// Decodes the rival's recorded path (resource) after the gauge's work and,
-/// unless the party returns to where it was, has the rival run it from the
-/// start, mirrored across the finish; then starts the rival's callback.
-void Colosso_StartRival(s32 resource) {
+/// Decodes the opponent's recorded path (resource) after the gauge's work and,
+/// unless the party returns to where it was, has the opponent run it from the
+/// start, mirrored across the finish; then starts the opponent's callback.
+void Colosso_StartOpponent(s32 resource) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
@@ -75,9 +75,9 @@ void Colosso_StartRival(s32 resource) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
-    recorder->actor = work->gauge.rivalActor;
+    recorder->actor = work->gauge.opponentActor;
     recorder->still = 0;
     recorder->pos = 0;
   }
-  FieldScheduler_AddCallback(Colosso_UpdatePathRival, 0xc85);
+  FieldScheduler_AddCallback(Colosso_UpdatePathOpponent, 0xc85);
 }

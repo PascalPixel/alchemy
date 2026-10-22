@@ -134,7 +134,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult);
 static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId);
 static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode);
 static void ColosseumNavampaMatch_EmptyHook(void);
-static void ColosseumNavampaMatch_WaitForRivalToFinish(void);
+static void ColosseumNavampaMatch_WaitForOpponentToFinish(void);
 static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
                                                         s32 secondItem);
 static void ColosseumNavampaMatch_PushActorAhead(void);
@@ -888,7 +888,7 @@ static void Event_ReachArena(void) {
   Engine_EventBegin();
   place = ColosseumNavampaMatch_CollectFinishEquipment(ITEM_CLAYMORE,
                                                        ITEM_HUNTERS_SWORD);
-  ColosseumNavampaMatch_WaitForRivalToFinish();
+  ColosseumNavampaMatch_WaitForOpponentToFinish();
   for (i = 0; i < 10; i++) {
     Object_RefreshSelectorById(OPPONENT);
   }
@@ -1128,7 +1128,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartRival((s32)&ResourceId_RivalPathC);
+    Colosso_StartOpponent((s32)&ResourceId_OpponentPathC);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:
@@ -1242,7 +1242,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   const s32 *leaderScaleScript;
   SchedulerCallback particleCallback;
 
-  // Place the rival and companions around the resting leader.
+  // Place the opponent and companions around the resting leader.
   Engine_ActorDestroy(PRIZE_A);
   Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
@@ -2053,15 +2053,15 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
 
 static void ColosseumNavampaMatch_EmptyHook(void) {}
 
-/// Unused: marks the rival path recorder as finished; nothing calls it.
-UNUSED static void ColosseumNavampaMatch_MarkRivalFinished(void) {
+/// Unused: marks the opponent path recorder as finished; nothing calls it.
+UNUSED static void ColosseumNavampaMatch_MarkOpponentFinished(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
   recorder->mode = PATH_RECORDER_FINISHED;
 }
 
-/// Waits until the rival path recorder reaches its finished mode.
-static void ColosseumNavampaMatch_WaitForRivalToFinish(void) {
+/// Waits until the opponent path recorder reaches its finished mode.
+static void ColosseumNavampaMatch_WaitForOpponentToFinish(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
   while (recorder->mode != PATH_RECORDER_FINISHED) {
@@ -2130,20 +2130,20 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
                                                         s32 secondItem) {
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
   struct FieldActor *actor;
-  s32 rivalFinishedFirst;
+  s32 opponentFinishedFirst;
   s32 x;
   s32 z;
   u16 *itemActorId;
   s16 *linkedItemActor;
 
-  rivalFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
+  opponentFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
   actor = Object_GetById(gGameState.selectedActor);
   if (work->finishX < actor->x.fixed) {
     x = work->finishX + PIXELS(12);
   } else {
     x = work->finishX - PIXELS(12);
   }
-  if (rivalFinishedFirst != 0) {
+  if (opponentFinishedFirst != 0) {
     z = work->finishZ + PIXELS(16);
     itemActorId = &work->finishItemActorB;
   } else {
@@ -2160,7 +2160,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   while (*linkedItemActor != 0) {
     Engine_TaskWait(1);
   }
-  if (rivalFinishedFirst == 0) {
+  if (opponentFinishedFirst == 0) {
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
@@ -2175,10 +2175,10 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   UiWork_PushValueSlot(gGameState.selectedActor, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(actor);
-  return rivalFinishedFirst;
+  return opponentFinishedFirst;
 }
 
-#include "common/colosso_path_rival.h"
+#include "common/colosso_path_opponent.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
@@ -2704,7 +2704,7 @@ s16 gColossoLetteringScriptWon[] = {
 
 s16 gColosso_MarkerSlot = -1;
 
-s32 gColosso_RivalFinishScript[] = {
+s32 gColosso_OpponentFinishScript[] = {
     SC_ARG(2),
     SC_SYNC,
     SC_ARG(1),

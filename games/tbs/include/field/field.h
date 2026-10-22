@@ -78,8 +78,8 @@ struct OverlayActorState {
   u8 pad00[35];
   u8 flags;
 };
-/// The Colosso rival's path player, at the start of gSceneState: the path in
-/// ColossoRaceWork is played back or recorded by Colosso_UpdatePathRival.
+/// The Colosso opponent's path player, at the start of gSceneState: the path in
+/// ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
 struct PathRecorder {
   s16 mode;   ///< 1 plays the path, 2 records it, 9 finished
   s16 mirror; ///< nonzero mirrors the path across the finish

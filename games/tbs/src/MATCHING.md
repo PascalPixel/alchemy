@@ -339,11 +339,11 @@ come down to how a struct's member is addressed.
   shared externs in `field.h` and `common/object_staged_actor.h` lack `const`,
   so `const` would conflict, and without the attribute they'd go to `.data`.
 - The Colosso race work (`HEAP_SLOT_COLOSSO_RACE`) is `gColossoWork`
-  (`Colosso_DrawGauge`, `Colosso_UpdatePathRival`, `Colosso_StartRival`,
+  (`Colosso_DrawGauge`, `Colosso_UpdatePathOpponent`, `Colosso_StartOpponent`,
   `ColosseumNavampaMatch_CollectFinishEquipment`, `ColosseumAzartMatch_CollectFinishItem`) or
   `WORK_SLOT(HEAP_SLOT_COLOSSO_RACE)`, whose literal pool entry is
   `gWorkSlot+236` (`Colosso_SetGaugeHold`,
-  `ColosseumSatrageMatch_ApproachFinishAndTakeItem`, `ColosseumSatrageMatch_StartRivalPath`). It's
+  `ColosseumSatrageMatch_ApproachFinishAndTakeItem`, `ColosseumSatrageMatch_StartOpponentPath`). It's
   the same address through another relocation, so no instruction differs.
   Where only the gauge is read, a `struct ColossoGaugeWork *` (the race work's
   first member) compiles the same as the race work's `->gauge`.

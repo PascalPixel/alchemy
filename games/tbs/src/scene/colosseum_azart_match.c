@@ -35,7 +35,7 @@
 ///   friend's turn, and where they stand is kept as their place; after Mia,
 ///   COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE starts the race.
 /// - COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, the race. Isaac runs alone
-///   against Azart, who follows a recorded path (Colosso_StartRival), with a
+///   against Azart, who follows a recorded path (Colosso_StartOpponent), with a
 ///   gauge at the top of the screen showing how near each is to the finish
 ///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
 ///   three. Azart runs east of the finish (1,304 pixels across, where the
@@ -766,7 +766,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
     Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartRival((s32)&ResourceId_RivalPathA);
+    Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
@@ -1461,7 +1461,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   return flag;
 }
 
-#include "common/colosso_path_rival.h"
+#include "common/colosso_path_opponent.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
@@ -1798,7 +1798,7 @@ s16 gColosseumAzartMatch_LetteringWon[] = {
 
 s16 gColosso_MarkerSlot = -1;
 
-s32 gColosso_RivalFinishScript[] = {
+s32 gColosso_OpponentFinishScript[] = {
     SC_ARG(2),
     SC_SYNC,
     SC_ARG(1),

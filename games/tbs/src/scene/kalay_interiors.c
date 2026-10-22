@@ -26,6 +26,14 @@
 /// - Kalay Sanctum (SceneId_KalaySanctum), whose healer offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
+///
+/// Open questions:
+///
+/// - XXX: what the four by two cells KalayInteriors_ApplyRoomState copies on
+///   entering by KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER show; a render of that
+///   house entered from each of its doors would settle it.
+/// - XXX: what the second tour guide's child value 2 changes while the tour
+///   waits; a render of the inn's dining room would settle it.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -70,16 +78,13 @@ enum KalayInteriorsActor {
   /// ★ Named from the game: "Somehow, the north has become the center of
   /// much attention lately." (MsgKalayInteriorsSomehowTheNorthHasBecomeThe)
   ACTOR_MAN_ON_THE_NORTH,
-  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS). "Then the
-  /// soldiers came and took him to Lord Hammet's Palace."
+  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS), who says the
+  /// soldiers took the merchant to Lord Hammet's Palace.
   /// ★ Named from the game: "A merchant from Vault had been saying many
   /// things about the north..." (MsgKalayInteriorsAMerchantFromVaultHadBeen)
   ACTOR_WOMAN_ON_THE_VAULT_MERCHANT,
   /// The worried father's son, drawn with the bald man in red's frames
-  /// (sprite 126, spr_124.png's picture). "No one is allowed to go to Vault,
-  /// even
-  /// though the bridge has been rebuilt." His thoughts: "I'm an adult, now. I
-  /// don't want my father ordering me around..."
+  /// (sprite 126, spr_124.png's picture), who may not go to Vault.
   /// ★ Named from the game: "I'm an adult, now. I don't want my father
   /// ordering me around..." (MsgKalayInteriorsImAnAdultNowIDont)
   ACTOR_WORRIED_FATHERS_SON,
@@ -88,22 +93,16 @@ enum KalayInteriorsActor {
   /// (MsgKalayInteriorsIDoNotWantMySon)
   ACTOR_WORRIED_FATHER,
   /// Drawn with the young man in green's frames (sprite 127, spr_125.png's
-  /// picture). "The most important skill for a merchant is the ability to
-  /// discern
-  /// quality." His mother's thoughts say he is one: "I feel like I am living
-  /// with a merchant... Actually, he is one!"
+  /// picture), whose mother's thoughts call him a merchant.
   /// ★ Named from the game: "I feel like I am living with a merchant...
   /// Actually, he is one!" (MsgKalayInteriorsMySonIsVeryTightWith)
   ACTOR_MERCHANT,
-  /// The merchant's mother, an old woman (SPRITE_OLD_WOMAN). "My son
-  /// received his knack for business from Lord Hammet."
+  /// The merchant's mother, an old woman (SPRITE_OLD_WOMAN).
   /// ★ Named from the game: "My son received his knack for business from Lord
   /// Hammet." (MsgKalayInteriorsMySonReceivedHisKnackFor)
   ACTOR_MERCHANTS_MOTHER,
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), gone once
-  /// the
-  /// tour
-  /// has left.
+  /// the tour has left.
   /// ★ Named from the game: "Do you know about the continent south of
   /// Tolbi?" (MsgKalayDoKnowAboutContinentSouth)
   ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH,
@@ -113,12 +112,10 @@ enum KalayInteriorsActor {
   /// to leave!" (MsgKalayInteriorsIBetterGetReadyTheColosso)
   ACTOR_WOMAN_BOUND_FOR_THE_TOUR,
   /// Two men in white turbans (SPRITE_MAN_IN_WHITE_TURBAN) who fled Lalivero,
-  /// in Gondowan. "We fled from Gondowan, to the
-  /// south. We lived in Lalivero..."
+  /// in Gondowan.
   /// ★ Named from the game: "We lived in Lalivero"
   /// (MsgKalayInteriorsWeFledFromGondowanToThe)
   ACTOR_MAN_FROM_LALIVERO,
-  /// "Lalivero, where I'm from, is the largest village in Gondowan."
   /// ★ Named from the game: "Lalivero, where I'm from, is the largest village
   /// in Gondowan." (MsgKalayInteriorsLaliveroWhereImFromIsThe)
   ACTOR_SECOND_MAN_FROM_LALIVERO,
@@ -129,54 +126,54 @@ enum KalayInteriorsActor {
   /// (MsgKalayOurInnFeelsEmptyNow)
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED,
   /// The innkeeper's wife, a woman in a pink apron
-  /// (SPRITE_WOMAN_IN_PINK_APRON),
-  /// by what she says once the tour has left: "Even our
-  /// chef left, so we can't keep our business open." Her thoughts: "Even if
-  /// my husband wanted to go on the Colosso tour, I would never let him."
+  /// (SPRITE_WOMAN_IN_PINK_APRON), who says once the tour has left that even
+  /// their chef went with it.
   /// ★ Named from the game: "Even if my husband wanted to go on the Colosso
   /// tour" (MsgKalayInteriorsEvenIfMyHusbandWantedTo)
   ACTOR_INNKEEPERS_WIFE,
-  /// A chef (SPRITE_CHEF): "I've signed on for a tour group going to Tolbi."
+  /// A chef (SPRITE_CHEF).
   /// ★ Named from the game: "I've signed on for a tour group going to
   /// Tolbi." (MsgKalayInteriorsIveSignedOnForATour)
   ACTOR_FIRST_TOURIST,
-  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN): "The Colosso
-  /// gladiators are all strong, muscular men!"
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who talks of the
+  /// Colosso gladiators. Like the other guests the tour takes, she is named
+  /// by what Kalay's people say of the inn's guests.
+  /// ★ Named from the game: "The guests at the inn are tourists on their way
+  /// to see Colosso." (MsgKalayInnFestivalTourists)
   ACTOR_SECOND_TOURIST,
   /// The tour's guides, men carrying packs (SPRITE_MAN_CARRYING_A_PACK), in
   /// the inn's dining room.
   /// ★ Named from the game: "Please finish eating if you are taking the tour!"
   /// (MsgKalayPleaseFinishEatingIfTaking)
   ACTOR_TOUR_GUIDE,
-  /// "Everyone looks forward to going to Tolbi once a year." His thoughts:
-  /// "I'm exhausted from preparing this tour."
   /// ★ Named from the game: "I'm exhausted from preparing this tour."
   /// (MsgKalayInteriorsImExhaustedFromPreparingThisTour)
   ACTOR_SECOND_TOUR_GUIDE,
-  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN): "Surely Lord Hammet will
-  /// pop up in Tolbi. He loves Colosso."
+  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN), who expects Lord Hammet
+  /// in Tolbi.
+  /// ★ Named from the game: "The guests at the inn are tourists on their way
+  /// to see Colosso." (MsgKalayInnFestivalTourists)
   ACTOR_THIRD_TOURIST,
-  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE): "I would have entered
-  /// Colosso if I were only a little younger."
+  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who would have
+  /// entered Colosso if he were younger.
+  /// ★ Named from the game: "The guests at the inn are tourists on their way
+  /// to see Colosso." (MsgKalayInnFestivalTourists)
   ACTOR_FOURTH_TOURIST,
-  /// An old woman (SPRITE_OLD_WOMAN): "Many of the guests here seem to be
-  /// heading to Tolbi."
+  /// An old woman (SPRITE_OLD_WOMAN), who stays once the tour has left.
+  /// ★ Named from the game: "Many of the guests here seem to be heading to
+  /// Tolbi." (MsgKalayInteriorsManyOfTheGuestsHereSeem)
   ACTOR_INN_GUEST,
-  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD). "Aren't you going to
-  /// Colosso? You guys are warriors!" Thoughts: "I'm going to sign up for
-  /// Colosso as soon as I arrive in Tolbi."
+  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD).
   /// ★ Named from the game: "I'm going to sign up for Colosso as soon as I
   /// arrive in Tolbi." (MsgKalayInteriorsImGoingToSignUpFor)
   ACTOR_WARRIOR_SIGNING_UP_FOR_COLOSSO,
   /// The warriors bound for Colosso, Ouranos and Sean, young men with red and
   /// with blue hair (SPRITE_YOUNG_MAN_WITH_RED_HAIR and
   /// SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, as in tolbi_ship_interiors.c), named by
-  /// what each says of the
-  /// other. "I have power, and Sean has speed."
+  /// what each says of the other.
   /// ★ Named from the game: "Then, Ouranos and I will fight each other"
   /// (MsgKalayInteriorsWereSoStrongMakingTheFinals)
   ACTOR_OURANOS,
-  /// "Then, Ouranos and I will fight each other..."
   /// ★ Named from the game: "I have power, and Sean has speed."
   /// (MsgKalayInteriorsIHavePowerAndSeanHas)
   ACTOR_SEAN,
@@ -186,6 +183,9 @@ enum KalayInteriorsActor {
   /// (MsgReviveDonation)
   ACTOR_HEALER = ACTOR_FIRST_PLACED
 };
+
+/// Kalay's inn, as Engine_InnOpen numbers the inns.
+enum { KALAY_INN = 7 };
 
 static void KalayInteriors_ApplyRoomState(void);
 
@@ -295,7 +295,7 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
-    Engine_InnOpen(7, ACTOR_INNKEEPER);
+    Engine_InnOpen(KALAY_INN, ACTOR_INNKEEPER);
   } else {
     Engine_EventBegin();
 
@@ -315,7 +315,7 @@ static void KalayInteriors_TalkToInnkeeper(void) {
 /// The Kalay Sanctum's healer offers its services across the counter. He does
 /// so when spoken to across the counter with the leader facing north; from
 /// elsewhere he says Kalay is a peaceful place.
-static void KalayInteriors_TalkToPriest(void) {
+static void KalayInteriors_TalkToHealer(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   // FACING_IS_NORTH removes the native EN halfword shift and changes its
@@ -342,7 +342,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   Engine_EventBegin();
 
   // Prevent idle movement while the doorway cells are animated.
-  for (slot = ACTOR_FIRST_PLACED; slot <= 65; slot++) {
+  for (slot = ACTOR_FIRST_PLACED; slot <= ACTOR_LAST_SLOT; slot++) {
     struct FieldActor *actor = Object_GetById(slot);
 
     if (actor != 0) {
@@ -668,9 +668,9 @@ struct SceneEvent gKalayInteriors_HouseEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FROM_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhatColossoIsLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_MAN_FROM_LALIVERO, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsItLooksLikeColossoWillSoon) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_MAN_FROM_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWasSoScaredComingTo) },
-    { SEARCH(SEARCH_BARREL), 100, 0xf83, FIND_COINS(11) },
-    { SEARCH(SEARCH_OVEN), 101, 0xf84, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_KALAY_INTERIORS_COINS_BARREL, FIND_COINS(11) },
+    { SEARCH(SEARCH_OVEN), 101, FLAG_KALAY_INTERIORS_SMOKE_BOMB_OVEN, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_BARREL), 102, FLAG_KALAY_INTERIORS_ELIXIR_BARREL, FIND_ITEM(ITEM_ELIXIR) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
     { SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
     // Unused: this oven's item row answers first (see the scenes README).
@@ -718,9 +718,9 @@ struct SceneEvent gKalayInteriors_InnEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_SIGNING_UP_FOR_COLOSSO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImGoingToSignUpFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OURANOS, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIHavePowerAndSeanHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEAN, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeAreTheToughestOfAll) },
-    { SEARCH(SEARCH_BARREL), 100, 0xf83, FIND_COINS(11) },
-    { SEARCH(SEARCH_OVEN), 101, 0xf84, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_KALAY_INTERIORS_COINS_BARREL, FIND_COINS(11) },
+    { SEARCH(SEARCH_OVEN), 101, FLAG_KALAY_INTERIORS_SMOKE_BOMB_OVEN, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_BARREL), 102, FLAG_KALAY_INTERIORS_ELIXIR_BARREL, FIND_ITEM(ITEM_ELIXIR) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
     { SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
     // Unused: this oven's item row answers first (see the scenes README).
@@ -732,7 +732,7 @@ struct SceneEvent gKalayInteriors_InnEvents[] = {
 
 struct SceneEvent gKalayInteriors_SanctumEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY },
-    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToPriest) },
+    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
     { SCENE_EVENTS_END },
 };

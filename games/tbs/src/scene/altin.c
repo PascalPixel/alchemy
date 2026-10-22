@@ -295,9 +295,6 @@ enum { SPRITE_SPRAY = 222, ANIM_BEAST_SPIT = 3 };
 
 enum { TRIGGER_NEAR_BEAST = 20 };
 
-/// The highest actor slot.
-enum { ACTOR_LAST_PLACED = 65 };
-
 static void Village_ApplyWaterLevel(void);
 static void Houses_PlaceSheltering(void);
 static void Beast_SpawnSpray(void);
@@ -615,7 +612,7 @@ static void Village_EnterDoor(void) {
 
   event = gEventWork;
   Engine_EventBegin();
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_PLACED; actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
     actor = Object_GetById(actorId);
     if (actor != 0) {
       actor->motionFlags = 0;

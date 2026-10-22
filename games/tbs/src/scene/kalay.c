@@ -93,6 +93,16 @@
 /// report and Layana's scolding count as seen and FLAG_KALAY_TUNNEL_OPEN opens
 /// the passage. The getters choose each scene's tables; the cave and the
 /// passage have no placements, and an empty set serves any other scene number.
+///
+/// Open questions:
+///
+/// - XXX (no evidence): whether the man waiting in the treasure room
+///   (ACTOR_WAITING_MAN) is Bunza; likely, because he is drawn with
+///   SPRITE_BUNZA, which every other scene places beside Hammet as Bunza, but
+///   his lines never name him.
+/// - XXX: Bunza's wagon here is sprite 0x111, not SPRITE_WAGON (0x9a); a
+///   render of the Kalay Tunnel Entrance's arrival would show how the two
+///   differ.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -146,8 +156,8 @@
 /// (gKalay_TourGroupPlacements).
 enum KalayTownActor {
   /// The two soldiers of Kalay at the town's entrance from the world map.
-  /// "Welcome to Kalay! You may enter, so long as you do not disrupt the
-  /// peace."
+  /// ★ Named from the game: "Welcome to Kalay! You may enter, so long as you
+  /// do not disrupt the peace." (MsgKalayWelcomeInPeace)
   ACTOR_WELCOMING_SOLDIER = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "We soldiers protect the peace in Kalay with our
   /// lives." (MsgKalaySoldiersProtectPeace)
@@ -170,7 +180,9 @@ enum KalayTownActor {
   ACTOR_WOMAN_ON_LAMAKAN_DESERT,
   /// The tourist the guides are missing, an old man with a cane
   /// (SPRITE_OLD_MAN_WITH_CANE), who stands in town until then and takes his
-  /// place again after: "Kalay sits at a great crossroads."
+  /// place again after.
+  /// ★ Named from the game: "Uh-oh... We're short one person... Now where
+  /// could he be?" (MsgKalayShortOnePerson)
   ACTOR_LATE_TOURIST,
   /// An old woman (SPRITE_OLD_WOMAN). "The guests at the inn are tourists on
   /// their way to see Colosso."
@@ -197,9 +209,13 @@ enum KalayTownActor {
   ACTOR_MAN_WHO_LEFT_TOLBI,
   /// The Colosso tour's guides, men carrying packs
   /// (SPRITE_MAN_CARRYING_A_PACK), who stand in town and lead the tour off
-  /// when it leaves. "OK... Follow me, and stay in line!"
+  /// when it leaves.
+  /// ★ Named from the game: "Are we all listening? Let's stop right here."
+  /// (MsgKalayOkListeningLets)
   ACTOR_HEAD_GUIDE,
-  ACTOR_SECOND_GUIDE, ///< "Oh, dear..."
+  /// ★ Named from the game: "We're just checking to make sure no one is
+  /// missing!" (MsgKalayWhyWeStoppingAtPlace)
+  ACTOR_SECOND_GUIDE,
   /// ★ Named from the game: "These weapons are good, but they're not the best
   /// Kalay makes." (MsgKalayLordHammetSellsHisBest)
   ACTOR_WEAPON_MERCHANT,
@@ -221,17 +237,13 @@ enum KalayTownActor {
   /// ACTOR_OURANOS: in row order a chef (SPRITE_CHEF), a young woman in
   /// green, a young man with brown hair, a woman with fair hair, a woman with a
   /// sword, a bald, muscular man, a young man with blue hair, and Ouranos, a
-  /// young man with red hair. Their first lines, in row order: "Why are we
-  /// stopping at
-  /// a place like this?", "Yeah! We have to hurry, or we'll be late for
-  /// Colosso!", "I hear there was a landslide on the road to Tolbi.", "Come
-  /// on! Why aren't we leaving yet?", "That won't do at all!", "Late for
-  /// Colosso? We can't have that!" and "But if anyone is missing, we're the
-  /// one's who'll miss out."
+  /// young man with red hair.
+  /// ★ Named from the game: "Why are we stopping at a place like this?"
+  /// (MsgKalayWhyWeStoppingAtPlace)
   ACTOR_FIRST_TOURIST,
-  /// The tourist the one beside him calls Ouranos: "It's just a shame a man
-  /// like you can't ride on a boat, Ouranos." "Right when we're leaving, they
-  /// tell us we have to ride a boat?"
+  /// The tourist the one beside him calls Ouranos.
+  /// ★ Named from the game: "It's just a shame a man like you can't ride on a
+  /// boat, Ouranos." (MsgKalayDecideEnteringColosso)
   ACTOR_OURANOS = ACTOR_FIRST_TOURIST + 7
 };
 
@@ -251,7 +263,10 @@ enum KalayPalaceActor {
 /// The Kalay Tunnel Entrance (KalayTunnelEntrance), numbering
 /// gKalay_TunnelEntrancePlacements after its rows for Garet, Ivan and Mia.
 enum KalayTunnelEntranceActor {
-  /// "Do you want to go to the cave up ahead?"
+  /// A soldier of Kalay who keeps the passage closed by Hammet and Layana's
+  /// command.
+  /// ★ Named from the game: "Do you want to go to the cave up ahead?"
+  /// (MsgKalayDoWantGoCaveUp)
   ACTOR_TUNNEL_GUARD = ACTOR_FIRST_PLACED,
   /// Bunza's.
   /// ★ Named from what the player sees: a covered wagon drawn by a horse
@@ -277,11 +292,8 @@ enum KalayTunnelActor {
   /// ★ Named from what the player sees: the second stone statue, east of the
   /// first (its render)
   ACTOR_SECOND_STATUE,
-  /// A man (with ACTOR_BUNZA's sprite) who waits here once
-  /// FLAG_KALAY_TUNNEL_OPEN is set.
-  /// "Layana was very hard on all of you, wasn't she?" XXX: likely Bunza,
-  /// because every other scene places that sprite beside Hammet as Bunza
-  /// (SPRITE_BUNZA in west_lunpa_cave.h); the text never names him here.
+  /// A man drawn with SPRITE_BUNZA who waits here once FLAG_KALAY_TUNNEL_OPEN
+  /// is set: "Layana was very hard on all of you, wasn't she?"
   ACTOR_WAITING_MAN,
   /// The sprite of the puddle that Frost freezes into an ice pillar in
   /// bilibin_cave.c.
@@ -293,6 +305,9 @@ enum KalayTunnelActor {
   ACTOR_SCORCH
 };
 
+/// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
+enum { PUDDLE_ANIM_FROZEN = 5 };
+
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
 /// passages (place flags) while the party stays in the tunnel's scenes.
 enum KalayTunnelFlag {
@@ -301,8 +316,8 @@ enum KalayTunnelFlag {
   /// Each statue's particles have started their sound.
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
-  FLAG_TUNNEL_FIRST_PASSAGE_OPEN = 0x302,
-  FLAG_TUNNEL_SECOND_PASSAGE_OPEN = 0x303
+  FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_PLACE_TEMP_02,
+  FLAG_TUNNEL_SECOND_PASSAGE_OPEN = FLAG_PLACE_TEMP_03
 };
 
 static void Kalay_PrepareTown(void);
@@ -576,7 +591,7 @@ static void Kalay_OpenDoorAndExit(void) {
 
   event = gEventWork;
   Engine_EventBegin();
-  for (i = ACTOR_FIRST_PLACED; i <= 65; i++) {
+  for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_SLOT; i++) {
     actor = Object_GetById(i);
     if (actor != NULL) {
       actor->motionFlags = 0;
@@ -1385,7 +1400,7 @@ static void Kalay_PrepareTunnel(void) {
     if (GameFlag_IsSet(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       Actor_Get(ACTOR_PUDDLE);
       column = 9;
-      Engine_ActorSetAnimation(ACTOR_PUDDLE, 5);
+      Engine_ActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIM_FROZEN);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 14);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 45);
       {
@@ -1903,7 +1918,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
-  Actor_SetAttachedEffect(IVAN, 0x102);
+  Actor_SetAttachedEffect(IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
@@ -2049,10 +2065,10 @@ static void Kalay_HammetReturnsToPalace(void) {
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
 /// it one tile when there is room.
-static void Kalay_PushTunnelPillar(void) {
+static void Kalay_PushTunnelStatue(void) {
   struct FieldPosition destination;
   struct FieldActor *leader;
-  struct FieldActor *pillar;
+  struct FieldActor *statue;
   s32 direction;
   s32 probeStep;
   s32 moveStep;
@@ -2065,34 +2081,34 @@ static void Kalay_PushTunnelPillar(void) {
   direction = (leader->facing >> 12);
   leaderX = leader->x.part.pixel;
   probeStep = gKalay_TileStepByFacing[direction];
-  pillar =
+  statue =
       SceneActor_FindActorAtCell((leaderX + (probeStep >> 16)) >> 4,
                                  (leader->z.part.pixel + (s16)probeStep) >> 4);
-  if (pillar != NULL) {
+  if (statue != NULL) {
     stoppedVelocity = 0;
-    pillar->terrainId = 2;
+    statue->terrainId = 2;
     target = &destination;
     moveStep = gKalay_TileStepByFacing[direction];
-    SET_POSITION(target, pillar->x.fixed + (moveStep & -0x10000),
-                 pillar->y.fixed, pillar->z.fixed + (moveStep << 16));
-    if (FieldObject_CheckMovementCollision(pillar, target) <= 0) {
-      Object_SetMode(leader, 8);
+    SET_POSITION(target, statue->x.fixed + (moveStep & -0x10000),
+                 statue->y.fixed, statue->z.fixed + (moveStep << 16));
+    if (FieldObject_CheckMovementCollision(statue, target) <= 0) {
+      Object_SetMode(leader, ANIM_PUSH);
       pushSpeed = PIXELS(1) / 5;
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_185);
-      pillar->speed = pushSpeed;
-      pillar->acceleration = pushSpeed;
-      Engine_ObjectSetPosition(pillar, target->x, target->y, target->z);
+      statue->speed = pushSpeed;
+      statue->acceleration = pushSpeed;
+      Engine_ObjectSetPosition(statue, target->x, target->y, target->z);
       leader->speed = pushSpeed;
       leader->acceleration = pushSpeed;
       Engine_ObjectSetPosition(leader, target->x, target->y, target->z);
-      FieldObject_WaitForMove(pillar);
+      FieldObject_WaitForMove(statue);
       FieldFx_PlayQueuedSound();
-      pillar->x.fixed = target->x;
-      pillar->z.fixed = target->z;
-      pillar->velocityX = stoppedVelocity;
-      pillar->velocityZ = stoppedVelocity;
-      Object_SetMode(leader, 1);
+      statue->x.fixed = target->x;
+      statue->z.fixed = target->z;
+      statue->velocityX = stoppedVelocity;
+      statue->velocityZ = stoppedVelocity;
+      Object_SetMode(leader, ANIM_STAND);
       Kalay_UpdateTunnelPassages();
     }
   }
@@ -2102,8 +2118,8 @@ static void Kalay_PushTunnelPillar(void) {
 /// the Kalay Tunnel (KalayTunnelTreasureRoom) the passage opens step by step,
 /// and the first one raises the puddle for Frost.
 static void Kalay_UpdateTunnelPassages(void) {
-  struct FieldActor *firstPillar;
-  struct FieldActor *secondPillar;
+  struct FieldActor *firstStatue;
+  struct FieldActor *secondStatue;
   s32 firstPassageOpen;
   struct FieldActor *frostEffect;
   u32 i;
@@ -2112,11 +2128,11 @@ static void Kalay_UpdateTunnelPassages(void) {
   s32 width;
 
   // Open each passage only after its corresponding statue reaches the trigger.
-  firstPillar = Object_GetById(ACTOR_FIRST_STATUE);
-  secondPillar = Object_GetById(ACTOR_SECOND_STATUE);
+  firstStatue = Object_GetById(ACTOR_FIRST_STATUE);
+  secondStatue = Object_GetById(ACTOR_SECOND_STATUE);
   firstPassageOpen = GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
   if (firstPassageOpen != 0) {
-  } else if ((firstPillar->x.fixed >> 19) > 29) {
+  } else if ((firstStatue->x.fixed >> 19) > 29) {
   } else {
     frostEffect = Object_GetById(ACTOR_PUDDLE);
     Engine_EventBegin();
@@ -2175,7 +2191,7 @@ static void Kalay_UpdateTunnelPassages(void) {
     Engine_EventEnd();
   }
   if (GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
-  } else if ((secondPillar->x.fixed >> 19) > 87) {
+  } else if ((secondStatue->x.fixed >> 19) > 87) {
   } else {
     Engine_EventBegin();
     i = 67;
@@ -2391,22 +2407,30 @@ s32 gKalay_TileStepByFacing[] = {
 };
 
 s32 gKalay_TourGroupWalkScript[] = {
-    SC_ARG(2),       SC_MOVE_BY(-PIXELS(80), 0, 0),
-    SC_SYNC,         SC_ARG(1),
-    SC_SET(0x23, 1), SC_WAIT(1),
+    SC_ARG(2), SC_MOVE_BY(-PIXELS(80), 0, 0), SC_SYNC,
+    SC_ARG(1), SC_SET(SW_TIMER, 1),           SC_WAIT(1),
     SC_END,
 };
 
 s32 gKalay_TourGroupLeaveScript[] = {
-    SC_ARG(2),       SC_MOVE_BY(-PIXELS(72), 0, 0),
-    SC_SYNC,         SC_MOVE_BY(-PIXELS(100), 0, 0),
-    SC_SYNC,         SC_MOVE_BY(-PIXELS(100), 0, 0),
-    SC_SYNC,         SC_ARG(1),
-    SC_SET(0x23, 1), SC_POS(0, 0, 0),
-    SC_WAIT(1),      SC_END,
-    SC_ARG(2),       SC_MOVE(PIXELS(192), 0, PIXELS(222)),
-    SC_SYNC,         SC_POS(0, 0, 0),
-    SC_WAIT(1),      SC_END,
+    SC_ARG(2),
+    SC_MOVE_BY(-PIXELS(72), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(-PIXELS(100), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(-PIXELS(100), 0, 0),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_TIMER, 1),
+    SC_POS(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(192), 0, PIXELS(222)),
+    SC_SYNC,
+    SC_POS(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gKalay_TouristFidgetScript[] = {
@@ -2433,7 +2457,7 @@ s32 gKalay_GuideCountScript[] = {
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_ARG(2),
     SC_MOVE(PIXELS(178), 0, PIXELS(272)),
     SC_SYNC,
@@ -2456,7 +2480,7 @@ s32 gKalay_GuidePaceScript[] = {
     SC_ARG(1),
     SC_SET(SW_FACING, 0xd000),
     SC_WAIT(40),
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_END,
 };
 
@@ -2473,7 +2497,7 @@ s32 gKalay_HeadGuideStopScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
     SC_END,
 };
@@ -2491,7 +2515,7 @@ s32 gKalay_SecondGuideStopScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
     SC_END,
 };
@@ -2502,7 +2526,7 @@ s32 gKalay_HeadGuideReturnScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_SET(0x23, 0),
+    SC_SET(SW_TIMER, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -2517,7 +2541,7 @@ s32 gKalay_SecondGuideReturnScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_WEST),
-    SC_SET(0x23, 0),
+    SC_SET(SW_TIMER, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -2759,7 +2783,7 @@ struct ScenePlacement gKalay_TownPlacements[] = {
         PIXELS(278), 0, PIXELS(318), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(440), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(56), 0, PIXELS(332), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -2809,7 +2833,7 @@ struct ScenePlacement gKalay_TunnelEntrancePlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BUNZA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, 7,
+    { SPRITE_BLANK, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, ACTOR_RESET_ACTION,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -2884,8 +2908,8 @@ struct SceneEvent gKalay_TownEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayPalaceWaterSupply) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TOWN_STATUE, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TOWN_NUT, FLAG_KALAY_TOWN_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTownNut) },
-    { SEARCH(SEARCH_JAR), 100, 0xf81, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_JAR), 101, 0xf82, FIND_ITEM(ITEM_VIAL) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_KALAY_SLEEP_BOMB_JAR, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_KALAY_VIAL_JAR, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_SearchWell) },
     { SCENE_EVENTS_END },
 };
@@ -2912,7 +2936,7 @@ struct SceneEvent gKalay_TunnelEntranceEvents[] = {
 struct SceneEvent gKalay_TunnelCaveEvents[] = {
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
-    { SEARCH(SEARCH_CHEST), 100, 0xf22, FIND_ITEM(ITEM_APPLE) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_KALAY_TUNNEL_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
     { SCENE_EVENTS_END },
 };
 
@@ -2934,22 +2958,22 @@ struct SceneEvent gKalay_TunnelEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_STATUE, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_STATUE, FLAG_TUNNEL_SECOND_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_TUNNEL_PUDDLE_FROZEN, EVENT_SCRIPT(Kalay_FreezePuddle) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StopTrackingLeader) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StartTrackingLeader) },
     { EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_DisableLeaderAutomaticPriority) },
     { EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnableLeaderAutomaticPriority) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf1c, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_KALAY_TUNNEL_SPIRIT_GLOVES_CHEST, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
     { EVENT_TALK, ACTOR_SCORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_RecruitScorch) },
-    { SEARCH(SEARCH_CHEST), 102, 0xf1e, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_CHEST), 103, 0xf1f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_CHEST), 104, 0xf20, FIND_COINS(200) },
-    { SEARCH(SEARCH_CHEST), 105, 0xf21, FIND_ITEM(ITEM_POTION) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_CHEST), 104, FLAG_KALAY_TUNNEL_COINS_CHEST, FIND_COINS(200) },
+    { SEARCH(SEARCH_CHEST), 105, FLAG_KALAY_TUNNEL_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

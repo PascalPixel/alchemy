@@ -74,6 +74,8 @@ An item is its row of `items.tsv`, read as `struct ItemDefinition`
 (`games/tbs/include/game/item.h`): what it costs, who equips it, what it adds
 while equipped and what using it does.
 
+![The Long Sword's row of `items.tsv`, price 200, type 1, a weapon, flags 0, `equip_mask` `0x13`, Isaac, Garet and Felix, icon 1, `primary_bonus` 14 and the rest 0 but element 4, beside four screens. In Bilibin's weapon shop the Buy list shows it at 200 coins; choosing who gets it, the hand on Isaac shows his Attack going from 56 with his Bandit's Sword to 58, and on Ivan the shop says `Can't equip`; once bought and equipped, the Item screen lists it among Isaac's items with its sword icon and his Attack at 58.](https://alchemy.pascalpixel.com/guides/game/item-row.png)
+
 | Column | What it holds |
 | --- | --- |
 | `price` | the price in coins |
@@ -348,4 +350,3 @@ scripts name no item past `ITEM_CLERICS_RING` (268), no enemy in
 `enemies.tsv` carries or drops one, and the debug item browser covers 0 to 269
 and skips items without an icon. They are filler to 324 rows.
 
-- XXX (picture): an item's row: its columns beside the Item and shop screens that show them.

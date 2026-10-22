@@ -108,6 +108,8 @@ are hexadecimal, one row of the grid per line.
 The header says where the camera may go, how each of the three layers is
 placed and scrolled, and where each part of the map starts.
 
+![Suhalla Desert's north as the leader walks east and south with the sand haze up, beside the map's cell grid at half size with each layer's window outlined: the ground on `BG3` from tile 0, 0 and the middle layer on `BG2` from tile 64, 0, each 64 by 128 tiles, the camera's bounds, and the overhead layer on `BG1` from tile 128, 0, a square of 32 by 32 tiles that wraps. In each window a box marks the part on screen. The ground's and the middle layer's boxes move with the leader, at a parallax of 16 sixteenths; the overhead layer's, at a parallax of 20 sixteenths and a drift of -121 and 35 sixteenths of a pixel a frame, races across its square and wraps round, as the haze streams over the screen.](https://alchemy.pascalpixel.com/guides/map/map-header.gif)
+
 The header is one `map_header` line and three `map_layer` lines in `map.s`,
 read as `struct LayeredSceneHeader`. It gives the camera's bounds in 8-pixel
 tiles, each layer's priority (0 leaves the layer off) and the char block its
@@ -132,7 +134,7 @@ write them in `map.inc`.
 | `layers[n].x`, `.y` | 8-pixel tiles | the layer's origin |
 | `layers[n].scrollX`, `.scrollY` | sixteenths of the view's motion | the layer's parallax |
 | `layers[n].speedX`, `.speedY` | sixteenths of a pixel a frame | the layer's drift |
-| `layers[n].periodX`, `.periodY` | 8-pixel tiles | where the layer wraps |
+| `layers[n].periodX`, `.periodY` | 8-pixel tiles, less one | where the layer wraps, as a mask: `0x1f` wraps every 32 tiles |
 | `tiles` | bytes from the header | the blocks |
 | `collision` | bytes from the header | the shapes |
 | `tilemap` | bytes from the header | the cell grid |
@@ -265,6 +267,8 @@ how their priorities put actors between them.
 A placeholder is a cell whose block is 4,095, and it marks the first place in
 the grid a block is used.
 
+![Goma Cave's three layer windows, ground, middle and overhead, at a quarter size, every cell dimmed but its 368 placeholders, tinted yellow wherever a block is first used. Beside them one example six times its size: a cell stored as 4095, a placeholder, which `Tile_ConvertMap` makes block 42, the next number counting from 0 in the order the grid first uses its blocks; and a cell further down with the same picture, stored as block 42 already and kept as it is. The legend gives one placeholder for each of the map's 368 blocks.](https://alchemy.pascalpixel.com/guides/map/placeholders.png)
+
 A cell whose block is 4,095, the highest 12 bits can hold, is a placeholder.
 As the map is converted, `Tile_ConvertMap` gives each placeholder a fresh
 block number, counting up from 0 in grid order. The ROM also keeps an unused
@@ -282,6 +286,8 @@ blocks, since the numbering depends only on the placeholders.
 
 The marker list names the cells where a chest or a Psynergy Stone can stand,
 each with the scene event that decides whether one does.
+
+![The map CrossboneIsleKeys and CrossboneIsleBane share, both rooms drawn as each scene loads them, with each of the map's eight markers outlined at its cell and labelled with what its chest holds. CrossboneIsleKeys places the four chests in alcoves along its north wall, 333 coins, a Fairy Ring, a Cookie and a Smoke Bomb; CrossboneIsleBane places 666 coins and an Elixir on its raised floor and a Water of Life below them, and the Demon Axe's marker, whose cell lies past the room's east wall: the scene moves that chest to 0, 0 until the stone pillar carrying it reaches the ladder.](https://alchemy.pascalpixel.com/guides/map/markers.png)
 
 The marker list is (column, row, id) triples, a cell and the trigger of a
 scene event, ended by 255, 255. When a scene loads, `Field_PlaceMapMarkers`
@@ -342,6 +348,8 @@ which have no names for them; the names are the tables' (`animation.tsv`,
 The world map's ground is one large grid of cells, packed a square at a time
 so that the game unpacks only the squares around the party.
 
+![The world map as the party runs south and east from its entrance 3, south of Vale, with `FLAG_NO_ENCOUNTERS` set, beside a 5 by 4 patch of the world's 512-pixel squares around it, each drawn from the ground layer's block buffer while it is unpacked there. The 2 by 2 squares unpacked now, around the party's white mark, are outlined in yellow and drawn bright: forest, rivers and Vale's door, marked in red. As the party crosses a square's edge the outline moves one square east or south, the squares it reaches appear, and those it leaves stay dim; squares never unpacked stay black.](https://alchemy.pascalpixel.com/guides/map/world-map-squares.gif)
+
 The world map's ground, `world/blocks.tsv` (`Field_PerspectiveDataA`), is one
 grid of 32-bit values in hexadecimal, 512 across and 320 down. The `blocks`
 form cuts it into 640 squares of 16 by 16 values and packs each separately
@@ -367,6 +375,8 @@ still view ([Field](../field/README.md#the-world-map-view)).
 
 In each Colosso final the opponent replays a recorded path of ground
 positions, one a frame.
+
+![The course of the Azart match stitched whole, with `opponent_path_a.tsv` drawn over it in yellow, 3,918 points, one a frame, marked every five seconds from 0 to 65: the path winds along the course Isaac runs, past its rocks, logs and pool, to the finish line at x 1304. In the race Azart stood on a point of the path mirrored across the finish on 3,900 of 4,038 frames, east of it and past the map's east edge.](https://alchemy.pascalpixel.com/guides/map/colosso-path.png)
 
 In each Colosso final the opponent replays a recorded path. `colosso/` holds
 three, each 7,200 points of ground in pixels, the size of the race's path
@@ -455,8 +465,3 @@ The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
 `struct LayeredSceneHeader`) are 0 in every map of both games, and nothing
 reads them: the loader is the only code that reads the header.
 
-- XXX (picture): the header, one map's three layer windows, bounds and parallax drawn over its grid
-- XXX (picture): placeholder blocks, a map's grid with each block's first use marked as `Tile_ConvertMap` numbers it
-- XXX (picture): chests and Psynergy Stones, a map's markers drawn over it with the ones its scene places
-- XXX (picture): the world map's data, the squares unpacked around the party as it walks
-- XXX (picture): the Colosso paths, a recorded path drawn over the race's map

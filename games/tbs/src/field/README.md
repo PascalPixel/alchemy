@@ -204,6 +204,8 @@ The player moves the leader through one of the engine's scripts, which sets
 the leader's speed from the keys and probes the ground ahead before each
 step.
 
+![Isaac in Vale walks right into the wall beside the Sanctum, then up and right along it, the screen at twice its size beside a box around his feet magnified six times. Every point `Map_CheckObjectStep` tested for him that frame is marked, green where the ground was open and red where it was not, with a line to it from his feet, and the heading the step took in yellow. Walking freely he makes five probes, 8 pixels the way the pad points and 22.5 and 45 degrees either side, all open; against the wall the pad's way fails and up to 14 probes fan out round him, the first heading whose five probes all pass sliding him along the wall.](https://alchemy.pascalpixel.com/guides/field/player-probes.gif)
+
 When the scene loop gives control back to the player, it starts one of the
 engine's scripts on the leader: `SC_PLAYER` on a layered map, `SC_WORLD` on
 the world map, `SC_KEYS` (8-pixel steps by the pad) while climbing, or only
@@ -574,4 +576,3 @@ control gives it priority 1. The take-apart picture of a sprite's layers is
 therefore of a battle unit, whose sprite is the same `struct AnimationObject`
 composed by the same `Sprite_ComposeAnimationFrame`.
 
-- XXX (picture): player control, the leader's probes for a step drawn over the map as a leader slides along a wall

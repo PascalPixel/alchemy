@@ -43,6 +43,8 @@ marked `@ PACKER:`.
 The palette fade moves every background and sprite colour a step a frame
 towards a target.
 
+![The title intro's fade, one frame for each of its 60 steps, the screen beside palette RAM's 256 background and 256 sprite colours, 16 to a row. On the first step every colour is the same near-black red; step by step the mountain, the clouds and the sky come up out of the dark, and each colour climbs towards its own target until on the 60th step both palettes hold the title's full colours, purples, blues and greys for the backgrounds, reds, greens, oranges and yellows for the sprites.](https://alchemy.pascalpixel.com/guides/graphics/palette-fade.gif)
+
 The palette fade moves every colour a step at a time towards a target.
 `PaletteFade_Initialize` saves both palettes, 512 colours, as the starting
 components in the colour buffer's heap block and schedules
@@ -59,7 +61,8 @@ palettes a setter changes.
 `Palette_Transform` builds the colours a fade starts from or heads for: one
 colour everywhere, a whole-palette filter (plain, grey, sepia and the
 others), a tint, blend or split carrying a colour, or a copy. In ☀️ only
-`Title_ShowIntro` uses the fade, for its 60-frame fade from black;
+`Title_ShowIntro` uses the fade, for its 60-frame fade from near-black
+(`RGB(2, 0, 0)`, a dark red);
 `PaletteFade_Release`, `PaletteFade_SetTarget` and `PaletteFade_SetBackdrop`
 are `UNUSED`.
 
@@ -283,5 +286,3 @@ draw.
   rather than globals of their own; the ROM's code shows only that both reach
   the same addresses, no other code uses them, and only Camelot's link map or
   source could say whether the sharing was meant.
-- XXX (picture): the palette fade, the 512 colours stepping from black to
-  the title's palette frame by frame.

@@ -6038,9 +6038,15 @@ enum {
 /// SceneId_VenusLighthouseAerie's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR = 1,
+  VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE = 2,  ///< after Saturos and Menardi
+  VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE = 3, ///< after their fused form
   VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP = 4,
+  VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT = 9, ///< after either battle is lost
   VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
       93, ///< the world map sends the party back here after its lighthouse cut
+  VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP = 1,
+  VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE = 2,
+  VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_SHOPS = 9,
 };
 
 /// SceneId_LemurianShip's entrances.

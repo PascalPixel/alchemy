@@ -85,6 +85,16 @@ enum SpriteId {
   /// ★ Named from what the player sees: a small white pillar on its base
   /// (its render)
   SPRITE_BALANCE_PLATFORM = 0x101,
+  /// The four statues around Venus Lighthouse's beacon.
+  /// ★ Named from what the player sees: a statue of a woman with a green
+  /// wreath, holding a sheaf (spr_258.png)
+  SPRITE_STATUE_WITH_WREATH = 0x102,
+  /// ★ Named from what the player sees: a pale column in bands, drawn in four
+  /// frames (spr_229.png)
+  SPRITE_BANDED_COLUMN = 0xe5,
+  /// ★ Named from what the player sees: a blue orb with white swirls, turning
+  /// (spr_244.png)
+  SPRITE_BLUE_ORB = 0xf4,
   /// The particles of Growth and of a Djinni's capture, and the gate effects
   /// of Venus Lighthouse.
   SPRITE_PARTICLE = 284,

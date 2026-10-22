@@ -1,26 +1,43 @@
 # System
 
-The system folder holds what the rest of the program is laid out on: the
-cartridge header and `System_Entry`, the RAM variables in their fixed order,
-the resident code copied into IWRAM, the far-call tables that join the banks
-of the main image, the overlays that hold each place's code, the resource
-directory every picture, table and overlay is found through, and the flash
-library that writes saves. Nearly all of it is assembly: code no C compiler
-emits, each file saying in its header what proves it, and tables the linker
-lays out. [Runtime](../runtime/README.md) builds directly on it, and
-[Scenes](../scene/README.md) are the main users of its overlays.
+![The console's two kinds of working memory, drawn to scale. EWRAM, 256 KB and slower, holds from the bottom up: the game's variables, flags and save buffer; the overlay, the code of the current place; the map's cells; battle sprite pictures; space to unpack into; the map's blocks, layers and collision; the EWRAM heap; and background tiles at the top. IWRAM, 32 KB and fast, holds the fast routines copied from the cartridge, the variables the engine uses most, the IWRAM heap, the sound mixer's code and the stacks at the top. The program itself, the pictures, maps and music stay on the cartridge, which can only be read.](https://alchemy.pascalpixel.com/illustrations/system/memory-map.svg)
+
+Every place the party visits needs its own code, its own map and its own
+pictures, and a Game Boy Advance has little room for any of it: 288 KB of
+working memory, against a cartridge that holds the whole game. The system
+folder holds what makes that fit. It lays out which part of memory holds
+what, splits the program into banks that can call one another through fixed
+tables, swaps each place's code in and out of one small area as the party
+moves, and finds every picture, map and piece of code on the cartridge by
+number.
+
+In more detail, the folder holds the cartridge header and `System_Entry`, the
+RAM variables in their fixed order, the resident code copied into IWRAM, the
+far-call tables that join the banks of the main image, the overlays that hold
+each place's code, the resource directory every picture, table and overlay is
+found through, and the flash library that writes saves. Nearly all of it is
+assembly: code no C compiler emits, each file saying in its header what proves
+it, and tables the linker lays out. [Runtime](../runtime/README.md) builds
+directly on it, and [Scenes](../scene/README.md) are the main users of its
+overlays.
 
 ## Memory map
 
-The memory map says where in EWRAM, IWRAM and VRAM each part of the game's
-state lives.
+The memory map says where each part of the game's state lives, as the picture
+at the top of this page shows.
 
-`main.ld` declares the areas the game uses: 256 KB of EWRAM, where most
-variables live; 32 KB of IWRAM, where code that must run fast is copied; VRAM,
-which holds the tiles and maps the screen is drawn from; and the cartridge
-ROM. The addresses below are tbs-en's, from its link map
-(`out/tbs-en/tbs-en.map`), in hexadecimal as the link map shows them. German
-moves three IWRAM variables ([below](#the-addresses-that-never-move)).
+The console has two kinds of working memory. EWRAM, 256 KB, is large but
+slower, and holds most of the game's data: its variables, the current place's
+code, the map and the heap. IWRAM, 32 KB, is fast, and holds what has to run
+or be read quickly: routines copied from the cartridge at power-on, the
+engine's busiest variables, a second heap and the stacks. Separately, video
+memory (VRAM) holds the tiles and maps the screen is drawn from, and the
+cartridge itself holds the program, which the CPU runs straight from it, and
+everything packed that the game loads.
+
+`main.ld` declares these areas. The addresses below are tbs-en's, from its
+link map (`out/tbs-en/tbs-en.map`), in hexadecimal as the link map shows them.
+German moves three IWRAM variables ([below](#the-addresses-that-never-move)).
 
 **EWRAM**, laid out by `ewram.s`:
 
@@ -50,13 +67,31 @@ moves three IWRAM variables ([below](#the-addresses-that-never-move)).
 | `0x03007f00`, `0x03007fa0` | the system-mode and IRQ-mode stack tops `System_Entry` sets | `entry.s` |
 | `0x03007ffc` | `gIrqVector`, where the BIOS jumps on an interrupt | `entry.s`, `iwram_hi.s` |
 
-**VRAM** (`games/tbs/include/system/io_reg.h`):
+### Video memory
+
+Video memory holds the pictures the screen is drawn from, and a scene fills
+it with its own.
+
+![The console's 96 KB of video memory as a field scene fills it, drawn to scale from the start at the top. The first 8 KB holds the windows' tiles, the frame pieces and letters every text box is built from. Next come the windows' own screen map, then the screen maps of the map's three layers, ground, middle and overhead, which say which tile goes where. The next 48 KB holds the map's three sheets of tiles. The last 32 KB is for sprites: the tiles of the people and things that move, handed out in small blocks as they appear.](https://alchemy.pascalpixel.com/illustrations/system/vram.svg)
+
+The screen is built from tiles, small 8-by-8 pictures. A background layer is
+a sheet of tiles plus a screen map that says which tile goes in each place on
+screen; a sprite draws its own tiles wherever it is put. Video memory is
+split accordingly. In a field scene, the windows' tiles come first, then the
+windows' screen map and the three map layers' screen maps, then the map's
+three sheets of tiles, and the last 32 KB holds the sprites' tiles.
+
+The hardware addresses video memory in fixed blocks (`games/tbs/include/system/io_reg.h`):
 
 - Background tiles go in four 16 KB character blocks (`BG_CHAR_BLOCK(n)`) and
   background maps in 2 KB screen blocks (`BG_SCREEN_BLOCK(n)`), sharing the
-  same 64 KB. The window system's tilemap is screen block 4
+  same 64 KB. `Ui_LoadWindowGraphics` copies the window tiles to the start of
+  character block 0. The window system's tilemap is screen block 4
   (`UI_TILEMAP_VRAM`) and its text canvas tiles follow it (`UI_CANVAS_VRAM`,
   [`unit/window/window.h`](../../include/unit/window/window.h)).
+  `Map_LoadLayeredScene` puts the ground, middle and overhead layers' maps in
+  screen blocks 5, 6 and 7 and the map's three tile sheets in character blocks
+  1 to 3 ([Maps](../map/README.md)).
 - Screens that load two pictures in turn split the background in halves: the
   first 32 KB with background colours 0 to 127, the second with colours 128 to
   255 (`Graphics_LoadCharacterBlockAndPalette`,
@@ -67,29 +102,33 @@ moves three IWRAM variables ([below](#the-addresses-that-never-move)).
 
 ## Why the program is cut into banks
 
-The main image is linked in banks, each at a fixed address with a table of
-8-byte stubs in front, so code in one bank reaches another only through that
-table.
+The program is linked in banks, each at a fixed place in the cartridge, so
+that one bank's code can change size without disturbing any other.
 
-```mermaid
-flowchart LR
-    caller["Caller in another bank"] -->|"bl WaitFramesFar"| stub["Far-call table entry:<br/>ldr r4, =WaitFrames; bx r4"]
-    stub --> target["WaitFrames, anywhere in its bank"]
-```
+![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, AudioCommand_PlayFar, which jumps on to AudioCommand_Play wherever it lies in the sound bank. If the sound bank's code changes size, AudioCommand_Play moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
 
-The main image, the part of the program the CPU runs straight from the
-cartridge, is linked in banks. `main.ld` puts each bank at an address of its
-own, written per edition (the `. = ABSOLUTE(...)` before each `rom_main_NN`
-from 01 on, and before the later `rom_tail` places), and leaves the space up
-to that address empty.
+The program the CPU runs straight from the cartridge, the main image, is
+divided into banks: the field, the windows, the battles, the sound and the
+rest. Each starts at a fixed address with room to spare after it, and opens
+with a table of short entries, one for each of its functions that other banks
+call. A call from another bank goes to the entry, which jumps on to the
+function. When a bank's code grows or shrinks, its functions move, but the
+table and every entry in it stay where they were, so no other bank has to
+change.
+
+`main.ld` puts each bank at an address of its own, written per edition (the
+`. = ABSOLUTE(...)` before each `rom_main_NN` from 01 on, and before the later
+`rom_tail` places), and leaves the space up to that address empty.
 
 Each bank opens with its far-call table, one 8-byte stub for each function
-another bank calls. A caller in another bank never calls such a function at
-its own address but the table's entry, by the function's `...Far` name:
-`WaitFramesFar` reaches `WaitFrames`. In `objects.tsv` the table is the first
-row of every `rom_main_NN` place from 01 on (a `far_call/*.S` file); the
-runtime bank's table, `FarCall_RuntimeTable`, follows the cartridge header,
-and the resource bank's opens `rom_tail_01`.
+another bank calls. A caller in another bank calls the table's entry, by the
+function's `...Far` name, rather than the function's own address:
+`AudioCommand_PlayFar` reaches `AudioCommand_Play`. The runtime bank is the
+exception: the other banks call its functions directly, and its table,
+`FarCall_RuntimeTable` (`WaitFramesFar` for `WaitFrames`), serves the
+overlays. In `objects.tsv` the table is the first row of every `rom_main_NN`
+place from 01 on (a `far_call/*.S` file); the runtime bank's table follows the
+cartridge header, and the resource bank's opens `rom_tail_01`.
 
 The stub is the `overlay_veneer` macro in `overlay.s`: `ldr r4` of the
 target's address from the word after it, then `bx r4`. It may use r4 freely
@@ -107,33 +146,28 @@ other editions' fall on 2 or 4 KB ones.
 | `overlay_veneer` | `overlay.s` | the 8-byte stub: `ldr r4` of the target, `bx r4` |
 | `far_call/*.S` | first row of each `rom_main_NN` from 01 on | a bank's far-call table, one stub per export (`stub.inc`) |
 | `FarCall_RuntimeTable` | after the cartridge header | the runtime bank's table |
-| `...Far` | each table entry | the name another bank calls (`WaitFramesFar`) |
+| `...Far` | each table entry | the name another bank or an overlay calls (`AudioCommand_PlayFar`) |
 
 ## How an overlay reaches the rest of the game
 
-An overlay is a place's code, unpacked into one fixed 32 KB area of EWRAM, and
-it meets the main image only through two tables of stubs.
+An overlay is one place's code, unpacked into one fixed 32 KB area of EWRAM
+while the party is there, and it meets the rest of the program only through
+two tables of stubs.
 
-```mermaid
-flowchart TB
-    subgraph ovl["Overlay, at gOverlayArea"]
-        entry["Entry table: six stubs"]
-        code["Overlay code"]
-        import["Import table: one stub per import"]
-    end
-    field["Field code"] -->|"gOverlayArea.events()"| entry
-    entry --> code
-    code -->|"short bl"| import
-    import -->|"WaitFramesFar"| far["Far-call table entry"]
-    far --> fn["WaitFrames"]
-```
+![The cartridge holds each place's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new scene's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
 
-The code for each place the party walks around in is not in the main image.
-It is an overlay: one compressed resource, unpacked into `gOverlayArea` (32 KB
-of EWRAM) when its scene loads. There are 96, placed by `overlay/overlays.s`
-and listed in the scene table (`field/scenes.s`). Some places share one (the
-three `VaultCave` scenes load the same overlay), and the title screen and a
-few other screens that are mostly menus are overlays too.
+The code for a town's people, its cutscenes and its puzzles is needed only
+while the party is in that town, and all the places' code together would not
+fit in RAM. So each place's code is packed on the cartridge as an overlay, and
+when the party enters a scene, its overlay is unpacked into the overlay area
+over whatever place was there before. Every overlay is built to run at that
+one address, so only one is ever loaded.
+
+There are 96 overlays, placed by `overlay/overlays.s` and listed in the scene
+table (`field/scenes.s`), each a compressed resource unpacked into
+`gOverlayArea`. Some places share one (the three `VaultCave` scenes load the
+same overlay), and the title screen and a few other screens that are mostly
+menus are overlays too.
 
 An overlay is linked on its own at the overlay area (`overlay/overlay.ld`),
 after the main image and against its symbols (`-R` in the `Makefile`'s overlay
@@ -188,18 +222,24 @@ behind its veneer word:
 
 ## The resource directory and table order
 
-Every picture, map, table and overlay is found through one directory by its
-row number, and the far-call tables are reached by place the same way, so
-both keep their order.
+Every picture, map, table and overlay on the cartridge is found by its number
+in one list, the resource directory, so the list has to keep its order.
 
-Every picture, map, table and overlay the game loads is a row of
-`Resource_DirectoryTable` (`resource/directory.s`), which holds where that
-resource's data starts. Code asks for a resource by its number
-(`Resource_GetTableEntry`), and the number is the row's place: the `resource`
-macro defines `ResourceId_NAME` as that place. The far-call tables are lists
-of places in the same way. Callers in this tree use names the linker resolves,
-so a moved row still builds, but the bytes change, and some code reads a list
-by position.
+![How the game finds Bilibin's code by number. The scene table's row for Bilibin names its overlay by a resource number. That number is a row of the resource directory, a list with one row for every picture, map, table and overlay, in a fixed order. Bilibin's row holds where its packed data starts in the cartridge. The game reads the row, finds the packed data and unpacks it into the overlay area. Because a resource's number is its place in the list, a row added in the middle gives every later resource a new number.](https://alchemy.pascalpixel.com/illustrations/system/resource-directory.svg)
+
+When the party enters Bilibin, the scene table does not say where Bilibin's
+code is; it gives a number. The number picks a row of the resource
+directory, and the row holds where the packed data starts on the cartridge.
+Pictures, maps and tables are found the same way. A resource's number is
+simply its place in the list, which keeps the lookup to one step, but it also
+means a row added in the middle renumbers everything after it. The far-call
+tables work the same way: an entry is found by its place.
+
+Every resource is a row of `Resource_DirectoryTable` (`resource/directory.s`).
+Code asks for a resource by its number (`Resource_GetTableEntry`), and the
+`resource` macro defines `ResourceId_NAME` as that row's place. Callers in
+this tree use names the linker resolves, so a moved row still builds, but the
+bytes change, and some code reads a list by position.
 
 A row added in the middle of a far-call table moves every later entry and the
 bank's code by 8 bytes. Callers follow through their `...Far` symbols, but the
@@ -235,8 +275,15 @@ any other.
 
 ## The addresses that never move
 
-Some places in memory are reached as plain numbers, not through the linker,
-and the layout keeps every one where the code expects it.
+Some places in memory are reached as plain numbers written into the code, not
+through names the linker fills in, so the layout must keep each one exactly
+where the code expects it.
+
+A fixed address is the code saying "the overlay area is at this address",
+rather than "the overlay area is wherever the linker put `gOverlayArea`". The
+original program holds 27 of them, and the matching build has to
+compile the same numbers, so the memory map cannot move anything they point
+at. Each is written down once, beside the name it stands for.
 
 `include/ram_buffer.h`, `include/iwram_call.h` and `include/cartboot.h` list
 them, each once, with `FIXED_ADDRESS(type, address, linked)`. The matching
@@ -277,6 +324,18 @@ and an overlay meet only at those two tables, and both have a known order.
 The fixed addresses are the cost of code that holds numbers rather than
 symbols. Each is defined once and named where its bytes are, so `make modern`
 can build from the names while the matching build keeps the numbers.
+
+## How it fits with the rest of the game
+
+The system folder is the ground the rest stands on. [Runtime](../runtime/README.md)
+copies the resident code into IWRAM at power-on and allocates from the two
+heaps laid out here. The field code loads each scene's overlay by the number
+the scene table gives it ([Field objects](../object/README.md)), and every
+overlay in [Scenes](../scene/README.md), [Menus](../menu/README.md) and
+[Debug rooms](../debug/README.md) is built from the entry and import tables
+described here. Code everywhere loads its pictures and maps through the
+resource directory, and [saving](../runtime/README.md#saving) writes through
+the flash library in `save/`.
 
 ## Limits
 
@@ -394,7 +453,3 @@ to its symbol in each edition its `#if` selects.
   banks as resources (the comment in `menu/title.c` suggests as much), but
   The Lost Age's stubs are empty too, and nothing in either ROM loads a bank
   through its row, so only Camelot's sources could say.
-- XXX (picture): overlays, as an illustration of one place's code swapped in for another.
-- XXX (picture): video memory, as a labelled illustration of what a scene loads where.
-- XXX (picture): the memory map, as a labelled illustration of what lives where.
-- XXX (picture): the resource directory, as an illustration of how a number finds a picture or map in the ROM.

@@ -131,6 +131,15 @@ quantity the player can buy stops at what the counter holds. An item that two
 shops' rows list can therefore be bought twice once both shops have been
 visited.
 
+![Bilibin's weapon shop, stock row 7, opened twice, each time with its Buy list and its Artifacts list. On a new game no counter is above 0 before Isaac talks to the keeper; the first visit adds 1 to the Witch's Wand's counter, Buy shows the row's five weapons from the Long Sword to the Heavy Mace, and Artifacts shows the Witch's Wand alone for 860 coins. After Vault's weapon shop has been opened, the Magic Rod's counter is already 1 before he talks; the visit adds the Witch's Wand's again, Buy shows the same five weapons, and Artifacts shows the Magic Rod for 380 coins as well as the Witch's Wand.](https://alchemy.pascalpixel.com/guides/shop/shop-counters.png)
+
+The Artifacts list comes from the counters, not from the row. In the picture
+Bilibin's weapon shop, whose row holds only the Witch's Wand, also offers
+Vault's Magic Rod once Vault's weapon shop (row 4) has been opened, since
+both are weapons with a counter above zero. The second visit starts from a
+new game with `gItemCounters` as a run that opened Vault's weapon shop left
+them, so it shows what the counters carry from one town to the next.
+
 ## Sanctums
 
 A sanctum serves one member at a time, choosing among the members who need
@@ -235,6 +244,3 @@ read and seed the stock table.
   (`shop->warriorShop`) by number rather than by a column of the row; the
   stock row's type column is an `s16` that could have carried it, and only
   Camelot's sources could say why it doesn't.
-- XXX (picture): no picture yet takes a counter apart; the shop's stock row drawn beside
-  the Buy and Artifacts lists it produces, before and after another town's
-  first visit, would show the counters at work.

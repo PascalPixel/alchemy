@@ -183,6 +183,14 @@ loaded into the first 64 background colours. Level 0 is transparent to the
 transparent blitters, as colour 0 is to the hardware, and 63 is as high as
 adding and brightening go.
 
+![Garet casts Heat Wave at Mia. On the left, the screen at twice its size: rings of red light gather round Garet, a fireball swells from him and streams left over Mia as a long blaze, bursts into sparks and embers that drift up and fade, and `Mia takes 90 damage!` appears. On the right, the canvas as character block 1 holds it, 128 pixels square, each byte drawn in the colour its level names, with the 64-level ramp beneath it: the same rings, blaze and embers, squeezed to half their width, on an empty dark ground.](https://alchemy.pascalpixel.com/guides/effect/effect-canvas.gif)
+
+In the recording the canvas holds Heat Wave's pictures at half the width the
+screen shows them: the blaze that crosses the screen from Garet to Mia
+crosses the canvas from its middle to its left edge. Everything else on the
+screen, the battlefield, the fighters and the windows, is the battle's own
+layers, over which `BG2` is blended.
+
 ### The transfer
 
 An effect never writes video memory itself. It draws a frame, then
@@ -199,6 +207,22 @@ treats what is left in the canvas as `work->transferMode` says
 | `CANVAS_COPY_AND_FADE` | each level halved when `transferValue` is 50, else scaled to three quarters |
 | `CANVAS_COPY_AND_DARKEN` | each level lowered by a byte of `transferValue`, stopping at 0 |
 | `CANVAS_COPY_AND_BRIGHTEN` | each level raised by a byte of `transferValue`, stopping at 63 |
+
+![Heat Wave's canvas six times side by side, frame for frame, each run with its transfer forced to another mode: `CANVAS_COPY`, `CANVAS_COPY_AND_CLEAR` 0, `CANVAS_COPY_AND_FADE` 50 (Heat Wave's own), `CANVAS_COPY_AND_FADE` 75, `CANVAS_COPY_AND_DARKEN` 0x04040404 and `CANVAS_COPY_AND_BRIGHTEN` 0x01010101. Left as drawn, the blaze and every ember stay and pile up into a white mass; cleared, only the embers drawn that frame show; faded by half, each ember leaves a short tail; by three quarters, a longer one; darkened by 4 levels, long tails that turn yellow before they go; and brightened by 1 level, the whole empty canvas climbs the ramp from dark red to white.](https://alchemy.pascalpixel.com/guides/effect/effect-transfer.gif)
+
+The picture plays Heat Wave six times, writing a mode over
+`work->transferMode` and `transferValue` each time
+`BattleFx_ProcessPendingGraphicsTransfer` runs, and shows the canvas each run
+presented, read from its heap block as the copy starts. The volley presents
+78 canvases in every run, its `total` of frames, and draws the same pictures
+in the same places, since the transfer draws no random numbers. A trail lasts
+as long as a level takes to fall to 0: halving takes level 63 to 0 in six
+frames, three quarters keeps it longer, and a step of 4 takes sixteen frames
+from 63 and lowers a bright pixel no faster than a dim one, so darkened
+trails stay bright the longest. Brightening raises level 0 as well, so it
+fills the whole canvas, not only what was drawn. No effect sets
+`CANVAS_COPY_AND_BRIGHTEN`; every transfer an effect starts copies, clears,
+fades or darkens.
 
 The usual end of a canvas effect, `EFFECT_FINISH_CANVAS`, removes the transfer
 callback before anything it reads is freed, then frees the two blitters and
@@ -235,6 +259,18 @@ for the next one launched, so a pool never grows during an effect.
 `EffectStep_AdvanceWithGravity2D` and its 3D twin
 ([`positions.c`](parts/positions.c)) move particles under gravity, and
 `BattleUnit_ProjectToScreen` turns a battle position into a screen point.
+
+![Garet casts Heat Wave at Mia, the screen on the left and the two particle pools on the right as grids of slots, dark when free. Of the 64 in the work block, the first seven are the fireballs: dim until launched, orange in flight and white once they have hit. Of the first 1,024 of `PARTICLES`, seven hit flashes light at the top and stay lit; the sparks from slot 100 fill in yellow rows as each fireball hits, over 270 at once, dim as their lives run out and are all free again before the end; and the trails from slot 512 fill in red rows, two for each fireball every frame, until about 480 of the 512 are in use at once, and stay that full until the effect ends.](https://alchemy.pascalpixel.com/guides/effect/effect-particles.gif)
+
+A projectile volley shows both pools at work. Heat Wave's seven fireballs are
+`work->particles` 0 to 6, and the volley frees its 1,024 `PARTICLES` with a
+`variant` of 0, not -1. Each hit throws 40 sparks into the first free slots
+from `PROJECTILE_VOLLEY_FIRST_SPARK`, and each fireball leaves two trails a
+frame in the first free slots from `PROJECTILE_VOLLEY_FIRST_TRAIL` for as long
+as the volley runs, even after it has hit and flown off the canvas, so the
+trail range stays nearly full, about 480 of its 512 slots, each trail living
+32 to 39 frames. Heat Wave's hit flashes are marked lit and never drawn or
+freed, since only the comet modes draw them.
 
 Several families break something apart: boulders into chips, shells into
 shards, an impact into fragments. Each piece is a particle, and each runner
@@ -682,6 +718,9 @@ A handler's name comes from the abilities that reach its kind, read from
 from what it draws. The recordings come from
 [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools#pictures),
 which plays an ability in a built tbs-en edition over a plain grey backdrop.
+The take-apart pictures play Heat Wave over the battle's own background and
+read the effect's work block, its canvas in character block 1 and
+`PARTICLES` after every frame.
 
 Three handlers are unused, and are named from what they draw:
 `BattleFx_RunUnusedOrbitingSpirals` (`planet_diver.c`),
@@ -720,16 +759,9 @@ alone skip building it.
 No effect uses `PARTICLES` past its first 32 KB, over `gActorSpriteSlots`: the
 largest range any effect reserves is 1,024 particles, 28 KB
 (`gathering_lights.c`, `helm_splitter.c`, `lobbed_shells.c`, `neptune.c`,
-`nereid.c`, `plasma.c` and `target_strike.c`).
+`nereid.c`, `plasma.c`, `projectiles.c` and `target_strike.c`).
 
 `BattleFx_DispatchByIdRange` sizes its sheet slot `0x60e` bytes. The largest
 picture its three runners decode there is `ParticleSpritesD`'s ten flare cells,
 2 by 2 to 20 by 20 pixels, 1,540 bytes (`2 * MOTE_SET_BYTES`); the slot's last
 10 bytes are never written.
-
-- XXX (picture): no picture yet takes an effect apart. Three would show a mechanism this page
-  explains: the canvas alone beside the battle it is blended over, with the
-  stretch to twice its width; one effect frame by frame under each
-  `enum CanvasTransferMode`, to show trails fading by level; and the particle
-  pools drawn as slots filling and freeing over an effect such as a projectile
-  volley.

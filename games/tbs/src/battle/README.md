@@ -232,6 +232,20 @@ one in range is left, the actor defends (`<unit> is defending!`). The player
 sees the same range as a cursor and smaller markers while aiming
 (`BattleTarget_RunSelection`, `../window/battle_command/targets.c`).
 
+![Isaac aims Quake at four enemies, Garet, Mia, Ivan and Jenna, and moves the aim right three times, from Mia to Ivan to Jenna and round to Garet. On the left the game marks the aimed one with a large pink marker and its name and each other unit in range with a small one. On the right the same battlefield is drawn from above: the enemies in a line at x -80, from z 45 down to z -69, and Isaac at x 80, z 48; the aimed enemy is ringed in yellow and labelled AIMED, the others in range ringed in orange as STEP 1, and those out of range grey with their steps, 2 or 3.](https://alchemy.pascalpixel.com/guides/battle/battle-places.gif)
+
+Seen from above, the battlefield is a plane in pixels.
+`BattleUnit_RefreshPlacement` stands the party at x 80, each member at the z
+of their place in `gBattlePlacement_StepPairs`, and
+`BattlePlacement_LayoutEnemies` lines the enemies up at x -80, each taking
+38 pixels of the line if large and 27 if small. The four characters copied
+onto the enemy side in the recording are large, so they stand 38 pixels
+apart, from z 45 to z -69, off centre because the line starts from an
+estimate of 30 pixels an enemy. Range is counted in places, not pixels:
+Quake's range of 2 reaches one place on either side of the aimed one, so with
+the aim on Jenna, at the end of the line, only Ivan is covered beside her.
+The aim wraps from the last place to the first.
+
 ### Rolls made in advance
 
 A plain Attack never misses a target that cannot act (down, asleep, stunned,
@@ -507,6 +521,17 @@ system's own code (`blitter.c`, `canvas.c`, `dispatch.c`, `display.c`,
 those, `BattleEvent_WaitForReady` finds playback idle when the effect returns
 and starts it itself.
 
+![Isaac's Quake against Garet, Ivan and Mia, one frame for each event playback plays, beside the queue it is playing with that event marked. First the rock pillars throw the three into the air while playback is idle and no target has been resolved. Then for each target in turn, Garet, Ivan and Mia, the queue holds eight events: the hit, which flashes the unit white; the number and the unit's name; the message `Garet takes 14 damage!!!`, then `Ivan takes 15 damage!` and `Mia takes 12 damage!`, which waits for the player; and a refresh of the unit, its name again, a clear of the arguments and a last refresh, which play in the same frame as the next target's hit.](https://alchemy.pascalpixel.com/guides/battle/round-events.gif)
+
+In the recording, Quake plays for about two seconds before its blow lands
+and starts playback. Playback then resolves the three targets in the plan's
+order, the battlefield's (Garet, Ivan, Mia), not the aimed Ivan first, and
+each target's `BattleTargetExec` queues the same eight events. Only the hit
+(nine frames of flashing) and the message (until the player presses A) make
+playback wait; the number and name it pushes before the message, and the
+name pushed for an added effect Quake doesn't have, the clear and the
+refreshes after it, all play within one frame.
+
 The queue (`struct BattleEventQueue`, `BATTLE_EVENT_CAPACITY` events) is the
 only channel from the rules to the screen. A message takes its names and
 numbers from the window system's argument table when it is decoded, so they
@@ -561,8 +586,3 @@ side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the
 enemies' column, and `BattleClass_HasHeavyImpact` reads the class bit that
 makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
 bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
-
-- XXX (picture): a round has no take-apart picture. One frame per event of a Quake
-  turn, beside the queue with the event playing marked, would show the rules
-  and the effect meeting; a battlefield render with each place's position
-  (`BattlePlacement_`) and an ability's range markers would show distance.

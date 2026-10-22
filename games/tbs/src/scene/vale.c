@@ -777,7 +777,7 @@ static void Event_TurnBackFromThePuppies(void) {
 /// Touch cell 100 in Vale, at the foot of the ladder beside Isaac's house:
 /// walking north into it climbs the leader up onto the roof, whose cells
 /// change so it can be walked (FLAG_SCENE_TEMP_04 set while there).
-static void Event_EnterNorthernPassage(void) {
+static void Event_ClimbLadderOntoRoof(void) {
   Engine_EventStart();
   Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   Vale_MoveActorAlongLowerZPath(ACTOR_PARTY_LEADER, 10, 11, 1);
@@ -788,7 +788,7 @@ static void Event_EnterNorthernPassage(void) {
 /// Touch cell 101 in Vale, at the top of the ladder beside Isaac's house:
 /// walking south into it climbs the leader back down, and the roof's cells
 /// are put back (FLAG_SCENE_TEMP_04 cleared).
-static void Event_ReturnThroughSouthernPassage(void) {
+static void Event_ClimbDownFromRoof(void) {
   Engine_EventStart();
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER, 13, 10, 1);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_04);
@@ -3639,8 +3639,8 @@ struct SceneEvent gVale_Events[] = {
     { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromFirstApproach) },
     { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromSecondApproach) },
     { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningAtEitherPause) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbLadderOntoRoof) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbDownFromRoof) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedPillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
@@ -3689,8 +3689,8 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromFirstApproach) },
     { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromSecondApproach) },
     { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningAtEitherPause) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbLadderOntoRoof) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbDownFromRoof) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedPillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
@@ -3736,8 +3736,8 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbLadderOntoRoof) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbDownFromRoof) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNutAfterKalay) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedPillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },

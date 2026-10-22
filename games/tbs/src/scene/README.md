@@ -114,8 +114,8 @@ touch row rather than an exit row: walking north into the doorstep runs a
 script, `Event_EnterIsaacsHouse` for Isaac's house, that opens the door,
 walks the leader in and only then asks for the exit, and that can refuse
 instead, as Dora does once the party has left Vale. Touch rows also climb the
-ladder beside Isaac's house (`Event_EnterNorthernPassage` up,
-`Event_ReturnThroughSouthernPassage` down) and put the upper path's cells
+ladder beside Isaac's house (`Event_ClimbLadderOntoRoof` up,
+`Event_ClimbDownFromRoof` down) and put the upper path's cells
 back when the leader steps off it (`Event_ClearPathCellOverride`). Three
 cells of the path at the top carry a code no row answers.
 

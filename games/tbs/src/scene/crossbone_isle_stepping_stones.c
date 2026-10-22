@@ -31,15 +31,6 @@
 ///
 /// The other three side rooms are in crossbone_isle_keys.c, and the
 /// ninth floor's in crossbone_isle.c.
-///
-/// Open questions:
-/// - XXX: what the two cells at the floodgate's foot show, which
-///   gCrossboneIsleSteppingStones_FloodgateFootSteps draws after the gate
-///   closes; a recording of CrossboneIsleFloodgate's switch would settle it.
-/// - XXX: what script slot 0x23 is, which the action table
-///   gCrossboneIsleSteppingStones_ActionTable sets to 2 and 0 before reading
-///   the actor's timer into its palette; no SW_ name covers it, and the
-///   script interpreter's table of slots would settle one in objcmd.h.
 
 #include "script.h"
 #include "game_state.h"
@@ -623,7 +614,8 @@ CrossboneIsleSteppingStones_UpdateDampedParticle(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
-/// Applies the actor timer's low four bits to its child sprite value.
+/// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in the
+/// low four bits of its timer.
 static s32 CrossboneIsleSteppingStones_SetChildValueFromTimer(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -1731,11 +1723,14 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
+/// The glint of a puddle Frost has frozen in CrossboneIsleDragonStatue: the
+/// timer carries a colour mode to CrossboneIsleSteppingStones_SetChildValueFromTimer,
+/// green and blue swapped for two frames in every eight.
 s32 gCrossboneIsleSteppingStones_ActionTable[] = {
-    SC_SET(0x23, 2),
+    SC_SET(SW_TIMER, SPRITE_COLOR_RBG),
     SC_CALL(CrossboneIsleSteppingStones_SetChildValueFromTimer),
     SC_WAIT(2),
-    SC_SET(0x23, 0),
+    SC_SET(SW_TIMER, SPRITE_COLOR_NORMAL),
     SC_CALL(CrossboneIsleSteppingStones_SetChildValueFromTimer),
     SC_WAIT(6),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -1760,8 +1755,9 @@ u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[] = {
     MAP_CELL_STEP(71, 50, 2, 5, 6), MAP_CELL_STEP(69, 50, 2, 5, 6), MAP_CELL_STEP(67, 50, 2, 5, 6), MAP_CELL_STEP(65, 50, 2, 5, 6), MAP_CELL_STEPS_END,
 };
 
-/// Two cells at the floodgate's foot, drawn after it closes. XXX: what they
-/// show; a recording of the gate closing would settle it.
+/// The two cells at the floodgate's foot as it shuts: three pictures of white
+/// spray splashing up and falling, then the stream bed below the gate, left
+/// almost dry (Event_FlipWaterSwitch's render).
 u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[] = {
     MAP_CELL_STEP(75, 38, 2, 1, 4), MAP_CELL_STEP(77, 38, 2, 1, 6), MAP_CELL_STEP(79, 38, 2, 1, 8), MAP_CELL_STEP(65, 53, 2, 1, 1), MAP_CELL_STEPS_END,
 };

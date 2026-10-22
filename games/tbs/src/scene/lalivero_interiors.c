@@ -22,11 +22,6 @@
 /// Event_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which sends the party
 /// outside, where Iodem gives it the Black Orb (lalivero.c). A barrel holds a
 /// Lucky Medal.
-///
-/// Open questions:
-/// - XXX: what animation 6 shows of the napping worker upstairs in the
-///   northwest house; his sprite's animation table or a recording would settle
-///   a name in enum ActorAnimation.
 
 #include "script.h"
 #include "game_state.h"
@@ -117,7 +112,7 @@ enum LaliveroInteriorsActor {
   /// ★ Named from the game: "I guess he plans to make us do even more work!"
   /// (MsgLaliveroInteriorsTheySayAManNamedIodem)
   ACTOR_WORKER,
-  /// A bald, muscular man upstairs in that house, posed in animation 6. "No
+  /// A bald, muscular man lying asleep upstairs in that house. "No
   /// one's called me, so maybe I'll take a nap..."; after Venus Lighthouse,
   /// Mind Read hears "I'm worried that we won't get paid now that the
   /// construction has ended."
@@ -189,6 +184,10 @@ enum LaliveroInteriorsActor {
   /// (MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause)
   ACTOR_COOK
 };
+
+/// The napping worker's pose, from his sprite's animation table
+/// (graphics/sprite/spr_114.tsv): one frame held, lying asleep on his side.
+enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 
 /// The place flag FLAG_PLACE_TEMP_00, which lasts until the party enters
 /// another place: the inn worker has apologized.
@@ -846,7 +845,7 @@ s32 Scene_Initialize(void) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
-    Engine_ActorSetAnimation(ACTOR_NAPPING_WORKER, 6);
+    Engine_ActorSetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
     entrance = gGameState.entrance;
     if (entrance == LALIVERO_SHOPS_SANCTUM) {
       gGameState.savedScene = scene;

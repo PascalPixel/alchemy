@@ -7,7 +7,7 @@
 /// - TunnelRuinsGreatStatue (SceneId_TunnelRuinsGreatStatue): entered from
 ///   Babi Lighthouse's stone door. A statue in the first room speaks to the
 ///   leader's soul; the rooms after it hold two pairs of pillars to push or
-///   Move, three stones with three patches of ivy for Whirlwind, and two
+///   Move, three small pillars with three patches of ivy for Whirlwind, and two
 ///   pillars that sink into the floor once moved onto their columns, each then
 ///   carrying a puddle for Frost.
 /// - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues): a pillar that
@@ -38,9 +38,9 @@
 /// which mean different things in each scene:
 ///
 /// - TunnelRuinsGreatStatue: FLAG_SCENE_TEMP_00 and FLAG_SCENE_TEMP_01 are
-///   ivy A and B blown away beside the stones, and in the sinking pillars'
-///   room puddles A and B frozen; FLAG_SCENE_TEMP_02 is pillar B soaked by
-///   Douse.
+///   ivy A and B blown away beside the small pillars, and in the sinking
+///   pillars' room puddles A and B frozen; FLAG_SCENE_TEMP_02 is pillar B
+///   soaked by Douse.
 /// - TunnelRuinsLadyStatues: FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_02 are the
 ///   carved stones set on the balance, FLAG_SCENE_TEMP_03 the pillar soaked by
 ///   Douse and FLAG_SCENE_TEMP_04 its puddle frozen.
@@ -98,9 +98,9 @@
 #include "item_ids.h"
 
 /// The actors of TunnelRuinsGreatStatue, in the order of its placements: two
-/// pairs of pillars to push or Move, three stones, three patches of ivy for
-/// Whirlwind, two pillars that sink into the floor, and two puddles for Frost,
-/// both placed with the first sinking pillar.
+/// pairs of pillars to push or Move, three small pillars, three patches of ivy
+/// for Whirlwind, two pillars that sink into the floor, and two puddles for
+/// Frost, both placed with the first sinking pillar.
 enum {
   /// ★ Named from what the player sees: one of a pair of grey pillars with gold
   /// tops, side by side (its render)
@@ -114,16 +114,20 @@ enum {
   /// ★ Named from what the player sees: the other pillar of the second pair
   /// (its render)
   ACTOR_SECOND_PILLAR_B,
-  /// ★ Named from what the player sees: a grey stone block below the ivy's
-  /// ledge (its render)
-  ACTOR_STONE_A,
-  /// ★ Named from what the player sees: the second grey stone block, beside the
-  /// first (its render)
-  ACTOR_STONE_B,
-  /// ★ Named from what the player sees: a grey stone block behind ivy A,
-  /// out of sight until Whirlwind clears it (its render)
-  ACTOR_STONE_C,
-  /// Ivy on the ledge above the stones, drawn with SPRITE_IVY, the sprite of
+  /// Three small stone pillars with white tops (SPRITE_SMALL_PILLAR, the size
+  /// of the sinking pillars), which the leader pushes by walking into them
+  /// (Event_PushSmallPillars) or shifts with Move. This one stands south of
+  /// the ivy's ledge.
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_SMALL_PILLAR_A,
+  /// Beside ACTOR_SMALL_PILLAR_A.
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_SMALL_PILLAR_B,
+  /// Behind ivy A, out of sight until Whirlwind clears the ivy.
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_SMALL_PILLAR_C,
+  /// Ivy on the ledge above the small pillars, drawn with SPRITE_IVY, the
+  /// sprite of
   /// the ivy that traps the stump at Goma Cave's entrance.
   /// ★ Named from the game: "It looks like it's trapped in the ivy."
   /// (MsgGomaNoUsePsynergy)
@@ -207,7 +211,7 @@ enum {
 
 /// Sprites, as the sheets show them.
 enum {
-  SPRITE_CARVED_STONE = 254,
+  SPRITE_SMALL_PILLAR = 254,
   SPRITE_SINKING_PILLAR = 255,
   SPRITE_CARRY_STONE = 256,
   SPRITE_STATUE = 258
@@ -220,7 +224,7 @@ static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
 #endif
 static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
-static void TunnelRuins_UpdateStoneCells(void);
+static void TunnelRuins_UpdateSmallPillarCells(void);
 static void TunnelRuins_MarkPushPillarCells(void);
 
 #include "common/object_staged_actor.h"
@@ -602,21 +606,21 @@ static void Event_HopEast(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// Walking into the stones pushes the one in front along.
+/// Walking into the small pillars pushes the one in front along.
 /// Reached by walking into cell code 28 in TunnelRuinsGreatStatue.
-static void Event_PushStones(void) {
+static void Event_PushSmallPillars(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   StagedActor_AdvancePair();
-  TunnelRuins_UpdateStoneCells();
+  TunnelRuins_UpdateSmallPillarCells();
   EV_END();
 }
 
-/// Walking south at the stones: the leader hops a gap if there is one,
-/// and pushes the stone in front otherwise. Reached by walking south
+/// Walking south at the small pillars: the leader hops a gap if there is one,
+/// and pushes the small pillar in front otherwise. Reached by walking south
 /// into cell code 28 in TunnelRuinsGreatStatue.
-static void Event_HopSouthOrPushStones(void) {
+static void Event_HopSouthOrPushSmallPillars(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
 
@@ -624,11 +628,11 @@ static void Event_HopSouthOrPushStones(void) {
   target.y = actor->y.fixed;
   target.z = actor->z.fixed + PIXELS(32);
   if (TunnelRuins_HopLeaderTo(&target) != 0) {
-    Event_PushStones();
+    Event_PushSmallPillars();
   }
 }
 
-/// Whirlwind on ivy A blows it away. Stone C changes state with the
+/// Whirlwind on ivy A blows it away. Small pillar C changes state with the
 /// ivy: with one of ivy A and B gone its rise counter is 1 and its
 /// collision bit 3 is set; with both gone, 0 and clear. Reached by Whirlwind on
 /// ivy A until FLAG_SCENE_TEMP_00 is set; sets it.
@@ -638,11 +642,11 @@ static void Event_BlowAwayIvyA(void) {
 
   FLAG_SET(FLAG_SCENE_TEMP_00);
   if (FLAG_CHECK(FLAG_SCENE_TEMP_01) != 0) {
-    Object_GetById(ACTOR_STONE_C)->riseCounter = 0;
-    Object_GetById(ACTOR_STONE_C)->collisionFlags &= 0xf7;
+    Object_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Object_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
   } else {
-    Object_GetById(ACTOR_STONE_C)->riseCounter = 1;
-    flags = &Object_GetById(ACTOR_STONE_C)->collisionFlags;
+    Object_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    flags = &Object_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -657,11 +661,11 @@ static void Event_BlowAwayIvyB(void) {
 
   FLAG_SET(FLAG_SCENE_TEMP_01);
   if (FLAG_CHECK(FLAG_SCENE_TEMP_00) != 0) {
-    Object_GetById(ACTOR_STONE_C)->riseCounter = 0;
-    Object_GetById(ACTOR_STONE_C)->collisionFlags &= 0xf7;
+    Object_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Object_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
   } else {
-    Object_GetById(ACTOR_STONE_C)->riseCounter = 1;
-    flags = &Object_GetById(ACTOR_STONE_C)->collisionFlags;
+    Object_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    flags = &Object_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -1427,29 +1431,29 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   }
 }
 
-/// After the stones move: redraw their room's cells and mark the cells
-/// the stones stand on. Reached by Move on any of the three
-/// stones, and called by Event_PushStones.
-static void TunnelRuins_UpdateStoneCells(void) {
+/// After the small pillars move: redraw their room's cells and mark the
+/// cells they stand on. Reached by Move on any of the three, and called by
+/// Event_PushSmallPillars.
+static void TunnelRuins_UpdateSmallPillarCells(void) {
   struct FieldActor *actor;
   s32 column;
 
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-  Object_GetById(ACTOR_STONE_C)->terrainId = 1;
-  actor = Object_GetById(ACTOR_STONE_A);
+  Object_GetById(ACTOR_SMALL_PILLAR_C)->terrainId = 1;
+  actor = Object_GetById(ACTOR_SMALL_PILLAR_A);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_STONE_A);
+  actor = Object_GetById(ACTOR_SMALL_PILLAR_A);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Object_GetById(ACTOR_STONE_B);
+  actor = Object_GetById(ACTOR_SMALL_PILLAR_B);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_STONE_B);
+  actor = Object_GetById(ACTOR_SMALL_PILLAR_B);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Object_GetById(ACTOR_STONE_C);
+  actor = Object_GetById(ACTOR_SMALL_PILLAR_C);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_STONE_C);
+  actor = Object_GetById(ACTOR_SMALL_PILLAR_C);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
 }
@@ -1584,18 +1588,18 @@ s32 TunnelRuins_Initialize(void) {
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_LONG_PASSAGE:
-      TunnelRuins_UpdateStoneCells();
-      Object_GetById(ACTOR_STONE_A)->motionFlags = 0;
-      Object_GetById(ACTOR_STONE_B)->motionFlags = 0;
+      TunnelRuins_UpdateSmallPillarCells();
+      Object_GetById(ACTOR_SMALL_PILLAR_A)->motionFlags = 0;
+      Object_GetById(ACTOR_SMALL_PILLAR_B)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_IVY_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_IVY_B), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_IVY_C), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_A), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_B), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_C), 0);
-      Object_GetById(ACTOR_STONE_A)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Object_GetById(ACTOR_STONE_B)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Object_GetById(ACTOR_STONE_C)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SMALL_PILLAR_A), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SMALL_PILLAR_B), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SMALL_PILLAR_C), 0);
+      Object_GetById(ACTOR_SMALL_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Object_GetById(ACTOR_SMALL_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Object_GetById(ACTOR_SMALL_PILLAR_C)->update = UPDATE_BY_RELATIVE_DEPTH;
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
@@ -2067,11 +2071,11 @@ struct ScenePlacement gTunnelRuinsGreatStatuePlacements[] = {
      FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_CAPPED_PILLAR, 0, ACTOR_STAND, PIXELS(536), 0, PIXELS(488),
      FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_CARVED_STONE, 0, ACTOR_STAND, PIXELS(488), 0, PIXELS(840),
+    {SPRITE_SMALL_PILLAR, 0, ACTOR_STAND, PIXELS(488), 0, PIXELS(840),
      FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {SPRITE_CARVED_STONE, 0, ACTOR_STAND, PIXELS(520), 0, PIXELS(840),
+    {SPRITE_SMALL_PILLAR, 0, ACTOR_STAND, PIXELS(520), 0, PIXELS(840),
      FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_CARVED_STONE, 0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792),
+    {SPRITE_SMALL_PILLAR, 0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792),
      FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_IVY, 0, (s32)gTunnelRuins_StretchScript, PIXELS(416), 0,
      PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
@@ -2171,8 +2175,8 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(Event_HopNorthUnlessAtCell30x52)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
         EVENT_SCRIPT(Event_HopSouth)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouthOrPushStones)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStones)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouthOrPushSmallPillars)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSmallPillars)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 29, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, EVENT_SCRIPT(Event_PushSinkingPillarA)},
     {TOUCH_WALKING_INTO(FACING_EAST), 29, FLAG_SCENE_TEMP_00,
         EVENT_SCRIPT(Event_HopEast)},
@@ -2203,9 +2207,9 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR_B, CONDITION_ALWAYS,
         EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateSmallPillarCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateSmallPillarCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateSmallPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_BlowAwayIvyA)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_BlowAwayIvyB)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_C, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayIvyC)},

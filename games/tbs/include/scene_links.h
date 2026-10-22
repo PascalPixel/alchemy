@@ -3584,6 +3584,9 @@ enum {
 enum {
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
+  /// The middle of the room, facing south. No exit leads to it: only the debug
+  /// scene selector, which warps to any entrance from 0 to 99, reaches it.
+  CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE = 99,
 };
 /// SceneId_CrossboneIsleFloatingLogs's exits.
 enum {

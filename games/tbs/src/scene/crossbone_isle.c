@@ -9,12 +9,12 @@
 ///
 /// - Crossbone Isle (SceneId_CrossboneIsle), the island itself, reached
 ///   from the world map (WORLD_MAP_TO_CROSSBONE_ISLE;
-///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows four ivies
-///   away for good (four flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY,
-///   the first also opening a cell), Growth grows four plants so they can be
-///   crossed, for this visit only (FLAG_SCENE_TEMP_40 to _43), two logs can
-///   be pushed, and a Nut circles until Catch takes it
-///   (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
+///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows three
+///   ivies away for good (flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY,
+///   the first also opening a cell; a fourth's event is unused), Growth grows
+///   four plants so they can be crossed, for this visit only (four flags from
+///   FLAG_FIRST_PLANT_GROWN), two logs can be pushed, and a Nut circles until
+///   Catch takes it (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the cave's
 ///   mouth, with only its two exits.
@@ -56,6 +56,12 @@
 /// Scene_Initialize restores each scene as its flags say: the ivy and plants on
 /// the island, the sliding logs' footprints, the corridor's sunk pillars and
 /// the chests the mimics leave.
+///
+/// Open questions:
+/// - XXX: whether the first plant and the second ivy, both placed at (0, 0),
+///   can be reached at all; a render of the island would show where they
+///   stand.
+
 #include "game_state.h"
 #include "version.h"
 #include "global_cells.h"
@@ -94,8 +100,12 @@
 #include "songs.h"
 #include "event.h"
 
+/// A chest searched while facing the given way.
+#define SEARCH_CHEST_FACING(facing)                                            \
+  (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
+
 /// Crossbone Isle's placed actors, numbered in the order of
-/// gCrossboneIslePlacements1.
+/// gCrossboneIsle_IslePlacements.
 enum CrossboneIsleActor {
   /// The Nut that circles over the island until Catch takes it
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
@@ -106,7 +116,7 @@ enum CrossboneIsleActor {
   /// grass (its render)
   ACTOR_FIRST_ISLE_LOG,
   /// The four plants Growth grows, crossable once grown for the
-  /// rest of the visit (FLAG_SCENE_TEMP_40 to _43).
+  /// rest of the visit (four flags from FLAG_FIRST_PLANT_GROWN).
   /// ★ Named from what the player sees: small sprouts on the cliff ledges
   /// (its render)
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_LOG + 2,
@@ -119,11 +129,17 @@ enum CrossboneIsleActor {
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
 };
 
+/// Growth has grown Crossbone Isle's first plant, until the party leaves the
+/// island's scene: four scene flags from this one, one a plant.
+/// ★ Named from what the player sees: small sprouts on the cliff ledges (its
+/// render)
+enum { FLAG_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
+
 /// The twelve floating logs of the ninth floor's side room
 /// (SceneId_CrossboneIsleFloatingLogs), numbered in the order of
-/// gCrossboneIslePlacements3, from the first to the twelfth, with their
-/// shapes: a log three cells wide slides north and south, and one three cells
-/// tall slides east and west.
+/// gCrossboneIsle_FloatingLogsPlacements, from the first to the twelfth, with
+/// their shapes: a log three cells wide slides north and south, and one three
+/// cells tall slides east and west.
 enum CrossboneIsleFloatingLogsActor {
   /// ★ Named from what the player sees: yellow logs floating on green water
   /// (its render)
@@ -165,7 +181,7 @@ enum CrossboneIsleFloatingLogsActor {
   ACTOR_TWELFTH_LOG
 };
 
-/// The corridor rooms' one placed actor (gCrossboneIslePlacements6To14).
+/// The corridor rooms' one placed actor (gCrossboneIsle_CorridorPlacements).
 enum CrossboneIsleCorridorActor {
   /// The pillar between the doors that sinks into the floor at column 40.
   /// ★ Named from what the player sees: a stone pillar between the two doors in
@@ -219,21 +235,21 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsle) {
-    return gCrossboneIsleEntrances1;
+    return gCrossboneIsle_IsleEntrances;
   }
   if (scene == (s32)&SceneId_CrossboneIsleCaveEntrance) {
-    return gCrossboneIsleEntrances2;
+    return gCrossboneIsle_CaveEntranceEntrances;
   }
   if (scene == (s32)&SceneId_CrossboneIsleFloatingLogs) {
-    return gCrossboneIsleEntrances3;
+    return gCrossboneIsle_FloatingLogsEntrances;
   }
   if (scene == (s32)&SceneId_CrossboneIslePier) {
-    return gCrossboneIsleEntrances4;
+    return gCrossboneIsle_PierEntrances;
   }
   if (scene == (s32)&SceneId_PirateShip) {
-    return gCrossboneIsleEntrances5;
+    return gCrossboneIsle_PirateShipEntrances;
   }
-  return &gCrossboneIsleEntrances5[2];
+  return &gCrossboneIsle_PirateShipEntrances[2];
 }
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
@@ -244,16 +260,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsle) {
-    return gCrossboneIslePlacements1;
+    return gCrossboneIsle_IslePlacements;
   }
   if (scene == (s32)&SceneId_CrossboneIsleFloatingLogs) {
-    return gCrossboneIslePlacements3;
+    return gCrossboneIsle_FloatingLogsPlacements;
   }
   if (scene <= (s32)&SceneId_CrossboneIsleNinthFloor &&
       scene >= (s32)&SceneId_CrossboneIsleFirstFloor) {
-    return gCrossboneIslePlacements6To14;
+    return gCrossboneIsle_CorridorPlacements;
   }
-  return gCrossboneIslePlacementsOther;
+  return gCrossboneIsle_NoPlacements;
 }
 
 #include "common/effect_advance.h"
@@ -280,7 +296,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
     velocityX += Math_Divide(velocityX, 3);
     velocity.x = velocityX;
     FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
-                  velocity.y, velocityZ, 0x01000001, &options);
+                  velocity.y, velocityZ, EFFECT_USE_UPDATE | 1, &options);
   }
 }
 
@@ -301,21 +317,21 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsle) {
-    return gCrossboneIsleEvents1;
+    return gCrossboneIsle_IsleEvents;
   }
   if (scene == (s32)&SceneId_CrossboneIsleCaveEntrance) {
-    return gCrossboneIsleEvents2;
+    return gCrossboneIsle_CaveEntranceEvents;
   }
   if (scene == (s32)&SceneId_CrossboneIsleFloatingLogs) {
-    return gCrossboneIsleEvents3;
+    return gCrossboneIsle_FloatingLogsEvents;
   }
   if (scene == (s32)&SceneId_CrossboneIslePier) {
-    return gCrossboneIsleEvents4;
+    return gCrossboneIsle_PierEvents;
   }
   if (scene == (s32)&SceneId_PirateShip) {
-    return gCrossboneIsleEvents5;
+    return gCrossboneIsle_PirateShipEvents;
   }
-  return gCrossboneIsleEventsOther;
+  return gCrossboneIsle_CorridorEvents;
 }
 
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
@@ -373,7 +389,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_ISLE_NUT)->targetX = PIXELS(129);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_ISLE_LOG);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_ISLE_LOG + 1);
-    if (FLAG_CHECK(FLAG_SCENE_TEMP_40) != 0) {
+    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -382,7 +398,7 @@ s32 Scene_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(304), PIXELS(368), 253);
     }
-    if (FLAG_CHECK(FLAG_SCENE_TEMP_41) != 0) {
+    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 1) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -391,7 +407,7 @@ s32 Scene_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(80), PIXELS(368), 253);
     }
-    if (FLAG_CHECK(FLAG_SCENE_TEMP_42) != 0) {
+    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 2) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -400,7 +416,7 @@ s32 Scene_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(96), PIXELS(336), 253);
     }
-    if (FLAG_CHECK(FLAG_SCENE_TEMP_43) != 0) {
+    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 3) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -620,7 +636,7 @@ static void Event_GrowFirstPlant(s32 actorId) {
   }
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_40);
+  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN);
 }
 
 /// Growth on Crossbone Isle's second plant.
@@ -634,7 +650,7 @@ static void Event_GrowSecondPlant(s32 actorId) {
   }
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_41);
+  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 1);
 }
 
 /// Growth on Crossbone Isle's third plant.
@@ -648,7 +664,7 @@ static void Event_GrowThirdPlant(s32 actorId) {
   }
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_42);
+  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 2);
 }
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
@@ -665,7 +681,7 @@ static void Event_GrowFourthPlant(s32 actorId) {
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
   SetMapCellCollision(0, secondFixedX, secondFixedZ, 253);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_43);
+  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 3);
 }
 
 /// Whirlwind on Crossbone Isle's first ivy: it is blown away for good, and
@@ -688,8 +704,10 @@ static void Event_BlowAwayThirdIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
 }
 
-/// Whirlwind on Crossbone Isle's fourth ivy.
-static void Event_BlowAwayFourthIvy(void) {
+/// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
+/// good, but the placement table places only three, so no actor answers its
+/// event.
+static void Event_UnusedBlowAwayFourthIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
 
@@ -720,7 +738,12 @@ static void CrossboneIsle_RestoreIvy(void) {
     OBJ_POS_SET(ACTOR_FIRST_IVY + 3, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 3);
-    actor->scaleY = 8 * Q16_ONE / 5;
+    // BUG: no fourth ivy is placed, so its slot is empty (ObjectTable_ClearAll)
+    // and this writes to address 0x18, in the BIOS, where the write is lost.
+#ifdef BUGFIX
+    if (actor != NULL)
+#endif
+      actor->scaleY = 8 * Q16_ONE / 5;
   }
 }
 
@@ -1014,7 +1037,7 @@ static s32 Event_HopEast(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking north onto the first log.
+/// Walking north on the first log drifts it north.
 static void Event_SlideFirstLogNorth(void) {
   s32 actorX = Object_GetById(ACTOR_FIRST_LOG)->x.fixed >> 20;
   s32 actorZ = Object_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
@@ -1089,7 +1112,7 @@ static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 actorId, s32 column,
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking south onto the first log.
+/// Walking south on the first log drifts it south.
 static void Event_SlideFirstLogSouth(void) {
   s32 column = Object_GetById(ACTOR_FIRST_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
@@ -1115,7 +1138,7 @@ static void Event_SlideFirstLogSouth(void) {
   CrossboneIsle_RedrawHorizontalLogRoute(ACTOR_FIRST_LOG, column, row);
 }
 
-/// Walking north onto the third log.
+/// Walking north on the third log drifts it north.
 static void Event_SlideThirdLogNorth(void) {
   s32 column = Object_GetById(ACTOR_THIRD_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
@@ -1145,7 +1168,7 @@ static void Event_SlideThirdLogNorth(void) {
   CrossboneIsle_RedrawHorizontalLogRoute(ACTOR_THIRD_LOG, column, row);
 }
 
-/// Walking south onto the third log.
+/// Walking south on the third log drifts it south.
 static void Event_SlideThirdLogSouth(void) {
   s32 column = Object_GetById(ACTOR_THIRD_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
@@ -1161,7 +1184,7 @@ static void Event_SlideThirdLogSouth(void) {
   }
 }
 
-/// Walking west onto the fourth log.
+/// Walking west on the fourth log drifts it west.
 static void Event_SlideFourthLogWest(void) {
   s32 column = Object_GetById(ACTOR_FOURTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_FOURTH_LOG)->z.fixed >> 20;
@@ -1183,7 +1206,7 @@ static void Event_SlideFourthLogWest(void) {
   }
 }
 
-/// Walking east onto the fourth log.
+/// Walking east on the fourth log drifts it east.
 static void Event_SlideFourthLogEast(void) {
   s32 column = Object_GetById(ACTOR_FOURTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_FOURTH_LOG)->z.fixed >> 20;
@@ -1201,7 +1224,7 @@ static void Event_SlideFourthLogEast(void) {
   }
 }
 
-/// Walking west onto the fifth log.
+/// Walking west on the fifth log drifts it west.
 static void Event_SlideFifthLogWest(void) {
   s32 column = Object_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_FIFTH_LOG)->z.fixed >> 20;
@@ -1218,7 +1241,7 @@ static void Event_SlideFifthLogWest(void) {
   CrossboneIsle_RedrawVerticalLogRoute(ACTOR_FIFTH_LOG, column, row);
 }
 
-/// Walking east onto the fifth log.
+/// Walking east on the fifth log drifts it east.
 static void Event_SlideFifthLogEast(void) {
   s32 column = Object_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_FIFTH_LOG)->z.fixed >> 20;
@@ -1234,7 +1257,7 @@ static void Event_SlideFifthLogEast(void) {
   CrossboneIsle_RedrawVerticalLogRoute(ACTOR_FIFTH_LOG, column, row);
 }
 
-/// Walking west onto the sixth log.
+/// Walking west on the sixth log drifts it west.
 static void Event_SlideSixthLogWest(void) {
   s32 column = Object_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_SIXTH_LOG)->z.fixed >> 20;
@@ -1284,7 +1307,7 @@ static void Event_SlideSixthLogWest(void) {
   CrossboneIsle_RedrawVerticalLogRoute(ACTOR_SIXTH_LOG, column, row);
 }
 
-/// Walking east onto the sixth log.
+/// Walking east on the sixth log drifts it east.
 static void Event_SlideSixthLogEast(void) {
   s32 column = Object_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_SIXTH_LOG)->z.fixed >> 20;
@@ -1305,7 +1328,7 @@ static void Event_SlideSixthLogEast(void) {
   CrossboneIsle_RedrawVerticalLogRoute(ACTOR_SIXTH_LOG, column, row);
 }
 
-/// Walking west onto the eighth log.
+/// Walking west on the eighth log drifts it west.
 static void Event_SlideEighthLogWest(void) {
   s32 column = Object_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
@@ -1339,7 +1362,7 @@ static void Event_SlideEighthLogWest(void) {
   CrossboneIsle_RedrawVerticalLogRoute(ACTOR_EIGHTH_LOG, column, row);
 }
 
-/// Walking east onto the eighth log.
+/// Walking east on the eighth log drifts it east.
 static void Event_SlideEighthLogEast(void) {
   s32 column = Object_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
@@ -1387,7 +1410,7 @@ static void Event_SlideEighthLogEast(void) {
   CrossboneIsle_RedrawVerticalLogRoute(ACTOR_EIGHTH_LOG, column, row);
 }
 
-/// Walking north onto the tenth log.
+/// Walking north on the tenth log drifts it north.
 static void Event_SlideTenthLogNorth(void) {
   s32 column = Object_GetById(ACTOR_TENTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_TENTH_LOG)->z.fixed >> 20;
@@ -1410,7 +1433,7 @@ static void Event_SlideTenthLogNorth(void) {
   CrossboneIsle_RedrawHorizontalLogRoute(ACTOR_TENTH_LOG, column, row);
 }
 
-/// Walking south onto the tenth log.
+/// Walking south on the tenth log drifts it south.
 static void Event_SlideTenthLogSouth(void) {
   s32 column = Object_GetById(ACTOR_TENTH_LOG)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_TENTH_LOG)->z.fixed >> 20;
@@ -1428,7 +1451,7 @@ static void Event_SlideTenthLogSouth(void) {
 /// These three columns form the crossing lane for the vertical logs.
 #define IS_IN_LOG_CROSSING_COLUMNS(x) ((x) >= 6 && (x) <= 8)
 
-/// Walking north onto the eleventh log.
+/// Walking north on the eleventh log drifts it north.
 static void Event_SlideEleventhLogNorth(void) {
   s32 column;
   s32 row;
@@ -1503,7 +1526,7 @@ static void Event_SlideEleventhLogNorth(void) {
 
 #undef IS_IN_LOG_CROSSING_COLUMNS
 
-/// Walking south onto the eleventh log.
+/// Walking south on the eleventh log drifts it south.
 static void Event_SlideEleventhLogSouth(void) {
   s32 column;
   s32 row;
@@ -1563,7 +1586,7 @@ static void Event_SlideEleventhLogSouth(void) {
 #undef IS_IN_LOG_CROSSING_COLUMNS
 #define IS_IN_LOG_CROSSING_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
-/// Walking north onto the second log.
+/// Walking north on the second log drifts it north.
 static void Event_SlideSecondLogNorth(void) {
   s32 column;
   s32 row;
@@ -1638,7 +1661,7 @@ static void Event_SlideSecondLogNorth(void) {
 
 #undef IS_IN_LOG_CROSSING_COLUMNS
 
-/// Walking south onto the second log.
+/// Walking south on the second log drifts it south.
 static void Event_SlideSecondLogSouth(void) {
   s32 column;
   s32 row;
@@ -1700,7 +1723,7 @@ static void Event_SlideSecondLogSouth(void) {
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Walking west onto the twelfth log.
+/// Walking west on the twelfth log drifts it west.
 static void Event_SlideTwelfthLogWest(void) {
   s32 column;
   s32 row;
@@ -1771,7 +1794,7 @@ static void Event_SlideTwelfthLogWest(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking east onto the twelfth log.
+/// Walking east on the twelfth log drifts it east.
 static void Event_SlideTwelfthLogEast(void) {
   s32 column;
   s32 row;
@@ -1823,7 +1846,7 @@ static void Event_SlideTwelfthLogEast(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking west onto the seventh log.
+/// Walking west on the seventh log drifts it west.
 static void Event_SlideSeventhLogWest(void) {
   s32 column;
   s32 row;
@@ -1876,7 +1899,7 @@ static void Event_SlideSeventhLogWest(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east onto the seventh log.
+/// Walking east on the seventh log drifts it east.
 static void Event_SlideSeventhLogEast(void) {
   s32 column;
   s32 row;
@@ -1922,7 +1945,7 @@ static void Event_SlideSeventhLogEast(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking west onto the ninth log.
+/// Walking west on the ninth log drifts it west.
 static void Event_SlideNinthLogWest(void) {
   s32 column;
   s32 row;
@@ -1972,7 +1995,7 @@ static void Event_SlideNinthLogWest(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east onto the ninth log.
+/// Walking east on the ninth log drifts it east.
 static void Event_SlideNinthLogEast(void) {
   s32 column;
   s32 row;
@@ -2086,32 +2109,32 @@ const s32 *gEffectScripts[] = {
     0,
 };
 
-struct SceneEntrance gCrossboneIsleEntrances1[] = {
+struct SceneEntrance gCrossboneIsle_IsleEntrances[] = {
     { CROSSBONE_ISLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 280, 0, 544, FACING_NORTH, 0, 0, 0, 512, 560, 0 },
     { CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE, CONDITION_ALWAYS, 136, 0, 360, FACING_SOUTH, 0, 0, 0, 512, 560, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleEntrances2[] = {
+struct SceneEntrance gCrossboneIsle_CaveEntranceEntrances[] = {
     { CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 312, 0, 520, FACING_NORTH, 0, 16, 64, 416, 544, 0 },
     { CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE_FIRST_FLOOR, CONDITION_ALWAYS, 280, 0, 144, FACING_EAST, 0, 16, 64, 416, 544, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleEntrances3[] = {
+struct SceneEntrance gCrossboneIsle_FloatingLogsEntrances[] = {
     { CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST, CONDITION_ALWAYS, 312, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
     { CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
-    { 99, CONDITION_ALWAYS, 272, 0, 232, FACING_SOUTH, 0, 0, 16, 640, 464, 0 },
+    { CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE, CONDITION_ALWAYS, 272, 0, 232, FACING_SOUTH, 0, 0, 16, 640, 464, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleEntrances4[] = {
+struct SceneEntrance gCrossboneIsle_PierEntrances[] = {
     { CROSSBONE_ISLE_PIER_FROM_CROSSBONE_ISLE_NINTH_FLOOR, CONDITION_ALWAYS, 184, 0, 136, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { CROSSBONE_ISLE_PIER_FROM_PIRATE_SHIP, CONDITION_ALWAYS, 40, 0, 184, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleEntrances5[] = {
+struct SceneEntrance gCrossboneIsle_PirateShipEntrances[] = {
     { PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     // The nine corridor rooms (CrossboneIsleFirstFloor to CrossboneIsleNinthFloor) enter through this
@@ -2188,16 +2211,16 @@ u32 gCrossboneIsleExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gCrossboneIslePlacementsOther[] = {
+struct ScenePlacement gCrossboneIsle_NoPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIslePlacements1[] = {
-    { SPRITE_BLANK, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, 7,
+struct ScenePlacement gCrossboneIsle_IslePlacements[] = {
+    { SPRITE_BLANK, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, ACTOR_RESET_ACTION,
         PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(144), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(352), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -2207,50 +2230,50 @@ struct ScenePlacement gCrossboneIslePlacements1[] = {
         PIXELS(104), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_IVY, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(352), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_IVY, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_IVY, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIslePlacements3[] = {
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+struct ScenePlacement gCrossboneIsle_FloatingLogsPlacements[] = {
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(408), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(520), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(552), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(216), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(72), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(120), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(216), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIslePlacements6To14[] = {
+struct ScenePlacement gCrossboneIsle_CorridorPlacements[] = {
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(632), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gCrossboneIsleEventsOther[] = {
+struct SceneEvent gCrossboneIsle_CorridorEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CORRIDOR_TO_PREVIOUS_ROOM },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CORRIDOR_TO_NEXT_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenEastDoor) },
@@ -2261,36 +2284,36 @@ struct SceneEvent gCrossboneIsleEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleEvents2[] = {
+struct SceneEvent gCrossboneIsle_CaveEntranceEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleEvents1[] = {
+struct SceneEvent gCrossboneIsle_IsleEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_SCENE_TEMP_40, EVENT_SCRIPT(Event_GrowFirstPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_SCENE_TEMP_41, EVENT_SCRIPT(Event_GrowSecondPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 2, FLAG_SCENE_TEMP_42, EVENT_SCRIPT(Event_GrowThirdPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 3, FLAG_SCENE_TEMP_43, EVENT_SCRIPT(Event_GrowFourthPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_FIRST_PLANT_GROWN, EVENT_SCRIPT(Event_GrowFirstPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_FIRST_PLANT_GROWN + 1, EVENT_SCRIPT(Event_GrowSecondPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 2, FLAG_FIRST_PLANT_GROWN + 2, EVENT_SCRIPT(Event_GrowThirdPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 3, FLAG_FIRST_PLANT_GROWN + 3, EVENT_SCRIPT(Event_GrowFourthPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_BlowAwayFourthIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_UnusedBlowAwayFourthIvy) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIsleLog) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIsleLog) },
-    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 100, 0xec0, FIND_COINS(1) },
-    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTH, 100, 0xec0, FIND_COINS(1) },
-    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTHWEST, 100, 0xec0, FIND_COINS(1) },
-    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
-    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTH, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
-    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTHWEST, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
+    { SEARCH_CHEST_FACING(FACING_WEST), 100, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
+    { SEARCH_CHEST_FACING(FACING_NORTH), 100, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
+    { SEARCH_CHEST_FACING(FACING_NORTHWEST), 100, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
+    { SEARCH_CHEST_FACING(FACING_WEST), 101, FLAG_CROSSBONE_ISLE_MINT, FIND_ITEM(ITEM_MINT) },
+    { SEARCH_CHEST_FACING(FACING_NORTH), 101, FLAG_CROSSBONE_ISLE_MINT, FIND_ITEM(ITEM_MINT) },
+    { SEARCH_CHEST_FACING(FACING_NORTHWEST), 101, FLAG_CROSSBONE_ISLE_MINT, FIND_ITEM(ITEM_MINT) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleEvents3[] = {
+struct SceneEvent gCrossboneIsle_FloatingLogsEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST },
     { TOUCH_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
@@ -2357,22 +2380,22 @@ struct SceneEvent gCrossboneIsleEvents3[] = {
     { EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnTwelfthLog) },
     { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnSeventhLog) },
     { EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnNinthLog) },
-    { SEARCH(SEARCH_CHEST), 100, 0xee2, FIND_COINS(999) },
-    { SEARCH(SEARCH_CHEST), 101, 0xee3, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { SEARCH(SEARCH_CHEST), 102, 0xee4, FIND_ITEM(ITEM_MURAMASA) },
-    { SEARCH(SEARCH_CHEST), 103, 0xee5, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_999_COINS, FIND_COINS(999) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_MURAMASA, FIND_ITEM(ITEM_MURAMASA) },
+    { SEARCH(SEARCH_CHEST), 103, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
 
-struct SceneEvent gCrossboneIsleEvents4[] = {
+struct SceneEvent gCrossboneIsle_PierEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP},
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gCrossboneIsleEvents5[] = {
+struct SceneEvent gCrossboneIsle_PirateShipEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER},
     {EVENT_TOUCH, 10, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
      EVENT_SCRIPT(Event_FightDeadbeard)},

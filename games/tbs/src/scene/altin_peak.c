@@ -11,11 +11,10 @@
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
 /// which puts back what the party has already done there.
 ///
-/// The party comes down from Altin, by doorways into AltinPeakFirstWaterBeast,
-/// AltinPeakSouthEntrance, AltinPeakSpritz and AltinPeakJunction, while
-/// boulders block Silk Road; the villagers say a passage at the bottom of the
-/// mine leads west. The water-spewing monsters that flooded Altin have flooded
-/// the mine too, and a water beast waits in AltinPeakFirstWaterBeast,
+/// Altin's doorways lead down into AltinPeakFirstWaterBeast,
+/// AltinPeakSouthEntrance, AltinPeakSpritz and AltinPeakJunction. The mine is
+/// flooded, and a water beast (SPRITE_WATER_BEAST, drawn with its green and
+/// blue swapped, SPRITE_COLOR_RBG) waits in AltinPeakFirstWaterBeast,
 /// AltinPeakSecondWaterBeast and AltinPeakThirdWaterBeast. In
 /// AltinPeakFirstWaterBeast the first one shows the way: stepping near it
 /// (touch 10, AltinPeak_ShowFirstBeastRoute) it cries out, hops around the
@@ -51,9 +50,9 @@
 /// of ruins buried in the mine. Stepping toward its guardian statue
 /// (AltinPeak_StartHydrosBattle) wakes it and starts the battle with the
 /// Hydros statues. Back from it (FLAG_HYDROS_STATUES_DEFEATED, which Altin's
-/// villagers read), Garet, Ivan and Mia step out and wonder why Altin's
-/// guardian statues turned into monsters, the statue sinks into the floor,
-/// and a chest behind it holds the Lifting Gem. Its Lift is what frees Hsu at
+/// villagers read), Garet, Ivan and Mia step out and talk, the statue sinks
+/// into the floor, and a chest behind it holds the Lifting Gem. Its Lift frees
+/// Hsu at
 /// the Alpine Crossing (alpine_crossing_lama_temple.c), and in the mine the
 /// boulders of AltinPeakSecondWaterBeast, AltinPeakJunction and
 /// AltinPeakWestExit have Lift rows that run nothing of their own.
@@ -62,17 +61,10 @@
 /// ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST) and AltinPeakWestExit
 /// onto the world map (ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP).
 ///
-/// Open questions:
-///
-/// - XXX: what the water beasts' animations 2 and 3 show (2 as one hops up a
-///   ledge, 3 in its high jumps and, in Altin, as one spits); the frames they
-///   pick in spr_190.tsv would settle names for them.
-/// - XXX: AltinPeakSpritz places a Lift boulder (sprite 0x127) as actor 13 at
-///   (520, 632), outside both of the room's camera boxes; whether the player
-///   can ever see it would be settled by a render of that corner.
-/// - XXX: the mine cart (sprite 0xe7), the Lift boulders (0x127), the falling
-///   boulder's pieces (0x120) and the falling boulder (200, SPRITE_BOULDER
-///   here) have no names in sprite_ids.h; their sheets would settle them.
+/// The falling boulder is SPRITE_ROCK, its shadow a SPRITE_BLANK_LARGE actor,
+/// and its pieces in the crash SPRITE_ROCK again, scaled down
+/// (AltinPeak_SpawnDebris); the beasts' spray is SPRITE_DUST_PUFF recoloured,
+/// as in Altin.
 
 #include "script.h"
 #include "version.h"
@@ -224,6 +216,11 @@ enum {
   /// ★ Named from what the player sees: a small blue puddle by the rails (its
   /// render)
   ACTOR_SPRITZ_ROOM_THIRD_PUDDLE,
+  /// Unused: a round boulder at (520, 632), outside both of the room's camera
+  /// boxes (gAltinPeak_SpritzEntrances': one ends at z 568, the one below it
+  /// at x 384), so the player never sees it, and no event names it. It stands
+  /// almost where AltinPeakJunction places its own boulder, (536, 636).
+  ACTOR_UNUSED_SPRITZ_ROOM_BOULDER,
   /// The Mercury Djinni, placed until it has joined.
   /// ★ Named from the game: "Spritz" (MsgDjinnName)
   ACTOR_SPRITZ = 14
@@ -251,7 +248,8 @@ enum {
   /// (MsgAltinWatchFallingRocks)
   ACTOR_WALL,
   /// The falling-rock sign, drawn with the sprite of Lalivero's sign and the
-  /// Kolima Forest floodgate's (0x112); it is read by searching cell code 12
+  /// Kolima Forest floodgate's (SPRITE_SIGNPOST); it is read by searching cell
+  /// code 12
   /// (AltinPeak_ReadFallingRockSign).
   /// ★ Named from the game: "Watch for falling rocks!"
   /// (MsgAltinWatchFallingRocks)
@@ -304,10 +302,6 @@ enum {
 
 /// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
 enum { PUDDLE_ANIM_FROZEN = 5 };
-
-/// The sprites the scene makes objects from: the water beast's spray (as in
-/// Altin) and AltinPeakFallingRocks's boulder, whose pieces fly in the crash.
-enum { SPRITE_BOULDER = 200, SPRITE_SPRAY = 222 };
 
 // The spray's direction (0 east, 0x8000 west) and origin, and the water's
 // flicker timer.
@@ -1359,7 +1353,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_AudioPlayCue(SE_HIGH_JUMP);
   actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   actor->velocityY = PIXELS(4);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_LEAP);
   Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 380, 248);
   Engine_EventWait(10);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1393,7 +1387,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   jumpSpeed = PIXELS(5);
   actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   actor->velocityY = jumpSpeed;
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 295, 215);
   Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
@@ -1403,7 +1397,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_AudioPlayCue(SE_HIGH_JUMP);
   actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   actor->velocityY = jumpSpeed;
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 260, 215);
   Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1472,7 +1466,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Engine_AudioPlayCue(SE_HIGH_JUMP);
   movingActor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   movingActor->velocityY = PIXELS(4);
-  Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+  Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
   Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 86, 214);
   Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   movingActor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
@@ -1500,7 +1494,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Engine_AudioPlayCue(SE_147);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_EventWait(80);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
   // End the route with a spray gust and a short skippable wait.
   AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
   Engine_EventWait(60);
@@ -1575,7 +1569,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   }
   opened = Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN);
   if (opened == 0) {
-    Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
+    Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
     flag = Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
     if (flag != 0) {
       Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
@@ -1590,7 +1584,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
                               PIXELS(215));
       actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
       actor->facing = opened;
-      Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+      Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
       AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
       return;
     }
@@ -1650,8 +1644,9 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
       Map_CopyCellAttributes(38, 24, 1, 2, 37, 24);
       Map_CopyCellAttributes(44, 23, 1, 2, 45, 23);
       if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) == 0) {
-        Actor_SetChildValue(ACTOR_SECOND_WATER_BEAST, 2);
-        Engine_ActorSetAnimation(ACTOR_SECOND_WATER_BEAST, 3);
+        Actor_SetChildValue(ACTOR_SECOND_WATER_BEAST, SPRITE_COLOR_RBG);
+        Engine_ActorSetAnimation(ACTOR_SECOND_WATER_BEAST,
+                                 WATER_BEAST_ANIM_SPIT);
         AltinPeak_StartSpitting(PIXELS(238), 0, PIXELS(418), 0x8000);
       }
     }
@@ -1702,8 +1697,8 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
     }
     AltinPeak_StartPaletteAnim();
     if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) == 0) {
-      Actor_SetChildValue(ACTOR_THIRD_WATER_BEAST, 2);
-      Engine_ActorSetAnimation(ACTOR_THIRD_WATER_BEAST, 3);
+      Actor_SetChildValue(ACTOR_THIRD_WATER_BEAST, SPRITE_COLOR_RBG);
+      Engine_ActorSetAnimation(ACTOR_THIRD_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
       AltinPeak_StartSpitting(PIXELS(748), PIXELS(8), PIXELS(280), 0x8000);
     }
   }
@@ -1900,7 +1895,7 @@ static void AltinPeak_RestoreWestExitRoom(void) {
 static void AltinPeak_InitSpray(struct FieldActor *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
-  ObjectGroup_SetChildValue(spray, 3);
+  ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
   Engine_ActorSetSpriteFlags(spray, 0);
   spray->scaleX = 3 * Q16_ONE / 10;
   spray->scaleY = 3 * Q16_ONE / 10;
@@ -1941,7 +1936,7 @@ static void AltinPeak_DriftSpray(union FieldObject *object) {
     spray->scaleY += 3 * Q16_ONE / 100;
   }
   if ((u32)(spray->timer * Engine_RandomNext()) >> 16 == 0)
-    ObjectGroup_SetChildValue(spray, 7);
+    ObjectGroup_SetChildValue(spray, SPRITE_COLOR_WHITE);
   if (spray->timer != 0)
     spray->timer -= 2;
   else
@@ -1958,7 +1953,7 @@ static void AltinPeak_SpawnSpray(void) {
   if ((gFrameCount & 3) != 0)
     return;
   spray = (union FieldObject *)Engine_ObjectCreate(
-      SPRITE_SPRAY, gAltinPeak_SprayOrigin[0], gAltinPeak_SprayOrigin[1],
+      SPRITE_DUST_PUFF, gAltinPeak_SprayOrigin[0], gAltinPeak_SprayOrigin[1],
       gAltinPeak_SprayOrigin[2]);
   if (spray == NULL)
     return;
@@ -1988,7 +1983,7 @@ static void AltinPeak_SpawnDebris(void) {
   s32 scale;
 
   if (gFrameCount % 3 == 0) {
-    debris = Object_Create(SPRITE_BOULDER,
+    debris = Object_Create(SPRITE_ROCK,
                            (((u32)(Engine_RandomNext() * 48) >> 16) << 16) +
                                PIXELS(765),
                            -PIXELS(64), PIXELS(608));
@@ -2025,9 +2020,9 @@ static void AltinPeak_SparkleIce(union FieldObject *object) {
   s32 framePhase = gFrameCount & 7;
 
   if (framePhase == 0) {
-    ObjectGroup_SetChildValue(actor, 2);
+    ObjectGroup_SetChildValue(actor, SPRITE_COLOR_RBG);
   } else if (framePhase == 2) {
-    ObjectGroup_SetChildValue(actor, 0);
+    ObjectGroup_SetChildValue(actor, SPRITE_COLOR_NORMAL);
   }
 }
 
@@ -2037,14 +2032,14 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   Engine_PsynergySetTarget(ACTOR_FIRST_WATER_BEAST,
                            ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
   Engine_PsynergyRaiseHands();
-  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
   Engine_PsynergyPlayEffect(1);
-  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
   Engine_PsynergyLowerHands();
-  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
   FieldFx_End();
   Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 }
 
 /// Back from AltinPeakFirstWaterBeast's beast battle: the beast is gone and the
@@ -2159,9 +2154,9 @@ static void AltinPeak_StartHydrosBattle(void) {
 /// Scheduler task while the statue sinks: it flickers every other frame.
 static void AltinPeak_FlickerStatue(void) {
   if (((gFrameCount >> 1) & 1) != 0) {
-    Engine_ActorSetChildValue(ACTOR_STATUE, 7);
+    Engine_ActorSetChildValue(ACTOR_STATUE, SPRITE_COLOR_WHITE);
   } else {
-    Engine_ActorSetChildValue(ACTOR_STATUE, 6);
+    Engine_ActorSetChildValue(ACTOR_STATUE, SPRITE_COLOR_GREY);
   }
 }
 
@@ -2241,7 +2236,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_PlayCue(SE_190);
-  Actor_SetChildValue(ACTOR_STATUE, 7);
+  Actor_SetChildValue(ACTOR_STATUE, SPRITE_COLOR_WHITE);
   Engine_EventWait(10);
   Event_PlayCue(SE_289);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2964,17 +2959,17 @@ struct ScenePlacement gAltinPeak_FirstWaterBeastPlacements[] = {
 };
 
 struct ScenePlacement gAltinPeak_SecondWaterBeastPlacements[] = {
-    {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(216), 0, PIXELS(312), FACING_EAST,
+    {SPRITE_MINE_CART, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(216), 0, PIXELS(312), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {SPRITE_WATER_BEAST, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(248), 0, PIXELS(464), FACING_WEST,
         TALK_KEEP_FACING, 0},
-    {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(888), 0, PIXELS(172), FACING_SOUTH,
+    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(888), 0, PIXELS(172), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
 
 struct ScenePlacement gAltinPeak_ThirdWaterBeastPlacements[] = {
-    {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(296), FACING_EAST,
+    {SPRITE_MINE_CART, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(296), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(216), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
@@ -2984,7 +2979,7 @@ struct ScenePlacement gAltinPeak_ThirdWaterBeastPlacements[] = {
 };
 
 struct ScenePlacement gAltinPeak_PoolPlacements[] = {
-    {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(712), 0, PIXELS(184), FACING_EAST,
+    {SPRITE_MINE_CART, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(712), 0, PIXELS(184), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(696), 0, PIXELS(664), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
@@ -2992,7 +2987,7 @@ struct ScenePlacement gAltinPeak_PoolPlacements[] = {
 };
 
 struct ScenePlacement gAltinPeak_SpritzPlacements[] = {
-    {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(264), 0, PIXELS(408), FACING_EAST,
+    {SPRITE_MINE_CART, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(264), 0, PIXELS(408), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(424), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
@@ -3002,25 +2997,25 @@ struct ScenePlacement gAltinPeak_SpritzPlacements[] = {
         TALK_KEEP_FACING, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(248), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(520), 0, PIXELS(632), FACING_SOUTH,
+    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(520), 0, PIXELS(632), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_SPRITZ, ACTOR_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0},
     {SCENE_TABLE_END},
 };
 
 struct ScenePlacement gAltinPeak_JunctionPlacements[] = {
-    {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(636), FACING_SOUTH,
+    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(636), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
 
 struct ScenePlacement gAltinPeak_FallingRocksPlacements[] = {
-    {0xc8, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(784), 0, PIXELS(80), FACING_SOUTH,
+    {SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(784), 0, PIXELS(80), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0x120, CONDITION_ALWAYS, 7, PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, 7, PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(76), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_BLANK, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x112, CONDITION_ALWAYS, 7, PIXELS(792), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, PIXELS(792), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
@@ -3028,7 +3023,7 @@ struct ScenePlacement gAltinPeak_FallingRocksPlacements[] = {
 struct ScenePlacement gAltinPeak_HydrosStatuePlacements[] = {
     {0xc7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0x120, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
+    {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
     {IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
@@ -3037,7 +3032,7 @@ struct ScenePlacement gAltinPeak_HydrosStatuePlacements[] = {
 };
 
 struct ScenePlacement gAltinPeak_WestExitPlacements[] = {
-    {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(280), FACING_SOUTH,
+    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(280), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(200), 0, PIXELS(328), FACING_SOUTH,
         TALK_KEEP_FACING, 0},

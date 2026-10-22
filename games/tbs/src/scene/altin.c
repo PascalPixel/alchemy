@@ -5,30 +5,27 @@
 /// The getters pick each scene's tables by gGameState.scene, both share one
 /// exit table, and a third, empty set of tables serves any other scene.
 ///
-/// The party comes up here when boulders have closed Silk Road at the Alpine
-/// Crossing, and finds the village under water. The day the gems fell from
-/// the sky, water-spewing monsters appeared in Altin Mine, the mine whose
-/// scenes the area names call Altin Peak (altin_peak.c), and flooded the
-/// village and the mine. Two things in Altin's code follow the party's work
-/// down there. The water drops in three stages with the three drains it
-/// opens by beating the mine's water beasts (FLAG_ALTIN_MINE_FIRST_DRAIN to
-/// _THIRD_DRAIN): Scene_Initialize turns them into three scene flags, the
-/// water dropped once, twice, or drained (the second and third drains both),
-/// and Village_ApplyWaterLevel copies the map block for that level over the
-/// village, with its collision, and leaves out whoever would be standing in
-/// the water. And every villager has two sets of lines and thoughts, before
-/// and after FLAG_HYDROS_STATUES_DEFEATED, whether the party has beaten the
-/// hydros statues at the bottom of the mine; the row that needs the flag
-/// clear comes first in each table, so the first row that matches picks the
-/// time. Before, they ask who will slay the beasts and wonder whether they
-/// were Altin's own guardian statues; after, they thank the party and talk of
-/// the ancient ruins it found at the bottom of the mine.
+/// The village is flooded by the water beasts of its mine, whose scenes the
+/// area names call Altin Peak (altin_peak.c), and two things in Altin's code
+/// follow the party's work down there. The water drops in three stages with the
+/// three drains it opens by beating the mine's water beasts
+/// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Scene_Initialize turns them
+/// into three scene flags, the water dropped once, twice, or drained (the
+/// second and third drains both), and Village_ApplyWaterLevel copies the map
+/// block for that level over the village, with its collision, and leaves out
+/// whoever would be standing in the water. And every villager has two sets of
+/// lines and thoughts, before and after FLAG_HYDROS_STATUES_DEFEATED, whether
+/// the party has beaten the hydros statues at the bottom of the mine; the row
+/// that needs the flag clear comes first in each table, so the first row that
+/// matches picks the time.
 ///
 /// In the village (Altin), three villagers come home one by one as the water
 /// drops, and the armor and item merchants wait outside their flooded shops
 /// until theirs dry (the item merchant's after the first drop, the armor
-/// merchant's after the second). A water beast spits water at the houses, its
-/// sound and its spray running from Village_ApplyWaterLevel, until the party
+/// merchant's after the second). A water beast, drawn with its green and blue
+/// swapped (SPRITE_COLOR_RBG), spits water at the houses, its sound and its
+/// spray (Spray_Initialize) running from Village_ApplyWaterLevel, until the
+/// party
 /// steps near it (Village_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (touches 2 to
 /// 9, Village_EnterDoor, each leaving by the exit of its number) lead into
@@ -45,23 +42,7 @@
 /// home (Houses_PlaceSheltering), and the weapon merchant waits in the inn
 /// until the water has drained. Each merchant opens across the counter once the
 /// shop has dried, and a cook from Xian paces between his pots
-/// (gAltinHouses_CookScript). The villagers point the party to a passage west
-/// at the bottom of the mine, the way on while Silk Road is closed; once the
-/// statues are beaten they also speak of a girl from Xian who asked after
-/// young warriors and bought up the soaked goods, of the landslide on Silk
-/// Road, and of a small temple west of the mine, Lama Temple.
-///
-/// Open questions:
-///
-/// - XXX: why the north door (ALTIN_TO_ALTIN_INTERIORS_NORTH) also redraws
-///   two cells at (8, 17), far from its own at (39, 17) (Village_EnterDoor); a
-///   render of the village before and after the door opens would show what
-///   they are.
-/// - XXX: the water beast's spray is sprite 222, which sprite_ids.h names
-///   SPRITE_DUST_PUFF; whether the spray is that puff in another palette (child
-///   values 3 and 7) would be settled by a render of the beast spitting.
-/// - XXX: what the water beast's child value 2 and the crates' 15 show; the
-///   sprite groups' parts in a render would settle it.
+/// (gAltinHouses_CookScript).
 
 #include "game_state.h"
 #include "version.h"
@@ -165,15 +146,13 @@ enum AltinVillageActor {
   /// ★ Named from the game: "Oh, no! What will I do if all my merchandise is
   /// soaked?" (MsgAltinWillDoIfMyMerchandise)
   ACTOR_FLOODED_ITEM_MERCHANT,
-  /// Three crates, drawn under the actors and never a target.
-  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
-  /// sheet draws it (its render)
+  /// Three crates placed with SPRITE_CRATE, which Village_ApplyWaterLevel hides
+  /// (SPRITE_COLOR_HIDDEN) but leaves solid, as placed actors are: invisible
+  /// blocks at the top of the ladder on the east cliff and, two of them, on
+  /// the rails below the doorway into the mine (the drained village's render
+  /// with them drawn).
   ACTOR_FIRST_CRATE,
-  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
-  /// sheet draws it (its render)
   ACTOR_SECOND_CRATE,
-  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
-  /// sheet draws it (its render)
   ACTOR_THIRD_CRATE
 };
 
@@ -273,8 +252,6 @@ enum {
   DOOR_SANCTUM = ALTIN_TO_SANCTUM - FIRST_DOOR_TRIGGER,
   DOOR_STRAIGHT_IN = ALTIN_TO_ALTIN_INTERIORS_EAST - FIRST_DOOR_TRIGGER
 };
-
-enum { SPRITE_SPRAY = 222, ANIM_BEAST_SPIT = 3 };
 
 #define WATER_BEAST_HOP_PERIOD 60
 #define WATER_SPRAY_LIFETIME 20
@@ -645,7 +622,11 @@ static void Village_EnterDoor(void) {
     Engine_EventWait(4);
   } else {
     Event_PlayCue(SE_DOOR_OPEN);
-    // The north door also redraws two cells at (8, 17), far from its own.
+    // The north door's row in gAltinVillage_Doors plays its opening at
+    // (39, 17), outside the village's camera box; its house stands at
+    // (8, 17), above where the party comes back out
+    // (ALTIN_FROM_ALTIN_INTERIORS_NORTH), so that doorway is drawn open here
+    // (a render with this copy made on entry shows the open doorway).
     if (doorIndex == ALTIN_TO_ALTIN_INTERIORS_NORTH - FIRST_DOOR_TRIGGER) {
       Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
@@ -830,8 +811,8 @@ static void Village_ApplyWaterLevel(void) {
     Engine_ActorDestroy(ACTOR_WATER_BEAST);
   } else {
     FieldFx_SetQueuedSoundAndPlay(SE_170);
-    Actor_SetChildValue(ACTOR_WATER_BEAST, 2);
-    Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_BEAST_SPIT);
+    Actor_SetChildValue(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
+    Engine_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
   }
   if (gGameState.entrance == ALTIN_FROM_SANCTUM) {
@@ -842,10 +823,10 @@ static void Village_ApplyWaterLevel(void) {
     Actor_SetPosition(ACTOR_STONE_STATUE, PIXELS(360), PIXELS(168));
   }
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_STATUE), 0);
-  // Draw the three crates under the actors before redrawing.
-  Actor_SetChildValue(ACTOR_FIRST_CRATE, 15);
-  Engine_ActorSetChildValue(ACTOR_SECOND_CRATE, 15);
-  Actor_SetChildValue(ACTOR_THIRD_CRATE, 15);
+  // Hide the three crates, which stay solid, and draw them under the actors.
+  Actor_SetChildValue(ACTOR_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
+  Engine_ActorSetChildValue(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
+  Actor_SetChildValue(ACTOR_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
   Object_GetById(ACTOR_FIRST_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
   Object_GetById(ACTOR_SECOND_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
   Object_GetById(ACTOR_THIRD_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -898,12 +879,13 @@ static void Houses_PlaceSheltering(void) {
   }
 }
 
-/// Gives a new spray particle its look: standing still, drawn on sprite
-/// priority 1 and at 0.3 scale.
+/// Gives a new spray particle its look: SPRITE_DUST_PUFF standing still, drawn
+/// with its red and blue swapped so the dust is water, on sprite priority 1
+/// and at 0.3 scale. Spray_Drift turns some white as they fade.
 static void Spray_Initialize(struct FieldActor *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
-  ObjectGroup_SetChildValue(spray, 3);
+  ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
   Engine_ActorSetSpriteFlags(spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;
   spray->scaleY = WATER_SPRAY_START_SCALE;
@@ -926,7 +908,7 @@ static void Spray_Drift(union FieldObject *fieldObject) {
     spray->scaleY += 0x7ae;
   }
   if (((u32)Engine_RandomNext() * spray->timer) >> 16 == 0)
-    ObjectGroup_SetChildValue(spray, 7);
+    ObjectGroup_SetChildValue(spray, SPRITE_COLOR_WHITE);
   if (spray->timer != 0)
     spray->timer--;
   else
@@ -942,7 +924,7 @@ static void Spray_Drift(union FieldObject *fieldObject) {
 static void Beast_SpawnSpray(void) {
   union FieldObject *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((union FieldObject *)Object_Create(SPRITE_SPRAY, PIXELS(64), 0,
+    spray = ((union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(64), 0,
                                                 PIXELS(400)));
     if (spray != 0) {
       spray->actor.timer = WATER_SPRAY_LIFETIME;

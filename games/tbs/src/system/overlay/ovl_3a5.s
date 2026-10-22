@@ -1,13 +1,13 @@
 	.section .bss,"aw",%nobits
-	.global gLamakanDesert_SandVramSlot
-gLamakanDesert_SandVramSlot:
+	.global gHeatGauge_VramSlot
+gHeatGauge_VramSlot:
 	.space 16
-	.global gLamakanDesert_SandWork
-gLamakanDesert_SandWork:
+	.global gHeatGauge_Sprites
+gHeatGauge_Sprites:
 	.space 0x50
-	.global gLamakanDesert_SandTileBuffer
-gLamakanDesert_SandTileBuffer:
+	.global gHeatGauge_TileBuffer
+gHeatGauge_TileBuffer:
 	.space 0x900
-	.global gLamakanDesert_SandPhase
-gLamakanDesert_SandPhase:
+	.global gHeatGauge_Held
+gHeatGauge_Held:
 	.space 2

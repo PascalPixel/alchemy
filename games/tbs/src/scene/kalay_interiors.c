@@ -26,14 +26,6 @@
 /// - Kalay Sanctum (SceneId_KalaySanctum), whose healer offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
-///
-/// Open questions:
-///
-/// - XXX: what the four by two cells KalayInteriors_ApplyRoomState copies on
-///   entering by KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER show; a render of that
-///   house entered from each of its doors would settle it.
-/// - XXX: what the second tour guide's child value 2 changes while the tour
-///   waits; a render of the inn's dining room would settle it.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -402,9 +394,12 @@ s32 KalayInteriors_Initialize(void) {
 }
 
 /// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
-/// two people from the houses. Entering by
-/// KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER instead redraws a rectangle of
-/// cells.
+/// two people from the houses; until then the second tour guide is drawn with
+/// his green and blue swapped, as in kalay.c. Entering by
+/// KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER instead blanks four by two cells
+/// below the ground floor, where the corner of a neighbouring room would
+/// otherwise show at the bottom edge of the view (the room's render with and
+/// without the copy).
 static void KalayInteriors_ApplyRoomState(void) {
   s16 entrance = gGameState.entrance;
 
@@ -432,7 +427,7 @@ static void KalayInteriors_ApplyRoomState(void) {
       Engine_ActorDestroy(ACTOR_SEAN);
       Engine_ActorDestroy(ACTOR_FOURTH_TOURIST);
     } else {
-      Engine_ActorSetChildValue(ACTOR_SECOND_TOUR_GUIDE, 2);
+      Engine_ActorSetChildValue(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
     }
     return;
   default:
@@ -569,11 +564,11 @@ struct ScenePlacement gKalayInteriors_HousePlacements[] = {
         PIXELS(383), 0, PIXELS(108), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, ACTOR_STAND,
         PIXELS(346), 0, PIXELS(109), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x7e, 0x0, ACTOR_WANDER,
+    { SPRITE_BALD_MAN_IN_RED_2, 0x0, ACTOR_WANDER,
         PIXELS(573), 0, PIXELS(163), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, ACTOR_STAND,
         PIXELS(670), 0, PIXELS(154), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x7f, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN_2, 0x0, ACTOR_STAND,
         PIXELS(183), 0, PIXELS(416), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(369), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },

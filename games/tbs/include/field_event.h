@@ -51,13 +51,17 @@ enum ActorAnimation {
   ANIM_WALK = 2,
   ANIM_NOD = 3,
   ANIM_SHAKE_HEAD = 4,
-  /// Leaning back for a moment before a jump. This and the leader's other
-  /// poses below are as Isaac's sprite (spr_000.png) draws them.
-  ANIM_LEADER_SPRING = 6,
-  ANIM_LEADER_LEAP = 7, ///< in mid-stride, leaning forward
+  /// Running, leaning forward, four frames a step to the walk's six. This and
+  /// the leader's other poses below are as Isaac's sprite (spr_000.png) draws
+  /// them.
+  ANIM_LEADER_RUN = 5,
+  ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
+  ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
   ANIM_PUSH = 8,
+  /// Sitting waist-deep in water and splashing, as in a Lamakan Desert oasis.
+  ANIM_LEADER_BATHE = 18,
   ANIM_LEADER_LEAN_BACK = 22,  ///< leaning back, his head thrown back
   ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
 };

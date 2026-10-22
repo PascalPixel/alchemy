@@ -10,36 +10,28 @@
 /// XIAN_INTERIORS_INN_GUEST_ROOMS_TO_INN back; and
 /// XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP opens into the weapon, armor and item
 /// shops. As in the village, every line has a row for each side of
-/// FLAG_XIAN_HEARD_HSU_TRAPPED: before, the villagers talk of silk, Silk Road
-/// to Tolbi and the mine at Altin, and wonder why the merchants have not come;
-/// after, of Hsu's injury, of Silk Road and Lamakan Desert closed, and of
-/// Altin's water monsters as Feizhi told of them, two villagers asking the
-/// party what it knows (a yes and a no get different replies). The
-/// shopkeepers and the innkeeper serve the party only when spoken to across
-/// the counter, and otherwise talk. Searching the ovens and shelves shows what
-/// the cooks are making and what lies about, such as a kimono for the inn's
-/// guests; a barrel holds an Elixir and a jar a Sleep Bomb.
+/// FLAG_XIAN_HEARD_HSU_TRAPPED, and two villagers' questions have a reply
+/// for a yes and one for a no. The shopkeepers and the innkeeper serve the
+/// party only when spoken to across the counter, and otherwise talk.
 ///
 /// The room behind Master Feh's school
 /// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) is reached only from the
 /// school (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE, in fuchin_temple.c) and has its
-/// own tables. Once Xian has heard of Hsu, Master Feh, Feizhi and Hsu are
-/// there, Hsu in his pose (animation 6). Master Feh says Feizhi's prediction
-/// came true, Hsu says he was injured on his way from Lama Temple, and Mind
-/// Read hears that he knew help would come, however he was freed. If the party
-/// helped free him (FLAG_HSU_RESCUED_WITHOUT_PARTY clear), Feizhi thanks it and
-/// Master Hama, and her thoughts praise the party's power as well as Hama's;
-/// otherwise she thanks Master Hama alone, and her thoughts are glad some of
-/// Hama's power passed to her. Arriving here clears FLAG_SHOW_LOCATION_NAME.
+/// own tables (XianInteriors_GetEvents). Once Xian has heard of Hsu, Master
+/// Feh, Feizhi and Hsu are there, Hsu lying in the bed (ANIM_HSU_IN_BED; the
+/// room's render with Hsu placed). FLAG_HSU_RESCUED_WITHOUT_PARTY, set when
+/// the party left the desert with Hsu still trapped (lamakan_desert.c), picks
+/// whether Feizhi thanks the party and Master Hama or Hama alone, and what
+/// Mind Read hears from each of them. Arriving here clears
+/// FLAG_SHOW_LOCATION_NAME.
 ///
 /// Open questions:
 ///
-/// - XXX: what the still objects of type 20 that XianInteriors_Initialize
-///   places in the inn and the shops are; type 20 is SPRITE_CHEST's number,
-///   but the rooms' renders show no chest where they stand, so a render with
-///   them hidden would settle it.
-/// - XXX: what Hsu's animation 6 shows in the room behind the school; a render
-///   of the room once Xian has heard of Hsu would settle it.
+/// - XXX (no evidence): why XianInteriors_Initialize places still objects of
+///   SPRITE_CHEST's sheet in the inn and the shops that it hides
+///   (OverlayObject_CreateConfiguredObject draws them SPRITE_COLOR_HIDDEN, not
+///   solid and never a target), as Xian does its crates; nothing the player
+///   sees or meets shows them, so only the authors' intent would explain them.
 
 #include "game_state.h"
 #include "unit/scene/xian_interiors.h"
@@ -136,6 +128,10 @@ enum {
   /// (MsgXianInteriorsHsuWasTrappedUnderTheRocks)
   ACTOR_HSU
 };
+
+/// Hsu on his back with his arms at his sides, as he lies in the bed in the
+/// room behind the school (spr_041.png's frame 36; the room's render).
+enum { ANIM_HSU_IN_BED = 6 };
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -294,28 +290,30 @@ const struct SceneEvent *XianInteriors_GetEvents(void) {
   return gXianInteriors_Events;
 }
 
-/// Opens the room through a window transition and places still objects of
-/// type 20 under the actors (OverlayObject_CreateConfiguredObject): one in the
+/// Opens the room through a window transition and places hidden still objects
+/// of SPRITE_CHEST's sheet (OverlayObject_CreateConfiguredObject): one in the
 /// inn (XIAN_INTERIORS_INN_SOUTH and
 /// XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS), two in the shops
 /// (XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
-/// clears FLAG_SHOW_LOCATION_NAME and Hsu takes his animation 6.
+/// clears FLAG_SHOW_LOCATION_NAME and lays Hsu in the bed.
 s32 XianInteriors_Initialize(void) {
   s16 entrance;
 
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   entrance = gGameState.entrance;
-  // Restore the ambient effects shared by connected interior entrances.
   if (entrance == XIAN_INTERIORS_INN_SOUTH ||
       entrance == XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS) {
-    OverlayObject_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417), 20);
+    OverlayObject_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417),
+                                         SPRITE_CHEST);
   } else if (entrance == XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP) {
-    OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568), 20);
-    OverlayObject_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568), 20);
+    OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568),
+                                         SPRITE_CHEST);
+    OverlayObject_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568),
+                                         SPRITE_CHEST);
   } else if (entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    Engine_ActorSetAnimation(ACTOR_HSU, 6);
+    Engine_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);
   }
   return 0;
 }

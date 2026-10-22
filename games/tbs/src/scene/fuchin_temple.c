@@ -1,93 +1,55 @@
 /// @file
 /// Fuchin Temple, and two masters' rooms in other places that share its
-/// overlay: Master Feh's school in Xian and the room in Lama Temple where
-/// Master Hama meditates. Two scenes hold four places, by their area names:
+/// overlay: Master Feh's school in Xian and Master Hama's room in Lama Temple.
+/// Two scenes hold four places, by their area names; in each, story flags pick
+/// where the people stand and which scripted scene plays on entry.
 ///
 /// - Fuchin Temple (SceneId_FuchinTempleGrounds), outside the temple, reached
-///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). Its monks read
-///   omens in the gems that fell from the sky and the blue lights in the north,
-///   and tell of Master Nyunpa, who is fasting to save the world by becoming
-///   enlightened. A young man from Kolima asks whether the bridge is open again
-///   (FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN), a traveling healer offers
-///   the Sanctum's services, and a search finds a Psynergy Stone. The monk
-///   beneath the falls guards the waterfall grotto: once Nyunpa has set the
-///   test (FLAG_NYUNPA_TEST_ACCEPTED), he leaps aside
-///   (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the party enters Fuchin Falls Cave
-///   (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE). Coming back out
-///   with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Isaac is
-///   sent on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST). The temple
-///   door leads inside (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS).
+///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
+///   anywhere here returns the party to FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, in
+///   front of the traveling healer. The monk beneath the falls guards the
+///   waterfall grotto: once Nyunpa has set his test
+///   (FLAG_NYUNPA_TEST_ACCEPTED) he leaps aside
+///   (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the grotto leads into Fuchin Falls
+///   Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE); back out with
+///   the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he sends the
+///   party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
 /// - Fuchin Temple (SceneId_FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS or the default
-///   entrance), inside, where Nyunpa meditates and does not answer. When the
-///   party reads his mind (Event_NyunpaOffersTest), he hears them, reads their
-///   minds in turn, guesses that they are following someone, warns them that no
-///   ordinary man can cross Mogall Forest and offers the test of the grotto;
-///   after a refusal (FLAG_NYUNPA_TEST_DECLINED), talking to him asks again.
-///   Back from the grotto with the Orb, Scene_Initialize plays his lesson
-///   (FuchinTemple_NyunpaTeachesKi): the power the monks call Ki, "force" in
-///   the western world, will make the monsters hiding in the forest show
-///   themselves (FLAG_NYUNPA_TAUGHT_FORCE). Once the party has been to Mogall
-///   Forest, Nyunpa has died, enlightened (FLAG_NYUNPA_ENLIGHTENED, set there):
-///   he no longer answers, the monks grieve, and Mind Read hears his last wish,
-///   that Isaac bring peace to the world.
+///   entrance), inside, where Nyunpa meditates. Mind Read on him offers the
+///   test (Event_NyunpaOffersTest, again after FLAG_NYUNPA_TEST_DECLINED);
+///   back with the Orb, Scene_Initialize plays his lesson on Ki
+///   (FuchinTemple_NyunpaTeachesKi, FLAG_NYUNPA_TAUGHT_FORCE). Once Mogall
+///   Forest has set FLAG_NYUNPA_ENLIGHTENED he sits withered
+///   (ANIM_NYUNPA_WITHERED) and Mind Read hears his last wish.
 /// - Xian (FuchinTempleInteriors, by FUCHIN_TEMPLE_INTERIORS_FROM_XIAN and
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE), Master Feh's kung fu school; the
 ///   area-name rules give the name Xian only at
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_XIAN, and Scene_Initialize hides the name at
-///   both. A student promises to take the party to Feh if the tree by the line
-///   falls to Chi. Force from the line fells it (Event_ForceTree): the first
-///   time, the students run for Feh, and Feizhi, Feh's daughter, storms out
-///   with him. Since gems fell from the sky and one hit her she has had
-///   visions, and she is sure that Hsu, who has not come back from Lama Temple,
-///   is in danger; Feh will not believe her, and she leaves alone to find him
-///   (FLAG_FEIZHI_WENT_TO_HSU), which unlocks the door she came out of
-///   (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). Feh asks to see Isaac's Chi
-///   (FLAG_FEH_WAITS_TO_SEE_CHI, or FLAG_FEH_CHI_DEMONSTRATION_DECLINED if
-///   Isaac twice says no); when he sees the tree fall from the line, he knows
-///   it is not Chi, which he learned from Master Hama of Lama Temple, but
-///   Fuchin's Ki, which releases the mind's energy as Chi releases the body's
-///   (FLAG_FEH_SAW_KI). Moving the tree with Move or pushing it by hand does
-///   not count, and FLAG_FEH_SCHOOL_SAW_TREE_FALL keeps the students asking for
-///   Chi from the line. Each of these flags picks the students' lines and Feh's
-///   place; once Hsu is known to be trapped (FLAG_XIAN_HEARD_HSU_TRAPPED),
-///   Scene_GetPlacements removes the tree and two students, and the school
-///   talks of the boulders that overcame him. FUCHIN_TEMPLE_INTERIORS_TO_XIAN
-///   leads out into Xian.
+///   both. Force from the line fells the training tree (Event_ForceTree): the
+///   first time, Feizhi and Feh come out and she leaves to find Hsu
+///   (FLAG_FEIZHI_WENT_TO_HSU), which unlocks FUCHIN_TEMPLE_INTERIORS_TO_HOUSE;
+///   Feh then waits to see Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
+///   FLAG_FEH_CHI_DEMONSTRATION_DECLINED after two refusals) and, seeing the
+///   tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
+///   with Move or by hand only sets FLAG_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu
+///   is known to be trapped (FLAG_XIAN_HEARD_HSU_TRAPPED),
+///   Scene_GetPlacements removes the tree and two students.
+///   FUCHIN_TEMPLE_INTERIORS_TO_XIAN leads out into Xian.
 /// - Lama Temple (FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE), the room in which Master Hama
-///   meditates, entered from Lama Temple (LamaTemple). On the first visit
-///   (FuchinTemple_RunHamasRevealLesson) Hama greets Isaac and his Adept
-///   companions, whom she foresaw, and tells Ivan that he is a Jupiter Adept
-///   like her. She means to teach him Reveal, without which the party cannot
-///   find the oases of the Lamakan Desert, which Saturos and Menardi are
-///   crossing after blocking Silk Road. Feizhi bursts in, having sensed that
-///   Hsu is in great danger among the boulders in the mountains; seeing that
-///   her power has passed to Feizhi, Hama gives Ivan Reveal and hurries with
-///   her to Hsu's aid, and FLAG_XIAN_HEARD_HSU_TRAPPED is set. Until Hsu is
-///   rescued (FLAG_HSU_RESCUED) Hama and the boy monk in her room are away;
-///   afterwards they are back. FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE leads
-///   back into Lama Temple (LamaTemple).
+///   meditates. The first visit plays her lesson
+///   (FuchinTemple_RunHamasRevealLesson), in which she gives Ivan Reveal and
+///   leaves with Feizhi to free Hsu, setting FLAG_XIAN_HEARD_HSU_TRAPPED; until
+///   FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
+///   FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE leads back into Lama Temple.
 ///
 /// Open questions:
 ///
-/// - XXX: what Nyunpa's animations 5 (as he meditates) and 6 (once he is
-///   enlightened), the kicking and punching students' animation 5 and the
-///   leader's 7 and 6 (the unused hops) show; the frames each picks in its
-///   sprite's sheet (graphics/sprite/spr_051.tsv for Nyunpa) would settle
-///   their names.
-/// - XXX: why Scene_Initialize places a translucent crate (SPRITE_CRATE,
-///   through OverlayObject_PrepareObject) 24 pixels up by Feh's door in Master
-///   Feh's school; a render of the school with and without it would show what
-///   it covers.
-/// - XXX: what reaches FuchinTempleGrounds' entrance 5, in front of the
-///   traveling healer, which no exit names; likely where the party wakes after
-///   it falls in battle, as Lama Temple's healer has one in the same place,
-///   and a battle lost after speaking to the healer would settle it.
-/// - XXX: what the leader's child values 15 and 1, alternated as spray falls
-///   over him at the grotto (FuchinTemple_SpawnGrottoEntryParticle), and Hama's
-///   and Ivan's 10 and 9 during the Reveal lesson change; the sprite group's
-///   child objects in a render of those frames would settle it.
+/// - XXX (no evidence): why Scene_Initialize places a crate painted solid
+///   black and translucent (OverlayObject_PrepareObject) over the lattice door
+///   to Feh's house in his school; the school's renders are the same with and
+///   without it, so nothing the player sees shows what it was for.
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/fuchin_temple.h"
@@ -234,6 +196,20 @@ enum HamasRoomActor {
   /// ★ Named from the game: "Feizhi... Why are you here?"
   /// (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_FEIZHI_IN_LAMA_TEMPLE
+};
+
+/// Animations of these scenes' own sprites beyond enum ActorAnimation.
+enum {
+  /// Seated cross-legged with his eyes shut (spr_051.png's frame 33).
+  ANIM_NYUNPA_MEDITATE = 5,
+  /// Seated as he meditated, shrunken and darkened, once he has died
+  /// enlightened (spr_051.png's frame 34).
+  ANIM_NYUNPA_WITHERED = 6,
+  /// A drill of kicks, a knee raised, a kick and a leaping kick, from a
+  /// fighting stance (spr_130.tsv).
+  ANIM_STUDENT_KICKS = 5,
+  /// A drill of quick punches with one kick among them (spr_131.tsv).
+  ANIM_STUDENT_PUNCHES = 5
 };
 
 static void FuchinTemple_FeizhiLeavesForHsu(void);
@@ -391,8 +367,8 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   movingMonk->gravity = 0x10000;
   Engine_ActorFaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 0);
   Engine_AudioPlayCue(SE_132);
-  // Only the palette option is enabled for these three particles.
-  options.palette = 7;
+  // Three white puffs, with only the colour option set.
+  options.palette = SPRITE_COLOR_WHITE;
   FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0x8000,
                 0, 0, EFFECT_USE_PALETTE, &options);
   FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0, 0,
@@ -565,7 +541,7 @@ static void Event_NyunpaOffersTest(void) {
     Event_ShowMessageAndWait(ACTOR_NYUNPA, 0, 10);
     FLAG_SET(FLAG_NYUNPA_TEST_ACCEPTED);
   }
-  OBJ_MODE(ACTOR_NYUNPA, 5);
+  OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
   EV_END();
 }
 
@@ -1240,8 +1216,8 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   }
   OBJ_DIR(ACTOR_KICKING_STUDENT, FACING_WEST, 0);
   OBJ_DIR(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
-  OBJ_MODE(ACTOR_KICKING_STUDENT, 5);
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, 5);
+  OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
   Actor_SetActionScript(ACTOR_JUMPING_STUDENT,
                         gFuchinTemple_JumpingStudentScript);
 }
@@ -1448,8 +1424,8 @@ static void FuchinTemple_FehSeesChi(void) {
   OBJ_WALK(ACTOR_JUMPING_STUDENT, 120, 248);
   Engine_ActorWaitForMove(ACTOR_KICKING_STUDENT);
   OBJ_DIR(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
-  OBJ_MODE(ACTOR_KICKING_STUDENT, 5);
-  OBJ_MODE(ACTOR_PUNCHING_STUDENT, 5);
+  OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+  OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
   Engine_ActorWaitForMove(ACTOR_JUMPING_STUDENT);
   Actor_SetActionScript(ACTOR_JUMPING_STUDENT,
                         gFuchinTemple_JumpingStudentScript);
@@ -1553,7 +1529,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gFuchinTempleEvents;
 }
 
-/// Emits a falling particle beside the leader during the grotto entrance fade.
+/// Emits a falling drop of spray beside the leader during the grotto entrance
+/// fade, white or, one drop in seven, with its colours rotated, and flickers
+/// the leader, hidden and red and green swapped on alternate frames, as he
+/// walks in behind the falls.
 static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   struct EffectOptions options;
   struct FieldActor *leader;
@@ -1562,10 +1541,10 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   paletteDraw = (u32)(Engine_RandomNext() * 7) >> 16;
   if ((paletteDraw & 7) == 0)
-    options.palette = 5;
+    options.palette = SPRITE_COLOR_BRG;
 
   options.startScaleX = 0xb333;
   options.startScaleY = 0xcccc;
@@ -1577,9 +1556,9 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
                 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 
   if ((gFrameCount & 1) != 0)
-    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   else
-    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_GRB);
 }
 
 /// Unused: hops the leader one map cell north; nothing calls it.
@@ -1604,9 +1583,9 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   OBJ_SPEED(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, offsetZ);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 7);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 6);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   EV_END();
 }
 
@@ -1628,7 +1607,7 @@ static void Event_EnterWaterfallGrotto(void) {
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_WALK);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+  Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(leader, 0);
   Scheduler_RemoveCallback(particleTask);
@@ -1762,7 +1741,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   WAIT(20);
   Engine_ActorSetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
   WAIT(20);
-  OBJ_MODE(ACTOR_NYUNPA, 5);
+  OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
   FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE);
   EV_END();
 }
@@ -2351,9 +2330,9 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance ==
         FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED)) {
-        OBJ_MODE(ACTOR_NYUNPA, 6);
+        OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_WITHERED);
       } else {
-        OBJ_MODE(ACTOR_NYUNPA, 5);
+        OBJ_MODE(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
         if (Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
             !Engine_GameFlagIsSet(FLAG_NYUNPA_TAUGHT_FORCE) &&
             !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -2399,10 +2378,13 @@ s32 Scene_Initialize(void) {
         trainingTree->sprite->rotation = 0x8000;
         Map_CopyCellAttributes(14, 11, 1, 1, 14, 10);
       }
+      // A crate painted solid black and translucent, over the lattice door to
+      // Feh's house (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). The school's render
+      // is the same with and without it; drawn plain, it covers the door.
       OverlayObject_PrepareObject(PIXELS(304), PIXELS(24), PIXELS(224),
                                   SPRITE_CRATE);
-      OBJ_MODE(ACTOR_KICKING_STUDENT, 5);
-      OBJ_MODE(ACTOR_PUNCHING_STUDENT, 5);
+      OBJ_MODE(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+      OBJ_MODE(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
     } else if (gGameState.entrance ==
                FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
@@ -2480,13 +2462,15 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   WAIT(60);
 }
 
-/// Hama's and Ivan's update hook during the Reveal lesson: their child value
-/// alternates between 10 and 9 every two frames.
+/// Hama's and Ivan's update hook during the Reveal lesson: they glow, drawn red
+/// and blue in turn every two frames.
 static void FuchinTemple_AlternateLessonChildEffect(union FieldObject *object) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    ObjectGroup_SetChildValue((struct FieldActor *)object, 10);
+    ObjectGroup_SetChildValue((struct FieldActor *)object,
+                              SPRITE_COLOR_RED_TINT);
   } else {
-    ObjectGroup_SetChildValue((struct FieldActor *)object, 9);
+    ObjectGroup_SetChildValue((struct FieldActor *)object,
+                              SPRITE_COLOR_BLUE_TINT);
   }
 }
 
@@ -2514,7 +2498,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   hama = Object_GetById(ACTOR_HAMA);
   // Emit the lesson particles while both temporary child effects run.
   options.priority = 1;
-  options.palette = 2;
+  options.palette = SPRITE_COLOR_RBG;
   options.type = 0x011d;
   for (particleIndex = 0; particleIndex < 64; particleIndex++) {
     if ((particleIndex & 3) == 0) {
@@ -2539,8 +2523,8 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   WAIT(40);
   Object_GetById(ACTOR_HAMA)->update = NULL;
   Object_GetById(IVAN)->update = NULL;
-  Engine_ActorSetChildValue(ACTOR_HAMA, 0);
-  Engine_ActorSetChildValue(IVAN, 0);
+  Engine_ActorSetChildValue(ACTOR_HAMA, SPRITE_COLOR_NORMAL);
+  Engine_ActorSetChildValue(IVAN, SPRITE_COLOR_NORMAL);
 }
 
 s32 gEffectScript0[] = {
@@ -2631,7 +2615,8 @@ struct SceneEntrance gFuchinTempleGroundsEntrances[] = {
      0, 304, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE, CONDITION_ALWAYS,
      168, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 232, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, CONDITION_ALWAYS, 232, 0, 328,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 

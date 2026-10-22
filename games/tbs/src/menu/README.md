@@ -99,8 +99,6 @@ same lists set the Psynergy the L or R button casts.
 The Item screen chooses a member, one of their items and a command, and
 carries the command out.
 
-![The Item screen in Vale at twice the GBA's size at two moments, each window outlined at the place and size its UiWindow gives, in tiles, and labelled with the InventoryMenuState member that points to it: with Isaac's items listed (MAINWINDOW with the party figures, MESSAGEWINDOW asking `Which item?`, STATUSWINDOW with his stats, LISTWINDOW with the Machete chosen, HELPWINDOW and INFOWINDOW describing the Machete), and with the Machete's commands up in LISTWINDOW](https://alchemy.pascalpixel.com/guides/menu/item-windows.png)
-
 The **Item** screen chooses a member (`ITEM_STEP_OWNER`), one of their items
 (`ITEM_STEP_ITEM`) and a command (`ITEM_STEP_COMMAND`): Use, Equip, Give,
 Drop, Remove or Details (`ITEM_STEP_INSPECT`). Giving chooses the receiver
@@ -368,3 +366,4 @@ last BIOS instruction fetched; as a width that is over 30, so
   (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
   and every test are in the menu's own code, so nothing in the ROM needs it to
   be a flag, and only Camelot's sources could say why it is one.
+- XXX (picture): the Item screen's windows, as an illustration.

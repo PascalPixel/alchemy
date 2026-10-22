@@ -105,8 +105,6 @@ song's header and its player, and the players, `gSound_PlayerSlots`
 A fanfare silences the music without stopping it, and the cue layer brings
 the music back by itself once the fanfare has ended.
 
-![A night at Bilibin's inn drawn as a chart, three frames to a column and a row for each track of the eight players, each cell lit while its track has notes sounding, as bright as its output volume: the music player's rows go dark six seconds in as the fanfare player's rows start, stay dark while the fanfare plays for about five seconds, and come back from about thirteen seconds; player 2 lights once and player 4 in short runs, for sound effects. Screens below show the inn at 0, 3, 7, 12 and 20 seconds: the inn, the black of the night and the room opening again.](https://alchemy.pascalpixel.com/guides/sound/players.png)
-
 `AudioCommand_Play` sets the music's volume to 0, plays the fanfare on the
 fanfare player and sets `gMusicRestoreDelay` to `MUSIC_RESTORE_DELAY_FRAMES`;
 the music keeps playing, silently.
@@ -309,3 +307,4 @@ player 2 the interface's (`SE_MENU_CONFIRM`, `SE_MENU_CANCEL`,
 `SE_MENU_ERROR`, `SE_SHOP_PURCHASE`) and player 3 the field's and battle's
 actions (`SE_CAST`, `SE_IMPACT`, `SE_HEAVY_IMPACT`, `SE_DOOR_OPEN`). A
 floating effect therefore never cuts those off.
+- XXX (picture): the sound players, as an illustration of music, fanfare and sound effects taking turns.

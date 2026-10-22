@@ -1,7 +1,5 @@
 # Scenes
 
-![Vale at twice the GBA's size where Garet's sister stands, each actor on screen labelled with its actor number: Isaac 0, Garet's sister 18, the stone pillar 20 and two other actors, 10 and 19](https://alchemy.pascalpixel.com/guides/scene/actors.png)
-
 A scene overlay is the code and tables of one place: who stands where, what
 happens when the party talks to someone, touches a cell, searches, uses an
 item or Psynergy, and the cutscenes the place plays. [Field
@@ -239,8 +237,6 @@ itself. What must move meanwhile runs as object scripts, callbacks (added with
 A scene never undoes what it changed: the engine clears the scene's and the
 place's temporary flags for it as the party enters.
 
-![The 256 scene flags and 256 place flags as two grids, lit where set, at four moments. In Vale all 512 are set by hand. Sent into the Sanctum, a scene of the same place, the scene flags are all clear and the place flags all still set. Sent on to the world map, another place, both are clear but for one scene flag the world map sets itself. Back in Vale the scene flags are clear and one place flag is set, the one Vale sets on entering.](https://alchemy.pascalpixel.com/guides/scene/temporary-flags.png)
-
 `Scene_ResetFlagsOnEnter` clears the scene's 256 flags on every ordinary
 entrance and the place's 256 when the party enters another group ([the front
 page](../../README.md#game-flags) explains the ranges). So a scene keeps a
@@ -261,8 +257,6 @@ The flags are in `games/tbs/include/flags.h`.
 
 Code several overlays need is written once in `common/` and compiled into
 each of them, because an overlay can call only the main image.
-
-![Two Colosso final overlays, Azart's match (18,256 bytes) and Navampa's (23,416), drawn a byte to a pixel, 128 to a line. Each opens with its own code in grey, and partway down both hold the same run of colour bands, 35 functions and tables from `common/`, 7,318 bytes, tinted alike in both and placed lower in Navampa's; five are the same byte for byte and thirty differ only in the addresses they hold. Below them each has its own tables again.](https://alchemy.pascalpixel.com/guides/scene/overlay-common.png)
 
 Only one overlay is loaded at a time and it can call only the main image, so
 the ROM holds a copy of the same functions in each, alike but for the
@@ -410,4 +404,6 @@ animations, named in `enum ActorAnimation` from Isaac's sprite
 seen side-on to full size facing the player, and a leaving turns from his
 back to side-on as he shrinks and is then hidden. The alternate pair, which
 goes with `SE_STAIRS_DOWN`, has its own drawings of the same turns.
-
+- XXX (picture): who stands where: a place's placement table filling the actor slots, labelled by who each actor is.
+- XXX (picture): scene and place flags, as an illustration of when each kind is cleared.
+- XXX (picture): code shared between places, as two places' code with the same blocks copied into both.

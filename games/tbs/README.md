@@ -1,7 +1,5 @@
 # ☀️ The Broken Seal
 
-![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
-
 The Broken Seal is one loop, `Game_Run`, that runs one scene at a time. A
 scene is a map and the overlay of code that drives it, and the scene table
 says which of each a scene uses and which place it belongs to. Scenes are

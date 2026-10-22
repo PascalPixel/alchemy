@@ -43,8 +43,6 @@ marked `@ PACKER:`.
 The palette fade moves every background and sprite colour a step a frame
 towards a target.
 
-![The title intro's fade, one frame for each of its 60 steps, the screen beside palette RAM's 256 background and 256 sprite colours, 16 to a row. On the first step every colour is the same near-black red; step by step the mountain, the clouds and the sky come up out of the dark, and each colour climbs towards its own target until on the 60th step both palettes hold the title's full colours, purples, blues and greys for the backgrounds, reds, greens, oranges and yellows for the sprites.](https://alchemy.pascalpixel.com/guides/graphics/palette-fade.gif)
-
 The palette fade moves every colour a step at a time towards a target.
 `PaletteFade_Initialize` saves both palettes, 512 colours, as the starting
 components in the colour buffer's heap block and schedules
@@ -143,8 +141,6 @@ a picture is as wide as its map, 256 pixels, so it wraps without a seam.
 
 The staff names are sprites drawn a line at a time into a ring of tiles,
 just ahead of where they come into view.
-
-![The credits from their first lines beside the sprites' tile memory, 32 tiles to a row: the staff names lie in it as lines of text, and each time the scroll enters a new line one row of the memory is outlined in red as the next line, such as `Scenario` or `Director`, is drawn into it ahead of being shown](https://alchemy.pascalpixel.com/guides/graphics/credits-tile-ring.gif)
 
 The names are sprites, not a background: six 32-by-8 sprites across each
 192-pixel line, drawing from the tile ring. They move up a pixel every
@@ -286,3 +282,5 @@ draw.
   rather than globals of their own; the ROM's code shows only that both reach
   the same addresses, no other code uses them, and only Camelot's link map or
   source could say whether the sharing was meant.
+- XXX (picture): the palette fade, as an illustration.
+- XXX (picture): how the credits draw only the lines about to show, as an illustration.

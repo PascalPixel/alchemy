@@ -18,8 +18,6 @@ A battle is a loop of rounds: each gathers every unit's action, sorts them
 into turns and plays them one after another, until one side has no unit
 standing or the party gets away.
 
-![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
-
 ```mermaid
 flowchart TD
     start["Battle_RunEncounter:<br/>formation.c builds the enemy units,<br/>transition.c plays the opening"] --> gather
@@ -570,8 +568,6 @@ The battle event queue is the one channel from the rules, which change the
 units at once, to the screen, which shows the changes one by one while the
 effect plays.
 
-![Isaac's Quake against Garet, Ivan and Mia, one frame for each event playback plays, beside the queue it is playing with that event marked. First the rock pillars throw the three into the air while playback is idle and no target has been resolved. Then for each target in turn, Garet, Ivan and Mia, the queue holds eight events: the hit, which flashes the unit white; the number and the unit's name; the message `Garet takes 14 damage!!!`, then `Ivan takes 15 damage!` and `Mia takes 12 damage!`, which waits for the player; and a refresh of the unit, its name again, a clear of the arguments and a last refresh, which play in the same frame as the next target's hit.](https://alchemy.pascalpixel.com/guides/battle/round-events.gif)
-
 `BattleTarget_Execute` never draws or waits, and an effect never computes an
 outcome. [Battle](../../battle.md#rules-and-effects-run-together) explains how
 `BattleEvent_Playback` runs as a task while the effect's own loop waits, and
@@ -760,3 +756,5 @@ side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the
 enemies' column, and `BattleClass_HasHeavyImpact` reads the class bit that
 makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
 bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
+- XXX (picture): a random battle starting while the party walks (to re-render once the walk and the party are fixed).
+- XXX (picture): a round's events played one at a time, as an illustration.

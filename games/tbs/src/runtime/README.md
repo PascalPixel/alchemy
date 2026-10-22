@@ -255,8 +255,6 @@ between is released with it.
 The scheduler runs each task once a frame, or once a VBlank, in an order the
 task chose when it was added.
 
-![Vale beside its task table through one frame, the 20 slots with each one's order, the pass it is run in, when it ran and its routine. Slots 0 to 6 are main-loop tasks in descending order: `0C8F` ColorBuffer_Update, `0C8A` Object_UpdateAllThumb, `0C85` Map_UpdateLayerScroll, then four of order `0C80`, MapAnimation_Update, ObjectSystem_UpdateCamera, UiWork_ProcessAll and Vale_AdjustPillarPriorityForLeaderHeight from the overlay, run in that table order as M1 to M7. Slot 7, `0480`, is the VBlank task UiWork_UploadDirtyBlocks, run as V1, and slots 8 to 19 are empty, `FFFF`.](https://alchemy.pascalpixel.com/guides/runtime/scheduler.png)
-
 The task table holds `SCHEDULER_TBS_TASK_COUNT` tasks, each a routine, an
 order halfword and flags. The order's high byte picks the pass that runs the
 task (`SCHEDULER_KEY_MAIN_LOOP` for the frame loop, `SCHEDULER_KEY_VBLANK` for
@@ -301,8 +299,6 @@ The code is `runtime/scheduler.c`, its names in
 
 The queue holds register writes and DMAs until the VBlank handler carries
 them out for a finished frame.
-
-![The register write queue over three frames of the title intro's palette fade, a pixel a scanline, the VBlank lines shaded, with a row for each slot used. Slot 0 already holds a write to `DISPCNT`; late in the first frame slots 1 and 2 fill with the fade's two DMAs, one of the background colours and one of the sprite colours, and at the VBlank a yellow line marks all three carried out and the queue emptied. In each frame after, the two DMAs are pushed into slots 0 and 1 a few lines after the VBlank and wait there until the next one empties them. Slots 3 to 31 are never used here.](https://alchemy.pascalpixel.com/guides/runtime/io-write-queue.png)
 
 The queue (`gIoWriteQueue`, `io_write_queue.h`) holds up to 32 entries, each a
 value, an address and a control word; a write to a full queue is dropped, and
@@ -574,3 +570,5 @@ the unused `DebugMenu_ScheduleSceneSelector` would schedule as a task.
   (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both
   games, nothing calls them, and each is reached only through a bare veneer,
   so no code shows what they were to do.
+- XXX (picture): the task table, as an illustration of what runs each frame and when.
+- XXX (picture): why register writes wait for the next VBlank, as an illustration rather than a chart.

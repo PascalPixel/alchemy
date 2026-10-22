@@ -1,7 +1,5 @@
 # Field objects
 
-![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
-
 A field scene, a room, a town, a dungeon floor or the world map, runs here
 from the moment `Game_Run` loads it until the party leaves. The code sets the
 scene up, hands the leader to the player, and handles whatever interrupts the
@@ -22,8 +20,6 @@ detail.
 A field scene is one loop that lets the player walk until something raises a
 request, a field of the field work, and then handles the requests one at a
 time in a fixed order.
-
-![The twelve request fields, in the loop's order, at each change as Isaac walks into a door in Vale, watched an instruction at a time: on the first frame `action` is raised with the door's code 7 and cleared again within the frame, as on every frame he pushes against it; at frame 17 it stays raised while the door's event runs; at frame 21 the event raises `exit` 6 with `action` still set, `action` is cleared, and then `exit`, as the scene ends. The screen at frames 0, 17 and 21 is below the table](https://alchemy.pascalpixel.com/guides/object/requests.png)
 
 `Field_RunScene` ([`object/run_scene.c`](object/run_scene.c)) allocates the
 field work, loads the map, picks the encounter zones, takes the overlay's
@@ -462,3 +458,5 @@ call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
   and 20 to 220, more than the 240 by 160 screen, and pass it to a window
   service that takes tiles, and with no caller in the ROM nothing shows what
   they were given.
+- XXX (picture): a random battle starting while the party walks (to re-render once the walk and the party are fixed).
+- XXX (picture): the field loop's requests, as a plain-language illustration of what can interrupt walking and the order the game deals with them.

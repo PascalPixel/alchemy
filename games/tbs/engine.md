@@ -125,8 +125,6 @@ memory map and the per-edition bank addresses.
 Each place's code is an overlay, unpacked into one fixed area of EWRAM when
 its scene loads, and it meets the main image only through two tables.
 
-![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
-
 An overlay is a compressed resource unpacked into `gOverlayArea`, 32 KB of
 EWRAM. There are 96 of them, listed in the
 scene table (`src/field/scenes.s`). Only one is loaded at a time, so overlays

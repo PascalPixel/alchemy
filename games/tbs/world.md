@@ -190,8 +190,6 @@ A map is one grid of 16-pixel cells, and each cell's word gives the block
 drawn there, the collision code events and walls are keyed on, and the
 ground's shape.
 
-![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
-
 The three layers are windows onto one grid of 128 by 128 cells, each 16 by 16
 pixels, decoded into the 64 KB at `Ram_MapCellBuffer`. A cell is one 32-bit
 word: its low halfword holds the block (a 2 by 2 group of 8-pixel tiles) in
@@ -212,8 +210,6 @@ A wall need not be coded. `Map_CheckObjectStep` lets an object step at most
 surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
 ground 32 pixels high runs along the foot of each cliff, some of it cut along
 a cell's diagonal.
-
-![One screen of Goma Cave, and under it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands more than 8 pixels above the leader's, too high to step up, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; the doorway cell the leader stands in tinted blue for an exit row and labelled as the way down to the room of the pond, and two magenta cells at the top edge labelled as pushing the east stone pillar a step. The cave has no wall-coded cells; its walls are all height. A key under it says what each colour stands for.](https://alchemy.pascalpixel.com/guides/map/cells.png)
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -277,8 +273,6 @@ values set how wide that row is and where it lies. Together the 160 lines
 sample a trapezoid around the party; when the player holds L to zoom out, the
 lines spread so far apart that some rows of the ground are never drawn.
 
-![The world map's screen above the ground as video memory holds it, laid flat: as the party walks south from Vale and then holds L to zoom out, a lit trapezoid on the flat ground shows every pixel some screen line reads, wider at the top of the screen than at the bottom, with five lines picked out in the same colours on both. Zoomed out, the lines spread apart and leave rows of the ground unread between them.](https://alchemy.pascalpixel.com/guides/field/world-map-footprint.gif)
-
 ![Isaac walking and running on the world map, the ground drawn in perspective](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
 The world map runs in display mode 2, which has only the two affine
@@ -301,8 +295,6 @@ picture R brings up.
 
 Walking fills a counter at a rate the ground under the leader decides, and a
 battle starts when it is full.
-
-![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
 
 Each frame the leader walks, `Encounter_SelectEnemyGroup` adds to
 `gGameState.encounterSteps` an amount that grows with the zone's rate and a

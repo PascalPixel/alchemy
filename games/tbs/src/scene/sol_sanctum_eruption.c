@@ -34,6 +34,8 @@
 /// - XXX: what the leader's animation 28, played as Isaac holds up the Mars
 ///   Star, is in the leader's sprite; its sprite sheet's animation table would
 ///   settle it.
+/// - XXX (picture): what ACTOR_RISING_EFFECT, a blank actor scaled with each
+///   departing actor, draws; a render of Alex rising away would show it.
 /// - XXX: MUS_017, MUS_023, MUS_063 and SE_107, SE_141, SE_144, SE_145,
 ///   SE_190, SE_201, SE_214, SE_246, SE_289, SE_292 and SE_308 have no proven
 ///   names; a recording of the scene would settle them.
@@ -141,7 +143,7 @@ const u32 *SolSanctumEruption_GetExits(void) {
   return gSolSanctumEruption_Exits;
 }
 
-/// Returns Garet and Jenna, then the rising glow (ACTOR_RISING_GLOW),
+/// Returns Garet and Jenna, then the rising effect (ACTOR_RISING_EFFECT),
 /// Kraden, Saturos, Menardi, Felix masked and unmasked, Alex, the Wise One
 /// (ACTOR_WISE_ONE) and sixteen crystals (from ACTOR_FIRST_CRYSTAL), all placed
 /// off the map until the cutscene moves them.
@@ -579,13 +581,13 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   struct FieldActor *spriteOwner;
   u8 frame;
 
-  departureEffect = Object_GetById(ACTOR_RISING_GLOW);
+  departureEffect = Object_GetById(ACTOR_RISING_EFFECT);
   departureEffect->scaleX = Q16_ONE;
   departureEffect->scaleY = Q16_ONE;
   Engine_ActorWalkToAndWait(actorId, 471, 290);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
   Engine_EventWait(10);
-  Actor_SetPosition(ACTOR_RISING_GLOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_RISING_EFFECT, PIXELS(471), PIXELS(290));
   actor = Object_GetById(actorId);
   spriteOwner = Object_GetById(actorId);
   Engine_ActorSetSpriteFlags(spriteOwner, 0);
@@ -611,7 +613,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
     frame++;
   } while (frame != 90);
   Actor_SetPosition(actorId, 0, 0);
-  Actor_SetPosition(ACTOR_RISING_GLOW, 0, 0);
+  Actor_SetPosition(ACTOR_RISING_EFFECT, 0, 0);
 }
 
 /// Unused: an empty function nothing calls.

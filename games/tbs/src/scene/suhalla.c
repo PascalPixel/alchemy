@@ -23,7 +23,8 @@
 /// - FLAG_SCENE_TEMP_01: Growth has grown the sprout; a return that keeps the
 ///   party's position, as after a battle, draws it grown again.
 ///
-/// Open questions: none.
+/// Open questions:
+/// - None.
 
 #include "game_state.h"
 #include "unit/scene/suhalla.h"

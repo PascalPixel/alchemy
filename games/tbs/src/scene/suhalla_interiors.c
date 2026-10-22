@@ -33,7 +33,8 @@
 /// always answers first, and the entrance SUHALLA_INTERIORS_HOUSE_WEST_UNUSED,
 /// to which no exit leads.
 ///
-/// Open questions: none.
+/// Open questions:
+/// - None.
 
 #include "game_state.h"
 #include "field_event.h"

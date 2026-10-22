@@ -155,7 +155,7 @@ so its name carries `Unused`. In story order:
   among them, with its own camera moves and map cells.
 - `Event_UnusedWaterBurstsByTheRiver` ([vale.c](src/scene/vale.c)) runs in
   Vale after Kalay. It shakes the map and has water grow up three times
-  (`gValeGrowingWaterAction`) north of `ACTOR_STRONGMAN_REMEMBERING_FELIX`,
+  (`gVale_UnusedWaterGrows`) north of `ACTOR_STRONGMAN_REMEMBERING_FELIX`,
   who then shows `MsgValeIUsedToPlayHere`
   (`I still remember when Felix and I used to play here...*Sniff*`) and a
   second line, and the event sets `FLAG_PLACE_TEMP_05`. The three water actors

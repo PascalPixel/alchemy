@@ -144,7 +144,7 @@ the overlay's exit table and takes the first one whose kind matches; a row
 written `SCENE_EXIT_IF` is taken only while its flag is clear, and the
 search otherwise goes on to the next row. Sol Sanctum's entrance
 (`gSolSanctumEntrance_Exits`) has three rows for `SOL_ENTRANCE_TO_VALE`,
-with `FLAG_SOL_SANCTUM_ERUPTED`, then `FLAG_PARTY_LEFT_VALE`, then no flag.
+with `FLAG_SOL_SANCTUM_ERUPTED`, then `FLAG_VALE_PARTY_LEFT`, then no flag.
 The entrance then decides where the party appears, and a scene's
 initialization often tests it as well, to play the part of a sequence that
 the previous scene sent the party to.

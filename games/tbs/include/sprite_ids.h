@@ -83,6 +83,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a small white pillar on its base
   /// (its render)
   SPRITE_BALANCE_PLATFORM = 0x101,
+  /// The signs of Lalivero, Tolbi Spring, Altin Peak and Kolima Forest's
+  /// floodgate.
+  /// ★ Named from what the player sees: a wooden signpost (spr_274.png)
+  SPRITE_SIGN = 0x112,
   /// The particles of Growth and of a Djinni's capture, and the gate effects
   /// of Venus Lighthouse.
   SPRITE_PARTICLE = 284,

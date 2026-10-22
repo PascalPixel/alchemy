@@ -45,6 +45,13 @@
 /// confront the tour guide on the Tolbi docks
 /// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
 /// Medal, and searching the ovens shows what is cooking.
+///
+/// Open questions:
+/// - XXX: what the camera limits that TBS_PATCH_1 moves 8 pixels show
+///   differently; renders of the inn and the east and south rooms in tbs-ja
+///   and tbs-en would settle it.
+/// - XXX (picture): the inn, its passage and its four guest rooms, each
+///   labelled with the exits that join them.
 
 #include "game_state.h"
 #include "unit/scene/tolbi_interiors.h"
@@ -68,6 +75,8 @@
 /// (MsgTolbiHeWontSailShipEven)
 #define FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN 0x300
 
+// From TBS_PATCH_1 on, the camera stops 8 pixels further at the inn and in
+// the east and south rooms.
 #if !TBS_PATCH_1
 #define TOLBI_INTERIORS_INN_CAMERA_MAX_Z 736
 #define TOLBI_INTERIORS_EAST_ROOM_CAMERA_MAX_X 944
@@ -173,7 +182,7 @@ static void TolbiInteriors_EnterDoor(void) {
   Map_AnimateCells(gTolbiInteriorsDoors[doorIndex].steps,
                    gTolbiInteriorsDoors[doorIndex].x,
                    gTolbiInteriorsDoors[doorIndex].y);
-  Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Engine_EventRequestExit(*trigger);
@@ -204,7 +213,7 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   // She runs to it and picks it up.
   Actor_ShowEmote(TOLBI_INTERIORS_MEDAL_WOMAN,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Actor_SetSpeed(TOLBI_INTERIORS_MEDAL_WOMAN, 0x10000, 0x8000);
+  Actor_SetSpeed(TOLBI_INTERIORS_MEDAL_WOMAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 600, 848);
   Actor_FaceDirection(TOLBI_INTERIORS_MEDAL_WOMAN, FACING_NORTH, 0);
   Engine_EventWait(40);
@@ -221,7 +230,8 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventWait(20);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
   Engine_EventWait(20);
-  Actor_FaceDirection(TOLBI_INTERIORS_MEDAL_WOMAN, 0x3000, 0);
+  Actor_FaceDirection(TOLBI_INTERIORS_MEDAL_WOMAN,
+                      FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(TOLBI_INTERIORS_MEDAL_WOMAN, 2);
   Engine_EventWait(20);
@@ -238,7 +248,7 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
 
   // She hides it and comes back, then leaves.
-  Actor_SetSpeed(TOLBI_INTERIORS_MEDAL_WOMAN, 0x16666, 0xb333);
+  Actor_SetSpeed(TOLBI_INTERIORS_MEDAL_WOMAN, PIXELS(7) / 5, PIXELS(7) / 10);
   Actor_WalkByAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 16, 0);
   Actor_WalkByAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 0, 32);
   Engine_EventWait(20);
@@ -248,7 +258,7 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Engine_EventWait(20);
-  Actor_SetSpeed(TOLBI_INTERIORS_MEDAL_WOMAN, 0x1cccc, 0xe666);
+  Actor_SetSpeed(TOLBI_INTERIORS_MEDAL_WOMAN, PIXELS(9) / 5, PIXELS(9) / 10);
   Actor_WalkByAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 0, 48);
   Actor_SetPosition(TOLBI_INTERIORS_MEDAL_WOMAN, 0, 0);
   Engine_EventEnd();
@@ -806,8 +816,8 @@ struct SceneEvent gTolbiInteriorsEventsFestival[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWeCouldHaveEnteredColosso) },
     { EVENT_TALK, TOLBI_INTERIORS_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderHowTheTryoutsAre) },
-    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, 0xf9a, FIND_ITEM(ITEM_VIAL) },
-    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, FLAG_TOLBI_INTERIORS_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, FLAG_TOLBI_INTERIORS_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
@@ -886,8 +896,8 @@ struct SceneEvent gTolbiInteriorsEventsFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTrialBattlesWerentQuiteLike) },
     { EVENT_TALK, TOLBI_INTERIORS_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfYoureNotInterestedInThe) },
-    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, 0xf9a, FIND_ITEM(ITEM_VIAL) },
-    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, FLAG_TOLBI_INTERIORS_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, FLAG_TOLBI_INTERIORS_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
@@ -971,8 +981,8 @@ struct SceneEvent gTolbiInteriorsEventsAfterColosso[] = {
     { EVENT_TALK, TOLBI_INTERIORS_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGotToSeeColossoSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_FELLOW_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatVoyageAcrossTheSeaWas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNoMatterWhatHappensImComing) },
-    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, 0xf9a, FIND_ITEM(ITEM_VIAL) },
-    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, FLAG_TOLBI_INTERIORS_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, FLAG_TOLBI_INTERIORS_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },

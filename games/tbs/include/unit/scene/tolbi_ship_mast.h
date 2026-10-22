@@ -33,9 +33,9 @@ extern struct SceneEntrance gTolbiShipMast_Entrances[];
 extern struct SceneRegion gTolbiShipMast_Regions[];
 extern u32 gTolbiShipMast_Exits[];
 extern struct ScenePlacement gTolbiShipMast_Placements[];
-extern struct ScenePlacement gTolbiShipMast_StagingObjects[];
-extern struct ScenePlacement gTolbiShipMast_EnsembleObjects[];
-extern struct ScenePlacement gTolbiShipMast_LandingObjects[];
+extern struct ScenePlacement gTolbiShipMast_FirstAttackPlacements[];
+extern struct ScenePlacement gTolbiShipMast_BirdPlacements[];
+extern struct ScenePlacement gTolbiShipMast_LandingPlacements[];
 extern struct SceneEvent gTolbiShipMast_Events[];
 extern u32 gTolbiShipMast_PassengerRowValues[];
 

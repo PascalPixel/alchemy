@@ -49,6 +49,35 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round sun disc lying flat (its
   /// sprite sheet, spr_204.png)
   SPRITE_SUN_DISC = 0xcc,
+  /// The Tolbi-bound Ship's oars and the sea monsters that attack it.
+  /// ★ Named from what the player sees: a wooden oar held at rest, slanting
+  /// (its render)
+  SPRITE_RESTING_OAR = 0xbc,
+  /// ★ Named from what the player sees: a blue jellyfish monster with
+  /// trailing tentacles (its render)
+  SPRITE_JELLYFISH_MONSTER = 0xbd,
+  /// The Kraken, which the party fights on the ship's deck.
+  /// ★ Named from the game: "You did good against that Kraken."
+  /// (MsgTolbiShipThankIsaacDidGoodAgainst)
+  SPRITE_KRAKEN = 0xc2,
+  /// ★ Named from what the player sees: a pink winged monster (its render)
+  SPRITE_PINK_WINGED_MONSTER = 0xc4,
+  /// ★ Named from what the player sees: a blue winged monster with claws (its
+  /// render)
+  SPRITE_BLUE_WINGED_MONSTER = 0xc5,
+  /// ★ Named from what the player sees: a green lizard-like monster (its
+  /// render)
+  SPRITE_LIZARD_MONSTER = 0xc6,
+  /// ★ Named from what the player sees: a spray of water rising and falling
+  /// (its render)
+  SPRITE_WATER_SPLASH = 0xd6,
+  /// ★ Named from what the player sees: an oar dipping into the water with a
+  /// splash (its render)
+  SPRITE_OAR = 0xe1,
+  /// The sign beside Tolbi Spring, Lalivero's and the Kolima Forest
+  /// floodgate's.
+  /// ★ Named from what the player sees: a wooden sign on a post (its render)
+  SPRITE_SIGNPOST = 0x112,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
   /// as Sol Sanctum's statues stand on its seals (its render)
   SPRITE_STONE_STATUE = 0xcb,

@@ -1075,10 +1075,18 @@
 /// ★ Named from the game: "have you seen anyone who looks like this?"
 /// (MsgTolbiSeenAnyoneWho)
 #define FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI 0x8c0
-/// The gambler has let the party go first into Tolbi Spring.
+/// The visitor at the gate of Tolbi Spring has let the party go first.
 /// ★ Named from the game: "I'll give you the chance to go first."
 /// (MsgTolbiWantTestLuck)
 #define FLAG_TOLBI_SPRING_OPENED 0x8c1
+/// The town's containers, set once each is searched: a barrel's coins, a
+/// jar's Lucky Medal and the Power Bread in the chest Reveal uncovers.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_TOLBI_BARREL_COINS 0xf97
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_TOLBI_JAR_LUCKY_MEDAL 0xf98
+/// ★ Named from the game: "Power Bread" (MsgItemName)
+#define FLAG_TOLBI_CHEST_POWER_BREAD 0xf99
 
 // Tolbi interiors: the woman who finds a Lucky Medal after Colosso
 /// After Colosso, on the party's first entry into the inn's northeast guest
@@ -1094,6 +1102,11 @@
 /// The medal woman has greeted the party, startled, since it took the medal.
 /// ★ Named from the game: "Oh... Hello!" (MsgTolbiHello)
 #define FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO 0x8be
+/// The interiors' barrels, set once each is searched.
+/// ★ Named from the game: "Vial" (MsgItemName)
+#define FLAG_TOLBI_INTERIORS_BARREL_VIAL 0xf9a
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_TOLBI_INTERIORS_BARREL_LUCKY_MEDAL 0xf9b
 
 // Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
 /// The ship is at anchor off Crossbone Isle, the rowers resting, until Kaja
@@ -1184,6 +1197,15 @@
 /// voyage starts over. XXX: no code of this game reads it; a reader would say
 /// what it changes.
 #define FLAG_TOLBI_SHIP_DEFEATED_AT_SEA 0x902
+/// The ship's containers below decks, set once each is searched: a barrel in
+/// the cargo hold, one in the passenger hold and a jar in the captain's
+/// quarters.
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL 0xf92
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_TOLBI_SHIP_HOLD_COINS 0xf93
+/// ★ Named from the game: "Nut" (MsgItemName)
+#define FLAG_TOLBI_SHIP_QUARTERS_NUT 0xf94
 // Tunnel Ruins
 /// Whirlwind has blown away the third leafy plant in TunnelRuinsGreatStatue,
 /// for good.

@@ -59,7 +59,7 @@
 /// - The Black Orb (WORLD_MAP_FROM_GATEWAY_CAVE). Iodem, who commands Babi's
 ///   soldiers and travels with the party, sees Babi's ship scuttled off the
 ///   coast and gives Isaac the Black Orb to use on it (FLAG_SCENE_TEMP_34,
-///   FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE); walking back into the cave
+///   FLAG_SAW_SHIP_AT_IDEJIMA); walking back into the cave
 ///   (ACTOR_PLACE_GATEWAY_CAVE) turns the leader round. Used on the wreck
 ///   (cell 96), the orb does nothing: it is not yet time, Iodem takes it back,
 ///   and the party must press on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED).
@@ -1825,7 +1825,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black
 /// Orb is handed back and before the wounded soldiers are seen in Lalivero
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_SCENE_TEMP_34 and
-/// FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE, and turns Gateway Cave's exit into
+/// FLAG_SAW_SHIP_AT_IDEJIMA, and turns Gateway Cave's exit into
 /// Event_StopLeavingShip.
 static void WorldMap_RunBlackOrbScene(void) {
   struct FieldActor *leader;
@@ -1901,7 +1901,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   FieldFx_ScheduleRatioTransition(Q16_ONE, 10);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
-  Engine_GameFlagSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE);
+  Engine_GameFlagSet(FLAG_SAW_SHIP_AT_IDEJIMA);
   gGameState.savedScene = (s32)&SceneId_WorldMap;
   gGameState.savedEntrance = 78;
   Engine_EventEnd();

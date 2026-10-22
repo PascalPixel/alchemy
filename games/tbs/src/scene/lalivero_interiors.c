@@ -28,12 +28,12 @@
 ///   LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE runs the report
 ///   (ReportToFaran): Faran and Iodem have found no sign of Sheba; the party
 ///   tells what became of Jenna and the others, in one of two versions by
-///   whether they saw the ship from the lighthouse
-///   (FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE), and will go on searching for Jenna;
-///   Faran is sure Sheba lived, Iodem tells him what an Adept is, and Faran
-///   sends them off. Stepping on trigger 51 afterwards, Iodem asks the party to
-///   wait for him outside Faran's house (FLAG_IODEM_ASKED_TO_MEET), where he
-///   gives them the Black Orb (lalivero.c).
+///   whether they saw the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA), and will
+///   go on searching for Jenna; Faran is sure Sheba lived, Iodem tells him what
+///   an Adept is, and Faran sends them off. Stepping on trigger 51 afterwards,
+///   Iodem asks the party to wait for him outside Faran's house
+///   (FLAG_IODEM_ASKED_TO_MEET), where he gives them the Black Orb
+///   (lalivero.c).
 
 #include "script.h"
 #include "game_state.h"
@@ -479,8 +479,8 @@ static void ReportToFaran(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 5, 50);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
-  // the ship from the lighthouse knows Idejima was swept away with it.
-  if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE) == 0) {
+  // the ship at Idejima knows Idejima was swept away with it.
+  if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
     TellFaranAboutJenna();
   } else {
     Engine_EventWait(20);
@@ -759,8 +759,8 @@ static void ReportToFaran(void) {
 }
 
 /// The party tells Faran and Iodem what became of Jenna and the others, when
-/// it did not see the ship from the lighthouse: Felix said he sent Jenna
-/// ahead to the ship.
+/// it did not see the ship at Idejima: Felix said he sent Jenna ahead to the
+/// ship.
 static void TellFaranAboutJenna(void) {
   Engine_EventSetMessage(MsgLaliveroTellOthers);
   Engine_EventWait(20);

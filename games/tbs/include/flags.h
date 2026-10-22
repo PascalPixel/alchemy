@@ -6,6 +6,7 @@
 
 /// Set while `character` (character_ids.h) is in the party
 /// (Party_AddActiveOwner).
+/// ★ Named from the game: "joined your party." (MsgJoinedParty)
 #define FLAG_IN_PARTY(character) (character)
 /// The prologue: Isaac and Garet are children. It ends with the caption
 /// "Three years later..." over Vale's repairs.
@@ -46,10 +47,17 @@
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_EVENT 0x107
-// Lit lighthouses: the adepts of a lit element regain PP faster
-/// Venus Lighthouse is lit.
+// Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
+// PP faster (units.c). Each lighthouse's scenes set its flag on every arrival,
+// and Scene_ResetFlagsOnEnter clears all four when the party enters another
+// place, so a flag is set only while the party is inside.
+/// The party is inside Venus Lighthouse, which is lit.
 /// ★ Named from its area name: Venus Lighthouse
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
+/// The party is inside Mercury Lighthouse, which is already lit when the
+/// party reaches its aerie.
+/// ★ Named from the game: "The lighthouse has already been lit!"
+/// (MsgMercuryLighthouseAlreadyLit)
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
 /// Mars Lighthouse is lit; no ☀️ scene sets it.
 /// ★ Named from the game: "the lighthouses aren't all lit!" (MsgMercuryGot)
@@ -91,9 +99,10 @@
 /// ★ Named from the game: "But nothing happens." (MsgNothingHappens)
 #define FLAG_NOTHING_HAPPENS 0x142
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
-/// Retreat is blocked, from Psynergy or an item. It "does not work here".
-/// Cleared on every normal scene entrance (not a return keeping the party's
-/// position); the scenes that forbid Retreat set it.
+/// Retreat is blocked, whether cast or used from an item, and the game says
+/// "It doesn't work here." Cleared on every normal scene entrance (not a return
+/// keeping the party's position); the scenes that forbid Retreat set it.
+/// ★ Named from the game: "Retreat" (MsgAbilityName)
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_SelectEnemyGroup), unless flag
@@ -173,14 +182,14 @@
 /// ★ Named from the game: "Welcome to Battle Arena"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_IN_BATTLE_ARENA 0x17e
-/// With it set, holding B on the field walks the leader at 4 pixels a frame
-/// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
 /// Holds the field's palette blend still (ColorBuffer_Update), while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_PALETTE_BLEND_HELD 0x152
 /// Holds the field's weather still, its particles and its next burst, while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_WEATHER_HELD 0x166
+/// With it set, holding B on the field walks the leader at 4 pixels a frame
+/// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
 #define FLAG_FAST_WALK 0x17f
 /// The places the party has visited, one flag for each place group, set by
 /// Scene_ResetFlagsOnEnter as the party enters the group; the world map screen
@@ -189,12 +198,12 @@
 /// A scene's own flags, cleared on every ordinary entrance
 /// (Scene_ResetFlagsOnEnter): puzzles reset when the party walks back in.
 #define FLAG_SCENE_FIRST 0x200
-#define FLAG_SCENE_LAST 0x2ff
+#define FLAG_SCENE_LAST 0x2ff ///< the last of the scene's 256 flags
 /// A place's flags, kept while the party moves between the scenes of one place
 /// group and cleared when it enters another. Each place uses the numbers for
 /// its own, so the scenes name them; the next two are the link lobby's.
 #define FLAG_PLACE_FIRST 0x300
-#define FLAG_PLACE_LAST 0x3ff
+#define FLAG_PLACE_LAST 0x3ff ///< the last of the place's 256 flags
 // Byte flags, read and written eight at a time.
 #define FLAG_LINK_PARTY_COUNT 0x3f0 ///< the members the linked opponent sent
 /// Monster Battles won in a row, added to the monsters' level; -1 after the
@@ -221,19 +230,71 @@
 #define FLAG_SHOW_LOCATION_NAME 0x12f
 /// The next layered map keeps the palette and tiles already loaded, once.
 #define FLAG_KEEP_LAYER_GRAPHICS 0x170
+/// Kraden has talked Isaac, Garet and Jenna into a secret look at Sol Sanctum
+/// and come out of his cottage ready to go (Event_KradenSetsOff). Until then
+/// Jenna stops Isaac on the path to Mt. Aleph; afterwards Kraden, Saturos and
+/// Menardi are gone from outside the cottage.
+/// ★ Named from the game: "Do you mean we should go into Sol Sanctum
+/// ourselves?" (MsgValeJennaTheyMightBeThieves)
 #define FLAG_SANCTUM_VISIT_PLANNED 0x801
+/// The party has come in through Sol Sanctum's door the first time, and
+/// Kraden has welcomed everyone to it; until then that welcome plays at
+/// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
+/// ★ Named from the game: "This is the entrance to Sol Sanctum. This is your
+/// first time here, right?" (MsgSolSanctumKradenFirstTimeAtSol)
 #define FLAG_SOL_SANCTUM_ENTERED 0x802
+/// In the hall of Sol Sanctum's first relief, Kraden has recalled the hidden
+/// passage Saturos and Menardi spoke of and the four have agreed to look for
+/// it together; until then his talk plays each time the party enters the hall.
+/// ★ Named from the game: "Those two said there was a hidden passage leading
+/// deeper into the sanctum." (MsgSolSanctumWrongKraden)
 #define FLAG_SEARCHING_FOR_HIDDEN_PASSAGE 0x804
+/// Isaac, Garet and Jenna have overheard the two strangers outside Kraden's
+/// cottage and been let go (Event_MeetSaturosAndMenardi). Afterwards the two
+/// stand watching the leader, and Vale's barking puppies are gone.
+/// ★ Named from the game: "Saturos and Menardi were their names, right?"
+/// (MsgValeKradenOhIsaac)
 #define FLAG_MET_SATUROS_AND_MENARDI 0x808
+/// The first Small Jewel is set in the empty eye of Sol Sanctum's first
+/// minotaur relief, which opened the passage beside it; the relief then shows
+/// both eyes sparkling, and the passage stays open on later visits.
+/// ★ Named from the game: "set the small gem into the empty socket."
+/// (MsgSolSanctumSetSmallGem)
 #define FLAG_SOL_SANCTUM_FIRST_GEM_PLACED 0x81a
+/// As FLAG_SOL_SANCTUM_FIRST_GEM_PLACED, for the second Small Jewel and the
+/// second minotaur relief, whose doorway it opened.
+/// ★ Named from the game: "set the small gem into the empty socket."
+/// (MsgSolSanctumSetSmallGem)
 #define FLAG_SOL_SANCTUM_SECOND_GEM_PLACED 0x821
+/// The party has beaten the evil within Tret in Tret Tree and he has spoken
+/// with it since, too weak to free Kolima. Set only once that talk ends; from
+/// then on his room's passage stays open, and in Kolima Forest Hermes' Water
+/// heals him instead of being thrown back.
+/// ★ Named from the game: "And you defeated the evil within me?"
+/// (MsgTretMmmmm)
 #define FLAG_TRET_DEFEATED 0x844
+/// Hermes' Water has healed Tret in Kolima Forest, and he has freed Kolima's
+/// people from being trees. The forest loses its cursed colors, and the
+/// people of Kolima and Bilibin switch to their lines for after the curse.
+/// ★ Named from the game: "freed Kolima from the curse"
+/// (MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards)
 #define FLAG_KOLIMA_CURSE_LIFTED 0x845
+/// Laurel has spoken with the party the first time in Kolima Forest, knowing
+/// them as the ones who resisted Tret's glamour and warning them to leave;
+/// afterwards she only repeats the warning until the curse is lifted.
+/// ★ Named from the game: "Tret and Laurel are the spirits of the holy trees
+/// protecting Kolima forest." (MsgKolimaInteriorsTheresABookEntitledTheHoly)
 #define FLAG_MET_LAUREL 0x84c
 /// The party has taken its reward from McCoy's treasure chests.
 /// ★ Named from the game: "The reward you received was indeed the greatest of
 /// treasures." (MsgBilibinRewardReceivedWasIndeedGreatest)
 #define FLAG_MCCOY_PALACE_REWARD_TAKEN 0x84e
+/// The party has beaten the three thieves in the loft of Vault's inn and the
+/// mayor has had them locked up; the stolen goods are returned and Ivan leaves
+/// the party. Vault's people, its jail and its Sanctum read it, and in Goma
+/// Cave Ivan comes back to rejoin the party.
+/// ★ Named from the game: "Those men you captured... They're in jail now?"
+/// (MsgVaultThoseMenCapturedTheyreIn)
 #define FLAG_VAULT_THIEVES_JAILED 0x855
 /// Vault's dog, given a Bone, has jumped where the passage underground is, and
 /// its thoughts now say so.
@@ -254,8 +315,25 @@
 /// ★ Named from what the player sees: a small fire beside a puddle among the
 /// ice pillars (its render)
 #define FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED 0x883
+/// Feizhi has burst in on Master Hama's lesson at Lama Temple to say that Hsu
+/// is trapped among the boulders, and Hama has gone to his aid. Set as the
+/// lesson ends; every villager in Xian then talks of the rockslide, and Hama
+/// and Feizhi wait by Hsu at the Alpine Crossing.
+/// ★ Named from the game: "He was trapped under a boulder."
+/// (MsgXianXianIsAPeacefulVillageBut)
 #define FLAG_XIAN_HEARD_HSU_TRAPPED 0x895
+/// Feizhi has stormed out of Master Feh's school, sure that Hsu is in danger,
+/// to find him alone. It unlocks the school's door she came out of, and
+/// places her by Xian's south exit until she reaches the Alpine Crossing.
+/// ★ Named from the game: "Hsu is in danger. Feizhi is going to help."
+/// (MsgXianDidDoWarrior)
 #define FLAG_FEIZHI_WENT_TO_HSU 0x89a
+/// Hsu is free of the boulders at the Alpine Crossing: Lift has raised the
+/// boulder while Hama and Feizhi pulled him out, or he was freed while the
+/// party was away (FLAG_HSU_RESCUED_WITHOUT_PARTY, set with it). The road is
+/// cleared, and Lama Temple's monks give their advice for the desert.
+/// ★ Named from the game: "We did it! Master Hama, Hsu is free!"
+/// (MsgMountainIsaacDidLiftBoulder)
 #define FLAG_HSU_RESCUED 0x8b2
 /// The water in Altin Mine has drained after the first, second and third
 /// water beasts' battles (AltinPeak_DrainFirstWater and the two after it).
@@ -268,13 +346,27 @@
 /// ★ Named from the game: "all the water should drain away"
 /// (MsgAltinIfWeCouldJustDestroyThe)
 #define FLAG_ALTIN_MINE_THIRD_DRAIN 0x907
+/// The party has beaten the Hydros statues at the bottom of Altin Peak; the
+/// statue there sinks into the floor. Every villager in Altin, and the Sanctum
+/// healer's thoughts, switch to their lines for after the battle.
+/// ★ Named from the game: "Thank you so much for defeating the hydros statues
+/// in the mine." (MsgAltinThankYouSoMuchForDefeating)
 #define FLAG_HYDROS_STATUES_DEFEATED 0x909
+/// In the ship's hold at Kalay, Sean and Ouranos have lost patience with the
+/// delay and gone to make the captain sail. It moves the voyage on: the
+/// passengers' talk changes, and the Anchor Charm can be found on the mast.
+/// ★ Named from the game: "Where else? To the captain's quarters, of course."
+/// (MsgTolbiShipIfWeArentGoingSet)
 #define FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN 0x922
 /// The crewman behind the deck's second door has been caught, and denies
 /// everything.
 /// ★ Named from the game: "I didn't do anything..."
 /// (MsgTolbiShipDidntDoAnything)
 #define FLAG_TOLBI_SHIP_CREWMAN_CAUGHT 0x923
+/// The party has found the captain's Anchor Charm at the top of the mast,
+/// which it can only do once the crewman on deck is caught or Sean and Ouranos
+/// have gone to the captain.
+/// ★ Named from the game: "Anchor Charm" (MsgItemName)
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND 0x924
 /// Lunpa's chef has told of the prisoner in the fortress, in words or in his
 /// thoughts.
@@ -286,11 +378,20 @@
 /// ★ Named from the game: "Donpa, didn't you just say you're going to lock up
 /// Dodonpa?" (MsgLunpaDad)
 #define FLAG_DODONPA_LOCKED_UP 0x941
+/// In West Lunpa Cave, Hammet has found Bunza, the Kalay merchant hiding
+/// behind a rock, and Bunza has offered his wagon. It plays once; until then
+/// Garet keeps the leader from going back up to Lunpa Fortress.
+/// ★ Named from the game: "Is that you, Bunza?" (MsgLunpaMoment)
 #define FLAG_LUNPA_CAVE_REUNION_SEEN 0x94d
 /// Bunza's wagon has left West Lunpa Cave, with the party aboard or without.
 /// ★ Named from the game: "You don't want to ride in Bunza's wagon?"
 /// (MsgLunpaGaretAsksIfNotRiding)
 #define FLAG_BUNZAS_WAGON_LEFT 0x94f
+/// Iodem, waiting in Gondowan Passage, travels with the party toward Babi
+/// Lighthouse. Turning back there clears it if he stays to wait; in the
+/// Suhalla Desert he warns of the storms and asks whether to press on.
+/// ★ Named from the game: "Then we should continue on our way to the
+/// lighthouse." (MsgKaragolWhyGoingBackIsaacDo)
 #define FLAG_IODEM_FOLLOWING_PARTY 0x9a0
 /// Move has sent GondowanCave's tree stump spinning across, freeing its cell.
 /// ★ Named from what the player sees: a tree stump on the ledge beside the
@@ -301,7 +402,11 @@
 #define FLAG_GONDOWAN_CAVE_PILLAR_DROPPED 0x9a5
 
 // Alpine Crossing and Lama Temple
-/// Feizhi has found the road blocked and run ahead to look for Hsu.
+/// At the Alpine Crossing, Feizhi has caught up with the party, found the road
+/// blocked as her vision foretold and run ahead calling for Hsu. She is gone
+/// from Xian from then on.
+/// ★ Named from the game: "Yahh! Silk Road! Boulders block the road!"
+/// (MsgMountainYahhSilkRoadBouldersBlock)
 #define FLAG_FEIZHI_SAW_ROCKSLIDE 0x8b0
 /// Hama has reached Hsu and spoken with him and Feizhi.
 /// ★ Named from the game: "Hsu, are you okay?" (MsgMountainHsuOkay)
@@ -320,8 +425,14 @@
 #define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a
 
 // Altin
-#define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff ///< jumped back into the flood
-#define FLAG_ALTIN_PILLAR_MOVED 0x906     ///< pushed to its place by Move
+/// The water beast spitting at Altin's houses has stopped as the party came
+/// near and hopped away into the flood for good; Altin's setup then removes
+/// it.
+#define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
+/// Altin's stone pillar stands in column 22, where Move pushes it. Checked
+/// after every Move (Village_CheckPillarMoved), which clears it if the pillar
+/// is anywhere else; the setup puts the pillar back there while it is set.
+#define FLAG_ALTIN_PILLAR_MOVED 0x906
 /// A barrel in the houses.
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_ALTIN_NUT 0xf73
@@ -342,8 +453,11 @@
 /// ★ Named from the game: "We beat the last water beast!"
 /// (MsgAltinWeDidIsaacWeBeat)
 #define FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN 0x905
-/// AltinPeakFallingRocks's boulder has fallen and rolled down after the party
-/// leader.
+/// AltinPeakFallingRocks's boulder has fallen and rolled after the party leader
+/// into the wall at the bottom, leaving rubble; the scene redraws the rubble
+/// and the toppled log on later visits, and Force no longer topples the log.
+/// ★ Named from the game: "Watch for falling rocks! Do not strike the wall!
+/// Rocks may fall!" (MsgAltinWatchFallingRocks)
 #define FLAG_ALTIN_PEAK_BOULDER_FALLEN 0x908
 /// AltinPeakSecondWaterBeast's chest.
 /// ★ Named from the game: "Cookie" (MsgItemName)
@@ -365,12 +479,18 @@
 #define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08
 
 // Altmiller Cave
-#define FLAG_MET_INVISIBLE_BABI 0x960 ///< Babi has asked for his draught
+/// The party has spoken with the unseen voice in Altmiller Cave, who cannot
+/// move and has asked for his draught from deep in the cave, telling the order
+/// of the five rocks.
+/// ★ Named from the game: "You're invisible!" (MsgAltmillerSee)
+#define FLAG_MET_INVISIBLE_BABI 0x960
 /// Babi has called the party back once as it made to leave without him.
 /// ★ Named from the game: "Wait..." (MsgAltmillerWait)
 #define FLAG_BABI_CALLED_PARTY_BACK 0x961
 /// The party has saved Babi in Altmiller Cave with his Mystic Draught; Tolbi
 /// then holds the Colosso finals, and its scenes read this as the finals day.
+/// ★ Named from the game: "You have our gratitude for saving Babi's life."
+/// (MsgAltmillerBabi)
 #define FLAG_BABI_SAVED 0x962
 /// The chest behind the rocks' wall.
 /// ★ Named from the game: "Mystic Draught" (MsgItemName)
@@ -388,24 +508,37 @@
 /// ★ Named from the game: "they opened the stone door"
 /// (MsgBabiYoureSureTheyWentThrough)
 #define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR 0x980
-/// The stone door that Reveal's switch opens stands open.
+/// The stone door that Reveal's switch opens stands open. Walking through
+/// clears it as the door shuts behind the party.
+/// ★ Named from the game: "The truth of this door is open to those seeing with
+/// their true heart." (MsgBabiTruthDoorOpenThoseSeeing)
 #define FLAG_BABI_LIGHTHOUSE_DOOR_OPEN 0x985
 /// Iodem and Faran have asked the party to follow Sheba's kidnappers.
 /// ★ Named from the game: "Can you follow the same paths that they took?"
 /// (MsgBabiYoureSureTheyWentThrough)
 #define FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW 0x988
-/// Set with it: Iodem has come to Babi Lighthouse, and from then on he no
-/// longer steps out of the party to question the wounded soldiers in Suhalla,
-/// or to ask in Gondowan Passage why the party is turning back.
+/// Set with FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW: Iodem has come to Babi
+/// Lighthouse, and from then on he no longer steps out of the party to
+/// question the wounded soldiers in Suhalla, or to ask in Gondowan Passage why
+/// the party is turning back.
+/// ★ Named from the game: "Oh! Iodem..." (MsgBabiYoureSureTheyWentThrough)
 #define FLAG_IODEM_AT_BABI_LIGHTHOUSE 0x98a
-/// The party has opened the door before Iodem and Faran, who stay behind.
+/// The party has opened the stone door before Iodem and Faran, who saw it shut
+/// again and stay behind, leaving Sheba's rescue to the party.
+/// ★ Named from the game: "I don't believe it! The door opened!"
+/// (MsgBabiTheDoor)
 #define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
 /// The building site's chest.
 /// ★ Named from the game: "Lucky Pepper" (MsgItemName)
 #define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc
 
 // Babi Palace
-#define FLAG_COLOSSO_OVER 0x950 ///< the Colosso finals have been fought
+/// The Colosso finals have been fought, won or lost; Babi's Palace, the
+/// Colosseum, the docks and Gondowan Passage take their after-Colosso people
+/// and talk.
+/// ★ Named from the game: "Colosso is over and the colosseum will be closed
+/// until next year." (MsgColosseumEntranceColossoIsOverAndTheColosseum)
+#define FLAG_COLOSSO_OVER 0x950
 /// The party won the finals.
 /// ★ Named from the game: "Iodem, bring him the victor's prize."
 /// (MsgTolbiWaitingCompanions)
@@ -418,14 +551,22 @@
 /// ★ Named from the game: "please feel free to get some rest"
 /// (MsgTolbiTiredFeelFreeRest)
 #define FLAG_BABI_PALACE_FINALS_BEDS_OPEN 0x967
-/// Sheba has felt the party read her mind.
+/// Sheba has felt the party read her mind in Babi's Palace, the first time
+/// Mind Read is used on her.
+/// ★ Named from the game: "Did you just..." (MsgTolbiEvenIfEscapedBabiPalace)
 #define FLAG_SHEBA_NOTICED_MIND_READ 0x968
 /// While set, the beds can be used before the finals.
 /// ★ Named from the game: "You may use these four beds."
 /// (MsgTolbiUseFourBeds)
 #define FLAG_BABI_PALACE_BEDS_OPEN 0x969
-#define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a ///< the party has slept there once
-/// The soldiers have come back from Altmiller Cave to Iodem without Babi.
+/// The party has slept in Babi's Palace once, talking it over the first night;
+/// later nights in its beds go straight to sleep.
+#define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a
+/// The soldiers have come back from Altmiller Cave to Iodem without Babi, and
+/// Iodem has left for the colosseum in Babi's stead; he and the soldiers are
+/// gone from the palace from then on.
+/// ★ Named from the game: "We went to Altmiller Cave, as you commanded."
+/// (MsgTolbiIodemIodem)
 #define FLAG_IODEM_HEARD_SOLDIERS 0x96b
 /// A courtyard guard has passed on Babi's word to go to the colosseum.
 /// ★ Named from the game: "Babi left word that he would be waiting for you"
@@ -435,7 +576,11 @@
 /// ★ Named from the game: "I'd really like to thank you for saving Babi."
 /// (MsgTolbiIsaacIdReallyLikeThank)
 #define FLAG_BABI_PALACE_GUARD_THANKED_PARTY 0x96d
-/// Babi and Iodem have spoken with the party after Colosso.
+/// Babi and Iodem have spoken with the party in the throne room after Colosso
+/// and sent Iodem with it toward Venus Lighthouse. Gondowan Passage, Suhalla
+/// and Suhalla Gate take their later people and events from then on.
+/// ★ Named from the game: "I've been waiting here because I wanted to speak
+/// with you." (MsgTolbiWaitingCompanions)
 #define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
 /// Lent by Babi after Colosso.
 /// ★ Named from the game: "Cloak Ball" (MsgItemName)
@@ -448,16 +593,38 @@
 /// ★ Named from the game: "Hard Nut" (MsgItemName)
 #define FLAG_BABI_PALACE_HARD_NUT 0xf9e
 // Bilibin
-#define FLAG_BILIBIN_JILL_RESCUED 0x848 ///< Jill, a tree, pulled from the river
+/// Move has pulled Jill, a tree in the river by Bilibin, ashore; she stays on
+/// the bank, and once the curse is lifted she is a child again with the rest
+/// of her gang.
+/// ★ Named from the game: "Jill, are these the people who saved you?"
+/// (MsgBilibinYoureGuy)
+#define FLAG_BILIBIN_JILL_RESCUED 0x848
 /// Her thanks, a Hard Nut.
 /// ★ Named from the game: "Jill gave a special gift."
 /// (MsgBilibinJillGaveIsaacSpecialGift)
 #define FLAG_BILIBIN_JILL_GIFT_RECEIVED 0x849
 
 // Colosso
-#define FLAG_COLOSSO_FAILED_TRIAL_SEEN 0x8a3  ///< a warrior failed his trial
-#define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4 ///< a warrior cleared his trial
+/// The trial attendant in the Colosseum's stands has shown the party a warrior
+/// failing his trial and explained it; the next time, he shows one clearing
+/// his.
+/// ★ Named from the game: "That warrior failed his trial"
+/// (MsgColosseumHaveMakeThroughCountlessMatches)
+#define FLAG_COLOSSO_FAILED_TRIAL_SEEN 0x8a3
+/// The trial attendant has shown the party a warrior clearing his trial; from
+/// then on he only talks of the techniques.
+/// ★ Named from the game: "That warrior cleared this trial"
+/// (MsgColosseumHavePerfectTechniquesLikeThose)
+#define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4
+/// Isaac has won his first match of the Colosso finals, in Colosseum Final 1;
+/// the soldiers congratulate him and lead him to Colosseum Final 2.
+/// ★ Named from the game: "I see you've made it through your first match."
+/// (MsgColosseumSeeYouveMadeThroughYour)
 #define FLAG_COLOSSO_FIRST_MATCH_WON 0x90e
+/// Isaac has won his second match, in Colosseum Final 2; from then on the
+/// passages east of the waiting room lead to Colosseum Final 3.
+/// ★ Named from the game: "You've managed to win both of your matches."
+/// (MsgColosseumWonBothMatches)
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
 /// The officials have taken the party into the Colosseum on the finals day.
 /// XXX: no code of this game reads it; a reader would say what it changes.
@@ -467,13 +634,23 @@
 // Also FLAG_BABI_SAVED: the trials are over, the finals day.
 
 // Kalay
-/// The inn's guests told the party about the Colosso tour to Tolbi.
+/// The innkeeper or the tour's guide at Kalay's inn has told the party about
+/// the Colosso tour to Tolbi; leaving the town then plays the tour group's
+/// departure.
+/// ★ Named from the game: "Oh, so you must be taking the Colosso tour, too..."
+/// (MsgKalayGoingTolbiAlso)
 #define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
-#define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 ///< the tour group has left town
+/// The Colosso tour's group has left Kalay without its missing man. Its guests
+/// are gone from the inn, the ticket taker at Kalay Docks starts asking for
+/// tickets, and Sean and Ouranos lose patience in the ship's hold.
+/// ★ Named from the game: "Our inn feels so empty, now that the Colosso tour
+/// group has left." (MsgKalayOurInnFeelsEmptyNow)
+#define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911
 /// Catch has taken the Nut circling in the town.
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916
-/// The Nut floating at the Kalay Tunnel Entrance is caught.
+/// Catch has taken the Nut floating at the Kalay Tunnel Entrance.
+/// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT 0xfd6
 
 // Imil
@@ -481,7 +658,10 @@
 /// ★ Named from the game: "Have you visited the old couple"
 /// (MsgImilHaveVisitedOldCoupleWho)
 #define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE 0x82a
-/// Mia healed the old man, and the party saw the Mercury Lighthouse lit.
+/// Mia has healed the old man of Imil with Ply before the party, seen Mercury
+/// Lighthouse flash and run off to it, the party following. Imil's old couple
+/// and Mercury Lighthouse's door statue read it.
+/// ★ Named from the game: "Mia" (MsgCharacterName)
 #define FLAG_IMIL_MET_MIA 0x82b
 /// The old couple have sent for Mia: the old man moaned for help and his wife
 /// hurried off to fetch her, or her apprentice told the party where she went.
@@ -501,7 +681,10 @@
 /// room.
 /// ★ Named from the game: "Dragon's Eye" (MsgItemName)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND 0xf13
-/// The Dragon's Eye is set in the dragon statue, which opened the hidden path.
+/// The Dragon's Eye is set in the eyeless dragon statue in Fuchin Falls Cave,
+/// which lights the room and shows its hidden path; the eye is used up.
+/// ★ Named from the game: "It's a statue of an eyeless dragon. What went in
+/// the sockets?" (MsgFuchinEyelessDragon)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET 0x820
 
 // Kalay and Tolbi docks
@@ -509,24 +692,52 @@
 /// ★ Named from the game: "Hand in your ticket at the ship's plank."
 /// (MsgKalayHandInTicketPlank)
 #define FLAG_KALAY_DOCKS_TICKET_BOUGHT 0x8a5
-/// The father on the Kalay docks asked the party to take a message to his
-/// daughter in Tolbi, and the party agreed.
+/// The woman waiting on Kalay Docks has asked the party to tell her daughter
+/// in Tolbi that the tickets are too dear, and the party agreed; the daughter
+/// on Tolbi Docks then asks for the message.
+/// ★ Named from the game: "please pass a message to my daughter"
+/// (MsgKalayPassMessageDaughter)
 #define FLAG_KALAY_DOCKS_CARRYING_MESSAGE 0x8a6
-#define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7 ///< the party may board
+/// The party has given its Boat Ticket to the ticket taker at the ship's plank
+/// on Kalay Docks, and may board.
+/// ★ Named from the game: "After handing over your ticket, you may board the
+/// ship." (MsgKalayAfterHandingOverTicket)
+#define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7
+/// The daughter on Tolbi Docks has heard from the party why her parents could
+/// not come, and thanks it from then on.
+/// ★ Named from the game: "Thank you for giving me the message from my
+/// parents." (MsgKalayThanksMessageParents)
 #define FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED 0x8a8
-#define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9 ///< off the ship after boarding
-/// A man on Tolbi Docks walked up to the party as it came off the ship.
+/// With its ticket handed over, the party has asked the ticket taker to go
+/// ashore and he has stepped aside; he then asks it to board when it is done.
+/// Coming back off the ship clears it, and he takes his place at the plank.
+/// ★ Named from the game: "Do you want to go ashore?" (MsgKalayWantGoAshore)
+#define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9
+/// A man on Tolbi Docks has walked up to the party as it came off the ship, and
+/// stays beside it. Coming off the ship again clears it, so he meets the party
+/// each time.
+/// ★ Named from the game: "I hear you had a scary trip."
+/// (MsgKalayHearScaryTrip)
 #define FLAG_TOLBI_DOCKS_ARRIVALS_GREETED 0x8aa
 /// The passengers confronted the tour guides and their bodyguard.
 /// ★ Named from the game: "Isn't the tour group responsible"
 /// (MsgKalayReturnedTicketCost)
 #define FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED 0x8ab
+/// The first time the party walked onto Kalay Docks from the world map, Garet
+/// ran to the water and was told the Karagol is no real ocean.
+/// ★ Named from the game: "The Karagol is surrounded by land, so technically,
+/// it's not a real ocean." (MsgKalayIncredibleOcean)
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
 // Kolima
-/// The party has seen the curse fall, in Kolima or in
-/// SceneId_KolimaForestEntrance.
+/// The party has seen the curse fall on Kolima, in Kolima or in
+/// SceneId_KolimaForestEntrance, whichever it reached first: the sparkles rain
+/// down, its Psynergy shields it, and Tret and Laurel speak.
+/// ★ Named from the game: "His wrathful side turned the people of Kolima into
+/// trees." (MsgKolimaWatchOutItsHappeningAgain)
 #define FLAG_KOLIMA_CURSE_WITNESSED 0x843
-/// Kolima's bridge fell as the party crossed it.
+/// Kolima Bridge fell apart in front of the leader the first time the party
+/// stepped onto it after the curse was lifted. The bridge is drawn broken from
+/// then on, and its piece of the world map changes with it.
 #define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847
 
 // Kolima Forest
@@ -551,20 +762,52 @@
 #define FLAG_LAMAKAN_DESERT_MINT 0xf7f
 
 // Lalivero
-/// The party is back from Venus Lighthouse, by the aerie's exit.
+/// The party is back from Venus Lighthouse: set at the Lighthouse Aerie after
+/// Sheba's fall, as the party is taken to Lalivero. Lalivero and its buildings
+/// then read their tables for after the lighthouse.
+/// ★ Named from its area name: Venus Lighthouse
 #define FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE 0x9a7
-/// The party saw the ship from Venus Lighthouse before coming back.
-#define FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE 0x9bf
+/// Out of Gateway Cave, Iodem saw a ship off the coast at Idejima, took it for
+/// Babi's and handed over the Black Orb (WorldMap_RunBlackOrbScene). Back from
+/// Venus Lighthouse, it picks the version of the report to Faran that knows
+/// the ship was swept away, and Garet's guess that it was Saturos's.
+/// ★ Named from the game: "I thought the ship we saw at Idejima was Babi's..."
+/// (MsgLaliveroThoughtShipWeSawAt)
+#define FLAG_SAW_SHIP_AT_IDEJIMA 0x9bf
+/// The party has first come into Lalivero with Iodem and found more of Tolbi's
+/// soldiers beaten in the street, who say Sheba's captors went to the ruins
+/// beneath Babi Lighthouse. After it, Gateway Cave's Black Orb scene no longer
+/// plays.
+/// ★ Named from the game: "More of Tolbi's soldiers lay defeated..."
+/// (MsgLaliveroMoreTolbisSoldiersLayDefeated)
 #define FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN 0x9b8
-#define FLAG_IODEM_FAREWELL_SEEN 0x9ba ///< Iodem gave the Black Orb
-#define FLAG_LALIVERO_WHARF_OPEN 0x9bb ///< the guard lets the party to the ship
-/// Iodem asked the party to wait for him outside.
+/// Outside Faran's house, Iodem has told the party the misty island may be
+/// Lemuria, given it the Black Orb that sails Babi's ship and said farewell.
+/// ★ Named from the game: "Farewell! And bring back news of Lemuria!"
+/// (MsgGotBlackOrb)
+#define FLAG_IODEM_FAREWELL_SEEN 0x9ba
+/// The guard at Lalivero's wharf has let the party through to Babi's ship
+/// and stepped aside, where he stays.
+/// ★ Named from the game: "I was told to let you in if you showed up... The
+/// door is open." (MsgLaliveroWasToldLetInIf)
+#define FLAG_LALIVERO_WHARF_OPEN 0x9bb
+/// After the report to Faran, Iodem has asked the party to wait for him outside
+/// Faran's house, where he gives it the Black Orb.
+/// ★ Named from the game: "Please wait for me outside Faran's house. I wish to
+/// speak with you." (MsgLaliveroPleaseWaitForMeOutside)
 #define FLAG_IODEM_ASKED_TO_MEET 0x9bc
 // Lunpa
-/// Set on the world map; from then on the east guard asks whether the party
-/// came from Kalay.
+/// Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then
+/// on Lunpa's east guard asks whether the party came from Kalay, and touching
+/// Vault on the world map leads straight in.
+/// ★ Named from the game: "You're not from Kalay, are you?"
+/// (MsgLunpaEastGuardAsksIfFrom)
 #define FLAG_GUARDS_SUSPECT_KALAY 0x85a
-/// The gate's left guard has recognized Hammet with the party.
+/// After Donpa's judgment, the left guard at the Lunpa Fortress Gates has
+/// half recognized Hammet with the party, then dismissed it; his thoughts
+/// afterwards say the man looks like that merchant.
+/// ★ Named from the game: "I've seen that man with you before."
+/// (MsgLunpaLeftGuardRecognizesHammet)
 #define FLAG_LUNPA_GATE_GUARD_SAW_HAMMET 0x9af
 /// The Psynergy Stone in the town.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
@@ -659,9 +902,18 @@
 #define FLAG_LUNPA_FORTRESS_SHAMSHIR 0xf2d
 
 // McCoy's Palace in Bilibin (McCoyPalace and McCoyPalaceGrounds)
-/// The gate guards have let the party into the palace.
+/// McCoy's gate guards have agreed to let the party in to see their lord, and
+/// the gate stands open; from then on the east guard only warns that McCoy is
+/// a difficult man. The palace also sets it when the captain lets slip that
+/// the barricade may not need a key.
+/// ★ Named from the game: "All right. I shall let you pass."
+/// (MsgBilibinLordOnlyMeet)
 #define FLAG_MCCOY_PALACE_ADMITTED 0x84a
-#define FLAG_MCCOY_PALACE_VISITED 0x84b ///< set on every entry to the palace
+/// The party has been inside McCoy's Palace: its setup sets this on every
+/// entry. Bilibin tests it with FLAG_MCCOY_PALACE_ADMITTED, so that a party
+/// let in that never went in is scolded at the gate for keeping McCoy waiting.
+/// ★ Named from its area name: McCoy's Palace
+#define FLAG_MCCOY_PALACE_VISITED 0x84b
 /// After McCoy turned the party away, his captain let slip that the
 /// barricade may not need a key.
 /// ★ Named from the game: "That barricade... You may not need a key."
@@ -683,23 +935,44 @@
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT 0xfd2
 // Mercury Lighthouse
-/// Mia has told the party she senses someone inside the lighthouse.
+/// Mia, waiting at the statue that blocks Mercury Lighthouse's door, has told
+/// the party she senses someone inside, where only she and Alex can enter.
+/// From then on she stands facing the door, and talking to her only gets her
+/// remark that the statue blocks the entrance.
+/// ★ Named from the game: "Somebody...is here."
+/// (MsgImilSomebodyHere)
 #define FLAG_MIA_SENSED_SOMEONE_INSIDE 0x870
-/// The statue is moved and Mia's Ply has opened the lighthouse door.
+/// Move has pushed aside the statue before Mercury Lighthouse's door, Mia has
+/// learned the word Psynergy, and her Ply has opened the door for her to go in.
+/// Afterwards she is gone from outside and the statue stays moved.
 #define FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE 0x871
-/// Past the Lizard Man, Mia has gone on into the lighthouse.
+/// Back from the battle with the Lizard Man on the lighthouse's ground floor,
+/// Mia has nodded to the leader and gone on deeper into the lighthouse. Until
+/// then, coming in by the door replays the Lizard Man blocking her way.
 #define FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE 0x872
-#define FLAG_MIA_JOINED_PARTY 0x873 ///< rescued again, Mia joins with Fizz
-/// The block rests on the floor switch and holds the gate open.
+/// Move has pushed aside the second statue that blocked Mia, and she has
+/// joined the party with Fizz, a Mercury Djinni. Afterwards she is gone from
+/// that spot and the statue stays where it was pushed.
+/// ★ Named from the game: "joined your party!" (MsgMercuryThoughtSo)
+#define FLAG_MIA_JOINED_PARTY 0x873
+/// The statue on the lighthouse's middle floor has been pushed or moved onto
+/// its floor switch, and the gate it works stays open for good. Until then the
+/// gate opens only while the leader stands on the switch.
 #define FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN 0x874
 /// Ply cast on the heart of the pool, as its inscription bids: the lights
 /// cycle and the pillar routes open.
 /// ★ Named from the game: "He who honors the heart of the goddess"
 /// (MsgMercuryWhoHonorsHeart)
 #define FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED 0x875
-/// All three channel blocks are in place and the water runs.
+/// All three small stone pillars on the lighthouse's lower floor are in place,
+/// the water runs, and it carries the party down to the ground floor. Moving
+/// one out again clears it. The ground floor's entrances from the lower floor
+/// place the party by whether it is set.
 #define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876
-/// The sliding statue has fallen through to the floor below.
+/// A pillar pushed along the upper floor's row has sent the blue statue on its
+/// ledge sliding off to the floor below, where Move can set it on the stair
+/// gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). The scene
+/// places the statue below from then on.
 #define FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL 0x877
 /// The fallen statue rests on the floor switch of MercuryLighthouseUpper and
 /// holds its gate open.
@@ -710,8 +983,11 @@
 /// with FLAG_SATUROS_BEATEN_AT_MERCURY.
 /// ★ Named from the game: "Alex!" (MsgMercuryGot)
 #define FLAG_MERCURY_AERIE_ALEX_APPEARED 0x880
-/// Saturos is beaten at Mercury Lighthouse: the Hermes fountain at its foot
-/// flows again.
+/// The party has beaten Saturos in the Lighthouse Aerie, and Alex has come for
+/// him; set with FLAG_MERCURY_AERIE_ALEX_APPEARED. The Fountain of Healing at
+/// the lighthouse's foot flows again and people come to drink from it, and
+/// Imil and Bilibin talk of what has changed.
+/// ★ Named from the game: "we got him!" (MsgMercuryGot)
 #define FLAG_SATUROS_BEATEN_AT_MERCURY 0x881
 /// The Psynergy Armor in the entrance's chest is taken.
 /// ★ Named from the game: "Psynergy Armor" (MsgItemName)
@@ -721,24 +997,44 @@
 #define FLAG_MERCURY_LIGHTHOUSE_MIMIC_BEATEN 0xef0
 
 // Mogall Forest
-#define FLAG_MOGALL_FOREST_FIRST_APE_SEEN 0x89c ///< an ape hides on arrival
-/// The last guiding ape has led the party to the Killer Ape's hiding place.
+/// On the party's first arrival in Mogall Forest's first area, an ape has
+/// peeked out at the leader and hidden in its stump.
+/// ★ Named from the game: "Ape" (MsgEnemyName)
+#define FLAG_MOGALL_FOREST_FIRST_APE_SEEN 0x89c
+/// In Mogall Forest's third area, the east ape has come out again and led the
+/// party south to the Killer Ape's hiding place, where the Killer Ape then
+/// bursts out to fight.
+/// ★ Named from the game: "Killer Ape" (MsgEnemyName)
 #define FLAG_MOGALL_FOREST_LED_TO_KILLER_APE 0x89d
+/// The party has come back from the Killer Ape's battle in Mogall Forest's
+/// third area, so the Killer Ape no longer bursts out. With Force learned
+/// (FLAG_NYUNPA_TAUGHT_FORCE), entering that area then sets
+/// FLAG_NYUNPA_ENLIGHTENED.
+/// ★ Named from the game: "Killer Ape" (MsgEnemyName)
 #define FLAG_MOGALL_FOREST_KILLER_APE_BEATEN 0x89e
 // Suhalla
-/// Set at Babi's palace as his audience after Colosso begins; afterwards
-/// Suhalla's people talk of the Tolbi soldiers the sandstorms brought there.
-/// Also uses FLAG_BABI_SPOKE_AFTER_COLOSSO.
-/// Iodem has found the wounded soldiers in a house in Suhalla and asked for
-/// Sheba.
+/// Iodem has questioned the two wounded soldiers in a house in Suhalla, who
+/// lost Sheba in a sandstorm and warn that monsters cause the storms. Stepping
+/// into the house sets it even once Iodem has reached Babi Lighthouse, when
+/// the scene no longer plays; Suhalla Desert and Suhalla Gate read it.
+/// ★ Named from the game: "You soldiers were supposed to be heading for
+/// Babi Lighthouse!" (MsgSuhallaIodem)
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
 /// The Smoke Bomb in one of the houses' ovens is found.
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB 0xfb0
 
 // Suhalla Gate
-#define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897 ///< after his last words
-#define FLAG_SUHALLA_GATE_ATTACK_SEEN 0x89f ///< Iodem has questioned the guards
+/// The soldier east of Suhalla Gate's passage has gasped that Venus Lighthouse
+/// was attacked by strange wanderers, then flickered and vanished for good.
+#define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897
+/// Iodem has questioned the wounded guards at Suhalla Gate about the strange
+/// group that beat them, and the party is sent on after the attackers. The
+/// guards then speak as the wounded, and a defeat returns the party to the
+/// house beside the gate.
+/// ★ Named from the game: "We tried to hold them back... but they were too
+/// powerful!" (MsgSuhallaMeaning)
+#define FLAG_SUHALLA_GATE_ATTACK_SEEN 0x89f
 /// The side the party last came through, which Retreat returns them to.
 /// ★ Named from its area name: Suhalla Gate
 #define FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH 0x8fb
@@ -751,7 +1047,11 @@
 /// ★ Named from the game: "Should we search the desert once more or press on
 /// to Lalivero?" (MsgSuhallaNowhereFound)
 #define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5
-/// Iodem warned of a sandstorm. "A sandstorm!"
+/// The first storm to rise in Suhalla Desert while Iodem travels with the
+/// party has brought him out to warn that they must get past the storms to
+/// reach Babi Lighthouse.
+/// ★ Named from the game: "There'll be trouble if we get caught up in one of
+/// those..." (MsgSuhallaSandstorm)
 #define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6
 /// Douse has stopped the sandstorm that chases the party in the second scene,
 /// for good.
@@ -781,27 +1081,64 @@
 #define FLAG_TOLBI_SPRING_OPENED 0x8c1
 
 // Tolbi interiors: the woman who finds a Lucky Medal after Colosso
-#define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc ///< she hid it in the barrel
-#define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  ///< the party took it
+/// After Colosso, on the party's first entry into the inn's northeast guest
+/// room, a woman has found a Lucky Medal on the floor and hidden it behind the
+/// trash pile. She then stands beside that barrel.
+/// ★ Named from the game: "She just hid that thing she found behind that trash
+/// pile." (MsgTolbiHehHehSheJustHid)
+#define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc
+/// The party has taken the Lucky Medal from the barrel where the woman hid it;
+/// she then stops teasing and greets the party, startled.
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd
 /// The medal woman has greeted the party, startled, since it took the medal.
 /// ★ Named from the game: "Oh... Hello!" (MsgTolbiHello)
 #define FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO 0x8be
 
 // Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
-#define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 ///< at anchor off the island
-/// The ship's place plays MUS_029, the monsters' theme, instead of MUS_041.
+/// The ship is at anchor off Crossbone Isle, the rowers resting, until Kaja
+/// switches the two teams and the ship sails on. The deck, the hold, the
+/// lookout and the world map, where the ship waits by the island, all follow
+/// it.
+/// ★ Named from the game: "We've reached the island!"
+/// (MsgTolbiShipReachedIslandRowers)
+#define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0
+/// The lookout has sighted the monsters of one of the ship's attacks, and the
+/// ship's place plays MUS_029, the monsters' theme, instead of MUS_041. It is
+/// cleared when the party fights them on the rowing deck.
+/// ★ Named from the game: "Monsters sighted!" (MsgTolbiShipAvast)
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
-#define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903 ///< the party will scout it
-/// The crew have wondered what became of the replacement ship.
+/// At anchor off the island, the party has agreed to Sean and Ouranos' request
+/// to scout it for monsters, so the tour group can know whether it is safe to
+/// go ashore.
+/// ★ Named from the game: "I'm sure no one will complain if we scout out the
+/// island." (MsgTolbiShipSeeYoureGoingGoFor)
+#define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903
+/// At Kalay, the captain, Kaja and a crewman have wondered what became of the
+/// replacement ship from Tolbi, on deck or below. On deck the captain then
+/// resolves to sail anyway, trusting his anchor charm, and the crewman slips
+/// away.
+/// ★ Named from the game: "I wonder what could have happened."
+/// (MsgTolbiShipWonderCouldHaveHappened)
 #define FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY 0x920
-/// The party has heard that the captain decided to sail.
-/// "But the captain decided to set sail just a second ago."
+/// In the captain's cabin at Kalay, the passengers have pressed the captain
+/// and heard he decided to sail, Ouranos and Sean have offered to guard the
+/// deck, and the captain has found his anchor charm gone and will not sail
+/// without it.
+/// ★ Named from the game: "But the captain decided to set sail just a second
+/// ago." (MsgTolbiShipYoureTryingLaunchShip)
 #define FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL 0x921
-/// The party gave back the captain's Anchor Charm and agreed to protect the
-/// ship.
+/// The party has given the captain back his Anchor Charm, found on the mast,
+/// and agreed to guard the oarsmen. The passengers who promised to row then
+/// stand on deck, and the lookout takes his place on the mast.
+/// ★ Named from the game: "It's my lucky anchor!"
+/// (MsgTolbiShipItsMyLuckyAnchor)
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED 0x925
-/// The ship has set sail without its replacement.
-/// "Our replacement never arrived, but we're shoving off just the same."
+/// Kaja has told the oarsmen the ship sails without its replacement, and asked
+/// the party to bring a passenger to row whenever an oarsman falls. A defeat
+/// at sea clears it with the rest of the voyage's flags.
+/// ★ Named from the game: "Our replacement never arrived, but we're shoving
+/// off just the same." (MsgTolbiShipOurReplacementNeverArrivedBut)
 #define FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT 0x926
 /// The ship is under way and the oars are moving.
 /// ★ Named from the game: "Row those oars!" (MsgTolbiShipRowThoseOars)
@@ -817,9 +1154,18 @@
 /// ★ Named from the game: "Looks like you took care of those sea monsters."
 /// (MsgTolbiShipHeyAreYouOk)
 #define FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF 0x92a
+/// The party has jumped down to the deck and beaten the Kraken, and Kaja has
+/// thanked Isaac. Another oarsman is lost, so the passenger chosen next takes
+/// the fourth seat (FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS).
+/// ★ Named from the game: "You did good against that Kraken."
+/// (MsgTolbiShipThankIsaacDidGoodAgainst)
 #define FLAG_TOLBI_SHIP_KRAKEN_DEFEATED 0x92b
-/// The passengers chosen to row: a group of nine flags for each empty seat,
-/// one flag for each passenger, in the order of their actors from 8.
+/// The passenger chosen to row in the first empty seat: nine flags, one for
+/// each passenger, in the order of TolbiShipPassenger (tolbi_ship_interiors.c).
+/// Each later seat has nine of its own, from
+/// FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS.
+/// ★ Named from the game: "go ask one of the passengers to row"
+/// (MsgTolbiShipHeyAreYouOk)
 #define FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS 0x92c
 /// ★ Named from the game: "the sea monsters got one of our rowers"
 /// (MsgTolbiShipHeyAreYouOk)
@@ -854,12 +1200,18 @@
 /// ★ Named from what the player sees: the second stone pillar gone into the
 /// floor with a puddle where it stood (its render)
 #define FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR 0x972
+/// The first of the two stone pillars in TunnelRuinsLadyStatues' east room is
+/// pushed to the west of its row; the scene puts it back there on the next
+/// visit.
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
 /// The second of the two stone pillars in TunnelRuinsLadyStatues' east room
 /// is pushed to the west of its row.
 /// ★ Named from what the player sees: the two stone pillars side by side, the
 /// second pushed west (its render)
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST 0x975
+/// All five colored statues of a woman in TunnelRuinsLadyStatues stand on
+/// their marks, and the door before them is open; moving one off closes it
+/// again. Coming back into the room puts the statues back on their marks.
 #define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
 /// The party has entered TunnelRuinsLadyStatues' room of four paths over a
 /// pit. XXX: no code of this game reads it; a reader would say what it
@@ -875,10 +1227,17 @@
 #define FLAG_TUNNEL_RUINS_ASURAS_ARMOR 0xf33
 // Vale
 /// The prologue's stormy night: lightning over Vale, the rockslide and the
-/// monsters loose in the village.
+/// monsters loose in the village. It is set when Dora wakes Isaac and on every
+/// arrival in the storm's map, and cleared when the strangers leave the boys
+/// lying in the storm; Vale's houses empty and their doors lead into the storm.
+/// ★ Named from the game: "I just knew a storm like this would knock it loose!"
+/// (MsgValeSureHelp)
 #define FLAG_VALE_STORM 0x834
-/// Set whenever Kalay is entered; Vale's villagers then talk of the party's
-/// journey.
+/// The party has reached Kalay: every Kalay scene sets it on entry. Vale's
+/// villagers then talk of the journey, Garet's homecoming plays, Vault leads to
+/// its later scene and the Sanctum's talk changes. XXX: the patched editions
+/// also set it on beating Lamakan Desert's Manticore; why is not known.
+/// ★ Named from its area name: Kalay
 #define FLAG_REACHED_KALAY 0x87a
 /// Catch has taken the Nut floating in Vale.
 /// ★ Named from the game: "Nut" (MsgItemName)
@@ -924,10 +1283,16 @@
 /// ★ Named from the game: "Your training stone crushed my flowers!"
 /// (MsgValeYouMakeMeSoMad)
 #define FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS 0x807
-/// Back from Kalay, a villager asked whether Jenna is back yet.
+/// Back from Kalay, a young man in Vale has asked Isaac whether Jenna is back
+/// yet and made him promise to bring her next time; after that he only repeats
+/// the promise.
+/// ★ Named from the game: "back yet?" (MsgValeIsJennaBackYet)
 #define FLAG_VALE_ASKED_IF_JENNA_IS_BACK 0x81f
-/// A villager stopped Isaac and warned him off the mountain.
-/// "You're not planning on sneaking up to Mt. Aleph..."
+/// A bearded man in a long robe has jumped out in front of Isaac on the path
+/// to the sacred peak and warned him off; from then on he watches Isaac and
+/// asks again whenever he comes near.
+/// ★ Named from the game: "You're not planning on sneaking up to Mt. Aleph,
+/// are you?" (MsgValeNotSneakingUpMtAleph)
 #define FLAG_VALE_WARNED_AGAINST_MT_ALEPH 0x823
 
 // Vale on the stormy night, the paths outside
@@ -951,8 +1316,9 @@
 /// "Huh? Isaac?"
 /// ★ Named from the game: "Huh?" (MsgValeHuh)
 #define FLAG_VALE_STORM_BUMPED_INTO_VILLAGER 0x835
-/// Isaac heard Garet struggling with his things.
-/// "Ugh... Hrnghhh..."
+/// On the stormy night, Isaac has heard Garet struggling to save his chest of
+/// valuables. Walking away from him afterwards has Garet call after Isaac.
+/// ★ Named from the game: "Ugh... Hrnghhh..." (MsgValeUghHrnghhh)
 #define FLAG_VALE_STORM_HEARD_GARET 0x836
 /// Garet left his things behind and joined Isaac.
 /// ★ Named from the game: "OK! Let's get out of here!" (MsgValeKnowRightOk)
@@ -975,13 +1341,19 @@
 /// ★ Named from the game: "Please... Don't leave me all alone..."
 /// (MsgValeMomDadFelixPleaseDontLeave)
 #define FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY 0x841
-/// After the Boulder swept the river, Isaac went for help and Garet set off
-/// after him. "I can't let him go alone..."
+/// After the Boulder swept Kyle, Jenna's parents and Felix away, Isaac has
+/// gone for help and Garet has set off after him. Arriving among the villagers
+/// then plays the meeting with the two strangers.
+/// ★ Named from the game: "I can't let him go alone..." (MsgValeIsaac)
 #define FLAG_VALE_STORM_GARET_LEFT 0x842
 /// Dora and Kyle sent Isaac to the plaza.
 /// ★ Named from the game: "go south to get to the plaza" (MsgValeKnowWayGo)
 #define FLAG_VALE_STORM_SENT_TO_PLAZA 0x87b
+/// The first of the two monsters that attack on the stormy night's paths has
+/// been fought, once; it also sets FLAG_VALE_STORM_MONSTER_FOUGHT.
 #define FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT 0x87c
+/// As FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT, for the second monster on the
+/// paths.
 #define FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT 0x87f
 
 // Vale, the village
@@ -1033,9 +1405,14 @@
 #define FLAG_VALE_PSYNERGY_STONE 0x8af
 
 // Vale, houses and shops
-/// The item shopkeeper gave Isaac a Herb as a farewell gift.
+/// After the party has left Vale, the item merchant has given Isaac a Herb as
+/// a farewell gift; afterwards he urges Isaac to save Jenna.
+/// ★ Named from the game: "This is my farewell gift."
+/// (MsgValeThisIsMyFarewellGift)
 #define FLAG_VALE_FAREWELL_HERB_RECEIVED 0x81b
-/// Back from Kalay, Garet surprised his family at home.
+/// Back from Kalay, Garet has surprised his family at home on the party's
+/// first visit to his house, and Ivan and Mia have introduced themselves.
+/// ★ Named from the game: "Mom, Dad... I'm home..." (MsgValeHey2)
 #define FLAG_GARET_CAME_HOME 0x81d
 // The houses' containers, set once each is searched (not on the stormy night)
 /// ★ Named from the game: "Antidote" (MsgItemName)
@@ -1050,8 +1427,11 @@
 #define FLAG_VALE_INTERIORS_SHOPS_JAR_3_COINS 0xf46
 
 // Vale during the eruption
-/// Isaac and Garet followed the elders into the sanctum. They came down
-/// Mt. Aleph to do so.
+/// Isaac and Garet have come back down the mountain to the villagers waiting
+/// before the sanctum during the eruption, and followed the Great Healer in.
+/// Sol Sanctum's entrance then changes the cells before its door.
+/// ★ Named from the game: "You're safe!"
+/// (MsgValeMtAlephWasInactive)
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
 
 // Vale Cave, where Kite hides
@@ -1091,9 +1471,11 @@
 /// Set as the three thieves attack the party in the loft, before the battle.
 /// ★ Named from the game: "Get 'em!!!" (MsgVaultVaultCutFree)
 #define FLAG_VAULT_THIEVES_ATTACKED 0x854
-/// Set when, back in Vault after the thieves broke out, the mayor or the
-/// villager who spoke with him has warned the party of them.
-/// XXX: no scene here reads it; its reader would say what it gates.
+/// Set when, back in Vault, the party hears that the thieves it caught have
+/// broken out: from the mayor's welcome in his house, or from the old man who
+/// was talking about the party with him. The clear password carries it.
+/// ★ Named from the game: "Those thieves you caught have escaped from jail."
+/// (MsgVaultIsaacYouveComeBackVault)
 #define FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
 /// A wooden box's Nut.
 /// ★ Named from the game: "Nut" (MsgItemName)
@@ -1178,10 +1560,20 @@
 /// Whirlwind has blown the second ivy at Goma Cave Entrance away.
 /// ★ Named from the game: "trapped in the ivy" (MsgGomaNoUsePsynergy)
 #define FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY 0x866
-#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869 ///< after the party caught Forge
+/// Set once the man in Goma Cave who fought Forge has seen it join the party,
+/// cheered and walked off for good; until then he stands by the Djinni.
+/// ★ Named from the game: "When I returned, I saw it again..."
+/// (MsgVaultDidYouSeeSomethingStrangeOver)
+#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869
 
 // Hammet's palace
-#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912 ///< that Hammet is still in Lunpa
+/// Set once the guards have brought Ivan and the party to Lady Layana and she
+/// has sent everyone back to their posts. Until then Hammet Palace's guards
+/// turn the party away at the door; Kalay's scenes set it whenever
+/// FLAG_DODONPA_LOCKED_UP is set.
+/// ★ Named from the game: "I must report this to Lady Layana!"
+/// (MsgKalayLordHammetsPalaceLordAway)
+#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912
 /// Layana has told the party that going into Lunpa is too dangerous.
 /// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
@@ -1192,23 +1584,69 @@
 #define FLAG_HAMMET_BACK_HOME_SEEN 0x914
 /// The Kalay Tunnel, the passage under the palace to Hammet's treasure, is open
 /// to the party: Layana opens it in thanks once Hammet is home, and Kalay's
-/// scenes set it whenever FLAG_DODONPA_LOCKED_UP is set.
+/// scenes set it whenever FLAG_DODONPA_LOCKED_UP is set. The palace's passage
+/// door and the tunnel's way through are drawn open, and its guard turns away.
+/// ★ Named from the game: "Layana ordered the door to the underground path
+/// opened." (MsgHammetPalaceLayanaOrderedTheDoorToThe)
 #define FLAG_KALAY_TUNNEL_OPEN 0x915
 
 // Fuchin Temple and Master Feh's school
-/// Nyunpa is enlightened, beyond words: he has passed away.
+/// Nyunpa has died, enlightened, at Fuchin Temple. Mogall Forest sets it once
+/// he has taught the party Force and the Killer Ape is beaten; from then on he
+/// no longer answers, and the monks grieve.
+/// ★ Named from the game: "Master Nyunpa reached enlightenment during his
+/// lifetime." (MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis)
 #define FLAG_NYUNPA_ENLIGHTENED 0x88f
-/// The visitor from Kolima heard that the bridge is open again.
+/// The young man from Kolima at Fuchin Temple asked whether the bridge is open
+/// again and the party said yes; from then on he skips the question.
+/// ★ Named from the game: "Is the bridge open again?"
+/// (MsgXianHowDidGetHereBridge)
 #define FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN 0x890
-#define FLAG_NYUNPA_TEST_ACCEPTED 0x891 ///< the test of the waterfall grotto
-#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892 ///< the monk stepped aside
-#define FLAG_NYUNPA_TAUGHT_FORCE 0x893        ///< the power the monks call Ki
+/// Isaac has taken Nyunpa's test of the waterfall grotto, and Nyunpa sends him
+/// to the monk beneath the falls, who will let the party in.
+/// ★ Named from the game: "Will you take the test?" (MsgXianFollowThemDoNot)
+#define FLAG_NYUNPA_TEST_ACCEPTED 0x891
+/// The monk beneath the falls at Fuchin Temple has heard of the test, leapt
+/// aside and let the party into the waterfall grotto, Fuchin Falls Cave; he
+/// stands aside on every visit after.
+/// ★ Named from the game: "You will be permitted to enter the grotto."
+/// (MsgXianDoNotWorryWillPermitted)
+#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892
+/// Back from the grotto with the Orb of Force, Isaac has heard Nyunpa name the
+/// power Ki, "force" in the western world, which makes the monsters hiding in
+/// Mogall Forest show themselves. Nyunpa can die enlightened only after this.
+/// ★ Named from the game: "I will teach you, as I promised."
+/// (MsgXianExcellentIsaac)
+#define FLAG_NYUNPA_TAUGHT_FORCE 0x893
+/// Coming out of the grotto with the Orb of Force, Isaac has been asked by the
+/// monk beneath the falls whether he passed, and sent on to Nyunpa; until then
+/// the way back from the grotto stays closed.
+/// ★ Named from the game: "Young master, did you complete the test?"
+/// (MsgXianYoungMasterDidCompleteTest)
 #define FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST 0x894
-/// The Orb of Force's chest in Fuchin Falls has been opened.
+/// The Orb of Force's chest in Fuchin Falls Cave has been opened, the end of
+/// Nyunpa's test. It brings on the monk's question and Nyunpa's lesson, and
+/// ends Garet's warning about falling rocks at Altin Peak.
+/// ★ Named from the game: "Orb of Force" (MsgItemName)
 #define FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND 0xf14
+/// Master Feh, in his school in Xian, has asked to see Isaac's Chi and Isaac
+/// agreed; Feh and his students wait for it. Cleared once Feh sees the tree
+/// fall from the line (FLAG_FEH_SAW_KI).
+/// ★ Named from the game: "Warrior, let me see your Chi now."
+/// (MsgFuchinTempleWarriorLetMeSeeYourChi)
 #define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
+/// Isaac has twice refused to show Master Feh his Chi. Feh then asks again
+/// whenever he is spoken to, and a yes sets FLAG_FEH_WAITS_TO_SEE_CHI.
+/// ★ Named from the game: "Why won't you show me, warrior?"
+/// (MsgFuchinTempleIWantToSeeTheChi)
 #define FLAG_FEH_CHI_DEMONSTRATION_DECLINED 0x899
-#define FLAG_FEH_SAW_CHI 0x89b
+/// Master Feh has watched the tree in his school fall to Force from the line
+/// and seen that it is not Chi but Fuchin's Ki, which releases the mind's
+/// energy as Chi releases the body's. His students' lines and his place in the
+/// school follow it.
+/// ★ Named from the game: "Fuchin's Ki releases the mind's energy"
+/// (MsgXianYaTreeFell)
+#define FLAG_FEH_SAW_KI 0x89b
 
 // Crossbone Isle
 /// The four blue doors in a row, then the red door: each is set once a Blue
@@ -1267,11 +1705,21 @@
 // pursuers is after the leader.
 
 // Sol Sanctum
-/// Kraden has found the hall of statues. "This is it! We've found it!"
+/// Kraden has found the heart of Sol Sanctum, the mark of the sun on the floor
+/// of the Luna and Sol rooms, and talked the others into going a little
+/// farther; Retreat is blocked from then on.
+/// ★ Named from the game: "This is it! We've found it!" (MsgSolSanctumFound)
 #define FLAG_SOL_SANCTUM_FOUND 0x809
-/// Kraden has seen the Luna and Sol rooms and asked the party to search on.
+/// Kraden has found the picture of Luna, wondered how the rooms of Luna and Sol
+/// are connected and asked Isaac to look farther up the passage; he waits by
+/// the picture from then on.
+/// ★ Named from the game: "Luna and Sol." (MsgSolSanctumLunaSolRooms)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN 0x80a
-/// A statue stands on its seal and the seal's light shines.
+/// The northwest statue in the statue room stands on its seal, and its quarter
+/// of the pictures in the Luna and Sol rooms is lit; the first of four flags.
+/// Springing the trap clears all four.
+/// ★ Named from what the player sees: the statue pushed onto its square
+/// shines a beam of light across the room (its render)
 #define FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN 0x80b
 /// As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the northeast statue.
 /// ★ Named from what the player sees: the statue pushed onto its square
@@ -1289,19 +1737,31 @@
 /// ★ Named from what the player sees: all four quarters of the pictures in
 /// the Luna and Sol rooms lit (its render)
 #define FLAG_SOL_SANCTUM_ALL_SEALS_OPEN 0x80f
-/// Kraden has seen the picture of Luna change to Sol.
+/// With all four seals open, Kraden has seen the picture of Luna change to Sol
+/// and guessed that something else must have changed too.
+/// ★ Named from the game: "The picture of Luna changed to Sol!"
+/// (MsgSolSanctumThePictureOfLunaChanged)
 #define FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED 0x810
-/// Kraden has seen the symbol on the floor change.
+/// Kraden has seen the symbol on the floor change from Sol to Luna; searching
+/// it then opens the way up to the Elemental Star Room.
+/// ★ Named from the game: "Look! The symbol on the floor!"
+/// (MsgSolSanctumLookSymbolFloor)
 #define FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN 0x811
-/// The statues' lights have flashed and fallen through the Luna room.
+/// The trap has sprung: the first statue set before the trap was disarmed
+/// flashed its light, lights fell through the Luna room, Kraden cried out, and
+/// every seal closed again. After that a seal opened too soon closes at once.
+/// ★ Named from what the player sees: lights falling through the Luna room
+/// around Kraden as the trap springs (its render)
 #define FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN 0x812
 /// The statues' lights have flashed as Kraden stood among them, after the
 /// trap was disarmed, and he has run off to see.
 /// ★ Named from the game: "must have found something!"
 /// (MsgSolSanctumWhatsHappeningAtTheTrap)
 #define FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING 0x813
-/// The volcano has erupted and the sanctum's rooms rumble and shake. The
-/// volcano is Mt. Aleph.
+/// The volcano has erupted, as the Wise One sends Isaac and Garet out of the
+/// collapsing Elemental Star Room. Mt. Aleph is the volcano: from then on
+/// every room of Sol Sanctum rumbles and shakes, and the field music changes.
+/// ★ Named from the game: "It's erupting..." (MsgSolSanctumReturnStarToBag)
 #define FLAG_SOL_SANCTUM_ERUPTED 0x814
 /// The statues beside the hall's centre shine their beams.
 /// ★ Named from the game: "two beams of light shot out from them"
@@ -1311,8 +1771,15 @@
 /// ★ Named from the game: "two beams of light shot out from them"
 /// (MsgSolSanctumKradenYouFoundIt)
 #define FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING 0x817
+/// With both beams shining, the center statue has slid into the hole that
+/// opened before it, disarming the trap; from then on the seals stay open.
+/// ★ Named from the game: "And dropped the statue into it after that."
+/// (MsgSolSanctumKradenYouFoundIt)
 #define FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED 0x818
-/// The floor has opened over the way up to the Elemental Star room.
+/// The floor at the symbol in the Luna and Sol rooms has opened, and Isaac,
+/// then Kraden, have risen through it to the Elemental Star Room.
+/// ★ Named from what the player sees: the floor at the symbol opening on the
+/// way up to the Elemental Star Room (its render)
 #define FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN 0x819
 /// Kraden has praised Isaac after the seals' lights flashed.
 /// ★ Named from the game: "You found it" (MsgSolSanctumYouFoundIt)
@@ -1337,38 +1804,82 @@
 /// ★ Named from what the player sees: a quarter of each picture in the Luna
 /// and Sol rooms lit for each statue in place (its render)
 #define FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN 0x829
+/// On the first arrival in the Elemental Star Room, Kraden has explained the
+/// four elements and their stars and given out the Mythril Bags.
+/// ★ Named from the game: "Legend holds that the four Elemental Stars contain
+/// the purified essence of each element."
+/// (MsgSolSanctumKradenTheElementsAreThe)
 #define FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED 0x83b
+/// Isaac has put the Venus Star in a Mythril Bag, opening new crossings between
+/// the pedestals.
+/// ★ Named from the game: "put the Venus Star in a Mythril Bag."
+/// (MsgSolSanctumVenusStarBagged)
 #define FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED 0x83c
+/// As FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, for the Mercury Star.
+/// ★ Named from the game: "put the Mercury Star in a Mythril Bag."
+/// (MsgSolSanctumPutMercuryStar)
 #define FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED 0x83d
-/// The Jupiter Star is bagged and Alex holds the four Elemental Stars.
+/// The Jupiter Star is bagged, Saturos and Menardi hold Jenna and Kraden, and
+/// Garet has handed Alex three Elemental Stars; Alex demands the Mars Star too.
+/// The captors stand round their hostages on every visit after.
+/// ★ Named from the game: "handed over the Elemental Stars."
+/// (MsgSolSanctumGuessTakeElemental)
 #define FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX 0x83e
+/// With the Mars Star taken, the Elemental Star Room has collapsed and the Wise
+/// One has sent Isaac and Garet out; set with FLAG_SOL_SANCTUM_ERUPTED, it ends
+/// the search of the Mars Star's pedestal.
+/// ★ Named from the game: "this chamber is collapsing."
+/// (MsgSolSanctumReturnStarToBag)
 #define FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED 0x83f
-/// Isaac agreed to look farther on while Kraden studies the rooms.
+/// Isaac agreed to look farther up the passage while Kraden studies the rooms;
+/// spoken to, Kraden then asks to hear what he finds.
+/// ★ Named from the game: "would you look farther up the passage?"
+/// (MsgSolSanctumMeanLookFarther)
 #define FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN 0x896
 /// The chests: the Small Jewel for each minotaur relief, and a Herb.
 /// ★ Named from the game: "Small Jewel" (MsgItemName)
 #define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND 0xf01
+/// The chest in Sol Sanctum's maze room holds the second Small Jewel, which
+/// fills the second minotaur relief's empty eye.
+/// ★ Named from the game: "Small Jewel" (MsgItemName)
 #define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND 0xf02
 /// The Luna and Sol rooms' chest.
 /// ★ Named from the game: "Herb" (MsgItemName)
 #define FLAG_SOL_SANCTUM_HERB_FOUND 0xf40
 
 // Sanctum
-/// Isaac accepted the Great Healer's request to go to Sol Sanctum.
+/// After the eruption, Isaac has accepted the Great Healer's request in Vale's
+/// Sanctum to recover the Elemental Stars, and the Wise One's guidance sends
+/// him and Garet off the next day. Vale's field music changes with it.
+/// ★ Named from the game: "will you accept responsibility for the fate of the
+/// land?" (MsgSanctumIsaacWillAcceptResponsibilityFor)
 #define FLAG_SANCTUM_QUEST_ACCEPTED 0x9f0
 
 // Venus Lighthouse
-/// The man at the entrance has told of the attack and is gone.
+/// The wounded soldier at Venus Lighthouse Entry has told of the attack,
+/// flickered and vanished; he is gone on every visit after.
+/// ★ Named from the game: "attacked by strange... wanderers..."
+/// (MsgFieldVenusLighthouseWasAttackedBy)
 #define FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD 0x981
-/// The path the statue opened: the first or the second of its two.
+/// The statue on Venus Lighthouse's ground floor has opened the first of its
+/// two paths. One of this and FLAG_VENUS_LIGHTHOUSE_SECOND_PATH is set once the
+/// statue has spoken, and each search switches them; the Tunnel Ruins under
+/// Babi Lighthouse redraw their rooms to match.
+/// ★ Named from the game: "The path long closed"
+/// (MsgVenusStatueSpeaksIsaacSoulYe)
 #define FLAG_VENUS_LIGHTHOUSE_FIRST_PATH 0x982
 /// As FLAG_VENUS_LIGHTHOUSE_FIRST_PATH, the statue's other path.
 /// ★ Named from the game: "The path long closed"
 /// (MsgVenusStatueSpeaksIsaacSoulYe)
 #define FLAG_VENUS_LIGHTHOUSE_SECOND_PATH 0x983
-/// Garet has said the block by the wall can go no farther.
+/// Move has pushed the pillar on Venus Lighthouse's ground floor up to the
+/// wall, and Garet has said they can push it no farther but might carry it.
+/// ★ Named from what the player sees: a grey pillar carved with spirals,
+/// pushed up against the wall (its render)
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL 0x986
-/// Carry has set that block down beyond the wall.
+/// Carry has set that pillar down beyond the wall, where it stays.
+/// ★ Named from what the player sees: the grey pillar carved with spirals,
+/// set down on the floor beyond the wall (its render)
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED 0x987
 
 // World map

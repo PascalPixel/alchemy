@@ -58,8 +58,16 @@ enum ActorAnimation {
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
   ANIM_PUSH = 8,
-  ANIM_LEADER_LEAN_BACK = 22,  ///< leaning back, his head thrown back
-  ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
+  ANIM_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
+  ANIM_LEADER_CLING = 12,      ///< still on a wall, seen from behind
+  ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
+  ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
+  /// Held in ANIM_LEADER_LEAP's mid-stride lean, as he lunges into a fight.
+  ANIM_LEADER_LUNGE = 16,
+  ANIM_LEADER_LEAN_BACK = 22,   ///< leaning back, his head thrown back
+  ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost match.
+  ANIM_LEADER_CROUCH = 35
 };
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's

@@ -679,6 +679,14 @@ enum PuddleAnimation {
   PUDDLE_ANIM_MELT = 6     ///< sinks from the pillar back into a puddle
 };
 
+/// SPRITE_WARRIOR_IN_GOLDEN_HELMET's animations at the end of a Colosso
+/// finals match (spr_062.tsv).
+enum GoldenHelmetWarriorAnimation {
+  WARRIOR_ANIM_DEFEATED = 8,        ///< slumped to the ground
+  WARRIOR_ANIM_FIGHTING_STANCE = 9, ///< braced to fight
+  WARRIOR_ANIM_ARMS_RAISED = 10     ///< both arms raised in victory
+};
+
 /// SPRITE_BABI's animations that scenes set by number (spr_052.tsv).
 enum BabiAnimation {
   /// Lying in bed, only his head on the pillow showing, its two frames

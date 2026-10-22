@@ -193,6 +193,13 @@ These turn up all over the game.
     `list->tailLink = &node->next` (`RenderOutput_AppendToList`);
   - a member through its neighbour's pointer: `((s16 *)nativeAttributes)[7]`
     for `entry->y` (`AffineEffect_UpdateFrame`).
+- A loop can be written with `goto`. A C loop's notes let `loop.c` move
+  constants and addresses out of the loop, strength-reduce its counters and
+  delete it when it is empty, and they let `jump.c` copy its exit test to its
+  top; register allocation also counts the references inside a C loop as
+  more frequent. A loop built from labels and `goto` gets none of this, so
+  where the ROM shows none of it the loop stays a `goto`, and the comment
+  beside it gives the measured cost of its loop form.
 - A random value is masked in place, with the mask assigned first
   (`speed = 0x3ff; speed &= Random16();`). Written as `Random16() & 0x3ff`,
   the mask goes into a scratch register and the result is copied before the

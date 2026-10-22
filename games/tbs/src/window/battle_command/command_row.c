@@ -431,6 +431,9 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
   count = BattleParty_ListActorIdsFar(1, 0);
   Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
   i = 0;
+  // The loop over ids is written with goto (MATCHING.md): as
+  // for (i = 0; i < 4 && ids[i] != 0xff; i++), or as a do-while loop inside
+  // this test, 49 of 74 instructions differ in tbs-en.
   if (ids[0] != 0xff) {
   next_id:
     for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {

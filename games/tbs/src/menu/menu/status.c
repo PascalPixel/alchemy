@@ -1113,6 +1113,8 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
 void Runtime_RunBusyWaitDelay(void) {
   s32 count = 0xff;
 
+  // Written with goto (MATCHING.md): as a do-while loop, the loop optimizer
+  // deletes the empty loop and leaves 1 of the 7 instructions.
 spin:
   count--;
   if (count >= 0)

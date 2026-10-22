@@ -471,7 +471,11 @@ s32 SaveMenu_Run(void) {
     return 0;
   }
   gSleepDisabled = blendStarted;
-// Choose a new game, existing save, arena entry, or data transfer.
+  // Choose a new game, existing save, arena entry, or data transfer. This
+  // menu, the transfer's choices and the save question above are loops
+  // written with goto (MATCHING.md): with the save question as for (;;) and
+  // continue, 101 of 920 instructions differ in tbs-en, and with this menu as
+  // for (;;), 462.
 menu_top:;
   v6 = SaveState_ScanRecordFlags();
   // No backup memory: in debug mode, say so and turn idle sleep on.
@@ -820,6 +824,9 @@ menu_top:;
           }
           Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
         } else {
+          // Left and Right share the wrap: with a copy in each arm, the
+          // copies are not folded back and 210 of 920 instructions differ in
+          // tbs-en.
           if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
             Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;

@@ -58,7 +58,18 @@ enum ActorAnimation {
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
   ANIM_PUSH = 8,
-  ANIM_LEADER_LEAN_BACK = 22,  ///< leaning back, his head thrown back
+  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  /// The arrivals and leavings of the animated exits (enum ExitStyle), each
+  /// four frames of the leader turning: an arrival grows from a small figure
+  /// seen side-on to full size facing the player, a leaving turns from his
+  /// back to side-on as he shrinks and is then hidden. The alternate pair
+  /// turns the other way.
+  ///@{
+  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIM_LEADER_ARRIVE = 24,
+  ANIM_LEADER_LEAVE_ALTERNATE = 25,
+  ANIM_LEADER_LEAVE = 26,
+  ///@}
   ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
 };
 

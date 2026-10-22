@@ -65,6 +65,17 @@ enum SpriteId {
   /// ★ Named from what the player sees: a blue statue of a woman holding a
   /// jar (its render)
   SPRITE_BLUE_STATUE = 0xe0,
+  /// The stone pipe sections Move pushes in Mercury Lighthouse to join its
+  /// channels, and the short upright pipes beside them.
+  /// ★ Named from what the player sees: a stone pipe section lying west to
+  /// east (spr_228.png)
+  SPRITE_PIPE_WEST_EAST = 0xe4,
+  /// ★ Named from what the player sees: a stone pipe section lying north to
+  /// south (spr_229.png)
+  SPRITE_PIPE_NORTH_SOUTH = 0xe5,
+  /// ★ Named from what the player sees: a short capped pipe standing upright
+  /// (spr_230.png)
+  SPRITE_PIPE_STUB = 0xe6,
   /// A puddle of water, which Frost freezes into a pillar of ice.
   /// ★ Named from what the player sees: a puddle of water (its render)
   SPRITE_PUDDLE = 0xe3,

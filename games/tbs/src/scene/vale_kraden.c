@@ -84,6 +84,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 // FLAG_SCENE_TEMP_42: the cottage's gate stands open since Kraden went in.
 
@@ -101,15 +102,12 @@ enum ValeKradenActor {
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_EAST_ROCK,
   /// A young man with brown hair who lies by the broken fence on the stormy
-  /// night.
-  /// "Rockslide...destroyed
-  /// fence... Monsters everywhere..."
+  /// night. "Rockslide...destroyed fence... Monsters everywhere..."
   /// ★ Named from the game: "Rockslide...destroyed fence..."
   /// (MsgValeRockslideDestroyedFence)
   ACTOR_ROCKSLIDE_SURVIVOR,
   /// A small boy with fair hair, by day, younger than Isaac. "Do you hear those
-  /// awful growls coming from
-  /// the other side of this fence?"
+  /// awful growls coming from the other side of this fence?"
   /// ★ Named from the game: "I can't stop wondering what lies beyond this
   /// fence." (MsgValeWonderBeyondFence)
   ACTOR_BOY_BY_THE_FENCE,
@@ -187,8 +185,8 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
 /// the growls beyond it; once the party has left Vale, he means to climb it
 /// someday.
 ///
-/// Reached by talking to the boy by the fence
-/// (ACTOR_BOY_BY_THE_FENCE) in the day's events.
+/// Reached by talking to the boy by the fence (ACTOR_BOY_BY_THE_FENCE) in the
+/// day's events.
 static void Event_TalkToBoyByTheFence(void) {
   s32 message;
 
@@ -336,7 +334,8 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(JENNA, FACING_SOUTH, 16);
     // Kraden stops them: nothing can be done until what he was told is
     // confirmed.
-    Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
+    Actor_SetAttachedEffect(ACTOR_KRADEN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
@@ -544,7 +543,7 @@ static void Event_KradenSetsOff(void) {
   Actor_SetPosition(ACTOR_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   GameFlag_Set(FLAG_SCENE_TEMP_42);
   Engine_EventEnd();
 }
@@ -581,7 +580,7 @@ static void Event_MeetSaturosAndMenardi(void) {
   }
 
   Engine_EventBegin();
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Saturos is overheard: the villagers know little of Sol Sanctum.
@@ -771,7 +770,7 @@ static void Event_MeetSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
 
   ValeKraden_WalkTowardLeader(GARET);
   Engine_ActorWaitForMove(GARET);
@@ -1213,9 +1212,9 @@ u32 gValeKraden_Exits[] = {
 struct ScenePlacement gValeKraden_Placements[] = {
     { 0x127, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(72), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSwayActions,
         PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACE_PARTY, 0 },

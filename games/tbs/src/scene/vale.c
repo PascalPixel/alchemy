@@ -54,14 +54,13 @@
 /// VALE_TO_VALE_INTERIORS_SHOPS_EAST, VALE_TO_VALE_INTERIORS_SHOPS_SOUTH,
 /// VALE_TO_VALE_INTERIORS_SHOPS_NORTH, VALE_TO_VALE_INTERIORS_SHOPS_WEST and
 /// VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR into the houses
-/// (SceneId_ValeInteriorsShops,
-/// vale_interiors_shops.c), VALE_TO_VALE_INTERIORS_INN into Isaac's house
-/// (SceneId_ValeInteriorsInn) and VALE_TO_SANCTUM into SceneId_Sanctum. Two
-/// scenes no table reaches remain: Event_UnusedRoofMended, a copy of the roof's
-/// end, and Event_UnusedWaterBurstsByTheRiver, which sets group flag
-/// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the man who watches Isaac
-/// while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
-/// priority before Kalay.
+/// (SceneId_ValeInteriorsShops, vale_interiors_shops.c),
+/// VALE_TO_VALE_INTERIORS_INN into Isaac's house (SceneId_ValeInteriorsInn) and
+/// VALE_TO_SANCTUM into SceneId_Sanctum. Two scenes no table reaches remain:
+/// Event_UnusedRoofMended, a copy of the roof's end, and
+/// Event_UnusedWaterBurstsByTheRiver, which sets group flag FLAG_PLACE_TEMP_05.
+/// FLAG_SCENE_TEMP_41 pauses the man who watches Isaac while a menu is open.
+/// The TBS_PATCH_4 editions also set Dora's sprite priority before Kalay.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -179,8 +178,7 @@ enum ValeActor {
   /// (MsgValeYourGrandpaIsTheMayor)
   ACTOR_GIRL_JEALOUS_OF_GARET,
   /// A young man with brown hair: "This place looks just like it did three
-  /// years
-  /// ago... after the storm..."
+  /// years ago... after the storm..."
   /// ★ Named from the game: "This place looks just like it did three years
   /// ago... after the storm..." (MsgValeThisPlaceLooksJustLikeIt)
   ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM,
@@ -215,12 +213,10 @@ enum ValeActor {
   /// party has left, "Please take care of my brother, Isaac."
   /// ★ Named from the game: "Please take care of my brother"
   /// (MsgValePleaseTakeCareOfMyBrother), said by a small boy with orange hair
-  /// in a green shirt and shorts (its
-  /// render)
+  /// in a green shirt and shorts (its render)
   ACTOR_GARETS_BROTHER,
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed (Event_PushPillar) or
-  /// moved
-  /// with Move, its column kept in FLAG_PLACE_TEMP_14 to _16
+  /// moved with Move, its column kept in FLAG_PLACE_TEMP_14 to _16
   /// (Event_SettleMovedPillar).
   /// ★ Named from what the player sees: a stone pillar of brown rock standing
   /// below the cliff north of the village (its render)
@@ -257,8 +253,7 @@ enum ValeAfterKalayActor {
   /// (MsgValePleaseTakeCareOfMyBrother)
   ACTOR_GARETS_BROTHER_AFTER_KALAY,
   /// The young man of ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM: "Is Jenna back
-  /// yet?"
-  /// (Event_AskWhetherJennaHasReturned)
+  /// yet?" (Event_AskWhetherJennaHasReturned)
   /// ★ Named from the game: "Is back yet?" (MsgValeIsJennaBackYet)
   ACTOR_YOUNG_MAN_ASKING_FOR_JENNA,
   /// The strongman of ACTOR_STRONGMAN_BY_THE_RIVER: "I still remember when
@@ -762,8 +757,8 @@ static void Event_ReturnThroughSouthernPassage(void) {
 
 /// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH, touch
 /// cell 50) jumps out in front of Isaac, then keeps watching him; sets
-/// FLAG_VALE_WARNED_AGAINST_MT_ALEPH.
-/// "You're not planning on sneaking up to Mt. Aleph...?"
+/// FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up to
+/// Mt. Aleph...?"
 static void Event_WarnAgainstSneakingUpMtAleph(void) {
   struct FieldActor *guard;
   struct FieldActor *actor;
@@ -1998,7 +1993,8 @@ static void Event_MendingTheRoof(void) {
   leader->scaleY = Q16_ONE;
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   Engine_ActorFaceEachOther(ACTOR_OPENING_DORA, ACTOR_PARTY_LEADER, 40);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(ACTOR_OPENING_DORA, 2);
@@ -2121,12 +2117,15 @@ static void Event_MendingTheRoof(void) {
   Event_ShowTwoMessagesAndWait(GARET, 1, 2, 25, 2, JENNA, 10, 14, 4, 14,
                                stoppedMotionFlags);
   Engine_EventWait(40);
-  Actor_SetAttachedEffect(JENNA, 0x102);
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
@@ -2148,7 +2147,8 @@ static void Event_MendingTheRoof(void) {
   Engine_EventWait(10);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 10);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
@@ -2195,7 +2195,8 @@ static void Event_MendingTheRoof(void) {
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 20);
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | GARET,
                            0, 20);
@@ -2546,7 +2547,8 @@ static void Event_RoofMended(void) {
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 30);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -2685,7 +2687,8 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Actor_SetAttachedEffect(ACTOR_DORA, 258);
+  Actor_SetAttachedEffect(ACTOR_DORA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 40);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -2702,7 +2705,8 @@ static void Event_RoofMended(void) {
   actor = Actor_Get(GARET);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(GARET, 403, VALE_GARET_REUNION_Z);
-  Actor_SetAttachedEffect(JENNA, 258);
+  Actor_SetAttachedEffect(JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(JENNA, FACING_NORTH, 20);
   Event_ShowMessageAndWait(JENNA, 0, 1);
   Engine_ActorWaitForMove(GARET);
@@ -3192,12 +3196,12 @@ s32 gStagedActor_FootprintBounds[] = {
 s32 gValeAlephGuardActions[] = {
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x4000),
-    SC_SET(0x23, 2),
+    SC_SET(SW_TIMER, 2),
     SC_LABEL(1),
     SC_ARG(2),
     SC_MOVE(PIXELS(296), 0, PIXELS(456)),
     SC_SYNC,
-    SC_SET(0x23, 3),
+    SC_SET(SW_TIMER, 3),
     SC_MOVE(PIXELS(296), 0, PIXELS(420)),
     SC_SYNC,
     SC_ARG(1),
@@ -3217,7 +3221,7 @@ s32 gValeAlephGuardActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(296), 0, PIXELS(456)),
     SC_SYNC,
-    SC_SET(0x23, 2),
+    SC_SET(SW_TIMER, 2),
     SC_MOVE(PIXELS(256), 0, PIXELS(456)),
     SC_SYNC,
     SC_ARG(1),
@@ -3229,7 +3233,7 @@ s32 gValeAlephGuardActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(212), 0, PIXELS(456)),
     SC_SYNC,
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_MOVE(PIXELS(212), 0, PIXELS(388)),
     SC_SYNC,
     SC_ARG(1),
@@ -3258,7 +3262,7 @@ s32 gValeAlephGuardActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(212), 0, PIXELS(456)),
     SC_SYNC,
-    SC_SET(0x23, 2),
+    SC_SET(SW_TIMER, 2),
     SC_MOVE(PIXELS(256), 0, PIXELS(456)),
     SC_SYNC,
     SC_ARG(1),
@@ -3295,7 +3299,7 @@ s32 gGaretAction[] = {
     SC_MOVE(PIXELS(300), 0, PIXELS(904)),
     SC_SYNC,
     SC_ARG(1),
-    SC_SET(SW_FACING, 0xd000),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_END,
 };
 
@@ -3306,7 +3310,7 @@ s32 gJennaAction[] = {
     SC_MOVE(PIXELS(321), 0, PIXELS(904)),
     SC_SYNC,
     SC_ARG(1),
-    SC_SET(SW_FACING, 0xd000),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_END,
 };
 

@@ -1,7 +1,7 @@
 /// @file
-/// Vale (SceneId_ValeInteriorsShops): the insides of the
-/// village's houses and shops, all on one map. Each room is an entrance with a
-/// camera box of its own, named for the door it is entered by
+/// Vale (SceneId_ValeInteriorsShops): the insides of the village's houses and
+/// shops, all on one map. Each room is an entrance with a camera box of its
+/// own, named for the door it is entered by
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST and the rest), and its door takes the
 /// exit of the same number back out: four open onto the village (SceneId_Vale),
 /// and four onto the part of Vale with the Psynergy Stone (SceneId_ValeGate),
@@ -86,21 +86,19 @@ enum ValeInteriorsShopsActor {
   /// ★ Named from the game: "he is my son" (MsgValeIAmConcernedForGaretBut)
   ACTOR_GARETS_MOTHER,
   /// Jenna's grandfather, a bent old man with a white beard and a cane. "My
-  /// granddaughter, Jenna, is finally happy
-  /// again..."
+  /// granddaughter, Jenna, is finally happy again..."
   /// ★ Named from the game: "My granddaughter,"
   /// (MsgValeMyGranddaughterJennaIsFinallyHappy)
   ACTOR_JENNAS_GRANDFATHER,
   /// Jenna's grandmother, an old woman with white hair. "Please return my
-  /// precious granddaughter, Jenna,
-  /// to me." Once Jenna is taken, ACTOR_WOMAN_ON_THE_SPITTING_IMAGE says she
-  /// "grew sick with despair", and she lies in bed.
+  /// precious granddaughter, Jenna, to me." Once Jenna is taken,
+  /// ACTOR_WOMAN_ON_THE_SPITTING_IMAGE says she "grew sick with despair", and
+  /// she lies in bed.
   /// ★ Named from the game: "Please return my precious granddaughter"
   /// (MsgValePleaseReturnMyPreciousGranddaughterJenna)
   ACTOR_JENNAS_GRANDMOTHER,
   /// A woman in a green dress in Jenna's grandparents' house. "Jenna is the
-  /// spitting image of her
-  /// mother, whom we lost that day..."
+  /// spitting image of her mother, whom we lost that day..."
   /// ★ Named from the game: "is the spitting image of her mother"
   /// (MsgValeJennaIsTheSpittingImageOf)
   ACTOR_WOMAN_ON_THE_SPITTING_IMAGE,
@@ -115,8 +113,7 @@ enum ValeInteriorsShopsActor {
   /// Psynergy." (MsgValeIfThereAreVisitorsInTown)
   ACTOR_WOMAN_ON_VISITORS_IN_TOWN,
   /// A young man with brown hair: "Do you ever dream of seeing the world
-  /// outside the
-  /// village?"
+  /// outside the village?"
   /// ★ Named from the game: "Do you ever dream of seeing the world outside
   /// the village?" (MsgValeDoYouEverDreamOfSeeing)
   ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING,

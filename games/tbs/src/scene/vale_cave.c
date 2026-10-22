@@ -87,6 +87,7 @@
 
 #include "fixed_math.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 /// The way in's placements (gValeCave_Placements1), numbered from
 /// ACTOR_FIRST_PLACED: three stacks of crates (drawn as the crates of the
@@ -196,8 +197,7 @@ static void ValeCave_ApplyEntryState(void);
 ///
 /// Scene_TalkToActor selects this EVENT_TALK_HALTED event while Kite is the
 /// paused actor. Djinn_JoinParty gives the Jupiter Djinni Kite and sets
-/// FLAG_KITE, so
-/// neither room places Kite again.
+/// FLAG_KITE, so neither room places Kite again.
 static void Event_TalkToKite(void) {
   Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
 }
@@ -804,7 +804,7 @@ static void Event_RideLogEast(void) {
   Engine_GameFlagSet(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
 }
 
 /// In Vale Cave's second room, walking west onto the riding log: it carries
@@ -820,7 +820,7 @@ static void Event_RideLogWest(void) {
   Engine_GameFlagClear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
 }
 
 /// Centers an actor on a map cell and gives it underfoot priority.
@@ -841,9 +841,9 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
 ///
 /// Called by ValeCave_Initialize. In Kite's part of the second room
 /// (VALE_CAVE_KITE_EAST_FROM_WEST to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
-/// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE
-/// is set, it sets FLAG_SCENE_TEMP_00 (and _01 from
-/// VALE_CAVE_KITE_EAST_FROM_WEST) and puts Kite back behind the ledge.
+/// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set, it sets
+/// FLAG_SCENE_TEMP_00 (and _01 from VALE_CAVE_KITE_EAST_FROM_WEST) and puts
+/// Kite back behind the ledge.
 static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnRow20;
 

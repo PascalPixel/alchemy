@@ -100,6 +100,7 @@
 #include "frame.h"
 #include "fixed_math.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 // Scene temporary flags, in Vale Sanctum: 00 is set once the Great Healer has
 // warned Isaac that leaving the village cannot be undone; 01 marks the visit
@@ -118,8 +119,8 @@ enum SanctumActor {
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   // Vale Sanctum (gSanctum_PlacementB, and gSanctum_PlacementD at the quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
-  /// and beards in long robes, as Mind Read hears a
-  /// villager in vale_interiors_shops.c call the Sanctum's people: "The healers
+  /// and beards in long robes, as Mind Read hears a villager in
+  /// vale_interiors_shops.c call the Sanctum's people: "The healers
   /// are supposed to guard Sol Sanctum." Before the quest: "Our Psynergy was
   /// given to us by the sacred power of Mt. Aleph."
   /// ★ Named from the game: "The healers are supposed to guard"
@@ -136,8 +137,7 @@ enum SanctumActor {
   /// (MsgValeAsStubbornAsYourFather)
   ACTOR_DORA,
   /// The Mayor, Garet's grandfather, an old man with white hair and a cane, as
-  /// the Great Healer calls him: "That is
-  /// all, Mayor."
+  /// the Great Healer calls him: "That is all, Mayor."
   /// ★ Named from the game: "That is all, Mayor"
   /// (MsgSanctumAcceptIsaacCantMean)
   ACTOR_GARETS_GRANDFATHER,
@@ -148,10 +148,10 @@ enum SanctumActor {
   ACTOR_HEALER_AFTERIMAGE, ///< a copy of the Great Healer for its afterimages
   // Vault Sanctum and Bilibin Sanctum (gSanctum_PlacementC).
   /// The other person of the Sanctum, in the western healer's sprite (a man
-  /// with long brown hair and a beard in a long robe), who
-  /// wanders, and who speaks of the healer as someone else and of "our
-  /// teachings" and "our meditations". In Vault: "I wonder if we'll ever see
-  /// our stolen gold statue again..."
+  /// with long brown hair and a beard in a long robe), who wanders, and who
+  /// speaks of the healer as someone else and of "our teachings" and "our
+  /// meditations". In Vault: "I wonder if we'll ever see our stolen gold statue
+  /// again..."
   /// ★ Named from the game: "stolen gold statue" (MsgSanctumWonderIfEverSeeOur)
   ACTOR_SANCTUM_MEMBER = ACTOR_FIRST_PLACED + 1,
   /// Vault Sanctum's gold statue (the sprite of the one a chest gives back in
@@ -365,7 +365,7 @@ static void Event_ReconsiderQuest(void) {
           Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         }
         Sanctum_ReceiveWiseOnesMission();
-        Engine_ColorBufferApplyTarget(0, 0);
+        Engine_ColorBufferApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
         Engine_ColorBufferInterpolate(120);
         Engine_EventWait(120);
         Engine_AudioPlayCue(MUS_086);
@@ -434,7 +434,7 @@ static void Event_AskAboutPsynergyChanges(void) {
 s32 Sanctum_Initialize(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(1);
   Engine_EventWait(1);
   switch (gGameState.entrance) {
@@ -493,8 +493,7 @@ static void Event_WarnBeforeLeaving(void) {
 /// The room turns sepia: `And so the world began drifting toward its fated
 /// destruction...` Starting again from the Great Healer takes
 /// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
-/// choices take SANCTUM_TO_CLEAR,
-/// to SceneId_Clear.
+/// choices take SANCTUM_TO_CLEAR, to SceneId_Clear.
 static void Event_LeaveAfterRefusing(void) {
   struct ColorBuffer *paletteWork;
 
@@ -506,7 +505,7 @@ static void Event_LeaveAfterRefusing(void) {
   Engine_ActorSetAnimation(ACTOR_HEALER, 0);
   Engine_ActorSetAnimation(ACTOR_WEST_HEALER, 0);
   Engine_ActorSetAnimation(ACTOR_EAST_HEALER, 0);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_SEPIA, 0);
+  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(120);
   Engine_EventWait(180);
   paletteWork = gPaletteBufferWork;
@@ -520,7 +519,7 @@ static void Event_LeaveAfterRefusing(void) {
   paletteWork->padding2a03 = 1;
   Engine_EventWait(1);
   UiText_ShowCenteredMessage(MsgSanctumWorldBeganDrifting, 1, 0);
-  Engine_ColorBufferApplyTarget(0, 0);
+  Engine_ColorBufferApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(120);
   Engine_EventWait(120);
   Engine_EventWait(60);
@@ -611,7 +610,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWaitForScreen();
     Engine_EventWait(120);
   } else {
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_SEPIA, 0);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
     Engine_ColorBufferInterpolate(1);
     Engine_EventWait(1);
     Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
@@ -622,7 +621,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWaitForScreen();
     // Reenact the journey before explaining the quest.
     Sanctum_ReenactSolSanctum();
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(100);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -832,12 +831,18 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(GARET, 0x102);
-    Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
-    Actor_SetAttachedEffect(ACTOR_WEST_HEALER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_EAST_HEALER, 0x102);
+    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_DORA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_WEST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_EAST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(ACTOR_EAST_HEALER, 1);
     Engine_EventWait(20);
@@ -926,7 +931,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ActorStartRepeatedMotion(ACTOR_WEST_HEALER, 1);
     Engine_ActorStartRepeatedMotion(ACTOR_EAST_HEALER, 1);
     Engine_ActorFaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
-    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER, 0x102);
+    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Engine_EventWait(20);
@@ -1000,12 +1006,18 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(GARET, 0x102);
-    Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_WEST_HEALER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_EAST_HEALER, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_DORA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_WEST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_EAST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 4);
     Engine_EventWait(20);
@@ -1050,7 +1062,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Engine_EventWait(60);
-    Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_DORA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
     Event_ShowMessage(ACTOR_DORA, 0);
     Engine_EventWait(30);
@@ -1083,7 +1096,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_ShowMessage(ACTOR_HEALER, 0);
     Engine_EventWait(20);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
-    Actor_SetAttachedEffect(GARET, 0x102);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -1097,7 +1111,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
   Event_OpenMessage(ACTOR_HEALER, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Sanctum_ReceiveWiseOnesMission();
-    ColorBuffer_ApplyTarget(0, 0);
+    ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);
     Event_PlayCue(MUS_086);
@@ -1131,7 +1145,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   u32 sparkIndex;
   struct FieldActor *wiseOne;
 
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1193,8 +1208,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_HEALER, 0);
   Engine_EventWait(80);
-  Event_PlayCue(MUS_017);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PALE, 1);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PALE, PALETTE_HALF_BG);
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
@@ -1230,7 +1245,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(60);
   Engine_ActorSetChildValue(ACTOR_WISE_ONE, 0x100);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Event_PlayCue(SE_308);
   // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
@@ -1247,7 +1262,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(40);
   Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
   Engine_CameraWaitForMove();
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(120);
   Sanctum_HideHealerAfterimage();
@@ -1653,7 +1668,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   Engine_ActorSetPosition(ACTOR_DORA, 0, 0);
   Engine_ActorSetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
   Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
+  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
   Engine_ColorBufferInterpolate(1);
   Engine_EventWait(1);
   window = UiWindow_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);

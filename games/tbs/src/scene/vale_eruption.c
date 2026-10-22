@@ -56,8 +56,8 @@ enum ValeEruptionActor {
   /// ★ Named from the game: "Come into the sanctum" (MsgValeMtAlephWasInactive)
   ACTOR_GREAT_HEALER = ACTOR_FIRST_PLACED,
   /// Garet's grandfather, an old man with white hair and a cane, the mayor
-  /// (whom the Great Healer calls Mayor in
-  /// sanctum.c). "Oooh, my grandson! Will Garet be safe in this eruption?!?"
+  /// (whom the Great Healer calls Mayor in sanctum.c). "Oooh, my grandson! Will
+  /// Garet be safe in this eruption?!?"
   /// ★ Named from the game: "Oooh, my grandson!" (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
   /// Isaac's mother (Dora in sanctum.c). "Isaac and Garet went to Mr. Kraden's
@@ -66,15 +66,15 @@ enum ValeEruptionActor {
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
   /// Garet's sister, a young woman with an orange ponytail, whom Garet calls
-  /// Sis at the farewell (vale_gate.c). She
-  /// calls the mayor Grandpa, and ACTOR_GARETS_BROTHER calls her Sis. "Grandpa,
-  /// we don't even know if he's up there!"
+  /// Sis at the farewell (vale_gate.c). She calls the mayor Grandpa, and
+  /// ACTOR_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
+  /// up there!"
   /// ★ Named from the game: "we don't even know if he's up there"
   /// (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
   /// Garet's brother, the small boy with orange hair of vale.c's
-  /// ACTOR_GARETS_BROTHER, who says
-  /// someone saw Garet climb and is first to cry "Garet!"
+  /// ACTOR_GARETS_BROTHER, who says someone saw Garet climb and is first to cry
+  /// "Garet!"
   /// ★ Named from the game: "But, Sis, someone saw him"
   /// (MsgValeMtAlephWasInactive), to Garet's sister
   ACTOR_GARETS_BROTHER = ACTOR_FIRST_PLACED + 4,
@@ -289,7 +289,8 @@ static void Event_ReturnFromMtAleph(void) {
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
   // and the villagers turn to the path.
   Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);

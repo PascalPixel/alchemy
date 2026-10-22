@@ -126,8 +126,7 @@ enum ValeInteriorsInnActor {
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED,
   /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in vale_storm.c).
-  /// "Isaac, Dora, hurry!
-  /// The Boulder could fall at any second!"
+  /// "Isaac, Dora, hurry! The Boulder could fall at any second!"
   /// ★ Named from the game: "Kyle, watch out!"
   /// (MsgValeKyleWatchOutTheBoulderThe)
   ACTOR_KYLE,
@@ -137,8 +136,7 @@ enum ValeInteriorsInnActor {
   /// as it shrinks away.
   ACTOR_FLAME,
   /// A young man with brown hair who lost his father in the storm and means to
-  /// be a
-  /// smith. "My father also died in that storm three years ago."; once the
+  /// be a smith. "My father also died in that storm three years ago."; once the
   /// party has left, "By then, I'll surely be a fine smith."
   /// ★ Named from the game: "My father also died in that storm three years
   /// ago." (MsgValeMyFatherAlsoDiedInThat)
@@ -152,14 +150,13 @@ enum ValeInteriorsInnActor {
   /// ★ Named from the game: "Is it the innkeeper?" (MsgValeCoughCoughWho)
   ACTOR_INNKEEPER,
   /// A young man with brown hair who walks about the inn. "One of the men from
-  /// that
-  /// group staying here wore a mask over his face."
+  /// that group staying here wore a mask over his face."
   /// ★ Named from the game: "wore a mask over his face"
   /// (MsgValeOneOfTheMenFromThat)
   ACTOR_YOUNG_MAN_SAW_MASK,
   /// A woman with fair hair at the inn. "Two of those three guests staying with
-  /// us have gone out.";
-  /// Mind Read later hears "I found his wallet when I was cleaning the room..."
+  /// us have gone out."; Mind Read later hears "I found his wallet when I was
+  /// cleaning the room..."
   /// ★ Named from the game: "We're a small hotel, and we get few guests"
   /// (MsgValeWereASmallHotelAndWe)
   ACTOR_INN_WORKER,
@@ -182,8 +179,8 @@ enum ValeInteriorsInnActor {
 /// first table's.
 enum ValeInteriorsInnAfterKalayActor {
   /// A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
-  /// so much, I almost
-  /// didn't recognize you!"; Mind Read hears of Dora's illness.
+  /// so much, I almost didn't recognize you!"; Mind Read hears of Dora's
+  /// illness.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   ACTOR_MAN_ISAAC_HAS_GROWN = ACTOR_FIRST_PLACED + 8,
   /// SPRITE_BLANK, a blank square, beside ACTOR_MAN_ISAAC_HAS_GROWN.
@@ -196,33 +193,31 @@ enum ValeInteriorsInnAfterKalayActor {
 /// Colosso finals.
 enum ValeInteriorsInnScholarActor {
   /// An old scholar with a white beard in a blue cap, who tells of the ruins
-  /// where Babi Lighthouse stands. "Originally, there were
-  /// ancient ruins at the site of Babi Lighthouse."
+  /// where Babi Lighthouse stands. "Originally, there were ancient ruins at the
+  /// site of Babi Lighthouse."
   /// ★ Named from the game: "Babi makes his scholars perform all sorts of
   /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_SCHOLAR_ANCIENT_RUINS = ACTOR_FIRST_PLACED,
   /// A scholar with glasses in a blue cap, whose experiments fail. "No matter
-  /// how many times I run the
-  /// experiment, I never get the results I want!"; after the finals he asks
-  /// whether the party knows Kraden.
+  /// how many times I run the experiment, I never get the results I want!";
+  /// after the finals he asks whether the party knows Kraden.
   /// ★ Named from the game: "No matter how many times I run the experiment"
   /// (MsgBabiNoMatterHowManyTimesI)
   ACTOR_SCHOLAR_EXPERIMENT,
   /// An old scholar with a white beard in a blue cap, who tells of Alchemy
-  /// sealed away. "It is said that long ago, the power of
-  /// Alchemy was sealed away."
+  /// sealed away. "It is said that long ago, the power of Alchemy was sealed
+  /// away."
   /// ★ Named from the game: "the power of Alchemy was sealed away."
   /// (MsgBabiItIsSaidThatLongAgo)
   ACTOR_SCHOLAR_SEALED_ALCHEMY,
   /// A scholar with glasses in a blue cap, who tells of the Venus Ruins.
-  /// "Originally, the ancient Venus Ruins lay buried
-  /// under Babi Lighthouse."
+  /// "Originally, the ancient Venus Ruins lay buried under Babi Lighthouse."
   /// ★ Named from the game: "Originally, the ancient Venus Ruins lay buried"
   /// (MsgBabiOriginallyTheAncientVenusRuinsLay)
   ACTOR_SCHOLAR_VENUS_RUINS,
   /// An old man with a cane who walks about the room. "Babi makes his scholars
-  /// perform all sorts of
-  /// research. I wonder where Babi's favorite scholar, Kraden, is now?"
+  /// perform all sorts of research. I wonder where Babi's favorite scholar,
+  /// Kraden, is now?"
   /// ★ Named from the game: "Babi makes his scholars perform all sorts of
   /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_OLD_MAN_ON_BABIS_RESEARCH
@@ -234,8 +229,7 @@ enum ValeInteriorsInnPlaceFlag {
   /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,
   /// Back from Kalay, ACTOR_MAN_ISAAC_HAS_GROWN remarked how much Isaac
-  /// has
-  /// grown.
+  /// has grown.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   FLAG_VALE_MAN_SAW_ISAAC_GROWN = 0x301
 };
@@ -467,11 +461,10 @@ static void Event_TakeExitToValeStormWest(void) {
 /// Sets up these rooms for the stormy night or the story's villagers. It also
 /// plays the scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG.
-/// Called by Field_RunScene once the actors are placed.
-/// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST sets FLAG_VALE_STORM before
-/// Event_DoraWakesIsaac; back from Kalay, Dora is put back in her sickbed
-/// unless FLAG_SCENE_TEMP_03 says she got up.
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Field_RunScene
+/// once the actors are placed. VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST sets
+/// FLAG_VALE_STORM before Event_DoraWakesIsaac; back from Kalay, Dora is put
+/// back in her sickbed unless FLAG_SCENE_TEMP_03 says she got up.
 s32 ValeInteriorsInn_Initialize(void) {
   struct FieldActor *actor;
 
@@ -834,8 +827,10 @@ ramp:
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
-  Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+  Actor_SetAttachedEffect(ACTOR_DORA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                        ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Engine_ActorSetPosition(ACTOR_KYLE, 0, 0);
   Engine_ActorFaceEachOther(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
@@ -892,12 +887,11 @@ static void Event_TalkToInnkeeper(void) {
 }
 
 /// Back from Kalay, a burly grey-haired man at Vale's inn
-/// (ACTOR_MAN_ISAAC_HAS_GROWN)
-/// remarks how much Isaac has grown. Reached by talking to him while
-/// FLAG_VALE_INNKEEPER_WELCOMED_ISAAC is clear, or by Mind Read on him until
-/// FLAG_VALE_MAN_SAW_ISAAC_GROWN is set, which this sets. XXX: the
-/// talk row tests the innkeeper's flag, not this one; likely a slip, because
-/// the Mind Read row tests this one, but both show the same line.
+/// (ACTOR_MAN_ISAAC_HAS_GROWN) remarks how much Isaac has grown. Reached by
+/// talking to him while FLAG_VALE_INNKEEPER_WELCOMED_ISAAC is clear, or by Mind
+/// Read on him until FLAG_VALE_MAN_SAW_ISAAC_GROWN is set, which this sets.
+/// XXX: the talk row tests the innkeeper's flag, not this one; likely a slip,
+/// because the Mind Read row tests this one, but both show the same line.
 static void Event_RemarkIsaacHasGrown(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
@@ -933,8 +927,8 @@ static void Event_ReadThoughtsAboutDorasIllness(void) {
 
 /// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale; she asks
 /// who told him she was ill, then gets up to show she feels well. Reached by
-/// talking to Dora, or by Mind Read on her, until
-/// FLAG_VISITED_SICK_DORA is set. Sets it and FLAG_SCENE_TEMP_03.
+/// talking to Dora, or by Mind Read on her, until FLAG_VISITED_SICK_DORA is
+/// set. Sets it and FLAG_SCENE_TEMP_03.
 static void Event_VisitSickDora(void) {
   struct FieldActor *leader;
   s32 firstMessage;

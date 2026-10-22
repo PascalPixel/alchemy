@@ -10,7 +10,7 @@ const u32 *ValeGate_GetExits(void);
 const struct ScenePlacement *ValeGate_GetPlacements(void);
 const struct SceneEvent *ValeGate_GetEvents(void);
 s32 ValeGate_Initialize(void);
-extern u32 gValeGate_ChargedUpStrongmanActionsHead[];
+extern u8 gValeGate_UnusedPaletteSteps[];
 extern s32 gValeGate_ChargedUpStrongmanActions[];
 extern s32 gValeGate_SecondTravelerLeapActions[];
 extern s32 gValeGate_FirstTravelerLeapActions[];

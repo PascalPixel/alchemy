@@ -34,7 +34,9 @@
 ///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. It has only its
 ///   two exits.
 /// - Colosseum (SceneId_Colosseum), one map that holds the stands, the trial
-///   grounds, the finals' waiting room and the passages to the finals stages.
+///   grounds, the finals' waiting room and the passages to the finals stages,
+///   each an entrance's camera box on it
+///   (https://alchemy.pascalpixel.com/places/colosseum/camera-boxes.png).
 ///   Each arrival is an entrance of its own, and
 ///   ColosseumEntrance_ApplyArrivalState plays the scene that entrance stands
 ///   for. During the trials, the attendant in the stands
@@ -81,16 +83,6 @@
 ///   no exit or code enters by them, only the debug scene selector can, and
 ///   ColosseumEntrance_GetPlacements gives entrance 8 the soldiers' table, as
 ///   it gives the arrivals of the finals day.
-/// - XXX: what the timer of 720 and the work value of 112 that Azart gets
-///   before ACTOR_WANDER do (Event_TalkToAzart,
-///   ColosseumEntrance_AnnounceFinals); the wander script's reader in
-///   ObjectMotion would settle it.
-/// - XXX: who the two young men with red flags at the trial grounds are
-///   (ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG) and what their animations 5 and 6
-///   show; a recording of both trials would settle it.
-/// - XXX (picture): the Colosseum as one map whose arrivals are camera regions
-///   of it (gColosseumEntrances), with the stands, the trial grounds, the
-///   waiting room and the passages outlined.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -258,16 +250,23 @@ enum ColosseumTrialActor {
   /// (MsgColosseumHavePerfectTechniquesLikeThose)
   ACTOR_CLEARING_WARRIOR,
   /// Two young men with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, drawn
-  /// mirrored) who take animation 5 when the warrior fails and 6 when he clears
-  /// the trial. XXX: who they are is unknown; no text names them.
+  /// mirrored) who judge the trial with flags: a red flag when the warrior
+  /// fails and a white one when he clears it (enum FlagBearerAnimation). No
+  /// text names them.
   /// ★ Named from what the player sees: two young men with fair hair in white
-  /// tunics, each raising a red flag beside the trial (its render)
-  ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG = ACTOR_FIRST_PLACED + 11,
+  /// tunics beside the trial, who raise a flag at its end (its render)
+  ACTOR_FIRST_FLAG_BEARER = ACTOR_FIRST_PLACED + 11,
   /// A capped pillar (SPRITE_CAPPED_PILLAR) the clearing warrior heaves up and
   /// drops.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
   ACTOR_TRIAL_PILLAR = ACTOR_FIRST_PLACED + 13
+};
+
+/// The flag bearers' animations (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, spr_165.tsv).
+enum FlagBearerAnimation {
+  FLAG_BEARER_ANIM_RED_FLAG = 5,  ///< raises a red flag: the warrior failed
+  FLAG_BEARER_ANIM_WHITE_FLAG = 6 ///< raises a white flag: he cleared it
 };
 
 /// The four soldiers of gColosseumOfficialsPlacements (SPRITE_SOLDIER),
@@ -541,6 +540,8 @@ static void Event_TalkToAzart(void) {
   ColosseumEntrance_ShowMessageAndPause(ACTOR_AZART);
   Engine_ActorRunRepeatedMotion(ACTOR_AZART, 1);
   Engine_EventShowMessage(ACTOR_AZART, 0);
+  // Give his wander back its home, where he is placed: ACTOR_WANDER reads
+  // timer and work as homeX and homeZ (ScriptObjectRuntime), in pixels.
   {
     u16 *timer = (u16 *)&contestant->timer;
     u16 duration = 720;
@@ -1116,9 +1117,9 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
   actor = Object_GetById(ACTOR_TRIAL_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG);
+  actor = Object_GetById(ACTOR_FIRST_FLAG_BEARER);
   actor->scaleX = -Q16_ONE;
-  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1);
+  actor = Object_GetById(ACTOR_FIRST_FLAG_BEARER + 1);
   actor->scaleX = -Q16_ONE;
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1185,8 +1186,9 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_FAILING_WARRIOR, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG, 5);
-  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_FLAG_BEARER, FLAG_BEARER_ANIM_RED_FLAG);
+  Engine_ActorSetAnimation(ACTOR_FIRST_FLAG_BEARER + 1,
+                           FLAG_BEARER_ANIM_RED_FLAG);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_FAILING_WARRIOR, facing, 20);
   Engine_ActorSetAnimation(ACTOR_FAILING_WARRIOR, 8);
@@ -1202,9 +1204,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetSpeed(ACTOR_FAILING_WARRIOR, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 916);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 890);
-  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG, ANIM_STAND);
-  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1,
-                           ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_FLAG_BEARER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_FLAG_BEARER + 1, ANIM_STAND);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 863);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 796);
   Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
@@ -1269,9 +1270,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
   actor = Object_GetById(ACTOR_TRIAL_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG);
+  actor = Object_GetById(ACTOR_FIRST_FLAG_BEARER);
   actor->scaleX = -Q16_ONE;
-  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1);
+  actor = Object_GetById(ACTOR_FIRST_FLAG_BEARER + 1);
   actor->scaleX = -Q16_ONE;
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1338,8 +1339,10 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
     trialEffect->y.fixed += -PIXELS(3) / 10;
     Engine_TaskWait(4);
   }
-  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG, 6);
-  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1, 6);
+  Engine_ActorSetAnimation(ACTOR_FIRST_FLAG_BEARER,
+                           FLAG_BEARER_ANIM_WHITE_FLAG);
+  Engine_ActorSetAnimation(ACTOR_FIRST_FLAG_BEARER + 1,
+                           FLAG_BEARER_ANIM_WHITE_FLAG);
   Engine_EventWait(60);
   Actor_SetAttachedEffect(ACTOR_CLEARING_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
@@ -1781,6 +1784,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Engine_EventSetMessage(MsgColosseumPrepareYourselvesContestantsFinalsWill);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FINALS_SOLDIER);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  // Azart's wander home, as in Event_TalkToAzart.
   {
     u16 *timer = (u16 *)&contestant->timer;
     u16 duration = 720;

@@ -27,11 +27,15 @@
 /// every ordinary entrance.
 ///
 /// Every room but the two lit ones is dark (FLAG_DARK): BG1 is blended over
-/// the rest (ALTMILLER_CAVE_DARKNESS_BLEND), leaving the light around the
-/// party. AltmillerCaveEntrance darkens by steps instead
+/// the rest (ALTMILLER_CAVE_DARKNESS_BLEND), and the light around the party is
+/// a display window, an ellipse around the leader inside which the layers are
+/// drawn differently (AltmillerCave_InitializeDarkness). In an evenly dark
+/// room BG1 covers everything outside it and is only blended inside it.
+/// AltmillerCaveEntrance darkens by steps instead
 /// (FLAG_DARKNESS_BY_STEPS): touch cells 60 to 65 each set a level, kept in
 /// gSceneState byte 4, from the lightest at the mouth to the darkest by the
-/// inner chamber. Reveal lights a dark room while it lasts and shows the
+/// inner chamber, and blends outside the light while BG1 is left out inside
+/// it. Reveal lights a dark room while it lasts and shows the
 /// rocks' colours (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
 ///
 /// The rock puzzle keeps the rounds matched in gSceneState byte 0 and its
@@ -44,12 +48,6 @@
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 ///
 /// Open questions:
-/// - XXX: what the window values the darkness puts in gDisplayTransition mean
-///   (mask 0x1d1d and active 0x3f by steps, 0x3f3f and 31 otherwise), and
-///   DisplayTransition_InitializeBattleEffectState's mode 0x4d; the window
-///   modes of DisplayTransition_UpdateScanlineTable would settle them.
-/// - XXX: struct LightWheel's unk04, which nothing in the overlay reads; a
-///   watch on the wheel while it spins would settle whether anything does.
 /// - XXX (picture): AltmillerCaveEntrance's darkness taken apart, BG1's blend
 ///   weight shown at each of the six levels beside the touch cells that set
 ///   them.
@@ -218,6 +216,32 @@ enum {
 /// A dark room's weights, which AltmillerCaveEntrance's levels do not use.
 #define ALTMILLER_CAVE_DARK_ALPHA BLEND_ALPHA(4, 12)
 
+// The light around the party is a window, an ellipse a little taller than
+// wide around the leader (WINDOW_TRANSITION_LEADER_LOW); the transition's
+// progress sets its size, 5 pixels to each side of the leader for each step.
+/// The light's progress: 25 pixels to each side of the leader.
+#define ALTMILLER_CAVE_LIGHT_STEPS 5
+/// The light's progress once Babi is found: wide enough to fill the screen.
+#define ALTMILLER_CAVE_LIGHT_FULL 32
+/// Inside the light where AltmillerCaveEntrance darkens by steps: every layer
+/// but BG1, with no blend, so the party's surroundings show at full
+/// brightness.
+#define ALTMILLER_CAVE_STEPS_LIGHT_WININ                                       \
+  (WININ_WIN0_BG0 | WININ_WIN0_BG2 | WININ_WIN0_BG3 | WININ_WIN0_OBJ |         \
+   WININ_WIN1_BG0 | WININ_WIN1_BG2 | WININ_WIN1_BG3 | WININ_WIN1_OBJ)
+/// Outside that light: everything, blended to the step's darkness.
+#define ALTMILLER_CAVE_STEPS_LIGHT_WINOUT WINOUT_WIN01_ALL
+/// Inside the light of an evenly dark room: everything, blended at
+/// ALTMILLER_CAVE_DARK_ALPHA.
+#define ALTMILLER_CAVE_DARK_LIGHT_WININ (WININ_WIN0_ALL | WININ_WIN1_ALL)
+/// Outside it: every layer with no blend, so BG1 covers the room.
+#define ALTMILLER_CAVE_DARK_LIGHT_WINOUT                                       \
+  (WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 | \
+   WINOUT_WIN01_OBJ)
+/// Outside the light once Babi is found: everything, blended, so the whole
+/// room brightens as BG1 fades.
+#define ALTMILLER_CAVE_BRIGHTENING_WINOUT (WINOUT_WIN01_ALL | WINOUT_WINOBJ_ALL)
+
 /// The puddle's animation once Frost has frozen it.
 enum { PUDDLE_ANIM_FROZEN = 5 };
 
@@ -229,7 +253,7 @@ static void AltmillerCave_ReleaseWallBurst(void);
 struct LightWheel {
   s16 phase;
   s16 ticks;
-  s16 unk04;
+  s16 unk04; ///< never read or written
   u16 angle;
   u16 speed;
   /// How far the ring has turned since its last click.
@@ -389,7 +413,7 @@ static void AltmillerCave_InitializeDarkness(void) {
     work->transitionFrames = 24;
   }
   Engine_TaskWait(1);
-  DisplayTransition_InitializeBattleEffectState(0x4d);
+  DisplayTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
   // UB: the fourth following pointer cell lies past scalar gEventWork.
   // Its named load adds eight bytes in the native EN trial (0x98 to 0xa0).
 #ifdef UBFIX
@@ -399,18 +423,18 @@ static void AltmillerCave_InitializeDarkness(void) {
 #endif
   {
     u16 *slot = &transition->value;
-    s32 value = 5;
+    s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
     *slot = value;
   }
   if (Engine_GameFlagIsSet(FLAG_DARKNESS_BY_STEPS) != 0) {
     {
       s16 *slot = &transition->mask;
-      s32 value = 0x1d1d;
+      s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
       *slot = value;
     }
     {
       s16 *slot = &transition->active;
-      s32 value = 0x3f;
+      s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WINOUT;
       *slot = value;
     }
     AltmillerCave_ApplyFadeBlend();
@@ -418,12 +442,12 @@ static void AltmillerCave_InitializeDarkness(void) {
   }
   {
     s16 *slot = &transition->mask;
-    s32 value = 0x3f3f;
+    s32 value = ALTMILLER_CAVE_DARK_LIGHT_WININ;
     *slot = value;
   }
   {
     s16 *slot = &transition->active;
-    s32 value = 31;
+    s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
     *slot = value;
   }
   {
@@ -1176,11 +1200,12 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_OpenMessage(ACTOR_BABI, 0);
   Engine_EventSetMessage(MsgAltmillerBabi);
   Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0);
-  // The cave brightens as two men from Tolbi arrive: "Babi!"
+  // The cave brightens as two men from Tolbi arrive: "Babi!" The light
+  // widens to fill the screen and BG1 fades out.
   display = gDisplayTransition;
   {
     u16 *slot = &display->value;
-    s32 value = 32;
+    s32 value = ALTMILLER_CAVE_LIGHT_FULL;
 
     *slot = value;
   }
@@ -1195,7 +1220,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   {
     u16 *slot = (u16 *)&display->active;
-    s32 value = 0x3f3f;
+    s32 value = ALTMILLER_CAVE_BRIGHTENING_WINOUT;
 
     *slot = value;
   }
@@ -1495,6 +1520,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_SetPosition(ACTOR_FIRST_SOLDIER, 0, 0);
   Actor_SetPosition(ACTOR_SECOND_SOLDIER, 0, 0);
   Engine_EventWait(20);
+  // With Babi gone the darkness returns: BG1 fades back in, then the light
+  // shrinks around the party again.
   for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
     {
       s32 control = ALTMILLER_CAVE_DARKNESS_BLEND;
@@ -1506,13 +1533,13 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   {
     u16 *slot = &display->value;
-    s32 value = 5;
+    s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
 
     *slot = value;
   }
   {
     u16 *slot = (u16 *)&display->active;
-    s32 value = 31;
+    s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
 
     *slot = value;
   }

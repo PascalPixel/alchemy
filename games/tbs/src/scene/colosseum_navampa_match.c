@@ -42,15 +42,11 @@
 /// finals.
 ///
 /// Open questions:
-/// - XXX: what ColosseumNavampaMatch_UnusedCompetitorTalk's messages were
-///   meant to be; its lines, three apart from MsgColossoDidntThinkBattles, are
-///   a spectator's thought and the stage announcements, so the Japanese catalog
-///   at those numbers would settle whether they ever fitted.
-/// - XXX: what the leader's animations show: 35 as he falls asleep after the
-///   last match, and 10, 12, 14 and 15 as he climbs in the Free-Climb Area's
-///   demonstration; recordings of the two would settle it.
-/// - XXX: whether anything sets FLAG_SCENE_TEMP_10, the condition of the
-///   arena's touch row; colosseum_azart_match.c asks the same.
+/// - XXX (no evidence): what ColosseumNavampaMatch_UnusedCompetitorTalk's
+///   messages were meant to be; the Japanese and English catalogs hold the
+///   same run after MsgColossoDidntThinkBattles (spectators' lines, the inn's
+///   `Inn Full` sign, the stage announcements), so neither shipped the lines
+///   it was written for.
 /// - XXX (picture): the Scales of Justice, the western pan sinking under a
 ///   rider or SCALE_WEIGHT as the eastern pan rises.
 
@@ -814,9 +810,10 @@ UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 /// Nothing calls it. Arriving at COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH
 /// it would ask a yes or no question and, on yes, make the character it names
 /// the one the player moves alone, as the friends' turns do. XXX: likely its
-/// message numbers date from an earlier catalog, because the lines three apart
-/// per character from MsgColossoDidntThinkBattles are a spectator's thought
-/// and the stage announcements, not this question.
+/// message numbers date from a catalog older than the Japanese release,
+/// because in it, as in the English one, the lines three apart per character
+/// from MsgColossoDidntThinkBattles are a spectator's thought and the stage
+/// announcements, not this question.
 UNUSED static void
 ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
   struct EventWork *work;
@@ -854,8 +851,8 @@ ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
 /// Reaching Colosseum Final 3's arena: the leader takes a prize (the Claymore
 /// if first, the Hunter's Sword if second), and he and Navampa face off and
 /// fight; the battle's group follows who took the Claymore.
-/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, and nothing
-/// here sets it.
+/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, which
+/// nothing in the game sets (colosseum_azart_match.c's Event_ReachArena).
 static void Event_ReachArena(void) {
   s32 place;
   s32 i;
@@ -884,8 +881,8 @@ static void Event_ReachArena(void) {
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
   Actor_WalkToAndWait(OPPONENT, 1520, 192);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
-  Engine_ActorSetAnimation(OPPONENT, 9);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LUNGE);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
@@ -1076,7 +1073,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   actor = Object_GetById(SCALE_PAN_EAST);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  Engine_ActorSetAnimation(OPPONENT, 9);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(PRIZE_B, ITEM_HUNTERS_SWORD);
@@ -1228,9 +1225,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventBegin();
   Actor_SetPosition(OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
-    Engine_ActorSetAnimation(OPPONENT, 10);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_ARMS_RAISED);
   } else {
-    Engine_ActorSetAnimation(OPPONENT, 8);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_DEFEATED);
   }
   Actor_SetActionScript(OPPONENT, gColosseumNavampaMatch_OpponentAfterBattle);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1504), PIXELS(192));
@@ -1242,7 +1239,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   }
   Actor_SetActionScript(ACTOR_PARTY_LEADER,
                         gColosseumNavampaMatch_LeaderActionA);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
@@ -1710,22 +1707,22 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       y = actor->y.fixed;
       x = actor->x.fixed;
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
       raisedHeight = PIXELS(6) + y;
       Engine_ObjectSetPosition(actor, x, raisedHeight, actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 14);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_EAST);
       shiftedX = PIXELS(64) + x;
       Engine_ObjectSetPosition(actor, shiftedX, raisedHeight, actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
       Engine_ObjectSetPosition(actor, shiftedX, y + PIXELS(54), actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 15);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_WEST);
       Engine_ObjectSetPosition(actor, x + PIXELS(48), y + PIXELS(54),
                                actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 12);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLING);
       Event_ShowMessage(guideId, 0);
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);

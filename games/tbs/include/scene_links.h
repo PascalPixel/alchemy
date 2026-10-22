@@ -2558,11 +2558,11 @@ enum {
 /// SceneId_AltinPeakSouthEntrance's entrances.
 enum {
   ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN = 1,
-  ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_POOL =
+  ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER =
       2, ///< ★ Named from what the player sees: the long rail tunnel that the
          ///< doorway from Altin opens into (its render)
   ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL = 3,
-  ALTIN_PEAK_SOUTH_ENTRANCE_POOL_FROM_TUNNEL =
+  ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_FROM_TUNNEL =
       4, ///< ★ Named from what the player sees: the chamber off the tunnel that
          ///< is filled with water until the second drain (its render)
   ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL = 5,
@@ -2572,13 +2572,13 @@ enum {
 /// SceneId_AltinPeakSouthEntrance's exits.
 enum {
   ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN = 1,
-  ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_POOL =
+  ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER =
       2, ///< ★ Named from what the player sees: the chamber off the tunnel that
          ///< is filled with water until the second drain (its render)
   ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL =
       3, ///< ★ Named from what the player sees: the long rail tunnel that the
          ///< doorway from Altin opens into (its render)
-  ALTIN_PEAK_SOUTH_ENTRANCE_POOL_TO_TUNNEL =
+  ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL =
       4, ///< ★ Named from what the player sees: the long rail tunnel that the
          ///< doorway from Altin opens into (its render)
   ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL =

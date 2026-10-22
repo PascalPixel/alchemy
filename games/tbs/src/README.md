@@ -24,6 +24,9 @@ names, so every name here is ours, chosen for what the folder holds.
 
 ## Banks and folders
 
+Each folder of code follows a bank of the main image, and the small banks'
+code sits in the folder it belongs with.
+
 `main.ld` lays the main image out in fourteen banks, each starting at an
 address fixed per edition and opening with a far-call table
 ([Engine](../engine.md) explains why). The nine large banks each have a
@@ -51,8 +54,19 @@ overlays.
 
 ## Objects and parts
 
-Every file the build compiles or assembles is one object.
-[`objects.tsv`](../objects.tsv) lists them in link order, with the image
+Every file the build compiles or assembles is one object, and an object too
+long to read as one file is written as parts that only its `.c` compiles.
+
+```mermaid
+flowchart LR
+    tsv["objects.tsv:<br/>every object in link order"] --> ld["main.ld:<br/>each bank's start per edition"]
+    c["battle/battle.c"] -->|"#include"| h["battle_internal.h"]
+    c -->|"#include, in ROM order"| parts["battle/battle/*.c"]
+    c --> obj["one object"]
+    obj --> tsv
+```
+
+[`objects.tsv`](../objects.tsv) lists the objects in link order, with the image
 each belongs to (`main`, or an overlay's resource number), the place in
 that image (`rom_main_07` is the battle bank) and its sections, and
 [`main.ld`](../main.ld) gives each bank its start in each edition. Within
@@ -66,6 +80,114 @@ The guide comment at the top of such a `.c` says where each family starts,
 and each part's first line says what it holds, so the tops of a folder's
 files read as its table of contents. The parts are ours, not Camelot's
 files.
+
+| File | What it says |
+| --- | --- |
+| `games/tbs/objects.tsv` | every object in link order, its image, its place and its sections |
+| `games/tbs/main.ld` | each bank's start in each edition |
+| `<object>.c` | the guide comment: where each family of its parts starts |
+| `<object>_internal.h` | what the parts share; places no bytes |
+| `<object>/*.c` | the parts, each opening with what it holds |
+
+## Overlays
+
+The 201 scenes of the scene table share 96 overlays, unpacked one at a time
+into the overlay area when a scene loads.
+
+The scene table, `gField_SceneTable` in [field/scenes.s](field/scenes.s),
+has 201 scenes, and they share 96 overlays: 90 under `scene/`, three under
+`menu/` and three under `debug/`. `Scene_LoadOverlay`
+([object/object/scene.c](object/object/scene.c)) unpacks the overlay a
+scene's row names before `Field_RunScene` runs it; a battle or a minigame is
+main-image code and loads none. [Engine](../engine.md) describes how an
+overlay meets the main image.
+
+Each overlay is three files in its folder:
+
+- `entry/<place>.s`, the entry table: six stubs, written with
+  `overlay_veneer`, that the field code calls to start the scene and to get
+  its entrances, exits, placements, events and regions.
+- `<place>.c`, the scene's code and tables.
+- `import/<place>.s`, the import table: the stubs the overlay calls the main
+  image through, chosen from the list in `system/overlay.inc`.
+
+Only one overlay is loaded at a time, so code several places use is in
+headers under `scene/common/`, and each scene that includes one compiles its
+own copy. [System](system/README.md) describes the stubs and how an overlay
+is packed.
+
+| Folder | Overlays |
+| --- | --- |
+| `scene/` | 90 |
+| `menu/` | 3: the title, the file select screen and the Battle Arena's lobby |
+| `debug/` | 3: the test rooms |
+
+## Headers
+
+The shared headers hold what the whole game uses, and `include/unit` mirrors
+this folder with one header for each compiled C file.
+
+[`../include`](../include) holds what the whole game shares: types and
+structures, the flags in `flags.h`, the songs and sound effects in
+`songs.h`, and the commands scenes are written in, in `event.h`. The
+`Makefile` puts `include` and its folders `battle`, `field`, `game`,
+`graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
+includes those headers by name alone.
+
+[`../include/unit`](../include/unit) mirrors this folder: each compiled C
+file has a header at the same path under `unit` that declares what it
+defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/scene/` has one
+for each place). [`../include/farcall`](../include/farcall) has a header for
+each bank with its `Far` names. An object written as parts keeps its private
+header beside it.
+
+| Header | What it holds |
+| --- | --- |
+| `include/flags.h` | the game flags |
+| `include/songs.h` | the songs and sound effects |
+| `include/event.h` | the commands scenes are written in |
+| `include/unit/<path>.h` | what the C file at `<path>.c` defines |
+| `include/farcall/` | each bank's `Far` names |
+
+## C and assembly
+
+Nearly all the code is C from one of three compilers; assembly stays only
+where its instructions prove no compiler wrote it, and for the stubs.
+
+In tbs-en, 95% of the bytes of code come from C. alchemy-gcc, a GCC of July
+2000, compiles the game's Thumb C. Three files written for ARM
+(`window/glyph_arm.c`, `field/update.c` and `field/vertices.c`) are compiled
+by GCC 2.95.2, and the sound driver's C and the flash save library by pret's
+`old_agbcc`. `make modern` also builds the C with a current GCC.
+[Matching](MATCHING.md) explains how a build is judged against the
+cartridge and why some of the C is written as it is.
+
+Code stays assembly only where its instructions show that none of those
+compilers wrote it. Each such file states its proof in its `@ C2:` lines: a
+branch on a shift's carry (`runtime/trig.s`,
+`system/resource/decode_byte_lz.s`), a load into `pc` from a table the code
+rewrites (`graphics/tile/decode.s`), a switch from Thumb to ARM inside a
+routine (`sound/mixer.s`), a write to the processor's mode
+(`system/entry.s`). This handwritten code is about 16 KB, mostly decoders,
+the sound mixing and the routines copied into IWRAM. The few handwritten
+helpers inside the C are each marked `CAMELOT_ASM` with their proof.
+
+The rest of the assembly, about 50 KB, is stubs: the 8-byte entries of the
+far-call tables in `system/far_call/` (`.S` files, which the C preprocessor
+reads first) and of every overlay's entry and import tables. The compiler's
+library routines come from libgcc, built from alchemy-gcc's sources; two
+overlays use its double-precision arithmetic.
+
+Most `.s` files place data, not code: a picture built from the PNG beside it,
+a table from its `.tsv`, or a map, under the name the code uses.
+
+| Code | Compiler | Where |
+| --- | --- | --- |
+| the game's Thumb C | alchemy-gcc, a GCC of July 2000 | everywhere else |
+| ARM C | GCC 2.95.2 | `window/glyph_arm.c`, `field/update.c`, `field/vertices.c` |
+| the sound driver's C, the flash library | pret's `old_agbcc` | `sound/`, `system/save/` |
+| handwritten assembly, about 16 KB | | decoders, sound mixing, IWRAM routines |
+| stubs, about 50 KB | | `system/far_call/`, each overlay's entry and import tables |
 
 ## Folders
 
@@ -107,75 +229,6 @@ the credits and the handwritten decoders. [Sound](sound/README.md) holds the
 cue layer and Nintendo's MusicPlayer2000 driver; the songs and samples are
 in [`../sound`](../sound). [Debug rooms](debug/README.md) holds the three
 test scenes the ROM keeps.
-
-## Overlays
-
-The scene table, `gField_SceneTable` in [field/scenes.s](field/scenes.s),
-has 201 scenes, and they share 96 overlays: 90 under `scene/`, three under
-`menu/` and three under `debug/`. `Scene_LoadOverlay`
-([object/object/scene.c](object/object/scene.c)) unpacks the overlay a
-scene's row names before `Field_RunScene` runs it; a battle or a minigame is
-main-image code and loads none. [Engine](../engine.md) describes how an
-overlay meets the main image.
-
-Each overlay is three files in its folder:
-
-- `entry/<place>.s`, the entry table: six stubs, written with
-  `overlay_veneer`, that the field code calls to start the scene and to get
-  its entrances, exits, placements, events and regions.
-- `<place>.c`, the scene's code and tables.
-- `import/<place>.s`, the import table: the stubs the overlay calls the main
-  image through, chosen from the list in `system/overlay.inc`.
-
-Only one overlay is loaded at a time, so code several places use is in
-headers under `scene/common/`, and each scene that includes one compiles its
-own copy. [System](system/README.md) describes the stubs and how an overlay
-is packed.
-
-## Headers
-
-[`../include`](../include) holds what the whole game shares: types and
-structures, the flags in `flags.h`, the songs and sound effects in
-`songs.h`, and the commands scenes are written in, in `event.h`. The
-`Makefile` puts `include` and its folders `battle`, `field`, `game`,
-`graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
-includes those headers by name alone.
-
-[`../include/unit`](../include/unit) mirrors this folder: each compiled C
-file has a header at the same path under `unit` that declares what it
-defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/scene/` has one
-for each place). [`../include/farcall`](../include/farcall) has a header for
-each bank with its `Far` names. An object written as parts keeps its private
-header beside it.
-
-## C and assembly
-
-In tbs-en, 95% of the bytes of code come from C. alchemy-gcc, a GCC of July
-2000, compiles the game's Thumb C. Three files written for ARM
-(`window/glyph_arm.c`, `field/update.c` and `field/vertices.c`) are compiled
-by GCC 2.95.2, and the sound driver's C and the flash save library by pret's
-`old_agbcc`. `make modern` also builds the C with a current GCC.
-[Matching](MATCHING.md) explains how a build is judged against the
-cartridge and why some of the C is written as it is.
-
-Code stays assembly only where its instructions show that none of those
-compilers wrote it. Each such file states its proof in its `@ C2:` lines: a
-branch on a shift's carry (`runtime/trig.s`,
-`system/resource/decode_byte_lz.s`), a load into `pc` from a table the code
-rewrites (`graphics/tile/decode.s`), a switch from Thumb to ARM inside a
-routine (`sound/mixer.s`), a write to the processor's mode
-(`system/entry.s`). This handwritten code is about 16 KB, mostly decoders,
-the sound mixing and the routines copied into IWRAM. The few handwritten
-helpers inside the C are each marked `CAMELOT_ASM` with their proof.
-
-The rest of the assembly, about 50 KB, is stubs: the 8-byte entries of the
-far-call tables in `system/far_call/` (`.S` files, which the C preprocessor
-reads first) and of every overlay's entry and import tables. The compiler's
-library routines come from libgcc, built from alchemy-gcc's sources; two
-overlays use its double-precision arithmetic.
-
-Most `.s` files place data, not code: a picture built from the PNG beside it,
-a table from its `.tsv`, or a map, under the name the code uses.
 
 ## Where to start reading
 

@@ -90,6 +90,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round floating platform (its
   /// render)
   SPRITE_FLOATING_PLATFORM = 0xf2,
+  /// The lit beacon of Mercury Lighthouse.
+  /// ★ Named from what the player sees: a swirling blue ball of light
+  /// (spr_244.png)
+  SPRITE_MERCURY_BEACON = 0xf4,
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH = 0xf6,

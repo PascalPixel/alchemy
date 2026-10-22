@@ -480,7 +480,7 @@ enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE = 2,
   SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 3, ///< no exit leads here
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED = 4,
-  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG = 5,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED = 5,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN = 6,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_UNUSED = 7,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION = 8,
@@ -492,7 +492,7 @@ enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED =
       3, ///< ★ Named from what the player sees: the quarter's light flashing
          ///< ever faster around Kraden once the trap is disarmed (its render)
-  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_SPRUNG =
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED =
       4, ///< ★ Named from the game: "Stop!!! You're about to make a big
          ///< mistake!" (MsgSolSanctumWhatsHappening)
   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN =
@@ -509,7 +509,7 @@ enum {
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 1,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE = 2,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED = 3,
-  SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG = 4,
+  SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED = 4,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN = 5,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 6,
 };
@@ -520,7 +520,7 @@ enum {
   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED =
       3, ///< ★ Named from what the player sees: Kraden explaining that the
          ///< centre statue disarmed the trap (its render)
-  SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG =
+  SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED =
       4, ///< ★ Named from the game: "Stop!!! You're about to make a big
          ///< mistake!" (MsgSolSanctumWhatsHappening)
   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN =
@@ -564,40 +564,40 @@ enum {
 /// SceneId_SolSanctumReliefs's entrances.
 enum {
   SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST = 1,
-  SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM =
       2, ///< ★ Named from what the player sees: the room of three passages
          ///< above a stepping-stone pool, one passage ending at a chest (its
          ///< render)
-  SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM =
       3, ///< ★ Named from what the player sees: the narrow dead end with a
          ///< statue at its head (its render)
-  SOL_SANCTUM_RELIEFS_POOL_ROOM_FROM_ENTRANCE_HALL =
+  SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_FROM_ENTRANCE_ROOM =
       4, ///< ★ Named from what the player sees: the room off the entrance hall
          ///< with a pool crossed on stepping stones (its render)
   SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST = 5,
-  SOL_SANCTUM_RELIEFS_STAIRWAY_ROOM_FROM_FIRST_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_STEPS_ROOM_FROM_FIRST_RELIEF_ROOM =
       6, ///< ★ Named from what the player sees: the narrow room whose doorway
          ///< has stairs leading on into the sanctum (its render)
   SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_WEST = 7,
   SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE = 8,
-  SOL_SANCTUM_RELIEFS_ENTRANCE_HALL_FROM_POOL_ROOM =
+  SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_FROM_STEPPING_STONE_ROOM =
       9, ///< ★ Named from what the player sees: the room inside Sol Sanctum's
          ///< door, where the party first comes in from the mountainside (its
          ///< render)
-  SOL_SANCTUM_RELIEFS_LOOP_CORRIDOR_FROM_SECOND_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_FROM_SECOND_RELIEF_ROOM =
       10, ///< ★ Named from what the player sees: the passage that runs in a
           ///< loop round a block of wall (its render)
-  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_CHEST_ROOM =
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM =
       11, ///< ★ Named from the game: "It's a relief"
           ///< (MsgSolSanctumMinotaurReliefOneEye)
-  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_STATUE_NOOK =
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK =
       12, ///< ★ Named from the game: "It's a relief"
           ///< (MsgSolSanctumMinotaurReliefOneEye)
-  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_STAIRWAY_ROOM =
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM =
       13, ///< ★ Named from the game: "It's a relief"
           ///< (MsgSolSanctumMinotaurReliefOneEye)
   SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST = 14,
-  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_HALL_FROM_LOOP_CORRIDOR =
+  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE =
       15, ///< ★ Named from the game: "It's a relief"
           ///< (MsgSolSanctumMinotaurReliefOneEye)
   SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
@@ -605,40 +605,40 @@ enum {
 /// SceneId_SolSanctumReliefs's exits.
 enum {
   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST = 1,
-  SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM =
       2, ///< ★ Named from the game: "It's a relief"
          ///< (MsgSolSanctumMinotaurReliefOneEye)
-  SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM =
       3, ///< ★ Named from the game: "It's a relief"
          ///< (MsgSolSanctumMinotaurReliefOneEye)
-  SOL_SANCTUM_RELIEFS_POOL_ROOM_TO_ENTRANCE_HALL =
+  SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM =
       4, ///< ★ Named from what the player sees: the room inside Sol Sanctum's
          ///< door, where the party first comes in from the mountainside (its
          ///< render)
   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST = 5,
-  SOL_SANCTUM_RELIEFS_STAIRWAY_ROOM_TO_FIRST_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM =
       6, ///< ★ Named from the game: "It's a relief"
          ///< (MsgSolSanctumMinotaurReliefOneEye)
   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST = 7,
   SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE = 8,
-  SOL_SANCTUM_RELIEFS_ENTRANCE_HALL_TO_POOL_ROOM =
+  SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM =
       9, ///< ★ Named from what the player sees: the room off the entrance hall
          ///< with a pool crossed on stepping stones (its render)
-  SOL_SANCTUM_RELIEFS_LOOP_CORRIDOR_TO_SECOND_RELIEF_HALL =
+  SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM =
       10, ///< ★ Named from the game: "It's a relief"
           ///< (MsgSolSanctumMinotaurReliefOneEye)
-  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_CHEST_ROOM =
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM =
       11, ///< ★ Named from what the player sees: the room of three passages
           ///< above a stepping-stone pool, one passage ending at a chest (its
           ///< render)
-  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_STATUE_NOOK =
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK =
       12, ///< ★ Named from what the player sees: the narrow dead end with a
           ///< statue at its head (its render)
-  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_STAIRWAY_ROOM =
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM =
       13, ///< ★ Named from what the player sees: the narrow room whose doorway
           ///< has stairs leading on into the sanctum (its render)
   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST = 14,
-  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_HALL_TO_LOOP_CORRIDOR =
+  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE =
       15, ///< ★ Named from what the player sees: the passage that runs in a
           ///< loop round a block of wall (its render)
   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,

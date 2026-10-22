@@ -1621,7 +1621,7 @@ static void Event_MeetFlint(void) {
     FieldFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 6);
     Event_WaitForZoomTransition();
     WorldMap_BeginEvent();
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->gravity = PIXELS(1) / 4;
     djinni->speed = PIXELS(1);
     djinni->acceleration = PIXELS(1);
@@ -1680,7 +1680,7 @@ static void Event_MeetFlint(void) {
     }
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
     for (i = 7; i >= 0; i--) {
@@ -2610,7 +2610,7 @@ static void WorldMap_CatchInStorm(s32 targetActor) {
                              actor->z.fixed);
     Engine_ActorWaitForMove(id);
     actor->velocityY = alreadyTraveling;
-    actor->motionFlags = 4;
+    actor->motionFlags = ACTOR_FLOATS;
     gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_SCENE_TEMP_F0);
     FieldGameFlag_SetByte(FLAG_SCENE_TEMP_F8, 180);
@@ -2650,7 +2650,7 @@ static void Event_DouseMapStorm(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
   selectedActor = Object_GetById(gGameState.selectedActor);
-  selectedActor->motionFlags = 2;
+  selectedActor->motionFlags = ACTOR_FALLS;
 }
 
 /// The storm drops the party outside Suhalla when its time in the air runs out.

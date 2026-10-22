@@ -821,7 +821,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Actor_SetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
-    leader->motionFlags = 3;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->update = 0;
     FieldFx_PlayQueuedSound();
     Engine_EventEnd();
@@ -862,7 +862,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
   Event_PlayCue(SE_204);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(24);
   options.palette = 7;
   options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
@@ -1495,7 +1495,7 @@ static void Event_StepOnFloorSwitch(void) {
     Map_CopyCellsTo(53, 50, 42, 49, 1, 1);
     Map_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_SCENE_TEMP_01);
-    leader->motionFlags |= 1;
+    leader->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
     leader->terrainHeight = 0;
     leader->y.fixed = 0;
   } else if (!GameFlag_IsSet(FLAG_SCENE_TEMP_01)) {
@@ -1505,7 +1505,7 @@ static void Event_StepOnFloorSwitch(void) {
     Map_CopyCellsTo(52, 117, 41, 117, 3, 5);
     GameFlag_Set(FLAG_SCENE_TEMP_01);
     Engine_AudioPlayCue(SE_161);
-    leader->motionFlags &= ~1;
+    leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
     leader->terrainHeight = -PIXELS(2);
     leader->y.fixed = -PIXELS(2);
     Engine_EventEnd();
@@ -1592,7 +1592,7 @@ static void Event_FallThroughFloor(void) {
                          VENUS_DESCENT_COLLISION_WIDTH, 1,
                          VENUS_DESCENT_COLLISION_X, 34);
 #if TBS_PATCH_3
-  *motionFlags = 3;
+  *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 #endif
   OverlayObject_WaitUntilIdle(0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1874,7 +1874,7 @@ static void Event_MoveGatePillar(void) {
         pillarActor = Object_GetById(ACTOR_GATE_PILLAR);
         Engine_ActorSetSpriteFlags(pillarActor, 0);
         pillar->terrainId = gateOpened;
-        pillar->motionFlags = 3;
+        pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         pillar->gravity = PIXELS(1) / 10;
         pillar->bounce = gateOpened;
         Map_CopyCellAttributes(43, 45, 1, 1, column, row);
@@ -1990,7 +1990,7 @@ static void Event_MoveSwitchPillar(void) {
     }
     Engine_ActorSetSpriteFlags(Object_GetById(pillarId), 0);
     pillar->terrainId = 0;
-    pillar->motionFlags = 3;
+    pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     pillar->bounce = 0;
     pillar->gravity = PIXELS(1) / 10;
     Map_CopyCellAttributes(42, 41, 1, 1, gVenusThirdFloorSockets[switchIndex].x,
@@ -2528,7 +2528,7 @@ static void Event_MoveSocketPillar(void) {
     Actor_SetSpriteFlags(Object_GetById(pillarId), 0);
     pillar->terrainId = 0;
     motionFlags = &pillar->motionFlags;
-    *motionFlags = 3;
+    *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     ((union FieldObject *)pillar)->effect.velocity.y = PIXELS(1) / 10;
     ((union FieldObject *)pillar)->effect.velocity.x = 0;
     Map_CopyCellAttributes(6, 44, 1, 1, gVenusFourthFloorSockets[switchIndex].x,
@@ -3117,7 +3117,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_EAST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_SOUTH:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING:
-      Object_GetById(ACTOR_RISING_PLATFORM)->motionFlags = 4;
+      Object_GetById(ACTOR_RISING_PLATFORM)->motionFlags = ACTOR_FLOATS;
       Object_GetById(ACTOR_RISING_PLATFORM)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
       Object_GetById(ACTOR_RISING_PLATFORM)->y.fixed = -(PIXELS(33) / 2);

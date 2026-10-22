@@ -1,50 +1,36 @@
 # Sound
 
-```mermaid
-flowchart LR
-    game["Game code"] -->|"AudioCommand_Play(cue)"| cue["Cue layer<br/>sound.c"]
-    vblank["System_VBlankHandler,<br/>once a frame"] -->|"steps the music's ramps"| cue
-    vblank -->|"SoundDriver_EnterMixer"| mixer["Mixer frame,<br/>resident in IWRAM"]
-    subgraph players["Eight players"]
-        direction LR
-        fanfare["0: fanfare, cues 80 to 99"]
-        music["1: music, cues below 80"]
-        others["2 to 7: song table rows, cues 100 up"]
-    end
-    cue -->|"starts the cue's song"| players
-    mixer -->|"ticks each player's tracks"| players
-    players -->|"notes"| pcm["PCM channels,<br/>mixed in software"]
-    players -->|"notes"| cgb["Four CGB channels"]
-```
+![The sound driver's eight players, each able to play one song at a time. Player 0 plays fanfares, such as the one for finding treasure, with four tracks. Player 1 plays the music, with ten tracks. Player 2 plays the menus' sounds: confirm, cancel, error and buying. Player 3 plays the sounds of actions in the field and in battle: casting, impacts, doors opening. Players 4 to 7 share the other sound effects: most take the first free player counting down from 7, and when none is free they cut off whatever player 7 was playing. Because each kind has its own players, a sound effect never stops the music.](https://alchemy.pascalpixel.com/illustrations/sound/players.svg)
 
-Every sound in ☀️ is played through one call, `AudioCommand_Play`, with a
-number, a cue. The game's cue layer (`sound.c`) decides what each number
-means, steps the music's volume, tempo and pitch towards their targets, and
-brings the music back after a fanfare. Under it is the driver that plays
-songs on the hardware: Nintendo's MusicPlayer2000, as this game links it.
-The two meet once a frame in the VBlank handler, which steps the music's
-ramps and then enters the mixer ([Runtime](../runtime/README.md)).
+A town's music plays while the cursor clicks through a menu, a door creaks
+open and, when a chest is opened, a short fanfare plays and the music comes
+back by itself once it has finished. All of that is the sound folder's work.
+The game asks for every sound the same way, with one call and a number, the
+cue; the cue layer (`sound.c`) decides what each number means and keeps the
+music, the fanfares and the sound effects out of each other's way. Under it is
+the driver that plays songs on the hardware: Nintendo's MusicPlayer2000, as
+this game links it.
+
+The driver has eight players, each of which plays one song at a time, and
+each kind of sound has players of its own, so a sound effect never stops the
+music. The cue layer and the driver meet once a frame in the VBlank handler,
+which steps the music's volume towards its target and then runs the mixer
+([Runtime](../runtime/README.md#the-frame-loop)).
 
 ## What a cue number means
 
-A cue's range decides whether it is music, a fanfare, a sound from the song
+A cue's number says whether it is music, a fanfare, a sound from the song
 table or a control.
 
-```mermaid
-flowchart TD
-    play["AudioCommand_Play(cue)"] --> mask["keep the low 12 bits"]
-    mask --> fade{{"AUDIO_CUE_FADE_BGM?"}}
-    fade -->|yes| fadeout["fade the music out over 112 frames"]
-    fade -->|no| slot3{{"AUDIO_CUE_FADE_SLOT3?"}}
-    slot3 -->|yes| fade3["fade player 3 out over 48 frames"]
-    slot3 -->|no| song{{"100 or more?"}}
-    song -->|yes| row["start the song table's row<br/>on the player it names"]
-    song -->|no| jingle{{"80 or more?"}}
-    jingle -->|yes| fanfare["silence the music,<br/>play the fanfare on player 0"]
-    jingle -->|no| same{{"AUDIO_CUE_KEEP_BGM, or<br/>the music already chosen?"}}
-    same -->|yes| nothing["do nothing"]
-    same -->|no| music["load the mixer record,<br/>start the music on player 1"]
-```
+![Every sound starts as one call with a cue number, and the number's range decides what it is. Cues below 80 are music, played on the music player; asking for the music already chosen does nothing. Cues from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Cues from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three cues are controls instead of sounds: cue 17 fades the music out, cue 18 keeps the music that is playing, and cue 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
+
+Code anywhere in the game plays a sound by calling `AudioCommand_Play` with a
+cue. The cue's range picks what happens: below 80 it is music, from 80 to 99 a
+fanfare, and from 100 up a row of the song table, which is how sound effects
+play. A few numbers are controls rather than sounds, such as the one that
+fades the music out. Asking for the music that is already chosen does
+nothing, so a scene can name its music every time the party enters without
+restarting it.
 
 Only a cue's low 16 bits count: the low 12 (`AUDIO_CUE_ID_MASK`) are the cue,
 0 to 4,095, and the four above them are flags, of which only
@@ -76,8 +62,7 @@ the music that is playing. `AUDIO_CUE_FADE_SLOT3` fades player 3 out over
 and those rows never play, since the controls are tested first.
 
 A cue for the music already chosen (`gAudioSecondaryState`) does nothing,
-even when that song has ended, so a scene names its music on every entry
-without restarting it.
+even when that song has ended.
 
 `AudioCommand_Play` does all of this, reached from the whole game through
 the sound bank's far-call table as `AudioCommand_PlayFar`. It reads the song
@@ -102,8 +87,17 @@ song's header and its player, and the players, `gSound_PlayerSlots`
 
 ## The fanfare's return to the music
 
-A fanfare silences the music without stopping it, and the cue layer brings
-the music back by itself once the fanfare has ended.
+A fanfare silences the music without stopping it, and the music comes back by
+itself once the fanfare has ended.
+
+![The music's volume over time while a chest is opened. The music plays at full volume. When the treasure fanfare starts on its own player, the music's volume drops to nothing at once, but the music keeps playing silently underneath. When the fanfare ends, the music's volume climbs back to full over 64 frames, about a second, from the point the song has reached. The code that asked for the fanfare does nothing to bring the music back.](https://alchemy.pascalpixel.com/illustrations/sound/fanfare-return.svg)
+
+When the party finds an item, the treasure fanfare plays and the town's music
+falls silent; a moment after the fanfare ends, the music fades back in from
+where it had got to. The music never stopped: only its volume went to zero.
+Once a frame the cue layer checks whether the fanfare has finished and, when
+it has, turns the music back up. The code that played the fanfare does
+nothing more.
 
 `AudioCommand_Play` sets the music's volume to 0, plays the fanfare on the
 fanfare player and sets `gMusicRestoreDelay` to `MUSIC_RESTORE_DELAY_FRAMES`;
@@ -116,8 +110,7 @@ to full. The same routine steps the volume, and the combined tempo and
 pitch, towards their targets by a fixed step each VBlank, and stops on the
 target when a step would cross it. Full volume is `MUSIC_UNITY_SCALE`, 1.0
 in the ramps' 8.8 fixed point, and the usual step `MUSIC_DEFAULT_RAMP_STEP`
-is 4, so a full fade takes 64 frames. The music resumes where it was, fading
-back in, and the code that asked for the fanfare need not track it.
+is 4, so a full fade takes 64 frames.
 
 The ramps are globals of the cue layer: `gMusicVolume`, `gMusicVolumeTarget`
 and `gMusicVolumeStep`, and `gMusicPitch`, `gMusicPitchTarget` and
@@ -137,26 +130,21 @@ their volume and pitch through the ramps and under a fanfare.
 
 ## The driver's lock
 
-One word in the driver's work, `work->lock`, keeps the game's library calls
-and the VBlank's mixer from changing the driver's state at the same time.
+One word in the driver's memory keeps the game's calls and the mixer from
+changing the driver's state at the same time.
 
-```mermaid
-sequenceDiagram
-    participant G as Library call (frame loop)
-    participant W as work->lock
-    participant V as SoundDriver_EnterMixer (VBlank)
-    G->>W: is it SOUND_LOCK? add 1
-    V->>W: is it SOUND_LOCK?
-    W-->>V: no: skip this frame's driver work
-    G->>W: put SOUND_LOCK back
-    V->>W: next VBlank: SOUND_LOCK, so mix
-```
+![Two kinds of code change the sound driver's state: the game's calls, such as starting a song, which run during the frame, and the mixer, which the VBlank interrupt runs once a frame and which can arrive in the middle of a call. They share one lock word. A call takes the lock while it works and gives it back when done. If the VBlank arrives while the lock is taken, the mixer skips that frame's driver work rather than read half-changed state, and at the next VBlank, with the lock free, it works as usual. A call that finds the lock taken does nothing at all: it is dropped, not delayed.](https://alchemy.pascalpixel.com/illustrations/sound/lock.svg)
+
+The game starts and stops songs during the frame, and the mixer runs in the
+blank, which can arrive in the middle of one of those calls. If the mixer read
+the driver while a call was halfway through changing it, it could play
+nonsense. So the two share a lock: a call takes it while it works, and the
+mixer, finding it taken, leaves that frame's driver work for the next one.
 
 The game calls the driver's library (`audio.c`, `engine.c`) from its frame
 loop, and the VBlank handler enters the mixer last of all
-(`SoundDriver_EnterMixer`), so each can interrupt the other. They share one
-word, `work->lock`, the first field of the driver's work, and each player
-has a lock word of its own.
+(`SoundDriver_EnterMixer`). They share one word, `work->lock`, the first field
+of the driver's work, and each player has a lock word of its own.
 
 The word is both a signature and a lock. `SOUND_LOCK`'s four bytes spell
 `Smsh` in memory order. `AudioEngine_Initialize` sets the word to 0 while it
@@ -184,13 +172,19 @@ or held once, as `AudioEngine_SetMode` holds it around a rate change, and
 
 ## The mixer's code is chosen per song
 
-Part of the code that mixes the PCM channels is copied in from one of five
-records each time music starts, so a song chooses how much of each frame's
-mix carries into the next.
+Part of the code that mixes the recorded sounds is swapped each time music
+starts, so a song chooses how much of each frame's sound carries into the
+next.
 
-The PCM channels play recorded samples, which the driver mixes in software
-into the buffers the hardware plays from. Each VBlank,
-`SoundDriver_EnterMixer` jumps into the resident sound code at
+Some of the game's sounds are recordings, samples, which the driver mixes in
+software, a frame's worth at a time, into the buffers the hardware plays
+from. The last step of that mixing decides what the next frame's mix starts
+from, and the game keeps five versions of that step. Starting a piece of
+music copies one of them into place: the title and ending music use one,
+most music another, a link battle a third.
+Each keeps a different share of what has already played.
+
+Each VBlank, `SoundDriver_EnterMixer` jumps into the resident sound code at
 `IwramSoundMixEntry`, which start-up copies to IWRAM with the rest of the
 resident runtime ([System](../system/README.md)).
 
@@ -214,6 +208,16 @@ touch it.
 | 2 | most music, the link lobby | a quarter of the mix and an eighth of each buffer's old samples |
 | 3 | `MUS_ENDING`, `MUS_TITLE`, `MUS_ENDING_LOGO` | an eighth of the mix and a quarter of the old samples |
 | 4 | a link battle | nothing: the mix buffer is cleared |
+
+## How it fits with the rest of the game
+
+Every part of the game plays sound through `AudioCommand_PlayFar`: scenes name
+their music on entry, menus click, battle effects play their impacts. The
+VBlank handler in [Runtime](../runtime/README.md#the-frame-loop) steps the
+music's ramps and enters the mixer every frame, and the mixer's resident code
+is part of what start-up copies into IWRAM
+([System](../system/README.md#memory-map)). The songs and samples themselves
+are data in `games/tbs/sound`.
 
 ## Limits
 
@@ -307,4 +311,3 @@ player 2 the interface's (`SE_MENU_CONFIRM`, `SE_MENU_CANCEL`,
 `SE_MENU_ERROR`, `SE_SHOP_PURCHASE`) and player 3 the field's and battle's
 actions (`SE_CAST`, `SE_IMPACT`, `SE_HEAVY_IMPACT`, `SE_DOOR_OPEN`). A
 floating effect therefore never cuts those off.
-- XXX (picture): the sound players, as an illustration of music, fanfare and sound effects taking turns.

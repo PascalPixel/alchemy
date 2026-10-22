@@ -33,6 +33,11 @@ enum SpriteId {
   /// night, and the Boulder of Mt. Aleph drawn at twice its size.
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   SPRITE_ROCK = 0xc8,
+  /// A blank 32-pixel square: an actor seen only by its shadow, such as the
+  /// shadows under Altin Peak's falling boulder and its Hydros statue.
+  /// ★ Named from what the player sees: nothing, every pixel transparent
+  /// (spr_288.png)
+  SPRITE_BLANK_LARGE = 0x120,
   /// The lights that float about the Elemental Star Room.
   /// ★ Named from what the player sees: a small glowing blue-green light (its
   /// sprite sheet, spr_287.png)
@@ -132,9 +137,16 @@ enum SpriteId {
   /// ★ Named from what the player sees: a golden statue of a figure in a long
   /// robe (spr_243.png)
   SPRITE_GOLDEN_STATUE = 0xf3,
-  SPRITE_DUST_PUFF = 222, ///< a puff of dust kicked up where an actor stands
+  /// A puff of dust kicked up where an actor stands; the water beasts of Altin
+  /// and its mine spit it as spray, drawn SPRITE_COLOR_BGR or
+  /// SPRITE_COLOR_WHITE.
+  SPRITE_DUST_PUFF = 222,
   /// ★ Named from what the player sees: a wooden crate (spr_223.png)
   SPRITE_CRATE = 0xdf,
+  /// The carts on the rails of Altin's mine.
+  /// ★ Named from what the player sees: a wooden mine cart on iron wheels
+  /// (spr_231.png)
+  SPRITE_MINE_CART = 0xe7,
   /// ★ Named from what the player sees: a snowman with a red cap and a green
   /// scarf (spr_234.png)
   SPRITE_SNOWMAN = 0xea,
@@ -474,6 +486,16 @@ enum SpriteId {
   /// ★ Named from what the player sees: a young man with brown hair in a
   /// green shirt (spr_125.png)
   SPRITE_YOUNG_MAN_IN_GREEN = 0x7d,
+  /// A second number for SPRITE_BALD_MAN_IN_RED, whose frames and animations
+  /// it borrows (sprites.tsv), placed in Kalay's houses and Hammet Palace.
+  /// ★ Named from what the player sees: a bald man in a red tunic with green
+  /// sleeves (spr_124.png)
+  SPRITE_BALD_MAN_IN_RED_2 = 0x7e,
+  /// A second number for SPRITE_YOUNG_MAN_IN_GREEN, whose frames and
+  /// animations it borrows (sprites.tsv).
+  /// ★ Named from what the player sees: a young man with brown hair in a
+  /// green shirt (spr_125.png)
+  SPRITE_YOUNG_MAN_IN_GREEN_2 = 0x7f,
   /// ★ Named from what the player sees: a woman with red-brown hair in a pink
   /// dress and a white apron (spr_128.png)
   SPRITE_WOMAN_IN_PINK_APRON = 0x80,
@@ -534,6 +556,11 @@ enum SpriteId {
   /// ★ Named from what the player sees: a covered wagon drawn by a horse
   /// (spr_154.png)
   SPRITE_WAGON = 0x9a,
+  /// SPRITE_WAGON drawn at 64 pixels, its back loaded with yellow crates:
+  /// Bunza's wagon at the Kalay Tunnel Entrance.
+  /// ★ Named from what the player sees: a large covered wagon drawn by a
+  /// horse, full of crates (spr_273.png)
+  SPRITE_LARGE_WAGON = 0x111,
   /// ★ Named from what the player sees: a white bird with outspread wings
   /// (spr_155.png)
   SPRITE_BIRD = 0x9b,
@@ -659,6 +686,14 @@ enum PuddleAnimation {
   PUDDLE_ANIM_LOW_ICE = 3, ///< held at the second step of freezing
   PUDDLE_ANIM_PILLAR = 5,  ///< the ice pillar, still
   PUDDLE_ANIM_MELT = 6     ///< sinks from the pillar back into a puddle
+};
+
+/// SPRITE_WATER_BEAST's animations beyond its standing frame (spr_190.tsv).
+enum WaterBeastAnimation {
+  WATER_BEAST_ANIM_LEAP = 2, ///< stretched out, legs down, as in mid-jump
+  /// Two low crouches in turn, a quarter of a second each: as one spits
+  /// water, and between its high jumps.
+  WATER_BEAST_ANIM_SPIT = 3
 };
 
 #endif

@@ -137,7 +137,7 @@ enum { TRIGGER_FORGE_JOINED = 99 };
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
 /// surprise, and the battle with the Djinni begins.
 static void Event_FightForge(void) {
-  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_WITNESS, 2, 0);
   Field_RequestDjinnBattle(ACTOR_FORGE, DJINNI_FORGE);
 }
@@ -376,7 +376,7 @@ static void Event_PushStumpOver(void) {
     WAIT(3);
     // It tips over the edge.
     Engine_ActorSetSpeed(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
-    Engine_AudioPlayCue(SE_288);
+    Engine_AudioPlayCue(SE_STOP_SLOT3);
     Engine_ActorSetDestination(ACTOR_STUMP, 416, 200);
     movedActor = Object_GetById(ACTOR_STUMP);
     Engine_ActorSetSpriteFlags(movedActor, 0);
@@ -532,7 +532,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   switch (frame) {
   case 60:
     OBJ_DIR(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
-    Engine_ActorShowEmote(ACTOR_WITNESS, 2, 0);
+    Engine_ActorShowEmote(ACTOR_WITNESS, EMOTE_WINCE, 0);
     break;
   case 180:
     Engine_ActorStartRepeatedMotion(ACTOR_WITNESS, 3);
@@ -555,7 +555,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 static void Event_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
   EV_BEGIN();
-  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT, 30);
+  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_WITNESS, 2);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   MESSAGE_SET(MsgGomaGotWowThatsPrettyImpressive);

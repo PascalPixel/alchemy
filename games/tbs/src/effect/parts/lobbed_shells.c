@@ -223,7 +223,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
           if (frame == k * 8 + 17) {
             ObjectGroup_UpdateMembers(work->effect->actors[k],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
-            EFFECT_SHOW_DAMAGE(SE_133);
+            EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
           /* FAKEMATCH(one-pass): an empty one-pass block ends the CSE block
            * after the hit, so k * 8 is recomputed; without it, 200 of 670

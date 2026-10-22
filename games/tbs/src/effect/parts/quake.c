@@ -119,7 +119,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
     // The damage shows 16 frames before the end.
     if (frame ==
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES] - 16)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {

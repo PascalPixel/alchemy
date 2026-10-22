@@ -40,7 +40,8 @@
 ///   caravan heads north for Lunpa. It sets FLAG_GUARDS_SUSPECT_KALAY, after
 ///   which Lunpa's east guard asks whether the party came from Kalay, and goes
 ///   on into Vault, where touching the place leads straight in from then on.
-/// - Mercury Lighthouse (WORLD_MAP_MERCURY_LIGHTHOUSE_LIT): the lighthouse
+/// - Mercury Lighthouse (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT): the
+/// lighthouse
 ///   transition (WorldMap_PlayLighthouseTransition) takes the party to
 ///   Mercury Lighthouse Aerie (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
 /// - Bunza's wagon: out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE),
@@ -59,11 +60,12 @@
 /// - The Black Orb (WORLD_MAP_FROM_GATEWAY_CAVE). Iodem, who commands Babi's
 ///   soldiers and travels with the party, sees Babi's ship scuttled off the
 ///   coast and gives Isaac the Black Orb to use on it (FLAG_SCENE_TEMP_34,
-///   FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE); walking back into the cave
+///   FLAG_SAW_SHIP_AT_IDEJIMA); walking back into the cave
 ///   (ACTOR_PLACE_GATEWAY_CAVE) turns the leader round. Used on the wreck
 ///   (cell 96), the orb does nothing: it is not yet time, Iodem takes it back,
 ///   and the party must press on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED).
-/// - Venus Lighthouse: after the beacon erupts (WORLD_MAP_VENUS_LIGHTHOUSE_LIT)
+/// - Venus Lighthouse: after the beacon erupts
+/// (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT)
 ///   the beam's transition sends the party back to the Lighthouse Aerie
 ///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT), and after that look back
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) a sparkling transition sends it on to
@@ -754,13 +756,13 @@ static void Event_ReturnToTolbiShip(void) {
 }
 
 /// Restores the map's state and runs the sequence its arrival entrance
-/// selects: WORLD_MAP_MERCURY_LIGHTHOUSE_LIT and WORLD_MAP_VENUS_LIGHTHOUSE_LIT
-/// the lighthouse transitions to Mercury Lighthouse Aerie and back to the
-/// Lighthouse Aerie, WORLD_MAP_FROM_VALE_GATE marks the first time the party
-/// leaves Vale, WORLD_MAP_FROM_GATEWAY_CAVE the Black Orb,
-/// WORLD_MAP_FROM_WEST_LUNPA_CAVE Bunza's wagon out of West Lunpa Cave, 64
-/// Hammet's caravan, 65 to 70 and WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS the
-/// Tolbi-bound Ship's crossing, WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH
+/// selects: WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
+/// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT the lighthouse transitions to Mercury
+/// Lighthouse Aerie and back to the Lighthouse Aerie, WORLD_MAP_FROM_VALE_GATE
+/// marks the first time the party leaves Vale, WORLD_MAP_FROM_GATEWAY_CAVE the
+/// Black Orb, WORLD_MAP_FROM_WEST_LUNPA_CAVE Bunza's wagon out of West Lunpa
+/// Cave, 64 Hammet's caravan, 65 to 70 and WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS
+/// the Tolbi-bound Ship's crossing, WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH
 /// Bunza's wagon at Kalay, 78 the discarded Black Orb, WORLD_MAP_FROM_CLEAR
 /// and 73 the transitions to the ending and to Sheba's fall, 80 the ending,
 /// and 74, WORLD_MAP_FROM_CROSSBONE_ISLE and 77 resume a storm's time in the
@@ -779,11 +781,11 @@ s32 WorldMap_Initialize(void) {
     Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_PLACE);
     Engine_GameFlagSet(FLAG_DEBUG_STEPS_OFF);
   }
-  if (*entrance == WORLD_MAP_MERCURY_LIGHTHOUSE_LIT) {
+  if (*entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(0);
     Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
                          MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*entrance == WORLD_MAP_VENUS_LIGHTHOUSE_LIT) {
+  } else if (*entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(1);
     Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
@@ -1023,8 +1025,8 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_WalkToAndWait(GARET, 5892, 1600);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, PIXELS(5848), PIXELS(1592));
   Engine_TaskWait(1);
   // Hammet decides to depart; gather the actors for the caravan's move.
@@ -1102,14 +1104,14 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_MAN, 1);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, 0, 10);
   Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 10);
-  Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
                            10);
   Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_HAMMET, 1);
   Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
                            10);
-  Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
   WorldMap_EndEvent();
@@ -1118,8 +1120,8 @@ static void WorldMap_ShowHammetsCaravan(void) {
   // Focus on the departure effect before moving the group to the landing.
   WorldMap_ShakeTransferStartCamera();
   Event_PlayCue(SE_289);
-  Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, 0, 40);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
@@ -1574,7 +1576,7 @@ static void Event_MeetFlint(void) {
     WorldMap_BeginEvent();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     djinni->work = 1;
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     Task_Wait(16);
@@ -1618,17 +1620,17 @@ static void Event_MeetFlint(void) {
     Engine_ObjectSetPartPalettes(djinni, 0);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);
     UiWork_PushValueSlot(300, 4);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1652,7 +1654,7 @@ static void Event_MeetFlint(void) {
     }
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | 2, 30);
+    Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1681,7 +1683,7 @@ static void Event_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   listened:
     UiWork_PushValueSlot(300, 4);
-    Event_PlayCue(MUS_081);
+    Event_PlayCue(MUS_JOINED);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);
     Event_SetMessage(count);
@@ -1740,7 +1742,7 @@ static void Event_MeetFlint(void) {
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT, 30);
+  Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   GameFlag_Set(FLAG_DJINN_LESSON_PART_A);
   GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
@@ -1750,7 +1752,7 @@ static void Event_MeetFlint(void) {
   WorldMap_EndEvent();
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS,
                   DJINNI_INDEX(DJINNI_FLINT));
-  Event_PlayCue(MUS_042);
+  Event_PlayCue(MUS_WORLD_MAP);
   Event_End();
   GameFlag_Clear(FLAG_DJINN_LESSON);
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
@@ -1825,7 +1827,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black
 /// Orb is handed back and before the wounded soldiers are seen in Lalivero
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_SCENE_TEMP_34 and
-/// FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE, and turns Gateway Cave's exit into
+/// FLAG_SAW_SHIP_AT_IDEJIMA, and turns Gateway Cave's exit into
 /// Event_StopLeavingShip.
 static void WorldMap_RunBlackOrbScene(void) {
   struct FieldActor *leader;
@@ -1844,7 +1846,8 @@ static void WorldMap_RunBlackOrbScene(void) {
   Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(gWorldMapTriggerActor, 5992, 3448);
   Engine_ActorFaceDirection(gWorldMapTriggerActor, FACING_EAST, 20);
-  Engine_ActorShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT, 60);
+  Engine_ActorShowEmote(gWorldMapTriggerActor,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Engine_ActorStartRepeatedMotion(gWorldMapTriggerActor, 2);
   Engine_EventSetMessage(MsgWorldMapLook);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor | SPEAKER_PORTRAIT_LEFT,
@@ -1875,7 +1878,8 @@ static void WorldMap_RunBlackOrbScene(void) {
     Engine_TaskWait(1);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-  Engine_ActorShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT | 6, 0);
+  Engine_ActorShowEmote(gWorldMapTriggerActor,
+                        EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 2);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
   Engine_ActorFaceDirection(gWorldMapTriggerActor, FACING_WEST, 10);
@@ -1901,7 +1905,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   FieldFx_ScheduleRatioTransition(Q16_ONE, 10);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
-  Engine_GameFlagSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE);
+  Engine_GameFlagSet(FLAG_SAW_SHIP_AT_IDEJIMA);
   gGameState.savedScene = (s32)&SceneId_WorldMap;
   gGameState.savedEntrance = 78;
   Engine_EventEnd();
@@ -2072,7 +2076,7 @@ static void Event_UseBlackOrb(void) {
   }
   Object_GetById(gWorldMapTriggerActor)->facing =
       FACING_SOUTHEAST + FACING_STEP;
-  Actor_ShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(gWorldMapTriggerActor, 2);
   message = MsgWorldMapMatter;
   Event_SetMessage(message);
@@ -2181,28 +2185,28 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 7, 20);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 100);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 100);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessageAndWait(JENNA, 0, 20);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 20);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Event_ShowMessageAndWait(JENNA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 120);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Event_ShowMessageAndWait(JENNA, 0, 40);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessageAndWait(JENNA, 0, 120);
   // Alex comes to show them something and leads them on.
   Actor_SetSpeed(ACTOR_ALEX, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -2212,8 +2216,8 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 20);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX,
                     0);
@@ -2685,9 +2689,9 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 }
 
 /// Animates the lighthouse transition frames, palette, and camera.
-/// Called by WorldMap_Initialize at WORLD_MAP_MERCURY_LIGHTHOUSE_LIT and
-/// WORLD_MAP_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and sets
-/// FLAG_SKIP_SCENE_CHANGE_SOUND.
+/// Called by WorldMap_Initialize at WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
+/// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and
+/// sets FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void WorldMap_PlayLighthouseTransition(s32 palette) {
   u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
@@ -3218,9 +3222,9 @@ struct SceneEntrance gWorldMapEntrances[] = {
      0, -1, -1, -1, -1, 0},
     {WORLD_MAP_JENNA_AND_KRADEN_ADRIFT, CONDITION_ALWAYS, 7552, 0, 3504,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_MERCURY_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6024, 0, 160,
+    {WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6024, 0, 160,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_VENUS_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6088, 0, 3168,
+    {WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6088, 0, 3168,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {97, CONDITION_ALWAYS, 6248, 0, 872, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {98, CONDITION_ALWAYS, 4248, 0, 2424, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

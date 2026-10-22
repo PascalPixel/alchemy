@@ -643,11 +643,11 @@ static void Event_RollLongLog(void) {
     column = 84;
     Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
     Map_CopyCellAttributes(86, 9, 1, 1, column, 12);
-    Event_PlayCue(SE_288);
+    Event_PlayCue(SE_STOP_SLOT3);
     Event_PlayCue(SE_240);
   } else {
     Object_SetMode(log, 1);
-    Event_PlayCue(SE_288);
+    Event_PlayCue(SE_STOP_SLOT3);
     Event_PlayCue(SE_213);
     column = x >> 20;
     Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
@@ -666,7 +666,7 @@ static s32 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(
     struct ScriptInterpreter *interpreter) {
   Map_SetLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_217);
   return 0;
 }
@@ -1248,7 +1248,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventWait(20);
   Actor_WalkToAndWait(GARET, 1504, 176);
   Actor_FaceDirection(GARET, FACING_SOUTH, 10);
-  Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | 0, 20);
+  Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(IVAN, 0);
   Object_LinkObjectAndSetCallback(GARET, IVAN);
   Engine_EventWait(30);
@@ -1270,7 +1270,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WalkToAndWait(MIA, 1488, 184);
   Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
   Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Object_LinkObjectAndSetCallback(IVAN, GARET);
   Object_LinkObjectAndSetCallback(GARET, IVAN);
   Engine_EventWait(40);
@@ -1303,24 +1303,24 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventWait(5);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(55);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Task_AddCallback(particleCallback, 0xc80);
   Engine_EventWait(20);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(40);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, 0xc80);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(25);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, 0xc80);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(25);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Object_LinkObjectAndSetCallback(MIA, IVAN);
   Object_LinkObjectAndSetCallback(IVAN, MIA);
   Engine_EventWait(60);
@@ -1331,7 +1331,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(particleCallback);
   Engine_EventWait(25);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 8, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   Engine_ActorStartRepeatedMotion(GARET, 3);
   Engine_ActorStartRepeatedMotion(IVAN, 3);
   Engine_ActorRunRepeatedMotion(MIA, 3);
@@ -1612,7 +1612,8 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       }
       Event_PassSouthWallOpening();
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 3, 60);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                      60);
       Engine_EventShowMessage(guideId, 0);
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1758,7 +1759,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_REMOVE);
 #endif
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       for (i = 119; i >= 0; i--) {
         if (actor->x.fixed > PIXELS(992)) {
@@ -1766,7 +1767,8 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
         }
         Engine_TaskWait(1);
       }
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 3, 60);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                      60);
       ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
       Event_ShowMessage(guideId, 0);
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
@@ -1874,7 +1876,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Engine_AudioPlayCue(MUS_089);
+    Engine_AudioPlayCue(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);
@@ -1951,11 +1953,11 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
     Engine_EventWait(countdown * 60 + 60);
     actorId = OPPONENT;
   }
-  Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | 5, 0);
+  Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
   Engine_AudioPlayCue(SE_289);
   Engine_EventCloseScreen();
@@ -2186,7 +2188,7 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
 
   Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(target);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

@@ -207,11 +207,11 @@ enum SceneEventKind {
 enum ExitStyle {
   EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   EXIT_STYLE_SILENT = 0x10,
-  /// With SE_128 and leaving animation 26; the next scene plays arrival 24
-  /// (FLAG_EXIT_ARRIVAL_PENDING).
+  /// With SE_STAIRS_UP and leaving animation 26; the next scene plays arrival
+  /// 24 (FLAG_EXIT_ARRIVAL_PENDING).
   EXIT_STYLE_ANIMATED = 0x20,
-  /// With SE_129 and leaving animation 25; the next scene plays arrival 23
-  /// (FLAG_EXIT_ARRIVAL_ALTERNATE).
+  /// With SE_STAIRS_DOWN and leaving animation 25; the next scene plays arrival
+  /// 23 (FLAG_EXIT_ARRIVAL_ALTERNATE).
   EXIT_STYLE_ANIMATED_ALTERNATE = 0x30,
   EXIT_STYLE_MASK = 0x30
 };

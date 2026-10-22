@@ -236,7 +236,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 80; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);
     if (frame == 32)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // Seven flashes of the canvas, 8 frames apart: it is filled with level 8.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)

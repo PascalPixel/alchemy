@@ -229,7 +229,7 @@ static void Event_WelcomeIsaacBack(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
-  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 30);
   // The negative answer advances to the next message before continuing.
   Event_OpenMessage(ACTOR_MAYOR, 0);

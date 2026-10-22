@@ -212,7 +212,7 @@ static void Event_TalkToEastGuard(void) {
       if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
         Engine_EventSetMessage(MsgBilibinWhere);
         Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
-        Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | 7, 40);
+        Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
         Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
         Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 2);
         Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
@@ -239,10 +239,10 @@ static void Event_TalkToEastGuard(void) {
       }
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 20);
-      Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 20);
+      Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
       Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 1);
       Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
-      Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | 8, 60);
+      Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
       Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 1);
       Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
       Engine_ActorSetAnimation(ACTOR_WEST_GUARD, 3);
@@ -371,12 +371,12 @@ static void Event_GuardsArrestParty(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 2);
-  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT, 60);
+  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Engine_EventSetMessage(MsgBilibinOhItS);
   Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 2);
-  Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT, 60);
+  Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 40);
@@ -389,7 +389,8 @@ static void Event_GuardsArrestParty(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Refusals repeat the accusation until the player acknowledges it.
   while (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) != 0) {
-    Engine_ActorShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT, 60);
+    Engine_ActorShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                          60);
     Engine_EventSetMessage(MsgBilibinNotTrueWitnesses);
     Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 2);
@@ -408,7 +409,8 @@ static void Event_GuardsArrestParty(void) {
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 314, 280);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 40);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
     Engine_ActorSetSpeed(ACTOR_EAST_GUARD, 0x10000, 0x8000);

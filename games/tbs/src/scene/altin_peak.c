@@ -978,7 +978,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   boulder = Actor_Get(ACTOR_FALLING_BOULDER);
   shadow = Actor_Get(ACTOR_BOULDER_SHADOW);
   rock = Actor_Get(ACTOR_STANDING_LOG);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
@@ -987,7 +988,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 792, 140);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_PlayCue(SE_183);
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_EventWait(20);
@@ -1016,12 +1017,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   rock->sprite->rotation = 0xc000;
   Event_PlayCue(SE_107);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Event_PlayCue(MUS_055);
   Map_SetShake(PIXELS(1), PIXELS(3), Q16_ONE);
   Engine_ActorSetSpritePriority(ACTOR_FALLING_BOULDER, 0);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // Send the leader first, then release the rolling object after its delay.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   leader->timer = 0;
@@ -1087,8 +1089,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Camera_MoveTo(PIXELS(788), -PIXELS(64), PIXELS(610), 1);
   Engine_CameraWaitForMove();
   Event_PlayCue(SE_148);
@@ -1163,8 +1165,8 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Event_PlayCue(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(GARET, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
@@ -1173,7 +1175,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_FaceDirection(GARET, 0, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTH, 40);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_FaceDirection(GARET, FACING_SOUTH, 20);
     Engine_ActorStartRepeatedMotion(GARET, 2);
     Event_ShowMessageAndWait(GARET, 0, 10);
@@ -1187,7 +1189,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_MoveToAndWait(GARET, 764, 166);
     Actor_MoveToAndWait(GARET, 764, 198);
     Actor_MoveToAndWait(GARET, 786, 198);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_MoveToAndWait(GARET, 786, 246);
     Engine_ActorSetAnimation(GARET, ANIM_STAND);
     Actor_SetPosition(GARET, 0, 0);
@@ -2023,7 +2025,7 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   Engine_PsynergyLowerHands();
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
   FieldFx_End();
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
 }
 
@@ -2120,7 +2122,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   Actor_SetDestination(ACTOR_STATUE, 328, 104);
   Actor_SetDestination(ACTOR_STATUE_SHADOW, 328, 108);
   Engine_EventWait(60);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorWaitForMove(ACTOR_STATUE);
   Battle_SetStart(BATTLE_START_SCENE);
@@ -2206,14 +2208,14 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Engine_EventSetMessage(MsgAltinGuardianStatuesWereCreatedLong);
   Event_ShowMessage(MIA, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 40);
   Event_ShowMessage(GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_PlayCue(SE_190);
   Actor_SetChildValue(ACTOR_STATUE, 7);
   Engine_EventWait(10);
@@ -2222,10 +2224,10 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_PlayCue(SE_103);
   // Animate the statues while the party reacts.
   update = AltinPeak_FlickerStatue;
@@ -2312,7 +2314,7 @@ static void AltinPeak_StopCartAndJumpOff(struct FieldActor *object) {
   struct AnimationObject *sprite;
   struct FieldActor *leader;
 
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_232);
   x = object->x.fixed & 0xfff00000;
   centerZ = PIXELS(8);
@@ -2420,11 +2422,11 @@ static void AltinPeak_TurnCartLeft(struct FieldActor *object) {
   Engine_AudioPlayCue(SE_233);
 }
 
-/// The cart rolls over a marked cell: SE_288 plays, and SE_184 and SE_233
-/// follow as its countdown runs out.
+/// The cart rolls over a marked cell: SE_STOP_SLOT3 plays, and SE_184 and
+/// SE_233 follow as its countdown runs out.
 static void AltinPeak_StartCartCountdown(struct FieldActor *object) {
   object->work = 33;
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 }
 
 /// Rolls the cart on by a frame and picks its animation from the terrain ahead
@@ -2775,9 +2777,9 @@ struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[] = {
 struct SceneEntrance gAltinPeak_SouthEntranceEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN, CONDITION_ALWAYS, 248, 0, 498, FACING_NORTH, 0, 24, 0, 648, 560, 0},
-    {ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_POOL, CONDITION_ALWAYS, 119, 0, 108, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
+    {ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER, CONDITION_ALWAYS, 119, 0, 108, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, 567, 0, 105, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
-    {ALTIN_PEAK_SOUTH_ENTRANCE_POOL_FROM_TUNNEL, CONDITION_ALWAYS, 887, 0, 798, FACING_NORTH, 0, 712, 568, 960, 860, 0},
+    {ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_FROM_TUNNEL, CONDITION_ALWAYS, 887, 0, 798, FACING_NORTH, 0, 712, 568, 960, 860, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 791, 0, 679, FACING_SOUTH, 0, 712, 560, 960, 860, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, 88, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, 216, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
@@ -2880,9 +2882,9 @@ u32 gAltinPeak_Exits[] = {
     SCENE_EXIT(ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM),
     SCENE_EXITS(AltinPeakSouthEntrance),
     SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
-    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_POOL, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_POOL_FROM_TUNNEL),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_FROM_TUNNEL),
     SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL, AltinPeakRailTunnel, ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
-    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_POOL_TO_TUNNEL, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_POOL),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER),
     SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL, AltinPeakPool, ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
     SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST),
     SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST),
@@ -3068,9 +3070,9 @@ struct SceneEvent gAltinPeak_SecondWaterBeastEvents[] = {
 
 struct SceneEvent gAltinPeak_SouthEntranceEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_POOL},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_POOL_TO_TUNNEL},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL},
     {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST},
     {EVENT_EXIT, 7, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST},

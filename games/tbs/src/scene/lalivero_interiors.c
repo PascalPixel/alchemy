@@ -28,12 +28,12 @@
 ///   LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE runs the report
 ///   (ReportToFaran): Faran and Iodem have found no sign of Sheba; the party
 ///   tells what became of Jenna and the others, in one of two versions by
-///   whether they saw the ship from the lighthouse
-///   (FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE), and will go on searching for Jenna;
-///   Faran is sure Sheba lived, Iodem tells him what an Adept is, and Faran
-///   sends them off. Stepping on trigger 51 afterwards, Iodem asks the party to
-///   wait for him outside Faran's house (FLAG_IODEM_ASKED_TO_MEET), where he
-///   gives them the Black Orb (lalivero.c).
+///   whether they saw the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA), and will
+///   go on searching for Jenna; Faran is sure Sheba lived, Iodem tells him what
+///   an Adept is, and Faran sends them off. Stepping on trigger 51 afterwards,
+///   Iodem asks the party to wait for him outside Faran's house
+///   (FLAG_IODEM_ASKED_TO_MEET), where he gives them the Black Orb
+///   (lalivero.c).
 
 #include "script.h"
 #include "game_state.h"
@@ -205,7 +205,8 @@ enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_PLACE_TEMP_00 };
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct ScriptInterpreter *interpreter) {
-  Actor_SetAttachedEffect(ACTOR_INN_WORKER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_INN_WORKER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -341,7 +342,7 @@ static void TalkToInnWorker(void) {
   Engine_FieldEndBusyAndReveal();
   Engine_EventSetMessage(MsgLaliveroImSorry);
   Engine_EventWait(50);
-  Actor_ShowEmote(ACTOR_INN_WORKER, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_INN_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_INN_WORKER, ACTOR_PARTY_LEADER, 20);
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Engine_EventWait(10);
@@ -457,7 +458,7 @@ static void ReportToFaran(void) {
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_ActorFaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 5, 70);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
@@ -468,7 +469,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -476,11 +477,11 @@ static void ReportToFaran(void) {
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 5, 50);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
-  // the ship from the lighthouse knows Idejima was swept away with it.
-  if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE) == 0) {
+  // the ship at Idejima knows Idejima was swept away with it.
+  if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
     TellFaranAboutJenna();
   } else {
     Engine_EventWait(20);
@@ -489,7 +490,7 @@ static void ReportToFaran(void) {
     Engine_EventShowMessage(ACTOR_FARAN, 0);
     Engine_EventWait(10);
     Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Engine_EventWait(10);
     Engine_ActorFaceDirection(GARET, FACING_NORTH, 0);
     Engine_EventWait(20);
@@ -503,7 +504,7 @@ static void ReportToFaran(void) {
     Engine_EventWait(20);
     Engine_EventShowMessage(IVAN, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 40);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Event_OpenMessage(ACTOR_IODEM, 0);
     Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -567,7 +568,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(40);
   Engine_EventWait(10);
   // Faran believes Sheba lived; Iodem explains Adepts.
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -584,7 +585,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(20);
   Engine_ActorFaceDirection(ACTOR_FARAN, FACING_EAST, 0);
@@ -609,15 +610,15 @@ static void ReportToFaran(void) {
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 65);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 65);
   Engine_ActorFaceDirection(ACTOR_FARAN, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
@@ -626,7 +627,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(50);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 6, 60);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
@@ -649,7 +650,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_EventWait(30);
@@ -659,7 +660,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -668,12 +669,12 @@ static void ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 7, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Engine_ActorFaceDirection(IVAN, FACING_NORTH, 0);
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
@@ -759,8 +760,8 @@ static void ReportToFaran(void) {
 }
 
 /// The party tells Faran and Iodem what became of Jenna and the others, when
-/// it did not see the ship from the lighthouse: Felix said he sent Jenna
-/// ahead to the ship.
+/// it did not see the ship at Idejima: Felix said he sent Jenna ahead to the
+/// ship.
 static void TellFaranAboutJenna(void) {
   Engine_EventSetMessage(MsgLaliveroTellOthers);
   Engine_EventWait(20);
@@ -771,7 +772,8 @@ static void TellFaranAboutJenna(void) {
   Engine_EventWait(10);
 
   Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                        60);
   Engine_EventWait(10);
   Engine_ActorFaceDirection(GARET, FACING_NORTH, 0);
   Engine_EventWait(20);
@@ -944,17 +946,17 @@ struct SceneEntrance gLaliveroEntrances[] = {
      FACING_SOUTH, 0, 8, 8, 312, 192, 0},
     {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 224, 0,
      392, FACING_NORTH, 0, 8, 232, 312, 416, 0},
-    {LALIVERO_FARANS_HOUSE_INN_FROM_INN_CORRIDOR, CONDITION_ALWAYS, 88, 0, 312,
+    {LALIVERO_FARANS_HOUSE_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 88, 0, 312,
      FACING_SOUTH, 0, 8, 232, 312, 416, 0},
-    {LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_INN, CONDITION_ALWAYS, 384, 0, 368,
+    {LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 384, 0, 368,
      FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_WEST, CONDITION_ALWAYS,
+    {LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST, CONDITION_ALWAYS,
      456, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_EAST, CONDITION_ALWAYS,
+    {LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST, CONDITION_ALWAYS,
      504, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+    {LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS, CONDITION_ALWAYS,
      472, 0, 72, FACING_SOUTH, 0, 344, 8, 584, 168, 0},
-    {LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+    {LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS, CONDITION_ALWAYS,
      744, 0, 72, FACING_SOUTH, 0, 632, 8, 872, 168, 0},
     {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 832, 0,
      872, FACING_NORTH, 0, 280, 504, 912, 896, 0},
@@ -993,12 +995,12 @@ u32 gLaliveroExits[] = {
     SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_SOUTHWEST),
     SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_SOUTH),
     SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_NORTHEAST),
-    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_TO_INN_CORRIDOR, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_INN),
-    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_INN, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_FROM_INN_CORRIDOR),
-    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_WEST, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_CORRIDOR),
-    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_EAST, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_CORRIDOR),
-    SCENE_EXIT(LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_TO_INN_CORRIDOR, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_WEST),
-    SCENE_EXIT(LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_TO_INN_CORRIDOR, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_EAST),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_TO_INN_UPSTAIRS, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_INN),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_TO_INN, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_TO_GUEST_ROOM_WEST, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_TO_GUEST_ROOM_EAST, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_TO_INN_UPSTAIRS, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_TO_INN_UPSTAIRS, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST),
     SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_NORTHWEST),
     SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP, LemurianShip, LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE),
     SCENE_EXITS_END,

@@ -177,13 +177,13 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   // 32 frames: the picture plays from frame 0, the hit lands on frame 4.
   for (frame = 0; frame != 32; frame++) {
     // On frame 5 the battle shows the damage, with the heavy impact if the
-    // user's class is flagged in the summon table and SE_133 otherwise. On
+    // user's class is flagged in the summon table and SE_IMPACT otherwise. On
     // frame 4 the target takes KNOCKBACK_NUDGE.
     if (frame == 5) {
       if (Summon_IsEntrySecondaryFlaggedFar(unit->classId))
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        EFFECT_SHOW_DAMAGE(SE_133);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     if (frame == 4)
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],

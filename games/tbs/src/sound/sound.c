@@ -52,13 +52,13 @@ void AudioCommand_Play(s32 id) {
 
   if (id == AUDIO_CUE_FADE_BGM) {
     // Fade the music out, once until the next music starts: 16 steps 7
-    // frames apart, 112 frames. MUS_019 is a song with no tracks, silence, so
-    // a later cue for the faded music starts it again.
+    // frames apart, 112 frames. MUS_SILENCE is a song with no tracks,
+    // so a later cue for the faded music starts it again.
     if (gMusicFadeRequested != 0)
       return;
     MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
     gMusicFadeRequested++;
-    gAudioSecondaryState = MUS_019;
+    gAudioSecondaryState = MUS_SILENCE;
   } else if (id == AUDIO_CUE_FADE_SLOT3) {
     // The cue is also SE_289's number, so playing SE_289 fades player 3 out
     // over 48 frames (16 steps of 3) and never starts SE_289. Only sound
@@ -176,8 +176,8 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
 
 /// Runs the audio test's three cue selectors and five mixer presets forever.
 /// Up and Down choose a row, Right and Left change its cue by 1, R and L by
-/// 10, and A plays it; B plays MUS_019 (silence), Start fades the music, and
-/// Select both steps the mixer preset (0 to 4, 2 at first) and fades player
+/// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
+/// and Select both steps the mixer preset (0 to 4, 2 at first) and fades player
 /// 3. Never returns. Reached only through the sound far-call table's veneer;
 /// nothing in ☀️ names it.
 void AudioTest_RunParameterController(void) {
@@ -237,7 +237,7 @@ void AudioTest_RunParameterController(void) {
     if (gKeysRepeat & KEY_A)
       AudioCommand_Play(cues[row]);
     if (gKeysRepeat & KEY_B)
-      AudioCommand_Play(MUS_019);
+      AudioCommand_Play(MUS_SILENCE);
     if (gKeysRepeat & KEY_START)
       AudioCommand_Play(AUDIO_CUE_FADE_BGM);
     if (gKeysRepeat & KEY_SELECT)
@@ -348,8 +348,8 @@ void AudioCommand_UpdateToggleMask(u32 command) {
 }
 
 /// Returns the music cue AudioCommand_Play last chose: 0xff before any,
-/// MUS_019 after a fade, else the last music cue. Field_RunScene saves it as
-/// gGameState.returnCue before the pause menu, so the music can be started
+/// MUS_SILENCE after a fade, else the last music cue. Field_RunScene saves it
+/// as gGameState.returnCue before the pause menu, so the music can be started
 /// again when the party is put back where it was (Game_Run,
 /// object/scene.c).
 s32 AudioCommand_GetSecondaryStateByte(void) { return gAudioSecondaryState; }

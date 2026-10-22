@@ -40,7 +40,7 @@
 ///   (Lunpa_WatchForUncloakedParty), or one still among them when Cloak fades
 ///   (Event_CloakFades), is marched back down the steps
 ///   (Event_GuardsCatchParty, FLAG_SCENE_TEMP_44). A party caught in the
-///   fortress arrives by LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT and is thrown
+///   fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown
 ///   down the steps (Event_GuardsThrowLeaderOut); one that slips out arrives by
 ///   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and casts Cloak to get
 ///   round the guards (Event_LeaderSneaksOut). Every entry resets the
@@ -294,7 +294,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// the party wants to enter Lunpa, and turns them away either way.
 static void Event_TalkToWestGuard(void) {
   Engine_EventBegin();
-  Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
+  Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_EventSetMessage(MsgLunpaWestGuardAsksAboutEntering);
   Engine_EventAskYesNo(ACTOR_WEST_GUARD, 0);
   Engine_EventEnd();
@@ -401,7 +401,8 @@ static void Event_TalkToLeftGuard(void) {
     Engine_EventSetMessage(MsgLunpaLeftGuardHearsSomeone);
   } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0 &&
              Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-    Engine_ActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
+    Engine_ActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                          60);
     recognitionMessageBase = MsgLunpaLeftGuardRecognizesHammet;
     Engine_EventSetMessage(recognitionMessageBase + RECOGNITION_SEEN_THAT_MAN);
     Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
@@ -442,7 +443,7 @@ static void Event_ReadLeftGuardsThoughts(void) {
       ((struct FieldWork *)gEventWork)->command = recognizedHammet;
       Engine_PsynergyCancel();
       Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
-      Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
+      Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
       Engine_EventSetMessage(MsgLunpaLeftGuardRecognizesHammet);
       GameFlag_Set(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     } else {
@@ -486,7 +487,7 @@ static void Event_GaretTurnsLeaderBack(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventSetMessage(MsgLunpaGaretRefusesToReturn);
   Event_ShowMessage(GARET, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 100);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -612,8 +613,8 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
 static void Event_GuardsBlockGate(void) {
   if (gGameState.cloaked == 0) {
     Engine_EventBegin();
-    Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 0, 2);
-    Actor_ShowEmote(ACTOR_RIGHT_GUARD, EMOTE_IN_FRONT | 0, 15);
+    Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 2);
+    Actor_ShowEmote(ACTOR_RIGHT_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 15);
     Engine_EventWait(30);
     Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 168);
     Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 168);
@@ -658,7 +659,7 @@ static void Event_GuardsCatchParty(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
   Engine_ActorStartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   // Warn the party before escorting everyone down the two sections of the gate.
   warningMessageBase = MsgLunpaGuardsCatchParty;
   Engine_EventSetMessage(warningMessageBase + CATCH_LEFT_GUARD_CHALLENGES);
@@ -670,7 +671,7 @@ static void Event_GuardsCatchParty(void) {
   Engine_EventWait(35);
   Engine_EventSetMessage(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
-  Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 3, 30);
+  Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   Engine_EventSetMessage(warningMessageBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
   Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
@@ -763,7 +764,7 @@ static void Lunpa_KickUpLeaderDust(void) {
   }
 }
 
-/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT, after being
+/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_CAUGHT, after being
 /// caught in the fortress: the guards throw the leader out and down the steps.
 static void Event_GuardsThrowLeaderOut(void) {
   Engine_EventBegin();
@@ -810,7 +811,8 @@ static void Event_GuardsThrowLeaderOut(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
   Event_PlayCue(SE_LANDING_THUD);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_SCENE);
   Engine_EventWait(2);
   // A smaller second bounce ends with the guards' final warning.
@@ -819,7 +821,8 @@ static void Event_GuardsThrowLeaderOut(void) {
   while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
     Engine_EventWait(1);
   }
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);
@@ -896,7 +899,7 @@ s32 Scene_Initialize(void) {
     ((struct FieldWork *)gEventWork)->transition =
         SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatEntrance = GATE_RETREAT_ENTRANCE;
-    if (gGameState.entrance == LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT &&
+    if (gGameState.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Event_GuardsThrowLeaderOut();
     }
@@ -950,7 +953,7 @@ struct SceneEntrance gLunpaEntrances[] = {
     LUNPA_ENTRANCE(LUNPA_FROM_ITEM_SHOP, 328, 120, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_INN, 104, 184, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_TEMPLE, 48, 168, FACING_SOUTH),
-    LUNPA_ENTRANCE(LUNPA_FROM_STOREROOM, 216, 344, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_CRATE_ROOM, 216, 344, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_VAULT_JAIL, 40, 328, FACING_SOUTH),
     {SCENE_TABLE_END},
 };
@@ -962,7 +965,7 @@ struct SceneEntrance gGateEntrances[] = {
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA, 152, 328, FACING_NORTH),
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA, 144, 104,
                   FACING_SOUTH),
-    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT, 160, 224, FACING_EAST),
+    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_AFTER_CAUGHT, 160, 224, FACING_EAST),
     {SCENE_TABLE_END},
 };
 
@@ -982,7 +985,7 @@ u32 gLunpaExits[] = {
     ROOM_EXIT(LUNPA_TO_ITEM_SHOP),
     ROOM_EXIT(LUNPA_TO_INN),
     ROOM_EXIT(LUNPA_TO_TEMPLE),
-    ROOM_EXIT(LUNPA_TO_STOREROOM),
+    ROOM_EXIT(LUNPA_TO_CRATE_ROOM),
     SCENE_EXIT(LUNPA_TO_VAULT_JAIL, VaultJail, VAULT_JAIL_FROM_LUNPA),
     SCENE_EXITS_END,
 };

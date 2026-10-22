@@ -645,10 +645,10 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       } else if (mode == PROJECTILE_VOLLEY_SLEET) {
         if (frame == 48)
-          EFFECT_SHOW_DAMAGE(SE_133);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
       } else if (mode != PROJECTILE_VOLLEY_CUTTING_EDGE) {
         if (frame == 16)
-          EFFECT_SHOW_DAMAGE(SE_133);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
       }
 
       // Prelude: the small Djinni circles, 4 pixels across and 2 up and down

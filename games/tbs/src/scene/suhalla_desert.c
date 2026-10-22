@@ -396,12 +396,12 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Engine_ActorSetAnimation(ACTOR_IODEM, 1);
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Engine_EventSetMessage(MsgSuhallaSandstorm);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 6, 60);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
@@ -480,12 +480,12 @@ static void Event_IodemAsksWhetherToPressOn(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 1256);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 444, 1240);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
     Engine_ActorSetAnimationAndWait(ACTOR_IODEM, 4);
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
@@ -493,7 +493,7 @@ static void Event_IodemAsksWhetherToPressOn(void) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Event_AskYesNo(ACTOR_IODEM, 0);
     Engine_EventWait(30);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 6, 60);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_IODEM, 3);
     Event_ShowMessage(ACTOR_IODEM, 0);
@@ -779,7 +779,7 @@ s32 Scene_Initialize(void) {
   } else if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
     SuhallaDesert_SetUpSecondSceneStorms();
   } else {
-    Engine_AudioPlayCue(SE_288);
+    Engine_AudioPlayCue(SE_STOP_SLOT3);
   }
   if (gGameState.entrance == ENTRANCE_DEFAULT) {
     map->flags &= ~DISPCNT_BG1_ON;

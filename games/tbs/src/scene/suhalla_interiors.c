@@ -280,7 +280,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
     Event_Wait(30);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
@@ -294,10 +294,10 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
-    Actor_ShowEmote(ACTOR_SOLDIER_SOUTH, EMOTE_IN_FRONT | 2, 40);
+    Actor_ShowEmote(ACTOR_SOLDIER_SOUTH, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
@@ -312,7 +312,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(30);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 7, 40);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_StartRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
@@ -328,7 +328,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
@@ -383,8 +383,8 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
@@ -394,7 +394,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 50);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
@@ -409,14 +409,14 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, 3);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, 4);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 50);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
@@ -426,7 +426,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
@@ -443,9 +443,9 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 80);
-    Actor_ShowEmote(ACTOR_SOLDIER_NORTH, EMOTE_IN_FRONT | 2, 50);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+    Actor_ShowEmote(ACTOR_SOLDIER_NORTH, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
@@ -494,7 +494,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -530,11 +530,11 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// Sets Suhalla's buildings up as the party enters: the merchant and
 /// innkeeper behind their counters, and the two wounded soldiers lying in their
-/// beds. SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE sets
+/// beds. SUHALLA_INTERIORS_AFTER_BABI_SPOKE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
-  if (gGameState.entrance == SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE)
+  if (gGameState.entrance == SUHALLA_INTERIORS_AFTER_BABI_SPOKE)
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

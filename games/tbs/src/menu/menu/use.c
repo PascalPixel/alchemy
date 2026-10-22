@@ -341,7 +341,7 @@ void Item_PlayUseAnimation(u32 item) {
 /// Plays the sound of action used from the menu, and returns at once: no
 /// animation is drawn and nothing waits. HP and PP healing
 /// (ABILITY_KIND_HEAL_HP and ABILITY_KIND_HEAL_PP) play SE_RECOVERY, HP healing
-/// twice; otherwise Revive's effect plays MUS_082, Cure Poison's MUS_084,
+/// twice; otherwise Revive's effect plays MUS_REVIVE, Cure Poison's MUS_084,
 /// Drain, Psy Drain and the unused HP and PP restores nothing, and every other
 /// effect, ABILITY_EFFECT_NONE of the stat items among them, MUS_091. Called
 /// after a successful use by Item_PlayUseAnimation (for ItemMenu_Use) and by
@@ -367,7 +367,7 @@ void Ability_PlayUseAnimation(s32 action) {
     targetType = actionDefinition->effect;
     switch (targetType) {
     case ABILITY_EFFECT_REVIVE:
-      Audio_PlayCueReturnOne(MUS_082);
+      Audio_PlayCueReturnOne(MUS_REVIVE);
       return;
     case ABILITY_EFFECT_CURE_POISON:
       Audio_PlayCueReturnOne(MUS_084);

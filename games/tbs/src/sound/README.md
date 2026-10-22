@@ -39,7 +39,7 @@ tracks each. What a cue plays depends on where its number falls:
 
 Three cues are controls instead. Cue 17 fades the music out over 112 frames
 (16 steps, 7 frames apart), only once until the next music starts, and records
-`MUS_019`, a song with no tracks, as what's playing, so a later cue for the
+`MUS_SILENCE`, a song with no tracks, as what's playing, so a later cue for the
 faded music starts it again. Cue 18 keeps the music that's playing. And cue
 289 fades player 3 out over 48 frames; it's also `SE_289`'s number,
 so `SE_289` never plays.

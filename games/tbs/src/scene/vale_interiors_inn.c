@@ -11,7 +11,7 @@
 ///   FLAG_VALE_STORM and plays Event_DoraWakesIsaac: Dora, Isaac's mother,
 ///   wakes him because the Mt. Aleph Boulder is going to fall, makes him take
 ///   his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs
-///   (VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA, to
+///   (VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, to
 ///   VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA), where
 ///   Event_HurryToThePlaza plays: Kyle, Isaac's father, calls them to hurry,
 ///   ACTOR_FLAME shakes outside the house, then turns to smoke and rises away,
@@ -248,7 +248,7 @@ enum ValeInteriorsInnPlaceFlag {
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST where a new game begins
 /// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this scene's
-/// own VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA, and
+/// own VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
 /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG from Kraden's cottage
 /// (VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG).
 const struct SceneEntrance *ValeInteriorsInn_GetEntrances(void) {
@@ -332,7 +332,7 @@ static void Event_AskIsaacHisBusiness(void) {
   Engine_EventSetMessage(MsgValeHeyBoy);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
   Event_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 6);
-  Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
@@ -416,9 +416,9 @@ static void Event_TakeExitToValeGateWest(void) {
 }
 
 /// Reached by cell code 5, the inn's stairs; climbs to its guest room at
-/// VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS.
+/// VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR.
 static void Event_TakeExitToInnUpstairs(void) {
-  Engine_AudioPlayCue(SE_128);
+  Engine_AudioPlayCue(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(5);
 }
 
@@ -433,20 +433,20 @@ static void Event_TakeExitToVale(void) {
 /// Reached by cell code 7, the stairs of Isaac's house; climbs to its upper
 /// floor.
 static void Event_TakeExitToIsaacsHouseUpstairs(void) {
-  Engine_AudioPlayCue(SE_128);
+  Engine_AudioPlayCue(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(7);
 }
 
 /// Reached by cell code 8, the stairs of the inn's guest room; goes back down.
 static void Event_TakeExitToInnDownstairs(void) {
-  Engine_AudioPlayCue(SE_129);
+  Engine_AudioPlayCue(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(8);
 }
 
 /// Reached by cell code 9, the stairs on the upper floor of Isaac's house; goes
 /// back down.
 static void Event_TakeExitToIsaacsHouseDownstairs(void) {
-  Engine_AudioPlayCue(SE_129);
+  Engine_AudioPlayCue(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(9);
 }
 
@@ -550,7 +550,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 /// to fall!" Called by ValeInteriorsInn_Initialize on arrival by
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, where a new game begins. Sets
 /// FLAG_ISAAC_WEARS_TUNIC and takes
-/// VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA, back into this
+/// VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, back into this
 /// scene by VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
 /// Event_HurryToThePlaza follows.
 static void Event_DoraWakesIsaac(void) {
@@ -713,7 +713,7 @@ static void Event_DoraWakesIsaac(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(
-      VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA);
+      VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
 
 /// Selects the hardware blend targets for the storm sequence.
@@ -780,7 +780,7 @@ static void Event_HurryToThePlaza(void) {
   Engine_EventOpenScreen();
   Object_RefreshSelectorById(ACTOR_DORA);
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
   // The camera finds Kyle coming up the path: "Isaac, Dora, hurry! The
@@ -947,7 +947,7 @@ static void Event_VisitSickDora(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventSetMessage(MsgValeCoughCoughWho);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 80);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
@@ -963,11 +963,11 @@ static void Event_VisitSickDora(void) {
   Engine_EventWait(40);
   // "Isaac..." "Are you finally home? Have you completed your mission!?"
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 8, 40);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, 13);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ActorSetAnimation(ACTOR_DORA, 11);
   Engine_EventWait(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
@@ -977,7 +977,7 @@ static void Event_VisitSickDora(void) {
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, 12);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorSetAnimation(ACTOR_DORA, 13);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
@@ -987,11 +987,11 @@ static void Event_VisitSickDora(void) {
     gEventWork->message += 1;
   }
   if (GameFlag_IsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
-    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_DORA, 0);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 7, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
   Engine_EventSetMessage(firstMessage);
@@ -1000,11 +1000,11 @@ static void Event_VisitSickDora(void) {
     gEventWork->message += 1;
   }
   if (Engine_GameFlagIsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
-    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_DORA, 0);
-  Engine_ActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 7, 60);
+  Engine_ActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // "You can't get out of your promises just because you're worried about
   // me." "I just caught a cold." "But I'm fine now. Look!"
   Engine_EventSetMessage(firstMessage + 3);
@@ -1416,10 +1416,10 @@ struct SceneEntrance gValeInteriorsInn_Entrances[] = {
      0, 344, 272, 640, 560, 0},
     {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS, CONDITION_ALWAYS, 408, 0,
      371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS, CONDITION_ALWAYS, 184, 0, 633,
+    {VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 184, 0, 633,
      FACING_EAST, 0, 8, 576, 320, 736, 0},
-    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS, CONDITION_ALWAYS, 408, 0,
-     665, FACING_EAST, 0, 328, 600, 624, 816, 0},
+    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 408,
+     0, 665, FACING_EAST, 0, 328, 600, 624, 816, 0},
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
     {VALE_INTERIORS_INN_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
@@ -1448,21 +1448,21 @@ u32 gValeInteriorsInn_Exits[] = {
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_WEST, ValeGate,
                VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH),
     SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_UPSTAIRS, ValeInteriorsInn,
-               VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS),
+               VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE, Vale, VALE_FROM_VALE_INTERIORS_INN),
     SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInteriorsInn,
-               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS),
-    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_DOWNSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR),
+    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR, ValeInteriorsInn,
                VALE_INTERIORS_INN_INN_FROM_UPSTAIRS),
-    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS, ValeInteriorsInn,
-               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR,
+               ValeInteriorsInn, VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WEST, ValeStorm,
                VALE_STORM_FROM_VALE_INTERIORS_INN_WEST),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_EAST, ValeStorm,
                VALE_STORM_FROM_VALE_INTERIORS_INN_EAST),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_BABI_PALACE, BabiPalace,
                BABI_PALACE_FROM_VALE_INTERIORS_INN),
-    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA,
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
                ValeInteriorsInn,
                VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, ValeStorm,
@@ -1483,20 +1483,20 @@ u32 gValeInteriorsInn_StormExits[] = {
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_WEST, ValeGate,
                VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH),
     SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_UPSTAIRS, ValeInteriorsInn,
-               VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS),
+               VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE, ValeStorm,
                VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE),
     SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInteriorsInn,
-               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS),
-    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_DOWNSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR),
+    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR, ValeInteriorsInn,
                VALE_INTERIORS_INN_INN_FROM_UPSTAIRS),
-    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS, ValeInteriorsInn,
-               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR,
+               ValeInteriorsInn, VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WEST, ValeStorm,
                VALE_STORM_FROM_VALE_INTERIORS_INN_WEST),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_EAST, ValeStorm,
                VALE_STORM_FROM_VALE_INTERIORS_INN_EAST),
-    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA,
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
                ValeInteriorsInn,
                VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, ValeStorm,

@@ -295,7 +295,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
-  Event_PlayCue(SE_133);
+  Event_PlayCue(SE_IMPACT);
   leader->velocityY = PIXELS(5);
   leader->gravity = PIXELS(1) / 4;
   leader->bounce = 5 * Q16_ONE / 8;
@@ -471,10 +471,10 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_TRET_AUXILIARY, 1);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_TRET, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Camera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
@@ -510,9 +510,9 @@ static void KolimaForestTree_RestoreTret(void) {
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   } else {
     gEventWork->message += 2;
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 3, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 0);
-    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 3, 40);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Engine_ActorSetAnimation(GARET, 4);
     Event_ShowMessage(GARET, 0);
     if (includeMia != 0) {
@@ -568,7 +568,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   } else {
     Engine_ActorSetAnimationAndWait(GARET, 4);
     gEventWork->message += 1;
@@ -596,10 +596,10 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_TRET_AUXILIARY, 2);
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_AUXILIARY, 5);
   Engine_EventWait(60);
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_AUXILIARY, 3);
@@ -645,7 +645,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Engine_EventWait(100);
   KolimaForestTree_FaceParty(FACING_SOUTHWEST, 40);
   Engine_ActorStartRepeatedMotion(IVAN, 1);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | IVAN, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
@@ -653,7 +653,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_TRET_AUXILIARY, 4);
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

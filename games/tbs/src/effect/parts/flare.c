@@ -92,9 +92,10 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   AudioCommand_PlayFar(SE_136);
   frame = 0;
   do {
-    // Frame 24 lets the battle show the damage, with SE_133 as the hit sound.
+    // Frame 24 lets the battle show the damage, with SE_IMPACT as the hit
+    // sound.
     if (frame == 24) {
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
 
     // Each flame shows six pictures, 4 frames each, and goes out; the last

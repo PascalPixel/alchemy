@@ -361,7 +361,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   Engine_AudioPlayCue(SE_226);
   FieldObject_WaitForMove(leader);
   Object_SetMode(actor, 2);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_EventEnd();
 }
 
@@ -479,7 +479,7 @@ static void Event_PushPipeworksPillar(void) {
   Engine_ActorSetAnimation(leaderId, 1);
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_213);
   Engine_EventWait(15);
   Engine_EventEnd();
@@ -782,21 +782,21 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteFirstFinalsBattle);
   Event_ShowMessage(guide, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessage(MIA, 0);
   Engine_ActorStartRepeatedMotion(guide, 3);
   Event_ShowMessage(guide, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessage(IVAN, 0);
   Actor_FaceActor(guide, IVAN, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(guide, 3);
   Event_ShowMessage(guide, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessage(GARET, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessage(MIA, 0);
-  Actor_ShowEmote(guide, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(guide, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   // Pan over each stage while the guide explains the finals rules.
   if (Event_AskYesNo(guide, 0) == 0) {
     do {
@@ -909,12 +909,13 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Engine_EventWait(30);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       Engine_EventShowMessage(scene, 0);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
       Engine_EventWait(30);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 6, 60);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
+                      60);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 184);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
@@ -1050,7 +1051,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
       Engine_EventWait(30);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
       Event_ShowMessage(scene, 0);
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1090,7 +1091,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
     Event_ShowMessage(scene, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 6, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 192);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 176);
@@ -1107,7 +1108,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Event_ShowMessage(scene, 0);
     Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1179,7 +1180,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Engine_AudioPlayCue(MUS_089);
+    Engine_AudioPlayCue(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);
@@ -1251,11 +1252,11 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
     Engine_EventWait(result * 60 + 60);
     loser = OPPONENT;
   }
-  Engine_ActorShowEmote(loser, EMOTE_IN_FRONT | 5, 0);
+  Engine_ActorShowEmote(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
   Engine_AudioPlayCue(SE_289);
   Engine_EventCloseScreen();
@@ -1494,7 +1495,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
   Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(target);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

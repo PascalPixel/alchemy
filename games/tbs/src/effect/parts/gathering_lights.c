@@ -117,7 +117,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
       if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        EFFECT_SHOW_DAMAGE(SE_133);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -137,7 +137,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
         if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
           AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         else
-          AudioCommand_PlayFar(SE_133);
+          AudioCommand_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
         ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,

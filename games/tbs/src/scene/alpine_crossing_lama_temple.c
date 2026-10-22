@@ -354,7 +354,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
   Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_TEMPLE_HAMA, 0, 20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_EventWait(120);
 
   // Garet claims that helping was his idea and asks the leader to agree.
@@ -365,7 +365,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(20);
     Actor_FaceDirection(MIA, FACING_EAST, 20);
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Event_ShowMessageAndWait(MIA, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
@@ -383,7 +383,7 @@ static void LamaTemple_RunHamasFarewell(void) {
     Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(MIA, 0, 20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
     Event_ShowMessageAndWait(GARET, 0, 20);
@@ -464,14 +464,14 @@ static void LamaTemple_RunHamasFarewell(void) {
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
@@ -615,8 +615,8 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_FEIZHI, 2);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_FEIZHI, FACING_SOUTH + FACING_STEP, 120);
-    Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | 5, 60);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
@@ -630,7 +630,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
 static void AlpineCrossing_TalkToFeizhi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
-  Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_OpenMessage(ACTOR_FEIZHI, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
     Event_SkipMessages(1);
@@ -670,7 +670,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Engine_EventWait(60);
-  Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);

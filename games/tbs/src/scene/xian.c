@@ -434,10 +434,12 @@ static void Xian_TalkToWaterCarrier(void) {
     scaleX += 0x1999;
     puddle->scaleX = scaleX;
   } while (scaleX <= 0xffff);
-  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 5, 70);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                  70);
   Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                  0);
   Engine_ActorStartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(70);
   Engine_EventSetMessage(MsgXianDoingMadeMeSpillMy);
@@ -669,7 +671,7 @@ static void Xian_OpenDoorAndLeave(void) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps1, 81, 18);
     break;
-  case XIAN_TO_HSUS_HOUSE:
+  case XIAN_TO_HOUSE_NORTH:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps2, 83, 11);
     break;
@@ -754,7 +756,8 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   carrier->speed = 0;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->acceleration = 0;
-  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                  0);
   Engine_ActorStartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(60);
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0x18000, 0xc000);
@@ -763,7 +766,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
   Engine_ActorWaitForMove(ACTOR_WOMAN_CARRYING_WATER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetActionScript(ACTOR_WOMAN_CARRYING_WATER, gXian_WaterCarrierRoute);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = XIAN_WATER_CARRIER_UPDATE;
@@ -968,7 +971,7 @@ struct SceneEntrance gXian_Entrances[] = {
      -1, -1, 0},
     {XIAN_FROM_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 344, 0, 328,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {XIAN_FROM_HSUS_HOUSE, CONDITION_ALWAYS, 376, 0, 216, FACING_SOUTH, 0, -1,
+    {XIAN_FROM_HOUSE_NORTH, CONDITION_ALWAYS, 376, 0, 216, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {XIAN_FROM_XIAN_INTERIORS_EAST, CONDITION_ALWAYS, 424, 0, 216, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
@@ -986,7 +989,7 @@ struct SceneEntrance gXian_Entrances[] = {
 u32 gXian_Exits[] = {
     SCENE_EXITS(Xian),
     SCENE_EXIT(XIAN_TO_HOUSE, XianInteriors, XIAN_INTERIORS_HOUSE),
-    SCENE_EXIT(XIAN_TO_HSUS_HOUSE, XianInteriors, XIAN_INTERIORS_HSUS_HOUSE),
+    SCENE_EXIT(XIAN_TO_HOUSE_NORTH, XianInteriors, XIAN_INTERIORS_HOUSE_NORTH),
     SCENE_EXIT(XIAN_TO_XIAN_INTERIORS_EAST, XianInteriors,
                XIAN_INTERIORS_FROM_XIAN_EAST),
     SCENE_EXIT(XIAN_TO_INN, XianInteriors, XIAN_INTERIORS_INN_SOUTH),

@@ -40,8 +40,9 @@
 ///   fall into the lighthouse; the party wonders whether it has won; Felix,
 ///   who says he must still light the beacons, takes Sheba and goes; the
 ///   beacon erupts and splits the aerie, its light lifts the party away, and
-///   the world map (WORLD_MAP_VENUS_LIGHTHOUSE_LIT) plays the lighthouse's
-///   transition and sends the party back to AERIE_ENTRANCE_SHEBA_IN_DANGER.
+///   the world map (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) plays the
+///   lighthouse's transition and sends the party back to
+///   AERIE_ENTRANCE_SHEBA_IN_DANGER.
 /// - A look back (AERIE_ENTRANCE_SHEBA_IN_DANGER,
 ///   VenusLighthouseAerie_ShowShebaInDanger): Felix calls to Sheba as she
 ///   clings to the broken aerie, and the world map returns
@@ -482,7 +483,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVING_PILLAR), 1);
   Actor_SetDestination(ACTOR_MOVING_PILLAR, 515, 171);
   Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, 516, 121);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
   ObjectMotion_WaitForAnimationChange(0);
@@ -549,11 +550,11 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MENARDI);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT, 0);
-  Engine_ActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
@@ -565,21 +566,21 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_EventWait(20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_EventShowMessageAndWait(ACTOR_MENARDI, 0, 40);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 6, 40);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_WEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 40);
@@ -587,9 +588,9 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 8, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Engine_EventShowMessageAndWait(ACTOR_FELIX, 0, 20);
   Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_WEST, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -599,11 +600,11 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
@@ -612,7 +613,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Engine_EventShowMessageAndWait(ACTOR_FELIX, 0, 20);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_EventShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
   VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
@@ -629,8 +630,8 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_WEST, 0);
   Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_WEST, 0);
   Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
@@ -640,30 +641,30 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FELIX);
-  Engine_ActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT, 20);
+  Engine_ActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Event_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FELIX);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 60);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_WEST, 20);
   Engine_EventShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
-  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 5, 120);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 40);
@@ -673,14 +674,14 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_EventShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_FELIX, 0, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-  Engine_ActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT, 40);
+  Engine_ActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_ActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 5, 40);
-  Engine_ActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 8, 40);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Engine_ActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-  Engine_ActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 20);
+  Engine_ActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Engine_EventWait(20);
@@ -701,7 +702,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | GARET);
-  Engine_ActorShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Engine_ActorShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(MIA);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | IVAN, 0, 40);
@@ -803,7 +804,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_WEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
@@ -815,14 +816,14 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_WEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   VenusLighthouseAerie_ShowMessage(MIA);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   VenusLighthouseAerie_ShowMessage(IVAN);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 6, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_EAST, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -831,7 +832,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
@@ -843,9 +844,9 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   Engine_ActorFaceDirection(MIA, FACING_WEST, 0);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 20);
-  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(SHEBA);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Engine_EventWait(20);
@@ -894,9 +895,9 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
   VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_WEST);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
-  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Engine_ActorStartRepeatedMotion(ACTOR_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Scheduler_RemoveCallback(VenusLighthouseAerie_UpdateShebaPalette);
@@ -906,14 +907,14 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Scene_EndCutscenePsynergy();
   Engine_ActorJump(SHEBA, 2, 40);
   VenusLighthouseAerie_ShowMessage(SHEBA);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Object_GetById(SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(SHEBA, 250, 176);
   Engine_EventWait(1);
   Object_GetById(SHEBA)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
@@ -934,13 +935,13 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(SHEBA);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 100);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 100);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_EventWait(20);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_EAST);
@@ -966,7 +967,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 8, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_OpenMessage(ACTOR_SATUROS, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -1012,11 +1013,11 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 60);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_WEST);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1050,7 +1051,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Actor_WalkToAndWait(SHEBA, 260, 186);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(SHEBA, 276, 192);
-  Event_PlayCue(MUS_019);
+  Event_PlayCue(MUS_SILENCE);
   object = Object_GetById(ACTOR_MENARDI);
   object->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
@@ -1082,14 +1083,14 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceActor(SHEBA, FACING_NORTH + FACING_STEP);
   Engine_ActorSetAnimation(MIA, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(MIA);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
-  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
   VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_EAST);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusLighthouseAerie_ShowMessage(GARET);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
@@ -1099,13 +1100,14 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Engine_ActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Engine_ActorFaceDirection(SHEBA, FACING_NORTH + FACING_STEP, 0);
-  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(MIA, 0, 20);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
   Engine_ActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
-  Actor_SetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
@@ -1122,13 +1124,13 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceActor(MIA, FACING_NORTHWEST);
   VenusLighthouseAerie_ShowMessage(MIA);
   Engine_ActorFaceDirection(GARET, FACING_WEST, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusLighthouseAerie_ShowMessage(GARET);
   Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 40);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
@@ -1345,11 +1347,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Event_Wait(1);
   Actor_Get(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   VenusLighthouseAerie_ShowMessage(IVAN);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_RunRepeatedMotion(GARET, 1);
   VenusLighthouseAerie_ShowMessage(GARET);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
@@ -1359,7 +1361,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(MIA);
   Actor_SetAnimation(MIA, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(MIA);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_Jump(IVAN, 2, 20);
@@ -1524,7 +1526,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     VenusLighthouseAerie_StopActorMotion(&star->actor);
   }
   // Let the group react as the Venus Star reaches the beacon.
-  VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT, 30);
+  VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_SetSpritePriority(ACTOR_FELIX, 1);
   Actor_Get(ACTOR_FELIX)->priorityFlags |= 1;
   Actor_StartRepeatedMotion(IVAN, 2);
@@ -1540,8 +1542,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(MIA, FACING_WEST, 0);
   Actor_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
   VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
-  VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | 1, 60);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 8, 40);
+  VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 40);
@@ -1578,7 +1580,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   actor->y.fixed = PIXELS(96);
   actor->x.fixed = PIXELS(304);
   actor->z.fixed = PIXELS(158);
-  VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT, 0);
+  VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
@@ -1634,10 +1636,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_EAST);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_StartRepeatedMotion(ACTOR_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   VenusLighthouseAerie_FaceActor(GARET, FACING_SOUTHWEST);
   VenusLighthouseAerie_ShowMessage(GARET);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
@@ -1656,7 +1658,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   VenusLighthouseAerie_FaceActor(MIA, FACING_NORTHWEST);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
@@ -1685,36 +1687,36 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 1, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 80);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 80);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 8, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Event_Wait(20);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -2225,7 +2227,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   VenusLighthouseAerie_FaceActor(MIA, FACING_NORTH);
   VenusLighthouseAerie_FaceActor(GARET, FACING_SOUTH);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 40);
@@ -2237,18 +2239,18 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   VenusLighthouseAerie_ShowMessage(MIA);
   Actor_FaceDirection(GARET, FACING_SOUTH, 80);
   Actor_FaceDirection(MIA, FACING_SOUTHWEST, 80);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   VenusLighthouseAerie_FaceActor(IVAN, FACING_NORTH);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
   Engine_ActorJump(IVAN, 4, 60);
   VenusLighthouseAerie_FaceActor(GARET, FACING_SOUTHEAST);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 40);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(GARET, 4, 40);
   VenusLighthouseAerie_ShowMessage(GARET);
   Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2259,7 +2261,8 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   Event_PlayCue(MUS_023);
-  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Engine_EventWait(20);
@@ -2268,7 +2271,8 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_SetAttachedEffect(SHEBA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   miaSpeaker = SPEAKER_PORTRAIT_RIGHT | MIA;
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(MIA, 2);
@@ -2284,11 +2288,12 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   VenusLighthouseAerie_ShowMessage(miaSpeaker);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_SetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | IVAN);
   Engine_ActorSetAnimation(ACTOR_FELIX, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusLighthouseAerie_ShowMessage(GARET);
   Engine_ActorSetAnimation(ACTOR_FELIX, ANIM_SHAKE_HEAD);
@@ -2296,7 +2301,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH + FACING_STEP, 20);
   Engine_ActorJump(MIA, 4, 20);
   Event_ShowMessageAndWait(miaSpeaker, 0, 20);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
 }
 
 static s32 sTransitionTimer;
@@ -2309,15 +2314,15 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   struct FieldActor *upper;
   struct FieldActor *actor;
 
-  Engine_AudioPlayCue(MUS_019);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(MUS_SILENCE);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT, 10);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
@@ -2447,14 +2452,16 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_ActorJump(IVAN, 2, 20);
   VenusLighthouseAerie_ShowMessage(IVAN);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusLighthouseAerie_ShowMessage(GARET);
   Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ActorWalkToAndWait(MIA, 326, 220);
   Engine_EventWait(40);
-  Engine_ActorSetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Engine_ActorSetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
+                                         ATTACHED_EFFECT_ONCE);
   VenusLighthouseAerie_ShowMessage(MIA);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->riseCounter = 0;
@@ -2499,7 +2506,8 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_EventWait(30);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   ObjectTable_Snapshot();
-  Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_VENUS_LIGHTHOUSE_LIT);
+  Event_SetDestination((s32)&SceneId_WorldMap,
+                       WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
   {
     u16 white = 0x7fff;
 
@@ -2600,10 +2608,12 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
   Engine_ActorRunRepeatedMotion(SHEBA, 3);
   VenusLighthouseAerie_ShowMessage(SHEBA);
-  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 80);
-  Actor_SetAttachedEffect(SHEBA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(SHEBA, 2);
   VenusLighthouseAerie_ShowMessage(SHEBA);
@@ -2619,7 +2629,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   stepPending = 0;
   // Sheba loses her grip while Felix tries to keep her on the platform.
   Engine_EventSetMessage(MsgVenusWhyHappeningProtectVenusLighthouse);
-  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 20);
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
@@ -2634,7 +2645,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Actor_SetActionScript(SHEBA, gVenusLighthouseAerie_StepBackAction);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 3);
   Object_RefreshSelectorById(SHEBA);
   Engine_EventWait(160);
@@ -2674,12 +2686,12 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->timer = 10;
   Actor_SetActionScript(ACTOR_PARTY_LEADER,
                         gVenusLighthouseAerie_ScaleStepAction);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   Event_ShowMessageAndWait(GARET, 0, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(20);
   VenusLighthouseAerie_ShowMessage(IVAN);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   VenusLighthouseAerie_ShowMessage(MIA);
   Engine_ActorSetSpriteFlags(Object_GetById(GARET), 1);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
@@ -2713,7 +2725,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   VenusLighthouseAerie_ShowMessage(MIA);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   VenusLighthouseAerie_FaceActor(GARET, FACING_SOUTH);
   VenusLighthouseAerie_ShowMessage(GARET);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
@@ -2728,7 +2740,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   VenusLighthouseAerie_FaceActor(GARET, FACING_SOUTHEAST);
   Engine_ActorJump(GARET, 4, 0);
   VenusLighthouseAerie_ShowMessage(GARET);
@@ -2756,14 +2768,15 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
     gEventWork->message += 3;
   }
   VenusLighthouseAerie_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Event_PlayCue(MUS_017);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 40);
   Actor_FaceDirection(GARET, FACING_WEST, 20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
@@ -2773,7 +2786,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_FaceDirection(MIA, FACING_WEST, 40);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   VenusLighthouseAerie_ShowMessage(MIA);
   Event_PlayCue(SE_141);
@@ -2808,10 +2821,10 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Camera_MoveTo(PIXELS(338), PIXELS(32), PIXELS(180), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_ActorJump(GARET, 6, 0);
   Engine_ActorJump(IVAN, 6, 0);
@@ -2857,10 +2870,13 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Camera_MoveTo(PIXELS(322), PIXELS(32), PIXELS(180), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_ActorJump(GARET, 6, 0);
   Engine_ActorJump(IVAN, 6, 0);
@@ -2874,7 +2890,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ActorStop(IVAN);
   Engine_ActorStop(MIA);
   Engine_EventWait(120);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 120);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   VenusLighthouseAerie_ShowMessage(IVAN);

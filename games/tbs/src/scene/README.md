@@ -266,7 +266,7 @@ static void Event_PatrolPairThrowsPartyOut(void) {
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   OBJ_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
   OBJ_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL, EMOTE_IN_FRONT, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
   EV_END();
 }

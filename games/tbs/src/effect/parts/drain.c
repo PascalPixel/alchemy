@@ -212,7 +212,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
     user = GetBattleObjectSlotFar(work->effect->actor)->object;
     halfHeight = BattleUnit_GetEffectHeightFar(work->effect->actor) / 2;
     if (frame == 64)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 40)
       ObjectGroup_UpdateMembers(work->effect->actor, SPRITE_COLOR_WHITE, -1, -1,

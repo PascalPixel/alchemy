@@ -48,7 +48,7 @@
 /// BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH (colosseum_navampa_match.c): the
 /// leader wakes long after the finals, and Babi wants to see him
 /// (BabiPalace_WakeAfterFinals). Coming into the throne room
-/// (BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL) the first time plays
+/// (BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM) the first time plays
 /// BabiPalace_MeetBabiAfterColosso (FLAG_BABI_SPOKE_AFTER_COLOSSO): Babi
 /// praises the party's fighting, and has Iodem bring the victor's prize if it
 /// won (FLAG_WON_COLOSSO). He saw its Psynergy through his Cloak Ball, and
@@ -446,11 +446,11 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   Engine_EventOpenMessage(actorId, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
-    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | 2, 0x28);
+    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
     Engine_EventSetMessage(question + 1);
   } else {
     Engine_EventWait(10);
-    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | 5, 0x28);
+    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
     Engine_EventSetMessage(question + 2);
   }
   Engine_EventShowMessage(actorId, 0);
@@ -478,7 +478,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_Wait(60);
   Event_ShowMessage(actorId, 0);
   Event_Wait(20);
-  Actor_ShowEmote(actorId, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(actorId, 2);
   Event_Wait(30);
   Actor_RunRepeatedMotion(actorId, 2);
@@ -506,7 +506,7 @@ static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
     GameFlag_Set(FLAG_SHEBA_NOTICED_MIND_READ);
     Psynergy_Cancel();
     Event_Wait(50);
-    Actor_ShowEmote(actorId, EMOTE_IN_FRONT, 70);
+    Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
     Actor_FaceActor(actorId, ACTOR_PARTY_LEADER, 40);
     Event_ShowMessage(actorId, 0);
     Event_Wait(30);
@@ -616,17 +616,17 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_Wait(30);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_Wait(20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 6, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
@@ -899,7 +899,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_WalkToAndWait(ACTOR_IODEM, 584, 360);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_IODEM, 32768, 0);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 131072, 65536);
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 131072, 65536);
@@ -923,18 +923,18 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 65536, 32768);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 8, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 65536, 32768);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 8, 0);
   Event_Wait(20);
@@ -956,13 +956,13 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
@@ -976,7 +976,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, 22, 60);
@@ -988,7 +988,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
@@ -1001,13 +1001,13 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -1019,7 +1019,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
   Event_Wait(20);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
@@ -1037,7 +1037,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
@@ -1048,13 +1048,13 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -1100,7 +1100,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
@@ -1195,12 +1195,12 @@ static void BabiPalace_WakeAfterFinals(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   event->transitionFrames = 24;
   Event_Wait(20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 50);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 40);
   Actor_RunRepeatedMotion(GARET, 2);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   Event_Wait(30);
   Event_ShowMessage(IVAN, 0);
@@ -1230,14 +1230,14 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(20);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 50);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Event_OpenMessage(IVAN, 0);
   if (Event_ChooseYesNo(-1, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(GARET, 4, 13);
     Actor_Jump(GARET, 4, 30);
     Event_ShowMessage(GARET, 0);
@@ -1246,7 +1246,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(GARET, 4, 13);
     Actor_Jump(GARET, 4, 30);
     gEventWork->message++;
@@ -1272,7 +1272,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(50);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   Event_Wait(35);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 8, 50);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(MIA, ANIM_NOD);
   Event_Wait(30);
@@ -1285,7 +1285,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     Event_ShowMessage(GARET, 0);
     pick = 0;
     gEventWork->message++;
@@ -1293,7 +1293,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     gEventWork->message++;
     pick = 1;
     Event_ShowMessage(GARET, 0);
@@ -1318,7 +1318,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(50);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   Event_Wait(35);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 8, 50);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(MIA, ANIM_NOD);
   Event_Wait(30);
@@ -1345,7 +1345,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_ShowMessage(GARET, 0);
   }
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_Wait(10);
   Actor_SetAnimationAndWait(GARET, ANIM_NOD);
   Event_Wait(30);
@@ -1596,7 +1596,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceActor(IVAN, GARET, 30);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 6, 50);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
@@ -1626,7 +1626,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -1647,7 +1647,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   }
 
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1660,14 +1660,14 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -1686,10 +1686,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 50);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -1713,10 +1713,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(40);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_BABI, IVAN, 40);
@@ -1772,7 +1772,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -1788,13 +1788,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 70);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -1811,7 +1811,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1826,7 +1826,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1876,10 +1876,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(30);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_BABI, 20, 40);
@@ -1901,7 +1901,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -1912,10 +1912,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(30);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -1935,7 +1935,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1952,7 +1952,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1979,16 +1979,16 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 50);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_BABI, 20, 30);
@@ -2008,7 +2008,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -2017,7 +2017,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -2030,7 +2030,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2039,13 +2039,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(GARET, ACTOR_PARTY_LEADER, 50);
@@ -2057,23 +2057,23 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_OpenMessage(IVAN, 0);
   if (Event_ChooseYesNo(ACTOR_BABI, 0) == 0) {
     Event_Wait(10);
@@ -2140,7 +2140,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_OpenMessage(ACTOR_IODEM, 0);
   if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_ShowMessage(GARET, 0);
     gEventWork->message++;
   } else {
@@ -2154,7 +2154,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2163,12 +2163,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
@@ -2185,8 +2185,8 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 80);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 70);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
@@ -2199,7 +2199,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 6, 50);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -2207,16 +2207,16 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 8, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_OpenMessage(ACTOR_BABI, 0);
   if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
-    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Event_ShowMessage(ACTOR_BABI, 0);
     gEventWork->message++;
   } else {
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     gEventWork->message++;
     Event_ShowMessage(ACTOR_BABI, 0);
   }
@@ -2234,12 +2234,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -2426,7 +2426,7 @@ static void BabiPalace_PassOnBabisWord(void) {
     Actor_FaceEachOther(ACTOR_FIRST_GUARD, ACTOR_SECOND_GUARD, 30);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUARD, ANIM_NOD);
     Event_Wait(30);
-    Actor_ShowEmote(ACTOR_FIRST_GUARD, EMOTE_IN_FRONT | 2, 50);
+    Actor_ShowEmote(ACTOR_FIRST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Actor_FaceDirection(ACTOR_FIRST_GUARD, 20480, 0);
     Actor_FaceDirection(ACTOR_SECOND_GUARD, 12288, 0);
     Event_Wait(20);
@@ -2541,7 +2541,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         Vram_Load(sprite->slot, 128, buf + 0x400);
         Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
-      if (gGameState.entrance == BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL &&
+      if (gGameState.entrance == BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
           !GameFlag_IsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
         GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
         Actor_SetPosition(ACTOR_BABI, PIXELS(208), PIXELS(704));
@@ -2602,42 +2602,42 @@ s32 gBabiPalace_IndigestionScript[] = {
 struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { BABI_PALACE_FROM_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, 768, 0, 200, FACING_NORTH, 0, 512, 0, 1024, 224, 0 },
-    { BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_WEST, CONDITION_ALWAYS, 728, 0, 88, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
-    { BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_EAST, CONDITION_ALWAYS, 808, 0, 88, FACING_WEST, 0, 512, 0, 1024, 224, 0 },
-    { BABI_PALACE_STATUE_HALL_FROM_WEST_STAIRWELL, CONDITION_ALWAYS, 600, 0, 152, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
-    { BABI_PALACE_STATUE_HALL_FROM_EAST_STAIRWELL, CONDITION_ALWAYS, 936, 0, 152, FACING_WEST, 0, 512, 0, 1024, 224, 0 },
-    { BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_WEST, CONDITION_ALWAYS, 584, 0, 56, FACING_SOUTH, 0, 512, 0, 1024, 224, 0 },
-    { BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_EAST, CONDITION_ALWAYS, 952, 0, 56, FACING_SOUTH, 0, 512, 0, 1024, 224, 0 },
-    { BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_WEST, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
-    { BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_EAST, CONDITION_ALWAYS, 440, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
-    { BABI_PALACE_SCHOLARS_LANDING_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 72, 0, 968, FACING_EAST, 0, 0, 864, 240, 1024, 0 },
+    { BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST, CONDITION_ALWAYS, 728, 0, 88, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
+    { BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_EAST, CONDITION_ALWAYS, 808, 0, 88, FACING_WEST, 0, 512, 0, 1024, 224, 0 },
+    { BABI_PALACE_STATUE_ROOM_FROM_WEST_STEPS, CONDITION_ALWAYS, 600, 0, 152, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
+    { BABI_PALACE_STATUE_ROOM_FROM_EAST_STEPS, CONDITION_ALWAYS, 936, 0, 152, FACING_WEST, 0, 512, 0, 1024, 224, 0 },
+    { BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_WEST, CONDITION_ALWAYS, 584, 0, 56, FACING_SOUTH, 0, 512, 0, 1024, 224, 0 },
+    { BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_EAST, CONDITION_ALWAYS, 952, 0, 56, FACING_SOUTH, 0, 512, 0, 1024, 224, 0 },
+    { BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
+    { BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_EAST, CONDITION_ALWAYS, 440, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
+    { BABI_PALACE_SCHOLARS_LANDING_FROM_CARPET_ROOM, CONDITION_ALWAYS, 72, 0, 968, FACING_EAST, 0, 0, 864, 240, 1024, 0 },
     { BABI_PALACE_FROM_VALE_INTERIORS_INN, CONDITION_ALWAYS, 168, 0, 936, FACING_SOUTH, 0, 0, 864, 240, 1024, 0 },
-    { BABI_PALACE_TUNNEL_LANDING_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 424, 0, 680, FACING_WEST, 0, 328, 600, 568, 760, 0 },
+    { BABI_PALACE_TUNNEL_LANDING_FROM_CARPET_ROOM, CONDITION_ALWAYS, 424, 0, 680, FACING_WEST, 0, 328, 600, 568, 760, 0 },
     { BABI_PALACE_FROM_COLOSSEUM_TUNNEL, CONDITION_ALWAYS, 472, 0, 696, FACING_SOUTH, 0, 328, 600, 568, 760, 0 },
-    { BABI_PALACE_BEDROOM_LANDING_FROM_THRONE_ROOM, CONDITION_ALWAYS, 408, 0, 824, FACING_EAST, 0, 320, 728, 560, 888, 0 },
+    { BABI_PALACE_BEDROOM_LANDING_FROM_MEETING_ROOM, CONDITION_ALWAYS, 408, 0, 824, FACING_EAST, 0, 320, 728, 560, 888, 0 },
     { BABI_PALACE_BEDROOM_LANDING_FROM_BABIS_BEDROOM, CONDITION_ALWAYS, 456, 0, 808, FACING_SOUTH, 0, 320, 728, 560, 888, 0 },
     { BABI_PALACE_BABIS_BEDROOM_FROM_BEDROOM_LANDING, CONDITION_ALWAYS, 824, 0, 648, FACING_NORTH, 0, 768, 480, 1024, 672, 0 },
-    { BABI_PALACE_WEST_STAIRWELL_FROM_STATUE_HALL, CONDITION_ALWAYS, 872, 0, 936, FACING_WEST, 0, 784, 864, 1024, 1024, 0 },
-    { BABI_PALACE_WEST_STAIRWELL_FROM_WEST_OCTAGONAL_ROOM, CONDITION_ALWAYS, 888, 0, 968, FACING_WEST, 0, 784, 864, 1024, 1024, 0 },
-    { BABI_PALACE_EAST_STAIRWELL_FROM_STATUE_HALL, CONDITION_ALWAYS, 760, 0, 936, FACING_EAST, 0, 608, 864, 848, 1024, 0 },
-    { BABI_PALACE_EAST_STAIRWELL_FROM_EAST_OCTAGONAL_ROOM, CONDITION_ALWAYS, 744, 0, 968, FACING_EAST, 0, 608, 864, 848, 1024, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_WEST, CONDITION_ALWAYS, 440, 0, 584, FACING_WEST, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_EAST, CONDITION_ALWAYS, 616, 0, 584, FACING_EAST, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_SCHOLARS_LANDING, CONDITION_ALWAYS, 328, 0, 312, FACING_WEST, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_TUNNEL_LANDING, CONDITION_ALWAYS, 728, 0, 312, FACING_EAST, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_NORTH_OCTAGONAL_ROOM, CONDITION_ALWAYS, 312, 0, 296, FACING_WEST, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_SHEBAS_LANDING, CONDITION_ALWAYS, 744, 0, 296, FACING_EAST, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_STOVE_ROOM, CONDITION_ALWAYS, 472, 0, 504, FACING_SOUTH, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_SOLDIERS_ROOM, CONDITION_ALWAYS, 584, 0, 504, FACING_SOUTH, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_CENTRAL_HALL_FROM_THRONE_ROOM, CONDITION_ALWAYS, 528, 0, 296, FACING_SOUTH, 0, 272, 240, 784, 608, 0 },
-    { BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 208, 0, 840, FACING_NORTH, 0, 0, 624, 336, 864, 0 },
-    { BABI_PALACE_THRONE_ROOM_FROM_BEDROOM_LANDING, CONDITION_ALWAYS, 40, 0, 760, FACING_WEST, 0, 0, 624, 336, 864, 0 },
-    { BABI_PALACE_STOVE_ROOM_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 200, 0, 360, FACING_NORTH, 0, 0, 240, 256, 480, 0 },
-    { BABI_PALACE_SOLDIERS_ROOM_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 824, 0, 360, FACING_NORTH, 0, 768, 240, 1024, 480, 0 },
-    { BABI_PALACE_WEST_OCTAGONAL_ROOM_FROM_WEST_STAIRWELL, CONDITION_ALWAYS, 376, 0, 936, FACING_EAST, 0, 232, 864, 472, 1024, 0 },
-    { BABI_PALACE_EAST_OCTAGONAL_ROOM_FROM_EAST_STAIRWELL, CONDITION_ALWAYS, 520, 0, 936, FACING_WEST, 0, 424, 864, 664, 1024, 0 },
-    { BABI_PALACE_NORTH_OCTAGONAL_ROOM_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 904, 0, 776, FACING_EAST, 0, 776, 704, 1016, 864, 0 },
-    { BABI_PALACE_SHEBAS_LANDING_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 216, 0, 552, FACING_WEST, 0, 0, 472, 304, 632, 0 },
+    { BABI_PALACE_WEST_STEPS_FROM_STATUE_ROOM, CONDITION_ALWAYS, 872, 0, 936, FACING_WEST, 0, 784, 864, 1024, 1024, 0 },
+    { BABI_PALACE_WEST_STEPS_FROM_WEST_ROUND_ROOM, CONDITION_ALWAYS, 888, 0, 968, FACING_WEST, 0, 784, 864, 1024, 1024, 0 },
+    { BABI_PALACE_EAST_STEPS_FROM_STATUE_ROOM, CONDITION_ALWAYS, 760, 0, 936, FACING_EAST, 0, 608, 864, 848, 1024, 0 },
+    { BABI_PALACE_EAST_STEPS_FROM_EAST_ROUND_ROOM, CONDITION_ALWAYS, 744, 0, 968, FACING_EAST, 0, 608, 864, 848, 1024, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_WEST, CONDITION_ALWAYS, 440, 0, 584, FACING_WEST, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_EAST, CONDITION_ALWAYS, 616, 0, 584, FACING_EAST, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_SCHOLARS_LANDING, CONDITION_ALWAYS, 328, 0, 312, FACING_WEST, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_TUNNEL_LANDING, CONDITION_ALWAYS, 728, 0, 312, FACING_EAST, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_NORTH_ROUND_ROOM, CONDITION_ALWAYS, 312, 0, 296, FACING_WEST, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_SHEBAS_LANDING, CONDITION_ALWAYS, 744, 0, 296, FACING_EAST, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_OVEN_ROOM, CONDITION_ALWAYS, 472, 0, 504, FACING_SOUTH, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_SOLDIERS_ROOM, CONDITION_ALWAYS, 584, 0, 504, FACING_SOUTH, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_CARPET_ROOM_FROM_MEETING_ROOM, CONDITION_ALWAYS, 528, 0, 296, FACING_SOUTH, 0, 272, 240, 784, 608, 0 },
+    { BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM, CONDITION_ALWAYS, 208, 0, 840, FACING_NORTH, 0, 0, 624, 336, 864, 0 },
+    { BABI_PALACE_MEETING_ROOM_FROM_BEDROOM_LANDING, CONDITION_ALWAYS, 40, 0, 760, FACING_WEST, 0, 0, 624, 336, 864, 0 },
+    { BABI_PALACE_OVEN_ROOM_FROM_CARPET_ROOM, CONDITION_ALWAYS, 200, 0, 360, FACING_NORTH, 0, 0, 240, 256, 480, 0 },
+    { BABI_PALACE_SOLDIERS_ROOM_FROM_CARPET_ROOM, CONDITION_ALWAYS, 824, 0, 360, FACING_NORTH, 0, 768, 240, 1024, 480, 0 },
+    { BABI_PALACE_WEST_ROUND_ROOM_FROM_WEST_STEPS, CONDITION_ALWAYS, 376, 0, 936, FACING_EAST, 0, 232, 864, 472, 1024, 0 },
+    { BABI_PALACE_EAST_ROUND_ROOM_FROM_EAST_STEPS, CONDITION_ALWAYS, 520, 0, 936, FACING_WEST, 0, 424, 864, 664, 1024, 0 },
+    { BABI_PALACE_NORTH_ROUND_ROOM_FROM_CARPET_ROOM, CONDITION_ALWAYS, 904, 0, 776, FACING_EAST, 0, 776, 704, 1016, 864, 0 },
+    { BABI_PALACE_SHEBAS_LANDING_FROM_CARPET_ROOM, CONDITION_ALWAYS, 216, 0, 552, FACING_WEST, 0, 0, 472, 304, 632, 0 },
     { BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM, CONDITION_ALWAYS, 88, 0, 552, FACING_SOUTH, 0, 0, 472, 304, 632, 0 },
     { BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING, CONDITION_ALWAYS, 728, 0, 824, FACING_NORTH, 0, 552, 656, 792, 848, 0 },
     { BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH, CONDITION_ALWAYS, 152, 0, 104, FACING_SOUTH, 0, 0, 0, 512, 240, 0 },
@@ -2659,42 +2659,42 @@ struct SceneRegion gBabiPalace_Regions[] = {
 u32 gBabiPalace_Exits[] = {
     SCENE_EXITS(BabiPalace),
     SCENE_EXIT(BABI_PALACE_TO_BABI_PALACE_ENTRANCE, BabiPalaceEntrance, BABI_PALACE_ENTRANCE_FROM_BABI_PALACE),
-    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_WEST, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_WEST),
-    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_EAST, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_EAST),
-    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_WEST_STAIRWELL, BabiPalace, BABI_PALACE_WEST_STAIRWELL_FROM_STATUE_HALL),
-    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_EAST_STAIRWELL, BabiPalace, BABI_PALACE_EAST_STAIRWELL_FROM_STATUE_HALL),
-    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_WEST, BabiPalace, BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_WEST),
-    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_EAST, BabiPalace, BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_EAST),
-    SCENE_EXIT(BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_WEST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_WEST),
-    SCENE_EXIT(BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_EAST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_EAST),
-    SCENE_EXIT(BABI_PALACE_SCHOLARS_LANDING_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_SCHOLARS_LANDING),
+    SCENE_EXIT(BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_WEST),
+    SCENE_EXIT(BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_EAST),
+    SCENE_EXIT(BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS, BabiPalace, BABI_PALACE_WEST_STEPS_FROM_STATUE_ROOM),
+    SCENE_EXIT(BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS, BabiPalace, BABI_PALACE_EAST_STEPS_FROM_STATUE_ROOM),
+    SCENE_EXIT(BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, BabiPalace, BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST),
+    SCENE_EXIT(BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, BabiPalace, BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_EAST),
+    SCENE_EXIT(BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST, BabiPalace, BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_WEST),
+    SCENE_EXIT(BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST, BabiPalace, BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_EAST),
+    SCENE_EXIT(BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_SCHOLARS_LANDING),
     SCENE_EXIT(BABI_PALACE_TO_VALE_INTERIORS_INN, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_BABI_PALACE),
-    SCENE_EXIT(BABI_PALACE_TUNNEL_LANDING_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_TUNNEL_LANDING),
+    SCENE_EXIT(BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_TUNNEL_LANDING),
     SCENE_EXIT(BABI_PALACE_TO_COLOSSEUM_TUNNEL, ColosseumTunnel, COLOSSEUM_TUNNEL_FROM_BABI_PALACE),
-    SCENE_EXIT(BABI_PALACE_BEDROOM_LANDING_TO_THRONE_ROOM, BabiPalace, BABI_PALACE_THRONE_ROOM_FROM_BEDROOM_LANDING),
+    SCENE_EXIT(BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM, BabiPalace, BABI_PALACE_MEETING_ROOM_FROM_BEDROOM_LANDING),
     SCENE_EXIT(BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, BabiPalace, BABI_PALACE_BABIS_BEDROOM_FROM_BEDROOM_LANDING),
     SCENE_EXIT(BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING, BabiPalace, BABI_PALACE_BEDROOM_LANDING_FROM_BABIS_BEDROOM),
-    SCENE_EXIT(BABI_PALACE_WEST_STAIRWELL_TO_STATUE_HALL, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_WEST_STAIRWELL),
-    SCENE_EXIT(BABI_PALACE_WEST_STAIRWELL_TO_WEST_OCTAGONAL_ROOM, BabiPalace, BABI_PALACE_WEST_OCTAGONAL_ROOM_FROM_WEST_STAIRWELL),
-    SCENE_EXIT(BABI_PALACE_EAST_STAIRWELL_TO_STATUE_HALL, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_EAST_STAIRWELL),
-    SCENE_EXIT(BABI_PALACE_EAST_STAIRWELL_TO_EAST_OCTAGONAL_ROOM, BabiPalace, BABI_PALACE_EAST_OCTAGONAL_ROOM_FROM_EAST_STAIRWELL),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_WEST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_WEST),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_EAST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_EAST),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_SCHOLARS_LANDING, BabiPalace, BABI_PALACE_SCHOLARS_LANDING_FROM_CENTRAL_HALL),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_TUNNEL_LANDING, BabiPalace, BABI_PALACE_TUNNEL_LANDING_FROM_CENTRAL_HALL),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_NORTH_OCTAGONAL_ROOM, BabiPalace, BABI_PALACE_NORTH_OCTAGONAL_ROOM_FROM_CENTRAL_HALL),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_SHEBAS_LANDING, BabiPalace, BABI_PALACE_SHEBAS_LANDING_FROM_CENTRAL_HALL),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_STOVE_ROOM, BabiPalace, BABI_PALACE_STOVE_ROOM_FROM_CENTRAL_HALL),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_SOLDIERS_ROOM, BabiPalace, BABI_PALACE_SOLDIERS_ROOM_FROM_CENTRAL_HALL),
-    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_THRONE_ROOM, BabiPalace, BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL),
-    SCENE_EXIT(BABI_PALACE_THRONE_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_THRONE_ROOM),
-    SCENE_EXIT(BABI_PALACE_THRONE_ROOM_TO_BEDROOM_LANDING, BabiPalace, BABI_PALACE_BEDROOM_LANDING_FROM_THRONE_ROOM),
-    SCENE_EXIT(BABI_PALACE_STOVE_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_STOVE_ROOM),
-    SCENE_EXIT(BABI_PALACE_SOLDIERS_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_SOLDIERS_ROOM),
-    SCENE_EXIT(BABI_PALACE_WEST_OCTAGONAL_ROOM_TO_WEST_STAIRWELL, BabiPalace, BABI_PALACE_WEST_STAIRWELL_FROM_WEST_OCTAGONAL_ROOM),
-    SCENE_EXIT(BABI_PALACE_EAST_OCTAGONAL_ROOM_TO_EAST_STAIRWELL, BabiPalace, BABI_PALACE_EAST_STAIRWELL_FROM_EAST_OCTAGONAL_ROOM),
-    SCENE_EXIT(BABI_PALACE_NORTH_OCTAGONAL_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_NORTH_OCTAGONAL_ROOM),
-    SCENE_EXIT(BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_SHEBAS_LANDING),
+    SCENE_EXIT(BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM, BabiPalace, BABI_PALACE_STATUE_ROOM_FROM_WEST_STEPS),
+    SCENE_EXIT(BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM, BabiPalace, BABI_PALACE_WEST_ROUND_ROOM_FROM_WEST_STEPS),
+    SCENE_EXIT(BABI_PALACE_EAST_STEPS_TO_STATUE_ROOM, BabiPalace, BABI_PALACE_STATUE_ROOM_FROM_EAST_STEPS),
+    SCENE_EXIT(BABI_PALACE_EAST_STEPS_TO_EAST_ROUND_ROOM, BabiPalace, BABI_PALACE_EAST_ROUND_ROOM_FROM_EAST_STEPS),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_WEST, BabiPalace, BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_EAST, BabiPalace, BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_EAST),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_SCHOLARS_LANDING, BabiPalace, BABI_PALACE_SCHOLARS_LANDING_FROM_CARPET_ROOM),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING, BabiPalace, BABI_PALACE_TUNNEL_LANDING_FROM_CARPET_ROOM),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM, BabiPalace, BABI_PALACE_NORTH_ROUND_ROOM_FROM_CARPET_ROOM),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING, BabiPalace, BABI_PALACE_SHEBAS_LANDING_FROM_CARPET_ROOM),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, BabiPalace, BABI_PALACE_OVEN_ROOM_FROM_CARPET_ROOM),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, BabiPalace, BABI_PALACE_SOLDIERS_ROOM_FROM_CARPET_ROOM),
+    SCENE_EXIT(BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, BabiPalace, BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM),
+    SCENE_EXIT(BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_MEETING_ROOM),
+    SCENE_EXIT(BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING, BabiPalace, BABI_PALACE_BEDROOM_LANDING_FROM_MEETING_ROOM),
+    SCENE_EXIT(BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_OVEN_ROOM),
+    SCENE_EXIT(BABI_PALACE_SOLDIERS_ROOM_TO_CARPET_ROOM, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_SOLDIERS_ROOM),
+    SCENE_EXIT(BABI_PALACE_WEST_ROUND_ROOM_TO_WEST_STEPS, BabiPalace, BABI_PALACE_WEST_STEPS_FROM_WEST_ROUND_ROOM),
+    SCENE_EXIT(BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS, BabiPalace, BABI_PALACE_EAST_STEPS_FROM_EAST_ROUND_ROOM),
+    SCENE_EXIT(BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_NORTH_ROUND_ROOM),
+    SCENE_EXIT(BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_SHEBAS_LANDING),
     SCENE_EXIT(BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, BabiPalace, BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING),
     SCENE_EXIT(BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING, BabiPalace, BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM),
     SCENE_EXITS(BabiPalaceEntrance),
@@ -2815,42 +2815,42 @@ struct ScenePlacement gBabiPalace_PlacementsAfterColosso[] = {
 
 struct SceneEvent gBabiPalace_EventsOther[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_WEST },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_EAST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_WEST_STAIRWELL },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_EAST_STAIRWELL },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_WEST },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_EAST },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
+    { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 11, CONDITION_ALWAYS, BABI_PALACE_TO_VALE_INTERIORS_INN },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_THRONE_ROOM },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
-    { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STAIRWELL_TO_STATUE_HALL },
-    { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STAIRWELL_TO_WEST_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 22, CONDITION_ALWAYS, BABI_PALACE_EAST_STAIRWELL_TO_STATUE_HALL },
-    { EVENT_EXIT, 23, CONDITION_ALWAYS, BABI_PALACE_EAST_STAIRWELL_TO_EAST_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 24, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_WEST },
-    { EVENT_EXIT, 25, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_EAST },
-    { EVENT_EXIT, 26, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_SCHOLARS_LANDING },
-    { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_TUNNEL_LANDING },
-    { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_NORTH_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_SHEBAS_LANDING },
+    { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
+    { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
+    { EVENT_EXIT, 22, CONDITION_ALWAYS, BABI_PALACE_EAST_STEPS_TO_STATUE_ROOM },
+    { EVENT_EXIT, 23, CONDITION_ALWAYS, BABI_PALACE_EAST_STEPS_TO_EAST_ROUND_ROOM },
+    { EVENT_EXIT, 24, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_WEST },
+    { EVENT_EXIT, 25, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_EAST },
+    { EVENT_EXIT, 26, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SCHOLARS_LANDING },
+    { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
+    { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
+    { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
     { TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_THRONE_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_THRONE_ROOM_TO_BEDROOM_LANDING },
-    { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_STOVE_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 36, CONDITION_ALWAYS, BABI_PALACE_SOLDIERS_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 40, CONDITION_ALWAYS, BABI_PALACE_WEST_OCTAGONAL_ROOM_TO_WEST_STAIRWELL },
-    { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_OCTAGONAL_ROOM_TO_EAST_STAIRWELL },
-    { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_OCTAGONAL_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
+    { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 36, CONDITION_ALWAYS, BABI_PALACE_SOLDIERS_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 40, CONDITION_ALWAYS, BABI_PALACE_WEST_ROUND_ROOM_TO_WEST_STEPS },
+    { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
+    { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
     { EVENT_TOUCH, 60, FLAG_IODEM_HEARD_SOLDIERS, EVENT_SCRIPT(BabiPalace_HearSoldiersReport) },
@@ -2894,42 +2894,42 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
 
 struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_WEST },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_EAST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_WEST_STAIRWELL },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_EAST_STAIRWELL },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_WEST },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_EAST },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
+    { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 11, CONDITION_ALWAYS, BABI_PALACE_TO_VALE_INTERIORS_INN },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_THRONE_ROOM },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
-    { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STAIRWELL_TO_STATUE_HALL },
-    { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STAIRWELL_TO_WEST_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 22, CONDITION_ALWAYS, BABI_PALACE_EAST_STAIRWELL_TO_STATUE_HALL },
-    { EVENT_EXIT, 23, CONDITION_ALWAYS, BABI_PALACE_EAST_STAIRWELL_TO_EAST_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 24, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_WEST },
-    { EVENT_EXIT, 25, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_EAST },
-    { EVENT_EXIT, 26, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_SCHOLARS_LANDING },
-    { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_TUNNEL_LANDING },
-    { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_NORTH_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_SHEBAS_LANDING },
+    { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
+    { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
+    { EVENT_EXIT, 22, CONDITION_ALWAYS, BABI_PALACE_EAST_STEPS_TO_STATUE_ROOM },
+    { EVENT_EXIT, 23, CONDITION_ALWAYS, BABI_PALACE_EAST_STEPS_TO_EAST_ROUND_ROOM },
+    { EVENT_EXIT, 24, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_WEST },
+    { EVENT_EXIT, 25, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_EAST },
+    { EVENT_EXIT, 26, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SCHOLARS_LANDING },
+    { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
+    { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
+    { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
     { TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_THRONE_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_THRONE_ROOM_TO_BEDROOM_LANDING },
-    { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_STOVE_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 36, CONDITION_ALWAYS, BABI_PALACE_SOLDIERS_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 40, CONDITION_ALWAYS, BABI_PALACE_WEST_OCTAGONAL_ROOM_TO_WEST_STAIRWELL },
-    { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_OCTAGONAL_ROOM_TO_EAST_STAIRWELL },
-    { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_OCTAGONAL_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
+    { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 36, CONDITION_ALWAYS, BABI_PALACE_SOLDIERS_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 40, CONDITION_ALWAYS, BABI_PALACE_WEST_ROUND_ROOM_TO_WEST_STEPS },
+    { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
+    { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisSoldiersHaveGoneToSee) },
@@ -2960,42 +2960,42 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
 
 struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_WEST },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_EAST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_WEST_STAIRWELL },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_HALL_TO_EAST_STAIRWELL },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_WEST },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_EAST },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
+    { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 11, CONDITION_ALWAYS, BABI_PALACE_TO_VALE_INTERIORS_INN },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_THRONE_ROOM },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
-    { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STAIRWELL_TO_STATUE_HALL },
-    { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STAIRWELL_TO_WEST_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 22, CONDITION_ALWAYS, BABI_PALACE_EAST_STAIRWELL_TO_STATUE_HALL },
-    { EVENT_EXIT, 23, CONDITION_ALWAYS, BABI_PALACE_EAST_STAIRWELL_TO_EAST_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 24, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_WEST },
-    { EVENT_EXIT, 25, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_EAST },
-    { EVENT_EXIT, 26, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_SCHOLARS_LANDING },
-    { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_TUNNEL_LANDING },
-    { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_NORTH_OCTAGONAL_ROOM },
-    { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CENTRAL_HALL_TO_SHEBAS_LANDING },
+    { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
+    { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
+    { EVENT_EXIT, 22, CONDITION_ALWAYS, BABI_PALACE_EAST_STEPS_TO_STATUE_ROOM },
+    { EVENT_EXIT, 23, CONDITION_ALWAYS, BABI_PALACE_EAST_STEPS_TO_EAST_ROUND_ROOM },
+    { EVENT_EXIT, 24, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_WEST },
+    { EVENT_EXIT, 25, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_EAST },
+    { EVENT_EXIT, 26, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SCHOLARS_LANDING },
+    { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
+    { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
+    { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
     { TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_THRONE_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_THRONE_ROOM_TO_BEDROOM_LANDING },
-    { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_STOVE_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 36, CONDITION_ALWAYS, BABI_PALACE_SOLDIERS_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 40, CONDITION_ALWAYS, BABI_PALACE_WEST_OCTAGONAL_ROOM_TO_WEST_STAIRWELL },
-    { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_OCTAGONAL_ROOM_TO_EAST_STAIRWELL },
-    { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_OCTAGONAL_ROOM_TO_CENTRAL_HALL },
-    { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL },
+    { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
+    { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 36, CONDITION_ALWAYS, BABI_PALACE_SOLDIERS_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 40, CONDITION_ALWAYS, BABI_PALACE_WEST_ROUND_ROOM_TO_WEST_STEPS },
+    { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
+    { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
+    { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutMeetingBabi) },

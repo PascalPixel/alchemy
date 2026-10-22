@@ -115,7 +115,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Flames move 12 pixels left a frame and shatter on their 5th frame;
     // a shattered flame is still drawn, flying on off the canvas.
@@ -127,7 +127,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
-          AudioCommand_PlayFar(SE_133);
+          AudioCommand_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Each mote flies off in a random direction at 1 to 3 pixels a
           // frame, the vertical part doubled, so the burst is twice as tall
@@ -259,7 +259,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   angle = 0x8000; // 180 degrees
   do {
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The Djinni turns 11.25 degrees a frame. Its radius, 64 - 2 * frame
     // (half that across), reaches 0 at frame 32, passing through the
@@ -295,7 +295,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
             mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
             mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
           }
-          AudioCommand_PlayFar(SE_133);
+          AudioCommand_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
             EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
@@ -414,7 +414,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // Ten flame columns rise 12 pixels a frame, one every 4 frames from
     // frame 16; each throws 16 motes upwards (in the upper half turn of
     // directions at 2 to 6 pixels a frame, the vertical part doubled) and
@@ -439,7 +439,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
             mote->variant = (Random16() & 15) + 32;
           }
           if (i & 1)
-            AudioCommand_PlayFar(SE_133);
+            AudioCommand_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
             EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
@@ -558,7 +558,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   diveY = -172;
   do {
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // A glowing orb flares, six pictures of 4 frames, then the Djinni shows
     // beside it and from frame 24 dives down to the left, 4 pixels across
     // and 8 down a frame. diveY is -172 + 8 * frame, so the dive starts where

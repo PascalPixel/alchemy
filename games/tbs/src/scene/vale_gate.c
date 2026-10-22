@@ -55,10 +55,10 @@
 /// GOMA_CAVE_STREAM_FROM_VALE_GATE).
 ///
 /// Three debug entrances are in no entrance table and no exit leads to them:
-/// VALE_GATE_DEBUG_TRAVELERS_LEAVE replays the strangers' departure,
+/// VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE replays the strangers' departure,
 /// VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
 /// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST into Vale
-/// (SceneId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_PRESET sets a preset
+/// (SceneId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_FLAGS sets a preset
 /// of story flags and takes VALE_GATE_TO_BILIBIN
 /// (ValeGate_SetProgressFlagsAndExit).
 
@@ -768,7 +768,8 @@ static void Event_PsynergyStoneIsGone(void) {
   actor->targetZ = ACTOR_NO_TARGET;
   Engine_ActorSetAnimation(ACTOR_AFTER_KALAY_HUT_OWNER, ANIM_STAND);
   Engine_ActorStop(ACTOR_AFTER_KALAY_HUT_OWNER);
-  Engine_ActorShowEmote(ACTOR_AFTER_KALAY_HUT_OWNER, EMOTE_IN_FRONT, 40);
+  Engine_ActorShowEmote(ACTOR_AFTER_KALAY_HUT_OWNER,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   actor->facing = FACING_NORTHWEST + FACING_STEP;
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(ACTOR_AFTER_KALAY_HUT_OWNER, 2);
@@ -912,11 +913,11 @@ static void Event_BlowAwayThirdIvy(void) {
 /// The scene's initialize entry. VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
 /// and takes VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST; VALE_GATE_FROM_SANCTUM
 /// runs Event_DepartForQuest; VALE_GATE_AFTER_TRAVELERS_BATTLE (and
-/// VALE_GATE_DEBUG_TRAVELERS_LEAVE) Event_TravelersLeaveAfterBattle; on the
-/// stormy night, once Garet has gone after Isaac (FLAG_VALE_STORM_GARET_LEFT),
-/// Event_MeetSurvivingTravelers. Once the boys have been sent back to the
-/// river, it removes the two strongmen who left to aid the elders, Jenna and
-/// the man who went with them.
+/// VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE) Event_TravelersLeaveAfterBattle; on
+/// the stormy night, once Garet has gone after Isaac
+/// (FLAG_VALE_STORM_GARET_LEFT), Event_MeetSurvivingTravelers. Once the boys
+/// have been sent back to the river, it removes the two strongmen who left to
+/// aid the elders, Jenna and the man who went with them.
 s32 ValeGate_Initialize(void) {
   struct FieldActor *actor;
   s32 flag;
@@ -936,10 +937,10 @@ s32 ValeGate_Initialize(void) {
     Engine_GameFlagSet(FLAG_CHILDHOOD);
     Engine_EventRequestExit(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
     return 0;
-  case VALE_GATE_DEBUG_STORY_PRESET:
+  case VALE_GATE_DEBUG_STORY_FLAGS:
     ValeGate_SetProgressFlagsAndExit();
     return 0;
-  case VALE_GATE_DEBUG_TRAVELERS_LEAVE:
+  case VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE:
     Event_TravelersLeaveAfterBattle();
     return 0;
   }
@@ -1146,10 +1147,11 @@ static void Event_SentToAidElders(void) {
     ValeGate_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                                   FACING_SOUTH, 30);
     Engine_EventShowMessage(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0);
-    Actor_ShowEmote(ACTOR_STORM_GARETS_GRANDFATHER, EMOTE_IN_FRONT | 0, 0);
-    Actor_ShowEmote(ACTOR_STORM_JENNA, EMOTE_IN_FRONT | 0, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
-    Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | 0, 40);
+    Actor_ShowEmote(ACTOR_STORM_GARETS_GRANDFATHER,
+                    EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_STORM_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirection(ACTOR_STORM_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_STORM_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -1302,8 +1304,9 @@ static void ValeGate_FightTravelers(void) {
   Actor_SetPosition(ACTOR_STORM_GARET, 0, PIXELS(331));
   Engine_TaskWait(1);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 0);
-  Actor_ShowEmote(ACTOR_FIRST_TRAVELER, EMOTE_IN_FRONT | 0, 0);
-  Actor_ShowEmote(ACTOR_SECOND_TRAVELER, EMOTE_IN_FRONT | 0, 40);
+  Actor_ShowEmote(ACTOR_FIRST_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SECOND_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  40);
   Engine_ActorSetPosition(ACTOR_STORM_GARET, 0, 0);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH + FACING_STEP, 0);
   southSouthwestFacing = FACING_SOUTH + FACING_STEP;
@@ -1340,7 +1343,7 @@ static void ValeGate_FightTravelers(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Engine_EventOpenMessage(ACTOR_FIRST_TRAVELER, 0);
-  Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   northNortheastFacing = FACING_NORTH + FACING_STEP;
   ValeGate_FaceDirectionAndWait(ACTOR_PARTY_LEADER, northNortheastFacing, 10);
   Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0);
@@ -1401,8 +1404,8 @@ static void ValeGate_FightTravelers(void) {
 /// storm, and the storm, and the prologue, end.
 ///
 /// Called by ValeGate_Initialize from VALE_GATE_AFTER_TRAVELERS_BATTLE, after
-/// the battle, or VALE_GATE_DEBUG_TRAVELERS_LEAVE. Clears FLAG_VALE_STORM and
-/// takes VALE_GATE_TO_TITLE, to the title (SceneId_Title,
+/// the battle, or VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE. Clears
+/// FLAG_VALE_STORM and takes VALE_GATE_TO_TITLE, to the title (SceneId_Title,
 /// TITLE_FROM_VALE_GATE), which then opens on Vale three years later
 /// (menu/title.c).
 static void Event_TravelersLeaveAfterBattle(void) {
@@ -1532,12 +1535,13 @@ static void Event_DepartForQuest(void) {
   Engine_EventWait(80);
   // The second child asks why everyone is at the gate; the first says Isaac and
   // Garet are leaving on a journey.
-  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                  40);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                 FACING_SOUTHWEST + FACING_STEP, 20);
   Event_SetMessage(MSGNO(MsgValeWhysEveryoneHanging));
   Event_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
-  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | 2, 20);
+  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                 FACING_EAST + FACING_STEP, 10);
   Event_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
@@ -1548,7 +1552,8 @@ static void Event_DepartForQuest(void) {
   // They walk to the top of the path: the second child wishes to go too, the
   // first has heard it will be dangerous, and everyone is down there to say
   // good-bye.
-  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | 0, 40);
+  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(ACTOR_FAREWELL_SECOND_CHILD, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FAREWELL_SECOND_CHILD, 184, 618);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
@@ -1582,8 +1587,10 @@ static void Event_DepartForQuest(void) {
   Engine_ActorStop(ACTOR_FAREWELL_FIRST_CHILD);
   Engine_ActorStop(ACTOR_FAREWELL_SECOND_CHILD);
   Engine_EventWait(60);
-  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | 5, 120);
+  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                  0);
+  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                  120);
   Engine_ActorFaceDirection(ACTOR_FAREWELL_FIRST_CHILD,
                             FACING_EAST + FACING_STEP, 0);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
@@ -1602,7 +1609,8 @@ static void Event_DepartForQuest(void) {
                                 FACING_SOUTH + FACING_STEP, 60);
   // They step down to look over the crowd: Isaac's mother is not there to
   // see him off.
-  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                  80);
   Engine_ActorFaceDirection(ACTOR_FAREWELL_FIRST_CHILD,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(ACTOR_FAREWELL_SECOND_CHILD, 184, 630);
@@ -1613,8 +1621,10 @@ static void Event_DepartForQuest(void) {
                                 FACING_SOUTH + FACING_STEP, 20);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                 FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | 1, 40);
-  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                  40);
+  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                  40);
   Actor_WalkToAndWait(ACTOR_FAREWELL_FIRST_CHILD, 168, 630);
   Engine_EventWait(20);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
@@ -1623,13 +1633,15 @@ static void Event_DepartForQuest(void) {
                                 FACING_SOUTH + FACING_STEP, 40);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                 FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                  40);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                 FACING_EAST + FACING_STEP, 10);
   Event_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
   Event_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
-  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | 0, 20);
+  Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                 FACING_SOUTH + FACING_STEP, 20);
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
@@ -1718,14 +1730,14 @@ static void Event_DepartForQuest(void) {
   Actor_FaceDirection(ACTOR_FAREWELL_GARETS_SISTER, FACING_SOUTHWEST, 0);
   // Garet protests he knows that, Sis; his brother says he will eat anything,
   // and Garet jumps.
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ValeGate_FaceDirectionAndWait(GARET, FACING_NORTHEAST + FACING_STEP, 10);
   Event_SayThenWait(GARET, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_FAREWELL_GARETS_BROTHER,
                                   ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 10);
   Engine_ActorFaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   ObjectMotion_Launch(GARET, 4, 60);
   // Dora is very late, the bearded man in a long robe says. Everyone wonders;
   // Garet's brother remembers.
@@ -1734,12 +1746,17 @@ static void Event_DepartForQuest(void) {
   ValeGate_FaceDirectionAndWait(ACTOR_FAREWELL_MAN_AWAITING_DORA,
                                 FACING_NORTH + FACING_STEP, 10);
   Event_SayThenWait(ACTOR_FAREWELL_MAN_AWAITING_DORA, 60);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_SISTER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_BROTHER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_MOTHER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_FATHER, EMOTE_IN_FRONT | 2, 80);
-  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_BROTHER, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  0);
+  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  0);
+  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  0);
+  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  80);
+  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_BROTHER,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 60);
   // Garet's brother brings the Catch Beads Aunty Dora sent for Isaac; Isaac and
   // Garet turn to follow.
@@ -1762,11 +1779,11 @@ static void Event_DepartForQuest(void) {
   Engine_ActorFaceDirection(ACTOR_FAREWELL_MAN_AWAITING_DORA,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ValeGate_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_EAST, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_FAREWELL_GARETS_SISTER, 1);
   Event_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
   ValeGate_FaceDirectionAndWait(GARET, FACING_NORTHEAST + FACING_STEP, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_FAREWELL_GARETS_SISTER,
                                   ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
@@ -1860,8 +1877,8 @@ static void Event_DepartForQuest(void) {
 
     actor->priorityFlags = value;
   }
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   ValeGate_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   ValeGate_FaceDirectionAndWait(GARET, FACING_SOUTH + FACING_STEP, 20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2006,7 +2023,7 @@ static void ValeGate_UpdateSmallRockPalette(void) {
   ValeGate_CyclePsynergyPalette(Object_GetById(ACTOR_STORM_SMALL_ROCK));
 }
 
-/// Arriving by VALE_GATE_DEBUG_STORY_PRESET: sets a preset of story flags,
+/// Arriving by VALE_GATE_DEBUG_STORY_FLAGS: sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_GATE_TO_BILIBIN.
 ///
 /// Called by ValeGate_Initialize. Sets FLAG_NO_ENCOUNTERS and
@@ -2083,7 +2100,7 @@ s32 gValeGate_ChargedUpStrongmanActions[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(40),
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_MOTION, 3),
     SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_ARG(2),
@@ -2096,7 +2113,7 @@ s32 gValeGate_ChargedUpStrongmanActions[] = {
 s32 gValeGate_SecondTravelerLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(12)),
     SC_MOVE(PIXELS(114), PIXELS(144), PIXELS(360)),
     SC_SYNC,
@@ -2108,7 +2125,7 @@ s32 gValeGate_SecondTravelerLeapActions[] = {
 s32 gValeGate_FirstTravelerLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(12)),
     SC_MOVE(PIXELS(114), PIXELS(144), PIXELS(343)),
     SC_SYNC,
@@ -2120,7 +2137,7 @@ s32 gValeGate_FirstTravelerLeapActions[] = {
 s32 gValeGate_LeaderActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
-    SC_SE(152),
+    SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(PIXELS(82), PIXELS(144), PIXELS(343)),
     SC_SYNC,
@@ -2132,7 +2149,7 @@ s32 gValeGate_LeaderActions[] = {
 s32 gValeGate_StormGaretLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
-    SC_SE(152),
+    SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(PIXELS(82), PIXELS(144), PIXELS(360)),
     SC_SYNC,
@@ -2145,7 +2162,7 @@ s32 gValeGate_FirstTravelerBounceActions[] = {
     SC_ARG(5),
     SC_WAIT(10),
     SC_ARG(6),
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_MOVE(PIXELS(65), 0, PIXELS(328)),
     SC_SYNC,
@@ -2153,7 +2170,7 @@ s32 gValeGate_FirstTravelerBounceActions[] = {
     SC_ARG(5),
     SC_WAIT(10),
     SC_ARG(6),
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(6)),
     SC_MOVE(PIXELS(31), 0, PIXELS(338)),
     SC_SYNC,
@@ -2161,7 +2178,7 @@ s32 gValeGate_FirstTravelerBounceActions[] = {
     SC_ARG(5),
     SC_WAIT(10),
     SC_ARG(6),
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
     SC_SYNC,
@@ -2187,7 +2204,7 @@ s32 gValeGate_SecondTravelerBounceActions[] = {
     SC_ARG(5),
     SC_WAIT(10),
     SC_ARG(6),
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
     SC_SYNC,
@@ -2338,7 +2355,7 @@ struct SceneEntrance gValeGate_Entrances[] = {
     { VALE_GATE_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_STREAM_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_GOMA_CAVE_STREAM_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_AFTER_TRAVELERS_BATTLE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };

@@ -228,7 +228,7 @@ void Battle_AwardSpoils(void) {
     unit->experience += spoils->experience;
     while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct BattleUnit)),
            Unit_TryLevelUpFar(unitId, &gains) != 0) {
-      AudioCommand_PlayFar(MUS_089);
+      AudioCommand_PlayFar(MUS_LEVEL_UP);
       UiWork_ClearValueNameTablesFar();
       UiWork_PushValueSlotFar(unit->classIndex, VALUE_CLASS_NAME);
       UiWork_PushValueSlotFar(unitIds[unitIndex], VALUE_UNIT_NAME);

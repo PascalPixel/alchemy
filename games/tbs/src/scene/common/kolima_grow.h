@@ -6,11 +6,11 @@
 #include "types.h"
 #include "field_obj.h"
 
-/// An object script call: widen the object by 0x1eb8 (about 0.12) a frame, and
+/// An object script call: widen the object by 3/25 of its size a frame, and
 /// release it once it has reached its destination.
 static s32 FieldFx_StretchUntilArrived(struct ScriptInterpreter *interpreter) {
   struct FieldActor *streak = (struct FieldActor *)interpreter;
-  streak->scaleX += 0x1eb8;
+  streak->scaleX += 3 * Q16_ONE / 25;
   if (streak->targetX == ACTOR_NO_TARGET &&
       streak->targetY == ACTOR_NO_TARGET &&
       streak->targetZ == ACTOR_NO_TARGET) {

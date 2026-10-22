@@ -8,9 +8,16 @@
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
 /// events of its own. Its one placed actor is the stump the party pushes over
 /// the edge up there with Move: once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL),
-/// entering finds it lying flat underfoot where it landed, and the map cells it
-/// covers change to match. The flag is a place flag, so the stump is back up
-/// in the room above once the party leaves Goma Cave's four scenes.
+/// entering finds it sunk where it landed until only its top shows
+/// (STUMP_ANIM_SINK), drawn underfoot with no collision flags, and the map
+/// cells it covers change to match. The flag is a place flag, so
+/// the stump is back up in the room above once the party leaves Goma Cave's
+/// four scenes.
+///
+/// Open questions:
+/// - XXX: whether the stump comes down in the pond the scene is named for, as
+///   STUMP_ANIM_SINK and the changed cells suggest; a render of the room with
+///   FLAG_GOMA_CAVE_STUMP_FELL set would settle it.
 #include "unit/scene/goma_cave_pond.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -42,8 +49,13 @@
 /// room above (its render)
 #define FLAG_GOMA_CAVE_STUMP_FELL 0x300
 
-/// The stump the party pushes over in the room above, lying in this room.
-#define FALLEN_STUMP 8
+/// The room's one placed actor.
+enum GomaCavePondActor {
+  /// The stump the party pushes over in the room above, lying in this room.
+  /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
+  /// free that stump." (MsgGomaNoUsePsynergy)
+  ACTOR_FALLEN_STUMP = ACTOR_FIRST_PLACED
+};
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gGomaCavePondEntrances;
@@ -69,11 +81,12 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    OBJ_POS_SET(FALLEN_STUMP, 216, 136);
-    OBJ_MODE(FALLEN_STUMP, 2);
-    Engine_ActorSetSpriteFlags(Object_GetById(FALLEN_STUMP), 0);
-    Object_GetById(FALLEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Object_GetById(FALLEN_STUMP)->collisionFlags = 0;
+    OBJ_POS_SET(ACTOR_FALLEN_STUMP, 216, 136);
+    OBJ_MODE(ACTOR_FALLEN_STUMP, STUMP_ANIM_SINK);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FALLEN_STUMP), 0);
+    Object_GetById(ACTOR_FALLEN_STUMP)->priorityFlags =
+        ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(ACTOR_FALLEN_STUMP)->collisionFlags = 0;
     Map_CopyCellAttributes(11, 36, 5, 5, 11, 6);
   }
   return 0;
@@ -111,8 +124,11 @@ struct ScenePlacement gGomaCavePondPlacements[] = {
 // clang-format on
 
 struct SceneEvent gGomaCavePondEvents[] = {
-    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS,
+     GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS,
+     GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS,
+     GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST},
     {SCENE_EVENTS_END},
 };

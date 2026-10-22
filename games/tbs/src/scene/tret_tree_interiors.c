@@ -1,10 +1,7 @@
 /// @file
 /// Tret Tree (SceneId_TretTreeInteriors), the inside of Tret, the holy tree
-/// of Kolima Forest, and the first of Tret Tree's two scenes. Tret turned the
-/// people of Kolima into trees and is withering. In Kolima Forest Tret's
-/// wrathful side answers for him and will not let the party do anything to him
-/// ("I control Tret's heart! I shall not let you do anything to him!",
-/// kolima_forest_tree.c); the way on is into Tret himself, to face it.
+/// of Kolima Forest, and the first of Tret Tree's two scenes. The party comes
+/// in from Kolima Forest (kolima_forest_tree.c) to face Tret's wrathful side.
 /// FLAG_TRET_DEFEATED, whether that battle is won and Tret has spoken with the
 /// party since, decides most of the scene.
 ///
@@ -52,6 +49,19 @@
 /// ends; casting Reveal stops it), and scales the first map layer to the room.
 /// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
 /// (search events 100 to 102).
+///
+/// Open questions:
+/// - XXX: what each of TretTreeInteriors_PlayGesture's gestures shows on
+///   Tret's face (SPRITE_TRET's animations 1 to 11); a render of the face's
+///   animations would name them as an enum.
+/// - XXX: what the leader's animation 27, as he spins and falls through a
+///   cocoon, shows; a render of the party's sprite animations would name it
+///   in field_event.h's ActorAnimation.
+/// - XXX: what MUS_017 and MUS_029, played through SE() in Event_FightTret,
+///   are, and what SE_204, SE_206, SE_220 and SE_289 sound like; a recording
+///   of the fall and the fight would name them.
+/// - XXX (picture): the six rooms side by side with each cocoon's touch code
+///   and the entrance it drops the leader to.
 
 #include "battle_effect_runtime.h"
 #include "version.h"
@@ -93,10 +103,12 @@
 #include "songs.h"
 #include "event.h"
 
-/// Tret's face, the first actor placed after the party, and a second Tret
-/// actor placed at the same spot. Both speak Tret's lines: the face as he
-/// attacks, the second after the battle.
+/// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
+/// second Tret actor (SPRITE_TRET_RAISED) placed at the same spot. Both speak
+/// Tret's lines: the face as he attacks, the second after the battle.
 enum {
+  /// ★ Named from the game: "Tret was once a kindly forest king."
+  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_TRET = ACTOR_FIRST_PLACED,
   /// Draws nothing the render shows beyond Tret's face.
   /// ★ Named from the game: "We can't let Tret die like this!" (MsgTretMmmmm)
@@ -198,7 +210,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Camera_MoveTo(-1, -1, -1, 0);
   actor->motionFlags = ACTOR_FALLS;
   actor->terrainHeight = -PIXELS(160);
-  actor->gravity = 0x8000;
+  actor->gravity = PIXELS(1) / 2;
   SE(SE_204);
   WAIT(3);
   actor->terrainId = 2;
@@ -370,10 +382,10 @@ static void Event_FightTret(void) {
   MESSAGE_SET(MsgTretHmHrooom);
   Engine_EventShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   SE(MUS_029);
-  OBJ_SPEED(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  OBJ_SPEED(GARET, 0x10000, 0x8000);
-  OBJ_SPEED(IVAN, 0x10000, 0x8000);
-  OBJ_SPEED(MIA, 0x10000, 0x8000);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  OBJ_SPEED(GARET, PIXELS(1), PIXELS(1) / 2);
+  OBJ_SPEED(IVAN, PIXELS(1), PIXELS(1) / 2);
+  OBJ_SPEED(MIA, PIXELS(1), PIXELS(1) / 2);
   Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(MIA, 2);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
@@ -392,11 +404,12 @@ static void Event_FightTret(void) {
     if (leader != NULL) {
       Engine_ActorSetPosition(MIA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetActionScript(MIA, gTretTreeInteriors_TableActions3);
+    Actor_SetActionScript(MIA, gTretTreeInteriors_MiaGathersActions);
   }
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gTretTreeInteriors_TableActions0);
-  Actor_SetActionScript(GARET, gTretTreeInteriors_TableActions1);
-  Actor_RunActionScriptAndWait(IVAN, gTretTreeInteriors_TableActions2);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER,
+                        gTretTreeInteriors_LeaderGathersActions);
+  Actor_SetActionScript(GARET, gTretTreeInteriors_GaretGathersActions);
+  Actor_RunActionScriptAndWait(IVAN, gTretTreeInteriors_IvanGathersActions);
   WAIT(10);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   OBJ_DIR(GARET, FACING_NORTH, 0);
@@ -625,7 +638,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TretTreeInteriors_PlayGesture(0);
   Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
-  Actor_RunActionScriptAndWait(ACTOR_TRET, gTretTreeInteriors_ActionTable1);
+  Actor_RunActionScriptAndWait(ACTOR_TRET, gTretTreeInteriors_FaceSinksActions);
   WAIT(40);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessage(SPEAKER(GARET), 0);
@@ -646,7 +659,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   OBJ_MODE(GARET, ANIM_NOD);
   OBJ_MODE(MIA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-  actions = gTretTreeInteriors_ActionTable2;
+  actions = gTretTreeInteriors_RejoinLeaderActions;
   Actor_SetActionScript(GARET, actions);
   if (hasMia != 0) {
     Actor_SetActionScript(MIA, actions);
@@ -757,7 +770,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
     actor->motionFlags = ACTOR_FALLS;
     actor->y.fixed = PIXELS(100);
     actor->terrainHeight = -PIXELS(160);
-    actor->gravity = 0x8000;
+    actor->gravity = PIXELS(1) / 2;
     SE(SE_204);
     Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance - 10);
     WAIT(20);
@@ -806,7 +819,7 @@ static void TretPalette_UpdateSceneTint(void) {
   if ((gFrameCount & 31) != 0)
     return;
   sourceColors += 16;
-  destinationColors = (u16 *)0x05000020;
+  destinationColors = (u16 *)&BG_PLTT_COLOR(1, 0);
   colorIndex = 0;
   for (; colorIndex < TRET_TINT_COLOR_COUNT; colorIndex++, sourceColors++) {
     redStep = gTretTreeInteriors_TintSteps[gTretTreeInteriors_TintIndex];
@@ -1152,7 +1165,9 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
-s32 gTretTreeInteriors_TableActions0[] = {
+/// The party gathers in front of Tret before the battle (Event_FightTret),
+/// each walking to its own place.
+s32 gTretTreeInteriors_LeaderGathersActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(80)),
     SC_SYNC,
@@ -1160,7 +1175,7 @@ s32 gTretTreeInteriors_TableActions0[] = {
     SC_END,
 };
 
-s32 gTretTreeInteriors_TableActions1[] = {
+s32 gTretTreeInteriors_GaretGathersActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(148), 0, PIXELS(90)),
     SC_SYNC,
@@ -1168,7 +1183,7 @@ s32 gTretTreeInteriors_TableActions1[] = {
     SC_END,
 };
 
-s32 gTretTreeInteriors_TableActions2[] = {
+s32 gTretTreeInteriors_IvanGathersActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(182), 0, PIXELS(90)),
     SC_SYNC,
@@ -1176,7 +1191,7 @@ s32 gTretTreeInteriors_TableActions2[] = {
     SC_END,
 };
 
-s32 gTretTreeInteriors_TableActions3[] = {
+s32 gTretTreeInteriors_MiaGathersActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(104)),
     SC_SYNC,
@@ -1184,7 +1199,10 @@ s32 gTretTreeInteriors_TableActions3[] = {
     SC_END,
 };
 
-s32 gTretTreeInteriors_ActionTable1[] = {
+/// Tret's face sinks away after the conversation: eight times it shows 80
+/// pixels up for 4 frames and drops back 78, shrinking a sixteenth each time,
+/// and then it is put away.
+s32 gTretTreeInteriors_FaceSinksActions[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, PIXELS(80)),
     SC_WAIT(4),
@@ -1198,7 +1216,8 @@ s32 gTretTreeInteriors_ActionTable1[] = {
     SC_END,
 };
 
-s32 gTretTreeInteriors_ActionTable2[] = {
+/// Garet, Ivan and Mia walk back to the leader and are put away.
+s32 gTretTreeInteriors_RejoinLeaderActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(80)),
     SC_SYNC,
@@ -1349,9 +1368,9 @@ struct ScenePlacement gTretTreeInteriorsPlacements[] = {
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-    { SPRITE_TRET, CONDITION_ALWAYS, 7,
+    { SPRITE_TRET, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x47, CONDITION_ALWAYS, 7,
+    { SPRITE_TRET_RAISED, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

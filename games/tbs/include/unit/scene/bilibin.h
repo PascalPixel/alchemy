@@ -30,17 +30,17 @@ extern struct SceneEvent gBilibinEventsOther[];
 extern struct SceneEvent gBilibinEvents[];
 extern struct SceneEvent gBilibinBarricadeEvents[];
 extern struct SceneEvent gBilibinTreasuryEvents[];
-extern u16 gBilibin_DoorSteps6[];
-extern u16 gBilibin_DoorSteps4[];
-extern u16 gBilibin_DoorSteps5[];
-extern u16 gBilibin_DoorSteps1[];
-extern u16 gBilibin_DoorSteps0[];
-extern u16 gBilibin_DoorSteps2[];
-extern u16 gBilibin_DoorSteps3[];
+extern u16 gBilibin_SanctumDoorSteps[];
+extern u16 gBilibin_ItemShopDoorSteps[];
+extern u16 gBilibin_WeaponAndArmorShopDoorSteps[];
+extern u16 gBilibin_HouseEastDoorSteps[];
+extern u16 gBilibin_InnDoorSteps[];
+extern u16 gBilibin_HouseWestDoorSteps[];
+extern u16 gBilibin_HouseNorthDoorSteps[];
 extern u16 *gBilibin_DoorSteps[];
 extern u32 gBilibin_DoorCells[];
-extern u32 gBilibin_RiverPillarCells[];
+extern u32 gBilibin_CratesLaneCells[];
 extern s32 gBilibin_FacingCellSteps[];
-extern s32 gBilibin_TransientEffectScript[];
+extern s32 gBilibin_RippleScript[];
 
 #endif

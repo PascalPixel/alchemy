@@ -16,18 +16,18 @@ const struct SceneEvent *BilibinCave_GetEvents(void);
 s32 BilibinCave_Initialize(void);
 extern s32 gBilibinCave_ClearSpriteScript[];
 extern struct SceneEntrance gBilibinCaveEntrancesOther[];
-extern struct SceneEntrance gBilibinCaveEntrances3[];
-extern struct SceneEntrance gBilibinCaveEntrances2[];
-extern struct SceneEntrance gBilibinCaveEntrances1[];
+extern struct SceneEntrance gBilibinCaveEntranceEntrances[];
+extern struct SceneEntrance gBilibinCaveRapierEntrances[];
+extern struct SceneEntrance gBilibinCaveIceEntrances[];
 extern u32 gBilibinCaveExits[];
 extern struct ScenePlacement gBilibinCavePlacementsOther[];
-extern struct ScenePlacement gBilibinCavePlacements3[];
-extern struct ScenePlacement gBilibinCavePlacements2[];
-extern struct ScenePlacement gBilibinCavePlacements1[];
+extern struct ScenePlacement gBilibinCaveEntrancePlacements[];
+extern struct ScenePlacement gBilibinCaveRapierPlacements[];
+extern struct ScenePlacement gBilibinCaveIcePlacements[];
 extern struct SceneEvent gBilibinCaveEventsOther[];
-extern struct SceneEvent gBilibinCaveEvents3[];
-extern struct SceneEvent gBilibinCaveEvents2[];
-extern struct SceneEvent gBilibinCaveEvents1[];
+extern struct SceneEvent gBilibinCaveEntranceEvents[];
+extern struct SceneEvent gBilibinCaveRapierEvents[];
+extern struct SceneEvent gBilibinCaveIceEvents[];
 extern s32 gBilibinCave_PushSteps[];
 
 #endif

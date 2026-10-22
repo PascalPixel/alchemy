@@ -8,6 +8,12 @@
 /// the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// FLAG_SCENE_TEMP_01: the log is in the river, until the party next comes in.
+///
+/// Open questions:
+/// - XXX: what the map's name, Cliff, rests on; a render of
+///   SceneId_KolimaForestCliff would show whether a cliff sets it apart.
+/// - XXX: what SE_240, as the log falls in, sounds like; a recording would
+///   name it.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -37,9 +43,15 @@
 #include "field_scene.h"
 #include "songs.h"
 
-/// The three logs are the first placed actors; the third is the one that can
-/// reach the river.
-enum { RIVER_LOG = ACTOR_FIRST_PLACED + 2 };
+/// The map's actors, numbering the rows of gKolimaForestCliffPlacements.
+enum {
+  /// The three logs; the third is the one that can reach the river.
+  /// ★ Named from what the player sees: a log lying west to east (its render)
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a log lying north to south (its
+  /// render)
+  ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
+};
 
 #include "common/object_staged_actor.h"
 
@@ -65,18 +77,19 @@ static void KolimaForestCliff_PushLog(void) {
   Engine_EventBegin();
   if (StagedActor_FindClearPosition(&result)) {
     SceneActor_MoveAndRedraw(result);
-    if (result.actorSlot == RIVER_LOG && (result.position.x >> 20) == 12) {
+    if (result.actorSlot == ACTOR_RIVER_LOG &&
+        (result.position.x >> 20) == 12) {
       struct FieldActor *actor;
-      Engine_ActorSetAnimation(RIVER_LOG, 3);
-      Engine_ActorSetDestinationOffset(RIVER_LOG, -18, 6);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, 3);
+      Engine_ActorSetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Engine_EventWait(30);
       Engine_AudioPlayCue(SE_240);
-      Engine_ActorSetAnimation(RIVER_LOG, 8);
-      Object_GetById(RIVER_LOG)->priorityFlags = 2;
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, 8);
+      Object_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
       Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
-      actor = Object_GetById(RIVER_LOG);
+      actor = Object_GetById(ACTOR_RIVER_LOG);
       Engine_ActorSetSpriteFlags(actor, 0);
     }
   }
@@ -98,17 +111,17 @@ s32 KolimaForestCliff_Initialize(void) {
 
   work->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  FieldScene_RedrawActorFootprint(RIVER_LOG);
+  FieldScene_RedrawActorFootprint(ACTOR_RIVER_LOG);
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
-    Object_GetById(RIVER_LOG)->priorityFlags = 2;
+    Object_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
     StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(RIVER_LOG), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_RIVER_LOG), 0);
   }
 
-  FieldScene_RedrawActorFootprint(8);
-  FieldScene_RedrawActorFootprint(9);
+  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG);
+  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(6);
@@ -161,11 +174,11 @@ u32 gKolimaForestCliffExits[] = {
 };
 
 struct ScenePlacement gKolimaForestCliffPlacements[] = {
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(256), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(224), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(312), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

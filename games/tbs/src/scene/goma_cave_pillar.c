@@ -38,8 +38,19 @@
 /// below (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST,
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH and
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
-/// ENTRANCE_STUMP_FALL, which no exit names, plays the stump being pushed to
-/// the edge and falling.
+/// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
+/// reaches, plays the stump being pushed to the edge and falling.
+///
+/// Open questions:
+/// - XXX: what ACTOR_STUMP_FALL_SPRITE shows: sprite 223 is a wooden crate
+///   (spr_223.png), yet the scene draws it blended at the edge only while the
+///   stump falls, with child value 14; a render of Event_PushStumpOver would
+///   settle it.
+/// - XXX: what SE_141, SE_189 and SE_188, as the stump teeters, falls and the
+///   east pillar sinks, sound like; a recording of the room would name them.
+/// - XXX: the leader's animations 6 and 7 in the patch-0 Event_JumpGapWest
+///   (crouch and jump, by their use); a render of the party's sprite
+///   animations would name them in field_event.h's ActorAnimation.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"
@@ -118,13 +129,14 @@ enum GomaCavePillarActor {
   /// ★ Named from the game: "Forge" (MsgDjinnName)
   ACTOR_FORGE,
   /// The man who fought Forge and lost it, a man with golden-brown hair in
-  /// orange and red. "Did you see something strange over there? I fought it,
-  /// but it fled."
+  /// orange and red.
+  /// ★ Named from the game: "Did you see something strange over there? I
+  /// fought it, but it fled." (MsgVaultDidYouSeeSomethingStrangeOver)
   ACTOR_WITNESS
 };
 
 /// The entrance no exit names, which plays the stump being pushed to the edge
-/// and falling into the room below.
+/// and falling into the room below; only the debug scene selector reaches it.
 enum { ENTRANCE_STUMP_FALL = 99 };
 
 /// The event the man's timer raises once Forge has joined the party
@@ -267,10 +279,10 @@ static void GomaCavePillar_SpawnStumpDust(void) {
   struct FieldActor *heightSource;
   struct FieldActor *firstXSource, *firstZSource;
   s32 firstRandomX, firstRandomSpeed, firstStyle, firstSpeedBand,
-      firstSpeedTimes13, firstFallingSpeed;
+      firstBandScaled, firstFallingSpeed;
   struct FieldActor *secondXSource, *secondZSource;
   s32 secondRandomX, secondRandomSpeed, secondStyle, secondSpeedBand,
-      secondSpeedTimes13, secondFallingSpeed;
+      secondBandScaled, secondFallingSpeed;
 
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
@@ -286,10 +298,10 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstRandomSpeed = Engine_RandomNext();
     firstSpeedBand = ((u32)((firstRandomSpeed << 2) + firstRandomSpeed) >> 16);
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
-    firstSpeedTimes13 =
+    firstBandScaled =
         (((firstSpeedBand << 1) + firstSpeedBand) << 2) + firstSpeedBand;
-    firstFallingSpeed = firstSpeedTimes13 << 6;
-    firstFallingSpeed -= firstSpeedTimes13;
+    firstFallingSpeed = firstBandScaled << 6;
+    firstFallingSpeed -= firstBandScaled;
     firstFallingSpeed <<= 3;
     firstFallingSpeed += firstSpeedBand;
     firstStyle = (u32)(Engine_RandomNext() << 1) >> 16;
@@ -311,10 +323,10 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondSpeedBand =
           ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
       // Keep the same five falling speeds for the second fragment.
-      secondSpeedTimes13 =
+      secondBandScaled =
           (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
-      secondFallingSpeed = secondSpeedTimes13 << 6;
-      secondFallingSpeed -= secondSpeedTimes13;
+      secondFallingSpeed = secondBandScaled << 6;
+      secondFallingSpeed -= secondBandScaled;
       secondFallingSpeed <<= 3;
       secondFallingSpeed += secondSpeedBand;
       secondStyle = (u32)(Engine_RandomNext() << 1) >> 16;
@@ -343,7 +355,7 @@ static void Event_PushStumpOver(void) {
   struct FieldActor *bounceActor, *gravityActor;
   struct FieldActor *movedActor;
   struct FieldActor *zSource, *xSource;
-  s32 randomX, randomSpeed, style, speedBand, speedTimes13, fallingSpeed;
+  s32 randomX, randomSpeed, style, speedBand, bandScaled, fallingSpeed;
   struct FieldActor *overlayActor;
 
   stump = Object_GetById(ACTOR_STUMP);
@@ -394,9 +406,9 @@ static void Event_PushStumpOver(void) {
     randomSpeed = Engine_RandomNext();
     speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
     // A last piece of dust, with the same tenth-pixel speed bands.
-    speedTimes13 = (((speedBand << 1) + speedBand) << 2) + speedBand;
-    fallingSpeed = speedTimes13 << 6;
-    fallingSpeed -= speedTimes13;
+    bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
+    fallingSpeed = bandScaled << 6;
+    fallingSpeed -= bandScaled;
     fallingSpeed <<= 3;
     fallingSpeed += speedBand;
     style = (u32)(Engine_RandomNext() << 1) >> 16;
@@ -581,9 +593,10 @@ s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
-  Object_GetById(ACTOR_STUMP)->collisionFlags |= 16;
+  Object_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   if (FLAG_CHECK(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
     OBJ_POS_SET(ACTOR_WEST_PILLAR, 344, 104);
     GomaCavePillar_CopyWestPillarCells(24);
@@ -654,12 +667,12 @@ s32 gStagedActor_FootprintBounds[] = {
 /// The scripts a pillar fragment can run, chosen by the low bits of its spawn
 /// value.
 struct EffectScripts gGomaCavePillar_FragmentScripts = {{
-    gGomaCavePillar_FragmentScript0,
-    gGomaCavePillar_FragmentScript1,
-    gGomaCavePillar_FragmentScript2,
+    gGomaCavePillar_FragmentScriptShort,
+    gGomaCavePillar_FragmentScriptMedium,
+    gGomaCavePillar_FragmentScriptLong,
 }};
 
-s32 gGomaCavePillar_FragmentScript0[] = {
+s32 gGomaCavePillar_FragmentScriptShort[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
@@ -667,7 +680,7 @@ s32 gGomaCavePillar_FragmentScript0[] = {
     SC_FREE,
 };
 
-s32 gGomaCavePillar_FragmentScript1[] = {
+s32 gGomaCavePillar_FragmentScriptMedium[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
@@ -675,7 +688,7 @@ s32 gGomaCavePillar_FragmentScript1[] = {
     SC_FREE,
 };
 
-s32 gGomaCavePillar_FragmentScript2[] = {
+s32 gGomaCavePillar_FragmentScriptLong[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),

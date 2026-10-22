@@ -81,6 +81,35 @@ enum SpriteId {
   SPRITE_STONE_PILLAR = 0xd3,
   /// ★ Named from what the player sees: a tree stump (its render)
   SPRITE_STUMP = 0xd4,
+  /// The hand Move reaches out with; Goma Cave's entrance and Vale place it
+  /// to push something in a cutscene.
+  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  SPRITE_MOVE_HAND = 0xd7,
+  /// Spray thrown up where water is struck: where Goma Cave's stumps land,
+  /// and at Kolima Forest's floodgate.
+  /// ★ Named from what the player sees: a splash of white and pale blue
+  /// spray (spr_214.png)
+  SPRITE_SPLASH = 0xd6,
+  /// The fields of Psynergy that rise over the party as Kolima's curse falls.
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
+  SPRITE_PSYNERGY_FIELD = 0xdc,
+  /// The sparkles of Tret's glamour that rain on Kolima and its forest.
+  /// ★ Named from what the player sees: rings of golden light (spr_026.png)
+  SPRITE_GOLDEN_RINGS = 0x1a,
+  /// The statues Move or a push slides in Bilibin and its Treasury.
+  /// ★ Named from what the player sees: a golden statue of a figure in a long
+  /// robe (spr_243.png)
+  SPRITE_GOLDEN_STATUE = 0xf3,
+  /// Ivy on a cliff or round a stump, which Whirlwind blows away.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  SPRITE_IVY = 0xf8,
+  /// Rings that spread on water where someone wades, the sprite the field's
+  /// own wading uses as FIELD_SPRITE_RIPPLE.
+  /// ★ Named from what the player sees: rings spreading on water
+  /// (spr_024.png)
+  SPRITE_RIPPLE = 0x18,
   SPRITE_DUST_PUFF = 222, ///< a puff of dust kicked up where an actor stands
   /// ★ Named from what the player sees: a wooden crate (spr_223.png)
   SPRITE_CRATE = 0xdf,
@@ -123,6 +152,12 @@ enum SpriteId {
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH = 0xf6,
+  /// A fire burning on the ground, which Douse puts out.
+  /// ★ Named from what the player sees: a flickering flame (spr_247.png)
+  SPRITE_FIRE = 0xf7,
+  /// ★ Named from what the player sees: a wooden signpost on a green post
+  /// (spr_274.png)
+  SPRITE_SIGNPOST = 0x112,
   /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
@@ -244,6 +279,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: an orange face with green eyes
   /// (spr_056.png)
   SPRITE_LAUREL = 0x38,
+  /// Tret's face again: SPRITE_TRET's pictures and animations drawn 12 pixels
+  /// higher (sprites.tsv's SPR_071), as Kolima Forest shows him.
+  SPRITE_TRET_RAISED = 0x47,
   /// The sprite of Iodem.
   /// ★ Named from what the player sees: a man with grey hair and a grey beard
   /// in a blue tunic and a yellow cape (spr_057.png)
@@ -477,6 +515,23 @@ enum SpriteId {
   /// ★ Named from what the player sees: a man in a green cap and a green and
   /// yellow robe, carrying a pack on his back (spr_171.png)
   SPRITE_MAN_CARRYING_A_PACK = 0xab
+};
+
+/// SPRITE_STUMP's animations beyond its standing frame (spr_212.tsv).
+enum StumpAnimation {
+  /// Sinks until only its cut top shows, level with the ground or the water.
+  STUMP_ANIM_SINK = 2,
+  STUMP_ANIM_SPLASH = 3 ///< drops into water with a splash
+};
+
+/// SPRITE_PUDDLE's animations (spr_227.tsv): the puddle, the ice pillar Frost
+/// makes of it, and the steps between.
+enum PuddleAnimation {
+  PUDDLE_ANIM_PUDDLE = 1,
+  PUDDLE_ANIM_FREEZE = 2,  ///< rises from the puddle into an ice pillar
+  PUDDLE_ANIM_LOW_ICE = 3, ///< held at the second step of freezing
+  PUDDLE_ANIM_PILLAR = 5,  ///< the ice pillar, still
+  PUDDLE_ANIM_MELT = 6     ///< sinks from the pillar back into a puddle
 };
 
 #endif

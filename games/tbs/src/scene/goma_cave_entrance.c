@@ -1,40 +1,45 @@
 /// @file
 /// Goma Cave Entrance (SceneId_GomaCaveEntrance), the mouth of the cave in
-/// the Goma Range that leads from Vault to Bilibin, where Ivan rejoins the
-/// party.
+/// the Goma Range between Vault and Bilibin, where Ivan rejoins the party.
 ///
-/// Vault's mayor sent the party here: `Look for a cave in the mountains of the
-/// Goma Range, northeast of us. Once you've passed it, you'll reach Bilibin.`
-/// In Vault, Ivan, Master Hammet's servant, had joined the party to find the
-/// Shaman's Rod that thieves stole from Hammet, reading the townspeople's
-/// minds; once the thieves were caught he took the rod and set out for Lunpa,
-/// where Hammet was said to be heading.
-///
-/// A stump caught in ivy blocks the way on, and Move on it runs
-/// Event_IvanRejoins while FLAG_GOMA_CAVE_IVAN_JOINED is clear. Garet says
-/// their Psynergy is not strong enough to free it. If the thieves in Vault are
-/// jailed (FLAG_VAULT_THIEVES_JAILED), Ivan walks up, blows the ivy off with
-/// Whirlwind, tells them he could not get into Lunpa and asks to join their
-/// quest; he rejoins with the Shaman's Rod equipped, and the flag is set.
-/// Otherwise Garet only falls back into line. Once Ivan is back, Move on the
-/// stump runs Event_MoveStump instead: when the stump has been moved to the
-/// right column it spins, leaps and lands out of the way
+/// A stump caught in ivy (ACTOR_STUMP, held by ACTOR_STUMP_IVY) blocks the
+/// way on. Until FLAG_GOMA_CAVE_IVAN_JOINED is set, Move on it runs
+/// Event_IvanRejoins: Garet says their Psynergy can't free it, and only once
+/// the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does Ivan walk
+/// up, blow the ivy off with Whirlwind and rejoin with the Shaman's Rod
+/// equipped. The ivy is never the player's target (ACTOR_NOT_TARGETED), so
+/// that cutscene is the only way past it. After it, Move runs Event_MoveStump,
+/// which sends the stump leaping out of the way once it stands on column 11
 /// (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
 ///
-/// Two pillars and a second ivy are puzzles on the way. The west pillar is
-/// pushed by walking into it or moved with Move, and stands on one of three
-/// columns, which two flags record
+/// The two stone pillars and a second ivy are puzzles on the way. The west
+/// pillar is pushed by walking into it or moved with Move, and stands on one of
+/// three columns, which two flags record
 /// (FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP and _TWO_STEPS). The east
 /// pillar, moved with Move to its last column, settles into the floor so it can
 /// be walked over (FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE). Whirlwind
-/// blows the second ivy away for good (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY),
-/// and its placement row is skipped from then on.
+/// blows the second ivy away for good (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
+/// its placement row is then skipped, though it keeps its actor number.
 ///
 /// Scene_Initialize blocks Retreat and puts everything back as these flags say:
 /// the stump where it landed, the pillars on their columns and the map cells
 /// that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma
 /// Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// world map.
+///
+/// Open questions:
+/// - XXX: whether the stump comes down in water, as its last animation
+///   (STUMP_ANIM_SPLASH) and ACTOR_SUNKEN_STUMP suggest; a render of the room
+///   with FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED set would settle it.
+/// - XXX: what the two Move hands and the stump placed at the origin after
+///   ACTOR_SUNKEN_STUMP are for, since nothing in the overlay addresses them; a
+///   recording of Event_IvanRejoins and of Move cast in the room would settle
+///   it.
+/// - XXX: what the 8 that GomaCaveEntrance_WhirlwindOnStumpIvy adds to the
+///   announcement's box mode changes; a recording of Ivan's Whirlwind here
+///   beside one the player casts would settle it.
+/// - XXX: what SE_170, which plays as the room opens, and SE_185, SE_188 and
+///   SE_141 sound like; a recording of the room's sounds would name them.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -71,18 +76,37 @@
 #include "event.h"
 #include "item_ids.h"
 #include "vector3.h"
+#include "fx_scene.h"
+#include "fixed_math.h"
 
-// The room's actors: Garet and Ivan take their party slots, the rest follow
-// the placement table from 8.
-#define STUMP 8
-#define WEST_PILLAR 9
-#define EAST_PILLAR 10
-#define STUMP_IVY 15 ///< the ivy holding the stump
-#define IVY 16
+/// The room's actors. Garet's and Ivan's rows go to their party slots, and the
+/// rows after them number from ACTOR_FIRST_PLACED.
+enum GomaCaveEntranceActor {
+  /// The stump caught in ivy that blocks the way on.
+  /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
+  /// free that stump." (MsgGomaNoUsePsynergy)
+  ACTOR_STUMP = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_WEST_PILLAR,
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_EAST_PILLAR,
+  /// A second stump, always sunk until only its top shows, that the party
+  /// walks over.
+  /// ★ Named from what the player sees: a stump sunk to its cut top, the last
+  /// frame of STUMP_ANIM_SINK in spr_212.png (its render)
+  ACTOR_SUNKEN_STUMP,
+  /// The ivy holding the stump, until Ivan blows it away.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  ACTOR_STUMP_IVY = ACTOR_FIRST_PLACED + 7,
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  ACTOR_IVY
+};
 
 // Private scene actions used by the reunion sequence.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
-static void GomaCaveEntrance_LeapStump(s32 id);
+static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
 // Shared effects stay at their native positions in the overlay.
@@ -114,7 +138,7 @@ static void Event_MoveWestPillar(void) {
   struct FieldActor *pillar;
   s32 column;
 
-  pillar = Object_GetById(WEST_PILLAR);
+  pillar = Object_GetById(ACTOR_WEST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   GameFlag_Clear(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   GameFlag_Clear(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
@@ -135,13 +159,13 @@ static void Event_MoveEastPillar(void) {
   struct FieldActor *pillar;
   s32 column;
 
-  pillar = Object_GetById(EAST_PILLAR);
+  pillar = Object_GetById(ACTOR_EAST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   if (column == 23) {
     WAIT(10);
-    Object_GetById(EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Object_GetById(EAST_PILLAR)->motionFlags = 0;
-    Engine_ActorSetSpriteFlags(Object_GetById(EAST_PILLAR), 0);
+    Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(ACTOR_EAST_PILLAR)->motionFlags = 0;
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_EAST_PILLAR), 0);
     Map_CopyCellAttributes(54, 17, 1, 1, column, 17);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE);
   }
@@ -158,14 +182,14 @@ static void Event_PushWestPillar(void) {
   OBJ_MODE(ACTOR_PARTY_LEADER, 8);
   WAIT(20);
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-  OBJ_SPEED(WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
+  OBJ_SPEED(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   SE(SE_185);
   // 16 pixels east from trigger 5, west from trigger 6.
   offsetX = (11 - (work->touchedTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
-  Actor_SetDestinationOffset(WEST_PILLAR, offsetX, 0);
+  Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorWaitForMove(WEST_PILLAR);
+  Engine_ActorWaitForMove(ACTOR_WEST_PILLAR);
   WAIT(20);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_MoveWestPillar();
@@ -196,50 +220,49 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// it off.
 s32 Scene_Initialize(void) {
   struct FieldActor *movedObject;
-  s32 v5;
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   WAIT(10);
   FieldFx_SetQueuedSoundAndPlay(SE_170);
-  OBJ_MODE(11, 2);
-  Object_GetById(11)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  OBJ_MODE(ACTOR_SUNKEN_STUMP, STUMP_ANIM_SINK);
+  Object_GetById(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
-    struct FieldActor *record = Object_GetById(STUMP);
+    struct FieldActor *record = Object_GetById(ACTOR_STUMP);
 
-    record->collisionFlags = 16 | record->collisionFlags;
+    record->collisionFlags = ACTOR_NEAR_PSYNERGY | record->collisionFlags;
   }
+  // The player never targets the stump's ivy; only Ivan's Whirlwind in
+  // Event_IvanRejoins removes it.
   {
-    struct FieldActor *record = Object_GetById(STUMP_IVY);
+    struct FieldActor *record = Object_GetById(ACTOR_STUMP_IVY);
 
-    record->collisionFlags = 8 | record->collisionFlags;
+    record->collisionFlags = ACTOR_NOT_TARGETED | record->collisionFlags;
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
     Map_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
-    Engine_ActorSetPosition(STUMP, PIXELS(136), PIXELS(196));
-    Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    v5 = 12;
-    OBJ_MODE(STUMP, 2);
-    Map_CopyCellAttributes(39, 12, 3, 1, 8, v5);
-    Map_CopyCellAttributes(43, 11, 3, 1, v5, 11);
+    Engine_ActorSetPosition(ACTOR_STUMP, PIXELS(136), PIXELS(196));
+    Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
+    Map_CopyCellAttributes(39, 12, 3, 1, 8, 12);
+    Map_CopyCellAttributes(43, 11, 3, 1, 12, 11);
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
-    OBJ_POS_SET(WEST_PILLAR, 264, 312);
+    OBJ_POS_SET(ACTOR_WEST_PILLAR, 264, 312);
     Map_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
     if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) !=
         0) {
-      OBJ_POS_SET(WEST_PILLAR, 280, 312);
+      OBJ_POS_SET(ACTOR_WEST_PILLAR, 280, 312);
       Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
     }
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
-    Engine_ActorSetPosition(EAST_PILLAR, PIXELS(376), PIXELS(280));
-    Object_GetById(EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    v5 = 0;
-    Object_GetById(EAST_PILLAR)->motionFlags = v5;
-    movedObject = Object_GetById(EAST_PILLAR);
+    Engine_ActorSetPosition(ACTOR_EAST_PILLAR, PIXELS(376), PIXELS(280));
+    Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(ACTOR_EAST_PILLAR)->motionFlags = 0;
+    movedObject = Object_GetById(ACTOR_EAST_PILLAR);
     Engine_ActorSetSpriteFlags(movedObject, 0);
     Map_CopyCellAttributes(54, 17, 1, 1, 23, 17);
   }
@@ -465,10 +488,10 @@ static void Event_MoveStump(void) {
   struct FieldActor *stump;
 
   EV_BEGIN();
-  column = Object_GetById(STUMP)->x.fixed >> 20;
+  column = Object_GetById(ACTOR_STUMP)->x.fixed >> 20;
   if (column == 11) {
-    GomaCaveEntrance_LeapStump(STUMP);
-    stump = Object_GetById(STUMP);
+    GomaCaveEntrance_LeapStump(ACTOR_STUMP);
+    stump = Object_GetById(ACTOR_STUMP);
     stump->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     Map_CopyCellAttributes(43, 11, 3, 1, 12, column);
@@ -479,18 +502,14 @@ static void Event_MoveStump(void) {
 
 /// Ivan casts Whirlwind on the stump's ivy, and the scene waits for it.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
-  u8 *effectWork;
+  struct FieldFxScene *effectWork;
+  u8 flags;
 
   effectWork = gEffectWork;
   FieldFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
-  FieldFx_SetupObjectPair(IVAN, STUMP_IVY);
-  {
-    u8 *f = (u8 *)((s32)effectWork + 0x71c);
-    s32 t = 8;
-
-    t |= *f;
-    *f = t;
-  }
+  FieldFx_SetupObjectPair(IVAN, ACTOR_STUMP_IVY);
+  flags = (u8)effectWork->messageMode | 8;
+  effectWork->messageMode = flags;
   EventObject_Initialize();
   Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
   FieldFx_StopCasterHook();
@@ -509,66 +528,67 @@ static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
 #include "common/object_waitdown.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
-/// then comes to rest a little further on.
-static void GomaCaveEntrance_LeapStump(s32 id) {
+/// then hops on into the water with a splash and sinks (STUMP_ANIM_SPLASH).
+static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
   struct EffectOptions params;
   struct Vector3 *v;
   struct EffectOptions *p;
-  struct FieldActor *actor;
+  struct FieldActor *stump;
   u32 i;
 
-  actor = Object_GetById(id);
-  actor->motionFlags = 0;
+  stump = Object_GetById(stumpId);
+  stump->motionFlags = 0;
   for (i = 0; i <= 17; i++) {
     Engine_TaskWait(1);
     // The corresponding signed halfword view retains the negative literal.
-    *(s16 *)&actor->sprite->rotation += -256;
-    actor->x.fixed -= Engine_MathCos(actor->sprite->rotation) / 2;
-    actor->targetX = ACTOR_NO_TARGET;
+    *(s16 *)&stump->sprite->rotation += -256;
+    stump->x.fixed -= Engine_MathCos(stump->sprite->rotation) / 2;
+    stump->targetX = ACTOR_NO_TARGET;
   }
-  actor->update = GomaCaveEntrance_SpinStump;
-  OBJ_SPEED(id, PIXELS(3), 3 * PIXELS(1) / 2);
-  Engine_ActorSetDestination(id, 160, 192);
-  actor->gravity = 0xcccc;
-  actor->motionFlags = 3;
-  actor->terrainId = 0;
-  Engine_ActorWaitForMove(id);
-  SceneActor_WaitObjectBelowHeight(actor, 0x200000);
+  stump->update = GomaCaveEntrance_SpinStump;
+  OBJ_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  Engine_ActorSetDestination(stumpId, 160, 192);
+  stump->gravity = 4 * PIXELS(1) / 5;
+  stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  stump->terrainId = 0;
+  Engine_ActorWaitForMove(stumpId);
+  SceneActor_WaitObjectBelowHeight(stump, PIXELS(32));
   Engine_AudioPlayCue(SE_188);
-  Map_SetShake(0x50000, 0x50000, 0x10000);
+  Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Engine_AudioPlayCue(SE_141);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   for (i = 0; i <= 16; i++) {
     v = &dir;
     SET_POSITION(v, Engine_MathCos(i << 12), 0, Engine_MathSin(i << 12));
     v->x -= v->x / 4;
     v->z -= v->z / 2;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, v->x, v->y,
+    FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, v->x, v->y,
                   v->z, 0, NULL);
   }
-  actor->velocityY = 0x50000;
-  Engine_ActorSetDestination(id, 139, 196);
-  Engine_ActorWaitForMove(id);
-  SceneActor_WaitObjectBelowHeight(actor, 0x200000);
+  stump->velocityY = PIXELS(5);
+  Engine_ActorSetDestination(stumpId, 139, 196);
+  Engine_ActorWaitForMove(stumpId);
+  SceneActor_WaitObjectBelowHeight(stump, PIXELS(32));
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
 #ifdef UBFIX
-  actor->update = NULL;
+  stump->update = NULL;
 #else
-  *(s32 *)&actor->update = 0;
+  *(s32 *)&stump->update = 0;
 #endif
-  actor->sprite->rotation = 0x1000;
+  stump->sprite->rotation = 0x1000;
   p = &params;
-  p->type = 214;
-  p->startScaleX = 0x8000;
-  p->startScaleY = 0xcccc;
-  p->targetScaleX = 0x18000;
-  p->targetScaleY = 0x13333;
-  FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
-                0x1c0000, p);
+  p->type = SPRITE_SPLASH;
+  p->startScaleX = Q16_ONE / 2;
+  p->startScaleY = 4 * Q16_ONE / 5;
+  p->targetScaleX = 3 * Q16_ONE / 2;
+  p->targetScaleY = 6 * Q16_ONE / 5;
+  FieldFx_Spawn(
+      stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
+      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, p);
   Engine_AudioPlayCue(SE_CAST);
-  OBJ_MODE(id, 3);
+  OBJ_MODE(stumpId, STUMP_ANIM_SPLASH);
   Engine_MapWaitWorkValuesBelow256();
 }
 
@@ -683,17 +703,17 @@ struct ScenePlacement gGomaCaveEntrancePlacements[] = {
         PIXELS(248), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_STUMP, CONDITION_ALWAYS, 7,
+    { SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(136), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd7, CONDITION_ALWAYS, 7,
+    { SPRITE_MOVE_HAND, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xd7, CONDITION_ALWAYS, 7,
+    { SPRITE_MOVE_HAND, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_WEST, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf8, FLAG_GOMA_CAVE_IVAN_JOINED, 7,
+    { SPRITE_IVY, FLAG_GOMA_CAVE_IVAN_JOINED, ACTOR_RESET_ACTION,
         PIXELS(191), 0, PIXELS(194), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0xf8, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, (s32)gGomaCaveEntranceTallIvyScript,
+    { SPRITE_IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, (s32)gGomaCaveEntranceTallIvyScript,
         PIXELS(200), 0, PIXELS(168), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -703,11 +723,11 @@ struct SceneEvent gGomaCaveEntranceEvents[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWestPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT_SCRIPT(Event_IvanRejoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_MoveEastPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT_SCRIPT(Event_IvanRejoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveWestPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_MoveEastPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayIvy) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

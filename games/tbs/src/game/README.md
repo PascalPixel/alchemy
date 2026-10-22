@@ -1,121 +1,76 @@
 # Game rules
 
-The game keeps its rules in one place: who's in the party, what each of them
-carries, how they level up and change class, the Djinn they hold, and the
-flags that remember the journey.
-
-Nearly every other part of the game comes here to ask or change something. A
-scene asks whether a chest has been opened, a shop what an item costs, a menu
-what a character's Attack is with their equipment and Djinn, and a battle how
-hard a blow lands. The tables all of this reads, every item, ability, Djinni,
-enemy, summon and class in the game, are the `.tsv` files in this folder, so
-it's a good place to start when you want to know what something in the game
-actually is. [Battles](../battle/README.md) follows an ability from these
-tables to its damage, and [Shops](../shop/README.md) sell the items.
-
-![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
-
-The Item screen above asks one of those questions. With the hand on Remove,
-the status panel shows Isaac's Attack as 24 now and 17 without the Machete,
-and the menu has no formula of its own for the second number. It copies
-Isaac aside, really takes the Machete off him, and has `UnitCalc`
-([`game/units.c`](game/units.c)) work out his stats again from his base
-stats, equipment, Djinn and class, the same function that runs whenever any
-of those change. Then it draws the new numbers against the copy and puts
-the copy back (`Menu_DrawOwnerStatusPanel`, in
-[`menu/menu/common.c`](../menu/menu/common.c)). So whatever the menu
-promises is exactly what equipping would do.
+The game object holds the party's state and the rules the rest of the game
+asks about: the units and their stats, items and inventories, levels and
+classes, the Djinn each character holds, and the game flags. Its `.tsv`
+tables define every item, ability, Djinni, enemy, summon and class. A scene
+asks it whether a chest has been opened, a shop what an item costs, a menu
+what a character's Attack would be, and a battle what a blow does;
+[Battles](../battle/README.md) follows an ability from these tables to its
+damage.
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `game.c` | the game object itself: it includes `game_internal.h`, then the parts in `game/` in the order their code has in the ROM, and its opening comment says where each subject starts |
-| `game_internal.h` | what the parts share: the object's includes, and `Inventory_CompactSlots`, which two parts use |
-| [`game/battle_calc.c`](game/battle_calc.c) | battle arithmetic: the attack, Psynergy and healing formulas, the element multiplier, the battle's random numbers, the effect rolls and the weapon unleash |
-| [`game/classes.c`](game/classes.c) | element levels and classes |
-| [`game/djinn.c`](game/djinn.c) | the Djinn: their definitions, setting them and putting them on standby, and counting them |
-| [`game/flags.c`](game/flags.c) | the game flags, read as bits, bytes and nibbles |
-| [`game/inventory.c`](game/inventory.c) | items and inventories: equipping, adding, removing, breaking and counting |
-| [`game/levels.c`](game/levels.c) | each unit's actions and Psynergy list, the characters, experience and levelling up |
-| [`game/party.c`](game/party.c) | enemy units, the active party, coins and counters, and summons |
-| [`game/snapshot.c`](game/snapshot.c) | equipping a given item, and the equipment put aside for the Colosso |
+| `game.c` | the object: it includes `game_internal.h`, then the parts in `game/` in ROM order; its opening comment says where each family starts |
+| `game_internal.h` | the object's includes and `Inventory_CompactSlots`, which two parts use |
 | [`game/units.c`](game/units.c) | the party's units and their stats, a new game, the prologue, HP and PP |
-| `starting_equipment.c` | the characters who start a new game with their own items equipped, their class and their starting level: Isaac, Garet, Ivan, Mia and Jenna |
+| [`game/inventory.c`](game/inventory.c) | items and inventories: equipping, adding, removing, breaking and counting, and the rare item counters |
+| [`game/levels.c`](game/levels.c) | each unit's actions and Psynergy list, the characters, experience and levelling up |
+| [`game/flags.c`](game/flags.c) | the game flags, read as bits, bytes and nibbles |
+| [`game/party.c`](game/party.c) | enemy units, the active party, coins and counters, and summons |
+| [`game/classes.c`](game/classes.c) | element levels and classes |
+| [`game/battle_calc.c`](game/battle_calc.c) | battle arithmetic: the attack, Psynergy and healing formulas, the element multiplier, the battle's random numbers, the effect rolls and the weapon unleash |
+| [`game/snapshot.c`](game/snapshot.c) | equipping a given item, and the equipment put aside for the Colosso |
+| [`game/djinn.c`](game/djinn.c) | the Djinn: their definitions, setting them, standby and recovery, and counting them |
+| `starting_equipment.c` | the starting items, class and level of the characters who begin a new game equipped: Isaac, Garet, Ivan, Mia and Jenna |
+| `element_curve.s` | `gElement_PowerResistCurve`, the points `Battle_GetElementMultiplier` interpolates between |
 | `*.tsv`, each with the `.s` that places it | the definition tables, below |
 
-| Table | One row per | Placed as | Label column |
-| --- | --- | --- | --- |
-| `items.tsv` | item, by item id (324) | `gItem_DefinitionTable` (`item_table.s`) | `item` |
-| `actions.tsv` | ability, by ability id (519) | `gBattleAction_DefinitionTable` (`actions.s`) | `ability` |
-| `djinn.tsv` | Djinni, 20 to an element: Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) | `djinni` |
-| `enemies.tsv` | enemy, by enemy id (165) | `gEnemy_Definitions` (`enemies.s`) | `enemy` |
-| `summons.tsv` | summon (16) | `gSummon_DefinitionTable` (`summons.s`) | none |
-| `classes.tsv` | class (203) | `gClass_DefinitionTable` (`classes.s`) | none |
-| `chars.tsv` | character (8) | `gCharacter_DefinitionTable` (`chars.s`) | none |
-| `elempre.tsv` | enemy element preset (44) | `gEnemy_ElementPresetTable` (`element_table.s`) | none |
-| `artifact_slots.tsv` | 16 item ids (columns `x0` to `xf`), so its 32 rows give one byte to each of the 512 item ids: a rare item's counter number plus one, or 0 for an ordinary item | `gItem_ArtifactSlotTable` (`artifact_slots.s`) | none |
-| `level_experience_0.tsv` to `level_experience_7.tsv` | level, with the experience it needs; one table per character (99 levels each) | `gCharacter_LevelExpTable` (`experience_table.s`) | none |
+| Table | One row per | Placed as |
+| --- | --- | --- |
+| `items.tsv` | item (324) | `gItem_DefinitionTable` (`item_table.s`) |
+| `actions.tsv` | ability (519) | `gBattleAction_DefinitionTable` (`actions.s`) |
+| `djinn.tsv` | Djinni, `DJINN_PER_ELEMENT` (20) to an element, Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) |
+| `enemies.tsv` | enemy (165) | `gEnemy_Definitions` (`enemies.s`) |
+| `summons.tsv` | summon (16) | `gSummon_DefinitionTable` (`summons.s`) |
+| `classes.tsv` | class (203) | `gClass_DefinitionTable` (`classes.s`) |
+| `chars.tsv` | character (8) | `gCharacter_DefinitionTable` (`chars.s`) |
+| `elempre.tsv` | enemy element preset (44) | `gEnemy_ElementPresetTable` (`element_table.s`) |
+| `artifact_slots.tsv` | 16 item ids, columns `x0` to `xf` (32 rows, 512 ids): a rare item's counter number plus one, or 0 | `gItem_ArtifactSlotTable` (`artifact_slots.s`) |
+| `level_experience_0.tsv` to `_7.tsv` | level (99), with the experience it needs, one table per character | `gCharacter_LevelExpTable` (`experience_table.s`) |
 
-Each `.tsv` is a plain table. Its header line names every column as
-`name:type`, and then comes one row per entry with no row numbers, so the
-first row after the header is entry 0. The type says how big the field is:
-`u8` is one byte, a whole number from 0 to 255, `s8` a signed byte from -128
-to 127, `u16` and `s16` two bytes, `u32` and `s32` four, and `strN` text of
-up to N bytes. The build turns each `.tsv` into a `.table` beside it, which
-its `.s` places under its symbol name, such as `gItem_DefinitionTable`; the
-`.tsv` is the source and the `.table` only build output. A column named
-without a type, such as `item`, is a label for people, and the build writes
-nothing for it. A column named `unknown_` or `unk_` is a field whose meaning
-isn't known yet, and `reserved_` and `pad_` name bytes that are zero in every
-row.
-
-The ROM shows the game rules as a single object, so that's how they're built:
-everything is compiled once, through `game.c`. The split into parts is ours,
-cut where one family ends and the next begins. Every part starts with
-`/// @file` and, on the line after it, a one-line summary of what it holds, so
-the first two lines of the parts read together as a table of contents. Each
-part includes the private header too, so it still makes sense when you open
-it on its own. The object's place in the link order is in
-`games/tbs/objects.tsv`, from the `game` row.
-
-The prototypes are in `games/tbs/include/unit/game/`. Code elsewhere in the
-ROM, in the other banks, reaches these functions through the far-call table
-`games/tbs/src/system/far_call/GAME.S`, under names ending in `Far`, so a
-function here can be known by two names, its own and its far-call one.
+The prototypes are in `games/tbs/include/unit/game/`. Code in other banks
+calls these functions through the far-call table
+`games/tbs/src/system/far_call/GAME.S`, by their `Far` names.
 
 ## Words used here
 
-- **owner** and **unit**: an owner is a number, and a unit is the record that
-  number leads to, the `struct BattleUnit` that `UnitGet(owner)` returns,
-  with its stats, HP and PP, inventory and Djinn. Owners 0 to 7 are the eight
-  characters, kept in the game state: Isaac (`ISAAC`, 0) to Piers (`PIERS`,
-  7) in `games/tbs/include/game/character_ids.h`. Owners 128 to 133 are the enemies of the current battle.
-- **party** and **active owners**: the characters travelling together, in
-  order (`gGameState.activeOwners`, `Party_CountActiveOwners`). Game flags 0
-  to 7 say who's in it.
-- **inventory entry**: one of a unit's 15 inventory slots, a halfword (two
-  bytes) holding the item, whether it's equipped or broken, and how many
-  there are. [An inventory slot is one halfword](#an-inventory-slot-is-one-halfword)
-  explains the layout.
+- **owner** and **unit**: an owner is a number, and a unit the
+  `struct BattleUnit` `UnitGet(owner)` returns, with its stats, HP and PP,
+  inventory and Djinn. Owners `ISAAC` (0) to `PIERS` (7) are the eight
+  characters, kept in `gGameState.owners` (`character_ids.h`); owners from
+  `FIRST_ENEMY_UNIT` (128) are the current battle's six enemies.
+- **party**: the characters travelling together. `FLAG_IN_PARTY(owner)`
+  says who is in it and `gGameState.activeOwners` lists them in order.
+- **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
+  holding an item, its state and its count.
 - **ability**: a row of `actions.tsv`. Psynergy, a Djinni's and a summon's
   effect, an item's use and an enemy's attack are all abilities.
-- **element**: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter (`ELEMENT_VENUS` and the
-  rest), and 4 for none. A character's **element levels** come from the Djinn
-  set on them plus their own element bonus, and an enemy's from its element
-  preset; `Unit_GetElementLevels` gives each level times ten.
-- **Djinni** `group` and `index`: a Djinni is its element (0 to 3), which the
-  code calls its group, and its number within it (0 to 19). A unit holds it,
-  and it's either set on that unit or on standby, waiting to be set again.
-  The Djinn a summon uses recover for some turns before they're set again.
-- **class series**: the classes a character's two strongest elements select.
-  The class is the last in the series whose element levels the character
-  reaches (`Class_Determine`). Isaac and Garet as children, and Jenna, have
-  fixed classes (200, 201 and 202).
-- **flag**: one of the game's 4,096 yes-or-no facts, a bit in
-  `gGameFlagBytes`, found by its number. Byte and nibble flags use the same
-  numbering (`flags.c`), and the flags with names are in `flags.h`.
-- `unk<offset>`: a field whose meaning isn't known yet.
+- **element**: `enum Element`, `ELEMENT_VENUS` to `ELEMENT_JUPITER`, and
+  `ELEMENT_NONE`. A character's **element levels** are the Djinn set on it
+  plus its own element bonus, an enemy's come from its element preset;
+  `Unit_GetElementLevels` returns each level times ten.
+- **Djinni** element and index: a Djinni is its element and its number in
+  that element (`DJINNI_INDEX`). It is either set on the unit that holds it
+  or on standby; the Djinn a summon uses recover for some turns before they
+  can be set again.
+- **class series**: the classes a character's two strongest elements select;
+  `Class_Determine` picks the last in the series whose element levels the
+  character reaches.
+- **flag**: one of the 4,096 bits of `gGameFlagBytes`, by number; the named
+  ones are in `flags.h`.
 
 ## Function prefixes
 
@@ -123,173 +78,168 @@ function here can be known by two names, its own and its far-call one.
 | --- | --- |
 | `Unit_`, `UnitGet`, `UnitCalc`, `UnitRatio` | one unit: stats, HP and PP, Psynergy, levels, elements |
 | `Party_`, `GameState_`, `Game_` | the party and the game state |
-| `Item_`, `Inventory_`, `PartyInventory_`, `InventorySnapshot_`, `ItemCounter_`, `Equipment_` | items: one unit's inventory, the party's, the snapshot the Colosso takes, and the rare item counters that limit what the shops sell |
+| `Item_`, `Inventory_`, `PartyInventory_`, `InventorySnapshot_`, `ItemCounter_`, `Equipment_` | items: one unit's inventory, the party's, the Colosso's snapshot, and the rare item counters |
 | `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
 | `GameFlag_` | the game flags |
-| `Djinn_`, `DjinnRecovery_` | the Djinn, and their standby lists |
-| `Battle_`, `BattleRandom`, `BattleTarget_` | battle arithmetic the battle folder calls |
+| `Djinn_`, `DjinnRecovery_` | the Djinn, and their recovery lists |
+| `Battle_`, `BattleRandom`, `BattleTarget_` | the battle arithmetic the battle folder calls |
 | `BattleUnitSet` | filling an enemy unit at the start of a battle |
-| `Runtime_` | two engine helpers that live here: a byte copy and the build stamp |
+| `Runtime_` | `Runtime_CopyBytesDirectional` and `Runtime_GetBuildStampTime`, which the engine names elsewhere |
 
-[Matching](../MATCHING.md) explains the odd spellings and the comment markers.
+## Design
 
-## Why it works this way
+### A row's id is its position, and its name is a message at the same position
 
-### A row's place is its id, and its name is the message at the same place
+The definition tables have no id column: an entry's id is its row, the first
+row after the header being entry 0. The same id, added to the number of a
+message, gives the entry's name. An item's name is `MsgItemName` + id and the
+line the Item screen shows about it `MsgItemPlainName` + id; an enemy's name
+is `MsgEnemyName` + id, an ability's `MsgAbilityName` + id and its
+description `MsgAbilityDescription` + id, and a Djinni's `MsgDjinnName` + its
+row, which is also its ability, `ABILITY_DJINNI_FIRST` + row. Code reaches a
+name by adding (`itemId + MsgItemName` in the shops and menus).
 
-The definition tables have no id column. An item is the row it sits on, and
-the same number is its place among the messages too. Its name is message
-`MsgItemName` + id, and the short line the item screen shows about it is
-`MsgItemPlainName` + id: the Broad Sword's just says Long Sword, its kind of
-weapon, and the Healing Ring's says Ring: Use to restore 70 HP. Code reaches
-both by adding the id to the first message's number (`itemId + MsgItemName`
-in the shops and the menus). Abilities, enemies and Djinn work the same way,
-each with its own first message.
+The tables and the message catalogs are therefore parallel lists tied only by
+position. A row inserted into `items.tsv` would give every later item the
+name of the one after it unless all six catalogs gained a message at the same
+place, and rows no item uses keep their places. The Healing Ring is on line
+267 of `items.tsv`, so it is item 265; its name is message 651 and its line
+"Ring: Use to restore 70 HP".
 
-So the tables and the message catalogs are parallel lists tied only by
-position. A row inserted in the middle of `items.tsv` would move every later
-item one place along, and each would show the name of the item that used to
-follow it, unless the catalogs of all six languages gained a message at the
-same place. That's also why rows no item uses keep their places, with `?` or
-`=` as their names.
+Each `.tsv` header names its columns as `name:type`: `u8`, `s8`, `u16`,
+`s16`, `u32` and `s32` are bytes of that size and sign, and `strN` is text
+of up to N bytes. The build writes a `.table` beside each `.tsv`, and its
+`.s` places it under its symbol. A column without a type (`item`, `ability`,
+`djinni`, `enemy`) is a label for readers and builds no bytes: the English
+name its message gives, `?` or `=` where the message marks the row unused,
+or `(no name message)` for a row past the last name. `reserved_` and `pad_`
+columns are zero in every row, and `unknown_` and `unk_` columns are fields
+whose meaning isn't known. `item_ids.h`, `ability_ids.h` and `djinn_ids.h`
+name the ids the code uses.
 
-The label columns are the English edition's names from
-`games/tbs/text/en.po`, by the message each row's id reaches. An item's name
-is message 386 + id (`MsgItemName`), an enemy's 655 + id (`MsgEnemyName`),
-an ability's 819 + id (`MsgAbilityName`) and its description 1338 + id
-(`MsgAbilityDescription`), and a Djinni's 1119 + its row
-(`MsgDjinnName`), which is also its ability, 300 + row. A row's id is its
-line number less two, since the header is line 1 and entry 0 is line 2:
-`Healing Ring` is on line 267 of `items.tsv`, so it's item 265 and its name
-is message 651. In the same way `Quake` is ability 3 in `actions.tsv`,
-`Flint` row 0 of `djinn.tsv` and `Vermin` enemy 1 in `enemies.tsv`. A row
-whose message is `?` or `=` is unused, and the labels keep those marks; a row
-past the last name message says `(no name message)`. `item_ids.h`,
-`ability_ids.h` and `djinn_ids.h` name the ids the code uses.
+### Stats are recomputed whole
 
-### Flags are bits that can also be read as bytes
+`UnitCalc` ([game/units.c](game/units.c)) works a unit's stats out again
+from its base stats, equipment, set Djinn, class and battle stat levels,
+clamps each and writes them back, keeping current HP and PP at the same
+fraction of their maximums. It runs after anything that changes an input:
+equipping, setting a Djinni, levelling up, a class change.
 
-The game remembers 4,096 yes-or-no facts about the journey: whether a chest
-has been opened, a boss beaten, a Djinni found. Each one is a flag, and each
-flag is a bit, a single on-or-off. Eight bits make a byte, so all the flags
-together fill 512 bytes, the array `gGameFlagBytes`. Flags 48 to 127, for
-example, are the 80 Djinn's found flags: Djinni n of element e is flag
-48 + 20 × e + n (`FLAG_DJINNI_0`). A chest has one of its own, such as
-`FLAG_ALTIN_PEAK_LUCKY_MEDAL`, and so does a boss, such as
-`FLAG_TRET_DEFEATED`.
+![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
 
-A flag's number says where it lives. Its low three bits, a number from 0 to
-7, pick the bit within a byte, and the next nine bits, 0 to 511, pick the
-byte (`game/flags.c`). Anything above that is dropped (`GAME_FLAG_BYTE`), so
-a number past 4,095 wraps round onto a flag below it instead of reaching
-other memory. That layout means eight flags in a row, starting at a multiple
-of 8, are also one byte, and the byte calls (`GameFlag_GetByte`,
-`GameFlag_SetByte`, `GameFlag_IncrementByte`) read and write it whole; the
-nibble calls (`GameFlag_GetNibble`, `GameFlag_SetNibble`) do the same with
-four flags. So a small counter can live among the flags, which is how the
-Colosso scenes, the world map and the Battle Arena's win counts keep theirs,
-and it follows the flags' rules. One kept in a scene's own range
-(`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`) is cleared with the rest on every
-ordinary entrance to the scene (see [Scenes](../scene/README.md)), and all of
-them are saved with the game.
+A menu that previews a change uses the same path. To show Attack without the
+Machete, `Menu_DrawOwnerStatusPanel` ([menu/menu/common.c](../menu/menu/common.c))
+copies the unit to the heap, changes the real unit's equipment, lets
+`UnitCalc` run, draws the new numbers against the copy and restores the
+unit from it. The preview is what equipping would do because it is the same
+computation.
 
-The save file's summary counts how many of flags 48 to 127 are set
-(`SaveState_BuildSummaryHeader`), which is how many Djinn the file has found.
-The title menu offers Battle only when some file has found one
-(`gTitleExtraOptionEnabled`), and the save menu's `SAVE_MENU_EXTRA` mode lists
-only those files (`window/battle_command/save.c`).
-
-### An inventory slot is one halfword
-
-Each of a unit's 15 inventory slots is a halfword, two bytes or 16 bits,
-packed like this:
+### An inventory entry is one halfword
 
 ```
-bits 15 to 11   how many there are, less one
-bit 10          broken
-bit 9           equipped
-bits 8 to 0     the item id
+bits 15..11   count less one   (INVENTORY_QUANTITY_SHIFT)
+bit 10        broken           (INVENTORY_BROKEN)
+bit 9         equipped         (INVENTORY_EQUIPPED)
+bits 8..0     item id          (ITEM_ID_MASK)
 ```
 
-The low nine bits hold the item's number, 0 to 511 (`ITEM_ID_MASK`).
-Bit 9 says it's equipped (`INVENTORY_EQUIPPED`), bit 10 that it's broken
-(`INVENTORY_BROKEN`), and the five bits from
-bit 11 up hold how many there are, less one (`INVENTORY_QUANTITY_SHIFT`); a
-stack of a stackable item grows to 30. So an item, its state and its stack
-move together in one load and one store, and a slot of 0 is empty, which
-`Inventory_CompactSlots` relies on when it closes the gaps. Code that asks
-which item a slot holds masks it with `ITEM_ID_MASK` first, since the same
-item equipped, broken or stacked is a different halfword.
+An item, its state and its count move in one load and one store, and an
+empty slot is 0, which `Inventory_CompactSlots` relies on to close gaps. A
+stack of an `ITEM_STACKABLE` item grows to 30 (`Inventory_AddItem`). Code
+that asks which item a slot holds masks it with `ITEM_ID_MASK` first, since
+the same item equipped, broken or stacked is a different halfword.
 
-## What an item's row holds
+### An item's row
 
-An item is its row of `items.tsv` (`struct ItemDefinition` in
-`games/tbs/include/game/item.h`). The Healing Ring, row 265, makes a good
-example to read along with: it costs 800 coins, anyone can wear it, it's a
-rare ring, and used in battle it casts Cure, though it may break.
+An item is its row of `items.tsv`, read as `struct ItemDefinition`
+(`games/tbs/include/game/item.h`):
 
 | Column | What it holds |
 | --- | --- |
-| `price` | the price, in coins |
-| `type` | what kind of item it is (`enum ItemType`): 0 for anything that isn't equipment, then 1 weapons, 2 armor and clothing, 3 shields, gloves and armlets, 4 headgear, 5 boots, 6 the items that teach Psynergy, 8 rings and 9 shirts; a unit equips one of each type except the Psynergy items |
-| `flags` | `enum ItemFlags`: cursed (1), can't be taken off (2), rare (4), never dropped (8) and stackable (0x10, 16) |
-| `equip_mask` | who can equip it, one bit per character with bit 0 for Isaac (`character_ids.h`): the Long Sword's 0x13 is bits 0, 1 and 4, so Isaac, Garet and Felix, and the Healing Ring's 0xff is all eight |
-| `icon` | its icon in the menus (`gUiIcon_ItemIconPointers`) |
-| `primary_bonus`, `secondary_bonus` | what it adds to Attack and Defense while equipped (`UnitCalc`, `game/units.c`) |
-| `unleash_action`, `unleash_chance` | what a weapon unleashes, an ability id, at `unleash_chance` times 5 percent |
-| `use_type` | what using it costs (below) |
-| `element` | a weapon's attack element, 4 for none |
-| `effect0_kind` and `effect0_amount` to `effect3_` | up to four effects while it's equipped; the kinds are `enum ItemEffectKind` in `item.h` (`ITEM_EFFECT_ADD_HP` is 1, `ITEM_EFFECT_SCALE_ATTACK` 11) |
-| `action_id` | what using it does, an ability id (below) |
+| `price` | the price in coins |
+| `type` | `enum ItemType`: `ITEM_TYPE_NONE` for anything that isn't equipment, then weapons, armor, shields, helms, boots, `ITEM_TYPE_PSYNERGY`, rings and shirts; a unit equips one of each type but Psynergy items |
+| `flags` | `enum ItemFlags`: `ITEM_CURSED`, `ITEM_CANNOT_UNEQUIP`, `ITEM_RARE`, `ITEM_INDISPENSABLE` and `ITEM_STACKABLE` |
+| `equip_mask` | one bit per character who can equip it, bit 0 for Isaac: the Long Sword's `0x13` is Isaac, Garet and Felix |
+| `icon` | its menu icon (`gUiIcon_ItemIconPointers`) |
+| `primary_bonus`, `secondary_bonus` | Attack and Defense added while equipped |
+| `unleash_action`, `unleash_chance` | the ability a weapon unleashes, at `unleash_chance` steps of 5 percent (`RollWeaponUnleash`) |
+| `use_type` | what using it costs: `ITEM_USE_CONSUMED`, `ITEM_USE_MAY_BREAK` (one time in eight), `ITEM_USE_EMPTIES` (leaves an Empty Bottle), or `ITEM_USE_FREE` |
+| `element` | a weapon's attack element, `ELEMENT_NONE` for none |
+| `effect0_kind`, `effect0_amount` to `effect3_` | up to four effects while equipped, `enum ItemEffectKind` (`ITEM_EFFECT_ADD_HP`, `ITEM_EFFECT_SCALE_ATTACK` and the rest), which `UnitCalc` applies |
+| `action_id` | the ability the item uses |
 
-Its name is message `MsgItemName` + id in the PO catalogs
-(`games/tbs/text`), and the line the item screen shows about it is
-`MsgItemPlainName` + id.
+`action_id` and `unleash_action` are rows of `actions.tsv`. Used in battle,
+the item command plans its `action_id` (`BattleCommand_BuildPlan`,
+[battle/battle/plan.c](../battle/battle/plan.c)), and
+[Battles](../battle/README.md#how-an-ability-resolves) follows that ability
+to its effect. An item whose `use_type` is `ITEM_USE_TEACHES` is never used:
+while it is equipped its `action_id` is in the unit's Psynergy list
+(`game/levels.c`). These are the eight Psynergy items, from the Orb of Force
+on.
 
-## How an item reaches an ability
+The Healing Ring's row shows the pieces together: 800 coins, `type` ring,
+`ITEM_RARE`, an `equip_mask` of `0xff` for all eight characters, `use_type`
+`ITEM_USE_MAY_BREAK` and `action_id` 90, Cure.
 
-An item names an ability by its row in `actions.tsv`, in two columns.
+### The game flags
 
-`action_id` is what the item does when it's used. In battle
-(`BattleCommand_BuildPlan`, `../battle/battle/plan.c`) the item command plans
-that ability, and `use_type` says what the use costs: 1 one is used up, 2 it
-may break (one time in eight), 4 it leaves an Empty Bottle. With `use_type` 3
-the ability is instead taught while the item is equipped, as Psynergy
-(`game/levels.c`): those are the Orb of Force and the rest of `type` 6.
+`gGameFlagBytes` holds the 4,096 flags in 512 bytes. A flag's low three bits
+pick its bit and the next nine its byte; `GAME_FLAG_BYTE` drops the rest, so
+a number past 4,095 wraps onto a lower flag instead of reaching other memory.
+Eight flags from a multiple of 8 are therefore also one byte, which
+`GameFlag_GetByte`, `GameFlag_SetByte` and `GameFlag_IncrementByte` read and
+write whole, and four flags one nibble (`GameFlag_GetNibble`,
+`GameFlag_SetNibble`). Counters live among the flags this way, such as the
+Battle Arena's win count (`FLAG_MONSTER_BATTLE_WINS`) and a link battle's
+party size (`FLAG_LINK_PARTY_COUNT`), and follow the flags' rules: one in
+a scene's range is cleared with that range, and all are saved.
+[The front page](../../README.md) gives the ranges and when they are
+cleared.
 
-`unleash_action` is what a weapon unleashes in place of an attack
-(`RollWeaponUnleash`, `game/battle_calc.c`).
+Flags `FLAG_DJINNI_0` (48) to 127 are the Djinn's found flags, Djinni n of
+element e being flag `FLAG_DJINNI_0` + 20 × e + n. The save summary counts
+how many are set (`SaveState_BuildSummaryHeader`), the title offers Battle
+only when some file has found a Djinni (`gTitleExtraOptionEnabled`), and the
+save menu's `SAVE_MENU_EXTRA` mode lists only those files
+([window/battle_command/save.c](../window/battle_command/save.c)).
 
-The ability's row of `actions.tsv` then gives its element, power, range and
-kind, and [Battles](../battle/README.md#how-an-ability-resolves) follows it
-to the damage.
+### Rare item counters
+
+`gItemCounters` holds 128 counters, each 0 to 99, for how many of each rare
+item the shops may still sell. `gItem_ArtifactSlotTable` gives each item id
+its counter number plus one, 0 for an ordinary item. Buying one takes one off
+and selling or discarding one puts it back (`Item_AdjustCounter`,
+`ItemCounter_Adjust`).
+
+## How it fits
+
+Other banks call these functions by their `Far` names and overlays through
+their import tables; some code reads `gGameState` directly, as the save
+summary does. The battle folder reads `actions.tsv` through
+`struct BattleAct` beside its own `actflags.tsv` and `actstat.tsv`, which
+choose how an ability is drawn ([Battle](../../battle.md)). The flags and the
+units are part of the save file.
 
 ## Limits
 
-- Item ids are 9 bits, 0 to 511 (`ITEM_ID_MASK`). `items.tsv` has 324 rows,
-  and rows 269 to 323 have no name message of their own.
-- A unit carries 15 inventory slots (`INVENTORY_SLOTS`), and a stack holds 30
-  at most.
-- 20 Djinn to an element; 519 abilities; 165 enemies, the last of them with
-  no name message.
+- Item ids are 9 bits, 0 to 511 (`ITEM_ID_MASK`); `items.tsv` has 324 rows,
+  and rows 269 to 323 have no name message.
+- A unit has 15 inventory slots, and a stack holds 30.
+- 20 Djinn to an element, 519 abilities, 165 enemies (the last with no name
+  message), 203 classes.
 - 4,096 game flags.
 - Levels go up to 99.
-- 128 rare item counters, each 0 to 99 (`gItemCounters`, `ItemCounter_Adjust`).
-  A counter is how many of its rare item the shops may still sell: buying one
-  takes one off, and selling or discarding one puts it back
-  (`Item_AdjustCounter`).
+- 128 rare item counters, each 0 to 99.
 
 ## Evidence and open questions
 
-The tables' label columns are the English edition's names from
-`games/tbs/text/en.po`, by the message each row's id reaches. The columns are
-named from what the code reads in them, and the item effect kinds from what
-`UnitCalc` does with each. `item_ids.h`, `ability_ids.h` and `djinn_ids.h`
-name only the ids the code uses. Flags 48 to 127 are the Djinn's found flags
-because `Djinn_AddToLeastLoadedOwner` and the field's Djinni effect set flag
-48 + 20 × element + index when a Djinni joins.
+The label columns are the English names from `games/tbs/text/en.po`, by the
+message each row's id reaches. The columns are named from what the code reads
+in them, and the item effect kinds from what `UnitCalc` does with each. Flags
+48 to 127 are the Djinn's found flags because `Djinn_AddToLeastLoadedOwner`
+sets flag `FLAG_DJINNI_0` + 20 × element + index when a Djinni joins.
 
-Still open:
-
-- XXX: the `unknown_` and `unk_` columns of the tables, and what rows 269 to
-  323 of `items.tsv` were for, as they have no name message.
+- XXX: the `unknown_` and `unk_` columns of the tables; the code that reads
+  each would settle it.
+- XXX: what rows 269 to 323 of `items.tsv` were for, as they have no name
+  message.

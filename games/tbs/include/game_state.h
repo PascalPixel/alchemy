@@ -26,6 +26,10 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
+/// gGameState.hazardDamage's bit 8: its low byte is a percentage of maximum HP
+/// rather than HP.
+#define HAZARD_DAMAGE_PERCENT 0x100
+
 /// gGameState.battleStart: how the next battle starts (Battle_SetStart); it is
 /// set back to BATTLE_START_NORMAL as the battle ends. Any start but that one
 /// stops the opening's first-strike and surprise rolls (Battle_RunEncounter).

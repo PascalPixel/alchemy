@@ -82,14 +82,14 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
       value = decode(&reader) + delta;
 #endif
       break;
-    case MSG_TEXT_COLOR:
-    case MSG_TEXT_EFFECT:
-    case MSG_LINE_SPACING:
+    case MESSAGE_TEXT_COLOR:
+    case MESSAGE_TEXT_EFFECT:
+    case MESSAGE_LINE_SPACING:
     case 11:
     case 12:
-    case MSG_WINDOW_EFFECT:
+    case MESSAGE_WINDOW_EFFECT:
 #if defined(DECODE_EUROPEAN)
-    case MSG_ARTICLE_CLASS:
+    case MESSAGE_ARTICLE_CLASS:
 #endif
       capacity--;
       if (capacity <= 0)
@@ -225,25 +225,25 @@ void UiWork_ClearValueNameTables(void) {
 
   do {
     work->values[no] = 0;
-    work->names[no] = MSG_ARG_NONE;
+    work->names[no] = MESSAGE_ARGUMENT_NONE;
     no++;
   } while (no != UI_ARGUMENT_SLOT_COUNT);
 }
 
-/// Adds a message argument of kind (MSG_ARG_) with value to the first free
-/// place of the argument table; when all eight are in use it is dropped.
-/// MSG_ARG_NONE marks an empty place. Callers push a message's arguments before
-/// decoding it. The decoder reads each argument code's value from the first
-/// slot of its kind (UiText_LookupArgument); told to clear, it removes each
-/// as it reads it, so arguments of one kind are taken in the order they were
-/// pushed, and it empties the table at the end.
+/// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value to the first
+/// free place of the argument table; when all eight are in use it is dropped.
+/// MESSAGE_ARGUMENT_NONE marks an empty place. Callers push a message's
+/// arguments before decoding it. The decoder reads each argument code's value
+/// from the first slot of its kind (UiText_LookupArgument); told to clear, it
+/// removes each as it reads it, so arguments of one kind are taken in the order
+/// they were pushed, and it empties the table at the end.
 void UiWork_PushValueSlot(u32 value, u32 kind) {
   struct UiRenderWork *work = UI_WORK;
   u32 no = 0;
   u32 limit = UI_ARGUMENT_SLOT_COUNT;
 
   do {
-    if (work->names[no] == MSG_ARG_NONE) {
+    if (work->names[no] == MESSAGE_ARGUMENT_NONE) {
       work->values[no] = value;
       work->names[no] = kind;
       break;
@@ -252,9 +252,9 @@ void UiWork_PushValueSlot(u32 value, u32 kind) {
   } while (no != limit);
 }
 
-/// Returns the value of the first message argument of kind (MSG_ARG_), or 0
-/// when there is none. With clear set the argument is removed from the table.
-/// Repeated kinds are allowed: only the first matching slot is read or
+/// Returns the value of the first message argument of kind (MESSAGE_ARGUMENT_),
+/// or 0 when there is none. With clear set the argument is removed from the
+/// table. Repeated kinds are allowed: only the first matching slot is read or
 /// consumed.
 u32 UiText_LookupArgument(u32 kind, u32 clear) {
   struct UiRenderWork *work = UI_WORK;
@@ -266,7 +266,7 @@ u32 UiText_LookupArgument(u32 kind, u32 clear) {
       value = work->values[i];
       if (clear != 0) {
         work->values[i] = 0;
-        work->names[i] = MSG_ARG_NONE;
+        work->names[i] = MESSAGE_ARGUMENT_NONE;
       }
       break;
     }

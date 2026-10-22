@@ -238,13 +238,13 @@ enum IconKind {
 /// The kinds of message argument (UiWork_PushValueSlot), which the message
 /// codes such as {argument_item_name} read.
 enum {
-  MSG_ARG_NONE = 0, ///< an empty place in the argument table
-  MSG_ARG_ACTOR = 1,
-  MSG_ARG_ITEM = 2,
-  MSG_ARG_CLASS = 3,
-  MSG_ARG_ABILITY = 4,
-  MSG_ARG_NUMBER = 5,
-  MSG_ARG_LOCATION = 6,
+  MESSAGE_ARGUMENT_NONE = 0, ///< an empty place in the argument table
+  MESSAGE_ARGUMENT_ACTOR = 1,
+  MESSAGE_ARGUMENT_ITEM = 2,
+  MESSAGE_ARGUMENT_CLASS = 3,
+  MESSAGE_ARGUMENT_ABILITY = 4,
+  MESSAGE_ARGUMENT_NUMBER = 5,
+  MESSAGE_ARGUMENT_LOCATION = 6,
 };
 
 struct RenderOutput *RenderOutput_AcquireFree(void);

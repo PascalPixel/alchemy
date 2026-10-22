@@ -63,7 +63,7 @@ struct UiRenderWork {
   /// Message argument values (UiWork_PushValueSlot). A portrait's release
   /// writes its palette slot state at RENDER_PALETTE_TABLE_OFFSET, in here.
   u32 values[8];
-  u16 names[8];          ///< the MSG_ARG_ kind of each value; 0 for a free slot
+  u16 names[8]; ///< the MESSAGE_ARGUMENT_ kind of each value; 0 for a free slot
   u16 resourceIds[2];    ///< picture shown in each portrait slot; 999 when free
   u16 outputIds[2];      ///< VRAM cache slot of each portrait slot's picture
   u16 speakerVoiceSound; ///< first of four voice blip sounds; 0 for none

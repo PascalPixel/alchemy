@@ -163,8 +163,8 @@ next_page:
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
-        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
-        UiWork_PushValueSlotFar(shop->selectedItem, MSG_ARG_ITEM);
+        UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           UiMessage_ShowAndWait(MsgPackFull);
         else
@@ -179,7 +179,7 @@ next_page:
         break;
       }
       if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
-        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         UiMessage_ShowAndWait(MsgCannotEquipStillWant);
         if (UiMessage_ShowChoice(0) != 0) {
           repromptRecipient = 1;
@@ -512,7 +512,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
       UiWork_PushValueSlotFar(
           (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
               1,
-          MSG_ARG_NUMBER);
+          MESSAGE_ARGUMENT_NUMBER);
       UiText_DrawCharacterAtOffsetFar(MsgYouHave, window, 0, 0);
     } else {
       UiText_DrawCharacterAtOffsetFar(MsgShopNoneInStock, window, 0, 0);
@@ -763,7 +763,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       return 0;
   }
 
-  UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+  UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
   UiMessage_ShowAndWait(MsgEquipNowPrompt);
   if (UiMessage_ShowChoice(0) != 0)
     return 0;

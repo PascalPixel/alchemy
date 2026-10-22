@@ -983,7 +983,7 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
           Unit_GetExperienceForLevelFar(menu->selectedIds[0],
                                         owner->level + 1) -
           owner->experience;
-      UiWork_PushValueSlotFar(remaining, MSG_ARG_NUMBER);
+      UiWork_PushValueSlotFar(remaining, MESSAGE_ARGUMENT_NUMBER);
     }
   }
 

@@ -2343,7 +2343,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     // editions pass it as the argument of "I have <number>."; Japanese draws
     // the number before its label.
 #if LANGUAGE != LANGUAGE_JAPANESE
-    UiWork_PushValueSlotFar(amount + 1, MSG_ARG_NUMBER);
+    UiWork_PushValueSlotFar(amount + 1, MESSAGE_ARGUMENT_NUMBER);
     UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
 #else
     UiText_DrawNumberInWindowFar(amount + 1, 2, window, 0, row * 8);

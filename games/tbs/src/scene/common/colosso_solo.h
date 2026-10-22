@@ -323,7 +323,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   s32 choice;
 
   Field_EndBusyAndReveal();
-  UiWork_PushValueSlot(warrior, MSG_ARG_NUMBER);
+  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -360,7 +360,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 scene;
   s32 message;
 
-  UiWork_PushValueSlot(warrior, MSG_ARG_NUMBER);
+  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -451,7 +451,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   Event_ShowMessage(guide, 0);
   return;
 L_main:
-  UiWork_PushValueSlot(friendId, MSG_ARG_ACTOR);
+  UiWork_PushValueSlot(friendId, MESSAGE_ARGUMENT_ACTOR);
   Engine_EventSetMessage(MsgColossoIsaacWillCheerForWay);
   Event_ShowMessage(guide, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);

@@ -360,7 +360,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                                           128, 16);
         } else {
           UiWork_PushValueSlotFar(
-              menu->shownOwner[page != DJINN_COMPARE_PAGE_BOTH], MSG_ARG_ACTOR);
+              menu->shownOwner[page != DJINN_COMPARE_PAGE_BOTH],
+              MESSAGE_ARGUMENT_ACTOR);
           UiText_DrawCharacterAtOffsetFar(MsgDjinnPsyHelp, menu->helpWindow,
                                           128, 16);
         }

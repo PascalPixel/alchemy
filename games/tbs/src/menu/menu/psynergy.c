@@ -662,8 +662,9 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
   else
     wide = 0;
   if (gGameState.firstShortcut != 0) {
-    UiWork_PushValueSlotFar(
-        gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK, MSG_ARG_ABILITY);
+    UiWork_PushValueSlotFar(gGameState.firstShortcut &
+                                PSYNERGY_SHORTCUT_ID_MASK,
+                            MESSAGE_ARGUMENT_ABILITY);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(
@@ -682,8 +683,9 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
   else
     wide = 0;
   if (gGameState.secondShortcut != 0) {
-    UiWork_PushValueSlotFar(
-        gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK, MSG_ARG_ABILITY);
+    UiWork_PushValueSlotFar(gGameState.secondShortcut &
+                                PSYNERGY_SHORTCUT_ID_MASK,
+                            MESSAGE_ARGUMENT_ABILITY);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(

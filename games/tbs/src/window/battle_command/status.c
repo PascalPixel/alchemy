@@ -731,7 +731,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         default:
           break;
         }
-        UiWork_PushValueSlot(helpValue, MSG_ARG_NUMBER);
+        UiWork_PushValueSlot(helpValue, MESSAGE_ARGUMENT_NUMBER);
         UiText_CopyMessageString(statusKind + MsgOwnerStatusConditionHelp,
                                  helpText, OWNER_STATUS_TEXT_MAX);
       } else if (cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
@@ -740,7 +740,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         UiWork_PushValueSlot(
             Unit_GetExperienceForLevelFar(owner, unit->level + 1) -
                 unit->experience,
-            MSG_ARG_NUMBER);
+            MESSAGE_ARGUMENT_NUMBER);
         UiText_CopyMessageString(MsgOwnerStatusNextLevel, helpText,
                                  OWNER_STATUS_TEXT_MAX);
       } else {

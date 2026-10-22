@@ -96,7 +96,7 @@
 
 // Edition-specific text and window layout values. The possessives
 // (gUiText_ItemPossessives) are by number in Spanish, singular and plural, and
-// by item gender in German and Italian; MSG_EM_DASH starts with
+// by item gender in German and Italian; MESSAGE_EM_DASH starts with
 // TEXT_ARGUMENT_SPACE, which only the international decoder writes; a
 // space in a window of sprite glyphs advances UI_SPRITE_SPACE_WIDTH pixels,
 // as UiText_MeasureEntryDimensions counts it.

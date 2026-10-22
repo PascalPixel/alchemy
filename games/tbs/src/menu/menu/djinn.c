@@ -1018,19 +1018,19 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         UiWindow_SetTilemapEntryFar(
             menu->helpWindow,
             DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 0, 0, 0);
-        UiWork_PushValueSlotFar(menu->shownOwner[0], MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(menu->shownOwner[0], MESSAGE_ARGUMENT_ACTOR);
         UiWork_PushValueSlotFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                MSG_ARG_ABILITY);
+                                MESSAGE_ARGUMENT_ABILITY);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel, menu->helpWindow, 8,
                                         0);
 #else
-        UiWork_PushValueSlotFar(menu->shownOwner[0], MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(menu->shownOwner[0], MESSAGE_ARGUMENT_ACTOR);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel, menu->helpWindow, 0,
                                         0);
         UiWork_PushValueSlotFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                MSG_ARG_ABILITY);
+                                MESSAGE_ARGUMENT_ABILITY);
         UiWindow_SetTilemapEntryFar(
             menu->helpWindow,
             DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 6, 0, 0);

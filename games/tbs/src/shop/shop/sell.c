@@ -293,13 +293,13 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   }
   total = Shop_SalePrice(unit->inventory[slot]) * count;
   if (total == 0) {
-    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
     UiMessage_ShowAndRestoreState(MsgWeDoNotBuy);
     return;
   }
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
       (item->flags & ITEM_CANNOT_UNEQUIP)) {
-    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
     UiMessage_ShowAndRestoreState(MsgCannotSellEquipped);
     return;
   }
@@ -313,8 +313,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     message = MsgRareSellOffer;
   else
     message = MsgSellOffer;
-  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
-  UiWork_PushValueSlotFar(total, MSG_ARG_NUMBER);
+  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  UiWork_PushValueSlotFar(total, MESSAGE_ARGUMENT_NUMBER);
   UiMessage_ShowAndRestoreState(message);
   if (UiMessage_ShowChoice(0) != 0) {
     if (rare || sellingReplacedItem)

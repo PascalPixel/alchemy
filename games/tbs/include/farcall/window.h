@@ -137,9 +137,9 @@ s32 UiText_GetResourceDimensionsAltFar(s32 no, s32 *x, s32 *y, u32 *width,
                                        u32 *height);
 /// Empties the table of message arguments.
 void UiWork_ClearValueNameTablesFar(void);
-/// Pushes an argument of kind (MSG_ARG_) for the next message decoded, dropped
-/// when all eight places are taken; arguments of one kind are read in the order
-/// they were pushed.
+/// Pushes an argument of kind (MESSAGE_ARGUMENT_) for the next message decoded,
+/// dropped when all eight places are taken; arguments of one kind are read in
+/// the order they were pushed.
 void UiWork_PushValueSlotFar(u32 value, u32 kind);
 /// Opens the party status window with flags in its own heap block and draws it;
 /// battle opens it erased, for the battle to draw.

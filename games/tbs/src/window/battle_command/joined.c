@@ -145,12 +145,13 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
 
-    // The message's arguments: the member (MSG_ARG_ACTOR) and the Djinni's
-    // name, its ability (ABILITY_DJINNI_FIRST, MSG_ARG_ABILITY).
-    UiWork_PushValueSlot(member, MSG_ARG_ACTOR);
+    // The message's arguments: the member (MESSAGE_ARGUMENT_ACTOR) and the
+    // Djinni's name, its ability (ABILITY_DJINNI_FIRST,
+    // MESSAGE_ARGUMENT_ABILITY).
+    UiWork_PushValueSlot(member, MESSAGE_ARGUMENT_ACTOR);
     UiWork_PushValueSlot(element * DJINN_PER_ELEMENT + djinn +
                              ABILITY_DJINNI_FIRST,
-                         MSG_ARG_ABILITY);
+                         MESSAGE_ARGUMENT_ABILITY);
 
     text = UiText_BuildRenderEntriesMode1(element + MsgVenusDjinnJoined);
 
@@ -210,7 +211,7 @@ void Party_ShowJoinedMessage(s32 member) {
     *p = palette | 0xe000;
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
-    UiWork_PushValueSlot(member, MSG_ARG_ACTOR);
+    UiWork_PushValueSlot(member, MESSAGE_ARGUMENT_ACTOR);
     JOINED_QUEUE_TEXT(window, UiText_BuildRenderEntriesMode1(MsgJoinedParty),
                       36, 2, 0);
     AudioCommand_PlayFar(MUS_JOINED);
@@ -276,8 +277,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     ((struct UiRenderWork *)work)->speakerVoiceSound = zero;
     ((struct UiRenderWork *)work)->speakerVoiceCountdown = zero;
 
-    UiWork_PushValueSlot(first, MSG_ARG_ACTOR);
-    UiWork_PushValueSlot(second, MSG_ARG_ACTOR);
+    UiWork_PushValueSlot(first, MESSAGE_ARGUMENT_ACTOR);
+    UiWork_PushValueSlot(second, MESSAGE_ARGUMENT_ACTOR);
 
     JOINED_QUEUE_TEXT(window,
                       UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2,

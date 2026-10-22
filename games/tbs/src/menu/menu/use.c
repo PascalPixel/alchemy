@@ -181,13 +181,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         break;
       case ABILITY_APPLE:
         target->baseAttack += amount + randomAdjust;
-        UiWork_PushValueSlotFar(3, MSG_ARG_NUMBER);
+        UiWork_PushValueSlotFar(3, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = ITEM_USE_RESULT_ATTACK_UP;
         changed = 1;
         break;
       case ABILITY_HARD_NUT:
         target->baseDefense += amount + randomAdjust;
-        UiWork_PushValueSlotFar(4, MSG_ARG_NUMBER);
+        UiWork_PushValueSlotFar(4, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = ITEM_USE_RESULT_DEFENSE_UP;
         changed = 1;
         break;

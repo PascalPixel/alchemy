@@ -268,8 +268,8 @@ s32 Sanctum_RunPartyService(void) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
         continue;
       }
-      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
-      UiWork_PushValueSlotFar(donation, MSG_ARG_NUMBER);
+      UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+      UiWork_PushValueSlotFar(donation, MESSAGE_ARGUMENT_NUMBER);
       messageBase = MsgReviveDonation;
       UiMessage_ShowResolvedAndWait(messageBase);
       if (UiMessage_ShowChoiceVariant(0) != 0) {
@@ -283,7 +283,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+      UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       UiMessage_ShowResolvedAndWait(messageBase + 3);
       UiWork_FinalizePendingCoreFar();
       // Apply the cure and animation before collecting the donation.
@@ -291,7 +291,7 @@ s32 Sanctum_RunPartyService(void) {
       Shop_RunPartyMemberIconBurst(memberIndex);
       Party_AdjustCoinsFar(-donation);
       Shop_DrawMoney();
-      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+      UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       UiMessage_ShowResolvedAndWait(messageBase + 4);
       if (Shop_CountUnits() != 0) {
         chooseAgain = 1;
@@ -395,7 +395,7 @@ void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
       serviceOrMessage = MsgNoHealingNeeded;
     }
     serviceOrMessage = Shop_MsgByMode(serviceOrMessage);
-    UiWork_PushValueSlotFar(donation, MSG_ARG_NUMBER);
+    UiWork_PushValueSlotFar(donation, MESSAGE_ARGUMENT_NUMBER);
     UiText_DrawResourceFar(serviceOrMessage, target, 0, 0);
   }
 }

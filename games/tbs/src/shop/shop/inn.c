@@ -67,7 +67,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
       UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
 
   roomPrice = Inn_RoomPrice(innId);
-  UiWork_PushValueSlotFar(roomPrice, MSG_ARG_NUMBER);
+  UiWork_PushValueSlotFar(roomPrice, MESSAGE_ARGUMENT_NUMBER);
   messageBase = MsgInnWelcome;
   UiMessage_ShowAndWait(messageBase);
   state->window =

@@ -196,12 +196,12 @@ s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id);
 void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer);
 void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index);
 void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation);
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
-                                     s32 animation);
-s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
-                                          s32 frames);
-void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
-                                          s32 step);
+s32 AnimationObject_SelectAnimation(struct AnimationObject *sprite,
+                                    s32 animation);
+s32 AnimationObject_SetActiveFrameTimers(struct AnimationObject *sprite,
+                                         s32 frames);
+void AnimationObject_SetActiveTimerSteps(struct AnimationObject *sprite,
+                                         s32 step);
 void ObjectSystem_Configure(s32 mode);
 struct AnimationEntry *Animation_AllocateLayer(s32 id);
 void ResourceMetadata_ClearRecord(struct AnimationEntry *record);

@@ -70,7 +70,7 @@ extern const u8 gObjectMotion_StepAngleScript[];
 extern u16 gScript_MainScript[];
 s32 Animation_InitializeObjects(struct AnimationObject *);
 void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
-void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *, s32);
+void AnimationObject_SetActiveTimerSteps(struct AnimationObject *, s32);
 s32 BattleEffect_ApplyColorToTargetBufferFar(s32, s32);
 void BattleEffect_ClearChildValueOnMismatch(void);
 s32 BattleEffect_DispatchRequestKind(void);

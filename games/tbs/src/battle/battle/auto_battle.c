@@ -543,7 +543,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
     object = BattleObject_Get(unitId)->object->records;
-    AnimationObjects_SelectAnimationFar(object, POSE_DAMAGE);
+    AnimationObject_SelectAnimationFar(object, POSE_DAMAGE);
     actorData = object->entries[0];
     actorData->param = SPRITE_COLOR_GREY;
     actorData->frame = 0xFF;

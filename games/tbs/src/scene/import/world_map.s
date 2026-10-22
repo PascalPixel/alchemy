@@ -16,7 +16,7 @@
 	.set import.Resource_ResetEntry, 1
 	.set import.Engine_VramLoad, 1
 	.set import.IoWriteQueue_Store16, 1
-	.set import.AnimationObjects_SelectAnimation, 1
+	.set import.AnimationObject_SelectAnimation, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

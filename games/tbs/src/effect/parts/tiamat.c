@@ -167,10 +167,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       // when the skip comes before frame 128, that frame's sound, shake and
       // shorter trails are skipped with it.
       if (mode == PALETTE_PARTICLES_TIAMAT) {
-        AnimationObjects_SelectAnimationFar(work->objects[0], 8);
-        AnimationObjects_SelectAnimationFar(work->objects[1], 9);
-        AnimationObjects_SelectAnimationFar(work->objects[3], 10);
-        AnimationObjects_SelectAnimationFar(work->objects[4], 11);
+        AnimationObject_SelectAnimationFar(work->objects[0], 8);
+        AnimationObject_SelectAnimationFar(work->objects[1], 9);
+        AnimationObject_SelectAnimationFar(work->objects[3], 10);
+        AnimationObject_SelectAnimationFar(work->objects[4], 11);
       }
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i],
@@ -379,16 +379,16 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     }
     if (mode == PALETTE_PARTICLES_TIAMAT) {
       if (frame == 128) {
-        AnimationObjects_SelectAnimationFar(work->objects[0], 8);
-        AnimationObjects_SelectAnimationFar(work->objects[1], 9);
-        AnimationObjects_SelectAnimationFar(work->objects[3], 10);
-        AnimationObjects_SelectAnimationFar(work->objects[4], 11);
+        AnimationObject_SelectAnimationFar(work->objects[0], 8);
+        AnimationObject_SelectAnimationFar(work->objects[1], 9);
+        AnimationObject_SelectAnimationFar(work->objects[3], 10);
+        AnimationObject_SelectAnimationFar(work->objects[4], 11);
       }
       if (frame == 176) {
-        AnimationObjects_SelectAnimationFar(work->objects[0], 0);
-        AnimationObjects_SelectAnimationFar(work->objects[1], 1);
-        AnimationObjects_SelectAnimationFar(work->objects[3], 3);
-        AnimationObjects_SelectAnimationFar(work->objects[4], 4);
+        AnimationObject_SelectAnimationFar(work->objects[0], 0);
+        AnimationObject_SelectAnimationFar(work->objects[1], 1);
+        AnimationObject_SelectAnimationFar(work->objects[3], 3);
+        AnimationObject_SelectAnimationFar(work->objects[4], 4);
       }
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
                                          focus.y);

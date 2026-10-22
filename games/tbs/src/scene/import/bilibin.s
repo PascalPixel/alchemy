@@ -3,7 +3,7 @@
 	.set import.Engine_TaskWait, 1
 	.set import.Scheduler_AddOrUpdateCallback, 1
 	.set import.ArcTan2, 1
-	.set import.AnimationObjects_SelectAnimation, 1
+	.set import.AnimationObject_SelectAnimation, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

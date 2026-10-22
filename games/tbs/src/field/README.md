@@ -533,7 +533,7 @@ and a part undefines its macros at its end.
 | Prefix | What it covers |
 | --- | --- |
 | `Sprite_`, `Render_` | drawing sprites |
-| `Animation_`, `AnimationObjects_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
+| `Animation_`, `AnimationObject_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
 | `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
 | `Script_` | object script commands |
 | `Field_` | the configured keys |

@@ -979,7 +979,7 @@ static void Bilibin_SpawnRipple(struct FieldActor *actor) {
   if (sprite == NULL)
     return;
 
-  AnimationObjects_SelectAnimation(sprite, 2);
+  AnimationObject_SelectAnimation(sprite, 2);
   sprite->flags = 0;
   sprite->image.objectMode = 1;
   sprite->image.priority = 3;

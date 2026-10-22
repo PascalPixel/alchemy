@@ -303,7 +303,7 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
         }
       }
       if (animation != -1)
-        AnimationObjects_SelectAnimationFar(group, animation);
+        AnimationObject_SelectAnimationFar(group, animation);
     }
     groupIndex++;
   }

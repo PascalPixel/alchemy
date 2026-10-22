@@ -115,7 +115,7 @@ void FieldEffect_SpawnScaledArcObjects(struct FieldActor *linked) {
     if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the effect's tiles.
-    AnimationObjects_SelectAnimationFar((struct AnimationObject *)sprite, 0);
+    AnimationObject_SelectAnimationFar((struct AnimationObject *)sprite, 0);
     sprite->flags = 0;
     Resource_ResetEntry(sprite->slot);
     sprite->slot = scene->tileSlot;

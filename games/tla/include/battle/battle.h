@@ -107,7 +107,7 @@ extern const u8 gColorBuffer_FadeStep3Map[32];
 extern u16 gEncounter_EnemyGroupTable[];
 extern struct WorldMapWork gWorldMapWork;
 extern const struct SceneCueRule gScene_CueRuleTable[];
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
+s32 AnimationObject_SelectAnimationFar(struct AnimationObject *, s32);
 s16 *Scene_FindActorPlacement(s16 action);
 s32 BattleActor_RemoveFromLists(s32);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
@@ -166,7 +166,7 @@ void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
 void PartyStatus_DrawFar(s32 mode);
 
-/// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
+/// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held

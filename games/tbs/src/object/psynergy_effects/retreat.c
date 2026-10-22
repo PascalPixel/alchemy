@@ -303,7 +303,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct FieldActor *arc) {
     object->scaleX = 0x6666;
     if (sprite == NULL)
       continue;
-    AnimationObjects_SelectAnimationFar((struct AnimationObject *)sprite, 0);
+    AnimationObject_SelectAnimationFar((struct AnimationObject *)sprite, 0);
     sprite->animation = zero;
     Resource_ResetEntry(sprite->resource);
     sprite->resource = scene->arcTileSlot;

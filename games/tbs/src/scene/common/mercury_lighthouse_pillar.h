@@ -162,7 +162,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     spark->timer = 0;
     spark->linkedObject = point;
     if (sprite != NULL) {
-      AnimationObjects_SelectAnimation(sprite, 2);
+      AnimationObject_SelectAnimation(sprite, 2);
       sprite->flags = 0;
       sprite->image.priority = 1;
     }
@@ -178,7 +178,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     spark->linkedObject = point;
     spark->priorityFlags = 2;
     if (sprite != NULL) {
-      AnimationObjects_SelectAnimation(sprite, 1);
+      AnimationObject_SelectAnimation(sprite, 1);
       sprite->flags = 0;
     }
   }
@@ -339,7 +339,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       obj->acceleration = 0x20000;
       Engine_ObjectSetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
       if (sprite != NULL) {
-        AnimationObjects_SelectAnimation(sprite, 6);
+        AnimationObject_SelectAnimation(sprite, 6);
         zero = 0;
         sprite->flags = zero;
       }

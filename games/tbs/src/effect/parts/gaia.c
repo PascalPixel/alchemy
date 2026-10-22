@@ -137,7 +137,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     work->objects[i] = rock;
     if (rock != 0) {
       rock->flags = 0;
-      AnimationObjects_SelectAnimationFar(rock, i / 4);
+      AnimationObject_SelectAnimationFar(rock, i / 4);
       work->objects[i]->image.priority = 1;
     }
   }

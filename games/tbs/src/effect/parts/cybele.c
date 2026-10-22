@@ -179,9 +179,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      AnimationObjects_SelectAnimationFar(
+      AnimationObject_SelectAnimationFar(
           work->objects[3], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT3]);
-      AnimationObjects_SelectAnimationFar(
+      AnimationObject_SelectAnimationFar(
           work->objects[4], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT4]);
     }
 
@@ -420,7 +420,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
             object->y = 128 << 16;
           object->verticalMotionStrength = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
-            AnimationObjects_SelectAnimationFar(record, 5);
+            AnimationObject_SelectAnimationFar(record, 5);
         }
       }
     }

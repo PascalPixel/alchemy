@@ -337,12 +337,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObjects_SelectAnimationFar(work->objects[i], i + 16);
+        AnimationObject_SelectAnimationFar(work->objects[i], i + 16);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObjects_SelectAnimationFar(work->objects[i], i + 32);
+        AnimationObject_SelectAnimationFar(work->objects[i], i + 32);
       }
     }
 
@@ -458,7 +458,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     work->objects[i] = obj;
     if (obj != 0) {
       obj->flags = 0;
-      AnimationObjects_SelectAnimationFar(obj, (i % 3));
+      AnimationObject_SelectAnimationFar(obj, (i % 3));
       work->objects[i]->image.priority = 0;
     }
   }

@@ -1828,7 +1828,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
       child->timer = 0;
       child->linkedObject = parent;
       if (sprite != NULL) {
-        AnimationObjects_SelectAnimation(sprite, 0);
+        AnimationObject_SelectAnimation(sprite, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
         sprite->slot = work->tileSlot;

@@ -251,7 +251,7 @@ The field engine's spellings are about its map state and a few of its loops.
   (`MapAnimation_Update`).
 - `(u16)~(...)` makes a halfword mask (`Map_SetShownLayers`).
 - Three loops are written with `goto` (`Sprite_ComposeAnimationFrame`,
-  `AnimationObjects_SelectAnimation`), and the comments beside them give the
+  `AnimationObject_SelectAnimation`), and the comments beside them give the
   measured cost of their loop forms. The other `goto`s (the wander retries,
   the step searches, the map effects' script loops and the debug loops) stay
   until someone finds their loops.

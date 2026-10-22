@@ -391,11 +391,11 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
       if (memberIndex == selected)
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            30);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           30);
       else
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            1);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           1);
       shop->partyMemberScale[memberIndex] = 0x10000;
       if (!Item_IsCompatibleWithOwnerFar(shop->partyMemberIds[memberIndex],
                                          itemId))

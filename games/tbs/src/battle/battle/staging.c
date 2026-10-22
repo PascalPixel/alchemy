@@ -1098,9 +1098,9 @@ void BattleMotion_ShowDowned(s32 unitId) {
   while ((record = GetMotionRecord(BattleObject_Get(unitId)->object,
                                    recordCount)) != 0) {
     if (unit->side != BATTLE_UNIT_ENEMY)
-      AnimationObjects_SelectAnimationFar(record, POSE_PARTY_HELD);
+      AnimationObject_SelectAnimationFar(record, POSE_PARTY_HELD);
     else
-      AnimationObjects_SelectAnimationFar(record, POSE_ENEMY_DOWN);
+      AnimationObject_SelectAnimationFar(record, POSE_ENEMY_DOWN);
     recordCount++;
   }
 

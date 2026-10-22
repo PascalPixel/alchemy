@@ -241,7 +241,7 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
-/// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
+/// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held

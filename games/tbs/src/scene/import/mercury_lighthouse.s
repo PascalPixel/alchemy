@@ -10,7 +10,7 @@
 	.set import.Engine_MathSin, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Runtime_AllocateBlock, 1
-	.set import.AnimationObjects_SelectAnimation, 1
+	.set import.AnimationObject_SelectAnimation, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

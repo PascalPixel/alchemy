@@ -38,9 +38,8 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `RenderOutput_`, `RenderResource_`, `Resource_`, `Runtime_`, `SceneTransform_`,
 `Scheduler_`, `StatusMenu_`, `Text_`, `Tile_`, `Title_`, `Transform_`, `Ui_`,
 `UiGlyph_`, `UiIcon_`, `UiMessage_`, `UiText_`, `UiTextResource_`,
-`UiTimedNotice_`, `UiWindow_` and `UiWork_`. Only `AnimationObject_`, taking a
-free animation entry (here and in `battle/effect`), is The Lost Age's own so
-far.
+`UiTimedNotice_`, `UiWindow_` and `UiWork_`, with `AnimationObject_` here and
+in `battle/effect`.
 
 ## Evidence and open questions
 

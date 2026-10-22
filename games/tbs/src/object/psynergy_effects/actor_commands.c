@@ -373,7 +373,7 @@ void Object_SetModeById(u32 objectId, s32 animation) {
 }
 
 /// Sets the animation timer steps of each of an actor's sprites
-/// (AnimationObjects_SetActiveTimerSteps). Called by the Tolbi ship and
+/// (AnimationObject_SetActiveTimerSteps). Called by the Tolbi ship and
 /// Lamakan Desert scene scripts.
 void Object_SetActionById(u32 objectId, s32 steps) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);

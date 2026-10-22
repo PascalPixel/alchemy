@@ -133,7 +133,7 @@ void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
 
 /// Sets the animation of an effect slot's sprite.
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode) {
-  AnimationObjects_SelectAnimationFar(effect->object, mode);
+  AnimationObject_SelectAnimationFar(effect->object, mode);
 }
 
 /// Gives an effect slot its per-frame callback, starting at state 0.

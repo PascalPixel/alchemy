@@ -1335,10 +1335,10 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
       if (Item_CanOwnerEquip(menu->ownerIds[memberIndex],
                              menu->selectedItems[0] & ITEM_ID_MASK) != 0) {
         struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
-        AnimationObjects_SelectAnimationFar(partyFigure, 3);
+        AnimationObject_SelectAnimationFar(partyFigure, 3);
       } else {
         struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
-        AnimationObjects_SelectAnimationFar(partyFigure, 1);
+        AnimationObject_SelectAnimationFar(partyFigure, 1);
       }
       memberIndex++;
     } while (memberIndex < menu->partyCount);
@@ -1358,7 +1358,7 @@ void EquipmentMenu_StartCompatibilityIndicators(void) {
     memberIndex = 0;
     do {
       struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
-      AnimationObjects_SelectAnimationFar(partyFigure, 1);
+      AnimationObject_SelectAnimationFar(partyFigure, 1);
       memberIndex++;
     } while (memberIndex < menu->partyCount);
   }
@@ -2928,7 +2928,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->partyCount; i++) {
-          AnimationObjects_SelectAnimationFar(menu->ownerObjects[i], 1);
+          AnimationObject_SelectAnimationFar(menu->ownerObjects[i], 1);
         }
       }
 
@@ -2938,7 +2938,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
           if (Item_CanOwnerEquip(menu->ownerIds[i],
                                  ITEM_ID_MASK &
                                      menu->items[state.selectedIndex]) != 0) {
-            AnimationObjects_SelectAnimationFar(menu->ownerObjects[i], 3);
+            AnimationObject_SelectAnimationFar(menu->ownerObjects[i], 3);
           }
         }
       }

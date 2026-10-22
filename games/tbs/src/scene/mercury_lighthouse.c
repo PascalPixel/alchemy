@@ -2933,7 +2933,7 @@ static void MercuryLighthouse_SpawnRipple(struct FieldActor *source) {
   effect->priorityFlags = 2;
 
   if (sprite != 0) {
-    AnimationObjects_SelectAnimation(sprite, 2);
+    AnimationObject_SelectAnimation(sprite, 2);
     sprite->flags = 0;
     sprite->image.priority = 3;
   }

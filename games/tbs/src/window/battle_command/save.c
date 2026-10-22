@@ -627,7 +627,7 @@ void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
             summary->party[i], (s8)summary->hasFlag20));
 
     if (sprite != NULL) {
-      AnimationObjects_SelectAnimationFar(sprite, 1);
+      AnimationObject_SelectAnimationFar(sprite, 1);
       sprite->flags = 0;
       sprite->image.priority = 0;
     }
@@ -700,7 +700,7 @@ void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
           ResourceObject_CreateFar(gMenu_PartySpriteResourceIds[i]);
 
       if (sprite != NULL) {
-        AnimationObjects_SelectAnimationFar(sprite, 2);
+        AnimationObject_SelectAnimationFar(sprite, 2);
         sprite->flags = 0;
         sprite->image.priority = 0;
       }

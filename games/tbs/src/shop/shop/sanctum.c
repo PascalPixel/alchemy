@@ -366,11 +366,11 @@ void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
       if (memberIndex == selected)
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            30);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           30);
       else
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            1);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           1);
       shop->partyMemberScale[memberIndex] = 0x10000;
       if (!Shop_CanServe(shop->partyMemberIds[memberIndex], serviceKind))
         shop->partyMemberScale[memberIndex] = 0xb333;
@@ -494,7 +494,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   shop->cursor.anchor->active = UI_SPRITE_HIDDEN;
   AudioCommand_PlayFar(sSanctumServiceCues[shop->partyAction]);
   Shop_SaveAndTintFieldPalette(0x00202108);
-  AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
+  AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
   callbackPriority = SCHEDULER_KEY_MAIN_LOOP;
   Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
@@ -558,7 +558,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   }
 
   Scheduler_RemoveCallback(Shop_ResetEffects);
-  AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
+  AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   WaitFrames(30);
   shop->cursor.anchor->active = savedCursorMode;

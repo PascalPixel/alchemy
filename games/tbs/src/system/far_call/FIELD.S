@@ -8,8 +8,8 @@ FarCall_FieldTable:
 	export Object_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	overlay_veneer Render_PlaceProjectedSprite
 	overlay_veneer Animation_InitializeObjects
-	export AnimationObjects_SelectAnimationFar, AnimationObjects_SelectAnimation
-	overlay_veneer AnimationObjects_SetActiveFrameTimers
+	export AnimationObject_SelectAnimationFar, AnimationObject_SelectAnimation
+	overlay_veneer AnimationObject_SetActiveFrameTimers
 	export ResourceObject_CreateFar, ResourceObject_Create
 	export ResourceObject_ReleaseFar, ResourceObject_Release
 	overlay_veneer Render_PlaceSpritePartPair
@@ -84,7 +84,7 @@ FarCall_FieldTable:
 	export GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior
 	export ResourceSlot_LoadFar, ResourceSlot_Load
 	export SetMapCellCollisionFar, SetMapCellCollision
-	export AnimationObjects_SetActiveTimerStepsFar, AnimationObjects_SetActiveTimerSteps
+	export AnimationObject_SetActiveTimerStepsFar, AnimationObject_SetActiveTimerSteps
 	export Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable
 	export MapAnimation_SuspendFar, MapAnimation_Suspend
 	export MapAnimation_ResumeFar, MapAnimation_Resume

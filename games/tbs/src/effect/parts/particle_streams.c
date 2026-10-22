@@ -207,7 +207,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       work->objects[i] = object;
       if (object != 0) {
         object->flags = 0;
-        AnimationObjects_SelectAnimationFar(object, 2);
+        AnimationObject_SelectAnimationFar(object, 2);
         work->objects[i]->image.priority = 3;
       }
     }

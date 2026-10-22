@@ -204,8 +204,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
     if (frame > 208) {
-      AnimationObjects_SelectAnimationFar(work->objects[2],
-                                          gBoreas_Animations[(frame / 4) & 3]);
+      AnimationObject_SelectAnimationFar(work->objects[2],
+                                         gBoreas_Animations[(frame / 4) & 3]);
     }
 
     scale.x = 0x10000;

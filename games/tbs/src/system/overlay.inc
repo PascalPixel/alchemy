@@ -84,8 +84,8 @@
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
 	import Scheduler_SetTaskFlags, Scheduler_SetTaskFlagsFar
 @ Field bank (far_call/FIELD.S)
-	import AnimationObjects_SelectAnimation, AnimationObjects_SelectAnimationFar
-	import Object_InitializeMode, AnimationObjects_SelectAnimationFar
+	import AnimationObject_SelectAnimation, AnimationObject_SelectAnimationFar
+	import Object_InitializeMode, AnimationObject_SelectAnimationFar
 	import ResourceMetadata_Register, ResourceMetadata_RegisterFar
 	import ResourceMetadata_ClearRecord, ResourceMetadata_ClearRecordFar
 	import Object_SetMode, ObjectDispatch_SelectAnimationFar

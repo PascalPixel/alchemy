@@ -75,7 +75,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     work->objects[9 + i] = object;
     if (object != 0) {
       object->flags = 0;
-      AnimationObjects_SelectAnimationFar(object, i % 3);
+      AnimationObject_SelectAnimationFar(object, i % 3);
       work->objects[9 + i]->image.priority = 1;
     }
   }

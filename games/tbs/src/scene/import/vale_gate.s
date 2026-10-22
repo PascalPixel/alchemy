@@ -7,7 +7,7 @@
 	.set import.ArcTan2, 1
 	.set import.Engine_MathSin, 1
 	.set import.Resource_ResetEntry, 1
-	.set import.AnimationObjects_SelectAnimation, 1
+	.set import.AnimationObject_SelectAnimation, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.Engine_MapRedraw, 1

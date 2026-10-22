@@ -28,7 +28,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
         ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
     if (object != NULL) {
-      AnimationObjects_SelectAnimationFar(object, 2);
+      AnimationObject_SelectAnimationFar(object, 2);
     }
     state->objects[index] = object;
     state->positionsX[index] = 0x10;
@@ -174,7 +174,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
         ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
     if (object != NULL)
-      AnimationObjects_SelectAnimationFar(object, 2);
+      AnimationObject_SelectAnimationFar(object, 2);
     state->objects[index] = object;
     state->phases[index] = 0x10000;
     state->positionsX[index] = 0x10;
@@ -223,7 +223,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
         ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[resourceKind]);
 
     if (object != NULL)
-      AnimationObjects_SelectAnimationFar(object, value);
+      AnimationObject_SelectAnimationFar(object, value);
     state->objects[index] = object;
   }
   return 1;
@@ -238,7 +238,7 @@ UNUSED void Menu_StartPartyFiguresWalking(void) {
   s32 index;
 
   for (index = 0; index < state->partyCount; ++index) {
-    AnimationObjects_SelectAnimationFar(state->ownerObjects[index], 1);
+    AnimationObject_SelectAnimationFar(state->ownerObjects[index], 1);
   }
 }
 

@@ -243,7 +243,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
     work->objects[entryIndex] = object;
     if (object != 0) {
       object->flags = 0;
-      AnimationObjects_SelectAnimationFar(object, entryIndex);
+      AnimationObject_SelectAnimationFar(object, entryIndex);
       work->objects[entryIndex]->image.priority = priority;
     }
     entryIndex++;

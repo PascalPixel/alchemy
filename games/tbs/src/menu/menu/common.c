@@ -571,7 +571,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
       figure->image.priority = 0;
       figure->flags = 0;
-      AnimationObjects_SelectAnimationFar(figure, 1);
+      AnimationObject_SelectAnimationFar(figure, 1);
     }
   }
   // Clear the unused party slots so the callback can skip them.

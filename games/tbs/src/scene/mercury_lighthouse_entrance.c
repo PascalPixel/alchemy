@@ -519,8 +519,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
-    Map_SetShake(0x50000, 0x50000, 0x10000);
-    Map_SetShake(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);

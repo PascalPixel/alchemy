@@ -6,6 +6,7 @@
 
 /// Set while `character` (character_ids.h) is in the party
 /// (Party_AddActiveOwner).
+/// ★ Named from the game: "joined your party." (MsgJoinedParty)
 #define FLAG_IN_PARTY(character) (character)
 /// The prologue: Isaac and Garet are children. It ends with the caption
 /// "Three years later..." over Vale's repairs.
@@ -46,10 +47,17 @@
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_EVENT 0x107
-// Lit lighthouses: the adepts of a lit element regain PP faster
-/// Venus Lighthouse is lit.
+// Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
+// PP faster (units.c). Each lighthouse's scenes set its flag on every arrival,
+// and Scene_ResetFlagsOnEnter clears all four when the party enters another
+// place, so a flag is set only while the party is inside.
+/// The party is inside Venus Lighthouse, which is lit.
 /// ★ Named from its area name: Venus Lighthouse
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
+/// The party is inside Mercury Lighthouse, which is already lit when the
+/// party reaches its aerie.
+/// ★ Named from the game: "The lighthouse has already been lit!"
+/// (MsgMercuryLighthouseAlreadyLit)
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
 /// Mars Lighthouse is lit; no ☀️ scene sets it.
 /// ★ Named from the game: "the lighthouses aren't all lit!" (MsgMercuryGot)
@@ -91,9 +99,10 @@
 /// ★ Named from the game: "But nothing happens." (MsgNothingHappens)
 #define FLAG_NOTHING_HAPPENS 0x142
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
-/// Retreat is blocked, from Psynergy or an item. It "does not work here".
-/// Cleared on every normal scene entrance (not a return keeping the party's
-/// position); the scenes that forbid Retreat set it.
+/// Retreat is blocked, whether cast or used from an item, and the game says
+/// "It doesn't work here." Cleared on every normal scene entrance (not a return
+/// keeping the party's position); the scenes that forbid Retreat set it.
+/// ★ Named from the game: "Retreat" (MsgAbilityName)
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_SelectEnemyGroup), unless flag
@@ -173,14 +182,14 @@
 /// ★ Named from the game: "Welcome to Battle Arena"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_IN_BATTLE_ARENA 0x17e
-/// With it set, holding B on the field walks the leader at 4 pixels a frame
-/// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
 /// Holds the field's palette blend still (ColorBuffer_Update), while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_PALETTE_BLEND_HELD 0x152
 /// Holds the field's weather still, its particles and its next burst, while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_WEATHER_HELD 0x166
+/// With it set, holding B on the field walks the leader at 4 pixels a frame
+/// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
 #define FLAG_FAST_WALK 0x17f
 /// The places the party has visited, one flag for each place group, set by
 /// Scene_ResetFlagsOnEnter as the party enters the group; the world map screen
@@ -189,12 +198,12 @@
 /// A scene's own flags, cleared on every ordinary entrance
 /// (Scene_ResetFlagsOnEnter): puzzles reset when the party walks back in.
 #define FLAG_SCENE_FIRST 0x200
-#define FLAG_SCENE_LAST 0x2ff
+#define FLAG_SCENE_LAST 0x2ff ///< the last of the scene's 256 flags
 /// A place's flags, kept while the party moves between the scenes of one place
 /// group and cleared when it enters another. Each place uses the numbers for
 /// its own, so the scenes name them; the next two are the link lobby's.
 #define FLAG_PLACE_FIRST 0x300
-#define FLAG_PLACE_LAST 0x3ff
+#define FLAG_PLACE_LAST 0x3ff ///< the last of the place's 256 flags
 // Byte flags, read and written eight at a time.
 #define FLAG_LINK_PARTY_COUNT 0x3f0 ///< the members the linked opponent sent
 /// Monster Battles won in a row, added to the monsters' level; -1 after the

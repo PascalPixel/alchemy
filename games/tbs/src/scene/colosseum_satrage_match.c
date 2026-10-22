@@ -8,10 +8,10 @@
 /// by the Colosseum's west passage. The stages run from east to west, through
 /// the Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and
 /// the Board Walk. Isaac comes here three times, each at its own entrance, and
-/// ColosseumSatrageMatch_Initialize restores the stages from the group's flags
-/// (the flags from FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and
-/// the Mini-Maze pillars' columns in their bytes of flags) before setting up
-/// the visit its entrance stands for:
+/// ColosseumSatrageMatch_Initialize restores the stages from their temporary
+/// flags (FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and the
+/// Mini-Maze pillars' columns from FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN) before
+/// setting up the visit its entrance stands for:
 ///
 /// - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST, the tour
 ///   (ColosseumSatrageMatch_IntroduceSecondFinals). The guide only greets the
@@ -39,6 +39,18 @@
 /// COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST, and
 /// COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace from
 /// what it takes for a dream.
+///
+/// Open questions:
+/// - XXX: what the four pieces in the lifts' sprite lying on the Board Walk
+///   (BOARD_WALK_FIRST_LIFT_PIECE) are; a render of the Board Walk would settle
+///   it.
+/// - XXX: which stage the three rolling logs (ROLLING_LOG_WEST and the two
+///   after it) belong to, and why only two of them roll; a render of their
+///   cells would settle the first.
+/// - XXX: whether anything sets FLAG_SCENE_TEMP_10, the condition of the
+///   arena's touch row; colosseum_azart_match.c asks the same.
+/// - XXX (picture): the shifting floor's lifts alternating their routes every
+///   COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES, with the cells they copy.
 
 #include "script.h"
 #include "game_state.h"
@@ -609,16 +621,17 @@ static void Event_RollEastLogEast(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Unused: rolls the center log north and rebuilds the log collision
-/// rectangles; nothing calls it.
-static UNUSED void ColosseumSatrageMatch_RollCenterLogNorth(void) {
+/// Unused: no event table row calls it, so the Board Walk's center log never
+/// rolls. Walking into it would have rolled it north, as the western and
+/// eastern logs roll west and east (Event_RollWestLogWest and the rest).
+static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogNorth(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_CENTER, 40, 23);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Unused: rolls the center log south and rebuilds the log collision
-/// rectangles; nothing calls it.
-static UNUSED void ColosseumSatrageMatch_RollCenterLogSouth(void) {
+/// Unused: as ColosseumSatrageMatch_UnusedRollCenterLogNorth, rolling the
+/// center log south.
+static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogSouth(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_CENTER, 40, 25);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
@@ -786,8 +799,8 @@ static void Event_HaltLifts(void) {
 /// Reaching Colosseum Final 2's arena: the leader takes a prize (the Chain Mail
 /// if first, the Cotton Shirt if second), and he and Satrage face off and
 /// fight; the battle's group follows who took the mail.
-/// FLAG_ARENA_REACHED says the arena was already reached; the arena's touch
-/// works while FLAG_SCENE_TEMP_10 is clear.
+/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, and nothing
+/// here sets it.
 static void Event_ReachArena(void) {
   s32 rivalFinishedFirst;
   s32 refreshCount;
@@ -998,8 +1011,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   Engine_ActorSetAnimation(OPPONENT, 9);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
-  Colosso_ShowItemIcon(PRIZE_B, 89);
-  Colosso_ShowItemIcon(PRIZE_A, 77);
+  Colosso_ShowItemIcon(PRIZE_B, ITEM_COTTON_SHIRT);
+  Colosso_ShowItemIcon(PRIZE_A, ITEM_CHAIN_MAIL);
   Engine_ActorSetChildValue(OPPONENT, 1);
   // The race, the friends' turns, the tour, and the battle's result.
   switch (gGameState.entrance) {

@@ -9,9 +9,9 @@
 /// attendants, and the stages run through the Scales of Justice, the
 /// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
 /// Sidewalk Stage and another log-rolling area.
-/// ColosseumNavampaMatch_Initialize restores the stages from the group's flags
-/// (FLAG_PLANT_GROWN to FLAG_LONG_LOG_IN_PLACE, and the stone's column in the
-/// byte of flags from FLAG_STONE_COLUMN) and sets up the visit its entrance
+/// ColosseumNavampaMatch_Initialize restores the stages from their temporary
+/// flags (FLAG_PLANT_GROWN to FLAG_LONG_LOG_IN_PLACE, and the stone's column
+/// from FLAG_STONE_COLUMN) and sets up the visit its entrance
 /// stands for:
 ///
 /// - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH, the tour
@@ -40,6 +40,19 @@
 /// Isaac in the arena, but he falls asleep, exhausted, and they leave him to
 /// sleep; both exits lead to Babi's Palace, where he wakes long after the
 /// finals.
+///
+/// Open questions:
+/// - XXX: what ColosseumNavampaMatch_UnusedCompetitorTalk's messages were
+///   meant to be; its lines, three apart from MsgColossoDidntThinkBattles, are
+///   a spectator's thought and the stage announcements, so the Japanese catalog
+///   at those numbers would settle whether they ever fitted.
+/// - XXX: what the leader's animations show: 35 as he falls asleep after the
+///   last match, and 10, 12, 14 and 15 as he climbs in the Free-Climb Area's
+///   demonstration; recordings of the two would settle it.
+/// - XXX: whether anything sets FLAG_SCENE_TEMP_10, the condition of the
+///   arena's touch row; colosseum_azart_match.c asks the same.
+/// - XXX (picture): the Scales of Justice, the western pan sinking under a
+///   rider or SCALE_WEIGHT as the eastern pan rises.
 
 #include "script.h"
 #include "version.h"
@@ -840,8 +853,8 @@ ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
 /// Reaching Colosseum Final 3's arena: the leader takes a prize (the Claymore
 /// if first, the Hunter's Sword if second), and he and Navampa face off and
 /// fight; the battle's group follows who took the Claymore.
-/// FLAG_ARENA_REACHED says the arena was already reached; the arena's touch
-/// works while FLAG_SCENE_TEMP_10 is clear.
+/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, and nothing
+/// here sets it.
 static void Event_ReachArena(void) {
   s32 place;
   s32 i;
@@ -1063,8 +1076,8 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Engine_ActorSetAnimation(OPPONENT, 9);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
-  Colosso_ShowItemIcon(PRIZE_A, 3);
-  Colosso_ShowItemIcon(PRIZE_B, 17);
+  Colosso_ShowItemIcon(PRIZE_A, ITEM_CLAYMORE);
+  Colosso_ShowItemIcon(PRIZE_B, ITEM_HUNTERS_SWORD);
   Engine_ActorSetChildValue(OPPONENT, 2);
 
   // Entrances: the race (1), the friends' turns, the tour, and the end of

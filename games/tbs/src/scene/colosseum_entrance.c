@@ -68,13 +68,29 @@
 ///   COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH); after the
 ///   second (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH,
 ///   FLAG_COLOSSO_SECOND_MATCH_WON) they lead him east again, and the same
-///   passages now go to Colosseum Final
-///   3. The finals stages and their races are in colosseum_azart_match.c,
+///   passages now lead to the last of the stages, Colosseum Final 3, on its
+///   own map. The finals stages and their races are in colosseum_azart_match.c,
 ///   colosseum_satrage_match.c and colosseum_navampa_match.c.
 ///
 /// The three scenes share one exit table, a run of exits for each scene, and
 /// the Colosseum's exits are how its arrivals chain into one another and into
 /// the finals stages.
+///
+/// Open questions:
+/// - XXX (no evidence): what the Colosseum's entrances 3 and 8 were made for;
+///   no exit or code enters by them, only the debug scene selector can, and
+///   ColosseumEntrance_GetPlacements gives entrance 8 the soldiers' table, as
+///   it gives the arrivals of the finals day.
+/// - XXX: what the timer of 720 and the work value of 112 that Azart gets
+///   before ACTOR_WANDER do (Event_TalkToAzart,
+///   ColosseumEntrance_AnnounceFinals); the wander script's reader in
+///   ObjectMotion would settle it.
+/// - XXX: who the two young men with red flags at the trial grounds are
+///   (ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG) and what their animations 5 and 6
+///   show; a recording of both trials would settle it.
+/// - XXX (picture): the Colosseum as one map whose arrivals are camera regions
+///   of it (gColosseumEntrances), with the stands, the trial grounds, the
+///   waiting room and the passages outlined.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -535,7 +551,7 @@ static void Event_TalkToAzart(void) {
 
     *work = value;
   }
-  Actor_SetBuiltinAction(ACTOR_AZART, 2);
+  Actor_SetBuiltinAction(ACTOR_AZART, ACTOR_WANDER);
   Engine_EventEnd();
 }
 
@@ -1775,7 +1791,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
 
     *work = value;
   }
-  Actor_SetBuiltinAction(ACTOR_AZART, 2);
+  Actor_SetBuiltinAction(ACTOR_AZART, ACTOR_WANDER);
   Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GALAHAD, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH + FACING_STEP, 0);

@@ -289,6 +289,21 @@ enum BabiPalaceTrigger {
   TRIGGER_WELL = 90  ///< the well outside the palace
 };
 
+/// A companion walks into the leader and is taken off the map, as the party
+/// closes up into one walking sprite at the end of a scene.
+static inline void BabiPalace_WalkIntoLeader(s32 member) {
+  struct FieldActor *leader;
+
+  Actor_SetAnimation(member, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (leader != NULL) {
+    Engine_ActorSetDestination(member, leader->x.part.pixel,
+                               leader->z.part.pixel);
+  }
+  Actor_WaitForMove(member);
+  Actor_SetPosition(member, 0, 0);
+}
+
 static inline void BabiPalace_CloseDoors(void) {
   Map_SetLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIM);
   Map_SetLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIM);
@@ -713,29 +728,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetAnimation(GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Engine_ActorSetDestination(GARET, leader->x.part.pixel,
-                               leader->z.part.pixel);
-  }
-  Actor_WaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Actor_SetAnimation(MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Engine_ActorSetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMove(MIA);
-  Actor_SetPosition(MIA, 0, 0);
-  Actor_SetAnimation(IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Engine_ActorSetDestination(IVAN, leader->x.part.pixel,
-                               leader->z.part.pixel);
-  }
-  Actor_WaitForMove(IVAN);
-  Actor_SetPosition(IVAN, 0, 0);
+  BabiPalace_WalkIntoLeader(GARET);
+  BabiPalace_WalkIntoLeader(MIA);
+  BabiPalace_WalkIntoLeader(IVAN);
   Event_Wait(10);
   Event_End();
 }
@@ -880,30 +875,9 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-    Actor_SetAnimation(GARET, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Engine_ActorSetDestination(GARET, leader->x.part.pixel,
-                                 leader->z.part.pixel);
-    }
-    Actor_WaitForMove(GARET);
-    Actor_SetPosition(GARET, 0, 0);
-    Actor_SetAnimation(MIA, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Engine_ActorSetDestination(MIA, leader->x.part.pixel,
-                                 leader->z.part.pixel);
-    }
-    Actor_WaitForMove(MIA);
-    Actor_SetPosition(MIA, 0, 0);
-    Actor_SetAnimation(IVAN, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Engine_ActorSetDestination(IVAN, leader->x.part.pixel,
-                                 leader->z.part.pixel);
-    }
-    Actor_WaitForMove(IVAN);
-    Actor_SetPosition(IVAN, 0, 0);
+    BabiPalace_WalkIntoLeader(GARET);
+    BabiPalace_WalkIntoLeader(MIA);
+    BabiPalace_WalkIntoLeader(IVAN);
     GameFlag_Set(FLAG_BABI_PALACE_FIRST_NIGHT);
   }
   Event_End();
@@ -1419,27 +1393,9 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetAnimation(GARET, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Engine_ActorSetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Actor_SetAnimation(MIA, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Engine_ActorSetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMove(MIA);
-  Actor_SetPosition(MIA, 0, 0);
-  Actor_SetAnimation(IVAN, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMove(IVAN);
-  Actor_SetPosition(IVAN, 0, 0);
+  BabiPalace_WalkIntoLeader(GARET);
+  BabiPalace_WalkIntoLeader(MIA);
+  BabiPalace_WalkIntoLeader(IVAN);
   Event_Wait(10);
   Event_End();
 }
@@ -1451,8 +1407,6 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Learning that the party is bound for Venus Lighthouse, he sends Iodem
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  struct FieldActor *position;
-
   Event_PlayCue(MUS_030);
   Event_Begin();
   Event_SetMessage(MsgTolbiWaitingCompanions);
@@ -2348,27 +2302,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetAnimation(GARET, ANIM_WALK);
-  position = Actor_Get(ACTOR_PARTY_LEADER);
-  if (position != 0)
-    Engine_ActorSetDestination(GARET, position->x.part.pixel,
-                               position->z.part.pixel);
-  Actor_WaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Actor_SetAnimation(IVAN, ANIM_WALK);
-  position = Actor_Get(ACTOR_PARTY_LEADER);
-  if (position != 0)
-    Engine_ActorSetDestination(IVAN, position->x.part.pixel,
-                               position->z.part.pixel);
-  Actor_WaitForMove(IVAN);
-  Actor_SetPosition(IVAN, 0, 0);
-  Actor_SetAnimation(MIA, ANIM_WALK);
-  position = Actor_Get(ACTOR_PARTY_LEADER);
-  if (position != 0)
-    Engine_ActorSetDestination(MIA, position->x.part.pixel,
-                               position->z.part.pixel);
-  Actor_WaitForMove(MIA);
-  Actor_SetPosition(MIA, 0, 0);
+  BabiPalace_WalkIntoLeader(GARET);
+  BabiPalace_WalkIntoLeader(IVAN);
+  BabiPalace_WalkIntoLeader(MIA);
   Event_Wait(10);
   Audio_PlayCueFromEventWork();
   Event_End();

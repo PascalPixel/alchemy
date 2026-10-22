@@ -8,10 +8,10 @@
 /// names, are the Rock Challenge, the Pipeworks, the Broken Bridge and the
 /// Lumber Water Crossing Area. Isaac comes here three times, each time at its
 /// own entrance, and ColosseumAzartMatch_Initialize blocks Retreat and sets up
-/// the visit that entrance stands for after restoring the stages from the
-/// group's flags (FLAG_PIPES_MOVED to FLAG_PLANT_GROWN and the rock's
-/// column in the byte of flags from FLAG_SECOND_ROCK_COLUMN), so that what the
-/// friends changed stays changed for the race.
+/// the visit that entrance stands for after restoring the stages from their
+/// temporary flags (FLAG_PIPES_MOVED, FLAG_PIPEWORKS_PILLAR_PUSHED,
+/// FLAG_PLANT_GROWN and the rock's column in FLAG_SECOND_ROCK_COLUMN), so that
+/// what the friends changed stays changed for the race.
 ///
 /// - COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM, the tour, from the Colosseum's east
 ///   passage. The guide (ColosseumAzartMatch_ExplainFinalsRules) tells the
@@ -50,6 +50,18 @@
 /// COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST, and
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
+///
+/// Open questions:
+/// - XXX: whether anything sets FLAG_SCENE_TEMP_10, the condition of the
+///   arena's touch row in all three finals stages; nothing in the overlays
+///   does, and a search of the main image's flag writes would settle whether
+///   the arena can ever be closed.
+/// - XXX: what the warriors' animations in the arena show (the leader's 16,
+///   28 and 35, the opponent's 8, 9 and 10); a recording of the arena before
+///   and after the battle would settle it.
+/// - XXX (picture): the race, the leader against the opponent's recorded path,
+///   with the gauge that shows how near each is to the finish
+///   (Colosso_StartRaceGauge).
 
 #include "script.h"
 #include "version.h"
@@ -540,9 +552,9 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
-/// fight; the battle's group follows who took the shield. FLAG_ARENA_REACHED
-/// says the arena was already reached; the arena's touch works while
-/// FLAG_SCENE_TEMP_10 is clear.
+/// fight; the battle's group follows who took the shield.
+/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, and nothing
+/// here sets it.
 static void Event_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -714,8 +726,8 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Object_SetMode(actor, 2);
   }
   Object_GetById(PIPE_EAST)->priorityFlags = 2;
-  Colosso_ShowItemIcon(PRIZE_A, 120);
-  Colosso_ShowItemIcon(PRIZE_B, 127);
+  Colosso_ShowItemIcon(PRIZE_A, ITEM_IRON_SHIELD);
+  Colosso_ShowItemIcon(PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.
   switch (gGameState.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:

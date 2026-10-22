@@ -242,11 +242,11 @@ static void Event_LeaveByExit(void) {
 /// the party follows, resolves either way to search the desert for Sheba and
 /// pursue them, and rejoins the party. Sets
 /// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way; once Iodem has reached Babi
-/// Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE), the scene does not play.
+/// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the scene does not play.
 static void Event_IodemQuestionsWoundedSoldiers(void) {
   struct FieldActor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
-  if (GameFlag_IsSet(FLAG_IODEM_AT_BABI_LIGHTHOUSE) == 0) {
+  if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
     Event_PlayCue(MUS_030);
     Event_Start();
     // Frame the speakers and bring the leader over before the dialogue.

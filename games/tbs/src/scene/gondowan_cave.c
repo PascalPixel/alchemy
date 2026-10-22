@@ -23,10 +23,10 @@
 /// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his actor is kept out
 /// of sight; talking to him or walking up to him while he waits (touch cell
 /// 11) makes him come along (Event_IodemRejoins), and until he has reached
-/// Babi Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE) turning back (touch cell
-/// 10) brings him out to ask why (Event_IodemAsksWhyTurningBack). If he stays
-/// to wait, the saved place becomes the Tolbi Sanctum, so a defeat returns the
-/// party there.
+/// Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) turning back (touch
+/// cell 10) brings him out to ask why (Event_IodemAsksWhyTurningBack). If he
+/// stays to wait, the saved place becomes the Tolbi Sanctum, so a defeat
+/// returns the party there.
 ///
 /// GondowanCave's way across the water is two things that float in it, and
 /// touch cells 10 and 11 jump the leader across them (Event_JumpAcross). Both
@@ -227,7 +227,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 static void Event_IodemAsksWhyTurningBack(void) {
   struct FieldActor *leader;
 
-  if (FLAG_CHECK(FLAG_IODEM_AT_BABI_LIGHTHOUSE) == 0 &&
+  if (FLAG_CHECK(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0 &&
       FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     EV_START();
     // Bring Iodem out of the party before opening his question.

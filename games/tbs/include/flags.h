@@ -546,7 +546,7 @@
 /// question the wounded soldiers in Suhalla, or to ask in Gondowan Passage why
 /// the party is turning back.
 /// ★ Named from the game: "Oh! Iodem..." (MsgBabiYoureSureTheyWentThrough)
-#define FLAG_IODEM_AT_BABI_LIGHTHOUSE 0x98a
+#define FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED 0x98a
 /// The party has opened the stone door before Iodem and Faran, who saw it shut
 /// again and stay behind, leaving Sheba's rescue to the party.
 /// ★ Named from the game: "I don't believe it! The door opened!"

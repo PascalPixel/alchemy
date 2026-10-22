@@ -505,7 +505,7 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
 static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
-  GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
+  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED);
   Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);

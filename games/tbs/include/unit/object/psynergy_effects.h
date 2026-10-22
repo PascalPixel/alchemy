@@ -199,6 +199,28 @@ void FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject);
 s32 FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject);
 #endif
 void FieldFx_SpawnLinked(s32 actor, s32 emote, s32 wait);
+/// FieldFx_SpawnLinked's emote flag: the bubble takes sprite priority 1
+/// instead of its actor's. The low four bits pick the bubble (enum Emote).
+#define EMOTE_IN_FRONT 0x100
+
+/// The bubbles FieldFx_SpawnLinked can show, by the animation they pick in the
+/// bubble's sprite sheet (SPR_021).
+enum Emote {
+  EMOTE_EXCLAMATION = 0, ///< "!"
+  EMOTE_QUESTION = 1,    ///< "?"
+  /// A wincing face in English; a sweat drop in Japanese and a frown in
+  /// Italian.
+  EMOTE_WINCE = 2,
+  EMOTE_ANGER_VEIN = 3, ///< the cross-shaped vein of anger
+  EMOTE_HEART = 4,      ///< a red heart
+  EMOTE_ELLIPSIS = 5,   ///< "..."
+  EMOTE_LIGHT_BULB = 6, ///< a lit bulb, with SE_110
+  EMOTE_SCOWL = 7,      ///< a scowling face
+  EMOTE_SMILE = 8,      ///< a smiling face
+  /// A sweat drop; no scene shows it, and the Japanese sheet has no tenth
+  /// bubble.
+  EMOTE_SWEAT_DROP = 9
+};
 /// FieldFx_ConfigureLinkedObject's flags: a mode in the low two bits, and
 /// ATTACHED_EFFECT_IN_FRONT.
 enum AttachedEffectFlag {

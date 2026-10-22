@@ -78,21 +78,19 @@ u8 *ItemLevel_GetPlacements(void) { return (u8 *)gItemLevelPlacements; }
 
 #if TBS_PATCH_1
 /// Sets the test message before displaying the first emote on the actor
-/// spoken to, ACTOR_FIRST_EMOTE_TESTER. 0x102 is bubble animation 2 in front
-/// of the actor (EMOTE_IN_FRONT); it stays a literal because what bubble
-/// animation 2 shows is not known.
+/// spoken to, ACTOR_FIRST_EMOTE_TESTER.
 static void ItemLevel_ShowMessageThenEmote(void) {
   Engine_EventSetMessage(MsgDebugWontStopYou);
-  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, 0x102, 0);
+  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventShowMessage(ACTOR_FIRST_EMOTE_TESTER, 0);
 }
 
 /// Displays the other test emote before setting ACTOR_FIRST_EMOTE_TESTER's
-/// message: bubble animation 5 in front (0x105). Talking to
+/// message. Talking to
 /// ACTOR_SECOND_EMOTE_TESTER, though the emote and the message are
 /// ACTOR_FIRST_EMOTE_TESTER's.
 static void ItemLevel_ShowEmoteThenMessage(void) {
-  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, 0x105, 0);
+  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Engine_EventSetMessage(MsgDebugWontStopYou);
   Engine_EventShowMessage(ACTOR_FIRST_EMOTE_TESTER, 0);
 }

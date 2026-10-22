@@ -1,76 +1,51 @@
 # Graphics
 
-Most of The Broken Seal's pictures live here, from monsters and battle
-backdrops to fonts and map tiles, along with the code for the screens that are
-mostly pictures.
-
-Those screens are the title intro, with the Nintendo and Camelot logos before
-it and the palette fade it uses, and the end credits. Next to them are the
-handwritten decoders that unpack tiles and animation frames for the rest of
-the game. Everything else here is data: the
-[Battle effects](../effect/README.md) load their sheets from `battle_fx/`, and
-each map's `map.s` in [Maps](../map/README.md) places its tile set from
-`tileset/`.
-
-## How a picture gets into the ROM
-
-Each picture is an indexed PNG, one whose pixels are numbers into its own
-palette, which is how the GBA draws them too. The build packs the PNG, with the
-`.tsv` beside it where there is one, into the form the game reads, and an `.s`
-file places the result in the ROM under the label the code knows it by.
-Usually that `.s` sits right beside the picture. The tile sets in `tileset/`
-are placed by the maps' `map.s` files instead, and the pictures in `window/`
-by `.s` files of the [Windows](../window/README.md) and
-[Menus](../menu/README.md) code.
-
-Some packed pictures are followed by a few stray bytes that Camelot's packing
-tool left behind, and the original kept them. The `.s` keeps them too, as
-literal bytes marked `@ PACKER:`, beside the picture they follow.
-
-A picture an effect or a scene loads by number, rather than by label, is an
-entry of the resource directory (`games/tbs/src/system/resource/directory.s`).
-The unit headers for the C files are in `games/tbs/include/unit/graphics/`,
-and the link order is in `games/tbs/objects.tsv`.
+The graphics folder holds most of ☀️'s pictures, from monsters and battle
+backdrops to fonts and map tiles, the code of the two screens that are
+mostly pictures, the title intro and the credits, and the handwritten
+decoders that unpack tiles and animation frames for the rest of the game.
+The [Battle effects](../effect/README.md) load their sheets from
+`battle_fx/`, and each map's `map.s` in [Maps](../map/README.md) places its
+tile set from `tileset/`.
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `title/intro.c` | the title intro, the Nintendo and Camelot logos, and the palette fade (`PaletteFade_`) |
+| `title/intro.c` | the title intro, the Nintendo and Camelot logos, and the palette fade |
 | `credits/credits.c` | the credits: the backdrops that slide and crossfade, and the scrolling text |
 | `text/numwords.c` | the counted nouns the German message decoder writes after a number |
 | `text/genders.s` | the grammatical gender of each item name, for the German and Italian editions |
 | `text/decode_symbol.s`, [`render/decode.s`](render/decode.s), `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |
-| `battle_fx/` | the battle effects' sheets and masks (`BattleFx_`), loaded by resource id |
+| `battle_fx/` | the battle effects' sheets and masks, loaded by resource id |
 | `ui/` | window tiles, the small font, icons and menu sprites |
-| `font/` | the main text font, in each language's version (`gUiText_Glyphs`) |
-| `world_map/` | the world map's tiles, palettes and the story frames |
+| `font/` | the main text font in each language's version (`gUiText_Glyphs`) |
+| `world_map/` | the world map's tiles and palettes and the story frames |
 | `tileset/` | the maps' tile sets and their palettes |
 | `window/` | the name entry keyboards, the cursor frame and the main font's glyph widths |
-| `shop/` | the eight frames of the shop cursor, `Shop_CursorFrameA` to `Shop_CursorFrameH` (resource `ResourceId_ShopCursorFrames`) |
-| `title/`, `render/labels.s` | the title screen, the logos and the "Press Start" lettering, the "To be continued" lettering, and the text headings |
+| `shop/` | the eight frames of the shop cursor, `Shop_CursorFrameA` to `Shop_CursorFrameH` (`ResourceId_ShopCursorFrames`) |
+| `title/` | the title picture, the logos, the "Press Start" prompt and the "To be continued" lettering |
+| `render/labels.s` | the 64-by-16 text headings, each two 32-by-16 sprites |
 | `display/credits.s` | the credits font, with its glyph widths in `display/glyph_widths.h` |
 | `backdrop/`, `monster/`, `sprite/`, `colosso/`, `lamakan/`, `lucky_dice/`, `slots/`, `sol_sanctum_statue/` | the pictures of the place or screen they name |
 | `animref*.s` | animation slot tables, whose entries point back at their own table |
 
-## Colours, halves and the tile ring
+The unit headers are in `games/tbs/include/unit/graphics/`. The credits are
+the scroll bank and the title intro the palette bank
+([Source](../README.md)); everything else here is linked where its users
+are, as `games/tbs/objects.tsv` lists.
 
-The GBA keeps a colour as three five-bit levels, red, green and blue, each
-from 0 to 31. The palette fade works on those levels one by one and calls each
-a **component**. It keeps a component in the top bits of a halfword (a 16-bit
-value), the level shifted up by ten bits, and works out each frame's step by
-dividing the distance to the target by the number of frames, so the ten bits
-below the level hold the fraction a step leaves over. It steps all 1536 components of the 512
-background and sprite colours, and its `paletteHalf` picks what to fade: 0
-both, 1 only the background colours, 2 only the sprites'.
+## Words used here
 
-A **half** is one of the two parts the credits split the background tile
-memory and the background palette into (`alternate` in the code). Half 0 is
-the first 32 KB of video memory (VRAM) with colours 0 to 127, and half 1 the
-next 32 KB with colours 128 to 255.
-
-The **tile ring** is the credits' 32 rows of text tiles, sixteen of them on
-screen at a time, used over and over as the text scrolls.
+- **component**: one of a colour's three five-bit levels, red, green or
+  blue, as the palette fade keeps it: in the top bits of a halfword, shifted
+  up ten bits, so the ten bits below hold the fraction a fade step leaves.
+- **half**: one of the two parts the credits split the background tile
+  memory and palette into (`alternate` in the code). Half 0 is the first
+  32 KB of VRAM with colours 0 to 127, half 1 the next 32 KB with colours
+  128 to 255.
+- **tile ring**: the credits' 32 rows of text tiles, 16 on screen at a time,
+  reused as the text scrolls.
 
 ## Function prefixes
 
@@ -80,132 +55,160 @@ screen at a time, used over and over as the text scrolls.
 | `PaletteFade_`, `Palette_` | the palette fade, and `Palette_Transform`, which builds its colours |
 | `DisplayScroll_` | the credits |
 | `Graphics_` | tile memory and palettes, as the engine names them elsewhere |
-| `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders, among them `Tile_ExpandSlide`, which unpacks the credits slides |
-| `Vector_` | `Vector_DotProduct`, the 16.16 dot product beside `Tile_ExpandSlide` in `tile/dot_product.s`, which nothing calls |
+| `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders, among them `Tile_ExpandSlide`, which unpacks the credits' backdrops |
+| `Vector_` | `Vector_DotProduct`, a 16.16 dot product in `tile/dot_product.s` that nothing calls |
 
 `UiText_LookupMessageArm` carries the text window's prefix, though it sits
-beside `Text_DecodeSymbol`.
+beside `Text_DecodeSymbol` in `text/decode_symbol.s`.
 
-## The title and the logos
+## Design
 
-At power-on, `Title_ShowSplashScreen` shows the Nintendo logo with its jingle
-and `Title_ShowAnimatedSplash` the Camelot logo for two seconds, cycling its
-four frames of tiles; A or Start cuts either of them short. Then, when a save
-file exists, `Title_ShowIntro` plays the intro: the backgrounds scroll down and
-the sprites rise along the slope until frame 278 (A or Start skips ahead), and
-the screen flashes white into the title picture, where "Press Start" pulses
-for up to a minute. The same intro plays after the prologue without the
-prompt, and then the picture stays five seconds. Which of these runs is
-decided by the title overlay, `Title_Run` in [Menus](../menu/README.md).
+### How a picture is built and placed
 
-The intro fades in from black over 60 frames through the palette fade, which
-moves every colour's components a step at a time towards a target.
-`PaletteFade_Init` saves both palettes, 512 colours, in the colour buffer's
-heap block and schedules `PaletteFade_Update`. `PaletteFade_Start` works out
-how far each component has to move each frame, and each frame the update adds
-those steps, packs the components back into colours and queues both palettes
-to be copied at the next VBlank, the short pause between frames when the
-screen isn't being drawn. The queue keeps a pointer to the colours until then,
-so the update packs each frame into the spare one of two copies, and this
-frame's packing can't overwrite the colours the queue still has to send.
+Each picture is an indexed PNG whose pixels are numbers into its own palette,
+which is how the GBA draws them too. The build packs the PNG, with the
+`.tsv` beside it where there is one, into the form the game reads, and an `.s`
+file places the result under the label the code uses. That `.s` usually sits
+beside the picture; the tile sets in `tileset/` are placed by the maps'
+`map.s` files, and the pictures in `window/` by `.s` files of
+[Windows](../window/README.md) and [Menus](../menu/README.md). A picture
+loaded by number rather than by label is an entry of the resource directory
+(`system/resource/directory.s`).
+
+Some packed pictures are followed by a few bytes Camelot's packing tool left
+behind. The `.s` keeps them beside the picture they follow, as literal bytes
+marked `@ PACKER:`.
+
+### The palette fade
+
+The palette fade moves every colour a step at a time towards a target.
+`PaletteFade_Init` saves both palettes, 512 colours, as the starting
+components in the colour buffer's heap block and schedules
+`PaletteFade_Update`. `PaletteFade_Start` divides each component's distance
+to the target by the number of frames, keeping the remainder in the
+component's low ten bits. Each frame the update adds the steps to all 1,536
+components, packs them into colours and queues both palettes for the next
+VBlank. The queue holds a pointer to the colours until then, so the update
+packs each frame into the spare one of two copies, and a frame's packing
+never overwrites colours the queue has yet to send. A `paletteHalf` of
+`PALETTE_HALVES_BOTH`, `PALETTE_HALF_BG` or `PALETTE_HALF_OBJ` chooses which
+palettes a setter changes.
 
 `Palette_Transform` builds the colours a fade starts from or heads for: one
-colour everywhere, the whole-palette filters (plain, grey, sepia and the
-others), the tint, blend and split modes that carry a colour, or a copy. Only
-`Title_ShowIntro` uses the fade in ☀️; `PaletteFade_Release`,
-`PaletteFade_SetTarget` and `PaletteFade_SetBackdrop` are kept, unused.
+colour everywhere, a whole-palette filter (plain, grey, sepia and the
+others), a tint, blend or split carrying a colour, or a copy. In ☀️ only
+`Title_ShowIntro` uses the fade, for its 60-frame fade from black;
+`PaletteFade_Release`, `PaletteFade_SetTarget` and `PaletteFade_SetBackdrop`
+are `UNUSED`.
 
-## How the credits are drawn
+### The title sequence
 
-At the end of the game, once the Lemurian ship sets sail, the staff credits
-roll over a slideshow of battle backdrops (`gDisplayScroll_SlideResources`),
-from the storm over Vale to a violet sky, each one fading into the next until
-the screen goes black.
-Afterwards the file select screen offers to save the cleared game.
-`Title_Run` reaches the credits as `ScrollFar_Entry00`, at the title scene's
-entrance 9, with `MUS_067` playing. They run a little over three minutes: a
-300-frame lead, then 33 slides, each a 64-frame fade and a 267-frame hold,
-11223 frames in all besides the loading.
+The title overlay, `Title_Run` in [Menus](../menu/README.md), decides what
+runs; the code is here, in the palette bank. At power-on
+`Title_ShowSplashScreen` shows the Nintendo logo with its jingle and
+`Title_ShowAnimatedSplash` the Camelot logo for two seconds, cycling its four
+frames of tiles. When a save file exists, `Title_ShowIntro` then scrolls the
+backgrounds down while the sprites rise along the slope until frame 278, and
+flashes white into the title picture, where "Press Start" pulses for up to a
+minute; if nothing is pressed `Title_Run` starts again from the logos. After
+the prologue the same intro plays without the prompt and holds the picture
+five seconds. A or Start cuts each part short.
 
-### Two backdrops on screen at once
+### Two backdrops in one background memory
 
-A crossfade needs both pictures on screen at the same time, so the credits
-split the 256-colour background tile memory and the background palette into
-two halves. `BG3` draws from tiles in the first half with colours 0 to 127, and `BG2`
-from tiles in the second with colours 128 to 255. A backdrop has 128 colours,
-and `Graphics_LoadCharacterBlockAndPalette` adds 128 to every pixel it unpacks
-into the second half, so the same picture works in either.
+The credits roll over a slideshow of 32 battle backdrops
+(`gDisplayScroll_SlideResources`), each crossfading into the next, and its
+last entry, 0, fades the screen to black.
+`Title_Run` reaches them through the scroll bank as `ScrollFar_Entry00`, at
+the title scene's entrance 9, with `MUS_067` playing, before the clear
+screen. Their waits come to 11,223 frames: a 300-frame lead, then for each
+of the 33 entries a 64-frame fade and a 267-frame hold.
+
+A crossfade needs both pictures on screen at once, so the credits split the
+256-colour background tile memory and the background palette into halves.
+`BG3` draws from tiles in half 0 with colours 0 to 127, and `BG2` from tiles
+in half 1 with colours 128 to 255. A backdrop has 128 colours, and
+`Graphics_LoadCharacterBlockAndPalette` adds 128 to every pixel it unpacks
+into half 1, so the same picture works in either.
 
 ![The credits halfway through their first crossfade, taken apart: `BG3` alone holds the next backdrop, a stone hall lit by torches; `BG2` alone holds the stormy Vale it replaces; the sprites alone are the staff names between two black bars; and the screen shows the two backdrops blended with the names over them.](https://alchemy.pascalpixel.com/guides/graphics/credits-layers.png)
 
 `DisplayScroll_RunSlideshow` loads each backdrop into the half that isn't
-showing, then steps the blend weights between `BG2` and `BG3` over 16 steps of 4
-frames, and holds. The halves swap roles from one backdrop to the next, so a
-backdrop is never loaded while it's being shown. The colours go to palette RAM
-through the I/O write queue at the next VBlank, and the tiles are unpacked by
-`Tile_ExpandSlide`, copied into heap slot 49 for each load and released
-again. Every fourth frame both backdrops drift one pixel to the right; a
-picture is as wide as its map, 256 pixels, so it wraps around without a seam.
-
-![The staff names scroll up over a backdrop of Vale's houses in the rain, which fades into a stone hall lit by torches while the names keep moving.](https://alchemy.pascalpixel.com/guides/graphics/credits.gif)
+showing, steps the blend weights between `BG2` and `BG3` over 16 steps of 4
+frames, and holds. The halves alternate from one backdrop to the next, so a
+backdrop is never loaded while it is shown. `Tile_ExpandSlide` unpacks the
+tiles from a copy in `HEAP_SLOT_TEMP_RENDERER`, released after each load, and
+the colours reach palette RAM through the I/O write queue at the next
+VBlank. Every fourth frame a VBlank task moves both backdrops a pixel right;
+a picture is as wide as its map, 256 pixels, so it wraps without a seam.
 
 ### The scrolling names
 
-The names scroll as sprites rather than as a background, six 32-by-8 sprites
-across each 192-pixel line. They move up a pixel every fourth frame, so a new
-line arrives every 32 frames, and the sprites draw from a ring of 32 rows of
-tiles of which 16 are visible. Each time the scroll crosses into a new line,
-`DisplayScroll_RenderEnteringLine` draws the line 16 rows ahead of the top
-into the hidden part of the ring. Only lines about to show are ever drawn, and
-the tile memory the credits need doesn't grow with their length. Solid sprites
-over the top 16 and bottom 24 pixels of the screen hide the rows that are only
-partly on.
+The names are sprites, not a background: six 32-by-8 sprites across each
+192-pixel line, drawing from the tile ring. They move up a pixel every
+fourth frame, so a new line arrives every 32 frames. Each time the scroll
+enters a new line, `DisplayScroll_RenderEnteringLine` draws the line 16 rows
+ahead into the hidden part of the ring, so only lines about to show are ever
+drawn and the tile memory the credits need doesn't grow with the text.
+Opaque border sprites over the top 16 and bottom 24 pixels, first in OAM,
+hide the rows that are only partly on screen.
 
-`DisplayScroll_DrawLine` draws each glyph in colour 15 with a colour 1 shadow
-a pixel down and to the right. The original has a small bug here: it takes its
-line buffer before checking for the end of the text, so the last call leaks
-the buffer. The fix is behind `BUGFIX`.
+![The staff names scroll up over a backdrop of Vale's houses in the rain, which fades into a stone hall lit by torches while the names keep moving.](https://alchemy.pascalpixel.com/guides/graphics/credits.gif)
 
-### Running outside the engine's usual frame
+`DisplayScroll_DrawLine` draws each glyph in colour 15 with a colour 1
+shadow a pixel down and to the right. It takes its line buffer before
+checking for the end of the text, so the last call leaks the buffer
+(`// BUG:`, fixed behind `BUGFIX`).
 
-The credits switch most of the engine's usual frame off. They reset the task
-table, stop the VBlank's copy of the sprite list to OAM, the hardware's list
-of sprites on screen (`gOamCopyEnabled`), and send their own 128 sprites from
-a 1 KB buffer that is never freed. They also turn off the CPU load display,
-the debug text and the idle sleep that would otherwise come after three idle
-minutes. When they finish, `BG2`, `BG3` and blending are off, the window graphics
-are reloaded and the OAM copy is back on; the three tasks they scheduled stay
-scheduled.
+### Running outside the engine's frame
 
-Their state lives in four cells borrowed from the flash library, the code
-that saves the game. Nothing is saved while the credits roll, so the cells sit
-idle: `gFlashNumRemainingBytes` holds the sprite buffer's
-pointer, `gFlash_Handler3` the scroll position, `gFlash` the position of the
-last line drawn and `gFlash_Handler0` the end-of-text latch. Borrowing them is
-safe because the flash library sets each one before it reads it:
+The credits switch most of the engine's frame off. They reset the task
+table, stop the VBlank's copy of the sprite list (`gOamCopyEnabled`) and
+send their own 128 sprites from a 1 KB buffer taken from the alternate bump
+pool and never freed. They also clear `gCpuLoadDisplayEnabled`,
+`gDebugTextEnabled` and `gIdleSleepEnabled`. On return `BG2`, `BG3` and
+blending are off, the window graphics are reloaded and the OAM copy is back
+on; the three tasks they scheduled stay scheduled.
+
+Their state lives in four cells borrowed from the flash library:
+`gFlashNumRemainingBytes` holds the sprite buffer's pointer,
+`gFlash_Handler3` the scroll position in pixels, `gFlash` the position of
+the last line drawn and `gFlash_Handler0` the end-of-text latch. The borrow
+is safe because the flash library sets each cell before it reads it:
 `IdentifyFlash`, which runs before each use of the save, writes `gFlash`,
 `gFlash_Handler0` and `gFlash_Handler3`, and each program routine sets
-`gFlashNumRemainingBytes`. The original reaches them through casts of the
-flash library's declarations, which is undefined behaviour; `UBFIX` gives the
-cells the credits' own types.
+`gFlashNumRemainingBytes`. The original reaches the cells through casts of
+the flash library's declarations, which is undefined behaviour (`// UB:`);
+`UBFIX` gives them the credits' own types.
+
+## How it fits
+
+The title intro and the credits are main-image code the title overlay
+calls through their banks' far-call tables. The decoders are called by the
+code that loads pictures everywhere else, many of them from a copy in a heap
+slot (`RamCode_LoadSlot`), as `Tile_ExpandSlide` is. The pictures belong to
+the code that loads them: effects, scenes, maps, windows and menus.
 
 ## Limits
 
 - A credits backdrop has at most 128 colours and 480 tiles, 256 by 120
-  pixels: half of the background palette, and 30 KB of its half's 32 KB of
+  pixels: half the background palette, and 30 KB of its half's 32 KB of
   tile memory, the backdrop's map taking the rest.
-- A credits line is 192 pixels wide, six 32-pixel sprites, and is drawn
-  centred.
+- A credits line is 192 pixels wide, six 32-pixel sprites, drawn centred.
 - The palette fade covers all 512 background and sprite colours.
 
 ## Evidence and open questions
 
 The pictures are named for what they show, from the scenes and effects that
-load them, and the decoders for the format each one unpacks, proven in their
-headers. The credits' and the title's functions are named for what they draw.
-The `// BUG:` and `// UB:` notes in the credits code, and the `BUGFIX` and
-`UBFIX` switches behind their fixes, work as they do everywhere in the source,
-described in [Matching](../MATCHING.md).
+load them, and the decoders for the format each unpacks, proven in their
+headers. The credits' and the title's functions are named for what they
+draw.
 
-Nobody knows yet why the credits borrow flash-library cells for their state
-instead of having globals of their own.
+- XXX: why the credits borrow flash-library cells instead of having globals
+  of their own. Another user of the same cells, or a link map of Camelot's
+  build, would settle it.
+- XXX: no picture yet shows the tile ring: the 32 rows of sprite tile memory
+  drawn a tile to a pixel as the names scroll, with each row filled as
+  `DisplayScroll_RenderEnteringLine` draws it.
+- XXX: no picture yet takes the title intro apart into its two scrolling
+  backgrounds and its rising sprites.

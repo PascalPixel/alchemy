@@ -12,67 +12,19 @@ emits, each file saying in its header what proves it, and tables the linker
 lays out. [Runtime](../runtime/README.md) builds directly on it, and
 [Scenes](../scene/README.md) are the main users of its overlays.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound preset records (`IwramCodeRecords`) |
-| `ewram.s`, `iwram.s`, `iwram_hi.s` | the main image's RAM variables, in their order in EWRAM and IWRAM |
-| `runtime.s`, `runtime_irq_table.s`, `runtime_mix*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
-| `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |
-| `cpu_set.s`, `sound_get_jump_list.s` | BIOS calls |
-| `heapfree.s` | `Runtime_ReleaseHeapBlock` and `MemFree` |
-| `updfar.s` | three ARM routines that share one literal pool (`ArcTan2FarArm`, `IwramSqrtFarArm`, `IwramRatioMulQ14FarArm`) |
-| `syspal.s`, `memory/*.png` | the window palette and the basic sprite palettes, built from the PNGs |
-| `overlay.s` | the far-call stub macro, `overlay_veneer` |
-| `overlay.inc` | the head every stub table includes, and the list of stubs an overlay may import |
-| `far_call/*.S` | each bank's far-call table, one stub per export in a fixed order (`stub.inc`) |
-| `overlay/` | `overlays.s` places each overlay's packed stream as a directory resource, `overlay.ld` links each at `gOverlayArea`, and the `ovl_*.s` hold the RAM variables of the overlays that have them |
-| `resource/directory.s` | the resource directory, each row defining its `ResourceId_` name |
-| `resource/*.s`, `resource/metadata_get_record.c`, `resource/colconv*.tsv` | the resource decoders; beside them the OAM build kernel and colour-buffer kernels other code copies into RAM to run, the colour conversion tables, the sprites' shadow and the animation metadata lookup |
-| `save/` | the flash library: the drivers for Atmel, Macronix and SST chips (`FLASH_C`, compiled with pret's `old_agbcc`), and the save record signature, `CAMELOT` (`savedata.c`) |
-
-The unit headers are in `games/tbs/include/unit/system/`, the far-call
-prototypes in `games/tbs/include/farcall/`. Link order, overlays included, is
-in `games/tbs/objects.tsv`; `games/tbs/overlays.tsv` gives each overlay's
-`.bss` header. `games/tbs/main.ld` places the main image's sections, and
-`games/tbs/include/ram_buffer.h` names the fixed RAM addresses the code uses
-as constants. [Matching](../MATCHING.md) explains the markers in the code.
-
-## Words used here
-
-- **bank** and **far call**: the main image is linked in banks (`runtime`,
-  `field`, `window`, `game` and the rest). A function another bank calls is
-  exported through its bank's far-call table and called by its `...Far` name.
-  An entry no code calls by name keeps its place in the table, as a stub with
-  no `...Far` name.
-- **overlay**: code and data unpacked into the overlay area from one
-  compressed resource when a scene or screen needs it: its entry table, its
-  code, and its import table.
-- **resource**: a row of the directory, loaded by its id
-  (`Resource_GetTableEntry`); the id is the `ResourceId_` symbol's value.
-- **resident code**: code, mostly ARM, copied from the ROM into IWRAM at
-  power-up (`.iwram_runtime`) or when sound starts (`.iwram_mixer`).
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `System_` | the cartridge entry |
-| `Iwram` | the resident IWRAM code and its entry stubs (`IwramIrqMain`, `IwramHalt`, `IwramMulQ16`) |
-| `Bios_` | the BIOS calls |
-| `Resource_`, `ResourceId_` | the resource decoders and the directory's ids |
-| `Flash_`, `EraseFlash`, `ProgramFlash` | the flash library, named as pret names it |
-| `Runtime_`, `Sound_`, `ColorBuffer_`, `Render_` | things the engine names elsewhere |
-
 ## Memory map
+
+The memory map says where in EWRAM, IWRAM and VRAM each part of the game's
+state lives.
+
+![Vale's video memory drawn as tiles, each in the palette the maps or the sprite list give it and grey where nothing on screen names it: the four 16 KB background character blocks, the first with the window font and Vale's trees, the second its grass, cliffs and water, the last two its thatched roofs and houses; beside them the sprites' 32 KB, nearly empty but for the frames on screen; and below, the 256 background colours and the 256 sprite colours.](https://alchemy.pascalpixel.com/guides/system/vram.png)
 
 `main.ld` declares the areas the game uses: 256 KB of EWRAM, where most
 variables live; 32 KB of IWRAM, where code that must run fast is copied; VRAM,
 which holds the tiles and maps the screen is drawn from; and the cartridge
 ROM. The addresses below are tbs-en's, from its link map
 (`out/tbs-en/tbs-en.map`), in hexadecimal as the link map shows them. German
-moves three IWRAM variables (see the fixed addresses below).
+moves three IWRAM variables ([below](#the-addresses-that-never-move)).
 
 **EWRAM**, laid out by `ewram.s`:
 
@@ -117,9 +69,17 @@ moves three IWRAM variables (see the fixed addresses below).
   hands out as 512 blocks of 64 bytes
   (`games/tbs/src/runtime/runtime/vram_cache.c`).
 
-![Vale's video memory drawn as tiles, each in the palette the maps or the sprite list give it and grey where nothing on screen names it: the four 16 KB background character blocks, the first with the window font and Vale's trees, the second its grass, cliffs and water, the last two its thatched roofs and houses; beside them the sprites' 32 KB, nearly empty but for the frames on screen; and below, the 256 background colours and the 256 sprite colours.](https://alchemy.pascalpixel.com/guides/system/vram.png)
-
 ## Why the program is cut into banks
+
+The main image is linked in banks, each at a fixed address with a table of
+8-byte stubs in front, so code in one bank reaches another only through that
+table.
+
+```mermaid
+flowchart LR
+    caller["Caller in another bank"] -->|"bl WaitFramesFar"| stub["Far-call table entry:<br/>ldr r4, =WaitFrames; bx r4"]
+    stub --> target["WaitFrames, anywhere in its bank"]
+```
 
 The main image, the part of the program the CPU runs straight from the
 cartridge, is linked in banks. `main.ld` puts each bank at an address of its
@@ -146,7 +106,31 @@ The bank starts differ by edition because each edition's banks hold different
 amounts of code. Most of German's starts fall on 256-byte steps, where the
 other editions' fall on 2 or 4 KB ones.
 
+| Name | Where | Meaning |
+| --- | --- | --- |
+| `overlay_veneer` | `overlay.s` | the 8-byte stub: `ldr r4` of the target, `bx r4` |
+| `far_call/*.S` | first row of each `rom_main_NN` from 01 on | a bank's far-call table, one stub per export (`stub.inc`) |
+| `FarCall_RuntimeTable` | after the cartridge header | the runtime bank's table |
+| `...Far` | each table entry | the name another bank calls (`WaitFramesFar`) |
+
 ## How an overlay reaches the rest of the game
+
+An overlay is a place's code, unpacked into one fixed 32 KB area of EWRAM, and
+it meets the main image only through two tables of stubs.
+
+```mermaid
+flowchart LR
+    subgraph ovl["Overlay, at gOverlayArea"]
+        entry["Entry table: six stubs"]
+        code["Overlay code"]
+        import["Import table: one stub per import"]
+    end
+    field["Field code"] -->|"gOverlayArea.events()"| entry
+    entry --> code
+    code -->|"short bl"| import
+    import -->|"WaitFramesFar"| far["Far-call table entry"]
+    far --> fn["WaitFrames"]
+```
 
 The code for each place the party walks around in is not in the main image.
 It is an overlay: one compressed resource, unpacked into `gOverlayArea` (32 KB
@@ -194,7 +178,23 @@ the same routine has the same bytes wherever it is made from. XXX: likely done
 so the overlays compress better under LZ, because that is what the filter
 achieves; nothing in the ROM says so.
 
+The entry table's members, as `struct SceneEntries` lays them out, each
+behind its veneer word:
+
+| Member | Offset | What it returns |
+| --- | --- | --- |
+| `initialize` | `0x04` | runs the scene's start-up |
+| `entrances` | `0x0c` | the scene's entrances (`struct SceneEntrance`) |
+| `exits` | `0x14` | its exits |
+| `placements` | `0x1c` | its placements (`struct ScenePlacement`) |
+| `events` | `0x24` | its events (`struct SceneEvent`) |
+| `regions` | `0x2c` | its exit regions (`struct SceneRegion`) |
+
 ## The resource directory and table order
+
+Every picture, map, table and overlay is found through one directory by its
+row number, and the far-call tables are reached by place the same way, so
+both keep their order.
 
 Every picture, map, table and overlay the game loads is a row of
 `Resource_DirectoryTable` (`resource/directory.s`), which holds where that
@@ -229,9 +229,19 @@ menu's marker steps through eight frames from `ResourceId_ShopCursorFrames`
 ends with 25 unused rows (`unused 25`), where a row fits without renumbering
 any other.
 
+| Where a number travels without its symbol | Why its rows keep their order |
+| --- | --- |
+| the scene table, `field/scenes.s` | each scene names its overlay as a resource number |
+| `objects.tsv`'s first column | each overlay's rows are numbered by resource |
+| `field/layered.tsv` | numbers counted from `ResourceId_Map001` |
+| `window/window/options.c` | eight frames counted from `ResourceId_ShopCursorFrames` |
+| `field/vertices.c` | `FarCall_RuntimeTable` read at byte offsets 64, 88 and 96 |
+
 ## The addresses that never move
 
-Some places in memory are reached as plain numbers, not through the linker.
+Some places in memory are reached as plain numbers, not through the linker,
+and the layout keeps every one where the code expects it.
+
 `include/ram_buffer.h`, `include/iwram_call.h` and `include/cartboot.h` list
 them, each once, with `FIXED_ADDRESS(type, address, linked)`. The matching
 build compiles the number, and `make modern` compiles the linked name instead
@@ -303,6 +313,59 @@ can build from the names while the matching build keeps the numbers.
   and overlays calls them by place.
 - The resource directory has 25 spare rows at its end.
 
+## Files
+
+| File | What it holds |
+| --- | --- |
+| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound preset records (`IwramCodeRecords`) |
+| `ewram.s`, `iwram.s`, `iwram_hi.s` | the main image's RAM variables, in their order in EWRAM and IWRAM |
+| `runtime.s`, `runtime_irq_table.s`, `runtime_mix*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
+| `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |
+| `cpu_set.s`, `sound_get_jump_list.s` | BIOS calls |
+| `heapfree.s` | `Runtime_ReleaseHeapBlock` and `MemFree` |
+| `updfar.s` | three ARM routines that share one literal pool (`ArcTan2FarArm`, `IwramSqrtFarArm`, `IwramRatioMulQ14FarArm`) |
+| `syspal.s`, `memory/*.png` | the window palette and the basic sprite palettes, built from the PNGs |
+| `overlay.s` | the far-call stub macro, `overlay_veneer` |
+| `overlay.inc` | the head every stub table includes, and the list of stubs an overlay may import |
+| `far_call/*.S` | each bank's far-call table, one stub per export in a fixed order (`stub.inc`) |
+| `overlay/` | `overlays.s` places each overlay's packed stream as a directory resource, `overlay.ld` links each at `gOverlayArea`, and the `ovl_*.s` hold the RAM variables of the overlays that have them |
+| `resource/directory.s` | the resource directory, each row defining its `ResourceId_` name |
+| `resource/*.s`, `resource/metadata_get_record.c`, `resource/colconv*.tsv` | the resource decoders; beside them the OAM build kernel and colour-buffer kernels other code copies into RAM to run, the colour conversion tables, the sprites' shadow and the animation metadata lookup |
+| `save/` | the flash library: the drivers for Atmel, Macronix and SST chips (`FLASH_C`, compiled with pret's `old_agbcc`), and the save record signature, `CAMELOT` (`savedata.c`) |
+
+The unit headers are in `games/tbs/include/unit/system/`, the far-call
+prototypes in `games/tbs/include/farcall/`. Link order, overlays included, is
+in `games/tbs/objects.tsv`; `games/tbs/overlays.tsv` gives each overlay's
+`.bss` header. `games/tbs/main.ld` places the main image's sections, and
+`games/tbs/include/ram_buffer.h` names the fixed RAM addresses the code uses
+as constants. [Matching](../MATCHING.md) explains the markers in the code.
+
+## Words used here
+
+- **bank** and **far call**: the main image is linked in banks (`runtime`,
+  `field`, `window`, `game` and the rest). A function another bank calls is
+  exported through its bank's far-call table and called by its `...Far` name.
+  An entry no code calls by name keeps its place in the table, as a stub with
+  no `...Far` name.
+- **overlay**: code and data unpacked into the overlay area from one
+  compressed resource when a scene or screen needs it: its entry table, its
+  code, and its import table.
+- **resource**: a row of the directory, loaded by its id
+  (`Resource_GetTableEntry`); the id is the `ResourceId_` symbol's value.
+- **resident code**: code, mostly ARM, copied from the ROM into IWRAM at
+  power-up (`.iwram_runtime`) or when sound starts (`.iwram_mixer`).
+
+## Function prefixes
+
+| Prefix | What it acts on |
+| --- | --- |
+| `System_` | the cartridge entry |
+| `Iwram` | the resident IWRAM code and its entry stubs (`IwramIrqMain`, `IwramHalt`, `IwramMulQ16`) |
+| `Bios_` | the BIOS calls |
+| `Resource_`, `ResourceId_` | the resource decoders and the directory's ids |
+| `Flash_`, `EraseFlash`, `ProgramFlash` | the flash library, named as pret names it |
+| `Runtime_`, `Sound_`, `ColorBuffer_`, `Render_` | things the engine names elsewhere |
+
 ## Evidence and open questions
 
 The names follow what each piece does in the link: the far-call tables are
@@ -333,3 +396,7 @@ to its symbol in each edition its `#if` selects.
   banks as resources (the comment in `menu/title.c` suggests as much), but
   The Lost Age's stubs are empty too, and nothing in either ROM loads a bank
   through its row, so only Camelot's sources could say.
+- XXX (picture): the resource directory's rows drawn against the ROM they
+  point into, overlays, maps and pictures each in their own colour.
+- XXX (picture): the EWRAM and IWRAM maps drawn a byte to a pixel through a
+  scene load and a battle, showing each area and the two heaps' reach.

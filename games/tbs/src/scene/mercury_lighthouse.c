@@ -1416,7 +1416,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Engine_EventSetMessage(MsgImilSomebodyHere);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_WalkToAndWait(MIA, 840, 648);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
   Engine_ActorSetAnimation(MIA, 16);
   mia = Object_GetById(MIA);
@@ -1540,7 +1540,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       Event_ShowMessageAndWait(MIA, 0, 20);
       gEventWork->message += 1;
     }
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 60);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER,
+                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     // Garet and Ivan step out to explain Psynergy; Mia tells of Ply.
     actor = Object_GetById(GARET);
     SetEffectRecordMode(actor, 1);
@@ -1558,7 +1559,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(GARET, 0, 20);
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Event_ShowMessageAndWait(MIA, 0, 20);
     Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 20);
@@ -1923,9 +1924,9 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Engine_ActorWaitForMove(GARET);
     Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1944,14 +1945,14 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 792, 200);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 18);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Engine_ActorStartRepeatedMotion(GARET, 2);
     Engine_ActorStartRepeatedMotion(IVAN, 2);
     MercuryLighthouse_RaiseActorWithSparks(ACTOR_PARTY_LEADER);
     Engine_EventWait(60);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 80);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     Engine_ActorFaceEachOther(GARET, IVAN, 20);
     Engine_ActorSetAnimation(GARET, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
@@ -2718,7 +2719,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 5, 90);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);

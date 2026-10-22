@@ -544,19 +544,23 @@ static void Event_JillGivesHardNut(void) {
   eastMember = Actor_Get(ACTOR_GANG_MEMBER_EAST);
   if (eastMember->x.fixed > leader->x.fixed) {
     Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH + FACING_STEP, 20);
-    Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT, 20);
+    Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                    20);
     Engine_EventSetMessage(MsgBilibinYoureGuy);
     Event_ShowMessageAndWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
-    Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT, 0);
+    Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                    0);
   } else {
     Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTHEAST + FACING_STEP,
                         20);
-    Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT, 20);
+    Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                    20);
     Engine_EventSetMessage(MsgBilibinYoureGuy);
     Event_ShowMessageAndWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
-    Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT, 0);
+    Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                    0);
   }
-  Actor_ShowEmote(ACTOR_JILL, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_JILL, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP,
@@ -714,7 +718,8 @@ static void Bilibin_UpdateVillagePillarCells(void) {
   if (leaderColumn == 16) {
     if (leaderRow == 13) {
       Engine_EventBegin();
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 20);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                      20);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
       Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
       if (pillarRow == 13) {

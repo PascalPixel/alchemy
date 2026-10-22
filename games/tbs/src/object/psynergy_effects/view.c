@@ -147,14 +147,15 @@ s32 FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 
 /// The event command "actor show emote": shows an emote bubble (object 21)
 /// over an actor, then waits wait frames. The low 4 bits of emote pick the
-/// bubble's animation (6 also plays sound 110); with 0x100 the bubble takes
-/// sprite priority 1, otherwise the actor's. The bubble rides the actor and
-/// frees itself after 46 frames (gFieldFx_LinkedObjectScript: 16 frames of
-/// squash and stretch, then 30), whatever wait is.
+/// bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_110); with
+/// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the actor's.
+/// The bubble rides the actor and frees itself after 46 frames
+/// (gFieldFx_LinkedObjectScript: 16 frames of squash and stretch, then 30),
+/// whatever wait is.
 void FieldFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   struct FieldActor *target;
 
-  if ((emote & 0xff) == 6) {
+  if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
     AudioCommand_PlayFar(SE_110);
   }
 
@@ -183,7 +184,7 @@ void FieldFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
       bubble->linkedObject = target;
 
       // Replace the bubble's priority bits (2 and 3) with 1 or the actor's.
-      if ((emote & 0x100) != 0) {
+      if ((emote & EMOTE_IN_FRONT) != 0) {
         s32 mask = 13;
         u8 attr = SPRITE_ATTR2_HIGH(sprite);
 

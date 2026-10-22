@@ -420,7 +420,8 @@ static void Event_DiscussSeating(void) {
 static void Event_DiscussLuckyGuessSeats(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
-    Engine_ActorShowEmote(ACTOR_OLD_WOMAN_GOOD_SPOT, 258, 40);
+    Engine_ActorShowEmote(ACTOR_OLD_WOMAN_GOOD_SPOT,
+                          EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Engine_EventSetMessage(MsgColosseumWantWatchFinalsFromGood);
     Engine_EventShowMessage(ACTOR_OLD_WOMAN_GOOD_SPOT, 0);
   } else {
@@ -464,7 +465,8 @@ static void Event_OfferLuckyGuess(void) {
       Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         gEventWork->message++;
-        Actor_ShowEmote(ACTOR_LUCKY_GUESS_MAN, 0x100, 40);
+        Actor_ShowEmote(ACTOR_LUCKY_GUESS_MAN,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
         Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
           gEventWork->message++;
@@ -521,7 +523,7 @@ static void Event_TalkToGalahad(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_GALAHAD, 2);
   Engine_EventSetMessage(MsgColosseumWaahDontFrightenMe);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GALAHAD);
-  Actor_ShowEmote(ACTOR_GALAHAD, 0x102, 40);
+  Actor_ShowEmote(ACTOR_GALAHAD, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_GALAHAD, 0);
   Engine_EventEnd();
 }
@@ -557,7 +559,7 @@ static void Event_TalkToDekka(void) {
     Engine_ActorFaceEachOther(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
     Engine_ActorSetAnimation(ACTOR_NAVAMPA, 4);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
-    Actor_ShowEmote(ACTOR_NAVAMPA, 0x105, 40);
+    Actor_ShowEmote(ACTOR_NAVAMPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
     ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH + FACING_STEP);
     GameFlag_Set(FLAG_PLACE_TEMP_C1);
@@ -631,7 +633,8 @@ static void Event_CrowdRecognizesIsaac(void) {
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
                       20);
   Engine_ActorFaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_EAST, 60);
-  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER, 0x100, 40);
+  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  40);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER,
                                   FACING_SOUTHEAST + FACING_STEP);
   Engine_EventSetMessage(MsgColosseumHeyYouRe);
@@ -648,7 +651,8 @@ static void Event_CrowdRecognizesIsaac(void) {
   Camera_MoveTo(PIXELS(256), -1, PIXELS(172), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 1, 0x102, 40);
+  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  40);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 1);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, 3);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
@@ -656,7 +660,8 @@ static void Event_CrowdRecognizesIsaac(void) {
   Engine_EventWait(40);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_EAST);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 2);
-  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3, 0x103, 40);
+  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_EAST);
   Engine_ActorStartRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 3, 2);
   Engine_EventShowMessageAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, 0, 20);
@@ -756,20 +761,23 @@ static void Event_CrowdRecognizesIsaac(void) {
     Engine_EventWaitForScreen();
   } else {
     Event_SkipMessages(1);
-    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER, 0x102, 40);
+    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 1, 0x102, 40);
+    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_WINCE,
+                    40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 1);
-    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 2, 0x102, 40);
+    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_WINCE,
+                    40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 2);
-    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3, 0x102, 40);
+    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3, EMOTE_IN_FRONT | EMOTE_WINCE,
+                    40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 2);
     Engine_ActorSetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, 4);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
     Engine_ActorRunRepeatedMotion(IVAN, 1);
     Engine_EventWait(20);
     ColosseumEntrance_ShowMessageAndPause(IVAN);
-    Actor_ShowEmote(MIA, 0x102, 40);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     ColosseumEntrance_ShowMessageAndPause(MIA);
     Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER,
                         FACING_NORTHWEST + FACING_STEP, 0);
@@ -785,7 +793,7 @@ static void Event_CrowdRecognizesIsaac(void) {
     Engine_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER + 1, 3);
     Engine_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, 3);
-    Actor_ShowEmote(MIA, 0x100, 60);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     ColosseumEntrance_Turn(MIA, FACING_NORTHWEST);
     ColosseumEntrance_ShowMessageAndPause(MIA);
     Engine_ActorSetAnimation(GARET, 4);
@@ -818,7 +826,7 @@ static void Event_CrowdRecognizesIsaac(void) {
       Engine_EventWait(20);
       Engine_ActorStartRepeatedMotion(GARET, 2);
       Engine_EventShowMessageAndWait(GARET, 0, 20);
-      Engine_ActorShowEmote(IVAN, 0x102, 60);
+      Engine_ActorShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       ColosseumEntrance_ShowMessageAndPause(IVAN);
       ColosseumEntrance_FaceDirection(MIA, FACING_WEST);
       Engine_ActorSetAnimation(MIA, 3);
@@ -1473,7 +1481,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ColorBuffer_ApplyTarget(0x10000, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_EventWait(80);
-  Actor_ShowEmote(IVAN, 0x100, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(20);
   // The soldiers explain Isaac's selection and the companions' role.
@@ -1481,19 +1489,19 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ColosseumEntrance_ShowMessageAndPause(IVAN);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, 3);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
-  Actor_ShowEmote(MIA, 0x102, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ColosseumEntrance_ShowMessageAndPause(MIA);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 1, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH + FACING_STEP, 0);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 1,
                                   FACING_SOUTHEAST + FACING_STEP);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, 0x105, 20);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
-  Actor_ShowEmote(GARET, 0x103, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   ColosseumEntrance_ShowMessageAndPause(GARET);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, 0x102, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, 3);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
@@ -1502,12 +1510,12 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ColosseumEntrance_ShowMessageAndPause(IVAN);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   ColosseumEntrance_ShowMessageAndPause(MIA);
-  Actor_ShowEmote(GARET, 0x103, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   ColosseumEntrance_FaceDirection(GARET, FACING_EAST);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   ColosseumEntrance_ShowMessageAndPause(GARET);
   ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   ColosseumEntrance_FaceDirection(IVAN, FACING_WEST);
   ColosseumEntrance_ShowMessageAndPause(IVAN);
@@ -1517,14 +1525,14 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Engine_ActorRunRepeatedMotion(GARET, 1);
   ColosseumEntrance_FaceDirection(GARET, FACING_SOUTHEAST);
   ColosseumEntrance_ShowMessageAndPause(GARET);
-  Actor_ShowEmote(IVAN, 0x105, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-  Actor_ShowEmote(GARET, 0x102, 0);
-  Actor_ShowEmote(MIA, 0x102, 80);
-  Actor_ShowEmote(IVAN, 0x106, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   ColosseumEntrance_FaceDirection(IVAN, FACING_NORTH);
   ColosseumEntrance_ShowMessageAndPause(IVAN);
@@ -1535,9 +1543,9 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
                                   FACING_SOUTHEAST + FACING_STEP);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, 3);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-  Actor_ShowEmote(GARET, 0x100, 0);
-  Actor_ShowEmote(MIA, 0x100, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
@@ -1556,16 +1564,16 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Actor_ShowEmote(GARET, 0x105, 0);
-  Actor_ShowEmote(IVAN, 0x105, 0);
-  Actor_ShowEmote(MIA, 0x105, 80);
-  Actor_ShowEmote(IVAN, 0x106, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   ColosseumEntrance_FaceDirection(IVAN, FACING_NORTHEAST);
   ColosseumEntrance_ShowMessageAndPause(IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 20);
-  Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, 0x101, 60);
+  Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_OpenMessage(IVAN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
@@ -1590,10 +1598,10 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
                       0);
   Actor_FaceDirection(ACTOR_ESCORTING_SOLDIER, FACING_NORTHWEST + FACING_STEP,
                       20);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, 0x105, 0);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, 0x105, 0);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, 0x105, 0);
-  Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, 0x105, 60);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER,
                                   FACING_SOUTHEAST + FACING_STEP);

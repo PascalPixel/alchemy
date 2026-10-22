@@ -205,7 +205,8 @@ enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_PLACE_TEMP_00 };
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct ScriptInterpreter *interpreter) {
-  Actor_SetAttachedEffect(ACTOR_INN_WORKER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_INN_WORKER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -341,7 +342,7 @@ static void TalkToInnWorker(void) {
   Engine_FieldEndBusyAndReveal();
   Engine_EventSetMessage(MsgLaliveroImSorry);
   Engine_EventWait(50);
-  Actor_ShowEmote(ACTOR_INN_WORKER, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_INN_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_INN_WORKER, ACTOR_PARTY_LEADER, 20);
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Engine_EventWait(10);
@@ -457,7 +458,7 @@ static void ReportToFaran(void) {
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_ActorFaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 5, 70);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
@@ -468,7 +469,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -476,7 +477,7 @@ static void ReportToFaran(void) {
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 5, 50);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
@@ -489,7 +490,7 @@ static void ReportToFaran(void) {
     Engine_EventShowMessage(ACTOR_FARAN, 0);
     Engine_EventWait(10);
     Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Engine_EventWait(10);
     Engine_ActorFaceDirection(GARET, FACING_NORTH, 0);
     Engine_EventWait(20);
@@ -503,7 +504,7 @@ static void ReportToFaran(void) {
     Engine_EventWait(20);
     Engine_EventShowMessage(IVAN, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 40);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Event_OpenMessage(ACTOR_IODEM, 0);
     Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -567,7 +568,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(40);
   Engine_EventWait(10);
   // Faran believes Sheba lived; Iodem explains Adepts.
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -584,7 +585,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(20);
   Engine_ActorFaceDirection(ACTOR_FARAN, FACING_EAST, 0);
@@ -609,15 +610,15 @@ static void ReportToFaran(void) {
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 65);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 65);
   Engine_ActorFaceDirection(ACTOR_FARAN, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
@@ -626,7 +627,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(50);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 6, 60);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
@@ -649,7 +650,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_EventWait(30);
@@ -659,7 +660,7 @@ static void ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_EventShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -668,12 +669,12 @@ static void ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 7, 60);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Engine_ActorFaceDirection(IVAN, FACING_NORTH, 0);
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
@@ -771,7 +772,8 @@ static void TellFaranAboutJenna(void) {
   Engine_EventWait(10);
 
   Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                        60);
   Engine_EventWait(10);
   Engine_ActorFaceDirection(GARET, FACING_NORTH, 0);
   Engine_EventWait(20);

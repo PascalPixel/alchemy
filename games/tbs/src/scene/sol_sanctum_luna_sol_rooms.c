@@ -350,7 +350,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(7) / 5, PIXELS(7) / 10);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 206);
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Engine_ActorJump(ACTOR_KRADEN, 4, 60);
     // Kraden: "This is it! We've found it!"
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 20);
@@ -409,7 +409,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST, 40);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 20);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     // Garet: "Kraden? What's the matter?" Kraden: "We're so close..." The
     // three wonder at turning back from the heart of the sanctum.
     Engine_EventShowMessage(GARET, 0);
@@ -417,22 +417,22 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
     Engine_EventWait(40);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 20);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     SolSanctumLunaSolRooms_ShowMessageAndWait(JENNA, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Engine_EventWait(20);
     SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 80);
-    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTHEAST + FACING_STEP, 0);
@@ -447,7 +447,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
       Engine_EventSetMessage(MsgSolSanctumThank);
     } else {
       Engine_EventSetMessage(MsgSolSanctumGoBackVillage);
-      Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 7, 20);
+      Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     }
     Engine_ActorJump(ACTOR_KRADEN, 4, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -464,7 +464,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 20);
     Engine_ActorJump(ACTOR_KRADEN, 6, 20);
-    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 4, 20);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 20);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 30);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimation(GARET, ANIM_NOD);
@@ -562,7 +562,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   request = MsgSolSanctumMeanLookFarther;
   Engine_EventSetMessage(request);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
@@ -866,7 +866,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   // Kraden turns, startled: "What's happening?"
   Engine_EventSetMessage(MsgSolSanctumWhatsHappeningAtTheTrap);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_KRADEN, 6, 30);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
   Engine_CameraWaitForMove();
@@ -925,7 +925,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   // Kraden turns, startled: "What's happening?" The lights flash four times.
   Engine_EventSetMessage(MsgSolSanctumWhatsHappening);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_KRADEN, 6, 30);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
   Engine_CameraWaitForMove();
@@ -1223,8 +1223,9 @@ static void Event_RiseToElementalStarRoom(void) {
       Map_CopyCellsTo(0, 32, 17, 39, 2, 1);
       Map_CopyCellsTo(44, 59, 17, 40, 2, 1);
       Engine_EventWait(10);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-      Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                      0);
+      Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       Map_CopyCellsTo(42, 62, 17, 36, 2, 3);
       Map_CopyCellsTo(0, 32, 17, 40, 2, 1);
       Map_CopyCellsTo(44, 59, 17, 41, 2, 1);

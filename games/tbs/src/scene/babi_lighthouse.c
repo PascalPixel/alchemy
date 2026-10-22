@@ -265,12 +265,14 @@ static void BabiLighthouse_LandWithParticles(void) {
                   &options);
   }
   Engine_AudioPlayCue(SE_188);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   Map_SetShake(0x50000, 0x50000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
   Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   Engine_EventEnd();
@@ -361,7 +363,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
       (leader->z.fixed >> 20) == 20) {
     leader->targetX = ACTOR_NO_TARGET;
     leader->targetZ = ACTOR_NO_TARGET;
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
     {
@@ -537,7 +539,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_EAST, 0);
@@ -556,14 +558,14 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 7, 40);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 1, 75);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 75);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_SOUTH, 0);
@@ -583,7 +585,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
@@ -615,7 +617,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetSpeed(ACTOR_FARAN, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_FARAN, 0, 16);
   Engine_EventWait(20);
@@ -629,7 +631,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -640,7 +642,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_OpenMessage(ACTOR_FARAN, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
@@ -656,7 +658,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
     Event_ShowMessage(ACTOR_FARAN, 0);
   }
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
@@ -669,13 +671,13 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x14ccc, 0xa666);
   Actor_WalkByAndWait(ACTOR_DOUBTING_THE_DOOR, 0, 16);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 7, 50);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Engine_EventWait(25);
   Event_ShowMessage(ACTOR_IODEM, 0);
@@ -776,15 +778,17 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_ActorJump(ACTOR_IODEM, 4, 13);
   Engine_ActorJump(ACTOR_IODEM, 4, 30);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
@@ -797,10 +801,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 1, 50);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(25);
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
@@ -818,7 +822,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -859,7 +863,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   GameFlag_Clear(FLAG_BEYOND_DOOR);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventBegin();
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
@@ -873,14 +877,16 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 70);
+  Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
   Camera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
@@ -897,7 +903,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(30);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
@@ -906,7 +912,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 3, 50);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Engine_EventWait(20);
   // Explain the restriction and ask the onlookers to leave the pursuit to us.
@@ -955,7 +961,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
@@ -974,7 +980,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(15);
   Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);

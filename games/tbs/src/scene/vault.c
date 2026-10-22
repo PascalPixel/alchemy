@@ -427,7 +427,8 @@ static void Event_LookForRoofer(void) {
   Engine_EventSetMessage(MsgVaultFixingRoofCant);
   Vault_FaceActorAndWait(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, ACTOR_PARTY_LEADER,
                          2);
-  Engine_ActorShowEmote(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0x103, 0);
+  Engine_ActorShowEmote(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED,
+                        EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_EventWait(30);
   Engine_EventOpenMessage(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0);
   Engine_EventEnd();

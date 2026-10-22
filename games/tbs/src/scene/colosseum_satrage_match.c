@@ -1387,7 +1387,7 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
     Engine_EventShowMessage(attendant, 0);
     ColosseumSatrageMatch_PushObstacleToCell(ROLLING_LOG_EAST, 360, 208);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 8, 45);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SMILE, 45);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 216);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 248);
@@ -1530,7 +1530,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
     Engine_EventWait(result * 60 + 60);
     reactingActor = 8;
   }
-  Engine_ActorShowEmote(reactingActor, EMOTE_IN_FRONT | 5, 0);
+  Engine_ActorShowEmote(reactingActor, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }

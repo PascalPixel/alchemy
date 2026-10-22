@@ -978,7 +978,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   boulder = Actor_Get(ACTOR_FALLING_BOULDER);
   shadow = Actor_Get(ACTOR_BOULDER_SHADOW);
   rock = Actor_Get(ACTOR_STANDING_LOG);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
@@ -987,7 +988,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 792, 140);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_PlayCue(SE_183);
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_EventWait(20);
@@ -1016,12 +1017,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   rock->sprite->rotation = 0xc000;
   Event_PlayCue(SE_107);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Event_PlayCue(MUS_055);
   Map_SetShake(PIXELS(1), PIXELS(3), Q16_ONE);
   Engine_ActorSetSpritePriority(ACTOR_FALLING_BOULDER, 0);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // Send the leader first, then release the rolling object after its delay.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   leader->timer = 0;
@@ -1087,8 +1089,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Camera_MoveTo(PIXELS(788), -PIXELS(64), PIXELS(610), 1);
   Engine_CameraWaitForMove();
   Event_PlayCue(SE_148);
@@ -1163,8 +1165,8 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Event_PlayCue(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(GARET, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
@@ -1173,7 +1175,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_FaceDirection(GARET, 0, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTH, 40);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_FaceDirection(GARET, FACING_SOUTH, 20);
     Engine_ActorStartRepeatedMotion(GARET, 2);
     Event_ShowMessageAndWait(GARET, 0, 10);
@@ -1187,7 +1189,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_MoveToAndWait(GARET, 764, 166);
     Actor_MoveToAndWait(GARET, 764, 198);
     Actor_MoveToAndWait(GARET, 786, 198);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_MoveToAndWait(GARET, 786, 246);
     Engine_ActorSetAnimation(GARET, ANIM_STAND);
     Actor_SetPosition(GARET, 0, 0);
@@ -2120,7 +2122,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   Actor_SetDestination(ACTOR_STATUE, 328, 104);
   Actor_SetDestination(ACTOR_STATUE_SHADOW, 328, 108);
   Engine_EventWait(60);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorWaitForMove(ACTOR_STATUE);
   Battle_SetStart(BATTLE_START_SCENE);
@@ -2206,14 +2208,14 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Engine_EventSetMessage(MsgAltinGuardianStatuesWereCreatedLong);
   Event_ShowMessage(MIA, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 40);
   Event_ShowMessage(GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_PlayCue(SE_190);
   Actor_SetChildValue(ACTOR_STATUE, 7);
   Engine_EventWait(10);
@@ -2222,10 +2224,10 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_PlayCue(SE_103);
   // Animate the statues while the party reacts.
   update = AltinPeak_FlickerStatue;

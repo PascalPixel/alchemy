@@ -478,7 +478,7 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Engine_EventWait(180);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(80);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 479);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
@@ -493,8 +493,8 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -504,8 +504,8 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_ActorJump(GARET, 6, 60);
   Actor_SetPosition(JENNA, PIXELS(475), PIXELS(332));
@@ -538,7 +538,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Engine_ActorSetAnimation(ACTOR_MENARDI, 4);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorJump(ACTOR_KRADEN, 4, 10);
   Engine_ActorJump(ACTOR_KRADEN, 6, 30);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
@@ -548,10 +548,10 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorFaceDirection(JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHWEST + FACING_STEP, 80);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
@@ -572,8 +572,8 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   felix->y.fixed = PIXELS(40);
   Engine_EventWait(1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 10);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 30);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 0);
@@ -726,7 +726,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT, 20);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetAttachedEffect(ACTOR_FELIX_MASKED,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 3);
@@ -746,7 +746,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Event_AskYesNo(GARET, 0);
   Engine_EventWait(10);
@@ -864,7 +864,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 80);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_MENARDI, 2);
@@ -998,7 +998,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   SolSanctumElementalStarRoom_AnimateAlexTeleport();
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(GARET, 2);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
   Engine_EventWait(20);
@@ -1031,10 +1031,10 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Engine_EventWait(10);
   Engine_EventSetMessage(MsgSolSanctumPermitRelieveElemental + 5);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 20);
@@ -1051,14 +1051,14 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   actor->motionFlags = 5;
   Engine_ActorStartRepeatedMotion(GARET, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 10);
-  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH + FACING_STEP, 10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 30);
-  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 10);
   Engine_EventCloseScreen();
@@ -1112,7 +1112,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Engine_CameraFollowActor(GARET, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(20);
   actor = Object_GetById(GARET);
@@ -1496,9 +1496,9 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorSetAnimation(JENNA, 1);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
   Engine_ActorJump(JENNA, 2, 0);
   Engine_ActorJump(GARET, 2, 40);
@@ -1546,7 +1546,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(20);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 60);
@@ -1611,7 +1611,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 306);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_KRADEN, 2, 80);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(30);
@@ -1650,14 +1650,14 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 10);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
@@ -1694,7 +1694,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 360);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 30);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(30);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 30);
@@ -1785,11 +1785,11 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(464), 306, 362,
                                            0x2009);
   Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 4, 60);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 40);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
   Engine_ActorJump(ACTOR_KRADEN, 4, 0);
@@ -1800,9 +1800,9 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 3);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
@@ -1818,17 +1818,17 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorJump(ACTOR_KRADEN, 4, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 6, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 6, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 6, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 20);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
@@ -1857,10 +1857,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 120);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Engine_ActorJump(GARET, 4, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
@@ -1947,19 +1947,19 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_MoveToAndWait(ACTOR_KRADEN, 471, 360);
   Engine_TaskWait(6);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 80);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 7, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 30);
   Actor_FaceDirection(JENNA, FACING_EAST, 30);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 6, 60);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 30);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
@@ -1991,7 +1991,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   // Jenna keeps asking until Isaac agrees to collect the stars.
   while (Engine_EventChooseYesNo(0, 0) != 0) {
     Engine_EventSetMessage(MsgSolSanctumJennaWontYouPlease);
-    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 7, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
     Engine_ActorJump(JENNA, 4, 60);
     Event_OpenMessage(JENNA, 0);
   }
@@ -2023,15 +2023,15 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 30);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);

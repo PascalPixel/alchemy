@@ -53,10 +53,6 @@ enum ActorAnimation {
   ANIM_SHAKE_HEAD = 4
 };
 
-/// Engine_ActorShowEmote: the bubble takes sprite priority 1 instead of its
-/// actor's. The low four bits pick the bubble's animation.
-#define EMOTE_IN_FRONT 0x100
-
 // Speaker bits, above the actor id in the low 12 bits of a message command's
 // speaker, as UiText_OpenMessageAtObject reads them.
 #define SPEAKER_PORTRAIT_LEFT 0x1000  ///< the portrait left of the speaker

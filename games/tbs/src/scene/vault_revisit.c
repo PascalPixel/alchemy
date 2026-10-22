@@ -250,7 +250,8 @@ static void Event_GreetWarriorGuy(void) {
   Engine_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
   Engine_ActorFaceEachOther(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   if (GameFlag_IsSet(FLAG_WARRIOR_GUY_GREETED) == 0) {
-    Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL, EMOTE_IN_FRONT, 60);
+    Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL,
+                    EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Event_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
     Event_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
     GameFlag_Set(FLAG_WARRIOR_GUY_GREETED);

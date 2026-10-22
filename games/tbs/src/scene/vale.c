@@ -422,18 +422,18 @@ static void Event_ArgueWithGaretsSister(void) {
   if (GameFlag_IsSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS) == 0) {
     GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
     Engine_EventSetMessage(MsgValeYouMakeMeSoMad);
-    Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 3, 0);
+    Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);
     Event_ShowMessageAndWait(ACTOR_GARETS_SISTER, 0, 6);
     Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_WEST, 30);
     Engine_ActorJump(ACTOR_GARETS_SISTER, 2, 20);
     Event_ShowMessageAndWait(ACTOR_GARETS_SISTER, 0, 6);
     Engine_ActorFaceEachOther(ACTOR_GARETS_SISTER, ACTOR_PARTY_LEADER, 10);
-    Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 3, 0);
+    Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_ShowMessageAndWait(ACTOR_GARETS_SISTER, 0, 10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   } else {
-    Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 3, 0);
+    Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Engine_EventSetMessage(MsgValeIllGetYouForMy);
     Event_ShowMessageAndWait(ACTOR_GARETS_SISTER, 0, 20);
   }
@@ -785,13 +785,14 @@ static void Event_WarnAgainstSneakingUpMtAleph(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH,
                       FACING_SOUTHEAST + FACING_STEP, 24);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(3) / 2, PIXELS(1));
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeLeaderWalkActions);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH,
                         gValeAlephGuardWalkActions);
   Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
@@ -837,12 +838,14 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
-  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 0, 20);
+  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, leaderActions);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_RunActionScriptAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, replyActions);
   Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
   Engine_EventWait(20);
@@ -1094,7 +1097,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
@@ -1153,14 +1156,15 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 30);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
@@ -1170,7 +1174,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(JENNA, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 30);
@@ -1212,7 +1216,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_FaceDirection(JENNA, FACING_WEST, 30);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_OpenMessage(ACTOR_DORA, 0);
@@ -1223,7 +1227,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 
   Engine_EventSetMessage(MsgValeAsStubbornAsYourFather);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Engine_EventWait(30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
@@ -1250,9 +1254,9 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Actor_WalkToAndWait(GARET, 374, 827);
   Event_ShowMessage(JENNA, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 10);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Engine_ActorSetAnimation(GARET, 13);
   Engine_ActorJump(GARET, 2, 5);
   Map_SetShake(0, PIXELS(4), Q16_ONE);
@@ -1262,7 +1266,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Engine_ActorStartRepeatedMotion(GARET, 3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Engine_ActorSetAnimation(ACTOR_DORA, 8);
   actor->scaleY = 0x8000;
   Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
@@ -1291,14 +1295,15 @@ UNUSED static void Event_UnusedRoofMended(void) {
   actor = Actor_Get(ACTOR_DORA);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 80);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Actor_SetAttachedEffect(ACTOR_DORA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_DORA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
@@ -1313,13 +1318,14 @@ UNUSED static void Event_UnusedRoofMended(void) {
   actor = Actor_Get(GARET);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(GARET, 403, 827);
-  Actor_SetAttachedEffect(JENNA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(JENNA, FACING_NORTH, 20);
   Event_ShowMessageAndWait(JENNA, 0, 1);
   Engine_ActorWaitForMove(GARET);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorSetAnimation(GARET, 13);
   Engine_ActorJump(GARET, 2, 5);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
@@ -1328,12 +1334,12 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 30);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetSpeed(JENNA, PIXELS(3) / 10, PIXELS(3) / 20);
   Actor_WalkToAndWait(JENNA, 408, 855);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorStartRepeatedMotion(JENNA, 3);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(80);
@@ -1352,12 +1358,12 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 80);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 80);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 70);
@@ -1380,7 +1386,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   Engine_EventWait(10);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
-  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Engine_EventWait(30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
@@ -1612,7 +1618,8 @@ static void Event_GaretMeetsHisSister(void) {
   }
   Event_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 40);
-  Actor_ShowEmote(ACTOR_GARETS_SISTER_AFTER_KALAY, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_GARETS_SISTER_AFTER_KALAY,
+                  EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_EventSetMessage(msg + 6);
   Event_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
@@ -1627,7 +1634,7 @@ static void Event_GaretMeetsHisSister(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 120);
   Event_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY,
                                   ANIM_SHAKE_HEAD);
@@ -1674,7 +1681,8 @@ static void Event_GaretAsksToProtectFamily(void) {
   Engine_EventSetMessage(MsgValeHowHaveYouBeen);
   Event_ShowMessage(GARET, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
-  Actor_ShowEmote(ACTOR_GARETS_BROTHER_AFTER_KALAY, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_GARETS_BROTHER_AFTER_KALAY,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
@@ -1689,7 +1697,7 @@ static void Event_GaretAsksToProtectFamily(void) {
                       FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Engine_ActorStartRepeatedMotion(GARET, 1);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
@@ -1705,15 +1713,15 @@ static void Event_GaretAsksToProtectFamily(void) {
   Event_ShowMessageAndWait(GARET, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
   Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 20);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 60);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   } else {
     gEventWork->message++;
   }
@@ -1770,7 +1778,8 @@ UNUSED static void Event_UnusedWaterBurstsByTheRiver(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_TaskWait(20);
   Actor_RunActionScriptAndWait(ACTOR_FIRST_WATER + 2, actions);
-  Actor_ShowEmote(ACTOR_STRONGMAN_REMEMBERING_FELIX, EMOTE_IN_FRONT | 0, 40);
+  Actor_ShowEmote(ACTOR_STRONGMAN_REMEMBERING_FELIX,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_REMEMBERING_FELIX, 2);
   Actor_FaceDirection(ACTOR_STRONGMAN_REMEMBERING_FELIX,
                       FACING_NORTH + FACING_STEP, 10);
@@ -2009,7 +2018,7 @@ static void Event_MendingTheRoof(void) {
   Actor_FaceDirection(JENNA, FACING_EAST, 40);
   Event_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | GARET, 0, 10);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(JENNA, 4, 40);
   Actor_FaceDirection(JENNA, FACING_NORTH, 30);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
@@ -2022,7 +2031,7 @@ static void Event_MendingTheRoof(void) {
   Actor_WalkToAndWait(JENNA, 456, 739);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
 
@@ -2083,15 +2092,15 @@ static void Event_MendingTheRoof(void) {
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
@@ -2104,7 +2113,7 @@ static void Event_MendingTheRoof(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
@@ -2115,19 +2124,19 @@ static void Event_MendingTheRoof(void) {
   Actor_SetAttachedEffect(JENNA, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 10);
@@ -2147,7 +2156,7 @@ static void Event_MendingTheRoof(void) {
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | GARET, 0, 20);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2156,7 +2165,7 @@ static void Event_MendingTheRoof(void) {
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Engine_ActorJump(JENNA, 4, 30);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 3);
@@ -2167,8 +2176,8 @@ static void Event_MendingTheRoof(void) {
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 40);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(JENNA, 428, 628);
   Engine_EventWait(20);
@@ -2481,7 +2490,7 @@ static void Event_RoofMended(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2542,9 +2551,9 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_ShowEmote(ACTOR_DORA, 257, 80);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -2554,7 +2563,7 @@ static void Event_RoofMended(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_DORA, 261, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(JENNA, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 10);
@@ -2592,7 +2601,7 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(JENNA, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_OpenMessage(ACTOR_DORA, 0);
   none = 0;
@@ -2602,7 +2611,7 @@ static void Event_RoofMended(void) {
   }
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Engine_EventSetMessage(MsgValeAsStubbornAsYourFather);
-  Actor_ShowEmote(ACTOR_DORA, 259, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Engine_ActorJump(ACTOR_DORA, 4, 0);
@@ -2632,9 +2641,9 @@ static void Event_RoofMended(void) {
 #endif
   Event_ShowMessage(JENNA, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_ShowEmote(JENNA, 256, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
-  Actor_ShowEmote(GARET, 256, 10);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Engine_ActorSetAnimation(GARET, 13);
   Engine_ActorJump(GARET, 2, 5);
   Event_PlayCue(SE_143);
@@ -2645,7 +2654,7 @@ static void Event_RoofMended(void) {
   Engine_ActorStartRepeatedMotion(GARET, 3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
-  Actor_ShowEmote(GARET, 258, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Engine_ActorSetAnimation(ACTOR_DORA, 8);
   actor->scaleY = 0x8000;
   Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
@@ -2672,14 +2681,14 @@ static void Event_RoofMended(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   actor->priorityFlags &= 0xfe;
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 80);
-  Actor_ShowEmote(ACTOR_DORA, 257, 80);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_DORA, 258);
   Engine_EventWait(80);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 40);
-  Actor_ShowEmote(GARET, 258, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_FaceDirection(GARET, FACING_WEST, 20);
@@ -2699,7 +2708,7 @@ static void Event_RoofMended(void) {
   Engine_ActorWaitForMove(GARET);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_ShowEmote(GARET, 256, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorSetAnimation(GARET, 13);
   Engine_ActorJump(GARET, 2, 5);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
@@ -2709,12 +2718,12 @@ static void Event_RoofMended(void) {
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
-  Actor_ShowEmote(GARET, 258, 30);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetSpeed(JENNA, PIXELS(3) / 10, PIXELS(3) / 20);
   Actor_WalkToAndWait(JENNA, 408, 855);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  Actor_ShowEmote(ACTOR_DORA, 261, 60);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorStartRepeatedMotion(JENNA, 3);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(80);
@@ -2733,12 +2742,12 @@ static void Event_RoofMended(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 80);
-  Actor_ShowEmote(ACTOR_DORA, 261, 80);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
-  Actor_ShowEmote(JENNA, 257, 0);
-  Actor_ShowEmote(GARET, 257, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
@@ -2761,7 +2770,7 @@ static void Event_RoofMended(void) {
   Engine_EventWait(10);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
-  Actor_ShowEmote(ACTOR_DORA, 256, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Engine_EventWait(30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);

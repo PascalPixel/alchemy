@@ -383,12 +383,12 @@ static void SetSail(void) {
   UiText_OpenMessageAtObject(1, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 50);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Engine_EventShowMessage(GARET, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 50);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     gEventWork->message++;
     Engine_EventShowMessage(GARET, 0);
   }
@@ -396,19 +396,19 @@ static void SetSail(void) {
   // Ivan and Mia remind Garet of their promise to Babi, and Lemuria comes up.
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 50);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(10);
   Engine_ActorFaceDirection(GARET, FACING_EAST, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Engine_EventWait(30);
   Engine_ActorFaceDirection(MIA, FACING_NORTHWEST, 0);
   Engine_EventWait(30);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 50);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -442,7 +442,7 @@ static void SetSail(void) {
   Engine_EventWait(10);
   // Ivan: their first time on the ocean; Garet: the ocean Kraden wanted
   // him to see.
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 50);
+  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Engine_EventWait(10);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Engine_EventWait(20);

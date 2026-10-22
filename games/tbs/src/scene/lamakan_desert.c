@@ -599,7 +599,7 @@ static void CollapseFromHeat(void) {
                       EFFECT_SCALE_TO_TARGET,
                   &options);
   }
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 4, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
   hold = (u16 *)(work + 0xcba);
   progress = &gGameState.hazardSteps;
@@ -737,10 +737,12 @@ static void FallIntoPit(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, best, 0);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(60);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   record = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = (record->facing + 0x8000) & -0x1000;
@@ -759,9 +761,10 @@ static void FallIntoPit(void) {
                                record->z.part.pixel);
   }
   Engine_EventWait(60);
-  Actor_ShowEmote(best, EMOTE_IN_FRONT | 4, 0);
+  Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Engine_EventWait(60);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   record = Object_GetById(ACTOR_PARTY_LEADER);
   record->update = NULL;
@@ -805,7 +808,8 @@ static void SlideDownDune(void) {
   }
   if (hit < 0) {
     // Let the fall complete before returning to ordinary field movement.
-    Actor_SetAttachedEffect(id, EMOTE_IN_FRONT | 2);
+    Actor_SetAttachedEffect(id,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + 0x80000);
     Object_SetMode(actor, 7);
@@ -877,7 +881,8 @@ static void MeetManticore(void) {
       Actor_FaceActor(ACTOR_PARTY_LEADER, MANTICORE, 0);
       Engine_EventWait(40);
       Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Engine_EventWait(40);
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       backwardOffset.x = paused;

@@ -1,36 +1,42 @@
 # Battles
 
-![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
+![Who acts first in a round, from first to last. First the Djinn Granite, Flash and Ground, which guard or hold an enemy, before everyone. Then everyone by Agility, highest first: a party member's Agility with up to a sixteenth more at random each round, an enemy's as it is, a tie keeping the party ahead and the enemies in a shuffled order. A unit's second action in a round comes at half its Agility. Defend is raised before anyone acts, so it guards for the whole round.](https://alchemy.pascalpixel.com/illustrations/battle/turn-order.svg)
 
-The battle code runs a fight from its opening transition to the spoils: it
-builds the units, gathers each round's actions and sorts them into turns,
-plans each action, stages it, and applies the ability to every target. Three
-other folders share the work. [Battle effects](../effect/README.md) draws the
+Everything the rules of a fight decide is worked out here: who acts in what
+order, which enemy does what, who an ability reaches, whether a blow misses
+or lands a critical hit, how much damage each target takes, and which
+statuses take hold and for how long. The answers come from tables and dice
+rolls, and each one shows up on screen as a message such as
+`Ivan takes 15 damage!`.
+
+The code runs a fight from its opening transition to the spoils: it builds
+the units, gathers each round's actions and sorts them into turns, plans each
+action, stages it, and applies the ability to every target. Three other
+folders share the work. [Battle effects](../effect/README.md) draws the
 animations, `../window` holds the command menu and the party's status
 window, and [Game rules](../game/README.md) holds the ability, item and enemy
 tables and the arithmetic in `game/battle_calc.c`. [Battle](../../battle.md)
-explains how a battle is entered from the field and how the rules and the
-effects run at the same time; this page explains the code underneath.
+explains a battle as a whole, how it is entered from the field and how the
+rules and the effects run at the same time; this page explains the rules
+underneath.
 
 ## Rounds
 
-A battle is a loop of rounds: each gathers every unit's action, sorts them
-into turns and plays them one after another, until one side has no unit
-standing or the party gets away.
+A battle is a loop of rounds. In each, every unit chooses an action, the
+actions line up fastest first, and they play one after another, until one
+side has no unit standing or the party gets away.
+[Battle](../../battle.md) opens with a picture of that loop; the picture at
+the top of this page is the order inside one round.
 
-```mermaid
-flowchart TD
-    start["Battle_RunEncounter:<br/>formation.c builds the enemy units,<br/>transition.c plays the opening"] --> gather
-    gather["round.c gathers the actions<br/>and BattleQueue_SortByPriority<br/>puts them in turn order"] --> plan
-    plan["BattleCommand_BuildPlan<br/>announces the next action"] --> stage
-    stage["BattlePresentation_DispatchAction<br/>stages it and runs its effect"] --> exec
-    exec["BattleTarget_Execute,<br/>once a target"] --> turnend
-    turnend["turn_end.c closes the turn"] --> more{{"another action<br/>this round?"}}
-    more -->|yes| plan
-    more -->|no| over{{"a side beaten,<br/>or the party fled?"}}
-    over -->|no| gather
-    over -->|yes| spoils["spoils.c: coins, experience,<br/>items and level ups"]
-```
+Who acts first is decided by Agility, highest first, with three twists. A
+Djinni that guards or holds an enemy (Granite, Flash and Ground) goes before
+everyone. A party member's Agility gains up to a sixteenth more at random
+each round, so two members of nearly equal speed may swap places from one
+round to the next; an enemy's Agility counts as it is, and enemies of equal Agility go in a
+shuffled order. And a unit that acts twice in a round has its second action
+at half its Agility, so it usually comes late. Defend is raised as soon as
+the actions are sorted, before anyone acts, so a defending unit is guarded
+against everything that round, even the fastest enemy.
 
 `Battle_RunEncounter` ([`battle/encounter.c`](battle/encounter.c)) fights the
 whole battle and returns the number of enemies defeated, `ENCOUNTER_FLED` or
@@ -46,13 +52,15 @@ standing or the party gets away:
 1. `round.c` gathers the actions: the party's from the command menu
    (`BattlePresentation_BuildActions`), or from `auto_battle.c` under
    `FLAG_AUTO_BATTLE`; the enemies' from `BattleCommand_SelectAutomatic`
-   (`enemy_ai.c`), or from the other console in a link battle. A unit with
-   two actions a round is listed twice, an enemy's second entry at half its
-   Agility.
-   `BattleQueue_SortByPriority` sorts them by Agility, fastest first, except
-   that a Djinni whose added effect is a guard or Ground (Granite, Flash,
-   Ground) goes before everyone. Defend and Total Defense are raised here,
-   before anyone acts.
+   (`enemy_ai.c`), or from the other console in a link battle. Each action's
+   priority is the unit's Agility; a party member's gains a random 0 to a
+   sixteenth of it (`Battle_CollectPartyCommands`). A unit with two actions
+   a round is listed twice, its second entry at half its Agility. The party's
+   entries come first and the enemies' in a shuffled order.
+   `BattleQueue_SortByPriority` sorts them, highest first, keeping the order
+   of equal priorities; a Djinni whose added effect is a guard or Ground
+   (Granite, Flash, Ground) has `DJINN_FIRST_PRIORITY` added and goes before
+   everyone. Defend and Total Defense are raised here, before anyone acts.
 2. `BattleCommand_BuildPlan` (`plan.c`) announces each action and fills the
    plan.
 3. `BattlePresentation_DispatchAction` (`staging.c`) stages the plan and runs
@@ -74,14 +82,28 @@ standing or the party gets away:
 
 ### Enemy actions
 
+A Gryphon in battle uses Wing Flutter more often than anything else and
+Ward least often. Every enemy has a list of eight
+actions and a habit for choosing among them, and the dice do the rest.
+
+![How an enemy picks its action. A Gryphon's eight actions, each with its chance under its strategy, which favours the top of the list: Wing Flutter 53 in 256, Tornado 47, Twin Beaks 41, Impact 35, Attack 29, Sonic Slash 23, Bind 17 and Ward 11. As the round starts the enemy draws once: a guard it draws, Defend or Total Defense, is kept and raised at once, and anything else waits for its turn. At its turn it draws again until it can use the pick: too little PP, a seal, or nobody worth aiming at means another draw, and 18 failed draws make it defend. Other enemies draw at 32 in 256 each, favour the first from 113 down to 5, or go down the list in order.](https://alchemy.pascalpixel.com/illustrations/battle/enemy-action.svg)
+
 An enemy picks one of the eight abilities in its row of `../game/enemies.tsv`
 by its action strategy (`enum EnemyActionStrategy`). Three strategies draw at
 random by a row of `gBattleCommand_SelectionWeights`: evenly, falling by 6 a
 place, or falling steeply from 113 in 256 to 5. The other four take the list
 in order, from a random place or the first, or repeat the last pick, and
-remember their place between turns. A
-pick the enemy cannot use (too little PP, a seal, no target worth it) is
-drawn again, and after 18 failed picks the enemy defends.
+remember their place between turns.
+
+`BattleCommand_SelectAutomatic` runs twice for each enemy. As the round is
+built (`retry` 0) it draws once and keeps the pick only if it is a guard, so
+that the guard is raised with the party's before anyone acts. At the enemy's
+turn (`retry` 1) it draws again for anything else, and a guard drawn then is
+refused. A pick the enemy cannot use (too little PP, a seal, no target worth
+it) is drawn again, and after 18 failed picks the enemy defends.
+
+The picture below is the game's own evidence for the Gryphon's chances: the
+same moment replayed with every possible roll.
 
 ![Two Gryphons against Isaac, Garet, Ivan and Mia, at the moment the first Gryphon casts Bind. Beside the screen, the Gryphon's eight actions from its row of `enemies.tsv`, each in its own colour with its chance under `ACTION_STRATEGY_FALLING` from `gBattleCommand_SelectionWeights` drawn as a bar: Wing Flutter 53 in 256, Tornado 47, Twin Beaks 41, Impact 35, Attack 29, Sonic Slash 23, Bind 17 (the one played) and Ward 11, with the rolls each takes. Below, a strip of the 256 rolls in the colour of the action the game took when `BattleCommand_SelectAutomatic` was run from the same moment with its roll answered with that number: rolls 0 to 52 take Wing Flutter, 53 to 99 Tornado, 100 to 140 Twin Beaks and so on to 245 to 255 for Ward, each span as wide as its chance.](https://alchemy.pascalpixel.com/guides/battle/enemy-actions.png)
 
@@ -102,13 +124,22 @@ guard is raised with the party's before anyone acts.
 
 ### First strikes and escape
 
+Now and then a random battle opens with `Isaac's party attacks first!`, and
+the enemies stand still for a round; more rarely it opens with
+`Isaac's party was caught by surprise!`, and some of the enemies act before
+the party can choose anything. Running away works the same kind of way: a
+chance that grows with every failed try.
+
+![Who gets the jump. A random battle opens with two rolls. One time in 16 the party strikes first: no enemy acts in the first round, and running away cannot fail. Otherwise, one time in 32 the party is caught by surprise: it chooses nothing, and two to five enemies act, once each. Otherwise the round is a normal one. A bar shows the shares: about 6 percent, about 3 percent and 91 percent. Only random encounters roll; the Djinn lesson always gives the party the first strike. Running away succeeds 50 percent of the time, plus 20 percent for each failed try and 5 percent for each level the party is ahead; a failed try gives the rest of the round to the enemies, as in a surprise.](https://alchemy.pascalpixel.com/illustrations/battle/first-strike.svg)
+
 `BattleWork.encounterMode` records which side has the jump. In a random
 encounter (`BATTLE_START_NORMAL`) the party strikes first one time in 16, and
 otherwise the enemies one time in 32; the Djinn tutorial (`FLAG_DJINN_LESSON`)
 always gives the party the first strike. When the party strikes first, no
 enemy acts in that round and running away cannot fail. When the enemies do,
 the party chooses no commands, and two to five enemies, drawn at random, act
-once each. The mode returns to normal at the round's end.
+once each. The mode returns to normal at the round's end. The picture
+below opens the same encounter both ways in the game itself.
 
 ![The same random encounter with four enemies, the Lizard King, a Harridan and two Stone Soldiers, opened twice, side by side as two columns of moments. Left, the first-strike roll (1 in 16) came up, `Battle_Random` answered 0 in `Battle_RunEncounter`: `Isaac's party attacks first!` with `encounterMode` `BATTLE_ENCOUNTER_PARTY_FIRST`, Ivan's attack as the round's first action, Garet's as its fourth and last, and the second round's command menu with the mode back to `BATTLE_ENCOUNTER_NORMAL`; four party members act and no enemy does. Right, that roll failed and the surprise roll (1 in 32) came up: `Isaac's party was caught by surprise!` with `BATTLE_ENCOUNTER_ENEMIES_FIRST`, a Stone Soldier's Blast as the first action and the Lizard King's Ice Blessing as the third and last, then the second round's command menu; three of the four enemies act and the party chooses no commands.](https://alchemy.pascalpixel.com/guides/battle/first-strikes.png)
 
@@ -130,6 +161,11 @@ of the round into one the enemies began.
 | `BATTLE_START_DEBUG` | 5 | the debug battle menu's battle; the party may run |
 
 ## Planning an action
+
+Just before a unit acts, the player reads its announcement, such as
+`Isaac casts Quake!`. By then the game has turned the chosen command into a
+plan: which ability it is, who it reaches, and the rolls the animation must
+show.
 
 `BattleCommand_BuildPlan` ([`battle/plan.c`](battle/plan.c)) turns the chosen
 command into an ability id, shows its announcement, picks its targets and
@@ -220,9 +256,16 @@ The aim wraps from the last place to the first.
 
 ### Rolls made in advance
 
+When an enemy dodges Isaac's attack, the player reads
+`Ivan nimbly dodges the blow!` and no damage follows; when Isaac lands a
+critical hit, the blow bursts in light. The animation has to know the outcome before it starts, so a few rolls
+are made while the action is planned, before anything is drawn.
+
+![Rolls made before the animation plays. A plain Attack lands 31 times in 32 and misses once; a deluded attacker also misses 153 times in 256, and a target that can't act is never missed. Separately, 1 blow in 32 is a critical hit, which deals a quarter more and then adds the target's level divided by 5, plus 6. An ability that strikes more than once makes one roll for all its targets: 153 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, 1 in 4 for Flying Attack, Double Fang, Twin Beaks and Swift Strike. Sonic Smash and Swift Strike strike three times, the others twice, and the animation shows each blow.](https://alchemy.pascalpixel.com/illustrations/battle/rolls.svg)
+
 The plan makes the rolls the effect must know before it plays: whether a plain
 Attack misses or lands a critical hit, and how many blows a multiple-blow
-ability strikes.
+ability strikes. The picture below plays each outcome in the game.
 
 ![Isaac attacks a copy of Ivan three times, each a row of four moments with what each roll decided and the plan for the target below it, the rolls answered at `Battle_Random`. A miss: no unleash, the hit roll (1 in 32 misses) misses, no critical; `Ivan nimbly dodges the blow!`, and the plan has no blow landing. A critical hit: no unleash, the hit roll lands, the critical roll (1 in 32) comes up; Isaac's blow bursts in light and Ivan takes 110 damage, the plan holding one blow and `CRITICAL_HIT`. A triple blow: wearing the Swift Sword, the unleash roll unleashes Sonic Smash and the extra blows roll (153 in 256) comes up; `Isaac's Swift Sword lets out a howl! Sonic Smash!`, and Ivan takes 281 damage, the plan holding three blows and the effect's variant showing three.](https://alchemy.pascalpixel.com/guides/battle/plan-rolls.png)
 
@@ -234,8 +277,8 @@ misses. A miss sets the target's multiplier to 0, and the player reads
 failing that at half the percentage the equipment adds to its unleash chance
 (`CRITICAL_HIT`).
 
-An ability with a double or triple blow rolls it once for every target: 153
-in 256 for Gust, Rapid Smash, Slice and Sonic Smash, and one time in four for
+An ability with a double or triple blow makes one roll, and a success
+applies to every target: 153 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, and one time in four for
 Flying Attack, Double Fang, Twin Beaks and Swift Strike. Sonic Smash and Swift
 Strike strike three times. A success raises the targets' multiplier, which
 `BattleTarget_Execute` multiplies the damage by, and the effect's variant, so the
@@ -304,16 +347,17 @@ own, chosen by ability id in `BattleCommand_BuildPlan`.
 
 ## How an ability resolves
 
+Once the animation shows the blow landing, each target in turn learns what
+the ability does to it: how much damage it takes or how much it heals, and
+whether the ability's added effect (Sleep, a lowered Defense, a poison) takes
+hold. For damage the game takes the ability's power, scales it by the
+element and by how far the target stands from the one aimed at, and adds a
+little luck.
+
+![How Psynergy damage is worked out, for Isaac's Avalanche at three enemies in a row, aimed at the first. Avalanche's power is 160, the damage at an even match. Isaac's Venus Power is 20 ahead of each target's Venus Resist, which multiplies it by about 1.1, to 175. The distance keeps 100 percent for the aimed enemy, 80 one place away and 60 two away: 175, 140 and 105. Last, 0 to 3 is added at random: 175 to 178, 140 to 143 and 105 to 108. A defending target takes half, one behind Total Defense a tenth. Every step rounds down.](https://alchemy.pascalpixel.com/illustrations/battle/damage.svg)
+
 `BattleTarget_Execute` turns the plan into what happens to one target: its damage
 or healing, its added effect, and the events that show them.
-
-```mermaid
-flowchart TB
-    p1["1. copy the target,<br/>distance, affinity, Power"] --> p2["2. Djinn bonus,<br/>effect roll"]
-    p2 --> p3["3. an enemy<br/>calls an ally"] --> p4["4. effects that change<br/>the damage step"]
-    p4 --> p5["5. damage or healing,<br/>by the ability kind"] --> p6["6. the added effect"]
-    p6 --> p7["7. waking, stats,<br/>the evil spirit's share"]
-```
 
 `BattleTarget_Execute` ([`battle/target_exec.c`](battle/target_exec.c)) applies
 the plan to one target. It draws nothing and never waits: it changes the
@@ -379,6 +423,13 @@ Attack with the weapon's own ability, nearly always `ABILITY_KIND_ATTACK`.
 
 ### The element multiplier
 
+Garet's Mars Psynergy hurts an enemy that resists Mars poorly far more than
+one that resists it well. Each unit has a Power and a Resist in each of the
+four elements, and the gap between the attacker's Power and the target's
+Resist decides how much the element counts.
+
+![The element multiplier, as a graph against how far the attacker's Power in the ability's element is ahead of the target's Resist in it, from 200 points behind to 200 ahead. For Psynergy it is a straight line from nothing at 200 behind, through 1 at an even match, to double at 200 ahead: half a percent a point. A blow feels the element half as much, from 0.5 to 1.5. Past 200 points either way it stops changing. Avalanche's 20 points ahead in the worked example gives about 1.1. An ability with no element is always at 1.](https://alchemy.pascalpixel.com/illustrations/battle/element-multiplier.svg)
+
 The element bonus is the actor's Power in the ability's element less the
 target's Resist in it. `Battle_GetElementMultiplier` turns it into a
 multiplier read from the five points of `gElement_PowerResistCurve`
@@ -389,7 +440,8 @@ ability with no element (`ELEMENT_NONE`) gets no bonus. Healing uses the
 healer's Power alone: each point above or below 100 moves it one percent,
 from nothing at 0 to double at 200, and an ability with no element heals as
 if at 100. The multipliers are counted in 256ths (`FULL_RATE`), and every
-result rounds down.
+result rounds down. The picture below plots real calls of
+`Battle_GetElementMultiplier` from two battles against the same line.
 
 ![Above, `gElement_PowerResistCurve`'s five points read from the ROM and drawn as the damage multiplier by the actor's Power less the target's Resist, in points from -200 to +200: a cast's line from 0 times to 2 times, and a blow's line, halved, from 0.5 to 1.5 times, both flat past either end, with a key for the lines and marks. On them, where each call of `Battle_GetElementMultiplier` put its target: for Isaac's Quake, Ivan at +52 and 1.26 times, Mia at +51 and 1.25 times, and Isaac's own copy at -30 and 0.85 times on the cast's line; for an attack at Ivan, -8 and 0.98 times on the blow's line. Below, the two battles: Quake, reading `Isaac takes 10 damage.` and `Mia takes 12 damage!`, and the attack, Isaac's Arctic Blade unleashing Blizzard.](https://alchemy.pascalpixel.com/guides/battle/element-multiplier.png)
 
@@ -417,8 +469,12 @@ better chance of its item (`BattleEnemy_RecordDefeat`).
 
 ### Distance
 
-Every kind but the attacks falls off with the target's distance from the aimed
-place.
+An ability that reaches several enemies hits the one aimed at hardest and
+the ones beside it less. Range and distance are both counted in places in
+the line-up, not in pixels, and every kind but the attacks falls off with
+the target's distance from the aimed place.
+
+![The fall-off with distance. Five enemies in a line, the middle one aimed at. A range of 1 reaches the aimed enemy alone, 2 one place either side, 3 two places either side. Each place away keeps a smaller share: Psynergy damage and healing 100, 80 and 60 percent; a summon 100, 70 and 40; the enemies' unleashed moves 100, 50 and 30; an added effect's chance 100, 60 and 30. A downed enemy still holds its place, and an ability that hits a whole side counts everyone as aimed.](https://alchemy.pascalpixel.com/illustrations/battle/distance.svg)
 
 ![Isaac casts Avalanche at Ivan, Garet and Mia: the ground swells under them, a narrow wall of rock rises with rocks tumbling up it and widens until it fills the screen, and Ivan takes 203 damage, Garet 160 and Mia 120.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
 
@@ -453,8 +509,13 @@ restores 70 to 73 because an item's user counts as Power 100.
 
 ### Whether the added effect lands
 
-An added effect lands on each target by its own roll, from the effect's base
-rate moved by element levels, Luck and weakness and scaled by distance.
+When Ivan casts Sleep at a group, some enemies fall asleep and the player
+reads `But it has no effect on <unit>!` for the others. Each target gets its
+own roll, and the chance depends on the effect, on the two units' element
+levels, on the target's Luck and weaknesses, and on its distance from the
+aimed place.
+
+![Will the added effect land? Ivan casts Sleep. The chance starts from the effect's own rate, 45 percent for Sleep, 40 for Stun. It gains 3 percent for each level Ivan's Jupiter is above the target's, loses 3 percent for every 2 points of the target's Luck, and gains 25 percent if Sleep is one of the target's three weaknesses. The distance then scales it: all of it for the aimed target, 60 percent next to it, 30 percent further. Some chances are fixed and changed only by distance: the Djinni Quartz 60 percent, Dew 90, and an effect with no rate of its own 100.](https://alchemy.pascalpixel.com/illustrations/battle/effect-chance.svg)
 
 ![Ivan casts Confuse at Isaac, Garet and Mia: a pale blue mist rolls over the three, and the messages read `Isaac is confused!` and `But it has no effect on Garet!`](https://alchemy.pascalpixel.com/abilities/confuse.gif)
 
@@ -495,6 +556,12 @@ enemies are laid out again, and the player reads `<unit> appears!!` or
 `It failed to divide!`.
 
 ### Applying the added effect
+
+A deluded enemy stays deluded for a while and then, sometimes early, the
+player reads that it `sees clearly once again!`. Statuses and stat changes
+are counters on the unit that the end of each round counts down.
+
+![How long a status lasts, over the seven round ends after it lands. A status such as Delude or Sleep, or a lowered stat, lasts 7 turns; after the first round end it is sure to last, and from 5 turns left each round end may end it early, more often for a lucky unit and as the turns run out, until the seventh ends it anyway. A raised stat always lasts all 7 turns. One stage moves Attack or Defense by an eighth, four stages at most.](https://alchemy.pascalpixel.com/illustrations/battle/status-turns.svg)
 
 Phase 6 applies the effect when it landed and the target is still standing.
 A revival needs the target down instead, and a drain still works on a target
@@ -548,8 +615,10 @@ detail; the rules they share are these.
 
 ### After each target
 
-Once a target has been dealt with, the damage it took may wake it and may feed
-a haunted actor's evil spirit.
+A sleeping unit that is hit may wake up, and a unit haunted by an evil
+spirit pays for its own attacks: once a target has been dealt with, the
+damage it took may wake it and may feed the haunted actor's evil spirit,
+which takes its share from the actor at the end of its turn.
 
 ![Isaac, haunted, casts Quake at copies of Garet, Ivan and Mia, the copy of Ivan asleep since an earlier round with 6 turns of sleep left; `BattleTarget_Execute`'s wake and haunt rolls are answered 0, so both come up. Garet loses 14 HP and, awake, has no wake roll; the evil spirit's share is 3 HP (14 / 4), its total so far 3 HP. Ivan loses 15 HP and the roll wakes him (`Ivan wakes from slumber!`); the total reaches 6 HP. Mia loses 12 HP and the total reaches 9 HP. At the turn's end the spirit takes its 9 HP, `A curse does 9 damage to Isaac!`, his HP falling from 625 to 616.](https://alchemy.pascalpixel.com/guides/battle/after-target.png)
 
@@ -563,6 +632,13 @@ In the Djinn tutorial a Djinni's blow always leaves its target 1 HP, and a
 summon always fells it.
 
 ## Rules and pictures meet at the event queue
+
+When Quake hits Garet, his HP drops at once, but the player sees it happen
+in steps: Garet flinches, the message `Garet takes 14 damage!!!` appears and
+waits for A, and only then does the next target's turn come. The rules leave
+a list of what to show, in order, and the screen plays the list.
+
+![One target's events, played in order. Quake reaches Garet. The rules work out his damage at once, take 14 HP off, and queue what the player should see: the hit, which makes him flinch and flash for 9 frames; the number 14 and the name Garet, which take no time and fill in the message's blanks; the message, which waits until A is pressed; and a refresh that redraws him. A few more events that take no time follow, then the next target. The number and name go first because the message fills its blanks from them as it is written.](https://alchemy.pascalpixel.com/illustrations/battle/event-queue.svg)
 
 The battle event queue is the one channel from the rules, which change the
 units at once, to the screen, which shows the changes one by one while the
@@ -756,4 +832,3 @@ side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the
 enemies' column, and `BattleClass_HasHeavyImpact` reads the class bit that
 makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
 bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
-- XXX (picture): a round's events played one at a time, as an illustration.

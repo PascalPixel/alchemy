@@ -421,8 +421,6 @@ enum {
   /// The hurt scholars and soldiers lying on the ground (spr_112.tsv and
   /// spr_152.tsv, the same pose).
   ANIM_HURT_LYING = 5,
-  /// The leader kicking in the air as he falls (spr_000.tsv).
-  ANIM_LEADER_FALL = 5,
   /// A light's sparkle, flickering between its two largest pictures
   /// (spr_284.tsv).
   PARTICLE_ANIM_FLICKER = 7
@@ -1592,7 +1590,8 @@ static void Event_FallThroughFloor(void) {
 
     leader->facing = facing;
   }
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_FALL);
+  // The run cycle: his legs kick in the air as he falls.
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Object_SetActionById(ACTOR_PARTY_LEADER, ANIM_STEPS_FAST);
   Engine_EventWait(40);
   // Start the fall only after the approach and descent animation have finished.

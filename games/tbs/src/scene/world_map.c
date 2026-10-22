@@ -394,9 +394,6 @@ enum WorldMapEndingActor {
 /// Animations the map plays by number beyond enum ActorAnimation, from each
 /// sprite's animation table (graphics/sprite/spr_<number>.tsv).
 enum {
-  /// The leader held up in a storm: standing, glancing one way and the other
-  /// between blinks (spr_000.tsv).
-  ANIM_LEADER_LOOK_AROUND = 9,
   ANIM_JENNA_LIE = 19, ///< lying on her back (spr_005.tsv's animation list)
   ANIM_KRADEN_LIE = 5, ///< lying on his back (spr_030.tsv)
   ANIM_FELIX_LIE = 6,  ///< lying face down, one arm out (spr_035.tsv)

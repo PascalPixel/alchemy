@@ -773,7 +773,7 @@
 /// the ship was swept away, and Garet's guess that it was Saturos's.
 /// ★ Named from the game: "I thought the ship we saw at Idejima was Babi's..."
 /// (MsgLaliveroThoughtShipWeSawAt)
-#define FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE 0x9bf
+#define FLAG_SAW_SHIP_AT_IDEJIMA 0x9bf
 /// The party has first come into Lalivero with Iodem and found more of Tolbi's
 /// soldiers beaten in the street, who say Sheba's captors went to the ruins
 /// beneath Babi Lighthouse. After it, Gateway Cave's Black Orb scene no longer

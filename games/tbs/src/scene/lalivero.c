@@ -67,7 +67,7 @@
 static void TalkToIodemAboutTheShip(void);
 
 /// Entrances that set up the later visit, 90 as if the party had also seen the
-/// ship at Idejima (FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE). XXX: no exit leads to
+/// ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). XXX: no exit leads to
 /// them and the entrance table has no row for them, while the aerie's exit
 /// leads into Faran's house instead; likely starts for testing.
 enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
@@ -643,8 +643,8 @@ static void ReceiveBlackOrb(void) {
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
-  // from the lighthouse.
-  if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE) != 0) {
+  // at Idejima.
+  if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) != 0) {
     TalkToIodemAboutTheShip();
   }
   Engine_EventSetMessage(MsgLaliveroBabiToldMeShipAncients);
@@ -835,7 +835,7 @@ s32 Lalivero_Initialize(void) {
   // Coming back from the lighthouse switches the town to its later state.
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
-    GameFlag_Set(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE);
+    GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
   if (gGameState.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
     GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);

@@ -1003,34 +1003,34 @@ enum {
 /// SceneId_McCoyPalace's entrances.
 enum {
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST = 1,
-  MCCOY_PALACE_HALL_FROM_SOUTHWEST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_SOUTHWEST_LANDING =
       2, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_HALL_FROM_SOUTHEAST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_SOUTHEAST_LANDING =
       3, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_HALL_FROM_LADY_MCCOYS_ROOM_WEST =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_LADY_MCCOYS_ROOM_WEST =
       4, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_HALL_FROM_LADY_MCCOYS_ROOM_EAST =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_LADY_MCCOYS_ROOM_EAST =
       5, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_HALL_FROM_TREASURE_ROOM =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_TREASURE_ROOM =
       6, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_HALL_FROM_NORTHWEST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_NORTHWEST_LANDING =
       7, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_HALL_FROM_NORTHEAST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_NORTHEAST_LANDING =
       8, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_HALL_FROM_MCCOYS_ROOM =
+  MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM =
       9, ///< ★ Named from what the player sees: the entrance hall whose red
          ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_HALL_WEST =
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_ENTRANCE_ROOM_WEST =
       10, ///< ★ Named from the game: "This is Lady McCoy's room"
           ///< (MsgBilibinThisIsLadyMccoysRoomSo)
-  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_HALL_EAST =
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_ENTRANCE_ROOM_EAST =
       11, ///< ★ Named from the game: "This is Lady McCoy's room"
           ///< (MsgBilibinThisIsLadyMccoysRoomSo)
   MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_WEST_BEDROOM =
@@ -1039,7 +1039,7 @@ enum {
   MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_EAST_BEDROOM =
       13, ///< ★ Named from the game: "This is Lady McCoy's room"
           ///< (MsgBilibinThisIsLadyMccoysRoomSo)
-  MCCOY_PALACE_SOUTHWEST_LANDING_FROM_HALL =
+  MCCOY_PALACE_SOUTHWEST_LANDING_FROM_ENTRANCE_ROOM =
       14, ///< ★ Named from what the player sees: the small stair rooms between
           ///< the hall's corner stairs and the rooms above (its render)
   MCCOY_PALACE_SOUTHWEST_LANDING_FROM_SOUTHWEST_TOWER =
@@ -1048,7 +1048,7 @@ enum {
   MCCOY_PALACE_SOUTHEAST_LANDING_FROM_SOUTHEAST_TOWER =
       16, ///< ★ Named from what the player sees: the small stair rooms between
           ///< the hall's corner stairs and the rooms above (its render)
-  MCCOY_PALACE_SOUTHEAST_LANDING_FROM_HALL =
+  MCCOY_PALACE_SOUTHEAST_LANDING_FROM_ENTRANCE_ROOM =
       17, ///< ★ Named from what the player sees: the small stair rooms between
           ///< the hall's corner stairs and the rooms above (its render)
   MCCOY_PALACE_WEST_BEDROOM_FROM_LADY_MCCOYS_ROOM =
@@ -1058,13 +1058,13 @@ enum {
       19, ///< ★ Named from what the player sees: the bedroom through the east
           ///< door, with a wardrobe and the woman with the silk nightgown (its
           ///< render)
-  MCCOY_PALACE_NORTHEAST_LANDING_FROM_HALL =
+  MCCOY_PALACE_NORTHEAST_LANDING_FROM_ENTRANCE_ROOM =
       20, ///< ★ Named from what the player sees: the small stair rooms between
           ///< the hall's corner stairs and the rooms above (its render)
   MCCOY_PALACE_NORTHEAST_LANDING_FROM_NORTHEAST_TOWER =
       21, ///< ★ Named from what the player sees: the small stair rooms between
           ///< the hall's corner stairs and the rooms above (its render)
-  MCCOY_PALACE_NORTHWEST_LANDING_FROM_HALL =
+  MCCOY_PALACE_NORTHWEST_LANDING_FROM_ENTRANCE_ROOM =
       22, ///< ★ Named from what the player sees: the small stair rooms between
           ///< the hall's corner stairs and the rooms above (its render)
   MCCOY_PALACE_NORTHWEST_LANDING_FROM_NORTHWEST_TOWER =
@@ -1082,7 +1082,7 @@ enum {
   MCCOY_PALACE_SOUTHEAST_TOWER_FROM_SOUTHEAST_LANDING =
       27, ///< ★ Named from what the player sees: the small eight-sided rooms up
           ///< two flights from each corner of the hall (its render)
-  MCCOY_PALACE_TREASURE_ROOM_FROM_HALL =
+  MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM =
       28, ///< ★ Named from the game: "Bilibin's great treasures"
           ///< (MsgBilibinDoThinkTheseBilibinsGreat)
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST = 29,
@@ -1090,34 +1090,34 @@ enum {
 /// SceneId_McCoyPalace's exits.
 enum {
   MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST = 1,
-  MCCOY_PALACE_HALL_TO_SOUTHWEST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_SOUTHWEST_LANDING =
       2, ///< ★ Named from what the player sees: the small stair rooms between
          ///< the hall's corner stairs and the rooms above (its render)
-  MCCOY_PALACE_HALL_TO_SOUTHEAST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_SOUTHEAST_LANDING =
       3, ///< ★ Named from what the player sees: the small stair rooms between
          ///< the hall's corner stairs and the rooms above (its render)
-  MCCOY_PALACE_HALL_TO_LADY_MCCOYS_ROOM_WEST =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_LADY_MCCOYS_ROOM_WEST =
       4, ///< ★ Named from the game: "This is Lady McCoy's room"
          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
-  MCCOY_PALACE_HALL_TO_LADY_MCCOYS_ROOM_EAST =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_LADY_MCCOYS_ROOM_EAST =
       5, ///< ★ Named from the game: "This is Lady McCoy's room"
          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
-  MCCOY_PALACE_HALL_TO_TREASURE_ROOM =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_TREASURE_ROOM =
       6, ///< ★ Named from the game: "Bilibin's great treasures"
          ///< (MsgBilibinDoThinkTheseBilibinsGreat)
-  MCCOY_PALACE_HALL_TO_NORTHWEST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHWEST_LANDING =
       7, ///< ★ Named from what the player sees: the small stair rooms between
          ///< the hall's corner stairs and the rooms above (its render)
-  MCCOY_PALACE_HALL_TO_NORTHEAST_LANDING =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHEAST_LANDING =
       8, ///< ★ Named from what the player sees: the small stair rooms between
          ///< the hall's corner stairs and the rooms above (its render)
-  MCCOY_PALACE_HALL_TO_MCCOYS_ROOM =
+  MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM =
       9, ///< ★ Named from what the player sees: the room behind McCoy's door
          ///< where Lord McCoy sits (its render)
-  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_HALL_WEST =
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_WEST =
       10, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_HALL_EAST =
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_EAST =
       11, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
   MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_WEST_BEDROOM =
@@ -1127,7 +1127,7 @@ enum {
       13, ///< ★ Named from what the player sees: the bedroom through the east
           ///< door, with a wardrobe and the woman with the silk nightgown (its
           ///< render)
-  MCCOY_PALACE_SOUTHWEST_LANDING_TO_HALL =
+  MCCOY_PALACE_SOUTHWEST_LANDING_TO_ENTRANCE_ROOM =
       14, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
   MCCOY_PALACE_SOUTHWEST_LANDING_TO_SOUTHWEST_TOWER =
@@ -1136,7 +1136,7 @@ enum {
   MCCOY_PALACE_SOUTHEAST_LANDING_TO_SOUTHEAST_TOWER =
       16, ///< ★ Named from what the player sees: the small eight-sided rooms up
           ///< two flights from each corner of the hall (its render)
-  MCCOY_PALACE_SOUTHEAST_LANDING_TO_HALL =
+  MCCOY_PALACE_SOUTHEAST_LANDING_TO_ENTRANCE_ROOM =
       17, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
   MCCOY_PALACE_WEST_BEDROOM_TO_LADY_MCCOYS_ROOM =
@@ -1145,13 +1145,13 @@ enum {
   MCCOY_PALACE_EAST_BEDROOM_TO_LADY_MCCOYS_ROOM =
       19, ///< ★ Named from the game: "This is Lady McCoy's room"
           ///< (MsgBilibinThisIsLadyMccoysRoomSo)
-  MCCOY_PALACE_NORTHEAST_LANDING_TO_HALL =
+  MCCOY_PALACE_NORTHEAST_LANDING_TO_ENTRANCE_ROOM =
       20, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
   MCCOY_PALACE_NORTHEAST_LANDING_TO_NORTHEAST_TOWER =
       21, ///< ★ Named from what the player sees: the small eight-sided rooms up
           ///< two flights from each corner of the hall (its render)
-  MCCOY_PALACE_NORTHWEST_LANDING_TO_HALL =
+  MCCOY_PALACE_NORTHWEST_LANDING_TO_ENTRANCE_ROOM =
       22, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
   MCCOY_PALACE_NORTHWEST_LANDING_TO_NORTHWEST_TOWER =
@@ -1169,10 +1169,10 @@ enum {
   MCCOY_PALACE_SOUTHEAST_TOWER_TO_SOUTHEAST_LANDING =
       27, ///< ★ Named from what the player sees: the small stair rooms between
           ///< the hall's corner stairs and the rooms above (its render)
-  MCCOY_PALACE_TREASURE_ROOM_TO_HALL =
+  MCCOY_PALACE_TREASURE_ROOM_TO_ENTRANCE_ROOM =
       28, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
-  MCCOY_PALACE_MCCOYS_ROOM_TO_HALL =
+  MCCOY_PALACE_MCCOYS_ROOM_TO_ENTRANCE_ROOM =
       29, ///< ★ Named from what the player sees: the entrance hall whose red
           ///< carpet leads to McCoy's door (its render)
 };

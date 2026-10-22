@@ -3287,8 +3287,8 @@ enum {
 /// SceneId_TolbiShipDeck's entrances.
 enum {
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD = 1,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CARGO_HOLD = 2,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN = 3,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CRATE_HOLD = 2,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM = 3,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST = 4,
   TOLBI_SHIP_DECK_FROM_KALAY_DOCKS = 5,
   TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS = 6,
@@ -3308,8 +3308,8 @@ enum {
 /// SceneId_TolbiShipDeck's exits.
 enum {
   TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD = 1,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CARGO_HOLD = 2,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN = 3,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD = 2,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM = 3,
   TOLBI_SHIP_DECK_TO_KALAY_DOCKS = 4,
   TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST = 5,
   TOLBI_SHIP_DECK_TO_TOLBI_DOCKS = 6,
@@ -3359,26 +3359,26 @@ enum {
   TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK =
       2, ///< ★ Named from what the player sees: the room below deck where the
          ///< tour's passengers sit round a green rug (its render)
-  TOLBI_SHIP_INTERIORS_CARGO_HOLD_FROM_TOLBI_SHIP_DECK =
+  TOLBI_SHIP_INTERIORS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK =
       3, ///< ★ Named from what the player sees: the room below deck stacked
          ///< with crates, barrels and fruit baskets (its render)
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD =
       4, ///< ★ Named from what the player sees: the oarsmen rowing in rows to a
          ///< drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK =
       5, ///< ★ Named from what the player sees: the room where the captain
          ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_MAST_CAST_OFF =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF =
       10, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_CABIN_CALL_TO_OARS = 11,
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS = 11,
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING =
       12, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_MAST_MONSTERS =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS =
       13, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_TURN =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN =
       14, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK =
@@ -3397,7 +3397,7 @@ enum {
   TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE =
       20, ///< TolbiShipInteriors_FightRowingDeckMonsters
   TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP = 21,
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_ISLAND =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND =
       22, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND = 23,
@@ -3415,15 +3415,15 @@ enum {
   TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK =
       2, ///< ★ Named from what the player sees: the oarsmen rowing in rows to a
          ///< drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_CARGO_HOLD_TO_TOLBI_SHIP_DECK = 3,
+  TOLBI_SHIP_INTERIORS_CRATE_HOLD_TO_TOLBI_SHIP_DECK = 3,
   TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD =
       4, ///< ★ Named from what the player sees: the room below deck where the
          ///< tour's passengers sit round a green rug (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK = 5,
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK = 5,
   TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY =
       10, ///< ★ Named from the game: "Preparations... Ready!"
           ///< (MsgTolbiShipPreparationsReady)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_PASSENGER_HOLD_CALL_TO_OARS =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS =
       11, ///< ★ Named from what the player sees: the room below deck where the
           ///< tour's passengers sit round a green rug (its render)
   TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING =
@@ -3432,10 +3432,10 @@ enum {
   TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_FIRST_ATTACK =
       13, ///< ★ Named from what the player sees: the ship sailing across the
           ///< world map until the first monster attack (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_SEA_MONSTERS =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_SEA_MONSTERS =
       14, ///< ★ Named from the game: "Sea monsters!"
           ///< (MsgTolbiShipAyeCaptainSeaMonsters)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD =
+  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD =
       15, ///< ★ Named from the game: "It's no use. It's too late!"
           ///< (MsgTolbiShipNoUseLate)
   TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK =

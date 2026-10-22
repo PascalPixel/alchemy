@@ -1,65 +1,59 @@
 /// @file
-/// The Tunnel Ruins, under Babi Lighthouse, in two scenes of Psynergy puzzles
-/// with no story event. The party comes in through the stone door in Babi
-/// Lighthouse whose switch shows only under Reveal, after the group that took
-/// Sheba (babi_lighthouse.c), and the ruins lead on to Venus Lighthouse; Babi's
-/// scholars in Tolbi speak of an extremely long tunnel beneath the ruins at the
-/// site of Babi Lighthouse, whose end no one has reached
-/// (vale_interiors_inn.c). Both scenes share the setup, which works room by
-/// room, one case for each room's entrances, and the walking events (hops
-/// across gaps, jumps off ledges and steps), keyed on the cell codes under the
-/// leader. In both, the retreat point is set and a fade overlay follows the
-/// leader in the rooms that need it (TunnelRuins_UpdateTrackedActor).
+/// The Tunnel Ruins under Babi Lighthouse, two scenes of Psynergy puzzles with
+/// no story event between Babi Lighthouse and Venus Lighthouse. Both have the
+/// area name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's
+/// three drops land, which the area names call Babi Lighthouse:
 ///
-/// - Tunnel Ruins (SceneId_TunnelRuinsGreatStatue), entered from Babi
-///   Lighthouse (SceneId_BabiLighthouseStoneDoor) at
-///   TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR, where
-///   TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR leads back;
-///   Retreat returns to
-///   TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR. In the first
-///   room a statue (search code 40) speaks to the leader's soul: those who
-///   would climb Venus Lighthouse must seek the lady's leave. Once the statue
-///   in Venus Lighthouse has opened one of its two paths
-///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH) it says instead that
-///   the path will not open here, and the setup redraws this room and the north
-///   room of columns to match the path. The rooms that follow hold two pairs of
-///   pillars to push or Move, three stones with three bushes for
-///   Whirlwind (bushes A and B, FLAG_SCENE_TEMP_00 and _01, change what
-///   stone C can do; bush C stays gone, FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY),
-///   and two pillars that sink into the floor once moved onto their columns
-///   (FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR and _B_IN_FLOOR, B only after Douse
-///   has soaked it, FLAG_SCENE_TEMP_02); each sunk pillar carries a puddle that
-///   Frost freezes into a pillar of ice (FLAG_SCENE_TEMP_00 and _01 in that
-///   room), after which some of the hops beside it no longer run.
-///   TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH, _SOUTHWEST
-///   and _SOUTHEAST lead on into TunnelRuinsLadyStatues.
-/// - Tunnel Ruins (SceneId_TunnelRuinsLadyStatues), whose entrances from Babi
-///   Lighthouse Entry
-///   (TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, _NORTH and
-///   _SOUTH) the area names call Babi Lighthouse: they are where the three
-///   drops in Babi Lighthouse Entry (SceneId_BabiLighthouseEntry) land, and
-///   from those rooms Retreat leads back up there, the place name not shown;
-///   regions for TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
-///   _SOUTH and _NORTH lead back up to it. There two pillars to push or Move
-///   keep their places between visits
-///   (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST).
-///   Elsewhere: a pillar that Douse soaks (FLAG_SCENE_TEMP_03), after which its
-///   puddle follows it and Frost freezes the puddle into a pillar of ice
-///   (FLAG_SCENE_TEMP_04); two balance platforms, each carved stone set on one
-///   with Carry (FLAG_SCENE_TEMP_00 to _02) sinking it a step and raising the
-///   other, set out with all three carved stones on them when the party comes
-///   in at TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH; two statues that
-///   block their cells until Reveal makes them vanish; the room of four
-///   walkways over a pit, redrawn for the path the statue in Venus Lighthouse
-///   opened; and five coloured statues of a woman before a door. Searching a
-///   statue there (search code 42) speaks to the soul, Mind Read on the five
-///   tells which colour shines in which direction, and with all five moved onto
-///   their marks the door opens (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing
-///   again if one is moved off. Two chests hold an Oracle's Robe and Asura's
-///   Armor. TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH,
-///   _SOUTHWEST and _SOUTHEAST lead back into TunnelRuinsGreatStatue, and
-///   TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR into Venus
-///   Lighthouse (SceneId_VenusLighthouseFirstFloor).
+/// - TunnelRuinsGreatStatue (SceneId_TunnelRuinsGreatStatue): entered from
+///   Babi Lighthouse's stone door. A statue in the first room speaks to the
+///   leader's soul; the rooms after it hold two pairs of pillars to push or
+///   Move, three stones with three bushes for Whirlwind, and two pillars that
+///   sink into the floor once moved onto their columns, each then carrying a
+///   puddle for Frost.
+/// - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues): a pillar that
+///   Douse soaks, two balance platforms weighed with carved stones by Carry,
+///   two false statues that Reveal makes vanish, two pillars that keep their
+///   places between visits, the room of four walkways over a pit, and five
+///   coloured statues of a woman that open the door to Venus Lighthouse once
+///   all five stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
+///
+/// The getters choose by gGameState.scene; the placements of
+/// TunnelRuinsLadyStatues answer any other scene number, and
+/// TunnelRuins_GetPlacements prepares each table's actors to appear only in
+/// view. TunnelRuins_Initialize works room by room, one case for each room's
+/// entrances: it puts each puzzle back as it was left, redraws the first room
+/// and the walkways for the path the statue in Venus Lighthouse opened
+/// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or FLAG_VENUS_LIGHTHOUSE_SECOND_PATH),
+/// sets the retreat point, and in the rooms that need it starts a fade overlay
+/// that follows the leader south of a depth set per room
+/// (TunnelRuins_UpdateTrackedActor). The walking events, keyed on the cell
+/// codes under the leader, are shared by both scenes: hops across gaps
+/// (TunnelRuins_HopLeaderTo), jumps off ledges and steps down.
+///
+/// The puzzles that must survive a visit keep story flags
+/// (FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR,
+/// FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR,
+/// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
+/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep scene flags,
+/// which mean different things in each scene:
+///
+/// - TunnelRuinsGreatStatue: FLAG_SCENE_TEMP_00 and FLAG_SCENE_TEMP_01 are
+///   bushes A and B blown away beside the stones, and in the sinking pillars'
+///   room puddles A and B frozen; FLAG_SCENE_TEMP_02 is pillar B soaked by
+///   Douse.
+/// - TunnelRuinsLadyStatues: FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_02 are the
+///   carved stones set on the balance, FLAG_SCENE_TEMP_03 the pillar soaked by
+///   Douse and FLAG_SCENE_TEMP_04 its puddle frozen.
+///
+/// Open questions:
+/// - XXX: what TunnelRuinsGreatStatue's fifteenth actor is, in sprite 0x114 at
+///   (232, 248), drawn at three fifths of its size with no collision and named
+///   by no event; a render of its room would show it.
+/// - XXX: what the leader's animations 6 and 7 show as it hops a gap; a render
+///   of the party's sprite animations would settle it.
+/// - XXX (picture): the balance platforms taken apart, each carved stone's
+///   weight beside the heights gTunnelRuins_BalanceHeights gives the two
+///   platforms.
 
 #include "script.h"
 #include "version.h"
@@ -214,14 +208,6 @@ enum {
   SPRITE_CARRY_STONE = 256,
   SPRITE_STATUE = 258
 };
-
-// The scene's temporary flags, by room. TunnelRuinsGreatStatue:
-// FLAG_SCENE_TEMP_00 and _01 are bushes A and B blown away beside the
-// stones, and in the sinking pillars' room puddles A and B frozen;
-// FLAG_SCENE_TEMP_02 is pillar B soaked by Douse. TunnelRuinsLadyStatues:
-// FLAG_SCENE_TEMP_00 to _02 are the carved stones set on the balance,
-// FLAG_SCENE_TEMP_03 the pillar soaked by Douse and FLAG_SCENE_TEMP_04 its
-// puddle frozen.
 
 #ifdef UBFIX
 static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
@@ -2106,10 +2092,11 @@ struct ScenePlacement gTunnelRuinsPlacementsOther[] = {
      FACING_NORTH, TALK_KEEP_FACING, 0},
     {SPRITE_PUDDLE, 0, ACTOR_STAND, PIXELS(392), 0, PIXELS(248), FACING_NORTH,
      TALK_KEEP_FACING, 0},
-    {SPRITE_BALANCE_PLATFORM, 0, 7, PIXELS(136), 0, PIXELS(152), FACING_NORTH,
-     TALK_KEEP_FACING, 0},
-    {SPRITE_BALANCE_PLATFORM, 0, 7, PIXELS(200), 0, PIXELS(152), FACING_NORTH,
-     TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_BALANCE_PLATFORM, 0, ACTOR_RESET_ACTION, PIXELS(136), 0,
+     PIXELS(152), FACING_NORTH, TALK_KEEP_FACING, 0},
+    {SPRITE_BALANCE_PLATFORM, 0, ACTOR_RESET_ACTION, PIXELS(200), 0,
+     PIXELS(152), FACING_NORTH, TALK_KEEP_FACING,
+     PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CARRY_STONE, 0, ACTOR_STAND, PIXELS(152), 0, PIXELS(136),
      FACING_NORTH, TALK_KEEP_FACING, 0},
     {SPRITE_CARRY_STONE, 0, ACTOR_STAND, PIXELS(184), 0, PIXELS(136),

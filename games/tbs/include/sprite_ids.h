@@ -21,6 +21,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
   SPRITE_SOLDIER = 0x98,
+  /// The ivy Whirlwind blows away, as in Vault Cave and Goma Cave.
+  /// ★ Named from what the player sees: a clump of leafy green ivy (its sprite
+  /// sheet, spr_248.png)
+  SPRITE_IVY = 0xf8,
   /// The lights that float about the Elemental Star Room.
   /// ★ Named from what the player sees: a small glowing blue-green light (its
   /// sprite sheet, spr_287.png)

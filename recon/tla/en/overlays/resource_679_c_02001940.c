@@ -1,5 +1,5 @@
 // Draft of Func_02001940 (overlay 679, 185 instructions), differ 90: the ground
-// particles' update, ported from ☀️'s FieldFx_UpdateGroundParticles (⚓️ has 64
+// particles' update, ported from ☀️'s FieldEffect_UpdateGroundParticles (⚓️ has 64
 // particles in heap slot 29, a leader pointer at 0x808 that may be NULL, and
 // new positions leader + Random16Far() * 240 - 0x780000 and * 160 - 0x500000,
 // with the terrain height unshifted). As ☀️'s for loop, loop.c adds a count-down

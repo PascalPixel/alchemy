@@ -42,7 +42,7 @@ FarCall_WindowTable:
 	export UiWork_ClearValueNameTablesFar, UiWork_ClearValueNameTables
 	export UiWork_PushValueSlotFar, UiWork_PushValueSlot
 	export UiWindow_CreateWithLayoutBoundsFar, UiWindow_CreateWithLayoutBounds
-	export PartyStatusDrawFar, PartyStatusDraw
+	export PartyStatus_DrawFar, PartyStatus_Draw
 	export PartyStatus_CloseFar, PartyStatus_Close
 	export UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore
 	export UiWork_DrainPendingFar, UiWork_DrainPending
@@ -64,7 +64,7 @@ FarCall_WindowTable:
 	export UiText_ShowMessageAndWaitCoreFar, UiText_ShowMessageAndWaitCore
 	export UiText_PrepareMessageWorkFar, UiText_PrepareMessageWork
 	overlay_veneer UiTextResource_NoOpCallback4
-	export Localization_LookupEntryIdFar, Localization_LookupEntryId
+	export Localization_LookupEntryIdFar, UiText_GetSpeakerPortrait
 	export Menu_RunTopSelectionFar, Menu_RunTopSelection
 	export Menu_SelectSaveSlotActionFar, Menu_SelectSaveSlotAction
 	export Menu_SelectResourceLayoutFar, Menu_SelectResourceLayout
@@ -97,7 +97,7 @@ FarCall_WindowTable:
 	export RenderOutput_CreateLoadedFar, RenderOutput_CreateLoaded
 	overlay_veneer RenderOutput_CreateFromTable
 	overlay_veneer SaveState_WriteCurrentSlotPair
-	export Save_WriteSelectedSlotFar, Save_WriteSelectedSlot
+	export Save_WriteSelectedSlotFar, SaveMenu_WriteSelectedSlot
 	export SaveState_LoadRecordIntoWorkFar, SaveState_LoadRecordIntoWork
 	export SaveState_CopySlotPairFar, SaveState_CopySlotPair
 	export SaveState_DeleteSelectedSlotFar, SaveState_DeleteSelectedSlot

@@ -297,8 +297,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
-  BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
-  BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+  BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+  BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
   Scheduler_AddOrUpdateCallback(STAR_FIELD_UPDATE_CALLBACK, 0xc80);
   return Scheduler_AddOrUpdateCallback(STAR_FIELD_UPLOAD_CALLBACK, 0xc80);
 }
@@ -436,7 +436,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     struct BattleEffectWork *effectWork;
 
     // The scene uses its image area to stage the tracked canvas origin.
-    BattleFx_StartElementStreaksFar(element);
+    BattleEffect_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
       effectWork = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
       BattleMotion_ProjectScaledPosition(
@@ -449,7 +449,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       effectWork->trackedCanvas.origin.queued = 1;
       WaitFrames(1);
     }
-    BattleFx_EndElementStreaksFar();
+    BattleEffect_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {
     // The pillar and the burst run an effect with the unit as its actor and
     // only target.
@@ -461,7 +461,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     launch.effect.firstTarget = unitId;
     launch.effect.count = 1;
     launch.effect.range = 1;
-    BattleFx_RunElementPillarFar(&launch.effect);
+    BattleEffect_RunElementPillarFar(&launch.effect);
   } else {
     launch2.effect.kind = element;
     launch2.effect.prelude = 0;
@@ -471,7 +471,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     launch2.effect.firstTarget = unitId;
     launch2.effect.count = 1;
     launch2.effect.range = 1;
-    BattleFx_RunElementBurstFar(&launch2.effect);
+    BattleEffect_RunElementBurstFar(&launch2.effect);
   }
 }
 

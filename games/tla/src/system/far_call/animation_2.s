@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Animation_SetIndexAndInitObjectsFar
+	.global Animation_SetIndexAndInitializeObjectsFar
 	.thumb_func
-Animation_SetIndexAndInitObjectsFar:
-	overlay_veneer Animation_SetIndexAndInitObjects
+Animation_SetIndexAndInitializeObjectsFar:
+	overlay_veneer Animation_SetIndexAndInitializeObjects
 	.global Func_08020240
 	.thumb_func
 Func_08020240:

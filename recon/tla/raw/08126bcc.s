@@ -115,7 +115,7 @@ Graphics_AdvancePaletteCycle:
 .L_08126c9c:
 	.4byte 0x00000010
 .L_08126ca0:
-	.4byte gBattleFx_HighlightBlendRamp
+	.4byte gBattleEffect_HighlightBlendRamp
 .L_08126ca4:
 	cmp r2, #14
 	bls .L_08126cac
@@ -156,7 +156,7 @@ Graphics_AdvancePaletteCycle:
 .L_08126ce8:
 	.4byte 0x00000010
 .L_08126cec:
-	.4byte gBattleFx_HighlightBlendRamp
+	.4byte gBattleEffect_HighlightBlendRamp
 .L_08126cf0:
 	cmp r2, #14
 	bls .L_08126cf8

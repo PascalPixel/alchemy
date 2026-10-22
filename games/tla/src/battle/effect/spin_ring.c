@@ -5,17 +5,17 @@ struct ObjectRuntime *Object_GetById(u32 actor);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_ResolvePendingActions(s32 skip);
 void EventRuntime_StartScreen(void);
 void EventRuntime_WaitDelay(void);
 void WaitFrames(s32 frames);
 void EventRuntime_Wait(s32 frames);
 void Object_Destroy(struct ObjectRuntime *object);
-void BattleFx_SpinObject(void);
+void BattleEffect_SpinObject(void);
 
 /// An event sequence, the arrival counterpart of Func_080e3698. The actor
-/// spins (BattleFx_SpinObject) at zero width and its sprite is hidden while
+/// spins (BattleEffect_SpinObject) at zero width and its sprite is hidden while
 /// object 280 grows on it for 32 frames; object 280 then snaps to 1.5 by 1
 /// (cue 136, mode 6) while the actor widens back from half size over 16 frames
 /// and shows again. Object 280 is destroyed and the actor's update and facing
@@ -26,9 +26,9 @@ void Func_080e37e0(s32 actor) {
   struct ObjectRuntime *ring;
   s32 i;
 
-  object->update = BattleFx_SpinObject;
+  object->update = BattleEffect_SpinObject;
   object->scaleX = 0;
-  EventRuntime_Begin();
+  EventRuntime_Start();
   EventRuntime_ResolvePendingActions(0);
   ObjectDispatch_SetSingleChildFlagsFar(Object_GetById(actor), 0);
   EventRuntime_StartScreen();

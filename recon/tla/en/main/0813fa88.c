@@ -1,12 +1,12 @@
 // Near miss, differ 2 of 280 (10 without its devices).
 
-// Twin: The Broken Seal's BattleFx_StartElementStreaks, the start of the
-// light-streak backdrop the scenes raise behind the battle (BattleFx_EndElementStreaks,
+// Twin: The Broken Seal's BattleEffect_StartElementStreaks, the start of the
+// light-streak backdrop the scenes raise behind the battle (BattleEffect_EndElementStreaks,
 // already C, takes it down; both are reached through the far-call table,
-// table_47.s). ⚓️ rebuilt it: instead of BattleFx_BeginCanvasLayer it sets
+// table_47.s). ⚓️ rebuilt it: instead of BattleEffect_StartCanvasLayer it sets
 // the BG2 canvas up step by step, a frame at a time, as 0813eb70 does; it
-// fades the battle background's colours over 24 frames (BattleFx_DimBackgroundStep), and
-// the streaks are halved into VRAM each frame (BattleFx_TransferHalvedCanvas) rather than
+// fades the battle background's colours over 24 frames (BattleEffect_DimBackgroundStep), and
+// the streaks are halved into VRAM each frame (BattleEffect_TransferHalvedCanvas) rather than
 // through the canvas transfer.
 
 // Left: one row in the prologue. The native stores the canvas pointer to its
@@ -15,7 +15,7 @@
 
 // The other eight rows were three values the native loads from the pool
 // before it starts their register's address (BLDCNT, BG2CNT, BG2PA), the
-// same rows BattleFx_OpenCanvasLayer (canvas.c) closes with pinned values
+// same rows BattleEffect_OpenCanvasLayer (canvas.c) closes with pinned values
 // behind barriers. They are closed the same way here, tagged; S2's counts
 // of pins and barriers may only fall, so adoption waits on Pascal (plan
 // D2), and the last row in any case.
@@ -53,7 +53,7 @@
 struct StreakSceneWork {
   s32 frame;        // the streaks' frame count (Func_0813f8d4)
   s32 halvePending; // the streaks are drawn: halve the canvas into VRAM
-  s32 fadeFrames;   // frames of the background's fade left (BattleFx_DimBackgroundStep)
+  s32 fadeFrames;   // frames of the background's fade left (BattleEffect_DimBackgroundStep)
   s32 fadeStep;
 };
 
@@ -63,11 +63,11 @@ extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_VioletPaletteD;
 extern char ResourceId_DustPuffSheet;
 
-void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void Func_0814355c(void); // the BG2 canvas's registers
-void BattleFx_DimBackgroundStep(void); // fades the battle background
-void BattleFx_TransferHalvedCanvas(void); // halves the canvas into VRAM
-void Func_0813f8d4(void); // BattleFx_DrawStreaks
+void BattleEffect_DimBackgroundStep(void); // fades the battle background
+void BattleEffect_TransferHalvedCanvas(void); // halves the canvas into VRAM
+void Func_0813f8d4(void); // BattleEffect_DrawStreaks
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
@@ -103,7 +103,7 @@ void Func_0813fa88(s32 kind) {
   view->secondMode = 1;
   WaitFrames(1);
   {
-    /* FAKEMATCH: as in BattleFx_OpenCanvasLayer (canvas.c), whose start this
+    /* FAKEMATCH: as in BattleEffect_OpenCanvasLayer (canvas.c), whose start this
      * is: the native loads the zero from the pool before it starts the
      * register address, pinned to the r3 it takes behind a barrier that holds
      * r2 (differ 4 plainly). */
@@ -142,7 +142,7 @@ void Func_0813fa88(s32 kind) {
     /* FAKEMATCH: the native loads the control word from the pool before it
      * starts the register address; plainly the address starts first
      * (differ 2). Pinned to the r2 it takes, behind a barrier that holds r3,
-     * as BattleFx_OpenCanvasLayer (canvas.c) does. A one-pass block cannot:
+     * as BattleEffect_OpenCanvasLayer (canvas.c) does. A one-pass block cannot:
      * the value as a local of its own is a split constant. */
     register u16 control asm("r2") = 0x784;
 
@@ -205,9 +205,9 @@ void Func_0813fa88(s32 kind) {
   // every frame.
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_DimBackgroundStep, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleEffect_DimBackgroundStep, 0x480);
   work->halvePending = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_TransferHalvedCanvas, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_TransferHalvedCanvas, 0xc80);
   work->frame = 0;
   Scheduler_AddOrUpdateCallback(Func_0813f8d4, 0x480);
 }

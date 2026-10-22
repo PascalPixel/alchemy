@@ -5,7 +5,7 @@ s32 Owner_SumDjinnCounts(s32 owner, s32 index) {
   struct OwnerDjinnState *state;
   s32 result;
 
-  state = UnitGet(owner);
+  state = Unit_Get(owner);
   if (index == -1) {
     result = state->counts.banks.owned[0];
     result += state->counts.banks.owned[1];

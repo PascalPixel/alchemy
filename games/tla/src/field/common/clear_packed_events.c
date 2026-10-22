@@ -52,7 +52,7 @@ void Party_RemoveOwnerRestored(s32 owner) {
 
   Party_RemoveActiveOwnerFar(owner);
   Event_ClearValidPackedIds();
-  vitals = UnitGet(owner);
+  vitals = Unit_Get(owner);
   /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
   do {
     vitals->hp = vitals->maxHp;
@@ -68,12 +68,12 @@ void Party_RemoveOwnerRestored(s32 owner) {
   standing = 0;
   count = Party_CountActiveOwnersFar();
   for (i = 0; i < count; i++) {
-    vitals = UnitGet(gPartyState.activeOwners[i]);
+    vitals = Unit_Get(gPartyState.activeOwners[i]);
     if (vitals->hp != 0)
       standing++;
   }
   if (standing == 0) {
-    vitals = UnitGet(gPartyState.currentOwner);
+    vitals = Unit_Get(gPartyState.currentOwner);
     vitals->hp = 1;
     vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
     if (vitals->hpRatio == 0 && vitals->hp != 0)

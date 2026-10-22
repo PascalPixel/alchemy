@@ -67,14 +67,14 @@
 //
 // - Display state: the windows that frame the battle view (lines 16 to
 //   135), the blend and display registers, and the set-up every effect
-//   starts and ends with (BattleFx_ConfigureEffectDisplay, below).
+//   starts and ends with (BattleEffect_ConfigureEffectDisplay, below).
 // - Per-frame callbacks the runner schedules: background scrolling, the
 //   camera shake and the backdrop palette fades that make the canvas stand
 //   out.
 // - Per-scanline work: HBlank DMA that feeds a window edge, BG2's affine
 //   reference or a palette row to the hardware line by line
-//   (BattleFx_ArmWin0HBlankDma, BattleFx_ArmBg2AffineHBlankDma and
-//   BattleFx_ArmPaletteHBlankDma), and the tables those transfers read.
+//   (BattleEffect_ArmWin0HBlankDma, BattleEffect_ArmBg2AffineHBlankDma and
+//   BattleEffect_ArmPaletteHBlankDma), and the tables those transfers read.
 //
 // The callbacks read the current effect's work block, so the runner that
 // schedules them must remove them before that block is released.
@@ -157,24 +157,25 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Lets the battle show the damage: resumes its paused playback, which plays
 /// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
-/// It acts only while the playback is idle (BattleEvent_BeginPhase),
+/// It acts only while the playback is idle (BattleEvent_StartPhase),
 /// so a second use while the damage is showing changes nothing.
-#define EFFECT_SHOW_DAMAGE(hitSound) BattleEvent_BeginPhaseFar(hitSound)
+#define EFFECT_SHOW_DAMAGE(hitSound) BattleEvent_StartPhaseFar(hitSound)
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1).
 #define CANVAS_BYTES (128 * 128)
 
 /// Opens the canvas layer at the canvas's own width, one texel per pixel,
-/// where BattleFx_BeginCanvasLayer stretches it to twice the width.
-#define EFFECT_BEGIN_NARROW_CANVAS(bgControl)                                  \
-  (BattleFx_BeginCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
+/// where BattleEffect_StartCanvasLayer stretches it to twice the width.
+#define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
+  (BattleEffect_StartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
 /// Builds a blitter for the 128x128 canvas (1 << 7 pixels each way) in work
-/// slot `slot`: BattleFx_BuildBlitter's drawing routine for one clip, mirror
-/// and blend mode. Every canvas effect draws through one or two of these.
+/// slot `slot`: BattleEffect_BuildBlitter's drawing routine for one clip,
+/// mirror and blend mode. Every canvas effect draws through one or two of
+/// these.
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
-  BattleFx_BuildBlitter(slot, 7, 7, flags, mode)
+  BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
 
 /// Sets how the canvas transfer treats what is left in the canvas after each
 /// copy: `mode` with `value` (see enum CanvasTransferMode).
@@ -184,7 +185,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define EFFECT_START_TRANSFER(work, mode, value)                               \
   (EFFECT_SET_TRANSFER(work, mode, value),                                     \
-   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,      \
+   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,  \
                                  EFFECT_CALLBACK_ORDER))
 
 /// Ends a frame of a canvas effect: marks the canvas ready for the transfer
@@ -204,13 +205,13 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The usual end of a canvas effect: stops the transfer callback before
 /// freeing what it reads, then the blitters, then the canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                 \
-  (Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer),          \
-   EFFECT_RELEASE_BLITTERS(), BattleFx_EndCanvasLayer())
+  (Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer),      \
+   EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
 
 /// The same for an effect that drew through one blitter.
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
-  (Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer),          \
-   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER), BattleFx_EndCanvasLayer())
+  (Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer),      \
+   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER), BattleEffect_EndCanvasLayer())
 
 /// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
@@ -220,14 +221,14 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// `draw`, centred across x and standing on y: the motes, sparks and dust of
 /// 29 parts, from the mote fountain to the summons. `size` is 1 to 10.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
-  (draw)(canvas, (sheet) + gBattleFx_MoteCells[(size) - 1], (x) - (size) / 2,  \
-         (y) - (size), size, (size) * 2)
+  (draw)(canvas, (sheet) + gBattleEffect_MoteCells[(size) - 1],                \
+         (x) - (size) / 2, (y) - (size), size, (size) * 2)
 
 /// Draws flare cell `size` of `sheet`, a square `size` pixels from its centre
 /// to each edge, centred on (x, y): Douse's sparks and the glowing points of
 /// the element pillar and burst, stat boosts, beams and rings.
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
-  (draw)(canvas, (sheet) + gBattleFx_FlareCells[(size) - 1], (x) - (size),     \
+  (draw)(canvas, (sheet) + gBattleEffect_FlareCells[(size) - 1], (x) - (size), \
          (y) - (size), (size) * 2, (size) * 2)
 
 /// Shows the canvas: the effect display mode, BG2 stretched to twice its width
@@ -295,11 +296,11 @@ static inline void Dma_Stop(volatile u16 *channel) {
     *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
   }
 
-/// Added to BattleFx_RunDjinniEntrance's element for the long entrance: 84
+/// Added to BattleEffect_RunDjinniEntrance's element for the long entrance: 84
 /// frames instead of 64, ending in a burst of motes.
-#define DJINNI_ENTRANCE_LONG NUM_ELEMENTS
+#define DJINNI_ENTRANCE_LONG ELEMENT_COUNT
 
-/// Where BattleFx_RunDjinniEntrance's Djinni appears.
+/// Where BattleEffect_RunDjinniEntrance's Djinni appears.
 enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
   DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0
@@ -308,7 +309,7 @@ enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_CENTRE       ///< in the centre of the field
 };
 
-/// Where BattleFx_RunSparkGroups' bursts go off.
+/// Where BattleEffect_RunSparkGroups' bursts go off.
 enum SparkGroupsMode {
   SPARK_GROUPS_NOVA,     ///< at (60, 48); the damage shows on frame 24
   SPARK_GROUPS_DYNAMITE, ///< at (60, 64), orange; the damage shows on frame 2
@@ -316,19 +317,19 @@ enum SparkGroupsMode {
                          ///< sparks rising; the damage shows on frame 2
 };
 
-/// Which way BattleFx_WipeCanvas sweeps.
+/// Which way BattleEffect_WipeCanvas sweeps.
 enum CanvasWipeDirection {
   CANVAS_WIPE_DOWN,  ///< top to bottom
   CANVAS_WIPE_ACROSS ///< left to right
 };
-/// What BattleFx_WipeCanvas leaves behind it.
+/// What BattleEffect_WipeCanvas leaves behind it.
 enum CanvasWipeFill {
   CANVAS_WIPE_FILL, ///< colour 1, which its callers make black first
   CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
 };
 
-/// The summons' object formations (BattleFx_PlaceFormationObjects and
-/// BattleFx_RunImpactBurst), each named for the summon that keeps it.
+/// The summons' object formations (BattleEffect_PlaceFormationObjects and
+/// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
   /// ★ Named from the game: "Thor" (MsgDjinnName)
   SUMMON_FORMATION_THOR, ///< nine in a 3x3 grid at 32-pixel spacing

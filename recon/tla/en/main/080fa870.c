@@ -66,7 +66,7 @@ extern u8 MsgItemPlainName[];
 void Func_080fabe0(void);
 void UiWindow_SetBounds(void *window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(void *window);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -106,13 +106,13 @@ s32 Func_080fa870(s32 mode) {
 
   UiWindow_SetBounds(window, 13, 5, 17, 12);
   RenderOutput_RedrawSavedRectFar(menu->itemWindow);
-  UnitGet(menu->ownerIds[menu->paneIndex[0]]);
+  Unit_Get(menu->ownerIds[menu->paneIndex[0]]);
   Scheduler_AddOrUpdateCallback(Func_080fabe0, 0x480);
   redraw = 2;
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
       window = menu->itemWindow;
-      UnitGet(menu->ownerIds[selection]);
+      Unit_Get(menu->ownerIds[selection]);
       marker = menu->marker;
       marker->oamX = marker->x =
           ((selection * 3 + menu->pageWindow->x) << 3) - 2;

@@ -26,7 +26,7 @@ void Func_02004d58(s32 a0, s32 a1);
 void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
 void Func_02004dd0(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_02000590(void) {
   if (!Flag_IsSet(0xa36)) {
@@ -42,7 +42,7 @@ void Func_02000590(void) {
     Func_02004dc8();
     FieldEvent_WaitFrames(40);
     Func_02004718();
-    BattleFx_PrepareBufferInterpolation();
+    BattleEffect_PrepareBufferInterpolation();
     WaitFrames(10);
     Func_02004cb0();
     Flag_Set(0xa36);

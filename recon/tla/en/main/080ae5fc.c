@@ -3,7 +3,7 @@
 // 0x240), calls Func_08038348 with the first two, then for the eight units
 // (saved from 0x520, 332 bytes each) restores base HP and PP (also as the
 // gauges), base Attack, Defense, Agility and Luck, level and experience and
-// recomputes each with UnitCalc; last the coins. Left: the native builds
+// recomputes each with Unit_Calculate; last the coins. Left: the native builds
 // each party offset from the last with an add (one register stepped from
 // 0x465 through 0x466, 0x46c, 0x46a and 0x48a, and its twin on the
 // gPartyState side), where the draft rebuilds most constants; the native
@@ -16,8 +16,8 @@
 #include "party_state.h"
 #include "battle_unit.h"
 
-void *UnitGet(s32 owner);
-void UnitCalc(s32 unitId);
+void *Unit_Get(s32 owner);
+void Unit_Calculate(s32 unitId);
 void Func_08038348(s32 a, s32 b);
 
 void Func_080ae5fc(u8 *save) {
@@ -34,7 +34,7 @@ void Func_080ae5fc(u8 *save) {
   gPartyState.unk244[6] = party->unk244[6];
   Func_08038348(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = UnitGet(i);
+    struct BattleUnit *unit = Unit_Get(i);
     struct BattleUnit *saved = &units[i];
 
     unit->baseHp = saved->baseHp;
@@ -47,7 +47,7 @@ void Func_080ae5fc(u8 *save) {
     unit->baseLuck = saved->baseLuck;
     unit->level = saved->level;
     unit->experience = saved->experience;
-    UnitCalc(i);
+    Unit_Calculate(i);
   }
   gPartyState.coins = party->coins;
 }

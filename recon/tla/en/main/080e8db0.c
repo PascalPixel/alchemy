@@ -17,7 +17,7 @@
 #include "effect_sprite.h"
 #include "view_move.h"
 
-// Field Psynergy kind 19 on a chosen object (BattleFx_DispatchRequestKind's
+// Field Psynergy kind 19 on a chosen object (BattleEffect_DispatchRequestKind's
 // case 19): Func_080e9090's sideways sway, stronger, with the object's
 // picture held in the work.
 
@@ -82,8 +82,8 @@ struct EffectScene {
 extern char ResourceId_ShakeTiles;
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_SetObjectTickMode(void *object, s32 mode);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_PrepareBufferInterpolation(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void Func_080e43a4(void *frames, void *buffer, s32 size);
 void WaitFrames(s32 frames);
@@ -132,7 +132,7 @@ void Func_080e8db0(void) {
     work->sprites[i].depth = 240;
     work->particles[i].timer = -1;
   }
-  BattleFx_SetObjectTickMode(scene->mainObject, 0);
+  BattleEffect_SetObjectTickMode(scene->mainObject, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
     Func_080e43a4(targetSprite->frames, work->picture,
@@ -222,7 +222,7 @@ void Func_080e8db0(void) {
   Func_080e8c9c();
   ViewMove_RestoreNearbySprites();
   Resource_ResetEntry(tiles);
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 release:
   Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
 }

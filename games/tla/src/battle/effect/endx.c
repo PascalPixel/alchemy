@@ -5,7 +5,7 @@
 
 void Func_080e2c38(void);
 
-void BattleFx_EndX(void) {
+void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
   /* FAKEMATCH: the loop note ends the scheduling block: the native loads the

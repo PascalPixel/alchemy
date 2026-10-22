@@ -26,7 +26,7 @@ struct PendingAction {
   u8 eventKind;
 };
 
-const struct PendingAction *BattleActGet(s32 action);
+const struct PendingAction *BattleAction_Get(s32 action);
 s32 EventRuntime_GetControlledOwner(void);
 s32 Func_080cb09c(void);
 s32 Func_080cb144(void);
@@ -50,7 +50,7 @@ s32 Func_080ce31c(s32 kind) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = BattleActGet((u16)flags >> 8)->eventKind;
+    s32 eventKind = BattleAction_Get((u16)flags >> 8)->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {

@@ -7,13 +7,13 @@ Resource_FarCall005:
 	.thumb_func
 Djinn_GetRecoveryTableFar:
 	overlay_veneer Djinn_GetRecoveryTable
-	.global UnitCalcFar
+	.global Unit_CalculateFar
 	.thumb_func
-UnitCalcFar:
+Unit_CalculateFar:
 	.global BattleUnit_Recalculate
 	.thumb_func
 BattleUnit_Recalculate:
-	overlay_veneer UnitCalc
+	overlay_veneer Unit_Calculate
 	.global Item_Get
 	.thumb_func
 Item_Get:

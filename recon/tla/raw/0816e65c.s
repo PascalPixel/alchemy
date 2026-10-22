@@ -21,7 +21,7 @@ Func_0816e65c:
 	movs r0, #1
 	str r2, [sp, #44]
 	mov r11, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816e6c0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -29,7 +29,7 @@ Func_0816e65c:
 	strh r3, [r2]
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -54,7 +54,7 @@ Func_0816e65c:
 .L_0816e6c0:
 	.4byte 0x00000410
 .L_0816e6c4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816e6c8:
 	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
@@ -567,7 +567,7 @@ Func_0816e65c:
 	mov r0, r11
 	movs r1, #64
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 .L_0816eace:
 	mov r0, r10
 	bl MemFree
@@ -641,7 +641,7 @@ Func_0816e65c:
 	movs r1, #62
 	adds r0, r5, #0
 	adds r2, r7, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r3, #2
 	ldrsh r2, [r5, r3]
 	movs r1, #6
@@ -658,7 +658,7 @@ Func_0816e65c:
 	movs r1, #62
 	adds r0, r5, #0
 	adds r2, r7, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r3, #2
 	ldrsh r2, [r5, r3]
 	movs r1, #6
@@ -675,7 +675,7 @@ Func_0816e65c:
 	adds r2, r7, #0
 	adds r0, r5, #0
 	movs r1, #62
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r2, #6
 	ldrsh r3, [r5, r2]
 	cmp r3, #104
@@ -736,7 +736,7 @@ Func_0816e65c:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816ec54
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #100
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -757,4 +757,4 @@ Func_0816e65c:
 .L_0816ec50:
 	.4byte Data_08198b9a
 .L_0816ec54:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

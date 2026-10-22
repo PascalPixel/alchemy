@@ -4,7 +4,7 @@
 #include "system.h"
 void EffectSlot_SetPositionFar(struct Effect_080b2f4c *, s32, s32);
 s32 EffectSlot_HasPendingTargetFar(struct Effect_080b2f4c *);
-void BattleFx_ClearOwnedSlotFar(struct Effect_080b2f4c *);
+void BattleEffect_ClearOwnedSlotFar(struct Effect_080b2f4c *);
 
 struct Position {
   s32 x;
@@ -29,7 +29,7 @@ struct Effect_080b2f4c {
 
 void Vector_AddPolarOffset(s32, s32, struct Position *);
 
-void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
+void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
   struct Position position;
   s8 *statePointer;
   s32 state;
@@ -57,6 +57,6 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
       *statePointer = result;
   } else if (state == 2) {
     if (EffectSlot_HasPendingTargetFar(effect) == 0)
-      BattleFx_ClearOwnedSlotFar(effect);
+      BattleEffect_ClearOwnedSlotFar(effect);
   }
 }

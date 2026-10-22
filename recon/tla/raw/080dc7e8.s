@@ -41,7 +41,7 @@ BattleEffect_CleanupSceneObjects:
 	cmp r3, #0
 	beq .L_080dc834
 	adds r0, r5, #0
-	bl BattleFx_ClearOwnedSlot
+	bl BattleEffect_ClearOwnedSlot
 .L_080dc834:
 	subs r7, #1
 	adds r5, #72
@@ -68,8 +68,8 @@ BattleEffect_CleanupSceneObjects:
 	asrs r3, r3, #24
 	cmp r3, #0
 	bne .L_080dc942
-	bl BattleFx_WaitForArcGroups
-	bl BattleFx_EndArcEffect
+	bl BattleEffect_WaitForArcGroups
+	bl BattleEffect_EndArcEffect
 	movs r3, #197
 	lsls r3, r3, #1
 	add r3, r11
@@ -186,4 +186,4 @@ BattleEffect_CleanupSceneObjects:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080dc950:
-	.4byte BattleFx_UpdateAllEffectSlots
+	.4byte BattleEffect_UpdateAllEffectSlots

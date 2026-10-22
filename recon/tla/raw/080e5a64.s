@@ -106,7 +106,7 @@ Func_080e5a64:
 	adds r0, r5, #0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFx_IntegrateVector2
+	bl BattleEffect_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_080e5b38:
 	adds r3, #1

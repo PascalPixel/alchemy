@@ -311,7 +311,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
 static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
@@ -343,7 +343,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(10);
@@ -387,12 +387,12 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // appeared. Jenna: Isaac dropped the statue into it.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_SayThenWait(GARET, 20);
-  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIMATION_NOD);
   Event_SayThenWait(JENNA, 6);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(40);
   // Kraden: "Good work, everyone!" and "So the statue puzzle was the trap..."
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 80);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
@@ -407,23 +407,23 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_EventWait(30);
   // Kraden: the other statue was there to disarm the trap, and now they
   // should be all right.
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
   Engine_EventWait(40);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(JENNA, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(JENNA, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   // Kraden: he will observe from the Luna room. He leaves south.
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
@@ -442,14 +442,14 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // Rejoin the companions to the leader and restore normal field control.
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(JENNA, ANIM_WALK);
+  Engine_ActorSetAnimation(JENNA, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(JENNA, leader->x.part.pixel, leader->z.part.pixel);
@@ -476,7 +476,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct EventWork *work;
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 32;
@@ -507,7 +507,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(10);
@@ -516,11 +516,11 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   Engine_EventWait(40);
   // Kraden: "This is a most interesting mechanism you've found, Isaac."
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(JENNA, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(JENNA, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(40);
   // Kraden: "But this is clearly... some kind of trap." All three start.
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
@@ -533,7 +533,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_SayThenWait(GARET, 6);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
   Engine_EventWait(40);
@@ -551,7 +551,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Camera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(80);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_EventWait(20);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
@@ -571,13 +571,13 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Kraden: they are looking in the right place, but moving one statue
   // springs the trap. Jenna: why would anyone put a trap here?
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 20);
   Engine_ActorShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Event_SayThenWait(JENNA, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Engine_EventWait(40);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
@@ -589,7 +589,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(40);
@@ -615,7 +615,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   Event_SayThenWait(GARET, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Engine_EventWait(20);
@@ -634,7 +634,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   Camera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 574, 323);
   Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
@@ -647,11 +647,11 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventWait(10);
   // Jenna: "let's see if we can't figure this out ourselves."
   Event_SayThenWait(JENNA, 6);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIMATION_NOD);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetAnimation(JENNA, ANIM_WALK);
+  Engine_ActorSetAnimation(JENNA, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Engine_ActorSetDestination(JENNA, leader->x.part.pixel,
@@ -659,7 +659,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   }
   Engine_ActorWaitForMove(JENNA);
   Engine_ActorSetPosition(JENNA, 0, 0);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Engine_ActorSetDestination(GARET, leader->x.part.pixel,
@@ -830,7 +830,7 @@ static void Event_JumpSouth(void) {
 /// Nothing calls it; the player moves the statue there with Move instead.
 UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Object_GetById(ACTOR_NORTHWEST_STATUE);
     Actor_SetSpeed(ACTOR_NORTHWEST_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_WalkToAndWait(ACTOR_NORTHWEST_STATUE, 504, 152);
@@ -947,7 +947,7 @@ s32 SolSanctumStatue_Initialize(void) {
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    FieldFx_SetQueuedSoundAndPlay(SE_141);
+    FieldEffect_SetQueuedSoundAndPlay(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
   }
@@ -1116,7 +1116,7 @@ static void Event_CenterStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(288), PIXELS(128), 0);
   if (statue != NULL) {
     statueZ = statue->z.fixed;
-    Engine_EventBegin();
+    Engine_EventStart();
     if ((statueZ >> 20) == 8) {
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_07) == 0) {
         leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1195,17 +1195,17 @@ static void Event_PushCenterStatueNorth(void) {
   movingActor = Object_GetById(ACTOR_CENTER_STATUE);
   if (movingActor != 0) {
     if ((movingActor->z.fixed >> 20) == 8) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Event_PlayCue(SE_PUSH);
       Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Object_GetById(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
       movingActor = Object_GetById(ACTOR_PARTY_LEADER);
       Actor_SetDestination(ACTOR_PARTY_LEADER, movingActor->x.part.pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
       Engine_ActorWaitForMove(ACTOR_CENTER_STATUE);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
       Engine_EventEnd();
     }
   }
@@ -1310,19 +1310,19 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   s32 statueX;
   s32 statueZ;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_PUSH);
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Engine_ActorSetDestination(ACTOR_PARTY_LEADER, (leaderColumn << 4) + 8,
                              (leaderRow << 4) + 8);
   statueX = statueColumn << 4;
   statueZ = statueRow << 4;
   Engine_ActorSetDestination(statueId, statueX + 8, statueZ + 8);
   Engine_ActorWaitForMove(statueId);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_EventEnd();
 }
 
@@ -1573,7 +1573,7 @@ static void SolSanctumStatue_OpenSeal(void) {
   s32 pulse;
 
   exitResult = 0;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (!Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
     // Show the configured seal and flash its two tile states.
     Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -1641,7 +1641,7 @@ static void SolSanctumStatue_OpenSeal(void) {
 /// Called when the left beam statue reaches its place in front of the centre,
 /// until the centre statue has moved. Sets FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING.
 static void SolSanctumStatue_ShineLeftBeam(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -1666,7 +1666,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
 /// Draws the right beam and opens the floor when the left beam is also lit.
 /// As the left one; sets FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING.
 static void SolSanctumStatue_ShineRightBeam(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);

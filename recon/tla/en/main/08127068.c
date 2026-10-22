@@ -3,7 +3,7 @@
 // ported with The Lost Age's heap slots (work 92, canvas 96, blitters 104
 // and 188) and packed blitter loader: Func_08138048(slot, mode << 4 | flags)
 // is BattleEffect_LoadWorkFar(slot, 7, 7, flags, 3 - mode), and returns its
-// s32 as nibble_pair.c's BattleFx_LoadBlitter now does (14 to 12). The twin's
+// s32 as nibble_pair.c's BattleEffect_LoadBlitter now does (14 to 12). The twin's
 // empty loop and unused Spark are not needed; its one-pass block for BG2X
 // stays. The callbacks are added at 0x480. The four resources are rows
 // 0x18c to 0x18f of the directory, read from the pool, so they need their

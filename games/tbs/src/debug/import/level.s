@@ -14,8 +14,8 @@
 	.set import.Engine_DebugClearWindow, 1
 	.set import.DebugMenu_BrowseIcons, 1
 	.set import.DebugMenu_BrowseEntryGlyphs, 1
-	.set import.UnitGet, 1
-	.set import.UnitCalc, 1
+	.set import.Unit_Get, 1
+	.set import.Unit_Calculate, 1
 	.set import.Engine_DebugGetItem, 1
 	.set import.PartyInventory_Add, 1
 	.ifndef TBS_EDITION_JA
@@ -25,7 +25,7 @@
 	.set import.Unit_LevelUpTo, 1
 	.set import.PartyInventory_HasSpace, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.endif
 	.ifdef TBS_EDITION_JA
 	.set import.Engine_EventEnd, 1

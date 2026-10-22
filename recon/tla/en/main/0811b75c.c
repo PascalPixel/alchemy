@@ -1,5 +1,5 @@
 // Near miss, differ 6 of 290 (one row moved), from The Broken Seal's
-// BattleObj_SpawnObjectsForList (games/tbs/src/battle/battle/objects.c):
+// BattleObject_SpawnObjectsForList (games/tbs/src/battle/battle/objects.c):
 // this game releases the unlisted places only when asked (the third
 // argument), skips a fading actor, has seven two-part sprites, sets the
 // body's palette before its priority and has a sprite record with its scale
@@ -84,7 +84,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
        unitIndex++) {
     if (unitId == 254)
       continue;
-    battleObject = (struct TlaBattleObj *)BattleObjGet(unitId);
+    battleObject = (struct TlaBattleObj *)BattleObject_Get(unitId);
     if (battleObject == 0)
       continue;
     if (battleObject->fading != 0)
@@ -159,7 +159,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
     if ((spriteId = unitIds[0]) != 255) {
       for (;;) {
         if (unitIds[unitIndex] != 254 &&
-            (battleObject = (struct TlaBattleObj *)BattleObjGet(spriteId)) != 0 &&
+            (battleObject = (struct TlaBattleObj *)BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
           BattlePres_SetActorModeAndAction(spriteId);
         unitIndex++;

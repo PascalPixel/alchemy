@@ -178,7 +178,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct EventWork *scene;
 
   scene = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
   Engine_EventRequestExit(scene->touchedTrigger);
   Engine_EventEnd();
@@ -197,7 +197,7 @@ const struct SceneEvent *KolimaForestTree_GetEvents(void) {
 /// warning. Once the curse is lifted, the forest is alive again thanks to the
 /// party, and Laurel says, "We shall protect the forest from now on."
 static void KolimaForestTree_TalkToLaurel(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgKolimaForestKolimaAlive);
@@ -212,7 +212,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
     Engine_EventWait(60);
     KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
     Engine_EventShowMessageAndWait(ACTOR_LAUREL, 0, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_EventWait(40);
     Engine_EventShowMessage(ACTOR_LAUREL, 0);
     KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
@@ -235,7 +235,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterOwner;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
     Engine_EventSetMessage(MsgKolimaNowHaveSuchPowerAxe);
@@ -277,7 +277,7 @@ static void KolimaForestTree_TalkToTret(void) {
 /// but its fountain has dried up; afterwards, it must be horrible beyond the
 /// river.
 static void KolimaForestTree_ReadLaurelThoughts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgKolimaMustHorribleBeyondRiverAm);
   } else {
@@ -291,7 +291,7 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
 /// curse is lifted, "People of Kolima... Forgive me..."; afterwards, a plea to
 /// be careful beyond the river.
 static void KolimaForestTree_ReadTretThoughts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgKolimaKnowCannotStopButPlease);
   } else {
@@ -307,7 +307,7 @@ static void KolimaForestTree_ReadTretThoughts(void) {
 /// (KolimaForestTree_RejectHermesWater); afterwards it heals him
 /// (KolimaForestTree_RestoreTret).
 static void KolimaForestTree_UseHermesWater(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   if (Engine_GameFlagIsSet(FLAG_TRET_DEFEATED) == 0) {
     KolimaForestTree_RejectHermesWater();
@@ -338,7 +338,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Camera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
   Event_PlayCue(SE_IMPACT);
   leader->velocityY = PIXELS(5);
@@ -352,7 +352,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
     Engine_TaskWait(1);
   } while (leader->velocityY <= 0);
   Event_PlayCue(SE_161);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_COLLAPSE);
   Engine_EventWait(120);
   Engine_TaskRemoveCallback(KolimaForestTree_SpawnRejectionSpark);
   Engine_TaskWait(40);
@@ -383,16 +383,16 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(40);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_EventWait(20);
 }
 
 /// Gives all four companions the same nod, waiting on Ivan's animation.
 static __inline__ void KolimaForestTree_NodTogether(void) {
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
 }
 
 /// Turns the companions together and pauses after the final facing change.
@@ -558,7 +558,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    Engine_ActorSetAnimation(GARET, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_SHAKE_HEAD);
     Event_ShowMessage(GARET, 0);
     if (includeMia != 0) {
       Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -566,7 +566,7 @@ static void KolimaForestTree_RestoreTret(void) {
     } else {
       gEventWork->message += 1;
     }
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Event_ShowMessage(IVAN, 0);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
@@ -615,7 +615,7 @@ static void KolimaForestTree_RestoreTret(void) {
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   } else {
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
     gEventWork->message += 1;
   }
   Event_ShowMessage(GARET, 0);
@@ -695,7 +695,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | IVAN, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
@@ -765,7 +765,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_BLINK);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
   Event_PlayCue(MUS_001);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
@@ -1053,7 +1053,7 @@ static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
     s32 inventorySlot = Inventory_Find(owner, oldItemId);
 
     if (inventorySlot != -1) {
-      UnitGet(owner)->inventory[inventorySlot] = newItemId;
+      Unit_Get(owner)->inventory[inventorySlot] = newItemId;
     }
   }
 }
@@ -1080,7 +1080,7 @@ s32 gKolimaForestTree_MiaApproachActions[] = {
 
 s32 gKolimaForestTree_RejoinPartyActions[] = {
     SC_ARG(2),  SC_MOVE(PIXELS(328), 0, PIXELS(212)),
-    SC_SYNC,    SC_POS(0, 0, 0),
+    SC_SYNC,    SC_POSITION(0, 0, 0),
     SC_WAIT(1), SC_END,
 };
 
@@ -1145,6 +1145,6 @@ struct SceneEvent gKolimaForestTreeEvents[] = {
 
 s32 gKolimaForestTreeEffectScript[] = {
     SC_ADD(SW_SCALE_X, Q16_ONE / 10),
-    SC_CALL(FieldFx_StretchUntilArrived),
+    SC_CALL(FieldEffect_StretchUntilArrived),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

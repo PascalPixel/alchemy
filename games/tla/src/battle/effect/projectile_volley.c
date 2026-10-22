@@ -15,95 +15,95 @@
 #define ObjectDispatch_SetAnimationSpeedFar                                 \
   ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_SetAnimationSpeedFar)
 
-DEFINE_EFFECT_KIND(BattleFx_RunSlash, BattleFx_RunProjectileVolley, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunSlash, BattleEffect_RunProjectileVolley, 0)
 
-DEFINE_EFFECT_KIND(BattleFx_RunShuriken, BattleFx_RunProjectileVolley, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunShuriken, BattleEffect_RunProjectileVolley, 1)
 
-DEFINE_EFFECT_KIND(BattleFx_RunCrazyVoice, BattleFx_RunProjectileVolley, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunCrazyVoice, BattleEffect_RunProjectileVolley, 2)
 
-DEFINE_EFFECT_KIND(BattleFx_RunWingFlutter, BattleFx_RunProjectileVolley, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunWingFlutter, BattleEffect_RunProjectileVolley, 3)
 
-DEFINE_EFFECT_KIND(BattleFx_RunWingStroke, BattleFx_RunProjectileVolley, 11)
+DEFINE_EFFECT_KIND(BattleEffect_RunWingStroke, BattleEffect_RunProjectileVolley, 11)
 
-DEFINE_EFFECT_KIND(BattleFx_RunWingBeat, BattleFx_RunProjectileVolley, 4)
+DEFINE_EFFECT_KIND(BattleEffect_RunWingBeat, BattleEffect_RunProjectileVolley, 4)
 
-void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCuttingEdge(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
-  BattleFx_RunProjectileVolley(effect, 5);
+  BattleEffect_RunProjectileVolley(effect, 5);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHeatWave(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
-  BattleFx_RunProjectileVolley(effect, 6);
+  BattleEffect_RunProjectileVolley(effect, 6);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
-DEFINE_EFFECT_KIND(BattleFx_RunSleet, BattleFx_RunProjectileVolley, 7)
+DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
 
-void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
-  BattleFx_RunProjectileVolley(effect, 9);
+  BattleEffect_RunProjectileVolley(effect, 9);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleFx_RunProjectileVolleyMode12WithAction(
+void BattleEffect_RunProjectileVolleyMode12WithAction(
     struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
-  BattleFx_RunProjectileVolley(effect, 12);
+  BattleEffect_RunProjectileVolley(effect, 12);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleFx_RunProjectileVolleyMode13WithAction(
+void BattleEffect_RunProjectileVolleyMode13WithAction(
     struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
-  BattleFx_RunProjectileVolley(effect, 13);
+  BattleEffect_RunProjectileVolley(effect, 13);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleFx_RunProjectileVolleyMode14WithAction(
+void BattleEffect_RunProjectileVolleyMode14WithAction(
     struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
-  BattleFx_RunProjectileVolley(effect, 14);
+  BattleEffect_RunProjectileVolley(effect, 14);
   ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
-DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode15,
-                   BattleFx_RunProjectileVolley, 15)
+DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode15,
+                   BattleEffect_RunProjectileVolley, 15)
 
-DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode16,
-                   BattleFx_RunProjectileVolley, 16)
+DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode16,
+                   BattleEffect_RunProjectileVolley, 16)
 
-DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode17,
-                   BattleFx_RunProjectileVolley, 17)
+DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode17,
+                   BattleEffect_RunProjectileVolley, 17)
 
 /// Kind 402: Ice Breath and Blue Dragon.
 // Named, as The Broken Seal names it, for Ice Blessing.
-DEFINE_EFFECT_KIND(BattleFx_RunIceBlessing, BattleFx_RunProjectileVolley, 10)
+DEFINE_EFFECT_KIND(BattleEffect_RunIceBlessing, BattleEffect_RunProjectileVolley, 10)
 
-DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode18,
-                   BattleFx_RunProjectileVolley, 18)
+DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode18,
+                   BattleEffect_RunProjectileVolley, 18)

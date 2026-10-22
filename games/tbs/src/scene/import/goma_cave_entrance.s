@@ -12,7 +12,7 @@
 	.set import.Engine_ObjectSetBlendMode, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapWaitWorkValuesBelow256, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Item_Get, 1
 	.set import.Inventory_AddItem, 1
 	.set import.Inventory_Equip, 1
@@ -21,7 +21,7 @@
 	.set import.Engine_GameFlagClear, 1
 	.set import.Inventory_Discard, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Event_PrepareObjectAndApplyValue, 1
 	.set import.Object_GetById, 1
@@ -47,11 +47,11 @@
 	.set import.Engine_ActorShowEmote, 1
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Field_DispatchTypeHandler, 1
-	.set import.FieldFx_LoadActionEffectResources, 1
-	.set import.FieldFx_SetupObjectPair, 1
-	.set import.FieldFx_StopCasterHook, 1
+	.set import.FieldEffect_LoadActionEffectResources, 1
+	.set import.FieldEffect_SetupObjectPair, 1
+	.set import.FieldEffect_StopCasterHook, 1
 	.set import.EventObject_Initialize, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

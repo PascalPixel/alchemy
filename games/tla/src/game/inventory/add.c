@@ -1,7 +1,7 @@
 #include "inventory.h"
 
 s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
-  struct OwnerInventoryState *inv = UnitGet(owner_id);
+  struct OwnerInventoryState *inv = Unit_Get(owner_id);
   struct ItemDefinition *item = Item_GetDirect(item_id);
   s32 slot;
 

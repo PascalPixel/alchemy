@@ -64,7 +64,7 @@ Func_0811b75c:
 	b .L_0811b954
 .L_0811b7ca:
 	adds r0, r2, #0
-	bl BattleObjGet
+	bl BattleObject_Get
 	adds r7, r0, #0
 	cmp r7, #0
 	bne .L_0811b7d8
@@ -295,7 +295,7 @@ Func_0811b75c:
 	cmp r3, #254
 	beq .L_0811b9a8
 	adds r0, r5, #0
-	bl BattleObjGet
+	bl BattleObject_Get
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_0811b9a8

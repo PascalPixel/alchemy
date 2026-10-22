@@ -21,8 +21,8 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
     BattlePresentation_WaitForAdvance();
   } else {
     for (i = 0; i < plan->targetCount; i++) {
-      BattleTargetExec(plan, i);
-      BattleEv_DispatchQueued();
+      BattleTarget_Execute(plan, i);
+      BattleEvent_DispatchQueued();
     }
   }
   WaitFrames(1);

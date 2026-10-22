@@ -11,14 +11,14 @@
 
 struct PendingEvent;
 
-s32 BattleFx_HasMatchingEvent5(s32 effectId) {
+s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
   u16 kind = effectId;
   s32 result = (s32)Func_080ce458(0xf0000005, kind, Func_080ce31c(kind));
 
   return (u32)((-result) | result) >> 31;
 }
 
-u32 BattleFx_HasTrigger(u16 effectId) {
+u32 BattleEffect_HasTrigger(u16 effectId) {
   s32 result;
 
   result = Event_FindFacingTrigger(effectId);

@@ -229,7 +229,7 @@ static void Event_IodemAsksWhyTurningBack(void) {
 
   if (FLAG_CHECK(FLAG_IODEM_AT_BABI_LIGHTHOUSE) == 0 &&
       FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-    EV_BEGIN();
+    EV_START();
     // Bring Iodem out of the party before opening his question.
     Engine_ActorSetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -238,7 +238,7 @@ static void Event_IodemAsksWhyTurningBack(void) {
     }
     Engine_ActorSetDestinationOffset(ACTOR_IODEM, -8, 16);
     Engine_ActorWaitForMove(ACTOR_IODEM);
-    OBJ_DIR(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
+    OBJECT_DIR(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
     WAIT(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
     MESSAGE_SET(MsgKaragolWhyGoingBackIsaacDo);
@@ -247,10 +247,10 @@ static void Event_IodemAsksWhyTurningBack(void) {
       // "I see... In that case, I shall wait here for you to return." The
       // saved place becomes Tolbi's.
       Event_ShowMessage(ACTOR_IODEM, 0);
-      OBJ_WALK(ACTOR_IODEM, 152, 232);
+      OBJECT_WALK(ACTOR_IODEM, 152, 232);
       GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
       Engine_ActorWaitForMove(ACTOR_IODEM);
-      OBJ_MODE(ACTOR_IODEM, ANIM_STAND);
+      OBJECT_MODE(ACTOR_IODEM, ANIMATION_STAND);
       gGameState.savedScene = (s32)&SceneId_TolbiInteriors;
       gGameState.savedEntrance = TOLBI_INTERIORS_SANCTUM_NORTH;
     } else {
@@ -258,19 +258,19 @@ static void Event_IodemAsksWhyTurningBack(void) {
       // the party, and Isaac steps away from the trigger.
       gEventWork->message += 1;
       Event_ShowMessage(ACTOR_IODEM, 0);
-      OBJ_MODE(ACTOR_IODEM, ANIM_WALK);
+      OBJECT_MODE(ACTOR_IODEM, ANIMATION_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
         Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                              leader->z.part.pixel);
       }
       Engine_ActorWaitForMove(ACTOR_IODEM);
-      OBJ_POS_SET(ACTOR_IODEM, 0, 0);
+      OBJECT_POSITION_SET(ACTOR_IODEM, 0, 0);
       WAIT(30);
-      OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_WALK);
+      OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_WALK);
       Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-      OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+      OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
     }
     EV_END();
   }
@@ -281,15 +281,15 @@ static void Event_IodemAsksWhyTurningBack(void) {
 /// with the party. `I've been waiting for you, Isaac! We should go to Babi
 /// Lighthouse soon.`
 static void Event_IodemRejoins(void) {
-  EV_BEGIN();
-  OBJ_FACE(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
-  OBJ_FACE(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  EV_START();
+  OBJECT_FACE(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
+  OBJECT_FACE(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   WAIT(10);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   MESSAGE_SET(MsgKaragolIveBeenWaitingForIsaac);
   MESSAGE_PUT(ACTOR_IODEM, 0);
-  OBJ_MODE(ACTOR_IODEM, ANIM_WALK);
+  OBJECT_MODE(ACTOR_IODEM, ANIMATION_WALK);
   {
     struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -351,7 +351,7 @@ static void Event_LeaveToWorldMapEast(void) {
   struct EventWork *event;
 
   event = gEventWork;
-  EV_BEGIN();
+  EV_START();
   if (FLAG_CHECK(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     GameFlag_Clear(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
@@ -375,7 +375,7 @@ static void Event_JumpAcross(void) { Engine_LeaderCheckAhead(); }
 /// less it spins and leaps into the water, freeing the cell where it stood.
 static void Event_MoveStump(void) {
   Object_GetById(ACTOR_STUMP);
-  EV_BEGIN();
+  EV_START();
   {
     struct FieldActor *actor = Object_GetById(ACTOR_STUMP);
 
@@ -397,15 +397,15 @@ static void Event_PushPillar(void) {
 
 /// Hides the pillar and shows the actor that stands in for it in its place.
 static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
-  OBJ_POS_SET(ACTOR_PILLAR, 0, 0);
-  OBJ_POS_SET(ACTOR_DROPPED_PILLAR, 696, 288);
-  OBJ_MODE(ACTOR_DROPPED_PILLAR, animation);
+  OBJECT_POSITION_SET(ACTOR_PILLAR, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_DROPPED_PILLAR, 696, 288);
+  OBJECT_MODE(ACTOR_DROPPED_PILLAR, animation);
 }
 
 /// Move on the pillar in GondowanCave, and after each push: past column 42 it
 /// drops into the water with a splash, for good.
 static void Event_MovePillar(void) {
-  EV_BEGIN();
+  EV_START();
   if ((Object_GetById(ACTOR_PILLAR)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
@@ -461,7 +461,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
   Engine_AudioPlayCue(SE_136);
-  OBJ_SPEED(actorId, PIXELS(2), PIXELS(1));
+  OBJECT_SPEED(actorId, PIXELS(2), PIXELS(1));
   Actor_SetDestination(actorId, 472, 288);
   actor->gravity = 4 * PIXELS(1) / 5;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -478,9 +478,9 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
     particleVelocity.z = Engine_MathSin(angle);
     particleVelocity.x -= particleVelocity.x / 4;
     particleVelocity.z -= particleVelocity.z / 2;
-    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-                  particleVelocity.x, particleVelocity.y, particleVelocity.z, 0,
-                  0);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                      particleVelocity.x, particleVelocity.y,
+                      particleVelocity.z, 0, 0);
   }
   Actor_SetDestination(actorId, 440, 308);
   // Finish the second movement before restoring the resting animation.
@@ -489,10 +489,10 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = 0;
   actor->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(SE_CAST);
-  OBJ_MODE(actorId, STUMP_ANIM_SPLASH);
+  OBJECT_MODE(actorId, STUMP_ANIM_SPLASH);
   Map_WaitForShakeToSettle();
   WAIT(10);
-  OBJ_MODE(actorId, STUMP_ANIM_SINK);
+  OBJECT_MODE(actorId, STUMP_ANIM_SINK);
 }
 
 /// Unused: an empty function nothing calls.
@@ -513,7 +513,7 @@ s32 Scene_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_GondowanPassage) {
     FLAG_SET(FLAG_RETREAT_BLOCKED);
     if (FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-      OBJ_POS_SET(ACTOR_IODEM, 0, 0);
+      OBJECT_POSITION_SET(ACTOR_IODEM, 0, 0);
     }
   }
   if (gGameState.scene == (s32)&SceneId_GondowanCave) {
@@ -521,8 +521,8 @@ s32 Scene_Initialize(void) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
-      OBJ_POS_SET(ACTOR_STUMP, 440, 308);
-      OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
+      OBJECT_POSITION_SET(ACTOR_STUMP, 440, 308);
+      OBJECT_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
@@ -535,18 +535,18 @@ s32 Scene_Initialize(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// Packs signed pixel steps with X in the upper halfword and Z in the lower.

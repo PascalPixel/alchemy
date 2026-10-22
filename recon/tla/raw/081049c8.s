@@ -32,7 +32,7 @@ Func_081049c8:
 	add r7, r10
 .L_081049fe:
 	ldrh r0, [r7]
-	bl UnitGet
+	bl Unit_Get
 	movs r6, #0
 	movs r4, #0
 	adds r0, #248

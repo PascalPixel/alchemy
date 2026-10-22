@@ -34,7 +34,7 @@ IWRAM and points the interrupt vector at its dispatcher
 graphics. It then installs `System_VBlankHandler`, arms the soft-reset keys,
 starts the sound driver, resets the sprite VRAM cache and the task table,
 waits ten frames and calls `Game_RunFar`. The German, French, Spanish and
-Italian editions (`TBS_PATCH_2`) also install `IwramHalt` for the
+Italian editions (`TBS_PATCH_2`) also install `Iwram_Halt` for the
 cartridge-removed interrupt.
 
 Neither function returns. `Game_Run` (`games/tbs/src/object/object/scene.c`)
@@ -180,7 +180,7 @@ its stack below the top again and overwrite `gSavedStack` and
 `gSavedStackSize`, which still hold the outer caller's frames. `WaitFrames`
 itself doesn't check, but it sets `gSchedulerStatus` while it runs the
 main-loop tasks, and code a task may reach tests it before waiting
-(`BattleObj_SpawnObjectsForList`). No task waits
+(`BattleObject_SpawnObjectsForList`). No task waits
 ([Evidence and open questions](#evidence-and-open-questions)).
 
 | Name | Value | Meaning |
@@ -536,6 +536,7 @@ names ending in `Far`, so renaming one touches other folders too.
 | `VramCache_` | the sprite VRAM cache |
 | `Scheduler_` | the task scheduler |
 | `Math_`, `Vector_` | square roots and polar offsets beside `Random16` and `ArcTan2` |
+| `FixedPoint_` | 16.16 and 8.8 arithmetic: a remainder, a product, a reciprocal and the distance between two positions |
 | `Transform_`, `SceneTransform_`, `Projection_` | the 3D transform and projection |
 | `NumberText_`, `DebugText_` | number text and the debug text screen |
 | `ColorBuffer_` | shading a buffer of pixels, keeping a copy |

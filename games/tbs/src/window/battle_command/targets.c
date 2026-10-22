@@ -150,7 +150,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
         if (candidateIds[j] == BATTLE_UNIT_REMOVED)
           continue;
-        candidate = UnitGetFar(candidateIds[j]);
+        candidate = Unit_GetFar(candidateIds[j]);
         switch (kind) {
         case TARGET_HINT_REVIVE:
           if (candidate->hp == 0) {
@@ -195,7 +195,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
          (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == TARGET_MODE_FOES &&
-          UnitGetFar(candidateIds[targetIndex])->hp == 0)) {
+          Unit_GetFar(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
@@ -342,7 +342,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       // placed by the member's tile column (anchor) and kept on screen.
       if (candidateIds[targetIndex] <= 7) {
         if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
-          unit = UnitGetFar(candidateIds[targetIndex]);
+          unit = Unit_GetFar(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(
               candidateIds[targetIndex],
               EffectPosition_Coordinates(&selectedPosition));
@@ -645,7 +645,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         // An enemy: its name, centred under it and kept on the 224 pixels
         // of the window; enemies 122 and 125 are "Mystery Man" and "Mystery
         // Woman".
-        target = UnitGetFar(candidateIds[targetIndex]);
+        target = Unit_GetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
             candidateIds[targetIndex],
             EffectPosition_Coordinates(&namePosition));

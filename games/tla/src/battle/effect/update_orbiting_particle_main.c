@@ -22,7 +22,7 @@
 
 struct OrbitingParticle;
 
-s32 BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
+s32 BattleEffect_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {
@@ -33,7 +33,7 @@ s32 BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
   return 0;
 }
 
-void BattleFx_UpdateOrbitingParticleFade(struct ObjectRuntime *object) {
+void BattleEffect_UpdateOrbitingParticleFade(struct ObjectRuntime *object) {
   s32 scale;
 
   if (object != NULL) {
@@ -42,7 +42,7 @@ void BattleFx_UpdateOrbitingParticleFade(struct ObjectRuntime *object) {
     object->scaleX = scale;
     if (scale <= 0x1000)
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (u32)gBattleFx_CommonParticleScript);
+                                   (u32)gBattleEffect_CommonParticleScript);
   }
 }
 
@@ -55,7 +55,7 @@ struct OrbitingParticleVector {
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct OrbitingParticleVector *pos);
 
-void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle) {
+void BattleEffect_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
   s32 count;
@@ -72,12 +72,12 @@ void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle) {
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
-      particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleFade;
+      particle->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleFade;
     }
   }
 }
 
-void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle) {
+void BattleEffect_UpdateOrbitingParticleRight(struct ObjectRuntime *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
   s32 count;
@@ -94,7 +94,7 @@ void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle) {
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
-      particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleFade;
+      particle->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleFade;
     }
   }
 }
@@ -104,7 +104,7 @@ struct OrbitingParticleChild {
   u8 flags;
 };
 
-void FieldFx_RunFrostOnTarget(void) {
+void FieldEffect_RunFrostOnTarget(void) {
   struct BattleFxScene *state = Ram_HeapSlots->effectWork;
   struct OrbitingParticleChild *child = state->child;
 
@@ -113,7 +113,7 @@ void FieldFx_RunFrostOnTarget(void) {
       state->enabled = 1;
     }
     child->flags |= 2;
-    FieldFx_RunFrost();
+    FieldEffect_RunFrost();
   }
 }
 
@@ -122,7 +122,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 /// Sixteen particles, one every three frames, orbit points scattered 2 to 6
 /// pixels around the effect; the target then flashes eight times, takes the
 /// orbiting particles' main update and runs its pending event.
-void FieldFx_RunFrost(void) {
+void FieldEffect_RunFrost(void) {
   struct OrbitingParticleVector pos;
   struct OrbitingParticleVector *p;
   struct BattleFxScene *scene;
@@ -148,9 +148,9 @@ void FieldFx_RunFrost(void) {
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
-        particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleLeft;
+        particle->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleLeft;
       else
-        particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleRight;
+        particle->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleRight;
 
       particle->angle = Random16();
       particle->action = 60;
@@ -190,7 +190,7 @@ void FieldFx_RunFrost(void) {
       Object_SetMode(target, 2);
     }
 
-    target->update = (void (*)(void))BattleFx_UpdateOrbitingParticleMain;
+    target->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleMain;
     ev = Func_080ce458(0x50000005, 6, Func_080ce31c(6));
     if (ev != NULL)
       EventRuntime_RunPendingEvent(ev, scene->firstObjectId,
@@ -198,5 +198,5 @@ void FieldFx_RunFrost(void) {
     WaitFrames(20);
   }
 
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
 }

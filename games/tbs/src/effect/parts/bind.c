@@ -4,9 +4,9 @@
 
 #include "../effect_internal.h"
 
-// The triangle effects (Bind, Luff and BattleFx_RunUnusedTriangleStrike) spin a
-// shrinking triangle onto the first target for 64 frames and then stand a
-// rune there. The triangle is drawn as the ring and star effects draw their
+// The triangle effects (Bind, Luff and BattleEffect_RunUnusedTriangleStrike)
+// spin a shrinking triangle onto the first target for 64 frames and then stand
+// a rune there. The triangle is drawn as the ring and star effects draw their
 // outlines: its corners are projected onto the canvas and stored in the
 // velocity fields of EffectStep records, then each edge is sampled at evenly
 // spaced points and a flare is stamped at each. Both runners write the same
@@ -112,18 +112,18 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
 /// A triangle of light spins and shrinks onto the first target for 64 frames,
 /// then a rune stands on the target; the battle shows the result on frame 64.
 ///
-/// Abilities: Bind (BATTLE_FX_BIND); Luff (BATTLE_FX_BIND_218).
+/// Abilities: Bind (BATTLE_EFFECT_BIND); Luff (BATTLE_EFFECT_BIND_218).
 ///
 /// When effect->prelude is 1 a Jupiter Djinni first appears over the first
 /// target, sways and rises away. The canvas darkens a little faster every 16
 /// frames.
 ///
-/// Runs BattleFx_RunDjinniEntrance first when effect->prelude is 1. Moves
+/// Runs BattleEffect_RunDjinniEntrance first when effect->prelude is 1. Moves
 /// BG2X so the canvas's x 64 is on the first target, cycles the palette
 /// each frame through Graphics_UpdatePhasePalette, raises
 /// work->transferValue every 16 frames, keeps the triangle's corners in
 /// work->particles 0 to 2, and builds and frees its blitters every frame.
-void BattleFx_RunBind(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {
@@ -158,10 +158,11 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
-                               DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
+    BattleEffect_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
+                                   DJINNI_ANCHOR_OVER_TARGET, &originX,
+                                   &originY);
   REG_BG2PA = Q_8_8(1);
 
   // Setup. The rune, the flares at 0x1000 and the Djinni at 0x2000, in the
@@ -202,7 +203,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
 
       x = ((Trig_Sin(frame << 11) * 20) >> 16) + originX + shift - 20;
       y = (((Trig_Cos(frame << 11) * 4)) >> 16) + originY - 24;
-      BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+      BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + 0x2000, x, y, 40, 40);
@@ -269,7 +270,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleFx_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleEffect_FlareCells[size - 1] + 0x1000,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -286,23 +287,23 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   }
 
   // Finish: the blitters were freed each frame.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 /// Unused: no row of actflags.tsv in either game names its kind, and the
-/// handler table is reached with no other kind (BattleFx_RunTableEffect), so
-/// the player never sees it. It would show the spinning triangle and rune of
-/// BattleFx_RunBind without the Djinni, with the user stepping up to the
+/// handler table is reached with no other kind (BattleEffect_RunTableEffect),
+/// so the player never sees it. It would show the spinning triangle and rune of
+/// BattleEffect_RunBind without the Djinni, with the user stepping up to the
 /// first target on frame 46.
 ///
-/// Abilities: none (BATTLE_FX_UNUSED_TRIANGLE_STRIKE).
+/// Abilities: none (BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE).
 ///
 /// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which
 /// holds the same point as Bind's (gBind_Vertex). Changes the same state as
-/// BattleFx_RunBind, on the narrow canvas at priority 0, and starts the
+/// BattleEffect_RunBind, on the narrow canvas at priority 0, and starts the
 /// user's approach through BattleMotion_ApproachTargetFar.
-void BattleFx_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {
@@ -335,7 +336,7 @@ void BattleFx_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
 
   // Setup, as for Bind: the rune, and the flares at 0x1000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
@@ -354,7 +355,7 @@ void BattleFx_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
-    // Frame loop, as in BattleFx_RunBind.
+    // Frame loop, as in BattleEffect_RunBind.
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
     // The user sets off three quarters of the way to the target, arriving
@@ -413,7 +414,7 @@ void BattleFx_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleFx_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleEffect_FlareCells[size - 1] + 0x1000,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -429,6 +430,6 @@ void BattleFx_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

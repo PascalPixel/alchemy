@@ -211,7 +211,7 @@ const struct SceneEvent *TretTreeBranch_GetEvents(void) {
 
 /// Unused event hook: begins and immediately ends an event.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
-  EV_BEGIN();
+  EV_START();
   EV_END();
 }
 

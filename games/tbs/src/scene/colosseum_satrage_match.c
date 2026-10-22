@@ -407,7 +407,7 @@ static void Event_KnockDownObstacle(void) {
 
     sprite->rotation = rotation;
   }
-  Engine_ActorSetAnimation(FALLING_OBSTACLE, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(FALLING_OBSTACLE, ANIMATION_SHAKE_HEAD);
   obstacle->x.fixed = PIXELS(336);
   obstacle->y.fixed = -PIXELS(8);
   obstacle->z.fixed = PIXELS(264);
@@ -478,7 +478,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 
   pusher = Object_GetById(gGameState.selectedActor);
   log = Object_GetById(logId);
-  Engine_EventBegin();
+  Engine_EventStart();
   {
     destinationX =
         ((pusher->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
@@ -573,7 +573,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
     offsetX = 0;
     offsetZ = (halfCellZ - log->z.fixed) / 2;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(pusher, 8);
   Engine_EventWait(6);
   log->speed = 0x8000;
@@ -581,7 +581,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Object_SetMode(log, gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
   Engine_ObjectSetPosition(log, halfCellX, 0, halfCellZ);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(pusher, ANIM_WALK);
+  Engine_ActorSetAnimation(pusher, ANIMATION_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_StartCamera(
       (struct DispatchObject *)((struct EventWork *)Runtime_AllocateBlock(
@@ -806,7 +806,7 @@ static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
 /// Halt on the shifting floor's lift operator: the lifts stop and leave a
 /// crossing (FLAG_LIFTS_HALTED).
 static void Event_HaltLifts(void) {
-  FieldFx_PauseObject(LIFT_OPERATOR);
+  FieldEffect_PauseObject(LIFT_OPERATOR);
   Engine_GameFlagSet(FLAG_LIFTS_HALTED);
 
   if (gColosseumSatrageMatch_LiftPhase != 0) {
@@ -834,7 +834,7 @@ static void Event_ReachArena(void) {
 
   resultBase = 2;
   SceneState_EmptyHook();
-  Engine_EventBegin();
+  Engine_EventStart();
   opponentFinishedFirst = ColosseumSatrageMatch_ApproachFinishAndTakeItem(
       ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   ColosseumSatrageMatch_WaitForOpponentFinish();
@@ -848,17 +848,17 @@ static void Event_ReachArena(void) {
   Actor_WalkTo(OPPONENT, 88, 256);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 256);
-  Engine_ActorSetAnimation(OPPONENT, ANIM_STAND);
+  Engine_ActorSetAnimation(OPPONENT, ANIMATION_STAND);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, OPPONENT, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(OPPONENT, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(OPPONENT, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 112, 256);
   Engine_ActorWalkToAndWait(OPPONENT, 96, 0x100);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
   Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
@@ -887,7 +887,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Engine_ActorDestroy(PRIZE_A);
   Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(OPPONENT, PIXELS(88), PIXELS(256));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(256));
   // BUG: 0x4000 is FACING_SOUTH, passed where Actor_FaceActor takes an actor
@@ -901,10 +901,10 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
 #endif
   if (result < 0) {
     Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_ARMS_RAISED);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CROUCH);
   } else {
     Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_DEFEATED);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);
   Camera_MoveTo(PIXELS(104), 0, PIXELS(192), 0);
@@ -960,7 +960,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Map_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }
   if (Engine_GameFlagIsSet(FLAG_PLANT_GROWN)) {
-    Engine_ActorSetAnimation(GROWTH_PLANT, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(GROWTH_PLANT, ANIMATION_SHAKE_HEAD);
     Map_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
   if (Engine_GameFlagIsSet(FLAG_WEST_TARGET_FROZEN)) {
@@ -1029,7 +1029,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       Map_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
     Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
-    FieldFx_PauseObject(LIFT_OPERATOR);
+    FieldEffect_PauseObject(LIFT_OPERATOR);
   } else {
     for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
          liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
@@ -1112,7 +1112,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   actor = Object_GetById(attendantId);
   attendantX = actor->x.part.pixel;
   attendantZ = actor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(attendantId, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
@@ -1134,7 +1134,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteSecondFinals);
-  Engine_ActorSetAnimationAndWait(attendantId, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(attendantId, ANIMATION_NOD);
   Engine_EventShowMessage(attendantId, 0);
   Engine_ActorRunRepeatedMotion(attendantId, 2);
   Engine_EventShowMessage(attendantId, 0);
@@ -1143,22 +1143,22 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Engine_ActorRunRepeatedMotion(attendantId, 2);
   Engine_EventShowMessage(attendantId, 0);
   // Gather the companions into Isaac before the attendant returns to his post.
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
@@ -1185,7 +1185,7 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
   if (gGameState.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(attendant, 1);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoStageDubbedMini);
@@ -1204,7 +1204,8 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
       Engine_EventWait(3);
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       actor->velocityY = 0x40000;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER,
+                               ANIMATION_LEADER_ARMS_RAISED);
       Engine_ActorSetAttachedEffect(
           ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Engine_EventWait(30);
@@ -1230,7 +1231,7 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
   if (gGameState.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(attendant, 2);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoShiftingFloorStage);
@@ -1276,7 +1277,7 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
   if (gGameState.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(attendant, 3);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoLogRollingStage);
@@ -1301,7 +1302,7 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
        * differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR(RIDING_LOG_SOUTH, -64, 0);
       Camera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
       Engine_EventWait(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 760, 232);
@@ -1333,7 +1334,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   result = Colosso_GreetAtStage(attendant, 4);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoFansJustCallWall);
@@ -1354,7 +1355,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Camera_SetSpeed(0x4000, 0x800);
     Camera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CLIMB);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x400000,
                              actor->z.fixed);
@@ -1407,7 +1408,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Object_SetMode(obstacle, 3);
   Engine_ObjectSetPosition(obstacle, column, 0, row);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(pusher, ANIM_WALK);
+  Engine_ActorSetAnimation(pusher, ANIMATION_WALK);
   Engine_ActorSetSpeed(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
   Object_SetMode(pusherActor, 2);
   Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
@@ -1431,7 +1432,7 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   result = Colosso_GreetAtStage(attendant, 5);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoPlaceCalledBoard);
@@ -1510,7 +1511,7 @@ static void ColosseumSatrageMatch_StartLetteringAnimation(u32 mode,
 /// (mode 0), or for the race `Match 2`, then 3, 2, 1 and `Go!`.
 static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
@@ -1523,7 +1524,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   }
 
   Engine_AudioPlayCue(SE_247);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   {
@@ -1982,7 +1983,7 @@ s32 gColosseumSatrageMatch_RaiseScript[] = {
     SC_WAIT(2),
     SC_WAIT(50),
     SC_LOOP(2, SC_TO(1)),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_SET(SW_HOOK, 0),
     SC_END,
 };

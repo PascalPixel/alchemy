@@ -227,7 +227,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
       else
         handle = UiText_OpenMessageWindowFar(message, left, top, 2);
     } else {
-      s32 voice = FieldFx_GetResourceId(sprite);
+      s32 voice = FieldEffect_GetResourceId(sprite);
 
       if (extra != 0)
         handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1,
@@ -467,13 +467,13 @@ void FieldEvent_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 
   firstWindow = (s32)UiText_OpenMessageWindowFar(
       field->message++, firstX, firstY,
-      FieldFx_GetResourceId(firstSprite) << 16);
+      FieldEffect_GetResourceId(firstSprite) << 16);
   UiWindow_CreateWithSideObjectFar(firstSprite, 0, firstPortraitX,
                                    firstPortraitY);
 
   secondWindow = (s32)UiText_OpenMessageWindowFar(
       field->message++, secondX, secondY,
-      FieldFx_GetResourceId(secondSprite) << 16);
+      FieldEffect_GetResourceId(secondSprite) << 16);
   UiWindow_CreateWithSideObjectFar(secondSprite, 0, secondPortraitX,
                                    secondPortraitY);
 
@@ -512,7 +512,7 @@ void Ui_SetMessageVoiceFromActor(s32 actor) {
     *(s16 *)&state->speakerVoiceSound = (rate = 0);
     *(s16 *)&state->speakerVoiceCountdown = rate;
   } else {
-    voice = FieldFx_GetResourceId(ObjectTable_ReadActiveValue(actor));
+    voice = FieldEffect_GetResourceId(ObjectTable_ReadActiveValue(actor));
     rate = gUi_RenderResultValues[gGameState.messageSpeed];
     *(s16 *)&state->speakerVoiceSound = voice;
     *(s16 *)&state->speakerVoiceCountdown = rate;

@@ -24,7 +24,7 @@ struct PairScene {
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 
-void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
+void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct ObjectRuntime *user;
   struct ObjectRuntime *target;
   struct PairScene *scene;

@@ -242,7 +242,7 @@ const s32 gObjectDispatch_EndScript[] = {
 const ScriptCommandFn gData_0802f204[54] = {
     Script_Wait,            // 0x00 SC_WAIT
     Script_WaitForArrival,                 // 0x01 SC_SYNC
-    Func_08024fe0,                       // 0x02 SC_POS
+    Func_08024fe0,                       // 0x02 SC_POSITION
     Func_08025038,                       // 0x03 SC_CMD_03
     Func_08025078,                       // 0x04 SC_MOVE
     Script_ApplyRelativePosition,        // 0x05 SC_MOVE_BY

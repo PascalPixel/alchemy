@@ -28,9 +28,9 @@
 /// over frames 32 to 79, fall back under gravity and from frame 80 rise away,
 /// while three columns of fire stream upwards over frames 32 to 79 and the
 /// targets bounce. At the end the formation explodes with
-/// BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
+/// BattleEffect_RunImpactBurst; the battle shows the damage on frame 120.
 ///
-/// Reached through BattleFx_RunSceneEffect, whose sheet slot holds the mote
+/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
 /// sheet here. The embers are PARTICLES 0 to 1023, canvas pixels in 16.16, a
 /// variant of -1 marking an idle one. Loads the water spray palette into the
 /// first 64 background colours, sets REG_BLDALPHA, spawns the twelve
@@ -38,7 +38,7 @@
 /// speed and the usual battle gravity at each bounce. Before the impact burst
 /// it removes its transfer callback and frees its blitters, which the burst
 /// builds again, and it closes the canvas layer last.
-void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
+void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
   void *canvas;
@@ -51,9 +51,9 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   graphics = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The band along the bottom from WaterSpray, the columns from FirePillarA
   // (at sheet + 0x6e4). FirePillarA's own palette is skipped, so both are
@@ -102,9 +102,9 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       life += 7; // sizeof(struct EffectStep) / 4
     }
     sparks = PARTICLES;
-    BattleFx_SelectLivingTargets(work->effect);
+    BattleEffect_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleFx_SpawnObjects(NEREID_OBJECTS, 380, 2);
+    BattleEffect_SpawnObjects(NEREID_OBJECTS, 380, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
@@ -125,7 +125,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
         if (focus.x < 120 << 16)
           velocity.x += 0x8000;
       }
-      BattleFx_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x, focus.y);
+      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
+                                         focus.y);
 
       // Embers burst up from an oval around (32, 96), twice as tall as wide
       // on the canvas and so round on the doubled-width screen, with a random
@@ -265,13 +266,13 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
     }
 
     // The impact burst builds its own blitters and transfer.
-    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
-    BattleFx_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
+    BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
       ResourceObject_ReleaseFar(work->objects[k]);
   }
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef NEREID_FRAMES

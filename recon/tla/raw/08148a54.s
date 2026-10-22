@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
-	.global BattleFx_RunFroth
+	.global BattleEffect_RunFroth
 	.thumb_func
-BattleFx_RunFroth:
+BattleEffect_RunFroth:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -19,7 +19,7 @@ BattleFx_RunFroth:
 	ldr r7, [r5, #92]
 	str r0, [sp, #16]
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #224
 	lsls r2, r2, #3
 	adds r1, r7, r2
@@ -29,12 +29,12 @@ BattleFx_RunFroth:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #31
 	movs r0, #188
 	str r3, [sp, #8]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, .L_08148ad0
 	movs r2, #128
@@ -522,7 +522,7 @@ BattleFx_RunFroth:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -536,6 +536,6 @@ BattleFx_RunFroth:
 .L_08148e90:
 	.4byte Camera_ApplyPhasedDelta
 .L_08148e94:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08148e98:
 	.4byte gData_081979a8

@@ -89,7 +89,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags) {
   UiWindow_BuildLayoutBounds(flags);
   layout->window =
       UiWindow_Create(layout->x, layout->y, layout->width, layout->height, 6);
-  PartyStatusDraw(flags);
+  PartyStatus_Draw(flags);
   *busy = zero;
 }
 
@@ -229,7 +229,7 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
 /// standby Djinn of each element. The HP is drawn in text colour 2 at zero and
 /// colour 4 at a quarter or less. When the flags change, the window is erased
 /// and laid out again first.
-void PartyStatusDraw(s32 flags) {
+void PartyStatus_Draw(s32 flags) {
   // UB: the negative indices leave the single party-status work slot.
   // Named owners grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
   // original address formation and load order in the matching build.
@@ -302,7 +302,7 @@ void PartyStatusDraw(s32 flags) {
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
-    struct BattleUnit *unit = UnitGetFar(members[i]);
+    struct BattleUnit *unit = Unit_GetFar(members[i]);
     s32 hp = unit->hp;
     s32 maxHp = unit->maxHp;
     s32 barLength;

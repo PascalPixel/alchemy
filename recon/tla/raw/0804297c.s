@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global PartyStatusDraw
+	.global PartyStatus_Draw
 	.thumb_func
-PartyStatusDraw:
+PartyStatus_Draw:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -227,7 +227,7 @@ PartyStatusDraw:
 	ldr r1, [sp, #4]
 	ldr r2, [sp, #12]
 	ldrh r0, [r1, r2]
-	bl UnitGet
+	bl Unit_Get
 	adds r6, r0, #0
 	movs r3, #56
 	ldrsh r5, [r6, r3]

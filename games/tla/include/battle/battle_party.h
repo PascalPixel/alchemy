@@ -48,7 +48,7 @@ struct DjinnRecoveryTable {
 };
 
 s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);
-s32 BattleEnemyList(s16 *unit_ids);
+s32 BattleEnemy_List(s16 *unit_ids);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 s32 BattleParty_AssignMemberSlots(void);
 s32 BattleParty_ListActorIds(s32 side_mask, u16 *unit_ids);

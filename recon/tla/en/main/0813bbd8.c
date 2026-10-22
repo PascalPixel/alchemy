@@ -1,10 +1,10 @@
 // Near miss, differ 41 of 558.
 
-// Twin: The Broken Seal's BattleFx_RunIce (effect kind 7 in
+// Twin: The Broken Seal's BattleEffect_RunIce (effect kind 7 in
 // both games), ported as is apart from ⚓️'s calling conventions: the effect is
 // read from the argument (⚓️ never stores work->effect), the heap blocks are
-// read as Ram_HeapSlots fields, the blitters go through BattleFx_LoadBlitter with
-// ⚓️'s mode numbers (3 - The Broken Seal's), BattleFx_ArmWin0HBlankDma arms the WIN0
+// read as Ram_HeapSlots fields, the blitters go through BattleEffect_LoadBlitter with
+// ⚓️'s mode numbers (3 - The Broken Seal's), BattleEffect_ArmWin0HBlankDma arms the WIN0
 // HBlank DMA, the callbacks take order 0xc80 and the results phase is 133.
 
 // Left: the native stores draw[0] before it builds the pair's address, and
@@ -47,7 +47,7 @@ extern u8 Data_08197521[];
 #define FRAME_COUNT(variant) Data_08197521[(variant) * 2 + 1]
 
 // The sparkle puff's size and cell for each of its nine pictures
-// (gBattleFx_PuffSizes and gBattleFx_PuffCells).
+// (gBattleEffect_PuffSizes and gBattleEffect_PuffCells).
 extern u8 Data_0819745e[];
 extern u16 Data_0819744c[];
 
@@ -55,17 +55,17 @@ extern char ResourceId_IceShardSheet;
 extern char ResourceId_SparkleDots;
 extern u16 gMapCellBuffer[];
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
-void BattleFx_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
+void BattleEffect_StartCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -85,7 +85,7 @@ void WaitFrames(s32 frames);
 // Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
 // its age: -1 is a shard still falling or a free puff.
 
-void BattleFx_RunIce(struct BattleEffectArgument *effect) {
+void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -102,7 +102,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
-  BattleFx_BeginCanvasLayer(0x2001);
+  BattleEffect_StartCanvasLayer(0x2001);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
@@ -136,13 +136,13 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
   if (effect->side == 0) {
-    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
-    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
+    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
   } else {
-    BattleFx_LoadBlitter(SLOT_BLITTER,
+    BattleEffect_LoadBlitter(SLOT_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
-    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -172,13 +172,13 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
     }
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma, CALLBACK_ORDER);
   work->transferMode = 2;
   if (effect->variant == 1)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
     if (frame == FRAME_COUNT(effect->variant) - 16)
@@ -262,10 +262,10 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
   Func_0813ba50();
 }

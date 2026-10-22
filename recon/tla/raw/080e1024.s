@@ -152,6 +152,6 @@ Func_080e1024:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080e114c:
-	.4byte BattleFx_UpdateDescendingParticleNegativeArc
+	.4byte BattleEffect_UpdateDescendingParticleNegativeArc
 .L_080e1150:
-	.4byte BattleFx_UpdateDescendingParticlePositiveArc
+	.4byte BattleEffect_UpdateDescendingParticlePositiveArc

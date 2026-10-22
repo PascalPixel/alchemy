@@ -66,10 +66,10 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_02004b80:
 	overlay_veneer Runtime_PushSlotEntryFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -357,7 +357,7 @@ FieldEvent_WaitFrames:
 	.global Func_02004ca8
 	.thumb_func
 Func_02004ca8:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02004cb0
 	.thumb_func
 Func_02004cb0:
@@ -389,7 +389,7 @@ Object_SetModeById:
 	.global Func_02004ce8
 	.thumb_func
 Func_02004ce8:
-	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -475,19 +475,19 @@ Func_02004d58:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Func_02004d60
 	.thumb_func
 Func_02004d60:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
-	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
@@ -506,10 +506,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -550,16 +550,16 @@ Func_02004d88:
 	overlay_veneer Func_080c8480
 	.endif
 	.endif
-	.global BattleFx_PrepareBufferInterpolation
+	.global BattleEffect_PrepareBufferInterpolation
 	.thumb_func
-BattleFx_PrepareBufferInterpolation:
+BattleEffect_PrepareBufferInterpolation:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer EventObject_InitializeFar
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer EventObject_InitializeFar
 	.else
-	overlay_veneer BattleFx_PrepareBufferInterpolationFar
+	overlay_veneer BattleEffect_PrepareBufferInterpolationFar
 	.endif
 	.endif
 	.global Func_02004d98
@@ -662,10 +662,10 @@ Func_02004dd0:
 	.thumb_func
 Func_02004dd8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectEffect_BeginContextEffect25Far
+	overlay_veneer ObjectEffect_StartContextEffect25Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectEffect_BeginContextEffect25Far
+	overlay_veneer ObjectEffect_StartContextEffect25Far
 	.else
 	overlay_veneer Func_080c8918
 	.endif

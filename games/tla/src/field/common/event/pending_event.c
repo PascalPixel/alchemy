@@ -10,7 +10,7 @@ s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
   if (event != NULL) {
     if (event->action != 0) {
       if (event->action < 0x10000) {
-        EventRuntime_Begin();
+        EventRuntime_Start();
         EventRuntime_SetMessage(event->action);
         EventRuntime_ShowMessageAndWait(target, 0);
         EventRuntime_End();
@@ -19,7 +19,7 @@ s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
       }
     }
     if (GameFlag_Test(0x142)) {
-      EventRuntime_Begin();
+      EventRuntime_Start();
       UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
       EventRuntime_End();
     }

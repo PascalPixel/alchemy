@@ -99,7 +99,7 @@ Func_080de21c:
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080de2f8
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	b .L_080de53a
 .L_080de2f4:
 	.4byte Func_080de060
@@ -373,7 +373,7 @@ Func_080de21c:
 .L_080de520:
 	movs r0, #10
 	bl WaitFrames
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #20
 	bl WaitFrames
 	mov r0, r11

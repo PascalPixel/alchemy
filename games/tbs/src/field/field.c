@@ -13,7 +13,7 @@
 ///
 ///   Sprites         sprite_draw.c: Sprite_ComposeAnimationFrame,
 ///                   Render_PlaceProjectedSprite; animation.c:
-///                   ResourceObject_Create, AnimationObjects_SelectAnimation
+///                   ResourceObject_Create, AnimationObject_SelectAnimation
 ///   Objects         objects.c: FieldObject_Create, ObjectSystem_Initialize;
 ///                   object_motion.c: Object_UpdateAllThumb,
 ///                   Object_SetMoveTarget

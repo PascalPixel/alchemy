@@ -1,4 +1,4 @@
-// Near miss: differ 6 of 139, The Broken Seal's ReelGame_InitTitle on this
+// Near miss: differ 6 of 139, The Broken Seal's ReelGame_InitializeTitle on this
 // game's heap slots (the reel work at 0xb4, the effect work at 0x5c with its
 // particles first). Three swaps remain, each a pool load the native issues one
 // place earlier: the sparks' base before the work pointer's copy, the halfword
@@ -42,7 +42,7 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-void ReelGame_InitTitle(void) {
+void ReelGame_InitializeTitle(void) {
   struct ReelWork *state;
   struct ReelEffectWork *work;
   struct EffectStep *letter;

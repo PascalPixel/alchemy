@@ -1,4 +1,4 @@
-// Near miss, differ 4 of 197: The Broken Seal's BattleFx_DrawClippedCanvasLine
+// Near miss, differ 4 of 197: The Broken Seal's BattleEffect_DrawClippedCanvasLine
 // with ⚓️'s fraction in bit 31 (start 0x80 << 23, step << 23, carry when
 // negative, then cleared with a shift pair) and dx/dy reused as the step
 // direction. Left: at entry the native loads the canvas pointer before it

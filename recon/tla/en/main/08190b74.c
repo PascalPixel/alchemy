@@ -1,7 +1,7 @@
 // Draft, differ 743 of 1075 (draft 1058 instructions, no device): effect
 // kind 125, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleFx_RunTitanBlade 0.44 by shape, BattleFx_RunHealingMotes 0.38
-// by call order); its backdrop swap is the one BattleFx_RunMegiddo (kind 124)
+// (twins: BattleEffect_RunTitanBlade 0.44 by shape, BattleEffect_RunHealingMotes 0.38
+// by call order); its backdrop swap is the one BattleEffect_RunMegiddo (kind 124)
 // also makes. Every call, cue and table read is in the native's order.
 // The native frame is 136 bytes: to at sp+124, from sp+112, the spawn list
 // sp+84, the blitter pair sp+76, the texture sp+68, effect sp+60, work
@@ -71,13 +71,13 @@ extern const u8 Data_081991a4[];
 extern const s16 Data_08199f2a[];
 extern const s16 Data_08199f2e[];
 
-void BattleFx_BeginCanvasLayer(s32 layer);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_LoadBlitter(s32 slot, s32 value);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_StartCanvasLayer(s32 layer);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_LoadBlitter(s32 slot, s32 value);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Graphics_LoadGreyRamp(void);
-void BattleFx_BuildRepeatingTilemap(void);
-void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
+void BattleEffect_BuildRepeatingTilemap(void);
+void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -94,9 +94,9 @@ void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
@@ -119,7 +119,7 @@ void Audio_PlayCue(s32 cue);
 // a great slash crosses the screen and at 90 the target is struck and 128
 // flat shards scatter, tumbling; from frame 100 everything fades to white,
 // and at the end the battle backdrop returns.
-void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
+void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   struct EffectPosition from;
   struct EffectPosition to;
   s16 list[3];
@@ -142,7 +142,7 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
@@ -150,12 +150,12 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
                              work->sheet + 0x2f10, 1, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   // The blitter faces the caster's side.
   if (effect->side == 0)
-    BattleFx_LoadBlitter(104, 1 << 4 | 3);
+    BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   else
-    BattleFx_LoadBlitter(104, 1 << 4 | 7);
+    BattleEffect_LoadBlitter(104, 1 << 4 | 7);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   transition = Ram_HeapSlots->transitionWork;
@@ -187,7 +187,7 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
       list[2] = 0xff;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-      BattleFx_BuildRepeatingTilemap();
+      BattleEffect_BuildRepeatingTilemap();
       palette = (u16 *)BG_PLTT + 96;
       for (i = 0; i != 128; i++) {
         u32 red = *palette & 31;
@@ -222,7 +222,7 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
       Audio_PlayCue(212);
       Object_SetMode(caster, 2);
       ObjectDispatch_SetAnimationSpeedFar(caster, 48);
-      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
+      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
     }
 
     // Frame 90: the hit, and 128 shards scatter away from the caster.
@@ -265,9 +265,9 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
       }
       draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
       if (effect->side == 0)
-        BattleFx_LoadBlitter(188, 1 << 4 | 11);
+        BattleEffect_LoadBlitter(188, 1 << 4 | 11);
       else
-        BattleFx_LoadBlitter(188, 1 << 4 | 15);
+        BattleEffect_LoadBlitter(188, 1 << 4 | 15);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
       Runtime_ReleaseHeapBlock(188);
@@ -282,7 +282,7 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
 
           draw[0](canvas, graphics + gData_08197410[size - 1],
                   HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
-          BattleFxKernels_IntegrateVector2(step, 60, 0);
+          BattleEffectKernels_IntegrateVector2(step, 60, 0);
           step->variant--;
         }
         step++;
@@ -342,9 +342,9 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
         }
         if (k == 1) {
           if (effect->side == 0)
-            BattleFx_LoadBlitter(188, 1 << 4 | 11);
+            BattleEffect_LoadBlitter(188, 1 << 4 | 11);
           else
-            BattleFx_LoadBlitter(188, 1 << 4 | 15);
+            BattleEffect_LoadBlitter(188, 1 << 4 | 15);
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         }
         draw[k](canvas, work->sheet, x - 20, y, 40, 80);
@@ -454,7 +454,7 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyYaw(step->z);
         Render_TransformVertices(Data_081991a4, projected, 3);
         Render_DrawModelList(model);
-        BattleFxKernels_IntegrateVector3(step, 62, 0);
+        BattleEffectKernels_IntegrateVector3(step, 62, 0);
         step++;
       }
     }
@@ -472,7 +472,7 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScrollX;
   transition->active = 0;
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

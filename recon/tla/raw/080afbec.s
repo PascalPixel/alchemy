@@ -33,7 +33,7 @@ Func_080afbec:
 	b .L_080afd9c
 .L_080afc20:
 	ldr r0, [sp, #12]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #166
 	ldr r3, .L_080afdac
 	lsls r1, r1, #1
@@ -195,9 +195,9 @@ Func_080afbec:
 	adds r1, r5, #0
 	adds r1, #36
 	ldr r0, [sp, #12]
-	bl Unit_CalcBaseElements
+	bl Unit_CalculateBaseElements
 	ldr r0, [sp, #12]
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r3, #149
 	lsls r3, r3, #1
 	adds r1, r5, r3

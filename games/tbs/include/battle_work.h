@@ -118,7 +118,7 @@ struct BattleWork {
   s32 promptSlot; ///< resource entry of the advance arrow's tiles; -1 for none
   s16 partyUnits[7];                       ///< ends with BATTLE_UNIT_LIST_END
   s16 enemyIds[BATTLE_ENEMY_CAPACITY + 1]; ///< ends with BATTLE_UNIT_LIST_END
-  /// The units' battle objects, reached through placement (BattleObjGet).
+  /// The units' battle objects, reached through placement (BattleObject_Get).
   struct BattleObj slots[14];
   /// Each unit's index in slots, indexed by party unit id (0 to 7), or 8 + n
   /// for enemy unit 0x80 + n: a party unit's place in the active party, an

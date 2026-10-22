@@ -237,6 +237,6 @@ Func_080df8e0:
 .L_080dfaa8:
 	.4byte gData_080f3978
 .L_080dfaac:
-	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
+	.4byte BattleEffect_UpdateObjectMotionScaleAndLinkedAngle
 .L_080dfab0:
 	.4byte 0xffff0000

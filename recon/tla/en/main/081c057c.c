@@ -11,7 +11,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 void MusicPlayer_StartSong(struct SoundPlayer *player,
                            const struct SequenceHeader *header);
 void MusicPlayer_Stop(struct SoundPlayer *player);
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
+void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 void AudioCommand_InvokeSlot35(void *block);
 extern struct SoundWork gSound_Work;
@@ -34,7 +34,7 @@ void MusicTrack_ReleaseKey(struct SoundPlayer *player,
 void AudioEngine_SetPcmRate(u32 mode);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicPlayer_StepFade(struct SoundPlayer *player);
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
                            struct SoundTrack *track);
 void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);

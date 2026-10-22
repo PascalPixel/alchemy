@@ -25,8 +25,8 @@ struct TouchWork {
 struct TouchEvent *Func_080ccd78(s32 kind, s32 target);
 void EventRuntime_RunMessage(s32 actor, s32 message);
 void Audio_PlayCue(s32 cue);
-void ObjectEffect_BeginContextEffect25(void);
-void ObjectEffect_BeginContextEffect26(void);
+void ObjectEffect_StartContextEffect25(void);
+void ObjectEffect_StartContextEffect26(void);
 void Func_080d5fd4(void);
 
 s32 Scene_RunRaisedEvent(s32 id) {
@@ -78,11 +78,11 @@ s32 Scene_RunTouchOrExit(s32 value) {
         break;
       case 32:
         Audio_PlayCue(128);
-        ObjectEffect_BeginContextEffect26();
+        ObjectEffect_StartContextEffect26();
         break;
       case 48:
         Audio_PlayCue(129);
-        ObjectEffect_BeginContextEffect25();
+        ObjectEffect_StartContextEffect25();
         break;
       case 80:
         Audio_PlayCue(123);

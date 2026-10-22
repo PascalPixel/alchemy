@@ -407,7 +407,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     Runtime_PushSlotEntry((s32 *)&cursorSprite, 241);
 
     if (redraw != 0) {
-      unit = UnitGetFar(owner);
+      unit = Unit_GetFar(owner);
 #if TBS_PATCH_1
       UiWindow_MarkVisibleTileAttributes();
 #endif
@@ -690,7 +690,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         unit->attackStage = 0;
         unit->defenseStage = 0;
         unit->agilityStage = 0;
-        UnitCalcFar(owner);
+        Unit_CalculateFar(owner);
         attackDelta -= unit->atk;
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;
@@ -731,7 +731,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         default:
           break;
         }
-        UiWork_PushValueSlot(helpValue, MSG_ARG_NUMBER);
+        UiWork_PushValueSlot(helpValue, MESSAGE_ARGUMENT_NUMBER);
         UiText_CopyMessageString(statusKind + MsgOwnerStatusConditionHelp,
                                  helpText, OWNER_STATUS_TEXT_MAX);
       } else if (cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
@@ -740,7 +740,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         UiWork_PushValueSlot(
             Unit_GetExperienceForLevelFar(owner, unit->level + 1) -
                 unit->experience,
-            MSG_ARG_NUMBER);
+            MESSAGE_ARGUMENT_NUMBER);
         UiText_CopyMessageString(MsgOwnerStatusNextLevel, helpText,
                                  OWNER_STATUS_TEXT_MAX);
       } else {
@@ -820,7 +820,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 #endif
   UiWork_Finalize(statusWindow, 1);
   UiWork_Finalize(helpWindow, 1);
-  PartyStatusDraw(gBattleWork->partyStatus);
+  PartyStatus_Draw(gBattleWork->partyStatus);
   // UB: the indexed scalar pointer steps outside gBattleWork to
   // HEAP_SLOT_BATTLE_COMMANDS.
   // The named slot changes native instructions at the same 0xcf8-byte EN

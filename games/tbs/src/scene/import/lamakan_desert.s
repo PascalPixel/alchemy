@@ -28,7 +28,7 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Object_GetById, 1
 	.set import.Engine_ActorSetSpeed, 1
@@ -55,6 +55,6 @@
 	.set import.Engine_MapObjectSetPosition, 1
 	.set import.Marker_MoveLeaderAway, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

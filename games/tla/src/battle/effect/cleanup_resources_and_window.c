@@ -17,7 +17,7 @@ struct WorldMapWork {
 
 extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 
-void BattleFx_CleanupResourcesAndWindow(void) {
+void BattleEffect_CleanupResourcesAndWindow(void) {
   Resource_ResetEntry(gWorldMapWork.resources[0]);
   Resource_ResetEntry(gWorldMapWork.resources[1]);
   UiWork_FinalizeFar(gWorldMapWork.window, 2);

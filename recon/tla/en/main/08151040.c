@@ -1,8 +1,8 @@
-// Near miss of BattleFx_RunFire, effect kind 12.
+// Near miss of BattleEffect_RunFire, effect kind 12.
 
-// Twin: The Broken Seal's BattleFx_RunFire (effect.c), call for
+// Twin: The Broken Seal's BattleEffect_RunFire (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
-// blocks as Ram_HeapSlots fields, loads its blitters through BattleFx_LoadBlitter
+// blocks as Ram_HeapSlots fields, loads its blitters through BattleEffect_LoadBlitter
 // (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal has 3 and 2),
 // orders both callbacks 0xc80, and plays cue 134 for a landing ember in
 // variant 2 where The Broken Seal always plays 136.
@@ -10,7 +10,7 @@
 // Near miss: differ 46 of 513 (draft 513), all order residue: about
 // twenty pairs where the native issues a pool or stack load, or one call
 // argument, one slot away from agscc's place (the camera before the
-// effect's copy, r1 before r0 for both BattleFx_LoadBlitter calls, the particle
+// effect's copy, r1 before r0 for both BattleEffect_LoadBlitter calls, the particle
 // buffer before its counter, the cell offset table before the size).
 
 // Tried (2026-10-15):
@@ -36,20 +36,20 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Camera_ApplyPhasedDelta(void); // Camera_ApplyPhasedDelta
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
-// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -60,7 +60,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_Data134; // the particle sheet
 extern u8 Data_08198300[];      // gFire_Counts
-extern u16 gData_08197410[];    // gBattleFx_MoteCells
+extern u16 gData_08197410[];    // gBattleEffect_MoteCells
 extern u16 Data_08198316[];     // gFire_FlareCells
 extern u8 Data_08198303[];      // gFire_FlareWidths
 extern u8 Data_0819830f[];      // gFire_FlareBiasY
@@ -75,7 +75,7 @@ extern u8 Data_08198309[];      // gFire_FlareHeights
 // it leaves a six-picture flare, its target flashes and the screen shakes
 // for two frames. The camera sways between frames 16 and 80. The variant
 // chooses the number of embers.
-void BattleFx_RunFire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -92,16 +92,16 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
   if (effect->side == 1)
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   else
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  BattleFx_LoadBlitter(104,
+  BattleEffect_LoadBlitter(104,
                 BLIT_MODE(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_BLDALPHA = 0x1010;
 
@@ -130,7 +130,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0xc80);
   work->transferMode = 2;
   work->transferValue = 75; // each transfer fades the canvas to 3/4: a trail
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != (Data_08198300[effect->variant] >> 1) + 132;
        frame++) {
@@ -229,9 +229,9 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

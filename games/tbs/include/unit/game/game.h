@@ -16,20 +16,20 @@ struct SummonDefinition;
 void Game_Restart(void);
 void *Djinn_GetRecoveryTable(s32 enemySide);
 u32 Party_GetAverageLevel(void);
-struct BattleUnit *UnitGet(u32 owner);
+struct BattleUnit *Unit_Get(u32 owner);
 const u8 *Enemy_GetDefinition(s32 selector);
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                   s32 direction);
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 void GameFlag_RefreshLureCap(void);
 u32 Runtime_GetBuildStampTime(void);
-void GameState_InitDefaults(void);
-void Party_BeginChildhood(void);
+void GameState_InitializeDefaults(void);
+void Party_StartChildhood(void);
 void Party_EndChildhood(void);
 void Party_RestoreHpPp(s32 cureConditions);
 void Party_RestorePpOfLitElements(void);
 void Unit_RatioNoOp(void);
-void UnitRatio(s32 owner);
+void Unit_UpdateRatios(s32 owner);
 void Unit_SetHp(struct BattleUnit *unit, s32 hp);
 void Unit_SetPp(struct BattleUnit *unit, s32 pp);
 s32 Unit_AddHp(s32 owner, s32 delta);
@@ -72,7 +72,7 @@ s32 Unit_RefreshPsynergy(s32 owner);
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value);
 struct LevelUpResult *Unit_CheckLevelUp(s32 owner, struct LevelUpResult *gains);
 struct CharacterDefinition *Character_GetDefinition(s32 index);
-void Party_InitCharacters(void);
+void Party_InitializeCharacters(void);
 void Unit_LevelNoOp(void);
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains);
@@ -90,7 +90,7 @@ u8 GameFlag_DecrementByte(s32 flag);
 s32 GameFlag_GetNibble(u32 flag);
 void GameFlag_SetNibble(s32 flag, s32 value);
 
-s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix);
+s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix);
 s32 Party_CountActiveOwners(void);
 s32 Party_AddActiveOwner(s32 owner);
 s32 Party_RemoveActiveOwner(s32 owner);
@@ -104,22 +104,23 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 s32 Unit_GetElementLevel(s32 owner, s32 element);
 s32 Enemy_GetAttackElement(struct BattleUnit *unit);
 #ifdef UBFIX
-void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination);
+void Unit_CalculateBaseElements(s32 owner,
+                                struct BattleElementStats *destination);
 #else
-u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]);
+u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 #endif
 s32 Class_Determine(s32 character, const u8 *djinn);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 void Unit_UpdateClass(s32 ownerId);
 
 s32 Battle_GetElementMultiplier(s32 input, s32 halve);
-s32 BattleRandom(void);
-u32 BattleRandomPercent(void);
-s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
-                            s32 elementDifference);
-s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
-                             s32 powerMultiplier);
-s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
+s32 Battle_Random(void);
+u32 Battle_RandomPercent(void);
+s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
+                                 s32 elementDifference);
+s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
+                                  s32 powerMultiplier);
+s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
 s32 Item_GetEquippedElement(s32 owner);
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit);
 s32 RollWeaponUnleash(struct BattleUnit *owner);

@@ -14,7 +14,7 @@
 /// that Battle_RunEncounter adds after the entry transition and removes as
 /// the battle ends. Writes each battle object's icon state and its sprites'
 /// priorities.
-void BattleObj_UpdateSpritePriorities(void) {
+void BattleObject_UpdateSpritePriorities(void) {
   // The two side walks stay separate: a shared priority helper changes EN
   // register allocation despite the same 0x1ac-byte extent.
   u16 unitIds[UNIT_MAX];
@@ -33,7 +33,7 @@ void BattleObj_UpdateSpritePriorities(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
-      struct BattleObj *slot = BattleObjGet(unitIds[unitIndex]);
+      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -77,7 +77,7 @@ void BattleObj_UpdateSpritePriorities(void) {
   {
     count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
-      struct BattleObj *slot = BattleObjGet(unitIds[unitIndex]);
+      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -107,7 +107,7 @@ void BattleObj_UpdateSpritePriorities(void) {
   {
     count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
-      struct BattleObj *slot = BattleObjGet(unitIds[unitIndex]);
+      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -149,14 +149,14 @@ void BattleObj_UpdateSpritePriorities(void) {
 /// Builds the status icon bits of unit id's ailments into its battle
 /// object's activeConditions, which BattleStatusIcon_Cycle shows. Called
 /// wherever a unit's statuses may have changed: BattleEvent_DispatchQueued,
-/// BattleEvent_Playback, Battle_ProcessRoundEnd, BattleObj_ResetRuntimeFields
-/// and BattleObj_SpawnObjectsForList.
+/// BattleEvent_Playback, Battle_ProcessRoundEnd,
+/// BattleObject_ResetRuntimeFields and BattleObject_SpawnObjectsForList.
 #ifdef UBFIX
 void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 #else
 s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 #endif
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s8 poison = unit->poison;
   u32 flags = 0;
 
@@ -198,7 +198,7 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 /// Shows a unit's status icons one after another, each for
 /// ICON_CYCLE_FRAMES frames, switching at once when the shown status ends,
 /// and removes the icon when no status is left. Called each frame for every
-/// unit by BattleObj_UpdateSpritePriorities. Changes the battle object's
+/// unit by BattleObject_UpdateSpritePriorities. Changes the battle object's
 /// cycleTimer, selectedCondition, animation and animationEntry, and
 /// registers or unregisters the icon on its first sprite.
 #ifdef UBFIX
@@ -292,7 +292,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
 /// timer step of 14 to 17 by the unit id's low two bits (16 is normal
 /// speed). XXX: likely so that units side by side do not animate in step,
 /// because the step follows nothing but the unit id. Called by
-/// BattleObj_SpawnObjectsForList, BattleEvent_DispatchQueued,
+/// BattleObject_SpawnObjectsForList, BattleEvent_DispatchQueued,
 /// BattleEvent_Playback and Battle_ProcessRoundEnd.
 #ifdef UBFIX
 void BattlePresentation_SetActorModeAndAction(s32 unitId) {
@@ -302,7 +302,7 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
   struct BattleUnit *unit;
   s32 pose;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   pose = POSE_STANDING;
   if (unit->hp != 0) {
     if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
@@ -315,14 +315,15 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
     pose = POSE_ENEMY_DOWN - pose;
   }
 
-  ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, pose);
+  ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
   ObjectDispatch_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObjGet(unitId)->object, (unitId & 3) + 14);
+      (struct DispatchObject *)BattleObject_Get(unitId)->object,
+      (unitId & 3) + 14);
 }
 
 /// Releases every sprite unitId's object holds and leaves it with none,
 /// clearing the battle object's animationEntry and effectEntry. Called by
-/// BattleObj_SpawnObjectsForList; BATTLE.S also gives it an unnamed
+/// BattleObject_SpawnObjectsForList; BATTLE.S also gives it an unnamed
 /// overlay veneer, which nothing in the source calls.
 void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObj *battleObject;
@@ -330,7 +331,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   s32 recordIndex;
   struct AnimationObject *record;
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   if (battleObject != NULL) {
     object = battleObject->object;
     if (object != NULL) {
@@ -355,12 +356,12 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// list lacks, then creates each listed unit's sprites (body, weapon, status
 /// icon and effect; or the two parts of a two-part enemy) unless it has
 /// them, building its status icons and setting its pose. With refreshPoses,
-/// sets every listed unit's pose again afterwards. Called by BattleObjPut
+/// sets every listed unit's pose again afterwards. Called by BattleObject_Put
 /// (refreshing) and BattleParty_ListAllUnitsAndSubmit, by the staging and
 /// entry transition code, and through its far stub by
-/// BattleFx_SelectLivingTargets. Writes the objects' records, their storage
+/// BattleEffect_SelectLivingTargets. Writes the objects' records, their storage
 /// kind and height, and the battle objects' icon and effect entries.
-void BattleObj_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
+void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
   struct BattleObj *battleObject;
@@ -391,7 +392,7 @@ void BattleObj_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
        unitIndex++) {
     if (unitId == BATTLE_UNIT_REMOVED)
       continue;
-    battleObject = BattleObjGet(unitId);
+    battleObject = BattleObject_Get(unitId);
     if (battleObject == 0)
       continue;
     BattleUnit_BuildStatusFlags(unitId, battleObject);
@@ -474,7 +475,7 @@ void BattleObj_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     if ((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END) {
       for (;;) {
         if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
-            (battleObject = BattleObjGet(spriteId)) != 0 &&
+            (battleObject = BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
           BattlePresentation_SetActorModeAndAction(spriteId);
         unitIndex++;
@@ -488,7 +489,7 @@ void BattleObj_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 
 /// Returns unitId's battle object, through its place, or null for a
 /// unit with no place. Called throughout the battle parts.
-struct BattleObj *BattleObjGet(s32 unitId) {
+struct BattleObj *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct BattleObj *objects = battle->slots;
   s32 placementIndex;
@@ -551,16 +552,16 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 /// (BattleMotion_DestroyAllSlotObjects), setting its active field to 1.
 /// Returns 0. Called when a unit leaves the battle: by
 /// BattleEvent_Playback, BattlePresentation_RunEscape, BattleMotion_ShowDowned,
-/// BattleObj_DestroyTemporaryObject and the auto battle.
-s32 BattleObj_MarkForRelease(s32 unitId) {
+/// BattleObject_DestroyTemporaryObject and the auto battle.
+s32 BattleObject_MarkForRelease(s32 unitId) {
   struct BattleObj *battleObject;
   BattleMotion_ReleaseObjectSlotByValue(unitId);
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   battleObject->active = 1;
   return 0;
 }
 
-/// Releases the object of every unit marked by BattleObj_MarkForRelease,
+/// Releases the object of every unit marked by BattleObject_MarkForRelease,
 /// leaving its battle object with no object. Called by Battle_RunEncounter
 /// at the end of each round and by BattlePresentation_DispatchAction.
 #ifdef UBFIX
@@ -578,7 +579,7 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
     if (placementIndex <= ALLY_MAX) {
       unitId = placementIndex;
     }
-    battleObject = BattleObjGet(unitId);
+    battleObject = BattleObject_Get(unitId);
     if ((battleObject != NULL) && (battleObject->active != 0)) {
       ObjectDispatch_ReleaseFar((struct DispatchObject *)battleObject->object);
       battleObject->object = NULL;
@@ -622,7 +623,7 @@ s32 Camera_ApplyTransformByFlag(void) {
 /// and y, then its depth; Render_ProjectPoint). Returns 0. Reached through
 /// its far stub from EffectPosition_ProjectBattler.
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
-  struct MotionObject *object = BattleObjGet(unitId)->object;
+  struct MotionObject *object = BattleObject_Get(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
   s32 position[3];
   s32 projectionScale;
@@ -654,7 +655,7 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 /// Called by Battle_RunEncounter as the battle is set up and by
 /// BattlePresentation_BuildActions. Writes the camera's yaw, pitch,
 /// distance, position and eye, and the transform state.
-void Camera_InitDefaultTransform(void) {
+void Camera_InitializeDefaultTransform(void) {
   struct BattleCamera *camera = gCameraWork;
   struct FixedPointPosition eyeOffset;
 

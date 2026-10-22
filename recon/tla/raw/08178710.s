@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Rising Dragon (kind 108).
-	.global BattleFx_RunRisingDragon
+	.global BattleEffect_RunRisingDragon
 	.thumb_func
-BattleFx_RunRisingDragon:
+BattleEffect_RunRisingDragon:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,19 +24,19 @@ BattleFx_RunRisingDragon:
 	str r2, [sp, #60]
 	ldr r3, [r3, #100]
 	str r3, [sp, #56]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r4, [sp, #84]
 	ldr r3, [r4, #4]
 	cmp r3, #0
 	bne .L_0817874e
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08178756
 .L_0817874e:
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08178756:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -75,7 +75,7 @@ BattleFx_RunRisingDragon:
 .L_0817879c:
 	.4byte 0x00001010
 .L_081787a0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081787a4:
 	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
@@ -310,7 +310,7 @@ BattleFx_RunRisingDragon:
 	movs r1, #1
 	lsls r2, r2, #10
 	str r3, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	b .L_081789bc
 .L_08178990:
 	.4byte IwramFillWords
@@ -332,7 +332,7 @@ BattleFx_RunRisingDragon:
 	movs r1, #1
 	lsls r2, r2, #10
 	lsls r3, r3, #11
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 .L_081789bc:
 	ldr r1, [sp, #84]
 	movs r3, #8
@@ -393,7 +393,7 @@ BattleFx_RunRisingDragon:
 	adds r0, r5, #0
 	movs r1, #60
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -974,7 +974,7 @@ BattleFx_RunRisingDragon:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08178ee0
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #164
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -994,4 +994,4 @@ BattleFx_RunRisingDragon:
 .L_08178edc:
 	.4byte Data_081991e0
 .L_08178ee0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

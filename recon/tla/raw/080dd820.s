@@ -14,7 +14,7 @@ Func_080dd820:
 	adds r3, #224
 	ldr r7, [r3]
 	movs r0, #6
-	bl BattleFx_RunBusyWaitDelay
+	bl BattleEffect_RunBusyWaitDelay
 	movs r0, #8
 	ldr r6, [r5, #108]
 	bl DisplayTransition_InitializeBattleEffectState
@@ -39,14 +39,14 @@ Func_080dd820:
 	lsls r0, r0, #9
 	mov r9, r1
 	movs r1, #0
-	bl BattleFx_ApplyColorToSourceBuffer
+	bl BattleEffect_ApplyColorToSourceBuffer
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #1
 	adds r0, #1
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r0, #1
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 	movs r2, #192
 	lsls r2, r2, #4
 	adds r2, #164

@@ -57,7 +57,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
   lostCount = 0;
   count = 0;
   for (i = 0; i < 32 && newGrid[i].encodedAction != 0; i++) {
-    if (BattleActGet(newGrid[i].encodedAction)->flags & 0x80) {
+    if (BattleAction_Get(newGrid[i].encodedAction)->flags & 0x80) {
       out[count] = newGrid[i].encodedAction & ACTION_ID_MASK;
       count++;
       for (j = 0; j < 32; j++) {
@@ -72,7 +72,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
     }
   }
   for (i = 0; i < 32 && oldGrid[i].encodedAction != 0; i++) {
-    if (BattleActGet(oldGrid[i].encodedAction)->flags & 0x80) {
+    if (BattleAction_Get(oldGrid[i].encodedAction)->flags & 0x80) {
       for (j = 0; j < 32; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
              ACTION_ID_MASK) == 0)
@@ -122,7 +122,7 @@ s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
 /// abilities after the change (unchanged ones in colour 15, new ones in
 /// colour 4) and then those it would lose (colour 2), and *pageCount is set
 /// to their number (at least 1).
-/// The Djinni is toggled and the unit recalculated (UnitCalcFar) only to
+/// The Djinni is toggled and the unit recalculated (Unit_CalculateFar) only to
 /// measure: the unit is restored from a copy before it returns.
 /// Battle_SelectAbility calls it as the cursor moves.
 struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
@@ -193,7 +193,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     }
   }
 
-  unit = UnitGetFar(owner);
+  unit = Unit_GetFar(owner);
   if (win != 0)
     UiWork_Finalize(win, 1);
 
@@ -221,7 +221,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     Djinn_DeactivateFar(owner, element, djinnIndex);
   else
     Djinn_ActivateFar(owner, element, djinnIndex);
-  UnitCalcFar(owner);
+  Unit_CalculateFar(owner);
 
   abilityCount =
       DjinnMenu_ListChangedDjinn(savedUnit->actionSlots, unit->actionSlots,
@@ -287,7 +287,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     i = page * 5 - 5;
     for (visibleRow = 0; visibleRow < visibleRows && i < abilityCount;
          visibleRow++, i++) {
-      ability = BattleActGet(changedAbilities[i]);
+      ability = BattleAction_Get(changedAbilities[i]);
       if (ability->element != ELEMENT_NONE)
         UiWindow_SetTilemapEntry(win, 0x5001 + ability->element, 15,
                                  visibleRow * 2, 0);
@@ -315,8 +315,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       UiWindow_SetTilemapEntry(win, 0xf01f, 11, visibleRow * 2, 0);
       UiWindow_SetTilemapEntry(win, PSYNERGY_COST_SECOND_TILE, 12,
                                visibleRow * 2, 0);
-      UiText_DrawNumberInWindow(BattleActGet(changedAbilities[i])->ppCost, 2,
-                                win, 104, visibleRow * 16);
+      UiText_DrawNumberInWindow(BattleAction_Get(changedAbilities[i])->ppCost,
+                                2, win, 104, visibleRow * 16);
     }
 
     if (gained != 0) {

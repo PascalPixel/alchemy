@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global FieldFx_RunDouse
+	.global FieldEffect_RunDouse
 	.thumb_func
-FieldFx_RunDouse:
+FieldEffect_RunDouse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -425,7 +425,7 @@ FieldFx_RunDouse:
 	blt .L_080df0e2
 	adds r0, r7, #0
 	bl Object_Destroy
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080df156:
 	add sp, #52
 	pop {r3, r5, r6, r7}
@@ -437,8 +437,8 @@ FieldFx_RunDouse:
 .L_080df164:
 	.4byte 0xffe00000
 .L_080df168:
-	.4byte BattleFx_LandFallingObject
+	.4byte BattleEffect_LandFallingObject
 .L_080df16c:
-	.4byte BattleFx_UpdateDriftingFallObject
+	.4byte BattleEffect_UpdateDriftingFallObject
 .L_080df170:
 	.4byte 0xffff4000

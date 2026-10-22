@@ -25,7 +25,7 @@ void Audio_PlayCue(s32 cue);
 void RenderOutput_ClearListFar(void *window);
 void RenderOutput_RedrawSavedRectFar(void *window);
 void InventoryMenu_ShowModalMessage(const u8 *message, s32 a, s32 b);
-void UnitCalcFar(s32 unit);
+void Unit_CalculateFar(s32 unit);
 
 /// Uses the selected item from the owner in pane 0 on the member in pane 1.
 /// On failure plays the error sound, shows why in the info window and returns
@@ -60,7 +60,7 @@ s32 ItemMenu_Use(void) {
   mask = 0x1ff;
   mask &= item;
   Func_08100d40(mask);
-  UnitCalcFar(menu->paneOwner[0]);
-  UnitCalcFar(menu->paneOwner[1]);
+  Unit_CalculateFar(menu->paneOwner[0]);
+  Unit_CalculateFar(menu->paneOwner[1]);
   return 1;
 }

@@ -11,7 +11,7 @@ extern struct EventWork *gEventWork;
 
 void Engine_ActorSetAnimation();
 void Engine_ActorShowEmote();
-void Engine_EventBegin(void);
+void Engine_EventStart(void);
 void Engine_EventEnd(void);
 void Engine_ActorSetPosition(u32 actor, s32 x, s32 z);
 void Engine_EventSetMessage();

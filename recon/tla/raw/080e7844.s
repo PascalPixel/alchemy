@@ -842,9 +842,9 @@ Func_080e7844:
 	lsls r0, r0, #7
 	adds r0, #255
 	movs r1, #0
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r0, #100
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 .L_080e7ed6:
 	ldr r2, [sp, #56]
 	movs r1, #2
@@ -919,10 +919,10 @@ Func_080e7844:
 	cmp r4, #2
 	bne .L_080e7f70
 	movs r0, #100
-	bl BattleFx_FadeToSavedPalettes
+	bl BattleEffect_FadeToSavedPalettes
 	b .L_080e7f74
 .L_080e7f70:
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080e7f74:
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

@@ -45,7 +45,7 @@ extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 /// it by at most 0x1000 (22.5 degrees), then emits one fragment particle
 /// nearby.
 /// src: main object.
-void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
+void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   struct ItemBreakFragmentSource *target;
   struct ItemBreakFragmentPosition pos;
   struct ItemBreakFragmentObject *obj;
@@ -89,6 +89,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
     Object_SetMode(obj, 0);
     obj->field5e = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleFx_CommonParticleScript);
+                                 gBattleEffect_CommonParticleScript);
   }
 }

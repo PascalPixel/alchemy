@@ -168,12 +168,12 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 #define DICE_WIN_X 9
-#define DICE_WIN_NUM_X 48
+#define DICE_WIN_NUMBER_X 48
 #define DICE_WIN_LABEL_X DICE_LABEL_X
 #define DICE_KIND_X 0x278
 #else
 #define DICE_WIN_X 10
-#define DICE_WIN_NUM_X 40
+#define DICE_WIN_NUMBER_X 40
 #define DICE_WIN_LABEL_X 40
 #define DICE_KIND_X 0x280
 #endif
@@ -537,7 +537,7 @@ void LuckyDice_Run(void) {
                                         sprites->winningsWindow,
                                         digits * 8 + DICE_WIN_LABEL_X, 0);
         UiText_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
-                                     DICE_WIN_NUM_X, 0);
+                                     DICE_WIN_NUMBER_X, 0);
       }
       if (payoutTimer > 0) {
         payoutTimer--;

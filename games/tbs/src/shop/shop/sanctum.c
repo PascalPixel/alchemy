@@ -8,7 +8,7 @@
 /// 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a level to
 /// remove a curse. Called by the member choice and its fee line.
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
-  u8 level = UnitGetFar(unitId)->level;
+  u8 level = Unit_GetFar(unitId)->level;
   s32 donation = 0;
 
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
@@ -28,7 +28,7 @@ s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
 /// for removing a curse. Called by the member choice, its count, its highlight
 /// and its fee line.
 s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 eligible = 0;
 
   if ((serviceKind == SANCTUM_SERVICE_REVIVE && unit->hp <= 0) ||
@@ -81,7 +81,7 @@ s32 Shop_MsgByMode(s32 messageId) {
 void UiMessage_ShowResolvedAndWait(s32 messageId) {
   s32 portraitResource;
 
-  portraitResource = FieldFx_GetResourceIdFar(
+  portraitResource = FieldEffect_GetResourceIdFar(
       ((struct ShopRuntime *)gMenuWork)->keeperResource);
   UiWork_FinalizePendingCoreFar();
   messageId = Shop_MsgByMode(messageId);
@@ -105,7 +105,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
   shop = gMenuWork;
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->active;
-  portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
+  portraitResource = FieldEffect_GetResourceIdFar(shop->keeperResource);
   messageId = Shop_MsgByMode(messageId);
   (*cursorSlot)->active = 13;
   UiWork_FinalizePendingCoreFar();
@@ -268,8 +268,8 @@ s32 Sanctum_RunPartyService(void) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
         continue;
       }
-      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
-      UiWork_PushValueSlotFar(donation, MSG_ARG_NUMBER);
+      UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+      UiWork_PushValueSlotFar(donation, MESSAGE_ARGUMENT_NUMBER);
       messageBase = MsgReviveDonation;
       UiMessage_ShowResolvedAndWait(messageBase);
       if (UiMessage_ShowChoiceVariant(0) != 0) {
@@ -283,7 +283,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+      UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       UiMessage_ShowResolvedAndWait(messageBase + 3);
       UiWork_FinalizePendingCoreFar();
       // Apply the cure and animation before collecting the donation.
@@ -291,7 +291,7 @@ s32 Sanctum_RunPartyService(void) {
       Shop_RunPartyMemberIconBurst(memberIndex);
       Party_AdjustCoinsFar(-donation);
       Shop_DrawMoney();
-      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+      UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       UiMessage_ShowResolvedAndWait(messageBase + 4);
       if (Shop_CountUnits() != 0) {
         chooseAgain = 1;
@@ -326,16 +326,16 @@ s32 Sanctum_RunPartyService(void) {
 
 /// Applies sanctum service `serviceKind` to member `unitId`: full HP for a
 /// revive, poison or the haunting cleared, or every cursed item taken off
-/// (UnitCalc then rebuilds the curse bits from what is still equipped). With
-/// no cursed item equipped, removing a curse changes nothing, whatever
+/// (Unit_Calculate then rebuilds the curse bits from what is still equipped).
+/// With no cursed item equipped, removing a curse changes nothing, whatever
 /// restraint bits Shop_CanServe saw. Called by Sanctum_RunPartyService.
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   struct BattleUnit *unit;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
     unit->hp = unit->maxHp;
-    UnitRatioFar(unitId);
+    Unit_UpdateRatiosFar(unitId);
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     unit->poison = 0;
   } else if (serviceKind == SANCTUM_SERVICE_EXORCISE) {
@@ -348,7 +348,7 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
         if (Item_GetDirectFar(unit->inventory[inventorySlot])->flags &
             ITEM_CURSED) {
           unit->inventory[inventorySlot] ^= INVENTORY_EQUIPPED;
-          UnitCalcFar(unitId);
+          Unit_CalculateFar(unitId);
         }
       }
     }
@@ -366,11 +366,11 @@ void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
       if (memberIndex == selected)
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            30);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           30);
       else
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                            1);
+        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                           1);
       shop->partyMemberScale[memberIndex] = 0x10000;
       if (!Shop_CanServe(shop->partyMemberIds[memberIndex], serviceKind))
         shop->partyMemberScale[memberIndex] = 0xb333;
@@ -395,7 +395,7 @@ void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
       serviceOrMessage = MsgNoHealingNeeded;
     }
     serviceOrMessage = Shop_MsgByMode(serviceOrMessage);
-    UiWork_PushValueSlotFar(donation, MSG_ARG_NUMBER);
+    UiWork_PushValueSlotFar(donation, MESSAGE_ARGUMENT_NUMBER);
     UiText_DrawResourceFar(serviceOrMessage, target, 0, 0);
   }
 }
@@ -436,7 +436,7 @@ void Shop_UpdateBurstSparkle(struct EffectSlot *effect) {
       *statePointer = targetPending;
   } else if (state == SANCTUM_SPARKLE_LAST_FLIGHT) {
     if (EffectSlot_HasPendingTargetFar(effect) == 0)
-      FieldFx_ClearOwnedSlotFar(effect);
+      FieldEffect_ClearOwnedSlotFar(effect);
   }
 }
 
@@ -494,7 +494,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   shop->cursor.anchor->active = UI_SPRITE_HIDDEN;
   AudioCommand_PlayFar(sSanctumServiceCues[shop->partyAction]);
   Shop_SaveAndTintFieldPalette(0x00202108);
-  AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
+  AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
   callbackPriority = SCHEDULER_KEY_MAIN_LOOP;
   Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
@@ -551,14 +551,14 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
 
       flagEntry += 0x48;
       if (flag != 0) {
-        FieldFx_ClearOwnedSlotFar(effectSlot);
+        FieldEffect_ClearOwnedSlotFar(effectSlot);
       }
       effectSlot++;
     }
   }
 
   Scheduler_RemoveCallback(Shop_ResetEffects);
-  AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
+  AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   WaitFrames(30);
   shop->cursor.anchor->active = savedCursorMode;

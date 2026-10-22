@@ -45,7 +45,7 @@ FieldEvent_WaitFrames:
 	.global Func_02001be4
 	.thumb_func
 Func_02001be4:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001bec
 	.thumb_func
 Func_02001bec:
@@ -170,10 +170,10 @@ Func_02001cd4:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -194,10 +194,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_02001cec:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	overlay_veneer Func_080c83e0
 	.endif

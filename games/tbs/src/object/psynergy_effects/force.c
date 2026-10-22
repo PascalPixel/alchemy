@@ -4,14 +4,15 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Runs Force cast on a target, through FieldFx_RunForce.
+/// Runs Force cast on a target, through FieldEffect_RunForce.
 ///
 /// Abilities: Force (FIELD_KIND_FORCE).
-void FieldFx_RunForceOnTarget(s32 unused) { FieldFx_RunForce(); }
+void FieldEffect_RunForceOnTarget(s32 unused) { FieldEffect_RunForce(); }
 
 /// Writes the position 16 pixels above the actor.
-static __inline__ void FieldFx_GetPositionAboveActor(struct FieldActor *obj,
-                                                     struct EffectVector *pos) {
+static __inline__ void
+FieldEffect_GetPositionAboveActor(struct FieldActor *obj,
+                                  struct EffectVector *pos) {
   SET_POSITION(pos, obj->x.fixed, obj->y.fixed + ABOVE, obj->z.fixed);
 }
 
@@ -21,10 +22,10 @@ static __inline__ void FieldFx_GetPositionAboveActor(struct FieldActor *obj,
 /// Abilities: Force (FIELD_KIND_FORCE).
 ///
 /// The shot is object 215, the hand of Move and Carry, flying at 4 pixels a
-/// frame; where it lands it makes a heavy impact (gFieldFx_HeavyImpactScript,
-/// SpawnHeavyImpactEffect). Called by FieldFx_Run, and through
-/// FieldFx_RunForceOnTarget.
-void FieldFx_RunForce(void) {
+/// frame; where it lands it makes a heavy impact
+/// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect). Called by
+/// FieldEffect_Run, and through FieldEffect_RunForceOnTarget.
+void FieldEffect_RunForce(void) {
   struct FieldActor *target;
   s32 eventTarget;
   struct FieldActor *copies[4];
@@ -42,17 +43,17 @@ void FieldFx_RunForce(void) {
 
   scene = gEffectWork;
   target = scene->child;
-  FieldFx_FadeToEffectColor();
+  FieldEffect_FadeToEffectColor();
   AudioCommand_PlayFar(SE_130);
   slot = scene->slots;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
     caster = scene->mainObject;
-    FieldFx_GetPositionAboveActor(caster, &pos);
+    FieldEffect_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
     EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, FieldFx_UpdateRadialBurst);
+    EffectSlot_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               SPRITE_COLOR_BLUE_TINT);
@@ -71,7 +72,7 @@ void FieldFx_RunForce(void) {
   Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
   projectile = (struct FieldActor *)Object_Spawn(0xd7, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
-    FieldFx_FadeFromEffectColor();
+    FieldEffect_FadeFromEffectColor();
     return;
   }
   projectile->scaleY = 0x4000;
@@ -119,8 +120,9 @@ void FieldFx_RunForce(void) {
   // Destination: 56 pixels in front of the caster with scene->enabled set
   // (no scene event named the target), otherwise the effect's position.
   // The shot's script waits to arrive and makes the impact
-  // (gFieldFx_BurstParticleObjectScript + 4 is gFieldFx_HeavyImpactScript);
-  // each afterimage follows 3 frames apart and is freed on arrival.
+  // (gFieldEffect_BurstParticleObjectScript + 4 is
+  // gFieldEffect_HeavyImpactScript); each afterimage follows 3 frames apart and
+  // is freed on arrival.
   if (scene->enabled != 0) {
     caster = scene->mainObject;
     pos.x = caster->x.fixed;
@@ -135,7 +137,7 @@ void FieldFx_RunForce(void) {
   Object_SetMoveTargetFar((struct ObjectRuntime *)projectile, pos.x, pos.y,
                           pos.z);
   ObjectDispatch_InitializeFar((struct DispatchObject *)projectile,
-                               gFieldFx_BurstParticleObjectScript + 4);
+                               gFieldEffect_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
@@ -143,7 +145,7 @@ void FieldFx_RunForce(void) {
       Object_SetMoveTargetFar((struct ObjectRuntime *)copy, pos.x, pos.y,
                               pos.z);
       ObjectDispatch_InitializeFar((struct DispatchObject *)copy,
-                                   gFieldFx_CommonParticleScript + 1);
+                                   gFieldEffect_CommonParticleScript + 1);
     }
   }
 
@@ -176,12 +178,12 @@ void FieldFx_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                    FIELD_KIND_FORCE, &eventTarget);
+  event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                        FIELD_KIND_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   WaitFrames(10);
-  FieldFx_FadeFromEffectColor();
+  FieldEffect_FadeFromEffectColor();
   WaitFrames(20);
   // 96 (0x60), the VRAM cache's entry count, means no entry to free.
   if (resourceSlot != 96)

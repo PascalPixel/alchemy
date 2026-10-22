@@ -1,6 +1,6 @@
 // Near miss, differ 38 of 312.
 
-// Twin: The Broken Seal's BattleFx_RunBladeRain. ⚓️ keeps the effect but no
+// Twin: The Broken Seal's BattleEffect_RunBladeRain. ⚓️ keeps the effect but no
 // handler or caller reaches it. It rains crossed daggers instead of swords:
 // every picture is a 32x32 cell, so the twin's three cell tables are gone,
 // and a landed dagger is drawn whole. The rest is the twin with ⚓️'s
@@ -41,10 +41,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 extern char ResourceId_CrossedDaggersSheet;
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
+void BattleEffect_StartCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -76,14 +76,14 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1000;
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                 BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   blit = draw;
@@ -91,7 +91,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
                              1, 1);
   work->transferMode = 1; // each transfer clears the canvas
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Centre BG2 on the first target.
   EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
@@ -178,8 +178,8 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

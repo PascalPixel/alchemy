@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Legend (kind 122).
-	.global BattleFx_RunLegend
+	.global BattleEffect_RunLegend
 	.thumb_func
-BattleFx_RunLegend:
+BattleEffect_RunLegend:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunLegend:
 	str r1, [sp, #44]
 	ldr r3, [r3, #100]
 	str r3, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08189b58
 	movs r2, #128
 	lsls r2, r2, #19
@@ -34,14 +34,14 @@ BattleFx_RunLegend:
 	bne .L_08189b5c
 	movs r0, #104
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08189b64
 .L_08189b58:
 	.4byte 0x00001010
 .L_08189b5c:
 	movs r0, #104
 	movs r1, #7
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08189b64:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -240,7 +240,7 @@ BattleFx_RunLegend:
 .L_08189ce8:
 	.4byte 0x000000c2
 .L_08189cec:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08189cf0:
 	.4byte Data_02014018
 .L_08189cf4:
@@ -257,7 +257,7 @@ BattleFx_RunLegend:
 	movs r1, #1
 	movs r3, #0
 	movs r2, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r4, [sp, #52]
 	movs r1, #7
 	movs r3, #36
@@ -458,7 +458,7 @@ BattleFx_RunLegend:
 	adds r0, r5, #0
 	movs r1, #62
 	lsls r2, r2, #7
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -838,7 +838,7 @@ BattleFx_RunLegend:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #88
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -859,4 +859,4 @@ BattleFx_RunLegend:
 .L_0818a1e8:
 	.4byte Data_08199200
 .L_0818a1ec:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

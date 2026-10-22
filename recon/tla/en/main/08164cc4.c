@@ -1,12 +1,12 @@
 // Draft, differ 187 of 1681 (the two nested helpers first, then the body;
 // alchemy diff DRAFT 08164c0c,08164c70,08164cc4):
-// BattleFx_RunParticleStreams, summon 11 and summon 0's default
-// (BattleFx_RunSceneEffect's default case, through BattleFx_RunMeteor and
-// BattleFx_RunOuterSpace in particle_stream_modes.c), with its nested
+// BattleEffect_RunParticleStreams, summon 11 and summon 0's default
+// (BattleEffect_RunSceneEffect's default case, through BattleEffect_RunMeteor and
+// BattleEffect_RunOuterSpace in particle_stream_modes.c), with its nested
 // helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused), which
 // adopt with it (S1 notes; alchemy permute cannot parse them).
 
-// Twin: ☀️ BattleFx_RunParticleStreams (games/tbs/src/effect/effect.c),
+// Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
 // ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
 // kept as the argument, Func_08163c2c for the canvas wipe, the fills through
 // IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 + i *
@@ -65,7 +65,7 @@
 // The scanline palette the HBlank DMA feeds into BG colour 0, in the work.
 #define HEAT_LINES(work) ((u16 *)((u8 *)(work) + 0x7640))
 
-// BattleFx_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
+// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
 // from 3) in the high nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_MAX 1
@@ -109,26 +109,26 @@ extern s16 Data_08198a02[][3]; // ☀️ gParticleStreams_OrbitPoints
 extern s16 Data_08198a2c[][2]; // ☀️ gParticleStreams_DropPoints
 extern u16 Data_08198a48[];    // ☀️ gParticleStreams_FlashCells
 extern u16 Data_08198a56[];    // ☀️ gParticleStreams_FlashSizes
-extern u16 gData_08197410[];   // ☀️ gBattleFx_MoteCells
+extern u16 gData_08197410[];   // ☀️ gBattleEffect_MoteCells
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
-void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_08163c2c(s32 mode, s32 value); // Func_08163c2c
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-void BattleFx_SpawnObjects(s32 count, s32 resource,
-                   s32 priority); // BattleFx_SpawnObjects
-void BattleFx_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
-void BattleFx_AdvanceBg2OnInterval(void);                 // BattleFx_AdvanceBg2OnInterval
-void BattleFx_FlushPendingGraphicsTransfer(void); // BattleFx_FlushPendingGraphicsTransfer
-void BattleFx_ArmPaletteHBlankDma(void); // BattleFx_ArmPaletteHBlankDma
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                   s32 priority); // BattleEffect_SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
+void BattleEffect_AdvanceBg2OnInterval(void);                 // BattleEffect_AdvanceBg2OnInterval
+void BattleEffect_FlushPendingGraphicsTransfer(void); // BattleEffect_FlushPendingGraphicsTransfer
+void BattleEffect_ArmPaletteHBlankDma(void); // BattleEffect_ArmPaletteHBlankDma
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode);                   // BattleFx_BuildBlitter
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
+                  s32 mode);                   // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                // 7, 7, flags, mode)
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, struct Scale *scale,
@@ -137,15 +137,15 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Func_080150e4(s32 roll); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 yaw);
-void Func_0814cca8(void); // BattleFx_SetupBlendedDisplay
+void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void BattleActor_CommitPlacementFar(void);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Transform_SetLookAt(s32 *eye, s32 *position);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // Summon 11: the screen goes dark and the ground dissolves away from the top;
 // a sun (or, in mode 1, two great flames the user throws) climbs over a
@@ -160,7 +160,7 @@ void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 // becomes a flame where it lands) and the motes. Act two (54 frames): the
 // blast pictures, 32 motes, 128 flashes and 512 embers; the palette
 // brightens from frame 36, the hit at 48.
-void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
+void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
                                      s32 mode) {
   u8 offsets[128];
   void *canvas;
@@ -213,7 +213,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleFx_BeginCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
@@ -238,9 +238,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Func_08163c2c(0, 0);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
 
   // Mode 1's two flames, or mode 0's sun.
   if (mode == 1) {
@@ -255,7 +255,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       }
     }
   } else {
-    BattleFx_SpawnObjects(1, 650, 3);
+    BattleEffect_SpawnObjects(1, 650, 3);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == 1)
@@ -290,7 +290,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
   gCameraSceneParameters[4] = 240;
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
 
   // BG2 scrolls a pixel every other frame, down and toward the user's side.
   work->bg2x = 0;
@@ -299,8 +299,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceBg2OnInterval, 0xcff);
-  Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceBg2OnInterval, 0xcff);
+  Scheduler_AddOrUpdateCallback(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
 
   // The ground dissolves: each column starts at its own random row, and the
   // rows go faster and faster.
@@ -345,7 +345,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
     work->transferMode = 3;
     work->transferValue = 0x02020202;
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmPaletteHBlankDma, 0xcfe);
+    Scheduler_AddOrUpdateCallback(BattleEffect_ArmPaletteHBlankDma, 0xcfe);
     for (i = 0; i != 64; i++)
       work->particles[i].variant = -1;
     transition->active = 1;
@@ -523,9 +523,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     } while (frame != STREAM_FRAMES);
     WaitFrames(1);
     transition->active = 0;
-    Scheduler_RemoveCallback(BattleFx_AdvanceBg2OnInterval);
-    Scheduler_RemoveCallback(BattleFx_ArmPaletteHBlankDma);
-    Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleEffect_AdvanceBg2OnInterval);
+    Scheduler_RemoveCallback(BattleEffect_ArmPaletteHBlankDma);
+    Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
     gBgScroll[1].x = savedX;
     gBgScroll[1].y = savedY;
   }
@@ -538,7 +538,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BG2Y = 0xfffff000;
   REG_BLDALPHA = 0x1010;
   REG_BG2CNT = 0x2784;
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
@@ -572,7 +572,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   work->transferMode = 1;
   work->transferValue = 0x10101010;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != BLAST_FRAMES; frame++) {
     s32 size = (frame + 0x1d0) << 8;
@@ -617,7 +617,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         draw(canvas,
              work->sheet + (gData_08197410[size - 1] + (i & 1) * 770) + 0x3200,
              point.x - size / 2, point.y - size, size, size * 2);
-        BattleFxKernels_IntegrateVector3(ember, 64, -0x2000);
+        BattleEffectKernels_IntegrateVector3(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
           ember->x = 0;
           ember->z = 0;
@@ -668,7 +668,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           flash->velocityZ = 0;
           flash->variant = 0;
         } else {
-          BattleFxKernels_IntegrateVector3(flash, 64, 1);
+          BattleEffectKernels_IntegrateVector3(flash, 64, 1);
         }
       }
     }
@@ -702,9 +702,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   if (mode == 0)
     ResourceObject_ReleaseFar(work->objects[0]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -2,7 +2,7 @@
 // built as Func_080f94a4 (recon/tla/en/main/080f94a4.c, ☀️'s
 // ItemMenu_Run) without the window tile save: opens the item menu
 // over the field, runs the command loop Func_080fcbd8, and when it returns 1
-// looks up the chosen item's action (BattleActGet, result unused) and records
+// looks up the chosen item's action (BattleAction_Get, result unused) and records
 // owner << 10 | item in the event work at 0x166. Returns the loop's result.
 // No ☀️ twin. Differ 50 of 117, register choice only: the native builds the
 // heap slots base in r1 and keeps that pseudo in r8, and takes r1 for the
@@ -42,7 +42,7 @@ s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
 s32 Func_080fcbd8(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
-void *BattleActGet(s32 action);
+void *BattleAction_Get(s32 action);
 void RenderOutput_ClearListFar(void *window);
 void ItemMenu_Close(void);
 void Event_ClearInvalidPackedValuesFar(void);
@@ -72,7 +72,7 @@ s32 Func_080fcab8(void) {
   if (result == 1) {
     u8 *event = Ram_HeapSlots->eventWork;
 
-    BattleActGet(screen->selectedItems[0] & 0x3fff);
+    BattleAction_Get(screen->selectedItems[0] & 0x3fff);
     *(u16 *)(event + 0x166) = item | (owner << 10);
   }
 

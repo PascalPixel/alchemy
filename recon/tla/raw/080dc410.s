@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_LoadActionEffectResources
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-BattleFx_LoadActionEffectResources:
+BattleEffect_LoadActionEffectResources:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -53,7 +53,7 @@ BattleFx_LoadActionEffectResources:
 	strh r3, [r6, #28]
 	mov r0, r10
 	mov r9, r2
-	bl BattleActGet
+	bl BattleAction_Get
 	movs r1, #192
 	ldrb r3, [r0, #6]
 	lsls r1, r1, #4
@@ -203,7 +203,7 @@ BattleFx_LoadActionEffectResources:
 	movs r1, #1
 	ldr r0, [r3]
 	negs r1, r1
-	bl BattleFx_SetupObjectPair
+	bl BattleEffect_SetupObjectPair
 	movs r1, #30
 	ldrsh r3, [r6, r1]
 	ldrh r2, [r6, #30]
@@ -251,7 +251,7 @@ BattleFx_LoadActionEffectResources:
 	adds r2, r7, r3
 	movs r3, #255
 	strb r3, [r2]
-	bl BattleFx_StartArcEffect
+	bl BattleEffect_StartArcEffect
 	movs r1, #144
 	ldr r0, .L_080dc628
 	lsls r1, r1, #3
@@ -280,4 +280,4 @@ BattleFx_LoadActionEffectResources:
 .L_080dc624:
 	.4byte 0x0000010a
 .L_080dc628:
-	.4byte BattleFx_UpdateAllEffectSlots
+	.4byte BattleEffect_UpdateAllEffectSlots

@@ -23,7 +23,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
                               u32 y2);
-s32 Localization_LookupEntryId(s32 key);
+s32 UiText_GetSpeakerPortrait(s32 key);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 void UiWork_PushValueSlot(u32 value, u32 kind);
@@ -58,7 +58,7 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
 
     work->dirty = 1;
 
-    id = Localization_LookupEntryId(name);
+    id = UiText_GetSpeakerPortrait(name);
     UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
 
     p = entry;

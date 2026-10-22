@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Hurricane (kind 105).
-	.global BattleFx_RunHurricane
+	.global BattleEffect_RunHurricane
 	.thumb_func
-BattleFx_RunHurricane:
+BattleEffect_RunHurricane:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunHurricane:
 	mov r8, r0
 	movs r0, #1
 	str r2, [sp, #16]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816f98c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -28,7 +28,7 @@ BattleFx_RunHurricane:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r0, .L_0816f990
 	str r5, [sp, #8]
@@ -111,7 +111,7 @@ BattleFx_RunHurricane:
 	b .L_0816fa1c
 	.2byte 0x0000
 .L_0816fa00:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816fa04:
 	.4byte IwramClearWords
 .L_0816fa08:
@@ -269,7 +269,7 @@ BattleFx_RunHurricane:
 	adds r0, r5, #0
 	movs r1, #56
 	ldr r2, .L_0816fc7c
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -414,7 +414,7 @@ BattleFx_RunHurricane:
 	adds r0, r6, #0
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl SummonFx_RunCanvasMode3
+	bl SummonEffect_RunCanvasMode3
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -429,7 +429,7 @@ BattleFx_RunHurricane:
 .L_0816fc7c:
 	.4byte 0xffffc000
 .L_0816fc80:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816fc84:
 	.4byte IwramClearWords
 .L_0816fc88:

@@ -46,8 +46,8 @@ extern u32 gFrameCount;
 
 s32 EventRuntime_GetControlledOwner(void);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
-s32 BattleFx_GetObjectPriority(struct ObjectRuntime *object);
-s32 BattleFx_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
 s32 Func_080e989c(s32 counter, s32 level);
 void Camera_WorldToScreen(s32 *position);
 
@@ -101,8 +101,8 @@ void Func_080e9940(void) {
   scaleY = scaleX * 6 / 8;
   sprite = &work->sprite;
   sprite->oam.index = work->tile + ((gFrameCount >> 1) & 1) * 32;
-  sprite->oam.priority = BattleFx_GetObjectPriority(player);
-  sprite->depth = BattleFx_GetObjectDepth(player) - 1;
+  sprite->oam.priority = BattleEffect_GetObjectPriority(player);
+  sprite->depth = BattleEffect_GetObjectDepth(player) - 1;
   position[0] = player->x;
   position[1] = player->y;
   position[2] = player->z;

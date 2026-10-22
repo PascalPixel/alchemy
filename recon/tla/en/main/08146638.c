@@ -1,15 +1,15 @@
 // Near miss, differ 34 of 480.
 
-// Twin: The Broken Seal's BattleFx_RunAstralBlast (effect kind 68 there and
+// Twin: The Broken Seal's BattleEffect_RunAstralBlast (effect kind 68 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is
 // read directly (the dispatcher stores work->effect), the rune palette and
-// resource 0x134 as in BattleFx_RunShiningStar, Object_SetMode for the caster where The
+// resource 0x134 as in BattleEffect_RunShiningStar, Object_SetMode for the caster where The
 // Broken Seal dispatches an argument to its children, one blitter from
-// BattleFx_LoadBlitter(104, MAX), the callback at 0xc80, and the target thrown with
+// BattleEffect_LoadBlitter(104, MAX), the callback at 0xc80, and the target thrown with
 // Object_ResetMotion and Object_SetPosition. The tables are not const (see
-// BattleFx_RunShiningStar).
+// BattleEffect_RunShiningStar).
 
-// BattleFx_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
+// BattleEffect_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
 // returns its store-flag and The Broken Seal's returns s32: void it is 36.
 
 // Left: order only. Same frame, registers and instructions; at about fifteen
@@ -43,13 +43,13 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
@@ -80,7 +80,7 @@ extern u8 gMapCellBuffer[];
 // Three rings of light fly one after another from the caster to the target,
 // each growing as it spins, while the camera swings round; each ring that
 // lands throws the target back, and the last begins the results.
-void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct EffectPosition base;
   s32 scale[3];
@@ -111,18 +111,18 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
 
   // Set up: the rune palette, the dot sheet, the caster's casting pose, one
   // max blitter and the transfer.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Object_SetMode(caster, 2);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;
   work->transferValue = 75;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The rings leave from above the caster and reach the target in twelve
   // frames; the second and third aim past it.
@@ -250,8 +250,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

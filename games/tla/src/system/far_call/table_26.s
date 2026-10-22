@@ -37,10 +37,10 @@ Func_080c82c0:
 	.thumb_func
 Func_080c82c8:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_FindNearestObject
+	overlay_veneer BattleEffect_FindNearestObject
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_FindNearestObject
+	overlay_veneer BattleEffect_FindNearestObject
 .else
 	overlay_veneer Func_080dd054
 .endif
@@ -49,16 +49,16 @@ Func_080c82c8:
 	.thumb_func
 Func_080c82d0:
 	overlay_veneer Func_080decb8
-	.global BattleFx_FindNearestObjectFar
+	.global BattleEffect_FindNearestObjectFar
 	.thumb_func
-BattleFx_FindNearestObjectFar:
+BattleEffect_FindNearestObjectFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080dd054
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer Func_080dd054
 .else
-	overlay_veneer BattleFx_FindNearestObject
+	overlay_veneer BattleEffect_FindNearestObject
 .endif
 .endif
 	.global Func_080c82e0
@@ -93,10 +93,10 @@ Func_080c82f0:
 	.thumb_func
 EventRuntime_PrepareCurrentObjectFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StartTwelveFrameBlend
+	overlay_veneer BattleEffect_StartTwelveFrameBlend
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StartTwelveFrameBlend
+	overlay_veneer BattleEffect_StartTwelveFrameBlend
 .else
 	overlay_veneer EventRuntime_PrepareCurrentObject
 .endif
@@ -105,10 +105,10 @@ EventRuntime_PrepareCurrentObjectFar:
 	.thumb_func
 Func_080c8300:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetBlock30ValuesMaxZero
+	overlay_veneer BattleEffect_SetBlock30ValuesMaxZero
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetBlock30ValuesMaxZero
+	overlay_veneer BattleEffect_SetBlock30ValuesMaxZero
 .else
 	overlay_veneer Func_080d690c
 .endif
@@ -117,36 +117,36 @@ Func_080c8300:
 	.thumb_func
 Func_080c8308:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetBlock30Values12Zero
+	overlay_veneer BattleEffect_SetBlock30Values12Zero
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetBlock30Values12Zero
+	overlay_veneer BattleEffect_SetBlock30Values12Zero
 .else
-	overlay_veneer BattleFx_StartTwelveFrameBlend
+	overlay_veneer BattleEffect_StartTwelveFrameBlend
 .endif
 .endif
 	.global Func_080c8310
 	.thumb_func
 Func_080c8310:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetBlock30Values128One
+	overlay_veneer BattleEffect_SetBlock30Values128One
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetBlock30Values128One
+	overlay_veneer BattleEffect_SetBlock30Values128One
 .else
-	overlay_veneer BattleFx_SetBlock30ValuesMaxZero
+	overlay_veneer BattleEffect_SetBlock30ValuesMaxZero
 .endif
 .endif
 	.global Func_080c8318
 	.thumb_func
 Func_080c8318:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StartBufferBlend
+	overlay_veneer BattleEffect_StartBufferBlend
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StartBufferBlend
+	overlay_veneer BattleEffect_StartBufferBlend
 .else
-	overlay_veneer BattleFx_SetBlock30Values12Zero
+	overlay_veneer BattleEffect_SetBlock30Values12Zero
 .endif
 .endif
 	.global Func_080c8320
@@ -158,19 +158,19 @@ Func_080c8320:
 .ifdef TLA_EDITION_IT
 	overlay_veneer Func_080d7408
 .else
-	overlay_veneer BattleFx_SetBlock30Values128One
+	overlay_veneer BattleEffect_SetBlock30Values128One
 .endif
 .endif
 	.global Func_080c8328
 	.thumb_func
 Func_080c8328:
 .ifdef TLA_EDITION_ES
-	overlay_veneer FieldEffect_InitSparkles
+	overlay_veneer FieldEffect_InitializeSparkles
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer FieldEffect_InitSparkles
+	overlay_veneer FieldEffect_InitializeSparkles
 .else
-	overlay_veneer BattleFx_StartBufferBlend
+	overlay_veneer BattleEffect_StartBufferBlend
 .endif
 .endif
 	.global Func_080c8330
@@ -186,7 +186,7 @@ Func_080c8338:
 .ifdef TLA_EDITION_IT
 	overlay_veneer DisplayTransition_InitializeState
 .else
-	overlay_veneer FieldEffect_InitSparkles
+	overlay_veneer FieldEffect_InitializeSparkles
 .endif
 .endif
 	.global Func_080c8340
@@ -253,10 +253,10 @@ Func_080c8360:
 	.thumb_func
 Func_080c8368:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToTargetBuffer
+	overlay_veneer BattleEffect_ApplyColorToTargetBuffer
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToTargetBuffer
+	overlay_veneer BattleEffect_ApplyColorToTargetBuffer
 .else
 	overlay_veneer Func_080ccec8
 .endif
@@ -265,10 +265,10 @@ Func_080c8368:
 	.thumb_func
 BattleEffect_InitializeBuffersFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToSourceBuffer
+	overlay_veneer BattleEffect_ApplyColorToSourceBuffer
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToSourceBuffer
+	overlay_veneer BattleEffect_ApplyColorToSourceBuffer
 .else
 	overlay_veneer BattleEffect_InitializeBuffers
 .endif

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Megiddo (kind 124).
-	.global BattleFx_RunMegiddo
+	.global BattleEffect_RunMegiddo
 	.thumb_func
-BattleFx_RunMegiddo:
+BattleEffect_RunMegiddo:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -37,7 +37,7 @@ BattleFx_RunMegiddo:
 	adds r0, r1, #0
 	bl BattleMotion_ApproachTargetFar
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0818ff84
 	movs r2, #128
 	lsls r2, r2, #19
@@ -73,9 +73,9 @@ BattleFx_RunMegiddo:
 .L_0818ff88:
 	.4byte 0x00000134
 .L_0818ff8c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0818ff90:
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r1, #204
 	ldr r0, [sp, #92]
 	movs r2, #212
@@ -375,7 +375,7 @@ BattleFx_RunMegiddo:
 	ldr r1, .L_08190388
 	movs r2, #0
 	bl BattleBackground_LoadFar
-	bl BattleFx_BuildRepeatingTilemap
+	bl BattleEffect_BuildRepeatingTilemap
 	movs r0, #8
 	movs r1, #2
 	movs r2, #2
@@ -385,7 +385,7 @@ BattleFx_RunMegiddo:
 	movs r0, #1
 	adds r1, #255
 	movs r2, #2
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 .L_08190214:
 	ldr r2, [sp, #96]
 	ldr r1, [sp, #20]
@@ -1535,7 +1535,7 @@ BattleFx_RunMegiddo:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #220
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1579,4 +1579,4 @@ BattleFx_RunMegiddo:
 .L_08190b6c:
 	.4byte gData_081991f0
 .L_08190b70:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

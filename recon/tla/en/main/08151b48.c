@@ -1,20 +1,20 @@
-// Near miss of BattleFx_RunRay, effect kind 17.
+// Near miss of BattleEffect_RunRay, effect kind 17.
 
-// Twin: The Broken Seal's BattleFx_RunRay (effect.c), call for
+// Twin: The Broken Seal's BattleEffect_RunRay (effect.c), call for
 // call, with The Lost Age's changes: on its own side the canvas begins
-// filled (BattleFx_BeginTiledCanvasFilled), with BG control 0x2001; the
-// blitters come through BattleFx_LoadBlitter (BLIT_MAX 1, BLIT_ADDITIVE 0); and
+// filled (BattleEffect_StartTiledCanvasFilled), with BG control 0x2001; the
+// blitters come through BattleEffect_LoadBlitter (BLIT_MAX 1, BLIT_ADDITIVE 0); and
 // outside variant 2 the bolts center on the midpoint of the targets
 // (Func_0815e22c), the canvas scrolled to it and clamped to 0-112, with
 // what the clamp leaves added to every x. Variant 2 reads the side through
 // work->effect, the only place this effect does. ResourceId_LightningBolt-
-// Sheet is row 0x188 of directory.s (asset BattleFx_LightningBoltSheet),
+// Sheet is row 0x188 of directory.s (asset BattleEffect_LightningBoltSheet),
 // not yet named there.
 
 // Near miss: differ 53 of 519 (draft 520), order residue: the native
 // loads BG2PA's value before it builds the register's address in both
 // branches (so their common tail is merged differently and one more
-// instruction lands here), sets r1 before r0 for BattleFx_LoadBlitter, and
+// instruction lands here), sets r1 before r0 for BattleEffect_LoadBlitter, and
 // issues the sheet offset and the work load one slot apart from agscc.
 
 // Tried (2026-10-15):
@@ -35,21 +35,21 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void Func_0815e22c(struct EffectPosition *midpoint);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -64,7 +64,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_Data134; // the particle sheet
 extern u8 Data_0819839c[][2];   // gRay_Sparks
-extern u16 gData_08197410[];    // gBattleFx_MoteCells
+extern u16 gData_08197410[];    // gBattleEffect_MoteCells
 
 // Four lightning bolts turn and close in on the targets, throwing sparks
 // from their feet.
@@ -74,7 +74,7 @@ extern u16 gData_08197410[];    // gBattleFx_MoteCells
 // canvas wiped every five frames, and each bolt throws the variant's
 // number of sparks; the sparks fall and bounce off y = 120 until frame 64.
 // The targets are hit from frame 4, four frames apart.
-void BattleFx_RunRay(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -91,16 +91,16 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   xOffset = 0;
   if (effect->side == 0)
-    BattleFx_BeginTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(0x2001);
   else
-    BattleFx_BeginTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(0x2001);
   if (effect->variant == 2)
     REG_BG2PA = 0x80; // twice as wide
   else
     REG_BG2PA = 0x100;
-  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
+  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+  BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_SHEET, 1, 1);
@@ -143,7 +143,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(138);
 
   for (frame = 0; frame != 64; frame++) {
@@ -202,7 +202,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        BattleFxKernels_IntegrateVector2(spark, 60, -0x800);
+        BattleEffectKernels_IntegrateVector2(spark, 60, -0x800);
         if (spark->y > 0x780000) {
           spark->velocityY = -spark->velocityY / 2;
         } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
@@ -229,8 +229,8 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

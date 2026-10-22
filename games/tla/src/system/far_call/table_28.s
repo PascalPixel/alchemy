@@ -1,16 +1,16 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global BattleFx_StartBufferInterpolationFar
+	.global BattleEffect_StartBufferInterpolationFar
 	.thumb_func
-BattleFx_StartBufferInterpolationFar:
+BattleEffect_StartBufferInterpolationFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetBufferWord
+	overlay_veneer BattleEffect_SetBufferWord
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetBufferWord
+	overlay_veneer BattleEffect_SetBufferWord
 .else
-	overlay_veneer BattleFx_StartBufferInterpolation
+	overlay_veneer BattleEffect_StartBufferInterpolation
 .endif
 .endif
 	.global BattlePalette_StopBlendAndReleaseBufferFar
@@ -25,15 +25,15 @@ BattlePalette_StopBlendAndReleaseBufferFar:
 	overlay_veneer BattlePalette_StopBlendAndReleaseBuffer
 .endif
 .endif
-	.global BattleFx_SetPrimaryBufferValueFar
+	.global BattleEffect_SetPrimaryBufferValueFar
 	.thumb_func
-BattleFx_SetPrimaryBufferValueFar:
+BattleEffect_SetPrimaryBufferValueFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer EventRuntime_FinishScreen
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer EventRuntime_FinishScreen
 .else
-	overlay_veneer BattleFx_SetPrimaryBufferValue
+	overlay_veneer BattleEffect_SetPrimaryBufferValue
 .endif
 .endif

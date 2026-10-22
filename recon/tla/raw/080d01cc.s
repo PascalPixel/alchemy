@@ -46,9 +46,9 @@ DisplayTransition_Start:
 	movs r0, #128
 	ldrh r1, [r3]
 	lsls r0, r0, #8
-	bl BattleFx_ApplyColorToSourceBuffer
+	bl BattleEffect_ApplyColorToSourceBuffer
 	mov r0, r10
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_080d027c
@@ -79,7 +79,7 @@ DisplayTransition_Start:
 .L_080d026c:
 	strh r5, [r4]
 	movs r0, #0
-	bl BattleFx_SetPrimaryBufferValue
+	bl BattleEffect_SetPrimaryBufferValue
 	b .L_080d0506
 	.2byte 0x0000
 .L_080d0278:
@@ -150,7 +150,7 @@ DisplayTransition_Start:
 .L_080d0300:
 	.4byte Func_080cf78c
 .L_080d0304:
-	.4byte BattleFx_StartWindowHBlankDma
+	.4byte BattleEffect_StartWindowHBlankDma
 .L_080d0308:
 	.4byte gIoWriteQueue
 .L_080d030c:

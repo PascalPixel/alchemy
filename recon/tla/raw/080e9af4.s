@@ -92,7 +92,7 @@ Func_080e9af4:
 	bl Object_SetPositionAndResetMotionFar
 	adds r0, r7, #0
 	movs r1, #0
-	bl BattleFx_SetObjectTickMode
+	bl BattleEffect_SetObjectTickMode
 	movs r1, #5
 	adds r0, r7, #0
 	bl Object_SetMode

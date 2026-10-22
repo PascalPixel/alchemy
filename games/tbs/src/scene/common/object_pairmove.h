@@ -16,7 +16,7 @@ static void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
 
   actor = Object_GetById(gGameState.selectedActor);
   other = Object_GetById(id);
-  Engine_EventBegin();
+  Engine_EventStart();
   {
     x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;

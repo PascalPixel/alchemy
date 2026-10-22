@@ -57,7 +57,7 @@ typedef void (*TileMapRowDrawer)(const struct MapAffinePair *lines, u8 *pixels,
                                  const u8 *tiles, const u8 *map);
 
 /// Draws the current affine page into the world map's still-view pixels.
-/// WorldMap_BeginStillView supplies 160 pairs and a 240 by 160 byte output.
+/// WorldMap_StartStillView supplies 160 pairs and a 240 by 160 byte output.
 /// The ARM kernel borrows HEAP_SLOT_TEMP_RENDERER for this synchronous call;
 /// it is released before returning, while both graphics buffers stay owned
 /// by the world map.

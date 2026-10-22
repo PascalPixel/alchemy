@@ -9,10 +9,10 @@ Unit_AddHpFar:
 	.thumb_func
 Unit_AddPpFar:
 	overlay_veneer Unit_AddPp
-	.global UnitRatioFar
+	.global Unit_UpdateRatiosFar
 	.thumb_func
-UnitRatioFar:
-	overlay_veneer UnitRatio
+Unit_UpdateRatiosFar:
+	overlay_veneer Unit_UpdateRatios
 	.global Unit_SetHpFar
 	.thumb_func
 Unit_SetHpFar:
@@ -21,9 +21,9 @@ Unit_SetHpFar:
 	.thumb_func
 Unit_SetPpFar:
 	overlay_veneer Unit_SetPp
-	.global BattleUnitSetFar
+	.global BattleUnit_SetFar
 	.thumb_func
-BattleUnitSetFar:
+BattleUnit_SetFar:
 	overlay_veneer Func_080afbec
 	.global Party_CountActiveOwnersFar
 	.thumb_func
@@ -49,30 +49,30 @@ Party_RemoveActiveOwnerFar:
 	.thumb_func
 Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
-	.global BattleHitCheck
+	.global BattleEffect_RollSuccessFar
 	.thumb_func
-BattleHitCheck:
-	overlay_veneer BattleFx_RollSuccess
-	.global BattleAtkCalc
+BattleEffect_RollSuccessFar:
+	overlay_veneer BattleEffect_RollSuccess
+	.global Battle_CalculateAttackDamageFar
 	.thumb_func
-BattleAtkCalc:
-	overlay_veneer Battle_CalcAttackDamage
-	.global BattlePowerCalc
+Battle_CalculateAttackDamageFar:
+	overlay_veneer Battle_CalculateAttackDamage
+	.global Battle_CalculatePsynergyPowerFar
 	.thumb_func
-BattlePowerCalc:
-	overlay_veneer Battle_CalcPsynergyPower
-	.global BattleRecoveryCalc
+Battle_CalculatePsynergyPowerFar:
+	overlay_veneer Battle_CalculatePsynergyPower
+	.global Battle_CalculateRecoveryFar
 	.thumb_func
-BattleRecoveryCalc:
-	overlay_veneer Battle_CalcRecovery
+Battle_CalculateRecoveryFar:
+	overlay_veneer Battle_CalculateRecovery
 	.global Enemy_GetDefinitionFar
 	.thumb_func
 Enemy_GetDefinitionFar:
 	overlay_veneer Enemy_GetDefinition
-	.global BattleRandomFar
+	.global Battle_RandomFar
 	.thumb_func
-BattleRandomFar:
-	overlay_veneer BattleRandom
+Battle_RandomFar:
+	overlay_veneer Battle_Random
 	.global Djinn_AddToOwnerFar
 	.thumb_func
 Djinn_AddToOwnerFar:

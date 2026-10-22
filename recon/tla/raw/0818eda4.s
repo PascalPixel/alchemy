@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Liquifier (kind 123).
-	.global BattleFx_RunLiquifier
+	.global BattleEffect_RunLiquifier
 	.thumb_func
-BattleFx_RunLiquifier:
+BattleEffect_RunLiquifier:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunLiquifier:
 	str r1, [sp, #40]
 	ldr r3, [r3, #100]
 	str r3, [sp, #32]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0818ee0c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -33,7 +33,7 @@ BattleFx_RunLiquifier:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #28]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r0, .L_0818ee10
 	ldr r1, .L_0818ee14
 	movs r2, #1
@@ -357,7 +357,7 @@ BattleFx_RunLiquifier:
 	movs r1, #64
 	movs r2, #0
 	adds r0, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r1, #1
 	add r9, r1
 	mov r2, r9
@@ -389,7 +389,7 @@ BattleFx_RunLiquifier:
 .L_0818f0ac:
 	.4byte IwramCopyWords
 .L_0818f0b0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0818f0b4:
 	.4byte Data_02010018
 .L_0818f0b8:
@@ -510,7 +510,7 @@ BattleFx_RunLiquifier:
 	movs r1, #64
 	movs r2, #0
 	adds r0, r5, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r1, #1
 	add r10, r1
 	mov r2, r10
@@ -944,7 +944,7 @@ BattleFx_RunLiquifier:
 	str r3, [sp, #4]
 	movs r1, #1
 	movs r3, #0
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r3, [sp, #48]
 	movs r1, #7
 	movs r2, #36
@@ -997,7 +997,7 @@ BattleFx_RunLiquifier:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #92
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1013,4 +1013,4 @@ BattleFx_RunLiquifier:
 .L_0818f5c4:
 	.4byte 0xffff8000
 .L_0818f5c8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

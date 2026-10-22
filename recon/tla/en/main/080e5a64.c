@@ -56,7 +56,7 @@ struct BlendWork {
 };
 
 void Func_080eb01c(struct ShineSprite *sprite);
-void BattleFx_IntegrateVector2(struct ShineParticle *particle, s32 frames,
+void BattleEffect_IntegrateVector2(struct ShineParticle *particle, s32 frames,
                                s32 flags);
 void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
@@ -85,7 +85,7 @@ void Func_080e5a64(void) {
         sprite->x = particle->x;
         sprite->y = particle->y;
         Func_080eb01c(sprite);
-        BattleFx_IntegrateVector2(particle, 64, 0);
+        BattleEffect_IntegrateVector2(particle, 64, 0);
       }
       particle->timer++;
     }

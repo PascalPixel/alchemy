@@ -9,7 +9,7 @@ typedef struct {
   s16 values[1];
 } BattleEffectIndexWindow;
 
-s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
+s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                     s16 *output) {
   s32 length = window->indexRadius * 2 + 1;
   s32 entryCount = 0;

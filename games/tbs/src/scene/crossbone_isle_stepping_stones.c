@@ -515,8 +515,9 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     drawY = Engine_RandomNext();
     velocityY = Math_Divide(
         (((u32)((drawY << 2) + drawY) >> 16) << 16) + PIXELS(3), 10);
-    FieldFx_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
-                  EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
+    FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
+                      settings);
   }
 }
 
@@ -573,7 +574,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 #endif
     if (StagedActor_FindAtTile(position, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, position) == 0) {
-      EV_BEGIN();
+      EV_START();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
@@ -673,7 +674,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Walking into a pillar in CrossboneIsleSteppingStones: jump two cells across
 /// it where the cells allow, otherwise push it.
 static void Event_JumpOrPushPillar(void) {
-  EV_BEGIN();
+  EV_START();
   if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0)
     StagedActor_AdvancePair();
   EV_END();
@@ -684,7 +685,7 @@ static void Event_JumpOrPushPillar(void) {
 static void Event_PushPillar(void) {
   struct StagedActorProbe out;
 
-  EV_BEGIN();
+  EV_START();
   if (StagedActor_FindClearPosition(&out) != 0)
     SceneActor_MoveAndRedraw(out);
   EV_END();
@@ -808,7 +809,7 @@ static void Event_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct FieldActor *water;
 
-  EV_BEGIN();
+  EV_START();
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
   Engine_CameraWaitForMove();
@@ -824,8 +825,8 @@ static void Event_FlipWaterSwitch(void) {
     Object_GetById(ACTOR_WATER)->motionFlags = waterRaised;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    OBJ_POS_SET(ACTOR_WATER, 272, 416);
-    OBJ_MODE(ACTOR_WATER, 1);
+    OBJECT_POSITION_SET(ACTOR_WATER, 272, 416);
+    OBJECT_MODE(ACTOR_WATER, 1);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80, 24);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateFootSteps, 80, 28);
     Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
@@ -841,8 +842,8 @@ static void Event_FlipWaterSwitch(void) {
     Object_GetById(ACTOR_WATER)->motionFlags = 0;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    OBJ_POS_SET(ACTOR_WATER, 272, 436);
-    OBJ_MODE(ACTOR_WATER, 2);
+    OBJECT_POSITION_SET(ACTOR_WATER, 272, 436);
+    OBJECT_MODE(ACTOR_WATER, 2);
     Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80, 24);
     CrossboneIsleSteppingStones_AnimateWaterLevel();
@@ -1131,7 +1132,7 @@ static void Event_MovePillar(void) {
 /// Walking into a pillar in CrossboneIsleStackedPillars: jump across if
 /// possible, otherwise push it, and the pillars settle.
 static void Event_JumpOrPushStackedPillar(void) {
-  EV_BEGIN();
+  EV_START();
 #if TBS_PATCH_3
   Object_GetById(ACTOR_PARTY_LEADER)->y.fixed =
       Map_GetTerrainHeight(Object_GetById(ACTOR_PARTY_LEADER)->terrainId,
@@ -1223,7 +1224,7 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
   struct FieldActor *actor;
 
   actor = Object_GetById(id);
-  EV_BEGIN();
+  EV_START();
 #ifdef UBFIX
   actor->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
@@ -1250,7 +1251,7 @@ static void Event_FreezeSecondPuddle(void) {
 
 /// Frost begins on the third puddle in CrossboneIsleDragonStatue: note whether
 /// the leader stands on it.
-static void Event_FrostBeginsOnThirdPuddle(void) {
+static void Event_FrostStartsOnThirdPuddle(void) {
   struct FieldActor *leader;
   struct FieldActor *puddle;
   u8 *effects;
@@ -1316,11 +1317,11 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   draw = Engine_RandomNext();
   velocityY = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(5));
 
-  FieldFx_Spawn(PIXELS(324), PIXELS(48), PIXELS(228), velocityX, velocityY, 0,
-                EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |
-                    EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
-                    EFFECT_USE_PALETTE,
-                settings);
+  FieldEffect_Spawn(
+      PIXELS(324), PIXELS(48), PIXELS(228), velocityX, velocityY, 0,
+      EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE |
+          EFFECT_SCALE_TO_TARGET | EFFECT_USE_PALETTE,
+      settings);
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -1361,8 +1362,8 @@ CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
   scale = Math_Divide(
       (((u32)Engine_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
 
-  FieldFx_Spawn(x, y, z, 0, scale, phase,
-                EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
+  FieldEffect_Spawn(x, y, z, 0, scale, phase,
+                    EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
 #ifdef UBFIX
   return;
 #else
@@ -1379,7 +1380,7 @@ static void Event_FreezeThirdPuddle(void) {
   set = Engine_GameFlagIsSet(LEADER_ON_THIRD_PUDDLE_FLAG);
   if (set == 0) {
     Engine_GameFlagSet(FIRST_FROZEN_PUDDLE_FLAG + 2);
-    EV_BEGIN();
+    EV_START();
     Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
     Engine_CameraMoveTo(PIXELS(312), -1, PIXELS(184), 1);
     Engine_CameraWaitForMove();
@@ -1398,7 +1399,7 @@ static void Event_FreezeThirdPuddle(void) {
       Object_GetById(ACTOR_SECOND_PUDDLE)->update = (void (*)(
           union FieldObject *))CrossboneIsleSteppingStones_SpawnThawParticle;
 #endif
-      OBJ_MODE(ACTOR_SECOND_PUDDLE, 6);
+      OBJECT_MODE(ACTOR_SECOND_PUDDLE, 6);
       ObjectMotion_WaitForAnimationChange(ACTOR_SECOND_PUDDLE);
       Object_GetById(ACTOR_SECOND_PUDDLE)->update =
           (void (*)(union FieldObject *))set;
@@ -1424,7 +1425,7 @@ static void Event_StartMovingSinkingPillar(void) {
   s32 x;
   s32 z;
 
-  EV_BEGIN();
+  EV_START();
 
   x = pillar->x.fixed >> 20;
   z = pillar->z.fixed >> 20;
@@ -1440,7 +1441,7 @@ static void Event_MoveSinkingPillar(void) {
   s32 alreadyLowered;
 
   pillar = Object_GetById(ACTOR_SINKING_BOULDER);
-  EV_BEGIN();
+  EV_START();
   StagedActor_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
                                          (pillar->z.fixed >> 20), 1, 1, 255);
   if ((pillar->x.fixed >> 20) == 16) {
@@ -1462,7 +1463,7 @@ static void Event_MoveSinkingPillar(void) {
 static void Event_PushSinkingPillar(void) {
   struct StagedActorProbe probe;
 
-  EV_BEGIN();
+  EV_START();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   } else {
@@ -1607,7 +1608,7 @@ s32 Scene_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Object_GetById(ACTOR_PARTY_LEADER)->riseCounter = 1;
     }
-    FieldFx_StartFadeOverlay(0);
+    FieldEffect_StartFadeOverlay(0);
     if (Object_GetById(ACTOR_PARTY_LEADER)->riseCounter == 0) {
       Event_StopRising();
     }
@@ -1649,7 +1650,7 @@ s32 Scene_Initialize(void) {
   } else if (gGameState.scene == (s32)&SceneId_CrossboneIsleDragonStatue) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
-    OBJ_MODE(ACTOR_SINKING_BOULDER, 2);
+    OBJECT_MODE(ACTOR_SINKING_BOULDER, 2);
     Engine_ActorSetChildValue(ACTOR_SINKING_BOULDER, 6);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
@@ -1680,18 +1681,18 @@ s32 Scene_Initialize(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
@@ -1997,7 +1998,7 @@ struct SceneEvent gCrossboneIsleDragonStatueEvents[] = {
      FIRST_FROZEN_PUDDLE_FLAG + 1, EVENT_SCRIPT(Event_FreezeSecondPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_THIRD_PUDDLE, FIRST_FROZEN_PUDDLE_FLAG + 2,
-     EVENT_SCRIPT(Event_FrostBeginsOnThirdPuddle)},
+     EVENT_SCRIPT(Event_FrostStartsOnThirdPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS),
      ACTOR_THIRD_PUDDLE, FIRST_FROZEN_PUDDLE_FLAG + 2,
      EVENT_SCRIPT(Event_FrostRaisesPillar)},

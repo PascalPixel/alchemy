@@ -61,7 +61,7 @@ s32 VenusLighthouse_Start(void) {
     }
     gPartyState.savedEntrance = 22;
 #endif
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     Func_02000b2c();
     Func_02000d30();

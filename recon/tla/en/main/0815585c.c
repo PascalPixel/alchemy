@@ -1,4 +1,4 @@
-// Draft of Func_0815585c, The Broken Seal's BattleFx_RunDjinniEntrance
+// Draft of Func_0815585c, The Broken Seal's BattleEffect_RunDjinniEntrance
 // (games/tbs/src/effect/effect.c): differ 165 of 818 (tla-en,
 // 2026-10-15). The Lost Age reworked it: the kind, the side and the anchor
 // come packed in one word (kind | side << 4 | anchor << 5), eleven anchors
@@ -13,7 +13,7 @@
 // What moved it: the three heap slots read before the packed word is
 // unpacked (562 to 546), packed as unsigned (lsrs), and the fade step's
 // zero through a variable of its own in the long branch (546 to 169, found
-// by alchemy permute; tagged below), and BattleFx_LoadBlitter
+// by alchemy permute; tagged below), and BattleEffect_LoadBlitter
 // returning its loader's s32, as nibble_pair.c now does (169 to 165).
 
 // Left: allocation through the frame loop, from the prologue's first
@@ -65,19 +65,19 @@ extern u8 ResourceId_JupiterDjinnSmallSheet[];
 extern u8 ResourceId_VenusDjinnSmallSheet[];
 extern u8 ResourceId_Data134[];
 
-// The Broken Seal's gBattleFx_MoteCells: each spark size's cel.
+// The Broken Seal's gBattleEffect_MoteCells: each spark size's cel.
 extern const u16 gData_08197410[];
 
 u8 *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 struct BattleObj *GetBattleObjectSlotFar(s32 id);
 s32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
@@ -87,9 +87,9 @@ void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
 void Transform_Pop(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer, s32 frames);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -187,11 +187,11 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
 
   // Additive and max blitters, clipped (flipped for side 1).
   if (side == 1) {
-    BattleFx_LoadBlitter(104, 0x07);
-    BattleFx_LoadBlitter(188, 0x17);
+    BattleEffect_LoadBlitter(104, 0x07);
+    BattleEffect_LoadBlitter(188, 0x17);
   } else {
-    BattleFx_LoadBlitter(104, 0x03);
-    BattleFx_LoadBlitter(188, 0x13);
+    BattleEffect_LoadBlitter(104, 0x03);
+    BattleEffect_LoadBlitter(188, 0x13);
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -214,7 +214,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The spin's centre moves from the caster to the anchor over frames 6-45.
   base[0] = actor->x;
@@ -334,7 +334,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
           size = 8 - (position.depth - 250) / 64;
           draw[1](canvas, sheet + gData_08197410[size - 1],
                   position.x - size / 2, position.y - size, size, size * 2);
-          BattleFxKernels_IntegrateVector3(spark, 60, 0);
+          BattleEffectKernels_IntegrateVector3(spark, 60, 0);
           if (frame >= i / 8 + 24) {
             s32 pullX = -spark->x >> 7;
             s32 pullY = -spark->y >> 7;
@@ -393,7 +393,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
           draw[0](canvas, sheet + gData_08197410[size - 1],
                   (s16)(mote->x >> 16) - size / 2, (s16)(mote->y >> 16) - size,
                   size, size * 2);
-          BattleFxKernels_IntegrateVector2(mote, 60, 0);
+          BattleEffectKernels_IntegrateVector2(mote, 60, 0);
           mote->variant--;
         }
       }
@@ -401,7 +401,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   Iwram_ClearWords((void *)0x06004000, 0x4000);

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Raging Heat, Fiery Abyss, Dire Inferno (kind 74).
-	.global BattleFx_RunRagingHeat
+	.global BattleEffect_RunRagingHeat
 	.thumb_func
-BattleFx_RunRagingHeat:
+BattleEffect_RunRagingHeat:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunRagingHeat:
 	str r1, [sp, #60]
 	ldr r2, [r5, #100]
 	str r2, [sp, #44]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081793f4
 	movs r2, #128
 	lsls r2, r2, #19
@@ -31,12 +31,12 @@ BattleFx_RunRagingHeat:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #7
 	str r3, [sp, #48]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r2, [r6, #20]
@@ -447,7 +447,7 @@ BattleFx_RunRagingHeat:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_081797fc
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_0817971a:
 	adds r3, #1
@@ -501,7 +501,7 @@ BattleFx_RunRagingHeat:
 	adds r0, r5, #0
 	lsls r2, r2, #5
 	movs r1, #60
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	mov r0, r11
 	subs r3, #1
@@ -551,7 +551,7 @@ BattleFx_RunRagingHeat:
 .L_081797dc:
 	.4byte Data_02011000
 .L_081797e0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081797e4:
 	.4byte Data_02015018
 .L_081797e8:
@@ -739,7 +739,7 @@ BattleFx_RunRagingHeat:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #172
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -759,4 +759,4 @@ BattleFx_RunRagingHeat:
 .L_0817998c:
 	.4byte gData_08199210
 .L_08179990:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

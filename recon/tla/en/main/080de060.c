@@ -48,9 +48,9 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectPosition *output);
 void Camera_WorldToScreen(struct EffectPosition *value);
 s32 EffectSlot_HasPendingTarget(struct RadialBurstEffect *effect);
-void BattleFx_ClearOwnedSlot(struct RadialBurstEffect *effect);
+void BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect);
 
-void BattleFx_UpdateRadialBurst(struct RadialBurstEffect *effect) {
+void BattleEffect_UpdateRadialBurst(struct RadialBurstEffect *effect) {
   struct EffectRuntime *runtime = Ram_HeapSlots->effectWork;
   struct EffectPosition value;
   s32 state;
@@ -96,5 +96,5 @@ again:
   }
 
   if (state == 3 && EffectSlot_HasPendingTarget(effect) == 0)
-    BattleFx_ClearOwnedSlot(effect);
+    BattleEffect_ClearOwnedSlot(effect);
 }

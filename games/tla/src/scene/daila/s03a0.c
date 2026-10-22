@@ -72,7 +72,7 @@ void Func_020003a0(void) {
     return;
   if (Engine_GameFlagIsSet(7))
     return;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   msg = (s32)MsgDailaFelixCall;
   Engine_EventSetMessage(msg);

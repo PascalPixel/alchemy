@@ -27,7 +27,7 @@ void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 void UiWork_SetParamNibbleFar(s32 color);
-struct BattleUnit *UnitGet(s32 owner);
+struct BattleUnit *Unit_Get(s32 owner);
 void WaitFrames(s32 frames);
 
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
@@ -35,7 +35,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   struct BattleUnit *unit;
 
   menu = Ram_HeapSlots->menuRuntime;
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   menu->cursor->state = 1;
   flags &= 0x100;
   if (flags == 0)

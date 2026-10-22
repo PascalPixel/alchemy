@@ -387,12 +387,12 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
 
 /// Switches all of an object's sprites to animation value.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SelectAnimation, void *,
-                             AnimationObjects_SelectAnimation)
+                             AnimationObject_SelectAnimation)
 
 /// Sets the animation speed (timer step) of all of an object's sprites.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SetAnimationSpeed,
                              struct DispatchObject *,
-                             AnimationObjects_SetActiveTimerSteps)
+                             AnimationObject_SetActiveTimerSteps)
 
 /// Both of the above: switches all of an object's sprites to animation and
 /// sets their timer step to step.
@@ -405,16 +405,16 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
   if (object != 0) {
     switch (object->kind & 15) {
     case OBJECT_SPRITE_ONE:
-      AnimationObjects_SelectAnimation(object->target.child, animation);
-      AnimationObjects_SetActiveTimerSteps(object->target.child, step);
+      AnimationObject_SelectAnimation(object->target.child, animation);
+      AnimationObject_SetActiveTimerSteps(object->target.child, step);
       break;
     case OBJECT_SPRITE_GROUP:
       sprites = object->target.children;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != 0) {
-          AnimationObjects_SelectAnimation(sprite, animation);
-          AnimationObjects_SetActiveTimerSteps(sprite, step);
+          AnimationObject_SelectAnimation(sprite, animation);
+          AnimationObject_SetActiveTimerSteps(sprite, step);
         }
       }
       break;
@@ -432,8 +432,8 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
 /// Gives a one-sprite object's first layer animation id animationId and
 /// restarts its layers.
 /// A negative animationId does nothing.
-void Animation_SetIndexAndInitObjects(void *rawDispatchObject,
-                                      s32 animationId) {
+void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
+                                            s32 animationId) {
   struct DispatchObject *object = rawDispatchObject;
   struct AnimationObject *sprite;
 

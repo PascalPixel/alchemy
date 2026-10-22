@@ -36,7 +36,7 @@ Func_080feb58:
 	add r2, r8
 	adds r6, #240
 	ldrh r0, [r7, r2]
-	bl UnitGet
+	bl Unit_Get
 	ldr r0, [r6]
 	bl RenderOutput_RedrawSavedRectFar
 	ldr r5, .L_080fecf4
@@ -67,7 +67,7 @@ Func_080feb58:
 	lsls r0, r0, #1
 	adds r0, r0, r6
 	ldrh r0, [r7, r0]
-	bl UnitGet
+	bl Unit_Get
 	mov r0, r9
 	movs r1, #3
 	adds r0, #3
@@ -89,7 +89,7 @@ Func_080feb58:
 	lsls r3, r3, #1
 	adds r3, r3, r6
 	ldrh r0, [r7, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #0
 	adds r1, r5, #0
 	bl Func_080fd6f0

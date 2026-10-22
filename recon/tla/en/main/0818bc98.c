@@ -1,7 +1,7 @@
 // Near miss: listing 1251 instructions, draft 1252, differ 203. No close ☀️ twin
-// (call order BattleFx_RunDragonCloud 0.417): ⚓️'s own effect on ☀️'s
+// (call order BattleEffect_RunDragonCloud 0.417): ⚓️'s own effect on ☀️'s
 // frame, its bursts and jaws drawn as textured quads by ⚓️'s model kernels, as
-// in Triple Chomp (BattleFx_RunTripleChomp). The native frame (108) holds the mode at
+// in Triple Chomp (BattleEffect_RunTripleChomp). The native frame (108) holds the mode at
 // sp+64, work 60, canvas 56, frame 52, graphics 48, the user's position's
 // address 44 (and a copy at 36), the target's 40, the mouth's x 32 and y 28,
 // the sheet's glow cell 24, the blitter pair's address 20, the vertices 16 and
@@ -34,7 +34,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -105,19 +105,19 @@ extern s32 Data_081991c0[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-void BattleFx_LoadBlitter(s32 slot, s32 packed);
+void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
@@ -134,14 +134,14 @@ void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
 // Breath): 32 motes gather at the user's mouth, then burst out of it as
@@ -171,9 +171,9 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   // otherwise) and the jaws' texture, then each breath's own sheet: the Beam
   // computes 16 fading rings of 32 x 32.
   if (mode != BREATH_BEAM)
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   if (mode == BREATH_PIKE)
     Iwram_CopyWords((void *)0x05000000,
@@ -215,24 +215,24 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   // A clipped MAX blitter facing the targets, and a clipped additive one.
   REG_BLDALPHA = 0x1010;
   if (effect->side == 0)
-    BattleFx_LoadBlitter(
+    BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
         BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                 BLIT_MAX));
   else
-    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                   BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
                 BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
   if (mode == BREATH_PIKE)
-    BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
+    BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
   EffectPosition_ProjectBattler(effect->actor, &user);
   if (mode == BREATH_BLAST) {
     if (effect->side == 0)
@@ -328,7 +328,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           draw[i & 1](canvas, graphics + gData_08197410[size - 1],
                       HI(step->x) - size / 2, HI(step->y) - size, size,
                       size * 2);
-          BattleFxKernels_IntegrateVector2(step, 60, 0);
+          BattleEffectKernels_IntegrateVector2(step, 60, 0);
           step->variant--;
         }
       }
@@ -375,7 +375,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
       // The ball of dust rolls to the target.
       step = &work->particles[0];
       draw[0](canvas, work->sheet, HI(step->x) - 16, HI(step->y) - 24, 32, 48);
-      BattleFxKernels_IntegrateVector2(step, 56, 0);
+      BattleEffectKernels_IntegrateVector2(step, 56, 0);
       step->velocityX += step->z;
       step->velocityY += step->velocityZ;
       step->variant++;
@@ -541,7 +541,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
             Func_0814cd48(effect->actors[i], 14, 5, i, 3);
           else
             Func_0814cd48(effect->actors[i], 7, 5, i, 3);
-          BattleFx_StartActorMotion(effect->actors[i], 1, 0x10000, 0x40000,
+          BattleEffect_StartActorMotion(effect->actors[i], 1, 0x10000, 0x40000,
                                     0x20000, frame + 100);
         }
       }
@@ -563,6 +563,6 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

@@ -140,7 +140,7 @@ enum { TRIGGER_FORGE_JOINED = 99 };
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
 /// surprise, and the battle with the Djinni begins.
 static void Event_FightForge(void) {
-  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ActorJump(ACTOR_WITNESS, 2, 0);
   Field_RequestDjinnBattle(ACTOR_FORGE, DJINNI_FORGE);
 }
@@ -250,7 +250,7 @@ static void Event_MoveWestPillar(void) {
   if (x < 0)
     x += 0xfffff;
   x >>= 20;
-  EV_BEGIN();
+  EV_START();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
     Engine_GameFlagClear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
@@ -351,7 +351,7 @@ static void Event_PushStumpOver(void) {
 
   stump = Object_GetById(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
-  EV_BEGIN();
+  EV_START();
   if (column == 25) {
     overlayActor = Object_GetById(ACTOR_STUMP_SHADOW);
     zero = 0;
@@ -464,7 +464,7 @@ static void GomaCavePillar_SettleEastPillar(void) {
 /// Move on the east pillar in Goma Cave, until it is in its place
 /// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE).
 static void Event_MoveEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
   GomaCavePillar_SettleEastPillar();
   EV_END();
 }
@@ -472,7 +472,7 @@ static void Event_MoveEastPillar(void) {
 /// Walking into the east pillar in Goma Cave pushes it a step, until it is in
 /// its place.
 static void Event_PushEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   GomaCavePillar_SettleEastPillar();
   EV_END();
@@ -498,11 +498,11 @@ static void Event_JumpGapWest(void) {
   destination->y = Object_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   destination->z = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
-    EV_BEGIN();
-    Object_SetMode(leader, ANIM_LEADER_SPRING);
+    EV_START();
+    Object_SetMode(leader, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(leader, ANIM_LEADER_LEAP);
+    Object_SetMode(leader, ANIMATION_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -511,7 +511,7 @@ static void Event_JumpGapWest(void) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
                               *(s16 *)((u8 *)destination + 2),
                               *(s16 *)((u8 *)destination + 10));
-    Object_SetMode(leader, ANIM_LEADER_SPRING);
+    Object_SetMode(leader, ANIMATION_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
     EV_END();
@@ -534,7 +534,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   frame = ++gGomaCavePillar_WitnessFrames;
   switch (frame) {
   case 60:
-    OBJ_DIR(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
+    OBJECT_DIR(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
     Engine_ActorShowEmote(ACTOR_WITNESS, EMOTE_WINCE, 0);
     break;
   case 180:
@@ -545,7 +545,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Engine_ActorJump(ACTOR_WITNESS, 4, 0);
     break;
   case 480:
-    OBJ_MODE(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
+    OBJECT_MODE(ACTOR_WITNESS, ANIMATION_SHAKE_HEAD);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
@@ -557,20 +557,20 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 /// good.
 static void Event_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
-  EV_BEGIN();
-  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  EV_START();
+  OBJECT_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_WITNESS, 2);
-  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
+  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   MESSAGE_SET(MsgGomaGotWowThatsPrettyImpressive);
   Event_ShowMessage(ACTOR_WITNESS, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIMATION_NOD);
   WAIT(30);
   Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  OBJ_SPEED(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
+  OBJECT_SPEED(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 248);
   Actor_WalkToAndWait(ACTOR_WITNESS, 568, 296);
-  OBJ_POS_SET(ACTOR_WITNESS, 0, 0);
+  OBJECT_POSITION_SET(ACTOR_WITNESS, 0, 0);
   Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_GOMA_CAVE_WITNESS_LEFT);
   EV_END();
@@ -589,17 +589,17 @@ s32 Scene_Initialize(void) {
   work->transitionFrames = 24;
   Object_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   if (FLAG_CHECK(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
-    OBJ_POS_SET(ACTOR_WEST_PILLAR, 344, 104);
+    OBJECT_POSITION_SET(ACTOR_WEST_PILLAR, 344, 104);
     GomaCavePillar_CopyWestPillarCells(24);
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
   }
   if (FLAG_CHECK(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    OBJ_POS_SET(ACTOR_STUMP, 0, 0);
+    OBJECT_POSITION_SET(ACTOR_STUMP, 0, 0);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
   if (FLAG_CHECK(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
-    OBJ_POS_SET(ACTOR_EAST_PILLAR, 616, 232);
+    OBJECT_POSITION_SET(ACTOR_EAST_PILLAR, 616, 232);
     if (gGameState.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
         gGameState.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       Object_GetById(ACTOR_EAST_PILLAR)->terrainId = 2;
@@ -613,7 +613,7 @@ s32 Scene_Initialize(void) {
   if (gGameState.entrance == ENTRANCE_STUMP_FALL) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    OBJ_POS_SET(ACTOR_STUMP, 384, 192);
+    OBJECT_POSITION_SET(ACTOR_STUMP, 384, 192);
     WAIT(60);
     Object_GetById(ACTOR_STUMP)->terrainId = 2;
     Actor_MoveToAndWait(ACTOR_STUMP, 408, 192);

@@ -1,7 +1,7 @@
 // Draft, differ 538 of 893 (draft 881 instructions, no device): summon 16,
 // written from the listing on The Broken Seal's summon skeleton
-// (BattleFx_RunNereid: canvas layer, blitter pair through
-// BattleFx_FetchRectangleBlitters, transfer callback at 0xc80,
+// (BattleEffect_RunNereid: canvas layer, blitter pair through
+// BattleEffect_FetchRectangleBlitters, transfer callback at 0xc80,
 // SelectLivingTargets, SpawnObjects, a frame loop with an A/B skip,
 // PlaceFormationObjects, RunImpactBurst and the twelve object releases). Its
 // rings use the ARM model renderer as summon 25's pillars do (Func_0819273c).
@@ -70,17 +70,17 @@ extern const u8 Data_08199f34[];
 extern const u8 Data_08199f38[];
 extern const s8 Data_08199f3c[];
 
-void BattleFx_BeginCanvasLayer(s32 layer);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_StartCanvasLayer(s32 layer);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Graphics_LoadGreyRamp(void);
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 priority);
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority);
 void Func_0816442c(s32 formation, s32 x, s32 y);
 void Func_0816467c(s32 formation, s32 x, s32 y);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Func_08158ce0(s32 randomMask, u32 range);
@@ -113,7 +113,7 @@ void ResourceObject_ReleaseFar(void *object);
 // retires the column), particles 24-39 the embers of the closing glow; the
 // map cell buffer holds the motes (variant counts down the frames before a
 // mote appears, 0 is a live mote).
-void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
   struct Point2D focus;
@@ -131,9 +131,9 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   graphics = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x3000, 0,
@@ -142,12 +142,12 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
   Graphics_LoadGreyRamp();
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   focus.x = 128 << 16;
   focus.y = 64 << 16;
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
   WaitFrames(1);
-  BattleFx_SpawnObjects(12, 654, 2);
+  BattleEffect_SpawnObjects(12, 654, 2);
 
   for (frame = 0; frame != SUMMON16_FRAMES; frame++) {
     if ((gInput.repeat & 3) && frame <= 231 && frame > 15) {
@@ -368,7 +368,7 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
       if (frame == k * 8 + 212) {
         for (i = 0; i != work->effect->count; i++) {
           Func_0814cd48(work->effect->actors[i], 7, 5, i, 8);
-          BattleFx_StartActorMotion(effect->actors[i], 1, 0x10000, 0x40000,
+          BattleEffect_StartActorMotion(effect->actors[i], 1, 0x10000, 0x40000,
                                     0x10000, k * 16 + 100);
         }
       }
@@ -408,11 +408,11 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   Func_0816467c(5, focus.x, focus.y);
   for (i = 0; i != 12; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

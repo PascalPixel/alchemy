@@ -271,11 +271,11 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 
   if (FieldObject_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(actor, target) == 0) {
-    EV_BEGIN();
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    EV_START();
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(actor, ANIM_LEADER_LEAP);
+    Object_SetMode(actor, ANIMATION_LEADER_LEAP);
 
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);
@@ -286,7 +286,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
                               TunnelRuins_GetLandingPixel(target->x),
                               TunnelRuins_GetLandingPixel(target->z));
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(actor, 1);
     Engine_TaskWait(6);
 
@@ -390,7 +390,8 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
   options.palette = 5;
   x = object->x.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
   z = object->z.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
-  FieldFx_Spawn(x, object->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001, &options);
+  FieldEffect_Spawn(x, object->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001,
+                    &options);
 #ifdef UBFIX
   return;
 #else
@@ -466,8 +467,8 @@ static void Event_HopDownStep(void) {
   struct EffectOptions options;
   u32 i;
 
-  EV_BEGIN();
-  Object_SetMode(leader, ANIM_LEADER_SPRING);
+  EV_START();
+  Object_SetMode(leader, ANIMATION_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
   Object_SetMode(leader, 1);
   Engine_ActorSetSpriteFlags(leader, 0);
@@ -479,7 +480,7 @@ static void Event_HopDownStep(void) {
   Engine_TaskWait(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
-  options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
+  options.update = (void (*)(union FieldObject *))FieldEffect_AdvanceMotion;
   Engine_AudioPlayCue(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
     leader->y.fixed -= PIXELS(2);
@@ -491,8 +492,8 @@ static void Event_HopDownStep(void) {
       s32 velocityZ;
 
       velocityZ = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
-      FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                    velocityX, 0, velocityZ, 0x1000001, &options);
+      FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                        velocityX, 0, velocityZ, 0x1000001, &options);
     }
   }
   Engine_ActorSetSpriteFlags(leader, 1);
@@ -557,7 +558,7 @@ const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
 /// Walking into the first pair of pillars pushes them along.
 /// Reached by walking into cell code 24 in TunnelRuinsGreatStatue.
 static void Event_PushFirstPillars(void) {
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   StagedActor_AdvancePair();
   TunnelRuins_UpdateFirstPillarCells();
@@ -581,7 +582,7 @@ static void Event_HopWest(void) {
 /// Walking into the second pair of pillars pushes them along.
 /// Reached by walking into cell code 26 in TunnelRuinsGreatStatue.
 static void Event_PushSecondPillars(void) {
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   StagedActor_AdvancePair();
   TunnelRuins_UpdateSecondPillarCells();
@@ -612,7 +613,7 @@ static void Event_HopEast(void) {
 /// Walking into the small pillars pushes the one in front along.
 /// Reached by walking into cell code 28 in TunnelRuinsGreatStatue.
 static void Event_PushSmallPillars(void) {
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   StagedActor_AdvancePair();
@@ -726,7 +727,7 @@ static void Event_SinkPillarA(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
 
-  EV_BEGIN();
+  EV_START();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_A);
   if ((actor->x.fixed >> 20) == 46) {
     WAIT(30);
@@ -745,19 +746,20 @@ static void Event_SinkPillarA(void) {
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
       randomZ = Engine_RandomNext();
-      FieldFx_Spawn(randomX, 0,
-                    ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
-                     PIXELS(128)),
-                    0, 0, 0, 0x90000, effectOptions);
+      FieldEffect_Spawn(
+          randomX, 0,
+          ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
+           PIXELS(128)),
+          0, 0, 0, 0x90000, effectOptions);
     }
     Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     WAIT(30);
     Actor_Get(ACTOR_SINKING_PILLAR_A)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
-    OBJ_MODE(ACTOR_SINKING_PILLAR_A, 3);
+    OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 3);
     Engine_ObjectDispatchRelease(overlay);
     Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    OBJ_POS_SET(ACTOR_PUDDLE_A, 744, 136);
+    OBJECT_POSITION_SET(ACTOR_PUDDLE_A, 744, 136);
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
     WAIT(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
@@ -772,7 +774,7 @@ static void Event_SinkPillarA(void) {
 /// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR).
 /// Reached by walking into cell code 29 in TunnelRuinsGreatStatue.
 static void Event_PushSinkingPillarA(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_SinkPillarA();
@@ -783,9 +785,9 @@ static void Event_PushSinkingPillarA(void) {
 static void Event_FreezePuddleA(void) {
   u8 *flags;
 
-  OBJ_MODE(ACTOR_PUDDLE_A, 1);
+  OBJECT_MODE(ACTOR_PUDDLE_A, 1);
   Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 0);
-  OBJ_MODE(ACTOR_PUDDLE_A, 2);
+  OBJECT_MODE(ACTOR_PUDDLE_A, 2);
   flags = &Object_GetById(ACTOR_PUDDLE_A)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_SCENE_TEMP_00);
@@ -807,7 +809,7 @@ static void Event_SinkPillarB(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
 
-  EV_BEGIN();
+  EV_START();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_B);
   if ((actor->x.fixed >> 20) == 48) {
     if (FLAG_CHECK(FLAG_SCENE_TEMP_02) != 0) {
@@ -827,16 +829,16 @@ static void Event_SinkPillarB(void) {
         randomZ = Engine_RandomNext();
         effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
                    PIXELS(224));
-        FieldFx_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, effectOptions);
+        FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, effectOptions);
       }
       Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
       WAIT(30);
       Actor_Get(ACTOR_SINKING_PILLAR_B)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
-      OBJ_MODE(ACTOR_SINKING_PILLAR_B, 3);
+      OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 3);
       Engine_ObjectDispatchRelease(overlay);
       Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      OBJ_POS_SET(ACTOR_PUDDLE_B, 776, 232);
+      OBJECT_POSITION_SET(ACTOR_PUDDLE_B, 776, 232);
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
       WAIT(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
@@ -853,7 +855,7 @@ static void Event_SinkPillarB(void) {
 /// Reached by walking into cell code 30, or east into 32 before Douse has
 /// soaked it, in TunnelRuinsGreatStatue.
 static void Event_PushSinkingPillarB(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_SinkPillarB();
@@ -861,7 +863,7 @@ static void Event_PushSinkingPillarB(void) {
 
 /// As Douse begins on sinking pillar B, water splashes on it.
 /// Reached by Douse's first phase on sinking pillar B until it is soaked.
-static void Event_DouseBeginsOnPillarB(void) {
+static void Event_DouseStartsOnPillarB(void) {
   Actor_SetActionScript(ACTOR_SINKING_PILLAR_B, gTunnelRuins_DouseSplashScript);
 }
 
@@ -878,9 +880,9 @@ static void Event_DousePillarB(void) {
 static void Event_FreezePuddleB(void) {
   u8 *flags;
 
-  OBJ_MODE(ACTOR_PUDDLE_B, 1);
+  OBJECT_MODE(ACTOR_PUDDLE_B, 1);
   Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 0);
-  OBJ_MODE(ACTOR_PUDDLE_B, 2);
+  OBJECT_MODE(ACTOR_PUDDLE_B, 2);
   flags = &Object_GetById(ACTOR_PUDDLE_B)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_SCENE_TEMP_01);
@@ -893,8 +895,8 @@ static void Event_FreezePuddleB(void) {
 /// open here.
 /// Reached by searching cell code 40 in TunnelRuinsGreatStatue.
 static void Event_ReadFirstStatue(void) {
-  EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  EV_START();
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
@@ -908,14 +910,14 @@ static void Event_ReadFirstStatue(void) {
 /// happens.
 /// Reached by Move on the Douse pillar until FLAG_SCENE_TEMP_04 is set.
 static void Event_MoveDousePillar(void) {
-  EV_BEGIN();
+  EV_START();
   EV_END();
 }
 
 /// Walking into the Douse pillar pushes it along.
 /// Reached by walking into cell code 25 in TunnelRuinsLadyStatues.
 static void Event_PushDousePillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_MoveDousePillar();
@@ -925,7 +927,7 @@ static void Event_PushDousePillar(void) {
 /// puddle follows it from then on.
 /// Reached by Douse's first phase on the Douse pillar until it is soaked; sets
 /// FLAG_SCENE_TEMP_03 and gives the puddle its update hook.
-static void Event_DouseBeginsOnPillar(void) {
+static void Event_DouseStartsOnPillar(void) {
   struct FieldActor *puddle;
 
   Actor_SetActionScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
@@ -948,11 +950,11 @@ static void Event_FreezeDousePuddle(void) {
   s32 column;
   s32 row;
 
-  EV_BEGIN();
+  EV_START();
   Engine_ActorSetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
-  OBJ_MODE(ACTOR_DOUSE_PUDDLE, 1);
+  OBJECT_MODE(ACTOR_DOUSE_PUDDLE, 1);
   Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 0);
-  OBJ_MODE(ACTOR_DOUSE_PUDDLE, 2);
+  OBJECT_MODE(ACTOR_DOUSE_PUDDLE, 2);
 
   {
     u8 *flag = &Object_GetById(ACTOR_DOUSE_PUDDLE)->priorityFlags;
@@ -1001,8 +1003,8 @@ static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
 static void TunnelRuins_SettleBalance(s32 wait) {
   u32 i;
 
-  OBJ_SPEED(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJ_SPEED(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
   if (wait != 0) {
     Engine_AudioPlayCue(SE_180);
   }
@@ -1062,7 +1064,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     Object_GetById(actorId)->timer = candidateId;
   }
 
-  OBJ_SPEED(actorId, PIXELS(4), PIXELS(2));
+  OBJECT_SPEED(actorId, PIXELS(4), PIXELS(2));
 
   {
     struct FieldActor *actor = Object_GetById(actorId);
@@ -1074,7 +1076,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
 
   Engine_ActorWaitForMove(actorId);
   Engine_AudioPlayCue(SE_188);
-  FieldFx_SpawnNineRadialEffects(actorId);
+  FieldEffect_SpawnNineRadialEffects(actorId);
   WAIT(30);
 }
 
@@ -1089,7 +1091,7 @@ static void Event_SetStoneOnBalance(void) {
   s32 j;
   s32 settledIndex;
 
-  EV_BEGIN();
+  EV_START();
   for (i = 0; i <= 2; i++) {
     if (Object_GetById(i + ACTOR_CARRY_STONE_A)->sprite->image.priority == 3 &&
         FLAG_CHECK(i + FLAG_SCENE_TEMP_00) == 0) {
@@ -1170,7 +1172,7 @@ static void Event_SetStoneOnBalance(void) {
 /// Walking into a pushable object pushes it along.
 /// Reached by walking into cell codes 28 and 30 in TunnelRuinsLadyStatues.
 static void Event_PushObject(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
 }
@@ -1180,7 +1182,7 @@ static void Event_PushObject(void) {
 /// Reached by Move on either east pillar; sets or clears
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST.
 static void Event_MoveEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
 
   if ((Object_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
     FLAG_SET(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
@@ -1201,7 +1203,7 @@ static void Event_MoveEastPillar(void) {
 /// Walking into an east pillar pushes it along, and its place is kept.
 /// Reached by walking east into cell code 29 in TunnelRuinsLadyStatues.
 static void Event_PushEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   Event_MoveEastPillar();
   EV_END();
@@ -1215,8 +1217,8 @@ static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   MapObject_SetPosition(100, 0, 0);
   MapObject_SetPosition(101, 0, 0);
-  OBJ_POS_SET(ACTOR_VANISHING_STATUE_A, 136, 792);
-  OBJ_POS_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
+  OBJECT_POSITION_SET(ACTOR_VANISHING_STATUE_A, 136, 792);
+  OBJECT_POSITION_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
 }
 
 /// Reveal makes the two false statues vanish. As it shows what is hidden, the
@@ -1244,7 +1246,7 @@ static void Event_MoveLadyStatue(void) {
   s32 row;
 
   correctPositions = 0;
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   actor = Object_GetById(ACTOR_LADY_STATUE_A);
   column = actor->x.fixed;
@@ -1349,7 +1351,7 @@ static void Event_MoveLadyStatue(void) {
 /// the door.
 /// Reached by walking into cell code 41 in TunnelRuinsLadyStatues.
 static void Event_PushLadyStatue(void) {
-  EV_BEGIN();
+  EV_START();
   {
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   }
@@ -1362,8 +1364,8 @@ static void Event_PushLadyStatue(void) {
 /// statues. "The statue seems to speak to your soul..." Reached by searching
 /// cell code 42 in TunnelRuinsLadyStatues.
 static void Event_ReadSecondStatue(void) {
-  EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  EV_START();
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   EV_END();
 }
@@ -1371,7 +1373,7 @@ static void Event_ReadSecondStatue(void) {
 /// Searching the door in TunnelRuinsLadyStatues: it is tightly locked.
 /// Reached by searching cell code 20 in TunnelRuinsLadyStatues.
 static void Event_SearchLockedDoor(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   EV_END();
 }
@@ -1486,7 +1488,7 @@ s32 TunnelRuins_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue ||
       gGameState.scene == (s32)&SceneId_TunnelRuinsLadyStatues) {
-    FieldFx_StartFadeOverlay(0);
+    FieldEffect_StartFadeOverlay(0);
     gGameState.retreatEntrance =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
     gGameState.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;
@@ -1550,7 +1552,7 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_B), 0);
-      OBJ_MODE(ACTOR_SINKING_PILLAR_A, 2);
+      OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 2);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE_B), 0);
       Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 15);
@@ -1560,33 +1562,33 @@ s32 TunnelRuins_Initialize(void) {
         Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(ACTOR_SINKING_PILLAR_A, 3);
+        OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        OBJ_POS_SET(ACTOR_SINKING_PILLAR_A, 744, 136);
+        OBJECT_POSITION_SET(ACTOR_SINKING_PILLAR_A, 744, 136);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->y.fixed = -PIXELS(16);
-        OBJ_POS_SET(ACTOR_PUDDLE_A, 744, 136);
+        OBJECT_POSITION_SET(ACTOR_PUDDLE_A, 744, 136);
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_00)) {
         Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 0);
-        OBJ_MODE(ACTOR_PUDDLE_A, 5);
+        OBJECT_MODE(ACTOR_PUDDLE_A, 5);
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_02))
-        OBJ_MODE(ACTOR_SINKING_PILLAR_B, 2);
+        OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 2);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR)) {
         Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(ACTOR_SINKING_PILLAR_B, 3);
+        OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-        OBJ_POS_SET(ACTOR_SINKING_PILLAR_B, 776, 232);
+        OBJECT_POSITION_SET(ACTOR_SINKING_PILLAR_B, 776, 232);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->y.fixed = -PIXELS(16);
         Engine_ActorSetPosition(ACTOR_PUDDLE_B, PIXELS(776), PIXELS(232));
         FLAG_SET(FLAG_SCENE_TEMP_02);
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_01)) {
         Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 0);
-        OBJ_MODE(ACTOR_PUDDLE_B, 5);
+        OBJECT_MODE(ACTOR_PUDDLE_B, 5);
       }
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
@@ -1621,9 +1623,9 @@ s32 TunnelRuins_Initialize(void) {
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_A, 6);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_B, 6);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
-        OBJ_POS_SET(ACTOR_EAST_PILLAR_A, 728, 312);
+        OBJECT_POSITION_SET(ACTOR_EAST_PILLAR_A, 728, 312);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
-        OBJ_POS_SET(ACTOR_EAST_PILLAR_B, 744, 312);
+        OBJECT_POSITION_SET(ACTOR_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
@@ -1638,7 +1640,7 @@ s32 TunnelRuins_Initialize(void) {
       if (!FLAG_CHECK(FLAG_SCENE_TEMP_04))
         break;
       Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 0);
-      OBJ_MODE(ACTOR_DOUSE_PUDDLE, 5);
+      OBJECT_MODE(ACTOR_DOUSE_PUDDLE, 5);
       Engine_MapCopyCellAttributes(
           26, 8, 1, 1, Object_GetById(ACTOR_DOUSE_PUDDLE)->x.fixed >> 20,
           Object_GetById(ACTOR_DOUSE_PUDDLE)->z.fixed >> 20);
@@ -1677,12 +1679,12 @@ s32 TunnelRuins_Initialize(void) {
         Object_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
         Object_GetById(ACTOR_BALANCE_WEST)->timer = 2;
         Object_GetById(ACTOR_BALANCE_EAST)->timer = 4;
-        OBJ_POS_SET(ACTOR_CARRY_STONE_A, 200, 152);
+        OBJECT_POSITION_SET(ACTOR_CARRY_STONE_A, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_A)->timer = ACTOR_BALANCE_EAST;
         Object_GetById(ACTOR_CARRY_STONE_A)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_POS_SET(ACTOR_CARRY_STONE_B, 200, 152);
+        OBJECT_POSITION_SET(ACTOR_CARRY_STONE_B, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_B)->timer = ACTOR_CARRY_STONE_A;
         Object_GetById(ACTOR_CARRY_STONE_B)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_B)->priorityFlags |=
@@ -1720,11 +1722,11 @@ s32 TunnelRuins_Initialize(void) {
       WAIT(1);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         Map_CopyCells(24, 59, 1, 2, 32, 46);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_A, 408, 792);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_B, 376, 792);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_C, 408, 760);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_D, 376, 760);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_E, 392, 776);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_A, 408, 792);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_B, 376, 792);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_C, 408, 760);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_D, 376, 760);
+        OBJECT_POSITION_SET(ACTOR_LADY_STATUE_E, 392, 776);
       }
       Object_GetById(ACTOR_LADY_STATUE_A)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
@@ -1741,8 +1743,8 @@ s32 TunnelRuins_Initialize(void) {
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_C, 4);
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_D, 10);
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_E, 0);
-      OBJ_MODE(ACTOR_LADY_STATUE_A, 2);
-      OBJ_MODE(ACTOR_LADY_STATUE_E, 2);
+      OBJECT_MODE(ACTOR_LADY_STATUE_A, 2);
+      OBJECT_MODE(ACTOR_LADY_STATUE_E, 2);
       Engine_MapCopyCellAttributes(
           20, 56, 1, 1, Object_GetById(ACTOR_LADY_STATUE_A)->x.fixed >> 20,
           Object_GetById(ACTOR_LADY_STATUE_A)->z.fixed >> 20);
@@ -1790,18 +1792,18 @@ s32 gStagedActor_FootprintBounds[] = {
 };
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// A balance platform's height by its weight (its timer): each carved stone on
@@ -2220,7 +2222,7 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_FreezePuddleA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_B, FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR, EVENT_SCRIPT(Event_SinkPillarB)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_FreezePuddleB)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DouseBeginsOnPillarB)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DouseStartsOnPillarB)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DousePillarB)},
     {SCENE_EVENTS_END},
 };
@@ -2263,7 +2265,7 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {SEARCH(SEARCH_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {SEARCH(SEARCH_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_MoveDousePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_DouseBeginsOnPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_DouseStartsOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PUDDLE, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_FreezeDousePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_STONE_A, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_STONE_B, CONDITION_ALWAYS, 0},

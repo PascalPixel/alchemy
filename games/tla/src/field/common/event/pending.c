@@ -4,7 +4,7 @@
 #include "item.h"
 
 void EventRuntime_RunMessage(s32 actor, s32 message) {
-  EventRuntime_Begin();
+  EventRuntime_Start();
   EventRuntime_SetMessage(message);
   EventRuntime_ShowMessageAndWait(actor, 0);
   EventRuntime_End();

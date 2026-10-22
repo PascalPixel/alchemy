@@ -29,10 +29,10 @@ UiText_DrawQuantity:
 	.thumb_func
 UiWindow_CreateWithLayoutBoundsFar:
 	overlay_veneer UiWindow_CreateWithLayoutBounds
-	.global PartyStatusDrawFar
+	.global PartyStatus_DrawFar
 	.thumb_func
-PartyStatusDrawFar:
-	overlay_veneer PartyStatusDraw
+PartyStatus_DrawFar:
+	overlay_veneer PartyStatus_Draw
 	.global PartyStatus_CloseFar
 	.thumb_func
 PartyStatus_CloseFar:

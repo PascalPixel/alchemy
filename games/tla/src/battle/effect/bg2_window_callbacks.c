@@ -15,7 +15,7 @@ struct AffineStepWork {
 
 /// Scheduler callback: every period frames, writes the BG2 reference point to
 /// the hardware, then moves it by (stepX, stepY).
-void BattleFx_AdvanceBg2OnInterval(void) {
+void BattleEffect_AdvanceBg2OnInterval(void) {
   struct AffineStepWork *work;
 
   /* FAKEMATCH: the one-pass block loads the effect work before the counter
@@ -44,7 +44,7 @@ void BattleFx_AdvanceBg2OnInterval(void) {
 
 /// Scheduler callback: restarts DMA0's HBlank copy of one WIN0H value per
 /// scanline from the map cell buffer.
-void BattleFx_ArmWin0HBlankDma(void) {
+void BattleEffect_ArmWin0HBlankDma(void) {
   volatile u16 *dma = (volatile u16 *)0x040000b0;
   u16 control = dma[5];
 

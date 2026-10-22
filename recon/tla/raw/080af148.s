@@ -6,7 +6,7 @@ Inventory_Remove:
 	push {r5, r6, r7, lr}
 	adds r5, r1, #0
 	adds r7, r0, #0
-	bl UnitGet
+	bl Unit_Get
 	lsls r5, r5, #1
 	adds r5, #216
 	ldrh r3, [r0, r5]
@@ -68,6 +68,6 @@ Inventory_Remove:
 	movs r6, #2
 .L_080af1be:
 	adds r0, r7, #0
-	bl UnitCalc
+	bl Unit_Calculate
 	adds r0, r6, #0
 	pop {r5, r6, r7, pc}

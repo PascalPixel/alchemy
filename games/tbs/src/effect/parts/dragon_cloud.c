@@ -19,14 +19,15 @@
 /// the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, cell, x, y)                \
   blit(canvas,                                                                 \
-       &(sheet)[DRAGON_CLOUD_PUFF_CELLS] + gBattleFx_PuffArcCells[cell], x, y, \
-       gBattleFx_PuffArcCellWidths[cell], gBattleFx_PuffArcCellHeights[cell])
+       &(sheet)[DRAGON_CLOUD_PUFF_CELLS] + gBattleEffect_PuffArcCells[cell],   \
+       x, y, gBattleEffect_PuffArcCellWidths[cell],                            \
+       gBattleEffect_PuffArcCellHeights[cell])
 
 /// A flame leaves the user along a stored path with a fading trail of 19 copies
 /// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
 /// bursts into embers and flashes.
 ///
-/// Abilities: Dragon Cloud (BATTLE_FX_DRAGON_CLOUD).
+/// Abilities: Dragon Cloud (BATTLE_EFFECT_DRAGON_CLOUD).
 ///
 /// The trail's last nine copies are darker versions of the trail picture, each
 /// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns a quarter turn about
@@ -39,7 +40,7 @@
 ///              rise in an arc
 ///   78 to 83   the flame dives in again
 ///   83         the target is struck; embers and flashes burst from it
-void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition position;
   DrawRectangle draw[2];
@@ -63,7 +64,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   y = 0;
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
                              1);
@@ -87,7 +88,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
                              &work->sheet[DRAGON_CLOUD_PUFF_CELLS], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
-  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
@@ -156,9 +157,9 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 cell = frame / 3;
 
       DRAGON_CLOUD_DRAW_PUFF(draw[0], canvas, work->sheet, cell, 48,
-                             gBattleFx_PuffArcCellBiasY[cell] + 60);
+                             gBattleEffect_PuffArcCellBiasY[cell] + 60);
       DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, cell, 56,
-                             gBattleFx_PuffArcCellBiasY[cell] + 60);
+                             gBattleEffect_PuffArcCellBiasY[cell] + 60);
     }
     // The path gives two 16-bit coordinates on frame 18, then a signed byte
     // step for each axis every frame through frame 58. From frame 78 the
@@ -255,8 +256,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
             position.depth = 799;
           // Nearer is larger: 9 pixels at depth 160 or less.
           // XXX: from depth 736 on the size is 0, and EFFECT_DRAW_MOTE would
-          // read gBattleFx_MoteCells[-1]; whether an ember ever gets that far
-          // needs a run of the effect to settle.
+          // read gBattleEffect_MoteCells[-1]; whether an ember ever gets that
+          // far needs a run of the effect to settle.
           size = 9 - (position.depth - 160) / 64;
           if (i > 47) {
             if (ember->variant <= 11) {
@@ -290,10 +291,10 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (puff->variant >= 0 && puff->variant <= 11) {
           s32 cell = puff->variant / 2;
 
-          DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, cell,
-                                 puff->x -
-                                     gBattleFx_PuffArcCellWidths[cell] / 2,
-                                 puff->y + gBattleFx_PuffArcCellBiasY[cell]);
+          DRAGON_CLOUD_DRAW_PUFF(
+              draw[1], canvas, work->sheet, cell,
+              puff->x - gBattleEffect_PuffArcCellWidths[cell] / 2,
+              puff->y + gBattleEffect_PuffArcCellBiasY[cell]);
         }
         puff->variant++;
       }

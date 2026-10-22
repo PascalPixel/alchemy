@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_SpawnScaledArcObjects
+	.global BattleEffect_SpawnScaledArcObjects
 	.thumb_func
-BattleFx_SpawnScaledArcObjects:
+BattleEffect_SpawnScaledArcObjects:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -56,7 +56,7 @@ BattleFx_SpawnScaledArcObjects:
 	ands r3, r2
 	strb r3, [r5, #9]
 	mov r0, r9
-	bl BattleFx_GetObjectPriority
+	bl BattleEffect_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r1, #13

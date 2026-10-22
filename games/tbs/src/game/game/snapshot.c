@@ -7,7 +7,7 @@
 /// Gives a unit `itemId` and equips every exactly matching inventory entry.
 /// Called by InventorySnapshot_Save to arm Isaac for the Colosso.
 void Inventory_AddAndEquip(s32 owner, s32 itemId) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   u16 *entry;
   s32 slot;
 
@@ -48,7 +48,7 @@ void InventorySnapshot_Save(void) {
     secondShortcut = gGameState.secondShortcut;
     // Save each inventory before retaining its Psynergy-granting items.
     for (owner = 0; owner < 4; owner++) {
-      unit = UnitGet(owner);
+      unit = Unit_Get(owner);
       for (slot = 0; slot < INVENTORY_SLOTS; slot++)
         *save++ = unit->inventory[slot];
       for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -58,7 +58,7 @@ void InventorySnapshot_Save(void) {
       inventory = unit->inventory;
       Inventory_CompactSlots(inventory);
       Unit_UpdateClass(owner);
-      UnitCalc(owner);
+      Unit_Calculate(owner);
     }
     // Keep shortcuts and party order with the inventory snapshot.
     *save++ = firstShortcut;
@@ -88,7 +88,7 @@ void InventorySnapshot_Restore(void) {
   if (*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
     owner = 0;
     do {
-      u16 *inventory = UnitGet(owner)->inventory;
+      u16 *inventory = Unit_Get(owner)->inventory;
       s32 remaining = 14;
 
       do {
@@ -96,7 +96,7 @@ void InventorySnapshot_Restore(void) {
         remaining--;
       } while (remaining >= 0);
       Unit_UpdateClass(owner);
-      UnitCalc(owner);
+      Unit_Calculate(owner);
       owner++;
     } while (owner <= 3);
 

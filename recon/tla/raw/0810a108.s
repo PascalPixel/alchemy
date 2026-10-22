@@ -19,7 +19,7 @@ Func_0810a108:
 	adds r7, r2, #0
 	str r3, [sp, #12]
 	mov r8, r0
-	bl UnitGet
+	bl Unit_Get
 	ldr r2, [sp, #16]
 	adds r6, r0, #0
 	lsls r2, r2, #1
@@ -158,7 +158,7 @@ Func_0810a108:
 	mov r0, r8
 	bl Unit_RefreshPsynergyFar
 	mov r0, r8
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r0, r10
 	bl Party_AdjustCoinsFar
 	bl Func_08109188

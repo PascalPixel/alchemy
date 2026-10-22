@@ -109,7 +109,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   s32 lowestSlot;
   s32 itemPriority;
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   battle = gBattleWork;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId <= ALLY_MAX)
@@ -168,7 +168,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   if (dropShift < 0)
     dropShift = 0;
   // 0x20000 >> n against a 16-bit random number: 1 in 2^(n - 1).
-  if ((0x20000 >> dropShift) > (BattleRandomFar() & 0xffff)) {
+  if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
     for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
@@ -224,7 +224,7 @@ void Battle_AwardSpoils(void) {
   beforeLevelUp = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     unitId = unitIds[unitIndex];
-    unit = UnitGetFar(unitId);
+    unit = Unit_GetFar(unitId);
     unit->experience += spoils->experience;
     while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct BattleUnit)),
            Unit_TryLevelUpFar(unitId, &gains) != 0) {

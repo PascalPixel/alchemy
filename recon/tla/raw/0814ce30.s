@@ -2,9 +2,9 @@
 	.thumb
 	.balign 4
 @ Abilities: Cybele (scene kind 5).
-	.global BattleFx_RunCybele
+	.global BattleEffect_RunCybele
 	.thumb_func
-BattleFx_RunCybele:
+BattleEffect_RunCybele:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,7 +25,7 @@ BattleFx_RunCybele:
 	movs r0, #8
 	movs r2, #1
 	str r3, [sp, #60]
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r1, #0
 	ldr r2, .L_0814cf08
 	mov r10, r1
@@ -77,7 +77,7 @@ BattleFx_RunCybele:
 	cmp r1, #8
 	bne .L_0814ce82
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0814cf00
 	movs r2, #128
 	lsls r2, r2, #19
@@ -96,14 +96,14 @@ BattleFx_RunCybele:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #72]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0814cf10
 .L_0814cf00:
 	.4byte 0x00000100
@@ -248,7 +248,7 @@ BattleFx_RunCybele:
 	adds r2, #240
 	adds r3, r1, r2
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r3, .L_0814d250
 	movs r4, #0
 	str r3, [sp, #52]
@@ -445,7 +445,7 @@ BattleFx_RunCybele:
 	adds r0, r6, #0
 	movs r1, #64
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_0814d1b6:
 	movs r0, #1
 	add r10, r0
@@ -519,7 +519,7 @@ BattleFx_RunCybele:
 	b .L_0814d27e
 	.2byte 0x0000
 .L_0814d248:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814d24c:
 	.4byte 0xffffe000
 .L_0814d250:
@@ -1269,14 +1269,14 @@ BattleFx_RunCybele:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #72]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -1323,7 +1323,7 @@ BattleFx_RunCybele:
 .L_0814d850:
 	.4byte 0x00000184
 .L_0814d854:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0814d858:
 	ldr r2, [r0, #20]
 	mov r10, r4
@@ -1548,7 +1548,7 @@ BattleFx_RunCybele:
 	adds r0, r5, #0
 	movs r1, #60
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r7, #1
 	adds r3, #1
@@ -1646,7 +1646,7 @@ BattleFx_RunCybele:
 	mov r1, r10
 	cmp r1, #8
 	bne .L_0814dad2
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1661,4 +1661,4 @@ BattleFx_RunCybele:
 .L_0814dafc:
 	.4byte Data_08198252
 .L_0814db00:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

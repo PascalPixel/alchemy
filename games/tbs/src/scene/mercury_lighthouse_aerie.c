@@ -298,7 +298,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Party_RestorePpOfLitElements();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(GARET), 0);
@@ -343,14 +343,14 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_EventWait(80);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER),
                              SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(60);
   Engine_ActorSetSpriteFlags(Object_GetById(GARET), SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Engine_EventWait(20);
@@ -358,20 +358,20 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Engine_ActorSetSpriteFlags(Object_GetById(IVAN), SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Engine_EventWait(40);
   Engine_ActorSetSpriteFlags(Object_GetById(MIA), SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0)
     Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
@@ -435,7 +435,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   s32 id;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   id = SceneActor_FindNearestFloatingPlatform();
   gMercuryLighthouseAerie_PlatformUnderfoot = id;
   if (id != 0) {
@@ -487,7 +487,7 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -532,7 +532,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Camera_MoveTo(PIXELS(344), PIXELS(24), PIXELS(232), 1);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(MsgMercuryLighthouseAlreadyLit);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -541,7 +541,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_WalkToAndWait(MIA, 328, 232);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 30);
   Engine_ActorFaceEachOther(IVAN, ACTOR_PARTY_LEADER, 0);
@@ -557,10 +557,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Engine_EventWait(20);
     Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     Event_ShowMessageAndWait(GARET, 0, 20);
     Actor_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(GARET, 0, 20);
     gEventWork->message += 2;
@@ -569,7 +569,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Engine_EventWait(20);
     Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
     Event_ShowMessageAndWait(GARET, 0, 20);
     Actor_FaceDirection(MIA, FACING_NORTH, 0);
     Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -582,17 +582,17 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(10);
   Actor_FaceDirection(MIA, FACING_EAST, 10);
   Engine_ActorSetAnimation(MIA, 0x10);
@@ -603,7 +603,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_ShowMessageAndWait(JENNA, 0, 20);
   Actor_SetPosition(JENNA, PIXELS(120), PIXELS(160));
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
@@ -866,12 +866,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -925,7 +925,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(344), PIXELS(224));
   Actor_SetPosition(GARET, PIXELS(328), PIXELS(224));
@@ -953,7 +953,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_EventSetMessage(MsgMercuryGot);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Engine_EventWait(20);
@@ -1007,7 +1007,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_ALEX, 2);
@@ -1211,7 +1211,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(IVAN, FACING_WEST, 20);
@@ -1330,7 +1330,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Camera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Audio_PlayCueFromEventWork();
   Event_ShowMessageAndWait(IVAN, 0, 20);
@@ -1351,16 +1351,16 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventOpenMessage(IVAN, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
   Actor_Get(MIA)->scaleX = Q16_ONE;
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(IVAN, 0, 20);
     gEventWork->message++;
@@ -1371,7 +1371,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_ShowMessageAndWait(IVAN, 0, 20);
   }
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 30);
@@ -1380,7 +1380,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_EventWait(10);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(MIA, 1);
@@ -1406,7 +1406,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -1418,29 +1418,29 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(MIA, FACING_EAST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 30);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 312, 216);
@@ -1474,7 +1474,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   struct MapLayerScroll *lift;
 
   lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-  Engine_EventBegin();
+  Engine_EventStart();
   lift->offsetY = PIXELS(896);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -1503,7 +1503,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 152);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 60);
@@ -1546,27 +1546,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x = left->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    left->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        -PIXELS(16),
-                    left->z.fixed, 0, PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        left->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            -PIXELS(16),
+                        left->z.fixed, 0, PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    right->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        -PIXELS(16),
-                    right->z.fixed, 0, PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        right->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            -PIXELS(16),
+                        right->z.fixed, 0, PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     }
   }
   Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
@@ -1601,27 +1601,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       x = left->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    left->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        PIXELS(32),
-                    left->z.fixed, 0, -PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        left->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            PIXELS(32),
+                        left->z.fixed, 0, -PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -PIXELS(12);
-      FieldFx_Spawn(x,
-                    right->y.fixed +
-                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        PIXELS(32),
-                    right->z.fixed, 0, -PIXELS(4), 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    effectOptions);
+      FieldEffect_Spawn(x,
+                        right->y.fixed +
+                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            PIXELS(32),
+                        right->z.fixed, 0, -PIXELS(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        effectOptions);
     }
     if (i == 20) {
       Actor_SetChildValue(ACTOR_SATUROS, 0x100);
@@ -1743,12 +1743,12 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// Nothing calls it. In the game, Alex and Saturos warp over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
-  Engine_PsynergyBegin(ABILITY_PLY, 1);
+  Engine_PsynergyStart(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(ACTOR_ALEX, ACTOR_LIFT_STATUE);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  FieldFx_End();
+  FieldEffect_End();
 }
 
 /// A beacon spark's update: it swings round the beacon it is linked to, its
@@ -1829,18 +1829,18 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {

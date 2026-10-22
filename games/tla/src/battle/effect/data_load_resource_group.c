@@ -13,7 +13,7 @@
 
 extern u8 gOverlayArea[];
 
-void BattleFx_LoadResourceGroup(void) {
+void BattleEffect_LoadResourceGroup(void) {
   const struct SceneRecord *table = gField_SceneTable;
   s16 scene = gPartyState.scene;
 

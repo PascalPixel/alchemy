@@ -971,7 +971,7 @@ const struct SceneEvent *ImilFuchinFalls_GetEvents(void) {
 static void Imil_LeaveFallsCave(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   leader->facing = FACING_SOUTH;
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -1359,7 +1359,7 @@ s32 ImilFuchinFalls_Initialize(void) {
 static void Imil_WalkTowardFever(void) {
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   actor = Object_GetById(ACTOR_FEVER);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_EventOpenScreen();
@@ -1400,11 +1400,11 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     switch (gGameState.entrance) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
-      FieldFx_StartFadeOverlay(0);
+      FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
       break;
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
-      FieldFx_StartFadeOverlay(0);
+      FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
       value = *(s32 *)(gWorkSlot + 36);
       ((struct FadeOverlayWork *)value)->actor = NULL;
@@ -1483,13 +1483,13 @@ static void Fuchin_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
 
 /// Jumps the leader by a pixel offset while using the hopping animations.
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, dx, dz);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAP);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_SPRING);
   Engine_EventEnd();
 }
 
@@ -1520,7 +1520,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
 /// Searching where the Dragon's Eye lies, in Fuchin Falls Cave's third room
 /// (trigger 30), gives it to the party (FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND).
 static void Fuchin_CollectDragonsEye(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
     Engine_ItemShowPicture(gImilFuchinFalls_DragonsEye, 3);
@@ -1642,7 +1642,7 @@ static void Fuchin_LightDragonWithEye(void) {
   // Flash the room as the eye opens the dragon's path.
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_AudioPlayCue(SE_GEM_SET);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
 
   for (pass = 0; pass < 4; pass++) {
@@ -1686,7 +1686,7 @@ static void Fuchin_LightDragonWithEye(void) {
 /// Searching the inscription in Fuchin Falls Cave's first room (trigger 1):
 /// `The dragon's flame illuminates the path of truth in darkness.`
 static void Fuchin_ReadDragonFlameInscription(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFuchinDragonFlameShowsPath, 1);
   Engine_EventEnd();
 }
@@ -1694,7 +1694,7 @@ static void Fuchin_ReadDragonFlameInscription(void) {
 /// Searching the inscription in Fuchin Falls Cave's Ki room (trigger 7): `The
 /// secret of Ki shall be revealed to the disciples of truth.`
 static void Fuchin_ReadKiInscription(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFuchinSecretKiRevealed, 1);
   Engine_EventEnd();
 }
@@ -1702,7 +1702,7 @@ static void Fuchin_ReadKiInscription(void) {
 /// Searching the inscription in Fuchin Falls Cave's dragon statue room
 /// (trigger 19): `Rays of light give birth to shadows, revealing the way.`
 static void Fuchin_ReadShadowInscription(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFuchinLightRevealsShadows, 1);
   Engine_EventEnd();
 }
@@ -1711,7 +1711,7 @@ static void Fuchin_ReadShadowInscription(void) {
 /// red eyes once set, else its empty sockets; with the Dragon's Eye carried
 /// it then opens the main menu as the search ends, so that the eye can be used.
 static void Fuchin_SearchDragonStatue(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET) != 0) {
     Engine_MessageShowCentered(MsgFuchinDragonRedEyes, 1);
@@ -1795,7 +1795,7 @@ static void Imil_SlideActorAcrossIce(void) {
       return;
     }
 
-    Engine_EventBegin();
+    Engine_EventStart();
 
     // Start at the cell center and reject a blocked or raised next cell.
     probe.x = (actor->x.fixed & 0xfff00000) + PIXELS(8);
@@ -2265,19 +2265,19 @@ struct SceneEvent gImilFuchinFalls_DragonRoomEvents[] = {
 };
 
 s32 gImilFuchinFalls_DustScript0[] = {
-    SC_WAIT(1), SC_LOOP(22, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
-    SC_WAIT(1), SC_POS(0, 0, 0),     SC_WAIT(1),
+    SC_WAIT(1), SC_LOOP(22, SC_TOP),  SC_CALL(Fuchin_SetDustPalette),
+    SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };
 
 s32 gImilFuchinFalls_DustScript1[] = {
-    SC_WAIT(1), SC_LOOP(44, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
-    SC_WAIT(1), SC_POS(0, 0, 0),     SC_WAIT(1),
+    SC_WAIT(1), SC_LOOP(44, SC_TOP),  SC_CALL(Fuchin_SetDustPalette),
+    SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };
 
 s32 gImilFuchinFalls_DustScript2[] = {
     SC_WAIT(1), SC_LOOP(126, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
-    SC_WAIT(1), SC_POS(0, 0, 0),      SC_WAIT(1),
+    SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };

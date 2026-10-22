@@ -141,7 +141,7 @@ FieldEvent_WaitFrames:
 	.global Func_02002a44
 	.thumb_func
 Func_02002a44:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02002a4c
 	.thumb_func
 Func_02002a4c:
@@ -274,10 +274,10 @@ Func_02002b44:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -318,10 +318,10 @@ Func_02002b64:
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
-	.global BattleFx_GetResourceId
+	.global BattleEffect_GetResourceId
 	.thumb_func
-BattleFx_GetResourceId:
-	overlay_veneer BattleFx_GetResourceIdFar
+BattleEffect_GetResourceId:
+	overlay_veneer BattleEffect_GetResourceIdFar
 	.global Func_02002b74
 	.thumb_func
 Func_02002b74:

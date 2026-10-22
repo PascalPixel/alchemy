@@ -42,7 +42,7 @@ s32 Func_080de154(struct ObjectRuntime *src) {
     obj->motionFlags = 0;
     ((struct ParticleTimer *)obj)->timer = 20;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleFx_CommonParticleScript);
+                                 gBattleEffect_CommonParticleScript);
   }
 
   for (i = 0; i < 12; i++) {

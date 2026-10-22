@@ -39,7 +39,7 @@ void EventRuntime_PrepareCurrentObject(void) {
     Object_SetMode(object, 1);
 }
 
-void EventRuntime_Begin(void) {
+void EventRuntime_Start(void) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
   UiTimedNotice_CloseIfActiveFar();
   EventRuntime_PrepareCurrentObject();

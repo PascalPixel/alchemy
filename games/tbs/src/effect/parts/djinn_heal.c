@@ -18,7 +18,7 @@
 /// 511 the healing sparkles, 64 for each target; both are offsets from the
 /// point the transform is centred on, in 16.16. work->sheet holds the
 /// Djinni, the battle sheet slot first the motes and then the sparkle dots.
-UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
+UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -42,11 +42,11 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
+  BattleEffect_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(work->effect->actor)->object;
   goal = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   // The swirl's motes start 20 to 51 pixels up and fly out level at 4 to 12
@@ -145,7 +145,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
   // The healing: sparkles scattered round each target, x and z within 64
-  // pixels and 32 to 95 up, as BattleFx_RunHealingMotes scatters them for
+  // pixels and 32 to 95 up, as BattleEffect_RunHealingMotes scatters them for
   // Ply. Target n starts on frame n * 8; the last gets 72 frames.
   for (i = 0; i != 512; i++) {
     struct EffectStep *spark = &PARTICLES[i];
@@ -202,14 +202,14 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
               EffectPosition_ProjectPoint(spark, &view);
               view.x >>= 1;
               CLAMP(view.depth, 314, 634);
-              /* FAKEMATCH(dead): BattleFx_RunHealingMotes' size by depth, a
+              /* FAKEMATCH(dead): BattleEffect_RunHealingMotes' size by depth, a
                * store nothing reads; without it, 219 of 747 instructions
                * differ in tbs-en. */
               cellIndex = 3 - (view.depth - 314) / 128;
               cellIndex = (i * 4 + frame) % 9;
               {
-                u8 *cell = sheet + gBattleFx_PuffCells[cellIndex];
-                u32 edge = gBattleFx_PuffSizes[cellIndex];
+                u8 *cell = sheet + gBattleEffect_PuffCells[cellIndex];
+                u32 edge = gBattleEffect_PuffSizes[cellIndex];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);
@@ -230,8 +230,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 /// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
 /// frame the effect has not marked.
 ///
-/// Runs each frame as a scheduler callback added by BattleFx_RunFire
-/// (fire.c) and BattleFx_RunFroth (vortices.c), which remove it before they
+/// Runs each frame as a scheduler callback added by BattleEffect_RunFire
+/// (fire.c) and BattleEffect_RunFroth (vortices.c), which remove it before they
 /// return. Each of them moves cameraPhase from CAMERA_PHASE_IDLE to
 /// CAMERA_PHASE_FRAME_DONE at the end of its own frame. Then the callback
 /// turns the whole delta and clears the phase; otherwise it turns half the

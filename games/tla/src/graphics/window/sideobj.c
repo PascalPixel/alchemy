@@ -11,7 +11,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct UiWindow *window, s32 x,
                      s32 y);
 
-s32 Localization_LookupEntryId(u32 value) {
+s32 UiText_GetSpeakerPortrait(u32 value) {
   s32 result = -1;
   s32 i = 0;
 
@@ -79,7 +79,7 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y) {
   struct UiRenderWork *work;
 
   work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  if (Localization_LookupEntryId(arg0) == -1) {
+  if (UiText_GetSpeakerPortrait(arg0) == -1) {
     return 0;
   }
   minusFour = -4;
@@ -105,7 +105,7 @@ void Func_0803d450(s32 id) {
 
   state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   work = state->windows;
-  id = Localization_LookupEntryId(id);
+  id = UiText_GetSpeakerPortrait(id);
   if (id == -1)
     return;
 

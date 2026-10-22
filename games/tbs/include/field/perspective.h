@@ -22,12 +22,12 @@ struct PerspectiveWork {
   s32 scaleY;             ///< 0x400000 at load
   s32 limitX;             ///< 0x1fe00000 at load
   s32 limitY;             ///< 0x1fe00000 at load
-  /// Set by WorldMap_BeginStillView while BG1 shows the drawn map; the tile
+  /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tile
   /// animations are then neither suspended nor resumed.
   s8 animationActive;
   u8 unk0fd[3]; ///< not named by TBS code
   /// Screen rows, 0 and 159 at load and 200 and 255 from
-  /// WorldMap_BeginStillView; each frame copies them to shownTop and
+  /// WorldMap_StartStillView; each frame copies them to shownTop and
   /// shownBottom and picks BG mode 2 or 0 from them.
   ///@{
   u16 windowTop;

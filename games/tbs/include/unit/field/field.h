@@ -36,27 +36,29 @@ enum ObjectSystemMode {
 enum AnimationFacingKind {
   /// The script's own frame whatever the facing; zero also marks a free
   /// layer record.
-  ANIM_FACING_NONE = 0,
-  ANIM_FACING_ONE_FRAME = 1,    ///< 8 sectors: one frame, mirrored to the left
-  ANIM_FACING_FRONT_BACK = 2,   ///< 8 sectors: a front and a back frame
-  ANIM_FACING_THREE_FRAMES = 3, ///< 16 sectors: front, side and back
-  ANIM_FACING_FOUR_FRAMES = 4,  ///< 64 sectors
-  ANIM_FACING_FIVE_FRAMES = 5,  ///< 16 sectors
-  ANIM_FACING_SIX_FRAMES = 6,   ///< 64 sectors
+  ANIMATION_FACING_NONE = 0,
+  ANIMATION_FACING_ONE_FRAME =
+      1, ///< 8 sectors: one frame, mirrored to the left
+  ANIMATION_FACING_FRONT_BACK = 2,   ///< 8 sectors: a front and a back frame
+  ANIMATION_FACING_THREE_FRAMES = 3, ///< 16 sectors: front, side and back
+  ANIMATION_FACING_FOUR_FRAMES = 4,  ///< 64 sectors
+  ANIMATION_FACING_FIVE_FRAMES = 5,  ///< 16 sectors
+  ANIMATION_FACING_SIX_FRAMES = 6,   ///< 64 sectors
   /// 8 sectors centred on the compass directions, a frame for each.
-  ANIM_FACING_EIGHT_FRAMES = 8,
-  /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
+  ANIMATION_FACING_EIGHT_FRAMES = 8,
+  /// ANIMATION_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
   /// second the next sprite id (the sprite viewer).
-  ANIM_FACING_TWO_PART = 20,
-  /// As ANIM_FACING_FRONT_BACK, with the front frame mirrored the other way.
-  ANIM_FACING_FRONT_BACK_SWAPPED = 22,
+  ANIMATION_FACING_TWO_PART = 20,
+  /// As ANIMATION_FACING_FRONT_BACK, with the front frame mirrored the other
+  /// way.
+  ANIMATION_FACING_FRONT_BACK_SWAPPED = 22,
   /// Ringed as eight facings by the sprite viewer, but with no facing table:
-  /// Sprite_ComposeAnimationFrame draws it as ANIM_FACING_NONE.
+  /// Sprite_ComposeAnimationFrame draws it as ANIMATION_FACING_NONE.
   /// XXX: likely an older eight-direction kind, because the viewer still
   /// lists it; a sprite of this kind would settle it.
-  ANIM_FACING_EIGHT_NO_TABLE = 44,
-  /// As ANIM_FACING_EIGHT_FRAMES, with three of the frames mirrored.
-  ANIM_FACING_EIGHT_FRAMES_MIRRORED = 88
+  ANIMATION_FACING_EIGHT_NO_TABLE = 44,
+  /// As ANIMATION_FACING_EIGHT_FRAMES, with three of the frames mirrored.
+  ANIMATION_FACING_EIGHT_FRAMES_MIRRORED = 88
 };
 
 /// AnimationEntry.mode, from the metadata's frameCodec: how a layer's frames
@@ -189,17 +191,17 @@ void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 s32 Animation_LookupValueByKey(s32 tag);
 s32 Animation_InitializeObjects(struct AnimationObject *sprite);
-void Animation_InitWorkFromMetadata(struct AnimationEntry *layer);
+void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer);
 s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id);
 void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer);
 void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index);
 void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation);
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
-                                     s32 animation);
-s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
-                                          s32 frames);
-void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
-                                          s32 step);
+s32 AnimationObject_SelectAnimation(struct AnimationObject *sprite,
+                                    s32 animation);
+s32 AnimationObject_SetActiveFrameTimers(struct AnimationObject *sprite,
+                                         s32 frames);
+void AnimationObject_SetActiveTimerSteps(struct AnimationObject *sprite,
+                                         s32 step);
 void ObjectSystem_Configure(s32 mode);
 struct AnimationEntry *Animation_AllocateLayer(s32 id);
 void ResourceMetadata_ClearRecord(struct AnimationEntry *record);
@@ -301,7 +303,8 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
                                          s32 animation, s32 step);
 void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
                                      u32 rotation);
-void Animation_SetIndexAndInitObjects(void *rawDispatchObject, s32 animationId);
+void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
+                                            s32 animationId);
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId);
 void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
@@ -425,7 +428,7 @@ void WorldMap_UpdateView(void);
 void Map_UpdateCurrentTileBlock(void);
 void Map_PreloadCurrentTileBlock(void);
 void MapAnimation_PresentFrame(void);
-void WorldMap_BeginStillView(void);
+void WorldMap_StartStillView(void);
 void Map_ShowBg1FromBuffer(void);
 void Map_LoadAreaGraphics(void);
 void Map_LoadDefaultCellsAndUpdateBlock(void);

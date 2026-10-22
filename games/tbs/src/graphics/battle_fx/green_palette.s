@@ -1,5 +1,5 @@
 	.section .rodata
-	.global BattleFx_GreenPalette
-BattleFx_GreenPalette:
+	.global BattleEffect_GreenPalette
+BattleEffect_GreenPalette:
 	.incbin "games/tbs/src/graphics/battle_fx/green_palette.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/green_palette.bitmap.lz"

@@ -82,10 +82,10 @@ Func_020031a8:
 	.thumb_func
 FieldEvent_WaitFrames:
 	overlay_veneer FieldEvent_WaitFramesFar
-	.global Engine_EventBegin
+	.global Engine_EventStart
 	.thumb_func
-Engine_EventBegin:
-	overlay_veneer EventRuntime_BeginFar
+Engine_EventStart:
+	overlay_veneer EventRuntime_StartFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
@@ -247,7 +247,7 @@ Func_020032f0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
@@ -266,10 +266,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif

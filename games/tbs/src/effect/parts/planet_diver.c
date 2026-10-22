@@ -42,7 +42,7 @@ struct ImpactChip {
 /// The user flashes and leaps into the air, turns into a ball of fire, falls
 /// onto the first target and bursts into chips that bounce on the ground.
 ///
-/// Abilities: Planet Diver (BATTLE_FX_PLANET_DIVER).
+/// Abilities: Planet Diver (BATTLE_EFFECT_PLANET_DIVER).
 ///
 /// The ball falls towards the middle of the field, from whichever side the
 /// user stands on; actors[0] is where it lands, and effect->side picks the
@@ -52,7 +52,7 @@ struct ImpactChip {
 /// flash's sheet and palette are replaced by the fireball's on frame 16. The
 /// sheet slot holds the mote sprites the chips are drawn from, and the chips
 /// themselves live in Ram_MapCellBuffer.
-void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
   void **slots;
@@ -70,7 +70,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sprites);
   // A sheet resource is its palette followed by its packed images.
@@ -245,7 +245,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
 
 /// Skulls close in on each target in turn.
 ///
-/// Abilities: Haunt (BATTLE_FX_HAUNT).
+/// Abilities: Haunt (BATTLE_EFFECT_HAUNT).
 ///
 /// Around each target, 32 frames apart, eight skulls appear one every 4 frames,
 /// scattered up to 64 pixels away, and close in on a point 20 pixels above the
@@ -254,9 +254,9 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
 /// ripples throughout. PARTICLES holds 64 skulls per target, of which the first
 /// 8 are used.
 ///
-/// Adds BattleFx_ArmBg2AffineHBlankDma, which feeds the ripple in
+/// Adds BattleEffect_ArmBg2AffineHBlankDma, which feeds the ripple in
 /// work->bg2xLines to BG2X line by line, and removes it before it returns.
-void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   s32 point[3];
   void **slots;
@@ -272,7 +272,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -286,7 +286,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
@@ -369,10 +369,10 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   }
 
   // Finish: both callbacks before the blocks they read.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 /// Frames from the start of a target's turn to its end; its spirals show on
@@ -380,18 +380,19 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 #define ORBITING_SPIRALS_LIFE 60
 
 /// Unused: no row of actflags.tsv in either game names its kind, and the
-/// handler table is reached with no other kind (BattleFx_RunTableEffect), so
-/// the player never sees it. Four spirals would circle 40 pixels above each
+/// handler table is reached with no other kind (BattleEffect_RunTableEffect),
+/// so the player never sees it. Four spirals would circle 40 pixels above each
 /// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
 /// the centre; each target would take its damage pose 32 frames into its
 /// turn.
 ///
-/// Abilities: none (BATTLE_FX_UNUSED_ORBITING_SPIRALS).
+/// Abilities: none (BATTLE_EFFECT_UNUSED_ORBITING_SPIRALS).
 ///
 /// The effect layer ripples throughout, through
-/// BattleFx_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
+/// BattleEffect_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
 /// the battle show damage, and leaves the targets' flash timers alone.
-void BattleFx_RunUnusedOrbitingSpirals(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUnusedOrbitingSpirals(
+    struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -406,7 +407,7 @@ void BattleFx_RunUnusedOrbitingSpirals(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Resource_DecodeType01((u8 *)palette + 128, work->sheet);
@@ -415,7 +416,7 @@ void BattleFx_RunUnusedOrbitingSpirals(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
   draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
   // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
@@ -501,10 +502,10 @@ void BattleFx_RunUnusedOrbitingSpirals(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
   // Finish: both callbacks before the blocks they read.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef PLANET_DIVER_IMPACT_CHIPS

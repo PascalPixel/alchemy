@@ -79,7 +79,7 @@ const s8 gMenu_WorkspaceIconFrames[8] = {
 };
 
 /// {character, portrait} pairs of the playable characters, ending in -1, which
-/// Localization_LookupEntryId searches for speakers below 20.
+/// UiText_GetSpeakerPortrait searches for speakers below 20.
 const s16 gPortrait_CharacterMap[20] = {
     ISAAC, ISAAC,
     ISAAC_CHILD, FACE_ISAAC_CHILD,

@@ -111,7 +111,7 @@ Func_080cf78c:
 .L_080cf85c:
 	.4byte 0x0000001f
 .L_080cf860:
-	.4byte BattleFx_StartWindowHBlankDma
+	.4byte BattleEffect_StartWindowHBlankDma
 .L_080cf864:
 	.4byte Func_080cf78c
 .L_080cf868:

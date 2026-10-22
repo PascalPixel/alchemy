@@ -251,12 +251,12 @@ static void Event_HammetFindsBunza(void) {
   if (GameFlag_IsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetPosition(ACTOR_BUNZA, PIXELS(144), PIXELS(400));
     Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
     Actor_WalkTo(ACTOR_BUNZA, 184, 400);
     Engine_ActorWaitForMove(ACTOR_BUNZA);
-    Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_BUNZA, ANIMATION_STAND);
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(30);
@@ -302,7 +302,7 @@ static void Event_HammetFindsBunza(void) {
     Engine_EventSetMessage(sighting + SIGHTING_GARET_SAW_SOMEONE);
     Event_ShowMessage(GARET, 0);
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(10);
     Engine_EventSetMessage(sighting + SIGHTING_MIA_SAW_SOMETHING);
     Event_ShowMessage(MIA, 0);
@@ -334,16 +334,16 @@ static void Event_HammetFindsBunza(void) {
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
     Actor_FaceDirection(IVAN, FACING_NORTH, 0);
     Actor_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_HAMMET, ANIMATION_WALK);
     Actor_WalkBy(ACTOR_HAMMET, 0, -16);
     Engine_ActorWaitForMove(ACTOR_HAMMET);
-    Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_HAMMET, ANIMATION_STAND);
     Engine_EventSetMessage(recognition + RECOGNITION_HAMMET_NAMES_BUNZA);
     Event_ShowMessage(ACTOR_HAMMET, 0);
     Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 65);
     Engine_EventSetMessage(recognition + RECOGNITION_BUNZA_KNOWS_VOICE);
     Event_ShowMessage(ACTOR_BUNZA, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
     Engine_EventWait(80);
     Actor_SetSpeed(ACTOR_BUNZA, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_WalkBy(ACTOR_BUNZA, -13, 0);
@@ -371,7 +371,7 @@ static void Reunion_Converse(void) {
   s32 plan;
 
   // Arrange the reunion while the screen is closed, then reveal the group.
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(GARET, PIXELS(200), PIXELS(544));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(184), PIXELS(544));
   Actor_SetPosition(MIA, PIXELS(168), PIXELS(544));
@@ -384,7 +384,7 @@ static void Reunion_Converse(void) {
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_EAST, 0);
-  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIMATION_STAND);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
   Engine_TaskWait(1);
   Engine_MapRedraw();
@@ -393,13 +393,13 @@ static void Reunion_Converse(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
 
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   reunion = MsgLunpaDodonpaNeverIntention;
   Engine_EventSetMessage(reunion + REUNION_BUNZA_ASKS_ABOUT_RELEASE);
   Event_ShowMessage(ACTOR_BUNZA, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Engine_EventSetMessage(reunion + REUNION_HAMMET_CREDITS_IVAN);
   Event_ShowMessage(ACTOR_HAMMET, 0);
   Actor_FaceActor(IVAN, ACTOR_HAMMET, 0);
@@ -424,9 +424,9 @@ static void Reunion_Converse(void) {
   Engine_EventSetMessage(reunion + REUNION_HAMMET_THANKS_PARTY);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
   Engine_EventWait(120);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
   Engine_EventWait(30);
@@ -435,7 +435,7 @@ static void Reunion_Converse(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
   Actor_FaceActor(IVAN, ACTOR_HAMMET, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
 
   // Bunza explains how he reached the cave despite being refused entry.
@@ -458,7 +458,7 @@ static void Reunion_Converse(void) {
   Engine_EventWait(60);
   Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
   Actor_FaceActor(IVAN, ACTOR_BUNZA, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_KNEW_OF_PRISON);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
@@ -475,7 +475,7 @@ static void Reunion_Converse(void) {
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 70);
   Engine_EventSetMessage(reunion + REUNION_MIA_ASKS_ABOUT_TRADE);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | MIA, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventWait(40);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_MEANS_WISDOM);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
@@ -483,11 +483,11 @@ static void Reunion_Converse(void) {
   Engine_EventSetMessage(reunion + REUNION_HAMMET_ON_APPEARANCES);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
   Actor_FaceActor(ACTOR_BUNZA, ACTOR_HAMMET, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_ON_UNPLEASANT_PLACES);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventSetMessage(reunion + REUNION_HAMMET_ON_SELLING);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
@@ -497,7 +497,7 @@ static void Reunion_Converse(void) {
   Engine_EventSetMessage(reunion + REUNION_IVAN_ASKS_ABOUT_SERVING);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Actor_FaceActor(ACTOR_BUNZA, IVAN, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventSetMessage(reunion + REUNION_IVAN_ON_FATE);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
@@ -505,7 +505,7 @@ static void Reunion_Converse(void) {
   Engine_EventSetMessage(reunion + REUNION_GARET_ASKS_ABOUT_ENTRY);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_WAS_REFUSED);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   Engine_ActorRunRepeatedMotion(MIA, 1);
@@ -517,11 +517,11 @@ static void Reunion_Converse(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   Engine_ActorFaceEachOther(IVAN, ACTOR_HAMMET, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventSetMessage(reunion + REUNION_IVAN_EXPLAINS_COMMOTION);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
   Actor_FaceActor(IVAN, ACTOR_BUNZA, 0);
   Engine_EventWait(20);
@@ -535,7 +535,7 @@ static void Reunion_Converse(void) {
   Engine_EventSetMessage(reunion + REUNION_GARET_ASKS_ABOUT_CAVE);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(reunion + REUNION_MIA_ON_GATE);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | MIA, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_BUNZA, 1);
@@ -547,10 +547,10 @@ static void Reunion_Converse(void) {
   Engine_EventWait(30);
   Actor_FaceActor(ACTOR_BUNZA, ACTOR_HAMMET, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_IS_GLAD);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Engine_EventWait(30);
 
   // Bunza checks the passage, worries about pursuit and proposes his wagon.
@@ -575,8 +575,8 @@ static void Reunion_Converse(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Engine_ActorWaitForMove(ACTOR_BUNZA);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIMATION_STAND);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventSetMessage(reunion + REUNION_BUNZA_WARNS_OF_SEARCH);
   Event_ShowMessage(ACTOR_BUNZA, 0);
@@ -625,7 +625,7 @@ static void Reunion_Converse(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | MIA, 0);
   Actor_FaceActor(ACTOR_BUNZA, MIA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   Engine_EventSetMessage(plan + PLAN_BUNZA_OFFERS_RIDE);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
@@ -633,7 +633,7 @@ static void Reunion_Converse(void) {
   Engine_EventSetMessage(plan + PLAN_IVAN_DOUBTS_WAGON);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(plan + PLAN_BUNZA_REASSURES);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
@@ -643,20 +643,20 @@ static void Reunion_Converse(void) {
   Engine_EventSetMessage(plan + PLAN_GARET_AGREES);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   Actor_FaceActor(ACTOR_BUNZA, GARET, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventSetMessage(plan + PLAN_BUNZA_IS_UNSUSPECTED);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   Engine_ActorFaceEachOther(ACTOR_HAMMET, IVAN, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
   Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventWait(60);
   WagonChoice_Run();
 }
@@ -789,7 +789,7 @@ static u8 Bunza_CannotWait(void) {
   Event_ShowMessage(IVAN, 0);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(warning + WARNING_BUNZA_CANNOT_WAIT);
   Event_ShowMessage(ACTOR_BUNZA, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -826,28 +826,28 @@ static void Party_StaysBehind(void) {
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Engine_EventSetMessage(farewell + FAREWELL_HAMMET_LETS_IVAN_GO);
   Event_ShowMessage(ACTOR_HAMMET, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(farewell + FAREWELL_BUNZA_SAYS_GOODBYE);
   Event_ShowMessage(ACTOR_BUNZA, 0);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
   Engine_EventWait(60);
   Actor_SetDestinationOffset(ACTOR_HAMMET, -16, 0);
   Engine_ActorWaitForMove(ACTOR_HAMMET);
-  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIMATION_STAND);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
   Actor_WalkTo(ACTOR_BUNZA, 156, 528);
   Engine_EventWait(20);
   Actor_WalkTo(ACTOR_HAMMET, 164, 528);
@@ -871,11 +871,11 @@ static void Party_StaysBehind(void) {
 
   Engine_EventSetMessage(farewell + FAREWELL_GARET_SIGHS);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventSetMessage(farewell + FAREWELL_MIA_HOPES_FOR_SAFETY);
   Event_ShowMessage(MIA, 0);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventSetMessage(farewell + FAREWELL_IVAN_REASSURES);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(140);
@@ -885,21 +885,21 @@ static void Party_StaysBehind(void) {
 
   // Merge the companions back into the leader and restore player camera
   // control.
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(IVAN, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(IVAN);
   Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -922,37 +922,37 @@ static void Party_RidesWagon(void) {
   departure = MsgLunpaDontUnfinishedBusiness;
   Engine_EventSetMessage(departure + DEPARTURE_GARET_HEADS_FOR_KALAY);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventSetMessage(departure + DEPARTURE_IVAN_THINKS_OF_LAYANA);
   Event_ShowMessage(IVAN, 0);
   Actor_FaceActor(ACTOR_HAMMET, IVAN, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventSetMessage(departure + DEPARTURE_HAMMET_LONGS_FOR_LAYANA);
   Event_ShowMessage(ACTOR_HAMMET, 0);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventSetMessage(departure + DEPARTURE_BUNZA_SETS_OFF);
   Event_ShowMessage(ACTOR_BUNZA, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
   Engine_EventWait(80);
   Actor_SetDestinationOffset(ACTOR_HAMMET, -16, 0);
   Engine_ActorWaitForMove(ACTOR_HAMMET);
-  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIMATION_STAND);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
   Actor_WalkTo(ACTOR_BUNZA, 152, 528);
   Engine_EventWait(20);
   Actor_WalkTo(ACTOR_HAMMET, 160, 528);
@@ -973,21 +973,21 @@ static void Party_RidesWagon(void) {
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
 
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(IVAN, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(IVAN);
   Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);

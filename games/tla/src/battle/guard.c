@@ -12,7 +12,7 @@
 #include "battle_unit.h"
 #include "owner_state.h"
 
-#define UnitCalcFar ((void (*)(u16))UnitCalcFar)
+#define Unit_CalculateFar ((void (*)(u16))Unit_CalculateFar)
 
 void BattleUnit_ResetGuardLevels(void) {
   u16 ids[14];
@@ -23,8 +23,8 @@ void BattleUnit_ResetGuardLevels(void) {
   for (index = 0; index < count; index++) {
     struct BattleUnit *actor;
 
-    actor = UnitGet(ids[index]);
+    actor = Unit_Get(ids[index]);
     actor->guardLevel = 0;
-    UnitCalcFar(ids[index]);
+    Unit_CalculateFar(ids[index]);
   }
 }

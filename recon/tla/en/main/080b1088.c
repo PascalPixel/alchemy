@@ -15,8 +15,8 @@
 #include "battle_unit.h"
 #include "item.h"
 
-void *UnitGet(s32 owner);
-void UnitCalc(s32 unitId);
+void *Unit_Get(s32 owner);
+void Unit_Calculate(s32 unitId);
 void Unit_UpdateClass(s32 owner);
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Func_080b106c(s32 item);
@@ -42,7 +42,7 @@ void Func_080b1088(void) {
     first = gPartyState.packedEvents[0];
     second = gPartyState.packedEvents[1];
     for (owner = 4; owner < 8; owner++) {
-      struct BattleUnit *unit = UnitGet(owner);
+      struct BattleUnit *unit = Unit_Get(owner);
       u16 *inventory;
       u16 *from;
       u16 *to;
@@ -71,7 +71,7 @@ void Func_080b1088(void) {
       for (; count < 15; count++)
         inventory[count] = 0;
       Unit_UpdateClass(owner);
-      UnitCalc(owner);
+      Unit_Calculate(owner);
     }
     *backup++ = first;
     *backup++ = second;

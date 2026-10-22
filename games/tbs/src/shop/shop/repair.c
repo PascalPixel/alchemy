@@ -43,7 +43,7 @@ s32 Shop_SelectRepair(s32 unitId) {
   s32 y;
 
   shop = gMenuWork;
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   priceWindow =
       UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, UI_WINDOW_INSTANT);
@@ -137,7 +137,7 @@ s32 Shop_SelectRepair(s32 unitId) {
 /// Shop_SelectRepair.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
@@ -148,18 +148,18 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
 
   useType = item->useType;
   if (useType != ITEM_USE_MAY_BREAK) {
-    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
     UiMessage_ShowAndRestoreState(MsgCannotRepairKind);
     return;
   }
   if (!(unit->inventory[slot] & INVENTORY_BROKEN)) {
-    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
     UiMessage_ShowAndRestoreState(MsgNotDamaged);
     return;
   }
   // useType is ITEM_USE_MAY_BREAK here, so this tests ITEM_CANNOT_UNEQUIP.
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flags)) {
-    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
     UiMessage_ShowAndRestoreState(MsgCursedWontComeOff);
     return;
   }
@@ -167,8 +167,8 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     UiMessage_ShowAndRestoreState(MsgNotEnoughMoney);
     return;
   }
-  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
-  UiWork_PushValueSlotFar(repairCost, MSG_ARG_NUMBER);
+  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  UiWork_PushValueSlotFar(repairCost, MESSAGE_ARGUMENT_NUMBER);
   messageBase = MsgShopRepairConfirm;
   UiMessage_ShowAndRestoreState(messageBase);
   if (UiMessage_ShowChoice(0) != 0) {
@@ -179,7 +179,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   savedEntry = unit->inventory[slot];
   unit->inventory[slot] = 0;
   Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
   UiMessage_ShowAndRestoreState(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
   // The hammer blows are 110 frames apart; the item stays hidden throughout,
@@ -199,7 +199,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   Party_AdjustCoinsFar(-repairCost);
   Shop_DrawMoney();
   Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
   UiMessage_ShowAndRestoreState(messageBase + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);

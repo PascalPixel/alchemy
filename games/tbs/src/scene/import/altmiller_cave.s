@@ -25,7 +25,7 @@
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_PartyRemoveItem, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_EventChooseYesNo, 1
 	.set import.Object_GetById, 1
@@ -60,7 +60,7 @@
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.DisplayTransition_InitializeBattleEffectState, 1
 	.set import.Engine_PsynergyPlayEffect, 1
-	.set import.Engine_PsynergyBegin, 1
+	.set import.Engine_PsynergyStart, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
@@ -70,15 +70,15 @@
 	.set import.EffectSlot_SetObjectMode, 1
 	.set import.EffectSlot_SetCallback, 1
 	.set import.EffectSlot_Initialize, 1
-	.set import.FieldFx_ClearOwnedSlot, 1
+	.set import.FieldEffect_ClearOwnedSlot, 1
 	.set import.Camera_WorldToScreen, 1
-	.set import.FieldFx_InitializeSlots, 1
-	.set import.FieldFx_ClearActiveSlotsAndScheduleUpdates, 1
+	.set import.FieldEffect_InitializeSlots, 1
+	.set import.FieldEffect_ClearActiveSlotsAndScheduleUpdates, 1
 	.set import.Motion_LaunchFromFocusedObject, 1
 	.set import.Engine_ActorWalkBy, 1
 	.set import.Engine_ActorWalkByAndWait, 1
 	.set import.Engine_ActorFollow, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Shop_SaveAndTintFieldPalette, 1
 	.set import.Shop_RestoreFieldPalette, 1
 	.set import.Engine_AudioPlayCue, 1

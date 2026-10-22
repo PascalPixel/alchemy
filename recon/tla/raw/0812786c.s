@@ -17,7 +17,7 @@ Func_0812786c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r9, r0
 	ldr r0, [sp, #8]
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r0, #0
 	adds r6, r7, #0
 	adds r6, #16
@@ -196,7 +196,7 @@ Func_0812786c:
 	add r3, r10
 	strb r3, [r7, #15]
 	ldr r0, [sp, #8]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r0, r9
 	bl MemFree
 	add sp, #12

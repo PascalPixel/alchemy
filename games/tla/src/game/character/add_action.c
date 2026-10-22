@@ -11,7 +11,7 @@
 
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct OwnerActionState *state =
-      (struct OwnerActionState *)UnitGet(stateIndex);
+      (struct OwnerActionState *)Unit_Get(stateIndex);
   s32 key = value & OWNER_ACTION_ID_MASK;
   s32 found = -1;
   s32 index;

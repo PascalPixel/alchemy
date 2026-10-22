@@ -4,9 +4,9 @@
 
 #include "../game_internal.h"
 
-/// The running totals UnitCalc builds a unit's stats in. Each call takes a
-/// block from EWRAM first (Runtime_BumpAllocateAlternatePool) and frees it
-/// with MemFree before returning; only UnitCalc reads it.
+/// The running totals Unit_Calculate builds a unit's stats in. Each call takes
+/// a block from EWRAM first (Runtime_BumpAllocateAlternatePool) and frees it
+/// with MemFree before returning; only Unit_Calculate reads it.
 struct StatWork {
   s32 hp;            ///< maximum HP
   s32 pp;            ///< maximum PP
@@ -32,7 +32,7 @@ struct StatWork {
 /// Starts a new game: clears the game state and restarts at the opening.
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_Restart(void) {
-  GameState_InitDefaults();
+  GameState_InitializeDefaults();
   Game_RunFar(0);
 }
 
@@ -43,7 +43,7 @@ void Game_Restart(void) {
 /// (DjinnRecovery_Tick, BattleSummon_UpdateAvailability, the link battle).
 void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
-    return UnitGet(0x83);
+    return Unit_Get(0x83);
   }
   return &gGameState.unk008[4];
 }
@@ -62,7 +62,7 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += UnitGet(gGameState.activeOwners[partyIndex])->level;
+    totalLevels += Unit_Get(gGameState.activeOwners[partyIndex])->level;
   }
   totalLevels = totalLevels / partySize;
   return totalLevels;
@@ -71,8 +71,8 @@ u32 Party_GetAverageLevel(void) {
 /// Returns the unit record of `owner`: ISAAC to PIERS are the playable
 /// characters in the game state, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
-/// bank calls it, through GAME.S as UnitGetFar.
-struct BattleUnit *UnitGet(u32 owner) {
+/// bank calls it, through GAME.S as Unit_GetFar.
+struct BattleUnit *Unit_Get(u32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
 
@@ -108,7 +108,7 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 
   recordIndex = selector - ENEMY_CLASS_FIRST;
   // BUG: the table has 165 rows, but only rows past 249 are refused, so 165 to
-  // 249 read the tables after it. BattleUnitSet refuses them itself.
+  // 249 read the tables after it. BattleUnit_Set refuses them itself.
 #ifdef BUGFIX
   if (recordIndex > 164U) {
 #else
@@ -149,7 +149,7 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.
-void UnitCalc(s32 owner) {
+void Unit_Calculate(s32 owner) {
   struct StatWork *stats;
   struct BattleUnit *unit;
   s32 index, effectIndex, elementIndex;
@@ -162,7 +162,7 @@ void UnitCalc(s32 owner) {
 
   // Start with the unit's base stats and elemental power/resistance.
   stats = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
   stats->atk = unit->baseAttack;
@@ -172,15 +172,15 @@ void UnitCalc(s32 owner) {
   stats->turns = unit->baseActionCount & 15;
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
-  for (index = 0; index < NUM_ELEMENTS; index++) {
+  for (index = 0; index < ELEMENT_COUNT; index++) {
     stats->element[index][0] = unit->baseElement[index].power;
     stats->element[index][1] = unit->baseElement[index].resistance;
   }
 
   // A gauge is HP or PP as a fraction of its maximum, 0x4000 full. When
   // either no longer gives its stat to within 1 (the stat was written
-  // without UnitRatio), both gauges are reset to full and the unit's HP and
-  // PP refilled, before the fractions carry over to the new maxima.
+  // without Unit_UpdateRatios), both gauges are reset to full and the unit's HP
+  // and PP refilled, before the fractions carry over to the new maxima.
   if (UNIT_STAT_DIFF(unit->maxHp * unit->hpGauge / 0x4000, unit->hp) > 1 ||
       UNIT_STAT_DIFF(unit->maxPp * unit->ppGauge / 0x4000, unit->pp) > 1) {
     unit->hpGauge = 0x4000;
@@ -284,7 +284,7 @@ void UnitCalc(s32 owner) {
       unit->restraint &= ~(RESTRAINT_REMOVABLE | RESTRAINT_BOUND);
 
     // Only set Djinn contribute their stat bonuses.
-    for (elementIndex = 0; elementIndex < NUM_ELEMENTS; elementIndex++) {
+    for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
       u32 activeDjinn = unit->djinnActive[elementIndex];
 
       for (index = 0; index < DJINN_PER_ELEMENT; index++) {
@@ -363,12 +363,12 @@ void UnitCalc(s32 owner) {
   stats->atk = stats->atk * (unit->attackStage + 8) / 8;
   stats->def = stats->def * (unit->defenseStage + 8) / 8;
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
-  for (index = 0; index < NUM_ELEMENTS; index++)
+  for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index][0] +=
         (unit->elementLevels[index] * unit->elementLevels[index] +
          unit->elementLevels[index]) *
         5;
-  for (index = 0; index < NUM_ELEMENTS; index++)
+  for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index][1] += unit->resistanceStage * 20;
 
   if (unit->classIndex != CLASS_INDEX_ENEMY) {
@@ -402,7 +402,7 @@ void UnitCalc(s32 owner) {
   CLAMP(stats->turns, 0, 2);
   CLAMP(stats->hpRegen, 0, 10000);
   CLAMP(stats->ppRegen, 0, 200);
-  for (index = 0; index < NUM_ELEMENTS; index++) {
+  for (index = 0; index < ELEMENT_COUNT; index++) {
     CLAMP(stats->element[index][0], 0, 200);
     CLAMP(stats->element[index][1], 0, 200);
   }
@@ -414,7 +414,7 @@ void UnitCalc(s32 owner) {
   unit->actionEntryCount = stats->turns;
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
-  for (index = 0; index < NUM_ELEMENTS; index++) {
+  for (index = 0; index < ELEMENT_COUNT; index++) {
     unit->element[index].power = stats->element[index][0];
     unit->element[index].resistance = stats->element[index][1];
   }
@@ -463,7 +463,7 @@ void GameFlag_RefreshLureCap(void) {
     struct BattleUnit *unit;
     s32 inventorySlot;
 
-    unit = UnitGet(gGameState.activeOwners[partyIndex]);
+    unit = Unit_Get(gGameState.activeOwners[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct ItemEffect *effect;
@@ -486,8 +486,8 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// GameState_InitDefaults stores it as a new game's start stamp, and the save
-/// menu (SaveMenu_SelectSlot, SaveState_BuildSummaryHeader) and the file
+/// GameState_InitializeDefaults stores it as a new game's start stamp, and the
+/// save menu (SaveMenu_SelectSlot, SaveState_BuildSummaryHeader) and the file
 /// select screen compare saves with it.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;
@@ -532,9 +532,9 @@ u32 Runtime_GetBuildStampTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gSceneState on, which GameState_InitDefaults writes
-/// one byte through. gSceneState's 0x78 bytes and gInventorySnapshot's 0x8c
-/// come first, so unk104 is the first byte of gObjectSnapshots.
+/// A view of EWRAM from gSceneState on, which GameState_InitializeDefaults
+/// writes one byte through. gSceneState's 0x78 bytes and gInventorySnapshot's
+/// 0x8c come first, so unk104 is the first byte of gObjectSnapshots.
 struct SceneStateTail {
   u8 unk000[0x100]; ///< gSceneState, then most of gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
@@ -551,13 +551,14 @@ struct SceneStateTail {
 /// button layout, the message speed, the play time clock and the slot
 /// machine prize odds. Called by the file select screen's new game, by
 /// Game_Restart and Game_Run, and by the debug battle menu.
-void GameState_InitDefaults(void) {
+void GameState_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, scene work, flags and save metadata in DMA order:
   // 0xb0 words are gGameState up to the characters (owners, which
-  // Party_InitCharacters sets up); 0x3e1 words run from gSceneState through
-  // gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096 flags.
+  // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneState
+  // through gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096
+  // flags.
   zero = 0;
   START_DMA(&zero, &gGameState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
@@ -573,7 +574,7 @@ void GameState_InitDefaults(void) {
   START_DMA(&zero, gSaveStamp + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
-  Party_InitCharacters();
+  Party_InitializeCharacters();
   gGameState.aKeys = KEY_A;
   gGameState.bKeys = KEY_B;
   gGameState.selectKeys = KEY_SELECT;
@@ -620,14 +621,14 @@ void GameState_InitDefaults(void) {
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
 /// then take their childhood forms. Called by the file select screen when a
 /// new game starts the prologue.
-void Party_BeginChildhood(void) {
+void Party_StartChildhood(void) {
   GameFlag_SetBit(FLAG_CHILDHOOD);
   Unit_UpdateClass(ISAAC);
   Unit_UpdateClass(GARET);
   Unit_UpdateClass(JENNA);
-  UnitCalc(ISAAC);
-  UnitCalc(GARET);
-  UnitCalc(JENNA);
+  Unit_Calculate(ISAAC);
+  Unit_Calculate(GARET);
+  Unit_Calculate(JENNA);
 }
 
 /// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
@@ -643,12 +644,12 @@ void Party_EndChildhood(void) {
   GameFlag_ClearBit(FLAG_ISAAC_WEARS_TUNIC);
   GameFlag_SetBit(0x901);
   Unit_UpdateClass(JENNA);
-  UnitCalc(JENNA);
+  Unit_Calculate(JENNA);
   GameFlag_ClearBit(FLAG_KEEP_MUSIC_HELD);
   GameFlag_SetBit(FLAG_KEEP_MUSIC);
 
   for (owner = 0; owner <= 1; owner++) {
-    struct BattleUnit *unit = UnitGet(owner);
+    struct BattleUnit *unit = Unit_Get(owner);
     s32 slot;
 
     unit->hp = unit->maxHp;
@@ -664,7 +665,7 @@ void Party_EndChildhood(void) {
     }
 
     Unit_UpdateClass(owner);
-    UnitCalc(owner);
+    Unit_Calculate(owner);
   }
 
   Unit_LearnPsynergy(ISAAC, ABILITY_MOVE);
@@ -686,7 +687,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountActiveOwners();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = UnitGet(gGameState.activeOwners[partyIndex]);
+    unit = Unit_Get(gGameState.activeOwners[partyIndex]);
 
     unit->hp = unit->maxHp;
     unit->pp = unit->maxPp;
@@ -731,7 +732,7 @@ void Party_RestorePpOfLitElements(void) {
       continue;
     }
 
-    unit = UnitGet(ownerId);
+    unit = Unit_Get(ownerId);
     unit->pp = unit->maxPp;
     Unit_UpdateGauges(unit);
   }
@@ -741,12 +742,13 @@ void Party_RestorePpOfLitElements(void) {
 UNUSED void Unit_RatioNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so
-/// that UnitCalc keeps the same fractions. Called after anything that writes
-/// HP or PP directly: Unit_AddHp, the inn, the sanctum, item use, battle.
-void UnitRatio(s32 owner) {
+/// that Unit_Calculate keeps the same fractions. Called after anything that
+/// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
+/// battle.
+void Unit_UpdateRatios(s32 owner) {
   struct BattleUnit *unit;
 
-  unit = UnitGet(owner);
+  unit = Unit_Get(owner);
   Unit_UpdateGauges(unit);
 }
 
@@ -765,7 +767,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
 }
 
 /// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
-/// gauges. Called by BattleObj_DestroyTemporaryObject.
+/// gauges. Called by BattleObject_DestroyTemporaryObject.
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 clamped;
 
@@ -788,7 +790,7 @@ void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
 /// gauges and returns the new HP. Called by battle's round end, poison and
 /// regeneration, and by the field's damage floors and status damage.
 s32 Unit_AddHp(s32 owner, s32 delta) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 currentHp = unit->hp;
   s32 maximumHp = unit->maxHp;
   s32 value = currentHp + delta;
@@ -796,7 +798,7 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumHp);
   unit->hp = result;
-  UnitRatio(owner);
+  Unit_UpdateRatios(owner);
   return unit->hp;
 }
 
@@ -805,7 +807,7 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 /// in battle and from the menu, by PP recovery at the end of a battle round,
 /// and by the debug menu.
 s16 Unit_AddPp(s32 owner, s32 delta) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 currentPp = unit->pp;
   s32 maximumPp = unit->maxPp;
   s32 value = currentPp + delta;
@@ -813,7 +815,7 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumPp);
   unit->pp = result;
-  UnitRatio(owner);
+  Unit_UpdateRatios(owner);
   return unit->pp;
 }
 

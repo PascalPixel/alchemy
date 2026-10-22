@@ -26,8 +26,8 @@ s32 Func_02000dbc(s32 mode);
 void Func_02000dfc(s32 cue);
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 void UiWork_FinalizePendingCore(void);
-u8 *UnitGet(s32 owner);
-void UnitCalc(s32 owner);
+u8 *Unit_Get(s32 owner);
+void Unit_Calculate(s32 owner);
 s32 Inventory_GetQuantity(s32 member, s32 slot);
 s32 Inventory_CountItem(s32 member, s32 item);
 void Inventory_Discard(s32 member, s32 slot);
@@ -70,7 +70,7 @@ s32 Func_02000878(s32 item, s32 unused) {
       work->message = saved;
       return owner;
     } else {
-      UnitGet(member);
+      Unit_Get(member);
       count = Inventory_GetQuantity(member, slot);
       if (Inventory_CountItem(member, item) > 29) {
         Func_02000ccc(member, 1);
@@ -81,7 +81,7 @@ s32 Func_02000878(s32 item, s32 unused) {
       for (i = 0; i < count; i++)
         Inventory_Discard(member, slot);
       Unit_RefreshPsynergy(member);
-      UnitCalc(member);
+      Unit_Calculate(member);
       owner = PartyInventory_Add(item);
       Func_02000dfc(83);
       if (owner == gPartyState.currentOwner) {

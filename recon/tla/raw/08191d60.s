@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Moloch (scene kind 16).
-	.global BattleFx_RunMoloch
+	.global BattleEffect_RunMoloch
 	.thumb_func
-BattleFx_RunMoloch:
+BattleEffect_RunMoloch:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +22,7 @@ BattleFx_RunMoloch:
 	ldr r3, [r3, #100]
 	mov r11, r1
 	str r3, [sp, #32]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08191dc8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -33,7 +33,7 @@ BattleFx_RunMoloch:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #28]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_08191dcc
@@ -91,7 +91,7 @@ BattleFx_RunMoloch:
 	lsls r4, r4, #15
 	ldr r0, [r3]
 	str r4, [sp, #24]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #128
@@ -99,7 +99,7 @@ BattleFx_RunMoloch:
 	movs r0, #12
 	adds r1, #142
 	movs r2, #2
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r0, #0
 	mov r9, r0
 .L_08191e36:
@@ -460,7 +460,7 @@ BattleFx_RunMoloch:
 	b .L_0819211e
 	.2byte 0x0000
 .L_081920f4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081920f8:
 	.4byte gInput
 .L_081920fc:
@@ -829,7 +829,7 @@ BattleFx_RunMoloch:
 	lsls r3, r3, #11
 	movs r1, #1
 	str r4, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r3, [r6]
 	adds r7, #1
 	ldr r3, [r3, #20]
@@ -975,7 +975,7 @@ BattleFx_RunMoloch:
 	mov r3, r10
 	cmp r3, #12
 	bne .L_081924e6
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1008,4 +1008,4 @@ BattleFx_RunMoloch:
 .L_08192534:
 	.4byte 0x3f3f3f3f
 .L_08192538:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

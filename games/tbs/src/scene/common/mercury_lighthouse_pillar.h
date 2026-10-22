@@ -162,7 +162,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     spark->timer = 0;
     spark->linkedObject = point;
     if (sprite != NULL) {
-      AnimationObjects_SelectAnimation(sprite, 2);
+      AnimationObject_SelectAnimation(sprite, 2);
       sprite->flags = 0;
       sprite->image.priority = 1;
     }
@@ -178,7 +178,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     spark->linkedObject = point;
     spark->priorityFlags = 2;
     if (sprite != NULL) {
-      AnimationObjects_SelectAnimation(sprite, 1);
+      AnimationObject_SelectAnimation(sprite, 1);
       sprite->flags = 0;
     }
   }
@@ -203,7 +203,7 @@ void MercuryLighthouse_ChargeLights(void) {
                ->actors[gGameState.selectedActor];
   if ((u32)state->levels > 2)
     return;
-  Engine_EventBegin();
+  Engine_EventStart();
   pillar = state->pillar;
   if (pillar == 0) {
     obj = Engine_ObjectCreate(26, leader->x.fixed, leader->y.fixed + 0x180000,
@@ -313,7 +313,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       to->collisionCode == state->terrainCode && state->levels == 0)
     return;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FieldObject_CheckMovementCollision(actor, (struct FieldPosition *)pos) !=
       0)
     return;
@@ -339,7 +339,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       obj->acceleration = 0x20000;
       Engine_ObjectSetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
       if (sprite != NULL) {
-        AnimationObjects_SelectAnimation(sprite, 6);
+        AnimationObject_SelectAnimation(sprite, 6);
         zero = 0;
         sprite->flags = zero;
       }

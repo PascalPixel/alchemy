@@ -25,7 +25,7 @@ EffectSlot_SetCallbackFar:
 	.thumb_func
 EffectSlot_InitializeFar:
 	overlay_veneer EffectSlot_Initialize
-	.global BattleFx_ClearOwnedSlotFar
+	.global BattleEffect_ClearOwnedSlotFar
 	.thumb_func
-BattleFx_ClearOwnedSlotFar:
-	overlay_veneer BattleFx_ClearOwnedSlot
+BattleEffect_ClearOwnedSlotFar:
+	overlay_veneer BattleEffect_ClearOwnedSlot

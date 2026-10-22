@@ -2,9 +2,9 @@
 	.thumb
 @ Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
 @ Thunderhead (kind 18).
-	.global BattleFx_RunPlasma
+	.global BattleEffect_RunPlasma
 	.thumb_func
-BattleFx_RunPlasma:
+BattleEffect_RunPlasma:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,7 +25,7 @@ BattleFx_RunPlasma:
 	lsls r7, r7, #3
 	ldr r2, [r5, #100]
 	str r2, [sp, #24]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08149800
 	movs r2, #128
 	lsls r2, r2, #19
@@ -33,12 +33,12 @@ BattleFx_RunPlasma:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #40]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r4, sp
@@ -400,7 +400,7 @@ BattleFx_RunPlasma:
 	str r3, [r6, #24]
 	adds r0, r6, #0
 	movs r1, #60
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r2, [r6, #4]
 	movs r4, #208
 	lsls r4, r4, #15
@@ -491,7 +491,7 @@ BattleFx_RunPlasma:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #48
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -506,7 +506,7 @@ BattleFx_RunPlasma:
 .L_08149b6c:
 	.4byte Data_02010018
 .L_08149b70:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08149b74:
 	.4byte Data_081979da
 .L_08149b78:

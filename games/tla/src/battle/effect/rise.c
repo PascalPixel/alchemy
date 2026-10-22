@@ -4,7 +4,7 @@
 #include "object_runtime.h"
 #include "iwram_call.h"
 
-void BattleFx_InitializeRisingObject(s32 slot) {
+void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObj *context = GetBattleObjectSlotFar(slot);
   struct ObjectRuntime *object = context->object;
 
@@ -22,8 +22,8 @@ void BattleFx_InitializeRisingObject(s32 slot) {
 
 /// Moves the object rate percent of the way to the target's object in the
 /// given frames.
-// The Broken Seal's BattleFx_SetApproachMotion always moves 80 percent.
-void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate) {
+// The Broken Seal's BattleEffect_SetApproachMotion always moves 80 percent.
+void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
   struct ObjectRuntime *obj = (struct ObjectRuntime *)slot->object;

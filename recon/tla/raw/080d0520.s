@@ -38,9 +38,9 @@ DisplayTransition_Finish:
 	movs r0, #128
 	lsls r0, r0, #8
 	movs r1, #0
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	mov r0, r10
-	bl BattleFx_StartBufferInterpolation
+	bl BattleEffect_StartBufferInterpolation
 	b .L_080d0718
 .L_080d0578:
 	.4byte .L_080d0544
@@ -97,7 +97,7 @@ DisplayTransition_Finish:
 .L_080d05e4:
 	.4byte Func_080cf78c
 .L_080d05e8:
-	.4byte BattleFx_StartWindowHBlankDma
+	.4byte BattleEffect_StartWindowHBlankDma
 .L_080d05ec:
 	bl WaitFrames
 	movs r2, #160

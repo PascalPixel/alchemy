@@ -70,7 +70,7 @@ void Inventory_RemoveFar(s32 unit, s32 slot);
 s32 Inventory_CountFar(s32 unit);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Shop_DrawMsg(void *window, s32 message);
-s32 Shop_SelectBuyNum(s32 unit, s32 item);
+s32 Shop_SelectBuyCount(s32 unit, s32 item);
 void Shop_BuyDone(s32 unit, s32 item, s32 quantity);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void Func_08109188(void);
@@ -247,7 +247,7 @@ next_page:
       }
       Audio_PlayCue(112);
       WaitFrames(1);
-      quantity = Shop_SelectBuyNum(unitId, shop->selectedItem);
+      quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
       if (quantity == -1)
         continue;

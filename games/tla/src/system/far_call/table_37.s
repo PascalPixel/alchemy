@@ -4,4 +4,4 @@
 	.global Func_080c8970
 	.thumb_func
 Func_080c8970:
-	overlay_veneer BattleFx_LoadBufferPalette
+	overlay_veneer BattleEffect_LoadBufferPalette

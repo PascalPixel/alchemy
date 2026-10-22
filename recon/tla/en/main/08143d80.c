@@ -1,5 +1,5 @@
 // Near miss, differ 6 of 114 (10 as plain C): The Broken Seal's
-// BattleFx_SetupCanvasTileMap with ⚓️'s slots (the background view is the
+// BattleEffect_SetupCanvasTileMap with ⚓️'s slots (the background view is the
 // 0xb0 slot) and its IWRAM calls through forwarders (differ 28 called
 // directly). Left: two places where the native issues a pool load between the
 // halves of a constant it builds, which agscc's sched2 ranks one below the
@@ -19,7 +19,7 @@
 #include "battle_display.h"
 #include "bg_scroll.h"
 
-void BattleFx_ClearActorTimers(void);
+void BattleEffect_ClearActorTimers(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 
@@ -31,7 +31,7 @@ static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
   return Iwram_FillWords(destination, size, value);
 }
 
-void BattleFx_SetupCanvasTileMap(void) {
+void BattleEffect_SetupCanvasTileMap(void) {
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleWork *screen = Ram_HeapSlots->battleWork;
   struct BattleBackgroundView *layer =
@@ -40,7 +40,7 @@ void BattleFx_SetupCanvasTileMap(void) {
   s32 col;
   s32 off;
 
-  BattleFx_ClearActorTimers();
+  BattleEffect_ClearActorTimers();
   BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)screen->unk670, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = 0;

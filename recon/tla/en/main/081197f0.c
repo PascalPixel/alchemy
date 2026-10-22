@@ -98,8 +98,8 @@ void Func_08118f6c(void);
 u16 *Djinn_GetRecoveryTableFar(s32 owner);
 void Func_081185c4(void);
 void UiWindow_CreateWithLayoutBoundsFar(s32 layout);
-void Camera_InitDefaultTransform(void);
-void BattleObjPut(void);
+void Camera_InitializeDefaultTransform(void);
+void BattleObject_Put(void);
 void Func_081263c4(void);
 void Func_081263fc(s32 mode, s32 background, s32 value);
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
@@ -107,14 +107,14 @@ void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
 void Func_081281ec(void);
 s32 VramCache_AllocEntry(s32 size);
-u32 BattleRandomFar(void);
+u32 Battle_RandomFar(void);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
 void BattlePresentation_UpdateCamera(void);
 void Func_0811b9fc(void);
 s32 Func_0811a39c(s32 side, s32 value);
 void Func_081195ec(void);
 void Func_0811d7e4(void);
-void PartyStatusDrawFar(s32 mode);
+void PartyStatus_DrawFar(s32 mode);
 void Resource_ResetEntry(s32 slot);
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions);
 s32 Func_0811c3bc(struct BattleActionRecord *actions);
@@ -135,7 +135,7 @@ s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Func_08120060(s32 x, s32 y);
 void BattlePres_ClearLinkPayload(void);
-s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
+s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32 slot, s32 kind);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
@@ -250,8 +250,8 @@ s32 Func_081197f0(s32 enemyGroup) {
   if (enemyGroup == 75 || enemyGroup == 76)
     Func_081185c4();
   UiWindow_CreateWithLayoutBoundsFar(9);
-  Camera_InitDefaultTransform();
-  BattleObjPut();
+  Camera_InitializeDefaultTransform();
+  BattleObject_Put();
   Func_081263c4();
   Func_081263fc(1, battle->background, 0);
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
@@ -265,9 +265,9 @@ s32 Func_081197f0(s32 enemyGroup) {
   if (GameFlag_Test(0x16e) != 0) {
     battle->encounterMode = 1;
   } else if (gPartyState.battleStart == 0) {
-    if ((BattleRandomFar() & 15) == 0)
+    if ((Battle_RandomFar() & 15) == 0)
       battle->encounterMode = 1;
-    else if ((BattleRandomFar() & 31) == 0)
+    else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = 2;
   } else if (gPartyState.battleStart == 6) {
     battle->encounterMode = 2;
@@ -288,7 +288,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       battle->partyStatus = 1;
     transition->targetYaw = 0x2800;
     transition->frames = 60;
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
 
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     Resource_ResetEntry(battle->promptSlot);
@@ -297,7 +297,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     else
       actionCount = Func_0811c3bc(battle->actions);
     battle->promptSlot = VramCache_AllocEntry(128);
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
       goto aborted;
 
@@ -403,7 +403,7 @@ won_scripted:
       if (battle->defeated != 0) {
         Audio_PlayCue(58);
         if (battle->defeatState <= 1) {
-          BattleUnitSetFar(128, battle->enemyClasses[battle->firstDefeated],
+          BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                            26);
           UiWork_ClearValueNameTablesFar();
           UiText_DrawQuantity(128, 1);

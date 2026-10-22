@@ -35,14 +35,14 @@ void AudioEngine_SuspendDirectSound(void);
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
 void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
+void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed);
 void MusicPlayer_Initialize(struct SoundPlayer *player,
                             struct SoundTrack *tracks, u8 count);
 void MusicPlayer_StepFade(struct SoundPlayer *player);
 void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_Tick(struct SoundPlayer *player);
-void MusicTrack_CalcOutput(struct SoundPlayer *player,
-                           struct SoundTrack *track);
+void MusicTrack_CalculateOutput(struct SoundPlayer *player,
+                                struct SoundTrack *track);
 void MusicTrack_HandleNote(u32 command, struct SoundPlayer *player,
                            struct SoundTrack *track);
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player,

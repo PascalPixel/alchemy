@@ -47,7 +47,7 @@ Func_080ce0ac:
 	adds r5, r3, r2
 .L_080ce102:
 	ldrb r0, [r5]
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #0
 	adds r0, #216
 	movs r1, #14
@@ -76,7 +76,7 @@ Func_080ce0ac:
 	b .L_080ce15a
 .L_080ce136:
 	mov r0, r10
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #128
 	lsls r4, r4, #1
 	adds r4, #255
@@ -142,7 +142,7 @@ Func_080ce0ac:
 	bl EventRuntime_GetControlledOwner
 	bl Field_FindNearbyTalkTarget
 	adds r5, r0, #0
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	ldr r0, [r6, #8]
 	bl EventRuntime_SetMessage
 	adds r0, r5, #0
@@ -240,13 +240,13 @@ Func_080ce0ac:
 	adds r6, #182
 	adds r0, r5, #0
 	movs r1, #0
-	bl BattleFx_LoadActionEffectResources
+	bl BattleEffect_LoadActionEffectResources
 	add r6, r8
 	movs r2, #0
 	movs r5, #1
 	mov r8, r2
 	strb r5, [r6]
-	bl BattleFx_Run
+	bl BattleEffect_Run
 	mov r3, r8
 	strb r3, [r6]
 	bl BattleEffect_CleanupSceneObjects

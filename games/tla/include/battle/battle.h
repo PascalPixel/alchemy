@@ -17,34 +17,35 @@ struct EffectSlot;
 struct ObjectRuntime;
 struct SceneAreaNameRule;
 
-extern u16 gBattleFx_CyclePatternWords[];
-extern s8 gBattleFx_RandomChildValues[];
+extern u16 gBattleEffect_CyclePatternWords[];
+extern s8 gBattleEffect_RandomChildValues[];
 extern const s8 gBattlePlacement_StepPairs[];
 extern u8 gEncounter_AreaEntryTable[];
 extern u8 gPlayerObjectId[];
 extern u16 gResource_SlotAssignments[];
-s32 BattleTargetExec(struct BattlePlan *plan, s32 slot);
+s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 struct BattleObj;
 #ifndef OWN_BattlePresentation_SpawnActorObject
-void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
+void BattleObject_Make(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 #endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
 #endif
 void BattleEffect_InitializeSharedScene(void);
 void BattleEvent_Playback(void);
-void BattleFx_DrawScaledObject(struct EffectSlot *object);
-#ifndef OWN_BattleFx_GetResourceGroup
-s8 BattleFx_GetResourceGroup(s32 effect_index);
+void BattleEffect_DrawScaledObject(struct EffectSlot *object);
+#ifndef OWN_BattleEffect_GetResourceGroup
+s8 BattleEffect_GetResourceGroup(s32 effect_index);
 #endif
-void BattleFx_PrepareBufferInterpolation(void);
-void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
-void BattleFx_DoNothing(void);
-void FieldFx_RunFrost(void);
-void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
-                                  s32 mode);
-void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode);
-void *BattleFx_StartItemBreak(void *object);
+void BattleEffect_PrepareBufferInterpolation(void);
+void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
+void BattleEffect_DoNothing(void);
+void FieldEffect_RunFrost(void);
+void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
+                                      s32 mode);
+void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
+                                  u32 mode);
+void *BattleEffect_StartItemBreak(void *object);
 s32 BattleMotion_GetSlotPalette(s32 id);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
@@ -59,9 +60,9 @@ s32 BattlePres_WaitSync(void);
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
                                            s32 count);
 void BattleUnit_ResetGuardLevels(void);
-void Camera_InitDefaultTransform(void);
+void Camera_InitializeDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-void FieldFx_RunDouse(void);
+void FieldEffect_RunDouse(void);
 s32 BattleClass_IsSmall(s32 index);
 void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
@@ -96,33 +97,33 @@ struct ParticlePosition {
   s32 y;
   s32 z;
 };
-extern const u8 gBattleFx_ArcTiles[];
-extern u16 gBattleFx_EightWayHeadingWords[];
-extern const u8 gBattleFx_ParticleScript[];
-extern const u8 gBattleFx_UntargetedObjectScript[];
+extern const u8 gBattleEffect_ArcTiles[];
+extern u16 gBattleEffect_EightWayHeadingWords[];
+extern const u8 gBattleEffect_ParticleScript[];
+extern const u8 gBattleEffect_UntargetedObjectScript[];
 extern const u8 gColorBuffer_FadeStep1Map[32];
 extern const u8 gColorBuffer_FadeStep2Map[32];
 extern const u8 gColorBuffer_FadeStep3Map[32];
 extern u16 gEncounter_EnemyGroupTable[];
 extern struct WorldMapWork gWorldMapWork;
 extern const struct SceneCueRule gScene_CueRuleTable[];
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
+s32 AnimationObject_SelectAnimationFar(struct AnimationObject *, s32);
 s16 *Scene_FindActorPlacement(s16 action);
 s32 BattleActor_RemoveFromLists(s32);
-void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
-void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
-void FieldFx_RunWhirlwindOnTarget(void);
+void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
+void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
+void FieldEffect_RunWhirlwindOnTarget(void);
 u16 Encounter_GetEnemyGroupAtSlot(s32 arg0, s32 arg1);
-s32 BattleFx_HasMatchingEvent5(s32 effectId);
-void BattleFx_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
-void BattleFx_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
+s32 BattleEffect_HasMatchingEvent5(s32 effectId);
+void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
+void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *);
-s32 BattleFx_RunProjectileVolleyB(void *effect, s32 mode);
-s32 BattleFx_RunSparkGroups(void *, s32);
-void BattleFx_SnapScaleToFull(void *object);
-void BattleFx_StartBufferInterpolation(s32 frames);
-s32 BattleFx_StartRandomParticleEmitter(s32, s32);
-void BattleFx_UpdateArcEffect(void);
+s32 BattleEffect_RunProjectileVolleyB(void *effect, s32 mode);
+s32 BattleEffect_RunSparkGroups(void *, s32);
+void BattleEffect_SnapScaleToFull(void *object);
+void BattleEffect_StartBufferInterpolation(s32 frames);
+s32 BattleEffect_StartRandomParticleEmitter(s32, s32);
+void BattleEffect_UpdateArcEffect(void);
 void BattleLayout_HighlightPartyPanelsFar(u16 *);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void BattleMotion_DestroyAllSlotObjects(void);
@@ -153,19 +154,19 @@ void Object_Destroy(struct DispatchObject *work);
 void ObjectMotion_SnapToTerrain(void *object);
 s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Owner_RecalculateStatsFar
-void UnitCalcFar(s32);
+void Unit_CalculateFar(s32);
 #endif
 s32 Party_CountActiveOwnersFar(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
-void SummonFx_RunCanvasEffect(void *action, s32 mode);
+void SummonEffect_RunCanvasEffect(void *action, s32 mode);
 struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
-void PartyStatusDrawFar(s32 mode);
+void PartyStatus_DrawFar(s32 mode);
 
-/// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
+/// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held

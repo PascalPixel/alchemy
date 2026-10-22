@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunDiamondBerg, decompiled from the listing: differ 317 of
+// Draft of BattleEffect_RunDiamondBerg, decompiled from the listing: differ 317 of
 // 658 (draft 659), the same 56 calls and control flow.
 // Left (2026-10-19): the three resource loads into the map cell buffer
 // (the native loads gMapCellBuffer and adds each offset; here the first
@@ -44,12 +44,12 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(
-    void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -67,19 +67,19 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
-void BattleFx_SelectLivingTargets(
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -95,12 +95,12 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleFx_BeginTiledCanvas(s32 bgControl);
-void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -112,7 +112,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
+void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 
 extern char ResourceId_CrystalSheet;
 extern char ResourceId_CrystalBitmapSheet;
@@ -142,7 +142,7 @@ extern const u8 gData_08199210[];  // its corners
 // An iceberg drops onto the target and is driven down in eight blows (every
 // eighth frame from 31), each throwing eight shards; the last shatters it
 // into a burst of light. Ripples of frost spread over the ground beneath.
-void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
@@ -165,11 +165,11 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   EffectPosition_ProjectBattler(effect->actors[0], &pos);
   centerX = pos.x / 2;
-  BattleFx_LoadBlitter(SLOT_BLITTER,
+  BattleEffect_LoadBlitter(SLOT_BLITTER,
                        BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
@@ -183,7 +183,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
                              0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   top = -128;
 
   for (frame = 0; frame != DIAMOND_BERG_FRAMES; frame++) {
@@ -197,7 +197,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
       EffectPosition_ProjectBattler(effect->actors[0], &target);
     }
     if (frame == 20) {
-      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 60);
+      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 60);
     }
     if (frame == 2) {
       Audio_PlayCue(212);
@@ -220,7 +220,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
           if (frame <= 79) {
             Audio_PlayCue(144);
-            BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 16,
+            BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16,
                                        70);
           } else {
             Func_08118088(effect->actors[0], 4);
@@ -276,7 +276,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
         blit[0](canvas, work->sheet + 0x800 + gData_08197834[cell],
                 HI(shard->x) - (width >> 1), HI(shard->y) - (height >> 1),
                 width, height);
-        BattleFxKernels_IntegrateVector2(shard, 64, 0x4000);
+        BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
         if (HI(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }
@@ -372,7 +372,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

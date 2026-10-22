@@ -24,7 +24,7 @@ Func_0816b6ec:
 	ldr r2, [r3, #48]
 	str r2, [sp, #32]
 	ldr r5, [r3, #100]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r3, r9
 	cmp r3, #0
 	bne .L_0816b748
@@ -68,12 +68,12 @@ Func_0816b6ec:
 	bne .L_0816b774
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0816b77c
 .L_0816b774:
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0816b77c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -111,7 +111,7 @@ Func_0816b6ec:
 .L_0816b7c0:
 	.4byte 0x00001010
 .L_0816b7c4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816b7c8:
 	mov r3, r11
 	ldr r2, [r3, #20]
@@ -681,7 +681,7 @@ Func_0816b6ec:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816bc6c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #84
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -703,4 +703,4 @@ Func_0816b6ec:
 .L_0816bc68:
 	.4byte gCameraSceneParameters
 .L_0816bc6c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

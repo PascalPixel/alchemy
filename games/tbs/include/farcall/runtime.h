@@ -87,10 +87,10 @@ s32 Sound_LoadPresetParametersFar(s32 preset);
 /// Starts sending `transferValue` bytes from `source` to the partner in 20-byte
 /// blocks; the size must be a multiple of 20. Returns -1 when a send is
 /// running.
-s32 SerialRuntime_BeginSendFar(void *source, s32 transferValue);
+s32 SerialRuntime_StartSendFar(void *source, s32 transferValue);
 /// Starts storing the partner's blocks in `destination`, which needs room for
 /// the whole send. Returns -1 when a receive is running.
-s32 SerialRuntime_BeginReceiveFar(void *destination);
+s32 SerialRuntime_StartReceiveFar(void *destination);
 /// Returns bit 0 while a send runs and bit 1 while a receive runs.
 s32 SerialRuntime_GetActiveTransfersFar(void);
 /// Stores `mask` as the flags of the task running `callback`; bit 0 keeps it

@@ -25,7 +25,7 @@ void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
-void DisplayScroll_InitObjectTable(void) {
+void DisplayScroll_InitializeObjectTable(void) {
   /* FAKEMATCH: retain the existing pointer-cell and postincrement word
      stores; direct typed stores in f4f9d28 change the 376-byte body to 368. */
   volatile u32 fill;

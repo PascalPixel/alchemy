@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Star Mine (kind 452).
-	.global BattleFx_RunStarMine
+	.global BattleEffect_RunStarMine
 	.thumb_func
-BattleFx_RunStarMine:
+BattleEffect_RunStarMine:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_RunStarMine:
 	str r1, [sp, #44]
 	ldr r3, [r3, #100]
 	str r3, [sp, #36]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0817d1cc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -32,7 +32,7 @@ BattleFx_RunStarMine:
 	strh r3, [r2]
 	add r1, sp, #56
 	movs r0, #0
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r2, [sp, #44]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -333,7 +333,7 @@ BattleFx_RunStarMine:
 	mov r0, r8
 	movs r1, #63
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r5, [sp, #40]
 	mov r3, r11
 	adds r3, #10
@@ -483,7 +483,7 @@ BattleFx_RunStarMine:
 	lsls r3, r3, #12
 	movs r1, #1
 	str r2, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r2, [sp, #52]
 	movs r1, #7
 	ldrsh r0, [r2, r5]
@@ -558,7 +558,7 @@ BattleFx_RunStarMine:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_0817d618
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -584,7 +584,7 @@ BattleFx_RunStarMine:
 .L_0817d608:
 	.4byte IwramCopyWords
 .L_0817d60c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817d610:
 	.4byte Data_02010018
 .L_0817d614:
@@ -623,7 +623,7 @@ BattleFx_RunStarMine:
 	adds r0, r5, #0
 	movs r1, #60
 	lsls r2, r2, #5
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -660,7 +660,7 @@ BattleFx_RunStarMine:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -669,4 +669,4 @@ BattleFx_RunStarMine:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817d6c0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

@@ -7,8 +7,8 @@
 
 /// Stops DMA 0, then arms it to copy one palette line from the battle effect
 /// work into the BG palette at each horizontal blank.
-// The Broken Seal's BattleFx_ArmPaletteHBlankDma.
-void BattleFx_ArmPaletteHBlankDma(void) {
+// The Broken Seal's BattleEffect_ArmPaletteHBlankDma.
+void BattleEffect_ArmPaletteHBlankDma(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;
   u32 palette;
@@ -30,7 +30,7 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 }
 
 /// The particle streams in mode 0.
-DEFINE_EFFECT_KIND(BattleFx_RunMeteor, BattleFx_RunParticleStreams, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunMeteor, BattleEffect_RunParticleStreams, 0)
 
 /// The particle streams in mode 1.
-DEFINE_EFFECT_KIND(BattleFx_RunOuterSpace, BattleFx_RunParticleStreams, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams, 1)

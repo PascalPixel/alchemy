@@ -184,7 +184,7 @@ Encounter_SelectEnemyGroup:
 	mov r2, r9
 	ldrh r5, [r2, r3]
 	ldr r0, [sp, #4]
-	bl BattleFx_SelectBattleCue
+	bl BattleEffect_SelectBattleCue
 	adds r0, r5, #0
 .L_080ca146:
 	add sp, #8

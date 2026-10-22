@@ -1,5 +1,5 @@
 // Near miss, differ 8 of 91 (2026-10-19; was 24), The Broken Seal's
-// BattleFx_RunFlashingCallbackSequence: Cloak. ⚓️ takes the caster from the
+// BattleEffect_RunFlashingCallbackSequence: Cloak. ⚓️ takes the caster from the
 // effect scene, sets its mode directly and schedules the ground check at
 // 0x480 where ☀️ uses 0xc80.
 // The callback order through a local set before the stores after the loop
@@ -40,7 +40,7 @@ struct CloakEvent {
 };
 
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void FieldFx_CheckCloakTile(void);
+void FieldEffect_CheckCloakTile(void);
 void Func_080debd8(void);
 void WaitFrames(s32 frames);
 
@@ -49,7 +49,7 @@ void WaitFrames(s32 frames);
 // The caster's palette while it flickers.
 #define CLOAK_FLICKER_PALETTE 7
 
-// What the ground check (FieldFx_CheckCloakTile) requests when the caster does not
+// What the ground check (FieldEffect_CheckCloakTile) requests when the caster does not
 // stand on a tile it can hide on.
 #define CLOAK_END 0x2092
 
@@ -87,7 +87,7 @@ void Func_080decb8(void) {
   sprite->blend = 2;
   entry->param = 0;
   sprite->dirty = 1;
-  check = FieldFx_CheckCloakTile;
+  check = FieldEffect_CheckCloakTile;
   Scheduler_AddOrUpdateCallback(check, order);
   gPartyState.cloaked = 1;
   check();

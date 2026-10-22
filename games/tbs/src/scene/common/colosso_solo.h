@@ -96,7 +96,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Party_AddActiveOwner(id);
   gGameState.selectedActor = id;
   Engine_CameraFollowActor(id, 0);
-  unit = UnitGet(id);
+  unit = Unit_Get(id);
   unit->hp = unit->maxHp;
   unit->pp = unit->maxPp;
   unit->poison = 0;
@@ -156,7 +156,7 @@ static void Colosso_TakePlaceForMatch(void) {
   s32 *transition;
   s32 flagBase;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
   for (actorId = 8; actorId <= 66; actorId++) {
     struct FieldActor *actor = Object_GetById(actorId);
@@ -230,7 +230,7 @@ void Colosso_AskDoneCheering(s32 id) {
   Object_GetById(id);
   slot = gGameState.selectedActor;
   obj = Object_GetById(slot);
-  Engine_EventBegin();
+  Engine_EventStart();
   msg = MsgColossoCheering;
   Engine_EventSetMessage(msg);
   Engine_EventOpenMessage(id, 0);
@@ -279,7 +279,7 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   actor = Object_GetById(actorId);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (GetPartyMemberCount() <= 1) {
     Engine_EventSetMessage(MsgColossoIsaacDidGetGoodLook);
@@ -323,7 +323,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   s32 choice;
 
   Field_EndBusyAndReveal();
-  UiWork_PushValueSlot(warrior, MSG_ARG_NUMBER);
+  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -360,7 +360,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 scene;
   s32 message;
 
-  UiWork_PushValueSlot(warrior, MSG_ARG_NUMBER);
+  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -451,7 +451,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   Event_ShowMessage(guide, 0);
   return;
 L_main:
-  UiWork_PushValueSlot(friendId, MSG_ARG_ACTOR);
+  UiWork_PushValueSlot(friendId, MESSAGE_ARGUMENT_ACTOR);
   Engine_EventSetMessage(MsgColossoIsaacWillCheerForWay);
   Event_ShowMessage(guide, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);

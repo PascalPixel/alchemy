@@ -21,7 +21,7 @@ void EventRuntime_ShowMessageAndWait(s32 actor, s32 flags);
 void EventRuntime_UpdateWaitMode(void);
 void EventRuntime_Wait(s32 frames);
 void EventRuntime_PrepareCurrentObject(void);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_End(void);
 void EventRuntime_EmptyHook(void);
 void EventRuntime_StartScreen(void);

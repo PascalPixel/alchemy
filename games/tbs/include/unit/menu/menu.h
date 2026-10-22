@@ -189,8 +189,8 @@ s32 DjinnMenu_ShowCurrentList(void);
 s32 CharacterSelector_RunRearrange(void);
 s32 PsynergyMenu_SelectOwner(void);
 s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction);
-void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
-                                       s32 unused3);
+void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
+                                             s32 unused2, s32 unused3);
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
 s32 CharacterMenu_SelectCommand(void);
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
@@ -231,7 +231,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns);
 void Menu_PlaceEntryObjectInGrid(struct RenderOutput *icon, s32 index,
                                  s32 originX, s32 originY, s32 columns);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
-void ItemMenu_PosCategory(void);
+void ItemMenu_PositionCategory(void);
 s32 Menu_CreateEightEntryObjects(struct UiWindow *window);
 void ItemMenu_ApplyFlags(const u8 *flags);
 void ItemMenu_ResetCategory(void);

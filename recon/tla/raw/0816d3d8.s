@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Stone Justice (kind 100).
-	.global BattleFx_RunStoneJustice
+	.global BattleEffect_RunStoneJustice
 	.thumb_func
-BattleFx_RunStoneJustice:
+BattleEffect_RunStoneJustice:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunStoneJustice:
 	movs r0, #1
 	str r2, [sp, #40]
 	mov r11, r1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816d438
 	movs r2, #128
 	lsls r2, r2, #19
@@ -38,7 +38,7 @@ BattleFx_RunStoneJustice:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r5, [r5, #104]
 	movs r2, #239
 	lsls r2, r2, #7
@@ -294,7 +294,7 @@ BattleFx_RunStoneJustice:
 	movs r2, #0
 	adds r0, r6, #0
 	movs r1, #60
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #20]
 	ldr r2, [r6, #8]
 	adds r3, r3, r2
@@ -358,7 +358,7 @@ BattleFx_RunStoneJustice:
 	movs r1, #1
 	lsls r3, r3, #11
 	str r2, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	movs r3, #4
 	movs r1, #36
 	ldrsh r0, [r5, r1]
@@ -400,7 +400,7 @@ BattleFx_RunStoneJustice:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -409,7 +409,7 @@ BattleFx_RunStoneJustice:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816d710:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816d714:
 	.4byte gData_0819749e
 .L_0816d718:

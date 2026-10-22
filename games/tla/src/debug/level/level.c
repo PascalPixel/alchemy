@@ -5,8 +5,8 @@
 
 extern const u8 gData_02000f10[];
 extern const u8 gData_02000ebc[];
-u8 *UnitGet(s32 owner);
-void UnitCalc(s32 owner);
+u8 *Unit_Get(s32 owner);
+void Unit_Calculate(s32 owner);
 void Func_02000724(void);
 void Func_020006e4(void);
 void Func_020006ec(void);
@@ -22,6 +22,6 @@ const u8 *Func_02000138(void) {
 }
 
 void Func_02000160(s32 owner, s32 delta) {
-  Unit_LevelUpTo(owner, UnitGet(owner)[15] + delta);
-  UnitCalc(owner);
+  Unit_LevelUpTo(owner, Unit_Get(owner)[15] + delta);
+  Unit_Calculate(owner);
 }

@@ -12,7 +12,7 @@ BattleParty_ListActorIdsFar:
 	.global GetBattleObjectSlotFar
 	.thumb_func
 GetBattleObjectSlotFar:
-	overlay_veneer BattleObjGet
+	overlay_veneer BattleObject_Get
 	.global Battle_RunEncounterFar
 	.thumb_func
 Battle_RunEncounterFar:
@@ -52,7 +52,7 @@ BattlePres_SetActorModesFar:
 	.global Func_081180e8
 	.thumb_func
 Func_081180e8:
-	overlay_veneer BattleEventRuntime_BeginPhase
+	overlay_veneer BattleEventRuntime_StartPhase
 	.global ColorBuffer_ScaleFar
 	.thumb_func
 ColorBuffer_ScaleFar:

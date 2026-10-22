@@ -42,10 +42,10 @@ Vector_AddPolarOffsetFar:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -295,7 +295,7 @@ FieldEvent_WaitFrames:
 	.global Func_020031e0
 	.thumb_func
 Func_020031e0:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_020031e8
 	.thumb_func
 Func_020031e8:
@@ -311,7 +311,7 @@ Func_020031f8:
 	.global Func_02003200
 	.thumb_func
 Func_02003200:
-	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -361,7 +361,7 @@ Func_02003248:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Func_02003250
@@ -373,19 +373,19 @@ Func_02003250:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_InitializeBuffersFar
 	.else
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.endif
 	.endif
 	.global Func_02003258
 	.thumb_func
 Func_02003258:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
-	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
@@ -512,10 +512,10 @@ Func_020032a8:
 	.thumb_func
 Func_020032b0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectEffect_BeginContextEffect25Far
+	overlay_veneer ObjectEffect_StartContextEffect25Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectEffect_BeginContextEffect25Far
+	overlay_veneer ObjectEffect_StartContextEffect25Far
 	.else
 	overlay_veneer Func_080c8918
 	.endif

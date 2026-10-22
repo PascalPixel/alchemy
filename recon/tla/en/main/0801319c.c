@@ -1,5 +1,5 @@
 // Draft, differ 8 of 88: The Broken Seal's System_Initialize with ⚓️'s
-// changes: the gamepak interrupt halts (IwramHalt), the OAM limit is set to
+// changes: the gamepak interrupt halts (Iwram_Halt), the OAM limit is set to
 // 256 with no sprites used, and gDebugTextEnabled is gData_03001110. All
 // eight rows are four one-slot load swaps: the native schedules each load
 // (the DMA0 control read, its reread, the WAITCNT and KEYCNT addresses) one
@@ -26,7 +26,7 @@ void Func_0801399c(void);
 void Audio_InitializeRuntimeDefaultsFar(void);
 void Game_RunFar(s32);
 void WaitFrames(s32 frames);
-void IwramHalt(void);
+void Iwram_Halt(void);
 
 void System_Initialize(void) {
   {
@@ -49,7 +49,7 @@ void System_Initialize(void) {
   Func_08014b70();
   REG_DISPCNT = 0x140;
   Runtime_SetIrqHandler(0, 1, Func_0801399c);
-  Runtime_SetIrqHandler(13, 1, IwramHalt);
+  Runtime_SetIrqHandler(13, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   Audio_InitializeRuntimeDefaultsFar();
   VramCache_Reset();

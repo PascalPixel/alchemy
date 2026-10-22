@@ -65,7 +65,7 @@ s32 Field_CountRequests(void) {
 /// Returns the collision code of the map cell 16 pixels ahead of the party
 /// leader (a world map block on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and FieldFx_FindMatchingEvent (items.c),
+/// Called by Field_FindItemEvent and FieldEffect_FindMatchingEvent (items.c),
 /// which match an item or Psynergy event to the tile the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
@@ -205,7 +205,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   s16 previousHp[8];
   struct MapCell *tile;
 #ifdef UBFIX
-  // The defined form reads the struct BattleUnit UnitGetFar returns, rather
+  // The defined form reads the struct BattleUnit Unit_GetFar returns, rather
   // than through the unrelated struct StepOwner; it compiles to the same size
   // with a different register allocation (see the tag above).
   struct BattleUnit *unitVitals;
@@ -229,7 +229,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // Note each character's HP, to see who falls.
   partyCount = Party_CountActiveOwnersFar();
   for (i = 0; i < partyCount; i++)
-    previousHp[i] = UnitGetFar(gGameState.activeOwners[i])->hp;
+    previousHp[i] = Unit_GetFar(gGameState.activeOwners[i])->hp;
 
   if (work->mode == MODE_WORLD_MAP) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
@@ -328,11 +328,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
-      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                  ATTACHED_EFFECT_ATTACH);
+      FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ATTACH);
     if (gGameState.hazardSteps == gGameState.hazardLimit)
-      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                  ATTACHED_EFFECT_REMOVE);
+      FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_REMOVE);
   }
   if (gGameState.hazardSteps >= gGameState.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
@@ -350,13 +350,13 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     work->fallenCount = 0;
     work->survivorCount = 0;
     leader->velocityY = 0x40000;
-    FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                ATTACHED_EFFECT_ONCE);
+    FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
-      unitVitals = UnitGetFar(gGameState.activeOwners[i]);
+      unitVitals = Unit_GetFar(gGameState.activeOwners[i]);
 #else
-      unitVitals = (struct StepOwner *)UnitGetFar(gGameState.activeOwners[i]);
+      unitVitals = (struct StepOwner *)Unit_GetFar(gGameState.activeOwners[i]);
 #endif
       if (unitVitals->hp > 0) {
         work->survivorCount++;
@@ -414,7 +414,7 @@ void Party_AddHp(s32 amount, s32 percent) {
 
   partyCount = Party_CountActiveOwnersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    unit = UnitGetFar(gGameState.activeOwners[partyIndex]);
+    unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
     if (!percent) {
       hpDelta = amount;
     } else {
@@ -443,7 +443,7 @@ s32 Party_ApplyPoisonDamage(void) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    struct BattleUnit *unit = UnitGetFar(gGameState.activeOwners[partyIndex]);
+    struct BattleUnit *unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
     s32 hpDelta;
 
     switch (unit->poison) {
@@ -488,7 +488,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// slot's block when it has one; with that slot free, the
 /// world map takes a new, uncleared block there, kept until the scene ends,
 /// whose step is then leftover memory.
-void WorldMap_BeginEvent(void) {
+void WorldMap_StartEvent(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *transition;
 
@@ -502,11 +502,11 @@ void WorldMap_BeginEvent(void) {
       transition->step = 0;
     }
     work->camera->movementState = 1;
-    WorldMap_BeginStillViewFar();
+    WorldMap_StartStillViewFar();
   }
 }
 
-/// Ends what WorldMap_BeginEvent started: on the world map, reloads
+/// Ends what WorldMap_StartEvent started: on the world map, reloads
 /// the area's graphics and sets the camera's movement state back to 0.
 void WorldMap_EndEvent(void) {
   struct FieldWork *work;

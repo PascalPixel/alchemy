@@ -9,11 +9,11 @@
 #define JUDGMENT_SHEET_BYTES 0x2710
 
 /// Judgment's work block, laid over struct BattleEffectWork from its start.
-/// It is the HEAP_SLOT_BATTLE_EFFECT block BattleFx_RunSceneEffect lends the
-/// scene and frees after it; only BattleFx_RunJudgment reads it this way. The
-/// sweep's 120x120 wave picture (14,400 bytes from the block's start) later
-/// overwrites sheet and the dimmed copies up to most of copy 5, which only the
-/// gathering reads.
+/// It is the HEAP_SLOT_BATTLE_EFFECT block BattleEffect_RunSceneEffect lends
+/// the scene and frees after it; only BattleEffect_RunJudgment reads it this
+/// way. The sweep's 120x120 wave picture (14,400 bytes from the block's start)
+/// later overwrites sheet and the dimmed copies up to most of copy 5, which
+/// only the gathering reads.
 struct JudgmentWork {
   /// The gathering's pictures: the pink burst, the burst's quarters and the
   /// tornado sheet.
@@ -62,14 +62,14 @@ struct JudgmentWork {
 /// beach, and to a forest swept by an explosion front, before brightening back
 /// into the battle. The folder README describes both parts.
 ///
-/// Reached through BattleFx_RunSceneEffect, whose sheet slot holds the mote
+/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
 /// sheet here. The scene projects with gProjection.centerY at 240 until
-/// BattleFx_SetupBlendedDisplay, on frame 280 of the sweep, puts it back at
+/// BattleEffect_SetupBlendedDisplay, on frame 280 of the sweep, puts it back at
 /// 120, and holds BG1's scroll from the battle camera until that frame too.
 /// It releases its formation and then its debris objects (16 each), and
 /// before it returns removes its transfer callback and closes the canvas
 /// layer.
-void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 anchor[3];
   struct EffectPosition projectedPosition;
@@ -114,8 +114,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP);
-  BattleFx_ConfigureEffectDisplay();
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
+  BattleEffect_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the first wipe fills the canvas with,
   // are black.
   PLTT_BACKDROP = 0;
@@ -124,12 +124,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
                       COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   // Setup: wipe the battle away, change the backdrop behind it, wipe back.
-  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleFx_SelectLivingTargets(work->effect);
-  BattleFx_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
+  BattleEffect_SelectLivingTargets(work->effect);
+  BattleEffect_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
@@ -137,7 +137,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   // The scene owns BG1's scroll until frame 280 of the sweep.
   ctrl->active = 1;
   gBgScroll[1].x = 0;
-  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(16);
   // The formation starts 64 pixels back and comes forward 8 pixels a frame
   // (16.16); the depth range is kept only by the dead spark stage.
@@ -272,9 +272,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // 81 + i / 4, mote i spins about the formation's centre on its own axes
     // while its radius shrinks by 2 a frame to nothing, and nearer motes are
     // drawn larger. The radius is a plain integer, at most 87, below the near
-    // depth of the projection BattleFx_BeginCanvasLayer sets (96 in the same
-    // units), so Render_ProjectPoint does not project the rotated point: its
-    // x, its y less 16 and its depth, which grows towards the viewer, are
+    // depth of the projection BattleEffect_StartCanvasLayer sets (96 in the
+    // same units), so Render_ProjectPoint does not project the rotated point:
+    // its x, its y less 16 and its depth, which grows towards the viewer, are
     // used as pixels.
     anchor[2] = 0;
     anchor[1] = 0;
@@ -337,12 +337,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObjects_SelectAnimationFar(work->objects[i], i + 16);
+        AnimationObject_SelectAnimationFar(work->objects[i], i + 16);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObjects_SelectAnimationFar(work->objects[i], i + 32);
+        AnimationObject_SelectAnimationFar(work->objects[i], i + 32);
       }
     }
 
@@ -422,8 +422,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       work->transferValue = 75;
       if (n <= 6) {
         // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
-        s32 cell =
-            n * MOTE_SET_BYTES + gBattleFx_MoteCells[7] + JUDGMENT_SHEET_BYTES;
+        s32 cell = n * MOTE_SET_BYTES + gBattleEffect_MoteCells[7] +
+                   JUDGMENT_SHEET_BYTES;
         /* FAKEMATCH(temporary): high holds the mote's height 8, so high / 2
          * is hoisted into fp; as the literals 4, 8 and 16, 331 of 2455
          * instructions differ in tbs-en. */
@@ -458,7 +458,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     work->objects[i] = obj;
     if (obj != 0) {
       obj->flags = 0;
-      AnimationObjects_SelectAnimationFar(obj, (i % 3));
+      AnimationObject_SelectAnimationFar(obj, (i % 3));
       work->objects[i]->image.priority = 0;
     }
   }
@@ -630,7 +630,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       // Back to the battle: blend the canvas over it again, fill the canvas
       // with colour 1 and restart the debris off the right of the screen,
       // where the explosion front now scrolls back from.
-      BattleFx_SetupBlendedDisplay();
+      BattleEffect_SetupBlendedDisplay();
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x01010101;
@@ -762,8 +762,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         s32 angle = i << 8;
         s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
         s32 y = (Trig_Cos(angle) * r2) >> 17;
-        draw[0](canvas, ramp + gBattleFx_MoteCells[size - 1], x + 60, y + 50,
-                size, size * 2);
+        draw[0](canvas, ramp + gBattleEffect_MoteCells[size - 1], x + 60,
+                y + 50, size, size * 2);
       }
     }
 

@@ -12,14 +12,14 @@
 #define SCALE_ONE 0x10000
 
 /// BattleObj.effect as a battle object is made: the sprite
-/// BattleObj_SpawnObjectsForList adds as a layer of every one-part body
+/// BattleObject_SpawnObjectsForList adds as a layer of every one-part body
 /// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
 /// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its
 /// bottom edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
 /// XXX: likely the unit's shadow on the ground rather than an effect, because
 /// of that picture, because adding it also clears the sprite's own shadow
 /// (AnimationObject.flags bit 0), and because
-/// BattleObj_UpdateSpritePriorities changes the layer's priority while the
+/// BattleObject_UpdateSpritePriorities changes the layer's priority while the
 /// unit is off the ground.
 #define BATTLE_OBJ_NO_EFFECT 0x1fe
 
@@ -28,10 +28,10 @@
 /// already holds; a party member's battle sprite), palette, size and weapon
 /// sprite, turned to face the centre, and starts its motion script
 /// (gBattlePresentation_ActorObjectScript). Called by
-/// BattleUnit_RefreshPlacement and by BattleTargetExec for an enemy that joins.
-/// Fills in actor, creates a field object for it and, for an enemy, claims its
-/// sprite slots.
-void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
+/// BattleUnit_RefreshPlacement and by BattleTarget_Execute for an enemy that
+/// joins. Fills in actor, creates a field object for it and, for an enemy,
+/// claims its sprite slots.
+void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;
@@ -47,10 +47,10 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   fixedX = x * 65536;
   fixedZ = y * 65536;
   // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
-  // FieldObject_Create makes no sprite; BattleObj_SpawnObjectsForList
+  // FieldObject_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
   object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = SummonSlot_RegisterActorSprites(unitId);
 
@@ -299,7 +299,7 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 /// enemy (27 for more than four), so it sits only roughly centred. The
 /// Kraken and the Fusion Dragon would stand nearer, 50 pixels left, past the
 /// first place; each is fought alone (formatn.tsv rows 213 and 347), so
-/// neither does. Called by BattleUnit_RefreshPlacement and EnemyUpdate;
+/// neither does. Called by BattleUnit_RefreshPlacement and Enemy_Update;
 /// writes only xPositions and zPositions, in pixels.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
@@ -318,7 +318,7 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 
       spacing = 25;
       if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-        actor = UnitGetFar(actorIds[index]);
+        actor = Unit_GetFar(actorIds[index]);
         spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
         // The first place keeps -80 whatever its class.
         if (actor->classId == ENEMY_FUSION_DRAGON ||
@@ -331,7 +331,7 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
     zPositions[index] = z;
     spacing = 25;
     if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-      struct BattleUnit *actor = UnitGetFar(actorIds[index]);
+      struct BattleUnit *actor = Unit_GetFar(actorIds[index]);
 
       spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
     }
@@ -340,14 +340,14 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 }
 
 /// Returns the id of the first free enemy unit, or -1 when all six are taken.
-/// Called by BattleTargetExec when an enemy calls for help.
-s32 EnemySlotGet(void) {
+/// Called by BattleTarget_Execute when an enemy calls for help.
+s32 Enemy_GetFreeSlot(void) {
   s32 enemySlot;
   s32 unitId;
 
   for (enemySlot = 0; enemySlot < ENEMY_BATTLE_SIZE; enemySlot++) {
     unitId = enemySlot + FIRST_ENEMY_UNIT;
-    if (UnitGetFar(unitId)->side == BATTLE_UNIT_ABSENT)
+    if (Unit_GetFar(unitId)->side == BATTLE_UNIT_ABSENT)
       break;
   }
   if (enemySlot == ENEMY_BATTLE_SIZE)
@@ -356,12 +356,12 @@ s32 EnemySlotGet(void) {
 }
 
 /// Lays the enemies out again and moves each one's object anchor to its new
-/// place. Called by BattleTargetExec after an enemy joins. Writes the
+/// place. Called by BattleTarget_Execute after an enemy joins. Writes the
 /// anchorX and anchorZ of every enemy's battle object.
 #ifdef UBFIX
-void EnemyUpdate(void) {
+void Enemy_Update(void) {
 #else
-s32 EnemyUpdate(void) {
+s32 Enemy_Update(void) {
 #endif
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[14];
@@ -380,7 +380,7 @@ s32 EnemyUpdate(void) {
     s32 unitId = battle->enemyIds[enemyIndex];
 
     if (unitId != BATTLE_UNIT_REMOVED) {
-      struct BattleObj *object = BattleObjGet(unitId);
+      struct BattleObj *object = BattleObject_Get(unitId);
 
       object->anchorX = xPositions[enemyIndex] * 65536;
       object->anchorZ = zPositions[enemyIndex] * 65536;
@@ -425,9 +425,9 @@ void BattleUnit_RefreshPlacement(void) {
     s32 unitId = unitIds[unitIndex];
 
     battle->placement[unitId] = partyPlace;
-    BattleObjMake(BattleObjGet(unitId), unitId,
-                  gBattlePlacement_StepPairs[partyPlace * 2],
-                  gBattlePlacement_StepPairs[partyPlace * 2 + 1]);
+    BattleObject_Make(BattleObject_Get(unitId), unitId,
+                      gBattlePlacement_StepPairs[partyPlace * 2],
+                      gBattlePlacement_StepPairs[partyPlace * 2 + 1]);
   }
 
   // The enemies, laid out by size.
@@ -441,13 +441,13 @@ void BattleUnit_RefreshPlacement(void) {
     s32 unitId = battle->enemyIds[unitIndex];
 
     if (unitId != BATTLE_UNIT_REMOVED)
-      BattleObjMake(BattleObjGet(unitId), unitId, xPositions[enemyPlace],
-                    zPositions[enemyPlace]);
+      BattleObject_Make(BattleObject_Get(unitId), unitId,
+                        xPositions[enemyPlace], zPositions[enemyPlace]);
   }
 }
 
 /// Returns 1 if the unit at place is in list. Called by
-/// BattleObj_SpawnObjectsForList to find the objects to release.
+/// BattleObject_SpawnObjectsForList to find the objects to release.
 /// @param list unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
 /// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {

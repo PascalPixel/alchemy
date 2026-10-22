@@ -224,7 +224,7 @@ Func_080fbe6c:
 	adds r3, #22
 	add r3, r9
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #16
 	adds r1, r7, #0
 	movs r3, #16
@@ -237,7 +237,7 @@ Func_080fbe6c:
 	adds r3, #255
 	add r3, r9
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r1, r7, #0
 	movs r2, #80
 	movs r3, #16

@@ -254,8 +254,8 @@ const struct ScenePlacement *MercuryLighthouseEntrance_GetPlacements(void) {
 /// "He who honors the heart of the goddess shall stand at the center of
 /// all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_EventStart();
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgMercuryWhoHonorsHeart, 1);
   Engine_EventEnd();
 }
@@ -308,7 +308,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
   leaderRow = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
   if (leaderColumn == 12 && leaderRow == 32) {
-    Engine_EventBegin();
+    Engine_EventStart();
     // Fade the scene before releasing fifteen sparks above the pool.
     ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
     Engine_ColorBufferInterpolate(60);
@@ -333,10 +333,10 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       speedRoll = ((u32)(Engine_RandomNext() << 2) >> 16);
       velocityY =
           Math_Divide((((speedRoll << 4) - speedRoll) << 16) + 0x3c0000, 100);
-      FieldFx_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
-                    EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
-                        1,
-                    effectData);
+      FieldEffect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
+                        EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
+                            EFFECT_USE_SCRIPT | 1,
+                        effectData);
       Engine_EventWait(4);
       sparkIndex++;
     } while ((u32)sparkIndex <= 14);
@@ -397,7 +397,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 /// begins; afterwards the party comes back at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_LIZARD_MAN, 2);
   Engine_EventWait(20);
   gEventWork->startTransition =
@@ -439,7 +439,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gGameState.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
-  FieldFx_StartFadeOverlay(0);
+  FieldEffect_StartFadeOverlay(0);
   if (GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_SCENE);
@@ -494,7 +494,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // The first time, the leader drops from 130 pixels up and lands in a
     // burst; until Ply has been used, the inscription's words appear.
     GameFlag_Set(FLAG_DROP_FROM_ABOVE_SEEN);
-    Engine_EventBegin();
+    Engine_EventStart();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
@@ -516,13 +516,14 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
       velocity[0] -= velocity[0] / 4;
       velocity[2] -= velocity[2] / 2;
-      FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0],
-                    velocity[1], velocity[2], EFFECT_USE_PALETTE | 1, &options);
+      FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                        velocity[0], velocity[1], velocity[2],
+                        EFFECT_USE_PALETTE | 1, &options);
     }
     Engine_AudioPlayCue(SE_188);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
@@ -535,7 +536,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_EventWaitForScreen();
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
       Engine_EventWait(30);
       UiText_ShowCenteredMessage(MsgMercuryWhoHonorsHeart, 0, 0);
       ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
@@ -550,12 +551,12 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // All four arrivals play the same sound.
     // Fall through.
   case MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_FOUNTAINS:
-    FieldFx_SetQueuedSoundAndPlay(SE_170);
+    FieldEffect_SetQueuedSoundAndPlay(SE_170);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_MapRedraw();
     Engine_TaskWait(1);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -590,7 +591,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   struct FieldActor *mia;
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   actor = Object_GetById(ACTOR_FIRST_EAST_STATUE);
   actor->scaleX = -Q16_ONE;
   actor = Object_GetById(ACTOR_FIRST_EAST_STATUE + 1);
@@ -673,7 +674,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
 
   if (GameFlag_IsSet(FLAG_MIA_GOES_IN_SEEN) == 0) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
-    Engine_EventBegin();
+    Engine_EventStart();
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
     actor->scaleX = -Q16_ONE;
     actor = Object_GetById(ACTOR_FIRST_EAST_STATUE + 1);
@@ -688,7 +689,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Engine_EventWaitForScreen();
     Engine_EventWait(60);
     Actor_FaceActor(MIA, ACTOR_PARTY_LEADER, 0);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(30);
     Actor_WalkTo(MIA, 136, 72);
     Engine_EventWait(40);
@@ -717,7 +718,7 @@ static void MercuryLighthouse_SpawnRipple(struct FieldActor *source) {
     effect->terrainId = 1;
     effect->priorityFlags = 2;
     if (sprite != 0) {
-      AnimationObjects_SelectAnimation(sprite, 2);
+      AnimationObject_SelectAnimation(sprite, 2);
       sprite->flags = 0;
       sprite->image.priority = 3;
     }
@@ -727,18 +728,18 @@ static void MercuryLighthouse_SpawnRipple(struct FieldActor *source) {
 #include "common/mercury_lighthouse_pillar.h"
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
@@ -989,7 +990,7 @@ s32 gMercuryLighthouseEntrance_SparkBurstScript[] = {
     SC_WAIT(6),
     SC_LOOP(4, SC_TOP),
     SC_WAIT(1),
-    SC_POS(0, 0, 0),
+    SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_FREE,
 };

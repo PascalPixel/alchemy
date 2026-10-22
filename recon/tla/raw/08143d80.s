@@ -13,7 +13,7 @@ Func_08143d80:
 	adds r3, #176
 	ldr r6, [r3]
 	mov r8, r2
-	bl BattleFx_ClearActorTimers
+	bl BattleEffect_ClearActorTimers
 	movs r3, #206
 	lsls r3, r3, #3
 	adds r5, r5, r3

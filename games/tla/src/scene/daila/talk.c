@@ -7,7 +7,7 @@ void Daila_TalkBeenBefore(void) {
   s32 msg;
 
   if (Engine_GameFlagIsSet(0x843) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     msg = (s32)MsgDailaBeenBefore;
     Engine_EventSetMessage(msg);
@@ -31,7 +31,7 @@ void Daila_TalkBeenBefore(void) {
 void Daila_TalkIndraMoved(void) {
   s32 msg;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   msg = (s32)MsgDailaIndraMoved;
   Engine_EventSetMessage(msg);
@@ -50,7 +50,7 @@ void Daila_TalkIndraMoved(void) {
 void Daila_TalkBoat(void) {
   s32 msg;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   msg = (s32)MsgDailaWantBoat;
   Engine_EventSetMessage(msg);
@@ -76,7 +76,7 @@ void Func_02000288(s32 keeper) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Engine_ShopOpen(3, keeper);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     Engine_EventSetMessage((s32)MsgDailaTaviRikiWorry);
     Engine_EventShowMessage(keeper, 0);

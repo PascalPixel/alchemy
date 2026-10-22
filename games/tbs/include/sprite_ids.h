@@ -108,7 +108,7 @@ enum SpriteId {
   SPRITE_LOG_NORTH_SOUTH = 0xcd,
   /// ★ Named from what the player sees: a log lying west to east (its render)
   SPRITE_LOG_WEST_EAST = 0xcf,
-  /// The effect FieldFx_ConfigureLinkedObject attaches to an actor or shows
+  /// The effect FieldEffect_ConfigureLinkedObject attaches to an actor or shows
   /// once, as the leader flinches on hazard ground.
   SPRITE_ATTACHED_EFFECT = 209,
   /// ★ Named from the game: "chest of valuables" (MsgValeSChestValuables)

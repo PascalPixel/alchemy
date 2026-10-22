@@ -1,7 +1,7 @@
 // Draft: listing 1235 instructions, draft 1251, differ 882. No close ☀️ twin
-// (call order BattleFx_RunTitanBlade 0.459): ⚓️'s own effect on ☀️'s frame,
+// (call order BattleEffect_RunTitanBlade 0.459): ⚓️'s own effect on ☀️'s frame,
 // its card and its pictures drawn as textured quads by ⚓️'s model kernels, as
-// in Triple Chomp (BattleFx_RunTripleChomp) and Legend (BattleFx_RunLegend). The native frame
+// in Triple Chomp (BattleEffect_RunTripleChomp) and Legend (BattleEffect_RunLegend). The native frame
 // (216) holds effect at sp+84, work 80, canvas 76, frame 72, the blitter 64,
 // graphics 60, the card's scale 56, the card's position's address 52, the hit's
 // speed 48, the texture's address 32, the member's actor offset 28, the
@@ -31,7 +31,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -108,8 +108,8 @@ extern s32 Data_081991c0[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_LoadBlitter(s32 slot, s32 packed);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Audio_PlayCue(s32 cue);
@@ -117,13 +117,13 @@ void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void Func_0815f0a0(s32 resource);
 void Func_081180e8(s32 phase);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
@@ -141,8 +141,8 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 // the user, spinning and growing, for 48 frames, then shows its picture.
@@ -174,9 +174,9 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up the canvas, a clipped additive blitter, the sparks, and the
   // card's picture and its extras.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                 BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   scale = 0;
@@ -205,7 +205,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   for (frame = 0; frame != Data_08199d60[mode]; frame++) {
     // Frame 0: clear the particles, give each member a strike countdown, and
@@ -300,7 +300,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
                     HI(step->x) - gData_0819781a[cell] / 2,
                     HI(step->y) - gData_08197826[cell] / 2,
                     gData_0819781a[cell], gData_08197826[cell]);
-            BattleFxKernels_IntegrateVector2(step, 64, 0);
+            BattleEffectKernels_IntegrateVector2(step, 64, 0);
             if (step->y > 96 << 16)
               step->velocityY = -step->velocityY / 2;
             step->variant += step->z;
@@ -351,7 +351,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
             Audio_PlayCue(133);
           if (i == 0)
             Func_081180e8(134);
-          BattleFx_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
+          BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
                                     0x10000, 100 + (frame - 68) * 3);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
           burst = 0;
@@ -505,7 +505,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
             step->y = 104 << 16;
             step->velocityY = -step->velocityY / 2;
           }
-          BattleFxKernels_IntegrateVector2(step, Data_08199d64[mode].damping,
+          BattleEffectKernels_IntegrateVector2(step, Data_08199d64[mode].damping,
                                            Data_08199d64[mode].gravity);
         }
         step->variant--;
@@ -517,7 +517,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

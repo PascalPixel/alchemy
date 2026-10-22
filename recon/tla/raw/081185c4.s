@@ -20,7 +20,7 @@ Func_081185c4:
 	ldr r5, .L_08118734
 	str r4, [sp, #0]
 	ldrb r0, [r5, r4]
-	bl UnitGet
+	bl Unit_Get
 	ldr r4, [sp, #0]
 	adds r6, r0, #0
 	ldrb r0, [r5, r4]

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Odyssey (kind 125).
-	.global BattleFx_RunOdyssey
+	.global BattleEffect_RunOdyssey
 	.thumb_func
-BattleFx_RunOdyssey:
+BattleEffect_RunOdyssey:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,7 +25,7 @@ BattleFx_RunOdyssey:
 	adds r7, #16
 	ldr r3, [r3, #100]
 	str r3, [sp, #48]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08190be0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -81,14 +81,14 @@ BattleFx_RunOdyssey:
 	bne .L_08190c20
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08190c28
 .L_08190c1c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08190c20:
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08190c28:
 	movs r5, #192
 	lsls r5, r5, #18
@@ -205,7 +205,7 @@ BattleFx_RunOdyssey:
 	movs r0, #1
 	ldr r1, .L_08191040
 	bl BattleBackground_LoadFar
-	bl BattleFx_BuildRepeatingTilemap
+	bl BattleEffect_BuildRepeatingTilemap
 	movs r4, #160
 	lsls r4, r4, #19
 	movs r2, #0
@@ -308,7 +308,7 @@ BattleFx_RunOdyssey:
 	ldrsh r1, [r7, r2]
 	ldr r0, [r7, #8]
 	movs r2, #7
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 .L_08190dea:
 	mov r3, r11
 	cmp r3, #90
@@ -464,12 +464,12 @@ BattleFx_RunOdyssey:
 	bne .L_08190f2c
 	movs r0, #188
 	movs r1, #27
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08190f34
 .L_08190f2c:
 	movs r0, #188
 	movs r1, #31
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08190f34:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -530,7 +530,7 @@ BattleFx_RunOdyssey:
 	adds r0, r5, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -762,12 +762,12 @@ BattleFx_RunOdyssey:
 	bne .L_08191170
 	movs r0, #188
 	movs r1, #27
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_08191178
 .L_08191170:
 	movs r0, #188
 	movs r1, #31
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_08191178:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1126,7 +1126,7 @@ BattleFx_RunOdyssey:
 	adds r0, r5, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	movs r0, #1
 	add r8, r0
 	mov r1, r8
@@ -1179,7 +1179,7 @@ BattleFx_RunOdyssey:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #136
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1214,4 +1214,4 @@ BattleFx_RunOdyssey:
 .L_08191528:
 	.4byte gBgScroll
 .L_0819152c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

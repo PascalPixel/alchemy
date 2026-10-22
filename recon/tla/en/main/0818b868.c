@@ -1,5 +1,5 @@
 // Near miss: listing 434 instructions, draft 433, differ 151. No ☀️ twin: the
-// frame and the spark blitting are ☀️'s (BattleFx_RunVenus, shape
+// frame and the spark blitting are ☀️'s (BattleEffect_RunVenus, shape
 // 0.572), the bite drawn as a textured quad through ⚓️'s model kernels is ⚓️'s
 // own. The native frame (84) holds effect at sp+60, work 56, canvas 52, frame
 // 48, the blitter pair at 40 and 44 (the second word unused), graphics 36, the
@@ -43,7 +43,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 // The sparks live in the map cell buffer's second 16 KB.
@@ -90,12 +90,12 @@ extern u8 gData_08199d94[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void WaitFrames(s32 frames);
-void BattleFx_LoadBlitter(s32 slot, s32 packed);
+void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
@@ -106,7 +106,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Render_ResetTransformState(void);
@@ -117,21 +117,21 @@ void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void MemFree(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // Triple Chomp (effect kind 426): the caster lunges 80% of the way to the
 // target, and three bites close on it at frames 0, 12 and 24. Each bite
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
 // further each bite, that grows and fades over 16 frames.
-void BattleFx_RunTripleChomp(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -150,17 +150,17 @@ void BattleFx_RunTripleChomp(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
 
   // Set up the canvas, then let the caster lunge.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
-  BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
   WaitFrames(8);
 
   // A clipped, mirrored MAX blitter for the sparks; the jaw's texture, the
   // spark sheet and the blue flame's colours.
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                 BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         BLIT_MAX));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -218,7 +218,7 @@ void BattleFx_RunTripleChomp(struct BattleEffectArgument *effect) {
           Func_081180e8(134);
         else
           Audio_PlayCue(134);
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
                                   i * 20 + 120);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 8;
@@ -256,10 +256,10 @@ void BattleFx_RunTripleChomp(struct BattleEffectArgument *effect) {
         size = (size >> 2) + 3;
         draw[0](canvas, graphics + gData_08197410[size - 1],
                 HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
-        BattleFxKernels_IntegrateVector2(spark, 62, 0);
+        BattleEffectKernels_IntegrateVector2(spark, 62, 0);
         draw[0](canvas, graphics + gData_08197410[size - 1],
                 HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
-        BattleFxKernels_IntegrateVector2(spark, 62, 0);
+        BattleEffectKernels_IntegrateVector2(spark, 62, 0);
         spark->variant--;
       }
       spark++;
@@ -274,6 +274,6 @@ void BattleFx_RunTripleChomp(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

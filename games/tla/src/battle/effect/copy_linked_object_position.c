@@ -12,7 +12,7 @@
 #include "scene.h"
 #include "object_runtime.h"
 
-s32 BattleFx_CopyLinkedObjectPosition(struct ObjectRuntime *object) {
+s32 BattleEffect_CopyLinkedObjectPosition(struct ObjectRuntime *object) {
   struct ObjectRuntime *link;
 
   link = object->linkedObject;

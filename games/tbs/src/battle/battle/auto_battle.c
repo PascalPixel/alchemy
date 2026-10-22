@@ -26,15 +26,15 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   // The party's actions. The four lookups' results are never used.
   partyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   for (index = 0; index != PARTY_BATTLE_SIZE; index++)
-    UnitGetFar(index);
+    Unit_GetFar(index);
   for (index = 0; index < partyCount; index++) {
     s32 unitId = unitIds[index];
 
-    unit = UnitGetFar(unitId);
+    unit = Unit_GetFar(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
     entry->priority = unit->agi;
-    entry->command = CMD_ATTACK;
+    entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = FIRST_ENEMY_UNIT;
     count++;
@@ -48,12 +48,12 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   for (index = 0; index < enemyCount; index++) {
     s32 unitId = unitIds[index];
 
-    unit = UnitGetFar(unitId);
+    unit = Unit_GetFar(unitId);
     entry->unitId = unitId;
     entry->priority = unit->agi >> 1;
     if (entry->priority != 0)
       entry->priority += (Random16() * unit->agi) >> 16;
-    entry->command = CMD_ATTACK;
+    entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = (Random16() * targetRange) >> 16;
     count++;
@@ -96,7 +96,7 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
   struct BattleUnit *actor;
 
   actorId = action->unitId;
-  actor = UnitGetFar(actorId);
+  actor = Unit_GetFar(actorId);
   if (actor->hp == 0)
     return -1;
 
@@ -113,20 +113,20 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
   UiWork_ClearValueNameTablesFar();
 
   switch (action->command) {
-  case CMD_FLEE:
+  case COMMAND_FLEE:
     UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
     if (BattleEscape_PlayRun(action) != 0)
       return 1;
     break;
-  case CMD_DEFEND:
+  case COMMAND_DEFEND:
     WaitFrames(45);
     BattlePresentation_ShowDefendMessage(action);
     break;
-  case CMD_ITEM:
+  case COMMAND_ITEM:
     WaitFrames(45);
     BattlePresentation_RunUnitAction(action);
     break;
-  case CMD_ATTACK:
+  case COMMAND_ATTACK:
   default: {
     struct BattlePresentationTransition *transition = gTransitionWork;
     transition->flag = 0;
@@ -134,7 +134,7 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
     transition->flag = 0;
     break;
   }
-  case CMD_PSYNERGY:
+  case COMMAND_PSYNERGY:
     BattlePresentation_RunPairedUnitTransition(action);
     break;
   }
@@ -145,7 +145,7 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
 
 /// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
 /// Called by the auto battle's action players.
-s32 BattleObj_IsValidId(u32 unitId) {
+s32 BattleObject_IsValidId(u32 unitId) {
   if (unitId <= ALLY_MAX) {
     return 0;
   }
@@ -195,8 +195,8 @@ s32 BattlePresentation_ShowDefendMessage(
   struct BattleUnit *unit;
 
   unitId = action->unitId;
-  unit = UnitGetFar(unitId);
-  if (BattleObj_IsValidId(unitId) < 0) {
+  unit = Unit_GetFar(unitId);
+  if (BattleObject_IsValidId(unitId) < 0) {
     return -1;
   }
   result = 0;
@@ -213,7 +213,7 @@ s32 BattlePresentation_ShowDefendMessage(
 /// the caster raises its hand; the target side fades out, its living units
 /// are readied alone, the Psynergy's effect (kind action->parameter) plays
 /// on them, and everyone fades back in. Returns -1 for an invalid actor or
-/// target. Called by BattlePresentation_RunAction for CMD_PSYNERGY. Writes
+/// target. Called by BattlePresentation_RunAction for COMMAND_PSYNERGY. Writes
 /// REG_BLDCNT and REG_BLDALPHA and the actors' record modes, and leaves the
 /// battle objects readied again.
 s32 BattlePresentation_RunPairedUnitTransition(
@@ -230,11 +230,11 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   livingCount = 0;
   actorId = action->unitId;
-  if (BattleObj_IsValidId(actorId) < 0) {
+  if (BattleObject_IsValidId(actorId) < 0) {
     return -1;
   }
   targetId = action->target;
-  if (BattleObj_IsValidId(targetId) < 0) {
+  if (BattleObject_IsValidId(targetId) < 0) {
     return -1;
   }
 
@@ -249,7 +249,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   WaitFrames(10);
   // A roll nothing uses, which still advances the random sequence.
   Random16();
-  actorRecord = BattleObjGet(actorId)->object;
+  actorRecord = BattleObject_Get(actorId)->object;
 
   // The caster's side, taken as the side the target is not on, and the
   // caster's POSE_CAST when its id is among that side's first sideCount ids.
@@ -280,7 +280,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
     REG_BLDALPHA = BLEND_ALPHA(16 - index, 16);
     WaitFrames(1);
   }
-  PartyStatusDrawFar(PARTY_STATUS_CLOSED);
+  PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
   // Ready only the target side's living units, and play the effect. The
   // walk counts unit ids up from the side's first until it has found as
@@ -289,20 +289,20 @@ s32 BattlePresentation_RunPairedUnitTransition(
     u32 count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + FIRST_ENEMY_UNIT;
-      if (UnitGetFar(unit)->hp > 0) {
+      if (Unit_GetFar(unit)->hp > 0) {
         visibleUnits[livingCount++] = unit;
       }
     }
   } else {
     u32 count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      if (UnitGetFar(index)->hp > 0) {
+      if (Unit_GetFar(index)->hp > 0) {
         visibleUnits[livingCount++] = index;
       }
     }
   }
   visibleUnits[livingCount] = BATTLE_UNIT_LIST_END;
-  BattleObj_SpawnObjectsForList(visibleUnits, 0);
+  BattleObject_SpawnObjectsForList(visibleUnits, 0);
 
   context.effect.kind = action->parameter;
   context.effect.actor = actorId;
@@ -315,11 +315,11 @@ s32 BattlePresentation_RunPairedUnitTransition(
   } else {
     context.effect.side = EFFECT_SIDE_ENEMIES;
   }
-  BattleFx_RunSceneEffectFar(&context.effect);
+  BattleEffect_RunSceneEffectFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
-  BattleObjPut();
+  BattleObject_Put();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
     BattlePresentation_SetActorRecordMode(index + sideStart,
@@ -353,24 +353,24 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
   }
 
   work.effect.actor = input->unitId;
-  if (BattleObj_IsValidId(work.effect.actor) < 0)
+  if (BattleObject_IsValidId(work.effect.actor) < 0)
     return -1;
 
   work.effect.actors[0] = input->target;
-  if (BattleObj_IsValidId(work.effect.actors[0]) < 0)
+  if (BattleObject_IsValidId(work.effect.actors[0]) < 0)
     return -1;
 
   // Lookups whose results are unused, and a roll that only advances the
   // random sequence.
-  UnitGetFar(work.effect.actor);
-  UnitGetFar(work.effect.actors[0]);
+  Unit_GetFar(work.effect.actor);
+  Unit_GetFar(work.effect.actors[0]);
   Random16();
   UiWork_PushValueSlotFar(work.effect.actor, VALUE_UNIT_NAME);
   UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], 13, 0);
   ObjectDispatch_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
-  BattleObjGet(work.effect.actors[0]);
+      (struct DispatchObject *)BattleObject_Get(work.effect.actor)->object, 16);
+  BattleObject_Get(work.effect.actors[0]);
 
   work.effect.count = 1;
   if ((u16)work.effect.actors[0] <= ALLY_MAX)
@@ -380,7 +380,7 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
   work.effect.prelude = 0;
 
   WaitFrames(4);
-  BattleFx_DispatchByIdRangeFar(&work.effect);
+  BattleEffect_DispatchByIdRangeFar(&work.effect);
   ObjMotRst(work.effect.actors[0]);
   ObjMotRst(work.effect.actor);
   return 0;
@@ -389,8 +389,9 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
 /// Auto battle: an attack or an item. Turns the camera to the actor's side,
 /// poses the actor and plays the effect (kind action->parameter) on the
 /// first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid actor. Called by BattlePresentation_RunAction for CMD_ATTACK,
-/// CMD_ITEM and any other command but fleeing, defending and Psynergy.
+/// for an invalid actor. Called by BattlePresentation_RunAction for
+/// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending
+/// and Psynergy.
 s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;
@@ -414,7 +415,7 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   work.effect.range = action->range;
   work.effect.actor = action->unitId;
   work.effect.firstTarget = action->target;
-  if (BattleObj_IsValidId(work.effect.actor) < 0)
+  if (BattleObject_IsValidId(work.effect.actor) < 0)
     return -1;
   if (work.effect.firstTarget > FIRST_ENEMY_UNIT - 1)
     work.effect.count =
@@ -423,10 +424,10 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
     work.effect.count =
         BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
   // The status window without its PP row (see PARTY_STATUS_SUMMONS).
-  PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
+  PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   // The actor raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
-  object = BattleObjGet(work.effect.actor)->object;
+  object = BattleObject_Get(work.effect.actor)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if ((u16)action->target <= ALLY_MAX) {
@@ -442,7 +443,7 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   // Keep each target's sprite entries' parameters for the effect.
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++) {
     struct AnimationObject *animation =
-        BattleObjGet(work.effect.actors[targetIndex])->object->records;
+        BattleObject_Get(work.effect.actors[targetIndex])->object->records;
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
@@ -455,15 +456,15 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   do {
     work.effect.kind = ELEMENT_VENUS;
     work.effect.variant = 0;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_MERCURY;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_MARS;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_JUPITER;
-    BattleFx_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
-    BattleFx_RunTableEffectFar(&work.effect);
+    BattleEffect_RunTableEffectFar(&work.effect);
     ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
@@ -492,15 +493,15 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     context[3] = 0;
   }
 
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   unit->hp -= damage;
   if (unit->hp < 0)
     unit->hp = 0;
 
   // The damage pose, and the status window with names and HP only.
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
-  PartyStatusDrawFar(PARTY_STATUS_HP_ONLY);
+  PartyStatus_DrawFar(PARTY_STATUS_HP_ONLY);
   UiWork_ClearValueNameTablesFar();
 
   if (unitId <= ALLY_MAX) {
@@ -529,26 +530,26 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     UiText_ShowMessageAndWaitCoreFar(MsgDowned);
   }
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_STANDING);
 }
 
 /// For a unit whose HP has run out: plays its falling animation to the last
-/// frame and marks its object for release (BattleObj_MarkForRelease).
+/// frame and marks its object for release (BattleObject_MarkForRelease).
 /// Called by BattlePresentation_ApplyUnitDamage.
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
   struct AnimationObject *object;
-  if (UnitGetFar(unitId)->hp <= 0) {
+  if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
-    object = BattleObjGet(unitId)->object->records;
-    AnimationObjects_SelectAnimationFar(object, POSE_DAMAGE);
+    object = BattleObject_Get(unitId)->object->records;
+    AnimationObject_SelectAnimationFar(object, POSE_DAMAGE);
     actorData = object->entries[0];
     actorData->param = SPRITE_COLOR_GREY;
     actorData->frame = 0xFF;
     WaitFrames(4);
     Map_RenderAnimatedTileFramesForObjectFar((u8 *)object);
-    BattleObj_MarkForRelease(unitId);
+    BattleObject_MarkForRelease(unitId);
   }
 }
 
@@ -566,7 +567,7 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   s32 livingCount;
 
   targetId = action->target;
-  if (UnitGetFar(targetId)->hp != 0) {
+  if (Unit_GetFar(targetId)->hp != 0) {
     return targetId;
   }
 

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane (kind 20).
-	.global BattleFx_RunWhirlwind
+	.global BattleEffect_RunWhirlwind
 	.thumb_func
-BattleFx_RunWhirlwind:
+BattleEffect_RunWhirlwind:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -21,7 +21,7 @@ BattleFx_RunWhirlwind:
 	movs r0, #1
 	ldr r1, [r5, #96]
 	str r1, [sp, #32]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08148f00
 	movs r2, #128
 	lsls r2, r2, #19
@@ -37,12 +37,12 @@ BattleFx_RunWhirlwind:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #23
 	str r3, [sp, #44]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r0, sp
@@ -121,7 +121,7 @@ BattleFx_RunWhirlwind:
 .L_08148f90:
 	.4byte 0x00001000
 .L_08148f94:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08148f98:
 	.4byte IwramFillWords
 .L_08148f9c:
@@ -469,7 +469,7 @@ BattleFx_RunWhirlwind:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08149264
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #52
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -486,4 +486,4 @@ BattleFx_RunWhirlwind:
 .L_08149260:
 	.4byte gData_08197498
 .L_08149264:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

@@ -1,7 +1,7 @@
 // Near miss, differ 41 of 273 (151 before), from The Broken Seal's
-// BattleObj_UpdateSpritePriorities (games/tbs/src/battle/battle/
+// BattleObject_UpdateSpritePriorities (games/tbs/src/battle/battle/
 // objects.c): this game lists both sides at once, reads each object through
-// BattleObjGet inlined and keeps it, stops when the battle work's byte at
+// BattleObject_Get inlined and keeps it, stops when the battle work's byte at
 // 0x866 is set, and marks a guarding unit's sprite (flag 2) as it sets the
 // side priority. The two-part loops take each part into its own pointer
 // before the shared record (151 to 47), and the counts declared before the
@@ -53,10 +53,10 @@ struct TlaSpriteRecord {
   struct SpriteEntry *entries[1];
 };
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 s32 BattleStatusIcon_Cycle(struct TlaBattleObj *slot);
 
-static inline struct TlaBattleObj *BattleObjGetInline(s32 unitId) {
+static inline struct TlaBattleObj *BattleObject_GetInline(s32 unitId) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct TlaBattleObj *objects = (struct TlaBattleObj *)battle->slots;
   s32 placementIndex;
@@ -90,7 +90,7 @@ void Func_0811b9fc(void) {
       struct TlaBattleObj *slot;
 
       object = 0;
-      slot = BattleObjGetInline(unitIds[unitIndex]);
+      slot = BattleObject_GetInline(unitIds[unitIndex]);
       if (slot != 0) {
         object = slot->object;
         BattleStatusIcon_Cycle(slot);
@@ -136,7 +136,7 @@ void Func_0811b9fc(void) {
       case 1:
         record = object->records;
         record->image.priority = partyPriority;
-        if (UnitGet(unitIds[unitIndex])->guardLevel == 4)
+        if (Unit_Get(unitIds[unitIndex])->guardLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;
@@ -164,7 +164,7 @@ void Func_0811b9fc(void) {
       case 1:
         record = object->records;
         record->image.priority = enemyPriority;
-        if (UnitGet(unitIds[unitIndex])->guardLevel == 4)
+        if (Unit_Get(unitIds[unitIndex])->guardLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;

@@ -78,7 +78,7 @@ const struct ScenePlacement *KolimaForestGlade_GetPlacements(void) {
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
   struct StagedActorProbe result;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&result))
     SceneActor_MoveAndRedraw(result);
   Engine_EventEnd();
@@ -87,7 +87,7 @@ static void KolimaForestGlade_PushLog(void) {
 /// Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut (until
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);

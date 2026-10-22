@@ -12,12 +12,12 @@
 /// again, scattering 16 sparks that drift upward; the target is struck on frame
 /// 10.
 ///
-/// Abilities: Undead Sword (BATTLE_FX_UNDEAD_SWORD).
+/// Abilities: Undead Sword (BATTLE_EFFECT_UNDEAD_SWORD).
 ///
 /// The effect runs 54 frames. BG2 is moved so that the canvas's centre line
 /// stands on the target. The sparks are work->particles 0 to 15, variant their
 /// age in frames.
-void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -41,13 +41,13 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + UNDEAD_SWORD_SPARK_SHEET, 1, 0);
-  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Shift BG2 so that canvas x 64 lines up with the target.
@@ -116,7 +116,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
     // 1/8 pixel a frame each frame and slowed to 62/64, until it is 29 frames
     // old. The blitters are fetched and released each frame, as the columns
     // took the slot.
-    BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+    BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {
         s32 px;
@@ -143,8 +143,8 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(16, 16);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef UNDEAD_SWORD_SPARK_SHEET

@@ -1,4 +1,4 @@
-// Draft of Func_0815e3ac, the cast sequence BattleFx_DispatchByIdRange
+// Draft of Func_0815e3ac, the cast sequence BattleEffect_DispatchByIdRange
 // runs for kinds below 100 (except 10): a beam strikes the target and
 // sparks fly from it.
 
@@ -21,7 +21,7 @@
 // by DMA, the spark sheet, the orb sheet, the transfer callback (half the
 // last frame left behind), and the sparks at the target.
 
-// Port of The Broken Seal's BattleFx_RunBeamSequence, with The Lost
+// Port of The Broken Seal's BattleEffect_RunBeamSequence, with The Lost
 // Age's heap slots, blitter modes (3 minus ☀️'s) and callback order, no
 // work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
 // its own test, the beam is drawn additive (☀️ draws it with max), the
@@ -30,7 +30,7 @@
 
 // Listing 687 instructions, draft 687, differ 44 (2026-10-18; 50 before the
 // three devices below: the argument's store before the RAM base and both
-// BG1CNT halfwords pinned to r3, as in BattleFx_RunUndeadSword). Left: rows
+// BG1CNT halfwords pinned to r3, as in BattleEffect_RunUndeadSword). Left: rows
 // one place apart (stack and pool loads, constants built around them, the
 // call arguments' stores), the usual residue; no allocation difference.
 
@@ -60,7 +60,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -76,7 +76,7 @@ extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_YellowOrbSheet;
-// The strike's six cels: ☀️'s gBeams_Cells and
+// The strike's six cels: ☀️'s gBeam_Cells and
 // gTargetStrike_Reach, _StrikeWidths and _StrikeHeights.
 extern u16 Data_0819886c[];
 extern u8 Data_08198878[];
@@ -94,10 +94,10 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectScaledBattler(s32 actor,
                                         struct EffectPosition *position);
@@ -106,20 +106,20 @@ void EffectPosition_ProjectSprite(s32 actor,
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *camera, void *eye);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 // Configures the battle display for an effect.
 void Func_0813ba50(void);
 // Sets up the canvas tile map on BG1.
 void Func_08143d80(void);
 // Marks the transition done and shows the battle view again.
-void BattleFx_HideBg1AndRestoreBackdrop(void);
+void BattleEffect_HideBg1AndRestoreBackdrop(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleEventRuntime_BeginPhase through its far call.
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
@@ -150,7 +150,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   kind = effect->kind;
-  unit = UnitGet(effect->actor);
+  unit = Unit_Get(effect->actor);
 
   // Setup: the display, the tile map on BG1, the blitters for the side.
   WaitFrames(1);
@@ -170,31 +170,31 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
-      BattleFx_LoadBlitter(HEAP_BLITTER,
+      BattleEffect_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                                COMPOSITE_FLIP_Y));
-      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP_Y));
     } else {
-      BattleFx_LoadBlitter(HEAP_BLITTER,
+      BattleEffect_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                                COMPOSITE_FLIP));
-      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP));
     }
   } else {
     if (effect->side == 0) {
-      BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_ADDITIVE,
+      BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_ADDITIVE,
                                           COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     } else {
-      BattleFx_LoadBlitter(HEAP_BLITTER,
+      BattleEffect_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                                COMPOSITE_FLIP_X));
-      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP_X));
     }
@@ -237,7 +237,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   // Each transfer leaves half the last frame behind.
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The layer is centred on the first target, kept within 128 pixels.
   {
@@ -297,7 +297,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
       else if (kind == 5 || kind == 6)
         Func_08118088(effect->actors[0], 1);
       else if (kind == 8)
-        BattleFx_StartActorMotion(effect->actors[0], 1, 0x10000, 0x40000,
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x10000, 0x40000,
                                   0x30000, 150);
       else
         Func_08118088(effect->actors[0], 0);
@@ -367,7 +367,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
           size += 2;
           draw[pair & 1](canvas, sheet + Data_08197424[size - 1],
                          point.x - size, point.y - size, size * 2, size * 2);
-          BattleFxKernels_IntegrateVector3(spark, 60, -0x400);
+          BattleEffectKernels_IntegrateVector3(spark, 60, -0x400);
           spark->variant--;
         }
       }
@@ -377,9 +377,9 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   gBgScroll[1].y = 32;
-  BattleFx_HideBg1AndRestoreBackdrop();
+  BattleEffect_HideBg1AndRestoreBackdrop();
 }

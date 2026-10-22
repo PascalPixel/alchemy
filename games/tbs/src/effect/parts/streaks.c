@@ -23,7 +23,7 @@
 /// The streak volley's styles: its colour and its row of gStreaks_Records.
 enum StreakStyle {
   STREAKS_STYLE_EMBER,  ///< Sonic Wave
-  STREAKS_STYLE_LIME,   ///< Shriek, and the unused BattleFx_RunLimeStreaks
+  STREAKS_STYLE_LIME,   ///< Shriek, and the unused BattleEffect_RunLimeStreaks
   STREAKS_STYLE_VIOLET, ///< Banshee Howl
   STREAKS_STYLE_RED,    ///< Wicked Howl
   STREAKS_STYLE_CYAN    ///< War Cry
@@ -32,42 +32,42 @@ enum StreakStyle {
 /// Three streaks of ember light fly from the user at each target in turn; each
 /// target flashes and recoils.
 ///
-/// Abilities: Sonic Wave (BATTLE_FX_SONIC_WAVE).
-void BattleFx_RunSonicWave(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAKS_STYLE_EMBER);
+/// Abilities: Sonic Wave (BATTLE_EFFECT_SONIC_WAVE).
+void BattleEffect_RunSonicWave(struct BattleEffectArgument *effect) {
+  BattleEffect_RunStreakVolley(effect, STREAKS_STYLE_EMBER);
 }
 /// Three streaks of lime light fly from the user at each target in turn; each
 /// target flashes and recoils.
 ///
-/// Abilities: Shriek (BATTLE_FX_SHRIEK).
-void BattleFx_RunShriek(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAKS_STYLE_LIME);
+/// Abilities: Shriek (BATTLE_EFFECT_SHRIEK).
+void BattleEffect_RunShriek(struct BattleEffectArgument *effect) {
+  BattleEffect_RunStreakVolley(effect, STREAKS_STYLE_LIME);
 }
 /// Three streaks of violet light fly from the user at each target in turn; each
 /// target flashes and trembles.
 ///
-/// Abilities: Banshee Howl (BATTLE_FX_BANSHEE_HOWL).
-void BattleFx_RunBansheeHowl(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAKS_STYLE_VIOLET);
+/// Abilities: Banshee Howl (BATTLE_EFFECT_BANSHEE_HOWL).
+void BattleEffect_RunBansheeHowl(struct BattleEffectArgument *effect) {
+  BattleEffect_RunStreakVolley(effect, STREAKS_STYLE_VIOLET);
 }
 /// Three flickering cyan streaks, cycling through three colour rows, fly from
 /// the user at each target in turn; each target flashes and recoils.
 ///
-/// Abilities: War Cry (BATTLE_FX_WAR_CRY).
-void BattleFx_RunWarCry(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAKS_STYLE_CYAN);
+/// Abilities: War Cry (BATTLE_EFFECT_WAR_CRY).
+void BattleEffect_RunWarCry(struct BattleEffectArgument *effect) {
+  BattleEffect_RunStreakVolley(effect, STREAKS_STYLE_CYAN);
 }
 /// Three flickering red streaks, cycling through three colour rows, fly from
 /// the user at each target in turn; each target flashes and trembles.
 ///
-/// Abilities: Wicked Howl (BATTLE_FX_WICKED_HOWL).
-void BattleFx_RunWickedHowl(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAKS_STYLE_RED);
+/// Abilities: Wicked Howl (BATTLE_EFFECT_WICKED_HOWL).
+void BattleEffect_RunWickedHowl(struct BattleEffectArgument *effect) {
+  BattleEffect_RunStreakVolley(effect, STREAKS_STYLE_RED);
 }
 /// Unused: no entry of the effect table points here. It would have played the
 /// same lime streaks as Shriek.
-UNUSED void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAKS_STYLE_LIME);
+UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectArgument *effect) {
+  BattleEffect_RunStreakVolley(effect, STREAKS_STYLE_LIME);
 }
 
 #define STREAKS_SPACING 6       ///< frames between streaks
@@ -81,14 +81,15 @@ UNUSED void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
 /// streak that leaves a fading trail.
 ///
 /// Called by the five streak handlers above and the unused
-/// BattleFx_RunLimeStreaks. Loads the style's colours over the first 64 of
+/// BattleEffect_RunLimeStreaks. Loads the style's colours over the first 64 of
 /// the background palette, writes work->bg2xLines and, over the last 16
 /// frames, BLDALPHA; sets work->shakeFrames on a recoiling hit, and moves a
 /// trembling target's x.
 ///
 /// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
 ///        cyan) and the row of gStreaks_Records that says how a hit looks.
-void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct EffectPosition position;
   void **slots;
   void **cursor;
@@ -109,7 +110,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
 
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
@@ -184,7 +185,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
 
       // A sine wave of BG2X offsets, one per scanline, for the wave
       // HBlank DMA.
-      // XXX: nothing here arms BattleFx_ArmBg2AffineHBlankDma, so the table
+      // XXX: nothing here arms BattleEffect_ArmBg2AffineHBlankDma, so the table
       // seems unread; a scheduler trace during Sonic Wave would settle it.
       for (k = 0; k != 160; k++)
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
@@ -280,7 +281,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The mote fountain's modes (BattleFx_RunMoteFountain).
+/// The mote fountain's modes (BattleEffect_RunMoteFountain).
 enum MoteFountainMode {
   MOTE_FOUNTAIN_FOUNTAIN_HEALING, ///< Soothing Star
   MOTE_FOUNTAIN_DRIFTING          ///< Sleep Star
@@ -292,16 +293,16 @@ enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 /// Motes burst out of the user and float up, wobbling, as they drift across the
 /// field onto the targets, and each target flinches in turn.
 ///
-/// Abilities: Sleep Star (BATTLE_FX_SLEEP_STAR).
-void BattleFx_RunSleepStar(struct BattleEffectArgument *effect) {
-  BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
+/// Abilities: Sleep Star (BATTLE_EFFECT_SLEEP_STAR).
+void BattleEffect_RunSleepStar(struct BattleEffectArgument *effect) {
+  BattleEffect_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
 }
 /// Orange healing motes burst out of the user and float up close to it, and
 /// each target glows in turn with the recovery sound.
 ///
-/// Abilities: Soothing Star (BATTLE_FX_SOOTHING_STAR).
-void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
-  BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
+/// Abilities: Soothing Star (BATTLE_EFFECT_SOOTHING_STAR).
+void BattleEffect_RunSoothingStar(struct BattleEffectArgument *effect) {
+  BattleEffect_RunMoteFountain(effect, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }
 #define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
 
@@ -309,7 +310,7 @@ void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
 /// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
 /// target in turn reacts from frame 48, 8 frames apart.
 ///
-/// Called by BattleFx_RunSleepStar and BattleFx_RunSoothingStar. Fills
+/// Called by BattleEffect_RunSleepStar and BattleEffect_RunSoothingStar. Fills
 /// PARTICLES 0 to 255 and loads the mode's colours over the first 64 of the
 /// background palette; the healing mode opens the canvas layer with BG
 /// control 0 and the drifting mode with 1.
@@ -319,7 +320,8 @@ void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
 ///       healing effect); MOTE_FOUNTAIN_DRIFTING throws motes on the earth
 ///       palette that drift across towards the far side of the field, and
 ///       each target flinches (an attack).
-void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   s32 worldPoint[3];
   struct EffectPosition position;
   struct BattleEffectWork *work;
@@ -339,9 +341,9 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   sheet = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,

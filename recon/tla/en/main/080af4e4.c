@@ -39,7 +39,7 @@ s32 Owner_UpdateClassActions(s32 owner) {
   u16 mask;
   struct ClassAbility *cg;
 
-  st = UnitGet(owner);
+  st = Unit_Get(owner);
   ability = (u16 *)st->actionSlots;
   cls = (struct ClassAbilities *)Class_GetDefinition(st->classIndex);
   if (st->classIndex == 0)

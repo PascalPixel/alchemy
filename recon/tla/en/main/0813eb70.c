@@ -1,6 +1,6 @@
 // Near miss, differ 378 of 1102 (two instructions short).
 
-// Twin: The Broken Seal's BattleFx_RunShatteringOpening, reached
+// Twin: The Broken Seal's BattleEffect_RunShatteringOpening, reached
 // from the scenes through the far-call table (table_47.s). It sets up its
 // own heap blocks (only the work and the canvas: the sheet block it releases
 // at the end is never taken), stores work->effect, marks the work active,
@@ -77,9 +77,9 @@ extern u8 Data_081976b1[];
 extern char ResourceId_TileAnimationMask;
 extern char ResourceId_FlashBurstSheet;
 
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ClearActorTimers(void); // BattleFx_ClearActorTimers
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ClearActorTimers(void); // BattleEffect_ClearActorTimers
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -89,7 +89,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -155,8 +155,8 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   work->effect = effect;
   work->framesSinceTransfer = 1;
 
-  // Make BG2 a 128x128 canvas, as BattleFx_BeginCanvasLayer does.
-  BattleFx_ClearActorTimers();
+  // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
+  BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = 32;
   BattlePresentation_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
@@ -195,10 +195,10 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = 1; // each transfer clears the canvas
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   // The pieces fly out from (32, 60) at a quarter of their distance a
@@ -373,7 +373,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
         draw[0](canvas, work->sheet + Data_0819764c[i], HI(piece->x),
                 HI(piece->y), Data_08197609[i], Data_0819762a[i]);
         if (frame > 3)
-          BattleFxKernels_IntegrateVector2(piece, 64, 0x4000);
+          BattleEffectKernels_IntegrateVector2(piece, 64, 0x4000);
       }
     }
 
@@ -425,7 +425,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
             cell = 5;
           draw[1](canvas, work->sheet + (cell << 11), HI(piece->x) - 16,
                   HI(piece->y) - 32, 32, 64);
-          BattleFxKernels_IntegrateVector2(piece, 60, -0x1000);
+          BattleEffectKernels_IntegrateVector2(piece, 60, -0x1000);
           piece->variant++;
         }
       }
@@ -439,7 +439,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   // Put the background and the display back.
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Func_0814cd48(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;

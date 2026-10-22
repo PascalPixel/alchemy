@@ -413,7 +413,7 @@ void Object_UpdateAllThumb(void) {
 }
 
 /// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
-/// and stops it. Reached through SC_POS and FieldObject_Create, and as
+/// and stops it. Reached through SC_POSITION and FieldObject_Create, and as
 /// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
 /// field scene's actors.
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,

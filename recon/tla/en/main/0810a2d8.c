@@ -2,7 +2,7 @@
 // the shop repairs a unit's damaged item at slot
 // (refusing other kinds, undamaged items, cursed equipped items and a price
 // over the party's coins), then offers to equip it. ☀️'s Shop_RepairItem in
-// games/tbs/src/shop/shop.c, rewritten with ⚓️'s calls (UnitGet,
+// games/tbs/src/shop/shop.c, rewritten with ⚓️'s calls (Unit_Get,
 // Shop_GetItemPrice, UiText_DrawQuantity, the shop message and choice routines
 // Func_0810857c and Func_08108630, Inventory_RepairFar, Func_08109188 for the
 // coins) and numbered messages, their ☀️ names beside them. Instruction order
@@ -30,7 +30,7 @@ extern u8 Msg04717[]; // MsgCursedWontComeOff
 extern u8 Msg04718[]; // MsgNotEnoughMoney
 extern u8 Msg04719[]; // MsgShopRepairConfirm, then its three replies
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 s32 Inventory_FindEquippedFar(s32 unitId, u8 kind);
 u32 Shop_GetItemPrice(s32 item);
 void UiText_DrawQuantity(s32 value, s32 slot);
@@ -48,7 +48,7 @@ void Shop_SellOld(s32 unitId, s32 slot);
 
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  struct BattleUnit *unit = UnitGet(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
   s32 itemId;
   struct ItemDefinition *item;

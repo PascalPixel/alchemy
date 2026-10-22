@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Death Plunge, Death Leap (kind 53).
-	.global BattleFx_RunDeathPlunge
+	.global BattleEffect_RunDeathPlunge
 	.thumb_func
-BattleFx_RunDeathPlunge:
+BattleEffect_RunDeathPlunge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunDeathPlunge:
 	movs r0, #0
 	ldr r3, [r3, #96]
 	str r3, [sp, #48]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #52]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -56,7 +56,7 @@ BattleFx_RunDeathPlunge:
 	str r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r2, #128
 	ldr r3, .L_08188794
 	lsls r2, r2, #19
@@ -90,7 +90,7 @@ BattleFx_RunDeathPlunge:
 	str r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_081887cc:
 	ldr r5, [sp, #52]
 	movs r0, #239
@@ -468,7 +468,7 @@ BattleFx_RunDeathPlunge:
 	adds r0, r5, #0
 	movs r1, #62
 	ldr r2, .L_08188af4
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_08188ad8:
 	movs r0, #1
@@ -484,7 +484,7 @@ BattleFx_RunDeathPlunge:
 	b .L_08188afc
 	.2byte 0x0000
 .L_08188af0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08188af4:
 	.4byte 0xffffe000
 .L_08188af8:
@@ -677,7 +677,7 @@ BattleFx_RunDeathPlunge:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -698,4 +698,4 @@ BattleFx_RunDeathPlunge:
 .L_08188ca8:
 	.4byte gData_08199210
 .L_08188cac:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

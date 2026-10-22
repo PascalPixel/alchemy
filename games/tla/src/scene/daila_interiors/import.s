@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -82,10 +82,10 @@ Func_02000ccc:
 	.thumb_func
 UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
+Unit_Calculate:
+	overlay_veneer Unit_CalculateFar
 	.global Func_02000ce4
 	.thumb_func
 Func_02000ce4:
@@ -118,10 +118,10 @@ Func_02000d14:
 	.thumb_func
 FieldEvent_WaitFrames:
 	overlay_veneer FieldEvent_WaitFramesFar
-	.global Engine_EventBegin
+	.global Engine_EventStart
 	.thumb_func
-Engine_EventBegin:
-	overlay_veneer EventRuntime_BeginFar
+Engine_EventStart:
+	overlay_veneer EventRuntime_StartFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:

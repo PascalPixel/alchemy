@@ -2,7 +2,7 @@
 @ Word-aligned, as an array of structures is: the two bytes before it are
 @ the alignment's fill.
 	.balign 4
-@ 243 rows searched by ID by BattleFx_FindDefinition, followed by one more row.
+@ 243 rows searched by ID by BattleEffect_FindDefinition, followed by one more row.
 	.global gData_080f0308
 gData_080f0308:
 	.incbin "games/tla/src/field/common/object/variant_motion.table"

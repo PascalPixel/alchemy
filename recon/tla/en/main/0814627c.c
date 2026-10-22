@@ -1,10 +1,10 @@
 // Near miss, differ 66 of 428.
 
-// Effect kind 67. Twin: The Broken Seal's BattleFx_RunTriangleStrike, ported
+// Effect kind 67. Twin: The Broken Seal's BattleEffect_RunTriangleStrike, ported
 // call for call. The Lost Age's changes: three Resource_LoadAndDecompress
 // loads (the rune picture with its palette into the work sheet, resource
 // 0x134 into the sheet slot, ParticleSpritesD after the rune picture), the
-// callback at 0xc80, BattleFx_LoadBlitter for the two blitters, the landed picture
+// callback at 0xc80, BattleEffect_LoadBlitter for the two blitters, the landed picture
 // drawn from work->sheet, and the effect argument read directly.
 
 // Left: order only. The frame is the native's (132 bytes); the prologue's
@@ -12,7 +12,7 @@
 // are a load one row from its neighbour.
 
 // Tried (2026-10-15): alchemy permute 10 minutes (56, through four
-// rewrites: REG_BG2PA written before BeginCanvasLayer, which would undo the
+// rewrites: REG_BG2PA written before StartCanvasLayer, which would undo the
 // layer's own 0x80 and was rejected; the work pointer copied; &vector
 // through a pointer temporary; and a 0x03000000 integer held from the setup
 // for the second blitter's read). The last, written as the tagged heap
@@ -43,11 +43,11 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
 void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
@@ -69,7 +69,7 @@ extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 // target, shrinking, for 64 frames; then the rune picture is stamped in two
 // halves where it landed. The caster approaches the target at frame 46, the
 // palette pulses throughout and the trail fades a step every 16 frames.
-void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   s32 vector[3];
   struct EffectPosition screen;
@@ -98,13 +98,13 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
    * the second blitter's read: spilled, it makes reload rebuild the
    * 0x03000000 base at that read (movs, lsls, adds #188) as the native does,
    * where agscc otherwise keeps the base in r5 across the second
-   * BattleFx_LoadBlitter. Measured (2026-10-15): TriangleStrike 94 -> 66,
+   * BattleEffect_LoadBlitter. Measured (2026-10-15): TriangleStrike 94 -> 66,
    * SpinningTriangle 98 -> 84; the pointer for both reads, 95 and 103. */
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, and a
   // transfer that fades the canvas by 4 each frame.
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
@@ -112,7 +112,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
                              work->sheet + FLARE_SHEET, 0, 0);
   work->transferMode = 3;
   work->transferValue = 0x04040404;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The background is shifted so that the target stands at x = 64.
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
@@ -128,9 +128,9 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
     Func_081496c8(frame, 0xaaab, 0x5555, 0);
 
     // A fresh pair of max blitters each frame, the second flipped.
-    BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     draw[1] = (DrawRectangle)heap->unkb8[1];
     if (frame > 16 && (frame & 15) == 0)
@@ -200,6 +200,6 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

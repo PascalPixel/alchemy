@@ -4,6 +4,6 @@
 #include "types.h"
 
 extern u16 gUnused_BitOperands[];
-extern u16 gBattleFx_BitOperands[];
+extern u16 gBattleEffect_BitOperands[];
 
 #endif

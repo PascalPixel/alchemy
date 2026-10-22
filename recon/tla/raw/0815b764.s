@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Ulysses (scene kind 17).
-	.global BattleFx_RunUlysses
+	.global BattleEffect_RunUlysses
 	.thumb_func
-BattleFx_RunUlysses:
+BattleEffect_RunUlysses:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -33,7 +33,7 @@ BattleFx_RunUlysses:
 	adds r3, #240
 	add r3, r11
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r3, #0
 	str r3, [sp, #88]
 	ldr r5, .L_0815b7d8
@@ -90,7 +90,7 @@ BattleFx_RunUlysses:
 	cmp r2, #32
 	bne .L_0815b7aa
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r1, .L_0815b8ec
 	ldr r0, .L_0815b8f0
 	ldrh r3, [r0]
@@ -166,7 +166,7 @@ BattleFx_RunUlysses:
 	adds r1, #255
 	movs r0, #8
 	movs r2, #3
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	ldr r3, .L_0815b8d8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -190,7 +190,7 @@ BattleFx_RunUlysses:
 	adds r1, r4, #0
 	movs r0, #0
 	str r4, [sp, #72]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	b .L_0815b904
 .L_0815b8d8:
 	.4byte 0x00000080
@@ -343,7 +343,7 @@ BattleFx_RunUlysses:
 .L_0815ba08:
 	.4byte 0x00007141
 .L_0815ba0c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815ba10:
 	.4byte 0x000000b1
 .L_0815ba14:
@@ -437,7 +437,7 @@ BattleFx_RunUlysses:
 .L_0815bac4:
 	.4byte 0x00001f80
 .L_0815bac8:
-	.4byte BattleFx_ProcessPendingBlock2Transfer
+	.4byte BattleEffect_ProcessPendingBlock2Transfer
 .L_0815bacc:
 	.4byte Display_ApplyBg2Affine
 .L_0815bad0:
@@ -880,11 +880,11 @@ BattleFx_RunUlysses:
 .L_0815be24:
 	.4byte 0x00001010
 .L_0815be28:
-	.4byte BattleFx_ProcessPendingBlock2Transfer
+	.4byte BattleEffect_ProcessPendingBlock2Transfer
 .L_0815be2c:
 	.4byte Display_ApplyBg2Affine
 .L_0815be30:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815be34:
 	.4byte 0x0000015c
 .L_0815be38:
@@ -1406,7 +1406,7 @@ BattleFx_RunUlysses:
 	lsls r2, r2, #10
 	lsls r3, r3, #12
 	str r5, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r3, [sp, #100]
 	movs r2, #1
 	ldrsh r0, [r7, r3]
@@ -1506,7 +1506,7 @@ BattleFx_RunUlysses:
 	adds r0, r5, #0
 	movs r1, #60
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -2058,7 +2058,7 @@ BattleFx_RunUlysses:
 .L_0815c768:
 	.4byte 0x00007741
 .L_0815c76c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815c770:
 	movs r7, #0
 	movs r0, #195

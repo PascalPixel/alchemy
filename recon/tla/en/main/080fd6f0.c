@@ -31,7 +31,7 @@ struct BattleAct {
   u8 fieldEffect;
 };
 
-struct BattleAct *BattleActGet(s32 actionId);
+struct BattleAct *BattleAction_Get(s32 actionId);
 
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode) {
   s32 i;
@@ -52,7 +52,7 @@ s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode) {
   if (mode == 1) {
     for (i = 0; i < 32; i++) {
       if (unit->actionSlots[i].encodedAction != 0) {
-        if (BattleActGet(unit->actionSlots[i].encodedAction & 0x3fff)
+        if (BattleAction_Get(unit->actionSlots[i].encodedAction & 0x3fff)
                 ->fieldEffect != 0) {
           actions[count] = unit->actionSlots[i].encodedAction;
           count++;
@@ -62,7 +62,7 @@ s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode) {
   } else {
     for (i = 0; i < 32; i++) {
       if (unit->actionSlots[i].encodedAction != 0) {
-        ability = BattleActGet(unit->actionSlots[i].encodedAction & 0x3fff);
+        ability = BattleAction_Get(unit->actionSlots[i].encodedAction & 0x3fff);
         if (ability->fieldEffect != 0 || (ability->flags & 0x40) != 0) {
           actions[count] = unit->actionSlots[i].encodedAction;
           count++;
@@ -72,7 +72,7 @@ s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode) {
     if (mode != 2) {
       for (i = 0; i < 32; i++) {
         if (unit->actionSlots[i].encodedAction != 0) {
-          ability = BattleActGet(unit->actionSlots[i].encodedAction & 0x3fff);
+          ability = BattleAction_Get(unit->actionSlots[i].encodedAction & 0x3fff);
           if (ability->fieldEffect == 0 && (ability->flags & 0x40) == 0) {
             actions[count] = unit->actionSlots[i].encodedAction;
             count++;

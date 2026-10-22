@@ -95,10 +95,10 @@ enum MenuTestActor {
 /// Recalculates the four heroes after a debug inventory or stat change.
 /// Preserve the original Isaac, Garet, Mia, Ivan order.
 static __inline__ void DebugMenu_RecalculateParty(void) {
-  UnitCalc(ISAAC);
-  UnitCalc(GARET);
-  UnitCalc(MIA);
-  UnitCalc(IVAN);
+  Unit_Calculate(ISAAC);
+  Unit_Calculate(GARET);
+  Unit_Calculate(MIA);
+  Unit_Calculate(IVAN);
 }
 
 u8 *MenuTest_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
@@ -567,7 +567,7 @@ static void DebugMenu_GivePartyDjinn(void) {
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
 /// Talking to ACTOR_SATUROS: `The body is being torn apart.` Isaac is poisoned
 /// and haunted, Garet given deadly poison. Garet's restraint
-/// is set to 1 too, but the closing UnitCalc clears the curse bits again
+/// is set to 1 too, but the closing Unit_Calculate clears the curse bits again
 /// unless he wears cursed equipment (game/game/units.c).
 static void DebugMenu_DamageAndAfflictParty(void) {
   // Named BattleUnit stores change address setup and store ordering in the
@@ -584,11 +584,11 @@ static void DebugMenu_DamageAndAfflictParty(void) {
   Unit_AddPp(GARET, -40);
   Unit_AddPp(IVAN, -35);
   Unit_AddPp(MIA, -20);
-  record = (u8 *)UnitGet(ISAAC);
+  record = (u8 *)Unit_Get(ISAAC);
   record[0x131] = POISON_NORMAL;
   record += 0x140;
   *record = 1;
-  record = (u8 *)UnitGet(GARET);
+  record = (u8 *)Unit_Get(GARET);
   record[0x130] = 1;
   record[0x131] = POISON_DEADLY;
   DebugMenu_RecalculateParty();

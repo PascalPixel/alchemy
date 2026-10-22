@@ -14,9 +14,10 @@
 /// Scheduler callback of Cloak: when the tile under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the world map it reads
 /// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map. Runs once a
-/// frame from FieldFx_StartCloak, and again from FieldFx_ResumeCloakCheck
-/// when a scene loads with the leader still cloaked.
-void FieldFx_CheckCloakTile(void) {
+/// frame from FieldEffect_StartCloak, and again from
+/// FieldEffect_ResumeCloakCheck when a scene loads with the leader still
+/// cloaked.
+void FieldEffect_CheckCloakTile(void) {
 #ifndef UBFIX
   u32 slot;
 #endif
@@ -85,7 +86,7 @@ void FieldFx_CheckCloakTile(void) {
 /// five alternate white and its own colours (param 0). Each half is 2
 /// frames. The leader ends with its shadow back.
 /// FieldEvent_RunTypeHandler runs it when the CLOAK_END request is handled.
-void FieldFx_EndCloak(void) {
+void FieldEffect_EndCloak(void) {
   struct ObjectRuntime *obj;
   struct AnimationObject *anim;
   struct AnimationEntry *entry;
@@ -96,7 +97,7 @@ void FieldFx_EndCloak(void) {
   entry = anim->entries[0];
 
   AudioCommand_PlayFar(SE_CAST);
-  Scheduler_RemoveCallback(FieldFx_CheckCloakTile);
+  Scheduler_RemoveCallback(FieldEffect_CheckCloakTile);
   ObjectDispatch_SelectAnimationFar(obj, 0);
   ((struct ScriptMotionObject *)obj)->hook = 0;
 
@@ -126,9 +127,9 @@ void FieldFx_EndCloak(void) {
 
 /// Starts the Cloak tile check if the leader is hidden. Field_RunScene calls
 /// it as a scene loads, since gGameState.cloaked outlives the scene.
-void FieldFx_ResumeCloakCheck(void) {
+void FieldEffect_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
-    Scheduler_AddOrUpdateCallback(FieldFx_CheckCloakTile, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldEffect_CheckCloakTile, 0xc80);
   }
 }
 
@@ -139,9 +140,9 @@ void FieldFx_ResumeCloakCheck(void) {
 ///
 /// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
 /// shadow), and while gGameState.cloaked is set no random battles come
-/// (Encounter_SelectEnemyGroup). Called by FieldFx_Run and
-/// FieldFx_DispatchRequestKind.
-void FieldFx_StartCloak(void) {
+/// (Encounter_SelectEnemyGroup). Called by FieldEffect_Run and
+/// FieldEffect_DispatchRequestKind.
+void FieldEffect_StartCloak(void) {
   struct FieldWork *field = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
   struct AnimationObject *animation = leader->animation;
@@ -169,12 +170,12 @@ void FieldFx_StartCloak(void) {
   animation->dirty = 1;
   // Check the tile at once: off a Cloak tile, unhide and drop the request
   // the check just raised (n is 0 here).
-  check = FieldFx_CheckCloakTile;
+  check = FieldEffect_CheckCloakTile;
   Scheduler_AddOrUpdateCallback(check, 0xc80);
   gGameState.cloaked = 1;
   check();
   if (field->psynergy == CLOAK_END) {
-    FieldFx_EndCloak();
+    FieldEffect_EndCloak();
     field->psynergy = n;
   }
 }

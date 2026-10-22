@@ -1,11 +1,11 @@
 // Near miss, differ 56 of 580.
 
-// Twin: The Broken Seal's BattleFx_RunFiveMode, the body of its five
+// Twin: The Broken Seal's BattleEffect_RunFiveMode, the body of its five
 // coloured streak effects. ⚓️ adds one thing: when each target's streaks
 // start, modes 1 to 4 play their own cry. The rest is the twin with ⚓️'s
 // calling conventions (the effect read from the argument, heap blocks as
-// Ram_HeapSlots fields, BattleFx_LoadBlitter with ⚓️'s mode numbers, callback
-// order 0xc80, BattleFxKernels_IntegrateVector3 for
+// Ram_HeapSlots fields, BattleEffect_LoadBlitter with ⚓️'s mode numbers, callback
+// order 0xc80, BattleEffectKernels_IntegrateVector3 for
 // EffectStep_AdvanceWithGravity3D).
 
 // Left: the native keeps the heap base 0x03000000 in r5 from the prologue
@@ -67,16 +67,16 @@ extern char ResourceId_VioletPaletteD;
 extern char ResourceId_RedPaletteB;
 extern char ResourceId_CyanPalette;
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+void BattleEffect_StartCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -116,19 +116,19 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
   camera = heap->cameraWork;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
 
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
   if (effect->side == 0) {
-    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
     drawUpper = heap->unk64[1];
-    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
     drawLower = heap->unkb8[1];
   } else {
-    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
+    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
     drawUpper = heap->unk64[1];
-    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     drawLower = heap->unkb8[1];
   }
@@ -156,7 +156,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;   // each transfer halves the old picture,
   work->transferValue = 50; // leaving a trail
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(effect->actor)->object;
   {
@@ -234,7 +234,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
                           40);
                 drawLower(canvas, cell, position.x - 10, position.y, 20, 40);
               }
-              BattleFxKernels_IntegrateVector3(streak, 64, 0);
+              BattleEffectKernels_IntegrateVector3(streak, 64, 0);
               streak->variant++;
             }
           }
@@ -279,8 +279,8 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

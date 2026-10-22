@@ -322,7 +322,7 @@ static __inline__ s32 Script_ApplyPositionCommand(
   return 1;
 }
 
-/// SC_POS(x, y, z): places the object at (x, y, z) and stops it.
+/// SC_POSITION(x, y, z): places the object at (x, y, z) and stops it.
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter) {
   return Script_ApplyPositionCommand(interpreter,
                                      Object_SetPositionAndResetMotion);

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Spider Web (kind 345).
-	.global BattleFx_RunSpiderWeb
+	.global BattleEffect_RunSpiderWeb
 	.thumb_func
-BattleFx_RunSpiderWeb:
+BattleEffect_RunSpiderWeb:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunSpiderWeb:
 	sub sp, #20
 	mov r10, r3
 	mov r11, r2
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0815cc30
 	movs r2, #128
 	lsls r2, r2, #19
@@ -103,11 +103,11 @@ BattleFx_RunSpiderWeb:
 .L_0815cc94:
 	.4byte 0x0000007c
 .L_0815cc98:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815cc9c:
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -126,7 +126,7 @@ BattleFx_RunSpiderWeb:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #39
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -145,7 +145,7 @@ BattleFx_RunSpiderWeb:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #43
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -164,7 +164,7 @@ BattleFx_RunSpiderWeb:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #47
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -245,7 +245,7 @@ BattleFx_RunSpiderWeb:
 	ldr r0, .L_0815cde4
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl SummonFx_RunCanvasMode1
+	bl SummonEffect_RunCanvasMode1
 	add sp, #20
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -254,7 +254,7 @@ BattleFx_RunSpiderWeb:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0815cdd8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815cddc:
 	.4byte IwramClearWords
 .L_0815cde0:

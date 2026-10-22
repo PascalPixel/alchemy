@@ -5,8 +5,8 @@
 	.global FarCall_GameTable
 FarCall_GameTable:
 	export Djinn_GetRecoveryTableFar, Djinn_GetRecoveryTable
-	export UnitGetFar, UnitGet
-	export UnitCalcFar, UnitCalc
+	export Unit_GetFar, Unit_Get
+	export Unit_CalculateFar, Unit_Calculate
 	export Item_GetDirectFar, Item_GetDirect
 	export Shop_GetSelectionState, Inventory_GetQuantity
 	export Inventory_AddItemFar, Inventory_AddItem
@@ -20,12 +20,12 @@ FarCall_GameTable:
 	export Inventory_RepairFar, Inventory_Repair
 	overlay_veneer Item_GetTargetMode
 	export Inventory_GetEquippedItemFar, Inventory_GetEquippedItem
-	export BattleActGet, BattleAction_GetDirect
+	export BattleAction_Get, BattleAction_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
 	export Unit_KnowsActionFar, Unit_KnowsAction
-	export GameState_InitDefaultsFar, GameState_InitDefaults
+	export GameState_InitializeDefaultsFar, GameState_InitializeDefaults
 	overlay_veneer Unit_CheckLevelUp
-	overlay_veneer Party_InitCharacters
+	overlay_veneer Party_InitializeCharacters
 	overlay_veneer Unit_LevelNoOp
 	export Unit_TryLevelUpFar, Unit_TryLevelUp
 	export GameFlag_TestFar, GameFlag_Test
@@ -41,22 +41,22 @@ FarCall_GameTable:
 	overlay_veneer Game_Restart
 	export Unit_AddHpFar, Unit_AddHp
 	export Unit_AddPpFar, Unit_AddPp
-	export UnitRatioFar, UnitRatio
+	export Unit_UpdateRatiosFar, Unit_UpdateRatios
 	export Unit_SetHpFar, Unit_SetHp
 	overlay_veneer Unit_SetPp
-	export BattleUnitSetFar, BattleUnitSet
+	export BattleUnit_SetFar, BattleUnit_Set
 	export Party_CountActiveOwnersFar, Party_CountActiveOwners
 	export Party_AddActiveOwnerFar, Party_AddActiveOwner
 	export Party_ListActiveOwnersFar, Party_ListActiveOwners
 	export RollWeaponUnleashFar, RollWeaponUnleash
 	export Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner
 	export Item_GetEquippedElementFar, Item_GetEquippedElement
-	export BattleHitCheck, Battle_RollEffectSuccess
-	export BattleAtkCalc, Battle_CalcAttackDamage
-	export BattlePowerCalc, Battle_CalcPsynergyPower
-	export BattleRecoveryCalc, Battle_CalcRecovery
+	export Battle_RollEffectSuccessFar, Battle_RollEffectSuccess
+	export Battle_CalculateAttackDamageFar, Battle_CalculateAttackDamage
+	export Battle_CalculatePsynergyPowerFar, Battle_CalculatePsynergyPower
+	export Battle_CalculateRecoveryFar, Battle_CalculateRecovery
 	export Enemy_GetDefinitionFar, Enemy_GetDefinition
-	export BattleRandomFar, BattleRandom
+	export Battle_RandomFar, Battle_Random
 	export Djinn_AddToOwnerFar, Djinn_AddToOwner
 	export Djinn_ActivateFar, Djinn_Activate
 	export Djinn_DeactivateFar, Djinn_Deactivate
@@ -82,7 +82,7 @@ FarCall_GameTable:
 	export Unit_GetExperienceForLevelFar, Unit_GetExperienceForLevel
 	export Party_RestoreHpPpFar, Party_RestoreHpPp
 	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
-	export Party_BeginChildhoodFar, Party_BeginChildhood
+	export Party_StartChildhoodFar, Party_StartChildhood
 	export Party_EndChildhoodFar, Party_EndChildhood
 	overlay_veneer Unit_RatioNoOp
 	export Djinn_AddToLeastLoadedOwnerFar, Djinn_AddToLeastLoadedOwner

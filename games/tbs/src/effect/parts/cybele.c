@@ -40,8 +40,8 @@
 ///   blast and embers.
 ///
 /// Pressing A or B between frames 191 and 285 skips to the drop. At the end
-/// the battle shows the damage and an impact burst (BattleFx_RunImpactBurst)
-/// explodes at the formation.
+/// the battle shows the damage and an impact burst
+/// (BattleEffect_RunImpactBurst) explodes at the formation.
 ///
 /// Besides the canvas and work->particles (above), it writes the dissolve
 /// order into the first 1024 bytes of Ram_MapCellBuffer, greys the first 64
@@ -49,7 +49,7 @@
 /// gravity), and sets REG_BG2X, REG_BG2PA, REG_BLDCNT and work->shakeFrames.
 /// It spawns eight formation objects and releases them, the transfer callback
 /// and the blitters before it closes the canvas layer.
-void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -68,7 +68,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleFx_SpawnObjects(8, 0x177, 1);
+  BattleEffect_SpawnObjects(8, 0x177, 1);
 
   // Setup. The dissolve order: eight shuffled runs of the columns 0 to 127,
   // each shuffled by 128 random swaps.
@@ -88,7 +88,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     }
   }
 
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
@@ -137,7 +137,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
 
   height = -(64 << 16);
   speed = 0;
@@ -174,13 +174,14 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     height += speed;
     if (height > 64 << 16)
       height = 64 << 16;
-    BattleFx_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, 128 << 16, height);
+    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, 128 << 16,
+                                       height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      AnimationObjects_SelectAnimationFar(
+      AnimationObject_SelectAnimationFar(
           work->objects[3], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT3]);
-      AnimationObjects_SelectAnimationFar(
+      AnimationObject_SelectAnimationFar(
           work->objects[4], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT4]);
     }
 
@@ -419,7 +420,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
             object->y = 128 << 16;
           object->verticalMotionStrength = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
-            AnimationObjects_SelectAnimationFar(record, 5);
+            AnimationObject_SelectAnimationFar(record, 5);
         }
       }
     }
@@ -535,13 +536,13 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
   // The end: the impact burst builds its own blitters and starts its own
   // transfer, so the scene's are released first.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  BattleFx_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);
+  BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef CYBELE_FRAMES

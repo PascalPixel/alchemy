@@ -12,7 +12,7 @@
 	.set import.Engine_GameFlagClear, 1
 	.set import.PartyInventory_HasSpace, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.FieldScene_PrepareActors, 1
 	.set import.Engine_PartyGiveItem, 1

@@ -2099,7 +2099,7 @@ Func_02001ed0:
 	cmp r5, #14
 	bgt .L_ja_0200aa18
 	movs r0, #4
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, .L_ja_0200aa14
 	ldrh r2, [r0, r6]
 	ands r3, r2
@@ -3469,7 +3469,7 @@ Func_02001ed0:
 	cmp r5, #14
 	bgt .L_0200aa18
 	movs r0, #4
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, .L_0200aa14
 	ldrh r2, [r0, r6]
 	ands r3, r2
@@ -5334,7 +5334,7 @@ Func_02003b7c:
 .L_0200bd38:
 	.4byte gData_02005a30
 .L_0200bd3c:
-	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
+	.4byte BattleEffect_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200bd40:
 	.4byte 0xffff0000
 	.section .text.x0200bd44,"ax",%progbits

@@ -251,7 +251,7 @@ s32 DisplayScroll_RunSlideshow(void) {
                  BLDCNT_TGT2_BD,
              &REG_BLDCNT);
   // Give the names a five-second lead before the first backdrop.
-  DisplayScroll_InitObjectTable();
+  DisplayScroll_InitializeObjectTable();
   WaitFrames(300);
   // Alternate the hidden layer after each 64-frame crossfade. Loading it
   // cannot overwrite the picture that is still showing.
@@ -955,9 +955,9 @@ const void *gDisplayScroll_LineTable[] = {
 
 #include "../display/glyph_widths.h"
 
-/// A VBlank task scheduled by DisplayScroll_InitObjectTable: maps the visible
-/// sixteen rows onto the tile ring and uploads their sprites. Advances one
-/// pixel every fourth frame until the end-of-text latch stops the scroll.
+/// A VBlank task scheduled by DisplayScroll_InitializeObjectTable: maps the
+/// visible sixteen rows onto the tile ring and uploads their sprites. Advances
+/// one pixel every fourth frame until the end-of-text latch stops the scroll.
 void DisplayScroll_UpdateObjects(void) {
   u32 frame = gFlash_Handler3;
   u32 scrollWithinTile = frame & 7;
@@ -985,9 +985,9 @@ void DisplayScroll_UpdateObjects(void) {
     gFlash_Handler3++;
 }
 
-/// A main-loop task scheduled by DisplayScroll_InitObjectTable: renders each
-/// entering line sixteen rows ahead of the visible top, into the hidden half
-/// of the tile ring. A null table entry latches the end-of-text state.
+/// A main-loop task scheduled by DisplayScroll_InitializeObjectTable: renders
+/// each entering line sixteen rows ahead of the visible top, into the hidden
+/// half of the tile ring. A null table entry latches the end-of-text state.
 void DisplayScroll_RenderEnteringLine(void) {
   u32 scrollPosition;
   s32 lineIndex;
@@ -1014,7 +1014,7 @@ void DisplayScroll_RenderEnteringLine(void) {
 /// flash-library cells (see the graphics README). The 1 KB sprite buffer
 /// comes from the alternate bump pool and is never freed; each line buffer
 /// is taken from the pool after it and given back.
-void DisplayScroll_InitObjectTable(void) {
+void DisplayScroll_InitializeObjectTable(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
   // changes registers at the same 0x178-byte native English extent.
   volatile u32 dmaFill;
@@ -1078,10 +1078,10 @@ void DisplayScroll_InitObjectTable(void) {
 /// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
 /// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
 /// beginning at firstTile. Called by the line-rendering task and, for the blank
-/// rows, by DisplayScroll_InitObjectTable. Returns -1 at the null end marker,
-/// otherwise zero. alignment 1 centres, 2 right-aligns and any other value
-/// left-aligns; every caller passes 1. The glyphs are colour 15 with a colour
-/// 1 shadow a pixel down and right.
+/// rows, by DisplayScroll_InitializeObjectTable. Returns -1 at the null end
+/// marker, otherwise zero. alignment 1 centres, 2 right-aligns and any other
+/// value left-aligns; every caller passes 1. The glyphs are colour 15 with a
+/// colour 1 shadow a pixel down and right.
 s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u8 *linePixels = Runtime_BumpAllocateAlternatePool(CREDITS_BUFFER_BYTES);
   s32 startX = 0;

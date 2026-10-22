@@ -288,7 +288,7 @@ const struct SceneEvent *Sanctum_GetEvents(void) {
 /// afterwards; on the later visit (SANCTUM_FROM_VAULT_REVISIT), the statue
 /// polished.
 static void Event_TalkAboutGoldenStatue(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
     Engine_EventSetMessage(MsgSanctumWhenStrayFromYourWorldly);
@@ -312,7 +312,7 @@ static void Event_TalkAboutGoldenStatue(void) {
 /// later visit, the statue cleaned up.
 static void Event_ReadMindAboutGoldenStatue(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Engine_EventSetMessage(MsgSanctumWonderIfEverSeeOur);
@@ -336,7 +336,7 @@ static void Event_ReadMindAboutGoldenStatue(void) {
 /// "Are you sure?" Changing his mind, Isaac can accept after all, and the
 /// quest goes on as if he had accepted at once.
 static void Event_ReconsiderQuest(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSanctumAreYouSure);
   Engine_EventOpenMessage(ACTOR_HEALER, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -402,7 +402,7 @@ static void Event_ReconsiderQuest(void) {
 /// be: in every edition but the Japanese, that friend is Ivan, placed for it;
 /// in the Japanese, Garet.
 static void Event_AskAboutNewAdepts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 #if TBS_PATCH_1
   Event_CallWithLastActiveObjectId(gSanctum_IvanPlacement);
   Engine_TaskWait(1);
@@ -424,7 +424,7 @@ static void Event_AskAboutNewAdepts(void) {
 /// who asks whether Isaac feels any change in his Psynergy.
 static void Event_AskAboutPsynergyChanges(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(10);
   Engine_EventSetMessage(MsgSanctumDoFeelAnyChangeIn);
@@ -486,7 +486,7 @@ s32 Sanctum_Initialize(void) {
 /// that the choice is final: "Once you step outside the village, you cannot
 /// take back your decision."
 static void Event_WarnBeforeLeaving(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
   Engine_CameraMoveToActor(GARET, 1);
   Engine_CameraWaitForMove();
@@ -509,7 +509,7 @@ static void Event_WarnBeforeLeaving(void) {
 static void Event_LeaveAfterRefusing(void) {
   struct ColorBuffer *paletteWork;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
   Engine_ActorSetAnimation(GARET, 0);
   Engine_ActorSetAnimation(ACTOR_DORA, 0);
@@ -570,8 +570,8 @@ static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 /// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
 /// last of them.
 static inline void Sanctum_NodAll(void) {
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
   Engine_ActorSetAnimation(ACTOR_DORA, 3);
   Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
   Engine_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
@@ -607,7 +607,7 @@ static inline void Sanctum_ShowAllEmotes(void) {
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // A repeat visit skips the account of Sol Sanctum.
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) != 0) {
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
@@ -638,8 +638,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(100);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Engine_ActorSetAnimation(GARET, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+    Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
     Engine_EventWait(30);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
     Actor_FaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
@@ -658,8 +658,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventSetMessage(MsgSanctumWeHadIdeaTrueSanctum);
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
     Engine_EventWait(20);
@@ -704,8 +704,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Event_ShowMessage(ACTOR_WEST_HEALER, 0);
     }
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
     Engine_ActorSetAnimation(ACTOR_DORA, 3);
     Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
     Engine_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
@@ -873,8 +873,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWait(30);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
     Engine_ActorFaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
@@ -884,9 +884,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
     Engine_ActorFaceEachOther(GARET, ACTOR_GARETS_GRANDFATHER, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_ActorSetAnimation(ACTOR_DORA, 3);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
     Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
     ObjectMotion_WaitForAnimationChange(ACTOR_GARETS_GRANDFATHER);
     Engine_EventWait(60);
@@ -973,8 +973,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
     Engine_ActorSetAnimation(ACTOR_DORA, 3);
     Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
     Engine_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
@@ -1178,7 +1178,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
   Engine_EventWait(60);
   Engine_ActorSetAnimation(ACTOR_HEALER, 3);
@@ -1192,7 +1192,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
   Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   // Garet and the Mayor react to Isaac accepting the burden.
   Engine_EventSetMessage(MsgSanctumAcceptIsaacCantMean);
@@ -1209,7 +1209,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(20);
   Actor_FaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(40);
   Actor_FaceActor(GARET, ACTOR_HEALER, 0);
   Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
@@ -1305,8 +1305,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_HEALER, 3);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
@@ -1481,8 +1481,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_DORA, 0);
   Engine_EventWait(20);
@@ -1721,7 +1721,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(15);
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GARET, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1732,7 +1732,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_EventWait(1);
   Object_GetById(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Object_GetById(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_ActorJump(GARET, 2, 0);
@@ -1744,15 +1744,15 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_ActorFaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(5);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(5);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(10);
   Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(15);
   Engine_ActorSetAnimation(ACTOR_DORA, 3);
   Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
@@ -1763,14 +1763,14 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_ActorFaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Engine_ActorFaceActor(GARET, ACTOR_DORA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Engine_EventWait(15);
@@ -1812,7 +1812,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_EventWait(60);
   Engine_ActorFaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(10);
   Object_GetById(ACTOR_HEALER)->timer = GARET;
 #ifdef UBFIX
@@ -1853,7 +1853,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_EventWait(60);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
   Engine_EventWait(10);
@@ -1868,7 +1868,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_EventWait(15);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   Engine_EventWait(60);
@@ -1876,15 +1876,15 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Engine_ActorFaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(10);
   Engine_ActorFaceDirection(GARET, FACING_EAST, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(10);
   Engine_ActorFaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(10);
@@ -1933,21 +1933,21 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Engine_ActorFaceActor(GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_DORA, 3);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   Engine_EventWait(30);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(10);
   Engine_ActorFaceDirection(GARET, FACING_EAST, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   Engine_EventWait(60);
 }
 
@@ -2075,7 +2075,7 @@ static void Event_TalkToHealer(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     Engine_EventSetMessage(MsgSanctumPathSolSanctumStillClosed);
   else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
@@ -2100,7 +2100,7 @@ static void Event_TalkToHealerOnVisit(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   entrance = gGameState.entrance;
 
@@ -2138,7 +2138,7 @@ static void Event_TalkAboutCurse(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
     Engine_EventSetMessage(MsgSanctumCurseMayOverButWe);
   else
@@ -2155,7 +2155,7 @@ static void Event_TalkAboutAltinMonsters(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSanctumWasAfterEerieNightWhen);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0)
     Engine_EventSetMessage(MsgSanctumSavedAltinFromMonstersClearly);
@@ -2171,7 +2171,7 @@ static void Event_TalkAboutJourneyFromXian(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSanctumCameXianFromVeryDistant);
   Engine_EventShowMessage(ACTOR_HEALER, 0);
   Engine_EventEnd();
@@ -2465,7 +2465,7 @@ s32 gSanctum_CursorBob[] = {
     SC_WAIT(1),
     SC_SYNC,
     SC_SYNC,
-    SC_POS(0x2, 0x3, 0x4),
+    SC_POSITION(0x2, 0x3, 0x4),
     SC_MOVE(0x2, 0x2, 0x1),
     SC_SYNC,
     SC_SYNC,

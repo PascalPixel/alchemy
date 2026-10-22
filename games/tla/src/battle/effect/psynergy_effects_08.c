@@ -15,7 +15,7 @@ void Func_080e68d0(void);
 void Func_080e7844(void);
 void Func_080e9af4(void);
 void Func_080e74d8(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
@@ -23,7 +23,7 @@ s32 EventRuntime_GetControlledOwner(void);
 /// 10 frames.
 void Func_080e7804(void) {
   Func_080e74d8();
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
   WaitFrames(10);
 }
 
@@ -31,10 +31,10 @@ void Func_080e7804(void) {
 void Func_080e7818(void) {}
 
 /// Field Psynergy kind 30.
-void BattleFx_RunEffect30(void) {
+void BattleEffect_RunEffect30(void) {
   ObjectTable_Get(EventRuntime_GetControlledOwner());
   ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
 }
 
 /// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
-void BattleFx_CallEffect22(void) { Func_080e7844(); }
+void BattleEffect_CallEffect22(void) { Func_080e7844(); }

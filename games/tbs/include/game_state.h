@@ -56,8 +56,8 @@ enum BattleStart {
 /// It is the one gGameState in EWRAM, right after the 0x200 bytes of game
 /// flags; a save file's checksum covers the 968 words from gGameFlagBytes to
 /// the end of this struct (SaveState_BuildSummaryHeader). A new game sets its
-/// defaults (GameState_InitDefaults), and the field, battle, menus and scenes
-/// read and write it directly.
+/// defaults (GameState_InitializeDefaults), and the field, battle, menus and
+/// scenes read and write it directly.
 struct GameState {
   /// Runtime_GetBuildStampTime's value when the game was last saved; its low
   /// half goes into the file's summary.
@@ -113,7 +113,7 @@ struct GameState {
   u8 paletteGlow[2];  ///< window hue (0 to 23), brightness (0 to 14)
   u8 unk207[3];       ///< not named by TBS code
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
-  /// sound as their message types (FieldFx_GetResourceId).
+  /// sound as their message types (FieldEffect_GetResourceId).
   u8 speech;
   u8 unk20b;       ///< 1 on a new game; not read by name in TBS
   u8 messageSpeed; ///< 0 to 2; 1 on a new game

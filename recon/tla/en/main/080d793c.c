@@ -9,7 +9,7 @@
 // has more dependents. The flag as u32, the reads swapped, the mask in the
 // test, blocks or an empty asm around the reads differ 6 to 166; permute
 // (4 min) found nothing. It joins battle/effect/slots.c, ahead of
-// BattleFx_UpdateAllSlots, when it matches.
+// BattleEffect_UpdateAllSlots, when it matches.
 #include "types.h"
 #include "party_state.h"
 #include "system.h"

@@ -7,7 +7,7 @@ enum { ITEM_COUNTER_COUNT = 300 };
 extern u8 gItemCounters[ITEM_COUNTER_COUNT];
 
 s32 Inventory_Break(s32 owner, s32 slot) {
-  struct OwnerInventoryState *inv = UnitGet(owner);
+  struct OwnerInventoryState *inv = Unit_Get(owner);
   if (inv->inventory[slot] == 0) {
     return -1;
   }
@@ -16,7 +16,7 @@ s32 Inventory_Break(s32 owner, s32 slot) {
 }
 
 s32 Inventory_Repair(s32 owner, s32 slot) {
-  struct OwnerInventoryState *inv = UnitGet(owner);
+  struct OwnerInventoryState *inv = Unit_Get(owner);
   if (inv->inventory[slot] == 0) {
     return -1;
   }

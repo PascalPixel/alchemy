@@ -36,6 +36,23 @@ Functions not yet matched are drafts under `recon/tla/en/main`, by address;
 editions whose bytes differ stay on their scaffolds under `recon/tla/<lang>`.
 `make progress` gives the counts.
 
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`AffineMatrix_`, `Animation_`, `Bios_`, `Camera_`, `Code_`, `DebugText_`,
+`Flash_`, `Graphics_`, `Input_`, `IoWriteQueue_`, `ItemIcon_`, `NumberText_`,
+`Palette_`, `PaletteQueue_`, `PartyStatus_`, `Resource_`, `ResourceMetadata_`,
+`ResourceObject_`, `ResourceSlot_`, `Runtime_`, `SaveState_`, `SceneState_`,
+`Scheduler_`, `SerialRuntime_`, `SerialTest_`, `Sound_`, `System_`, `Ui_` and
+`VramCache_`. Those only The Lost Age's code has so far:
+
+| Prefix | What it acts on |
+| --- | --- |
+| `SaveProgress_` | the progress screen that saves, erases or copies a file |
+| `BattleLink_` | a link battle's transfer state |
+| `VramBlock_` | loading a resource into a VRAM block, and block 93's load and reset in the graphics and scene code |
+| `Reg_` | writing a halfword register, as ☀️'s `Io_` does |
+
 ## Evidence and open questions
 
 - XXX: two banks do not open with a far-call file (`rom_main_00` opens with

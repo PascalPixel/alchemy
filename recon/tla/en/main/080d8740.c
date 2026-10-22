@@ -4,8 +4,8 @@
 
 extern u8 gEffectWork[];
 
-void BattleFx_HalveDistanceToTarget(void);
-void BattleFx_UpdateRandomTargetParticle(void);
+void BattleEffect_HalveDistanceToTarget(void);
+void BattleEffect_UpdateRandomTargetParticle(void);
 
 struct CaptureSprite {
   u8 unk00[40];
@@ -43,7 +43,7 @@ struct CaptureResource {
 extern s32 gGameState[];
 
 struct CaptureObject *Object_GetById(s32 id);
-void BattleFx_InitializeSlots(void);
+void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -60,10 +60,10 @@ void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 void EffectSlot_SetCallback(void *slot, void *callback);
 void EffectSlot_SetObjectMode(void *slot, s32 mode);
-void Shop_InitEffectFar(void);
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
+void Shop_InitializeEffectFar(void);
+void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
-void BattleFx_RunMercuryDjinnCapture(s32 arg) {
+void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   struct CaptureObject *djinni;
   struct CaptureObject *copy;
   struct CaptureObject *previous;
@@ -87,7 +87,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg) {
   if (djinni == NULL)
     return;
 
-  BattleFx_InitializeSlots();
+  BattleEffect_InitializeSlots();
   effectSlots = *(void **)gEffectWork;
   Shop_RestoreSceneTilesFar(0x204084);
   WaitFrames(30);
@@ -118,7 +118,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg) {
       copy->mode = 0;
       copy->priorityFlags = 2;
       copy->collisionFlags |= 1;
-      copy->callback = (void *)BattleFx_HalveDistanceToTarget;
+      copy->callback = (void *)BattleEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
       Object_SetMode(copy, 0);
@@ -157,7 +157,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg) {
   remaining = 23;
   do {
     EffectSlot_Initialize(slot, 240, position.x, position.z);
-    EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRandomTargetParticle);
+    EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdateRandomTargetParticle);
     EffectSlot_SetObjectMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 9);
     remaining--;
@@ -182,6 +182,6 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg) {
   }
 
   WaitFrames(50);
-  Shop_InitEffectFar();
-  BattleFx_ClearActiveSlotsAndScheduleUpdates();
+  Shop_InitializeEffectFar();
+  BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

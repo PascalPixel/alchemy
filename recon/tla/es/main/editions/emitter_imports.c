@@ -30,7 +30,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(struct ParticleEffectObject *, s32);
-extern const u8 gBattleFx_ParticleScript[];
+extern const u8 gBattleEffect_ParticleScript[];
 
 void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
@@ -54,7 +54,7 @@ void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
     u8 flags;
 
     ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                 (u32)gBattleFx_ParticleScript);
+                                 (u32)gBattleEffect_ParticleScript);
     Object_SetMode(object, 0);
     mask = 13;
     flags = object->child->flags;

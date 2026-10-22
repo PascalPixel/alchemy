@@ -198,7 +198,7 @@ Func_080e87c4:
 	movs r1, #62
 	adds r0, r6, #0
 	lsls r2, r2, #8
-	bl BattleFx_IntegrateVector3
+	bl BattleEffect_IntegrateVector3
 	ldr r1, [r6, #24]
 	b .L_080e8998
 .L_080e896c:
@@ -247,7 +247,7 @@ Func_080e87c4:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	bl Resource_ResetEntry
-	bl BattleFx_EndCanvasSprite
+	bl BattleEffect_EndCanvasSprite
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 .L_080e89d6:

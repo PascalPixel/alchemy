@@ -1,5 +1,5 @@
 	.section .rodata
-	.global BattleFx_TanPalette
-BattleFx_TanPalette:
+	.global BattleEffect_TanPalette
+BattleEffect_TanPalette:
 	.incbin "games/tbs/src/graphics/battle_fx/tan_palette.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/tan_palette.bitmap.lz"

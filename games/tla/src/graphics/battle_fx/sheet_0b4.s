@@ -1,5 +1,5 @@
 	.section .rodata
-@ Uncolored art using BattleFx_MarsDjinnSheet colors (same effect).
+@ Uncolored art using BattleEffect_MarsDjinnSheet colors (same effect).
 	.global Resource_Data0B4
 Resource_Data0B4:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0b4.bitmap.lz"

@@ -28,7 +28,7 @@ Func_0810021c:
 	mov r10, r3
 	adds r3, r7, r1
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r10
 	mov r11, r0
 	movs r3, #10
@@ -74,7 +74,7 @@ Func_0810021c:
 	adds r2, #22
 	adds r3, r7, r2
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #226
 	lsls r3, r3, #1
 	adds r1, r7, r3

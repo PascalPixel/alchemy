@@ -327,7 +327,7 @@ can build from the names while the matching build keeps the numbers.
 | `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |
 | `cpu_set.s`, `sound_get_jump_list.s` | BIOS calls |
 | `heapfree.s` | `Runtime_ReleaseHeapBlock` and `MemFree` |
-| `updfar.s` | three ARM routines that share one literal pool (`ArcTan2FarArm`, `IwramSqrtFarArm`, `IwramRatioMulQ14FarArm`) |
+| `updfar.s` | three ARM routines that share one literal pool (`ArcTan2FarArm`, `Iwram_SqrtFarArm`, `Iwram_RatioMulQ14FarArm`) |
 | `syspal.s`, `memory/*.png` | the window palette and the basic sprite palettes, built from the PNGs |
 | `overlay.s` | the far-call stub macro, `overlay_veneer` |
 | `overlay.inc` | the head every stub table includes, and the list of stubs an overlay may import |
@@ -364,8 +364,10 @@ as constants. [Matching](../MATCHING.md) explains the markers in the code.
 | Prefix | What it acts on |
 | --- | --- |
 | `System_` | the cartridge entry |
-| `Iwram` | the resident IWRAM code and its entry stubs (`IwramIrqMain`, `IwramHalt`, `IwramMulQ16`) |
+| `Iwram` | the resident IWRAM code and its entry stubs (`IwramIrqMain`, `Iwram_Halt`, `IwramMulQ16`) |
 | `Bios_` | the BIOS calls |
+| `Dma_`, `Io_`, `Memory_` | DMA transfers, stops and fills (`system/dma.h`) and single register writes |
+| `ResourceTable_` | the table of the 512 resource blocks and who owns each |
 | `Resource_`, `ResourceId_` | the resource decoders and the directory's ids |
 | `Flash_`, `EraseFlash`, `ProgramFlash` | the flash library, named as pret names it |
 | `Runtime_`, `Sound_`, `ColorBuffer_`, `Render_` | things the engine names elsewhere |

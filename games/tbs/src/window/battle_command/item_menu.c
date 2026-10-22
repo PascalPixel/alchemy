@@ -29,7 +29,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   if ((definition->type != 0) && (Item_CanOwnerEquip(unit, item) == 0)) {
     return itemUseStatus;
   }
-  if ((BATTLE_OK & BattleActGet(definition->actionId)->flags) == 0) {
+  if ((BATTLE_OK & BattleAction_Get(definition->actionId)->flags) == 0) {
     return 2;
   }
   return 0;
@@ -96,7 +96,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
     s32 y = i * 2;
 
     iconSprite = &sprites[i];
-    MenuSprite_Init(sprites[i], MENU_SPRITE_SIZE_16);
+    MenuSprite_Initialize(sprites[i], MENU_SPRITE_SIZE_16);
     iconSprite->oam.f.x = window->x * 8 + 8;
     iconSprite->oam.f.y = (y + window->y) * 8 + 4;
   }

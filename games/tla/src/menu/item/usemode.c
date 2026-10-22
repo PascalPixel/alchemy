@@ -5,13 +5,13 @@
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 struct ItemDefinition *Item_Get(s32);
-s32 BattleFx_HasTriggerFar(s32);
+s32 BattleEffect_HasTriggerFar(s32);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // Spanish and Italian builds use a different name for this far call,
 // as in shop.c.
 s32 Func_080c8500(s32);
 #endif
-void *BattleActGet(s32);
+void *BattleAction_Get(s32);
 s32 Item_CanOwnerEquip(s32, s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
@@ -25,7 +25,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   if (Func_080c8500(masked) != 0) {
 #else
-  if (BattleFx_HasTriggerFar(masked) != 0) {
+  if (BattleEffect_HasTriggerFar(masked) != 0) {
 #endif
     return 0;
   }
@@ -41,7 +41,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
     __asm__ volatile("");
     id = 0x3fff;
     id &= use;
-    abilityData = BattleActGet(id);
+    abilityData = BattleAction_Get(id);
 
     if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
       if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {

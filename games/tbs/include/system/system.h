@@ -143,43 +143,43 @@ extern const u8 Resource_PatchThumbBranch[];
 extern const u8 gRom_LanguageCode;
 /// No code in the tree defines or reads it.
 extern u8 gRom_UnknownBytes[];
-// The pixel fragments BattleFx_BuildBlitter copies into its blitters, from
+// The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
 // battle_effect_composite.s: Forward reads the picture left to right and
 // Reverse right to left. None of them runs where it is.
 /// Max, four pixels (one canvas word), right to left; a full cell's row takes
 /// it twice.
-extern const u32 BattleFx_Max4Reverse[];
+extern const u32 BattleEffect_Max4Reverse[];
 /// Max, four pixels (one canvas word), left to right; a full cell's row takes
 /// it twice.
-extern const u32 BattleFx_Max4Forward[];
+extern const u32 BattleEffect_Max4Forward[];
 /// Max, one pixel, right to left.
-extern const u32 BattleFx_MaxReverse[];
+extern const u32 BattleEffect_MaxReverse[];
 /// Max, one pixel, left to right.
-extern const u32 BattleFx_MaxForward[];
+extern const u32 BattleEffect_MaxForward[];
 /// Additive, four pixels added a word at a time, right to left; a full cell's
 /// row takes it twice.
-extern const u32 BattleFx_ColorReverse[];
+extern const u32 BattleEffect_ColorReverse[];
 /// Additive, four pixels added a word at a time, left to right; a full cell's
 /// row takes it twice.
-extern const u32 BattleFx_ColorForward[];
+extern const u32 BattleEffect_ColorForward[];
 /// Additive, one pixel, right to left.
-extern const u32 BattleFx_AdditiveReverse[];
+extern const u32 BattleEffect_AdditiveReverse[];
 /// Additive, one pixel, left to right.
-extern const u32 BattleFx_AdditiveForward[];
+extern const u32 BattleEffect_AdditiveForward[];
 /// Sets 0x40 in every byte of sl, which caps an additive word's pixels at 63.
-extern const u32 BattleFx_Mask[];
+extern const u32 BattleEffect_Mask[];
 /// Transparent, a full cell's eight pixels, right to left.
-extern const u32 BattleFx_Transparent8Reverse[];
+extern const u32 BattleEffect_Transparent8Reverse[];
 /// Transparent, a full cell's eight pixels, left to right.
-extern const u32 BattleFx_Transparent8Forward[];
+extern const u32 BattleEffect_Transparent8Forward[];
 /// Transparent, one pixel, right to left.
-extern const u32 BattleFx_TransparentReverse[];
+extern const u32 BattleEffect_TransparentReverse[];
 /// Transparent, one pixel, left to right.
-extern const u32 BattleFx_TransparentForward[];
+extern const u32 BattleEffect_TransparentForward[];
 /// Copy, one pixel, right to left.
-extern const u32 BattleFx_CopyReverse[];
+extern const u32 BattleEffect_CopyReverse[];
 /// Copy, one pixel, left to right.
-extern const u32 BattleFx_CopyForward[];
+extern const u32 BattleEffect_CopyForward[];
 /// The basic sprite palettes 0 to 13, 224 colours (Palette_LoadBasicObjColors).
 extern const u8 gSystem_BasicColorPalette[];
 /// The sprite tile uploader, run from HEAP_SLOT_FRAME_UPLOADER.
@@ -189,7 +189,7 @@ extern u8 Tile_CopyStridedCodeSize[];
 /// The size of Resource_ExecuteTransfer (decode_01.s).
 extern u8 TransferCommandExecutor_Size[];
 void _call_via_r2(s32 arg0, s32 arg1, s32 target);
-void IwramHalt(void);
+void Iwram_Halt(void);
 void SoundDriver_EnterMixer(void);
 
 #endif

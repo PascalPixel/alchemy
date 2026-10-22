@@ -15,14 +15,14 @@
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
-/// staging code, the auto battle, BattleTargetExec and the Quake effect.
+/// staging code, the auto battle, BattleTarget_Execute and the Quake effect.
 void ObjMotRst(s32 unitId) {
   s32 z;
   s32 stopped;
   struct BattleObj *battleObject;
   struct MotionObject *object;
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
   stopped = 0;
   object->acceleration = 0x20000;
@@ -35,7 +35,7 @@ void ObjMotRst(s32 unitId) {
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   Object_SetMoveTargetFar((struct ObjectRuntime *)object, battleObject->anchorX,
                           0, battleObject->anchorZ);
-  // z / 8, rounded toward zero, as BattleObjMake turns a new object.
+  // z / 8, rounded toward zero, as BattleObject_Make turns a new object.
   z = battleObject->anchorZ;
   if (z < 0)
     z += 7;
@@ -49,7 +49,7 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
@@ -115,7 +115,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
   object->acceleration = 0x10000;
   object->speedLimit = 0x40000;
@@ -135,7 +135,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
 /// centre, in POSE_DAMAGE. Only an unnamed overlay veneer in
 /// BATTLE.S reaches it, and nothing in the source calls that.
 void BattleMotion_InitializeObject(s32 unitId) {
-  struct BattleObj *battleObject = BattleObjGet(unitId);
+  struct BattleObj *battleObject = BattleObject_Get(unitId);
   struct MotionObject *object = battleObject->object;
 
   object->acceleration = 128 << 9;
@@ -162,9 +162,9 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
   s32 targetX;
   s32 anchorX;
 
-  battleObject = BattleObjGet(unitId);
+  battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
-  if (UnitGetFar(unitId)->classId != ENEMY_FUSION_DRAGON) {
+  if (Unit_GetFar(unitId)->classId != ENEMY_FUSION_DRAGON) {
     object->acceleration = gBattleMotion_VariantAcceleration[variant];
     object->speedLimit = gBattleMotion_VariantSpeedLimit[variant];
     // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
@@ -190,8 +190,8 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 /// Bind, burst scene, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
-  struct BattleObj *actorSlot = BattleObjGet(actorId);
-  struct BattleObj *targetSlot = BattleObjGet(targetId);
+  struct BattleObj *actorSlot = BattleObject_Get(actorId);
+  struct BattleObj *targetSlot = BattleObject_Get(targetId);
   struct MotionObject *object = actorSlot->object;
   struct MotionObject *target = targetSlot->object;
   s32 percent = 75;
@@ -231,7 +231,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
 void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
   struct MotionObject *object;
 
-  object = BattleObjGet(unitId)->object;
+  object = BattleObject_Get(unitId)->object;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }
@@ -253,8 +253,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   s32 z2;
   struct FixedPointPosition pos;
 
-  first = BattleObjGet(firstId)->object;
-  secondSlot = BattleObjGet(secondId);
+  first = BattleObject_Get(firstId)->object;
+  secondSlot = BattleObject_Get(secondId);
   second = secondSlot->object;
 
   x1 = first->targetX;
@@ -292,7 +292,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
   struct AnimationEntry *effect;
   s32 effectHandle;
 
-  object = BattleObjGet(unitId)->object;
+  object = BattleObject_Get(unitId)->object;
   if ((object != NULL) &&
       ((RECORDS_KIND_MASK & object->recordStorageKind) == RECORDS_SINGLE)) {
     effectHandle =
@@ -312,7 +312,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 /// ElementGlow_Play, and through its far stub by
 /// EffectPosition_ProjectScaledBattler and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
-  struct MotionObject *object = BattleObjGet(unitId)->object;
+  struct MotionObject *object = BattleObject_Get(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
   s32 projectionScale;
   s32 spriteScale;
@@ -334,7 +334,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
 /// Returns 0. Reached through its far stub from BattleTarget_RunSelection, to
 /// place the target cursor.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
-  struct MotionObject *object = BattleObjGet(unitId)->object;
+  struct MotionObject *object = BattleObject_Get(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
   s32 projectedHeight;
   s32 spriteScale;
@@ -342,7 +342,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   Camera_ApplyTransformByFlag();
   projectedHeight = Render_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectedHeight, record->scale);
-  if (BattleClass_IsSmall(UnitGetFar(unitId)->classId) != 0)
+  if (BattleClass_IsSmall(Unit_GetFar(unitId)->classId) != 0)
     projectedHeight = Iwram_MulQ16(spriteScale, 24);
   else
     projectedHeight = Iwram_MulQ16(spriteScale, 48);
@@ -358,10 +358,10 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;
 
-  classId = UnitGetFar(unitId)->classId;
+  classId = Unit_GetFar(unitId)->classId;
   height = (u8)BattleClass_GetEffectHeight(classId) << 16;
   if (height == 0) {
-    classId = UnitGetFar(unitId)->classId;
+    classId = Unit_GetFar(unitId)->classId;
     if (BattleClass_IsSmall(classId) != 0) {
       height = 0x180000;
     } else {

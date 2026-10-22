@@ -165,7 +165,7 @@ Func_080f9644:
 	adds r0, #255
 	ands r0, r3
 	mov r10, r2
-	bl BattleFx_HasTriggerFar
+	bl BattleEffect_HasTriggerFar
 	cmp r0, #0
 	beq .L_080f97ec
 	movs r3, #1
@@ -232,7 +232,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	ldrb r0, [r1]
 	add r5, r9
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_CollectItems
@@ -378,7 +378,7 @@ Func_080f9644:
 	lsls r5, r5, #1
 	ldrb r0, [r3]
 	add r5, r9
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_CollectItems
@@ -544,7 +544,7 @@ Func_080f9644:
 	add r3, r9
 	ldrb r7, [r3]
 	adds r0, r7, #0
-	bl UnitGet
+	bl Unit_Get
 	adds r0, r6, #1
 	cmp r0, #0
 	ble .L_080f9b1a
@@ -572,7 +572,7 @@ Func_080f9644:
 	adds r0, r7, #0
 	bl Unit_RefreshPsynergyFar
 	adds r0, r7, #0
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	bl ItemMenu_SetItemWindowRow3
 	movs r3, #128
 	lsls r3, r3, #2
@@ -615,7 +615,7 @@ Func_080f9644:
 	adds r3, #22
 	add r3, r9
 	ldrb r0, [r3]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	movs r3, #134
 	lsls r3, r3, #2
 	add r3, r9
@@ -806,9 +806,9 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r5]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldrb r0, [r7]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r2, r10
 	movs r6, #1
 	cmp r2, #0
@@ -933,14 +933,14 @@ Func_080f9644:
 	adds r3, #22
 	add r3, r9
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #140
 	str r0, [sp, #12]
 	lsls r3, r3, #1
 	adds r3, #255
 	add r3, r9
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r5, #166
 	lsls r5, r5, #1
 	str r0, [sp, #8]
@@ -1172,9 +1172,9 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r5]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldrb r0, [r7]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	bl ItemMenu_SetMessageWindowHeight5
 	mov r3, r9
 	adds r3, #240
@@ -1294,7 +1294,7 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r7]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r3, r9
 	ldr r2, [r3, #20]
 	movs r5, #226
@@ -1303,7 +1303,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	add r5, r9
 	ldrb r0, [r7]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_CollectItems
@@ -1358,7 +1358,7 @@ Func_080f9644:
 	adds r6, #22
 	add r6, r9
 	ldrb r0, [r6]
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #180
 	lsls r3, r3, #1
 	add r3, r9
@@ -1375,7 +1375,7 @@ Func_080f9644:
 	ldrb r0, [r6]
 	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r6]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r1, r9
 	ldr r2, [r1, #20]
 	movs r3, #0
@@ -1386,7 +1386,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	add r5, r9
 	ldrb r0, [r6]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_CollectItems

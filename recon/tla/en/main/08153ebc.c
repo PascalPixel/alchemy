@@ -1,6 +1,6 @@
-// Draft of BattleFx_RunAtalanta, summon scene 4 (BattleFx_RunSceneEffect's case 4).
+// Draft of BattleEffect_RunAtalanta, summon scene 4 (BattleEffect_RunSceneEffect's case 4).
 
-// Twin: The Broken Seal's BattleFx_RunAtalanta (effect.c), call
+// Twin: The Broken Seal's BattleEffect_RunAtalanta (effect.c), call
 // for call, with The Lost Age's changes:
 // - the giant is eleven sprite objects (Func_0815b290, priority 1, their
 // 1 KB of tiles copied to object VRAM) in a grid of four rows of three,
@@ -11,12 +11,12 @@
 // - after the giant, object palette 0's sixteen colors are copied into
 // background palette 5 by DMA and color 0x5e takes object color 0xf4
 // (Func_0814cca8, then Palette_LoadBasicObjColors);
-// - blitters through BattleFx_LoadBlitter, callbacks ordered 0xc80, the backdrop
+// - blitters through BattleEffect_LoadBlitter, callbacks ordered 0xc80, the backdrop
 // ResourceId_VioletSkyBackdrop, the skip on gInput.repeat.
 // Resources not yet named in directory.s, by row and asset: 0xa6
-// Summon_LeafWarriorTiles, 0x12b BattleFx_SlashSheet, 0x163
-// BattleFx_LimePalette, 0x195 BattleFx_StagedParticlePath and 0x178
-// BattleFx_EmberStreakSheet.
+// Summon_LeafWarriorTiles, 0x12b BattleEffect_SlashSheet, 0x163
+// BattleEffect_LimePalette, 0x195 BattleEffect_StagedParticlePath and 0x178
+// BattleEffect_EmberStreakSheet.
 
 // Draft: differ 966 of 1115 (draft 1147).
 
@@ -53,20 +53,20 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_0813baec(void); // BattleFx_AdvanceScrollOnInterval
-void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
-void Func_0814cca8(void); // BattleFx_SetupBlendedDisplay
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
+void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
 void Func_08163c2c(s32 layer, s32 value);  // Func_08163c2c
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
@@ -86,7 +86,7 @@ struct SpriteObject {
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
                                    u32 attributes);
 
-// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -123,11 +123,11 @@ extern char ResourceId_StagedParticlePath;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_EmberStreakSheet;
 extern s32 Data_081983cc[];  // gAtalanta_UnitScale
-extern u16 gData_08197410[]; // gBattleFx_MoteCells
-extern u16 gData_0819747a[]; // gBattleFx_PuffArcCells
-extern u8 gData_08197467[];  // gBattleFx_PuffArcCellWidths
-extern u8 gData_08197473[];  // gBattleFx_PuffArcCellBiasY
-extern u8 gData_0819746d[];  // gBattleFx_PuffArcCellHeights
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern u16 gData_0819747a[]; // gBattleEffect_PuffArcCells
+extern u8 gData_08197467[];  // gBattleEffect_PuffArcCellWidths
+extern u8 gData_08197473[];  // gBattleEffect_PuffArcCellBiasY
+extern u8 gData_0819746d[];  // gBattleEffect_PuffArcCellHeights
 
 // Summon 4: a giant strides across a violet sky and cuts the air; sixteen
 // slashes gather light and fly, then rain down on the targets.
@@ -139,7 +139,7 @@ extern u8 gData_0819746d[];  // gBattleFx_PuffArcCellHeights
 // and flies off. Second loop (88 frames): 32 slashes fall from the sky, the
 // first 24 two frames apart, and burst into flame on the ground, each one
 // shaking the screen and flashing a target.
-void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
   s32 position[4];
@@ -166,15 +166,15 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleFx_BeginCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
   Func_0813ba50();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Func_08163c2c(0, 0);
-  BattleFx_SelectLivingTargets(work->effect);
+  BattleEffect_SelectLivingTargets(work->effect);
 
   // The giant: eleven sprite objects with their tiles.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
@@ -200,8 +200,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
-  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
-  BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP));
+  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
+  BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   gCameraSceneParameters[4] = 240;
@@ -442,8 +442,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

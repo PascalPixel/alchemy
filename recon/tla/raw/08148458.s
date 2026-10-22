@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Nereid (scene kind 2).
-	.global BattleFx_RunNereid
+	.global BattleEffect_RunNereid
 	.thumb_func
-BattleFx_RunNereid:
+BattleEffect_RunNereid:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_RunNereid:
 	str r1, [sp, #40]
 	ldr r3, [r3, #100]
 	str r3, [sp, #36]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081484bc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -35,7 +35,7 @@ BattleFx_RunNereid:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #32]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r3, [sp, #40]
 	ldr r0, .L_081484c0
 	adds r1, r3, r6
@@ -152,7 +152,7 @@ BattleFx_RunNereid:
 	adds r0, #240
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #197
@@ -160,7 +160,7 @@ BattleFx_RunNereid:
 	adds r1, #255
 	movs r0, #12
 	movs r2, #2
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r1, #0
 	mov r9, r1
 .L_081485a6:
@@ -511,7 +511,7 @@ BattleFx_RunNereid:
 .L_08148850:
 	.4byte 0x00000134
 .L_08148854:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08148858:
 	.4byte 0xfffc0000
 .L_0814885c:
@@ -758,7 +758,7 @@ BattleFx_RunNereid:
 	bl ResourceObject_ReleaseFar
 	cmp r7, #12
 	bne .L_08148a20
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -774,4 +774,4 @@ BattleFx_RunNereid:
 .L_08148a4c:
 	.4byte Data_08197998
 .L_08148a50:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

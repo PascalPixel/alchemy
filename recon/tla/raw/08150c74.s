@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Quake, Earthquake, Quake Sphere (kind 1).
-	.global BattleFx_RunQuake
+	.global BattleEffect_RunQuake
 	.thumb_func
-BattleFx_RunQuake:
+BattleEffect_RunQuake:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,7 +25,7 @@ BattleFx_RunQuake:
 	ldr r3, [r3, #48]
 	movs r7, #0
 	str r3, [sp, #48]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08150cdc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -133,7 +133,7 @@ BattleFx_RunQuake:
 .L_08150d6a:
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -477,7 +477,7 @@ BattleFx_RunQuake:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #112
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -489,7 +489,7 @@ BattleFx_RunQuake:
 .L_08151030:
 	.4byte 0xffff9000
 .L_08151034:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08151038:
 	.4byte Data_08196e1c
 .L_0815103c:

@@ -1463,7 +1463,7 @@ Func_0200058c:
 	.ifdef TLA_EDITION_IT
 	bl Field_EndActorSpriteEffect
 	.else
-	bl Field_BeginPaletteTransition
+	bl Field_StartPaletteTransition
 	.endif
 	.endif
 	movs r0, #40

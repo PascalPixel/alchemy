@@ -57,7 +57,7 @@ extern char MsgCureSeal;
 extern char MsgRefrainEnd;
 extern char MsgReflectEnd;
 
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 u32 BattleParty_IsUnitListed(u32 id);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 u32 BattleEventRuntime_Reset(void);
@@ -73,7 +73,7 @@ s32 sub_08124af8(s32 id);
 
 #define ANNOUNCE_END(tick, message)                                            \
   if (tick(unitId) != 0) {                                                     \
-    BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));                 \
+    BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     UiText_DrawQuantity(unitId, 1);                                            \
     UiText_ShowMessageAndWaitCoreFar((s32)&message);                           \
     BattlePresentation_WaitForAdvance();                                       \
@@ -81,7 +81,7 @@ s32 sub_08124af8(s32 id);
 
 #define ANNOUNCE_END_POSE(tick, message)                                       \
   if (tick(unitId) != 0) {                                                     \
-    BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));                 \
+    BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     UiText_DrawQuantity(unitId, 1);                                            \
     BattlePres_SetActorModeAndAction(unitId);                                  \
     UiText_ShowMessageAndWaitCoreFar((s32)&message);                           \
@@ -106,8 +106,8 @@ void Func_08124e20(void) {
     timedEntry = list->entries;
     if (recoveryIndex < list->count) {
       do {
-        if (timedEntry->turns > 0 && BattleObjGet(timedEntry->unitId) != 0 &&
-            UnitGet(timedEntry->unitId)->hp != 0) {
+        if (timedEntry->turns > 0 && BattleObject_Get(timedEntry->unitId) != 0 &&
+            Unit_Get(timedEntry->unitId)->hp != 0) {
           timedEntry->turns--;
         }
         recoveryIndex++;
@@ -122,27 +122,27 @@ void Func_08124e20(void) {
           u8 unitId = expiredEntry->unitId;
           u8 element;
 
-          if (BattleObjGet(unitId) != 0) {
+          if (BattleObject_Get(unitId) != 0) {
             BattleEventRuntime_Reset();
             BattleEventRuntime_SchedulePhase(30);
-            BattleEvPush(0, unitId);
-            BattleEvPush(3, expiredEntry->element * 20 + expiredEntry->index +
+            BattleEvent_Push(0, unitId);
+            BattleEvent_Push(3, expiredEntry->element * 20 + expiredEntry->index +
                                 300);
-            BattleEvPush(14, 175);
-            BattleEvPush(10, 0);
-            BattleEvPush(4, (u32)&MsgDjinnIsSet);
-            BattleEvPush(11, unitId);
+            BattleEvent_Push(14, 175);
+            BattleEvent_Push(10, 0);
+            BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
+            BattleEvent_Push(11, unitId);
             Audio_PlayCue(212);
             if (BattleParty_IsUnitListed(unitId)) {
-              Object_SetMode(BattleObjGet(unitId)->object, 3);
+              Object_SetMode(BattleObject_Get(unitId)->object, 3);
               ObjectDispatch_SetAnimationSpeedFar(
-                  (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
+                  (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;
             Djinn_ActivateFar(unitId, element, expiredEntry->index);
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
-            UnitCalcFar(unitId);
+            Unit_CalculateFar(unitId);
             if (BattleParty_IsUnitListed(unitId))
               Func_08127308(unitId, element, 3, 0);
             BattleEventRuntime_WaitForReady();
@@ -175,7 +175,7 @@ void Func_08124e20(void) {
         s32 hpAmount;
         s32 ppAmount;
         s32 unitId = unitIds[unitIndex];
-        struct BattleUnit *unit = UnitGet(unitId);
+        struct BattleUnit *unit = Unit_Get(unitId);
 
         unit->equipBonus[1] = 0;
         if (unit->ready != 0) {

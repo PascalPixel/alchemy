@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_RunBurstScene
+	.global BattleEffect_RunBurstScene
 	.thumb_func
-BattleFx_RunBurstScene:
+BattleEffect_RunBurstScene:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ BattleFx_RunBurstScene:
 	str r2, [sp, #48]
 	ldr r3, [r3, #48]
 	str r3, [sp, #44]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0815a178
 	movs r2, #128
 	lsls r2, r2, #19
@@ -405,18 +405,18 @@ BattleFx_RunBurstScene:
 	bne .L_0815a44a
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #27
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0815a45a
 .L_0815a44a:
 	movs r1, #23
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #31
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0815a45a:
 	movs r1, #192
 	lsls r1, r1, #18
@@ -529,9 +529,9 @@ BattleFx_RunBurstScene:
 .L_0815a528:
 	.4byte IwramCopyWords
 .L_0815a52c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815a530:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_0815a534:
 	.4byte gMapCellBuffer
 .L_0815a538:
@@ -787,10 +787,10 @@ BattleFx_RunBurstScene:
 	bl Transform_SetLookAt
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r1, #19
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #192
 	lsls r0, r0, #18
 	ldr r3, [r0, #104]
@@ -848,7 +848,7 @@ BattleFx_RunBurstScene:
 	adds r0, r6, #0
 	movs r1, #60
 	ldr r2, .L_0815a9bc
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r6, #4]
 	ldr r0, .L_0815a9c0
 	cmp r3, r0
@@ -997,7 +997,7 @@ BattleFx_RunBurstScene:
 	bne .L_0815a94a
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #192
 	lsls r0, r0, #18
 	ldr r3, [r0, #104]
@@ -1037,7 +1037,7 @@ BattleFx_RunBurstScene:
 	adds r0, r5, #0
 	movs r1, #62
 	ldr r2, .L_0815a9d8
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_0815a934:
 	movs r1, #1
@@ -1085,7 +1085,7 @@ BattleFx_RunBurstScene:
 .L_0815a98e:
 	ldr r0, .L_0815a9e0
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #152
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1121,6 +1121,6 @@ BattleFx_RunBurstScene:
 .L_0815a9d8:
 	.4byte 0xfffff000
 .L_0815a9dc:
-	.4byte BattleFx_ArmBg2AffineHBlankDma
+	.4byte BattleEffect_ArmBg2AffineHBlankDma
 .L_0815a9e0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

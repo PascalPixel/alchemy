@@ -10,10 +10,10 @@ __modsi3:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global UnitGet
+	.global Unit_Get
 	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
+Unit_Get:
+	overlay_veneer Unit_GetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -130,10 +130,10 @@ Func_02000d30:
 	.thumb_func
 Func_02000d38:
 	overlay_veneer Func_08038340
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
+Unit_Calculate:
+	overlay_veneer Unit_CalculateFar
 	.global Func_02000d48
 	.thumb_func
 Func_02000d48:
@@ -252,10 +252,10 @@ Func_02000e20:
 	.thumb_func
 Func_02000e28:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.else
 	overlay_veneer Func_080c83e0
 	.endif

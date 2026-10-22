@@ -18,7 +18,7 @@ struct HighlightWork {
   u16 highlightMode;
 };
 
-extern s8 gBattleFx_HighlightBlendRamp[];
+extern s8 gBattleEffect_HighlightBlendRamp[];
 
 void Graphics_AdvancePaletteCycle(void) {
   struct HighlightWork *battle =
@@ -44,7 +44,7 @@ void Graphics_AdvancePaletteCycle(void) {
       battle->highlightStep++;
     } else if (battle->highlightMode == 2) {
       REG_BLDCNT = 0x3f40;
-      level = gBattleFx_HighlightBlendRamp[battle->highlightStep];
+      level = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
       REG_BLDALPHA = (level << 8) | (0x10 - level);
       rampIndex = battle->highlightStep;
       nextIndex = (rampIndex + 1) & 0xf;
@@ -54,7 +54,7 @@ void Graphics_AdvancePaletteCycle(void) {
     } else if (battle->highlightMode != 0) {
       REG_BLDCNT = 0x3f90;
       REG_BLDALPHA = 0x10;
-      REG_BLDY = gBattleFx_HighlightBlendRamp[battle->highlightStep];
+      REG_BLDY = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
       rampIndex = battle->highlightStep;
       nextIndex = (rampIndex + 1) & 0xf;
       if (rampIndex > 14)

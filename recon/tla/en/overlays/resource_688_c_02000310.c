@@ -35,7 +35,7 @@ void Object_RefreshSelectorById(u32 id);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 BattleFx_GetResourceId(s32 id);
+s32 BattleEffect_GetResourceId(s32 id);
 void UiText_GetResourceDimensions(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void UiText_OpenMessageWindow(s32 id, s32 x, s32 y, u32 flags);
 s32 UiWork_IsComplete(void);
@@ -90,7 +90,7 @@ void Func_02000310(s32 kind, s32 frames) {
   id = 56;
   if (kind != 8)
     id = kind;
-  resource = BattleFx_GetResourceId(id);
+  resource = BattleEffect_GetResourceId(id);
   if (kind == 7) {
     width = 10;
     height = 10;

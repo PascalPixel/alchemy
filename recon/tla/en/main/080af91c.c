@@ -66,7 +66,7 @@ void MemFree(void *buffer);
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 struct OwnerGrowth *Character_GetDefinition(s32 owner);
 s32 Unit_RefreshPsynergy(s32 owner);
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 u32 Random16(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 u32 __udivsi3(u32 numerator, u32 denominator);
@@ -79,7 +79,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
   s32 diff;
   s32 level;
 
-  st = UnitGet(owner);
+  st = Unit_Get(owner);
   work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
   work->classId = st->classId;
   level = st->level;
@@ -134,7 +134,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
     st->base20 = 0;
     st->base21 = 0;
     Unit_RefreshPsynergy(owner);
-    UnitCalc(owner);
+    Unit_Calculate(owner);
   }
   MemFree(work);
   return res;

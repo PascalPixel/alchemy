@@ -9,9 +9,10 @@
 #include "farcall.h"
 
 // Percentages by a target's distance from the aimed position, 0 for the aimed
-// target to 5 for the farthest: BattleTargetExec scales an amount by the entry
-// and divides by 100, so an ability spread over a group weakens step by step.
-// gHitTable instead scales the effect's chance, through BattleHitCheck.
+// target to 5 for the farthest: BattleTarget_Execute scales an amount by the
+// entry and divides by 100, so an ability spread over a group weakens step by
+// step. gHitTable instead scales the effect's chance, through
+// Battle_RollEffectSuccessFar.
 /// The share of an effect's chance to land (Battle_RollEffectSuccess's
 /// successScale): 100, 60, then 30.
 extern u8 gHitTable[];

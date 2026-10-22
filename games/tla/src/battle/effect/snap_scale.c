@@ -3,7 +3,7 @@
 
 /// Raises the object's scale in sixteenths to full size and commits its
 /// position.
-void BattleFx_SnapScaleToFull(struct ObjectRuntime *object) {
+void BattleEffect_SnapScaleToFull(struct ObjectRuntime *object) {
   s32 next;
   s32 scale;
   s32 limit;

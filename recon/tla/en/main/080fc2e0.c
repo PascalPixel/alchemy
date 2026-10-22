@@ -30,7 +30,7 @@ struct InventoryMenuState {
 extern u8 MsgYes[];           // the ☀️ twin's name
 extern u8 MsgEquipThisItem[]; // the ☀️ twin's name
 
-void *UnitGet(s32 unit);
+void *Unit_Get(s32 unit);
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -39,7 +39,7 @@ void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
 void Func_080f8ab4(s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-void UnitCalcFar(s32 unit);
+void Unit_CalculateFar(s32 unit);
 void Unit_RefreshPsynergyFar(s32 unit);
 void WaitFrames(s32 frames);
 
@@ -55,7 +55,7 @@ s32 Func_080fc2e0(s32 unused) {
   s32 changed = 1;
   struct InventoryMenuState *menu =
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
-  void *unit = UnitGet(menu->paneOwner[1]);
+  void *unit = Unit_Get(menu->paneOwner[1]);
   void *saved;
   s32 window;
 
@@ -109,6 +109,6 @@ s32 Func_080fc2e0(s32 unused) {
     Iwram_CopyWords(unit, saved, 332);
   MemFree(saved);
   Unit_RefreshPsynergyFar(menu->paneOwner[1]);
-  UnitCalcFar(menu->paneOwner[1]);
+  Unit_CalculateFar(menu->paneOwner[1]);
   return selection;
 }

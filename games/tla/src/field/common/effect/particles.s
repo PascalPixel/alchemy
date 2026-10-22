@@ -1,7 +1,7 @@
 	.section .rodata
 @ Field effect particles, 16x16 sprite frames packed one after another
 
-@ A copy of The Broken Seal's gFieldFx_GroundParticleTiles
+@ A copy of The Broken Seal's gFieldEffect_GroundParticleTiles
 	.global gData_080f3798
 gData_080f3798:
 	.incbin "games/tla/src/field/common/effect/ground.4bpp16x16.plz"
@@ -11,7 +11,7 @@ gData_080f3798:
 gData_080f385e:
 	.incbin "games/tla/src/field/common/effect/mote.4bpp16x16.plz"
 
-@ A copy of The Broken Seal's gFieldFx_SparkleTiles
+@ A copy of The Broken Seal's gFieldEffect_SparkleTiles
 	.global gData_080f38b2
 gData_080f38b2:
 	.incbin "games/tla/src/field/common/effect/sparkle.4bpp16x16.plz"

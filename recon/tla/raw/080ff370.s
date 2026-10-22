@@ -27,7 +27,7 @@ Func_080ff370:
 	lsrs r3, r3, #31
 	ldr r0, [sp, #28]
 	str r3, [sp, #8]
-	bl UnitGet
+	bl Unit_Get
 	ldr r2, [sp, #24]
 	movs r3, #255
 	ands r3, r2

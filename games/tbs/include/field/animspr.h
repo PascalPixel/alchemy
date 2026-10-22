@@ -40,18 +40,18 @@ struct AnimationEntry {
   /// each timed command adds its argument times 16, each frame takes off step.
   u16 timer;
   /// The facing table its frames follow (from the metadata, or
-  /// ANIM_CMD_SET_KIND); zero marks a free layer record.
+  /// ANIMATION_COMMAND_SET_KIND); zero marks a free layer record.
   u8 kind;
   u8 param;      ///< SpriteColorMode its pixels are drawn with; 0 when taken
   u8 priority;   ///< drawing order 0 to 3 among the layers; above 3 not drawn
   u8 mode;       ///< frame codec: 1 type-01, 3 LZ, anything else raw
   void **frames; ///< frame pointers, from the metadata or a resource slot
   u8 **scripts;  ///< the metadata's command scripts, one per animation number
-  u8 *script;    ///< the running script; null when stopped (ANIM_CMD_END)
-  u8 pos;        ///< byte offset of the next command in script
-  u8 step;       ///< taken off timer each frame; 16 is normal speed
-  u8 frame;      ///< frame shown, frameBase plus the facing offset; 255 none
-  u8 frameBase;  ///< frame the script chose, before facing; 255 blank
+  u8 *script; ///< the running script; null when stopped (ANIMATION_COMMAND_END)
+  u8 pos;     ///< byte offset of the next command in script
+  u8 step;    ///< taken off timer each frame; 16 is normal speed
+  u8 frame;   ///< frame shown, frameBase plus the facing offset; 255 none
+  u8 frameBase; ///< frame the script chose, before facing; 255 blank
 };
 
 /// A resource slot: the tag of the animation loaded into it (slot number and

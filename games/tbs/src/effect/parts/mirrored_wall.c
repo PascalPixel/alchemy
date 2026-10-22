@@ -6,7 +6,7 @@
 
 // The canvas blitters, and the 48-frame wall effects.
 
-/// The mirrored wall's modes (BattleFx_RunMirroredWall), each named for the
+/// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {
   MIRRORED_WALL_SPASM,   ///< actual size, a gentle shake for 32 frames
@@ -26,7 +26,7 @@ enum MirroredWallMode {
 ///
 /// flip : nonzero draws mirrored.
 /// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
-void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
+void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
@@ -46,34 +46,35 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
 
 /// The wall rises wide and shakes the screen hard.
 ///
-/// Abilities: Berserk (BATTLE_FX_BERSERK).
-void BattleFx_RunBerserk(struct BattleEffectArgument *effect) {
-  BattleFx_RunMirroredWall(effect, MIRRORED_WALL_BERSERK);
+/// Abilities: Berserk (BATTLE_EFFECT_BERSERK).
+void BattleEffect_RunBerserk(struct BattleEffectArgument *effect) {
+  BattleEffect_RunMirroredWall(effect, MIRRORED_WALL_BERSERK);
 }
 /// The wall rises with a long gentle shake and the recovery sound.
 ///
-/// Abilities: Spasm (BATTLE_FX_SPASM).
-void BattleFx_RunSpasm(struct BattleEffectArgument *effect) {
-  BattleFx_RunMirroredWall(effect, MIRRORED_WALL_SPASM);
+/// Abilities: Spasm (BATTLE_EFFECT_SPASM).
+void BattleEffect_RunSpasm(struct BattleEffectArgument *effect) {
+  BattleEffect_RunMirroredWall(effect, MIRRORED_WALL_SPASM);
 }
 /// A wide wall of fire rises without shaking the screen.
 ///
-/// Abilities: Recovery (BATTLE_FX_RECOVERY).
-void BattleFx_RunRecovery(struct BattleEffectArgument *effect) {
-  BattleFx_RunMirroredWall(effect, MIRRORED_WALL_RECOVERY);
+/// Abilities: Recovery (BATTLE_EFFECT_RECOVERY).
+void BattleEffect_RunRecovery(struct BattleEffectArgument *effect) {
+  BattleEffect_RunMirroredWall(effect, MIRRORED_WALL_RECOVERY);
 }
 /// Raises a symmetrical wall (the EarthWall images) at the first target's
 /// feet for 48 frames; the target glows and the battle shows the result on
 /// frame 24.
 ///
-/// Called by BattleFx_RunBerserk, BattleFx_RunSpasm and
-/// BattleFx_RunRecovery. Loads its colours over the first 64 of the
+/// Called by BattleEffect_RunBerserk, BattleEffect_RunSpasm and
+/// BattleEffect_RunRecovery. Loads its colours over the first 64 of the
 /// background palette, sets BG2PA and BG2X so the wall stands on the target,
 /// and sets work->shakeFrames. Frees its blitters and closes the canvas
 /// layer before it returns.
 ///
 /// mode: the wall's width, shake and colours (enum MirroredWallMode).
-void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -88,7 +89,7 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
 
   // Setup. The EarthWall images, coloured with the Mars Djinn palette (the
   // Fireball palette for Recovery), each palette replacing the one before.

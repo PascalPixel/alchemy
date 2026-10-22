@@ -4,7 +4,7 @@
 #include "edition.h"
 #include "types.h"
 
-u32 BattleRandom(void);
+u32 Battle_Random(void);
 
 extern s32 gBattleRandomSeed;
 

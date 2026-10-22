@@ -51,7 +51,7 @@ struct InventoryMenuState {
 
 extern u8 MsgSwitchCharacterHelp[];
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
@@ -92,7 +92,7 @@ s32 Func_0810021c(void) {
   result = 0;
   refresh = 2;
   listNeedsRedraw = 1;
-  owner = UnitGet(menu->paneOwner);
+  owner = Unit_Get(menu->paneOwner);
   UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, 15, 10, 2);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
@@ -100,7 +100,7 @@ s32 Func_0810021c(void) {
   while (!GameFlag_Test(0x150)) {
     if (refresh) {
       if (refresh == 2) {
-        owner = UnitGet(menu->paneOwner);
+        owner = Unit_Get(menu->paneOwner);
         menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
         RenderOutput_RedrawSavedRectFar(window);
         for (i = 0; i <= 14; i++)

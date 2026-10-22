@@ -23,7 +23,7 @@ void PartyInventory_Remove(s32 item);
 void Party_AddActiveOwner(s32 owner);
 void Func_080ae358(s32 mode);
 void Djinn_ActivateOfferedForParty(void);
-void UnitCalc(s32 unitId);
+void Unit_Calculate(s32 unitId);
 void Func_080ae16c(s32 mode);
 void Func_080ae6c8(s32 a, s32 b);
 u32 Random16(void);
@@ -56,7 +56,7 @@ void Func_080ae6e4(void) {
   Func_080ae358(0);
   Djinn_ActivateOfferedForParty();
   for (i = 0; i < 8; i++)
-    UnitCalc(i);
+    Unit_Calculate(i);
   Func_080ae16c(1);
   GameFlag_SetBit(34);
 

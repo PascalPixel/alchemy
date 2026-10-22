@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 105 (2026-10-18; plainly 4): the twin of The Broken
-// Seal's BattleFx_UpdateRadialLaunch; this game stores x and z to the slot's
+// Seal's BattleEffect_UpdateRadialLaunch; this game stores x and z to the slot's
 // origin and position together and does not write them back to pos. After a
 // store, the listing puts one other instruction before the next load through
 // another base: it copies sp to r0 for the camera call before it loads y, and
@@ -38,7 +38,7 @@ void Camera_WorldToScreen(struct LaunchVector *position);
 void Vector_AddPolarOffset(s32 distance, s32 angle, void *position);
 u32 Random16(void);
 void Audio_PlayCue(s32 cue);
-void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
+void BattleEffect_ClearOwnedSlot(struct EffectSlot *slot);
 
 void Func_080e0cec(struct EffectSlot *slot) {
   struct LaunchVector pos;
@@ -83,6 +83,6 @@ void Func_080e0cec(struct EffectSlot *slot) {
       slot->state--;
   } else if (state == 2) {
     if (EffectSlot_HasPendingTarget(slot) == 0)
-      BattleFx_ClearOwnedSlot(slot);
+      BattleEffect_ClearOwnedSlot(slot);
   }
 }

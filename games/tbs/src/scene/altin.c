@@ -349,7 +349,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Altin's village before the hydros statues are beaten; either way, he says
 /// the flood has changed Altin.
 static void Village_AskAboutFirstVisit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinYourFirstTimeVisitAltin);
 
   Engine_EventOpenMessage(ACTOR_GREETING_STRONG_MAN, 0);
@@ -367,7 +367,7 @@ static void Village_AskAboutFirstVisit(void) {
 /// A strong man asks whether the slain hydros creatures gushed water. He's in
 /// Altin's village once the hydros statues are beaten.
 static void Village_AskAboutHydros(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinDidSeeWaterGushingOut);
   Engine_EventAskYesNo(ACTOR_CURIOUS_STRONG_MAN, 0);
   Engine_EventEnd();
@@ -382,12 +382,12 @@ static void Village_TalkToThirstyOldWoman(void) {
   struct FieldActor *beast;
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Engine_EventSetMessage(MsgAltinOnesWhoDefeatedWaterBeasts);
     Event_AskYesNo(ACTOR_THIRSTY_OLD_WOMAN, 0);
   } else {
-    Engine_ActorSetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIMATION_SHAKE_HEAD);
     Engine_EventSetMessage(MsgAltinWeCantDrinkWaterMonsters);
     Event_ShowMessageAndWait(ACTOR_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
@@ -411,7 +411,8 @@ static void Village_TalkToThirstyOldWoman(void) {
       Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
       Engine_CameraWaitForMove();
     }
-    Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN,
+                                    ANIMATION_SHAKE_HEAD);
   }
   Engine_EventEnd();
 }
@@ -420,7 +421,7 @@ static void Village_TalkToThirstyOldWoman(void) {
 /// in Altin's village once the hydros statues are beaten.
 static void Village_AskAboutRuins(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinTrueFoundAncientRuinsIn);
   Engine_EventAskYesNo(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, 0);
   Engine_EventEnd();
@@ -431,7 +432,7 @@ static void Village_AskAboutRuins(void) {
 /// Altin once the hydros statues are beaten.
 static void Houses_AskAboutXianGirl(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinGirlFromXianWasAsking);
   Engine_EventAskYesNo(ACTOR_ROOM_ONE_SECOND_GUEST, 0);
   Engine_EventEnd();
@@ -442,7 +443,7 @@ static void Houses_AskAboutXianGirl(void) {
 /// statues are beaten, he asks whether the party seeks the way west.
 static void Houses_AskAboutWayWest(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinTryingFindYourWayWest);
   Engine_EventAskYesNo(ACTOR_ROOM_TWO_GUEST, 0);
   Engine_EventEnd();
@@ -453,7 +454,7 @@ static void Houses_AskAboutWayWest(void) {
 /// the monsters; she gives the kiss either way.
 static void Houses_AskAboutMonsters(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinDefeatedThoseMonstersDidnt);
   Engine_EventAskYesNo(ACTOR_KISSING_GIRL, 0);
   Engine_EventEnd();
@@ -463,7 +464,7 @@ static void Houses_AskAboutMonsters(void) {
 /// staying at Altin's inn once the hydros statues are beaten.
 static void Houses_AskAboutMineBeasts(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinThereFewBeastsInMine);
   Engine_EventAskYesNo(ACTOR_MAN_WAITING_TO_GO_HOME, 0);
   Engine_EventEnd();
@@ -486,7 +487,7 @@ static s32 Leader_FacesCounter(void) {
 static void Houses_TalkToWeaponMerchant(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DRAINED) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgAltinDoWantWeapons);
 
     Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
@@ -499,7 +500,7 @@ static void Houses_TalkToWeaponMerchant(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinThankGoodnessWaterHasReceded);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Engine_EventSetMessage(MsgAltinYoullHaveFindPassageIn);
@@ -514,7 +515,7 @@ static void Houses_TalkToWeaponMerchant(void) {
 static void Altin_TalkToArmorMerchant(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_TWICE) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgAltinMyStoreSubmergedWantSell);
     Engine_EventShowMessage(ACTOR_FLOODED_ARMOR_MERCHANT, 0);
     Engine_EventEnd();
@@ -526,7 +527,7 @@ static void Altin_TalkToArmorMerchant(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinItsGreatCanSellArmor);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Engine_EventSetMessage(MsgAltinHowAboutArentImpressedBy);
@@ -538,7 +539,7 @@ static void Altin_TalkToArmorMerchant(void) {
 /// Altin's item merchant, the same way: she reopens after the first drop.
 static void Altin_TalkToItemMerchant(void) {
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_ONCE) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgAltinWillDoIfMyMerchandise);
     Engine_EventShowMessage(ACTOR_FLOODED_ITEM_MERCHANT, 0);
     Engine_EventEnd();
@@ -550,7 +551,7 @@ static void Altin_TalkToItemMerchant(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltinNoneMyGoodsWereDamaged);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Engine_EventSetMessage(MsgAltinGirlFromXianBoughtLot);
@@ -572,7 +573,7 @@ static void Houses_TalkToInnkeeper(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Engine_EventSetMessage(MsgAltinThereSmallTempleWestAltin);
@@ -601,7 +602,7 @@ static void Village_EnterDoor(void) {
   s32 rightColumn;
 
   event = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
     actor = Object_GetById(actorId);
     if (actor != 0) {
@@ -645,7 +646,7 @@ static void Village_EnterDoor(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
   } else {
@@ -669,7 +670,7 @@ static void Village_WalkThroughDoorway(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_PlayCue(SE_MAP_EXIT);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
@@ -737,7 +738,7 @@ static void Beast_HopAway(void) {
   Engine_EventWait(4);
   Map_SetShake(-1, -1, 0xe666);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIMATION_STAND);
 }
 
 /// After Move: remembers whether the pillar now stands in map column 22, the
@@ -818,7 +819,7 @@ static void Village_ApplyWaterLevel(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     Engine_ActorDestroy(ACTOR_WATER_BEAST);
   } else {
-    FieldFx_SetQueuedSoundAndPlay(SE_170);
+    FieldEffect_SetQueuedSoundAndPlay(SE_170);
     Actor_SetChildValue(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
     Engine_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
@@ -846,7 +847,7 @@ static void Village_ApplyWaterLevel(void) {
   Engine_ActorSetSpritePriority(ACTOR_THIRD_CRATE, 1);
   // Redraw at the leader after the map and object state are ready.
   Engine_TaskWait(1);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
   Engine_MapRedraw();
   Engine_EventEnd();
@@ -948,14 +949,14 @@ static void Beast_SpawnSpray(void) {
 /// Stepping near the water beast in Altin's village: the camera pans to it, it
 /// stops spitting, turns to the party, cries out and hops away into the flood.
 static void Village_ScareOffBeast(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_SetSpeed(0x6666, 0xccc);
   Camera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIMATION_STAND);
   // The spitting stops: its sound and its spray end.
-  FieldFx_SetQueuedSoundAndPlay(-1);
+  FieldEffect_SetQueuedSoundAndPlay(-1);
   Engine_TaskRemoveCallback(Beast_SpawnSpray);
   Engine_EventWait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WATER_BEAST, 0);
@@ -969,7 +970,8 @@ static void Village_ScareOffBeast(void) {
   Beast_HopAway();
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN,
+                                  ANIMATION_SHAKE_HEAD);
   GameFlag_Set(FLAG_ALTIN_WATER_BEAST_LEFT);
   Engine_EventEnd();
 }
@@ -980,29 +982,29 @@ s32 gAltinHouses_CookScript[] = {
     SC_SET(SW_SPEED, 0x26666),
     SC_SET(SW_ACCEL, 0x13333),
     SC_LABEL(1),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(30),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(356), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(50),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(20),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(ALTIN_COOK_LAST_POT_X), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_EAST + FACING_STEP),
     SC_WAIT(90),

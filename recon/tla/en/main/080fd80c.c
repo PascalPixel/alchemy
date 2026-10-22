@@ -33,7 +33,7 @@ struct MenuResult {
   s32 selectedIndex;
 };
 
-s32 UnitGet(s32 owner);
+s32 Unit_Get(s32 owner);
 
 // Split the selected slot owner's Psynergy into pages of five rows.
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
@@ -46,7 +46,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
   s32 selectedIndex;
   s32 owner;
 
-  ownerState = UnitGet(menu->paneOwner[index]);
+  ownerState = Unit_Get(menu->paneOwner[index]);
   entryCount = menu->psynergyCount;
   owner = menu->paneOwner[index];
   selectedIndex = menu->selectedIndexByOwner[owner];

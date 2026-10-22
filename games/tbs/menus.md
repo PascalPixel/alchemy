@@ -84,7 +84,7 @@ A message is shown in three steps, each done by different code:
    ARM routine that walks the trees is copied into heap slot
    `TEXT_WORK_BLOCK` for the decode and released after it. The decoder also
    writes out everything the message refers to: names, numbers, and item and
-   ability names from the argument table (`MSG_ARG_`,
+   ability names from the argument table (`MESSAGE_ARGUMENT_`,
    `UiWork_PushValueSlot`), and each language's articles and possessives
    (`articles.c`). Style codes are kept with their operands.
 2. The decoded text goes into `work->entries`, a ring of 16-bit codes

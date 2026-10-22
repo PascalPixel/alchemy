@@ -13,8 +13,8 @@
 #include "battle_session.h"
 #include "owner_state.h"
 
-struct BattleObj *BattleObjGet(s32 arg0);
-s32 BattleObj_MarkForRelease(s32 arg0);
+struct BattleObj *BattleObject_Get(s32 arg0);
+s32 BattleObject_MarkForRelease(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
   /* FAKEMATCH: the shared discard-only result type preserves the epilogue
@@ -22,12 +22,12 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
   struct BattleUnit *creature;
   struct BattleObj *runtime;
 
-  creature = UnitGet(arg0);
+  creature = Unit_Get(arg0);
   if (creature->side == 1) {
     Unit_SetHpFar(creature, 0);
     BattleActor_RemoveFromLists(arg0);
-    BattleObj_MarkForRelease(arg0);
-    runtime = BattleObjGet(arg0);
+    BattleObject_MarkForRelease(arg0);
+    runtime = BattleObject_Get(arg0);
     Object_Destroy((struct DispatchObject *)runtime->object);
     runtime->object = 0;
     runtime->active = 0;
@@ -39,7 +39,7 @@ struct BattleEventFlagWork {
   u32 flags;
 };
 
-void BattleEv_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
+void BattleEvent_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
                                u32 operand) {
   runtime->flags |= 1;
 }

@@ -46,12 +46,12 @@ Func_0816467c:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r1, [r5, #104]
 	movs r0, #188
 	str r1, [sp, #16]
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r1, [sp, #12]
@@ -285,7 +285,7 @@ Func_0816467c:
 	adds r0, r6, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r4, [r6, #24]
 	cmp r4, #0
 	bge .L_081648d2
@@ -337,7 +337,7 @@ Func_0816467c:
 	adds r0, r6, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r4, [r6, #24]
 	cmp r4, #0
 	bge .L_08164936
@@ -387,7 +387,7 @@ Func_0816467c:
 	movs r2, #0
 	adds r0, r5, #0
 	movs r1, #64
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r1, #7
 	adds r0, r6, #0
 	bl __divsi3
@@ -465,7 +465,7 @@ Func_0816467c:
 .L_08164a28:
 	.4byte 0x00000121
 .L_08164a2c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08164a30:
 	.4byte gMapCellBuffer
 .L_08164a34:

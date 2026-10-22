@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunMars, effect kind 282: the Mars Djinn's puffs.
+// Draft of BattleEffect_RunMars, effect kind 282: the Mars Djinn's puffs.
 
 // On screen: a glowing orb swells over the targets for 24 frames; at frame
 // 20 a small Mars Djinn appears in it, and from frame 24 it dives down and
@@ -17,7 +17,7 @@
 // Teardown: the callback and both blitters are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunMars (kind 252 there),
+// Port of The Broken Seal's BattleEffect_RunMars (kind 252 there),
 // with The Lost Age's heap slots and callback order and no work->effect
 // store.
 
@@ -58,7 +58,7 @@ extern char ResourceId_GlowOrbSheet;
 extern char ResourceId_EmberStreakSheet;
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern u16 gData_08197410[];
-// The ember puff's six cels: ☀️'s gBattleFx_PuffArcCellWidths, _CellHeights,
+// The ember puff's six cels: ☀️'s gBattleEffect_PuffArcCellWidths, _CellHeights,
 // _CellBiasY and _CellSourceOffsets.
 extern u8 gData_08197467[];
 extern u8 gData_0819746d[];
@@ -68,16 +68,16 @@ extern u16 gData_0819747a[];
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
 // Fetches the max and additive blitters, flipped or not.
-void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
-// BattleEventRuntime_BeginPhase through its far call.
+void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
@@ -91,10 +91,10 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void BattleFx_RunMars(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -111,9 +111,9 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   draw = blit;
-  BattleFx_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);
@@ -121,7 +121,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
                              1, 1);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The puffs sit on an oval, alternately left and right of the middle,
   // each two frames behind the last; sixteen sparks wait under each one.
@@ -213,7 +213,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
         x = HI(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
         draw[1](canvas, sheet + gData_08197410[size - 1], x - ((u32)size >> 1),
                 HI(spark->y) - size, size, size * 2);
-        BattleFxKernels_IntegrateVector2(spark, 64, -0x2000);
+        BattleEffectKernels_IntegrateVector2(spark, 64, -0x2000);
         wobble = spark->z;
         spark->z = wobble + 0x800;
         if (spark->z > 0xffff)
@@ -240,8 +240,8 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   } while (frame != 112);
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

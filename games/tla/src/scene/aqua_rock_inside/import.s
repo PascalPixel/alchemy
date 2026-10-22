@@ -285,7 +285,7 @@ FieldEvent_WaitFrames:
 	.global Func_02003d7c
 	.thumb_func
 Func_02003d7c:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02003d84
 	.thumb_func
 Func_02003d84:
@@ -345,7 +345,7 @@ Object_SetModeById:
 	.global Func_02003df4
 	.thumb_func
 Func_02003df4:
-	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:
@@ -423,7 +423,7 @@ Func_02003e74:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Func_02003e7c
@@ -435,19 +435,19 @@ Func_02003e7c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_InitializeBuffersFar
 	.else
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.endif
 	.endif
 	.global Func_02003e84
 	.thumb_func
 Func_02003e84:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
 	.else
-	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
@@ -466,10 +466,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -514,10 +514,10 @@ Func_02003eac:
 	.thumb_func
 Func_02003eb4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SnapScaleToFullFar
+	overlay_veneer BattleEffect_SnapScaleToFullFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SnapScaleToFullFar
+	overlay_veneer BattleEffect_SnapScaleToFullFar
 	.else
 	overlay_veneer BattleParty_ApplyDrainFar
 	.endif

@@ -1,5 +1,5 @@
 // Near miss, differ 6 of 117 (2026-10-15), ported from ☀️'s
-// BattleFx_UpdateRadialCamera. The listing loads the effect work before it
+// BattleEffect_UpdateRadialCamera. The listing loads the effect work before it
 // copies the slot argument (ldr r3, [r3]; adds r7, r0, #0) and keeps two later
 // loads one slot earlier; no single or paired barrier moved them.
 #include "types.h"
@@ -16,7 +16,7 @@ struct EffectVector {
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *pos);
 void Camera_WorldToScreen(struct EffectVector *pos);
-void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
+void BattleEffect_ClearOwnedSlot(struct EffectSlot *slot);
 
 void Func_080e0020(struct EffectSlot *effect) {
   struct BattleFxScene *scene;
@@ -62,5 +62,5 @@ top:
     return;
   }
   if (state == 3 && EffectSlot_HasPendingTarget(effect) == 0)
-    BattleFx_ClearOwnedSlot(effect);
+    BattleEffect_ClearOwnedSlot(effect);
 }

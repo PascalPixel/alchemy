@@ -7,7 +7,7 @@
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the user.
 /// effect: effect ID.
-s32 BattleEffectDeadCheck(s32 effect) {
+s32 BattleEffect_CheckDead(s32 effect) {
   switch (effect) {
   case 31: // Drain HP.
   case 32: // Drain PP.

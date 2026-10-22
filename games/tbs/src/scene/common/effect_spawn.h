@@ -5,12 +5,12 @@
 #include "fixed_math.h"
 
 // Twenty-four scenes, and the main image's Psynergy effects (whirlwind.c, with
-// EFFECT_SPAWN_RESIDENT): FieldFx_Spawn, which places a small effect moving at
-// a velocity, its script one of gEffectScripts and its options chosen by the
+// EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn, which places a small effect moving
+// at a velocity, its script one of gEffectScripts and its options chosen by the
 // EFFECT_USE_ flags.
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
-void FieldFx_UpdateMotionScaleAndSpin(union FieldObject *object) {
+void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object) {
   object->effect.x += object->effect.velocity.x;
   object->effect.y += object->effect.velocity.y;
   object->effect.z += object->effect.velocity.z;
@@ -32,11 +32,11 @@ enum {
 
 /// Starts with linear motion and the leader's draw order; options can override
 /// it.
-static inline void FieldFx_InitializeMotion(struct FieldEffect *effect,
-                                            struct AnimationObject *sprite,
-                                            struct FieldActor *leader,
-                                            s32 velocityX, s32 velocityY,
-                                            s32 velocityZ) {
+static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
+                                                struct AnimationObject *sprite,
+                                                struct FieldActor *leader,
+                                                s32 velocityX, s32 velocityY,
+                                                s32 velocityZ) {
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -72,9 +72,9 @@ static inline void FieldFx_InitializeMotion(struct FieldEffect *effect,
     set_script((void *)effect, gEffectScripts[flags & EFFECT_SCRIPT_MASK]);    \
     effect->motionFlags = 0;                                                   \
     sprite->flags = 0;                                                         \
-    effect->update = FieldFx_UpdateMotionScaleAndSpin;                         \
-    FieldFx_InitializeMotion(effect, sprite, party, velocityX, velocityY,      \
-                             velocityZ);                                       \
+    effect->update = FieldEffect_UpdateMotionScaleAndSpin;                     \
+    FieldEffect_InitializeMotion(effect, sprite, party, velocityX, velocityY,  \
+                                 velocityZ);                                   \
                                                                                \
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)                     \
       return;                                                                  \
@@ -117,9 +117,9 @@ static inline void FieldFx_InitializeMotion(struct FieldEffect *effect,
 
 #ifdef EFFECT_SPAWN_RESIDENT
 /// The resident version uses far calls to the engine.
-EFFECT_SPAWN(FieldFx_SpawnResident, Object_CreateFar,
+EFFECT_SPAWN(FieldEffect_SpawnResident, Object_CreateFar,
              ObjectDispatch_SelectAnimationFar, ObjectDispatch_InitializeFar)
 #else
 /// Each overlay includes its own copy of this version.
-EFFECT_SPAWN(FieldFx_Spawn, Object_Create, Object_SetMode, Object_SetScript)
+EFFECT_SPAWN(FieldEffect_Spawn, Object_Create, Object_SetMode, Object_SetScript)
 #endif

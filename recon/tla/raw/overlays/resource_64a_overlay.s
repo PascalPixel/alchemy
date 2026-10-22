@@ -5422,7 +5422,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_fr_02008d74
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3
@@ -5557,13 +5557,13 @@ Func_02000b24:
 	mov lr, r6
 	.2byte 0xf800
 	movs r0, #0
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #1
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #2
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #3
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r2, #244
 	adds r1, r5, #0
 	lsls r2, r2, #4
@@ -5736,7 +5736,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_es_02008d70
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3
@@ -5871,13 +5871,13 @@ Func_02000b24:
 	mov lr, r6
 	.2byte 0xf800
 	movs r0, #0
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #1
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #2
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #3
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r2, #244
 	adds r1, r5, #0
 	lsls r2, r2, #4
@@ -6056,7 +6056,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_02008d7c
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3
@@ -6191,13 +6191,13 @@ Func_02000b24:
 	mov lr, r6
 	.2byte 0xf800
 	movs r0, #0
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #1
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #2
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r0, #3
-	bl UnitCalc
+	bl Unit_Calculate
 	movs r2, #244
 	adds r1, r5, #0
 	lsls r2, r2, #4
@@ -10282,7 +10282,7 @@ Func_020018e0:
 	ldr r2, .L_ja_02009ac0
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	lsls r1, r7, #3
 	ldr r2, [r5, r1]
 	movs r4, #128
@@ -10344,7 +10344,7 @@ Func_020018e0:
 	ldr r2, .L_ja_02009c08
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r3, r6, #0
 	lsrs r3, r5
 	movs r2, #127
@@ -10366,7 +10366,7 @@ Func_020018e0:
 	ldr r3, .L_ja_02009c08
 	lsls r2, r7, #2
 	ldr r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	movs r6, #0
 	adds r5, r0, #0
 .L_ja_02009b14:
@@ -10429,7 +10429,7 @@ Func_020018e0:
 	ldr r3, .L_ja_02009c08
 	movs r7, #0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 .L_ja_02009b94:
 	ldr r3, [sp, #4]
 	movs r2, #1
@@ -10458,7 +10458,7 @@ Func_020018e0:
 	ldr r2, .L_ja_02009c08
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	mov r4, r8
 	adds r0, #216
 	movs r6, #0
@@ -10513,7 +10513,7 @@ Func_020018e0:
 	ldr r3, .L_ja_02009d00
 	lsls r2, r7, #2
 	ldr r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r8
 	movs r3, #0
 	add r2, r10
@@ -10611,7 +10611,7 @@ Func_020018e0:
 	bl Unit_UpdateClass
 	adds r7, #1
 	ldr r0, [r6, r5]
-	bl UnitCalc
+	bl Unit_Calculate
 	cmp r7, #4
 	bne .L_ja_02009cdc
 	add sp, #40
@@ -10746,7 +10746,7 @@ Func_020018e0:
 	ldr r2, .L_02009a1c
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	lsls r1, r7, #3
 	ldr r2, [r5, r1]
 	movs r4, #128
@@ -10808,7 +10808,7 @@ Func_020018e0:
 	ldr r2, .L_02009b78
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	mov r3, r8
 	lsrs r3, r6
 	movs r2, #127
@@ -10838,7 +10838,7 @@ Func_020018e0:
 	ldr r3, .L_02009b78
 	lsls r2, r7, #2
 	ldr r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	movs r6, #0
 	adds r5, r0, #0
 .L_02009a82:
@@ -10901,7 +10901,7 @@ Func_020018e0:
 	ldr r3, .L_02009b78
 	movs r7, #0
 	ldr r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 .L_02009b02:
 	ldr r3, [sp, #4]
 	movs r2, #1
@@ -10930,7 +10930,7 @@ Func_020018e0:
 	ldr r2, .L_02009b78
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	mov r4, r8
 	adds r0, #216
 	movs r6, #0
@@ -10986,7 +10986,7 @@ Func_020018e0:
 	ldr r3, .L_02009c70
 	lsls r2, r7, #2
 	ldr r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	mov r2, r8
 	movs r1, #0
 	add r2, r10
@@ -11084,7 +11084,7 @@ Func_020018e0:
 	bl Unit_UpdateClass
 	adds r7, #1
 	ldr r0, [r6, r5]
-	bl UnitCalc
+	bl Unit_Calculate
 	cmp r7, #4
 	bne .L_02009c4c
 	add sp, #40
@@ -11198,7 +11198,7 @@ Func_02001c7c:
 	ldr r2, .L_02009e48
 	lsls r3, r6, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	adds r1, r0, #0
 	adds r1, #16
 	movs r2, #218
@@ -11393,7 +11393,7 @@ Func_02001c7c:
 	ldr r2, .L_02009ecc
 	lsls r3, r6, #2
 	ldr r0, [r2, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r4, #0
 	mov r12, r4
 	adds r7, r0, #0
@@ -11451,7 +11451,7 @@ Func_02001c7c:
 	ldr r3, .L_0200a05c
 	lsls r2, r6, #2
 	ldr r0, [r3, r2]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #0
 	str r0, [sp, #0]
 	mov lr, r1

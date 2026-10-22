@@ -5,7 +5,7 @@
 #include "../effect_internal.h"
 
 /// The beam sequence's pictures, by effect kind: the kinds below 100 that
-/// BattleFx_DispatchByIdRange sends here. No ability's row selects one; the
+/// BattleEffect_DispatchByIdRange sends here. No ability's row selects one; the
 /// unused BattlePresentation_RunPlainAttack plays an attack's kind, 0 for
 /// Attack.
 enum BeamKind {
@@ -22,16 +22,16 @@ enum BeamKind {
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
 /// effect->kind picks the picture.
 ///
-/// Reached through BattleFx_DispatchByIdRange for kinds 136 to 199 and,
+/// Reached through BattleEffect_DispatchByIdRange for kinds 136 to 199 and,
 /// through its unsigned test, every kind below 100;
 /// BattlePresentation_RunPlainAttack (battle/staging.c) sends every plain
 /// attack there. Only the kinds of enum BeamKind have pictures. Shows the
-/// canvas on BG1 (BattleFx_SetupCanvasTileMap), loads palette colours 0 to 63,
-/// scrolls BG1 through gBgScroll[1] and uses work->particles 0 to 63 (only 0 to
-/// 31 fly) and both blitter slots; at the end it removes the transfer callback,
-/// frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1 again
-/// (BattleFx_HideBg1AndRestoreBackdrop).
-void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
+/// canvas on BG1 (BattleEffect_SetupCanvasTileMap), loads palette colours 0 to
+/// 63, scrolls BG1 through gBgScroll[1] and uses work->particles 0 to 63 (only
+/// 0 to 31 fly) and both blitter slots; at the end it removes the transfer
+/// callback, frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1
+/// again (BattleEffect_HideBg1AndRestoreBackdrop).
+void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -59,10 +59,10 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   kind = effect->kind;
   work->effect = effect;
-  unit = UnitGetFar(effect->actor);
+  unit = Unit_GetFar(effect->actor);
   WaitFrames(1);
-  BattleFx_ConfigureEffectDisplay();
-  BattleFx_SetupCanvasTileMap();
+  BattleEffect_ConfigureEffectDisplay();
+  BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   WaitFrames(1);
@@ -219,16 +219,16 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
         s32 cell = frame / 3;
 
         if (work->effect->side == 0)
-          draw[1](canvas, work->sheet + gBeams_Cells[cell],
-                  screenPosition.x + gBeams_CellReaches[cell] + scrollX - 58,
-                  screenPosition.y - gBeams_CellHeights[cell] / 2,
-                  gBeams_CellWidths[cell], gBeams_CellHeights[cell]);
+          draw[1](canvas, work->sheet + gBeam_Cells[cell],
+                  screenPosition.x + gBeam_CellReaches[cell] + scrollX - 58,
+                  screenPosition.y - gBeam_CellHeights[cell] / 2,
+                  gBeam_CellWidths[cell], gBeam_CellHeights[cell]);
         else
-          draw[1](canvas, work->sheet + gBeams_Cells[cell],
-                  screenPosition.x - gBeams_CellReaches[cell] + scrollX -
-                      gBeams_CellWidths[cell] + 58,
-                  screenPosition.y - gBeams_CellHeights[cell] / 2,
-                  gBeams_CellWidths[cell], gBeams_CellHeights[cell]);
+          draw[1](canvas, work->sheet + gBeam_Cells[cell],
+                  screenPosition.x - gBeam_CellReaches[cell] + scrollX -
+                      gBeam_CellWidths[cell] + 58,
+                  screenPosition.y - gBeam_CellHeights[cell] / 2,
+                  gBeam_CellWidths[cell], gBeam_CellHeights[cell]);
       }
     }
     // Frames 4 to 15: the yellow orb flashes over the target, six 40x48
@@ -262,10 +262,10 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
-  BattleFx_HideBg1AndRestoreBackdrop();
+  BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
 /// Plays the selected ring-and-spark strike, restoring the user motion after
@@ -274,7 +274,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
 /// over the canvas and sparks fly from the first target for 32 frames, and
 /// the background palette fades back in.
 ///
-/// Reached through BattleFx_DispatchByIdRange for kinds 200 and up, which
+/// Reached through BattleEffect_DispatchByIdRange for kinds 200 and up, which
 /// BattlePresentation_RunAttack (battle/staging.c) makes by adding 200 to the
 /// kind of a critical hit; so the gathering always plays. Shows the canvas on
 /// BG1, keeps the battle's transition centred between the user and the first
@@ -284,7 +284,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
 /// stops the user's motion, and restores both after. At the end it removes
 /// the transfer callback, frees the blitters, sets gBgScroll[1].y back to 32,
 /// steps the background palette level from 6 back to 0 and hides BG1 again.
-void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -319,7 +319,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   // DEAD: the test is never true, as only kinds 200 and up reach this
-  // runner (BattleFx_DispatchByIdRange), so big stays 1; the ROM keeps it.
+  // runner (BattleEffect_DispatchByIdRange), so big stays 1; the ROM keeps it.
   big = 1;
   if (effect->kind <= 199)
     big = 0;
@@ -332,7 +332,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   BattlePresentation_SetupTransitionAtPairMidpointFar(effect->actor,
                                                       effect->firstTarget, 130);
   WaitFrames(1);
-  BattleFx_SetupCanvasTileMap();
+  BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   if (work->effect->side == 0) {
@@ -517,7 +517,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
   // Fade the background palette back in over 7 frames.
@@ -525,5 +525,5 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
     WaitFrames(1);
   }
-  BattleFx_HideBg1AndRestoreBackdrop();
+  BattleEffect_HideBg1AndRestoreBackdrop();
 }

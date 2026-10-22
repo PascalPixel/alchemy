@@ -16,14 +16,14 @@
 #define BG_PLTT_COLOR(bank, color)                                             \
   (*(volatile u16 *)(0x05000000 + ((bank) * 16 + (color)) * 2))
 
-void BattleFx_ArmBg0HBlankDma(void);
+void BattleEffect_ArmBg0HBlankDma(void);
 void Func_08038348(s32 first, s32 second);
 
 // Stops scanline scrolling and restores background palette 15.
 void Func_080dcadc(void) {
   u8 *work = Ram_HeapSlots->windowTiles;
 
-  Scheduler_RemoveCallback((SchedulerCallback)BattleFx_ArmBg0HBlankDma);
+  Scheduler_RemoveCallback((SchedulerCallback)BattleEffect_ArmBg0HBlankDma);
   BG_PLTT_COLOR(15, 1) = 0x7fff;  // White.
   BG_PLTT_COLOR(15, 3) = 0;       // Black.
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).

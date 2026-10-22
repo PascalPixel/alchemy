@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Thorn, Briar, Nettle (kind 5).
-	.global BattleFx_RunThorn
+	.global BattleEffect_RunThorn
 	.thumb_func
-BattleFx_RunThorn:
+BattleEffect_RunThorn:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,7 +20,7 @@ BattleFx_RunThorn:
 	mov r9, r0
 	movs r0, #1
 	str r1, [sp, #48]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08154fe0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -64,12 +64,12 @@ BattleFx_RunThorn:
 .L_08154ff8:
 	movs r1, #35
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #36]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r3, r5, #0
 	adds r3, #188
 	ldr r3, [r3]
@@ -171,7 +171,7 @@ BattleFx_RunThorn:
 .L_081550c8:
 	.4byte 0x00001000
 .L_081550cc:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_081550d0:
 	.4byte Data_08198442
 .L_081550d4:
@@ -505,7 +505,7 @@ BattleFx_RunThorn:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -526,4 +526,4 @@ BattleFx_RunThorn:
 .L_08155374:
 	.4byte Data_08198445
 .L_08155378:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

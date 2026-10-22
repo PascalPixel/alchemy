@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-/// The eruption's modes (BattleFx_RunEruption).
+/// The eruption's modes (BattleEffect_RunEruption).
 enum EruptionMode {
   ERUPTION_BLAST,     ///< fire streak colours; the variant picks the counts and
                       ///< the targets recoil
@@ -14,19 +14,19 @@ enum EruptionMode {
 /// A fountain of grey motes and puffs of smoke bursts up beside the targets and
 /// falls back, flashing each target.
 ///
-/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_FX_SMOKE_BOMB).
+/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_EFFECT_SMOKE_BOMB).
 ///
 /// It always uses Mad Blast's row of gEruption_Counts: 32 motes, 16 puffs, 80
 /// frames.
-void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
-  BattleFx_RunEruption(effect, ERUPTION_SMOKE_BOMB);
+void BattleEffect_RunSmokeBomb(struct BattleEffectArgument *effect) {
+  BattleEffect_RunEruption(effect, ERUPTION_SMOKE_BOMB);
 }
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
 ///
-/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_FX_BLAST).
-void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
-  BattleFx_RunEruption(effect, ERUPTION_BLAST);
+/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_EFFECT_BLAST).
+void BattleEffect_RunBlast(struct BattleEffectArgument *effect) {
+  BattleEffect_RunEruption(effect, ERUPTION_BLAST);
 }
 /// The columns of a gEruption_Counts row.
 enum {
@@ -41,7 +41,7 @@ enum {
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.
 ///
-/// Called by BattleFx_RunBlast and BattleFx_RunSmokeBomb.
+/// Called by BattleEffect_RunBlast and BattleEffect_RunSmokeBomb.
 /// A sound and a 6-frame screen shake start on frame 2, and the battle shows
 /// the damage 48 frames before the end. Writes the first 64 BG colours, sets
 /// work->shakeFrames.
@@ -51,7 +51,7 @@ enum {
 ///       give 16 motes, 8 puffs and 72 frames (Blast), 32, 16 and 80 (Mad
 ///       Blast, and Smoke Bomb and Sleep Bomb) and 128, 32 and 88 (Fiery
 ///       Blast).
-void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -67,7 +67,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Smoke Bomb's palette is a ramp of greys, two levels to each step of
   // brightness, 0 to 31; Blast takes the fire streak's.
@@ -136,7 +136,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     // falling under a gravity of 1/8 pixel a frame per frame. The half-width
     // x is shifted 16 pixels left, or right on side 1. A mote is size 9 at
     // depth 160 or nearer and one smaller for each 64 deeper; from depth 736
-    // the size is 0, which would read gBattleFx_MoteCells[-1].
+    // the size is 0, which would read gBattleEffect_MoteCells[-1].
     // XXX: whether a mote ever gets that deep needs a run of the effect.
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct EffectStep *mote = &PARTICLES[i];
@@ -149,11 +149,12 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         screen.x += work->effect->side * 32 - 16;
         CLAMP(screen.depth, 160, 799);
         size = 9 - (screen.depth - 160) / 64;
-        draw[0](canvas,
-                work->sheet +
-                    (gBattleFx_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-                    ERUPTION_FIELD_MOTE_CELLS,
-                screen.x - size / 2, screen.y - size, size, size * 2);
+        draw[0](
+            canvas,
+            work->sheet +
+                (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
+                ERUPTION_FIELD_MOTE_CELLS,
+            screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
       }
     }
@@ -229,7 +230,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 /// entryCount: how many objects to create.
 /// source: the resource object every one of them is made from.
 /// priority: the sprite priority they take.
-void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
+void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 entryIndex = 0;
 
@@ -242,15 +243,15 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
     work->objects[entryIndex] = object;
     if (object != 0) {
       object->flags = 0;
-      AnimationObjects_SelectAnimationFar(object, entryIndex);
+      AnimationObject_SelectAnimationFar(object, entryIndex);
       work->objects[entryIndex]->image.priority = priority;
     }
     entryIndex++;
   } while (entryIndex != entryCount);
 }
 
-/// Does nothing. BattleFx_CallDoNothing calls it in a loop, 10000 times for
+/// Does nothing. BattleEffect_CallDoNothing calls it in a loop, 10000 times for
 /// Annihilation, a busy wait.
-void BattleFx_DoNothing(void) {}
+void BattleEffect_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_CELLS

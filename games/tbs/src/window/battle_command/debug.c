@@ -333,7 +333,7 @@ s32 Menu_RunWorkspaceResultLoop(void) {
     return -1;
   }
   if (result == SYSTEM_MENU_SAVE) {
-    if (Save_WriteSelectedSlot() == -1) {
+    if (SaveMenu_WriteSelectedSlot() == -1) {
       return Menu_RunWorkspaceResultLoop();
     }
   } else if (result == SYSTEM_MENU_SLEEP) {

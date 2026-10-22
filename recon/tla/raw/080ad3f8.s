@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UnitCalc
+	.global Unit_Calculate
 	.thumb_func
-UnitCalc:
+Unit_Calculate:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -13,7 +13,7 @@ UnitCalc:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r0, #0
 	movs r0, #16
 	ldrsh r3, [r7, r0]

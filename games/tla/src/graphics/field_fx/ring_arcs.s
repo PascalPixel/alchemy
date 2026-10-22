@@ -6,6 +6,6 @@
 @ carries the colours of the first tick, and black for the 240 it does not
 @ use.
 	.section .rodata
-	.global FieldFx_RingArcs
-FieldFx_RingArcs:
+	.global FieldEffect_RingArcs
+FieldEffect_RingArcs:
 	.incbin "games/tla/src/graphics/field_fx/ring_arcs.8bpp.lz"

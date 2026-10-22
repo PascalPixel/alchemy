@@ -137,16 +137,16 @@ s32 UiText_GetResourceDimensionsAltFar(s32 no, s32 *x, s32 *y, u32 *width,
                                        u32 *height);
 /// Empties the table of message arguments.
 void UiWork_ClearValueNameTablesFar(void);
-/// Pushes an argument of kind (MSG_ARG_) for the next message decoded, dropped
-/// when all eight places are taken; arguments of one kind are read in the order
-/// they were pushed.
+/// Pushes an argument of kind (MESSAGE_ARGUMENT_) for the next message decoded,
+/// dropped when all eight places are taken; arguments of one kind are read in
+/// the order they were pushed.
 void UiWork_PushValueSlotFar(u32 value, u32 kind);
 /// Opens the party status window with flags in its own heap block and draws it;
 /// battle opens it erased, for the battle to draw.
 void UiWindow_CreateWithLayoutBoundsFar(s32 flags);
 /// Draws the party status window: names, HP and optionally PP with their bars,
 /// and in battle the standby Djinn of each element.
-void PartyStatusDrawFar(s32 flags);
+void PartyStatus_DrawFar(s32 flags);
 /// Closes the party status window and frees its heap block.
 void PartyStatus_CloseFar(void);
 /// Closes each message window whose text has ended, then waits ten frames;

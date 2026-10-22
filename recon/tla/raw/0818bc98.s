@@ -26,11 +26,11 @@ Func_0818bc98:
 	cmp r2, #0
 	beq .L_0818bcca
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	b .L_0818bcd0
 .L_0818bcca:
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 .L_0818bcd0:
 	movs r3, #0
 	ldr r0, .L_0818bde0
@@ -165,7 +165,7 @@ Func_0818bc98:
 	bne .L_0818be08
 	movs r0, #104
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0818be10
 	.2byte 0x0000
 .L_0818bddc:
@@ -193,7 +193,7 @@ Func_0818bc98:
 .L_0818be08:
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0818be10:
 	movs r5, #192
 	lsls r5, r5, #18
@@ -201,7 +201,7 @@ Func_0818bc98:
 	movs r1, #3
 	movs r0, #188
 	str r3, [sp, #76]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r6, sp
@@ -233,7 +233,7 @@ Func_0818bc98:
 	ldr r0, [r6, #8]
 	movs r2, #10
 	movs r3, #80
-	bl BattleFx_SetApproachMotion
+	bl BattleEffect_SetApproachMotion
 .L_0818be64:
 	mov r5, sp
 	mov r3, r11
@@ -571,7 +571,7 @@ Func_0818bc98:
 	adds r0, r6, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #24]
 	subs r3, #1
 	str r3, [r6, #24]
@@ -583,7 +583,7 @@ Func_0818bc98:
 	bne .L_0818c096
 	b .L_0818c188
 .L_0818c104:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0818c108:
 	.4byte Data_08199d97
 .L_0818c10c:
@@ -752,7 +752,7 @@ Func_0818bc98:
 	movs r2, #0
 	ldr r0, [sp, #60]
 	movs r1, #56
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #12]
 	ldr r2, [r6, #8]
 	adds r3, r3, r2
@@ -1313,7 +1313,7 @@ Func_0818bc98:
 	movs r1, #1
 	lsls r2, r2, #9
 	lsls r3, r3, #11
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	mov r1, r11
 	ldr r0, [r1, #20]
 .L_0818c6b4:
@@ -1401,7 +1401,7 @@ Func_0818bc98:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0818c79c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #108
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1428,4 +1428,4 @@ Func_0818bc98:
 .L_0818c798:
 	.4byte 0x3f3f3f3f
 .L_0818c79c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

@@ -43,12 +43,12 @@ struct EffectParticle {
 
 void Func_080eaf98(struct EffectSprite *sprite, s32 width, s32 height,
                    u32 shape, s32 tiles);
-s32 BattleFx_GetObjectDepth(struct ObjectRuntime *object);
-s32 BattleFx_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void BattleFx_IntegrateVector2(struct EffectParticle *particle, s32 frames,
+void BattleEffect_IntegrateVector2(struct EffectParticle *particle, s32 frames,
                                s32 flags);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -80,7 +80,7 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
     sprite->x = position[0];
     sprite->y = position[2];
     Func_080eb01c(sprite);
-    BattleFx_IntegrateVector2(particle, 60, 0);
+    BattleEffect_IntegrateVector2(particle, 60, 0);
   }
   particle->timer++;
 }

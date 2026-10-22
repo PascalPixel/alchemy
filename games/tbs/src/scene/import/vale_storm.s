@@ -25,7 +25,7 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Event_CallWithLastActiveObjectId, 1
 	.set import.Event_PrepareObjectAndApplyValue, 1
@@ -67,18 +67,18 @@
 	.set import.Camera_GetEventObject, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.FieldFx_StartGroundParticles, 1
-	.set import.FieldFx_StartLightning, 1
-	.set import.FieldFx_StopLightning, 1
-	.set import.FieldFx_LastLightning, 1
-	.set import.FieldFx_ResumeLightning, 1
+	.set import.FieldEffect_StartGroundParticles, 1
+	.set import.FieldEffect_StartLightning, 1
+	.set import.FieldEffect_StopLightning, 1
+	.set import.FieldEffect_LastLightning, 1
+	.set import.FieldEffect_ResumeLightning, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Engine_PsynergyBegin, 1
-	.set import.FieldFx_End, 1
-	.set import.FieldFx_SetQueuedSoundAndPlay, 1
-	.set import.FieldFx_PlayQueuedSound, 1
+	.set import.Engine_PsynergyStart, 1
+	.set import.FieldEffect_End, 1
+	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

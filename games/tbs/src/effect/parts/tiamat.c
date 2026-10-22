@@ -4,11 +4,11 @@
 
 #include "../effect_internal.h"
 
-/// The palette particles' modes (BattleFx_RunPaletteParticles).
+/// The palette particles' modes (BattleEffect_RunPaletteParticles).
 enum PaletteParticlesMode {
   PALETTE_PARTICLES_TIAMAT,       ///< also a formation of eight objects that
                                   ///< sweeps in and explodes at the end
-                                  ///< (BattleFx_RunImpactBurst)
+                                  ///< (BattleEffect_RunImpactBurst)
   PALETTE_PARTICLES_DRAGON_DRIVER ///< the sparks and flashes thrown from the
                                   ///< user's side, in the LightningBolt colours
 };
@@ -16,16 +16,16 @@ enum PaletteParticlesMode {
 /// Embers rise from the ground while sparks and flashes fly from the user's
 /// side, in the LightningBolt colours.
 ///
-/// Abilities: Dragon Driver (BATTLE_FX_DRAGON_DRIVER).
-void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
-  BattleFx_RunPaletteParticles(effect, PALETTE_PARTICLES_DRAGON_DRIVER);
+/// Abilities: Dragon Driver (BATTLE_EFFECT_DRAGON_DRIVER).
+void BattleEffect_RunDragonDriver(struct BattleEffectArgument *effect) {
+  BattleEffect_RunPaletteParticles(effect, PALETTE_PARTICLES_DRAGON_DRIVER);
 }
 /// Embers rise from the ground while a formation of eight objects sweeps in,
 /// and the formation explodes at the end.
 ///
 /// Abilities: Tiamat (SCENE_EFFECT_TIAMAT).
-void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
-  BattleFx_RunPaletteParticles(effect, PALETTE_PARTICLES_TIAMAT);
+void BattleEffect_RunTiamat(struct BattleEffectArgument *effect) {
+  BattleEffect_RunPaletteParticles(effect, PALETTE_PARTICLES_TIAMAT);
 }
 #define PALETTE_PARTICLES_FRAMES 208
 /// Falling streaks, work->particles 24 to 39.
@@ -44,7 +44,7 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 /// over frames 160 to 175 and fades out after, and the battle shows the damage
 /// on frame 178.
 ///
-/// Called by BattleFx_RunTiamat and BattleFx_RunDragonDriver.
+/// Called by BattleEffect_RunTiamat and BattleEffect_RunDragonDriver.
 ///
 /// Four kinds of particle, in canvas coordinates with y growing downwards,
 /// 16.16 except the streaks, which are whole pixels:
@@ -66,8 +66,8 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 /// eight formation objects and releases them after the impact burst.
 ///
 /// mode: Tiamat's or Dragon Driver's (enum PaletteParticlesMode).
-void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
+                                      s32 mode) {
   struct EffectPosition origin;
   void **cursor;
   void *canvas;
@@ -87,7 +87,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -155,9 +155,9 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
   if (mode == PALETTE_PARTICLES_TIAMAT) {
-    BattleFx_SelectLivingTargets(work->effect);
+    BattleEffect_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleFx_SpawnObjects(8, 377, 2);
+    BattleEffect_SpawnObjects(8, 377, 2);
   }
 
   for (frame = 0; frame != PALETTE_PARTICLES_FRAMES; frame++) {
@@ -167,10 +167,10 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       // when the skip comes before frame 128, that frame's sound, shake and
       // shorter trails are skipped with it.
       if (mode == PALETTE_PARTICLES_TIAMAT) {
-        AnimationObjects_SelectAnimationFar(work->objects[0], 8);
-        AnimationObjects_SelectAnimationFar(work->objects[1], 9);
-        AnimationObjects_SelectAnimationFar(work->objects[3], 10);
-        AnimationObjects_SelectAnimationFar(work->objects[4], 11);
+        AnimationObject_SelectAnimationFar(work->objects[0], 8);
+        AnimationObject_SelectAnimationFar(work->objects[1], 9);
+        AnimationObject_SelectAnimationFar(work->objects[3], 10);
+        AnimationObject_SelectAnimationFar(work->objects[4], 11);
       }
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i],
@@ -345,7 +345,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           u8 size = gTiamat_DropSizes[i & 3];
           s32 height = size * 2;
 
-          draw[0](canvas, sheet + gBattleFx_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   Q_16_16_TO_INT(grain->x) - size / 2,
                   Q_16_16_TO_INT(grain->y) - size, size, height);
           grain->x += grain->velocityX * dir;
@@ -379,18 +379,19 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     }
     if (mode == PALETTE_PARTICLES_TIAMAT) {
       if (frame == 128) {
-        AnimationObjects_SelectAnimationFar(work->objects[0], 8);
-        AnimationObjects_SelectAnimationFar(work->objects[1], 9);
-        AnimationObjects_SelectAnimationFar(work->objects[3], 10);
-        AnimationObjects_SelectAnimationFar(work->objects[4], 11);
+        AnimationObject_SelectAnimationFar(work->objects[0], 8);
+        AnimationObject_SelectAnimationFar(work->objects[1], 9);
+        AnimationObject_SelectAnimationFar(work->objects[3], 10);
+        AnimationObject_SelectAnimationFar(work->objects[4], 11);
       }
       if (frame == 176) {
-        AnimationObjects_SelectAnimationFar(work->objects[0], 0);
-        AnimationObjects_SelectAnimationFar(work->objects[1], 1);
-        AnimationObjects_SelectAnimationFar(work->objects[3], 3);
-        AnimationObjects_SelectAnimationFar(work->objects[4], 4);
+        AnimationObject_SelectAnimationFar(work->objects[0], 0);
+        AnimationObject_SelectAnimationFar(work->objects[1], 1);
+        AnimationObject_SelectAnimationFar(work->objects[3], 3);
+        AnimationObject_SelectAnimationFar(work->objects[4], 4);
       }
-      BattleFx_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
+      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
+                                         focus.y);
     }
     if (frame == 138) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
@@ -429,7 +430,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
             AudioCommand_PlayFar(SE_136);
-          draw[0](canvas, sheet + gBattleFx_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {
           streak->variant++;
@@ -441,14 +442,14 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   }
 
   // The impact burst builds its own blitters and transfer.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   if (mode == PALETTE_PARTICLES_TIAMAT) {
-    BattleFx_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
+    BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     for (i = 0; i != 8; i++)
       ResourceObject_ReleaseFar(work->objects[i]);
   }
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef PALETTE_PARTICLES_FRAMES

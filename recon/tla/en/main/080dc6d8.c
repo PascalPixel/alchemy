@@ -32,7 +32,7 @@ struct FinishWork {
 extern char MsgBlank2;
 
 s32 GameFlag_Test(s32 flag);
-void BattleFx_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_SetObjectTickMode(void *object, s32 mode);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
                                     s32 groupMode, s32 action);
 void UiText_DrawQuantity(s32, s32);
@@ -57,7 +57,7 @@ void Func_080dc6d8(void) {
   } while (0);
   if (work->sound != 0) {
     Audio_PlayCue(212);
-    BattleFx_SetObjectTickMode(object, 1);
+    BattleEffect_SetObjectTickMode(object, 1);
   }
   if (work->showQuantity != 0) {
     work->messageShown = 1;
@@ -69,7 +69,7 @@ void Func_080dc6d8(void) {
   }
   if (GameFlag_Test(320)) {
     if (work->sound != 0)
-      BattleFx_SetObjectTickMode(object, 2);
+      BattleEffect_SetObjectTickMode(object, 2);
     Object_SetMode(object, 21);
   } else {
     EffectRuntime_StopCurrentObject();

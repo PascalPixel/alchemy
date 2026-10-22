@@ -16,7 +16,7 @@ void Party_SetLeaderFelix(void) {
 
 void GameFlag_SetBit(s32 flag);
 void Func_080ae358(s32 mode);
-void UnitCalc(s32 unit);
+void Unit_Calculate(s32 unit);
 
 void Func_080ae118(void) {
   s32 i;
@@ -30,5 +30,5 @@ void Func_080ae118(void) {
   Func_080ae358(0);
   count = Party_CountActiveOwners();
   for (i = 0; i < count; i++)
-    UnitCalc(gPartyState.activeOwners[i]);
+    Unit_Calculate(gPartyState.activeOwners[i]);
 }

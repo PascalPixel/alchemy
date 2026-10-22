@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Catastrophe (scene kind 23).
-	.global BattleFx_RunCatastrophe
+	.global BattleEffect_RunCatastrophe
 	.thumb_func
-BattleFx_RunCatastrophe:
+BattleEffect_RunCatastrophe:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -36,7 +36,7 @@ BattleFx_RunCatastrophe:
 	bl VramBlock_Reset93Far
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r6, #128
 	ldr r3, .L_08184484
 	lsls r6, r6, #19
@@ -51,7 +51,7 @@ BattleFx_RunCatastrophe:
 	strh r2, [r3]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r7, [sp, #164]
 	movs r0, #239
@@ -73,7 +73,7 @@ BattleFx_RunCatastrophe:
 .L_0818448c:
 	.4byte gBgScroll
 .L_08184490:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08184494:
 	movs r0, #0
 	movs r1, #0
@@ -566,7 +566,7 @@ BattleFx_RunCatastrophe:
 	str r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]

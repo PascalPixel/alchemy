@@ -37,7 +37,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 
 /// Debug only: while debug mode is on, R makes every event wait
 /// (FieldEvent_WaitFrames) end at once and L restores normal waits. Runs as a
-/// scheduler callback for the length of an event (FieldEvent_Begin). R also
+/// scheduler callback for the length of an event (FieldEvent_Start). R also
 /// skips the actors' messages, which open nothing while fastForward is set
 /// (UiText_OpenMessageAtObject).
 void Event_UpdateDebugSkip(void) {
@@ -66,9 +66,9 @@ void FieldEvent_WaitFrames(s32 frames) {
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// FieldEvent_Begin, by Field_RunScene before it handles several requests, by
+/// FieldEvent_Start, by Field_RunScene before it handles several requests, by
 /// Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and the world
-/// map's zoom (FieldFx_RunVisibilityTransition).
+/// map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct ObjectRuntime *object;
 
@@ -89,11 +89,11 @@ void Leader_StopMoving(void) {
 /// The event command "begin event": closes any timed notice, stops the leader,
 /// resets the message and timing state, and starts the debug fast-forward
 /// callback with the leader as the message speaker. Scene scripts reach it as
-/// Engine_EventBegin (EV_BEGIN); the field's item, Psynergy, Djinni, Retreat
+/// Engine_EventStart (EV_START); the field's item, Psynergy, Djinni, Retreat
 /// and climbing events open with it too. Clears the field work's name window,
 /// fastForward and messageWindow, sets transitionFrames to 16 and the speaker
 /// to the leader.
-void FieldEvent_Begin(void) {
+void FieldEvent_Start(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
   UiTimedNotice_CloseIfActiveFar();
@@ -121,7 +121,7 @@ void FieldEvent_Begin(void) {
 /// Ends an event: stops the debug fast-forward callback, gives the camera back
 /// to the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Scene
 /// scripts reach it as Engine_EventEnd (EV_END), and every event that opens
-/// with FieldEvent_Begin closes with it.
+/// with FieldEvent_Start closes with it.
 void FieldEvent_End(void) {
   Scheduler_RemoveCallback(Event_UpdateDebugSkip);
   Camera_FollowActor(gGameState.selectedActor, 1);
@@ -168,7 +168,7 @@ void Event_SetSceneEvents(const struct SceneEvent *events) {
 /// announce too). Called by six scene scripts as a character joins (Vale,
 /// the Vault, Goma Cave and Mercury Lighthouse among them).
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
-  UnitGetFar(unit);
+  Unit_GetFar(unit);
   Party_AddActiveOwnerFar(unit);
   if (announce != 0) {
     Party_ShowJoinedMessageFar(unit, announce);
@@ -225,7 +225,7 @@ void Party_RemoveOwnerRestored(s32 unit) {
 
   Party_RemoveActiveOwnerFar(unit);
   Event_ClearInvalidPackedValues();
-  vitals = UnitGetFar(unit);
+  vitals = Unit_GetFar(unit);
   vitals->hp = vitals->maxHp;
   vitals->pp = vitals->maxPp;
   Unit_UpdateGauges(vitals);
@@ -234,12 +234,12 @@ void Party_RemoveOwnerRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountActiveOwnersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = UnitGetFar(gGameState.activeOwners[partyIndex]);
+    vitals = Unit_GetFar(gGameState.activeOwners[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = UnitGetFar(gGameState.selectedActor);
+    vitals = Unit_GetFar(gGameState.selectedActor);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -326,7 +326,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     } else {
       // A carried item was picked: drop it (the whole stack) and take the new
       // one.
-      UnitGetFar(member);
+      Unit_GetFar(member);
       {
         /* FAKEMATCH(temporary): the slot copied to a block local loads before
          * the member; as Shop_GetSelectionState(member, slot), 2 of 181

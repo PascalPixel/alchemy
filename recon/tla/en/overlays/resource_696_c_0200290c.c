@@ -11,7 +11,7 @@
 #define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
 
 s32 PartyInventory_FindOwner(s32 item);
-u8 *UnitGet(s32 owner);
+u8 *Unit_Get(s32 owner);
 u8 *Func_02004894(s32 item);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
 
@@ -29,7 +29,7 @@ void Func_0200290c(void) {
     count = Party_ListActiveOwners(owners);
     remaining = 8;
     for (i = 0; i < count; i++) {
-      items = (u16 *)(UnitGet(*owner++) + 216);
+      items = (u16 *)(Unit_Get(*owner++) + 216);
       for (slot = 0;;) {
         if (slot >= 15 || *items == 0)
           break;

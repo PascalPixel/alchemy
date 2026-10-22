@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Fume, Serpent Fume, Dragon Fume (kind 72).
-	.global BattleFx_RunFume
+	.global BattleEffect_RunFume
 	.thumb_func
-BattleFx_RunFume:
+BattleEffect_RunFume:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -20,10 +20,10 @@ BattleFx_RunFume:
 	movs r0, #1
 	ldr r1, [r5, #96]
 	str r1, [sp, #72]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, .L_0817c718
 	movs r2, #128
 	lsls r2, r2, #19
@@ -58,7 +58,7 @@ BattleFx_RunFume:
 .L_0817c718:
 	.4byte 0x00001010
 .L_0817c71c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817c720:
 	adds r4, #104
 	adds r1, r4, #0
@@ -170,7 +170,7 @@ BattleFx_RunFume:
 	lsls r3, r3, #11
 	movs r1, #1
 	str r2, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r4, [sp, #80]
 	movs r1, #7
 	movs r3, #36
@@ -297,7 +297,7 @@ BattleFx_RunFume:
 	adds r0, r5, #0
 	negs r2, r2
 	movs r1, #60
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_0817c908:
 	adds r3, #1
@@ -687,7 +687,7 @@ BattleFx_RunFume:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817cc2c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -700,4 +700,4 @@ BattleFx_RunFume:
 .L_0817cc28:
 	.4byte Data_02011000
 .L_0817cc2c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

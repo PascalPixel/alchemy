@@ -4,16 +4,16 @@
 #include "types.h"
 #include "battle.h"
 
-/// Calls the empty BattleFx_DoNothing cnt times without waiting for frames.
+/// Calls the empty BattleEffect_DoNothing cnt times without waiting for frames.
 /// cnt: call count.
-void BattleFx_CallDoNothing(s32 cnt) {
+void BattleEffect_CallDoNothing(s32 cnt) {
   s32 n;
 
   n = 0;
   if (cnt != 0) {
     do {
       n += 1;
-      BattleFx_DoNothing();
+      BattleEffect_DoNothing();
     } while (n != cnt);
   }
 }

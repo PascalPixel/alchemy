@@ -95,7 +95,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   UiWork_SetAltFlagAndClearTable(1);
   listWindow = UiWindow_Create(21, 9, 9, 11, 6);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  unit = UnitGetFar(owner);
+  unit = Unit_GetFar(owner);
 
   // Pack Djinn state and recovery turns before paging the selection list.
   for (element = 0; element <= 3; element++) {
@@ -198,13 +198,13 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
         } else if (selectedDjinn & DJINN_ENTRY_STANDBY) {
           // A recovering Djinni: its effect, with the turns as the argument
-          // (MSG_ARG_NUMBER), and no preview. A ready one: the preview and
-          // "Ready to summon.", its element blinking in the party window.
+          // (MESSAGE_ARGUMENT_NUMBER), and no preview. A ready one: the preview
+          // and "Ready to summon.", its element blinking in the party window.
           if (selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
             UiWork_PushValueSlot(
                 (s32)((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                       DJINN_ENTRY_RECOVERY_SHIFT),
-                MSG_ARG_NUMBER);
+                MESSAGE_ARGUMENT_NUMBER);
             BATTLE_MENU_MESSAGE_COPY((s32)(((selectedDjinn & 0xf00) >> 8) * 20 +
                                            (selectedDjinn & 0xff)) +
                                          MsgDjinnEffect,
@@ -370,7 +370,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           UiWork_ClearValueNameTables();
           UiWork_PushValueSlot((s32)((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT),
-                               MSG_ARG_NUMBER);
+                               MESSAGE_ARGUMENT_NUMBER);
           UiText_CopyMessageString(MsgBattleDjinnRecovering, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
           UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);

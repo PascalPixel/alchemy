@@ -92,28 +92,28 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       frame = layer->script[layer->pos++];
       arg = layer->script[layer->pos++];
       switch (frame) {
-      case ANIM_CMD_PLAY:
+      case ANIMATION_COMMAND_PLAY:
         Animation_SetWorkEntry(layer, arg);
         obj->lastNo = arg;
         break;
-      case ANIM_CMD_JUMP:
+      case ANIMATION_COMMAND_JUMP:
         layer->pos = arg;
         break;
-      case ANIM_CMD_WAIT:
+      case ANIMATION_COMMAND_WAIT:
         layer->timer += arg << 4;
         break;
-      case ANIM_CMD_HOLD:
+      case ANIMATION_COMMAND_HOLD:
         layer->pos -= 2;
         goto framed;
-      case ANIM_CMD_SET_KIND:
+      case ANIMATION_COMMAND_SET_KIND:
         layer->kind = arg;
         break;
-      case ANIM_CMD_BLANK:
+      case ANIMATION_COMMAND_BLANK:
         layer->frameBase = 255;
         frame = 255;
         layer->timer += arg << 4;
         goto select_direction;
-      case ANIM_CMD_END:
+      case ANIMATION_COMMAND_END:
         layer->frameBase = 255;
         layer->script = 0;
         frame = 255;
@@ -150,33 +150,33 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     // The facing table of the layer's kind gives an offset from the base
     // frame (low three bits) and whether to mirror it (bit 7).
     switch (layer->kind) {
-    case ANIM_FACING_ONE_FRAME:
+    case ANIMATION_FACING_ONE_FRAME:
       facing = gAnimationFacing_OneFrame[dir >> 13];
       break;
-    case ANIM_FACING_FRONT_BACK:
-    case ANIM_FACING_TWO_PART:
+    case ANIMATION_FACING_FRONT_BACK:
+    case ANIMATION_FACING_TWO_PART:
       facing = gAnimationFacing_FrontBack[dir >> 13];
       break;
-    case ANIM_FACING_FRONT_BACK_SWAPPED:
+    case ANIMATION_FACING_FRONT_BACK_SWAPPED:
       facing = gAnimationFacing_FrontBackSwapped[dir >> 13];
       break;
-    case ANIM_FACING_THREE_FRAMES:
+    case ANIMATION_FACING_THREE_FRAMES:
       facing = gAnimationFacing_ThreeFrames[dir >> 12];
       break;
-    case ANIM_FACING_FOUR_FRAMES:
+    case ANIMATION_FACING_FOUR_FRAMES:
       facing = gAnimationFacing_FourFrames[dir >> 10];
       break;
-    case ANIM_FACING_FIVE_FRAMES:
+    case ANIMATION_FACING_FIVE_FRAMES:
       facing = gAnimationFacing_FiveFrames[dir >> 12];
       break;
-    case ANIM_FACING_SIX_FRAMES:
+    case ANIMATION_FACING_SIX_FRAMES:
       facing = gAnimationFacing_SixFrames[dir >> 10];
       break;
-    case ANIM_FACING_EIGHT_FRAMES:
+    case ANIMATION_FACING_EIGHT_FRAMES:
       facing =
           gAnimationFacing_EightFrames[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
-    case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
+    case ANIMATION_FACING_EIGHT_FRAMES_MIRRORED:
       facing = gAnimationFacing_EightFramesMirrored[((u32)(dir << 16) +
                                                      0x10000000) >>
                                                     29];

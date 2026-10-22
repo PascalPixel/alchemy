@@ -10,7 +10,7 @@
 /// dst: target components.
 /// step: destination for component increments.
 /// frames: fade duration; nothing is written if zero or negative.
-void PaletteFade_ComputeSteps(s16 *src, s16 *dst, s16 *step, s32 frames) {
+void PaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step, s32 frames) {
   s32 n;
   s32 from;
   s32 to;

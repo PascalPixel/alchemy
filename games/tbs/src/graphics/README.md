@@ -46,7 +46,7 @@ towards a target.
 ![The title intro's fade, one frame for each of its 60 steps, the screen beside palette RAM's 256 background and 256 sprite colours, 16 to a row. On the first step every colour is the same near-black red; step by step the mountain, the clouds and the sky come up out of the dark, and each colour climbs towards its own target until on the 60th step both palettes hold the title's full colours, purples, blues and greys for the backgrounds, reds, greens, oranges and yellows for the sprites.](https://alchemy.pascalpixel.com/guides/graphics/palette-fade.gif)
 
 The palette fade moves every colour a step at a time towards a target.
-`PaletteFade_Init` saves both palettes, 512 colours, as the starting
+`PaletteFade_Initialize` saves both palettes, 512 colours, as the starting
 components in the colour buffer's heap block and schedules
 `PaletteFade_Update`. `PaletteFade_Start` divides each component's distance
 to the target by the number of frames, keeping the remainder in the

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Trident (scene kind 27).
-	.global BattleFx_RunTrident
+	.global BattleEffect_RunTrident
 	.thumb_func
-BattleFx_RunTrident:
+BattleEffect_RunTrident:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,7 +26,7 @@ BattleFx_RunTrident:
 	ldr r2, [r5, #100]
 	movs r6, #2
 	str r2, [sp, #36]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0818cbdc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -35,12 +35,12 @@ BattleFx_RunTrident:
 	ldr r4, [sp, #52]
 	adds r3, r4, r7
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r1, #166
 	lsls r1, r1, #2
 	movs r0, #4
 	movs r2, #1
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	ldr r3, .L_0818cbe0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -68,7 +68,7 @@ BattleFx_RunTrident:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r0, [sp, #52]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -95,7 +95,7 @@ BattleFx_RunTrident:
 .L_0818cc2c:
 	.4byte 0x00001088
 .L_0818cc30:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0818cc34:
 	lsls r2, r2, #3
 	adds r7, #86
@@ -338,7 +338,7 @@ BattleFx_RunTrident:
 	lsls r2, r2, #10
 	str r6, [sp, #0]
 	str r7, [sp, #4]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r4, [sp, #56]
 	movs r3, #1
 	add r9, r3
@@ -615,7 +615,7 @@ BattleFx_RunTrident:
 	movs r2, #0
 	str r3, [sp, #12]
 	str r4, [sp, #8]
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r2, [sp, #28]
 	asrs r5, r5, #1
 	lsls r5, r5, #1
@@ -1071,7 +1071,7 @@ BattleFx_RunTrident:
 	adds r0, r5, #0
 	movs r1, #62
 	ldr r2, .L_0818d574
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_0818d3f0:
 	movs r7, #1
@@ -1119,7 +1119,7 @@ BattleFx_RunTrident:
 	adds r0, r5, #0
 	movs r1, #56
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 .L_0818d44c:
 	movs r7, #1
 	add r9, r7
@@ -1248,7 +1248,7 @@ BattleFx_RunTrident:
 	mov r0, r9
 	cmp r0, #4
 	bne .L_0818d54a
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1273,4 +1273,4 @@ BattleFx_RunTrident:
 .L_0818d588:
 	.4byte gData_08197486
 .L_0818d58c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

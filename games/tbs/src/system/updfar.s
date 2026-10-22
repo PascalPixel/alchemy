@@ -8,12 +8,12 @@
 ArcTan2FarArm:
 	ldr	r4, .L_ArcTan2
 	bx	r4
-	.global IwramSqrtFarArm
-IwramSqrtFarArm:
+	.global Iwram_SqrtFarArm
+Iwram_SqrtFarArm:
 	ldr	r4, .L_IwramSqrt
 	bx	r4
-	.global IwramRatioMulQ14FarArm
-IwramRatioMulQ14FarArm:
+	.global Iwram_RatioMulQ14FarArm
+Iwram_RatioMulQ14FarArm:
 	ldr	r4, .L_IwramRatioMulQ14
 	bx	r4
 .L_ArcTan2:

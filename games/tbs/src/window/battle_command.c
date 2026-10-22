@@ -15,8 +15,8 @@
 /// start:
 ///
 ///   Party status    party_status.c: UiWindow_CreateWithLayoutBounds,
-///                   PartyStatusDraw
-///   Saving          save.c: SaveMenu_SelectSlot, Save_WriteSelectedSlot
+///                   PartyStatus_Draw
+///   Saving          save.c: SaveMenu_SelectSlot, SaveMenu_WriteSelectedSlot
 ///   Battle menus    party_commands.c: Battle_CollectPartyCommands, which
 ///                   runs command_row.c: Menu_RunCommandRow and the menus
 ///                   of djinn_menu.c, summon_menu.c, item_menu.c,

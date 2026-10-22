@@ -173,7 +173,7 @@ Func_0810b1b4:
 	cmp r3, #0
 	beq .L_0810b320
 	adds r0, r5, #0
-	bl BattleFx_ClearOwnedSlotFar
+	bl BattleEffect_ClearOwnedSlotFar
 .L_0810b320:
 	subs r7, #1
 	adds r5, #72
@@ -187,7 +187,7 @@ Func_0810b1b4:
 	ldr r0, [r2, r3]
 	movs r1, #16
 	bl Animation_ApplyChildValueFar
-	bl Shop_InitEffect
+	bl Shop_InitializeEffect
 	movs r0, #30
 	bl WaitFrames
 	movs r3, #128
@@ -214,4 +214,4 @@ Func_0810b1b4:
 .L_0810b370:
 	.4byte 0xfff40000
 .L_0810b374:
-	.4byte BattleFx_UpdateRadialMotion
+	.4byte BattleEffect_UpdateRadialMotion

@@ -21,10 +21,10 @@
 /// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
 /// the table's 165 rows but within the check, are filled from row 0. Called by
 /// the battle set-up (Battle_RunEncounter, BattleFormation_BuildEnemyList) and
-/// by BattleTargetExec when an enemy calls for help.
+/// by BattleTarget_Execute when an enemy calls for help.
 /// XXX: why a Djinni is put on the party's side is unknown; the battle code
 /// that reads BATTLE_UNIT_PARTY for an enemy would say.
-s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
+s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
   u16 name[15];
@@ -40,7 +40,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
     return 0;
   if (index > 242)
     return 0;
-  unit = UnitGet(unitId);
+  unit = Unit_Get(unitId);
   Iwram_ClearWords(unit, BATTLE_UNIT_SIZE);
   if (index > 164)
     index = 0;
@@ -85,11 +85,11 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   unit->classIndex = 0;
   unit->classId = enemyId;
 #ifdef UBFIX
-  Unit_CalcBaseElements(unitId, unit->baseElement);
+  Unit_CalculateBaseElements(unitId, unit->baseElement);
 #else
-  Unit_CalcBaseElements(unitId, (s16 (*)[2])unit->baseElement);
+  Unit_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
 #endif
-  UnitCalc(unitId);
+  Unit_Calculate(unitId);
   unit->side = BATTLE_UNIT_ENEMY;
   switch (unit->classId) {
   case ENEMY_VENUS_DJINNI:

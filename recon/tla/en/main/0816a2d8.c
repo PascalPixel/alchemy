@@ -1,15 +1,15 @@
 // Draft, differ 342 of 469 (441 here): Func_0816a2d8, the body of five effect
 // kinds (variant_a.c's wrappers pass variants 1-5), The Broken Seal's
-// BattleFx_RunFlashingStrike rebuilt.
+// BattleEffect_RunFlashingStrike rebuilt.
 
-// Twin: ☀️ BattleFx_RunFlashingStrike (games/tbs/src/effect/effect.c), a body of
+// Twin: ☀️ BattleEffect_RunFlashingStrike (games/tbs/src/effect/effect.c), a body of
 // two kinds there; The Lost Age keeps its frame (the 120 x 120 picture in four
 // frames of four, the canvas flooded with colour 0x3f for four frames, the hit
 // at frame 20) and adds:
 // - six picture sets, with variant 4's colours rotated in the BG palette;
 // - variant 5, a 120 x 60 picture drawn twice, its lower half mirrored
 // through the second blitter;
-// - variant 3 hands the canvas to SummonFx_RunCanvasMode2 instead of
+// - variant 3 hands the canvas to SummonEffect_RunCanvasMode2 instead of
 // closing it, and variant 4 animates the user instead of moving it;
 // - a blend of 16/16 (BLDCNT cleared but for variants 3 to 5);
 // - two blitters, flipped by side, where ☀️ builds one copy blitter.
@@ -45,7 +45,7 @@
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 
-// BattleFx_LoadBlitter's argument: The Lost Age's blitter mode in the high nibble,
+// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode in the high nibble,
 // the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_ADDITIVE 0
@@ -72,18 +72,18 @@ extern char ResourceId_RevealMaskD;
 extern char ResourceId_RevealMaskE;
 extern char ResourceId_RevealMaskF;
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                // 7, 7, flags, mode)
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
-void SummonFx_RunCanvasMode2(struct BattleEffectArgument *effect);
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *effect);
 void Audio_PlayCue(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 s32 ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
@@ -110,7 +110,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
     REG_BLDCNT = 0;
   REG_BLDALPHA = 0x1010;
@@ -155,7 +155,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The user closes on the target in 16 frames (variant 3 jumps in place,
   // variant 4 strikes a pose instead and waits 8).
@@ -179,19 +179,19 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   // The blitters face the target: one for the picture, one flipped upside
   // down for its reflection.
   if (effect->side == 1)
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                              COMPOSITE_FLIP_X));
   else
-    BattleFx_LoadBlitter(HEAP_BLITTER,
+    BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (effect->side == 1)
-    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                              COMPOSITE_FLIP));
   else
-    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                              COMPOSITE_FLIP_Y));
   mirror = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -250,17 +250,17 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    SummonFx_RunCanvasMode2(effect);
+    SummonEffect_RunCanvasMode2(effect);
   } else {
     if (variant == 4)
       ObjectDispatch_SetAnimationSpeedFar(
           GetBattleObjectSlotFar(effect->actor)->object, 16);
-    BattleFx_EndCanvasLayer();
+    BattleEffect_EndCanvasLayer();
   }
 }

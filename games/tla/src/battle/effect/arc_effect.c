@@ -14,22 +14,22 @@
 #include "ram_buffer.h"
 #include "arc_effect.h"
 
-void BattleFx_StartArcEffect(void) {
+void BattleEffect_StartArcEffect(void) {
   struct ArcEffectWork *work = Runtime_AllocateHeapBlock(248, sizeof(*work));
 
   work->resource = Resource_FindFreeEntry();
-  VramCache_Load(work->resource, 0x100, gBattleFx_ArcTiles);
+  VramCache_Load(work->resource, 0x100, gBattleEffect_ArcTiles);
   work->group = 0;
   work->age[0] = 999;
   work->age[1] = 999;
   work->target = 0;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateArcEffect, 1152);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_UpdateArcEffect, 1152);
 }
 
-void BattleFx_EndArcEffect(void) {
+void BattleEffect_EndArcEffect(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->block62;
 
   Resource_ResetEntry(work->resource);
-  Scheduler_RemoveCallback((u32)BattleFx_UpdateArcEffect);
+  Scheduler_RemoveCallback((u32)BattleEffect_UpdateArcEffect);
   Runtime_ReleaseHeapBlock(248);
 }

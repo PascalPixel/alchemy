@@ -25,13 +25,13 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   state->mask = 0x3f3f;
   state->active = (REG_WINOUT & 0xff00) | 1;
   Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
-  Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0xc76);
+  Scheduler_AddOrUpdateCallback(BattleEffect_StartWindowHBlankDma, 0xc76);
 }
 #endif
 
 void Func_080d0184(void) {
   Scheduler_SuspendTasks(Func_080cf78c);
-  Scheduler_SuspendTasks(BattleFx_StartWindowHBlankDma);
+  Scheduler_SuspendTasks(BattleEffect_StartWindowHBlankDma);
 }
 
 void *Func_080d019c(void) {

@@ -13,7 +13,7 @@
 #include "owner_state.h"
 #include "party_state.h"
 
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 
 void Func_02000704(s32 levels) {
   s16 owners[16];
@@ -26,8 +26,8 @@ void Func_02000704(s32 levels) {
       u16 owner = owners[i++];
 
       Unit_LevelUpTo(owner,
-                     ((struct BattleUnit *)UnitGet(owner))->level + levels);
-      UnitCalc(owner);
+                     ((struct BattleUnit *)Unit_Get(owner))->level + levels);
+      Unit_Calculate(owner);
     }
     if (i < count)
       goto loop;

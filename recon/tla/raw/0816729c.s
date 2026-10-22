@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Judgment (scene kind 9).
-	.global BattleFx_RunJudgment
+	.global BattleEffect_RunJudgment
 	.thumb_func
-BattleFx_RunJudgment:
+BattleEffect_RunJudgment:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -28,7 +28,7 @@ BattleFx_RunJudgment:
 	str r3, [sp, #84]
 	ldr r2, [r5, #100]
 	str r2, [sp, #68]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816730c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -43,7 +43,7 @@ BattleFx_RunJudgment:
 	strh r2, [r3]
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, [sp, #88]
 	movs r4, #239
 	lsls r4, r4, #7
@@ -64,7 +64,7 @@ BattleFx_RunJudgment:
 .L_08167314:
 	.4byte gMapCellBuffer
 .L_08167318:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816731c:
 	bl Scheduler_AddOrUpdateCallback
 	movs r1, #0
@@ -76,7 +76,7 @@ BattleFx_RunJudgment:
 	adds r0, #240
 	adds r3, r5, r0
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r1, .L_08167424
 	movs r2, #0
 	movs r0, #1
@@ -987,7 +987,7 @@ BattleFx_RunJudgment:
 	movs r1, #3
 	movs r0, #188
 	add r8, r3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r6, #24
 	movs r5, #64
 	str r6, [sp, #0]
@@ -1010,7 +1010,7 @@ BattleFx_RunJudgment:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #7
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	str r6, [sp, #0]
 	str r5, [sp, #4]
 	ldr r6, [sp, #88]
@@ -1198,7 +1198,7 @@ BattleFx_RunJudgment:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -1941,7 +1941,7 @@ BattleFx_RunJudgment:
 .L_081681ae:
 	movs r1, #19
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #24
 	str r5, [sp, #0]
 	str r5, [sp, #4]
@@ -1961,7 +1961,7 @@ BattleFx_RunJudgment:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #192
 	str r5, [sp, #0]
 	str r5, [sp, #4]
@@ -1978,7 +1978,7 @@ BattleFx_RunJudgment:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #27
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r1, #192
 	str r5, [sp, #0]
 	str r5, [sp, #4]
@@ -1996,7 +1996,7 @@ BattleFx_RunJudgment:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #31
 	movs r0, #188
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r2, #192
 	str r5, [sp, #0]
 	str r5, [sp, #4]
@@ -2658,7 +2658,7 @@ BattleFx_RunJudgment:
 .L_08168720:
 	movs r0, #188
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r6, #192
 	lsls r6, r6, #18
 	adds r6, #188
@@ -3041,7 +3041,7 @@ BattleFx_RunJudgment:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #188
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -3061,4 +3061,4 @@ BattleFx_RunJudgment:
 .L_08168a38:
 	.4byte 0x000fffff
 .L_08168a3c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

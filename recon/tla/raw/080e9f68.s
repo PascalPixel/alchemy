@@ -219,7 +219,7 @@ Func_080e9f68:
 	adds r0, r7, #0
 	movs r1, #63
 	ldr r2, .L_080ea12c
-	bl BattleFx_IntegrateVector3
+	bl BattleEffect_IntegrateVector3
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]

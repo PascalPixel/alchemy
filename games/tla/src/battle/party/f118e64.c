@@ -3,7 +3,7 @@
 s32 BattleParty_PrepareActiveOwners(u16 *ids);
 s32 BattleParty_PrepareReserveOwners(u16 *ids);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
-u8 *UnitGet(s32 id);
+u8 *Unit_Get(s32 id);
 
 void Func_08118e64(void) {
   u16 ids[16];
@@ -15,7 +15,7 @@ void Func_08118e64(void) {
   count += BattleParty_ListActorIds(2, ids + count);
   if (count > 0) {
     do {
-      u8 *unit = UnitGet(*id++);
+      u8 *unit = Unit_Get(*id++);
 
       unit[299] = 0;
       unit[325] = 0;

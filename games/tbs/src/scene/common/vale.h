@@ -10,7 +10,7 @@
 static void Vale_RequestBackdropExit(s32 no) {
   struct EventWork *p;
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    FieldFx_StopLightning();
+    FieldEffect_StopLightning();
   }
   p = gEventWork;
   p->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

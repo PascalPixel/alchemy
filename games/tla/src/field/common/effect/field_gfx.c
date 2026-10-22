@@ -14,7 +14,7 @@
 
 void Func_080d67e8(void);
 
-void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
+void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames);
 
 #define Resource_DecodeByteLzInRam                                             \
@@ -55,7 +55,7 @@ s32 Func_08020190(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 #endif
 
-void FieldEffect_InitSparkles(void) {
+void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct DustWork);
   struct DustWork *work = Runtime_AllocateBlock(116, size);
   struct DustParticle *p = work->particles;
@@ -116,7 +116,7 @@ loop:
   Scheduler_AddOrUpdateCallback(Func_080d7034, 0x480);
 }
 
-void BattleFx_StartTwelveFrameBlend(void) {
+void BattleEffect_StartTwelveFrameBlend(void) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
   volatile u32 zero;
@@ -125,37 +125,37 @@ void BattleFx_StartTwelveFrameBlend(void) {
   buffers = Ram_HeapSlots->block32;
   zero = 0;
   Dma_Set((const void *)&zero, work, 0x850007e2, REG_DMA3);
-  BattleFx_BuildBuffer(0x10003, (u16 *)buffers, (u16 *)work, 1);
-  BattleFx_BuildBuffer(0x10005, (u16 *)buffers, (u16 *)work->to, 1);
-  BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
-  BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
+  BattleEffect_BuildBuffer(0x10003, (u16 *)buffers, (u16 *)work, 1);
+  BattleEffect_BuildBuffer(0x10005, (u16 *)buffers, (u16 *)work->to, 1);
+  BattleEffect_InterpolateBuffers(work->to, work->from, work->delta, 12);
+  BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
   Scheduler_AddOrUpdateCallback(Func_080d67e8, 0x480);
 }
 
-void BattleFx_SetBlock30ValuesMaxZero(void) {
+void BattleEffect_SetBlock30ValuesMaxZero(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
   state->timer = 0x7fff;
   state->enabled = 0;
 }
 
-void BattleFx_SetBlock30Values12Zero(void) {
+void BattleEffect_SetBlock30Values12Zero(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
 
-void BattleFx_SetBlock30Values128One(void) {
+void BattleEffect_SetBlock30Values128One(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
   state->timer = 128;
   state->enabled = 1;
 }
 
-void BattleFx_StartBufferBlend(s32 from, s32 to) {
+void BattleEffect_StartBufferBlend(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
   volatile u32 zero;
@@ -165,11 +165,11 @@ void BattleFx_StartBufferBlend(s32 from, s32 to) {
   buffers = Ram_HeapSlots->block32;
   zero = 0;
   Dma_Set((const void *)&zero, work, 0x850007e2, REG_DMA3);
-  BattleFx_BuildBuffer(from, (u16 *)buffers, (u16 *)work, 1);
+  BattleEffect_BuildBuffer(from, (u16 *)buffers, (u16 *)work, 1);
   target = work->to;
-  BattleFx_BuildBuffer(to, (u16 *)buffers, (u16 *)target, 1);
-  BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
-  BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
+  BattleEffect_BuildBuffer(to, (u16 *)buffers, (u16 *)target, 1);
+  BattleEffect_InterpolateBuffers(target, work->from, work->delta, 12);
+  BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
   Scheduler_AddOrUpdateCallback(Func_080d67e8, 0x480);

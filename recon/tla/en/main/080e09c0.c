@@ -6,8 +6,8 @@
 // first and the event takes r0, which moves the registers of the opening and
 // the object copies after it. The sprite flags in the order priority,
 // palette, palette256 measure best (66-96 otherwise). The two resources are
-// 0x1ea and 0x1eb in directory.s (FieldFx_SparkleFade,
-// FieldFx_StarSparkleFade), still unnamed there.
+// 0x1ea and 0x1eb in directory.s (FieldEffect_SparkleFade,
+// FieldEffect_StarSparkleFade), still unnamed there.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -49,7 +49,7 @@ struct ScatterEvent {
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(struct ObjectRuntime *object);
 void *Resource_GetTableEntry(s32 id);
@@ -61,7 +61,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 void WaitFrames(s32 frames);
 void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-struct ObjectRuntime *BattleFx_SpawnScatterParticle(s32 x, s32 y, s32 z);
+struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void Func_080d92d4(s32 target, s32 y, s32 z);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallback(void (*callback)(void));
@@ -133,7 +133,7 @@ void Func_080e09c0(void) {
     Audio_PlayCue(132);
     if (scene->enabled != 0) {
       for (i = 15; i >= 0; i--)
-        BattleFx_SpawnScatterParticle(object->x, object->y, object->z);
+        BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
       WaitFrames(1);
     } else {
       WaitFrames(6);
@@ -159,6 +159,6 @@ void Func_080e09c0(void) {
     Resource_ResetEntry(slotB);
     Object_Destroy(object);
   }
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
   Runtime_ReleaseHeapBlock(92);
 }

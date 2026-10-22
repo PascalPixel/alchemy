@@ -45,7 +45,7 @@ void Func_081084f4(s32 first) {
    * that order (differ 2 without them). */
   asm volatile("");
   message = first;
-  value = BattleFx_GetResourceIdFar(state->keeperResource);
+  value = BattleEffect_GetResourceIdFar(state->keeperResource);
   UiWork_FinalizePendingCoreFar();
   mode = state->shopType;
   if (mode == 3)
@@ -76,7 +76,7 @@ void Func_0810857c(s32 messageId) {
   slot = &state->anchor;
   saved = (*slot)->active;
   no = messageId;
-  variant = BattleFx_GetResourceIdFar(state->keeperResource);
+  variant = BattleEffect_GetResourceIdFar(state->keeperResource);
   mode = state->shopType;
   if (mode == 3)
     no += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;

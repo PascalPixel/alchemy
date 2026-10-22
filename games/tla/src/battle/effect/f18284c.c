@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 
-void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleEffect_StartCanvasLayer(s32 mode);
 void Func_08182898(s32 arg);
 
 /// Opens the canvas layer, sets alpha blending and a 24-frame palette fade
@@ -10,7 +10,7 @@ void Func_08182898(s32 arg);
 void Func_0818284c(s32 arg) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   {
     /* FAKEMATCH: the blend word pinned to r3 as a halfword loads from the pool
      * before the register address, as native; as a plain store, 2

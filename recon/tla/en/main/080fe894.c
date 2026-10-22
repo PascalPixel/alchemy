@@ -48,7 +48,7 @@ struct CharacterMenuState {
 
 extern u8 MsgRearrangeHelp[], MsgDjinnListHelp[];
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void Palette_LightenBankHighlight(s32 bank);
 s32 GameFlag_Test(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -80,7 +80,7 @@ s32 Func_080fe894(void) {
   redraw = 2;
   result = 0;
   page = menu->page;
-  UnitGet(menu->ownerIds[ownerIndex]);
+  Unit_Get(menu->ownerIds[ownerIndex]);
   for (rowIndex = 0; rowIndex < 4; rowIndex++) {
     menu->rowX[rowIndex] = 130 + rowIndex * 32;
     menu->rowY[rowIndex] = 128;
@@ -104,7 +104,7 @@ s32 Func_080fe894(void) {
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3,
                                       menu->selectorWindow, 0, 8);
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
-      UnitGet(menu->ownerIds[ownerIndex]);
+      Unit_Get(menu->ownerIds[ownerIndex]);
       page = (page + 3) % 3;
       Menu_CreateWindowAndEntryObjects(menu->ownerIds[ownerIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);

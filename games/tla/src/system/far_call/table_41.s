@@ -51,10 +51,10 @@ Shop_FillSelectorFar:
 	.thumb_func
 Shop_RestoreSceneTilesFar:
 	overlay_veneer Shop_RestoreSceneTiles
-	.global Shop_InitEffectFar
+	.global Shop_InitializeEffectFar
 	.thumb_func
-Shop_InitEffectFar:
-	overlay_veneer Shop_InitEffect
+Shop_InitializeEffectFar:
+	overlay_veneer Shop_InitializeEffect
 	.global Func_08108068
 	.thumb_func
 Func_08108068:

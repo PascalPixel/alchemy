@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
-	.global BattleFx_PatchTemplateCode
-BattleFx_PatchTemplateCode:
-	.global BattleFx_PatchTemplate
+	.global BattleEffect_PatchTemplateCode
+BattleEffect_PatchTemplateCode:
+	.global BattleEffect_PatchTemplate
 	.thumb_func
-BattleFx_PatchTemplate:
+BattleEffect_PatchTemplate:
 	bx	pc
 AlchemyUncredited_081972a2:
 	.2byte	0x0200

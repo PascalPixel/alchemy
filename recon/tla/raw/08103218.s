@@ -18,7 +18,7 @@ Func_08103218:
 	str r1, [sp, #60]
 	str r2, [sp, #56]
 	str r3, [sp, #52]
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #192
 	str r0, [sp, #48]
 	lsls r3, r3, #18
@@ -292,9 +292,9 @@ Func_08103218:
 	bl Djinn_ActivateFar
 .L_0810346e:
 	ldr r0, [sp, #52]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	ldr r0, [sp, #52]
-	bl UnitGet
+	bl Unit_Get
 	ldr r3, [sp, #212]
 	str r0, [sp, #48]
 	cmp r3, #0
@@ -837,7 +837,7 @@ Func_08103218:
 	bl UiText_DrawCharacterAtOffsetFar
 	mov r2, r8
 	ldrh r0, [r2]
-	bl BattleActGet
+	bl BattleAction_Get
 	ldr r3, [sp, #16]
 	ldrb r0, [r0, #9]
 	movs r1, #2

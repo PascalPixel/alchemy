@@ -17,8 +17,8 @@ struct Cur {
 };
 extern u8 gData_03001f2c[];
 
-u8 *BattleActGet(s32 action);
-s32 BattleFx_HasMatchingEvent5Far(u8 effect);
+u8 *BattleAction_Get(s32 action);
+s32 BattleEffect_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   void *menu = Ram_HeapSlots->menuRuntime;
@@ -57,7 +57,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   objOff = combinedOffset + 516;
   objId = *(u16 *)(menu + objOff);
-  objPtr = UnitGetFar(objId);
+  objPtr = Unit_GetFar(objId);
   p456 = menu + 452;
   badge = PsynergyMenu_CollectActions(objPtr, p456, 2);
   *(u8 *)(menu + 532) = (u8)badge;

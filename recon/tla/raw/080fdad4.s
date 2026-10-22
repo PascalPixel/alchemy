@@ -58,7 +58,7 @@ Func_080fdad4:
 	ldr r1, [sp, #16]
 	str r4, [sp, #8]
 	ldrb r0, [r1, r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #155
 	str r0, [sp, #48]
 	lsls r2, r2, #2
@@ -334,7 +334,7 @@ Func_080fdad4:
 	ldr r0, .L_080fdd7c
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrb r3, [r0, #6]
 	ldr r4, [sp, #8]
 	cmp r3, #0
@@ -462,7 +462,7 @@ Func_080fdad4:
 	ldr r0, .L_080fde88
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BattleActGet
+	bl BattleAction_Get
 	ldr r1, [sp, #48]
 	ldrb r2, [r0, #9]
 	movs r0, #58
@@ -593,7 +593,7 @@ Func_080fdad4:
 	adds r3, r7, r1
 	strb r2, [r3]
 	ldrb r0, [r3]
-	bl UnitGet
+	bl Unit_Get
 	movs r2, #226
 	lsls r2, r2, #1
 	adds r1, r7, r2
@@ -667,7 +667,7 @@ Func_080fdad4:
 	ldr r0, .L_080fe020
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrb r3, [r0, #6]
 	ldr r4, [sp, #8]
 	cmp r3, #0
@@ -726,7 +726,7 @@ Func_080fdad4:
 	ldr r0, .L_080fe094
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BattleActGet
+	bl BattleAction_Get
 	ldrb r3, [r0, #6]
 	ldr r4, [sp, #8]
 	cmp r3, #0

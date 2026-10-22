@@ -1,13 +1,13 @@
 // Draft, differ 149 of 863 (864 here): Func_08166b10, the body of two effect
-// kinds (series_h.c's BattleFx_RunTitanBlade and BattleFx_RunAcheronsGrief pass modes 0 and 1),
-// The Broken Seal's BattleFx_RunTitanBlade.
+// kinds (series_h.c's BattleEffect_RunTitanBlade and BattleEffect_RunAcheronsGrief pass modes 0 and 1),
+// The Broken Seal's BattleEffect_RunTitanBlade.
 
-// Twin: ☀️ BattleFx_RunTitanBlade (games/tbs/src/effect/effect.c) with The
+// Twin: ☀️ BattleEffect_RunTitanBlade (games/tbs/src/effect/effect.c) with The
 // Lost Age's mode argument: mode 2 skips the sword sheet, mode 1 rotates each
 // BG colour's three fields first and at frame 61 copies resource 0x188's
 // palette and calls Func_0815b634, mode 0 steps the palette toward the blast
 // sheet on frames 41 to 63; frame 60 starts phase 144 or 145; frame 9 also
-// flashes the first target. The blitters come from BattleFx_LoadBlitter(104, 19) and
+// flashes the first target. The blitters come from BattleEffect_LoadBlitter(104, 19) and
 // (188, 35).
 
 // frame declared before the blitters, and the sheet held in a local for the
@@ -37,7 +37,7 @@
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 
-// BattleFx_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
+// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
 // from 3) in the high nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_MAX 1
@@ -63,19 +63,19 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_Data188;
 extern u8 gData_08198a9e[];  // ☀️ gPlasma_FlashCells
 extern s32 gData_08198aa4[]; // the dust's four gravities
-extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
+extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
-void Func_0815f0a0(s32 resourceId); // BattleFx_StepPaletteToResource
+void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Func_0815b634(void);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
@@ -83,7 +83,7 @@ void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // A great sword falls from the sky onto the target, a pillar of fire and dust
 // spouting under it, and drives into the ground in a burst of flashes and
@@ -114,15 +114,15 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
   cells = Ram_HeapSlots->unk64[0];
 
   // Open the canvas on BG1 over the target and build the blitters.
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   centerX = target.x / 2;
 
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
@@ -151,7 +151,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // 32 flashes on rings, two pixels apart.
   i = 0;
@@ -382,7 +382,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
           s32 y;
           s32 size;
 
-          BattleFxKernels_IntegrateVector2(spark, 64, 128 << 6);
+          BattleEffectKernels_IntegrateVector2(spark, 64, 128 << 6);
           y = spark->y;
           spark->variant--;
           if (y > (216 << 15)) {
@@ -428,8 +428,8 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
     frame++;
   } while (frame != 102);
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

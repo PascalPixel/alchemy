@@ -54,7 +54,7 @@ BattleEscape_CheckSuccess:
 .L_0811cef4:
 	mov r3, r11
 	ldrsh r0, [r7, r3]
-	bl UnitGet
+	bl Unit_Get
 	ldrb r3, [r0, #15]
 	subs r5, #1
 	adds r6, r6, r3
@@ -82,7 +82,7 @@ BattleEscape_CheckSuccess:
 .L_0811cf2e:
 	mov r3, r10
 	ldrsh r0, [r7, r3]
-	bl UnitGet
+	bl Unit_Get
 	ldrb r3, [r0, #15]
 	subs r5, #1
 	adds r6, r6, r3

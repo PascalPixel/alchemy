@@ -41,7 +41,7 @@ void Func_02000150(s32 unused, s32 actor) {
 }
 
 s32 DailaInteriors_TalkScamps(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   Engine_EventSetMessage((s32)MsgDailaInteriorsScamps);
   Engine_EventShowMessage(19, 0);
@@ -50,7 +50,7 @@ s32 DailaInteriors_TalkScamps(void) {
 }
 
 s32 DailaInteriors_TalkMazeTreasure(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   Engine_EventSetMessage((s32)MsgDailaInteriorsMazeTreasure);
   Engine_EventShowMessage(19, 0);
@@ -58,8 +58,8 @@ s32 DailaInteriors_TalkMazeTreasure(void) {
   return 0;
 }
 
-void DailaInteriors_BeginLeaderEvent(void) {
-  Engine_EventBegin();
+void DailaInteriors_StartLeaderEvent(void) {
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   Engine_ActorSetSpritePriority(gPartyState.currentOwner, 1);
 }

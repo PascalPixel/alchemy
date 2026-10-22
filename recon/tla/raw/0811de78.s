@@ -56,7 +56,7 @@ Func_0811de78:
 	lsls r5, r6, #1
 .L_0811dee2:
 	ldrsh r0, [r7, r5]
-	bl UnitGet
+	bl Unit_Get
 	movs r1, #60
 	adds r2, r0, #0
 	adds r1, #255
@@ -103,7 +103,7 @@ Func_0811de78:
 	ldrb r0, [r6]
 	bl BattleActor_RemoveFromLists
 	ldrb r0, [r6]
-	bl BattleObj_MarkForRelease
+	bl BattleObject_MarkForRelease
 	b .L_0811df5a
 .L_0811df50:
 	ldr r0, .L_0811df6c

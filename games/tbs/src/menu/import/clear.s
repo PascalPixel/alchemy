@@ -13,7 +13,7 @@
 	.set import.Engine_BlendSetDarkenTarget16, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
-	.set import.SerialRuntime_BeginSend, 1
+	.set import.SerialRuntime_StartSend, 1
 	.set import.UiWindow_Create, 1
 	.set import.UiWork_Finalize, 1
 	.set import.UiText_ShowPositionedMessageAndWait, 1
@@ -27,7 +27,7 @@
 	.set import.Menu_SelectResourceLayout, 1
 	.set import.UiText_ShowCenteredMessage, 1
 	.set import.UiWindow_SetTilemapEntry, 1
-	.set import.Save_WriteSelectedSlot, 1
+	.set import.SaveMenu_WriteSelectedSlot, 1
 	.set import.SaveState_LoadRecordIntoWork, 1
 	.set import.SaveState_CopySlotPair, 1
 	.set import.SaveState_DeleteSelectedSlot, 1
@@ -37,15 +37,15 @@
 	.set import.Menu_RunConfirmSelection, 1
 	.set import.Graphics_ExpandVramTilesByColorTable, 1
 	.set import.Link_DrawShiftedTilePair, 1
-	.set import.UnitGet, 1
+	.set import.Unit_Get, 1
 	.set import.Item_Get, 1
-	.set import.GameState_InitDefaults, 1
+	.set import.GameState_InitializeDefaults, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.GameFlag_ClearBit, 1
 	.set import.Party_AddActiveOwner, 1
 	.set import.Party_RemoveActiveOwner, 1
-	.set import.Party_BeginChildhood, 1
+	.set import.Party_StartChildhood, 1
 	.set import.Runtime_GetBuildStampTime, 1
 	.set import.InventorySnapshot_Restore, 1
 	.set import.Engine_EventWait, 1

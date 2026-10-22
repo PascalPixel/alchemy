@@ -25,7 +25,7 @@ Func_080fc2e0:
 	adds r6, #255
 	add r6, r9
 	ldrb r0, [r6]
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #181
 	str r0, [sp, #4]
 	lsls r3, r3, #1
@@ -184,7 +184,7 @@ Func_080fc2e0:
 	ldrb r0, [r5]
 	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r5]
-	bl UnitCalcFar
+	bl Unit_CalculateFar
 	mov r0, r8
 	add sp, #12
 	pop {r3, r5, r6, r7}

@@ -35,7 +35,7 @@ static inline void Actor_RunRepeatedMotion(s32 actor, s32 repeats) {
   Engine_ActorRunRepeatedMotion(actor, repeats);
 }
 
-/// Switches an actor to an ActorAnimation, such as ANIM_NOD.
+/// Switches an actor to an ActorAnimation, such as ANIMATION_NOD.
 static inline void Actor_SetAnimation(s32 actor, s32 animation) {
   Engine_ActorSetAnimation(actor, animation);
 }
@@ -79,7 +79,7 @@ static inline void ColorBuffer_Interpolate(s32 frames) {
 }
 
 /// Starts a scripted scene, taking the field out of the player's hands.
-static inline void Event_Begin(void) { Engine_EventBegin(); }
+static inline void Event_Start(void) { Engine_EventStart(); }
 
 /// Lets the player answer yes or no to the line on screen; 0 means yes.
 static inline s32 Event_ChooseYesNo(s32 actor, s32 flags) {

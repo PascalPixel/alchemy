@@ -9,7 +9,7 @@
 #define ENCOUNTER_FLED 999
 
 /// The six enemy units, BATTLE_UNIT_SIZE bytes each: the
-/// HEAP_SLOT_LINK_OWNER_STATES work slot, gBattleOwnerStates, which UnitGet
+/// HEAP_SLOT_LINK_OWNER_STATES work slot, gBattleOwnerStates, which Unit_Get
 /// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
 /// link lobby passes the opponent's party to the battle in a copy of this block
 /// (menu/lobby.c).
@@ -174,8 +174,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // The party status window, opened PARTY_STATUS_CLOSED: laid out, but erased
   // until it is drawn (window/battle_command/party_status.c).
   UiWindow_CreateWithLayoutBoundsFar(PARTY_STATUS_CLOSED);
-  Camera_InitDefaultTransform();
-  BattleObjPut();
+  Camera_InitializeDefaultTransform();
+  BattleObject_Put();
   BattlePresentation_InitializeWorkAndResetState();
   BattleBackground_Load(BATTLE_BACKGROUND_FLAT, battle->background, 0);
   // The camera on the centre at 190 percent, until the opening sets its own
@@ -197,9 +197,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
     battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
   } else if (gGameState.battleStart == BATTLE_START_NORMAL) {
-    if ((BattleRandomFar() & 15) == 0)
+    if ((Battle_RandomFar() & 15) == 0)
       battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
-    else if ((BattleRandomFar() & 31) == 0)
+    else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = BATTLE_ENCOUNTER_ENEMIES_FIRST;
   }
   // After the entry transition the camera callback owns the background
@@ -207,7 +207,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattlePresentation_RunEntryTransition(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Scheduler_AddOrUpdateCallback(BattleObj_UpdateSpritePriorities, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleObject_UpdateSpritePriorities, 0xc80);
 
   // The rounds.
   for (;;) {
@@ -223,7 +223,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     // party status window is drawn with or without its Djinn column.
     transition->targetYaw = 0x2800;
     transition->frames = 60;
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
 
     // Every unit's action for the round, in turn order.
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
@@ -240,7 +240,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       actionCount = BattlePresentation_BuildSortedUnitEntries(battle->actions);
     }
     battle->promptSlot = VramCache_AllocEntry(128);
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
       goto aborted;
 
@@ -304,7 +304,7 @@ won:
   // Name the defeat ("X has been downed!" or "X's party goes down!") after
   // the first enemy class to fall, then hand out the spoils. Unit 128 is
   // rewritten as that class to carry the name, bare: letter 26 is past every
-  // edition's last (BattleUnitSet). DEFEAT_BY_PARTY_MEMBER shows no line.
+  // edition's last (BattleUnit_Set). DEFEAT_BY_PARTY_MEMBER shows no line.
   Battle_ClearSerialTransferPayload();
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->twoSided != 0)
@@ -312,8 +312,8 @@ won:
     if (battle->spoils.defeated != 0) {
       AudioCommand_PlayFar(MUS_VICTORY);
       if (battle->defeatState <= DEFEAT_SEVERAL) {
-        BattleUnitSetFar(FIRST_ENEMY_UNIT,
-                         battle->enemyClasses[battle->firstDefeated], 26);
+        BattleUnit_SetFar(FIRST_ENEMY_UNIT,
+                          battle->enemyClasses[battle->firstDefeated], 26);
         UiWork_ClearValueNameTablesFar();
         UiWork_PushValueSlotFar(FIRST_ENEMY_UNIT, VALUE_UNIT_NAME);
         UiText_ShowMessageAndWaitCoreFar(battle->defeatState + MsgDowned);
@@ -369,7 +369,7 @@ finished:
   Battle_ReservedNoOpF674();
   DjinnRecovery_Tick();
   Battle_SetStart(BATTLE_START_NORMAL);
-  Scheduler_RemoveCallback(BattleObj_UpdateSpritePriorities);
+  Scheduler_RemoveCallback(BattleObject_UpdateSpritePriorities);
   Runtime_ReleaseHeapBlock10();
   return result;
 }
@@ -398,7 +398,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    UnitGetFar(owner)->side = BATTLE_UNIT_PARTY;
+    Unit_GetFar(owner)->side = BATTLE_UNIT_PARTY;
   }
 
   if (owners != 0)
@@ -409,8 +409,8 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
 /// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
 /// how many there are (0 when unitIds is null). A link battle looks only at
 /// the opponent's three places. Called by BattleIntro_AnnounceEncounter,
-/// BattleParty_CollectUnitList and BattleTargetExec.
-s32 BattleEnemyList(s16 *unitIds) {
+/// BattleParty_CollectUnitList and BattleTarget_Execute.
+s32 BattleEnemy_List(s16 *unitIds) {
   s16 *output;
   s32 count;
   s32 id;
@@ -428,7 +428,7 @@ s32 BattleEnemyList(s16 *unitIds) {
     id = FIRST_ENEMY_UNIT;
     lastId += FIRST_ENEMY_UNIT;
     for (; id < lastId; id += 1) {
-      if (UnitGetFar(id)->side != BATTLE_UNIT_ABSENT) {
+      if (Unit_GetFar(id)->side != BATTLE_UNIT_ABSENT) {
         *output = id;
         listed += 1;
         output += 1;
@@ -477,7 +477,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = UnitGetFar(unitId)->hp;
+        hp = Unit_GetFar(unitId)->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -495,7 +495,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
     lastEnemy = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < lastEnemy) {
       do {
-        unit = UnitGetFar(remaining);
+        unit = Unit_GetFar(remaining);
         if ((unit->side != BATTLE_UNIT_ABSENT) && (unit->hp > 0)) {
           if (output != NULL) {
             *output = remaining;

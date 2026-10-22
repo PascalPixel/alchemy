@@ -224,11 +224,11 @@ enum SceneEventKind {
 enum ExitStyle {
   EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   EXIT_STYLE_SILENT = 0x10,
-  /// With SE_STAIRS_UP and ANIM_LEADER_LEAVE; the next scene plays
-  /// ANIM_LEADER_ARRIVE (FLAG_EXIT_ARRIVAL_PENDING).
+  /// With SE_STAIRS_UP and ANIMATION_LEADER_LEAVE; the next scene plays
+  /// ANIMATION_LEADER_ARRIVE (FLAG_EXIT_ARRIVAL_PENDING).
   EXIT_STYLE_ANIMATED = 0x20,
-  /// With SE_STAIRS_DOWN and ANIM_LEADER_LEAVE_ALTERNATE; the next scene plays
-  /// ANIM_LEADER_ARRIVE_ALTERNATE (FLAG_EXIT_ARRIVAL_ALTERNATE).
+  /// With SE_STAIRS_DOWN and ANIMATION_LEADER_LEAVE_ALTERNATE; the next scene
+  /// plays ANIMATION_LEADER_ARRIVE_ALTERNATE (FLAG_EXIT_ARRIVAL_ALTERNATE).
   EXIT_STYLE_ANIMATED_ALTERNATE = 0x30,
   EXIT_STYLE_MASK = 0x30
 };
@@ -270,11 +270,11 @@ enum PsynergyPhase {
   /// Force strikes, Frost freezes or Reveal shows what is hidden. An event in
   /// this phase also makes Field_UsePsynergy aim the effect at the actor ahead.
   PSYNERGY_PHASE_EFFECT_ACTS = 5,
-  PSYNERGY_PHASE_ANY = 7 ///< FieldFx_FindMatchingEvent matches every phase
+  PSYNERGY_PHASE_ANY = 7 ///< FieldEffect_FindMatchingEvent matches every phase
 };
 
 /// The control word of a Psynergy event (EVENT_PSYNERGY) in the given phase, as
-/// FieldFx_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind).
+/// FieldEffect_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind).
 #define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
 #define PSYNERGY_EV_ANY PSYNERGY_EV(PSYNERGY_PHASE_ANY)
 

@@ -17,7 +17,7 @@ struct BattleFxScene {
   void *volatile mainObject;
 };
 
-void FieldFx_RunMove(void) {
+void FieldEffect_RunMove(void) {
   /* FAKEMATCH: an unused 12-byte local explains the native 12-byte frame. */
   s32 work[3];
   struct BattleFxScene *scene;
@@ -27,12 +27,12 @@ void FieldFx_RunMove(void) {
   object = scene->mainObject;
 
   BattleEffect_InitializeSharedScene();
-  object = BattleFx_StartItemBreak(object);
-  BattleFx_SnapScaleToFull(object);
+  object = BattleEffect_StartItemBreak(object);
+  BattleEffect_SnapScaleToFull(object);
   if (object != 0) {
     Object_SetMode(object, 4);
     WaitFrames(30);
   }
-  BattleFx_PrepareBufferInterpolation();
+  BattleEffect_PrepareBufferInterpolation();
   UpdateRisingParticleBurst(object);
 }

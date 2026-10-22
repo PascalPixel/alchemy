@@ -26,3 +26,11 @@ what differs here.
 Functions not yet matched are drafts under `recon/tla/en/main`, by address;
 one file is still named by its address (`f1c0cac.c`). `make progress` gives
 the counts.
+
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`Audio_`, `AudioCommand_`, `AudioEngine_`, `Cgb_`, `CgbAudio_`, `CgbChannel_`,
+`CgbNote_`, `LzPack_`, `MusicCommand_`, `MusicPlayer_`, `MusicTrack_`, `Pcm_`,
+`Runtime_` and `Sound_`. Only `SongFlag_`, setting, clearing and testing a
+song's flags, is The Lost Age's own so far.

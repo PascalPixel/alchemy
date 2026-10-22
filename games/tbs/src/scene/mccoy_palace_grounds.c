@@ -149,7 +149,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
 /// it to the party.
 static void Event_CatchFloatingNut(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
@@ -159,7 +159,7 @@ static void Event_CatchFloatingNut(void) {
 
 /// McCoy's Palace, outside: searching the dry well.
 static void Event_SearchWell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgBilibinUponCloserInspectionSeemsDried, 1);
   Engine_EventEnd();
@@ -176,7 +176,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// McCoy's Palace, outside, before the curse is lifted: the north worker asks
 /// whether the party has seen the barricade they built on the road to Kolima.
 static void Event_TalkToNorthWorker(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinHaveYouSeenBarricadeWe);
   Engine_EventAskYesNo(ACTOR_NORTH_WORKER, 0);
   Engine_EventEnd();
@@ -187,7 +187,7 @@ static void Event_TalkToNorthWorker(void) {
 /// victim, on no she calls the curse a superstition, and either way she wants
 /// her palace.
 static void Event_TalkToLadyMcCoy(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
   Engine_EventAskYesNo(ACTOR_LADY_MCCOY, 0);
   Engine_EventEnd();
@@ -196,7 +196,7 @@ static void Event_TalkToLadyMcCoy(void) {
 /// McCoy's Palace, outside, after the reward: the west guard asks whether he
 /// can become as fine a warrior as the leader.
 static void Event_TalkToWestGuard(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinDoThinkCanBecomeAs);
   Engine_EventAskYesNo(ACTOR_WEST_GUARD, 0);
   Engine_EventEnd();
@@ -212,7 +212,7 @@ static void Event_TalkToWestGuard(void) {
 /// MsgBilibinMasterQuiteCranky), never runs, because FLAG_KEEPING_MCCOY_WAITING
 /// is cleared on entering the grounds.
 static void Event_TalkToEastGuard(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   // Once admitted, the party only receives the guard's current reminder.
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     if (Engine_GameFlagIsSet(FLAG_KEEPING_MCCOY_WAITING) != 0) {
@@ -252,8 +252,8 @@ static void Event_TalkToEastGuard(void) {
       Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
       Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 1);
       Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
-      Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
-      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
+      Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIMATION_NOD);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
       Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 1);
@@ -294,13 +294,13 @@ static void Event_TalkToEastGuard(void) {
 /// McCoy's Palace, outside, trigger 2: walking north into the palace gate opens
 /// it if it is still shut, and the leader walks into the palace.
 static void Event_EnterPalace(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_GATE_OPEN) == 0) {
     McCoyPalaceGrounds_OpenGate();
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Engine_EventWait(16);
   Engine_EventRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
@@ -365,7 +365,7 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
 static void Event_GuardsArrestParty(void) {
 
   // Bring the leader into view before the guards interrupt.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Camera_MoveTo(PIXELS(320), -1, PIXELS(320), 0);
   Engine_MapRedraw();
@@ -406,8 +406,8 @@ static void Event_GuardsArrestParty(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   Engine_EventSetMessage(MsgBilibinUnderArrest);
@@ -435,7 +435,7 @@ static void Event_GuardsArrestParty(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_WalkTo(ACTOR_WEST_GUARD, 328, 262);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
-  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_STAND);
   McCoyPalaceGrounds_OpenGate();
   Engine_EventWait(40);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);

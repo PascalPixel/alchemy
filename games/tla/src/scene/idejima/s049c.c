@@ -10,7 +10,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void Engine_EventBegin(void);
+void Engine_EventStart(void);
 void Engine_EventEnd();
 void Engine_EventSetMessage();
 void Engine_EventShowMessage();
@@ -54,7 +54,7 @@ extern const u8 gData_02003790[];
 void Func_0200049c(void) {
   struct ObjectRuntime *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Func_02003310(0);
   Motion_SetVarCbAndRefresh(6, 2);
   Engine_EventSetMessage(MsgIdejimaSecondGroan);
@@ -116,7 +116,7 @@ static inline void ActorPlace(s32 actor, s32 x, s32 z) {
 }
 
 void Func_02000640(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Func_02003310(0);
   Engine_AudioPlayCue(123);
   Event_FinishScreenTransition();
@@ -138,7 +138,7 @@ void Func_020006a8(void) {
   struct ObjectRuntime *leader;
 
   if (FlagCheck(0x863) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Call1(Func_02003310, 0);
     Func_02000664();
     Call1(Engine_EventSetMessage, (s32)MsgIdejimaHeyFelix);
@@ -187,7 +187,7 @@ void Func_020006a8(void) {
     Engine_EventEnd();
   }
   if (FlagCheck(0x864) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Call1(Func_02003310, 0);
     Func_02000664();
     Call3(Func_02003228, 5, 0x1380000, 0x29a0000);
@@ -241,7 +241,7 @@ void Func_020006a8(void) {
     Engine_EventEnd();
   }
   if (FlagCheck(0x865) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Call1(Func_02003310, 0);
     Func_02000664();
     Call3(Func_02003228, 6, 0x1380000, 0x29a0000);

@@ -6,7 +6,7 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 
-void PaletteFade_Init(void) {
+void PaletteFade_Initialize(void) {
   struct PaletteFade *buffer;
   s32 operation;
 
@@ -51,7 +51,7 @@ void PaletteFade_Start(s32 value) {
   if (state != NULL) {
     state->duration = value;
     state->step = 0;
-    PaletteFade_ComputeSteps((s16 *)state->current, (s16 *)state->target,
+    PaletteFade_CalculateSteps((s16 *)state->current, (s16 *)state->target,
                              (s16 *)state->delta, value);
   }
 }

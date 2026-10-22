@@ -6,7 +6,7 @@
 @ 0. The picture carries the shared OBJ palette and, for its colours 224 to
 @ 255, the colours the sprite shows for them on the first tick.
 	.section .rodata
-	.global FieldFx_FireColumn
-FieldFx_FireColumn:
+	.global FieldEffect_FireColumn
+FieldEffect_FireColumn:
 	.incbin "games/tla/src/graphics/field_fx/fire_column.8bpp.lz"
-	.byte 0xee, 0xd3	@ PACKER: left in the buffer by FieldFx_GlowDisc+0x3fe
+	.byte 0xee, 0xd3	@ PACKER: left in the buffer by FieldEffect_GlowDisc+0x3fe

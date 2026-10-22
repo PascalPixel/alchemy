@@ -157,7 +157,7 @@ FieldEvent_WaitFrames:
 	.global Func_02003c28
 	.thumb_func
 Func_02003c28:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02003c30
 	.thumb_func
 Func_02003c30:
@@ -291,7 +291,7 @@ Func_02003d18:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c82c8
 	.else
-	overlay_veneer BattleFx_FindNearestObjectFar
+	overlay_veneer BattleEffect_FindNearestObjectFar
 	.endif
 	.endif
 	.global Func_02003d20
@@ -322,10 +322,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -375,7 +375,7 @@ Func_02003d50:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8490
 	.else
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.endif
 	.endif
 	.global Func_02003d58
@@ -387,17 +387,17 @@ Func_02003d58:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02003d60
 	.thumb_func
 Func_02003d60:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.else
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.endif
@@ -406,10 +406,10 @@ Func_02003d60:
 	.thumb_func
 Func_02003d68:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer BattleEffect_SetupObjectPairFar
 	.else
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.endif
@@ -442,10 +442,10 @@ Func_02003d78:
 	.thumb_func
 Func_02003d80:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_HasMatchingEvent5Far
+	overlay_veneer BattleEffect_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif

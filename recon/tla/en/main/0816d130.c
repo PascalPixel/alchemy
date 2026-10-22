@@ -1,5 +1,5 @@
 // Draft, differ 97 of 298 (297 here), from the listing (The Broken Seal's
-// BattleFx_RunDrain is only a hint): a mote leaves the first
+// BattleEffect_RunDrain is only a hint): a mote leaves the first
 // target as a ring of 24 sparks turning about it and is pulled toward the
 // user until it passes it. The blitter declared before the camera and the
 // sheet gives the native's stack slots; the spark size kept in a local set
@@ -34,11 +34,11 @@ extern char ResourceId_Data134;
 extern char ResourceId_Data17F;
 extern u16 gData_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 layer);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_StartCanvasLayer(s32 layer);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleFx_LoadBlitter(s32 slot, s32 kind);
+void BattleEffect_LoadBlitter(s32 slot, s32 kind);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
@@ -46,13 +46,13 @@ void Transform_Pop(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32 angle);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void ObjectGroup_TickMemberTimers(void);
 
 // A mote leaves the first target and is drawn as a ring of 24 sparks
 // turning about it while it is pulled back to the user.
-void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
+void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   struct BattleFxWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -68,7 +68,7 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
   work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Iwram_CopyWords((void *)0x05000000,
                   Resource_GetTableEntry((s32)&ResourceId_Data17F), 128);
@@ -82,11 +82,11 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
   orb->velocityY = 0;
   orb->velocityZ = 0;
   orb->variant = 0;
-  BattleFx_LoadBlitter(104, 19);
+  BattleEffect_LoadBlitter(104, 19);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != 80; frame++) {
@@ -127,7 +127,7 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
         blit(canvas, sheet + gData_08197410[size - 1], out.x - size / 2,
              out.y - size, size, size * 2);
       }
-      BattleFxKernels_IntegrateVector3(orb, 62, 0);
+      BattleEffectKernels_IntegrateVector3(orb, 62, 0);
       if (frame > 0) {
         s32 dx = user->x - orb->x;
         s32 dy = user->y + userHalf - orb->y;
@@ -151,7 +151,7 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

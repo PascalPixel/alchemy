@@ -71,8 +71,8 @@ struct ClassDefinition {
 struct DjinnDefinition {
   u16 abilityId; ///< the action the Djinni unleashes
   u8 unk02[2];   ///< Reserved in djinn.tsv; not named by any TBS code.
-  /// Added to the base stats while the Djinni is set (UnitCalc), before the
-  /// class multiplies them.
+  /// Added to the base stats while the Djinni is set (Unit_Calculate), before
+  /// the class multiplies them.
   ///@{
   s8 hp;
   s8 pp;
@@ -90,7 +90,7 @@ struct DjinnDefinition {
 /// BattleCommand_SelectAutomatic: with any strategy but STRATEGY_MOST_HP an
 /// enemy skips Psynergy it lacks the PP for, and with STRATEGY_RANDOM any
 /// Psynergy while sealed; with STRATEGY_MOST_HP, an enemy that picks an item
-/// place with no items left still commands CMD_ITEM.
+/// place with no items left still commands COMMAND_ITEM.
 enum EnemyTargetStrategy {
   STRATEGY_MOST_HP = 0,
   STRATEGY_MOST_MAX_HP = 1,
@@ -117,10 +117,10 @@ enum EnemyActionStrategy {
 /// actions it chooses from and its rewards.
 struct EnemyDefinition {
   /// The enemy's name: enemies.tsv's name column, 15 bytes, blank in every
-  /// row. BattleUnitSet takes the name from the messages instead.
+  /// row. BattleUnit_Set takes the name from the messages instead.
   u8 unk00[15];
   u8 level;
-  /// The base stats BattleUnitSet copies into the unit.
+  /// The base stats BattleUnit_Set copies into the unit.
   ///@{
   u16 hp;
   u16 pp;

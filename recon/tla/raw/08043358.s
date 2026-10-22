@@ -29,7 +29,7 @@ SaveState_BuildSummaryHeader:
 	lsls r1, r1, #2
 	adds r2, r2, r1
 	ldr r0, [r2]
-	bl UnitGet
+	bl Unit_Get
 	adds r7, r5, #0
 	adds r6, r0, #0
 	adds r1, r5, #0

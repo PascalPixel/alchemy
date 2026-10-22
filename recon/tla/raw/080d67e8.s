@@ -95,7 +95,7 @@ Func_080d67e8:
 .L_080d68b2:
 	adds r0, r6, #0
 	movs r1, #1
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r2, #168
 	lsls r2, r2, #5
 	adds r0, r6, r2
@@ -119,7 +119,7 @@ Func_080d67e8:
 	lsls r3, r3, #4
 	adds r0, r6, r3
 	movs r1, #1
-	bl BattleFx_ApplyColorToTargetBuffer
+	bl BattleEffect_ApplyColorToTargetBuffer
 	movs r1, #168
 	lsls r1, r1, #6
 	adds r1, #1

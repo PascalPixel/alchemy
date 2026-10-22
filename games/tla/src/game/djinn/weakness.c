@@ -122,7 +122,7 @@ s32 Battle_IsReviveEffect(s32 effect_id) {
 }
 
 s32 Unit_GetElementLevel(s32 unitId, s32 element);
-u32 BattleRandomPercent(void);
+u32 Battle_RandomPercent(void);
 
 /// Rolls whether effect `effectId` takes hold on `target`: it fails at once
 /// when there is nothing for it to do; the chance is the base rate, plus three
@@ -132,9 +132,9 @@ u32 BattleRandomPercent(void);
 /// luck or more shrugs off effects 18, 19, 26 to 28, 34, 80 and 82, and a
 /// character 82; effects 80 and 85 get three tries as 67 does.
 // As The Broken Seal's function of the same name, with effects 90 and 91 added.
-s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
+s32 BattleEffect_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
-  u8 *state = UnitGet(target);
+  u8 *state = Unit_Get(target);
   struct BattleUnit *unit = (struct BattleUnit *)state;
   s32 attempts = 1;
   s32 score;
@@ -233,7 +233,7 @@ action4_done:
     attempts = 3;
 
   for (attempt = 0; attempt < attempts; attempt++) {
-    if (score * successScale / 100 >= (s32)BattleRandomPercent()) {
+    if (score * successScale / 100 >= (s32)Battle_RandomPercent()) {
       return 1;
     }
   }

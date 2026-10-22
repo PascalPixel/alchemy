@@ -4,7 +4,7 @@
 // new psynergy and stat rises, then the coins and the dropped items, best
 // first, keeping one that does not fit in Data_0200049c. ☀️'s Battle_AwardSpoils
 // in games/tbs/src/battle/battle.c, rewritten from the listing with ⚓️'s calls
-// (UnitGet, UiText_DrawQuantity, Func_080ad0b0 for the level-up check) and
+// (Unit_Get, UiText_DrawQuantity, Func_080ad0b0 for the level-up check) and
 // numbered messages. Other: the listing's frame is 4 bytes larger (64 against
 // 60), with 4 bytes between the unit list (sp+28) and the gains (sp+48) that no
 // local here explains, so the gains' address takes movs and add there and one
@@ -39,7 +39,7 @@ void BattlePresentation_WaitForAdvance(void);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
 s32 Func_0811a24c(s32 side, u16 *units);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct BattleUnit *UnitGet(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void Audio_PlayCue(s32 cue);
 void UiWork_ClearValueNameTablesFar(void);
 s32 Func_080ad0b0(s32 unitId, s16 *gains);
@@ -79,7 +79,7 @@ void Battle_AwardSpoils(void) {
   backup = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
   for (i = 0; i < count; i++) {
     unitId = list[i];
-    unit = UnitGet(unitId);
+    unit = Unit_Get(unitId);
     if (i >= living)
       unit->experience += (u32)spoils->experience >> 1;
     else

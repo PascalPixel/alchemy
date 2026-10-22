@@ -75,7 +75,7 @@ extern u16 gGraphics_ExpandNibbleTable[];
 extern const u8 Resource_PatchThumbBranchCode[];
 s32 _call_via_r3(s32, u8 *, u8, s32);
 s32 AnimationObject_Allocate(s32 id);
-s32 BattleFx_FindMatchingEvent(s32, s32, void *);
+s32 BattleEffect_FindMatchingEvent(s32, s32, void *);
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant);
 #ifndef OWN_BattleMotion_ApproachTarget
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travel_divisor,

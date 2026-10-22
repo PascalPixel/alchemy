@@ -1,5 +1,5 @@
 // Draft (tla-en): listing 436 instructions, draft 436, common 409, differ 54.
-// Written from the listing (☀️'s BattleFx_RunJupiter is only a
+// Written from the listing (☀️'s BattleEffect_RunJupiter is only a
 // hint). The pink star burst: 32 smoke puffs rise from the caster for 24
 // frames, the caster rises and leans to the target, and at frame 32 the
 // target bursts into 16 pink stars for 24 frames.
@@ -8,7 +8,7 @@
 // loop starts at &particles[SMOKE_COUNT] as the native rebuilds it: 88 to
 // 70; the smoke drawing loop on a pointer of its own (r5, the native's;
 // the spawn loop keeps r7): 54. What is left is scheduling: the native's
-// loads one row before their neighbouring constants, BattleFx_LoadBlitter's
+// loads one row before their neighbouring constants, BattleEffect_LoadBlitter's
 // 3 before its 104, and the star base built between the divisions.
 // Earlier notes, from before the pair:
 // - the native frame is 60 bytes with an unreferenced slot at sp+20
@@ -19,19 +19,19 @@
 // and every stack offset moves (differ 132). Tried for the slot: the
 // step or source pointer, angle or speed at function scope, a particles
 // pointer, stars set in each block.
-// - after BattleFx_BeginCanvasLayer, REG_BLDALPHA's 0x1010 is loaded from
+// - after BattleEffect_StartCanvasLayer, REG_BLDALPHA's 0x1010 is loaded from
 // the pool before the register address: a u16 pinned to r3 with a
 // one-pass block fixes it (the empty asm of f18284c.c instead moves the
 // halfword pool by four estimated bytes). Another one-pass block before
 // the heap loads puts effect's spill first, as the native does.
-// - the native sets BattleFx_LoadBlitter's 3 before its 104.
+// - the native sets BattleEffect_LoadBlitter's 3 before its 104.
 // - in the frame-32 block the native schedules the 0x380 + r9 of the
 // burst loop between the divisions and loads target->x after the
 // division's 100 (each load comes one row later after a store).
 // 2026-10-15 (lane N2): rewritten with the work struct, named constants and
 // comments, the devices tagged; the same 436 instructions and differ 88.
 // The always-true "frame >= 0" test is a device: without it differ 105.
-// Resources 302 (BattleFx_PinkStarSheet) and 353 (BattleFx_SmokeSheet)
+// Resources 302 (BattleEffect_PinkStarSheet) and 353 (BattleEffect_SmokeSheet)
 // need their names in system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -64,7 +64,7 @@
 extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SmokeSheet;
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -76,19 +76,19 @@ s32 Trig_Cos(s32 angle);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void BattleFx_LoadBlitter(s32 slot, s32 blitter);
+void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void BattleObject_SetRecordPriority(s32 id, s32 priority);
-void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A pink star burst. Smoke puffs from the caster for its first 24 frames
 // while the caster stands just past the target; at frame 16 it leaps at
@@ -96,7 +96,7 @@ void BattleFx_EndCanvasLayer(void);
 // beside the target, which is knocked back and flashes, and sixteen pink
 // stars burst from it for 24 frames. Battle work byte 0x866 is set for the
 // whole effect.
-void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   u8 *canvas;
   struct EffectPosition caster;
@@ -121,7 +121,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   } while (0);
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   {
     /* FAKEMATCH: the native loads BLDALPHA's 0x1010 from the pool before
      * it starts the register address; pinned behind a one-pass block it
@@ -135,11 +135,11 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, CLIP_XY));
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, CLIP_XY));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
   casterObject = GetBattleObjectSlotFar(effect->actor)->object;
   battle = (u8 *)Ram_HeapSlots->battleWork;
@@ -178,7 +178,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
         if (frame >= i / 8 && puff->variant <= 23) {
           draw[0](canvas, work->sheet + (puff->variant / 4) * 0x480,
                   HI(puff->x) - 12, HI(puff->y) - 24, 24, 48);
-          BattleFxKernels_IntegrateVector2(puff, 48, -0x2000);
+          BattleEffectKernels_IntegrateVector2(puff, 48, -0x2000);
           puff->variant++;
         }
       }
@@ -190,7 +190,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
     }
 
     if (frame == STAR_LEAP_FRAME) {
-      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 16, 120);
+      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16, 120);
       casterObject->velocityY = 7 << 16;
     }
 
@@ -220,7 +220,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
       work->shakeFrames = 4;
       Func_081180e8(134);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
-      BattleFx_StartActorMotion(effect->actors[0], 1, 8 << 16, 20 << 16,
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 8 << 16, 20 << 16,
                                 6 << 16, 10);
     }
 
@@ -230,7 +230,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
         if (step->variant >= 0) {
           draw[0](canvas, work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
                HI(step->x) - 8, HI(step->y) - 8, 16, 16);
-          BattleFxKernels_IntegrateVector2(step, 56, 0);
+          BattleEffectKernels_IntegrateVector2(step, 56, 0);
           step->variant--;
         }
       }
@@ -243,7 +243,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   }
 
   battle[0x866] = 0;
-  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

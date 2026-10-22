@@ -37,8 +37,8 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// Collects the party's commands for a round into `commands`, one
 /// for each of the `commandCount` units in `actors` (a member with two
 /// actions is listed twice), and returns how many it wrote: commandCount, 1
-/// when the party flees (CMD_FLEE for the first actor), or -1 when the link
-/// fails. Each record gets its command (CMD_), parameter (the ability, the
+/// when the party flees (COMMAND_FLEE for the first actor), or -1 when the link
+/// fails. Each record gets its command (COMMAND_), parameter (the ability, the
 /// summon, the Djinni entry or the inventory place), target
 /// (BattleTarget_RunSelection's code), range and priority: the unit's
 /// Agility plus up to a sixteenth more at random, halved for its second
@@ -198,7 +198,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       MemFree(block);
       continue;
     }
-    // Flee, unless the battle forbids it: one CMD_FLEE for the party,
+    // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
     // first in the round (priority 0x7ffe).
     if (mode == COMMAND_ICON_FLEE) {
       if (UiText_ShowLocalizedMessageAndWait() != 0) {
@@ -208,7 +208,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       command = commands;
       command->unitId = actors[0];
       command->priority = 0x7ffe;
-      command->command = CMD_FLEE;
+      command->command = COMMAND_FLEE;
       command->parameter = 0;
       command->target = 256;
       break;
@@ -238,14 +238,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
       command = &commands[commandIndex];
       actorId = actors[commandIndex];
-      // UB: UnitGetFar returns a pointer, not the cast's doubleword result.
+      // UB: Unit_GetFar returns a pointer, not the cast's doubleword result.
 #ifdef UBFIX
-      unit = UnitGetFar(actorId);
+      unit = Unit_GetFar(actorId);
 #else
       /* FAKEMATCH(wrapper): called as returning a doubleword, which sets r1,
-       * so sched2 loads i * 2 first; as UnitGetFar(actorId), 1 of 1727
+       * so sched2 loads i * 2 first; as Unit_GetFar(actorId), 1 of 1727
        * instructions differ in tbs-en. */
-      unit = (struct BattleUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
+      unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_GetFar)(actorId);
 #endif
       // The member's row starts on Attack; its portrait shows at the left.
       gLinkCountdownWork->commandActor = actorId;
@@ -327,12 +327,12 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       }
       iconSprite->oam.f.y = 136;
       state->iconShown[0] = 1;
-      // Each command's menus; commandKind is the CMD_ value recorded. B in a
-      // target selection goes back to the command's list (for Attack, to the
+      // Each command's menus; commandKind is the COMMAND_ value recorded. B in
+      // a target selection goes back to the command's list (for Attack, to the
       // member's row), B in a list to the row.
       switch (mode) {
       case COMMAND_ICON_ATTACK:
-        // Attack: one enemy, range 1; CMD_ATTACK.
+        // Attack: one enemy, range 1; COMMAND_ATTACK.
         commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
         UiText_DrawCharacterAtOffset(MsgCommandName, commandWindow,
                                      BATTLE_COMMAND_NAME_X, 0);
@@ -343,7 +343,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto mark_visible;
         }
-        commandKind = CMD_ATTACK;
+        commandKind = COMMAND_ATTACK;
         target = mode;
         command->range = 1;
         break;
@@ -363,7 +363,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         // Psynergy: the member's abilities usable in battle, from its 32
         // action slots (pick keeps each one's slot); then the ability's
         // window, colour 2 when the PP fall short and 9 while sealed, and
-        // its target; CMD_PSYNERGY with the ability as parameter.
+        // its target; COMMAND_PSYNERGY with the ability as parameter.
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
@@ -376,7 +376,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         entryValue = unit->actionSlots[k].encodedAction & ACTION_ID_MASK;
         if (entryValue != 0) {
           do {
-            if ((BattleActGet(entryValue)->flags & 0x80) != 0) {
+            if ((BattleAction_Get(entryValue)->flags & 0x80) != 0) {
               pick[cnt] = k;
               list[cnt] = entryValue;
               cnt++;
@@ -396,7 +396,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         }
         parameter =
             unit->actionSlots[pick[mode]].encodedAction & ACTION_ID_MASK;
-        ability = BattleActGet(parameter);
+        ability = BattleAction_Get(parameter);
         // cost holds the ability's range, not its PP.
         cost = ability->range;
         iconSprite = &state->icons[1];
@@ -446,7 +446,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto psynergy_menu;
         }
-        commandKind = CMD_PSYNERGY;
+        commandKind = COMMAND_PSYNERGY;
         target = mode;
         break;
       }
@@ -464,7 +464,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         // have each other's names): the summon list from this command's
         // standby Djinn, the summon's window with its cost (its name in
         // colour 2 and the error sound when it cannot be paid for), and its
-        // target; CMD_SUMMON with the summon as parameter.
+        // target; COMMAND_SUMMON with the summon as parameter.
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
@@ -475,12 +475,12 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto mark_visible;
         }
-        commandKind = CMD_SUMMON;
+        commandKind = COMMAND_SUMMON;
         parameter = mode;
         WaitFrames(1);
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
-        ability = BattleActGet(summon->nameMessageId);
+        ability = BattleAction_Get(summon->nameMessageId);
         handle = VramCache_AllocEntry(128);
         commandWindow =
             UiWindow_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
@@ -555,7 +555,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 element;
         s32 index;
 
-        // Djinn: the member's Djinn list; CMD_DJINN with the Djinni's entry
+        // Djinn: the member's Djinn list; COMMAND_DJINN with the Djinni's entry
         // as parameter, kept in chosenDjinn so no later command takes it. A
         // set Djinni is unleashed: its ability's target, then in the
         // tutorial a hint. A standby one is set on the member itself
@@ -570,13 +570,13 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto mark_visible;
         }
-        commandKind = CMD_DJINN;
+        commandKind = COMMAND_DJINN;
         parameter = mode;
         gLinkCountdownWork->chosenDjinn[commandIndex] = mode;
         element = (parameter >> 8) & 15;
         index = parameter & 255;
         if (Djinn_IsActiveFar(actorId, element, index) != 0) {
-          ability = BattleActGet(Djinn_GetAbilityIdFar(element, index));
+          ability = BattleAction_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
           commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
           state->icons[0].oam.f.x = 64;
@@ -639,7 +639,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
         // Item: the member's 15 inventory places, the usable items first
         // and the rest after (pick keeps each one's place); then the item's
-        // window and its action's target; CMD_ITEM with the place as
+        // window and its action's target; COMMAND_ITEM with the place as
         // parameter.
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
@@ -688,7 +688,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         }
         selection = pick[mode];
         parameter = selection;
-        ability = BattleActGet(
+        ability = BattleAction_Get(
             Item_GetDirectFar(unit->inventory[selection])->actionId);
         cost = ability->range;
         iconSprite = &state->icons[1];
@@ -720,14 +720,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto item_menu;
         }
-        commandKind = CMD_ITEM;
+        commandKind = COMMAND_ITEM;
         target = mode;
         break;
       }
 
       case COMMAND_ICON_DEFEND:
-        // Defend: CMD_DEFEND, nothing to choose.
-        commandKind = CMD_DEFEND;
+        // Defend: COMMAND_DEFEND, nothing to choose.
+        commandKind = COMMAND_DEFEND;
         break;
       }
 

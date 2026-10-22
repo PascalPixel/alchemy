@@ -19,7 +19,7 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Event_CallWithLastActiveObjectId, 1
 	.set import.Engine_EventChooseYesNo, 1
@@ -62,10 +62,10 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_PsynergyPlayEffect, 1
-	.set import.Engine_PsynergyBegin, 1
+	.set import.Engine_PsynergyStart, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
-	.set import.FieldFx_End, 1
+	.set import.FieldEffect_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Djinn_JoinParty, 1

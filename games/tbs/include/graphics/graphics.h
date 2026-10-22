@@ -305,7 +305,7 @@ extern u8 UiText_LookupMessageCodeSize[];
 extern const s8 gUiWindow_PartyColumnOffsets[];
 #ifndef OWN_FarCall_EffectTable
 /// The battle effect bank's far-call table, declared as a function so that a
-/// call reaches its first stub, BattleFx_BuildBlitterFar; nothing in this
+/// call reaches its first stub, BattleEffect_BuildBlitterFar; nothing in this
 /// game calls it by this name.
 s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags,
                         u32 mode);

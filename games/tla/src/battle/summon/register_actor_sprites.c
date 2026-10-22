@@ -10,7 +10,7 @@ struct BattleSpriteSlots {
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 extern u8 Data_02018000[];
 
-struct BattleUnit *UnitGet(s32 unit);
+struct BattleUnit *Unit_Get(s32 unit);
 s32 BattleClass_IsSmall(s32 index);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
@@ -26,7 +26,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
   s32 pass;
   struct BattleSpriteSlots *table =
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
-  struct BattleUnit *actor = UnitGet(unit);
+  struct BattleUnit *actor = Unit_Get(unit);
   s32 singleSlot = BattleClass_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
    * pass a copy of its register (mov r4, r10), as in The Broken Seal; as an

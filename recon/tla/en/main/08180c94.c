@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunDaedalusAlt, decompiled from the listing: differ 188
+// Draft of BattleEffect_RunDaedalusAlt, decompiled from the listing: differ 188
 // of 575 (draft 569), the same 51 calls and control flow.
 // 2026-10-19 (run 33), from 328: the frame now matches (68 bytes: effect
 // sp+32, canvas 28, the blitter pair 20 and 24, centerX 16, centerY 12, burst
@@ -46,11 +46,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -69,18 +69,18 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void ResourceObject_ReleaseFar(void *object);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -99,7 +99,7 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_Data0C9;
 extern u8 gMapCellBuffer[];
-extern const u16 gData_08197410[];         // gBattleFx_MoteCells
+extern const u16 gData_08197410[];         // gBattleEffect_MoteCells
 extern const u8 Data_081995ec[];           // the seven strike frames
 struct PlacementSource {
   s32 x;
@@ -138,7 +138,7 @@ struct SummonObject {
 // light spin out from it. At the seven frames of Data_081995ec every target
 // is knocked back and flashes; from frame 80 eight bursts of eight sparks,
 // one a frame, scatter over the canvas.
-void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
@@ -162,17 +162,17 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   Func_0813ba50();
   REG_WIN0V = 0x1080;
   REG_WININ = 0x2737;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_SpawnObjects(1, 0x296, 3);
-  BattleFx_SelectLivingTargets(work->effect);
-  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
+  BattleEffect_SpawnObjects(1, 0x296, 3);
+  BattleEffect_SelectLivingTargets(work->effect);
+  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
   draw[0] = BLITTER;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -191,7 +191,7 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     for (i = 0; i != 7; i++) {
       if (frame == Data_081995ec[i]) {
         for (j = 0; j != effect->count; j++) {
-          BattleFx_StartActorMotion(effect->actors[j], 1, 0x20000, 0x80000,
+          BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000, 0x80000,
                                     0x20000, 120);
           Func_0814cd48(effect->actors[j], 7, 5, j, 7);
         }
@@ -235,7 +235,7 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           if ((u32)mote->variant <= 17) {
             draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
                     HI(mote->x) - 16, HI(mote->y) - 48, 32, 64);
-            BattleFxKernels_IntegrateVector2(mote, 62, -0x800);
+            BattleEffectKernels_IntegrateVector2(mote, 62, -0x800);
             mote->variant++;
           }
         }
@@ -334,8 +334,8 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   ResourceObject_ReleaseFar(work->objects[0]);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 196 (2026-10-18): ⚓️'s
-// BattleFx_StartRandomParticleEmitter: shows the picture of item above actor
+// BattleEffect_StartRandomParticleEmitter: shows the picture of item above actor
 // (in front of the controlled owner, on the centre of the cell), clearing
 // Reveal's sparkles first. The source actor and the picture are one
 // variable (their register is shared), the tile is a 10-bit bitfield, and
@@ -33,7 +33,7 @@ struct EffectVisual {
 };
 
 extern const u8 gData_080effd8[];
-extern const u8 gBattleFx_ParticleScript[];
+extern const u8 gBattleEffect_ParticleScript[];
 extern const u8 Data_080f01b8[];
 s32 EventRuntime_GetControlledOwner(void);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
@@ -46,10 +46,10 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08038248(s32 item);
 s32 VramCache_Load(u32 slot, u32 size, const void *picture);
-void BattleFx_SpawnRandomParticleAtPosition(void);
+void BattleEffect_SpawnRandomParticleAtPosition(void);
 void Marker_MoveLeaderAwayFromEmitter(void);
 
-struct ObjectRuntime *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
+struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   struct EmitterWork *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *picture = work->actors[actor];
   struct ObjectRuntime *object;
@@ -76,9 +76,9 @@ struct ObjectRuntime *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     i = 63;
     do {
       if (object->script != NULL) {
-        if (object->update == BattleFx_SpawnRandomParticleAtPosition)
+        if (object->update == BattleEffect_SpawnRandomParticleAtPosition)
           Object_Destroy(object);
-        if (object->script == (s32 *)gBattleFx_ParticleScript)
+        if (object->script == (s32 *)gBattleEffect_ParticleScript)
           Object_Destroy(object);
       }
       i--;

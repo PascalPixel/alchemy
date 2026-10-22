@@ -1,4 +1,4 @@
-@ The pieces BattleFx_BuildBlitter (parts/blitter.c) builds canvas blitters
+@ The pieces BattleEffect_BuildBlitter (parts/blitter.c) builds canvas blitters
 @ from.
 @ None of this code runs where it is: the builder copies its words into a
 @ heap block, one routine per canvas size, mirroring, clip and mode.
@@ -10,8 +10,8 @@
 @ right to left; canvas rows stay in tile order. The 8 variants do eight
 @ pixels a pass. For whole cells the additive mode uses the colour fragments
 @ (battle_effect_composite_color.s), which add four pixels a word at a time:
-@ BattleFx_Mask puts 0x40 in every byte of sl, and a byte that reaches it
-@ becomes 63. BattleFx_Composite is the template the builder walks: each
+@ BattleEffect_Mask puts 0x40 in every byte of sl, and a byte that reaches it
+@ becomes 63. BattleEffect_Composite is the template the builder walks: each
 @ word it rewrites is marked, and parts/blitter.c describes its blocks.
 @
 @ Why assembly:
@@ -21,37 +21,37 @@
 .syntax unified
 .text
 	.arm
-	.global BattleFx_CopyReverse
-	.global BattleFx_CopyForward
-	.global BattleFx_TransparentForward
-	.global BattleFx_TransparentReverse
-	.global BattleFx_Transparent8Forward
-	.global BattleFx_Transparent8Reverse
-	.global BattleFx_MaxForward
-	.global BattleFx_MaxReverse
-	.global BattleFx_Max4Forward
-	.global BattleFx_Max4Reverse
-	.global BattleFx_AdditiveForward
-	.global BattleFx_AdditiveReverse
-	.global BattleFx_Mask
-	.global BattleFx_Composite
-BattleFx_CopyReverse:
+	.global BattleEffect_CopyReverse
+	.global BattleEffect_CopyForward
+	.global BattleEffect_TransparentForward
+	.global BattleEffect_TransparentReverse
+	.global BattleEffect_Transparent8Forward
+	.global BattleEffect_Transparent8Reverse
+	.global BattleEffect_MaxForward
+	.global BattleEffect_MaxReverse
+	.global BattleEffect_Max4Forward
+	.global BattleEffect_Max4Reverse
+	.global BattleEffect_AdditiveForward
+	.global BattleEffect_AdditiveReverse
+	.global BattleEffect_Mask
+	.global BattleEffect_Composite
+BattleEffect_CopyReverse:
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
-BattleFx_CopyForward:
+BattleEffect_CopyForward:
 	ldrb	r5, [r1], #1
 	strb	r5, [r9], #1
-BattleFx_TransparentForward:
+BattleEffect_TransparentForward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleFx_TransparentReverse:
+BattleEffect_TransparentReverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleFx_Transparent8Forward:
+BattleEffect_Transparent8Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -77,7 +77,7 @@ BattleFx_Transparent8Forward:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleFx_Transparent8Reverse:
+BattleEffect_Transparent8Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -103,17 +103,17 @@ BattleFx_Transparent8Reverse:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleFx_MaxForward:
+BattleEffect_MaxForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleFx_MaxReverse:
+BattleEffect_MaxReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleFx_Max4Forward:
+BattleEffect_Max4Forward:
 	ldrb	r5, [r1], #1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -130,7 +130,7 @@ BattleFx_Max4Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleFx_Max4Reverse:
+BattleEffect_Max4Reverse:
 	ldrb	r5, [r1], #-1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -147,25 +147,25 @@ BattleFx_Max4Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleFx_AdditiveForward:
+BattleEffect_AdditiveForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleFx_AdditiveReverse:
+BattleEffect_AdditiveReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleFx_Mask:
+BattleEffect_Mask:
 	mov	sl, #64
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16
-BattleFx_Composite:
+BattleEffect_Composite:
 	@ Block 1: prologue (see parts/blitter.c)
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32

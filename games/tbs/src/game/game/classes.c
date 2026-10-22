@@ -5,7 +5,7 @@
 #include "../game_internal.h"
 
 /// The elemental power and resistance of one element level, in
-/// gElement_PowerResistByLevel, which Unit_CalcBaseElements reads by whole
+/// gElement_PowerResistByLevel, which Unit_CalculateBaseElements reads by whole
 /// level, 0 to 15.
 struct ElementLevelBonus {
   u16 power; ///< base power, before the tenths of a level
@@ -24,7 +24,7 @@ s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
 /// Writes ten times each element level to `output`: an enemy's from its
 /// element preset, a character's from the Djinn set on it (`source` is its
 /// Djinn bits) plus its own element bonus. Called by Class_Determine,
-/// Unit_GetElementLevel and Unit_CalcBaseElements.
+/// Unit_GetElementLevel and Unit_CalculateBaseElements.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
@@ -39,7 +39,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 
     i = 0;
     cursor = output;
-    for (; i < NUM_ELEMENTS; i++)
+    for (; i < ELEMENT_COUNT; i++)
       *cursor++ = gEnemy_ElementPresetTable[index].digits[i] * 10;
   } else {
     cursor = output;
@@ -54,7 +54,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     }
 
     if (record <= 7) {
-      for (i = 0; i < NUM_ELEMENTS; i++) {
+      for (i = 0; i < ELEMENT_COUNT; i++) {
         *output += Character_GetDefinition(record)->elementBonus[i];
         output++;
       }
@@ -70,11 +70,11 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 /// Called by the two status screens to show the element levels, and by
 /// Battle_IsReviveEffect.
 s32 Unit_GetElementLevel(s32 owner, s32 element) {
-  struct BattleUnit *unit = UnitGet(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 elementLevels[4];
   s32 result = 0;
 
-  if (element < NUM_ELEMENTS) {
+  if (element < ELEMENT_COUNT) {
     Unit_GetElementLevels(unit->classId, (u8 *)unit->djinnAvailable,
                           elementLevels);
     result = elementLevels[element] / 10;
@@ -97,18 +97,19 @@ s32 Enemy_GetAttackElement(struct BattleUnit *unit) {
 // Writes a unit's base power and resistance in each element: an enemy's come
 // from its preset, a character's from its element levels, as the value of
 // gElement_PowerResistByLevel for the whole level (0 to 15) plus the level's
-// tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnitSet
+// tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnit_Set
 // and Unit_UpdateClass, which both ignore the result.
 #ifdef UBFIX
-void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination) {
+void Unit_CalculateBaseElements(s32 owner,
+                                struct BattleElementStats *destination) {
 #else
-u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
+u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
 #endif
   // Without UBFIX the return type is u32, which keeps r0 as the ROM does
   // (as void, the two return instructions differ: 4 in tbs-en), and the
   // destination is the array view, which keeps the table address added
   // after the first store (the typed fields differ by 2 in tbs-en).
-  struct BattleUnit *state = UnitGet(owner);
+  struct BattleUnit *state = Unit_Get(owner);
   u32 index;
   s32 values[4];
   s32 i;
@@ -138,7 +139,7 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
   }
 
   Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
-  for (i = 0; i < NUM_ELEMENTS; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     s32 value;
     s32 ones;
     s32 tens;
@@ -193,7 +194,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
     return result;
   best = result;
   primary = result;
-  for (i = 0; i < NUM_ELEMENTS; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     if (best < levels[i]) {
       best = levels[i];
       primary = i;
@@ -201,7 +202,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   }
   j = -1;
   best = -1;
-  for (i = 0; i < NUM_ELEMENTS; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     if (i != primary && best < levels[i]) {
       best = levels[i];
       j = i;
@@ -215,7 +216,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   for (i = 202; i >= 0; i--) {
     if (gClass_DefinitionTable[i].series != series)
       continue;
-    for (j = 0; j < NUM_ELEMENTS; j++) {
+    for (j = 0; j < ELEMENT_COUNT; j++) {
       if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
         break;
     }
@@ -241,14 +242,14 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 /// standby, at the prologue's start and end, at a new game and around the
 /// Colosso's inventory snapshot.
 void Unit_UpdateClass(s32 ownerId) {
-  struct BattleUnit *owner = UnitGet(ownerId);
+  struct BattleUnit *owner = Unit_Get(ownerId);
 
   owner->classIndex =
       Class_Determine(owner->classId, (u8 *)owner->djinnAvailable);
   Unit_RefreshPsynergy(ownerId);
 #ifdef UBFIX
-  Unit_CalcBaseElements(ownerId, owner->baseElement);
+  Unit_CalculateBaseElements(ownerId, owner->baseElement);
 #else
-  Unit_CalcBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
+  Unit_CalculateBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
 #endif
 }

@@ -126,9 +126,9 @@ void BattleUnit_ResetGuardLevels(void) {
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     struct BattleUnit *unit;
 
-    unit = UnitGetFar(unitIds[unitIndex]);
+    unit = Unit_GetFar(unitIds[unitIndex]);
     unit->guardLevel = 0;
-    UnitCalcFar(unitIds[unitIndex]);
+    Unit_CalculateFar(unitIds[unitIndex]);
   }
 }
 
@@ -138,7 +138,7 @@ void BattleUnit_ResetGuardLevels(void) {
 /// party that struck first always gets away; no one gets away from a battle
 /// that forbids it. Every attempt counts toward the next. Returns 1 when
 /// the party gets away. Called by BattlePresentation_BuildActions when the
-/// first action is CMD_FLEE. Each roll, even a successful one, raises
+/// first action is COMMAND_FLEE. Each roll, even a successful one, raises
 /// gBattleWork->escapeFailures.
 s32 BattleEscape_CheckSuccess(void) {
   s32 escaped;
@@ -160,13 +160,13 @@ s32 BattleEscape_CheckSuccess(void) {
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
     levelTotal = 0;
     for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
-      levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
+      levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
     }
     chance += levelTotal * 500 / livingCount;
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
+      levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
     }
     chance -= levelTotal * 500 / livingCount;
     // A roll from 0 to 9999 against the chance.
@@ -183,7 +183,7 @@ s32 BattleEscape_CheckSuccess(void) {
 
 /// The party's actions for the round, from the command menu: a member who
 /// is asleep, confused, charmed or stunned loses each of their turns
-/// (CMD_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
+/// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
 /// Returns how many actions there are, or -1 if the menu gave up. Called by
 /// BattlePresentation_BuildActions. Fills entries.
 s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
@@ -198,7 +198,7 @@ s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-    struct BattleUnit *unit = UnitGetFar(unitIds[unitIndex]);
+    struct BattleUnit *unit = Unit_GetFar(unitIds[unitIndex]);
     s32 copyIndex;
 
     // Once for each of the member's actions this round (actionEntryCount):
@@ -209,7 +209,7 @@ s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
         struct BattleActionRecord *entry = &entries[entryCount];
         entry->unitId = unitIds[unitIndex];
         entry->priority = unit->agi;
-        entry->command = CMD_NONE;
+        entry->command = COMMAND_NONE;
         entry->parameter = 0;
         entry->target = TARGET_NONE_PARTY;
         entryCount++;
@@ -284,7 +284,7 @@ s32 BattlePresentation_BuildOpponentEntries(
   for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
        shuffleOrUnitIndex++) {
     s32 unitId = unitIds[shuffleOrUnitIndex];
-    struct BattleUnit *unit = UnitGetFar(unitId);
+    struct BattleUnit *unit = Unit_GetFar(unitId);
     s32 copyIndex;
 
     for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {
@@ -299,7 +299,7 @@ s32 BattlePresentation_BuildOpponentEntries(
       }
 
       if (unit->sleep != 0 || unit->stun != 0) {
-        entry->command = CMD_NONE;
+        entry->command = COMMAND_NONE;
         entry->parameter = 0;
         entry->target = TARGET_NONE_ENEMY;
       } else {
@@ -333,14 +333,14 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   for (actionIndex = 0; actionIndex < count; actionIndex++) {
     struct BattleActionRecord *entry = &entries[actionIndex];
 
-    if (entry->command == CMD_DJINN) {
+    if (entry->command == COMMAND_DJINN) {
       struct BattleAct *action;
 
       // parameter: the Djinni's element in bits 8 to 11, its number below.
       // The unit lookup's result is unused.
-      UnitGetFar(entry->unitId);
-      action = BattleActGet(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
-                                                  entry->parameter & 0xff));
+      Unit_GetFar(entry->unitId);
+      action = BattleAction_Get(Djinn_GetAbilityIdFar(
+          entry->parameter >> 8 & 15, entry->parameter & 0xff));
       if (action->effect == ABILITY_EFFECT_DEFEND ||
           action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
           action->effect == ABILITY_EFFECT_GROUND) {
@@ -378,7 +378,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
 /// its count over the received header and sends it back.
 struct BattleLinkedActionState {
   s32 count; ///< actions that follow the header
-  s32 check; ///< the parent's next BattleRandomFar; the child checks its own
+  s32 check; ///< the parent's next Battle_RandomFar; the child checks its own
   s32 seed;  ///< the parent's gRandomSeed, the round's battle seed
   u8 unused[28]; ///< padding; a header packet carries only the first 20 bytes
 };
@@ -418,7 +418,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginSend(state, LINK_PACKET_BYTES);
+    s32 status = SerialRuntime_StartSend(state, LINK_PACKET_BYTES);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
@@ -436,7 +436,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       }
     }
     if (allocationSize) {
-      status = SerialRuntime_BeginSend(actions, allocationSize);
+      status = SerialRuntime_StartSend(actions, allocationSize);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {
@@ -461,7 +461,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
     // (serial_runtime.h), so every read here loads it again.
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginReceive(state);
+    s32 status = SerialRuntime_StartReceive(state);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
@@ -484,7 +484,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       return -1;
     result = state->count;
     if (state->count) {
-      status = SerialRuntime_BeginReceive(actions + count);
+      status = SerialRuntime_StartReceive(actions + count);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {
@@ -527,7 +527,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       u32 saved;
 
       state->count = count;
-      state->check = BattleRandomFar();
+      state->check = Battle_RandomFar();
       IRQ_LOCK(saved);
       gBattleRandomSeed = state->seed = gRandomSeed;
       IRQ_UNLOCK(saved);
@@ -539,7 +539,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
         goto fail;
       result = state->count;
       state->count = count;
-      if (LinkBattle_SendActions() < 0 || BattleRandomFar() != state->check)
+      if (LinkBattle_SendActions() < 0 || Battle_RandomFar() != state->check)
         goto fail;
       gBattleRandomSeed = state->seed;
     }
@@ -663,7 +663,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
     if (count < 0)
       goto finish;
     // A failed escape turns the round into one the enemies began.
-    if (count != 0 && actions[0].command == CMD_FLEE &&
+    if (count != 0 && actions[0].command == COMMAND_FLEE &&
         BattleEscape_CheckSuccess() == 0)
       *encounterMode = BATTLE_ENCOUNTER_ENEMIES_FIRST;
   } else {
@@ -695,11 +695,13 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
 
     remainingActions = count;
     do {
-      if (action->command == CMD_DEFEND || action->command == CMD_DEFEND2) {
-        unit = UnitGetFar(action->unitId);
+      if (action->command == COMMAND_DEFEND ||
+          action->command == COMMAND_DEFEND2) {
+        unit = Unit_GetFar(action->unitId);
         // Half the damage, or a tenth.
-        unit->guardLevel =
-            action->command == CMD_DEFEND ? GUARD_DEFEND : GUARD_TOTAL_DEFENSE;
+        unit->guardLevel = action->command == COMMAND_DEFEND
+                               ? GUARD_DEFEND
+                               : GUARD_TOTAL_DEFENSE;
       }
       action++;
       remainingActions--;
@@ -709,7 +711,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
 finish:
   // The battle view again, turned toward the party's turn.
   GameFlag_ClearBitFar(FLAG_CHOOSING_COMMANDS);
-  Camera_InitDefaultTransform();
+  Camera_InitializeDefaultTransform();
   gTransitionWork->targetYaw = YAW_PARTY_TURN;
   return count;
 }

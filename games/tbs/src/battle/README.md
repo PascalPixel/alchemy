@@ -26,7 +26,7 @@ flowchart TD
     gather["round.c gathers the actions<br/>and BattleQueue_SortByPriority<br/>puts them in turn order"] --> plan
     plan["BattleCommand_BuildPlan<br/>announces the next action"] --> stage
     stage["BattlePresentation_DispatchAction<br/>stages it and runs its effect"] --> exec
-    exec["BattleTargetExec,<br/>once a target"] --> turnend
+    exec["BattleTarget_Execute,<br/>once a target"] --> turnend
     turnend["turn_end.c closes the turn"] --> more{{"another action<br/>this round?"}}
     more -->|yes| plan
     more -->|no| over{{"a side beaten,<br/>or the party fled?"}}
@@ -59,7 +59,7 @@ standing or the party gets away:
    plan.
 3. `BattlePresentation_DispatchAction` (`staging.c`) stages the plan and runs
    its effect.
-4. `BattleTargetExec` (`target_exec.c`) applies the ability to each target,
+4. `BattleTarget_Execute` (`target_exec.c`) applies the ability to each target,
    called once a target from the event playback.
 5. `turn_end.c` closes the actor's turn and then the round: stat changes and
    statuses count down, Djinn recover, poison takes a tenth of the maximum HP
@@ -97,7 +97,7 @@ drawn again, and after 18 failed picks the enemy defends.
 
 An ability whose added effect is Defend, Total Defense or Flee is never used
 as an ability. `BattleCommand_SelectAutomatic` turns it into the command
-`CMD_DEFEND`, `CMD_DEFEND2` or `CMD_FLEE`, aimed at the enemy itself, so the
+`COMMAND_DEFEND`, `COMMAND_DEFEND2` or `COMMAND_FLEE`, aimed at the enemy itself, so the
 guard is raised with the party's before anyone acts.
 
 ### First strikes and escape
@@ -143,24 +143,24 @@ has been shown.
 
 The command the actor chose decides which ability id the plan carries.
 
-- `CMD_ATTACK` is `ABILITY_ATTACK`, unless the equipped weapon unleashes
+- `COMMAND_ATTACK` is `ABILITY_ATTACK`, unless the equipped weapon unleashes
   (`RollWeaponUnleashFar`): then the weapon's `unleash_action` replaces it,
   at a chance of five times its `unleash_chance` percent plus what the
   equipment adds. The player reads `<unit>'s <weapon> lets out a howl!` and
   then the ability's name.
-- `CMD_PSYNERGY` is the ability chosen in the menu. Its PP cost is paid here,
+- `COMMAND_PSYNERGY` is the ability chosen in the menu. Its PP cost is paid here,
   only when the cast goes ahead: a sealed caster, or one short of PP, pays
   nothing.
-- `CMD_DJINN` reads the Djinni's ability from `../game/djinn.tsv`
+- `COMMAND_DJINN` reads the Djinni's ability from `../game/djinn.tsv`
   (`Djinn_GetAbilityIdFar`). Only a set Djinni is unleashed, and it then goes
   on standby; one on standby is set again instead, and one still recovering
   says so.
-- `CMD_ITEM` takes the item's `action_id`. An item with none, or a broken
+- `COMMAND_ITEM` takes the item's `action_id`. An item with none, or a broken
   one, makes the user defend. What using it costs is the item's `use_type`
   ([Game rules](../game/README.md)), spent in `staging.c` after the effect.
-- `CMD_SUMMON` takes the summon's ability from `../game/summons.tsv` and
+- `COMMAND_SUMMON` takes the summon's ability from `../game/summons.tsv` and
   marks the standby Djinn it uses.
-- `CMD_ABILITY` is an enemy's ability, chosen as above.
+- `COMMAND_ABILITY` is an enemy's ability, chosen as above.
 
 The plan takes its element from the ability's row, except that a plain
 Attack strikes with the weapon's element, or an enemy's with its own
@@ -168,16 +168,16 @@ Attack strikes with the weapon's element, or an enemy's with its own
 
 | Command | Value | Ability |
 | --- | --- | --- |
-| `CMD_ATTACK` | 0 | `ABILITY_ATTACK`, or the weapon's unleash |
-| `CMD_PSYNERGY` | 1 | the ability chosen in the menu |
-| `CMD_ITEM` | 2 | the item's `action_id` |
-| `CMD_DEFEND` | 3 | Defend |
-| `CMD_ABILITY` | 4 | an enemy's ability |
-| `CMD_DJINN` | 5 | the Djinni's ability |
-| `CMD_SUMMON` | 6 | the summon's ability |
-| `CMD_DEFEND2` | 7 | an enemy's Total Defense |
-| `CMD_NONE` | 8 | nothing this turn |
-| `CMD_FLEE` | 99 | running away |
+| `COMMAND_ATTACK` | 0 | `ABILITY_ATTACK`, or the weapon's unleash |
+| `COMMAND_PSYNERGY` | 1 | the ability chosen in the menu |
+| `COMMAND_ITEM` | 2 | the item's `action_id` |
+| `COMMAND_DEFEND` | 3 | Defend |
+| `COMMAND_ABILITY` | 4 | an enemy's ability |
+| `COMMAND_DJINN` | 5 | the Djinni's ability |
+| `COMMAND_SUMMON` | 6 | the summon's ability |
+| `COMMAND_DEFEND2` | 7 | an enemy's Total Defense |
+| `COMMAND_NONE` | 8 | nothing this turn |
+| `COMMAND_FLEE` | 99 | running away |
 
 ### Targets and range
 
@@ -234,14 +234,14 @@ An ability with a double or triple blow rolls it once for every target: 153
 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, and one time in four for
 Flying Attack, Double Fang, Twin Beaks and Swift Strike. Sonic Smash and Swift
 Strike strike three times. A success raises the targets' multiplier, which
-`BattleTargetExec` multiplies the damage by, and the effect's variant, so the
+`BattleTarget_Execute` multiplies the damage by, and the effect's variant, so the
 animation shows the extra blows. `enum AbilityEffect` also has blows one time
 in eight and an ability's own critical hit (`CRITICAL_STRONG`, half as much
 again), but no ability uses them.
 
 Annihilation rolls its instant death here, at full rate whatever the
 distance, so that its effect can show whether it landed. Every other added
-effect is rolled per target in `BattleTargetExec`.
+effect is rolled per target in `BattleTarget_Execute`.
 
 | Name | Meaning |
 | --- | --- |
@@ -298,7 +298,7 @@ own, chosen by ability id in `BattleCommand_BuildPlan`.
 
 ## How an ability resolves
 
-`BattleTargetExec` turns the plan into what happens to one target: its damage
+`BattleTarget_Execute` turns the plan into what happens to one target: its damage
 or healing, its added effect, and the events that show them.
 
 ```mermaid
@@ -309,7 +309,7 @@ flowchart TB
     p6 --> p7["7. waking, stats,<br/>the evil spirit's share"]
 ```
 
-`BattleTargetExec` ([`battle/target_exec.c`](battle/target_exec.c)) applies
+`BattleTarget_Execute` ([`battle/target_exec.c`](battle/target_exec.c)) applies
 the plan to one target. It draws nothing and never waits: it changes the
 units at once and pushes the events that show the change, in the order the
 player sees them. It runs in seven phases, marked in its body:
@@ -338,11 +338,11 @@ calls them by their far-call names (`../system/far_call/GAME.S`).
 
 | Ability kind | What the target takes | What the power is |
 | --- | --- | --- |
-| `ABILITY_KIND_HEAL_HP` (Cure, Ply, Herb) | HP back, by the healer's Power in the element (`BattleRecoveryCalc`) | the HP restored at Power 100 |
+| `ABILITY_KIND_HEAL_HP` (Cure, Ply, Herb) | HP back, by the healer's Power in the element (`Battle_CalculateRecoveryFar`) | the HP restored at Power 100 |
 | `ABILITY_KIND_EFFECT` (Sleep, Impair, Drain) | damage only when the added effect lands, and otherwise `But it has no effect on <unit>!` | the damage at an even match |
-| `ABILITY_KIND_ATTACK` (Attack, Ragnarok) | a blow, the actor's Attack against the target's Defense (`BattleAtkCalc`) | damage added to a plain blow |
+| `ABILITY_KIND_ATTACK` (Attack, Ragnarok) | a blow, the actor's Attack against the target's Defense (`Battle_CalculateAttackDamageFar`) | damage added to a plain blow |
 | `ABILITY_KIND_ATTACK_MULTIPLIED` (Flint, Quick Strike) | a plain blow times the power | the multiplier, in tenths |
-| `ABILITY_KIND_DAMAGE` (Quake, Avalanche) | damage scaled by the actor's Power against the target's Resist (`BattlePowerCalc`) | the damage at an even match |
+| `ABILITY_KIND_DAMAGE` (Quake, Avalanche) | damage scaled by the actor's Power against the target's Resist (`Battle_CalculatePsynergyPowerFar`) | the damage at an even match |
 | `ABILITY_KIND_UNLEASHED_DAMAGE` (Fire Blessing, War Cry) | as `ABILITY_KIND_DAMAGE`, falling off faster | the damage at an even match |
 | `ABILITY_KIND_SUMMON` (Ramses, Judgment) | as `ABILITY_KIND_DAMAGE`, with a share of the target's maximum HP added to the power, falling off by its own table | the damage at an even match, before the share |
 | `ABILITY_KIND_PP_DAMAGE` (Crazy Voice) | PP lost, as `ABILITY_KIND_DAMAGE` | the PP lost at an even match |
@@ -358,7 +358,7 @@ an attack's power is only added to the blow, so Attack, whose power is 0,
 still strikes. Ember is `ABILITY_KIND_HEAL_PP` with a power of 0: its PP
 comes from its added effect.
 
-A summon called with `CMD_SUMMON` adds 3 percent of the target's maximum HP
+A summon called with `COMMAND_SUMMON` adds 3 percent of the target's maximum HP
 to the power for each Djinni it uses, so 3 to 12 percent. HP healing,
 attacks and HP damage then add a random 0 to 3; an added effect's damage, PP
 damage and PP healing do not. A guarding target takes half the damage, or a
@@ -387,7 +387,7 @@ result rounds down.
 
 A unit's Power and Resist come from its element levels
 (`gElement_PowerResistByLevel`) or, for an enemy, its element preset, with
-the equipment's added by `UnitCalc`. A Resistance stage adds 20 Resist in
+the equipment's added by `Unit_Calculate`. A Resistance stage adds 20 Resist in
 every element (`RESISTANCE_PER_STAGE`). A summon's boost, applied at the end
 of the summoner's turn, raises the element it spent most Djinn of by 10, 30,
 60 or 100 Power for one to four Djinn (`BattleUnit_ProcessTurnEnd`).
@@ -428,7 +428,7 @@ figures are percentages:
 | an added effect's chance (`gHitTable`) | 100 | 60 | 30 | 30 | 30 | 30 |
 
 Avalanche is `ABILITY_KIND_DAMAGE` with a power of 160 and a range of 3, the
-aimed foe and two places on either side. At an even match `BattlePowerCalc`
+aimed foe and two places on either side. At an even match `Battle_CalculatePsynergyPowerFar`
 gives 160, so the aimed foe takes 160 to 163 with the random, a foe one place
 away 128 to 131 and one two places away 96 to 99. With the actor's Power 20
 ahead, the multiplier is 281 in 256ths, and the three take 175 to 178, 140 to
@@ -450,7 +450,7 @@ rate moved by element levels, Luck and weakness and scaled by distance.
 
 ![Ivan casts Confuse at Isaac, Garet and Mia: a pale blue mist rolls over the three, and the messages read `Isaac is confused!` and `But it has no effect on Garet!`](https://alchemy.pascalpixel.com/abilities/confuse.gif)
 
-`BattleHitCheck` (`Battle_RollEffectSuccess`) rolls it, unless the plan
+`Battle_RollEffectSuccessFar` (`Battle_RollEffectSuccess`) rolls it, unless the plan
 rolled it already. It fails at once when there is nothing to do: a revival on
 a unit still standing, a cure on a unit without the ailment, Curse on a unit
 whose countdown is at its last turn. Otherwise the chance starts from the
@@ -481,7 +481,7 @@ target that has already acted is left alone.
 
 Phase 3 handles Ally Search, Search for Help and Speed Surge. When the roll
 succeeds, a free unit id exists and the enemy sprite slots have room
-(`EnemyCheck`), the new enemy fills an empty place or is appended, the
+(`Enemy_CheckRoom`), the new enemy fills an empty place or is appended, the
 enemies are laid out again, and the player reads `<unit> appears!!` or
 `It split off into <unit>!`; otherwise `But no one came!` or
 `It failed to divide!`.
@@ -490,8 +490,8 @@ enemies are laid out again, and the player reads `<unit> appears!!` or
 
 Phase 6 applies the effect when it landed and the target is still standing.
 A revival needs the target down instead, and a drain still works on a target
-its own damage has just felled (`BattleEffectDeadCheck`). The case comments
-in `BattleTargetExec` and the notes on `enum AbilityEffect`
+its own damage has just felled (`BattleEffect_CheckDead`). The case comments
+in `BattleTarget_Execute` and the notes on `enum AbilityEffect`
 ([`battle_unit.h`](../../include/battle/battle_unit.h)) give each effect's
 detail; the rules they share are these.
 
@@ -558,7 +558,7 @@ effect plays.
 
 ![Isaac's Quake against Garet, Ivan and Mia, one frame for each event playback plays, beside the queue it is playing with that event marked. First the rock pillars throw the three into the air while playback is idle and no target has been resolved. Then for each target in turn, Garet, Ivan and Mia, the queue holds eight events: the hit, which flashes the unit white; the number and the unit's name; the message `Garet takes 14 damage!!!`, then `Ivan takes 15 damage!` and `Mia takes 12 damage!`, which waits for the player; and a refresh of the unit, its name again, a clear of the arguments and a last refresh, which play in the same frame as the next target's hit.](https://alchemy.pascalpixel.com/guides/battle/round-events.gif)
 
-`BattleTargetExec` never draws or waits, and an effect never computes an
+`BattleTarget_Execute` never draws or waits, and an effect never computes an
 outcome. [Battle](../../battle.md#rules-and-effects-run-together) explains how
 `BattleEvent_Playback` runs as a task while the effect's own loop waits, and
 runs each target's rules once the effect calls `EFFECT_SHOW_DAMAGE`. Of the
@@ -572,7 +572,7 @@ and starts it itself.
 In the recording, Quake plays for about two seconds before its blow lands
 and starts playback. Playback then resolves the three targets in the plan's
 order, the battlefield's (Garet, Ivan, Mia), not the aimed Ivan first, and
-each target's `BattleTargetExec` queues the same eight events. Only the hit
+each target's `BattleTarget_Execute` queues the same eight events. Only the hit
 (nine frames of flashing) and the message (until the player presses A) make
 playback wait; the number and name it pushes before the message, and the
 name pushed for an added effect Quake doesn't have, the clear and the
@@ -597,7 +597,7 @@ is sealed or short of PP.
 Some of the original's functions are declared to return a value and end
 without one, and no caller reads it. The matching build keeps the declared
 type where `void` would change the epilogue, and `UBFIX` gives the `void`
-form; [Matching](../MATCHING.md) explains the rule. `BattleTargetExec`,
+form; [Matching](../MATCHING.md) explains the rule. `BattleTarget_Execute`,
 `BattleEvent_DispatchQueued` and `BattleEvent_WaitForReady` are among them.
 
 ### One sprite, several structs
@@ -653,13 +653,13 @@ form a table of contents. The functions are declared in
 
 - **unit**, **unit id**: everyone in a fight. Party members keep their
   character numbers as unit ids, up to `ALLY_MAX`, and enemies take ids from
-  `FIRST_ENEMY_UNIT`. `UnitGetFar` returns a unit's `struct BattleUnit`: its
+  `FIRST_ENEMY_UNIT`. `Unit_GetFar` returns a unit's `struct BattleUnit`: its
   HP, PP, stats, statuses, stat stages and a Power and a Resist in each
   element (`BattleUnit.element`).
 - **ability**, **ability id**: anything a unit does on its turn, from Attack
   to Quake, a Djinni, a summon, an item's use or an enemy's move. The id is a
   row number in three tables: `../game/actions.tsv` (`struct BattleAct`, read
-  with `BattleActGet`), `actflags.tsv` and `actstat.tsv`.
+  with `BattleAction_Get`), `actflags.tsv` and `actstat.tsv`.
 - **ability kind**: the low four bits of the ability's `flags`
   (`ABILITY_KIND_MASK`, `enum AbilityKind`). It chooses the formula each
   target goes through. The **effect kind** in `actflags.tsv` is unrelated and
@@ -683,11 +683,11 @@ form a table of contents. The functions are declared in
   **outcome** (`enum BattlePlanStaging`, how it is staged) and its
   **presentation flags** (the `actflags.tsv` row: `STAGING_*`).
 - **battle object**: a unit's figure on the battlefield (`struct BattleObj`,
-  `BattleObjGet`). Its **records** are its sprites; the Kraken and the Fusion
+  `BattleObject_Get`). Its **records** are its sprites; the Kraken and the Fusion
   Dragon are drawn in two parts and have two (`SPRITE_WITH_SECOND_PART_A`,
   `SPRITE_WITH_SECOND_PART_B`).
 - **event**: one thing the battle shows while an action plays, waiting in the
-  battle event queue (`BattleEvPush`, `enum BattleEventOpcode` in
+  battle event queue (`BattleEvent_Push`, `enum BattleEventOpcode` in
   `battle_event.h`): a message, a name or number the next message needs, a
   flinch, a defeat, a redraw or a sound.
 - **pose**: how a battle object stands (`POSE_*`, set with
@@ -710,7 +710,7 @@ for its `struct BattleObj`, `object` for that object's
 | `BattleTarget_` | targets an enemy or a confused unit picks |
 | `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera, the palettes |
 | `BattleEvent_` | the event queue and its playback |
-| `BattleObj_`, `BattleObjGet`, `BattleObjMake`, `BattleObjPut` | the battle objects |
+| `BattleObject_` | the battle objects |
 | `BattleMotion_` | their movements |
 | `BattlePlacement_` | where each place stands on the battlefield |
 | `BattleUnit_` | one unit's battle state: its guard, weapon sprite, status flags and turn-end counters |
@@ -721,6 +721,8 @@ for its `struct BattleObj`, `object` for that object's
 | `BattleSpoils_` | the items the enemies leave |
 | `BattleSummon_` | which summons the party's standby Djinn make available |
 | `BattleIntro_` | the message that announces the encounter |
+| `BattleBackground_`, `BattleCamera_` | the battle background and the perspective plane's zoom |
+| `SummonSlot_` | the enemy sprite slots a unit's battle sprite is loaded into |
 | `ElementGlow_` | a unit's elemental glow: the star field and the other glows |
 | `LinkBattle_` | link battles |
 | `DebugBattle_`, `DebugParty_` | the debug battle menu, its message viewer and the party presets |

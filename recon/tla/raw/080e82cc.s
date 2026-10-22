@@ -574,7 +574,7 @@ Func_080e82cc:
 	ble .L_080e86d6
 	ldr r0, [sp, #28]
 	bl Resource_ResetEntry
-	bl BattleFx_PrepareBufferInterpolation
+	bl BattleEffect_PrepareBufferInterpolation
 .L_080e8768:
 	ldr r0, [sp, #48]
 	movs r1, #164

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global EnemyUpdate
+	.global Enemy_Update
 	.thumb_func
-EnemyUpdate:
+Enemy_Update:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -79,7 +79,7 @@ EnemyUpdate:
 	adds r5, #2
 	cmp r0, #254
 	beq .L_0811b364
-	bl BattleObjGet
+	bl BattleObject_Get
 	mov r1, r9
 	ldr r3, [r6, r1]
 	mov r2, r8

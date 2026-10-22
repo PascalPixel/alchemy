@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Charon (scene kind 24).
-	.global BattleFx_RunCharon
+	.global BattleEffect_RunCharon
 	.thumb_func
-BattleFx_RunCharon:
+BattleEffect_RunCharon:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -36,7 +36,7 @@ BattleFx_RunCharon:
 	movs r5, #240
 	ldr r2, [r2, #36]
 	str r2, [sp, #68]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r3, .L_08175ff8
 	movs r2, #128
@@ -75,7 +75,7 @@ BattleFx_RunCharon:
 .L_08176004:
 	.4byte gBgScroll
 .L_08176008:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817600c:
 	.4byte gCameraSceneParameters
 .L_08176010:
@@ -145,7 +145,7 @@ BattleFx_RunCharon:
 	str r0, [r3]
 	adds r1, #176
 	str r1, [sp, #64]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r0, .L_081760bc
 	bl Resource_GetTableEntry
 	movs r2, #160
@@ -2604,7 +2604,7 @@ BattleFx_RunCharon:
 	bl Func_0818caa8
 	movs r0, #188
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -4070,7 +4070,7 @@ BattleFx_RunCharon:
 	lsls r2, r2, #11
 	lsls r3, r3, #12
 	str r5, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r3, [sp, #100]
 	movs r1, #7
 	ldrsh r0, [r6, r3]
@@ -4097,7 +4097,7 @@ BattleFx_RunCharon:
 .L_08177f16:
 	movs r0, #104
 	movs r1, #31
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -4135,7 +4135,7 @@ BattleFx_RunCharon:
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_0817806c
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_08177f6a:
 	movs r7, #1
@@ -4186,7 +4186,7 @@ BattleFx_RunCharon:
 	movs r1, #63
 	adds r0, r6, #0
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r6, #4]
 	movs r1, #224
 	lsls r1, r1, #15
@@ -4648,7 +4648,7 @@ BattleFx_RunCharon:
 	strh r3, [r2, #4]
 	movs r1, #27
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r7, #0
 	ldr r2, [sp, #92]
 	mov r9, r7
@@ -4684,7 +4684,7 @@ BattleFx_RunCharon:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0817838a:
 	ldr r2, [r5]
 	mov r0, r11
@@ -4796,7 +4796,7 @@ BattleFx_RunCharon:
 	bne .L_081783e0
 	movs r0, #104
 	movs r1, #31
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -4838,7 +4838,7 @@ BattleFx_RunCharon:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	movs r1, #47
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -4876,7 +4876,7 @@ BattleFx_RunCharon:
 	adds r0, r5, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -5023,7 +5023,7 @@ BattleFx_RunCharon:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817867c
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #324
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -5051,4 +5051,4 @@ BattleFx_RunCharon:
 .L_08178678:
 	.4byte gData_08199210
 .L_0817867c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

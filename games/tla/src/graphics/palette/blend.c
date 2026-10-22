@@ -19,7 +19,7 @@ void DisplayTransition_InitializeState(s32 value) {
   WaitFrames(0x78);
 }
 
-void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
+void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames) {
   s32 index;
   s32 first;

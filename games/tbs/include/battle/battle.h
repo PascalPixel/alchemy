@@ -115,7 +115,8 @@ extern s8 gBattleParty_CenterOrderOffsets[];
 /// Round-end effects go to the party (BATTLE_SIDE_PARTY), then the enemies
 /// (BATTLE_SIDE_ENEMIES).
 extern const struct BattleGroupOrder gBattleParty_RoundEndGroupOrder;
-/// A lone SC_END: a battle unit's object script, which BattleObjMake starts.
+/// A lone SC_END: a battle unit's object script, which BattleObject_Make
+/// starts.
 extern const s32 gBattlePresentation_ActorObjectScript[];
 /// The advance arrow beside a battle message: eight 128-byte frames of a
 /// 256-colour sprite, one every four frames.
@@ -165,7 +166,7 @@ extern void *gBattleFxWork[];
 #endif
 #ifndef OWN_gBattleOwnerStates
 /// The HEAP_SLOT_LINK_OWNER_STATES work slot: the six enemy battle units,
-/// BATTLE_UNIT_SIZE bytes each, that UnitGet returns for unit ids 128 to 133
+/// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
 extern u8 *gBattleOwnerStates;
 #endif
@@ -196,9 +197,9 @@ extern u16 gBattleFormation_LevelMatchedEnemies[];
 /// and then its scenes, ended by 0; a scene not listed takes the last backdrop
 /// (Battle_SelectSceneBackdrop).
 extern s32 gBattle_BackdropScenes[];
-/// The template BattleFx_BuildBlitter walks word by word to write a blitter
+/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
 /// (battle_effect_composite.s); none of it runs where it is.
-extern const u32 BattleFx_Composite[];
+extern const u32 BattleEffect_Composite[];
 /// The message voice's rate by message speed option: 1, 3, then 10
 /// (Ui_SetMessageVoiceFromActor).
 extern u8 gUi_RenderResultValues[];
@@ -240,7 +241,7 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
-/// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
+/// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held

@@ -1258,7 +1258,7 @@ Func_02000510:
 	bl Func_02002a54
 	bl Func_02002a4c
 	movs r0, #16
-	bl Field_BeginPaletteTransition
+	bl Field_StartPaletteTransition
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r1, #9

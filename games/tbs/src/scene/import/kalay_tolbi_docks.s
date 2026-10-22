@@ -16,7 +16,7 @@
 	.set import.Party_AdjustCoins, 1
 	.set import.Inventory_Discard, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_PartyGiveItem, 1
 	.set import.Engine_EventChooseYesNo, 1

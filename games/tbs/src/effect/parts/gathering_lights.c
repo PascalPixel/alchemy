@@ -12,23 +12,23 @@
 /// Sixteen pink lights burst out of the user and are pulled into each target,
 /// with the heavy impact sound.
 ///
-/// Abilities: Demon Night (BATTLE_FX_DEMON_NIGHT).
-void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, GATHERING_LIGHTS_DEMON_NIGHT);
+/// Abilities: Demon Night (BATTLE_EFFECT_DEMON_NIGHT).
+void BattleEffect_RunDemonNight(struct BattleEffectArgument *effect) {
+  BattleEffect_RunGatheringLights(effect, GATHERING_LIGHTS_DEMON_NIGHT);
 }
 /// Eight lights in Mars Djinn colours burst out of the user and are pulled into
 /// each target.
 ///
-/// Abilities: Rumble (BATTLE_FX_RUMBLE).
-void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, GATHERING_LIGHTS_RUMBLE);
+/// Abilities: Rumble (BATTLE_EFFECT_RUMBLE).
+void BattleEffect_RunRumble(struct BattleEffectArgument *effect) {
+  BattleEffect_RunGatheringLights(effect, GATHERING_LIGHTS_RUMBLE);
 }
 /// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
 /// into each target.
 ///
-/// Abilities: Haunting (BATTLE_FX_HAUNTING).
-void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, GATHERING_LIGHTS_HAUNTING);
+/// Abilities: Haunting (BATTLE_EFFECT_HAUNTING).
+void BattleEffect_RunHaunting(struct BattleEffectArgument *effect) {
+  BattleEffect_RunGatheringLights(effect, GATHERING_LIGHTS_HAUNTING);
 }
 #define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
 
@@ -39,18 +39,18 @@ void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
 /// images. Each target is struck 70 frames after its turn starts, and the
 /// battle shows the damage at frame 80. The effect layer ripples throughout.
 ///
-/// Called by BattleFx_RunDemonNight, BattleFx_RunRumble and
-/// BattleFx_RunHaunting. Loads its colours over the first 64 of the
+/// Called by BattleEffect_RunDemonNight, BattleEffect_RunRumble and
+/// BattleEffect_RunHaunting. Loads its colours over the first 64 of the
 /// background palette, uses PARTICLES 0 to 1023, writes work->bg2xLines each
-/// frame and adds BattleFx_ArmBg2AffineHBlankDma to feed it to BG2X; removes
-/// both its callbacks before it returns.
+/// frame and adds BattleEffect_ArmBg2AffineHBlankDma to feed it to BG2X;
+/// removes both its callbacks before it returns.
 ///
 /// mode: the colours (enum GatheringLightsMode) and the row of
 ///       gGatheringLights_Counts: lights per target and frames, 16 and 88,
 ///       8 and 72, or 12 and 80, the effect running 20 frames more for each
 ///       target.
-void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
-                                 s32 mode) {
+void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
+                                     s32 mode) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
   void **slots;
@@ -66,7 +66,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   // Setup. The sheet is the first field of the work block, so the pictures
   // decode to `work` itself: three 20x32 lights.
   Resource_DecodeType01(
@@ -78,7 +78,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   else
     paletteId = (s32)&ResourceId_MercuryDjinnSheet;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
-  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
 
   // The lights start at the top of the user's body and fly off in any
   // direction at up to 2 pixels a frame.
@@ -99,7 +99,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     }
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
   // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
@@ -175,10 +175,10 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
 
   // Finish: the transfer goes before the blitters and the DMA callback
   // before the layer closes.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef GATHERING_LIGHTS_SLOTS

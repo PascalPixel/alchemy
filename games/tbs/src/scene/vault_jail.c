@@ -125,7 +125,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Reached by talking to the leader (ACTOR_THIEF_LEADER) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_LeaderSilencesThieves(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   Engine_ActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
   Engine_EventWait(40);
@@ -159,7 +159,7 @@ static void Event_LeaderSilencesThieves(void) {
 /// Reached by talking to him (ACTOR_LEFT_THIEF) while FLAG_VAULT_THIEVES_JAILED
 /// is set.
 static void Event_LeftThiefRegretsEscape(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgVaultLeftThiefRegretsEscape);
@@ -173,8 +173,8 @@ static void Event_LeftThiefRegretsEscape(void) {
 /// Reached by talking to him (ACTOR_RIGHT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_RightThiefRegretsStaying(void) {
-  Engine_EventBegin();
-  Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
+  Engine_EventStart();
+  Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgVaultRightThiefRegretsStaying);
   Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
@@ -188,7 +188,7 @@ static void Event_RightThiefRegretsStaying(void) {
 /// is set; the two below are reached the same way on ACTOR_LEFT_THIEF and
 /// ACTOR_RIGHT_THIEF.
 static void Event_ReadLeaderMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultThiefLeaderThoughts);
   Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
   Engine_EventEnd();
@@ -196,7 +196,7 @@ static void Event_ReadLeaderMind(void) {
 
 /// Mind Read on the thief on the left: will he ever run free again?
 static void Event_ReadLeftThiefMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultLeftThiefThoughts);
   Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
   Engine_EventEnd();
@@ -205,7 +205,7 @@ static void Event_ReadLeftThiefMind(void) {
 /// Mind Read on the thief on the right: is this because they stole Hammet's
 /// Shaman's Rod?
 static void Event_ReadRightThiefMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultRightThiefThoughts);
   Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
   Engine_EventEnd();

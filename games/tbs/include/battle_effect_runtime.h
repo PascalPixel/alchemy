@@ -37,14 +37,15 @@ struct FieldFxSpeakerObject {
   u8 kind; ///< ObjectRuntime.animationKind: 1 for one animated sprite
 };
 
-/// A speaker definition, a row of gFieldFx_DefinitionTable: a sprite, its
+/// A speaker definition, a row of gFieldEffect_DefinitionTable: a sprite, its
 /// voice (0xff for none) and the flags that choose its idle line.
 struct FieldFxDefinition {
   u16 id; ///< the sprite id
   /// The first of its four voice blip sounds, less 256: a message plays sound
-  /// 256 + value as it types (FieldFx_GetResourceId); 0xff for none.
+  /// 256 + value as it types (FieldEffect_GetResourceId); 0xff for none.
   u8 value;
-  u8 flags; ///< choose its line when it has nothing to say (FieldFx_GetFlags)
+  u8 flags; ///< choose its line when it has nothing to say
+            ///< (FieldEffect_GetFlags)
 };
 
 /// The colour buffer, heap slot HEAP_SLOT_PALETTE_BUFFER under its own name.

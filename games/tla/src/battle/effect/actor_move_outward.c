@@ -3,15 +3,15 @@
 #include "battle_session.h"
 #include "battle_unit.h"
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
-/// BattleFx_StartActorMotion with fixed values: unless the unit is one of
+/// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
 /// four enemies, the actor steps 15 pixels further from x = 0 on its
 /// anchor's side, its y velocity growing by 0x28000 while y is under 10.
-void BattleFx_StartActorMotionOutward(s32 id) {
+void BattleEffect_StartActorMotionOutward(s32 id) {
   struct BattleObj *slot;
   struct MotionObject *object;
   u32 enemy;
@@ -19,7 +19,7 @@ void BattleFx_StartActorMotionOutward(s32 id) {
 
   slot = GetBattleObjectSlotFar(id);
   object = slot->object;
-  enemy = ((struct BattleUnit *)UnitGet(id))->enemyId;
+  enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     object->acceleration = 0x20000;
     /* FAKEMATCH: the one-pass block's loop note holds the speed limit's store

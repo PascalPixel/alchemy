@@ -30,7 +30,7 @@ void Func_02000098(s32 id) {
   Task_Wait(40);
 }
 
-void Engine_EventBegin();
+void Engine_EventStart();
 void Engine_EventEnd();
 void Engine_EventSetMessage();
 void Engine_EventShowMessage();
@@ -62,7 +62,7 @@ void Func_020000f0(void) {
   struct ObjectRuntime *actor;
   struct ObjectRuntime *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Func_02003310(0);
   Call2(Motion_SetVarCbAndRefresh, 8, 1);
   message = (s32)MsgIdejimaGroan;
@@ -118,7 +118,7 @@ void Func_020002b4(void) {
   struct ObjectRuntime *actor;
   struct ObjectRuntime *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Func_02003310(0);
   Motion_SetVarCbAndRefresh(5, 1);
   FieldEvent_WaitFrames(40);

@@ -44,7 +44,7 @@ void Func_08044b98(s32 member) {
     UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
     UiGlyph_LoadEntryWithPalette(
-        Localization_LookupEntryId(Func_08044b80(member)), 0, &handle, &palette,
+        UiText_GetSpeakerPortrait(Func_08044b80(member)), 0, &handle, &palette,
         14, 0);
     p = entry;
     *p++ = 0;

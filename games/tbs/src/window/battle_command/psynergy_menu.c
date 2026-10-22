@@ -45,7 +45,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
-  unit = UnitGetFar(unitId);
+  unit = Unit_GetFar(unitId);
   messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
   iconCount = BATTLE_LIST_ROWS;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -55,7 +55,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     s32 y = i * 2;
 
     iconSprite = &sprites[i];
-    MenuSprite_Init(sprites[i], MENU_SPRITE_SIZE_16);
+    MenuSprite_Initialize(sprites[i], MENU_SPRITE_SIZE_16);
     iconSprite->oam.f.x = window->x * 8 + 8;
     iconSprite->oam.f.y = (y + window->y) * 8 + 4;
   }
@@ -100,7 +100,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           if (encodedAction == 0) {
             break;
           }
-          action = BattleActGet(encodedAction);
+          action = BattleAction_Get(encodedAction);
           UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
           UiWindow_SetTilemapEntry(window, PSYNERGY_COST_SECOND_TILE, 12, i * 2,
                                    0);
@@ -204,8 +204,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if ((BattleActGet(actions[result])->flags & ACTION_USABLE_IN_BATTLE) !=
-            0) {
+        if ((BattleAction_Get(actions[result])->flags &
+             ACTION_USABLE_IN_BATTLE) != 0) {
           break;
         }
         /* FAKEMATCH(dead): a dead store keeps the test above from being

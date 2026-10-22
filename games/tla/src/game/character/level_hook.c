@@ -8,7 +8,7 @@ extern u32 gOwner_ExperienceThresholds[];
 
 /// Experience required per level: eight characters, 99 levels each.
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
-  struct BattleUnit *state = (struct BattleUnit *)UnitGet(owner);
+  struct BattleUnit *state = (struct BattleUnit *)Unit_Get(owner);
 
   if (state->classIndex != 0) {
     if (level <= 0) {

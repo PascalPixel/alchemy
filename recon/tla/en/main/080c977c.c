@@ -10,7 +10,7 @@
 #include "battle_unit.h"
 #include "party_state.h"
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void GameFlag_SetBit(s32 flag);
 void Func_080ca3f4(s32 scene, s32 entrance);
 
@@ -21,7 +21,7 @@ void Scene_ReturnFromBattle(s32 result) {
 
   gPartyState.unk256 = result;
   if (result == -1) {
-    unit = UnitGet(gPartyState.currentOwner);
+    unit = Unit_Get(gPartyState.currentOwner);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);

@@ -11,13 +11,13 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 s32 Ui_CountIconTableEntries(void);
 
-u8 *BattleActGet(s32);
+u8 *BattleAction_Get(s32);
 
 /// Builds the icon of a battle action's item.
 // As ☀️'s Ability_RequestGlyph.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
-  UiIcon_BuildItemIconTiles(*(u16 *)(BattleActGet(action) + 4), withBase, slot,
+  UiIcon_BuildItemIconTiles(*(u16 *)(BattleAction_Get(action) + 4), withBase, slot,
                             tile, reuse);
 }
 

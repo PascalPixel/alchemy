@@ -53,7 +53,7 @@ Everyone in a fight is a unit, and everything a unit can do on its turn is an
 ability, one row number across three tables.
 
 Party members keep their character numbers as unit ids, and enemies take ids
-from `FIRST_ENEMY_UNIT`. `UnitGetFar` returns a unit's `struct BattleUnit`,
+from `FIRST_ENEMY_UNIT`. `Unit_GetFar` returns a unit's `struct BattleUnit`,
 with its HP, PP, stats, statuses and a Power and a Resist in each element.
 
 An ability runs from Attack to Quake, a Djinni, a summon, an item's use or an
@@ -61,7 +61,7 @@ enemy's special move. Its id is the same row in three tables:
 
 | Table | Read through | What its row says |
 | --- | --- | --- |
-| `src/game/actions.tsv` | `struct BattleAct`, `BattleActGet` | what the ability does: its targets, element, range, PP cost, power, added effect and ability kind |
+| `src/game/actions.tsv` | `struct BattleAct`, `BattleAction_Get` | what the ability does: its targets, element, range, PP cost, power, added effect and ability kind |
 | `src/battle/actflags.tsv` | `gBattle_ActionFlags` | the effect that draws it, and how it is staged |
 | `src/battle/actstat.tsv` | `gBattle_ActionStatus` | how the battle shows it, where it overrides the default |
 
@@ -101,7 +101,7 @@ A round has five steps, each in its own part of `src/battle/battle/`:
    rolled in advance, and the staging.
 3. `BattlePresentation_DispatchAction` (`staging.c`) stages the plan and runs
    its effect.
-4. `BattleTargetExec` (`target_exec.c`) applies the ability to each target.
+4. `BattleTarget_Execute` (`target_exec.c`) applies the ability to each target.
 5. `turn_end.c` counts down stat changes and statuses, recovers Djinn and
    applies poison and the Grim Reaper's countdown.
 
@@ -114,14 +114,14 @@ and [planning an action](src/battle/README.md#planning-an-action).
 
 ## Resolving an ability
 
-`BattleTargetExec` puts each target in turn through the formula its ability
+`BattleTarget_Execute` puts each target in turn through the formula its ability
 kind chooses, scaled by distance and element.
 
-It rolls the added effect (`BattleHitCheck`), then switches on the ability
+It rolls the added effect (`Battle_RollEffectSuccessFar`), then switches on the ability
 kind to choose the formula, then applies the added effect if it landed. The
 formulas are in `src/game/game/battle_calc.c` and are called by their
-far-call names: `BattleAtkCalc` for attacks, `BattlePowerCalc` for Psynergy
-damage, `BattleRecoveryCalc` for healing.
+far-call names: `Battle_CalculateAttackDamageFar` for attacks, `Battle_CalculatePsynergyPowerFar` for Psynergy
+damage, `Battle_CalculateRecoveryFar` for healing.
 
 For `ABILITY_KIND_DAMAGE` the power is the damage the aimed target takes when
 the caster's Power in the ability's element equals the target's Resist in it;
@@ -185,9 +185,9 @@ ability's `actflags.tsv` row:
 
 | Entry point | Chosen by | What it runs |
 | --- | --- | --- |
-| `BattleFx_RunTableEffect` | neither bit | an ordinary effect kind, an index into `gBattleFx_EffectHandlers` |
-| `BattleFx_DispatchByIdRange` | `STAGING_BY_ID_RANGE` (`0x4000`) | casting impacts, beam sequences and ring and spark scenes, by the effect kind's range |
-| `BattleFx_RunSceneEffect` | `STAGING_SCENE` (`0x8000`) | the summons' scenes |
+| `BattleEffect_RunTableEffect` | neither bit | an ordinary effect kind, an index into `gBattleEffect_EffectHandlers` |
+| `BattleEffect_DispatchByIdRange` | `STAGING_BY_ID_RANGE` (`0x4000`) | casting impacts, beam sequences and ring and spark scenes, by the effect kind's range |
+| `BattleEffect_RunSceneEffect` | `STAGING_SCENE` (`0x8000`) | the summons' scenes |
 
 Each entry point takes three heap blocks (the sprite sheet, the work block
 and the canvas), runs the effect to its end and releases them in reverse
@@ -197,19 +197,19 @@ before it returns.
 
 Most effects draw into a canvas of 128 by 128 pixels, one byte each, which
 `BG2` shows blended over the battle and stretched to twice its width
-(`BattleFx_BeginCanvasLayer`). An effect copies pictures onto the canvas
-through blitters, ARM routines `BattleFx_BuildBlitter` assembles at run time
+(`BattleEffect_StartCanvasLayer`). An effect copies pictures onto the canvas
+through blitters, ARM routines `BattleEffect_BuildBlitter` assembles at run time
 for one combination of size, mirroring, clipping and blend mode, and moves
 particles over it. It never writes video memory itself: it sets
 `transferPending` and waits, and the callback
-`BattleFx_ProcessPendingGraphicsTransfer` copies the canvas and then fades,
+`BattleEffect_ProcessPendingGraphicsTransfer` copies the canvas and then fades,
 clears or keeps the pixels left in it as the work block's transfer mode says.
 Canvas pixels are levels in a palette ramp, so fading them makes trails die
 away without per-particle bookkeeping.
 
 ![Isaac unleashes Flint at Ivan, and sparks close in on a point above Isaac while he hangs in mid-leap, a streak of light shoots down at Ivan, and a ring of light and a spray of sparks burst over him.](https://alchemy.pascalpixel.com/abilities/flint.gif)
 
-Flint is a casting impact, reached through `BattleFx_DispatchByIdRange`
+Flint is a casting impact, reached through `BattleEffect_DispatchByIdRange`
 (`src/effect/parts/casting_impact.c`): 64 sparks gather on the caster, `BG2`
 is moved so the impact sits over the target, and 32 scattering sparks follow
 the impact.
@@ -221,7 +221,7 @@ every random value after it.
 
 The twelve summons that need two or more Djinn are scenes, enumerated by
 `enum SceneEffectKind`. They take the same three blocks; unlike
-`BattleFx_RunTableEffect`, `BattleFx_RunSceneEffect` leaves setting
+`BattleEffect_RunTableEffect`, `BattleEffect_RunSceneEffect` leaves setting
 `work->effect` to each scene. The four summons that need one Djinni, Venus,
 Mercury, Mars and Jupiter, are ordinary effect kinds. A summon's damage
 (`ABILITY_KIND_SUMMON`) also adds 3 percent of the target's maximum HP to the
@@ -229,7 +229,7 @@ power for each Djinni it uses.
 
 ![Isaac summons Judgment: the screen goes dark, Judgment rises out of the clouds and strikes, and the scene clears to a wide landscape](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 
-`BattleFx_RunJudgment` (`src/effect/parts/judgment.c`) replaces the battle's
+`BattleEffect_RunJudgment` (`src/effect/parts/judgment.c`) replaces the battle's
 display with backdrops of its own and runs in two parts, each with its own
 frame clock (`JUDGMENT_GATHER_FRAMES`, `JUDGMENT_SWEEP_FRAMES`). The battle
 comes back near the end of the second part, and the damage is shown after
@@ -261,7 +261,7 @@ after the effect returns it waits in `BattleEvent_WaitForReady` until
 playback is done. Playback stays idle until the effect calls
 `EFFECT_SHOW_DAMAGE(hitSound)`, which most effects do on the frame the blow
 lands; if an effect never calls it, the wait after the effect starts playback
-instead. From then on, once a frame, the task runs `BattleTargetExec` for the
+instead. From then on, once a frame, the task runs `BattleTarget_Execute` for the
 next target and plays that target's events over the following frames before
 it moves on.
 
@@ -270,7 +270,7 @@ sequenceDiagram
     participant D as BattlePresentation_DispatchAction
     participant F as Effect
     participant P as BattleEvent_Playback (task)
-    participant T as BattleTargetExec
+    participant T as BattleTarget_Execute
     participant Q as Event queue
     D->>P: Scheduler_AddOrUpdateCallback
     D->>F: start the effect
@@ -282,8 +282,8 @@ sequenceDiagram
         F->>F: WaitFrames
     and playback runs the rules
         loop each target, once a frame
-            P->>T: BattleTargetExec(target)
-            T->>Q: BattleEvPush (arguments, then message)
+            P->>T: BattleTarget_Execute(target)
+            T->>Q: BattleEvent_Push (arguments, then message)
             P->>Q: play that target's events
         end
     end
@@ -292,8 +292,8 @@ sequenceDiagram
 ```
 
 The two sides meet at the battle event queue (`struct BattleEventQueue`,
-`BATTLE_EVENT_CAPACITY` events). `BattleTargetExec` never draws or waits: it
-changes the target's HP and statuses and pushes events with `BattleEvPush` in
+`BATTLE_EVENT_CAPACITY` events). `BattleTarget_Execute` never draws or waits: it
+changes the target's HP and statuses and pushes events with `BattleEvent_Push` in
 the order the player sees them, a message's arguments before the message,
 since the message takes them from the window system's argument table when it
 is decoded. `BattleEvent_DispatchQueued` plays the same queue straight

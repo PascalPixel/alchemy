@@ -42,7 +42,7 @@ s32 *Func_02000070(void) {
 void Func_0200009c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   Engine_ActorSetSpeed(gPartyState.currentOwner, 0x8000, 0x4000);
   Engine_ActorSetSpritePriority(gPartyState.currentOwner, 2);

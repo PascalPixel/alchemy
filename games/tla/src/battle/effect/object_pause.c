@@ -19,7 +19,7 @@
   ((void (*)(void *, s32))ObjectDispatch_SetAnimationSpeedFar)
 
 void BattleEffect_SetRandomTableValueOnObject(struct DispatchObject *object) {
-  s8 *table = gBattleFx_RandomChildValues;
+  s8 *table = gBattleEffect_RandomChildValues;
   s32 index = Random16();
   Animation_ApplyChildValuesFar(object, table[(u32)(index * 8) >> 16]);
 }
@@ -44,7 +44,7 @@ void BattleEffect_PauseObject(s32 id) {
   }
 }
 
-void BattleFx_ResumeObject(s32 id) {
+void BattleEffect_ResumeObject(s32 id) {
   struct DispatchObject *object = ObjectTable_Get(id);
 
   if (object != NULL) {

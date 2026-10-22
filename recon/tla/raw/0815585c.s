@@ -152,18 +152,18 @@ Func_0815585c:
 	bne .L_0815597c
 	movs r1, #7
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #23
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0815598c
 .L_0815597c:
 	movs r1, #3
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r0, #188
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0815598c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -398,7 +398,7 @@ Func_0815585c:
 .L_08155b60:
 	.4byte 0x00000134
 .L_08155b64:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08155b68:
 	.4byte .L_08155a60
 .L_08155b6c:
@@ -647,7 +647,7 @@ Func_0815585c:
 	adds r0, r6, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	mov r3, r8
 	cmp r3, #0
 	bge .L_08155d5a
@@ -868,7 +868,7 @@ Func_0815585c:
 	adds r0, r5, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -930,7 +930,7 @@ Func_0815585c:
 .L_08155f80:
 	.4byte gData_08197410
 .L_08155f84:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08155f88:
 	.4byte IwramClearWords
 .L_08155f8c:

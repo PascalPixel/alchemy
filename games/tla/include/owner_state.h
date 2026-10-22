@@ -74,7 +74,7 @@ STATIC_ASSERT(sizeof(struct TradeOffer) == 4);
 STATIC_ASSERT(offsetof(struct TradeOfferState, offers) == 8);
 STATIC_ASSERT(offsetof(struct TradeOfferState, count) == 0x128);
 
-void *UnitGet(s32 owner);
+void *Unit_Get(s32 owner);
 void Unit_UpdateClass(s32 owner);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);

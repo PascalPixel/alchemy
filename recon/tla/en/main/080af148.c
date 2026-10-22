@@ -12,7 +12,7 @@
 // nothing lower.
 #include "inventory.h"
 
-void UnitCalc(s32 owner);
+void Unit_Calculate(s32 owner);
 
 static inline void Inventory_CompactSlots(s16 *inventory) {
   s32 usedSlots = 0;
@@ -27,7 +27,7 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 }
 
 s32 Inventory_Remove(s32 owner, s32 slot) {
-  struct OwnerInventoryState *unit = UnitGet(owner);
+  struct OwnerInventoryState *unit = Unit_Get(owner);
   u16 item = unit->inventory[slot];
   s32 result = -1;
 
@@ -41,6 +41,6 @@ s32 Inventory_Remove(s32 owner, s32 slot) {
       result = 2;
     }
   }
-  UnitCalc(owner);
+  Unit_Calculate(owner);
   return result;
 }

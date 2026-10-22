@@ -41,7 +41,7 @@ enum Element {
   ELEMENT_MARS,
   ELEMENT_JUPITER,
   ELEMENT_NONE,
-  NUM_ELEMENTS = ELEMENT_NONE
+  ELEMENT_COUNT = ELEMENT_NONE
 };
 
 /// BattleAct.range of an ability that reaches every unit on the side, each
@@ -52,7 +52,7 @@ enum Element {
 #define ABILITY_KIND_MASK 15
 
 /// An ability kind picks what the ability's power does to each target: the
-/// formula BattleTargetExec puts it through. ABILITY_KIND_BLANK,
+/// formula BattleTarget_Execute puts it through. ABILITY_KIND_BLANK,
 /// ABILITY_KIND_EFFECT_ONLY and ABILITY_KIND_NO_POWER apply no power. No row
 /// has a kind above ABILITY_KIND_HEAL_PP, which would apply none either.
 enum AbilityKind {
@@ -85,13 +85,12 @@ enum AbilityKind {
 };
 
 /// BattleAct.effect: what an ability does besides its damage or healing,
-/// applied by BattleTargetExec unless noted. Each is named for the abilities
-/// that have it (actions.tsv, with their English names and descriptions).
-/// ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are read by no code
-/// here, and no row has ABILITY_EFFECT_RESTORE_HP or ABILITY_EFFECT_RESTORE_PP.
-/// A stat
-/// change whose name ends in `_2` moves its stat two stages, one without moves
-/// it one.
+/// applied by BattleTarget_Execute unless noted. Each is named for the
+/// abilities that have it (actions.tsv, with their English names and
+/// descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are
+/// read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
+/// ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_2` moves its
+/// stat two stages, one without moves it one.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
   ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)
@@ -146,27 +145,27 @@ enum AbilityEffect {
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite
   ABILITY_EFFECT_TOTAL_DEFENSE = 47,      ///< Total Defense, Flash
   ABILITY_EFFECT_SIDESTEP = 48,           ///< Sidestep
-  ABILITY_EFFECT_FLEE = 49,               ///< Flee: an enemy's becomes CMD_FLEE
-  ABILITY_EFFECT_CALL_ALLY = 50,          ///< Ally Search, Speed Surge
-  ABILITY_EFFECT_CALL_HELP = 51,          ///< Search for Help
-  ABILITY_EFFECT_CRAZY_VOICE = 52,        ///< Crazy Voice
-  ABILITY_EFFECT_GROUND = 53,             ///< Ground, War Cry, Wicked Howl
-  ABILITY_EFFECT_CHALLENGE = 54,          ///< no ability has it
-  ABILITY_EFFECT_SELF_DESTRUCT = 55,      ///< Dynamite, Mortal Blow
-  ABILITY_EFFECT_REVIVE_HALF = 56,        ///< Quartz
-  ABILITY_EFFECT_REVIVE_80 = 57,          ///< Dew: 80% of max HP
-  ABILITY_EFFECT_AGILITY_DOWN = 58,       ///< Vine
-  ABILITY_EFFECT_AGILITY_UP = 59,         ///< Zephyr
-  ABILITY_EFFECT_DRAIN_HALF_HP = 60,      ///< Sap
-  ABILITY_EFFECT_HEAL_HP_60 = 61,         ///< Fizz: 60% of max HP
-  ABILITY_EFFECT_HEAL_HP_30 = 62,         ///< Spritz: 30%
-  ABILITY_EFFECT_HEAL_PP_7 = 63,          ///< Ember: 7% of max PP
-  ABILITY_EFFECT_CURE_ALL = 64,           ///< Tonic
-  ABILITY_EFFECT_DOUBLE_BLOW_60 = 65,     ///< Gust, Rapid Smash: 153 in 256
-  ABILITY_EFFECT_ACT_TWICE = 66,          ///< Kite
-  ABILITY_EFFECT_SEAL_2_TURNS = 67,       ///< Luff
-  ABILITY_EFFECT_TRIPLE_BLOW_60 = 68,     ///< Sonic Smash
-  ABILITY_EFFECT_PSY_LEECH = 69           ///< Psy Leech
+  ABILITY_EFFECT_FLEE = 49,           ///< Flee: an enemy's becomes COMMAND_FLEE
+  ABILITY_EFFECT_CALL_ALLY = 50,      ///< Ally Search, Speed Surge
+  ABILITY_EFFECT_CALL_HELP = 51,      ///< Search for Help
+  ABILITY_EFFECT_CRAZY_VOICE = 52,    ///< Crazy Voice
+  ABILITY_EFFECT_GROUND = 53,         ///< Ground, War Cry, Wicked Howl
+  ABILITY_EFFECT_CHALLENGE = 54,      ///< no ability has it
+  ABILITY_EFFECT_SELF_DESTRUCT = 55,  ///< Dynamite, Mortal Blow
+  ABILITY_EFFECT_REVIVE_HALF = 56,    ///< Quartz
+  ABILITY_EFFECT_REVIVE_80 = 57,      ///< Dew: 80% of max HP
+  ABILITY_EFFECT_AGILITY_DOWN = 58,   ///< Vine
+  ABILITY_EFFECT_AGILITY_UP = 59,     ///< Zephyr
+  ABILITY_EFFECT_DRAIN_HALF_HP = 60,  ///< Sap
+  ABILITY_EFFECT_HEAL_HP_60 = 61,     ///< Fizz: 60% of max HP
+  ABILITY_EFFECT_HEAL_HP_30 = 62,     ///< Spritz: 30%
+  ABILITY_EFFECT_HEAL_PP_7 = 63,      ///< Ember: 7% of max PP
+  ABILITY_EFFECT_CURE_ALL = 64,       ///< Tonic
+  ABILITY_EFFECT_DOUBLE_BLOW_60 = 65, ///< Gust, Rapid Smash: 153 in 256
+  ABILITY_EFFECT_ACT_TWICE = 66,      ///< Kite
+  ABILITY_EFFECT_SEAL_2_TURNS = 67,   ///< Luff
+  ABILITY_EFFECT_TRIPLE_BLOW_60 = 68, ///< Sonic Smash
+  ABILITY_EFFECT_PSY_LEECH = 69       ///< Psy Leech
 };
 
 /// BattleAct.targetMode: whom an ability may target, from its user's view.
@@ -190,8 +189,8 @@ enum TargetMode {
 enum RestraintFlag {
   RESTRAINT_BOUND = 0x01,       ///< the unit is bound
   RESTRAINT_CURSED_ITEM = 0x02, ///< a cursed item is equipped
-  RESTRAINT_KEEP_BOUND = 0x04,  ///< keeps RESTRAINT_BOUND through UnitCalc
-  /// ITEM_EFFECT_CURSE_REMOVABLE: UnitCalc clears it again with
+  RESTRAINT_KEEP_BOUND = 0x04, ///< keeps RESTRAINT_BOUND through Unit_Calculate
+  /// ITEM_EFFECT_CURSE_REMOVABLE: Unit_Calculate clears it again with
   /// RESTRAINT_BOUND.
   RESTRAINT_REMOVABLE = 0x08
 };
@@ -249,12 +248,12 @@ enum BattleActionUse {
 /// Djinn and ailments.
 struct BattleUnit {
   /// The name, one byte a character, ending in 0. An enemy's is its message
-  /// name cut to 14 characters, with the suffix letter BattleUnitSet is given
+  /// name cut to 14 characters, with the suffix letter BattleUnit_Set is given
   /// (a digit in Japanese); name[14] is always 0.
   u8 name[0x0f];
   u8 level;        ///< 1 to 99 for a character
-  s16 baseHp;      ///< before equipment, Djinn and class (UnitCalc)
-  s16 basePp;      ///< before equipment, Djinn and class (UnitCalc)
+  s16 baseHp;      ///< before equipment, Djinn and class (Unit_Calculate)
+  s16 basePp;      ///< before equipment, Djinn and class (Unit_Calculate)
   s16 hpGauge;     ///< hp / maxHp in 0..0x4000; 1 while any HP remains
   s16 ppGauge;     ///< pp / maxPp in 0..0x4000; 1 while any PP remains
   u16 baseAttack;  ///< before equipment, Djinn, class and stages
@@ -269,28 +268,28 @@ struct BattleUnit {
   u8 unk022[2];   ///< Not named by any TBS code.
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
-  /// (Unit_CalcBaseElements).
-  struct BattleElementStats baseElement[NUM_ELEMENTS];
-  s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
-  s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
+  /// (Unit_CalculateBaseElements).
+  struct BattleElementStats baseElement[ELEMENT_COUNT];
+  s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
+  s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
   s16 hp;    ///< current HP, 0 when downed
   s16 pp;    ///< current PP
-  u16 atk;   ///< Attack, 0 to 999 (UnitCalc)
-  u16 def;   ///< Defense, 0 to 999 (UnitCalc)
+  u16 atk;   ///< Attack, 0 to 999 (Unit_Calculate)
+  u16 def;   ///< Defense, 0 to 999 (Unit_Calculate)
   u16 agi;   ///< Agility, 0 to 999: the order of the round's actions
-  u8 luck;   ///< 0 to 99 (UnitCalc)
+  u8 luck;   ///< 0 to 99 (Unit_Calculate)
   /// Actions each round, 0 to 2: baseActionCount, one more while ready, and
-  /// the equipment's extra turns (UnitCalc). Each gives the unit a place in
-  /// the round's queue.
+  /// the equipment's extra turns (Unit_Calculate). Each gives the unit a place
+  /// in the round's queue.
   u8 actionEntryCount;
-  u8 hpRegen; ///< HP regained at each turn's end (UnitCalc)
-  /// PP regained at each turn's end, 0 to 200 (UnitCalc): 4 more once the
+  u8 hpRegen; ///< HP regained at each turn's end (Unit_Calculate)
+  /// PP regained at each turn's end, 0 to 200 (Unit_Calculate): 4 more once the
   /// lighthouse of the character's element is lit.
   u8 ppRegen;
   u8 unk046[2]; ///< Not named by any TBS code.
   /// Power and resistance in each element, 0 to 200, after equipment, a
-  /// summon's boost and Resistance stages (UnitCalc).
-  struct BattleElementStats element[NUM_ELEMENTS];
+  /// summon's boost and Resistance stages (Unit_Calculate).
+  struct BattleElementStats element[ELEMENT_COUNT];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's (Unit_RefreshPsynergy). An empty entry is 0.
   struct OwnerActionSlot actionSlots[32];
@@ -299,44 +298,44 @@ struct BattleUnit {
   u16 inventory[15];
   u8 unk0f6[2]; ///< Not named by any TBS code.
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
-  u32 djinnAvailable[NUM_ELEMENTS];
+  u32 djinnAvailable[ELEMENT_COUNT];
   /// The Djinn set, one bit per Djinni; only these add their stat bonuses.
-  u32 djinnActive[NUM_ELEMENTS];
-  u8 djinnOwnedCounts[NUM_ELEMENTS];  ///< the Djinn held in each element, at
-                                      ///< most 10
-  u8 djinnActiveCounts[NUM_ELEMENTS]; ///< the Djinn set in each element; the
-                                      ///< class's element levels are read from
-                                      ///< these
+  u32 djinnActive[ELEMENT_COUNT];
+  u8 djinnOwnedCounts[ELEMENT_COUNT];  ///< the Djinn held in each element, at
+                                       ///< most 10
+  u8 djinnActiveCounts[ELEMENT_COUNT]; ///< the Djinn set in each element; the
+                                       ///< class's element levels are read from
+                                       ///< these
   /// Copied from the enemy's definition, where it is 0 in every row. During
   /// a battle the enemy's action choice keeps its place in its action list
   /// here (BattleCommand_SelectAutomatic).
   u32 rewards;
   u32 experience; ///< a character's experience points
   /// Who the unit is: a character's id (ISAAC to JENNA, below 8) or an
-  /// enemy's id (BattleUnitSet). The class tables are indexed by classIndex.
+  /// enemy's id (BattleUnit_Set). The class tables are indexed by classIndex.
   u8 classId;
   /// The character's class, worked out from its Djinn (Unit_UpdateClass);
   /// CLASS_INDEX_ENEMY marks an enemy, and code throughout tests it to tell
   /// the two apart.
   u8 classIndex;
   /// enum BattleUnitPresence. The Djinn the party fights are enemies put on
-  /// BATTLE_UNIT_PARTY (BattleUnitSet).
+  /// BATTLE_UNIT_PARTY (BattleUnit_Set).
   u8 side;
   /// GUARD_DEFEND or GUARD_TOTAL_DEFENSE while the unit guards, else 0.
   s8 guardLevel;
   /// A summon's boost to its summoner's power in each element: at the end of
   /// the summoner's turn, the element the summon spent the most Djinn of
   /// rises to that many (BattleUnit_ProcessTurnEnd), and n adds
-  /// (n * n + n) * 5 power (UnitCalc). Cleared at the battle's start, on
+  /// (n * n + n) * 5 power (Unit_Calculate). Cleared at the battle's start, on
   /// going down and by Break.
-  s8 elementLevels[NUM_ELEMENTS];
-  /// The curse: RestraintFlag bits. UnitCalc rebuilds RESTRAINT_BOUND and
+  s8 elementLevels[ELEMENT_COUNT];
+  /// The curse: RestraintFlag bits. Unit_Calculate rebuilds RESTRAINT_BOUND and
   /// RESTRAINT_CURSED_ITEM from the equipment. A bound unit loses one action in
   /// four, except Defend (BattleCommand_BuildPlan); any bit set shows the curse
   /// in the status screens and lets the sanctum remove it.
   s8 restraint;
   s8 poison; ///< POISON_NORMAL or POISON_DEADLY, 0 for none
-  /// Each stat change: the turns it has left, and its stage (UnitCalc: an
+  /// Each stat change: the turns it has left, and its stage (Unit_Calculate: an
   /// eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
   /// Stages run -4 to 4 and last 7 turns; a lowered one may recover sooner at
   /// the end of a turn.
@@ -368,10 +367,10 @@ struct BattleUnit {
   /// end; at 0 the unit falls.
   u8 grimReaper;
   /// The totals of ITEM_EFFECT_ADD_UNLEASH_CHANCE and ITEM_EFFECT_24 that
-  /// UnitCalc sums; TBS never reads them back
+  /// Unit_Calculate sums; TBS never reads them back
   u8 equipBonus[2];
   /// Kite's extra action: 2 when cast, down one at each turn's end; while
-  /// nonzero UnitCalc gives the unit one more action a round.
+  /// nonzero Unit_Calculate gives the unit one more action a round.
   u8 ready;
   u8 immobile;     ///< set by ABILITY_EFFECT_GROUND: the next action is lost
   u8 agilityTurns; ///< the Agility change's turns left, 5 when cast

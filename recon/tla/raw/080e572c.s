@@ -66,7 +66,7 @@ Func_080e572c:
 	strb r0, [r3]
 	ldr r1, [sp, #24]
 	ldr r0, [r1, #16]
-	bl BattleFx_GetObjectDepth
+	bl BattleEffect_GetObjectDepth
 	ldr r2, [sp, #20]
 	adds r0, #2
 	adds r2, #190
@@ -365,8 +365,8 @@ Func_080e572c:
 	bl Resource_ResetEntry
 	mov r0, r11
 	bl Resource_ResetEntry
-	bl BattleFx_PrepareBufferInterpolation
-	bl BattleFx_EndCanvasSprite
+	bl BattleEffect_PrepareBufferInterpolation
+	bl BattleEffect_EndCanvasSprite
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #40

@@ -16,7 +16,7 @@
 	.set import.Resource_ResetEntry, 1
 	.set import.Engine_VramLoad, 1
 	.set import.IoWriteQueue_Store16, 1
-	.set import.AnimationObjects_SelectAnimation, 1
+	.set import.AnimationObject_SelectAnimation, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -27,7 +27,7 @@
 	.set import.Map_LoadDefaultCellsAndUpdateBlock, 1
 	.set import.Map_SetWindowCellTile, 1
 	.set import.Engine_ActorSetSpriteFlags, 1
-	.set import.WorldMap_BeginStillView, 1
+	.set import.WorldMap_StartStillView, 1
 	.set import.Map_LoadAreaGraphics, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
@@ -45,7 +45,7 @@
 	.set import.Party_RestoreHpPp, 1
 	.set import.PartyInventory_Discard, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_PartyGiveItem, 1
 	.set import.Engine_EventChooseYesNo, 1
@@ -93,13 +93,13 @@
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.WorldMap_BeginEvent, 1
+	.set import.WorldMap_StartEvent, 1
 	.set import.WorldMap_EndEvent, 1
 	.set import.Engine_ActorLookup, 1
-	.set import.Engine_PsynergyBegin, 1
-	.set import.FieldFx_End, 1
+	.set import.Engine_PsynergyStart, 1
+	.set import.FieldEffect_End, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.FieldFx_ScheduleRatioTransition, 1
+	.set import.FieldEffect_ScheduleRatioTransition, 1
 	.set import.Event_WaitForZoomTransition, 1
 	.set import.DjinnMenu_Open, 1
 	.set import.Engine_AudioPlayCue, 1

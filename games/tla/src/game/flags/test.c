@@ -13,7 +13,7 @@
 
 extern struct BattleUnit gOwnerStates[];
 
-void *UnitGet(s32 owner) {
+void *Unit_Get(s32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
 

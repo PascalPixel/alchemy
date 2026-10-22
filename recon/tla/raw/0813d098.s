@@ -28,11 +28,11 @@ Func_0813d098:
 	cmp r3, #8
 	bne .L_0813d0ce
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	b .L_0813d0d4
 .L_0813d0ce:
 	movs r0, #1
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 .L_0813d0d4:
 	movs r2, #128
 	ldr r3, .L_0813d110
@@ -612,7 +612,7 @@ Func_0813d098:
 	bne .L_0813d5b4
 	movs r1, #23
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r2, .L_0813d7b8
 	lsls r3, r6, #1
 	ldrh r1, [r2, r3]
@@ -652,7 +652,7 @@ Func_0813d098:
 .L_0813d5b4:
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r2, .L_0813d7b8
 	lsls r3, r6, #1
 	ldrh r1, [r2, r3]
@@ -900,7 +900,7 @@ Func_0813d098:
 	b .L_0813d82e
 	.2byte 0x0000
 .L_0813d7b0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0813d7b4:
 	.4byte Data_0819754f
 .L_0813d7b8:
@@ -1536,14 +1536,14 @@ Func_0813d098:
 	bl Transform_SetLookAt
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r6, #192
 	lsls r6, r6, #18
 	ldr r3, [r6, #104]
 	movs r1, #3
 	movs r0, #188
 	str r3, [sp, #96]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -1612,7 +1612,7 @@ Func_0813d098:
 	adds r0, r5, #0
 	movs r1, #62
 	ldr r2, .L_0813de98
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -1667,11 +1667,11 @@ Func_0813d098:
 	adds r0, r5, #0
 	movs r1, #62
 	adds r2, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	adds r0, r5, #0
 	movs r1, #62
 	adds r2, r6, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -1762,7 +1762,7 @@ Func_0813d098:
 	adds r0, r5, #0
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -1869,7 +1869,7 @@ Func_0813d098:
 	str r3, [r6]
 	movs r1, #60
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	asrs r5, r5, #3
 	adds r5, #1
 	lsls r0, r5, #1
@@ -2064,7 +2064,7 @@ Func_0813d098:
 .L_0813e0d4:
 	ldr r0, .L_0813e110
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #164
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2091,4 +2091,4 @@ Func_0813d098:
 .L_0813e10c:
 	.4byte gData_08199210
 .L_0813e110:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

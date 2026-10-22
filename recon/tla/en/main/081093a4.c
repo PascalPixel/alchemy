@@ -1,5 +1,5 @@
 // Near miss, differ 28 of 238 (2026-10-12): The Broken Seal's
-// Shop_DrawEquipComparison with this game's UnitGet, Item_Get and menu runtime
+// Shop_DrawEquipComparison with this game's Unit_Get, Item_Get and menu runtime
 // slot. Every instruction and register is the native's; seven rows are in
 // another order: (1) movs r3, #192 is started before sub sp and the unitId
 // store; (2) and (3) the first inventory entry and the replaced entry are
@@ -41,8 +41,8 @@ extern u8 MsgShopCannotEquip[];
 extern u8 MsgShopStatLabel[];
 extern u8 MsgItemName[];
 
-struct ShopUnit *UnitGet(s32 unitId);
-void UnitCalcFar(s32 unitId);
+struct ShopUnit *Unit_Get(s32 unitId);
+void Unit_CalculateFar(s32 unitId);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 void RenderOutput_PrepareForRedrawFar(s32 window);
@@ -58,7 +58,7 @@ struct RenderOutput *RenderOutput_CreateFar(s32 code, s32 layers,
 
 void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = UnitGet(unitId);
+  struct ShopUnit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_Get(itemId);
   s32 replaced = -1;
   s32 slot;
@@ -94,7 +94,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
   }
   saved = unit->inventory[slot];
   unit->inventory[slot] = itemId | 0x200;
-  UnitCalcFar(unitId);
+  Unit_CalculateFar(unitId);
   with[0] = unit->atk;
   with[1] = unit->def;
   with[2] = unit->agi;
@@ -103,7 +103,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
    * (differ 32 without the barrier, 28 with). */
   __asm__("");
   unit->inventory[slot] = saved;
-  UnitCalcFar(unitId);
+  Unit_CalculateFar(unitId);
   without[0] = unit->atk;
   without[1] = unit->def;
   without[2] = unit->agi;

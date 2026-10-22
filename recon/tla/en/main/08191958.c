@@ -29,7 +29,7 @@
 #include "io_write_queue.h"
 #include "battle_effect_work.h"
 
-void BattleFx_LoadBlitter(s32 slot, s32 value);
+void BattleEffect_LoadBlitter(s32 slot, s32 value);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
 
@@ -52,7 +52,7 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
   scrollX = (side & 1) * 192 - 64;
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleFx_LoadBlitter(104, 3);
+  BattleEffect_LoadBlitter(104, 3);
   work->transferMode = 0;
   work->transferValue = 75;
   REG_BG2PA = 0x48;

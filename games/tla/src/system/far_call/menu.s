@@ -4,7 +4,7 @@
 	.global Localization_LookupEntryIdFar
 	.thumb_func
 Localization_LookupEntryIdFar:
-	overlay_veneer Localization_LookupEntryId
+	overlay_veneer UiText_GetSpeakerPortrait
 	.global Menu_RunTopSelectionFar
 	.thumb_func
 Menu_RunTopSelectionFar:

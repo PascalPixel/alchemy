@@ -35,14 +35,14 @@ Func_080c88f0:
 	.thumb_func
 ObjectMotion_ResetTargetsAndVelocityFar:
 	overlay_veneer ObjectMotion_ResetTargetsAndVelocity
-	.global ObjectEffect_BeginContextEffect26Far
+	.global ObjectEffect_StartContextEffect26Far
 	.thumb_func
-ObjectEffect_BeginContextEffect26Far:
-	overlay_veneer ObjectEffect_BeginContextEffect26
-	.global ObjectEffect_BeginContextEffect25Far
+ObjectEffect_StartContextEffect26Far:
+	overlay_veneer ObjectEffect_StartContextEffect26
+	.global ObjectEffect_StartContextEffect25Far
 	.thumb_func
-ObjectEffect_BeginContextEffect25Far:
-	overlay_veneer ObjectEffect_BeginContextEffect25
+ObjectEffect_StartContextEffect25Far:
+	overlay_veneer ObjectEffect_StartContextEffect25
 	.global Func_080c8910
 	.thumb_func
 Func_080c8910:

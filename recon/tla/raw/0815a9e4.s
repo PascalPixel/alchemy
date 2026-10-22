@@ -2,9 +2,9 @@
 	.thumb
 @ Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche (kind
 @ 3).
-	.global BattleFx_RunGaia
+	.global BattleEffect_RunGaia
 	.thumb_func
-BattleFx_RunGaia:
+BattleEffect_RunGaia:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -23,7 +23,7 @@ BattleFx_RunGaia:
 	str r1, [sp, #44]
 	ldr r3, [r3, #100]
 	str r3, [sp, #28]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #52]
 	ldr r0, [r2, #24]
 	cmp r0, #0
@@ -317,14 +317,14 @@ BattleFx_RunGaia:
 	bne .L_0815abf6
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #32]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	ldr r3, .L_0815ac84
 	movs r2, #128
 	lsls r2, r2, #19
@@ -369,7 +369,7 @@ BattleFx_RunGaia:
 .L_0815ac9c:
 	.4byte 0x00000134
 .L_0815aca0:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0815aca4:
 	movs r2, #140
 	lsls r2, r2, #1
@@ -1102,7 +1102,7 @@ BattleFx_RunGaia:
 	bl ResourceObject_ReleaseFar
 	cmp r6, #11
 	bne .L_0815b228
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #80
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1112,4 +1112,4 @@ BattleFx_RunGaia:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0815b248:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

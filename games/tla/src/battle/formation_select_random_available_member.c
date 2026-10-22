@@ -2,7 +2,7 @@
 #include "battle_formation.h"
 #include "system.h"
 
-s32 BattleGroupRandom(s32 recordId) {
+s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 *choicesBase;
   s32 choices[5];
   struct BattleFormationRecord *record;

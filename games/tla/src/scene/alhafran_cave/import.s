@@ -105,7 +105,7 @@ FieldEvent_WaitFrames:
 	.global Func_02001430
 	.thumb_func
 Func_02001430:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001438
 	.thumb_func
 Func_02001438:
@@ -262,38 +262,38 @@ Func_02001528:
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
-	.global BattleFx_StartItemBreak
+	.global BattleEffect_StartItemBreak
 	.thumb_func
-BattleFx_StartItemBreak:
+BattleEffect_StartItemBreak:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8518
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8518
 	.else
-	overlay_veneer BattleFx_StartItemBreakFar
+	overlay_veneer BattleEffect_StartItemBreakFar
 	.endif
 	.endif
-	.global BattleFx_SnapScaleToFull
+	.global BattleEffect_SnapScaleToFull
 	.thumb_func
-BattleFx_SnapScaleToFull:
+BattleEffect_SnapScaleToFull:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Event_GetSpecialValueFar
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Event_GetSpecialValueFar
 	.else
-	overlay_veneer BattleFx_SnapScaleToFullFar
+	overlay_veneer BattleEffect_SnapScaleToFullFar
 	.endif
 	.endif
 	.global UpdateRisingParticleBurst
 	.thumb_func
 UpdateRisingParticleBurst:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StartItemBreakFar
+	overlay_veneer BattleEffect_StartItemBreakFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StartItemBreakFar
+	overlay_veneer BattleEffect_StartItemBreakFar
 	.else
 	overlay_veneer UpdateRisingParticleBurstFar
 	.endif
@@ -422,18 +422,18 @@ Func_020015a0:
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
-	.global Field_BeginPaletteTransition
+	.global Field_StartPaletteTransition
 	.thumb_func
-Field_BeginPaletteTransition:
-	overlay_veneer Field_BeginPaletteTransitionFar
+Field_StartPaletteTransition:
+	overlay_veneer Field_StartPaletteTransitionFar
 	.endif
 	.endif
 	.global Func_020015b0
@@ -445,7 +445,7 @@ Func_020015b0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87f8
 	.else
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.endif
 	.endif
 	.global Func_020015b8
@@ -457,31 +457,31 @@ Func_020015b8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.endif
 	.endif
 	.global Func_020015c0
 	.thumb_func
 Func_020015c0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_StartArcEffectFar
+	overlay_veneer BattleEffect_StartArcEffectFar
 	.else
-	overlay_veneer BattleFx_WaitForArcGroupsFar
+	overlay_veneer BattleEffect_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_020015c8
 	.thumb_func
 Func_020015c8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_EndArcEffectFar
+	overlay_veneer BattleEffect_EndArcEffectFar
 	.else
-	overlay_veneer BattleFx_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectTickModeFar
 	.endif
 	.endif
 	.global Func_020015d0

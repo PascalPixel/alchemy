@@ -15,8 +15,8 @@ void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite,
                                        s32 facing);
 /// Starts animation `flags & 0x7f` on every layer of a sprite unless it plays
 /// it already; bit 7 keeps each layer's place and timer. Returns 0.
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state,
-                                        s32 flags);
+s32 AnimationObject_SelectAnimationFar(struct AnimationObject *state,
+                                       s32 flags);
 /// Creates a sprite for animation `id` with a VRAM cache entry for its tiles,
 /// or returns NULL when there's no room or the id has no image. The caller
 /// keeps it until ResourceObject_ReleaseFar.
@@ -186,7 +186,7 @@ void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *obj,
                                              s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
 /// menu or event can use the window and VBlank.
-void WorldMap_BeginStillViewFar(void);
+void WorldMap_StartStillViewFar(void);
 /// Reloads the world map area's palette and tiles after the still view and
 /// returns to the perspective view.
 void Map_LoadAreaGraphicsFar(void);
@@ -217,8 +217,8 @@ s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 void SetMapCellCollisionFar(u32 layer, s32 x, s32 y, u32 collisionCode);
 /// Sets the timer step of a sprite's animated layers: 16 plays at normal
 /// speed, 0 stops them.
-void AnimationObjects_SetActiveTimerStepsFar(struct AnimationObject *group,
-                                             s32 val);
+void AnimationObject_SetActiveTimerStepsFar(struct AnimationObject *group,
+                                            s32 val);
 /// Remaps `cnt` bytes of `buf` in place through gRuntime_ByteRemapTable, as
 /// the command icons' colours are.
 void Runtime_RemapBytesByTableFar(u8 *buf, s32 cnt);

@@ -23,6 +23,17 @@ rest. This page says only what differs here.
 Functions not yet matched are drafts under `recon/tla/en/overlays`, by
 overlay and address. `make progress` gives the counts.
 
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`GameFlag_`, `Input_`, `Map_`, `Object_`, `ObjectMotion_`, `Scene_` and
+`Unit_`. Those only The Lost Age's code has so far:
+
+| Prefix | What it acts on |
+| --- | --- |
+| `Stream_` | reading halfwords from a byte stream |
+| `BattleMap_` | the view a scene entrance sets for the battle map |
+
 ## Evidence and open questions
 
 - XXX: what the second Psynergy test room tests that the first does not.

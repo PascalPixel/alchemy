@@ -6,7 +6,7 @@
 #include "owner_state.h"
 #include "fixed_math.h"
 
-s32 UnitCalc(s32);
+s32 Unit_Calculate(s32);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
@@ -29,7 +29,7 @@ void Func_080ae16c(s32 arg0) {
       /* FAKEMATCH: ⚓️ loads the party state before it starts the owner list's
        * offset; read as a plain field the offset is started first (differ 2) */
       asm volatile("");
-      obj = UnitGet(party->activeOwners[n]);
+      obj = Unit_Get(party->activeOwners[n]);
     }
 
     do {
@@ -118,7 +118,7 @@ void Func_080ae220(void) {
       continue;
     }
 
-    obj = UnitGet(ownerId);
+    obj = Unit_Get(ownerId);
     do {
       *(u16 *)(obj + 0x3A) = *(u16 *)(obj + 0x36);
     } while (0);
@@ -164,7 +164,7 @@ struct UnitDjinnSets {
 
 /// Element and index of the last owned Djinni.
 s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out) {
-  u32 *sets = ((struct UnitDjinnSets *)UnitGet(unit))->djinn;
+  u32 *sets = ((struct UnitDjinnSets *)Unit_Get(unit))->djinn;
   s32 element = -1;
   s32 index = -1;
   s32 i;

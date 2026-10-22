@@ -10,11 +10,11 @@
 #include "battle_session.h"
 
 extern const s8 gBattlePlacement_StepPairs[];
-void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
+void BattleObject_Make(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 s32 BattleParty_PrepareActiveOwners(u16 *ids);
 s32 BattleParty_PrepareReserveOwners(u16 *ids);
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
-struct BattleObj *BattleObjGet(s32 id);
+struct BattleObj *BattleObject_Get(s32 id);
 
 void BattleUnit_RefreshPlacement(void) {
   u16 ids[14];
@@ -43,7 +43,7 @@ void BattleUnit_RefreshPlacement(void) {
     s32 id = ids[i];
 
     work->placement[id] = place;
-    BattleObjMake(BattleObjGet(id), id, gBattlePlacement_StepPairs[place * 2],
+    BattleObject_Make(BattleObject_Get(id), id, gBattlePlacement_StepPairs[place * 2],
                   gBattlePlacement_StepPairs[place * 2 + 1]);
   }
   for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
@@ -54,6 +54,6 @@ void BattleUnit_RefreshPlacement(void) {
     s32 id = work->enemyIds[i];
 
     if (id != 0xfe)
-      BattleObjMake(BattleObjGet(id), id, x[stand], z[stand]);
+      BattleObject_Make(BattleObject_Get(id), id, x[stand], z[stand]);
   }
 }

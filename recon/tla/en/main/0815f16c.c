@@ -226,33 +226,33 @@ s32 BattleUnit_GetEffectHeightFar(s32);
 void Func_08118088(s32, s32);
 struct BattleObject **GetBattleObjectSlotFar(s32);
 void Func_081180e8(s32);
-void BattleFxKernels_IntegrateVector3(struct Particle *, s32, s32);
-void BattleFxKernels_IntegrateVector2(struct Particle *, s32, s32);
+void BattleEffectKernels_IntegrateVector3(struct Particle *, s32, s32);
+void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void Func_08143001(void);
 void Func_08143489(void);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_BeginCanvasLayer(s32);
-void BattleFx_BeginTiledCanvas(s32);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32, struct DrawFuncs *);
-void BattleFx_RunSparkGroups(struct SummonAction *, s32);
-void BattleFx_RunMysticFlame(struct SummonAction *);
+void BattleEffect_StartCanvasLayer(s32);
+void BattleEffect_StartTiledCanvas(s32);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_FetchRectangleBlitters(s32, struct DrawFuncs *);
+void BattleEffect_RunSparkGroups(struct SummonAction *, s32);
+void BattleEffect_RunMysticFlame(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
-void SummonFx_RunCanvasMode3(struct SummonAction *);
-void SummonFx_RunCanvasMode1(struct SummonAction *);
-void SummonFx_RunCanvasMode2(struct SummonAction *);
+void SummonEffect_RunCanvasMode3(struct SummonAction *);
+void SummonEffect_RunCanvasMode1(struct SummonAction *);
+void SummonEffect_RunCanvasMode2(struct SummonAction *);
 void Func_08152475(void);
-void BattleFx_RunProjectileVolley(struct SummonAction *, s32);
+void BattleEffect_RunProjectileVolley(struct SummonAction *, s32);
 s32 Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Func_08158ce0(s32, s32);
 void Func_0815b434(void *, s32, s32);
 void EffectPosition_ProjectPoint(void *, s32 *);
 void EffectPosition_ProjectScaledBattler(s32, s32 *);
-void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
-void BattleFx_LoadBlitter(s32, s32);
+void BattleEffect_LoadBlitter(s32, s32);
 void Func_08196404(s32, s32, s32, s32, s32);
 void Render_TransformVertices(const void *, void *, s32);
 struct Model *Render_AllocateModelList(s32);
@@ -360,9 +360,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
   if (kind == 41 || kind == 38 || kind == 62 || kind == 85 || kind == 86 ||
       kind == 87 || kind == 88)
-    BattleFx_BeginTiledCanvas(0x2000);
+    BattleEffect_StartTiledCanvas(0x2000);
   else
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
 
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&Value_00000134, tiles, 0, 0);
@@ -589,7 +589,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   Scheduler_AddOrUpdateCallback(Func_08143001, 3200);
   EffectPosition_ProjectScaledBattler(action->actor, target);
   EffectPosition_ProjectScaledBattler(action->target, base);
-  BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+  BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
   work->unk77b4 = 24;
   work->unk77b8 = 0;
   object = *GetBattleObjectSlotFar(action->target);
@@ -721,11 +721,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Runtime_ReleaseHeapBlock(104);
     Object_SetMode(object, 3);
     if (kind == 45)
-      BattleFx_RunProjectileVolley(action, 9);
+      BattleEffect_RunProjectileVolley(action, 9);
     if (kind == 54)
-      BattleFx_RunMysticFlame(action);
+      BattleEffect_RunMysticFlame(action);
     if (kind == 56)
-      BattleFx_RunProjectileVolley(action, 8);
+      BattleEffect_RunProjectileVolley(action, 8);
     return;
   }
   ObjectDispatch_SetAnimationSpeedFar(object, 16);
@@ -743,7 +743,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     action->unk18 = 3;
-    BattleFx_RunSparkGroups(action, 2);
+    BattleEffect_RunSparkGroups(action, 2);
     return;
   }
   CLEAR(screen, 0x3c00);
@@ -1010,7 +1010,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                 point[0] - n / 2, point[1] - n, n, n * 2);
-              BattleFxKernels_IntegrateVector3(p, 62, kind == 89 ? 0 : -0x800);
+              BattleEffectKernels_IntegrateVector3(p, 62, kind == 89 ? 0 : -0x800);
               p->life -= 2;
             }
           }
@@ -1024,7 +1024,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               drawFuncs.draw[(i / 2) & 1](
                   screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2,
                   point[1] - n, n, n * 2);
-              BattleFxKernels_IntegrateVector3(p, 62, -0x800);
+              BattleEffectKernels_IntegrateVector3(p, 62, -0x800);
               p->life--;
             }
           }
@@ -1072,7 +1072,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             drawFuncs.draw[kind == 78](
                 screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2,
                 point[1] - n, n, n * 2);
-            BattleFxKernels_IntegrateVector3(p, 62, 0);
+            BattleEffectKernels_IntegrateVector3(p, 62, 0);
             if (frame > i + 22) {
               dx = (object3->x - p->x) >> 8;
               dy = (object3->y + half - p->y) >> 8;
@@ -1098,7 +1098,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           point[0] = point[0] / 2;
           drawFuncs.draw[0](screen, EWRAM_BUF, point[0] - 20, point[1] - 32, 40,
                             64);
-          BattleFxKernels_IntegrateVector3(p, 64, 0);
+          BattleEffectKernels_IntegrateVector3(p, 64, 0);
           p->life++;
         }
       }
@@ -1148,7 +1148,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);
           Runtime_ReleaseHeapBlock(188);
-          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+          BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
     } else if (kind == 68) {
@@ -1165,7 +1165,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
           Runtime_ReleaseHeapBlock(188);
-          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+          BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       p = SPARKS;
@@ -1177,7 +1177,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + 0x1809 + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
-            BattleFxKernels_IntegrateVector3(p, 60, 0x1000);
+            BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;
           }
         }
@@ -1195,7 +1195,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           top = 0;
         while (scroll > 104)
           scroll -= 104;
-        BattleFx_LoadBlitter(188, 19);
+        BattleEffect_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll - 104, 17, 104);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll, 17, 104 - scroll);
         IWRAM_SLOT_BC(screen, EWRAM_BUF + 0x6e8, x - 17, top + 47, 34, 65);
@@ -1221,20 +1221,20 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       }
-      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+      BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 61) {
       Runtime_ReleaseHeapBlock(188);
       Runtime_ReleaseHeapBlock(104);
       if (frame >= 4 && frame < 24) {
         x = target[0] / 2;
-        BattleFx_LoadBlitter(188, 19);
+        BattleEffect_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 24, 48, 24, 48);
         Runtime_ReleaseHeapBlock(188);
-        BattleFx_LoadBlitter(188, 23);
+        BattleEffect_LoadBlitter(188, 23);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x, 48, 24, 48);
         Runtime_ReleaseHeapBlock(188);
       }
-      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+      BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 60) {
       if (frame > 15)
         REG_BLDALPHA = (32 - frame) | 0x1000;
@@ -1259,7 +1259,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, EWRAM_BUF + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
-              BattleFxKernels_IntegrateVector3(p, 60, 0x1000);
+              BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
               p->life++;
             }
           }
@@ -1310,7 +1310,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       work->unk7784 = 0;
       Runtime_ReleaseHeapBlock(188);
       Runtime_ReleaseHeapBlock(104);
-      BattleFx_LoadBlitter(104, 35);
+      BattleEffect_LoadBlitter(104, 35);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       if (frame == 0) {
         for (i = 0; i != 1104; i++)
@@ -1361,7 +1361,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       Runtime_ReleaseHeapBlock(104);
-      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+      BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 96 || kind == 97 || kind == 98) {
       if (frame < 20) {
         if (frame < 8)
@@ -1370,14 +1370,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           m = 3;
         Runtime_ReleaseHeapBlock(188);
         Runtime_ReleaseHeapBlock(104);
-        BattleFx_LoadBlitter(104, 3);
+        BattleEffect_LoadBlitter(104, 3);
         IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x6c0, target[0] / 2 - 18, 56, 18,
                       48);
         Runtime_ReleaseHeapBlock(104);
-        BattleFx_LoadBlitter(104, 7);
+        BattleEffect_LoadBlitter(104, 7);
         IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x6c0, target[0] / 2, 56, 18, 48);
         Runtime_ReleaseHeapBlock(104);
-        BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+        BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       }
       if ((kind == 97 || kind == 98) && frame < 24) {
         if (kind == 97)
@@ -1393,7 +1393,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, EWRAM_BUF + 0xd80 + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
-              BattleFxKernels_IntegrateVector3(p, 64, 0x1000);
+              BattleEffectKernels_IntegrateVector3(p, 64, 0x1000);
               p->life++;
             }
           }
@@ -1405,9 +1405,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Runtime_ReleaseHeapBlock(188);
       Runtime_ReleaseHeapBlock(104);
       if (action->side == 0)
-        BattleFx_LoadBlitter(104, 35);
+        BattleEffect_LoadBlitter(104, 35);
       else
-        BattleFx_LoadBlitter(104, 39);
+        BattleEffect_LoadBlitter(104, 39);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       scrollA += scrollB;
       if (frame > 6)
@@ -1437,7 +1437,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             gData_081988b2[m]);
       }
       Runtime_ReleaseHeapBlock(104);
-      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+      BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 88) {
       work->unk7780 = 1;
       work->unk7784 = 0;
@@ -1452,9 +1452,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Runtime_ReleaseHeapBlock(188);
       Runtime_ReleaseHeapBlock(104);
       if (action->side == 0)
-        BattleFx_LoadBlitter(104, 35);
+        BattleEffect_LoadBlitter(104, 35);
       else
-        BattleFx_LoadBlitter(104, 39);
+        BattleEffect_LoadBlitter(104, 39);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       scrollA += scrollB;
       if (frame == 5)
@@ -1498,7 +1498,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       Runtime_ReleaseHeapBlock(104);
-      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+      BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 62) {
       scrollA += scrollB;
       if (frame > 6)
@@ -1620,11 +1620,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         drawFuncs.draw[1](screen, EWRAM_BUF + 0x800, (p->x >> 16) - 24,
                           (p->y >> 16) - 96, 48, 96);
         if (frame < 12)
-          BattleFxKernels_IntegrateVector2(SPARKS, 64, 0);
+          BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0);
         else if (frame == 12)
           p->vy = __divsi3(-p->vy, 3);
         else if (frame < 13 || frame > 18)
-          BattleFxKernels_IntegrateVector2(SPARKS, 64, 0x4000);
+          BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0x4000);
       }
       if (frame == 11) {
         Audio_PlayCue(144);
@@ -1654,7 +1654,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame == 13) {
           Audio_PlayCue(134);
           work->unk77a8 = 8;
-          BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
+          BattleEffect_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
                                     150);
           p = SPARKS;
           table = gData_081977f8;
@@ -1674,7 +1674,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                                  (p->x >> 16) - gData_0819781a[m] / 2,
                                  (p->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
-          BattleFxKernels_IntegrateVector2(p, 64, 0x2000);
+          BattleEffectKernels_IntegrateVector2(p, 64, 0x2000);
           p->life += p->z;
           if (p->z > 1 && (frame & 1))
             p->z--;
@@ -1700,7 +1700,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       if (frame == 14) {
-        BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
+        BattleEffect_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
                                   150);
         Audio_PlayCue(134);
         work->unk77a8 = 8;
@@ -1722,7 +1722,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             (p->x >> 16) - gData_0819749e[m] / 2,
                             (p->y >> 16) - gData_081974ad[m] / 2,
                             gData_0819749e[m], gData_081974ad[m]);
-          BattleFxKernels_IntegrateVector2(p, 63, 0x8000);
+          BattleEffectKernels_IntegrateVector2(p, 63, 0x8000);
           p->z += p->vz;
           if ((frame & 1) && p->vz > 0)
             p->vz--;
@@ -1758,7 +1758,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
           Runtime_ReleaseHeapBlock(188);
-          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
+          BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       if (frame > 3) {
@@ -1846,7 +1846,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           Func_0815b434(work->frames, m * 4, size);
           Runtime_ReleaseHeapBlock(188);
           Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);
-          BattleFx_LoadBlitter(188, 15);
+          BattleEffect_LoadBlitter(188, 15);
         }
       }
     } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
@@ -2091,8 +2091,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           point[0] = point[0] / 2;
           drawFuncs.draw[1](screen, EWRAM_BUF + m * 0x400, point[0] - 16,
                             point[1] - 16, 32, 32);
-          BattleFxKernels_IntegrateVector3(p, 62, 0x800);
-          BattleFxKernels_IntegrateVector3(p, 62, 0x800);
+          BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
+          BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
           p->life++;
         }
       }
@@ -2116,7 +2116,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           point[0] = point[0] / 2;
           drawFuncs.draw[0](screen, EWRAM_BUF + m * 0x800, point[0] - 16,
                             point[1] - 32, 32, 64);
-          BattleFxKernels_IntegrateVector3(p, 58, 0x1000);
+          BattleEffectKernels_IntegrateVector3(p, 58, 0x1000);
           p->life++;
         }
       }
@@ -2134,7 +2134,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         point[0] = point[0] / 2;
         drawFuncs.draw[i & 1](screen, EWRAM_BUF + m * 0x240, point[0] - 12,
                               point[1] - 12, 24, 24);
-        BattleFxKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
+        BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
         p->life++;
       }
     } else if (kind == 76) {
@@ -2158,8 +2158,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
-            BattleFxKernels_IntegrateVector3(p, 62, 0x800);
-            BattleFxKernels_IntegrateVector3(p, 62, 0x800);
+            BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
+            BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
             p->life++;
           }
         }
@@ -2179,9 +2179,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               drawFuncs.draw[i & 1](screen, EWRAM_BUF + (life / 4) * 0x480,
                                     point[0] - 12, point[1] - 24, 24, 48);
             if (kind == 55)
-              BattleFxKernels_IntegrateVector3(p, 60, 0x400);
+              BattleEffectKernels_IntegrateVector3(p, 60, 0x400);
             else
-              BattleFxKernels_IntegrateVector3(p, 60, 0x1000);
+              BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;
           }
         }
@@ -2211,7 +2211,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       if (frame == 24) {
-        BattleFx_StartActorMotion(action->actor, 1, 0, 0, 0x90000, 100);
+        BattleEffect_StartActorMotion(action->actor, 1, 0, 0, 0x90000, 100);
         Func_0814cd48(action->actor, 7, 5, 0, 4);
         Func_081180e8(134);
         work->unk77a8 = 8;
@@ -2290,11 +2290,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
-      SummonFx_RunCanvasMode1(action);
+      SummonEffect_RunCanvasMode1(action);
     else if (kind == 9 || kind == 67)
-      SummonFx_RunCanvasMode2(action);
+      SummonEffect_RunCanvasMode2(action);
     else if (kind == 11)
-      SummonFx_RunCanvasMode3(action);
+      SummonEffect_RunCanvasMode3(action);
     return;
   }
   if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||
@@ -2303,5 +2303,5 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   Scheduler_RemoveCallback(Func_08143001);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

@@ -46,11 +46,11 @@ void Inn_PlaySleep(s32 roomPrice) {
   Party_AdjustCoinsFar(-roomPrice);
 
   for (index = 0; index < count; index++) {
-    object = UnitGet(objects[index]);
+    object = Unit_Get(objects[index]);
     if (object->x != 0) {
       object->x = object->savedX;
       object->y = object->savedY;
-      UnitRatioFar(objects[index]);
+      Unit_UpdateRatiosFar(objects[index]);
     }
   }
 
@@ -59,7 +59,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   state->delay = 60;
   WaitFrames(20);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  BattleFx_SetPrimaryBufferValueFar();
+  BattleEffect_SetPrimaryBufferValueFar();
 #else
   Event_FinishScreenTransitionFar();
 #endif

@@ -178,7 +178,7 @@ debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
 | --- | --- |
 | `TestRooms_` | the Djinn room (`rooms.c`) |
 | `ItemLevel_` | the level and browser room (`level.c`) |
-| `MenuTest_`, `DebugMenu_` | the message and shop test room (`test.c`) |
+| `MenuTest_`, `DebugMenu_`, `SceneDialogue_` | the message and shop test room (`test.c`) and its message helper |
 | `SceneData_`, `Scene_`, `FieldScene_`, `CommandTable_` | the setup and region entries, which keep older names; the other four entries take the room's prefix (`TestRooms_GetEvents`) |
 
 ## Evidence and open questions

@@ -96,10 +96,10 @@ extern char ResourceId_Data0DA;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_EffectPalette03;
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+void BattleEffect_StartCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
@@ -108,7 +108,7 @@ void Audio_PlayCue(s32 cue);
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -151,9 +151,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
   work->framesSinceTransfer = 1;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
+  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -162,7 +162,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -247,7 +247,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         if (flash->variant >= 0 && flash->variant <= 17) {
           draw(canvas, work->sheet + (flash->variant / 3 << 11),
                HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
-          BattleFxKernels_IntegrateVector2(flash, 62, -0x800);
+          BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
           flash->variant++;
         }
       }
@@ -359,7 +359,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
@@ -370,7 +370,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     gCameraSceneParameters[4] = 120;
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   } else {
-    BattleFx_EndCanvasLayer();
+    BattleEffect_EndCanvasLayer();
   }
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);

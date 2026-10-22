@@ -12,7 +12,7 @@ Owner_UpdateClassActions:
 	mov r7, r8
 	push {r7}
 	sub sp, #4
-	bl UnitGet
+	bl Unit_Get
 	movs r5, #42
 	mov r9, r0
 	adds r5, #255

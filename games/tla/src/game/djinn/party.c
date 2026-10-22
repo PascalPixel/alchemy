@@ -22,7 +22,7 @@ s32 Party_SumDjinnCounts(s32 index) {
     s32 remaining = count;
 
     do {
-      struct OwnerDjinnState *state = UnitGet(*owner++);
+      struct OwnerDjinnState *state = Unit_Get(*owner++);
 
       if (index == -1) {
         result += state->counts.banks.owned[0];

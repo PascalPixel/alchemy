@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Haures (scene kind 18).
-	.global BattleFx_RunHaures
+	.global BattleEffect_RunHaures
 	.thumb_func
-BattleFx_RunHaures:
+BattleEffect_RunHaures:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -29,7 +29,7 @@ BattleFx_RunHaures:
 	str r4, [sp, #72]
 	ldr r3, [r3]
 	str r3, [sp, #68]
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08186e70
 	movs r3, #160
@@ -63,7 +63,7 @@ BattleFx_RunHaures:
 .L_08186e74:
 	.4byte 0x00003f40
 .L_08186e78:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08186e7c:
 	str r3, [r2]
 	ldr r2, .L_08187070
@@ -75,7 +75,7 @@ BattleFx_RunHaures:
 	adds r4, #240
 	adds r3, r2, r4
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	ldr r3, .L_08187074
 	ldr r7, [sp, #68]
 	movs r2, #1
@@ -101,7 +101,7 @@ BattleFx_RunHaures:
 	movs r0, #2
 	movs r2, #2
 	movs r5, #240
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	movs r7, #13
 	movs r3, #0
 	lsls r5, r5, #7
@@ -318,7 +318,7 @@ BattleFx_RunHaures:
 .L_08187074:
 	.4byte gBgScroll
 .L_08187078:
-	.4byte BattleFx_ProcessPendingStampTransfer
+	.4byte BattleEffect_ProcessPendingStampTransfer
 .L_0818707c:
 	.4byte 0xc0002000
 .L_08187080:
@@ -717,7 +717,7 @@ BattleFx_RunHaures:
 	adds r0, r7, #0
 	movs r1, #63
 	lsls r2, r2, #6
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	movs r0, #6
 	ldrsh r3, [r7, r0]
 	cmp r3, #119
@@ -1641,7 +1641,7 @@ BattleFx_RunHaures:
 	movs r0, #11
 	adds r1, #255
 	movs r2, #2
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	ldr r6, .L_08187d80
 	ldr r5, [sp, #88]
 	movs r7, #0
@@ -2021,7 +2021,7 @@ BattleFx_RunHaures:
 	adds r0, r5, #0
 	movs r1, #62
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r5]
 	movs r4, #128
 	movs r7, #1
@@ -2170,7 +2170,7 @@ BattleFx_RunHaures:
 	adds r1, #255
 	movs r2, #2
 	movs r0, #11
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 	ldr r0, .L_08188004
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -2267,7 +2267,7 @@ BattleFx_RunHaures:
 	strh r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -2292,7 +2292,7 @@ BattleFx_RunHaures:
 .L_08187ff8:
 	.4byte 0x00001010
 .L_08187ffc:
-	.4byte BattleFx_ProcessPendingStampTransfer
+	.4byte BattleEffect_ProcessPendingStampTransfer
 .L_08188000:
 	.4byte gCameraSceneParameters
 .L_08188004:
@@ -2394,7 +2394,7 @@ BattleFx_RunHaures:
 	adds r0, r5, #0
 	movs r1, #63
 	ldr r2, .L_08188278
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	subs r3, #1
 	str r3, [r5, #24]
@@ -2668,7 +2668,7 @@ BattleFx_RunHaures:
 	adds r2, r6, #0
 	lsls r3, r3, #12
 	str r6, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r4, [sp, #100]
 	movs r3, #16
 	ldrsh r0, [r5, r4]
@@ -2722,7 +2722,7 @@ BattleFx_RunHaures:
 	movs r1, #1
 	adds r2, r6, #0
 	str r6, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r2, [sp, #100]
 	movs r1, #7
 	ldrsh r0, [r5, r2]
@@ -2770,7 +2770,7 @@ BattleFx_RunHaures:
 	adds r2, r6, #0
 	lsls r3, r3, #12
 	str r6, [sp, #0]
-	bl BattleFx_StartActorMotion
+	bl BattleEffect_StartActorMotion
 	ldr r4, [sp, #100]
 	movs r3, #16
 	ldrsh r0, [r5, r4]
@@ -3039,7 +3039,7 @@ BattleFx_RunHaures:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #192
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -3049,4 +3049,4 @@ BattleFx_RunHaures:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081885ec:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

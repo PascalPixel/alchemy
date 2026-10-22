@@ -264,7 +264,7 @@ Func_081c08a4:
 .L_081c0938:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	MusicTrack_CalcOutput
+	bl	MusicTrack_CalculateOutput
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]

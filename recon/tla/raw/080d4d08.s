@@ -278,7 +278,7 @@ Func_080d4d08:
 	ldrb r3, [r3, #26]
 	str r3, [sp, #0]
 .L_080d4f16:
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	movs r1, #6
 	adds r0, r6, #0
 	bl Object_SetMode

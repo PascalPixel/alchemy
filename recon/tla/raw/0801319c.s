@@ -92,7 +92,7 @@ Func_0801319c:
 .L_0801325c:
 	.4byte Func_0801399c
 .L_08013260:
-	.4byte IwramHalt
+	.4byte Iwram_Halt
 .L_08013264:
 	.4byte 0x04000132
 .L_08013268:

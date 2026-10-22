@@ -315,7 +315,7 @@ static void Event_TalkToInnkeeper(void) {
       return;
     }
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_EventSetMessage(MsgLunpaInnkeeperOffersRoom);
     Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
@@ -330,7 +330,7 @@ static void Event_TalkToInnkeeper(void) {
 /// taking meals to the fortress; either way the party has heard of the
 /// prisoner.
 static void Event_TalkToChef(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLunpaChefOffersStory);
   Engine_EventAskYesNo(ACTOR_CHEF, 0);
   Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
@@ -340,7 +340,7 @@ static void Event_TalkToChef(void) {
 /// Lunpa, the inn: Mind Read on the chef, who pities the prisoner in the
 /// dungeon.
 static void Event_ReadChefsThoughts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLunpaChefThinksOfPrisoner);
   Engine_EventShowMessage(ACTOR_CHEF, 0);
   Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
@@ -350,7 +350,7 @@ static void Event_ReadChefsThoughts(void) {
 /// Lunpa, the inn, after Donpa's judgment: a woman asks whether the party is
 /// Donpa's guest.
 static void Event_AskWhetherDonpasGuest(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLunpaInnClerkAsksAboutGuest);
   Engine_EventAskYesNo(ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
   Engine_EventEnd();
@@ -365,12 +365,12 @@ static void Event_TalkToHealer(void) {
   if (FACING_IS_NORTH(leader->facing)) {
     Engine_SanctumOpen(ACTOR_HEALER);
   } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgLunpaTemplePriestReopened);
     Engine_EventShowMessage(ACTOR_HEALER, 0);
     Engine_EventEnd();
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgLunpaTemplePriestSealed);
     Engine_EventShowMessage(ACTOR_HEALER, 0);
     Engine_EventEnd();
@@ -380,12 +380,12 @@ static void Event_TalkToHealer(void) {
 /// Lunpa, the item shop: Mind Read on the merchant.
 static void Event_ReadItemMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgLunpaIsntWeaponsVendors);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Engine_EventEnd();
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgLunpaItemMerchantSealedThoughts);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Engine_EventEnd();
@@ -400,12 +400,12 @@ static void Event_TalkToItemMerchant(void) {
   if (FACING_IS_NORTH(leader->facing)) {
     Engine_ShopOpen(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
   } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgLunpaItemMerchantReopened);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Engine_EventEnd();
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgLunpaItemMerchantSealed);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Engine_EventEnd();
@@ -435,7 +435,7 @@ static void Event_TalkToWeaponMerchant(void) {
     if (FACING_IS_NORTH(facing)) {
       Engine_ShopOpen(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
     } else {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventSetMessage(MsgLunpaWeaponMerchantReopened);
       Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
       Engine_EventEnd();
@@ -469,7 +469,7 @@ static void Event_TalkToArmorMerchant(void) {
     if (FACING_IS_NORTH(facing)) {
       Engine_ShopOpen(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
     } else {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventSetMessage(MsgLunpaArmorMerchantReopened);
       Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
       Engine_EventEnd();

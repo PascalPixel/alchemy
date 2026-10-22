@@ -23,7 +23,7 @@ Func_080ce61c:
 	sub sp, #16
 	mov r0, r9
 	str r3, [sp, #12]
-	bl BattleActGet
+	bl BattleAction_Get
 	mov r2, r8
 	ldrb r0, [r0, #6]
 	lsrs r7, r2, #10
@@ -317,10 +317,10 @@ Func_080ce61c:
 	cmp r7, #7
 	bgt .L_080ce920
 	mov r0, r9
-	bl BattleActGet
+	bl BattleAction_Get
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl UnitGet
+	bl Unit_Get
 	ldrb r1, [r5, #9]
 	movs r2, #58
 	ldrsh r3, [r0, r2]
@@ -436,7 +436,7 @@ Func_080ce61c:
 .L_080ce9b6:
 	mov r0, r9
 	movs r1, #0
-	bl BattleFx_LoadActionEffectResources
+	bl BattleEffect_LoadActionEffectResources
 	movs r1, #192
 	ldr r0, [sp, #12]
 	lsls r1, r1, #4
@@ -506,7 +506,7 @@ Func_080ce61c:
 .L_080cea3e:
 	bl EventRuntime_GetControlledOwner
 	mov r1, r10
-	bl BattleFx_SetupObjectPair
+	bl BattleEffect_SetupObjectPair
 	bl Func_080dc6d8
 	adds r1, r7, #0
 	ldr r0, [sp, #8]
@@ -522,10 +522,10 @@ Func_080ce61c:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_080cea74
-	bl BattleFx_DispatchRequestKind
+	bl BattleEffect_DispatchRequestKind
 	b .L_080cea78
 .L_080cea74:
-	bl BattleFx_Run
+	bl BattleEffect_Run
 .L_080cea78:
 	bl EffectRuntime_StopCurrentObject
 	ldr r1, [sp, #12]
@@ -563,7 +563,7 @@ Func_080ce61c:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_080ceacc
-	bl BattleFx_ClearChildValueOnMismatch
+	bl BattleEffect_ClearChildValueOnMismatch
 .L_080ceacc:
 	ldr r0, [sp, #12]
 	movs r1, #192

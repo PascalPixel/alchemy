@@ -20,7 +20,7 @@
 /// though only 64 are drawn.
 ///
 /// Nothing calls it. Draws through the side's blitters mirrored (side ^ 1).
-UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
+UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -34,9 +34,9 @@ UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
-  BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw);
+  BattleEffect_FetchRectangleBlitters(work->effect->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &PARTICLES[i];
     SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
@@ -86,8 +86,8 @@ UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
         CLAMP(screen.depth, 250, 0x27a);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
-                work->sheet +
-                    ((i & 3) * MOTE_SET_BYTES + gBattleFx_MoteCells[size - 1]),
+                work->sheet + ((i & 3) * MOTE_SET_BYTES +
+                               gBattleEffect_MoteCells[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(star, 60, 0);
         // From 30 frames after it appears, it accelerates towards the centre
@@ -117,7 +117,7 @@ UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
 /// Nothing calls it. Copies the skull palette over the first 128 bytes of BG
 /// palette RAM; writes REG_BG2PA, REG_BG2X and REG_BLDALPHA; keeps each
 /// skull's angle in velocityX of work->particles, three to a target.
-UNUSED void BattleFx_RunOrbitingSkulls(void) {
+UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 point[3];
@@ -137,7 +137,7 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
-  EFFECT_BEGIN_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
@@ -147,7 +147,7 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   draw[0] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   // Put the canvas on the targets' side of the screen: at one texel a pixel
   // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
@@ -233,7 +233,7 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
 ///
 /// Nothing calls it. Copies the pink burst palette over the first 128 bytes
 /// of BG palette RAM, uses work->particles six to a target.
-UNUSED void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
+UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -249,7 +249,7 @@ UNUSED void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
                              work->sheet + TARGET_BURSTS_CELLS, 0, 0);

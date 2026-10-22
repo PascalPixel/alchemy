@@ -23,7 +23,7 @@ PsynergyMenu_DrawListPage:
 	ldrb r0, [r3]
 	adds r5, r2, #0
 	sub sp, #8
-	bl UnitGet
+	bl Unit_Get
 	str r0, [sp, #4]
 	mov r0, r8
 	bl RenderOutput_RedrawSavedRectFar
@@ -75,7 +75,7 @@ PsynergyMenu_DrawListPage:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BattleActGet
+	bl BattleAction_Get
 	mov r1, r11
 	ldrh r3, [r7, r1]
 	adds r6, r0, #0

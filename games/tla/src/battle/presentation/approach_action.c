@@ -33,15 +33,15 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   if (BattleObject_IsValidId(work.actors[0]) < 0)
     return -1;
 
-  UnitGet(work.actor);
-  UnitGet(work.actors[0]);
+  Unit_Get(work.actor);
+  Unit_Get(work.actors[0]);
   Random16();
   UiText_DrawQuantity(work.actor, 1);
   UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
   ObjectDispatch_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
-  BattleObjGet(work.actors[0]);
+      (struct DispatchObject *)BattleObject_Get(work.actor)->object, 16);
+  BattleObject_Get(work.actors[0]);
 
   work.count = 1;
   if ((u16)work.actors[0] <= 7)

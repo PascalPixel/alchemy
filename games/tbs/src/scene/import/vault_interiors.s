@@ -22,15 +22,15 @@
 	.set import.Engine_ActorSetSpriteFlags, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.UnitGet, 1
-	.set import.UnitCalc, 1
+	.set import.Unit_Get, 1
+	.set import.Unit_Calculate, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Djinn_Transfer, 1
 	.set import.PartyInventory_HasSpace, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.FieldScene_PrepareActors, 1
 	.set import.Event_PrepareObjectAndApplyValue, 1
@@ -80,14 +80,14 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.FieldFx_PlayCueAndStartEmitterOnTarget, 1
+	.set import.FieldEffect_PlayCueAndStartEmitterOnTarget, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_ActorLookup, 1
 	.set import.Engine_PsynergyPlayEffect, 1
-	.set import.Engine_PsynergyBegin, 1
+	.set import.Engine_PsynergyStart, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
-	.set import.FieldFx_End, 1
+	.set import.FieldEffect_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Ui_SetBank15PaletteAndClearRenderMode, 1
 	.set import.Audio_PlayCueFromEventWork, 1

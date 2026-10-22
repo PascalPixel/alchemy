@@ -15,7 +15,7 @@ Func_08103064:
 	adds r0, r5, #0
 	sub sp, #4
 	adds r6, r2, #0
-	bl UnitGet
+	bl Unit_Get
 	mov r10, r0
 	movs r0, #1
 	negs r0, r0

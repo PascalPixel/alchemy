@@ -1,9 +1,9 @@
 // Draft, differ 803 of 1022 (draft 1015 instructions, no device): the body
-// of the canvas burst family (BattleFx_RunCanvasMode0,
-// BattleFx_RunCanvasModeByCount and BattleFx_RunCanvasMode3WithAction in
+// of the canvas burst family (BattleEffect_RunCanvasMode0,
+// BattleEffect_RunCanvasModeByCount and BattleEffect_RunCanvasMode3WithAction in
 // canvas_modes.c), written from the listing on The Broken Seal's canvas
-// skeleton (twins: BattleFx_RunRamses 0.44, by call
-// order BattleFx_RunSparkGroups 0.44).
+// skeleton (twins: BattleEffect_RunRamses 0.44, by call
+// order BattleEffect_RunSparkGroups 0.44).
 // Every call, table and branch of the four modes is in the native's order;
 // the four quarter blits of a disc reload the second blitter for each flip
 // (flags 3, 7, 11, 15 with mode 1), as the native does.
@@ -36,10 +36,10 @@ extern u8 gMapCellBuffer[];
 extern u16 gData_08197410[];
 extern const u8 Data_08199ec5[];
 
-void BattleFx_BeginCanvasLayer(s32 layer);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_LoadBlitter(s32 slot, s32 value);
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_StartCanvasLayer(s32 layer);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_LoadBlitter(s32 slot, s32 value);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Palette_StepFadeTransfer(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0815e22c(struct EffectPosition *position);
@@ -54,7 +54,7 @@ void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
@@ -62,7 +62,7 @@ void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
-void SummonFx_RunCanvasMode1(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 
@@ -71,7 +71,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
 // each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode).
 #define DRAW_DISC_QUARTER(flags, left, top)                                    \
   do {                                                                         \
-    BattleFx_LoadBlitter(188, 1 << 4 | (flags));                                      \
+    BattleEffect_LoadBlitter(188, 1 << 4 | (flags));                                      \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, gMapCellBuffer + *disc,   \
                                              (left), (top), half, size);       \
     Runtime_ReleaseHeapBlock(188);                                             \
@@ -81,14 +81,14 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
 // in mode 0 a growing glow at the target, with sixteen rays that close on
 // it) hits the target; at the hit the targets flash and recoil, sixteen
 // flames rise and 47 sparks scatter. Modes:
-//   0  (BattleFx_RunCanvasMode0): 78 frames, the glow at the target; the
-//      hit at frame 54, then the canvas is cleared and SummonFx_RunCanvasMode1
+//   0  (BattleEffect_RunCanvasMode0): 78 frames, the glow at the target; the
+//      hit at frame 54, then the canvas is cleared and SummonEffect_RunCanvasMode1
 //      runs on;
 //   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
 //      half-speed sparks, hit at 32, no flames;
 //   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
 //      32;
-//   3  (BattleFx_RunCanvasMode3WithAction): 58 frames, the ball flies to the
+//   3  (BattleEffect_RunCanvasMode3WithAction): 58 frames, the ball flies to the
 //      midpoint of the targets, its own palette, hit at 24.
 // Modes 1 and 2 close by restoring the battle display themselves.
 void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
@@ -112,11 +112,11 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   if (mode <= 1)
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   else
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleFx_LoadBlitter(104, 1 << 4 | 3);
+  BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   discs = (s16 *)work->sheet;
   frames = 78;
@@ -127,7 +127,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
 
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
@@ -311,7 +311,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
           s32 x = HI(step->x);
           s32 y = HI(step->y);
 
-          BattleFxKernels_IntegrateVector2(step, 60, 0);
+          BattleEffectKernels_IntegrateVector2(step, 60, 0);
           if ((u32)step->variant <= 17)
             draw(canvas,
                  work->sheet + 0x800 + (Data_08199ec5[step->variant / 3] << 11),
@@ -329,7 +329,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
 
           draw(canvas, graphics + gData_08197410[size - 1],
                HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
-          BattleFxKernels_IntegrateVector2(step, 60, 0);
+          BattleEffectKernels_IntegrateVector2(step, 60, 0);
           step->variant--;
         }
         step++;
@@ -342,15 +342,15 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   if (mode == 0) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    SummonFx_RunCanvasMode1(effect);
+    SummonEffect_RunCanvasMode1(effect);
   } else if (mode == 3) {
-    BattleFx_EndCanvasLayer();
+    BattleEffect_EndCanvasLayer();
   } else {
     // Back to the battle display: BG1's scroll, BG2 as before, the palette
     // fade off and the backgrounds on again.

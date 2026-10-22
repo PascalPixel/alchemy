@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
-	.global BattleFx_RunRay
+	.global BattleEffect_RunRay
 	.thumb_func
-BattleFx_RunRay:
+BattleEffect_RunRay:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -29,13 +29,13 @@ BattleFx_RunRay:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleFx_BeginTiledCanvasFilled
+	bl BattleEffect_StartTiledCanvasFilled
 	b .L_08151b8a
 .L_08151b80:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleFx_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 .L_08151b8a:
 	ldr r1, [sp, #40]
 	ldr r3, [r1, #24]
@@ -55,14 +55,14 @@ BattleFx_RunRay:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #7
 	movs r0, #188
 	str r3, [sp, #44]
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r2, sp
@@ -437,7 +437,7 @@ BattleFx_RunRay:
 	ldr r2, .L_08151ee8
 	adds r0, r5, #0
 	movs r1, #60
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #4]
 	movs r2, #240
 	lsls r2, r2, #15
@@ -459,7 +459,7 @@ BattleFx_RunRay:
 .L_08151ed4:
 	.4byte 0xffffc000
 .L_08151ed8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08151edc:
 	.4byte IwramFillWords
 .L_08151ee0:
@@ -571,7 +571,7 @@ BattleFx_RunRay:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -584,4 +584,4 @@ BattleFx_RunRay:
 .L_08151fd0:
 	.4byte gData_08197410
 .L_08151fd4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

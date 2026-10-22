@@ -143,7 +143,7 @@ s32 Scene_Initialize(void) {
         stump = Object_GetById(ACTOR_STUMP);
         Engine_ActorSetSpriteFlags(stump, 0);
         Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
+        OBJECT_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -177,7 +177,7 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
     stump->targetX = ACTOR_NO_TARGET;
   }
   stump->update = GomaCaveWaterway_SpinStump;
-  OBJ_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  OBJECT_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(stumpId, 376, 288);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -194,8 +194,8 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
     dir.z = Trig_Sin(i << 12);
     dir.x -= dir.x / 4;
     dir.z -= dir.z / 2;
-    FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x, dir.y,
-                  dir.z, 0, NULL);
+    FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
+                      dir.y, dir.z, 0, NULL);
   }
   stump->velocityY = PIXELS(5);
   Actor_SetDestination(stumpId, 346, 292);
@@ -214,28 +214,28 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
   options.startScaleY = 4 * Q16_ONE / 5;
   options.targetScaleX = 3 * Q16_ONE / 2;
   options.targetScaleY = 6 * Q16_ONE / 5;
-  FieldFx_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
-                EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                    EFFECT_SCALE_TO_TARGET,
-                &options);
+  FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_SCALE_TO_TARGET,
+                    &options);
   Engine_AudioPlayCue(SE_CAST);
-  OBJ_MODE(stumpId, STUMP_ANIM_SPLASH);
+  OBJECT_MODE(stumpId, STUMP_ANIM_SPLASH);
   Map_WaitForShakeToSettle();
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {

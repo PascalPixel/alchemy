@@ -98,7 +98,7 @@ enum HeapSlot {
   /// GroundParticleWork).
   HEAP_SLOT_GROUND_PARTICLES = 29,
   /// The field's colour blend work (gFieldBlendWork): the struct
-  /// FieldBlendWork the storm's lightning and FieldFx_StartBufferBlend
+  /// FieldBlendWork the storm's lightning and FieldEffect_StartBufferBlend
   /// allocate.
   HEAP_SLOT_FIELD_BLEND = 30,
   /// The display transition (struct DisplayTransitionState,
@@ -137,9 +137,9 @@ enum HeapSlot {
   HEAP_SLOT_BATTLE_BACKGROUND = 44,
   /// Lucky Dice's sprites (0x618 bytes), for as long as the game runs.
   HEAP_SLOT_LUCKY_DICE_SPRITES = 45,
-  /// A routine run from RAM: the canvas drawing routine BattleFx_BuildBlitter
-  /// writes, called as a DrawRectangle and released before its canvas, or the
-  /// world map's copy of Transform_UpdateVertices.
+  /// A routine run from RAM: the canvas drawing routine
+  /// BattleEffect_BuildBlitter writes, called as a DrawRectangle and released
+  /// before its canvas, or the world map's copy of Transform_UpdateVertices.
   HEAP_SLOT_BLITTER = 46,
   /// A second routine as HEAP_SLOT_BLITTER, released before it.
   HEAP_SLOT_BLITTER_ALTERNATE = 47,
@@ -164,9 +164,10 @@ enum HeapSlot {
   /// save screen takes it for its sprite work (struct ShopRuntime).
   HEAP_SLOT_MENU = 55,
   /// The Psynergy effect's work (struct FieldFxScene, gEffectWork). A field
-  /// Psynergy holds it from FieldFx_LoadActionEffectResources to
-  /// FieldFx_End, a Djinni's joining from
-  /// FieldFx_InitializeSlots to FieldFx_ClearActiveSlotsAndScheduleUpdates.
+  /// Psynergy holds it from FieldEffect_LoadActionEffectResources to
+  /// FieldEffect_End, a Djinni's joining from
+  /// FieldEffect_InitializeSlots to
+  /// FieldEffect_ClearActiveSlotsAndScheduleUpdates.
   HEAP_SLOT_FX = 56,
   /// The battle command menus' work (struct BattleMenuWork).
   HEAP_SLOT_BATTLE_COMMANDS = 57,

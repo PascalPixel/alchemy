@@ -13,7 +13,8 @@
 /// frame for source to reach target in frames frames; with frames 0 or less
 /// step is left as it was. Called by ColorBuffer_StartInterpolation and by
 /// the weather effects (psynergy_effects/weather.c).
-void ColorBuffer_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames) {
+void ColorBuffer_CalculateSteps(s16 *source, s16 *target, s16 *step,
+                                s32 frames) {
   s32 remainingChannels;
   s32 sourceChannel;
   s32 targetChannel;
@@ -430,7 +431,8 @@ void ColorBuffer_StartInterpolation(s32 frames) {
   if (work != NULL) {
     work->duration = frames;
     work->step = 0;
-    ColorBuffer_ComputeSteps(work->current, work->target, work->delta, frames);
+    ColorBuffer_CalculateSteps(work->current, work->target, work->delta,
+                               frames);
   }
 }
 

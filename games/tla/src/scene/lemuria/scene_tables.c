@@ -21,7 +21,7 @@ void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 s32 ArcTan2(s32, s32);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Animation_SetIndexAndInitObjects(struct ObjectRuntime *object, s32 index);
+void Animation_SetIndexAndInitializeObjects(struct ObjectRuntime *object, s32 index);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
@@ -95,9 +95,9 @@ static __inline__ struct ObjectRuntime *Object_GetById_(s32 id) {
 }
 
 static __inline__ void
-Animation_SetIndexAndInitObjects_(struct ObjectRuntime *object, s32 index) {
+Animation_SetIndexAndInitializeObjects_(struct ObjectRuntime *object, s32 index) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Animation_SetIndexAndInitObjects(object, index);
+  Animation_SetIndexAndInitializeObjects(object, index);
 }
 
 static __inline__ void ObjectMotion_ArmCallback_(s32 id, s32 angle, s32 flags) {
@@ -251,7 +251,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 void Func_020001bc(void) {
   Func_02001c2c_(12, 0x1e80000, 0x4e80000);
-  Animation_SetIndexAndInitObjects(Object_GetById(12), 157);
+  Animation_SetIndexAndInitializeObjects(Object_GetById(12), 157);
   Object_SetModeById_(12, 3);
   ObjectMotion_ArmCallback_(12, 0x8000, 0);
 }

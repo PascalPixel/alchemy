@@ -32,7 +32,7 @@ Func_080ae358:
 	ldrb r5, [r7]
 	str r4, [sp, #0]
 	adds r0, r5, #0
-	bl UnitGet
+	bl Unit_Get
 	movs r3, #140
 	ldr r4, [sp, #0]
 	lsls r3, r3, #1

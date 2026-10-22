@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunProjectileVolley, the body of the volley family:
+// Draft of BattleEffect_RunProjectileVolley, the body of the volley family:
 // the user fires a volley of shots at each target, staggered by shot and
 // by target, and each shot that reaches its target flashes and throws
 // sparks. The mode picks the shot's picture and flight; its wrappers are C
@@ -19,7 +19,7 @@
 // sprays glints of water around the first target
 // A Mercury Djinn may circle the user first (effect->prelude).
 
-// Twin: The Broken Seal's BattleFx_RunProjectileVolley (effect.c), modes
+// Twin: The Broken Seal's BattleEffect_RunProjectileVolley (effect.c), modes
 // 0-11. The Lost Age adds modes 12-18, the falling-streak particles, and
 // no longer opens the canvas differently for mode 10.
 // Listing 2278 instructions, draft 2282, differ 1002.
@@ -50,7 +50,7 @@
 // the hit block, as the twin                                   2224
 
 // Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), blitters load through BattleFx_LoadBlitter and
+// Age never stores work->effect), blitters load through BattleEffect_LoadBlitter and
 // Func_08196404 with the Lost Age's mode numbers (max is 1, additive 0),
 // the callback order is 0xc80, the canvas preparer takes its flags packed,
 // the volley time counts count - 1 target delays, and a shot's z velocity
@@ -110,7 +110,7 @@ extern u8 Data_081984ec[];  // _FlashRises
 extern u16 Data_081984f4[]; // _FlashOffsets
 extern u16 Data_08198502[]; // _PelletOffsets
 extern u8 Data_0819850a[];  // the glints' palettes
-// gBattleFx_MoteCells; gBattleFx_GlintCell* (offsets, widths,
+// gBattleEffect_MoteCells; gBattleEffect_GlintCell* (offsets, widths,
 // heights); gPrism_ShardOffsets and the shards' widths and heights.
 extern u16 gData_08197410[];
 extern u16 gData_08197486[];
@@ -127,11 +127,11 @@ extern u8 gData_08197826[];
 #define VOLLEY_DELAY 3   // frames between targets
 #define VOLLEY_SPARKS 4  // sparks on impact
 
-void BattleFx_BeginCanvasLayer(s32 control);
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_StartCanvasLayer(s32 control);
+void BattleEffect_EndCanvasLayer(void);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
@@ -154,10 +154,10 @@ void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *pos);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_ADDITIVE (0 << 4)
 #define BLITTER_MAX (1 << 4)
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -170,7 +170,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
 #define PHASE_LATE_RESULTS 134
 
-void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
+void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition screen;
   struct EffectPosition world;
@@ -202,7 +202,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   sheet = Ram_HeapSlots->unk64[0];
   seWait = 0;
   kind = effect->variant;
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   if (effect->prelude == 1)
     Func_0815585c(effect, 1 | effect->side << 4 | 2 << 5, &screen, &world);
   REG_BLDALPHA = 0x1010;
@@ -210,14 +210,14 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   // A 128x128 blitter, mirrored for the other side.
   if (mode == 5 || mode == 12 || mode == 13) {
     if (effect->side == 1)
-      BattleFx_LoadBlitter(104, BLITTER_MAX | CLIP | COMPOSITE_FLIP_X);
+      BattleEffect_LoadBlitter(104, BLITTER_MAX | CLIP | COMPOSITE_FLIP_X);
     else
-      BattleFx_LoadBlitter(104, BLITTER_MAX | CLIP);
+      BattleEffect_LoadBlitter(104, BLITTER_MAX | CLIP);
   } else {
     if (effect->side == 1)
-      BattleFx_LoadBlitter(104, BLITTER_ADDITIVE | CLIP | COMPOSITE_FLIP_X);
+      BattleEffect_LoadBlitter(104, BLITTER_ADDITIVE | CLIP | COMPOSITE_FLIP_X);
     else
-      BattleFx_LoadBlitter(104, BLITTER_ADDITIVE | CLIP);
+      BattleEffect_LoadBlitter(104, BLITTER_ADDITIVE | CLIP);
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -318,7 +318,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     work->transferMode = 2;
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Where each shot starts and how fast it flies.
   user = GetBattleObjectSlotFar(effect->actor)->object;
@@ -474,9 +474,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame > 69)
           djinnY = djinnY - frame * 2 + 138;
         if (effect->side == 1)
-          BattleFx_LoadBlitter(188, BLITTER_ADDITIVE | CLIP | COMPOSITE_FLIP_X);
+          BattleEffect_LoadBlitter(188, BLITTER_ADDITIVE | CLIP | COMPOSITE_FLIP_X);
         else
-          BattleFx_LoadBlitter(188, BLITTER_ADDITIVE | CLIP);
+          BattleEffect_LoadBlitter(188, BLITTER_ADDITIVE | CLIP);
         draw[1] = DRAW_ALTERNATE;
         if (frame <= 3)
           draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY, 20, 40);
@@ -618,17 +618,17 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             // Only the comet's upper half is drawn; the lower half is the
             // same picture flipped.
             if (effect->side == 1)
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_X);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_X);
             else
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
                            pos->y - Data_08198475[kind], 32,
                            Data_08198475[kind]);
             Runtime_ReleaseHeapBlock(188);
             if (effect->side == 1)
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
             else
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_Y);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_Y);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
                            32, Data_08198475[kind]);
             Runtime_ReleaseHeapBlock(188);
@@ -678,26 +678,26 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             s32 step = flash->z / 2;
 
             if (!(i & 1)) {
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
               DRAW_ALTERNATE(canvas, work->sheet + Data_081984f4[step],
                              flash->x - Data_081984d7[step],
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
               Runtime_ReleaseHeapBlock(188);
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step], flash->x,
                   flash->y + Data_081984e5[step] - Data_081984ec[step],
                   Data_081984d7[step], Data_081984de[step]);
               Runtime_ReleaseHeapBlock(188);
             } else {
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
               DRAW_ALTERNATE(canvas, work->sheet + Data_081984f4[step] + 0x128a,
                              flash->x - Data_081984ec[step],
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
               Runtime_ReleaseHeapBlock(188);
-              BattleFx_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
+              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step] + 0x128a,
                   flash->x + Data_081984e5[step] - Data_081984ec[step],
@@ -721,9 +721,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
           draw[0](canvas, sheet + gData_08197410[size - 1], HI(p->x) - size / 2,
                   HI(p->y) - size, size, size * 2);
           if (mode == 13)
-            BattleFxKernels_IntegrateVector2(p, 60, 0x4000);
+            BattleEffectKernels_IntegrateVector2(p, 60, 0x4000);
           else
-            BattleFxKernels_IntegrateVector2(p, 60, 0x1000);
+            BattleEffectKernels_IntegrateVector2(p, 60, 0x1000);
           if (p->y > 0x700000)
             p->velocityY = -p->velocityY / 2;
           p->variant--;
@@ -739,7 +739,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
           draw[0](canvas, sheet + gData_08197410[size - 1], HI(p->x) - size / 2,
                   HI(p->y) - size, size, size * 2);
-          BattleFxKernels_IntegrateVector2(p, 60, -0x4000);
+          BattleEffectKernels_IntegrateVector2(p, 60, -0x4000);
           p->variant--;
         }
       }
@@ -753,7 +753,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
           if ((u32)p->variant <= 23) {
             draw[0](canvas, work->sheet + 0x22 + p->variant / 4 * 1152,
                     HI(p->x) - 12, HI(p->y) - 24, 24, 48);
-            BattleFxKernels_IntegrateVector2(p, 62, -0x400);
+            BattleEffectKernels_IntegrateVector2(p, 62, -0x400);
             p->variant++;
           }
         }
@@ -790,7 +790,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

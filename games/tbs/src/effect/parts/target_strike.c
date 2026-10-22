@@ -34,93 +34,97 @@ enum {
 
 /// One slash strikes the first target among glints, in lightning colours.
 ///
-/// Abilities: Numbing Sting (BATTLE_FX_NUMBING_STING).
-void BattleFx_RunNumbingSting(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
+/// Abilities: Numbing Sting (BATTLE_EFFECT_NUMBING_STING).
+void BattleEffect_RunNumbingSting(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect,
+                               TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
 /// Three ember columns strike the first target and drain it into the user.
 ///
-/// Abilities: Cannibal Fang (BATTLE_FX_CANNIBAL_FANG).
-void BattleFx_RunCannibalFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
+/// Abilities: Cannibal Fang (BATTLE_EFFECT_CANNIBAL_FANG).
+void BattleEffect_RunCannibalFang(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
 }
 /// One lime column strikes the first target, with smoke.
 ///
-/// Abilities: Poisonous Bite (BATTLE_FX_POISONOUS_BITE); Poison Fang
-/// (BATTLE_FX_POISONOUS_BITE_323).
-void BattleFx_RunPoisonousBite(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
+/// Abilities: Poisonous Bite (BATTLE_EFFECT_POISONOUS_BITE); Poison Fang
+/// (BATTLE_EFFECT_POISONOUS_BITE_323).
+void BattleEffect_RunPoisonousBite(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
 }
 /// One column strikes the first target, with smoke, in Mars Djinn colours.
 ///
-/// Abilities: Rabid Fang (BATTLE_FX_RABID_FANG).
-void BattleFx_RunRabidFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN);
+/// Abilities: Rabid Fang (BATTLE_EFFECT_RABID_FANG).
+void BattleEffect_RunRabidFang(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN);
 }
 /// Three lightning columns strike the first target among glints.
 ///
-/// Abilities: Electric Bite (BATTLE_FX_ELECTRIC_BITE).
-void BattleFx_RunElectricBite(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
+/// Abilities: Electric Bite (BATTLE_EFFECT_ELECTRIC_BITE).
+void BattleEffect_RunElectricBite(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect,
+                               TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
 }
 /// One lime slash strikes the first target, with smoke.
 ///
-/// Abilities: Poison Tail (BATTLE_FX_POISON_TAIL).
-void BattleFx_RunPoisonTail(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
+/// Abilities: Poison Tail (BATTLE_EFFECT_POISON_TAIL).
+void BattleEffect_RunPoisonTail(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
 /// Three columns strike the first target and drain it, in Mars Djinn colours.
 ///
-/// Abilities: Vampiric Fang (BATTLE_FX_VAMPIRIC_FANG).
-void BattleFx_RunVampiricFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS);
+/// Abilities: Vampiric Fang (BATTLE_EFFECT_VAMPIRIC_FANG).
+void BattleEffect_RunVampiricFang(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS);
 }
 /// Two blue columns strike the first target, with sparks.
 ///
-/// Abilities: Double Fang (BATTLE_FX_DOUBLE_FANG).
-void BattleFx_RunDoubleFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS);
+/// Abilities: Double Fang (BATTLE_EFFECT_DOUBLE_FANG).
+void BattleEffect_RunDoubleFang(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS);
 }
 /// One heavy slash strikes the first target, with sparks, in Mars Djinn
 /// colours.
 ///
-/// Abilities: Mortal Blow (BATTLE_FX_MORTAL_BLOW).
-void BattleFx_RunMortalBlow(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
+/// Abilities: Mortal Blow (BATTLE_EFFECT_MORTAL_BLOW).
+void BattleEffect_RunMortalBlow(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
 }
 /// Two slashes strike the first target, with sparks, in lightning colours.
 ///
-/// Abilities: Twin Beaks (BATTLE_FX_TWIN_BEAKS).
-void BattleFx_RunTwinBeaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
+/// Abilities: Twin Beaks (BATTLE_EFFECT_TWIN_BEAKS).
+void BattleEffect_RunTwinBeaks(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect,
+                               TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
 }
 /// Three pink columns strike the first target, with smoke.
 ///
-/// Abilities: Acid Bite (BATTLE_FX_ACID_BITE).
-void BattleFx_RunAcidBite(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS);
+/// Abilities: Acid Bite (BATTLE_EFFECT_ACID_BITE).
+void BattleEffect_RunAcidBite(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect, TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS);
 }
 /// Three additive columns strike the first target and drain it with large
 /// motes, in Mars Djinn colours.
 ///
-/// Abilities: Drain Fang (BATTLE_FX_DRAIN_FANG).
-void BattleFx_RunDrainFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect,
-                           TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS);
+/// Abilities: Drain Fang (BATTLE_EFFECT_DRAIN_FANG).
+void BattleEffect_RunDrainFang(struct BattleEffectArgument *effect) {
+  BattleEffect_RunTargetStrike(effect,
+                               TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS);
 }
 /// Strikes the first target TARGET_STRIKE_HITS times with a sideways slash or a
 /// column of light, with the extras its flags choose, and lets the battle
 /// show the damage on the hits.
 ///
-/// Called by the twelve wrappers above, from BattleFx_RunNumbingSting to
-/// BattleFx_RunDrainFang. Loads the style's colours over the first 64 of the
-/// background palette; uses work->particles 0 to 63 for smoke, PARTICLES 0
+/// Called by the twelve wrappers above, from BattleEffect_RunNumbingSting to
+/// BattleEffect_RunDrainFang. Loads the style's colours over the first 64 of
+/// the background palette; uses work->particles 0 to 63 for smoke, PARTICLES 0
 /// to 127 for motes and TARGET_STRIKE_SPARKS for sparks; builds and frees its
 /// blitters in both slots every frame, sets work->shakeFrames on each hit and
 /// lights the user while an absorb runs. Leaves the canvas layer closed.
 ///
 /// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Records.
-void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;
   struct EffectPosition alternate;
@@ -147,9 +151,9 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
-    BattleFx_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleFx_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   // The canvas adds its full colour to everything under it.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -448,16 +452,16 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         s32 y;
 
         x = targetPosition.x / 2 + (Trig_Sin(angle) * (radius + 4) >> 17) -
-            (gBattleFx_GlintCellWidths[image] / 2);
+            (gBattleEffect_GlintCellWidths[image] / 2);
         y = targetPosition.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
-            (gBattleFx_GlintCellHeights[image] / 2);
+            (gBattleEffect_GlintCellHeights[image] / 2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             gTargetStrike_GlintDrawFlags[Random16() & 3] |
                                 EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
-        (*lower)(canvas, work->sheet + gBattleFx_GlintCells[image], x, y,
-                 gBattleFx_GlintCellWidths[image],
-                 gBattleFx_GlintCellHeights[image]);
+        (*lower)(canvas, work->sheet + gBattleEffect_GlintCells[image], x, y,
+                 gBattleEffect_GlintCellWidths[image],
+                 gBattleEffect_GlintCellHeights[image]);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       }
     }
@@ -508,7 +512,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           if (step->variant >= 0) {
             EffectPosition_ProjectPoint(step, &position);
             position.x >>= 1;
-            draw[1](canvas, particleSheet + gBattleFx_MoteCells[size - 1],
+            draw[1](canvas, particleSheet + gBattleEffect_MoteCells[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
             EffectStep_AdvanceWithGravity3D(step, 60, 0);
@@ -556,8 +560,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // Finish: the blitters were freed each frame.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  BattleFx_EndCanvasLayer();
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }
 
 #undef TARGET_STRIKE_SPARKS

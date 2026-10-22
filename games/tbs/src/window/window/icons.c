@@ -53,7 +53,7 @@ void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
 /// as UiIcon_BuildItemIconTiles.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
-  UiIcon_BuildItemIconTiles(BattleActGet(action)->unk04[0], withBase, slot,
+  UiIcon_BuildItemIconTiles(BattleAction_Get(action)->unk04[0], withBase, slot,
                             tile, reuse);
 }
 
@@ -264,8 +264,8 @@ void Ui_PrepareTransferForItem(s32 code) {
 /// UiIcon_BuildAbilityIconTiles.
 void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                        s32 reuse) {
-  UiIcon_BuildAbilityIconTiles(BattleActGet(action)->unk04[0], withBase, slot,
-                               tile, reuse);
+  UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->unk04[0], withBase,
+                               slot, tile, reuse);
 }
 
 /// The heap slot UiIcon_Decode copies its decoding routines into, one at a
@@ -334,7 +334,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                    sizeof(GlyphTransfer));
   offsets = Resource_GetTableEntry((s32)&ResourceId_Icons);
   // A number below 128 is the entry itself; the other speakers' portraits,
-  // numbered from 128 (Localization_LookupEntryId), are entries 16 on.
+  // numbered from 128 (UiText_GetSpeakerPortrait), are entries 16 on.
   if (icon <= 127)
     index = icon;
   else

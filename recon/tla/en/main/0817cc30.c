@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunOceanFist, decompiled from the listing: differ 448 of
+// Draft of BattleEffect_RunOceanFist, decompiled from the listing: differ 448 of
 // 598 (draft 596), the same 46 calls and control flow; allocation differs.
 // 2026-10-19 (run 33), from 477: canvas declared before work (the native's
 // sp+28 and sp+24): 455; the column's scroll written as frame * 8, which
@@ -36,11 +36,11 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -59,18 +59,18 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
-void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -90,7 +90,7 @@ extern char ResourceId_WhirlBeamSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
-extern const u16 gData_08197410[];         // gBattleFx_MoteCells
+extern const u16 gData_08197410[];         // gBattleEffect_MoteCells
 extern const s32 Data_081994a8[4];         // the early drops' drags
 extern u8 gData_02014000[];                // the spray sheet
 // The drops' lives: gMapCellBuffer's EffectSteps from their variant on.
@@ -112,7 +112,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 // buffer's 512 fly up from the target for the first 32 frames, with a
 // fountain of 256 at frame 28. The target is struck at frame 32 and pushed
 // back.
-void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
+void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -129,9 +129,9 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
   Func_0813ba50();
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  BattleFx_FetchRectangleBlitters(0, (void **)blitters);
+  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, gData_02014000,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
@@ -141,7 +141,7 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
 
   for (frame = 0; frame != OCEAN_FIST_FRAMES; frame++) {
@@ -159,7 +159,7 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
     }
     if (frame == 32) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
-      BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 0xf0000, 100);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0xf0000, 100);
     }
     if (frame == 38) {
       Func_081180e8(134);
@@ -214,7 +214,7 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
       if ((u32)spray->variant <= 17) {
         blitters[0](canvas, gData_02014000 + ((spray->variant / 3) << 11),
                     HI(spray->x) - 16, HI(spray->y) - 32, 32, 64);
-        BattleFxKernels_IntegrateVector2(spray, 62, -0x2000);
+        BattleEffectKernels_IntegrateVector2(spray, 62, -0x2000);
       }
       if (++spray->variant == 0) {
         spray->x = ((Random16() & 31) + target.x / 2 - 16) << 16;
@@ -263,9 +263,9 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
                         HI(drop->x) - size / 2, HI(drop->y) - size, size,
                         size * 2);
         if (frame > 31) {
-          BattleFxKernels_IntegrateVector2(drop, 62, 0x4000);
+          BattleEffectKernels_IntegrateVector2(drop, 62, 0x4000);
         } else {
-          BattleFxKernels_IntegrateVector2(drop, 62, Data_081994a8[i & 3]);
+          BattleEffectKernels_IntegrateVector2(drop, 62, Data_081994a8[i & 3]);
         }
         drop->variant++;
         if (drop->velocityY > 0 && (drop->y >> 16) > 104) {
@@ -290,8 +290,8 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

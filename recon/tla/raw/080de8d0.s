@@ -136,6 +136,6 @@ Func_080de8d0:
 .L_080de9e0:
 	.4byte gFrameCount
 .L_080de9e4:
-	.4byte BattleFx_SwayParticle
+	.4byte BattleEffect_SwayParticle
 .L_080de9e8:
-	.4byte gBattleFx_CommonParticleScript
+	.4byte gBattleEffect_CommonParticleScript

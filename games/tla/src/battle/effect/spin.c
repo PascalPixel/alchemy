@@ -10,8 +10,8 @@
 #include "types.h"
 #include "motobj.h"
 
-void BattleFx_SpinObject(struct MotionObject *object) {
+void BattleEffect_SpinObject(struct MotionObject *object) {
   object->angle += 0x1000;
 }
 
-void BattleFx_CallSpinEffect(void) { Func_080e3074(); }
+void BattleEffect_CallSpinEffect(void) { Func_080e3074(); }

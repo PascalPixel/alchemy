@@ -28,3 +28,8 @@ the units; this page says only what differs here.
 
 Functions not yet matched are drafts under `recon/tla/en/main`, by address.
 `make progress` gives the counts.
+
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`FixedPoint_`, `Math_`, `Palette_` and `Vector_`.

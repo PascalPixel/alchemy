@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunHail, effect kind 207: a spray of ice chips over a
+// Draft of BattleEffect_RunHail, effect kind 207: a spray of ice chips over a
 // rising wave.
 
 // On screen: a band of water five tiles wide rises 32 pixels from the
@@ -20,7 +20,7 @@
 // Teardown: the callback and both blitters are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunHail (kind 207 there
+// Port of The Broken Seal's BattleEffect_RunHail (kind 207 there
 // too), with The Lost Age's heap slots and callback order, no work->effect
 // store, and the canvas preparer's packed arguments: kind | side << 4 |
 // anchor << 5, with the screen point returned in a three-word array.
@@ -60,7 +60,7 @@
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_IceChipSheet;
 extern char ResourceId_MercuryDjinnSmallSheet;
-// The ice chip's four cels: ☀️'s gProjectiles_PelletOffsets,
+// The ice chip's four cels: ☀️'s gProjectileVolley_PelletOffsets,
 // gHail_CellWidths and gHail_CellHeights.
 extern const u16 Data_0819851c[];
 extern const u8 Data_08198513[];
@@ -68,19 +68,19 @@ extern const u8 Data_08198517[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void BattleFx_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 // Fetches the max and additive blitters, flipped or not.
-void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 // Closes the canvas layer.
-void BattleFx_EndCanvasLayer(void);
+void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
-// BattleEventRuntime_BeginPhase through its far call.
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
@@ -95,10 +95,10 @@ void EffectPosition_ProjectBattler(s32 id, s32 *position);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void BattleFx_RunHail(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screen[3];
@@ -113,14 +113,14 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   // Setup: the canvas, the blitter pair for the caster's side, the water.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleFx_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0815585c(effect, PREPARE(1, effect->side, 2), screen, otherPoint);
-  BattleFx_FetchRectangleBlitters(effect->side, blit);
+  BattleEffect_FetchRectangleBlitters(effect->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The chips start in a 16-pixel spread at the first target and fly up
   // at random, each to live 32 to 47 frames.
@@ -180,7 +180,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
                     HI(chip->x) - (width = Data_08198513[cel]) / 2,
                     HI(chip->y) - (height = Data_08198517[cel]) / 2, width,
                     height);
-        BattleFxKernels_IntegrateVector3(chip, 63, 0x1000);
+        BattleEffectKernels_IntegrateVector3(chip, 63, 0x1000);
       }
     }
 
@@ -215,8 +215,8 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

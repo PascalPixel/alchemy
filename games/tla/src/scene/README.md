@@ -35,6 +35,23 @@ Functions not yet matched are drafts under `recon/tla/en/overlays`, by
 overlay and address (`resource_64b_c_02002594.c`). `make progress` gives the
 counts.
 
+## Function prefixes
+
+Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
+`Actor_`, `Animation_`, `Camera_`, `Engine_`, `Event_`, `FieldEvent_`,
+`GameFlag_`, `Map_`, `Motion_`, `Object_`, `ObjectDispatch_`, `ObjectMotion_`,
+`OverlayObject_`, `Scene_`, `SceneActor_`, `SceneState_`, `Scheduler_`,
+`Vector_` and `Vram_`, with a place's name for its own events. Those only The
+Lost Age's code has so far:
+
+| Prefix | What it acts on |
+| --- | --- |
+| `FelixWake_` | the steps of the waking event in `idejima/wake.c` |
+| `StoryActor_` | the actors the world map's story scenes place |
+| `Exit_` | the exit the Gabomba Statue scene sets |
+| `Blend_`, `Frame_`, `Speed_` | writing the blend alpha, the frame count modulo 6, and setting an actor's speed |
+| `Mem_`, `Pool_`, `Words_` | allocating from a scene's memory pool, and copying words |
+
 ## Evidence and open questions
 
 - XXX: which functions several ⚓️ overlays carry as copies, as ☀️'s do in

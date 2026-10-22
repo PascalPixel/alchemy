@@ -141,7 +141,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
 
   created = 0;
   state = gMenuWork;
-  unit = UnitGetFar(owner);
+  unit = Unit_GetFar(owner);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
@@ -229,7 +229,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);
-    UnitCalcFar(owner);
+    Unit_CalculateFar(owner);
     UiText_DrawStatComparison(unit, backup, window);
     Owner_Copy(unit, backup);
     MemFree(backup);
@@ -505,7 +505,7 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// in it, hidden for now, as paneIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
-/// Menu_InitSelectorCursorAndEntries (the Status screen and the member
+/// Menu_InitializeSelectorCursorAndEntries (the Status screen and the member
 /// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
 /// figures.
 struct UiWindow *UiMenu_CreateCursor(void *source) {
@@ -571,7 +571,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
       figure->image.priority = 0;
       figure->flags = 0;
-      AnimationObjects_SelectAnimationFar(figure, 1);
+      AnimationObject_SelectAnimationFar(figure, 1);
     }
   }
   // Clear the unused party slots so the callback can skip them.

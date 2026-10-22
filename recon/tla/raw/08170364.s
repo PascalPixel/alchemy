@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Megaera (scene kind 14).
-	.global BattleFx_RunMegaera
+	.global BattleEffect_RunMegaera
 	.thumb_func
-BattleFx_RunMegaera:
+BattleEffect_RunMegaera:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,7 +26,7 @@ BattleFx_RunMegaera:
 	str r3, [sp, #72]
 	bl Func_0813ba50
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081703d4
 	movs r2, #128
 	lsls r2, r2, #19
@@ -37,7 +37,7 @@ BattleFx_RunMegaera:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #68]
-	bl BattleFx_FetchRectangleBlitters
+	bl BattleEffect_FetchRectangleBlitters
 	ldr r3, [sp, #80]
 	ldr r0, .L_081703dc
 	adds r1, r3, r6
@@ -212,7 +212,7 @@ BattleFx_RunMegaera:
 	adds r0, #240
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #0
@@ -263,7 +263,7 @@ BattleFx_RunMegaera:
 	movs r2, #2
 	str r3, [sp, #52]
 	str r6, [sp, #56]
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 .L_0817058a:
 	ldr r7, [sp, #76]
 	cmp r7, #108
@@ -286,7 +286,7 @@ BattleFx_RunMegaera:
 	movs r0, #11
 	lsls r1, r1, #2
 	movs r2, #2
-	bl BattleFx_SpawnObjects
+	bl BattleEffect_SpawnObjects
 .L_081705bc:
 	ldr r7, [sp, #76]
 	cmp r7, #107
@@ -371,7 +371,7 @@ BattleFx_RunMegaera:
 .L_08170654:
 	.4byte 0x0000017e
 .L_08170658:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0817065c:
 	.4byte Data_02010018
 .L_08170660:
@@ -623,7 +623,7 @@ BattleFx_RunMegaera:
 	adds r0, r5, #0
 	movs r1, #62
 	ldr r2, .L_081709c8
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 .L_0817085a:
 	adds r3, #1
@@ -780,7 +780,7 @@ BattleFx_RunMegaera:
 	adds r0, r5, #0
 	movs r1, #58
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	mov r7, r9
 	movs r3, #1
 	ands r3, r7
@@ -1143,7 +1143,7 @@ BattleFx_RunMegaera:
 .L_08170c54:
 	movs r0, #188
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -1196,7 +1196,7 @@ BattleFx_RunMegaera:
 	adds r0, r5, #0
 	movs r1, #62
 	lsls r2, r2, #7
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	ldr r3, [r5, #24]
 	adds r3, #1
 	str r3, [r5, #24]
@@ -1288,7 +1288,7 @@ BattleFx_RunMegaera:
 .L_08170d80:
 	.4byte gData_08197410
 .L_08170d84:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08170d88:
 	ldmia r5!, {r0}
 	bl ResourceObject_ReleaseFar
@@ -1297,7 +1297,7 @@ BattleFx_RunMegaera:
 	mov r6, r9
 	cmp r6, #11
 	bne .L_08170d88
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #124
 	pop {r3, r5, r6, r7}
 	mov r8, r3

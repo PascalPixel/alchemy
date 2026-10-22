@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Crystal (kind 244).
-	.global BattleFx_RunCrystal
+	.global BattleEffect_RunCrystal
 	.thumb_func
-BattleFx_RunCrystal:
+BattleEffect_RunCrystal:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -72,7 +72,7 @@ BattleFx_RunCrystal:
 	adds r0, r5, #0
 	bl Func_0816ae40
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #56]
 	movs r3, #1
 	ldr r1, [r2, #4]
@@ -116,7 +116,7 @@ BattleFx_RunCrystal:
 	bne .L_0816c388
 	movs r0, #104
 	movs r1, #3
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	b .L_0816c390
 	.2byte 0x0000
 .L_0816c368:
@@ -138,7 +138,7 @@ BattleFx_RunCrystal:
 .L_0816c388:
 	movs r0, #104
 	movs r1, #7
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 .L_0816c390:
 	ldr r3, [sp, #52]
 	movs r5, #192
@@ -253,7 +253,7 @@ BattleFx_RunCrystal:
 .L_0816c478:
 	.4byte 0x00001000
 .L_0816c47c:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816c480:
 	bl Render_ResetTransformState
 	ldr r1, [sp, #16]
@@ -529,7 +529,7 @@ BattleFx_RunCrystal:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -555,4 +555,4 @@ BattleFx_RunCrystal:
 .L_0816c6f0:
 	.4byte gData_08199210
 .L_0816c6f4:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

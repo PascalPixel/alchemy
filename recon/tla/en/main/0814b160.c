@@ -1,9 +1,9 @@
 // Near miss, differ 42 of 222 (effect kinds 41 and 354, the target markers).
 
-// ☀️ twin: BattleFx_RunCurse (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleEffect_RunCurse (games/tbs/src/effect/effect.c), shape
 // 0.771, structure 1.000. ⚓️'s changes: the effect argument read directly
 // (the dispatcher stores work->effect), the star cross sheet (directory row
-// 0x13b), the blitter from BattleFx_LoadBlitter(104, 0x23) (transparent, ⚓️ mode
+// 0x13b), the blitter from BattleEffect_LoadBlitter(104, 0x23) (transparent, ⚓️ mode
 // 2) and the transfer callback at 0xc80. ☀️ needs its family's blitter pair
 // for the frame (a FAKEMATCH tag there), and so does this one: as a single
 // DrawRectangle the frame is 4 bytes short (differ 170).
@@ -11,13 +11,13 @@
 // The frame slots and every instruction match. What is left is order: the
 // native loads the work slot before it sets the first argument, loads each
 // pool word (0x100, -0x7000) ahead of the register's address, sets r1
-// before r0 for BattleFx_LoadBlitter, and reloads its spills one row earlier in the
+// before r0 for BattleEffect_LoadBlitter, and reloads its spills one row earlier in the
 // marker loop.
 
 // Tried (differ):
 // the repository draft (local copy of the work struct)                44
 // the blitter flags in a local first                                  44
-// BattleFx_LoadBlitter declared returning s32 as ☀️'s LoadWork does          42
+// BattleEffect_LoadBlitter declared returning s32 as ☀️'s LoadWork does          42
 // ☀️'s slot form (slot = &battleFxWork[1]; canvas = slot[0];
 // work = slot[-1]; draw[0] = slot[2])                               48
 // greedy declaration-order scan, every local through every place     42
@@ -45,16 +45,16 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
 extern char ResourceId_StarCrossSheet; // directory row 0x13b
 
-void BattleFx_BeginCanvasLayer(s32 bgControl);
-void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase);          // ☀️ BattleEvent_BeginPhaseFar
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_BuildBlitter
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase);          // ☀️ BattleEvent_StartPhaseFar
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Audio_PlayCue(s32 cue);
 
 // A spinning star marks each target in turn, sixteen frames apart: a post
 // under the target and the star turning above it, each for 72 frames.
-void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
   /* FAKEMATCH: the family's blitter pair, as in ☀️: this effect loads only
@@ -72,7 +72,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   // right half of the field.
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleFx_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet, work->sheet, 1,
@@ -80,12 +80,12 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  BattleFx_LoadBlitter(HEAP_BLITTER,
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   work->transferMode = 1;
   work->transferValue = 0;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Each star starts at a random point in its turn.
   for (i = 0; i != effect->count; i++) {
@@ -130,7 +130,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  BattleFx_EndCanvasLayer();
+  BattleEffect_EndCanvasLayer();
 }

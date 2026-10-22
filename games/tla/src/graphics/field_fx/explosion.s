@@ -5,6 +5,6 @@
 @ palette 15, and the picture carries them. Overlays 685, 6a6 and 6a7 load
 @ the sheet too.
 	.section .rodata
-	.global FieldFx_Explosion
-FieldFx_Explosion:
+	.global FieldEffect_Explosion
+FieldEffect_Explosion:
 	.incbin "games/tla/src/graphics/field_fx/explosion.4bpp16x16.lz"

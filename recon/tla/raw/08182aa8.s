@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 @ Abilities: Coatlicue (scene kind 20).
-	.global BattleFx_RunCoatlicue
+	.global BattleEffect_RunCoatlicue
 	.thumb_func
-BattleFx_RunCoatlicue:
+BattleEffect_RunCoatlicue:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -28,7 +28,7 @@ BattleFx_RunCoatlicue:
 	mov r10, r3
 	bl Func_0813ba50
 	movs r0, #0
-	bl BattleFx_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_08179e6c
 	ldr r3, [sp, #72]
 	movs r4, #239
@@ -64,7 +64,7 @@ BattleFx_RunCoatlicue:
 	bne .L_08182b0a
 	movs r1, #19
 	movs r0, #104
-	bl BattleFx_LoadBlitter
+	bl BattleEffect_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -197,11 +197,11 @@ BattleFx_RunCoatlicue:
 .L_08182c24:
 	.4byte 0x00000000
 .L_08182c28:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_08182c2c:
 	.4byte 0x00000134
 .L_08182c30:
-	.4byte BattleFx_ArmPaletteHBlankDma
+	.4byte BattleEffect_ArmPaletteHBlankDma
 .L_08182c34:
 	.4byte Data_02014400
 .L_08182c38:
@@ -1334,7 +1334,7 @@ BattleFx_RunCoatlicue:
 	adds r0, r7, #0
 	ldr r2, .L_081835c8
 	movs r1, #63
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	mov r0, r10
 	ldrb r3, [r0, r6]
 	ldr r2, [r7, #4]
@@ -1845,7 +1845,7 @@ BattleFx_RunCoatlicue:
 	adds r0, r6, #0
 	movs r1, #64
 	movs r2, #0
-	bl BattleFxKernels_IntegrateVector3
+	bl BattleEffectKernels_IntegrateVector3
 	ldr r3, [r6, #8]
 	cmp r3, #0
 	bge .L_081838c8
@@ -2833,7 +2833,7 @@ BattleFx_RunCoatlicue:
 	adds r0, #240
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl BattleFx_SelectLivingTargets
+	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, .L_08184274
@@ -3001,7 +3001,7 @@ BattleFx_RunCoatlicue:
 	adds r0, r7, #0
 	ldr r2, .L_08184298
 	movs r1, #63
-	bl BattleFxKernels_IntegrateVector2
+	bl BattleEffectKernels_IntegrateVector2
 	mov r0, r10
 	ldrb r3, [r0, r6]
 	ldr r2, [r7, #4]
@@ -3074,7 +3074,7 @@ BattleFx_RunCoatlicue:
 .L_08184270:
 	.4byte 0x050001e8
 .L_08184274:
-	.4byte BattleFx_ArmPaletteHBlankDma
+	.4byte BattleEffect_ArmPaletteHBlankDma
 .L_08184278:
 	.4byte gCameraSceneParameters
 .L_0818427c:
@@ -3235,7 +3235,7 @@ BattleFx_RunCoatlicue:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_081843f8
 	bl Scheduler_RemoveCallback
-	bl BattleFx_EndCanvasLayer
+	bl BattleEffect_EndCanvasLayer
 	add sp, #164
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -3255,4 +3255,4 @@ BattleFx_RunCoatlicue:
 .L_081843f4:
 	.4byte 0xffff0000
 .L_081843f8:
-	.4byte BattleFx_ProcessPendingGraphicsTransfer
+	.4byte BattleEffect_ProcessPendingGraphicsTransfer

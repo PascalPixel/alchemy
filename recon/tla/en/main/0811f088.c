@@ -45,7 +45,7 @@ extern char MsgPsynergyBlocked;
 
 s32 ArcTan2(s32 x, s32 y);
 void Object_SetMode(struct MotionObject *object, s32 mode);
-void PartyStatusDrawFar(s32 flags);
+void PartyStatus_DrawFar(s32 flags);
 void *Func_0811e3ac(struct BattlePlan *plan,
                     struct BattlePresentationWork *work);
 void Func_0811e7dc(void *saved);
@@ -76,7 +76,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
       transition->targetYaw = 0x5000;
     transition->frames = 60;
   } else {
-    struct MotionObject *actor = BattleObjGet(plan->actorId)->object;
+    struct MotionObject *actor = BattleObject_Get(plan->actorId)->object;
     u32 target = plan->targetIds[0];
     u32 actorId = plan->actorId;
     s32 angle = (u16)ArcTan2(actor->x, actor->z);
@@ -107,9 +107,9 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
     work.flags = 1;
   heap = Ram_HeapSlots;
   BattlePres_SetActorModes(0, 0);
-  PartyStatusDrawFar(heap->battleWork->partyStatus & ~1);
+  PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);
-  object = BattleObjGet(work.actor)->object;
+  object = BattleObject_Get(work.actor)->object;
   Object_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   Audio_PlayCue(154);
@@ -124,7 +124,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
 
   for (targetIndex = 0; targetIndex != work.count; targetIndex++) {
     struct CastAnimation *animation =
-        GetMotionRecord(BattleObjGet(work.actors[targetIndex])->object, 0);
+        GetMotionRecord(BattleObject_Get(work.actors[targetIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
@@ -133,12 +133,12 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattleEvPush(0, plan->actorId);
-      BattleEvPush(4, (u32)&MsgPsynergyBlocked);
+      BattleEvent_Push(0, plan->actorId);
+      BattleEvent_Push(4, (u32)&MsgPsynergyBlocked);
     } else {
-      BattleEvPush(4, (u32)&MsgCastLacksPp);
+      BattleEvent_Push(4, (u32)&MsgCastLacksPp);
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     Func_0812756c();
   } else {
     if (((s32 *)plan)[25] == 0)

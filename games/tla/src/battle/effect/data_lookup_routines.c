@@ -11,7 +11,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 
-#define BattleFx_GetResourceGroup ((s32 (*)(s32))BattleFx_GetResourceGroup)
+#define BattleEffect_GetResourceGroup ((s32 (*)(s32))BattleEffect_GetResourceGroup)
 
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 
@@ -109,7 +109,7 @@ extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
   s32 areaNameIndex = 0;
-  s32 group = BattleFx_GetResourceGroup(scene);
+  s32 group = BattleEffect_GetResourceGroup(scene);
 
   while (entry->id != -1) {
     if (entry->useSceneId) {

@@ -238,7 +238,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   s32 velocity[3];
 
   // Start above the room with movement disabled until the fall begins.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -256,23 +256,23 @@ static void BabiLighthouse_LandWithParticles(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
-  options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
+  options.update = (void (*)(union FieldObject *))FieldEffect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (particle = 0; particle < 17; particle++) {
     SET_VECTOR(velocity, Engine_MathCos(particle << 12), 0,
                Engine_MathSin(particle << 12));
     velocity[0] += velocity[0] / 2;
-    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                  velocity[0], velocity[1], velocity[2],
-                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                      EFFECT_USE_PALETTE | 1,
-                  &options);
+    FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
+                      &options);
   }
   Engine_AudioPlayCue(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
   Map_SetShake(0x50000, 0x50000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
@@ -289,7 +289,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   struct FieldActor *leader;
 
   // Start above the room with movement disabled until the fall begins.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -364,7 +364,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   if (((leader->x.fixed >> 20) == 6 || (leader->x.fixed >> 20) == 18) &&
       (leader->z.fixed >> 20) == 20) {
     leader->targetX = ACTOR_NO_TARGET;
@@ -393,7 +393,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
 
 /// Walking into one of the pillars at the Babi Lighthouse Entry pushes it.
 static void BabiLighthouse_PushLedgePillar(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   StagedActor_AdvancePair();
   BabiLighthouse_JumpFromLedge();
   Engine_EventEnd();
@@ -436,7 +436,7 @@ static void BabiLighthouse_JumpIntoPit(void) {
 /// Walking south into the east pit of BabiLighthouseLuff's west room: the
 /// leader jumps in and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomEastPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   BabiLighthouse_JumpIntoPit();
   Engine_EventRequestExit(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST);
   Engine_EventEnd();
@@ -445,7 +445,7 @@ static void BabiLighthouse_DropFromWestRoomEastPit(void) {
 /// Walking south into the pit of BabiLighthouseLuff's east room: the pit mask
 /// is placed by it, and the leader jumps in and drops into the south room.
 static void BabiLighthouse_DropFromEastRoomPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   OverlayObject_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
   BabiLighthouse_JumpIntoPit();
   Engine_EventRequestExit(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
@@ -456,7 +456,7 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
 /// the pit mask and a capped pillar are placed by it, and the leader jumps in
 /// and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   OverlayObject_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
   OverlayObject_PrepareObject(PIXELS(121), 0, PIXELS(286),
                               SPRITE_CAPPED_PILLAR);
@@ -469,7 +469,7 @@ static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
 /// Walking south into the northwest pit of BabiLighthouseLuff's west room: the
 /// leader jumps in and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   BabiLighthouse_JumpIntoPit();
   Engine_EventRequestExit(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST);
@@ -478,8 +478,8 @@ static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
 
 /// Searching the locked door in BabiLighthouseLuff. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_EventStart();
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgBabiSeemsLocked, 1);
   Engine_EventEnd();
 }
@@ -489,7 +489,7 @@ static void BabiLighthouse_InspectLockedDoor(void) {
 static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
   struct FieldActor *leader;
 
-  Engine_ActorSetAnimation(actorId, ANIM_WALK);
+  Engine_ActorSetAnimation(actorId, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
@@ -506,7 +506,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -525,7 +525,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Camera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Engine_EventWait(10);
@@ -558,11 +558,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA,
+                                  ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Engine_EventWait(20);
@@ -585,18 +586,18 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   // The party learns where the kidnappers went and is asked to pursue them.
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -611,7 +612,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Engine_EventWait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     gEventWork->message++;
@@ -619,7 +620,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
     Event_ShowMessage(ACTOR_IODEM, 0);
@@ -646,7 +647,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
@@ -654,13 +655,13 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_OpenMessage(ACTOR_FARAN, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_FARAN, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
     Event_ShowMessage(ACTOR_FARAN, 0);
@@ -682,7 +683,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -695,13 +696,13 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_OpenMessage(ACTOR_IODEM, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Engine_EventWait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
     Event_ShowMessage(ACTOR_IODEM, 0);
@@ -709,7 +710,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
   Engine_EventWait(35);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(40);
@@ -717,14 +718,14 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_EventWait(10);
   Engine_ActorFaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA,
                             50);
-  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x10000, 0x8000);
   Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 0x10000, 0x8000);
@@ -734,7 +735,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 16, 0);
   Actor_WalkTo(ACTOR_WORRIED_FOR_SHEBA, 344, 312);
   Actor_WalkToAndWait(ACTOR_DOUBTING_THE_DOOR, 344, 336);
-  Engine_ActorSetAnimation(ACTOR_WORRIED_FOR_SHEBA, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WORRIED_FOR_SHEBA, ANIMATION_STAND);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Engine_EventWait(10);
@@ -768,7 +769,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
 static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiTheDoor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -834,7 +835,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -850,19 +851,19 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_CameraFollowActor(ACTOR_IODEM, 1);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -32);
@@ -871,7 +872,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   BabiLighthouse_CloseTruthDoor();
   GameFlag_Clear(FLAG_BEYOND_DOOR);
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -898,7 +899,8 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA,
+                                  ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
@@ -917,7 +919,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
@@ -955,12 +957,12 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   // Iodem and Faran agree to stay behind and leave the rescue to the party.
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -975,7 +977,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Engine_EventWait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     gEventWork->message++;
@@ -983,7 +985,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
     Event_ShowMessage(ACTOR_IODEM, 0);
@@ -992,7 +994,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(15);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
@@ -1001,7 +1003,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
@@ -1018,10 +1020,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   // The companions walk back into the leader.
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
@@ -1065,7 +1067,7 @@ static void BabiLighthouse_OpenTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
     Engine_AudioPlayCue(SE_GATE_MOVE);
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetDestination(ACTOR_LEFT_DOOR, 280, 240);
     Actor_SetDestination(ACTOR_RIGHT_DOOR, 328, 240);
     Engine_ActorWaitForMove(ACTOR_LEFT_DOOR);
@@ -1084,7 +1086,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
     GameFlag_Clear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
     Engine_AudioPlayCue(SE_GATE_MOVE);
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetDestination(ACTOR_LEFT_DOOR, 296, 240);
     Actor_SetDestination(ACTOR_RIGHT_DOOR, 312, 240);
     Engine_ActorWaitForMove(ACTOR_LEFT_DOOR);
@@ -1105,7 +1107,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (work->revealActive != 0) {
     if (Engine_GameFlagIsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 
@@ -1519,18 +1521,18 @@ s32 gStagedActor_FootprintBounds[] = {
 };
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {

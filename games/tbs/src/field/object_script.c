@@ -72,7 +72,7 @@ const s32 gObjectDispatch_EndScript[] = {
 const ScriptCommand gScriptObject_CommandTable[47] = {
     Script_Wait,                       // 0x00 SC_WAIT
     Script_WaitForArrival,             // 0x01 SC_SYNC
-    Script_SetPositionAndResetMotion,  // 0x02 SC_POS
+    Script_SetPositionAndResetMotion,  // 0x02 SC_POSITION
     Script_ApplyAbsolutePosition,      // 0x03 SC_MOVE
     Script_ApplyRelativePosition,      // 0x04 SC_MOVE_BY
     Script_StoreAngleToLinkedObject,   // 0x05 SC_FACE_LINK

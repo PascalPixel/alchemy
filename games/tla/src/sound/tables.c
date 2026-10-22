@@ -34,7 +34,7 @@ void MusicTrack_ReleaseKey(void);
 void AudioEngine_SetPcmRate(void);
 void MusicTrack_Stop(void);
 void MusicPlayer_StepFade(void);
-void MusicTrack_CalcOutput(void);
+void MusicTrack_CalculateOutput(void);
 void SoundNote_Detach(void);
 void SoundDriver_ClearBuffer(void);
 
@@ -96,7 +96,7 @@ const SoundFunc gSound_CommandTableTemplate[] = {
     AudioEngine_SetPcmRate,
     MusicTrack_Stop,
     MusicPlayer_StepFade,
-    MusicTrack_CalcOutput,
+    MusicTrack_CalculateOutput,
     SoundNote_Detach,
     SoundDriver_ClearBuffer
 };

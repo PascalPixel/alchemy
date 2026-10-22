@@ -193,9 +193,9 @@ s32 Shop_OpenDebugShop(s32 unused) {
   Inventory_EquipFar(
       ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | ITEM_MURAMASA));
   Inventory_AddItemFar(IVAN, ITEM_BONE);
-  UnitGetFar(MIA)->poison = 1;
-  UnitGetFar(JENNA)->poison = 1;
-  UnitGetFar(IVAN)->haunt = 1;
+  Unit_GetFar(MIA)->poison = 1;
+  Unit_GetFar(JENNA)->poison = 1;
+  Unit_GetFar(IVAN)->haunt = 1;
   Shop_Run(SHOP_DEBUG_STOCK_ROW, 0x1e);
   return 0;
 }
@@ -225,7 +225,7 @@ void UiMessage_ShowAndWait(s32 messageId) {
   // A shared message-resolution inline added four bytes to each dialogue caller
   // in the English native build; both callers retain their direct resolution.
   struct ShopRuntime *shop = gMenuWork;
-  s32 portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
+  s32 portraitResource = FieldEffect_GetResourceIdFar(shop->keeperResource);
   s32 resolvedMessage = messageId;
   s8 shopType;
 
@@ -260,7 +260,7 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->active;
   resolvedMessage = messageId;
-  portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
+  portraitResource = FieldEffect_GetResourceIdFar(shop->keeperResource);
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_ARMOR) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;

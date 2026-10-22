@@ -12,7 +12,7 @@ static inline void MapCopyAttr(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 }
 
 void Func_02000924(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   MapCopyAttr(10, 19, 1, 1, 11, 19);
   Func_02000ca8(22, 0, 0);
@@ -21,7 +21,7 @@ void Func_02000924(void) {
 }
 
 void Func_02000960(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   MapCopyAttr(25, 20, 1, 1, 26, 20);
   Func_02000ca8(23, 0, 0);
@@ -30,7 +30,7 @@ void Func_02000960(void) {
 }
 
 void Func_020009a0(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   MapCopyAttr(28, 23, 1, 1, 29, 23);
   Func_02000ca8(24, 0, 0);
@@ -39,7 +39,7 @@ void Func_020009a0(void) {
 }
 
 void Func_020009e0(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   MapCopyAttr(17, 11, 1, 1, 18, 11);
   Func_02000ca8(25, 0, 0);
@@ -48,7 +48,7 @@ void Func_020009e0(void) {
 }
 
 void Func_02000a20(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   MapCopyAttr(30, 17, 1, 1, 31, 17);
   Func_02000ca8(26, 0, 0);
@@ -57,7 +57,7 @@ void Func_02000a20(void) {
 }
 
 void Func_02000a5c(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   MapCopyAttr(16, 23, 1, 1, 17, 23);
   Func_02000ca8(31, 0, 0);

@@ -338,7 +338,7 @@ Game_Run:
 	adds r3, r3, r1
 	strh r2, [r3]
 	movs r0, #0
-	bl BattleFx_LoadResourceGroup
+	bl BattleEffect_LoadResourceGroup
 	adds r0, r6, #0
 	bl Field_RunScene
 	bl Scene_TakeExit

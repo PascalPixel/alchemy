@@ -12,7 +12,7 @@ Owner_LevelUp:
 	push {r7}
 	adds r6, r1, #0
 	mov r11, r0
-	bl UnitGet
+	bl Unit_Get
 	mov r10, r0
 	movs r0, #44
 	bl Runtime_BumpAllocateAlternatePool
@@ -283,7 +283,7 @@ Owner_LevelUp:
 	mov r0, r11
 	bl Unit_RefreshPsynergy
 	mov r0, r11
-	bl UnitCalc
+	bl Unit_Calculate
 .L_080afb6a:
 	mov r0, r9
 	bl MemFree

@@ -30,7 +30,7 @@ extern u8 Msg04673[], Msg04674[], Msg04666[];
 // Message 607, item 0's name: item names follow it in item order.
 extern u8 Msg00607[];
 
-struct ShopUnit *UnitGet(s32 unitId);
+struct ShopUnit *Unit_Get(s32 unitId);
 void RenderOutput_RedrawSavedRectFar(void *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
@@ -41,7 +41,7 @@ s32 Shop_GetSellPrice(s32 item);
 
 void Shop_DrawSellItem(void *window, s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = UnitGet(unitId);
+  struct ShopUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
   s32 item;
   s32 quantity;

@@ -14,7 +14,7 @@ void Func_08122c18(void) {
   Dma_Set(0, 0, 0x84000000, (volatile u32 *)0x040000d4);
 }
 
-void BattleEventRuntime_BeginPhase(s32 cue) {
+void BattleEventRuntime_StartPhase(s32 cue) {
   struct BattleEventState *ev;
 
   ev = &Ram_HeapSlots->battleWork->events;

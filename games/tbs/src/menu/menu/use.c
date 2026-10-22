@@ -30,7 +30,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct BattleUnit *unit;
   struct ItemDefinition *item;
 
-  unit = UnitGetFar(ownerId);
+  unit = Unit_GetFar(ownerId);
   menu = gMenuWork;
   itemId = ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
@@ -59,10 +59,11 @@ s32 Item_ReturnOne(void) { return 1; }
 /// effectId, used by member sourceId, to targetId, or to every member when the
 /// action's range is ABILITY_RANGE_ALL. Item_Use passes fixedScale 1, the
 /// action's plain power; the Psynergy screen 0, which scales HP healing by the
-/// user's Power in the action's element (BattleRecoveryCalc). Leaves the result
-/// message in the work's messageOffset, counted from MsgItemUseResult ("You
-/// recovered all HP!"). Returns 0 after recalculating every member, or -1 when
-/// nothing changed.
+/// user's Power in the action's element (Battle_CalculateRecoveryFar). Leaves
+/// the result message in the work's messageOffset, counted from
+/// MsgItemUseResult
+/// ("You recovered all HP!"). Returns 0 after recalculating every member, or -1
+/// when nothing changed.
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct BattleAct *effect;
@@ -78,16 +79,16 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   s32 amount;
   s32 messageOffset;
 
-  effect = BattleActGet(effectId);
+  effect = BattleAction_Get(effectId);
   menu = gMenuWork;
   changed = 0;
   messageOffset = 0;
   partyResultShown = 0;
 
   if (targetId != MENU_TARGET_WHOLE_PARTY)
-    target = UnitGetFar(targetId);
+    target = Unit_GetFar(targetId);
   else
-    target = UnitGetFar(0);
+    target = Unit_GetFar(0);
 
   /* FAKEMATCH(dead): a test that is never true (partyResultShown is still
    * 0), which emits nothing but loads effect->range ahead of the loop's count
@@ -99,7 +100,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == ABILITY_RANGE_ALL) {
       targetId = menu->ownerIds[targetIndex];
-      target = UnitGetFar(targetId);
+      target = Unit_GetFar(targetId);
     }
 
     // The ability kind first; the result messages are enum ItemUseResult.
@@ -110,12 +111,12 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         if (effect->element != ELEMENT_NONE) {
           s32 elementIndex;
 
-          caster = UnitGetFar(sourceId);
+          caster = Unit_GetFar(sourceId);
           elementIndex = effect->element;
           elementPower = caster->element[elementIndex].power;
         } else
           elementPower = 100;
-        amount = BattleRecoveryCalc(amount, elementPower, 0x100);
+        amount = Battle_CalculateRecoveryFar(amount, elementPower, 0x100);
       }
 
       if (target->hp <= 0) {
@@ -135,7 +136,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           } else if (partyResultShown == 0) {
             messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
           }
-          UnitRatioFar(targetId);
+          Unit_UpdateRatiosFar(targetId);
           changed = 1;
           if (effect->range == ABILITY_RANGE_ALL) {
             partyResultShown = 1;
@@ -181,13 +182,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         break;
       case ABILITY_APPLE:
         target->baseAttack += amount + randomAdjust;
-        UiWork_PushValueSlotFar(3, MSG_ARG_NUMBER);
+        UiWork_PushValueSlotFar(3, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = ITEM_USE_RESULT_ATTACK_UP;
         changed = 1;
         break;
       case ABILITY_HARD_NUT:
         target->baseDefense += amount + randomAdjust;
-        UiWork_PushValueSlotFar(4, MSG_ARG_NUMBER);
+        UiWork_PushValueSlotFar(4, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = ITEM_USE_RESULT_DEFENSE_UP;
         changed = 1;
         break;
@@ -208,7 +209,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
         if (effect->range == ABILITY_RANGE_ALL) {
           partyResultShown = 1;
@@ -244,7 +245,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
       }
       break;
@@ -262,7 +263,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
       }
       break;
@@ -270,7 +271,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
         target->hp = target->maxHp;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
@@ -285,7 +286,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->maxHp / 2;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
@@ -296,7 +297,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
         target->hp = target->maxHp * 7 / 10;
-        UnitRatioFar(targetId);
+        Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
@@ -326,7 +327,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   }
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++)
-    UnitCalcFar(menu->ownerIds[targetIndex]);
+    Unit_CalculateFar(menu->ownerIds[targetIndex]);
   menu->messageOffset = messageOffset;
   return 0;
 }
@@ -351,7 +352,7 @@ void Ability_PlayUseAnimation(s32 action) {
   u32 targetType;
   struct BattleAct *actionDefinition;
 
-  actionDefinition = BattleActGet(action);
+  actionDefinition = BattleAction_Get(action);
   animationType = ABILITY_KIND_MASK & actionDefinition->flags;
   switch (animationType) {
   case ABILITY_KIND_HEAL_HP:

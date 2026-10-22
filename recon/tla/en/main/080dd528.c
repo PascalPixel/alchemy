@@ -1,4 +1,4 @@
-// Near miss, differ 8 of 120 (2026-10-18): ☀️'s BattleFx_StartItemBreak with
+// Near miss, differ 8 of 120 (2026-10-18): ☀️'s BattleEffect_StartItemBreak with
 // ⚓️'s objects 278 and 673, a direct cue and Object_SetMode. Left: order
 // only. The native loads the source's x and y before it finishes the angle
 // (adds r5, r3, r0; movs r3, #192 after the loads), and loads the angle
@@ -15,11 +15,11 @@ extern const s32 gData_080f0e78[];
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
-void BattleFx_UpdateItemBreakFragment(void);
+void BattleEffect_UpdateItemBreakFragment(void);
 
 #define SE_ITEM_BREAK 138
 
-void *BattleFx_StartItemBreak(void *object) {
+void *BattleEffect_StartItemBreak(void *object) {
   struct ObjectRuntime *source = object;
   struct ObjectRuntime *parent;
   struct ObjectRuntime *child;
@@ -36,7 +36,7 @@ void *BattleFx_StartItemBreak(void *object) {
     return 0;
   parent->scaleY = 0x4000;
   parent->scaleX = 0x4000;
-  parent->update = BattleFx_UpdateItemBreakFragment;
+  parent->update = BattleEffect_UpdateItemBreakFragment;
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;

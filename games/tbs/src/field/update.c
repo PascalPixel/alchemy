@@ -22,8 +22,8 @@ extern struct ScriptMotionObject *gObjectSlots;
 
 // Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
-s32 IwramSqrtFarArm(s32 value);
-s32 IwramRatioMulQ14FarArm(s32 divisor, s32 value);
+s32 Iwram_SqrtFarArm(s32 value);
+s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
 
 /// Advances the eight script-driven objects by one frame. For each live one:
 /// run its hook, then its script (unless it waits or is paused); steer it
@@ -150,14 +150,14 @@ void Object_UpdateAll(void) {
         deltaX = object->velocityX;
         deltaZ = object->velocityZ;
         distance =
-            IwramSqrtFarArm(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
+            Iwram_SqrtFarArm(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
             << 8;
         if (distance != 0) {
           if (distance - object->acceleration < 0) {
             object->velocityX = 0;
             object->velocityZ = 0;
           } else {
-            speedRatio = IwramRatioMulQ14FarArm(
+            speedRatio = Iwram_RatioMulQ14FarArm(
                 distance, distance - object->acceleration);
             object->velocityX = MulQ16(deltaX, speedRatio);
             object->velocityZ = MulQ16(deltaZ, speedRatio);

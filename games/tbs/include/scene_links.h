@@ -384,11 +384,11 @@ enum {
   VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS =
       7, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
          ///< him on the stormy night (its render)
-  VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS =
+  VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR =
       8, ///< ★ Named from what the player sees: Vale's inn, with its
          ///< innkeeper's counter and the stairs up to the guest room (its
          ///< render)
-  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS =
+  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
          ///< him on the stormy night (its render)
   VALE_INTERIORS_INN_FROM_VALE_STORM_WEST = 11,
@@ -413,16 +413,16 @@ enum {
   VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS =
       7, ///< ★ Named from what the player sees: the upper floor the stairs
          ///< climb to, the inn's guest room or Isaac's bedroom (its render)
-  VALE_INTERIORS_INN_INN_TO_DOWNSTAIRS =
+  VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR =
       8, ///< ★ Named from what the player sees: the ground floor at the foot of
          ///< the stairs (its render)
-  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS =
+  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: the ground floor at the foot of
          ///< the stairs (its render)
   VALE_INTERIORS_INN_TO_VALE_STORM_WEST = 10,
   VALE_INTERIORS_INN_TO_VALE_STORM_EAST = 11,
   VALE_INTERIORS_INN_TO_BABI_PALACE = 19,
-  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA =
+  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA =
       20, ///< ★ Named from what the player sees: the ground floor at the foot
           ///< of the stairs (its render)
   VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA =

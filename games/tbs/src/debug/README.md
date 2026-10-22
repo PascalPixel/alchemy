@@ -1,46 +1,45 @@
 # Debug rooms
 
-The finished game still holds three test rooms: one that hands out Djinn, one
-for levels and for browsing items, icons and letters, and one full of shop and
-message tests.
+The ROM keeps three test rooms, each an ordinary scene overlay: one that hands
+out Djinn, one for levels and for browsing items, icons and letters, and one
+of shop and message tests. They are built exactly as [Scenes](../scene/README.md)
+describes, with the same entry, import and event tables, and are the smallest
+complete examples of one.
 
-No exit, table or code of the game leads to them. The only way in is the
-debug scene selector (`Menu_RunSelection`, in
-[debug.c](../window/battle_command/debug.c)), which picks any scene and
-entrance by number and opens from the Start menu with B held, but only while
-`gDebugMode` is set. The only code that turns it on is the sprite viewer,
-`Ui_RunIconMonitor`, and the only thing that leads there is a bare far-call
-veneer at the end of `FIELD.S`, which no code names. XXX: likely the retail
-game never turns debug mode on, because nothing else writes `gDebugMode` but
-the reset to 0 at start-up. [Unused](../../unused.md) has the scene the
-selector reaches that nothing else does.
+## How the rooms are reached
 
-The rooms themselves are complete, though. Each is an ordinary scene overlay,
-put together exactly like a town or a dungeon in [Scenes](../scene/README.md)
-and loaded like every other overlay in [System](../system/README.md), so
-they're also a compact look at how a scene is built.
+No exit, table or code of the game leads to them. Ten rows at the end of the
+scene table (`games/tbs/src/field/scenes.s`) run them: `TestRoom0` to
+`TestRoom7` all run the Djinn room's overlay, each on its own map, and
+`IncreaseItemAndLevel` and `MenuTest` run the other two. The only way in is
+the debug scene selector, `Menu_RunSelection`
+([debug.c](../window/battle_command/debug.c)), which warps to any scene and
+entrance by number. `Field_RunScene` opens it when the Start menu is opened
+with B held, and only while `gDebugMode` is set.
 
-## The rooms and their files
+Nothing but start-up (`gDebugMode = 0` in `runtime/runtime/system.c`) and the
+sprite viewer, `Ui_RunIconMonitor` (`field/field/sprite_viewer.c`), writes
+`gDebugMode`, and the sprite viewer is reached only through a far-call veneer
+at the end of `system/far_call/FIELD.S` that no code names. XXX: likely the
+retail game never turns debug mode on, for that reason; a caller of the veneer
+would show otherwise. [Unused](../../unused.md#debug-scenes) explains why the
+rooms count as reachable rather than unused.
+
+## Files
 
 | Overlay | Files | What the room holds |
 | --- | --- | --- |
-| 0x3cc | `rooms.c` | four Djinn, one of each element, to receive and test |
-| 0x3cd | `level.c`, [`level.h`](level.h) | level changes for the party, an item, icon and glyph browser, emote and motion tests |
-| 0x3ce | `test.c`, `menu_test.h` | message browsers for every shop, shop and inventory tests, test stock and the name editor |
-| | `entry/<room>.s` | the functions the scene loader calls (the room's entrances, exits, placements and events) |
-| | `import/<room>.s` | the main-image functions the room calls |
-| | `swatch.png` | the colour swatches and letters of the debug palette editor |
+| `0x3cc` | `rooms.c` | four Djinn, one of each element |
+| `0x3cd` | `level.c`, `level.h` | level changes for the party; item, icon, glyph and ability browsers; emote and Force tests |
+| `0x3ce` | `test.c`, `menu_test.h` | message browsers for every shop, shop and inventory tests, test stock and the name editor |
+| | `entry/<room>.s`, `import/<room>.s` | each room's entry and import tables |
+| | `swatch.png` | the debug palette editor's colour swatches and letters |
 
-An overlay is a block of code the game copies into RAM only while it's needed,
-and the scene table names which overlay each scene runs. Link order is in
-`games/tbs/objects.tsv`, from `debug/entry/rooms`. The unit headers are in
-`games/tbs/include/unit/debug/`, and [`level.h`](level.h) and `menu_test.h`
-here hold each room's private declarations.
-
-`swatch.png` isn't part of a room. It belongs to the palette editor in the
-main image (`Debug_RunPaletteEditor`, `object/object/palette_editor.c`), which
-opens with L on the pause menu in debug mode; `object/swatch.s` places the
-picture as `gDebug_PaletteSwatchTiles`.
+`swatch.png` is not part of a room: `object/swatch.s` places it in the main
+image as `gDebug_PaletteSwatchTiles` for `Debug_RunPaletteEditor`
+(`object/object/palette_editor.c`), which opens with L on the Start menu in
+debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
+`games/tbs/include/unit/debug/`.
 
 ## Function prefixes
 
@@ -49,116 +48,99 @@ picture as `gDebug_PaletteSwatchTiles`.
 | `TestRooms_` | the Djinn room (`rooms.c`) |
 | `ItemLevel_` | the level and browser room (`level.c`) |
 | `MenuTest_`, `DebugMenu_` | the message and shop test room (`test.c`) |
-| `SceneData_`, `Scene_`, `FieldScene_`, `Engine_` | scene entry points and engine calls every scene shares |
+| `SceneData_`, `Scene_`, `FieldScene_`, `CommandTable_` | the setup and region entries, which keep older names; the other four entries take the room's prefix (`TestRooms_GetEvents`) |
 
-## How the rooms are built
+## Design
 
-Each room has the three pieces every scene has. `entry/<room>.s` is its entry
-table, the six functions the field engine calls to ask a scene for its setup,
-entrances, exits, placements, events and exit regions. The entrance, exit,
-placement and event tables are what every scene hands the loader, and here
-they come from each room's `*_Get*` functions. The room's C file answers them,
-and `import/<room>.s` lists the functions of the main image the room calls;
-the Djinn room needs only `Djinn_JoinParty` and `Engine_GameFlagClear`. None
-of the rooms has exit regions, so each answers that one with
-`SceneData_ReturnZero`.
+### Setup on every visit
 
-The rooms' messages are linker symbols, like every message in the game, with
-their text in the PO catalogs in `games/tbs/text`. Where a function takes an
-owner, that's a party member's number, as in `games/tbs/src/game`.
-
-The setup entry runs every time the party walks in. The Djinn room's
-(`Scene_RunEmptyScene`) has nothing to do. The level room's
+Each room's setup entry, its first, runs every time the party walks in. The
+Djinn room's (`Scene_RunEmptyScene`) does nothing. The level room's
 (`FieldScene_RunEntrySetup`) draws the level editor 1.6 times its size (1.7 in
-Japanese) and, outside Japanese, starts the emote testers' animations. The
-menu test room's (`CommandTable_ConfigureCommandList`) builds its test party
-on every visit: Jenna leaves, Garet, Mia and Ivan join, the shops' counters
-for their rare weapons and armour go up, and everyone is raised to level 30
-(Isaac to 50 outside Japanese). In Japanese the party's coins are also set to
-777777. So each visit adds to the shops' stock again, but a later visit only
-changes a level that is still below 30, because `Unit_LevelUpTo` only ever
-raises one.
+Japanese) and, outside Japanese, starts the emote testers' animations. The menu
+test room's (`CommandTable_ConfigureCommandList`) builds a test party: Jenna
+leaves, Garet, Mia and Ivan join, the shops' counters for their rare weapons
+and armour go up, and everyone is raised to level 30, Isaac to 50 outside
+Japanese; in Japanese the coins are set to 777777. Each visit therefore adds to
+the shops' stock again, but changes a level only if it is still below the
+target, because `Unit_LevelUpTo` only ever raises one. None of the rooms has
+exit regions, so each answers that entry with `SceneData_ReturnZero`.
 
 ### The Djinn room
 
-Flint, Fizz, Forge and Gust stand in the room, one Djinni of each element, as
-actors 8 to 11. Each is placed only while its caught flag is clear. Talking to
-one gives it to the party the normal way, through `Djinn_JoinParty`, which
-plays the element's capture effect and hands Djinni 0 of that element to the
-member with the fewest Djinn. Then the room clears the flag again, so the
-Djinni is back the next time the party walks in.
+Flint, Fizz, Forge and Gust stand as actors 8 to 11, each placed only while its
+Djinni's flag is clear. Talking to one calls `Djinn_JoinParty`, the same call
+the game uses, which plays the element's capture effect and gives that
+element's first Djinni to the member with the fewest Djinn. The room then
+clears the flag again (`Engine_GameFlagClear`), so the Djinni is placed again
+on the next visit. Those two calls are the room's whole import table.
 
 ![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
 
 ### The level room
 
-The room's actors are numbered from 8: 8 is the item browser, 9 the icon
-browser, 10 the glyph browser and the target of the Force tests, and 11 the
-level editor. Outside Japanese, 12 is the ability browser and 13 and 14 test
-emotes. The level editor shows the leader's name and level under
-`Raise everyone's level.`, and raises the whole party by five levels with
-Start or Select, or by one with A. The item browser steps through the
-`ITEM_COUNT` item numbers, 0 to 269, one at a time with Up and Down,
-`BROWSER_ROW_STEP` (ten) with Right and Left and `BROWSER_PAGE_STEP` (thirty)
-with R and L. It skips numbers whose item has no icon and gives the chosen
-item to the first member with room.
+Actor 8 is the item browser, 9 the icon browser, 10 the glyph browser and 11
+the level editor; outside Japanese, 12 is the ability browser and 13 and 14
+test emotes. The level editor shows the leader's name and level under
+`Raise everyone's level.`, and raises the party five levels with Start or
+Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
+0 to 269, by one with Up and Down, `BROWSER_ROW_STEP` (ten) with Right and Left
+and `BROWSER_PAGE_STEP` (thirty) with R and L, skips numbers whose item has no
+icon, and gives the chosen item to the first member with room.
 
-The room changed from one language to the next. The ability browser is only
-reachable in English and German; French, Spanish and Italian keep its code and
-its actor but no event for it. Casting Force at actor 10 runs an animation
-test in Japanese and shows the three character-set caption rows elsewhere, and
-in every edition Force's shot then leaves that actor where it is.
+The room's event table differs by edition. The ability browser has an event
+only in English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French,
+Spanish and Italian keep its code and its actor. Force cast at the glyph
+browser runs a motion test in Japanese and shows the three character-set
+caption rows elsewhere. In every edition a `PSYNERGY_PHASE_BEFORE_CAST` event
+on that actor sets the effect's child mode, so Force's shot leaves it where it
+is.
 
 ### The menu test room
 
-Garet, Jenna, Ivan and Mia stand in this room and run some of the tests
-themselves. Garet levels the four heroes up to 10, then 20 the next time, and
-so on; the first few talks change nothing, since walking in has already raised
-them to 30. Jenna hands out test equipment, Ivan consumables, and Mia opens
-the name entry screen for Isaac. The room's own actors, from 8 on, open the
-picker a full party drops an item with, give out Djinn and treasure, wound and
-afflict Isaac and Garet, and run a preset shop with 200000 coins, broken
-equipment and afflicted members.
+Talking to the party members runs tests: Garet raises the four to level 10,
+then 20 on the next talk, and so on (`gMenuTest_SlotOffsets`), which changes
+nothing until the target passes the 30 set on entry; Jenna hands out test
+equipment, Ivan consumables, and Mia opens the name entry screen for Isaac. The
+placed actors, from 8, open the picker a full party drops an item with, give
+out Djinn and treasure, wound and afflict Isaac and Garet, and run a preset
+shop (`Shop_OpenDebugShop`) with 200000 coins, broken equipment and afflicted
+members.
 
-Actors 16 and 17 changed most between languages. In Japanese they're plain
-talk events: 16 opens the character selector, whose choice nothing uses, and
-17 an item browser that, unlike the level room's, stops on every item number,
-iconless ones too. Everywhere else, what they do depends on the way the
-leader faces when talking to them, and most of those ways open a message
-browser that pages through one keeper's lines a message at a time. Actor 16
-has the weapon shop, armour shop and item shop to the north, west and east,
-and the Sanctum to the south. Actor 17 has the Warrior's weapon, armour and
-item shops the same three ways. To the south, actor 17 does nothing in
-English; in German, Spanish, French and Italian it shows a single message
-instead, MsgValeComeOnHurry, with no speaker.
-
-Those rows of `gMenuTest_Events` say which way the leader has to face in
-their control word: the top four bits of its low halfword hold the facing,
-in sixteenths of a turn counted from east, so north, west, east and south.
+Actors 16 and 17 changed most. In Japanese they are plain talk events: 16
+opens the character selector, whose choice nothing uses, and 17 an item
+browser. Everywhere else each has four `EVENT_TALK` rows that differ in the
+way the leader must face, written in bits 15 to 12 of the control word as
+sixteenths of a turn from east (`0xc` north, `0x8` west, `0x0` east, `0x4`
+south), with bit 10 asking for the facing. Most open a message browser that
+pages through one keeper's lines: 16 has the weapon, armour and item shops to
+the north, west and east and the Sanctum to the south, and 17 the Warrior's
+weapon, armour and item shops the same ways. To the south, 17 has no row in
+English; in German, Spanish, French and Italian it shows `MsgValeComeOnHurry`
+with no speaker.
 
 ## Limits
 
-- Each room is an overlay, loaded into the same 32 KB overlay area as every
-  scene (see [System](../system/README.md)).
+- Each room is an overlay in the same 32 KB overlay area as every scene.
 - The item browsers cover item numbers 0 to 269.
 
 ## Evidence and open questions
 
-The rooms are scenes of the scene table like any other. Eight scenes, the
-last rows of `games/tbs/src/field/scenes.s` but two, run one overlay
-(`rooms.c`) on eight different maps, and the last two run `level.c` and
-`test.c`. They're the scenes `TestRoom0` to `TestRoom7`,
-`IncreaseItemAndLevel` and `MenuTest`. The game gives the rooms no names either, so their
-functions are named for what they let a tester do, going by the messages they
-show. `test.c` also keeps one empty function nothing calls, `DebugMenu_NoOp`,
-marked `UNUSED` like other code the ROM keeps (see
-[Matching](../MATCHING.md)).
+The game gives the rooms no names, so their scene ids (`TestRoom0` to
+`TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`) and functions are named for what they let a tester do, going by the messages they
+show. `test.c` keeps one empty function nothing calls, `DebugMenu_NoOp`, marked
+`UNUSED`.
 
-A few things are still open: whether anything in the retail game turns debug
-mode on (above), and why one room's overlay serves eight scenes, each on its
-own map. The 56 words at the head of the Djinn room's data
-(`gTestRooms_EntrancesHead`, eight rows of seven) are a mystery too; the menu
-test room keeps the same words (`gDebugItemPromptHead`), and nothing reads
-either by name. And the Japanese loop in `DebugMenu_GivePartyDjinn` is
-probably a benchmark for the text buffer, since it fills a local
-buffer sixteen times with 32 to 47 letters and nothing reads the result.
+- XXX: whether anything in the retail game turns debug mode on (above).
+- XXX: why one overlay serves eight scenes, each on its own map; the maps'
+  contents would say what each room was for.
+- XXX: the 56 words at the head of the Djinn room's data
+  (`gTestRooms_EntrancesHead`, eight rows of seven) and the same words in the
+  menu test room (`gDebugItemPromptHead`) are read by nothing by name; a reader
+  of them would say what they hold.
+- XXX: likely a benchmark for the text buffer, the Japanese loop in
+  `DebugMenu_GivePartyDjinn`, because it fills a local buffer sixteen times
+  with 32 to 47 letters and nothing reads the result.
+- XXX: the level and menu test rooms have no picture; a frame of each with its
+  actors labelled by number and event would show what the tables above
+  describe.

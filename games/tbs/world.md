@@ -1,55 +1,42 @@
 # World
 
-![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+![Four parts of the field. While the party walks around a place, four parts of the program work together. The loop lets the party walk, and stops to deal with whatever comes up. The engine moves everything that moves and draws the map, every frame. The map says where the ground is, how high it is and which spots do something. The place's own code, loaded for each place, says who stands where and what happens there. The loop asks the place what to do; the engine reads the map. The loop and the engine know nothing of any one place.](https://alchemy.pascalpixel.com/illustrations/world/field-parts.svg)
 
-The field is the layer that runs every place the party walks: towns, dungeons
-and the world map. The engine in `src/field` moves objects and draws maps,
-`src/object` runs a field scene and its requests, each place's overlay in
-`src/scene` supplies its tables and events, and `src/map` holds the map data.
-How scenes and overlays fit into the whole game is on [the front
-page](README.md).
+Everywhere the party walks, a town, a dungeon or the world map, is run by
+the same four parts. The loop in `src/object` lets the party walk and deals
+with whatever interrupts it. The engine in `src/field` moves everything that
+moves and draws the map. The map, in `src/map`, says what the ground is like.
+And each place's own code, its overlay in `src/scene`, says who is there and
+what happens. Only that last part knows anything about one place. How scenes
+and overlays fit into the whole game is on [the front page](README.md).
 
 ## The scene loop and its requests
 
-A field scene is one loop that lets the leader walk until something raises a
-request, and then handles the requests one at a time in a fixed order.
+While the party walks, the game asks once a frame whether something should
+happen. When something should, the walk stops, the game deals with it, and
+the walk starts again.
 
-```mermaid
-flowchart TD
-    load["Field_RunScene: load the map,<br/>the overlay's events, entrances<br/>and placements, the scene's initialization"] --> walk
-    walk["walk: the leader's control script,<br/>Field_ProcessStep once a frame"] --> count{{"Field_CountRequests<br/>above zero?"}}
-    count -->|no| walk
-    count -->|yes| exit{{"exit raised?"}}
-    exit -->|yes| next["Scene_TakeExit:<br/>the next scene"]
-    exit -->|no| handle["handle the first raised request<br/>in the fixed order"]
-    handle --> count
-```
+![The field's loop. The party walks, and every frame the game checks the ground under the leader and the buttons. When something comes up (a doorway, a random battle, the A button, the menu, Psynergy or an item), walking stops, the game handles one thing at a time until nothing is left, and walking resumes. Leaving the scene, through a doorway or into a battle, is always handled first and ends the loop.](https://alchemy.pascalpixel.com/illustrations/field/scene-loop.svg)
 
-`Field_RunScene` runs one field scene. It loads the map, calls the overlay's
-entries for its events, entrances and placements, then the scene's
-initialization, which may take an exit at once. Then, while nothing is
-pending, the leader runs its control script and `Field_ProcessStep` checks the
-ground underfoot once a frame. Anything that should interrupt the walk (an
-event cell, a random battle, the A button, a menu, an exit) raises a request,
-a field of the field work, and the walk stops as soon as `Field_CountRequests`
-isn't zero.
+Stepping into a doorway, pressing A beside someone, a random battle
+starting: each only raises a flag of its own, a request. When the walk
+stops, the game deals with the raised requests one at a time, always in the
+same order, and leaving comes first, so a cutscene that ends by taking an
+exit simply ends the scene. That is why a cutscene is written as one script
+that runs from start to end: the walk is stopped until it is done.
 
-The loop then handles the requests one at a time in a fixed order, starting
-again from the top after each, and `exit` is first. An exit therefore always
-wins: when an event's script takes an exit, the scene ends before any other
-request raised with it is handled, and `Scene_TakeExit` loads the next scene.
-Because requests are fields rather than a queue, each kind holds at most one.
+A random battle is a way out of the scene too. The game remembers where
+everyone stood, loads the battle as the next scene, and afterwards loads the
+place again with everyone put back.
 
-This shape is why scene code is written as straight-line cutscenes. A handler
-runs its script to the end, waiting with `WaitFrames` as it goes, and the walk
-resumes only when every request is done. Whatever must move during a cutscene
-runs as a task or an object script.
-
-A random battle is an exit too. Its handler saves the actors with
-`ObjectTable_Snapshot`, sets the next scene to `SCENE_BATTLE` and raises
-`EXIT_NONE`. After the battle, `Scene_ReturnFromBattle` loads the field scene
-again with `FLAG_KEEP_PARTY_POSITION` set, and `ObjectTable_Restore` puts the
-actors back where they stood.
+In the code, `Field_RunScene` runs one field scene: it loads the map, calls
+the overlay's entries, then lets the leader walk, calling `Field_ProcessStep`
+once a frame, until `Field_CountRequests` finds a request. The requests are
+fields of the field work, so each kind holds at most one. A battle request
+saves the actors with `ObjectTable_Snapshot`, sets the next scene to
+`SCENE_BATTLE` and raises `EXIT_NONE`; afterwards `Scene_ReturnFromBattle`
+loads the field scene again with `FLAG_KEEP_PARTY_POSITION` set, and
+`ObjectTable_Restore` puts the actors back.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -57,32 +44,33 @@ actors back where they stood.
 | `EXIT_NONE` | 999 | the exit result that means the next scene is already set |
 | `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next field scene starts where the party was |
 
-[Field objects](src/object/README.md#the-scene-loop-handles-requests-not-events)
-lists the requests in order, with a picture of them changing as Isaac walks
-through a door, and goes through each handler.
+[Field](src/field/README.md#the-walk-and-what-interrupts-it) explains the
+walk, and [Field objects](src/object/README.md#the-scene-loop-handles-requests-not-events)
+lists all twelve requests in the order they are handled and goes through
+each one.
 
 ## Scene entries
 
-A place's overlay tells the field engine everything about the place through
-six functions at its start.
+The engine knows a place only by asking its code six questions: what can
+happen here, where the party arrives, who stands where, whether anything
+needs setting up, whether the leader is in an exit area, and where an exit
+leads.
 
-The six (`struct SceneEntries`) are the scene's initialization and the
-functions that return its events, entrances, exits, placements and exit
-regions. How an overlay is loaded and how it calls back into the main image is
-in [Engine](engine.md#overlays).
+![Six questions a place answers. When the party arrives the engine asks what happens here, where the party arrives, who stands where, and whether anything needs setting up first. At every step it asks whether the leader stands in an exit area. As the party leaves it asks where the exit leads. Each answer comes from a function, so a place can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
 
-They are functions rather than pointers to tables so that a scene can answer
-differently as the story moves on, and the engine needs no notion of story
-state. Vault's `Scene_GetEvents` returns `gVault_EventsAfterThieves` once
-`FLAG_VAULT_THIEVES_JAILED` is set, and `gVault_Events` before. Placement and
-exit rows also carry conditions of their own. The front page describes [how
-scenes depend on the story](README.md#how-scenes-depend-on-the-story) across
-the game.
+Each answer comes from a function rather than a fixed table, so a place can
+answer differently as the story moves on, and the engine needs no idea of
+the story at all. Vault's `Scene_GetEvents` returns
+`gVault_EventsAfterThieves` once `FLAG_VAULT_THIEVES_JAILED` is set, and
+`gVault_Events` before. The rows of a table carry conditions of their own as
+well, and `Scene_FindEvent` runs the first row whose kind, trigger and
+condition fit, so a later row for the same person or cell runs only where
+every earlier row's condition fails.
 
-`Scene_FindEvent` reads the event table from the top and runs the first row
-whose kind, trigger and condition fit, so a later row for the same actor or
-cell runs only where every earlier row's condition fails.
-
+The six functions are `struct SceneEntries`, at the start of every overlay.
+How an overlay is loaded and how it calls back into the main image is in
+[Engine](engine.md#overlays). The front page describes [how scenes depend on
+the story](README.md#how-scenes-depend-on-the-story) across the game.
 [Scenes](src/scene/README.md#the-entry-table) describes the entry table, the
 tables it returns and [how an event is
 chosen](src/scene/README.md#how-an-event-is-chosen), and
@@ -90,8 +78,11 @@ chosen](src/scene/README.md#how-an-event-is-chosen), and
 
 ## Scene and place flags
 
-A scene doesn't undo its changes when the party leaves; instead two ranges of
-game flags are cleared when the party comes back.
+A scene never undoes what it changed. The game keeps two sets of flags for
+scenes to use and forgets them as the party moves on: scene flags whenever
+the party enters a scene, place flags when it enters another place.
+
+![What a place forgets, and when. Scene flags are forgotten every time the party enters a scene, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Place flags are kept while the party moves between the scenes of one place and forgotten when it enters another place: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
 `Scene_ResetFlagsOnEnter` clears the scene's 256 flags (`FLAG_SCENE_FIRST` to
 `FLAG_SCENE_LAST`) on every ordinary entrance, and the place's 256
@@ -114,32 +105,29 @@ uses them.
 
 ## Field objects and their scripts
 
-Everything that moves on the field is a field object, and every object in use
-runs an object script.
+Everything on the field that moves or changes by itself, the party, the
+townspeople, the camera, even the footprints the leader leaves in snow, is a
+field object, and each one runs a small script.
 
-![Isaac walking through the snow in Imil, leaving footprints that fade behind him](https://alchemy.pascalpixel.com/guides/field/snow.gif)
+![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
-The objects are the 64 slots of `gObjectSlots`, each 112 bytes: the party's
-characters, the people a scene places, the camera and the footprints the
-leader leaves. A slot with no script is free.
+Every frame each object takes a turn: it runs the steps of its script in
+order until one says to wait. A step that only tests something or jumps
+takes no time, so a script can decide within a frame. The player's control
+is itself one of these steps, run once a frame on the leader: `SC_PLAYER` on
+a town or dungeon map, `SC_WORLD` on the world map, `SC_KEYS` while
+climbing. A footprint shows an object's whole life: every 18 frames of
+walking, or 12 of running, the leader's control creates one and starts it
+on `gWorldMap_FootprintActions`, the two words `SC_WAIT(120), SC_FREE`.
 
-A script is an array of 32-bit words: an `SC_` command from `objcmd.h`, then
-its operands, run through `gScriptObject_CommandTable`. Each frame,
-`Object_UpdateAllThumb` runs each live object's commands until one yields. A
-command that returns 1 has finished and the next runs in the same frame, so
-tests, jumps and work-value arithmetic take no frame of their own; a command
-that returns 0 ends the object's frame. `SC_WAIT(n)` and `SC_SYNC` yield this
-way. A jump stores no offset: `Script_FindLabel` searches the script for the
-matching `SC_LABEL` word, so a script needs no assembler to fix up its
-branches. `SC_END` leaves the object idling on `gScript_MainScript`; only
-`SC_FREE` frees the slot.
-
-A footprint shows an object's whole lifetime. Every 18 frames of walking, or
-12 of running, the player's control creates an object of
-`FIELD_SPRITE_FOOTPRINT` and starts it on `gWorldMap_FootprintActions`, the
-two words `SC_WAIT(120), SC_FREE`. The player's control is itself a script
-command run once a frame on the leader: `SC_PLAYER` on a layered map,
-`SC_WORLD` on the world map, `SC_KEYS` while climbing.
+The objects are the 64 slots of `gObjectSlots`, each 112 bytes. A script is
+an array of 32-bit words, an `SC_` command from `objcmd.h` and then its
+operands, run through `gScriptObject_CommandTable` by
+`Object_UpdateAllThumb`. A command that returns 1 has finished and the next
+runs in the same frame; one that returns 0 ends the object's turn. A jump
+stores no offset: `Script_FindLabel` searches the script for the matching
+`SC_LABEL` word. `SC_END` leaves the object idling on `gScript_MainScript`;
+only `SC_FREE` frees the slot.
 
 The same 112 bytes are read through several structs (`ObjectRuntime`,
 `ScriptMotionObject`, `FieldActor` and others), kept apart because the
@@ -152,24 +140,26 @@ view describes the same block.
 | `FIELD_OBJECT_COUNT` | 64 | the slots of `gObjectSlots` |
 | `FIELD_SPRITE_FOOTPRINT` | 25 | a footprint's sprite, on maps that show them |
 
-[Field](src/field/README.md#everything-that-moves-runs-a-script) covers the scripts and their
-commands, the sprites and [the views of one
+[Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
+scripts and their commands, the sprites and [the views of one
 object](src/field/README.md#one-object-many-views).
 
 ## Movement
 
-The leader's control script sets its speed and acceleration, and probes the
-ground ahead before each step so that a leader pushed into a wall slides
-along it.
+The leader walks at one pixel a frame and runs at one and a half. Before
+every step the game checks the ground just ahead, and when the leader walks
+into a wall it tries other directions, so the leader slides along the wall
+instead of stopping dead.
 
-![Isaac walking right through Vale, then running back the other way](https://alchemy.pascalpixel.com/guides/field/walk-run.gif)
+![How the leader slides along a wall, seen from above with the pad held right. Before each step the game checks the ground 8 pixels away in five directions: the way the pad points, and 22.5 and 45 degrees to either side. On open ground all five are clear, and the leader steps the way the pad points. Walking into a slanting wall, three of the five land beyond the wall, so the game tries other headings, nearest first: 22.5, then 45, then 67.5 degrees to either side, each needing five clear checks of its own. Here the first to pass is 67.5 degrees towards the open side, so the leader slides along the wall.](https://alchemy.pascalpixel.com/illustrations/world/probe-fan.svg)
 
-On a layered map the leader walks at `FIELD_WALK_SPEED`, 1 pixel a frame, and
-runs at `FIELD_RUN_SPEED`, 1.5, while a dash key is held. Before each step it
-probes 8 pixels ahead, then headings 22.5 and 45 degrees either side, then
-further out to 67.5 degrees.
-
-`Map_CheckObjectStep` decides each probe from the cell there:
+On a town or dungeon map the leader walks at `FIELD_WALK_SPEED` and runs at
+`FIELD_RUN_SPEED` while a dash button is held. Each step needs five clear
+checks 8 pixels away: the way the pad points and 22.5 and 45 degrees either
+side. When one fails, `FieldObject_UpdatePlayerControl` tries headings 22.5,
+45 and 67.5 degrees off, nearest first, each with five checks of its own, and
+takes the first that passes. `Map_CheckObjectStep` decides each check from
+the cell there:
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -178,7 +168,7 @@ further out to 67.5 degrees.
 | `MAP_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
 | `MAP_STEP_WALL` | 2 | the cell there is a wall (`MAP_CELL_WALL`) |
 | `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame, in 16.16 fixed point |
-| `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash key held |
+| `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash button held |
 
 [Field](src/field/README.md#walking-and-running) has the speeds on each kind of
 map and [the ground under an
@@ -186,30 +176,29 @@ object](src/field/README.md#how-high-a-step-can-go).
 
 ## Cells and collision
 
-A map is one grid of 16-pixel cells, and each cell's word gives the block
-drawn there, the collision code events and walls are keyed on, and the
-ground's shape.
+A map is a grid of 16-pixel squares, cells, and each cell says three things:
+what is drawn there, how high its ground is, and what standing there does.
 
-The three layers are windows onto one grid of 128 by 128 cells, each 16 by 16
-pixels, decoded into the 64 KB at `Ram_MapCellBuffer`. A cell is one 32-bit
-word: its low halfword holds the block (a 2 by 2 group of 8-pixel tiles) in
-its low 12 bits and the layer and priority an object standing there takes
-above it; its third byte is the collision code and its fourth its ground
-shape.
+![What one cell of a map says. A map is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one block of four tiles; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this place's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the place's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
 
-The collision code is what events and walls are keyed on. `MAP_CELL_WALL` is a
-wall; the codes from `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST` belong to
-the scene, whose touch and search events name them; the codes above mean the
-same on every map (encounter ground, the searchable jars and barrels, ledges
-and climbing spots). The shape gives the ground's height, which
-`Map_GetTerrainHeight` computes from the shape's terrain kind and height
-samples.
+What standing on a cell does is its collision code, and it is what walls
+and events are keyed on. Some codes mean the same on every map: a wall,
+ground with battles of its own, the jars and barrels anyone can search,
+ledges and climbing spots. The rest belong to the place, and its event table
+says what each one does, so the same code is a door in one town and a chest
+in another. A wall need not be marked, either: the leader can step at most 8
+pixels up or 12 down, so ground that rises sharply stops him as surely as a
+wall. Goma Cave has no wall-coded cells at all; a rim of ground 32 pixels
+high runs along the foot of each cliff.
 
-A wall need not be coded. `Map_CheckObjectStep` lets an object step at most
-8 pixels up or 12 down, so ground that rises sharply stops the leader as
-surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
-ground 32 pixels high runs along the foot of each cliff, some of it cut along
-a cell's diagonal.
+The three layers of a map are windows onto one grid of 128 by 128 cells,
+decoded into the 64 KB at `Ram_MapCellBuffer`. A cell is one 32-bit word: its
+low halfword holds the block (a 2 by 2 group of 8-pixel tiles) in its low 12
+bits and the layer and priority an object standing there takes above it; its
+third byte is the collision code and its fourth its ground shape, from which
+`Map_GetTerrainHeight` computes the height. `MAP_CELL_WALL` is a wall; the
+codes from `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST` belong to the
+scene.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -223,20 +212,24 @@ map](src/map/README.md#how-the-build-makes-a-map) from editable tables.
 
 ## Map layers
 
-A town or dungeon is a layered map drawn on three of the console's four
-background layers, with the actors as sprites between them.
+A town or dungeon is drawn as flat sheets stacked on top of each other: the
+ground at the back, then walls and edges, then the characters, then roofs
+and treetops in front. That is how Isaac can walk behind a roof.
 
-`MAP_LAYER_GROUND` is on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
+![A town is drawn in four sheets, stacked from back to front: the ground, then the middle layer of walls and edges, then the characters, then the overhead layer of roofs and treetops. The console stacks them in this order on most maps, and a map can give its layers another order. No code works out whether Isaac is hidden behind a roof: he is drawn between two layers of the same map.](https://alchemy.pascalpixel.com/illustrations/world/layer-order.svg)
+
+No code works out whether someone is hidden behind a roof or a tree. The
+console draws its background layers and sprites in an order set by their
+priorities, and the characters are simply drawn between two layers of the
+same map.
+
+The three map layers are three of the console's four background layers:
+`MAP_LAYER_GROUND` on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
 `MAP_LAYER_OVERHEAD` on `BG1`; `BG0` is the window layer, where messages and
-menus are drawn. The picture at the top of this page pulls Vale apart into
-them.
-
-Depth is left to the hardware. Each layer's priority comes from the map's
-header, most maps give the three layers 3, 2 and 1, and the field draws its
-sprites at priority 2. A sprite wins a tie with a background, so actors stand
-in front of the middle layer and behind the overhead one. No code tests
-whether an actor is hidden behind a roof or a tree; it is drawn between two
-layers of the same map. A priority of 0 leaves a layer off:
+menus are drawn. Each layer's priority comes from the map's header, most maps
+give the three layers 3, 2 and 1, and the field draws its sprites at priority
+2. A sprite wins a tie with a background, so actors stand in front of the
+middle layer and behind the overhead one. A priority of 0 leaves a layer off:
 `Map_LoadLayeredScene` enables only the layers whose priority isn't zero.
 
 | Name | Value | Background | What it holds |
@@ -245,40 +238,36 @@ layers of the same map. A priority of 0 leaves a layer off:
 | `MAP_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
 | `MAP_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
 
-[Field](src/field/README.md#towns-and-dungeons-on-screen) describes how the layers
-are put on screen, and [Maps](src/map/README.md#one-grid-three-layers) how
-they share one grid.
+[Field](src/field/README.md#towns-and-dungeons-on-screen) shows Vale pulled
+apart into its layers and how they are put on screen, and
+[Maps](src/map/README.md#one-grid-three-layers) how they share one grid.
 
 ## The world map
 
-The world map is a flat map tilted into perspective by giving every screen
-line its own affine scale.
+The world map is a flat map tilted into perspective, so the land near the
+party looks close and the land towards the top of the screen far away.
 
-![The world map pulled apart into its layers: the ground on BG3 at the back, the mountains and forest on BG2, both tilted line by line, and the towns and the party as sprites in front](https://alchemy.pascalpixel.com/guides/field/world-map-layers-3d.gif)
+![What the world map's screen reads. Above, the world map's screen as Isaac leaves Vale, with five of its lines picked out in colour from the top of the screen to the bottom. Below, the same part of the world laid flat, with Vale and Vault marked. A trapezoid around Isaac shows the part of the flat map the screen reads: each coloured screen line reads the straight strip of the same colour. The lines near the top of the screen read strips that are farther away and wider, so the area read is a trapezoid, wide at the far end.](https://alchemy.pascalpixel.com/illustrations/field/world-map-footprint.svg)
 
-`BG2` and `BG3` are affine backgrounds, and their scale changes on every
-scanline, so a line higher on the screen covers more of the map than a line
-lower down. `WorldMap_BuildScanlineTable` gives each screen line a width scale
-and a ground distance when the world map is set up, and again only if the
-camera's pitch changes, which nothing in the game does. Each frame
+The console can scale and rotate two of its background layers, and the game
+changes the scale for every line of the screen. Each screen line shows one
+straight strip of the flat map; lines higher on the screen show strips that
+are farther away and wider, so together they show a trapezoid around the
+party, and the land seems to tilt away. When the player holds L to zoom out,
+the lines spread so far apart that some strips of the map are never drawn.
+
+`BG2` and `BG3` are affine backgrounds in display mode 2: the ground is
+`BG3`, the middle map layer of mountains and forest is `BG2`, and the towns
+and the party are sprites drawn flat over both.
+`WorldMap_BuildScanlineTable` gives each screen line a width scale and a
+ground distance when the world map is set up, and again only if the camera's
+pitch changes, which nothing in the game does. Each frame
 `Transform_UpdateVertices`, an ARM routine run from IWRAM, turns them into a
 page of affine values, and `MapAnimation_ApplyAffineFrame` sets the first
-line's values and starts an HBlank DMA that feeds each following line its own.
-There are two pages, and alternate frames use them: the HBlank DMA reads one
-page throughout a frame while `Transform_UpdateVertices` builds the other, and
-a render of each page shows the one on screen alternating every frame.
-
-Each screen line reads one straight row of the flat ground, and its affine
-values set how wide that row is and where it lies. Together the 160 lines
-sample a trapezoid around the party; when the player holds L to zoom out, the
-lines spread so far apart that some rows of the ground are never drawn.
-
-![Isaac walking and running on the world map, the ground drawn in perspective](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
-
-The world map runs in display mode 2, which has only the two affine
-backgrounds. Pulled apart, the ground is `BG3`, the middle map layer of
-mountains and forest is `BG2`, and the towns and the party are sprites drawn
-flat over both.
+line's values and starts an HBlank DMA that feeds each following line its
+own. There are two pages, and alternate frames use them: the HBlank DMA
+reads one page throughout a frame while `Transform_UpdateVertices` builds
+the other.
 
 When a menu or event starts on the world map, `WorldMap_StartStillView` draws
 the current affine frame into ordinary tiles on `BG1` and switches the display
@@ -286,47 +275,50 @@ to `DISPCNT_MODE_0`, in which no background is affine; `Map_LoadAreaGraphics`
 undoes it. The world map's own scene, its places and events, is described on
 [the front page](README.md#the-world-map).
 
-[Field](src/field/README.md#the-world-map-in-perspective) works through the scanline
-table, [Maps](src/map/README.md#the-world-maps-data) the world map's data,
-and [Field objects](src/object/README.md#the-world-map-screen) the still
+[Field](src/field/README.md#the-world-map-in-perspective) works through the
+scanline table, [Maps](src/map/README.md#the-world-maps-data) the world map's
+data, and [Field objects](src/object/README.md#the-world-map-screen) the still
 picture R brings up.
 
 ## Random encounters
 
-Walking fills a counter at a rate the ground under the leader decides, and a
-battle starts when it is full.
+As the party walks, a counter fills, faster on some ground than on other,
+and a battle starts when it is full.
 
-Each frame the leader walks, `Encounter_SelectEnemyGroup` adds to
-`gGameState.encounterSteps` an amount that grows with the zone's rate and a
-random bias redrawn after each battle, scaled by the leader's speed limit. A
-battle starts when the counter reaches `work->encounterThreshold`, 16 in 16.16
-fixed point, and one of the zone's eight enemy groups is drawn by weight. A
-field scene's zones come from the first matching rule in
-`gBattle_LocationRules`, which assigns zones to the encounter grounds its
-cells mark; the world map's come from `gWorldMap_EncounterRules`, by the
-terrain under the leader. Each zone is a row of `src/object/encounter.tsv`.
+![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. The step is bigger on ground whose zone has a higher rate, bigger when the party's level is above the zone's, and varies by a random amount drawn again after each battle. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
+
+Each kind of ground belongs to a zone, and the zone decides how fast the
+counter fills and which enemies can appear. Each frame the leader walks,
+`Encounter_SelectEnemyGroup` adds to `gGameState.encounterSteps` an amount
+that grows with the zone's rate and a random bias redrawn after each battle,
+scaled by the leader's speed limit. A battle starts when the counter reaches
+`work->encounterThreshold`, 16 in 16.16 fixed point, and one of the zone's
+eight enemy groups is drawn by weight. A field scene's zones come from the
+first matching rule in `gBattle_LocationRules`, which assigns zones to the
+encounter grounds its cells mark; the world map's come from
+`gWorldMap_EncounterRules`, by the terrain under the leader. Each zone is a
+row of `src/object/encounter.tsv`.
 
 [Field objects](src/object/README.md#random-battles) has the roll step by
 step, and [Battle](battle.md#starting-a-battle) what happens once it starts.
 
 ## Field Psynergy
 
-Field Psynergy is a request like any other: the scene's event table decides
-what it does to the place, and its effect only draws it.
+Using Move on a stone pillar slides it; using it on a blank wall shows the
+same hand and moves nothing. What Psynergy does to a place is decided by the
+place's own events, and the effect only draws it.
 
-![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
+![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. The game checks Psynergy can be used here and takes the PP. It runs the place's event for before the cast, if there is one. The effect plays: Move's hand appears, and it pushes the pillar only because Vale has an event for Move on it. Last it runs the place's event for after the cast, which notes where the pillar now stands and makes its new cell solid.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
 
-Choosing it from the menu or a shortcut key raises the `psynergy` request, and
-`Field_UsePsynergy` checks it can be used there, pays the PP and looks up the
-scene's Psynergy events for what the leader faces. It runs the
+Choosing Psynergy from the menu or a shortcut raises the `psynergy` request,
+and `Field_UsePsynergy` checks it can be used there, pays the PP and looks up
+the scene's Psynergy events for what the leader faces. It runs the
 `PSYNERGY_PHASE_BEFORE_CAST` event, plays the effect for the ability's field
 kind (`enum FieldKind`, from the `type` column of `src/game/actions.tsv`)
-through `FieldEffect_Run`, or `FieldEffect_DispatchRequestKind` when an event names
-the target, then runs the `PSYNERGY_PHASE_AFTER_CAST` event.
-
-Whether a stone pillar slides under Move is decided by the scene's event, not
-by the effect, and an event in the `PSYNERGY_PHASE_EFFECT_ACTS` phase runs
-from inside the effect, where Force strikes or Frost freezes.
+through `FieldEffect_Run`, or `FieldEffect_DispatchRequestKind` when an event
+names the target, then runs the `PSYNERGY_PHASE_AFTER_CAST` event. An event
+in the `PSYNERGY_PHASE_EFFECT_ACTS` phase runs from inside the effect, where
+Force strikes or Frost freezes.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

@@ -1,38 +1,47 @@
 # Field objects
 
-![Isaac walks up and down a narrow passage of Goma Cave until a random battle starts: the screen flashes and goes black, and the battle opens on Isaac, Garet and Ivan facing a Ghost, with `Ghost appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
+![What can stop the walk, in the order the game deals with it. Twelve things can interrupt the walk, and the game checks them from the top of the list down, dealing with the first one it finds and then starting again from the top. Leaving the scene comes first, then an event that something asked for, then a battle. Then the ground: the cell the leader stepped onto, and a ledge or climbing spot pushed against. Then the buttons: A, which becomes talking to someone, searching the spot ahead or the menu; the menu; talking; searching; Psynergy; an item; and Start. When nothing is left, walking resumes.](https://alchemy.pascalpixel.com/illustrations/object/requests.svg)
 
-A field scene, a room, a town, a dungeon floor or the world map, runs here
-from the moment `Game_Run` loads it until the party leaves. The code sets the
-scene up, hands the leader to the player, and handles whatever interrupts the
-walk: an event, a random battle, the A button, a menu or an exit. Around that
-loop sit the systems a field scene needs: random encounters, the scene's
-actors and events, items and Psynergy used on the field, the commands scene
-scripts run, Djinn joining the party and the world map screen. The slot
-machine is here too, in another bank.
+While the party is in a town, a dungeon or on the world map, this code runs
+the place from the moment it loads until the party leaves. It sets the place
+up, hands the leader to the player, and deals with whatever stops the walk:
+a doorway, a random battle, the A button, the menu. Around that loop sit the
+things a place needs from one moment to the next: random battles, the people
+a place puts on the map and what they say, items and Psynergy used outside a
+battle, the commands cutscenes are written in, Djinn joining the party, and
+the world map screen R brings up. The slot machine at Tolbi's spring is here
+too, in another bank.
 
-The engine underneath, which moves objects and draws maps, is
-[Field](../field/README.md); each place's events come from its overlay in
-[Scenes](../scene/README.md). [World](../../world.md) gives the overview of
-the scene loop, encounters and field Psynergy that this page goes through in
-detail.
+The engine underneath, which moves everything and draws the maps, is
+[Field](../field/README.md); what happens in each place comes from its own
+code in [Scenes](../scene/README.md). [World](../../world.md) gives the whole
+layer in brief.
 
 ## The scene loop handles requests, not events
 
-A field scene is one loop that lets the player walk until something raises a
-request, a field of the field work, and then handles the requests one at a
-time in a fixed order.
+While the party walks, the game asks once a frame whether something should
+happen, and when something should, it stops the walk and deals with one
+thing at a time until nothing is left.
 
-`Field_RunScene` ([`object/run_scene.c`](object/run_scene.c)) allocates the
-field work, loads the map, picks the encounter zones, takes the overlay's
-events, entrance and placements, restores the actors after a battle, and calls
-the scene's initialization, which may take an exit at once. Otherwise it fades
-the scene in, shows the area name if the group changed, and gives a Djinni or
-item left pending by the scene before.
+Each thing that can stop the walk has a flag of its own, a request: one for
+leaving, one for a battle, one for each button, and so on. Stepping onto a
+doorway, pressing A or a script asking for a battle only raises its flag.
+The game then works down the list in a fixed order, the order in the picture
+above, deals with the first raised flag it finds, and starts again from the
+top. Leaving always comes first, so when an event both asks for a battle and
+takes an exit, the scene simply ends. Raising a flag that is already raised
+changes nothing, and a request an event raises waits until the event has
+finished, so a battle a cutscene asks for starts only after its last line.
 
-Then it alternates between walking and handling requests, as [World](../../world.md#the-scene-loop-and-its-requests)
-outlines. These are the request fields, in the order the loop tests them; it
-starts again from the top after each one it handles:
+In the code, `Field_RunScene` ([`object/run_scene.c`](object/run_scene.c))
+runs one scene. Before the loop it allocates the field work, loads the map,
+picks the encounter zones, takes the overlay's events, entrance and
+placements, restores the actors after a battle, and calls the scene's
+initialization, which may take an exit at once. Otherwise it fades the scene
+in, shows the area name if the group changed, and gives a Djinni or item left
+pending by the scene before. Then it alternates between walking and handling
+requests, as [Field](../field/README.md#the-walk-and-what-interrupts-it)
+describes. These are the request fields, in the order the loop tests them:
 
 | Order | Field | What it asks for |
 | --- | --- | --- |
@@ -49,11 +58,6 @@ starts again from the top after each one it handles:
 | 11 | `item` | use an item (`Field_UseItem`) |
 | 12 | `start` | the pause menu |
 
-Raising a request twice before the loop reaches it is the same as raising it
-once. A request an event raises waits for the event to return, so a battle a
-cutscene asks for starts only after its last line, and an exit it takes
-discards whatever else it raised.
-
 An `event` is either a scene event to run (`Scene_RunRaisedEvent`) or a
 negative code from `enum FieldEventCode` that the loop handles itself:
 `FIELD_EVENT_PARTY_FELL` when characters fell to poison or hazardous ground
@@ -61,12 +65,14 @@ negative code from `enum FieldEventCode` that the loop handles itself:
 leader at 1 HP), `FIELD_EVENT_WORLD_MAP_PICTURE` and
 `FIELD_EVENT_WORLD_MAP_ZOOM` for the world map screen (below).
 
-The `battle` handler leaves the scene as an exit does: after
-`ObjectTable_Snapshot`, it writes `SCENE_BATTLE` as the next scene with the
-enemy group as its entrance, and raises `EXIT_NONE`, the result that means the
-next scene is already set. `Scene_ReturnFromBattle` then loads the field scene
-again with `FLAG_KEEP_PARTY_POSITION`, and `Field_RunScene` calls
-`ObjectTable_Restore`.
+A battle is a way out of the scene, handled as an exit is. The game
+remembers where everyone stood, loads the battle as the next scene, and
+afterwards loads the place again with everyone put back. In the code, the
+`battle` handler calls `ObjectTable_Snapshot`, writes `SCENE_BATTLE` as the
+next scene with the enemy group as its entrance, and raises `EXIT_NONE`, the
+result that means the next scene is already set. `Scene_ReturnFromBattle`
+then loads the field scene again with `FLAG_KEEP_PARTY_POSITION`, and
+`Field_RunScene` calls `ObjectTable_Restore`.
 
 The snapshot (`ObjectTableSnapshot` in
 [`object_runtime.h`](../../include/object_runtime.h)) keeps up to
@@ -93,25 +99,24 @@ The requests are fields of the field work, `struct FieldWork`
 
 ## Random battles
 
-Each frame the leader moves, the ground underfoot may start a battle against
-one of its zone's enemy groups; the picture at the top of this page shows
-one starting in Goma Cave.
+As the party walks through a dungeon or across the world map, a battle
+starts every so often. The game decides when by filling a counter as the
+leader moves, and which enemies by drawing one of the groups that live on
+that ground.
 
-```mermaid
-flowchart TD
-    step["Field_ProcessStep: the leader moved"] --> off{{"FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_PLACE,<br/>zone 0, Cloak, or rate 0?"}}
-    off -->|yes| none["no battle"]
-    off -->|no| rate["add 5 to the rate for each level, up to five,<br/>the party is above the zone's level"]
-    rate --> avoid{{"Avoid active and the party above the zone?"}}
-    avoid -->|yes| none
-    avoid -->|no| add["add the step, grown by the rate and bias<br/>and scaled by the speed, to encounterSteps"]
-    add --> reached{{"encounterSteps reached the threshold?"}}
-    reached -->|no| none
-    reached -->|yes| group["draw one of the zone's eight groups by weight,<br/>pick the music, raise battle"]
-```
+![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. The step is bigger on ground whose zone has a higher rate, bigger when the party's level is above the zone's, and varies by a random amount drawn again after each battle. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight: in the Sol Sanctum's corridor, Vermin one time in six, Bats one in three, Wild Mushrooms one in three, and a mix of the three one in six.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
 
-`Field_ProcessStep` rolls on the zone of the ground underfoot through
-`Encounter_SelectEnemyGroup` ([`object/encounter.c`](object/encounter.c)),
+Each kind of ground belongs to a zone, and a zone says how fast the counter
+fills there and which enemy groups can appear. The step grows with the
+leader's speed, so the counter measures distance walked rather than time. A
+random part of each step is drawn once and kept until the next battle, so
+the gap between battles varies. When the counter is full, one of the zone's
+eight groups is drawn, each with its own weight.
+
+![Isaac walks up and down a narrow passage of Goma Cave until a random battle starts: the screen flashes and goes black, and the battle opens on Isaac, Garet and Ivan facing a Ghost, with `Ghost appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
+
+In the code, `Field_ProcessStep` rolls on the zone of the ground underfoot
+through `Encounter_SelectEnemyGroup` ([`object/encounter.c`](object/encounter.c)),
 passing the leader's speed limit, doubled while `FLAG_LURE_CAP` is set. There
 is no battle when `FLAG_NO_ENCOUNTERS` or `FLAG_NO_ENCOUNTERS_IN_PLACE` is
 set, on zone 0, while Cloak is active, or on a zone with rate 0. Otherwise:
@@ -182,25 +187,21 @@ and the flags in `flags.h`.
 
 ## How field Psynergy reaches its effect
 
-Psynergy used on the field runs the scene's events for what the leader faces
-before and after its effect, and those events, not the effect, decide what
-happens to the thing it is cast at.
+When the player uses Move on a stone pillar, the pillar slides; used on a
+blank wall, the same hand appears and nothing moves. What Psynergy does to a
+place is decided by that place's own events, and the effect only draws it.
+
+![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. First the game checks Psynergy can be used here and takes the PP. Then it runs the scene's event for before the cast, if the scene has one. Then the effect plays: Move's hand appears, and it pushes the thing ahead only because the scene has an event for Move on that pillar; with no such event the hand pushes at nothing. Last it runs the scene's event for after the cast: in Vale, noting where the pillar now stands and making its new cell solid. The place decides; the effect only draws.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
+
+A place can have an event for a Psynergy at three moments: before the effect
+plays, after it, and while it acts. The game looks up all three first, runs
+the "before" event, plays the effect, and runs the "after" event. The effect
+aims at the thing ahead only when the place has an event for this Psynergy
+there, which is how a pillar moves under Move in one spot and nothing
+happens in another. In Vale, the "after" event for Move notes which column
+the pillar now stands in and makes its cell solid.
 
 ![Isaac casts Move at a stone pillar in Vale: `Move` shows, the field turns blue-green as a hand appears over the pillar, and the hand pushes it one step to the right before the colours come back.](https://alchemy.pascalpixel.com/abilities/move.gif)
-
-```mermaid
-sequenceDiagram
-    participant L as Field_RunScene's loop
-    participant U as Field_UsePsynergy
-    participant S as The scene's Psynergy events
-    participant E as The field kind's effect
-    L->>U: the psynergy request
-    U->>U: refuse, or pay the PP
-    U->>S: look up the events for what the leader faces
-    U->>S: run PSYNERGY_PHASE_BEFORE_CAST
-    U->>E: FieldEffect_Run, or FieldEffect_DispatchRequestKind on a target
-    U->>S: run PSYNERGY_PHASE_AFTER_CAST
-```
 
 Choosing Psynergy on the field raises the `psynergy` request, and the loop calls
 `Field_UsePsynergy` ([`object/psynergy.c`](object/psynergy.c)). It refuses in
@@ -282,22 +283,24 @@ every place the party has visited, and L zooms the moving view out.
 
 ![On the world map, R brings up the still picture of the whole world, a hand on the party's place beside a `Present location` window; the hand moves right and up across the map, sits back on the party's place while L is held, and A closes the picture.](https://alchemy.pascalpixel.com/guides/object/world-map-picture.gif)
 
+A place's marker is drawn where the place stands on the world map the party
+walks, and only once the party has been inside it. A cursor moves with the
+d-pad, faster the longer it is held, and returns to the party's place while L
+or R is held; the place nearest it gets a blinking frame and its name in a
+window. A or B closes the screen. The screen borrows the memory the map's
+cells normally use, so it needs none of its own.
+
 On the world map, L and R don't use their shortcuts. L raises
 `FIELD_EVENT_WORLD_MAP_ZOOM`, and `FieldEffect_RunVisibilityTransition` sets the
 view 1.6 times as far while L is held. R raises `FIELD_EVENT_WORLD_MAP_PICTURE`,
-and `Map_ShowWorldMap` shows a still picture of the whole world with a marker
-on every place the party has visited. A cursor moves with the d-pad, faster the
-longer it is held, and returns to the party's place while L or R is held; the
-place nearest it gets a blinking frame and its name in a window. A or B closes
-the screen.
+and `Map_ShowWorldMap` shows the picture.
 
 `Map_ShowWorldMap` decodes the picture into `gMapCellBuffer`, the map cells'
 scratch memory, and copies it to VRAM; only then does
 [`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) reuse that
 buffer for its own work: the cursor, the markers and the name window. The
 marker task releases its window and VRAM before `Map_LoadAreaGraphics`
-restores the field graphics into the same buffer, so the screen needs no memory
-of its own.
+restores the field graphics into the same buffer.
 
 `gWorldMap_PlaceMarkers` (`scripts.s`) has a row for each place: its visited
 flag (`FLAG_PLACE_VISITED` of the place's group, set on entering the group),
@@ -460,4 +463,3 @@ call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
   and 20 to 220, more than the 240 by 160 screen, and pass it to a window
   service that takes tiles, and with no caller in the ROM nothing shows what
   they were given.
-- XXX (picture): the field loop's requests, as a plain-language illustration of what can interrupt walking and the order the game deals with them.

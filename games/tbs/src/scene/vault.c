@@ -35,12 +35,19 @@
 /// (VAULT_TO_SANCTUM); the cells the events answer are enum VaultCell
 /// (vault.h).
 ///
+/// The rope bridge in the town's south-east spans a path that runs under it,
+/// and stepping onto either end of it or off its west end switches the cells
+/// beneath it between the deck and the path (common/vault_toggle.h).
+///
 /// Open questions:
-/// - XXX: what the ivy placed at (0, 0) with ACTOR_RESET_ACTION, the row after
-///   ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, is for; nothing addresses it, and a
-///   reader of actor 22 elsewhere in the engine would settle it.
-/// - XXX: what VAULT_CELL_PASSAGE_ALTERNATE and _USUAL switch between; a
-///   render of the passage's cells with each collision would settle it.
+/// - XXX (no evidence): what the ivy placed at (0, 0) with ACTOR_RESET_ACTION,
+///   actor 22, the row after ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, was for; it
+///   is drawn above the map's top edge where no camera shows it, is not
+///   solid, and only the engine's passes over every actor touch it (render
+///   probe vault-ivy, watching ObjectTable_Get for it while the town loads,
+///   while the leader walks and while Whirlwind is cast; vault_revisit.c's
+///   table has the same row), so nothing in the ROM says what it was meant to
+///   do.
 
 #include "game_state.h"
 #include "animspr.h"
@@ -866,10 +873,13 @@ s32 Scene_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     Engine_EventRequestExit(VAULT_TO_VAULT_REVISIT);
   }
-  // Restore the passage cells and the two children's proximity callbacks.
+  // Keep the bridge deck after a battle, and restore the two children's
+  // proximity callbacks.
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
     Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
+  // A still object on the well that shows nothing (vault_revisit.c's open
+  // questions).
   OverlayObject_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
   lowBit = 1;
   zero = 0;
@@ -1390,8 +1400,8 @@ struct ScenePlacement gVault_PlacementsAfterThieves[] = {
 struct SceneEvent gVault_Events[] = {
     { EVENT_TOUCH, VAULT_CELL_SOUTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
     { EVENT_TOUCH, VAULT_CELL_NORTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
-    { EVENT_TOUCH, VAULT_CELL_PASSAGE_ALTERNATE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
-    { EVENT_TOUCH, VAULT_CELL_PASSAGE_USUAL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
+    { EVENT_TOUCH, VAULT_CELL_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
+    { EVENT_TOUCH, VAULT_CELL_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterChildsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
@@ -1438,8 +1448,8 @@ struct SceneEvent gVault_Events[] = {
 struct SceneEvent gVault_EventsAfterThieves[] = {
     { EVENT_TOUCH, VAULT_CELL_SOUTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
     { EVENT_TOUCH, VAULT_CELL_NORTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
-    { EVENT_TOUCH, VAULT_CELL_PASSAGE_ALTERNATE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
-    { EVENT_TOUCH, VAULT_CELL_PASSAGE_USUAL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
+    { EVENT_TOUCH, VAULT_CELL_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
+    { EVENT_TOUCH, VAULT_CELL_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterChildsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },

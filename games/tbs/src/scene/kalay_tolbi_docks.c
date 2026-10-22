@@ -59,6 +59,18 @@
 /// 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken
 /// home and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them.
+///
+/// Open questions:
+///
+/// - XXX: what reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO (entrance 90),
+///   which no exit names; likely the debug menus, as Babi Palace's entrances 90
+///   and 91 set story flags the same way, and the debug menus' scene lists
+///   would settle it.
+/// - XXX: why the woman with the message (ACTOR_WOMAN_WITH_A_MESSAGE, a
+///   woman's sprite) speaks of the daughter's mother as someone else ("Her
+///   mother says that tickets are too expensive"), and the man beside her
+///   (ACTOR_MAN_AT_SILK_ROADS_END) thinks of the daughter as his; the Japanese
+///   text of MsgKalayPassMessageDaughter would settle who was meant to ask.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -100,9 +112,7 @@
 /// stand off the map.
 enum KalayDocksActor {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who walks
-  /// over
-  /// to
-  /// tell Garet the Karagol is no real ocean.
+  /// over to tell Garet the Karagol is no real ocean.
   /// ★ Named from the game: "Do you want to go to Tolbi?"
   /// (MsgKalayWantGoToTolbi)
   ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI = ACTOR_FIRST_PLACED,
@@ -110,15 +120,13 @@ enum KalayDocksActor {
   /// ★ Named from the game: "We can't take Silk Road, so everyone's in a
   /// pickle." (MsgKalayTolbiDocksWeCantTakeSilkRoadSo)
   ACTOR_WOMAN_IN_A_PICKLE,
-  /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR). XXX: likely
-  /// the waiting daughter's father, because Mind Read finds "My daughter left
-  /// Tolbi to meet us at the docks."
+  /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR), whose thoughts
+  /// tell of a daughter who left Tolbi to meet him at the docks.
   /// ★ Named from the game: "You can't take Silk Road much further than
   /// this." (MsgKalayTolbiDocksYouCantTakeSilkRoadMuch)
   ACTOR_MAN_AT_SILK_ROADS_END,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS) whose daughter
-  /// waits on the Tolbi Docks. XXX: she speaks of "her mother" as someone
-  /// else, as the daughter's father would; the sprite is a woman's.
+  /// waits on the Tolbi Docks.
   /// ★ Named from the game: "When you reach Tolbi, please pass a message to
   /// my daughter." (MsgKalayPassMessageDaughter)
   ACTOR_WOMAN_WITH_A_MESSAGE,
@@ -131,7 +139,9 @@ enum KalayDocksActor {
   /// ★ Named from the game: "I'm glad I only work on the docks"
   /// (MsgKalayTolbiDocksImGladIOnlyWorkOn)
   ACTOR_DOCK_WORKER,
-  ACTOR_GROUND ///< Ground, a Venus Djinni, placed until it joins
+  /// A Venus Djinni, placed until it joins.
+  /// ★ Named from the game: "Ground" (MsgDjinnName)
+  ACTOR_GROUND
 };
 
 /// Tolbi Docks' people after the crossing, numbering the rows of
@@ -182,9 +192,7 @@ enum TolbiDocksActor {
 /// one done sailing and the crates keep their rows.
 enum TolbiDocksStrandedActor {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), the
-  /// passenger
-  /// who
-  /// charges the tour guide and is knocked flat.
+  /// passenger who charges the tour guide and is knocked flat.
   /// ★ Named from the game: "To heck with you! I'm staying right here until
   /// the ship leaves!" (MsgKalayTolbiDocksToHeckWithYouImStaying)
   ACTOR_ANGRY_YOUNG_MAN = ACTOR_FIRST_PLACED + 2,
@@ -680,12 +688,14 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_EventEnd();
 }
 
-/// Prepares whichever of the three scenes is entered. Entrance 90 sets
-/// FLAG_COLOSSO_OVER, which leaves the tour's passengers stranded on the Tolbi
-/// Docks. XXX: no exit leads to entrance 90; likely a start for testing, since
-/// Babi's Palace's entrances 90 and 91 set story flags the same way.
+/// An entrance no exit leads to, whose arrival sets FLAG_COLOSSO_OVER.
+enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
+
+/// Prepares whichever of the three scenes is entered. Arriving by
+/// KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
+/// leaves the tour's passengers stranded on the Tolbi Docks.
 s32 KalayTolbiDocks_Initialize(void) {
-  if (gGameState.entrance == 90) {
+  if (gGameState.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     Engine_GameFlagSet(FLAG_COLOSSO_OVER);
   }
   if (gGameState.scene == (s32)&SceneId_KalayDocks) {
@@ -775,7 +785,8 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 /// The building between the docks opens with a window transition and no area
 /// name.
 static void KalayTolbiDocks_PrepareInterior(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
 }
 
@@ -1399,8 +1410,8 @@ struct SceneEvent gKalayTolbiDocks_TolbiEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIThinkThatMissingShipMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(ITEM_POTION) },
-    { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf95, FIND_COINS(35) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_TOLBI_DOCKS_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
+    { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_TOLBI_DOCKS_COINS_BOX, FIND_COINS(35) },
     { SCENE_EVENTS_END },
 };
 
@@ -1427,8 +1438,8 @@ struct SceneEvent gKalayTolbiDocks_TolbiEventsStranded[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SIGHING_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfGrandmaIsDoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(ITEM_POTION) },
-    { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf95, FIND_COINS(35) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_TOLBI_DOCKS_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
+    { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_TOLBI_DOCKS_COINS_BOX, FIND_COINS(35) },
     { SCENE_EVENTS_END },
 };
 

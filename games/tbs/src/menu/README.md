@@ -1,5 +1,7 @@
 # Menus
 
+![The field menu open in Vale, pulled apart into its layers: the map's three layers at the back, the party status window and the label `Psynergy` on BG0, and Isaac and the four command icons as sprites in front](https://alchemy.pascalpixel.com/guides/menu/layers-3d.gif)
+
 The menu code runs the field menu's four screens (Psynergy, Djinn, Item and
 Status), the member chooser the Colosso scenes open, and three overlays that
 are mostly menus: the title screen, the file select screen and the Battle
@@ -116,8 +118,6 @@ background palettes and of the window tiles it draws over. Each puts them
 back and frees them before returning.
 
 ## The screens
-
-![The field menu open in Vale, pulled apart into its layers: the map's three layers at the back, the party status window and the label `Psynergy` on BG0, and Isaac and the four command icons as sprites in front](https://alchemy.pascalpixel.com/guides/menu/layers-3d.gif)
 
 Each screen is entered from the field menu by its `FIELD_MENU_` id through
 `system/far_call/MENU.S`, runs a command loop over its steps, and returns a

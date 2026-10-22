@@ -1,5 +1,7 @@
 # Field objects
 
+![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
+
 This folder runs a field scene: a room, a town, a dungeon floor or the world
 map, from the moment `Game_Run` loads it until the party leaves. It sets the
 scene up, hands the leader to the player, and handles whatever interrupts the
@@ -172,8 +174,6 @@ Cloak is active, or on a zone with rate 0. Otherwise:
    `work->encounterThreshold`, 16 in 16.16 fixed point.
 4. One of the zone's eight enemy groups is drawn by weight, and
    `FieldFx_SelectBattleCue` picks the music.
-
-![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
 
 There is also no battle while flag 5 (`FLAG_IN_PARTY` for Jenna) is set and her
 experience is above 130. Jenna is in the party only from Vale to the Sol

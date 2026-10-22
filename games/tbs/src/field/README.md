@@ -1,5 +1,7 @@
 # Field
 
+![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+
 The field engine runs whatever the player walks around in: a town, a dungeon
 or the world map. It keeps the 64 field objects and runs a script on each of
 them every frame, draws their sprites, turns the direction pad into steps,
@@ -241,8 +243,6 @@ world map's upper collision layer where it has one, else the lower.
 The three map layers are drawn on three of the four backgrounds:
 `MAP_LAYER_GROUND` on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
 `MAP_LAYER_OVERHEAD` on `BG1`. `BG0` is left for the windows.
-
-![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
 
 Depth comes from the hardware's priorities, not from code. Each layer's
 priority comes from the map's header, and a lower number is drawn nearer the

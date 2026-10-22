@@ -1,5 +1,22 @@
 # Sound
 
+```mermaid
+flowchart LR
+    game["Game code"] -->|"AudioCommand_Play(cue)"| cue["Cue layer<br/>sound.c"]
+    vblank["System_VBlankHandler,<br/>once a frame"] -->|"steps the music's ramps"| cue
+    vblank -->|"SoundDriver_EnterMixer"| mixer["Mixer frame,<br/>resident in IWRAM"]
+    subgraph players["MusicPlayer2000's eight players"]
+        direction LR
+        fanfare["0: fanfare, cues 80 to 99"]
+        music["1: music, cues below 80"]
+        others["2 to 7: song table rows, cues 100 up"]
+    end
+    cue -->|"starts the cue's song"| players
+    mixer -->|"ticks each player's tracks"| players
+    players -->|"notes"| pcm["PCM channels,<br/>mixed in software"]
+    players -->|"notes"| cgb["Four CGB channels"]
+```
+
 Every sound in ☀️ is played through one call, `AudioCommand_Play`, with a
 number, a cue. The game's cue layer (`sound.c`) decides what each number
 means, steps the music's volume, tempo and pitch towards their targets, and

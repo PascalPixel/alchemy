@@ -1,5 +1,7 @@
 # Battles
 
+![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
+
 The battle code runs a fight from its opening transition to the spoils: it
 builds the units, gathers each round's actions and sorts them into turns,
 plans each action, stages it, and applies the ability to every target. Three

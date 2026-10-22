@@ -1,5 +1,7 @@
 # What did the game leave unused?
 
+![`Event_UnusedGaretJoinsIsaac` played out in Vale on the stormy night, although the game never reaches it: Garet runs up through the rain, pants `*Hah* *Hah*`, asks `Are you trapped, too?` and says `You came just in time... We can go together.`](https://alchemy.pascalpixel.com/places/vale-storm/events/Event_UnusedGaretJoinsIsaac.gif)
+
 The cartridge holds code, table rows and messages that no path through the
 game reaches. They are kept because their bytes are part of the image, and
 they are marked in the source so that a reader knows the code never runs.

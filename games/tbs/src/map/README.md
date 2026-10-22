@@ -1,5 +1,7 @@
 # Maps
 
+![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
+
 This folder holds the map data, as editable tables: 182 layered maps for the
 towns, dungeons and interiors, the world map's ground and default cells, and
 the rivals' recorded paths in the Colosso finals. It holds no code. Each
@@ -141,8 +143,6 @@ the cell its window starts at (half its tile position, since a cell is 2 by 2
 tiles), so a map lays its layers out side by side or one above another:
 `map_000`'s start at tiles 0, 60 and 120 across, and Venus Lighthouse's
 entrance puts them at (0, 0), (64, 0) and (0, 68).
-
-![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
 
 The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
 layer on `BG1`; [Field](../field/README.md#layered-maps-on-screen) explains

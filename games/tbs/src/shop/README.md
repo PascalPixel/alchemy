@@ -1,5 +1,7 @@
 # Shops
 
+![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper's portrait greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
+
 The shop code runs every counter where the party spends or earns coins: the
 weapon, armor and item shops with their Buy, Sell, Artifacts and Repair
 commands, the sanctums and the inns. It also holds the Game Ticket gifts and
@@ -93,8 +95,6 @@ the welcome of the shop's own type. Xian's three rows
 (`SHOP_STOCK_ROW_XIAN_WEAPONS` to `SHOP_STOCK_ROW_XIAN_ITEMS`) set
 `shop->warriorShop`, which adds the distance to `MsgWarriorShopWelcome` as
 well, so those shops say a set of lines of their own.
-
-![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper's portrait greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
 **Buying** takes each item's price from the coins and adds the same amount
 to `gGameState.shopCredit`, one item at a time. After each purchase

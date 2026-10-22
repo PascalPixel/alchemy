@@ -1,5 +1,7 @@
 # ☀️ The Broken Seal
 
+![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
+
 The Broken Seal is one loop, `Game_Run`, that runs one scene at a time. A
 scene is a map and the overlay of code that drives it, and the scene table
 says which of each a scene uses and which place it belongs to. Scenes are
@@ -47,8 +49,6 @@ encounter zones in `encounter.tsv`.
 A scene's code is an overlay, a compressed resource that `Resource_LoadCode`
 unpacks into `gOverlayArea`, 32 KB of EWRAM, when the scene loads. The next
 scene's overlay is unpacked over it, so only one is ever in memory.
-
-![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
 
 The field engine knows a scene only through the six stubs at the start of
 its overlay (`struct SceneEntries`): its initialization, and the functions

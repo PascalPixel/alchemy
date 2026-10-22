@@ -1,5 +1,15 @@
 # Matching
 
+```mermaid
+flowchart LR
+    write["Write the function in plain C"] --> compare["make compare-editions: each edition's SHA-1 against rom.sha1"]
+    compare -->|"all twelve print : OK"| pass["Still the original game"]
+    compare -->|"an edition fails"| find["Find the bytes: diff the object's assembly against a baseline, or alchemy-devtools diff"]
+    find -->|"reshape: another plain form or an equivalent spelling"| compare
+    find -->|"no plain form matches"| device["Keep a device, tagged FAKEMATCH(kind)"]
+    device --> compare
+```
+
 Alchemy's C has to compile, with an old compiler, into exactly the
 instructions Camelot shipped.
 

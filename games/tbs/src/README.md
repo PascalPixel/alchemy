@@ -1,5 +1,21 @@
 # The Broken Seal's source
 
+```mermaid
+block-beta
+    columns 1
+    romlabel["Main image in ROM: fourteen banks in link order, each opening with a far-call table"]
+    block:rom
+        columns 7
+        runtime field window game object menu shop
+        battle effect scroll["scroll<br/>graphics/credits"] palette["palette<br/>graphics/title"] blankrun["blank run<br/>field"] blankload["blank load<br/>object"] sound
+    end
+    space
+    area["gOverlayArea in EWRAM, 32 KB: one overlay at a time, of the 96 in scene, menu and debug"]
+    area -- "import table, through the far-call tables" --> rom
+    classDef label fill:none,stroke:none
+    class romlabel label
+```
+
 The source is divided the way the cartridge divides the program: one folder
 for each large bank of the main image, folders for the overlays, and four
 folders that gather one kind of thing (pictures, maps, sound, the memory

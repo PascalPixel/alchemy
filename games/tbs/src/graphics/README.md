@@ -1,5 +1,7 @@
 # Graphics
 
+![The title intro after the prologue, 140 frames after the screen first shows, pulled apart into its layers: `BG1` at the back with purple clouds, `BG2` with blue sky and clouds, `BG0` with the mountain, and in front the sprites, the sun on its patch of blue sky and the lens flares below it](https://alchemy.pascalpixel.com/guides/graphics/title-intro-layers-3d.gif)
+
 The graphics folder holds most of ☀️'s pictures, from monsters and battle
 backdrops to fonts and map tiles, the code of the two screens that are
 mostly pictures, the title intro and the credits, and the handwritten
@@ -116,8 +118,6 @@ five seconds. A or Start cuts each part short. Of the backgrounds, `BG1` at
 the back scrolls a pixel every third tick and `BG2` in front every other one,
 each copying the next band of its picture in as a new row of tiles comes
 into view.
-
-![The title intro after the prologue, 140 frames after the screen first shows, pulled apart into its layers: `BG1` at the back with purple clouds, `BG2` with blue sky and clouds, `BG0` with the mountain, and in front the sprites, the sun on its patch of blue sky and the lens flares below it](https://alchemy.pascalpixel.com/guides/graphics/title-intro-layers-3d.gif)
 
 ### Two backdrops in one background memory
 

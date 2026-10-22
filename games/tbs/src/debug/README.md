@@ -1,5 +1,7 @@
 # Debug rooms
 
+![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
+
 The ROM keeps three test rooms, each an ordinary scene overlay: one that hands
 out Djinn, one for levels and for browsing items, icons and letters, and one
 of shop and message tests. They are built exactly as [Scenes](../scene/README.md)
@@ -76,8 +78,6 @@ element's first Djinni to the member with the fewest Djinn. The room then
 clears the flag again (`Engine_GameFlagClear`), so the Djinni is placed again
 on the next visit. Those two calls are the room's whole import table.
 
-![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
-
 ### The level room
 
 Actor 8 is the item browser, 9 the icon browser, 10 the glyph browser and 11
@@ -88,7 +88,6 @@ Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
 0 to 269, by one with Up and Down, `BROWSER_ROW_STEP` (ten) with Right and Left
 and `BROWSER_PAGE_STEP` (thirty) with R and L, skips numbers whose item has no
 icon, and gives the chosen item to the first member with room.
-
 
 ![The level room in English at twice the GBA's size, with no map behind it, each actor on screen labelled with its number: the leader 0, the item browser 8, the level editor 11 and the ability browser 12](https://alchemy.pascalpixel.com/guides/debug/level-room.png)
 

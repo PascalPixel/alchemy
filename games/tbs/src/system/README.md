@@ -1,5 +1,7 @@
 # System
 
+![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
+
 The system folder holds what the rest of the program is laid out on: the
 cartridge header and `System_Entry`, the RAM variables in their fixed order,
 the resident code copied into IWRAM, the far-call tables that join the banks
@@ -152,8 +154,6 @@ of EWRAM) when its scene loads. There are 96, placed by `overlay/overlays.s`
 and listed in the scene table (`field/scenes.s`). Some places share one (the
 three `VaultCave` scenes load the same overlay), and the title screen and a
 few other screens that are mostly menus are overlays too.
-
-![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
 
 An overlay is linked on its own at the overlay area (`overlay/overlay.ld`),
 after the main image and against its symbols (`-R` in the `Makefile`'s overlay

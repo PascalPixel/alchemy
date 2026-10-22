@@ -1,5 +1,7 @@
 # World
 
+![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+
 The field is the layer that runs every place the party walks: towns, dungeons
 and the world map. The engine in `src/field` moves objects and draws maps,
 `src/object` runs a field scene and its requests, each place's overlay in
@@ -47,8 +49,6 @@ A town or dungeon is a layered map drawn on three of the console's four
 background layers, with the actors as sprites between them: `MAP_LAYER_GROUND`
 on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and `MAP_LAYER_OVERHEAD` on `BG1`. `BG0`
 is the window layer, where messages and menus are drawn.
-
-![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
 
 Depth is left to the hardware. Each layer's priority comes from the map's
 header, most maps give the three layers 3, 2 and 1, and the field draws its

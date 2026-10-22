@@ -1,5 +1,7 @@
 # Engine
 
+![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
+
 The engine is the code the field, the battles and the menus are built on:
 start-up, the frame loop and its tasks, the banked layout of the main image,
 the overlays that hold each place's code, and the sound driver's cues.
@@ -32,8 +34,6 @@ after `n` frames. Each frame, `WaitFrames` runs the main-loop tasks
 (`Render_BuildOamList`) and halts the CPU until VBlank. The VBlank handler
 then copies the sprite list and scroll registers to the hardware, carries out
 the queued register writes and runs the VBlank tasks.
-
-![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
 
 Work that has to continue while a function waits is a task: a routine added
 with `Scheduler_AddOrUpdateCallback`, which the scheduler runs every frame

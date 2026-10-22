@@ -1,5 +1,7 @@
 # Windows
 
+![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+
 The window code draws the framed boxes that carry the game's text, decodes
 its compressed messages, types them into those boxes over several frames and
 moves the sprites a window carries: letters, icons, portraits and the page
@@ -210,8 +212,6 @@ for each VBlank the last frame took, counting at most two: 8 for a frame on
 time and 13 after a late one. The speaker's voice blip plays every
 `gUiText_SpeedCueGaps` characters (1, 3 or 10), and is one of four sounds
 from `speakerVoiceSound`, chosen by the character's code.
-
-![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
 ## Drawing text
 

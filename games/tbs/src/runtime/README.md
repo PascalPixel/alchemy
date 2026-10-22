@@ -1,5 +1,7 @@
 # Runtime
 
+![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
+
 The runtime is the layer every other part of the game runs on: power-up, the
 frame loop and the VBlank handler, input, the task scheduler, the heap, the
 register write queue, fades, the frame's sprite lists and the sprite VRAM
@@ -134,8 +136,6 @@ moved (see below). Each frame then:
 5. releases the scratch block, resets the depth slots, counts the frame and
    updates key repeat (`Input_UpdateKeyRepeatAndDirection`);
 6. sleeps, or restarts the game, if either was requested.
-
-![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
 
 VBlank interrupts the halt. `System_VBlankHandler`, reached through the IWRAM
 dispatcher and `gIrqHandlers`, stops any HBlank DMA, trades the link payloads

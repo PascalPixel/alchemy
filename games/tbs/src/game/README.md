@@ -1,5 +1,7 @@
 # Game rules
 
+![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
+
 The game object holds the party's state and the rules the rest of the game
 asks about: the units and their stats, items and inventories, levels and
 classes, the Djinn each character holds, and the game flags. Its `.tsv`

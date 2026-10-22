@@ -2,6 +2,8 @@
 
 Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
 
+<img src="https://alchemy.pascalpixel.com/guides/field/layers-3d.gif" width="520" alt="Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front" />
+
 ## What is a decompilation?
 
 Camelot wrote Golden Sun as source code, then compiled it into the `0`s and `1`s on the cartridge. They never released that source, so Alchemy writes it again: C code that compiles back into exactly the same `0`s and `1`s.
@@ -24,8 +26,6 @@ The Broken Seal is fully rebuilt: every byte of all six editions comes from this
 ## Where do I start reading?
 
 [The documentation](https://alchemy.pascalpixel.com/) explains how The Broken Seal works underneath, and it takes the game apart to show you. [Its front page](games/tbs/README.md) covers the big picture: the loop that runs one scene after another, the places and their flags. Four pages go a layer deeper: [the world](games/tbs/world.md) you walk around, [battles](games/tbs/battle.md), [menus, windows and shops](games/tbs/menus.md) and [the engine](games/tbs/engine.md) underneath them all. The places have pages of their own too, with maps of their rooms and recordings of their events.
-
-<img src="https://alchemy.pascalpixel.com/guides/field/layers-3d.gif" width="520" alt="Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front" />
 
 If you’d rather start in the code, [the source’s own guide](games/tbs/src/README.md) says what lives in which folder, and every folder has a guide of its own. [MATCHING.md](games/tbs/src/MATCHING.md) collects the plain C spellings that compile to the game’s exact instructions, for anyone who wants to help with The Lost Age.
 

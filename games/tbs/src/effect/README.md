@@ -1,5 +1,7 @@
 # Battle effects
 
+![Isaac summons Judgment against Garet, Ivan and Mia: the screen goes dark, Judgment rises out of purple clouds and gathers light, a burst sweeps over an aerial view of hills, a beach and a forest, and the battle comes back as `Garet takes 405 damage!!!`, then Ivan 510 and Mia 367.](https://alchemy.pascalpixel.com/abilities/judgment.gif)
+
 A battle effect is the animation drawn over the battle while an ability plays:
 Psynergy, a Djinni, a summon, an item or a monster's attack. Each effect is one
 function, its handler, which the battle calls with a

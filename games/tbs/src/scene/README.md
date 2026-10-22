@@ -1,5 +1,7 @@
 # Scenes
 
+![Vale at twice the GBA's size where Garet's sister stands, each actor on screen labelled with its actor number: Isaac 0, Garet's sister 18, the stone pillar 20 and two other actors, 10 and 19](https://alchemy.pascalpixel.com/guides/scene/actors.png)
+
 A scene overlay is the code and tables of one place: who stands where, what
 happens when the party talks to someone, touches a cell, searches, uses an
 item or Psynergy, and the cutscenes the place plays. [Field

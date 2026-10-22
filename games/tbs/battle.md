@@ -1,5 +1,7 @@
 # Battle
 
+![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
+
 The battle layer is the code that runs a fight from its opening transition to
 the spoils: the rounds and turn order, the ability tables, the arithmetic each
 target goes through, and the effects drawn over the battlefield while it
@@ -115,8 +117,6 @@ commands are chosen (`FLAG_CHOOSING_COMMANDS`), its top 16 lines are left off.
 switches the background to that flat picture (`BATTLE_BACKGROUND_FLAT`), whose
 horizontal scroll follows the camera. `BG0` holds the windows, and the units
 are sprites.
-
-![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
 
 ## Effects
 

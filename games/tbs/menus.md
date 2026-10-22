@@ -1,5 +1,7 @@
 # Menus, windows and shops
 
+![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats with `Your status is normal.` above them, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
+
 The menus layer is the code that draws every window, decodes and types the
 game's messages, runs the field menu's four screens (Psynergy, Djinn, Item
 and Status) and runs the counters where the party spends coins: shops,

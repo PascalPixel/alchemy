@@ -1,27 +1,24 @@
 # Game rules
 
-![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
+![One number, three lists. The Healing Ring is item 265, and that one number finds it in three lists kept in the same order: row 265 of the item table, 800 coins, a ring, uses Cure; entry 265 of the item names, Healing Ring; and entry 265 of the Item screen's lines, Ring: Use to restore 70 HP. The Sleep Ring at 264 and the Unicorn Ring at 266 line up the same way. Only the position ties the lists together, so a row put into one list would shift all the later names.](https://alchemy.pascalpixel.com/illustrations/game/row-id.svg)
 
-The game object holds the party's state and the rules the rest of the game
-asks about: the units and their stats, items and inventories, levels and
-classes, the Djinn each character holds, and the game flags. Its `.tsv`
-tables define every item, ability, Djinni, enemy, summon and class. A scene
-asks it whether a chest has been opened, a shop what an item costs, a menu
-what a character's Attack would be, and a battle what a blow does;
+Everything the game needs to know about the party lives here: who is in it,
+each character's level, HP and stats, the items each one carries, the Djinn
+they hold, and the flags that remember what has happened in the story. So do
+the tables that describe every item, ability, Djinni, enemy, summon and
+class. The rest of the game asks this code its questions: a scene whether a
+chest has been opened, a shop what an item costs, a menu what a character's
+Attack would be with another sword, and a battle what a blow does.
 [Battles](../battle/README.md) follows an ability from these tables to its
 damage.
 
 ## A row's id is its position, and its name is a message at the same position
 
-The definition tables give every item, ability, Djinni, enemy, summon and
-class its id by its row, and its name by the message at the same position.
-
-```mermaid
-flowchart LR
-    id["item id 265"] -->|"row 265 of items.tsv"| row["the Healing Ring's row:<br/>800 coins, a ring, Cure"]
-    id -->|"MsgItemName + 265"| name["message 651:<br/>its name"]
-    id -->|"MsgItemPlainName + 265"| line["its line on the Item screen"]
-```
+The Healing Ring costs 800 coins, heals like Cure when used, and is called
+"Healing Ring" on screen. Those facts sit in different places, the price in
+the item table and the name in the game's text, and the one thing that joins
+them is a number: the ring is item 265, the 265th row of one list and the
+265th entry of the others.
 
 The definition tables have no id column: an entry's id is its row, the first
 row after the header being entry 0. The same id, added to the number of a
@@ -70,9 +67,14 @@ name the ids the code uses.
 
 ## An item's row
 
-An item is its row of `items.tsv`, read as `struct ItemDefinition`
-(`games/tbs/include/game/item.h`): what it costs, who equips it, what it adds
-while equipped and what using it does.
+An item is one row of the item table, and everything the player learns about
+it in a shop or on the Item screen comes from that row: its price, who can
+equip it, what it adds to Attack or Defense, and what using it does.
+
+![The Long Sword's row of the item table, read column by column. Its price, 200, is what a shop asks in coins. Its type, a weapon, means a character holds one weapon at a time. Its equip mask has one bit for each of the eight characters, Isaac, Garet, Ivan, Mia, Felix, Jenna, Sheba and Piers; the bits for Isaac, Garet and Felix are set, so they can equip it, and for the others the shop says Can't equip. Its first bonus, 14, is added to Attack while it is equipped, before the character's class multiplies it.](https://alchemy.pascalpixel.com/illustrations/game/item-row.svg)
+
+The row is read as `struct ItemDefinition` (`games/tbs/include/game/item.h`).
+The picture below shows the same row at work in the game.
 
 ![The Long Sword's row of `items.tsv`, price 200, type 1, a weapon, flags 0, `equip_mask` `0x13`, Isaac, Garet and Felix, icon 1, `primary_bonus` 14 and the rest 0 but element 4, beside four screens. In Bilibin's weapon shop the Buy list shows it at 200 coins; choosing who gets it, the hand on Isaac shows his Attack going from 56 with his Bandit's Sword to 58, and on Ivan the shop says `Can't equip`; once bought and equipped, the Item screen lists it among Isaac's items with its sword icon and his Attack at 58.](https://alchemy.pascalpixel.com/guides/game/item-row.png)
 
@@ -118,8 +120,12 @@ The Healing Ring's row shows the pieces together: 800 coins, `type` ring,
 
 ## An inventory entry is one halfword
 
-Each of a unit's inventory slots is one halfword holding the item, whether it
-is equipped or broken, and how many of it the slot holds.
+Each character carries up to 15 things, and the Item screen shows for each
+one whether it is equipped, whether it is broken, and how many there are of
+a stackable item such as Herbs. All of that fits in one 16-bit number per
+slot.
+
+![One inventory slot, sixteen bits in four parts. From the left: five bits for how many are stacked, less one; one bit set when the item is broken; one bit set when it is equipped; and nine bits for which item it is. Three Herbs: the count part holds 2, for three, neither broken nor equipped, and the item part holds 180, the Herb. A Long Sword, equipped: the count part holds 0, for just one, the equipped bit is set, and the item part holds 1, the Long Sword. An empty slot is all zeros; a stack grows to 30, and each character has 15 slots.](https://alchemy.pascalpixel.com/illustrations/game/inventory-entry.svg)
 
 ```
 bits 15..11   count less one   (INVENTORY_QUANTITY_SHIFT)
@@ -149,23 +155,15 @@ parts, and [game/inventory.c](game/inventory.c) reads and writes them.
 
 ## Stats are recomputed whole
 
-A unit's stats are never adjusted in place: `Unit_Calculate` works them all out
-again whenever one of their inputs changes, and a menu previews a change by
-running the same computation, as the picture at the top of the page shows.
+When the player points at Remove on Isaac's Machete, the status panel shows
+his Attack falling from 24 to 17 before anything is chosen. The game never
+adds or subtracts a stat bit by bit: whenever anything that feeds a stat
+changes, it works every stat out again from the start, and a menu's preview
+is that same calculation, run on Isaac for a moment and then undone.
 
-```mermaid
-sequenceDiagram
-    participant M as Menu_DrawOwnerStatusPanel
-    participant H as Copy on the heap
-    participant U as The unit
-    participant C as Unit_Calculate
-    M->>H: copy the unit
-    M->>U: change its equipment
-    M->>C: recompute the unit
-    C->>U: stats from base stats, equipment, Djinn, class
-    M->>M: draw the new stats against the copy's
-    H->>U: restore the unit
-```
+![How a menu previews a change, pointing at Remove on the Machete. One: copy Isaac aside, every stat and item as he is. Two: take the Machete off the real Isaac, for a moment. Three: work out every stat again. Four: show the new against the old, Attack 24 going to 17. Five: put Isaac back from the copy, so nothing has changed. The preview is exact because it is the same calculation that equipping runs.](https://alchemy.pascalpixel.com/illustrations/game/stats-preview.svg)
+
+![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
 
 `Unit_Calculate` ([game/units.c](game/units.c)) works a unit's stats out again
 from its base stats, equipment, set Djinn, class and battle stat levels,
@@ -179,12 +177,17 @@ Machete, `Menu_DrawOwnerStatusPanel`
 copies the unit to the heap, changes the real unit's equipment, lets
 `Unit_Calculate` run, draws the new numbers against the copy and restores the
 unit from it. The preview is what equipping would do because it is the same
-computation.
+computation. The Machete adds 6 to Attack, but the panel shows 7 less,
+because his class multiplies the sum (in tenths, from its row of
+`classes.tsv`) and the result rounds down.
 
 ## The game flags
 
-The game flags are 4,096 bits that record what has happened, and the bytes
-and nibbles they make up also hold small counters.
+The game remembers what has happened (a chest opened, a Djinni found, a
+scene already played) as yes-or-no flags, 4,096 of them, one bit each, and
+the bytes and nibbles they make up also hold small counters.
+
+![A flag is one bit. The 4,096 flags are kept in 512 bytes. Flag 48 is set once Flint, the first Venus Djinni, is found: 48 divided by 8 is byte 6, remainder bit 0. Byte 6 holds flags 48 to 55, Flint, Granite and the Venus Djinn after them. All 80 Djinn have flags 48 to 127, 20 to an element in order, so Fizz, the first Mercury Djinni, is flag 68. Eight flags in a row are one byte, so a byte can hold a number: the Battle Arena's wins live there.](https://alchemy.pascalpixel.com/illustrations/game/game-flags.svg)
 
 ```
 flag number   bits 11..3   its byte of gGameFlagBytes   (GAME_FLAG_BYTE)
@@ -223,15 +226,11 @@ The flag functions are in [game/flags.c](game/flags.c), `GAME_FLAG_BYTE` in
 
 ## Rare item counters
 
-The rare item counters limit how many of each rare item the shops may still
-sell.
+A shop never runs out of Herbs, but a rare item such as the Healing Ring can
+be sold only as many times as its counter allows, and selling one back to a
+shop makes it available again. The rare item counters keep that count.
 
-```mermaid
-flowchart LR
-    item["item id"] -->|"gItem_ArtifactSlotTable"| slot{{"0?"}}
-    slot -->|yes| plain["an ordinary item:<br/>no counter"]
-    slot -->|"n"| counter["counter n - 1 of<br/>gItemCounters, 0 to 99"]
-```
+![Rare item counters. A lookup table gives each item its counter number plus one. The Herb's entry is 0: an ordinary item with no counter, so the shops never run out. The Healing Ring's entry is 96, so its count is counter 95. Buying one takes one off; selling or dropping one puts it back. There are 128 counters, each 0 to 99, one byte each.](https://alchemy.pascalpixel.com/illustrations/game/rare-counters.svg)
 
 `gItemCounters` holds 128 counters, each 0 to 99, for how many of each rare
 item the shops may still sell. `gItem_ArtifactSlotTable` gives each item id

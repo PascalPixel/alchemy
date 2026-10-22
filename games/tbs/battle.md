@@ -1,40 +1,48 @@
 # Battle
 
-![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
+![A battle, round by round. At the start of each round everyone chooses an action: the party in the command menu, each enemy from its own list. The actions line up fastest first, by Agility. Then each action plays in turn: it is announced, its animation plays and each target is hit, and the unit's turn ends. After any action, if one side is down or the party ran, the battle ends, with coins, experience and items after a win. When everyone has acted, the next round begins.](https://alchemy.pascalpixel.com/illustrations/battle/round.svg)
 
-The battle layer is the code that runs a fight from its opening transition to
-the spoils: the rounds and turn order, the ability tables, the arithmetic each
-target goes through, and the effects drawn over the battlefield while it
-resolves.
+When a random battle starts, the field gives way to a battlefield where the
+party faces the enemies. From then on the battle runs in
+rounds. At the start of a round the player picks a command for each party
+member and every enemy picks one of its own. The game lines the actions up,
+fastest first, and plays them one after another: an announcement such as
+`Isaac casts Quake!`, the animation, and the damage and messages for each
+target. When one side has nobody left standing, or the party runs away, the
+battle ends and the field comes back.
+
+Two kinds of code share the work. The rules decide what happens: who acts
+when, who is hit and for how much, which statuses take hold. The effects
+draw it: the rock that rises, the flash of a critical hit, a summon's whole
+scene. They are kept apart so cleanly that a later target's damage is worked
+out while the animation is still on screen. This page explains the battle as
+a whole; [Battles](src/battle/README.md) goes through the rules in detail,
+[Game rules](src/game/README.md) holds the tables and the arithmetic they
+use, and [Battle effects](src/effect/README.md) the animations.
 
 ## Starting a battle
 
-A battle is a scene of its own that runs from the main image rather than an
-overlay, entered from the field and returning to it.
+To the rest of the game a battle is one more scene: the field leaves for it
+as it would leave through a doorway, and comes back to the same place
+afterwards.
 
-```mermaid
-flowchart LR
-    field["Field scene:<br/>an encounter raises an exit<br/>to SCENE_BATTLE"] --> run["Game_Run:<br/>reset tasks and heap"]
-    run --> enc["Battle_RunEncounterFar(entrance)"]
-    enc --> back["Scene_ReturnFromBattle:<br/>the field scene again,<br/>or the defeat point"]
-```
-
-Its code is in the main image's `battle` bank. A random encounter raises a
-field exit like any other, with `SCENE_BATTLE` as the next scene and the enemy
-group in `gGameState.entrance`. `Game_Run` (`src/object/object/scene.c`)
-resets the task table and the heap as it does between any two scenes, then
-calls `Battle_RunEncounterFar(entrance)` instead of loading an overlay. The
-debug battle menu (`DebugBattle_RunMenu`) is the only other caller.
+A random encounter raises a field exit like any other, with `SCENE_BATTLE`
+as the next scene and the enemy group in `gGameState.entrance`. `Game_Run`
+(`src/object/object/scene.c`) resets the task table and the heap as it does
+between any two scenes. Then, instead of loading a place's overlay, it calls
+`Battle_RunEncounterFar(entrance)`, which fights the whole battle before it
+returns. Afterwards `Scene_ReturnFromBattle` reloads the field scene the
+battle started from, with the party where it was, or after a defeat goes to
+the defeat point. The debug battle menu (`DebugBattle_RunMenu`) is the only
+other way in. The battle's code runs from the main image's `battle` bank
+rather than from an overlay.
 
 `Battle_RunEncounter` (`src/battle/battle/encounter.c`) allocates the
-battle's work slots, `gBattleWork` among them, sets `FLAG_IN_BATTLE`, and
-fights the whole battle before it returns. The result is the number of
-enemies defeated, `ENCOUNTER_FLED` or `ENCOUNTER_PARTY_LOST`.
-`Scene_ReturnFromBattle` then reloads the field scene the battle started
-from, with the party where it was, or after a defeat goes to the defeat
-point. The enemy group is a row of `formatn.tsv`, which `formation.c` turns
-into enemy units; the encounter zones in `src/object/encounter.tsv` choose
-the row.
+battle's work slots, `gBattleWork` among them, and sets `FLAG_IN_BATTLE`
+while it runs. Its result is the number of enemies defeated,
+`ENCOUNTER_FLED` or `ENCOUNTER_PARTY_LOST`. The enemy group is a row of
+`formatn.tsv`, which `formation.c` turns into enemy units; the encounter
+zones in `src/object/encounter.tsv` choose the row.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -49,15 +57,16 @@ rolls the encounter, and [Battles](src/battle/README.md#rounds) what
 
 ## Units and abilities
 
-Everyone in a fight is a unit, and everything a unit can do on its turn is an
-ability, one row number across three tables.
+Everyone in a fight, party member or enemy, is a unit, and everything a unit
+can do on its turn is an ability: Attack, Quake, a Djinni, a summon, using an
+item, an enemy's special move.
 
 Party members keep their character numbers as unit ids, and enemies take ids
 from `FIRST_ENEMY_UNIT`. `Unit_GetFar` returns a unit's `struct BattleUnit`,
 with its HP, PP, stats, statuses and a Power and a Resist in each element.
 
-An ability runs from Attack to Quake, a Djinni, a summon, an item's use or an
-enemy's special move. Its id is the same row in three tables:
+An ability's id is the same row in three tables, each saying one thing about
+it:
 
 | Table | Read through | What its row says |
 | --- | --- | --- |
@@ -70,7 +79,7 @@ a PP cost of 4 and a power of 12, and its `flags` are `0x85`:
 `ACTION_USABLE_IN_BATTLE` plus `ABILITY_KIND_DAMAGE`. The ability kind, the
 low four bits of `flags` (`ABILITY_KIND_MASK`), chooses the formula the
 targets go through. The effect kind in `actflags.tsv` is an unrelated number
-that chooses only the animation, so the formula and the picture can be
+that chooses only the animation, so the arithmetic and the picture can be
 changed independently.
 
 | Name | Value | Meaning |
@@ -86,8 +95,8 @@ ability kind.
 
 ## Rounds and turns
 
-A round gathers every unit's action, sorts them into turn order and then
-plans, stages, applies and closes each one in turn.
+The picture at the top of this page is one battle: rounds of choosing,
+sorting and playing actions, until one side is beaten.
 
 A round has five steps, each in its own part of `src/battle/battle/`:
 
@@ -97,46 +106,54 @@ A round has five steps, each in its own part of `src/battle/battle/`:
    `FLAG_AUTO_BATTLE`. `BattleQueue_SortByPriority` sorts them by Agility,
    fastest first, except that Granite, Flash and Ground go before everyone.
 2. `BattleCommand_BuildPlan` (`plan.c`) turns each action into a
-   `struct BattlePlan`: the ability id, the targets, double and critical blows
-   rolled in advance, and the staging.
+   `struct BattlePlan`: the ability id, the targets, double blows and
+   critical hits rolled in advance, and the staging.
 3. `BattlePresentation_DispatchAction` (`staging.c`) stages the plan and runs
    its effect.
 4. `BattleTarget_Execute` (`target_exec.c`) applies the ability to each target.
 5. `turn_end.c` counts down stat changes and statuses, recovers Djinn and
    applies poison and the Grim Reaper's countdown.
 
-The battle ends when one side has no unit left standing or the party gets
-away. A plan reaches at most `TARGET_MAX` (14) targets.
+After every action the battle checks both sides, so it can end in the middle
+of a round. A plan reaches at most `TARGET_MAX` (14) targets.
 [Battles](src/battle/README.md#rounds) goes through each step, with
+[who acts first](src/battle/README.md#rounds),
 [enemy action selection](src/battle/README.md#enemy-actions),
 [first strikes and escape](src/battle/README.md#first-strikes-and-escape)
 and [planning an action](src/battle/README.md#planning-an-action).
 
 ## Resolving an ability
 
-`BattleTarget_Execute` puts each target in turn through the formula its ability
-kind chooses, scaled by distance and element.
+When Quake hits three enemies, the one aimed at takes the most and the ones
+beside it less, and an enemy weak to Venus takes more than one that resists
+it. Every damaging ability works out its number the same way, in a few
+plain steps.
 
-It rolls the added effect (`Battle_RollEffectSuccessFar`), then switches on the ability
-kind to choose the formula, then applies the added effect if it landed. The
-formulas are in `src/game/game/battle_calc.c` and are called by their
-far-call names: `Battle_CalculateAttackDamageFar` for attacks, `Battle_CalculatePsynergyPowerFar` for Psynergy
-damage, `Battle_CalculateRecoveryFar` for healing.
+![How Psynergy damage is worked out, for Isaac's Avalanche at three enemies in a row, aimed at the first. Avalanche's power is 160. Isaac's Venus Power is 20 ahead of each target's Venus Resist, which multiplies it by about 1.1, to 175. The distance keeps 100 percent for the aimed enemy, 80 one place away and 60 two away: 175, 140 and 105. Last, 0 to 3 is added at random: 175 to 178, 140 to 143 and 105 to 108. A defending target takes half, one behind Total Defense a tenth. Every step rounds down.](https://alchemy.pascalpixel.com/illustrations/battle/damage.svg)
 
-For `ABILITY_KIND_DAMAGE` the power is the damage the aimed target takes when
-the caster's Power in the ability's element equals the target's Resist in it;
-a random 0 to 3 is then added. Quake's 12 is therefore 12 to 15. Two factors
-scale it:
+An ability's power is the damage the aimed target takes at an even match,
+when the caster's Power in the ability's element equals the target's Resist
+in it. Two things scale it, and a little luck is added:
 
-- Distance. A range counts places in the target side's line-up, and each step
-  from the aimed place takes a lower share from the fall-off tables in
-  `src/battle/battle_calc.s`: 80 percent one step away and 60 two steps away
-  for Psynergy damage. Summons and enemy unleashed damage have tables of
-  their own.
-- Element. Each point the caster's Power is ahead of the target's Resist adds
-  half a percent, up to double, and each point behind takes half a percent
-  off, down to nothing (`Battle_GetElementMultiplier`). The multiplier is
-  counted in 256ths (`FULL_RATE`), and every result rounds down.
+- The element. Each point the caster's Power is ahead of the target's Resist
+  adds half a percent, up to double; each point behind takes half a percent
+  off, down to nothing.
+- The distance. A range counts places in the target side's line-up, and each
+  step from the aimed place keeps a smaller share: 80 percent one step away
+  and 60 two steps away for Psynergy damage. Summons and the enemies'
+  unleashed moves have tables of their own.
+- A random 0 to 3 is added at the end, so Quake's power of 12 deals 12 to 15
+  at an even match.
+
+In the code, `BattleTarget_Execute` rolls the added effect
+(`Battle_RollEffectSuccessFar`), then switches on the ability kind to choose
+the formula, then applies the added effect if it landed. The formulas are in
+`src/game/game/battle_calc.c` and are called by their far-call names:
+`Battle_CalculateAttackDamageFar` for attacks,
+`Battle_CalculatePsynergyPowerFar` for Psynergy damage,
+`Battle_CalculateRecoveryFar` for healing. `Battle_GetElementMultiplier`
+gives the element's share, counted in 256ths (`FULL_RATE`), and the
+fall-off tables are in `src/battle/battle_calc.s`. Every result rounds down.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -150,8 +167,12 @@ Avalanche, Cure and Ragnarok.
 
 ## The battle's picture
 
-A battle is drawn on three backgrounds and the sprites, with the battlefield
-as a perspective plane that an effect may trade for a flat picture.
+The battlefield the player sees tilts away into the distance and turns as
+the camera swings round, while the status window and the messages stay flat
+in front. That takes three of the console's background layers and its
+sprites, each with its own job.
+
+![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
 
 The battlefield is `BG2`, an affine plane in perspective
 (`BATTLE_BACKGROUND_PLANE`): `BattleCamera_SetRange` builds a page of
@@ -162,7 +183,7 @@ the camera's yaw. Outside the time commands are chosen
 same picture flat. An effect that needs `BG2` for its canvas switches the
 background to that flat picture (`BATTLE_BACKGROUND_FLAT`), whose horizontal
 scroll follows the camera. `BG0` holds the windows, and the units are
-sprites. The picture at the top of this page takes these layers apart.
+sprites. The recording above takes these layers apart.
 
 | Layer | What it holds |
 | --- | --- |
@@ -176,8 +197,9 @@ takes `BG2` for its canvas.
 
 ## Effects
 
-An effect is the function that draws an ability, started through one of
-three entry points and run to its end while the battle waits.
+Every ability's animation, from a sword swing to Judgment rising out of the
+clouds, is an effect: one function that draws it frame by frame and returns
+when it is over, while the battle waits.
 
 `BattlePresentation_DispatchAction` starts the effect through one of three
 entry points, chosen by bits of the plan's `presentationFlags`, which are the
@@ -245,51 +267,30 @@ how the entry point is chosen, then [the canvas](src/effect/README.md#the-canvas
 
 ## Rules and effects run together
 
-The damage messages appear while the effect is still drawing because a task
-plays the rules' results from the frame the blow lands.
+In a battle the damage messages appear while the rock is still rising: the
+animation does not have to finish before the numbers show. That is because
+the animation and the damage run side by side, and only meet at the moment
+the blow lands.
 
-![Isaac casts Quake: the rock rises under the party, and the damage messages appear while it's still on screen, the aimed member taking more than the one beside him](https://alchemy.pascalpixel.com/abilities/quake.gif)
+![The animation and the damage, side by side, with time running down the page. On the left the animation runs in its own loop: Quake's rock rises frame after frame. On the right the damage task waits. When the blow lands the animation says so, and from then on both run at once: the animation keeps drawing to its last frame while the task works out the first target's damage and shows its messages, then the next target's, then the last. The battle moves on only when both are done. The animation picks when the damage appears; the rules alone decide how much.](https://alchemy.pascalpixel.com/illustrations/battle/side-by-side.svg)
 
 An effect is an ordinary function with a loop of its own: it calls
 `WaitFrames` whenever time has to pass and returns only when the animation is
-over. The battle code that called it cannot run until then.
+over. The battle code that called it cannot run until then, so the damage
+has to come from somewhere else: a task, which the scheduler runs once a
+frame alongside the effect.
 
-The messages are shown from a task. Before it starts the effect,
-`BattlePresentation_DispatchAction` schedules `BattleEvent_Playback`
-(`src/battle/battle/playback.c`) with `Scheduler_AddOrUpdateCallback`, and
-after the effect returns it waits in `BattleEvent_WaitForReady` until
-playback is done. Playback stays idle until the effect calls
-`EFFECT_SHOW_DAMAGE(hitSound)`, which most effects do on the frame the blow
-lands; if an effect never calls it, the wait after the effect starts playback
-instead. From then on, once a frame, the task runs `BattleTarget_Execute` for the
-next target and plays that target's events over the following frames before
-it moves on.
+Before it starts the effect, `BattlePresentation_DispatchAction` schedules
+`BattleEvent_Playback` (`src/battle/battle/playback.c`) with
+`Scheduler_AddOrUpdateCallback`, and after the effect returns it waits in
+`BattleEvent_WaitForReady` until playback is done. Playback stays idle until
+the effect calls `EFFECT_SHOW_DAMAGE(hitSound)`, which most effects do on the
+frame the blow lands; if an effect never calls it, the wait after the effect
+starts playback instead. From then on, once a frame, the task runs
+`BattleTarget_Execute` for the next target and plays that target's events
+over the following frames before it moves on.
 
-```mermaid
-sequenceDiagram
-    participant D as BattlePresentation_DispatchAction
-    participant F as Effect
-    participant P as BattleEvent_Playback (task)
-    participant T as BattleTarget_Execute
-    participant Q as Event queue
-    D->>P: Scheduler_AddOrUpdateCallback
-    D->>F: start the effect
-    loop until the blow lands
-        F->>F: WaitFrames
-    end
-    F->>P: EFFECT_SHOW_DAMAGE(hitSound)
-    par the effect keeps drawing
-        F->>F: WaitFrames
-    and playback runs the rules
-        loop each target, once a frame
-            P->>T: BattleTarget_Execute(target)
-            T->>Q: BattleEvent_Push (arguments, then message)
-            P->>Q: play that target's events
-        end
-    end
-    F-->>D: effect returns
-    D->>P: BattleEvent_WaitForReady until playback is done
-```
+![Isaac casts Quake: the rock rises under the party, and the damage messages appear while it's still on screen, the aimed member taking more than the one beside him](https://alchemy.pascalpixel.com/abilities/quake.gif)
 
 The two sides meet at the battle event queue (`struct BattleEventQueue`,
 `BATTLE_EVENT_CAPACITY` events). `BattleTarget_Execute` never draws or waits: it
@@ -311,7 +312,7 @@ known.
 | `BATTLE_EVENT_CAPACITY` | 64 | events the battle event queue holds |
 
 [Battles](src/battle/README.md#rules-and-pictures-meet-at-the-event-queue)
-takes one round's queue apart, event by event.
+takes one target's queue apart, event by event.
 
 ## Limits
 

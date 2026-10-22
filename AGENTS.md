@@ -177,6 +177,7 @@ Not rules; facts about alchemy-gcc that keep coming back.
 - A struct object declared before its type is complete keeps a smaller alignment and changes the code that reads it: a header includes its structs' headers first.
 - alchemy-gcc pads every struct to 4 bytes, and a field after the first is addressed from the table's base: a table read by columns is a `[][N]` array with an `enum` naming the columns.
 - Locals declared in an inner block take their pseudos later and change register allocation.
+- A loop built from labels and `goto` has no loop notes: loop.c neither hoists its constants and addresses nor strength-reduces it nor deletes it when empty, jump.c does not copy its exit test, and global.c does not weight its references. Its C form rarely matches, and an empty C loop is deleted.
 - A file that tests `LANGUAGE` without including `edition.h` silently gets the Japanese branch.
 - Within one object, code and data follow definition order after preprocessing; only the object list orders objects. Every Thumb function starts on 4 bytes, so code shows no object boundary; data can, through a gap no type alignment explains.
 - Register choice is arithmetic: allocation order r3, r2, r1, r0, ip, lr, r4 to r7, r8, r10, r9, r11; global.c ranks pseudos by refs and live length, loop depth weighting refs. A constant `REG_EQUAL` note doubles a pseudo's live length.

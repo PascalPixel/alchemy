@@ -521,6 +521,8 @@ static s32 LinkLobby_ReceivePartyRecords(void) {
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   slot = 0;
+  // The record loop and both waits are written with goto (MATCHING.md): as a
+  // for loop round while loops, 105 of 189 instructions differ in tbs-en.
   goto next;
 wait1:
   if (gSerialReceivedSize > size) {
@@ -735,6 +737,8 @@ static s32 LinkLobby_SendPartyRecords(void) {
     }
     Engine_TaskWait(2);
   }
+  // The padding loop is written with goto (MATCHING.md): as for (; i <= 2;
+  // i++) round a while loop, 127 of 254 instructions differ in tbs-en.
   goto next;
 wait:
   Engine_TaskWait(1);
@@ -833,6 +837,8 @@ static s32 LinkLobby_ExchangePartyRecords(void) {
   } while (0);
   receiveFirst = Engine_GameFlagIsSet(FLAG_PLACE_TEMP_02);
   gLinkExchangeState = result;
+  // Every failure reaches the one reset: as nested ifs before a single
+  // if (result < 0), 16 of 62 instructions differ in tbs-en.
   if (!receiveFirst) {
     Engine_TaskWait(5);
     result = LinkLobby_SendPartyRecords();

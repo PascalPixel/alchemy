@@ -91,6 +91,9 @@ enum ScriptWork {
   SW_PAUSED = 0x20,
   SW_REPEAT = 0x21,
   SW_WAIT = 0x22,
+  /// FieldActor.timer, the parameter an action script reads; a scene's own
+  /// scripts set it to 1 as they end, for the code that waits on them.
+  SW_TIMER = 0x23,
   SW_HOOK = 0x26
 };
 

@@ -21,6 +21,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
   SPRITE_SOLDIER = 0x98,
+  /// A big round rock: the rocks that fall across Vale's paths on the stormy
+  /// night, and the Boulder of Mt. Aleph drawn at twice its size.
+  /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
+  SPRITE_ROCK = 0xc8,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
   /// as Sol Sanctum's statues stand on its seals (its render)
   SPRITE_STONE_STATUE = 0xcb,
@@ -42,6 +46,8 @@ enum SpriteId {
   /// The effect FieldFx_ConfigureLinkedObject attaches to an actor or shows
   /// once, as the leader flinches on hazard ground.
   SPRITE_ATTACHED_EFFECT = 209,
+  /// ★ Named from the game: "chest of valuables" (MsgValeSChestValuables)
+  SPRITE_CHEST_OF_VALUABLES = 0xd2,
   /// What Move pushes in Goma Cave and many rooms after it, which the game
   /// calls a stone pillar ("It's just a stone pillar.").
   /// ★ Named from what the player sees: a tall stone pillar (its render)

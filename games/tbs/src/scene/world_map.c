@@ -322,8 +322,8 @@ enum { ROWING_BALANCE_OFF_COURSE = 11 };
 /// Isaac's animations the map plays beyond enum ActorAnimation, as his sprite
 /// (spr_000.png) draws them.
 enum {
-  ANIM_LEADER_LOOK_UP = 22, ///< his head thrown back, looking up
-  ANIM_LEADER_HOLD_UP = 28  ///< both arms raised, holding something up
+  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  ANIM_LEADER_HOLD_UP = 28    ///< both arms raised, holding something up
 };
 
 /// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge has fallen.
@@ -1659,7 +1659,7 @@ static void Event_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);
@@ -1687,7 +1687,7 @@ static void Event_MeetFlint(void) {
       djinni->facing += FACING_STEP;
       Task_Wait(1);
     }
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
@@ -1711,7 +1711,7 @@ static void Event_MeetFlint(void) {
       count++;
       goto plead;
     }
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 20);
     Event_SetMessage(MsgWorldMapSeeWontRegret);
@@ -1739,7 +1739,7 @@ static void Event_MeetFlint(void) {
   WorldMap_BeginEvent();
   Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   // Offer the tutorial again, then demonstrate setting and standby.
   Event_SetMessage(MsgWorldMapSeeDjinnUseful);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
@@ -1760,7 +1760,7 @@ static void Event_MeetFlint(void) {
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
   if (Event_ChooseYesNo(0, 0) == 1) {
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_SetMessage(MsgWorldMapHmmmmExplainAgain);
     Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1772,7 +1772,7 @@ static void Event_MeetFlint(void) {
       return;
     }
   }
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LOOK_UP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   Event_SetMessage(MsgWorldMapYeahWantLearn);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);

@@ -735,12 +735,12 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   struct FieldActor *member;
 
   if (shown != 0) {
-    Actor_SetChildValue(actorId, 0);
+    Actor_SetChildValue(actorId, SPRITE_COLOR_NORMAL);
     member = Actor_Get(actorId);
     Engine_ActorSetSpriteFlags(member, 1);
     Actor_SetSpeed(actorId, PIXELS(4) / 5, PIXELS(2) / 5);
   } else {
-    Actor_SetChildValue(actorId, 15);
+    Actor_SetChildValue(actorId, SPRITE_COLOR_HIDDEN);
     member = Actor_Get(actorId);
     Engine_ActorSetSpriteFlags(member, 0);
   }
@@ -902,7 +902,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Scheduler_RemoveCallback(VenusLighthouseAerie_UpdateShebaPalette);
   Engine_TaskWait(1);
-  Actor_SetChildValue(SHEBA, 0);
+  Actor_SetChildValue(SHEBA, SPRITE_COLOR_NORMAL);
   Engine_TaskWait(10);
   Scene_EndCutscenePsynergy();
   Engine_ActorJump(SHEBA, 2, 40);
@@ -1169,9 +1169,9 @@ static void Event_ConfrontSaturosAndMenardi(void) {
 /// Flashes an actor palette and emits paired effects every fifteenth frame.
 static void VenusLighthouseAerie_FlashActorPalette(struct FieldActor *actor) {
   if (*(s32 *)&gFrameCount & 2) {
-    Engine_ObjectSetPartPalettes(actor, 7);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_WHITE);
   } else {
-    Engine_ObjectSetPartPalettes(actor, 0);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_NORMAL);
   }
   if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
     VenusLighthouseAerie_SpawnLinkedPairEffects(actor);
@@ -1563,7 +1563,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Event_Wait(20);
 
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_1), 0);
-  Actor_SetChildValue(ACTOR_BEAM_1, 7);
+  Actor_SetChildValue(ACTOR_BEAM_1, SPRITE_COLOR_WHITE);
   actor = Actor_Get(ACTOR_BEAM_1);
   actor->scaleY = -Q16_ONE;
   actor->scaleX = Q16_ONE / 10;
@@ -1572,7 +1572,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   actor->x.fixed = PIXELS(304);
   actor->z.fixed = PIXELS(158);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_2), 0);
-  Actor_SetChildValue(ACTOR_BEAM_2, 7);
+  Actor_SetChildValue(ACTOR_BEAM_2, SPRITE_COLOR_WHITE);
   actor = Actor_Get(ACTOR_BEAM_2);
   actor->scaleY = -Q16_ONE;
   actor->scaleX = Q16_ONE / 10;
@@ -1593,7 +1593,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(16);
   Task_Wait(20);
-  ColorBuffer_ApplyTarget(0x7fff, 0);
+  ColorBuffer_ApplyTarget(RGB(31, 31, 31), 0);
   ColorBuffer_Interpolate(24);
   Task_Wait(60);
   Task_AddCallback(VenusLighthouseAerie_SpawnUpperOrbitParticles,
@@ -1743,8 +1743,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
   VenusLighthouseAerie_FlashScreen();
-  Actor_SetChildValue(ACTOR_SATUROS, 7);
-  Actor_SetChildValue(ACTOR_MENARDI, 7);
+  Actor_SetChildValue(ACTOR_SATUROS, SPRITE_COLOR_WHITE);
+  Actor_SetChildValue(ACTOR_MENARDI, SPRITE_COLOR_WHITE);
   Event_Wait(20);
   Actor_SetChildValue(ACTOR_SATUROS, 0x100);
   Actor_SetChildValue(ACTOR_MENARDI, 0x100);
@@ -1901,7 +1901,7 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   if (effect != 0) {
     sprite = effect->sprite;
     Object_SetScript(effect, gVenusLighthouseAerie_OrbitParticleScript);
-    ObjectGroup_SetChildValue(effect, 1);
+    ObjectGroup_SetChildValue(effect, SPRITE_COLOR_GRB);
     effect->motionFlags = 0;
     angle = Random_Next() & 0xffff000;
     effect->timer = angle;
@@ -1938,8 +1938,8 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
     saturos->facing = 0;
     menardi->facing = 0;
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_35) != 0) {
-      Engine_ActorSetChildValue(ACTOR_SATUROS, 7);
-      Engine_ActorSetChildValue(ACTOR_MENARDI, 7);
+      Engine_ActorSetChildValue(ACTOR_SATUROS, SPRITE_COLOR_WHITE);
+      Engine_ActorSetChildValue(ACTOR_MENARDI, SPRITE_COLOR_WHITE);
       if (saturos->scaleX < 5 * Q16_ONE / 4) {
         saturos->scaleX += Q16_ONE / 128;
         saturos->scaleY += Q16_ONE / 128;
@@ -1948,11 +1948,11 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
       }
     } else {
       if ((*(s32 *)&gFrameCount & 2) != 0) {
-        Engine_ActorSetChildValue(ACTOR_SATUROS, 15);
-        Engine_ActorSetChildValue(ACTOR_MENARDI, 0);
+        Engine_ActorSetChildValue(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
+        Engine_ActorSetChildValue(ACTOR_MENARDI, SPRITE_COLOR_NORMAL);
       } else {
-        Engine_ActorSetChildValue(ACTOR_SATUROS, 0);
-        Engine_ActorSetChildValue(ACTOR_MENARDI, 15);
+        Engine_ActorSetChildValue(ACTOR_SATUROS, SPRITE_COLOR_NORMAL);
+        Engine_ActorSetChildValue(ACTOR_MENARDI, SPRITE_COLOR_HIDDEN);
       }
     }
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_34) != 0) {
@@ -2072,7 +2072,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTICLE_SOURCE), 0);
   Object_GetById(ACTOR_PARTICLE_SOURCE)->motionFlags = 4;
-  Actor_SetChildValue(ACTOR_PARTICLE_SOURCE, 4);
+  Actor_SetChildValue(ACTOR_PARTICLE_SOURCE, SPRITE_COLOR_GBR);
   Actor_Get(ACTOR_PARTICLE_SOURCE)->y.fixed = PIXELS(40);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_SCENE);
@@ -2109,7 +2109,7 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(292), PIXELS(158));
 
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_BEAM_1), 0);
-  Actor_SetChildValue(ACTOR_BEAM_1, 7);
+  Actor_SetChildValue(ACTOR_BEAM_1, SPRITE_COLOR_WHITE);
   Engine_ActorSetSpritePriority(ACTOR_BEAM_1, 1);
   actor = Actor_Get(ACTOR_BEAM_1);
   actor->scaleY = -Q16_ONE;
@@ -2120,7 +2120,7 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->z.fixed = PIXELS(96);
 
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_BEAM_2), 0);
-  Actor_SetChildValue(ACTOR_BEAM_2, 7);
+  Actor_SetChildValue(ACTOR_BEAM_2, SPRITE_COLOR_WHITE);
   Engine_ActorSetSpritePriority(ACTOR_BEAM_2, 1);
   actor = Actor_Get(ACTOR_BEAM_2);
   actor->scaleY = -Q16_ONE;
@@ -2351,7 +2351,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_36);
   Object_GetById(ACTOR_BEAM_1)->y.fixed = -PIXELS(96);
   Object_GetById(ACTOR_BEAM_2)->y.fixed = -PIXELS(64);
-  Engine_ActorSetChildValue(ACTOR_BEAM_3, 7);
+  Engine_ActorSetChildValue(ACTOR_BEAM_3, SPRITE_COLOR_WHITE);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BEAM_3), 0);
   // Stack three more beam segments under the rising upper pair.
   lower = Object_GetById(ACTOR_BEAM_3);
@@ -2361,7 +2361,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   lower->x.fixed = PIXELS(304);
   lower->y.fixed = -PIXELS(32);
   lower->z.fixed = PIXELS(96);
-  Engine_ActorSetChildValue(ACTOR_BEAM_4, 7);
+  Engine_ActorSetChildValue(ACTOR_BEAM_4, SPRITE_COLOR_WHITE);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BEAM_4), 0);
   middle = Object_GetById(ACTOR_BEAM_4);
   middle->scaleY = -Q16_ONE;
@@ -2370,7 +2370,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   middle->x.fixed = PIXELS(304);
   middle->y.fixed = 0;
   middle->z.fixed = PIXELS(96);
-  Engine_ActorSetChildValue(ACTOR_BEAM_5, 7);
+  Engine_ActorSetChildValue(ACTOR_BEAM_5, SPRITE_COLOR_WHITE);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BEAM_5), 0);
   upper = Object_GetById(ACTOR_BEAM_5);
   upper->scaleY = -Q16_ONE;
@@ -2444,7 +2444,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_RunActionScriptAndWait(ACTOR_BEAM_5,
                                gVenusLighthouseAerie_BeamCloseAction);
   Engine_AudioPlayCue(SE_289);
-  Engine_ActorSetChildValue(ACTOR_BEAM_1, 15);
+  Engine_ActorSetChildValue(ACTOR_BEAM_1, SPRITE_COLOR_HIDDEN);
   Engine_EventWait(20);
   Actor_RunActionScriptAndWait(ACTOR_BEAM_1,
                                gVenusLighthouseAerie_BeamEndAction);
@@ -2493,7 +2493,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   actor->riseBaseY = actor->y.fixed;
   Object_GetById(ACTOR_PARTICLE_SOURCE)->motionFlags = 0;
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTICLE_SOURCE), 0);
-  Engine_ActorSetChildValue(ACTOR_PARTICLE_SOURCE, 7);
+  Engine_ActorSetChildValue(ACTOR_PARTICLE_SOURCE, SPRITE_COLOR_WHITE);
   Engine_ActorSetSpritePriority(ACTOR_PARTICLE_SOURCE, 2);
   sTransitionStep = 0;
   sTransitionTimer = 240;
@@ -2582,12 +2582,12 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Actor_Get(ACTOR_FELIX)->riseCounter = 0;
   Actor_Get(SHEBA)->riseCounter = 0;
   Actor_Get(ACTOR_PARTICLE_SOURCE)->motionFlags |= 4;
-  Actor_SetChildValue(ACTOR_PARTICLE_SOURCE, 4);
+  Actor_SetChildValue(ACTOR_PARTICLE_SOURCE, SPRITE_COLOR_GBR);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_SCENE);
   gEventWork->transitionFrames = 1;
   Engine_EventOpenScreen();
-  ColorBuffer_ApplySource(0x7fff, 0);
+  ColorBuffer_ApplySource(RGB(31, 31, 31), 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_TaskWait(60);
@@ -3029,7 +3029,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   case 36:
     Event_PlayCue(SE_187);
-    ColorBuffer_ApplyTarget(0x7fff, 0);
+    ColorBuffer_ApplyTarget(RGB(31, 31, 31), 0);
     Engine_ColorBufferInterpolate(12);
     break;
   case 48:
@@ -3045,7 +3045,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     if (effect != 0) {
       sprite = effect->sprite;
       Object_SetScript(effect, gVenusLighthouseAerie_RiseParticleScript);
-      ObjectGroup_SetChildValue(effect, 1);
+      ObjectGroup_SetChildValue(effect, SPRITE_COLOR_GRB);
       effect->motionFlags = 0;
       angle = Random_Next() & 0xffff000;
       effect->timer = angle;
@@ -3124,7 +3124,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
     return;
   sprite = effect->sprite;
   Object_SetScript(effect, gVenusLighthouseAerie_BesideParticleScript);
-  ObjectGroup_SetChildValue(effect, 5);
+  ObjectGroup_SetChildValue(effect, SPRITE_COLOR_BRG);
   effect->motionFlags = phase;
   angle = Random_Next() & 0xffff000;
   effect->timer = angle;

@@ -1,56 +1,54 @@
 /// @file
 /// Vault (SceneId_Vault), "the town at the heart of Angara", as the party first
-/// finds it, just after Mt. Aleph's eruption: the first town on the journey,
-/// where Vale's villagers send the party (vale_gate.c). In the chaos of the
-/// eruption thieves struck: Master Hammet, a wealthy landowner and merchant
-/// from Kalay, had his precious rod, the Shaman's Rod, stolen, and his servant
-/// Ivan was left at the mayor's and cannot go home until he recovers it. This
-/// scene is the town's streets, with the townspeople's talk, Ivan's comings and
-/// goings, the bell and the dog; the houses, the inn and its loft, where the
-/// story plays out, are vault_interiors.c. Scene_GetPlacements and
-/// Scene_GetEvents choose by FLAG_VAULT_THIEVES_JAILED.
+/// finds it after Mt. Aleph's eruption: its streets, with the townspeople,
+/// Ivan, the bell and the dog. The houses, the inn and its loft, where the
+/// search for Hammet's stolen Shaman's Rod plays out, are vault_interiors.c.
+/// Scene_GetPlacements and Scene_GetEvents choose their tables by
+/// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
+/// (FLAG_REACHED_KALAY) Scene_Initialize sends it straight on to the town's
+/// later scene (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit,
+/// vault_revisit.c).
 ///
-/// - While the rod is missing, the townspeople talk of the eruption, of the
-///   stolen rod, and of strange travelers who left in a hurry: two women and
-///   four men, the young girl and the old man among them unhappy to be there.
-///   Read with Mind Read, they blame the three strangers staying at the inn.
-///   One of the three loiters in town, denying everything, until the party
-///   has confronted them in the loft (FLAG_VAULT_THIEVES_ATTACKED removes
-///   him). A young man complains of the hole a fiery rock burnt through a roof;
-///   once the suspects' minds have been read (FLAG_VAULT_SUSPECTS_MIND_READ)
-///   he is missing and a woman walks about looking for him, for he went up
-///   into the inn's loft to fix its roof and was tied up there.
-/// - Once Ivan has joined the search (FLAG_VAULT_IVAN_JOINED_ROD_SEARCH),
-///   walking out of either gate (triggers 20 and 21, before
-///   VAULT_TO_WORLD_MAP_SOUTH and VAULT_TO_WORLD_MAP_NORTH) has him stay behind
-///   to wait in Vault (Event_IvanStaysBehind): he hands back any Venus Djinni
-///   of Isaac's he holds and leaves the party. Coming back in by a gate
-///   (VAULT_FROM_WORLD_MAP_SOUTH, or ENTRANCE_DEFAULT or
-///   VAULT_NORTH_UNUSED at the north gate) or out of the Vault Sanctum
-///   (VAULT_FROM_SANCTUM), Scene_Initialize has him greet the two and rejoin.
-/// - After the thieves are jailed, the townspeople thank the party, Ivan has
-///   gone out to Lunpa to rescue Hammet, and the dog, given a Bone
-///   (Event_GiveBoneToDog, FLAG_VAULT_DOG_SHOWN_PASSAGE), runs to a spot and
-///   jumps there three times. Its thoughts then hint at a passage leading
-///   underground, which opens only in the town's later scene
-///   (vault_revisit.c).
+/// The story flags change the streets in order:
+/// - While the rod is missing, the townspeople talk of the eruption, the
+///   theft and the travelers who left in a hurry, and Mind Read on them blames
+///   the three strangers staying at the inn. One of the three loiters in town
+///   until the party has confronted them in the loft
+///   (FLAG_VAULT_THIEVES_ATTACKED). Once the suspects' minds have been read
+///   (FLAG_VAULT_SUSPECTS_MIND_READ) the young man fixing a roof is missing,
+///   and a woman walks about looking for him.
+/// - While Ivan is helping the search (FLAG_VAULT_IVAN_JOINED_ROD_SEARCH),
+///   leaving by either gate has him stay behind (Event_IvanStaysBehind), and
+///   Scene_Initialize has him rejoin when the party comes back in by a gate or
+///   out of the Vault Sanctum.
+/// - Once the thieves are jailed, the townspeople thank the party, and the
+///   dog, given a Bone (Event_GiveBoneToDog, FLAG_VAULT_DOG_SHOWN_PASSAGE),
+///   runs to a spot and jumps there three times; the passage it shows opens
+///   only in the later scene.
 ///
-/// Sap, a Venus Djinni, hides near the bell. Searching the bell rings it, and
-/// the first ring since the party came in by a gate
-/// (FLAG_VAULT_DJINNI_CALLED_BY_BELL) calls Sap out to stand beside it; no
-/// event here lets the party talk to Sap, which joins only in the town's
-/// later scene. The well rumbles with water and a wooden box holds a Nut.
-/// The doors lead into the houses, shops and inn (VaultInteriors, through the
-/// VAULT_TO_VAULT_INTERIORS_ exits), the jail (VAULT_TO_VAULT_JAIL) and the
-/// Vault Sanctum (VAULT_TO_SANCTUM), and the two gates to the world map. Once
-/// the party has reached Kalay (FLAG_REACHED_KALAY), Scene_Initialize sends it
-/// straight on to the later scene (VAULT_TO_VAULT_REVISIT,
-/// SceneId_VaultRevisit).
+/// Sap, a Venus Djinni, hides near the bell, and the first ring since the party
+/// came in by a gate (FLAG_VAULT_DJINNI_CALLED_BY_BELL) calls it out to stand
+/// beside the bell; it joins only in the later scene. The well rumbles with
+/// water and a wooden box holds a Nut. The doors open with an animation
+/// (gVault_*DoorCells) and lead into the houses, shops and inn
+/// (SceneId_VaultInteriors), the jail (SceneId_VaultJail) and the Vault Sanctum
+/// (VAULT_TO_SANCTUM); the cells the events answer are enum VaultCell
+/// (vault.h).
+///
+/// Open questions:
+/// - XXX: what the ivy placed at (0, 0) with ACTOR_RESET_ACTION, the row after
+///   ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, is for; nothing addresses it, and a
+///   reader of actor 22 elsewhere in the engine would settle it.
+/// - XXX: what VAULT_CELL_PASSAGE_ALTERNATE and _USUAL switch between; a
+///   render of the passage's cells with each collision would settle it.
+/// - XXX: SE_100, the bell's sound, is also the shop's repair sound
+///   (shop/repair.c); a recording of both would settle its name.
 
 #include "game_state.h"
 #include "animspr.h"
 #include "window.h"
 #include "unit/scene/vault.h"
+#include "vault.h"
 #include "unit/scene/common/vault_range.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
@@ -224,7 +222,7 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 
 #include "common/vault_djinn.h"
 
-/// Leaving Vault by either gate (triggers 20 and 21, before
+/// Leaving Vault by either gate (VAULT_CELL_SOUTH_GATE and _NORTH_GATE, before
 /// VAULT_TO_WORLD_MAP_SOUTH and VAULT_TO_WORLD_MAP_NORTH): while Ivan is
 /// helping search for the rod and the thieves are free, he walks out to the
 /// gate, says he is still worried about the rod and will wait in Vault, leaves
@@ -236,7 +234,8 @@ static void Event_IvanStaysBehind(void) {
   eventWork = gEventWork;
   if (GameFlag_IsSet(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_IsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
-    Engine_EventRequestExit(eventWork->touchedTrigger - 19);
+    Engine_EventRequestExit(eventWork->touchedTrigger -
+                            (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
   // Bring Ivan out beside the party at the exit they are using.
@@ -246,7 +245,7 @@ static void Event_IvanStaysBehind(void) {
     Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  if (eventWork->touchedTrigger == 20) {
+  if (eventWork->touchedTrigger == VAULT_CELL_SOUTH_GATE) {
     Actor_WalkToAndWait(IVAN, 400, 448);
   } else {
     Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
@@ -268,7 +267,8 @@ static void Event_IvanStaysBehind(void) {
     Engine_TaskWait(20);
   }
   Party_RemoveOwnerRestored(IVAN);
-  Engine_EventRequestExit(eventWork->touchedTrigger - 19);
+  Engine_EventRequestExit(eventWork->touchedTrigger -
+                          (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
@@ -696,21 +696,21 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Engine_EventRequestExit(continuation);
 }
 
-/// The door of the southeastern house opens and the party walks in.
+/// The door of the gem owner's house opens and the party walks in.
 /// It's VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST, into the house where a man
 /// keeps a sparkling rock the volcano threw.
-static void Event_EnterSoutheastHouse(void) {
+static void Event_EnterGemOwnersHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVault_SoutheastHouseDoorCells, 56, 19);
+  Engine_MapAnimateCells(gVault_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST);
 }
 
 /// The door of a child's home opens and the party walks in.
 /// It's VAULT_TO_VAULT_INTERIORS_SOUTHEAST, into the house east of the town's
-/// center.
-static void Event_EnterCentralEastHouse(void) {
+/// centre.
+static void Event_EnterChildsHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVault_CentralEastHouseDoorCells, 50, 18);
+  Engine_MapAnimateCells(gVault_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_TO_VAULT_INTERIORS_SOUTHEAST);
 }
 
@@ -813,7 +813,8 @@ static void Event_RingBell(void) {
   Event_PlayCue(SE_100);
   Engine_EventWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
-    Actor_SetAttachedEffect(ACTOR_SAP, 0x102);
+    Actor_SetAttachedEffect(ACTOR_SAP,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ActorJump(ACTOR_SAP, 4, 0);
     Engine_EventWait(12);
     Engine_ActorJump(ACTOR_SAP, 4, 0);
@@ -1124,25 +1125,28 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   sprite->image.priority = anchor->sprite->image.priority;
 }
 
-s32 gEffectScript0[] = {
+// The three scripts of gEffectScripts, which FieldFx_Spawn picks by the low
+// bits of its flags: each holds its effect for about 24, 46 or 128 frames,
+// then frees it.
+s32 gVault_ShortEffectScript[] = {
     SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gVault_MediumEffectScript[] = {
     SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gVault_LongEffectScript[] = {
     SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gVault_ShortEffectScript,
+    gVault_MediumEffectScript,
+    gVault_LongEffectScript,
 };
 
 /// ACTOR_WOMAN_WANTING_THE_ROOF_FIXED's search for the young man fixing the
@@ -1342,7 +1346,7 @@ struct ScenePlacement gVault_Placements[] = {
         PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_MIND_READ), (s32)gVault_WomanWantingTheRoofFixedRoute,
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xf8, CONDITION_ALWAYS, 7,
+    { SPRITE_IVY, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_SAP, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1378,7 +1382,7 @@ struct ScenePlacement gVault_PlacementsAfterThieves[] = {
         PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, FLAG_VAULT_THIEVES_JAILED, (s32)gVault_WomanWantingTheRoofFixedRoute,
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xf8, CONDITION_ALWAYS, 7,
+    { SPRITE_IVY, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_SAP, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1386,19 +1390,19 @@ struct ScenePlacement gVault_PlacementsAfterThieves[] = {
 };
 
 struct SceneEvent gVault_Events[] = {
-    { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterItemShop) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWeaponAndArmorShop) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterMayorsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
-    { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPassage) },
+    { EVENT_TOUCH, VAULT_CELL_SOUTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
+    { EVENT_TOUCH, VAULT_CELL_NORTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
+    { EVENT_TOUCH, VAULT_CELL_PASSAGE_ALTERNATE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
+    { EVENT_TOUCH, VAULT_CELL_PASSAGE_USUAL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterChildsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterItemShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWeaponAndArmorShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterMayorsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
+    { EVENT_TOUCH, VAULT_CELL_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPassage) },
     { EVENT_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
     { EVENT_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutEruption) },
     { EVENT_TALK, ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetAWealthyLandownerAnd) },
@@ -1427,26 +1431,26 @@ struct SceneEvent gVault_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadDogMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultFixTheRoofWhyPayFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadWomanWantingTheRoofFixedMind) },
-    { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RingBell) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PeerIntoWell) },
-    { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CELL_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RingBell) },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CELL_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PeerIntoWell) },
+    { SEARCH(SEARCH_WOODEN_BOX), VAULT_CELL_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gVault_EventsAfterThieves[] = {
-    { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterItemShop) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWeaponAndArmorShop) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterMayorsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
-    { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPassage) },
+    { EVENT_TOUCH, VAULT_CELL_SOUTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
+    { EVENT_TOUCH, VAULT_CELL_NORTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IvanStaysBehind) },
+    { EVENT_TOUCH, VAULT_CELL_PASSAGE_ALTERNATE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
+    { EVENT_TOUCH, VAULT_CELL_PASSAGE_USUAL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterChildsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterItemShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWeaponAndArmorShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterMayorsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
+    { EVENT_TOUCH, VAULT_CELL_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPassage) },
     { EVENT_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutLeavingAgain) },
     { EVENT_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultSmokeIsStillRisingFromMt) },
     { EVENT_TALK, ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetTheWealthyMerchantI) },
@@ -1471,23 +1475,23 @@ struct SceneEvent gVault_EventsAfterThieves[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgVaultThereIsAlwaysAFightWhen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadDogMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultSniffAhTheSmellOfCooking) },
-    { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RingBell) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PeerIntoWell) },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CELL_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RingBell) },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CELL_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PeerIntoWell) },
     { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(Event_GiveBoneToDog) },
-    { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_WOODEN_BOX), VAULT_CELL_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
 
 // Each door's opening, two frames of map cells, named for the room it opens
-// into (Event_EnterSoutheastHouse and the rest).
-u16 gVault_SoutheastHouseDoorCells[] = {
+// into (Event_EnterGemOwnersHouse and the rest).
+u16 gVault_GemOwnersHouseDoorCells[] = {
     MAP_CELL_STEP(35, 52, 2, 2, 4),
     MAP_CELL_STEP(33, 52, 2, 2, 4),
     MAP_CELL_STEPS_END,
 };
 
-u16 gVault_CentralEastHouseDoorCells[] = {
+u16 gVault_ChildsHouseDoorCells[] = {
     MAP_CELL_STEP(35, 50, 2, 2, 4),
     MAP_CELL_STEP(33, 50, 2, 2, 4),
     MAP_CELL_STEPS_END,

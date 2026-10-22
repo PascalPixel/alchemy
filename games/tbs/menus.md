@@ -89,8 +89,8 @@ language, and the code names each message by its linker symbol
 The field menu's row of icons is drawn by `Menu_RunTopSelection` in the
 window code. `Menu_SelectTopEntry` leaves out the Djinn icon while the party
 owns no Djinni, so the row has three icons until the first Djinni joins and
-four after. `Menu_RunTopSelection` which calls the chosen screen through the far-call table
-`system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`,
+four after. `Menu_RunTopSelection` calls the chosen screen through the
+far-call table `system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`,
 `ItemMenu_Run` or `StatusMenu_Run`. Each screen is an ordinary function with
 its own command loop that waits a frame at a time, and a command may run a
 further loop inside it. When the player backs out, the screen returns and

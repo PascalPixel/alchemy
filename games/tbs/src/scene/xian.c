@@ -51,10 +51,9 @@
 ///
 /// Open questions:
 ///
-/// - XXX: what the three actors of sprite 0xdf from ACTOR_FIRST_DECORATION on
-///   show, drawn under the others in palette 15 and never a target; a render of
-///   the village with them hidden would settle it, and with it a name for the
-///   sprite.
+/// - XXX: why Xian places three crates as actors (ACTOR_FIRST_CRATE on), in
+///   palette 15 and drawn under the others, where the map could draw them; a
+///   render of the village with them hidden would show what they cover.
 /// - XXX: what the leader's object modes 6 and 7 show as he jumps over the
 ///   spilled water (Xian_JumpOverSpilledWater); the frames they pick in the
 ///   party's sprite sheets would settle their names.
@@ -165,8 +164,9 @@ enum XianActor {
   /// Mist, a Mercury Djinni.
   /// ★ Named from the game: "Mist" (MsgDjinnName)
   ACTOR_MIST,
-  /// The first of three actors kept below the others.
-  ACTOR_FIRST_DECORATION
+  /// The first of three crates, drawn under the actors and never a target.
+  /// ★ Named from what the player sees: a wooden crate (spr_223.png)
+  ACTOR_FIRST_CRATE
 };
 
 enum { ANIM_PUDDLE_FROZEN = 5 };
@@ -800,10 +800,10 @@ const struct SceneEvent *Xian_GetEvents(void) { return gXian_Events; }
 /// after the news or once she has seen the rockslide; back from a battle, the
 /// frozen puddle keeps its ice; the water carrier is hooked to
 /// Xian_WatchWaterCarrierPath; and the training tree, its Force mark and the
-/// three actors kept below the others are set in place.
+/// three crates are drawn under the actors.
 s32 Xian_Initialize(void) {
   struct FieldActor *actor;
-  u32 decorationIndex;
+  u32 crateIndex;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldFx_SetQueuedSoundAndPlay(SE_169);
@@ -825,10 +825,11 @@ s32 Xian_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
     Engine_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
   }
-  // Keep the three decorative actors below the moving characters.
-  for (decorationIndex = 0; decorationIndex <= 2; decorationIndex++) {
+  // Draw the three crates under the actors, as
+  // OverlayObject_CreateConfiguredObject draws its objects.
+  for (crateIndex = 0; crateIndex <= 2; crateIndex++) {
     struct FieldActor *actor;
-    actor = Object_GetById(decorationIndex + ACTOR_FIRST_DECORATION);
+    actor = Object_GetById(crateIndex + ACTOR_FIRST_CRATE);
     actor->sprite->image.priority = 1;
     actor->motionFlags = 0;
     actor->collisionFlags = ACTOR_NOT_TARGETED;
@@ -1054,11 +1055,11 @@ struct ScenePlacement gXian_Placements[] = {
         PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_MIST, ACTOR_STAND,
         PIXELS(448), 0, PIXELS(328), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(299), 0, PIXELS(222), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };

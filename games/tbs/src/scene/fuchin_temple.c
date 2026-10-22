@@ -73,12 +73,17 @@
 ///
 /// - XXX: what Nyunpa's animations 5 (as he meditates) and 6 (once he is
 ///   enlightened), the kicking and punching students' animation 5 and the
-///   leader's 8 (pushing the tree) and 7 and 6 (the unused hops) show; the
-///   frames each picks in its sprite's sheet (graphics/sprite/spr_051.tsv for
-///   Nyunpa) would settle their names.
-/// - XXX: what the object of type 223 that Scene_Initialize places by Feh's
-///   door in Master Feh's school is (OverlayObject_PrepareObject, blended); a
-///   render of the school with and without it would settle it.
+///   leader's 7 and 6 (the unused hops) show; the frames each picks in its
+///   sprite's sheet (graphics/sprite/spr_051.tsv for Nyunpa) would settle
+///   their names.
+/// - XXX: why Scene_Initialize places a translucent crate (SPRITE_CRATE,
+///   through OverlayObject_PrepareObject) 24 pixels up by Feh's door in Master
+///   Feh's school; a render of the school with and without it would show what
+///   it covers.
+/// - XXX: what reaches FuchinTempleGrounds' entrance 5, in front of the
+///   traveling healer, which no exit names; likely where the party wakes after
+///   it falls in battle, as Lama Temple's healer has one in the same place,
+///   and a battle lost after speaking to the healer would settle it.
 /// - XXX: what the leader's child values 15 and 1, alternated as spray falls
 ///   over him at the grotto (FuchinTemple_SpawnGrottoEntryParticle), and Hama's
 ///   and Ivan's 10 and 9 during the Reveal lesson change; the sprite group's
@@ -118,16 +123,16 @@
 #include "palbuf.h"
 #include "io_reg.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Fuchin Temple's place flags, which last until the party enters another place;
+// FLAG_PLACE_TEMP_50 is the Psynergy Stone outside, which then refills.
 
 /// The party refused Nyunpa's test, so talking to him offers it again.
 /// ★ Named from the game: "Then I cannot tell you. Give up and go back from
 /// whence you came." (MsgXianThenCannotTellGiveUp)
-#define FLAG_NYUNPA_TEST_DECLINED 0x300
+#define FLAG_NYUNPA_TEST_DECLINED FLAG_PLACE_TEMP_00
 /// Feh's students saw the training tree fall, but not to Chi from the line.
 /// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
-#define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
+#define FLAG_FEH_SCHOOL_SAW_TREE_FALL FLAG_PLACE_TEMP_01
 
 /// The placed actors outside Fuchin Temple (FuchinTempleGrounds), numbered in
 /// the order of gFuchinTempleGroundsPlacements.
@@ -910,7 +915,7 @@ static void Event_PushTreeByHand(void) {
   u16 facing;
 
   EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, 8);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_PUSH);
   WAIT(20);
 
   facing = leader->facing;
@@ -2393,7 +2398,8 @@ s32 Scene_Initialize(void) {
         trainingTree->sprite->rotation = 0x8000;
         Map_CopyCellAttributes(14, 11, 1, 1, 14, 10);
       }
-      OverlayObject_PrepareObject(0x1300000, 0x180000, 0xe00000, 223);
+      OverlayObject_PrepareObject(PIXELS(304), PIXELS(24), PIXELS(224),
+                                  SPRITE_CRATE);
       OBJ_MODE(ACTOR_KICKING_STUDENT, 5);
       OBJ_MODE(ACTOR_PUNCHING_STUDENT, 5);
     } else if (gGameState.entrance ==
@@ -2753,7 +2759,7 @@ struct SceneEvent gFuchinTempleGroundsEvents[] = {
     { EVENT_TALK, ACTOR_WORRIED_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
     { EVENT_TALK, ACTOR_ADMIRING_BOY_MONK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyMonkSpeaksOfNyunpa) },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
-    { SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
+    { SEARCH(SEARCH_UNNAMED), 110, FLAG_PLACE_TEMP_50, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleIKnewMasterNyunpaWasFasting) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
@@ -2861,8 +2867,8 @@ struct SceneEvent gFuchinTempleEvents[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushTreeByHand) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAINING_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveTree) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_TRAINING_TREE_TARGET, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ForceTree) },
-    { SEARCH(SEARCH_BARREL), 100, 0xf69, FIND_ITEM(ITEM_ANTIDOTE) },
-    { SEARCH(SEARCH_JAR), 101, 0xf68, FIND_ITEM(ITEM_UNICORN_RING) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL, FIND_ITEM(ITEM_ANTIDOTE) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR, FIND_ITEM(ITEM_UNICORN_RING) },
     { SCENE_EVENTS_END },
 };
 
@@ -2872,7 +2878,7 @@ struct SceneEvent gFuchinTempleEventsFromLamaTemple[] = {
     { EVENT_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheFutureHoldsManyHardshipsBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICannotSeeYourFutureClearly) },
-    { SEARCH(SEARCH_JAR), 102, 0xf6a, FIND_COINS(6) },
+    { SEARCH(SEARCH_JAR), 102, FLAG_HAMAS_ROOM_COINS_JAR, FIND_COINS(6) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

@@ -223,6 +223,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: an orange face with green eyes
   /// (spr_056.png)
   SPRITE_LAUREL = 0x38,
+  /// Tret's face again: SPRITE_TRET's pictures and animations drawn 12 pixels
+  /// higher (sprites.tsv's SPR_071), as Kolima Forest shows him.
+  SPRITE_TRET_RAISED = 0x47,
   /// The sprite of Iodem.
   /// ★ Named from what the player sees: a man with grey hair and a grey beard
   /// in a blue tunic and a yellow cape (spr_057.png)

@@ -4157,19 +4157,19 @@ enum {
 
 /// SceneId_Colosseum's entrances.
 enum {
-  COLOSSEUM_CORRIDOR_FROM_STANDS_NORTH =
+  COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH =
       1, ///< ★ Named from what the player sees: the stone corridor the
          ///< Colosseum Tunnel opens into, with doorways to the stands (its
          ///< render)
-  COLOSSEUM_CORRIDOR_FROM_STANDS_WEST =
+  COLOSSEUM_STONE_PASSAGE_FROM_STANDS_WEST =
       2, ///< ★ Named from what the player sees: the stone corridor the
          ///< Colosseum Tunnel opens into, with doorways to the stands (its
          ///< render)
   COLOSSEUM_FROM_COLOSSEUM_TUNNEL = 4,
-  COLOSSEUM_STANDS_FROM_CORRIDOR_WEST =
+  COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST =
       5, ///< ★ Named from what the player sees: the crowded seats above the
          ///< trial grounds (its render)
-  COLOSSEUM_STANDS_FROM_CORRIDOR_NORTH =
+  COLOSSEUM_STANDS_FROM_STONE_PASSAGE_NORTH =
       6, ///< ★ Named from what the player sees: the crowded seats above the
          ///< trial grounds (its render)
   COLOSSEUM_FAILED_TRIAL_FROM_STANDS =
@@ -4179,11 +4179,11 @@ enum {
   COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST = 21,
   COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH = 31,
   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE = 64,
-  COLOSSEUM_ARCHED_PASSAGE_FROM_WAITING_ROOM_EAST =
+  COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST =
       65, ///< ★ Named from what the player sees: the long passage with arched
           ///< walls where an official leads Isaac to the finals (its render)
   COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH = 66,
-  COLOSSEUM_ARCHED_PASSAGE_FROM_WAITING_ROOM_WEST =
+  COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST =
       67, ///< ★ Named from what the player sees: the long passage with arched
           ///< walls where an official leads Isaac to the finals (its render)
   COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH = 68,
@@ -4196,22 +4196,22 @@ enum {
 };
 /// SceneId_Colosseum's exits.
 enum {
-  COLOSSEUM_CORRIDOR_TO_STANDS_NORTH =
+  COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH =
       1, ///< ★ Named from what the player sees: the crowded seats above the
          ///< trial grounds (its render)
-  COLOSSEUM_CORRIDOR_TO_STANDS_WEST =
+  COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST =
       2, ///< ★ Named from what the player sees: the crowded seats above the
          ///< trial grounds (its render)
-  COLOSSEUM_CORRIDOR_LOCKED_DOOR_TO_CORRIDOR =
+  COLOSSEUM_STONE_PASSAGE_LOCKED_DOOR_TO_STONE_PASSAGE =
       3, ///< ★ Named from what the player sees: the stone corridor the
          ///< Colosseum Tunnel opens into, with doorways to the stands (its
          ///< render)
   COLOSSEUM_TO_COLOSSEUM_TUNNEL = 4,
-  COLOSSEUM_STANDS_TO_CORRIDOR_WEST =
+  COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST =
       5, ///< ★ Named from what the player sees: the stone corridor the
          ///< Colosseum Tunnel opens into, with doorways to the stands (its
          ///< render)
-  COLOSSEUM_STANDS_TO_CORRIDOR_NORTH =
+  COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH =
       6, ///< ★ Named from what the player sees: the stone corridor the
          ///< Colosseum Tunnel opens into, with doorways to the stands (its
          ///< render)
@@ -4223,14 +4223,14 @@ enum {
   COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST = 22,
   COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH = 31,
   COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH = 32,
-  COLOSSEUM_WAITING_ROOM_TO_ARCHED_PASSAGE_EAST =
+  COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST =
       64, ///< ★ Named from what the player sees: the long passage with arched
           ///< walls where an official leads Isaac to the finals (its render)
   COLOSSEUM_TO_COLOSSEUM_AZART_MATCH = 65,
   COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST =
       66, ///< ★ Named from what the player sees: the long passage with pillars
           ///< before a plain wall that Isaac walks alone (its render)
-  COLOSSEUM_WAITING_ROOM_TO_ARCHED_PASSAGE_WEST =
+  COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST =
       67, ///< ★ Named from what the player sees: the long passage with arched
           ///< walls where an official leads Isaac to the finals (its render)
   COLOSSEUM_TRIAL_GROUNDS_TO_STANDS =

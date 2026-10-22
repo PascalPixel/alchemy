@@ -267,7 +267,7 @@ how their priorities put actors between them.
 A placeholder is a cell whose block is 4,095, and it marks the first place in
 the grid a block is used.
 
-![Goma Cave's grid read as `TileMap_ConvertBuffer` is entered, before `Tile_ConvertMap` numbers it: the three layer windows at half size, every cell dimmed but the 368 placeholders, tinted yellow, which fall wherever a block is first used. Beside it the first 16 by 10 cells of the ground layer's window at twice size, each with its block number after the conversion: the placeholders, in yellow, read 0, 1, 2, 10, 11, 27, 51 and 52, numbered in the order the 128-cell-wide grid meets them, and every other cell repeats a number already given, such as 1, 5 and 10. The cave has 368 placeholders and 368 blocks.](https://alchemy.pascalpixel.com/guides/map/placeholders.png)
+![Goma Cave's three layer windows, ground, middle and overhead, at a quarter size, every cell dimmed but its 368 placeholders, tinted yellow wherever a block is first used. Beside them one example six times its size: a cell stored as 4095, a placeholder, which `Tile_ConvertMap` makes block 42, the next number counting from 0 in the order the grid first uses its blocks; and a cell further down with the same picture, stored as block 42 already and kept as it is. The legend gives one placeholder for each of the map's 368 blocks.](https://alchemy.pascalpixel.com/guides/map/placeholders.png)
 
 A cell whose block is 4,095, the highest 12 bits can hold, is a placeholder.
 As the map is converted, `Tile_ConvertMap` gives each placeholder a fresh
@@ -287,7 +287,7 @@ blocks, since the numbering depends only on the placeholders.
 The marker list names the cells where a chest or a Psynergy Stone can stand,
 each with the scene event that decides whether one does.
 
-![The map CrossboneIsleKeys and CrossboneIsleBane share, both rooms drawn as each scene loads them, with the map's eight markers outlined at their cells and labelled with their ids. CrossboneIsleKeys places markers 100 to 103, the four chests in alcoves along its north wall, and CrossboneIsleBane places 104 to 107: chests 104 and 106 on its raised floor and 105 below them, and 107, whose cell lies past the room's east wall, where the scene moves its chest to 0, 0 until the stone pillar that carries the chest reaches the ladder.](https://alchemy.pascalpixel.com/guides/map/markers.png)
+![The map CrossboneIsleKeys and CrossboneIsleBane share, both rooms drawn as each scene loads them, with each of the map's eight markers outlined at its cell and labelled with what its chest holds. CrossboneIsleKeys places the four chests in alcoves along its north wall, 333 coins, a Fairy Ring, a Cookie and a Smoke Bomb; CrossboneIsleBane places 666 coins and an Elixir on its raised floor and a Water of Life below them, and the Demon Axe's marker, whose cell lies past the room's east wall: the scene moves that chest to 0, 0 until the stone pillar carrying it reaches the ladder.](https://alchemy.pascalpixel.com/guides/map/markers.png)
 
 The marker list is (column, row, id) triples, a cell and the trigger of a
 scene event, ended by 255, 255. When a scene loads, `Field_PlaceMapMarkers`
@@ -348,7 +348,7 @@ which have no names for them; the names are the tables' (`animation.tsv`,
 The world map's ground is one large grid of cells, packed a square at a time
 so that the game unpacks only the squares around the party.
 
-![The world map as the party runs south and east from its entrance 3, south of Vale, with `FLAG_NO_ENCOUNTERS` set, beside the 16 by 16 places of the world, each labelled with the square the `tileIds` table puts there: every place holds the square of its own number but place 59, which holds square 264. The 2 by 2 squares around the party are outlined in yellow, each with the quarter of the block buffer it fills, and the list beside the screen gives each quarter's square in the ground layer and in the second, 320 on. As the party crosses a square's edge the outlined block moves one place and the quarters it leaves are filled with the squares it reaches: 42, 43, 58 and 264 at first, then 43, 44, 264 and 60.](https://alchemy.pascalpixel.com/guides/map/world-map-squares.gif)
+![The world map as the party runs south and east from its entrance 3, south of Vale, with `FLAG_NO_ENCOUNTERS` set, beside a 5 by 4 patch of the world's 512-pixel squares around it, each drawn from the ground layer's block buffer while it is unpacked there. The 2 by 2 squares unpacked now, around the party's white mark, are outlined in yellow and drawn bright: forest, rivers and Vale's door, marked in red. As the party crosses a square's edge the outline moves one square east or south, the squares it reaches appear, and those it leaves stay dim; squares never unpacked stay black.](https://alchemy.pascalpixel.com/guides/map/world-map-squares.gif)
 
 The world map's ground, `world/blocks.tsv` (`Field_PerspectiveDataA`), is one
 grid of 32-bit values in hexadecimal, 512 across and 320 down. The `blocks`

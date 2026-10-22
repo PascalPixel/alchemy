@@ -182,7 +182,7 @@ such case.
 A function an event names is a script: straight-line code written in the
 commands of `event.h` over the engine calls of `field_event.h`.
 
-![Isaac talks to a villager in Vale after the party has reached Kalay, and beside the screen the body of `Event_ReactToAnotherTremor` is listed a statement to a line, the one running highlighted and each finished one marked with the frames it took: `Engine_EventBegin`, both `Map_SetShake` calls and `Engine_EventSetMessage` take none, `Engine_TaskWait(10)` 10 frames, `Event_ShowMessageAndWait` 74 while `Aghh! I felt another one!` is typed out and answered, `Actor_FaceActor` 20 as she turns to him, and `Event_ShowMessage` 60 for her second page, before `Engine_EventEnd`.](https://alchemy.pascalpixel.com/guides/scene/scene-script.gif)
+![Isaac talks to a villager in Vale after the party has reached Kalay, and beside the screen the body of `Event_ReactToAnotherTremor` is listed a statement to a line, the one running highlighted and each finished one marked with the frames it took: `Engine_EventStart`, both `Map_SetShake` calls and `Engine_EventSetMessage` take none, `Engine_TaskWait(10)` 10 frames, `Event_ShowMessageAndWait` 74 while `Aghh! I felt another one!` is typed out and answered, `Actor_FaceActor` 20 as she turns to him, and `Event_ShowMessage` 60 for her second page, before `Engine_EventEnd`.](https://alchemy.pascalpixel.com/guides/scene/scene-script.gif)
 
 ```c
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:

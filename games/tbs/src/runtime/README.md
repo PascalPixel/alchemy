@@ -302,7 +302,7 @@ The code is `runtime/scheduler.c`, its names in
 The queue holds register writes and DMAs until the VBlank handler carries
 them out for a finished frame.
 
-![The register write queue's 32 slots down the side over four frames of the title intro's palette fade, two pixels a scanline, the VBlank lines shaded. Slot 0 holds a write of `0xF740` to `DISPCNT`, and late in the first frame slots 1 and 2 fill with two DMAs, one to the background colours and one to the sprite colours; at the VBlank a yellow line marks the queue emptied. In each frame after, two DMAs are pushed into slots 0 and 1 a few lines after the VBlank ends and wait there until the next VBlank empties them, and slots 2 to 31 stay empty.](https://alchemy.pascalpixel.com/guides/runtime/io-write-queue.png)
+![The register write queue over three frames of the title intro's palette fade, a pixel a scanline, the VBlank lines shaded, with a row for each slot used. Slot 0 already holds a write to `DISPCNT`; late in the first frame slots 1 and 2 fill with the fade's two DMAs, one of the background colours and one of the sprite colours, and at the VBlank a yellow line marks all three carried out and the queue emptied. In each frame after, the two DMAs are pushed into slots 0 and 1 a few lines after the VBlank and wait there until the next one empties them. Slots 3 to 31 are never used here.](https://alchemy.pascalpixel.com/guides/runtime/io-write-queue.png)
 
 The queue (`gIoWriteQueue`, `io_write_queue.h`) holds up to 32 entries, each a
 value, an address and a control word; a write to a full queue is dropped, and
@@ -378,8 +378,8 @@ it in numbered blocks that are sent again when lost.
 
 ```mermaid
 sequenceDiagram
-    participant S as Sender (SerialRuntime_BeginSend, 60 bytes)
-    participant R as Receiver (SerialRuntime_BeginReceive)
+    participant S as Sender (SerialRuntime_StartSend, 60 bytes)
+    participant R as Receiver (SerialRuntime_StartReceive)
     Note over S,R: one payload each way per VBlank, carrying one 20-byte block
     S->>R: block 0 (sequence 0, more to come)
     Note right of R: expected 0: stored, now expects 1

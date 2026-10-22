@@ -35,8 +35,8 @@
 ///
 /// Stepping onto the Scales of Justice's western pan (touch 15,
 /// Event_StepOnScales) sends it, with the rider, down towards 4 pixels high
-/// and the eastern pan up towards 32, and stepping off (touch 16) swings them back; the
-/// weight Move sets on the western pan does the same
+/// and the eastern pan up towards 32, and stepping off (touch 16) swings them
+/// back; the weight Move sets on the western pan does the same
 /// (https://alchemy.pascalpixel.com/places/colosseum-navampa-match/scales.gif:
 /// the leader stepping on, each pan labelled with its height in whole
 /// pixels).

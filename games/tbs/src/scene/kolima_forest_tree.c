@@ -31,10 +31,11 @@
 /// the healthy set and back towards the cursed one every 30 frames
 /// (KolimaForestTree_UpdateHealingPalette) while the camera pans to three
 /// places, flashes between the two sets four times and settles on the healthy
-/// one (https://alchemy.pascalpixel.com/places/kolima-forest-tree/healing-palette.gif:
+/// one
+/// (https://alchemy.pascalpixel.com/places/kolima-forest-tree/healing-palette.gif:
 /// the screen beside those palettes, from the line that the water has seeped
-/// into Tret until Tret speaks). Retreat from here always leads back to the forest's
-/// way in (SceneId_KolimaForestEntrance,
+/// into Tret until Tret speaks). Retreat from here always leads back to the
+/// forest's way in (SceneId_KolimaForestEntrance,
 /// KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP), and the way back,
 /// KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the Floodgate
 /// Switch's map (SceneId_KolimaForestFloodgate).

@@ -42,8 +42,9 @@
 /// either direction
 /// (https://alchemy.pascalpixel.com/places/altmiller-cave-entrance/darkness-levels.png:
 /// the passage's map with each cell labelled with the level it sets, over the
-/// same moment drawn at each of the six levels). Reveal lights a dark room while it lasts and shows the
-/// rocks' colours (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
+/// same moment drawn at each of the six levels). Reveal lights a dark room
+/// while it lasts and shows the rocks' colours (AltmillerCave_StartReveal,
+/// AltmillerCave_EndReveal).
 ///
 /// The rock puzzle keeps the rounds matched in gSceneState byte 0 and its
 /// state and the light at the top in struct RockPuzzle after it. Turning the

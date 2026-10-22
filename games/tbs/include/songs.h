@@ -167,9 +167,9 @@
 /// frozen open.
 #define MUS_PUZZLE_SOLVED 80
 /// The fanfare as a Djinni or a new member joins the party, Flint included.
-#define MUS_081 81
+#define MUS_JOINED 81
 /// The fanfare of Revive, used from the menu or bought at a Sanctum.
-#define MUS_082 82
+#define MUS_REVIVE 82
 /// The fanfare as an item is found or given, Psynergy learned, a Colosso prize
 /// taken, the Hermes' Water bottle filled, or an Elemental Star taken.
 #define MUS_TREASURE_FOUND 83
@@ -177,14 +177,14 @@
 /// field effect plays it too.
 #define MUS_084 84
 /// The fanfare as a save is written, or a link battle's results are saved.
-#define MUS_085 85
+#define MUS_SAVED 85
 /// The fanfare of a lost Colosso match, of the inn as the party sleeps, and in
 /// the Sanctum as the party is asked to take on the quest.
 #define MUS_086 86
 /// The fanfare of a Sanctum's Remove Curse.
-#define MUS_087 87
+#define MUS_REMOVE_CURSE 87
 /// The fanfare of a Sanctum's Exorcise.
-#define MUS_088 88
+#define MUS_EXORCISE 88
 /// The fanfare as a member levels up after a battle, and as a Colosso round
 /// begins.
 #define MUS_LEVEL_UP 89

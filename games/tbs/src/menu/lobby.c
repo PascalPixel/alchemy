@@ -1411,7 +1411,7 @@ static s32 LinkLobby_SaveBattleResults(void) {
   // 0x70 in the native build, so retain the two sequences.
   struct UiWindow *window;
 
-  Engine_AudioPlayCue(MUS_085);
+  Engine_AudioPlayCue(MUS_SAVED);
   window = UiText_OpenMessageWindow(MsgLobbySavingBattleResults, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);
@@ -1433,7 +1433,7 @@ static s32 LinkLobby_SaveMonsterBattleResults(void) {
   // See LinkLobby_SaveBattleResults for the measured shared-helper trial.
   struct UiWindow *window;
 
-  Engine_AudioPlayCue(MUS_085);
+  Engine_AudioPlayCue(MUS_SAVED);
   window = UiText_OpenMessageWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);

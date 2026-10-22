@@ -1681,7 +1681,7 @@ static void Event_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   listened:
     UiWork_PushValueSlot(300, 4);
-    Event_PlayCue(MUS_081);
+    Event_PlayCue(MUS_JOINED);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);
     Event_SetMessage(count);

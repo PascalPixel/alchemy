@@ -466,10 +466,10 @@ void Shop_ResetEffects(void) {
 /// waits for the sound driver (AudioCommand_WaitForStateByteClear) before
 /// freeing its sparkles.
 static const s8 sSanctumServiceCues[4] = {
-    [SANCTUM_SERVICE_REVIVE] = MUS_082,
+    [SANCTUM_SERVICE_REVIVE] = MUS_REVIVE,
     [SANCTUM_SERVICE_CURE_POISON] = MUS_084,
-    [SANCTUM_SERVICE_EXORCISE] = MUS_088,
-    [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_087,
+    [SANCTUM_SERVICE_EXORCISE] = MUS_EXORCISE,
+    [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_REMOVE_CURSE,
 };
 
 /// Plays the service's burst on party member `member` (an index into the

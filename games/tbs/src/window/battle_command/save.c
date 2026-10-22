@@ -377,7 +377,7 @@ UNUSED s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
     UiWork_FinalizePendingCore();
   } else {
     UiWork_FinalizePendingCore();
-    AudioCommand_PlayFar(MUS_085);
+    AudioCommand_PlayFar(MUS_SAVED);
     result = SaveState_ProcessSelectedSlot();
     if (result >= 0) {
       UiText_ShowPositionedMessageAndWait(MsgGameSaved, 1);
@@ -1231,7 +1231,7 @@ s32 Save_WriteSelectedSlot(void) {
         UiWork_FinalizePendingCore();
       }
       gSaveSlot = file;
-      AudioCommand_PlayFar(MUS_085);
+      AudioCommand_PlayFar(MUS_SAVED);
       UiText_ShowPositionedMessageAndWait(MsgSaving, 13);
       while (UiWork_IsComplete() == 0) {
         WaitFrames(1);

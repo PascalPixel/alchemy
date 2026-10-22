@@ -166,6 +166,21 @@ pixels through a 256-byte table: one of the five
 The first remap table also recolours the command icons
 (`Runtime_RemapBytesByTable`).
 
+![Isaac attacking in a battle, the screen on the left and his sprite taken apart on the right. Its three layers are each composed alone: `entries[0]`, sprite 300, his body; `entries[1]`, sprite 320, his sword; and `entries[2]`, sprite 510, a dark ellipse along the bottom of its 64 by 64 picture. Beside them is the buffer composed from all three, read back from video memory: the ellipse under his feet, the body over it and the sword over the body. As he winds up, swings and lands, the body's and the sword's frame numbers change together, from 1 to 5 standing, then 13, 15 and 17 for the swing, 7 and 9 as he lands, while the ellipse stays at frame 0.](https://alchemy.pascalpixel.com/guides/field/sprite-layers.gif)
+
+A battle unit's sprite shows how layers combine. `BattleObj_SpawnObjectsForList`
+(`../battle/battle/objects.c`) gives Isaac's sprite three layers: his body
+(`BattleObj.resource`) and his weapon (`BattleObj.overlay`) at priority 1, and
+the 64 by 64 sprite 510 (`BattleObj.effect`) at priority 0. The two at priority
+1 are drawn in layer order, so the weapon lies over the body; the layer at
+priority 0 is drawn first, so its ellipse lies under his feet. The body and the
+weapon play scripts with the same frame numbers, so each change of pose
+changes both and redraws the whole buffer. In the picture each layer is drawn
+alone by the game's own `Sprite_ComposeAnimationFrame`: as it is called for
+Isaac's sprite, the other layers' priority is raised past 3 and every layer's
+`step` set to 0, so the scripts stand still while it composes, and the buffer
+is read back from video memory before the machine is put back as it was.
+
 ## Cameras and the frame
 
 `ObjectSystem_Initialize` sets the engine up for one mode and schedules two
@@ -394,12 +409,10 @@ command is `SC_KEY_COUNT` (`0x23`), and no script holds a bare word from
 `0x24` to 63, so neither the eleven entries that act as `SC_END` nor the words
 past the table are ever called.
 
-- XXX (picture): no picture yet takes a sprite apart into its animation layers and the
-  composed buffer. The field scenes sampled for one (Vale, Bilibin's item
-  shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map) have no
-  actor with a second layer but the leader on the world map, whose second
-  layer is `SPRITE_BLANK_32` and draws nothing even in a forest, where the
-  player control gives it priority 1. A search of the code's other layer
-  writes (`battle/battle/staging.c` reads `entries[1]`, Altin Peak and the
-  Psynergy effects' context clear one) for a sprite whose layers both draw
-  would find what to render.
+The field scenes sampled for a sprite with more than one drawn layer (Vale,
+Bilibin's item shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map)
+have none: the leader on the world map has a second layer,
+`SPRITE_BLANK_32`, which draws nothing even in a forest, where the player
+control gives it priority 1. The take-apart picture of a sprite's layers is
+therefore of a battle unit, whose sprite is the same `struct AnimationObject`
+composed by the same `Sprite_ComposeAnimationFrame`.

@@ -180,7 +180,7 @@ its stack below the top again and overwrite `gSavedStack` and
 `gSavedStackSize`, which still hold the outer caller's frames. `WaitFrames`
 itself doesn't check, but it sets `gSchedulerStatus` while it runs the
 main-loop tasks, and code a task may reach tests it before waiting
-(`BattleObj_SpawnObjectsForList`). No task waits
+(`BattleObject_SpawnObjectsForList`). No task waits
 ([Evidence and open questions](#evidence-and-open-questions)).
 
 | Name | Value | Meaning |

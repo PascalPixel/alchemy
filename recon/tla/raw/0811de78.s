@@ -103,7 +103,7 @@ Func_0811de78:
 	ldrb r0, [r6]
 	bl BattleActor_RemoveFromLists
 	ldrb r0, [r6]
-	bl BattleObj_MarkForRelease
+	bl BattleObject_MarkForRelease
 	b .L_0811df5a
 .L_0811df50:
 	ldr r0, .L_0811df6c

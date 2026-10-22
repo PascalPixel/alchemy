@@ -57,7 +57,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   ReleaseBattleObjectRecords(unitId);
   Iwram_CopyWords(BattleObjGet(saved->unitId), saved, 44);
   if (saved->reactivate) {
-    BattleObj_MarkForRelease(unitId);
+    BattleObject_MarkForRelease(unitId);
     BattleMotion_DestroyAllSlotObjects();
   }
   ResourceSlot_LoadFar(7, 0, 0, 0);

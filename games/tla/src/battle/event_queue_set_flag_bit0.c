@@ -14,7 +14,7 @@
 #include "owner_state.h"
 
 struct BattleObj *BattleObjGet(s32 arg0);
-s32 BattleObj_MarkForRelease(s32 arg0);
+s32 BattleObject_MarkForRelease(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
   /* FAKEMATCH: the shared discard-only result type preserves the epilogue
@@ -26,7 +26,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
   if (creature->side == 1) {
     Unit_SetHpFar(creature, 0);
     BattleActor_RemoveFromLists(arg0);
-    BattleObj_MarkForRelease(arg0);
+    BattleObject_MarkForRelease(arg0);
     runtime = BattleObjGet(arg0);
     Object_Destroy((struct DispatchObject *)runtime->object);
     runtime->object = 0;

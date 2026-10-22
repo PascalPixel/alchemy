@@ -97,6 +97,6 @@ void BattleMotion_ShowDowned(s32 id) {
     WaitFrames(4);
     BattleActor_RemoveFromLists(id);
     Map_RenderAllAnimatedTileFramesFar(recs, n); // Erase pixel by pixel.
-    BattleObj_MarkForRelease(id);
+    BattleObject_MarkForRelease(id);
   }
 }

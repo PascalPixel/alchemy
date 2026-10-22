@@ -35,7 +35,7 @@ s32 ArcTan2(s32 y, s32 x);
 /// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
 /// script.
 // The tail of The Broken Seal's BattleObjMake, for an actor without a unit.
-void BattleObj_Reset(struct TlaBattleObj *actor, s32 keep) {
+void BattleObject_Reset(struct TlaBattleObj *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;
   s32 zero;

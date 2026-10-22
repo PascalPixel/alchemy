@@ -145,7 +145,7 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
 
 /// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
 /// Called by the auto battle's action players.
-s32 BattleObj_IsValidId(u32 unitId) {
+s32 BattleObject_IsValidId(u32 unitId) {
   if (unitId <= ALLY_MAX) {
     return 0;
   }
@@ -196,7 +196,7 @@ s32 BattlePresentation_ShowDefendMessage(
 
   unitId = action->unitId;
   unit = UnitGetFar(unitId);
-  if (BattleObj_IsValidId(unitId) < 0) {
+  if (BattleObject_IsValidId(unitId) < 0) {
     return -1;
   }
   result = 0;
@@ -230,11 +230,11 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   livingCount = 0;
   actorId = action->unitId;
-  if (BattleObj_IsValidId(actorId) < 0) {
+  if (BattleObject_IsValidId(actorId) < 0) {
     return -1;
   }
   targetId = action->target;
-  if (BattleObj_IsValidId(targetId) < 0) {
+  if (BattleObject_IsValidId(targetId) < 0) {
     return -1;
   }
 
@@ -302,7 +302,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
     }
   }
   visibleUnits[livingCount] = BATTLE_UNIT_LIST_END;
-  BattleObj_SpawnObjectsForList(visibleUnits, 0);
+  BattleObject_SpawnObjectsForList(visibleUnits, 0);
 
   context.effect.kind = action->parameter;
   context.effect.actor = actorId;
@@ -353,11 +353,11 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
   }
 
   work.effect.actor = input->unitId;
-  if (BattleObj_IsValidId(work.effect.actor) < 0)
+  if (BattleObject_IsValidId(work.effect.actor) < 0)
     return -1;
 
   work.effect.actors[0] = input->target;
-  if (BattleObj_IsValidId(work.effect.actors[0]) < 0)
+  if (BattleObject_IsValidId(work.effect.actors[0]) < 0)
     return -1;
 
   // Lookups whose results are unused, and a roll that only advances the
@@ -414,7 +414,7 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   work.effect.range = action->range;
   work.effect.actor = action->unitId;
   work.effect.firstTarget = action->target;
-  if (BattleObj_IsValidId(work.effect.actor) < 0)
+  if (BattleObject_IsValidId(work.effect.actor) < 0)
     return -1;
   if (work.effect.firstTarget > FIRST_ENEMY_UNIT - 1)
     work.effect.count =
@@ -534,7 +534,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 }
 
 /// For a unit whose HP has run out: plays its falling animation to the last
-/// frame and marks its object for release (BattleObj_MarkForRelease).
+/// frame and marks its object for release (BattleObject_MarkForRelease).
 /// Called by BattlePresentation_ApplyUnitDamage.
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
@@ -548,7 +548,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
     actorData->frame = 0xFF;
     WaitFrames(4);
     Map_RenderAnimatedTileFramesForObjectFar((u8 *)object);
-    BattleObj_MarkForRelease(unitId);
+    BattleObject_MarkForRelease(unitId);
   }
 }
 

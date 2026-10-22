@@ -15,9 +15,9 @@
 /// recomputes its stats, and BattleUnit_BuildStatusFlags its battle object's
 /// status flags.
 #ifdef UBFIX
-void BattleObj_ResetRuntimeFields(s32 unitId) {
+void BattleObject_ResetRuntimeFields(s32 unitId) {
 #else
-s32 BattleObj_ResetRuntimeFields(s32 unitId) {
+s32 BattleObject_ResetRuntimeFields(s32 unitId) {
 #endif
   struct BattleUnit *unit;
   s32 element;
@@ -206,9 +206,9 @@ void BattleEvent_MarkDisplay(void) { gBattleDisplayWork->marked = 1; }
 /// BattleEvent_Playback. A party unit is left as it is. Clears the battle
 /// object's object and active and releases its dispatch object.
 #ifdef UBFIX
-void BattleObj_DestroyTemporaryObject(s32 unitId) {
+void BattleObject_DestroyTemporaryObject(s32 unitId) {
 #else
-s32 BattleObj_DestroyTemporaryObject(s32 unitId) {
+s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 #endif
   struct BattleUnit *enemy;
   struct BattleObj *slot;
@@ -216,8 +216,8 @@ s32 BattleObj_DestroyTemporaryObject(s32 unitId) {
   enemy = UnitGetFar(unitId);
   if (enemy->side == BATTLE_UNIT_ENEMY) {
     Unit_SetHpFar(enemy, 0);
-    BattleObj_RemoveFromLists(unitId);
-    BattleObj_MarkForRelease(unitId);
+    BattleObject_RemoveFromLists(unitId);
+    BattleObject_MarkForRelease(unitId);
     slot = BattleObjGet(unitId);
     ObjectDispatch_ReleaseFar((struct DispatchObject *)slot->object);
     slot->object = 0;
@@ -266,7 +266,7 @@ u32 BattleEvent_DispatchQueued(void) {
         BattleEvent_GrantDjinnBonus(runtime, queue->operands[eventIndex]);
         break;
       case BATTLE_EVENT_REMOVE_UNIT:
-        BattleObj_DestroyTemporaryObject(queue->operands[eventIndex]);
+        BattleObject_DestroyTemporaryObject(queue->operands[eventIndex]);
         break;
       case BATTLE_EVENT_UNIT_NAME:
         UiWork_PushValueSlotFar(queue->operands[eventIndex], VALUE_UNIT_NAME);
@@ -309,7 +309,7 @@ u32 BattleEvent_DispatchQueued(void) {
         break;
       case BATTLE_EVENT_DEFEAT:
         BattleEnemy_RecordDefeat(queue->operands[eventIndex], runtime->flags);
-        BattleObj_ResetRuntimeFields(queue->operands[eventIndex]);
+        BattleObject_ResetRuntimeFields(queue->operands[eventIndex]);
         BattleMotion_ShowDowned(queue->operands[eventIndex]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:

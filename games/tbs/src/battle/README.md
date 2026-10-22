@@ -710,7 +710,7 @@ for its `struct BattleObj`, `object` for that object's
 | `BattleTarget_` | targets an enemy or a confused unit picks |
 | `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera, the palettes |
 | `BattleEvent_` | the event queue and its playback |
-| `BattleObj_`, `BattleObjGet`, `BattleObjMake`, `BattleObjPut` | the battle objects |
+| `BattleObject_`, `BattleObjGet`, `BattleObjMake`, `BattleObjPut` | the battle objects |
 | `BattleMotion_` | their movements |
 | `BattlePlacement_` | where each place stands on the battlefield |
 | `BattleUnit_` | one unit's battle state: its guard, weapon sprite, status flags and turn-end counters |

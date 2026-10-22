@@ -32,7 +32,7 @@ struct BattleObj {
   s8 cycleTimer;                      ///< frames until the next status icon
   struct SpriteEntry *animationEntry; ///< the status icon's sprite, or NULL
   struct SpriteEntry *effectEntry;    ///< the effect sprite, or NULL
-  /// Set by BattleObj_MarkForRelease: the object is released with the
+  /// Set by BattleObject_MarkForRelease: the object is released with the
   /// others by BattleMotion_DestroyAllSlotObjects.
   s16 active;
   s16 fading; ///< set while a fallen enemy's picture is being removed

@@ -356,7 +356,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     } else if (ability->effect == ABILITY_EFFECT_INSTANT_DEATH) {
       skipDamage = 1;
     } else if (ability->effect == ABILITY_EFFECT_SELF_DESTRUCT) {
-      // The actor leaves the battle (BattleObj_DestroyTemporaryObject).
+      // The actor leaves the battle (BattleObject_DestroyTemporaryObject).
       if (actor->hp != 0)
         BattleEvPush(BATTLE_EVENT_REMOVE_UNIT, actorId);
     } else if (ability->effect == ABILITY_EFFECT_DRAIN_PP) {

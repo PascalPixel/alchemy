@@ -185,7 +185,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 /// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Judgment, Boreas, Thor) and the particle streams
 /// as they open. Spawns the
-/// objects through BattleObj_SpawnObjectsForListFar.
+/// objects through BattleObject_SpawnObjectsForListFar.
 void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect) {
   s16 list[14];
   s32 count;
@@ -206,7 +206,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect) {
     }
   }
   list[count] = 0xff; // the end of the list
-  BattleObj_SpawnObjectsForListFar(list, 0);
+  BattleObject_SpawnObjectsForListFar(list, 0);
 }
 
 /// Shows the BG1 battle background behind a cleared canvas: clears the canvas

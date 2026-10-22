@@ -1,5 +1,5 @@
 // Near miss, differ 41 of 273 (151 before), from The Broken Seal's
-// BattleObj_UpdateSpritePriorities (games/tbs/src/battle/battle/
+// BattleObject_UpdateSpritePriorities (games/tbs/src/battle/battle/
 // objects.c): this game lists both sides at once, reads each object through
 // BattleObjGet inlined and keeps it, stops when the battle work's byte at
 // 0x866 is set, and marks a guarding unit's sprite (flag 2) as it sets the

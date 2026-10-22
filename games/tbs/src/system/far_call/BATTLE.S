@@ -6,7 +6,7 @@
 FarCall_BattleTable:
 	export DebugBattle_RunMenuFar, DebugBattle_RunMenu
 	overlay_veneer BattlePresentation_RunMosaicFadeOut
-	export BattleObj_SpawnObjectsForListFar, BattleObj_SpawnObjectsForList
+	export BattleObject_SpawnObjectsForListFar, BattleObject_SpawnObjectsForList
 	overlay_veneer Graphics_FadeAlphaOut
 	overlay_veneer Graphics_FadeAlphaIn
 	export BattlePresentation_SetupTransitionSceneFar, BattlePresentation_SetupTransitionScene

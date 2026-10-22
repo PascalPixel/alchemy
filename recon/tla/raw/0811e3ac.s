@@ -222,7 +222,7 @@ Func_0811e3ac:
 	mov r3, r8
 	ldrb r0, [r3]
 	bl BattleObjGet
-	bl BattleObj_Reset
+	bl BattleObject_Reset
 	mov r1, r8
 	ldrb r0, [r1]
 	bl BattleObjGet
@@ -369,7 +369,7 @@ Func_0811e3ac:
 	ldrb r0, [r3]
 	bl BattleObjGet
 	ldr r1, [sp, #4]
-	bl BattleObj_Reset
+	bl BattleObject_Reset
 	mov r1, r8
 	ldrb r0, [r1]
 	bl BattleObjGet

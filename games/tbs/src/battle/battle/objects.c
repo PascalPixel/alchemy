@@ -14,7 +14,7 @@
 /// that Battle_RunEncounter adds after the entry transition and removes as
 /// the battle ends. Writes each battle object's icon state and its sprites'
 /// priorities.
-void BattleObj_UpdateSpritePriorities(void) {
+void BattleObject_UpdateSpritePriorities(void) {
   // The two side walks stay separate: a shared priority helper changes EN
   // register allocation despite the same 0x1ac-byte extent.
   u16 unitIds[UNIT_MAX];
@@ -149,8 +149,8 @@ void BattleObj_UpdateSpritePriorities(void) {
 /// Builds the status icon bits of unit id's ailments into its battle
 /// object's activeConditions, which BattleStatusIcon_Cycle shows. Called
 /// wherever a unit's statuses may have changed: BattleEvent_DispatchQueued,
-/// BattleEvent_Playback, Battle_ProcessRoundEnd, BattleObj_ResetRuntimeFields
-/// and BattleObj_SpawnObjectsForList.
+/// BattleEvent_Playback, Battle_ProcessRoundEnd,
+/// BattleObject_ResetRuntimeFields and BattleObject_SpawnObjectsForList.
 #ifdef UBFIX
 void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 #else
@@ -198,7 +198,7 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 /// Shows a unit's status icons one after another, each for
 /// ICON_CYCLE_FRAMES frames, switching at once when the shown status ends,
 /// and removes the icon when no status is left. Called each frame for every
-/// unit by BattleObj_UpdateSpritePriorities. Changes the battle object's
+/// unit by BattleObject_UpdateSpritePriorities. Changes the battle object's
 /// cycleTimer, selectedCondition, animation and animationEntry, and
 /// registers or unregisters the icon on its first sprite.
 #ifdef UBFIX
@@ -292,7 +292,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
 /// timer step of 14 to 17 by the unit id's low two bits (16 is normal
 /// speed). XXX: likely so that units side by side do not animate in step,
 /// because the step follows nothing but the unit id. Called by
-/// BattleObj_SpawnObjectsForList, BattleEvent_DispatchQueued,
+/// BattleObject_SpawnObjectsForList, BattleEvent_DispatchQueued,
 /// BattleEvent_Playback and Battle_ProcessRoundEnd.
 #ifdef UBFIX
 void BattlePresentation_SetActorModeAndAction(s32 unitId) {
@@ -322,7 +322,7 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
 
 /// Releases every sprite unitId's object holds and leaves it with none,
 /// clearing the battle object's animationEntry and effectEntry. Called by
-/// BattleObj_SpawnObjectsForList; BATTLE.S also gives it an unnamed
+/// BattleObject_SpawnObjectsForList; BATTLE.S also gives it an unnamed
 /// overlay veneer, which nothing in the source calls.
 void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObj *battleObject;
@@ -360,7 +360,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// entry transition code, and through its far stub by
 /// BattleEffect_SelectLivingTargets. Writes the objects' records, their storage
 /// kind and height, and the battle objects' icon and effect entries.
-void BattleObj_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
+void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
   struct BattleObj *battleObject;
@@ -551,8 +551,8 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 /// (BattleMotion_DestroyAllSlotObjects), setting its active field to 1.
 /// Returns 0. Called when a unit leaves the battle: by
 /// BattleEvent_Playback, BattlePresentation_RunEscape, BattleMotion_ShowDowned,
-/// BattleObj_DestroyTemporaryObject and the auto battle.
-s32 BattleObj_MarkForRelease(s32 unitId) {
+/// BattleObject_DestroyTemporaryObject and the auto battle.
+s32 BattleObject_MarkForRelease(s32 unitId) {
   struct BattleObj *battleObject;
   BattleMotion_ReleaseObjectSlotByValue(unitId);
   battleObject = BattleObjGet(unitId);
@@ -560,7 +560,7 @@ s32 BattleObj_MarkForRelease(s32 unitId) {
   return 0;
 }
 
-/// Releases the object of every unit marked by BattleObj_MarkForRelease,
+/// Releases the object of every unit marked by BattleObject_MarkForRelease,
 /// leaving its battle object with no object. Called by Battle_RunEncounter
 /// at the end of each round and by BattlePresentation_DispatchAction.
 #ifdef UBFIX

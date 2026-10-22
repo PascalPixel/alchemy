@@ -132,7 +132,7 @@ pixels through a 256-byte table: one of the five
 The first remap table also recolours the command icons
 (`Runtime_RemapBytesByTable`).
 
-A battle unit's sprite shows how layers combine. `BattleObj_SpawnObjectsForList`
+A battle unit's sprite shows how layers combine. `BattleObject_SpawnObjectsForList`
 (`../battle/battle/objects.c`) gives Isaac's sprite three layers: his body
 (`BattleObj.resource`) and his weapon (`BattleObj.overlay`) at priority 1, and
 the 64 by 64 sprite 510 (`BattleObj.effect`) at priority 0. The two at priority

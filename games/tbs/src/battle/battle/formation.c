@@ -318,7 +318,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 /// the letter back from the end of its name.
 /// Does nothing for a unit that is not an enemy, a class not listed or one
 /// with no letters given. Clears the letter's bit in BattleWork.summonMasks.
-/// Called by BattleObj_RemoveFromLists.
+/// Called by BattleObject_RemoveFromLists.
 #ifdef UBFIX
 void BattleEnemy_ReleaseNameLetter(s32 actorId) {
 #else

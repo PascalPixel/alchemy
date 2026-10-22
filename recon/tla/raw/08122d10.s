@@ -898,7 +898,7 @@ BattleEvent_Playback:
 	lsls r4, r4, #1
 	adds r3, r7, r4
 	ldr r0, [r3]
-	bl BattleObj_MarkForRelease
+	bl BattleObject_MarkForRelease
 	movs r0, #164
 	lsls r0, r0, #1
 	movs r1, #168

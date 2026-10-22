@@ -207,7 +207,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattlePresentation_RunEntryTransition(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Scheduler_AddOrUpdateCallback(BattleObj_UpdateSpritePriorities, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleObject_UpdateSpritePriorities, 0xc80);
 
   // The rounds.
   for (;;) {
@@ -369,7 +369,7 @@ finished:
   Battle_ReservedNoOpF674();
   DjinnRecovery_Tick();
   Battle_SetStart(BATTLE_START_NORMAL);
-  Scheduler_RemoveCallback(BattleObj_UpdateSpritePriorities);
+  Scheduler_RemoveCallback(BattleObject_UpdateSpritePriorities);
   Runtime_ReleaseHeapBlock10();
   return result;
 }

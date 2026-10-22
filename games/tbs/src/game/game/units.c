@@ -765,7 +765,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
 }
 
 /// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
-/// gauges. Called by BattleObj_DestroyTemporaryObject.
+/// gauges. Called by BattleObject_DestroyTemporaryObject.
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 clamped;
 

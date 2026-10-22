@@ -6,7 +6,7 @@
 void DebugBattle_RunMenuFar(void);
 /// Readies the sprites of the units in `list` and releases those of units it
 /// lacks; with `refresh`, every listed unit's pose is set again afterwards.
-void BattleObj_SpawnObjectsForListFar(s16 *list, s32 refresh);
+void BattleObject_SpawnObjectsForListFar(s16 *list, s32 refresh);
 /// Points the battle camera at (x, depth, y) with a zoom in percent and lines
 /// the background's perspective plane up with it.
 void BattlePresentation_SetupTransitionSceneFar(s32 x, s32 depth, s32 y,

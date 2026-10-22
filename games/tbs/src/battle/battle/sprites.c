@@ -14,7 +14,7 @@ void BattleObjPut(void) {
   s16 unitIds[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
-  BattleObj_SpawnObjectsForList(unitIds, 1);
+  BattleObject_SpawnObjectsForList(unitIds, 1);
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
@@ -24,7 +24,7 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
   s16 unitIds[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
-  BattleObj_SpawnObjectsForList(unitIds, 0);
+  BattleObject_SpawnObjectsForList(unitIds, 0);
 }
 
 /// Returns the palette of unit id's battle object. Called by
@@ -137,7 +137,8 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
-/// Called by BattleObj_MarkForRelease. Clears those gBattleWork->spriteSlots.
+/// Called by BattleObject_MarkForRelease. Clears those
+/// gBattleWork->spriteSlots.
 #ifdef UBFIX
 void BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
 #else
@@ -210,7 +211,7 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 /// weapon they have equipped (gBattleUnit_WeaponAnims tables), or 0 for no
 /// weapon, for Felix, or for a unit that is no party member. Called by
 /// BattleObjMake, which keeps it in BattleObj.overlay for
-/// BattleObj_SpawnObjectsForList to add as a layer of the body sprite.
+/// BattleObject_SpawnObjectsForList to add as a layer of the body sprite.
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   struct BattleUnit *unit;
   s32 slot;

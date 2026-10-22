@@ -291,7 +291,7 @@ button press latched before a page's wait is dropped.
 A render output is one sprite a window carries: two letters of text, an icon,
 a portrait or the page arrow.
 
-![Garet's sister's first page typed out in Vale, each render output outlined at twice the screen's size where its own OAM attributes put it, beside each open window's output list walked from its head: the message window's outputs appear one by one as `You guys are so lucky, Garet.` is typed, each a 16 by 16 glyph sprite holding two letters, 13 of them, then the bobbing page arrow, an 8 by 16 glyph with motion `UI_SPRITE_PAGE_ARROW`; the portrait window holds one 32 by 32 portrait output. Every output's attributes were found in the game's OAM in the same or the next frame.](https://alchemy.pascalpixel.com/guides/window/render-outputs.gif)
+![Garet's sister's first page typed out in Vale, each render output outlined at twice the screen's size where its own OAM attributes put it, beside each open window's output list walked from its head, each output named by what it holds with its size and place in pixels, and a colour key below: the message window's outputs appear one by one as `You guys are so lucky, Garet.` is typed, each a 16 by 16 glyph sprite holding two letters, 13 of them, then the bobbing page arrow, an 8 by 16 glyph with motion `UI_SPRITE_PAGE_ARROW`; the portrait window holds one 32 by 32 portrait output. Every output's attributes were found in the game's OAM in the same or the next frame.](https://alchemy.pascalpixel.com/guides/window/render-outputs.gif)
 
 Each window keeps a list of its outputs, taken from the pool's free list and
 returned when the window closes. `UiWork_AnimateSpriteSlots` moves each

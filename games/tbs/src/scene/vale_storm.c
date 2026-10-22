@@ -122,8 +122,6 @@ static void ValeStorm_UpdateBoulderSceneEffects(void);
 static void ValeStorm_CycleBoulderPalette(void);
 static void ValeStorm_CopyLeaderSpritePriority(void);
 
-enum { STORM_CALLBACK_PRIORITY = 3200 };
-
 /// The placed actors, numbered in the order of gValeStorm_Placements; the
 /// elders holding back the Boulder (gValeStorm_BoulderWatchers) follow them.
 enum StormNightActor {
@@ -578,7 +576,7 @@ s32 ValeStorm_Initialize(void) {
     Object_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
         ~ACTOR_PRIORITY_AUTOMATIC;
     FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority,
-                               STORM_CALLBACK_PRIORITY);
+                               TASK_PRIORITY_SCENE);
     Engine_ActorSetPosition(ACTOR_JENNAS_FATHER, 0, 0);
     Engine_ActorSetPosition(ACTOR_JENNAS_MOTHER, 0, 0);
     Engine_ActorSetPosition(ACTOR_FELIX, 0, 0);
@@ -1455,9 +1453,9 @@ static void Event_WatchBoulderFall(void) {
     updateEffects = ValeStorm_UpdateBoulderSceneEffects;
     sShakeDone = 0;
     *shakeShift = 0;
-    FieldScheduler_AddOrUpdateCallback(updateEffects, STORM_CALLBACK_PRIORITY);
+    FieldScheduler_AddOrUpdateCallback(updateEffects, TASK_PRIORITY_SCENE);
     cycleBoulderPalette = ValeStorm_CycleBoulderPalette;
-    FieldScheduler_AddCallback(cycleBoulderPalette, STORM_CALLBACK_PRIORITY);
+    FieldScheduler_AddCallback(cycleBoulderPalette, TASK_PRIORITY_SCENE);
     Engine_EventWait(40);
     *shakeShift = 1;
     Engine_EventWait(30);
@@ -2336,8 +2334,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Engine_ColorBufferInterpolate(30);
   Task_Wait(30);
   // Follow the boulder script until its eighth movement phase.
-  FieldScheduler_AddCallback(ValeStorm_UpdatePulsingGlow,
-                             STORM_CALLBACK_PRIORITY);
+  FieldScheduler_AddCallback(ValeStorm_UpdatePulsingGlow, TASK_PRIORITY_SCENE);
   Actor_SetActionScript(ACTOR_BOULDER, gValeStorm_BoulderRollsDownriver);
   Camera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
   Camera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
@@ -2405,8 +2402,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Engine_MapRedraw();
   groupActor->scaleX = 2 * Q16_ONE;
   groupActor->scaleY = 2 * Q16_ONE;
-  FieldScheduler_AddCallback(ValeStorm_FlickerGlowOffset,
-                             STORM_CALLBACK_PRIORITY);
+  FieldScheduler_AddCallback(ValeStorm_FlickerGlowOffset, TASK_PRIORITY_SCENE);
   Actor_Stop(ACTOR_KYLE);
   Actor_Stop(ACTOR_JENNAS_FATHER);
   Actor_Stop(ACTOR_JENNAS_MOTHER);
@@ -2512,7 +2508,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Object_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority,
-                             STORM_CALLBACK_PRIORITY);
+                             TASK_PRIORITY_SCENE);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(181), PIXELS(1273));
   currentActor = Actor_Get(ACTOR_PARTY_LEADER);
   currentActor->facing = FACING_NORTHEAST;

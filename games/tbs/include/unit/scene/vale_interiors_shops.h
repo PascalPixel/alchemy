@@ -13,7 +13,7 @@ s32 ValeInteriorsShops_Initialize(void);
 extern s32 gValeInteriorsShops_FaceTargetScript[];
 extern s32 gValeInteriorsShops_FatherPacingScript[];
 extern s32 gValeInteriorsShops_PartyLeavesScript[];
-extern s32 gValeInteriorsShops_DriftingSpriteScript[];
+extern s32 gValeInteriorsShops_SleepZScript[];
 extern struct SceneEntrance gValeInteriorsShops_Entrances[];
 extern u32 gValeInteriorsShops_Exits[];
 extern u32 gValeInteriorsShops_StormExits[];

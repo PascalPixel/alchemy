@@ -5283,19 +5283,19 @@ enum {
   BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM =
       11, ///< ★ Named from what the player sees: the small room with a locked
           ///< door and the arch on to the stone door (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_EAST =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST =
       12, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
-  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_RISE =
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_PIT =
       13, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_SOUTHWEST =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST =
       14, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH =
       15, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_NORTHWEST =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST =
       16, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH =
@@ -5330,19 +5330,19 @@ enum {
   BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM =
       10, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_EAST =
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST =
       11, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
-  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_RISE =
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT =
       12, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_SOUTHWEST =
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST =
       13, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH =
       14, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
-  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_NORTHWEST =
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST =
       15, ///< ★ Named from what the player sees: the brick room entered by the
           ///< Entry's east door, where Luff waits on a ledge (its render)
   BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH =

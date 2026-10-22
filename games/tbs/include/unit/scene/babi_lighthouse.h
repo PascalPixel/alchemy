@@ -27,17 +27,17 @@ extern s32 gBabiLighthouse_TrembleScript[];
 extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];
 extern struct SceneEntrance gBabiLighthouse_LuffEntrances[];
 extern struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[];
-extern struct SceneEntrance gBabiLighthouse_EntrancesOther[];
+extern struct SceneEntrance gBabiLighthouse_RoadEntrances[];
 extern struct SceneRegion gBabiLighthouse_EntryRegions[];
 extern u32 gBabiLighthouse_Exits[];
 extern struct ScenePlacement gBabiLighthouse_NoPlacements[];
 extern struct ScenePlacement gBabiLighthouse_EntryPlacements[];
 extern struct ScenePlacement gBabiLighthouse_LuffPlacements[];
 extern struct ScenePlacement gBabiLighthouse_StoneDoorPlacements[];
-extern struct ScenePlacement gBabiLighthouse_PlacementsOther[];
+extern struct ScenePlacement gBabiLighthouse_RoadPlacements[];
 extern struct SceneEvent gBabiLighthouse_EntryEvents[];
 extern struct SceneEvent gBabiLighthouse_LuffEvents[];
 extern struct SceneEvent gBabiLighthouse_StoneDoorEvents[];
-extern struct SceneEvent gBabiLighthouse_EventsOther[];
+extern struct SceneEvent gBabiLighthouse_RoadEvents[];
 
 #endif

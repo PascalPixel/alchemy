@@ -6,10 +6,10 @@
 #include "field_obj.h"
 #include "field_event.h"
 
-/// Searching cell code 41 beside the girl at the inn takes a Bone after the
-/// thieves are jailed. The floor Bone remains, so the party can take more.
-/// With no room for it, ACTOR_GIRL_AT_THE_INN (as both scenes name her) shakes
-/// their head: "Aren't you a greedy lad!"
+/// Searching VAULT_INTERIORS_CELL_INN_BARREL beside the girl at the inn takes a
+/// Bone after the thieves are jailed. The floor Bone remains, so the party can
+/// take more. With no room for it, ACTOR_GIRL_AT_THE_INN (as both scenes name
+/// her) shakes their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
   Engine_EventBegin();
   if (PartyInventory_HasSpace() == 0) {

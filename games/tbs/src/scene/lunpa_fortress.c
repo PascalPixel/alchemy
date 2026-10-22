@@ -36,7 +36,10 @@
 /// makes the watcher request CLOAK_NEAR_GUARD. The patrolling guards walk
 /// action scripts (gFirstPatrolRoute and the others), stop while a menu,
 /// Psynergy or an item is in use, and drag MAP_LAYER_OVERHEAD along with them,
-/// shaking it by a pixel every frame; each has stretches of its rounds where
+/// shaking it by a pixel every frame: in the dark corridors that layer holds
+/// the circles of light the patrols carry, which flicker as they shake
+/// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
+/// shows the pair's two circles). Each has stretches of its rounds where
 /// it cannot see the leader. The guards who fight instead pick one of four
 /// challenges, by gLunpaFortressRandomPick, drawn on every entrance.
 ///
@@ -69,18 +72,14 @@
 /// never read.
 ///
 /// Open questions:
-/// - XXX: what MAP_LAYER_OVERHEAD shows where the patrols drag it; likely the
-///   light each patrol carries, because its origin follows the guard. A render
-///   of LunpaFortressUpperFloor's west corridor would settle it.
 /// - XXX: what CAVE_INVISIBLE_ACTOR and the three invisible actors of
-///   LunpaFortressToadonpa stand in for; a render with their collision drawn
-///   would settle it.
-/// - XXX: what Engine_MapSetWorkFlagBits9To11's 0xe00 and 0xc00 choose for the
-///   passages and the rooms; reading the map work's bits 9 to 11 would settle
-///   it.
+///   LunpaFortressToadonpa do; each stands in one of the cells behind the
+///   Cell Key's doors, by the jar or chest the map draws there
+///   (https://alchemy.pascalpixel.com/places/lunpa-fortress-toadonpa/map-0.png),
+///   so likely they make it solid, and the map's collision attributes at
+///   those cells would settle it.
 /// - XXX (picture): LunpaFortressUpperFloor's west corridor taken apart, the
-///   patrolling pair with the overhead layer that follows them and the cells
-///   where they cannot see the leader.
+///   cells along the pair's rounds where they cannot see the leader.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -115,6 +114,7 @@
 #include "djinn_ids.h"
 #include "songs.h"
 #include "fixed_math.h"
+#include "io_reg.h"
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorPlacements from ACTOR_FIRST_PLACED, past its first
@@ -196,9 +196,10 @@ enum {
   CAVE_FIRST_SWITCH_COVER = ACTOR_FIRST_PLACED,
   CAVE_PASSAGE_COVER,
   CAVE_SECOND_SWITCH_COVER,
-  /// An invisible actor at (504, 168), its sprite hidden by
-  /// LunpaFortress_InitializeCave; no event names it. XXX: what it stands in
-  /// for is not known.
+  /// An invisible actor at (504, 168), in the cell behind the cave's eastern
+  /// door by the jar the map draws there, its sprite hidden by
+  /// LunpaFortress_InitializeCave; no event names it. XXX: likely it makes
+  /// the jar solid, as the file's open questions say.
   CAVE_INVISIBLE_ACTOR,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
@@ -211,8 +212,10 @@ enum {
 enum {
   /// Three invisible actors at (56, 72), (136, 72) and (216, 72), in line with
   /// the cell doors gLunpaFortressToadonpaDoorCells lists third, second and
-  /// first. Scene_Initialize hides their sprites and lays them underfoot, and
-  /// no event names them. XXX: what they stand in for is not known.
+  /// first, by the jar, chest and jar the map draws in those cells.
+  /// Scene_Initialize hides their sprites and lays them underfoot, and no
+  /// event names them. XXX: likely they make the jars and chest solid, as the
+  /// file's open questions say.
   TOADONPA_WEST_INVISIBLE_ACTOR = ACTOR_FIRST_PLACED,
   TOADONPA_MIDDLE_INVISIBLE_ACTOR,
   TOADONPA_EAST_INVISIBLE_ACTOR,
@@ -263,6 +266,13 @@ enum {
   UPPER_FLOOR_DOOR_FLAG = FLAG_PLACE_TEMP_58,
   GROUND_FLOOR_DOOR_FLAG = FLAG_PLACE_TEMP_5A
 };
+
+/// The map layers the dark passages show (Engine_MapSetWorkFlagBits9To11):
+/// BG1 to BG3, BG1 being MAP_LAYER_OVERHEAD and its circles of light.
+#define LUNPA_FORTRESS_PASSAGE_LAYERS                                          \
+  (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)
+/// The map layers the lit rooms show: BG2 and BG3, without the overhead layer.
+#define LUNPA_FORTRESS_ROOM_LAYERS (DISPCNT_BG2_ON | DISPCNT_BG3_ON)
 
 /// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
 // The native paired patrol computes this layer offset in floating point.
@@ -2992,7 +3002,7 @@ s32 Scene_Initialize(void) {
 
   gLunpaFortressRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
   if (gGameState.scene == (s32)&SceneId_LunpaFortressGroundFloor) {
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();
   }
   if (gGameState.scene == (s32)&SceneId_LunpaFortressUpperFloor)
@@ -3018,14 +3028,14 @@ s32 Scene_Initialize(void) {
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     if (gGameState.entrance == LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE) {
-      Engine_MapSetWorkFlagBits9To11(0xc00);
+      Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
       Event_DonpaJudgesDodonpa();
     }
     if (gGameState.entrance ==
         LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST) {
-      Engine_MapSetWorkFlagBits9To11(0xc00);
+      Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
       if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
         OBJ_POS_SET(TOADONPA_HAMMET, 0, 0);
         OBJ_POS_SET(TOADONPA_CELL_GUARD, 432, 344);
@@ -3063,13 +3073,13 @@ static void LunpaFortress_InitializeGroundFloor(void) {
                      TASK_PRIORITY_SCENE);
     Task_AddCallback(LunpaFortress_CheckSecondEntranceSentry,
                      TASK_PRIORITY_SCENE);
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_FROM_NORTHEAST_PASSAGE:
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    Engine_MapSetWorkFlagBits9To11(0xc00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_NORTHEAST_PASSAGE:
@@ -3084,7 +3094,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Map_CopyCells(101, 9, 10, 8, 110, 9);
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_EAST_PASSAGE:
@@ -3096,7 +3106,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   default:
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
   Engine_ActorSetChildValue(GROUND_FLOOR_PATROL_GUARD, 1);
@@ -3135,7 +3145,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE:
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdatePairedGuardDetection,
                      TASK_PRIORITY_SCENE);
     Engine_TaskWait(1);
@@ -3149,7 +3159,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM:
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    Engine_MapSetWorkFlagBits9To11(0xc00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
     Engine_ActorSetSpriteFlags(Actor_Get(UPPER_FLOOR_DONPA), 0);
     if (FLAG_CHECK(FLAG_PLACE_TEMP_14)) {
       OBJ_POS_SET(UPPER_FLOOR_ATTENDANT, 872, 120);
@@ -3159,7 +3169,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_SOUTH_PASSAGE:
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdateHallGuardDetection,
                      TASK_PRIORITY_SCENE);
     Engine_TaskWait(1);
@@ -3188,7 +3198,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   default:
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapSetWorkFlagBits9To11(0xe00);
+    Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
   keyActor = Actor_Get(UPPER_FLOOR_CELL_KEY);
@@ -3253,7 +3263,7 @@ static void LunpaFortress_InitializeCave(void) {
   }
   Engine_ActorSetSpriteFlags(Actor_Get(CAVE_INVISIBLE_ACTOR), 0);
   EV_END();
-  Engine_MapSetWorkFlagBits9To11(0xe00);
+  Engine_MapSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }
 
 /// LunpaFortressGroundFloor's opened cell doors stay open.

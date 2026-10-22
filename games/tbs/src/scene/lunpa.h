@@ -14,7 +14,9 @@
 // Lunpa's and the gates' entrances and exits are in scene_links.h.
 
 /// The exit the gates' third road (TRIGGER_THIRD_ROAD) requests, which
-/// gGateExits has no row for.
+/// gGateExits has no row for. Scene_TakeExit, reaching the end of the gates'
+/// exits, falls back to the scene of their first exit at entrance 0, so the
+/// road leads to LunpaFortressGroundFloor's default entrance.
 enum { GATE_EXIT_THIRD = 3 };
 
 /// The first of the rooms in LunpaSuhalla that Lunpa's doors lead into.

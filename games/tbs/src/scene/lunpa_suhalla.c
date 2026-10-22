@@ -31,12 +31,11 @@
 /// hides the location name.
 ///
 /// Open questions:
-/// - XXX: whether Event_TalkToTravelingHealer opening the Sanctum for
-///   ACTOR_HEALER, the temple's Healer, rather than ACTOR_TRAVELING_HEALER is
-///   a slip; a recording of the Sanctum at Suhalla Gate would show which actor
-///   its window points at.
-/// - XXX: what ROOM_NINTH_UNUSED was, an entrance no exit leads to beside the
-///   house at Suhalla Gate; a render of its camera box would show the room.
+/// - XXX (no evidence): what ROOM_NINTH_UNUSED was meant for, an entrance no
+///   exit leads to; its camera box takes half the crate room and half the
+///   house at Suhalla Gate, and it stands the leader in the empty dark between
+///   them (https://alchemy.pascalpixel.com/places/lunpa-suhalla/map-9.png), so
+///   the map holds no room of its own for it.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -507,9 +506,15 @@ static void Event_TalkToTravelingHealer(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
-    // XXX: the temple's Healer, not the traveling one; the file's open
-    // questions ask whether this is a slip.
+    // BUG: the temple's Healer, not the traveling one. The Sanctum only takes
+    // its keeper's portrait from the actor (Shop_ConfirmAct), and both Healers
+    // are placed in this scene in the same sprite, so the player sees no
+    // difference.
+#ifdef BUGFIX
+    Engine_SanctumOpen(ACTOR_TRAVELING_HEALER);
+#else
     Engine_SanctumOpen(ACTOR_HEALER);
+#endif
   } else {
     Engine_EventSetMessage(MsgLunpaTravelingPriest);
     Engine_EventShowMessage(ACTOR_TRAVELING_HEALER, 0);

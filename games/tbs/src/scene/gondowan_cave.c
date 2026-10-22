@@ -45,9 +45,6 @@
 ///   likely so that a party coming in from the east is never cut off, because
 ///   it is the cell the dropped pillar fills. A recording of that arrival with
 ///   the puzzle unsolved would settle it.
-/// - XXX: what ACTOR_BOULDER_SIDE does; likely holds the cell beside the
-///   boulder, because it stands one cell west of it and Lift takes it away with
-///   the boulder. A render with its collision drawn would settle it.
 
 #include "game_state.h"
 #include "global_cells.h"
@@ -131,9 +128,12 @@ enum GondowanCaveActor {
   /// ★ Named from what the player sees: a round boulder in the cave passage,
   /// which floats up under Lift (its render)
   ACTOR_BOULDER,
-  /// An invisible actor 16 pixels west of the boulder, which Lift takes away
-  /// with it (the file's open questions ask what it does).
-  ACTOR_BOULDER_SIDE
+  /// An invisible actor (SPRITE_BLANK, its shadow turned off) 16 pixels west
+  /// of the boulder. It fills the gap between the boulder and the passage's
+  /// west wall, so the boulder blocks the passage until Lift takes both away
+  /// (https://alchemy.pascalpixel.com/places/gondowan-cave/map-4.png shows
+  /// the gap).
+  ACTOR_BOULDER_GAP
 };
 
 // The leap event also runs after the shared staged-actor movement.
@@ -490,7 +490,7 @@ static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 /// Lift on the boulder in GondowanCave also takes away the
 /// invisible actor beside it.
 static void Event_LiftBoulder(void) {
-  Engine_ActorSetPosition(ACTOR_BOULDER_SIDE, 0, 0);
+  Engine_ActorSetPosition(ACTOR_BOULDER_GAP, 0, 0);
 }
 
 /// Sets up the scene as the party enters. Gondowan Passage blocks Retreat and
@@ -517,7 +517,7 @@ s32 Scene_Initialize(void) {
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
       GondowanCave_PlaceDroppedPillar(STUMP_ANIM_SINK);
     }
-    actor = Actor_Get(ACTOR_BOULDER_SIDE);
+    actor = Actor_Get(ACTOR_BOULDER_GAP);
     Engine_ActorSetSpriteFlags(actor, 0);
   }
   return 0;

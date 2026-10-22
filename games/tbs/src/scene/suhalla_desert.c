@@ -51,12 +51,6 @@
 /// - XXX (no evidence): what flag 0x1b7 holds, which
 ///   Event_IodemAsksWhetherToPressOn requires clear; no code in the game sets
 ///   or reads it elsewhere, so the test always passes.
-/// - XXX: what the Douse effect's child option, which Event_DouseCastAtStorm
-///   sets, changes; reading the Douse effect would settle it.
-/// - XXX: what the leader's animation 9 shows as a storm draws it in; a render
-///   of the party's sprite animations would settle it.
-/// - XXX: what map object 100, which Reveal moves in SuhallaDesertSouth, is; a
-///   render of the scene with Reveal cast would show it.
 
 #include "script.h"
 #include "flags.h"
@@ -145,6 +139,12 @@ enum {
 
 /// Frames a caught party spins before the storm carries it away.
 enum { STORM_CAPTURE_FRAMES = 180 };
+
+/// The map marker of SuhallaDesertSouth's hidden Psynergy Stone, whose search
+/// row finds the stone (FIND_PSYNERGY_STONE). Its actor stands in its cell
+/// only while Reveal lasts (Event_RevealStarts moves it to the cell's centre)
+/// and is moved off the map as Reveal ends.
+enum { MAP_OBJECT_PSYNERGY_STONE = 100 };
 
 /// The events the storms raise: the spinning has run out, or the chasing storm
 /// has reached the moving leader.
@@ -269,7 +269,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(selectedActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Engine_ActorSetAnimation(selectedActorId, 9);
+    Engine_ActorSetAnimation(selectedActorId, ANIM_LEADER_LOOK_AROUND);
     storm = Object_GetById(stormIdCopy);
     if (storm != 0) {
       Actor_SetDestination(selectedActorId, storm->x.part.pixel,
@@ -586,7 +586,9 @@ static void Event_StormGivesChase(void) {
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader:
-/// sets the Psynergy effect's child option (its meaning unknown).
+/// sets the Psynergy effect's child option, so that Douse's orb rises to 80
+/// pixels above the storm rather than 32 and rains on it from above
+/// (FieldFx_RunDouse).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
   ((struct FieldFxScene *)state)->childOption = 1;
@@ -712,7 +714,7 @@ static s32 Event_RevealEnds(void) {
         ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Actor_SetPosition(ACTOR_REVEALED_PILLAR, 0, 0);
     Map_CopyCellAttributes(16, 44, 1, 1, 15, 44);
-    MapObject_SetPosition(100, 0, 0);
+    MapObject_SetPosition(MAP_OBJECT_PSYNERGY_STONE, 0, 0);
     Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
     Map_CopyCellAttributes(11, 71, 1, 1, 12, 71);
 #ifdef UBFIX
@@ -730,12 +732,12 @@ static s32 Event_RevealEnds(void) {
 #ifdef UBFIX
 /// Reveal shows a hidden stone pillar in the desert's south. In
 /// SuhallaDesertSouth the stone pillar appears at 248, 712, map cells and the
-/// map object at 100 change, and a palette color pulses.
+/// Psynergy Stone's map object change, and a palette color pulses.
 static void Event_RevealStarts(void) {
 #else
 /// Reveal shows a hidden stone pillar in the desert's south. In
 /// SuhallaDesertSouth the stone pillar appears at 248, 712, map cells and the
-/// map object at 100 change, and a palette color pulses.
+/// Psynergy Stone's map object change, and a palette color pulses.
 static s32 Event_RevealStarts(void) {
 #endif
   if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
@@ -744,7 +746,7 @@ static s32 Event_RevealStarts(void) {
     Object_GetById(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
     Actor_SetPosition(ACTOR_REVEALED_PILLAR, PIXELS(248), PIXELS(712));
     Map_CopyCellAttributes(31, 95, 1, 1, 15, 44);
-    MapObject_SetPosition(100, -1, -1);
+    MapObject_SetPosition(MAP_OBJECT_PSYNERGY_STONE, -1, -1);
     Marker_MoveLeaderAway();
     Map_CopyCellAttributes(127, 127, 1, 1, 12, 71);
 #ifdef UBFIX
@@ -1081,7 +1083,7 @@ struct SceneEvent gSuhallaDesertEventsOther[] = {
     { EVENT_TOUCH, 54, FLAG_SECOND_SCENE_STORM_DOUSED + 3, EVENT_SCRIPT(Event_CaughtByFourthStorm) },
     { EVENT_TOUCH, 81, FLAG_SCENE_TEMP_0E, EVENT_SCRIPT(Event_StormGivesChase) },
     { EVENT_TALK, ACTOR_FLASH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightDjinni) },
-    { SEARCH(SEARCH_UNNAMED), 100, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { SEARCH(SEARCH_UNNAMED), MAP_OBJECT_PSYNERGY_STONE, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { SEARCH(SEARCH_CHEST), 103, FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET, FIND_ITEM(ITEM_VIRTUOUS_ARMLET) },
     { SEARCH(SEARCH_CHEST), 104, FLAG_SUHALLA_DESERT_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_SUHALLA_DESERT_COOKIE, FIND_ITEM(ITEM_COOKIE) },

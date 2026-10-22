@@ -106,7 +106,7 @@ enum MercuryLighthouseAerieActor {
   /// Flickers between two sizes and sheds sparks while in view
   /// (MercuryLighthouseAerie_FlickerBeacon).
   /// ★ Named from what the player sees: the swirling blue ball of light the
-  /// lit beacon shows (spr_244.png)
+  /// lit beacon shows, spr_244.png (its render)
   ACTOR_BEACON = ACTOR_FIRST_PLACED,
   /// A statue, drawn as the lighthouse's statues all are, standing on
   /// the lift; it rides up and down with it.

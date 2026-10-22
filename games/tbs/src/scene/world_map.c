@@ -276,7 +276,7 @@ enum WorldMapActor {
   ACTOR_TOLBI_SHIP = ACTOR_PLACE_GONDOWAN_PASSAGE + 2,
   /// The storm that lifts the party, as the Suhalla Desert's do.
   /// ★ Named from what the player sees: a white whirlwind spinning on the map,
-  /// drawn as the Suhalla Desert's sandstorms (spr_289.png)
+  /// drawn as the Suhalla Desert's sandstorms, spr_289.png (its render)
   ACTOR_STORM,
   /// Placed by the coast once he has handed over the Black Orb.
   /// ★ Named from the game: "Iodem, Iodem!" (MsgTolbiIodemIodem)
@@ -368,7 +368,7 @@ enum {
 /// until the map leads into their scene.
 enum {
   /// ★ Named from what the player sees: an island of green hills around a
-  /// mountain, drifting on the sea (spr_504.png)
+  /// mountain, drifting on the sea, spr_504.png (its render)
   ACTOR_DRIFTING_ISLAND = ACTOR_FIRST_PLACED
 };
 

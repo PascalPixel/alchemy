@@ -182,19 +182,19 @@ enum MercuryLighthouseLowerActor {
   /// SPRITE_PIPE_NORTH_SOUTH for the third) along until each joins its
   /// channel's pipes.
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_FIRST_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_SECOND_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south (spr_229.png)
+  /// south, spr_229.png (its render)
   ACTOR_THIRD_PIPE,
   /// SPRITE_PIPE_END, one still frame, 59 pixels south of where
   /// ACTOR_THIRD_PIPE comes to rest; pushing it does nothing, and nothing else
   /// moves it: the rim of the fixed pipe the third section joins.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// (spr_230.png)
+  /// in spr_230.png (its render)
   ACTOR_PIPE_END
 };
 
@@ -202,15 +202,15 @@ enum MercuryLighthouseLowerActor {
 /// gate's floor switch and Sleet, a Mercury Djinni.
 enum MercuryLighthouseMiddleActor {
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south (spr_229.png)
+  /// south, spr_229.png (its render)
   ACTOR_STAIR_PIPE = ACTOR_FIRST_PLACED,
   /// 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs are
   /// raised; nothing moves it.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// (spr_230.png)
+  /// in spr_230.png (its render)
   ACTOR_STAIR_PIPE_END,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_FOUNTAIN_PIPE,
   /// ★ Named from what the player sees: a blue statue of a woman holding a jar
   /// (its render)
@@ -232,14 +232,14 @@ enum MercuryLighthouseUpperActor {
   /// its ledge (its render)
   ACTOR_SLIDING_STATUE,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east, spr_228.png (its render)
   ACTOR_DOOR_ROOM_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south (spr_229.png)
+  /// south, spr_229.png (its render)
   ACTOR_DOOR_SWITCH_PIPE,
   /// Three in a row south of the stone doors' pipes; nothing moves them.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// (spr_230.png)
+  /// in spr_230.png (its render)
   ACTOR_FIRST_DOOR_PIPE_END,
   /// Five in a row along the north wall.
   /// ★ Named from what the player sees: stone statues of a robed figure (its

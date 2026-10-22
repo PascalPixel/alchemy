@@ -15,7 +15,7 @@ enum {
   /// two drawn mirrored. When the beacon erupts and splits the aerie, the west
   /// two move west with their half and the east two east.
   /// ★ Named from what the player sees: four statues of a woman with a green
-  /// wreath around the beacon (spr_258.png)
+  /// wreath around the beacon, spr_258.png (its render)
   ACTOR_BEACON_STATUE_SOUTHWEST = 8,
   ACTOR_BEACON_STATUE_NORTHWEST = 9,
   ACTOR_BEACON_STATUE_NORTHEAST = 10,
@@ -24,7 +24,7 @@ enum {
   /// each dipping under him as he lands, and the one that carries him up to
   /// the aerie.
   /// ★ Named from what the player sees: round floating platforms
-  /// (spr_242.png)
+  /// in spr_242.png (its render)
   ACTOR_FIRST_PLATFORM = 12,
   ACTOR_LAST_PLATFORM = 17,
   ACTOR_RISING_PLATFORM = 18,

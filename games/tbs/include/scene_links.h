@@ -5469,22 +5469,22 @@ enum {
   LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST = 21,
   LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTH = 22,
   LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHEAST = 23,
-  LALIVERO_FARANS_HOUSE_INN_FROM_INN_CORRIDOR =
+  LALIVERO_FARANS_HOUSE_INN_FROM_INN_UPSTAIRS =
       24, ///< ★ Named from what the player sees: the room where an innkeeper
           ///< offers a room for the night across a counter (its render)
-  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_INN =
+  LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_INN =
       25, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_WEST =
+  LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST =
       26, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_EAST =
+  LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST =
       27, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_CORRIDOR =
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS =
       28, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
-  LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_CORRIDOR =
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS =
       29, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
   LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHWEST = 30,
@@ -5497,22 +5497,22 @@ enum {
   LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTHWEST = 21,
   LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTH = 22,
   LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHEAST = 23,
-  LALIVERO_FARANS_HOUSE_INN_TO_INN_CORRIDOR =
+  LALIVERO_FARANS_HOUSE_INN_TO_INN_UPSTAIRS =
       24, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_INN =
+  LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_TO_INN =
       25, ///< ★ Named from what the player sees: the room where an innkeeper
           ///< offers a room for the night across a counter (its render)
-  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_WEST =
+  LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_TO_GUEST_ROOM_WEST =
       26, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
-  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_EAST =
+  LALIVERO_FARANS_HOUSE_INN_UPSTAIRS_TO_GUEST_ROOM_EAST =
       27, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
-  LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_TO_INN_CORRIDOR =
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_TO_INN_UPSTAIRS =
       28, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_TO_INN_CORRIDOR =
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_TO_INN_UPSTAIRS =
       29, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
   LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHWEST = 30,

@@ -200,6 +200,32 @@ instead. From then on, once a frame, the task runs `BattleTargetExec` for the
 next target and plays that target's events over the following frames before
 it moves on.
 
+```mermaid
+sequenceDiagram
+    participant D as BattlePresentation_DispatchAction
+    participant F as Effect
+    participant P as BattleEvent_Playback (task)
+    participant T as BattleTargetExec
+    participant Q as Event queue
+    D->>P: Scheduler_AddOrUpdateCallback
+    D->>F: start the effect
+    loop until the blow lands
+        F->>F: WaitFrames
+    end
+    F->>P: EFFECT_SHOW_DAMAGE(hitSound)
+    par the effect keeps drawing
+        F->>F: WaitFrames
+    and playback runs the rules
+        loop each target, once a frame
+            P->>T: BattleTargetExec(target)
+            T->>Q: BattleEvPush (arguments, then message)
+            P->>Q: play that target's events
+        end
+    end
+    F-->>D: effect returns
+    D->>P: BattleEvent_WaitForReady until playback is done
+```
+
 The two sides meet at the battle event queue (`struct BattleEventQueue`,
 `BATTLE_EVENT_CAPACITY` events). `BattleTargetExec` never draws or waits: it
 changes the target's HP and statuses and pushes events with `BattleEvPush` in

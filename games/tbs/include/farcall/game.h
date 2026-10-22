@@ -201,7 +201,7 @@ void Party_RestoreHpPpFar(s32 arg0);
 void Party_RestorePpOfLitElementsFar(void);
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna in their childhood
 /// classes, as a new game starts the prologue.
-void Party_BeginChildhoodFar(void);
+void Party_StartChildhoodFar(void);
 /// Sets the party up for Vale three years after the prologue: the Short Sword,
 /// Move, Retreat and Mind Read taught, and 300 coins.
 void Party_EndChildhoodFar(void);

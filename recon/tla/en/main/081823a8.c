@@ -48,7 +48,7 @@ extern char ResourceId_JupiterDjinnSheet;
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
 extern const u16 gData_08197410[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
@@ -98,7 +98,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
   s32 member;
   s32 i;
 
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   work->fadeFrames = 24;
   work->fadeStep = 0;

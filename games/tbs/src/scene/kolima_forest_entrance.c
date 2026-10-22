@@ -177,7 +177,7 @@ const struct ScenePlacement *KolimaForestEntrance_GetPlacements(void) {
 /// become ground the party can cross (sets FLAG_SCENE_TEMP_00).
 static void KolimaForestEntrance_PushLog(void) {
   struct StagedActorProbe res;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (StagedActor_FindClearPosition(&res)) {
     SceneActor_MoveAndRedraw(res);
@@ -258,7 +258,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   const s32 *growFieldAction;
   const s32 *shrinkFieldAction;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Camera_MoveTo(PIXELS(246), -1, PIXELS(604), 0);

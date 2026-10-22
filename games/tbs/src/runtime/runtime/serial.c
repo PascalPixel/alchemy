@@ -473,7 +473,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
 /// only when it reaches exactly 0. `source` is read a block each VBlank, and
 /// may be resent from after a rewind, so it must stay unchanged until
 /// gSerialSendSource is 0 again.
-s32 SerialRuntime_BeginSend(void *source, s32 size) {
+s32 SerialRuntime_StartSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
 
@@ -491,11 +491,11 @@ s32 SerialRuntime_BeginSend(void *source, s32 size) {
 
 /// Starts receiving the partner's blocks into `destination`: sets the receive
 /// destination and clears the received size. Called by the same code as
-/// SerialRuntime_BeginSend. Returns -1 when a receive is already running, 0
+/// SerialRuntime_StartSend. Returns -1 when a receive is already running, 0
 /// otherwise. Each block is stored whole, so `destination` needs room for
 /// the partner's whole send; the receive ends at the partner's last block,
 /// whatever the room.
-s32 SerialRuntime_BeginReceive(void *destination) {
+s32 SerialRuntime_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
 
@@ -721,13 +721,13 @@ void SerialTest_Run(void) {
   Cpu_Fill32(0, gMapCellBuffer, 0x400);
   SerialRuntime_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:
-  SerialRuntime_BeginReceive(gMapCellBuffer);
+  SerialRuntime_StartReceive(gMapCellBuffer);
   for (;;) {
     // 0x280 bytes: 32 blocks, 20 tiles
     if (gKeysHeld & KEY_A)
-      SerialRuntime_BeginSend((void *)Cart_Restart, 0x280);
+      SerialRuntime_StartSend((void *)Cart_Restart, 0x280);
     if (gKeysHeld & KEY_B)
-      SerialRuntime_BeginSend((void *)(Rom_Start + 0x1000), 0x280);
+      SerialRuntime_StartSend((void *)(Rom_Start + 0x1000), 0x280);
     if (gKeysHeld & KEY_START) {
       tick = 9999;
       do {

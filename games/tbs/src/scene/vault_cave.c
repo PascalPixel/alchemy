@@ -688,7 +688,7 @@ static void VaultCave_RunRumble(void) {
   s32 lowFadeLevel;
   s32 upperFadeBits;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (gFrameCount & 1) {
     layer->speedX = 1;
     layer->speedY = 1;

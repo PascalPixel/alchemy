@@ -62,12 +62,12 @@ extern s8 Data_08197a23[][4]; // ☀️ gVolcano_Depths
 extern u8 Data_08197a2f[];    // ☀️ gVolcano_StartFrames
 extern u16 gData_08197410[];  // ☀️ gBattleEffect_MoteCells
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                  // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);             // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -95,7 +95,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);

@@ -149,7 +149,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   canvasShiftX = 0;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
 
   // Bring out the djinni, Mars for Psy Crystal and Mercury otherwise; origin
   // receives where it ends. Ply and Psy Crystal place it over the first

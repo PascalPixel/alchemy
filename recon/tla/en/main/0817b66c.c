@@ -66,7 +66,7 @@ extern s32 gCameraSceneParameters[];
 extern const u8 gData_08199450[];
 extern const u8 gData_08199474[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
@@ -115,7 +115,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
   s32 i;
   s32 strikeFrame;
 
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
                              1, 1);
   work->transferMode = 1;

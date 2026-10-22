@@ -35,7 +35,7 @@ BattleEffect_RunFlora:
 	ldr r2, [r2, #100]
 	mov r9, r3
 	str r2, [sp, #148]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	bl Func_08179e6c
 	ldr r4, [sp, #172]

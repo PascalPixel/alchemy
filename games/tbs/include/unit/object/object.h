@@ -175,7 +175,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
-void WorldMap_BeginEvent(void);
+void WorldMap_StartEvent(void);
 void WorldMap_EndEvent(void);
 s32 Field_RunScene(s32 entrance);
 s32 Object_GetTriggerTileAheadOfCurrent(void);

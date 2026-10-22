@@ -458,7 +458,7 @@ static void AltinPeak_RideCart(s32 log) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   logActor = Object_GetById(ACTOR_CART);
   Field_EndBusyAndReveal();
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
   Engine_EventWait(10);
   Engine_AudioPlayCue(SE_JUMP);
@@ -797,7 +797,7 @@ static void AltinPeak_ToggleSecondWaterBeastRoomSwitchCells(void) {
 /// Searching AltinPeakSecondWaterBeast's switch flips it. "You flipped the
 /// switch."
 static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Engine_AudioPlayCue(SE_125);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
@@ -821,7 +821,7 @@ static void AltinPeak_ToggleThirdWaterBeastRoomSwitchCells(void) {
 
 /// Searching AltinPeakThirdWaterBeast's switch flips it.
 static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Engine_AudioPlayCue(SE_125);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
@@ -832,7 +832,7 @@ static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
 
 /// Searching AltinPeakPool's switch flips it.
 static void AltinPeak_FlipPoolRoomSwitch(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Event_PlayCue(SE_125);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
@@ -851,7 +851,7 @@ static void AltinPeak_FlipPoolRoomSwitch(void) {
 
 /// Searching AltinPeakSpritz's switch flips it.
 static void AltinPeak_FlipSpritzRoomSwitch(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Event_PlayCue(SE_125);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
@@ -883,7 +883,7 @@ static void AltinPeak_RestorePillarAutomaticPriority(void) {
 /// Walking east into AltinPeakSpritz's pillar pushes it one cell along with a
 /// scrape; the leader follows it and its cells are settled as after Move.
 static void AltinPeak_PushSpritzRoomPillar(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
   Event_PlayCue(SE_PUSH);
   Actor_SetSpeed(ACTOR_SPRITZ_ROOM_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -914,7 +914,7 @@ static void AltinPeak_ForceLogOver(void) {
   sprite = actor->sprite;
   originX = actor->x.fixed;
   originHeight = actor->y.fixed;
-  Event_Begin();
+  Event_Start();
   Event_PlayCue(SE_141);
   Map_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Event_Wait(10);
@@ -1133,7 +1133,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
   struct FieldActor *actor;
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   message = MsgAltinWatchFallingRocks;
   Engine_MessageShowCentered(message, 1);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
@@ -1305,7 +1305,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   s32 jumpSpeed;
 
   beast = (union FieldObject *)Object_GetById(ACTOR_FIRST_WATER_BEAST);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_CameraSetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
   Engine_CameraWaitForMove();
@@ -1435,7 +1435,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   u32 waitedFrames;
 
   actor = (union FieldObject *)Object_GetById(ACTOR_FIRST_WATER_BEAST);
-  Engine_EventBegin();
+  Engine_EventStart();
   ObjectMotion_EnableActionAndResetMotion(ACTOR_FIRST_WATER_BEAST);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(279), PIXELS(64), PIXELS(216), 1);
@@ -1838,7 +1838,7 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
   if (gGameState.entrance ==
           ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE &&
       !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(88);
     Engine_CameraMoveTo(PIXELS(792), -PIXELS(88), PIXELS(577), 0);
     Engine_MapRedraw();
@@ -1872,7 +1872,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
       entrance == 98) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
-      Engine_EventBegin();
+      Engine_EventStart();
       leader->y.fixed = PIXELS(16);
       Engine_EventEnd();
     }
@@ -2033,7 +2033,7 @@ static void AltinPeak_SparkleIce(union FieldObject *object) {
 
 /// AltinPeakFirstWaterBeast's water beast casts Frost on the second puddle.
 static void AltinPeak_BeastFreezesSecondPuddle(void) {
-  Engine_PsynergyBegin(ABILITY_FROST, 1);
+  Engine_PsynergyStart(ABILITY_FROST, 1);
   Engine_PsynergySetTarget(ACTOR_FIRST_WATER_BEAST,
                            ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
   Engine_PsynergyRaiseHands();
@@ -2054,7 +2054,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   gEventWork->startTransition =
@@ -2082,7 +2082,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
 /// mine cart waits at (328, 424), the switch is back in its first position, and
 /// the second drain runs.
 static void AltinPeak_DrainAfterSecondBeast(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);
   Engine_ActorSetPosition(ACTOR_CART, PIXELS(328), PIXELS(424));
   Engine_GameFlagSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
@@ -2102,7 +2102,7 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
 /// Back from AltinPeakThirdWaterBeast's beast battle, the same way, with the
 /// third drain.
 static void AltinPeak_DrainAfterThirdBeast(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
   Engine_ActorSetPosition(ACTOR_CART, PIXELS(488), PIXELS(138));
   Engine_GameFlagSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
@@ -2132,7 +2132,7 @@ static void AltinPeak_PlayHydrosRumble(void) {
 /// to it, it rumbles and slides forward, and the battle with the Hydros statues
 /// starts.
 static void AltinPeak_StartHydrosBattle(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   Camera_MoveTo(PIXELS(328), -1, PIXELS(87), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -2176,7 +2176,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   const s32 *celebrate;
   const s32 *party;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_STATUE, PIXELS(328), PIXELS(88));
   Actor_SetPosition(ACTOR_STATUE_SHADOW, PIXELS(328), PIXELS(88));
   Engine_ActorSetAnimation(ACTOR_STATUE, 0);
@@ -2516,7 +2516,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   struct FieldPosition position;
   s32 directionIndex;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (heading == -1) {
     heading = object->facing;
   }

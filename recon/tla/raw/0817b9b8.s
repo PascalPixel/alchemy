@@ -21,7 +21,7 @@ BattleEffect_RunBackstab:
 	mov r9, r0
 	movs r0, #0
 	str r1, [sp, #28]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0817ba1c
 	movs r2, #128
 	lsls r2, r2, #19

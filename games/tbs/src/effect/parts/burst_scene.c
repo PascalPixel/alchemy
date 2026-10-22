@@ -130,7 +130,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   sprites = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(

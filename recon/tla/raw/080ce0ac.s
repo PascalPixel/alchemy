@@ -142,7 +142,7 @@ Func_080ce0ac:
 	bl EventRuntime_GetControlledOwner
 	bl Field_FindNearbyTalkTarget
 	adds r5, r0, #0
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	ldr r0, [r6, #8]
 	bl EventRuntime_SetMessage
 	adds r0, r5, #0

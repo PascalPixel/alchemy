@@ -19,7 +19,7 @@ BattleEffect_RunFroth:
 	ldr r7, [r5, #92]
 	str r0, [sp, #16]
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #224
 	lsls r2, r2, #3
 	adds r1, r7, r2

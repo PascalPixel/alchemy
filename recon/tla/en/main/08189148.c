@@ -67,7 +67,7 @@ extern u16 gData_08197410[];
 extern u8 Data_08199d5c[];
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -128,7 +128,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   x = 0;
   y = 0;
   graphics = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
 
   // The pillar sheet, and nine copies of its cell, each darker than the last,

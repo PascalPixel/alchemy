@@ -674,7 +674,7 @@ static void Event_RollLongLog(void) {
   // Clear the old footprint, then move the log and rider together.
   Map_CopyCellAttributes(74, 8, 1, 4, log->x.fixed >> 20, 9);
   Map_CopyCellAttributes(120, 60, 8, 5, 74, 60);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(actor, 8);
   Engine_EventWait(6);
   log->speed = PIXELS(1) / 2;
@@ -850,7 +850,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   actorId = gGameState.selectedActor;
   entrance = gGameState.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
-    Engine_EventBegin();
+    Engine_EventStart();
     messageOffset = warriorId * 3;
     Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles);
     Engine_EventOpenMessage(warriorId, 0);
@@ -885,7 +885,7 @@ static void Event_ReachArena(void) {
 
   last = 4;
   ColosseumNavampaMatch_EmptyHook();
-  Engine_EventBegin();
+  Engine_EventStart();
   place = ColosseumNavampaMatch_CollectFinishEquipment(ITEM_CLAYMORE,
                                                        ITEM_HUNTERS_SWORD);
   ColosseumNavampaMatch_WaitForOpponentToFinish();
@@ -1247,7 +1247,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
     Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_ARMS_RAISED);
@@ -1454,7 +1454,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   actor = Object_GetById(guideId);
   guideX = actor->x.part.pixel;
   guideZ = actor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(guideId, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
@@ -1529,7 +1529,7 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   promptResult = Colosso_GreetAtStage(guideId, 1);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     // Point out the pans, demonstrate both heights, then restore the stage.
@@ -1593,7 +1593,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   promptResult = Colosso_GreetAtStage(guideId, 2);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoSteppingStoneStage);
@@ -1648,7 +1648,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
   if (gGameState.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     promptResult = Colosso_GreetAtStage(guideId, 3);
     if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
       // Show the pattern cycle before demonstrating a timed passage.
@@ -1711,7 +1711,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   if (gGameState.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(guideId, 4);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoPlaceNormallyCalledFreeClimb);
@@ -1801,7 +1801,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
   if (gGameState.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(guideId, 5);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       // Walk against the sidewalk, then show how its current pushes the rider.
@@ -1865,7 +1865,7 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   state = Colosso_GreetAtStage(actor, 6);
 
   if (state == COLOSSO_GUIDE_DESCRIBE) {
@@ -1941,7 +1941,7 @@ static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
 /// (mode 0), or for the race `Match 3`, then 3, 2, 1 and `Go!`.
 static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
@@ -1954,7 +1954,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   }
 
   Engine_AudioPlayCue(SE_247);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   {

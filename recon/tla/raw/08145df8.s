@@ -23,7 +23,7 @@ BattleEffect_RunBind:
 	ldr r5, [r3, #100]
 	ldr r3, [r3, #48]
 	str r3, [sp, #56]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r1, [sp, #76]
 	ldr r3, [r1, #28]
 	cmp r3, #1

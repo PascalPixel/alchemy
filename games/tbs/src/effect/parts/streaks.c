@@ -110,7 +110,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
 
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
@@ -341,9 +341,9 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   sheet = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,

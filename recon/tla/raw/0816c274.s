@@ -72,7 +72,7 @@ BattleEffect_RunCrystal:
 	adds r0, r5, #0
 	bl Func_0816ae40
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #56]
 	movs r3, #1
 	ldr r1, [r2, #4]

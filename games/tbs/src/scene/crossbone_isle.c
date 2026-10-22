@@ -305,7 +305,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
 /// back to the ship at ENTRANCE_AFTER_BATTLE.
 static void Event_FightDeadbeard(void) {
 
-  EV_BEGIN();
+  EV_START();
   Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
   Battle_SetStart(BATTLE_START_SCENE);
   Field_RequestBattleFromEncounterTable(
@@ -337,7 +337,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void Event_CatchNut(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorSetPosition(ACTOR_ISLE_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
@@ -533,7 +533,7 @@ static void Event_MovePillar(void) {
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (trigger 20):
 /// push it a step.
 static void Event_PushPillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_MovePillar();
@@ -556,7 +556,7 @@ static void Event_OpenEastDoor(void) {
           gGameState.scene +
           (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
            (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
-    EV_BEGIN();
+    EV_START();
     Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
     Battle_SetStart(BATTLE_START_SCENE);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
@@ -610,7 +610,7 @@ static void Event_OpenEastDoor(void) {
 /// Back from the battle at a corridor room's east door
 /// (ENTRANCE_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -756,7 +756,7 @@ static void CrossboneIsle_RestoreIvy(void) {
 static void Event_PushIsleLog(void) {
   struct StagedActorProbe probe;
 
-  EV_BEGIN();
+  EV_START();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   }
@@ -773,7 +773,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
 
   selectedActor = Object_GetById(gGameState.selectedActor);
   logActor = Object_GetById(actorId);
-  EV_BEGIN();
+  EV_START();
   {
     fixedX = ((selectedActor->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
              PIXELS(8);
@@ -966,7 +966,7 @@ static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
 #endif
     s32 movingFlags;
 
-    EV_BEGIN();
+    EV_START();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);

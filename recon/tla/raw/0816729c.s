@@ -28,7 +28,7 @@ BattleEffect_RunJudgment:
 	str r3, [sp, #84]
 	ldr r2, [r5, #100]
 	str r2, [sp, #68]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816730c
 	movs r2, #128
 	lsls r2, r2, #19

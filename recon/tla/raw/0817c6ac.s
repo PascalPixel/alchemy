@@ -20,7 +20,7 @@ BattleEffect_RunFume:
 	movs r0, #1
 	ldr r1, [r5, #96]
 	str r1, [sp, #72]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r1, #19
 	movs r0, #104
 	bl BattleEffect_LoadBlitter

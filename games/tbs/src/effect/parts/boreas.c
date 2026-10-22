@@ -77,7 +77,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   puffSheet = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1

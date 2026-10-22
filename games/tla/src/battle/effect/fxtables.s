@@ -73,7 +73,7 @@ Data_080f0f64:
 	.balign 4
 
 @ The four colours (BGR555) Func_080e3d04 passes to
-@ Field_BeginColorTransition
+@ Field_StartColorTransition
 	.global Data_080f0f90
 Data_080f0f90:
 	.4byte 0x1090, 0x304c, 0x098c, 0x2942

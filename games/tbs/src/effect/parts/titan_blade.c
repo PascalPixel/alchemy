@@ -53,7 +53,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
 
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;

@@ -50,7 +50,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapCellBuffer;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burstPixels, 1,

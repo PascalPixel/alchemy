@@ -246,7 +246,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
     script = ((const struct EffectDescriptor *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
-        FieldEvent_Begin();
+        FieldEvent_Start();
         Event_SetMessageId(((const struct EffectDescriptor *)event)->result);
         FieldEvent_ShowMessageAndWait(target, 0);
         FieldEvent_End();
@@ -255,7 +255,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
       }
     }
     if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0) {
-      FieldEvent_Begin();
+      FieldEvent_Start();
       UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
       FieldEvent_End();
     }

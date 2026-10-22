@@ -227,7 +227,7 @@ s32 Scene_TalkToActor(s32 id) {
         u32 random = Random16();
         s32 message =
             MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
-        FieldEvent_Begin();
+        FieldEvent_Start();
         Event_SetMessageId(message);
         FieldEvent_ShowMessageAndWait(id, 0);
         FieldEvent_End();
@@ -262,7 +262,7 @@ s32 Scene_TalkToActor(s32 id) {
     // A result below 0x10000 is a message; above, a function to call.
     if (event->result < 0x10000) {
       UiWork_SetBusyFlagsFar(usePausedDialogue);
-      FieldEvent_Begin();
+      FieldEvent_Start();
       Event_SetMessageId(event->result);
       FieldEvent_ShowMessageAndWait(id, 0);
       FieldEvent_End();
@@ -316,7 +316,7 @@ s32 Scene_RunRaisedEvent(s32 value) {
     result = event->result;
     if (result != 0) {
       if (result < 0x10000) {
-        FieldEvent_Begin();
+        FieldEvent_Start();
         Event_SetMessageId(event->result);
         FieldEvent_ShowMessageAndWait(-1, 0);
         handled = 0;
@@ -353,7 +353,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
       work->blockedSteps = 0;
     }
     if (touch->result < 0x10000) {
-      FieldEvent_Begin();
+      FieldEvent_Start();
       Event_SetMessageId(touch->result);
       FieldEvent_ShowMessageAndWait(-1, 0);
       handled = 0;
@@ -374,11 +374,11 @@ s32 Scene_RunTouchOrExit(s32 value) {
         break;
       case EXIT_STYLE_ANIMATED:
         AudioCommand_PlayFar(SE_STAIRS_UP);
-        ObjectEffect_BeginContextEffect26();
+        ObjectEffect_StartContextEffect26();
         break;
       case EXIT_STYLE_ANIMATED_ALTERNATE:
         AudioCommand_PlayFar(SE_STAIRS_DOWN);
-        ObjectEffect_BeginContextEffect25();
+        ObjectEffect_StartContextEffect25();
         break;
       }
       work->exit = exit->result;
@@ -496,7 +496,7 @@ s32 Field_SearchTile(s32 tile) {
         }
       } else {
         // A chest; its condition flag is set once it has been opened.
-        FieldEvent_Begin();
+        FieldEvent_Start();
         if (GameFlag_IsConditionActive(condition) != 0) {
           // Bit 16 of the value marks a chest the party's own characters
           // cannot open ("Can't open it").

@@ -26,12 +26,12 @@ BattleEffect_RunSerac:
 	bne .L_0816dc84
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleEffect_BeginTiledCanvasFilled
+	bl BattleEffect_StartTiledCanvasFilled
 	b .L_0816dc8c
 .L_0816dc84:
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 .L_0816dc8c:
 	ldr r2, [sp, #64]
 	movs r3, #2

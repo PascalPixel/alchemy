@@ -32,7 +32,7 @@ BattleEffect_RunMeteorBlow:
 	movs r0, #128
 	lsls r0, r0, #6
 	mov r11, r2
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #128
 	movs r1, #128
 	lsls r2, r2, #19

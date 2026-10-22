@@ -42,7 +42,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // A Mercury Djinni appears over the user.
   BattleEffect_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
@@ -205,7 +205,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // A Venus Djinni appears over the user.
   BattleEffect_RunDjinniEntrance(effect, ELEMENT_VENUS, work->effect->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);

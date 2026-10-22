@@ -35,7 +35,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
@@ -165,7 +165,7 @@ void BattleEffect_RunDrain(struct BattleEffectArgument *effect) {
   else
     alternate = 1;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry(alternate == 0

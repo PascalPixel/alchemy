@@ -38,14 +38,14 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 
 // The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
@@ -104,7 +104,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100; // no horizontal stretch
   REG_BLDCNT = 0;    // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,

@@ -48,11 +48,11 @@
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);      // ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
@@ -100,7 +100,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up: the mote picture, the mode's palette, and the max and additive
   // blitters for the caster's side.
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_MemberBurstImage, work->sheet, 0,
                              0);
   if (mode == 0 || mode == 3)

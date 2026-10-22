@@ -55,12 +55,12 @@ extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
 extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
 extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);         // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);         // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);    // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase);    // ☀️ BattleEvent_StartPhaseFar
 void BattleEffect_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -90,7 +90,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   shards = (struct EffectStep *)Ram_MapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);

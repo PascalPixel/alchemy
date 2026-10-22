@@ -213,11 +213,11 @@ Most effects draw into one canvas, a 128 by 128 picture of palette levels that
 
 The canvas is 128 by 128 pixels at one byte each, stored as the hardware
 stores a 256-colour background, 16 by 16 tiles of 8 by 8 pixels.
-`BattleEffect_BeginCanvasLayer` ([`canvas.c`](parts/canvas.c)) makes `BG2`, the
+`BattleEffect_StartCanvasLayer` ([`canvas.c`](parts/canvas.c)) makes `BG2`, the
 layer the hardware can scale and rotate, show the canvas from character block
 1, alpha-blended over the battle inside the effect windows and stretched to
 twice its width so that it spans the screen; it waits five frames of its own
-while the registers change. `EFFECT_BEGIN_NARROW_CANVAS` opens the layer at one
+while the registers change. `EFFECT_START_NARROW_CANVAS` opens the layer at one
 canvas pixel to a screen pixel instead. On the wide canvas a point x pixels
 across the screen is at x / 2 on the canvas. `BG2`'s scale (`REG_BG2PA`) is 8.8
 fixed point (`Q_8_8(1)` is 1) and its reference point (`REG_BG2X`) has 8
@@ -240,7 +240,7 @@ layers, over which `BG2` is blended.
 | level 0 | | transparent to the transparent blitters |
 | level 63 | | the highest level adding and brightening reach |
 | `REG_BG2PA` | `Q_8_8(0.5)` | the wide canvas: two screen pixels to a canvas pixel |
-| `REG_BG2PA` | `Q_8_8(1)` | the narrow canvas (`EFFECT_BEGIN_NARROW_CANVAS`): one screen pixel to a canvas pixel |
+| `REG_BG2PA` | `Q_8_8(1)` | the narrow canvas (`EFFECT_START_NARROW_CANVAS`): one screen pixel to a canvas pixel |
 
 ### The transfer
 

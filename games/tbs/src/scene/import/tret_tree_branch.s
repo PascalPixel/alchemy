@@ -4,7 +4,7 @@
 	.set import.Runtime_SetIrqHandler, 1
 	.set import.SerialRuntime_PollAndTransfer, 1
 	.set import.Map_GetTerrainHeight, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Object_GetById, 1
 	.set import.Engine_EventRequestExit, 1

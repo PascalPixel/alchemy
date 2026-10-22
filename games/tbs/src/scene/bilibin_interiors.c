@@ -183,7 +183,7 @@ static void Event_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(BILIBIN_WEAPON_SHOP, BILIBIN_WEAPON_MERCHANT);
@@ -206,7 +206,7 @@ static void Event_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(BILIBIN_ITEM_SHOP, BILIBIN_ITEM_MERCHANT);
@@ -234,7 +234,7 @@ static void Event_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(BILIBIN_ARMOR_SHOP, BILIBIN_ARMOR_MERCHANT);
   } else {
@@ -256,7 +256,7 @@ static void Event_TalkToArmorMerchant(void) {
 /// The head chef in Bilibin's restaurant, before the curse is lifted: born in
 /// Kolima, he is too worried to focus on his cooking.
 static void Event_TalkToWorriedChef(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinImReallyWorriedAboutKolima);
   Actor_FaceActor(BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);
   Event_ShowMessage(BILIBIN_CHEF, 0);
@@ -267,7 +267,7 @@ static void Event_TalkToWorriedChef(void) {
 /// A diner in Bilibin's restaurant, before the curse is lifted, still waiting
 /// for his dinner: his stomach growls, and he asks whether the party heard it.
 static void Event_TalkToHungryDiner(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinGrrr);
   Event_ShowMessageAndWait(BILIBIN_HUNGRY_DINER, 0, 20);
   Actor_FaceActor(BILIBIN_HUNGRY_DINER, ACTOR_PARTY_LEADER, 0);
@@ -285,7 +285,7 @@ static void Event_TalkToHungryDiner(void) {
 /// Bilibin's restaurant before the curse is lifted; on yes, sends the party to
 /// hear Lord McCoy's story. Then the diner turns back to the table.
 static void Event_AskAboutTreeSpirit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinDoBelieveTreeSpiritCan);
   Actor_FaceActor(BILIBIN_DINER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(10);
@@ -301,7 +301,7 @@ static void Event_AskAboutTreeSpirit(void) {
 /// A young man asks whether Kolima Forest's holy tree survived. He's in Bilibin
 /// once the curse is lifted.
 static void Event_AskAboutHolyTree(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinDoKnowIfHolyTree);
   Engine_EventAskYesNo(BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
   Engine_EventEnd();
@@ -311,7 +311,7 @@ static void Event_AskAboutHolyTree(void) {
 /// knows what silk is; on yes, that Xian, across the river, makes it, at the
 /// start of Silk Road.
 static void Event_AskAboutSilk(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinDoKnowSilk);
   Engine_EventAskYesNo(BILIBIN_GIRL_SILK, 0);
   Engine_EventEnd();
@@ -324,7 +324,7 @@ static void Event_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_InnOpen(BILIBIN_INN, BILIBIN_INNKEEPER);
@@ -342,7 +342,7 @@ static void Event_TalkToInnkeeper(void) {
 /// The head chef in Bilibin's restaurant, once the curse is lifted: he calls
 /// out orders once, then sends the party to the waitress.
 static void Event_TalkToBusyChef(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_00) == 0) {
     // The first time (FLAG_PLACE_TEMP_00, kept until the party leaves Bilibin),
     // the chef shouts orders and the kitchen worker answers.
@@ -369,7 +369,7 @@ static void Event_TalkToBusyChef(void) {
 /// The kitchen worker can't keep up with the head chef's energy. This is in
 /// Bilibin's restaurant once the curse is lifted.
 static void Event_TalkToKitchenWorker(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinReallyThinkHeadChefHas);
   Engine_EventShowMessage(BILIBIN_KITCHEN_WORKER, 0);
   Engine_ActorFaceActor(BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER, 0);
@@ -381,7 +381,7 @@ static void Event_TalkToKitchenWorker(void) {
 /// The waitress hurries through her work before the head chef yells. She works
 /// in Bilibin's restaurant once the curse is lifted.
 static void Event_TalkToWaitress(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinLetsSeeServeThemWater);
   Event_ShowMessage(BILIBIN_WAITRESS, 0);
   Actor_FaceActor(BILIBIN_WAITRESS, ACTOR_PARTY_LEADER, 0);
@@ -393,7 +393,7 @@ static void Event_TalkToWaitress(void) {
 /// A diner loves the meal and asks whether the party does too. The diner is in
 /// Bilibin's restaurant once the curse is lifted and the food flows.
 static void Event_TalkAboutMeal(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinWasSomeMealDontJust);
   Engine_EventAskYesNo(BILIBIN_DINER, 0);
   Engine_EventEnd();
@@ -404,7 +404,7 @@ static void Event_TalkAboutMeal(void) {
 /// must feel warm with her around; without her, he hopes to see her
 /// again in spring.
 static void Event_ReadMiaAdmirersMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MsgBilibinEvenFrozenImilMustFeel);
   } else {

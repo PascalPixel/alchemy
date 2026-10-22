@@ -1642,10 +1642,10 @@ Game_RunFar:
 FieldEvent_WaitFramesFar:
 	.incbin "baserom.gba", 0x000c8010, 0x00000008
 	.section .rom.000c8018, "ax"
-	.global EventRuntime_BeginFar
-	.type EventRuntime_BeginFar, %function
+	.global EventRuntime_StartFar
+	.type EventRuntime_StartFar, %function
 	.thumb_func
-EventRuntime_BeginFar:
+EventRuntime_StartFar:
 	.incbin "baserom.gba", 0x000c8018, 0x00000008
 	.section .rom.000c8020, "ax"
 	.global EventRuntime_EndFar
@@ -2476,16 +2476,16 @@ Func_080c88f0:
 ObjectMotion_ResetTargetsAndVelocityFar:
 	.incbin "baserom.gba", 0x000c8908, 0x00000008
 	.section .rom.000c8910, "ax"
-	.global ObjectEffect_BeginContextEffect26Far
-	.type ObjectEffect_BeginContextEffect26Far, %function
+	.global ObjectEffect_StartContextEffect26Far
+	.type ObjectEffect_StartContextEffect26Far, %function
 	.thumb_func
-ObjectEffect_BeginContextEffect26Far:
+ObjectEffect_StartContextEffect26Far:
 	.incbin "baserom.gba", 0x000c8910, 0x00000008
 	.section .rom.000c8918, "ax"
-	.global ObjectEffect_BeginContextEffect25Far
-	.type ObjectEffect_BeginContextEffect25Far, %function
+	.global ObjectEffect_StartContextEffect25Far
+	.type ObjectEffect_StartContextEffect25Far, %function
 	.thumb_func
-ObjectEffect_BeginContextEffect25Far:
+ObjectEffect_StartContextEffect25Far:
 	.incbin "baserom.gba", 0x000c8918, 0x00000008
 	.section .rom.000c8920, "ax"
 	.global Func_080c8910
@@ -4518,10 +4518,10 @@ Func_08142944:
 Func_0814355c:
 	.incbin "baserom.gba", 0x0014355c, 0x00000084
 	.section .rom.001435e0, "ax"
-	.global BattleEffect_BeginCanvasLayer
-	.type BattleEffect_BeginCanvasLayer, %function
+	.global BattleEffect_StartCanvasLayer
+	.type BattleEffect_StartCanvasLayer, %function
 	.thumb_func
-BattleEffect_BeginCanvasLayer:
+BattleEffect_StartCanvasLayer:
 	.incbin "baserom.gba", 0x001435e0, 0x00000260
 	.section .rom.00143d80, "ax"
 	.incbin "baserom.gba", 0x00143d80, 0x00000134

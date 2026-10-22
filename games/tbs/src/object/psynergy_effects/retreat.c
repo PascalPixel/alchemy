@@ -101,7 +101,7 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *slot) {
 /// The caster turns south, plays animation 28 with its colours cycling,
 /// spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises and shrinks
 /// out of sight (FieldEffect_UpdateDescendingObject) as the particles fly. It
-/// is hidden, not released, and the effect opens an event (FieldEvent_Begin)
+/// is hidden, not released, and the effect opens an event (FieldEvent_Start)
 /// it does not end: the Retreat exit raised before it (EXIT_RETREAT, by
 /// Field_UsePsynergy or Field_UseItem) then leaves the scene. Called by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind.
@@ -113,7 +113,7 @@ void FieldEffect_RunRetreat(void) {
   u8 last;
   u32 i;
 
-  FieldEvent_Begin();
+  FieldEvent_Start();
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldEffect_FadeToEffectColor();
   WaitFrames(10);

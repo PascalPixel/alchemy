@@ -42,7 +42,7 @@ void Func_02000730(void) {
   item = 458;
   saved28 = Object_GetById(9)->unk28;
   savedY = Object_GetById(9)->y;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventResolvePendingActions(0);
   if (Func_02000d14(item) >= 0) {
     Func_02000da4(Object_GetById(9), 3);

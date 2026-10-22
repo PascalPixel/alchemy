@@ -258,7 +258,7 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 }
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
-/// used with ACT_PACKED runs its ending events. Called by FieldEvent_Begin when
+/// used with ACT_PACKED runs its ending events. Called by FieldEvent_Start when
 /// an event starts while the field is busy, by Field_RunScene before the pause
 /// menu, and by 30 scene overlays.
 void Field_EndBusyAndReveal(void) {

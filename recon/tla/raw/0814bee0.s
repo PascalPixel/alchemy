@@ -32,7 +32,7 @@ BattleEffect_RunZagan:
 	str r3, [sp, #40]
 	bl Func_0813ba50
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_08179e6c
 	movs r3, #239
 	lsls r3, r3, #7

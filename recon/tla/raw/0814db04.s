@@ -26,7 +26,7 @@ BattleEffect_RunBoreas:
 	ldr r2, [r5, #100]
 	str r3, [sp, #24]
 	str r2, [sp, #28]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_0814db74
 	movs r3, #160

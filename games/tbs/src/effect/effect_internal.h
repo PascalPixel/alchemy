@@ -157,18 +157,18 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Lets the battle show the damage: resumes its paused playback, which plays
 /// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
-/// It acts only while the playback is idle (BattleEvent_BeginPhase),
+/// It acts only while the playback is idle (BattleEvent_StartPhase),
 /// so a second use while the damage is showing changes nothing.
-#define EFFECT_SHOW_DAMAGE(hitSound) BattleEvent_BeginPhaseFar(hitSound)
+#define EFFECT_SHOW_DAMAGE(hitSound) BattleEvent_StartPhaseFar(hitSound)
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1).
 #define CANVAS_BYTES (128 * 128)
 
 /// Opens the canvas layer at the canvas's own width, one texel per pixel,
-/// where BattleEffect_BeginCanvasLayer stretches it to twice the width.
-#define EFFECT_BEGIN_NARROW_CANVAS(bgControl)                                  \
-  (BattleEffect_BeginCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
+/// where BattleEffect_StartCanvasLayer stretches it to twice the width.
+#define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
+  (BattleEffect_StartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
 /// Builds a blitter for the 128x128 canvas (1 << 7 pixels each way) in work
 /// slot `slot`: BattleEffect_BuildBlitter's drawing routine for one clip,

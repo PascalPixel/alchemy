@@ -73,7 +73,7 @@ extern char ResourceId_YellowPaletteA;
 extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
@@ -118,7 +118,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
   work->framesSinceTransfer = 1;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = 0x100c;

@@ -40,7 +40,7 @@ void Func_02003320();
 void Idejima_RunAlexDeparture(void) {
   const u8 *script;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Func_02003310(0);
   Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
   Call4(Camera_MoveWithinMapBounds, 0x6c0000, -1, 0x2d00000, 1);

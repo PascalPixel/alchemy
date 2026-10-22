@@ -53,7 +53,7 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
@@ -166,7 +166,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleEffect_BeginCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
   Func_0813ba50();
   BG_PLTT[0] = 0;

@@ -504,7 +504,7 @@ static void AltmillerCave_EndReveal(void) {
 
 /// Retreat's first phase: the Psynergy's first actor faces south, and its
 /// object is copied into a new one for the effect to use.
-static void AltmillerCave_BeginRetreat(void) {
+static void AltmillerCave_StartRetreat(void) {
   struct FieldFxScene *work;
   struct FieldActor *original;
   struct FieldActor *replacement;
@@ -604,7 +604,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     Vector_AddPolarOffset(PIXELS(32), angle, destination.coordinates);
   }
   if (FieldObject_CheckMovementCollision(actor, &destination.position) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -627,7 +627,7 @@ static void AltmillerCave_HopSelectedActor(void) {
 static void AltmillerCave_MoveStagedActorToClearPosition(void) {
   struct StagedActorProbe probe;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   }
@@ -743,7 +743,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
   u16 angle;
   u8 *puzzleState;
 
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessage(MsgAltmillerRotatedRock);
   Event_ShowMessage(ACTOR_FIRST_ROCK, 0);
@@ -909,7 +909,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // Give Babi the draught and bring the party beside him.
   GameFlag_Set(FLAG_BABI_SAVED);
   Engine_PartyRemoveItem(ITEM_MYSTIC_DRAUGHT);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Engine_EventWait(20);
@@ -1064,7 +1064,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(40);
   // Ivan reads Babi's mind: he is Babi, the ruler of Tolbi, and hid by the
   // power of an ancient civilization.
-  Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
+  Engine_PsynergyStart(ABILITY_MIND_READ, 1);
   Engine_PsynergySetTarget(IVAN, ACTOR_BABI);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
@@ -1689,7 +1689,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   // Gather the party around the invisible voice.
   GameFlag_Set(FLAG_MET_INVISIBLE_BABI);
   Engine_AudioPlayCue(MUS_CAVE);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgAltmillerSee);
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
@@ -1962,7 +1962,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
 static void AltmillerCave_RepeatRockOrder(void) {
   s32 question;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   question = MsgAltmillerForgetOrderRock;
   Engine_EventSetMessage(question);
   Engine_EventOpenMessage(ACTOR_INVISIBLE_BABI, 0);
@@ -1988,7 +1988,7 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
     return;
 
   Engine_GameFlagSet(FLAG_BABI_CALLED_PARTY_BACK);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgAltmillerWait);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Engine_EventWait(10);
@@ -2547,7 +2547,7 @@ struct SceneEvent gAltmillerCave_EventsOther[] = {
         EVENT_SCRIPT(AltmillerCave_StartReveal)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
-    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
+    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
     {SCENE_EVENTS_END},
 };
 
@@ -2565,7 +2565,7 @@ struct SceneEvent gAltmillerCave_BabiEvents[] = {
         EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
-    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
+    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTMILLER_CAVE_MIMIC_BEATEN, FIND_MIMIC | 5},
     {SCENE_EVENTS_END},
 };
@@ -2575,7 +2575,7 @@ struct SceneEvent gAltmillerCave_VialChestEvents[] = {
     {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
-    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
+    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTMILLER_CAVE_VIAL, FIND_ITEM(ITEM_VIAL)},
     {SCENE_EVENTS_END},
 };
@@ -2601,7 +2601,7 @@ struct SceneEvent gAltmillerCave_CookieChestEvents[] = {
     {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
-    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
+    {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTMILLER_CAVE_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {SCENE_EVENTS_END},
 };

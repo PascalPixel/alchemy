@@ -31,7 +31,7 @@ BattleEffect_RunAtalanta:
 	ldrh r3, [r3, #4]
 	mov r9, r1
 	str r3, [sp, #36]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08153f34
 	movs r2, #128
 	lsls r2, r2, #19

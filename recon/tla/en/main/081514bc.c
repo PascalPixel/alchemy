@@ -33,7 +33,7 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_FetchRectangleBlitters(
@@ -41,7 +41,7 @@ void BattleEffect_FetchRectangleBlitters(
     DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 
 // A row of Data_08198348, one for each variant.
 enum {
@@ -98,7 +98,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   dots = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);

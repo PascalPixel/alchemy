@@ -8,8 +8,8 @@
 
 /// Prepares the effect work and spark tiles of Move (ability 140) for the
 /// cutscene's Psynergy.
-void Scene_BeginCutscenePsynergy(void) {
-  Engine_PsynergyBegin(ABILITY_MOVE, 0);
+void Scene_StartCutscenePsynergy(void) {
+  Engine_PsynergyStart(ABILITY_MOVE, 0);
 }
 
 /// Ends the cutscene's Psynergy and releases its effect work.

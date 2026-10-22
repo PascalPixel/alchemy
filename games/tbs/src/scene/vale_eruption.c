@@ -141,7 +141,7 @@ static void Event_ReturnFromMtAleph(void) {
   struct EventWork *work;
   const s32 *actionScript;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER, ANIMATION_STILL);
   Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, ANIMATION_STILL);
   Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, ANIMATION_STILL);

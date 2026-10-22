@@ -178,7 +178,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct EventWork *scene;
 
   scene = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
   Engine_EventRequestExit(scene->touchedTrigger);
   Engine_EventEnd();
@@ -197,7 +197,7 @@ const struct SceneEvent *KolimaForestTree_GetEvents(void) {
 /// warning. Once the curse is lifted, the forest is alive again thanks to the
 /// party, and Laurel says, "We shall protect the forest from now on."
 static void KolimaForestTree_TalkToLaurel(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgKolimaForestKolimaAlive);
@@ -235,7 +235,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterOwner;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     KolimaForestTree_PlayGesture(ACTOR_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
     Engine_EventSetMessage(MsgKolimaNowHaveSuchPowerAxe);
@@ -277,7 +277,7 @@ static void KolimaForestTree_TalkToTret(void) {
 /// but its fountain has dried up; afterwards, it must be horrible beyond the
 /// river.
 static void KolimaForestTree_ReadLaurelThoughts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgKolimaMustHorribleBeyondRiverAm);
   } else {
@@ -291,7 +291,7 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
 /// curse is lifted, "People of Kolima... Forgive me..."; afterwards, a plea to
 /// be careful beyond the river.
 static void KolimaForestTree_ReadTretThoughts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgKolimaKnowCannotStopButPlease);
   } else {
@@ -307,7 +307,7 @@ static void KolimaForestTree_ReadTretThoughts(void) {
 /// (KolimaForestTree_RejectHermesWater); afterwards it heals him
 /// (KolimaForestTree_RestoreTret).
 static void KolimaForestTree_UseHermesWater(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   if (Engine_GameFlagIsSet(FLAG_TRET_DEFEATED) == 0) {
     KolimaForestTree_RejectHermesWater();

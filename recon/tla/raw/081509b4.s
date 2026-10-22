@@ -20,7 +20,7 @@ BattleEffect_RunFlare:
 	mov r10, r0
 	movs r0, #0
 	str r1, [sp, #16]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08150a10
 	movs r2, #128
 	lsls r2, r2, #19

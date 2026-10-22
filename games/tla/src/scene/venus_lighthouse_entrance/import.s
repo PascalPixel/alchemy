@@ -113,7 +113,7 @@ FieldEvent_WaitFrames:
 	.global Func_020028b4
 	.thumb_func
 Func_020028b4:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_020028bc
 	.thumb_func
 Func_020028bc:
@@ -402,10 +402,10 @@ Func_02002a34:
 	overlay_veneer Func_080c87f8
 	.endif
 	.endif
-	.global Field_BeginPaletteTransition
+	.global Field_StartPaletteTransition
 	.thumb_func
-Field_BeginPaletteTransition:
-	overlay_veneer Field_BeginPaletteTransitionFar
+Field_StartPaletteTransition:
+	overlay_veneer Field_StartPaletteTransitionFar
 	.global Func_02002a44
 	.thumb_func
 Func_02002a44:

@@ -23,7 +23,7 @@ BattleEffect_RunCondemn:
 	lsls r0, r0, #6
 	str r2, [sp, #32]
 	mov r8, r3
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	ldr r3, .L_081457ec
 	movs r2, #128
 	lsls r2, r2, #19

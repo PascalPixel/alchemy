@@ -243,7 +243,7 @@ const struct SceneEvent *ValeInteriorsShops_GetEvents(void) {
 /// Reached by talking to ACTOR_MAN_ON_KRADENS_STUDIES on the day the story
 /// begins.
 static void Event_AskAboutKradensStudies(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeKradenCameToStudyMt);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES,
                             6);
@@ -257,7 +257,7 @@ static void Event_AskAboutKradensStudies(void) {
 /// Reached by talking to ACTOR_STRONGMAN_SCARING_VISITORS on the day the story
 /// begins.
 static void Event_AskToScareVisitors(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeLetsScareKradensVisitors);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER,
                             ACTOR_STRONGMAN_SCARING_VISITORS, 6);
@@ -275,7 +275,7 @@ static void Event_AskToScareVisitors(void) {
 static void ValeInteriorsShops_GiveFarewellHerb(void) {
   s32 gift;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     Engine_EventSetMessage(MsgValeYouMustSaveJenna);
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
@@ -299,7 +299,7 @@ static void ValeInteriorsShops_GiveFarewellHerb(void) {
 /// Reached by talking to ACTOR_WOMAN_ON_VISITORS_IN_TOWN after the party has
 /// left Vale.
 static void Event_AskAboutStrangePowers(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeTheCulpritsHadStrangePowers);
   Engine_EventAskYesNo(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0);
   Engine_EventEnd();
@@ -310,7 +310,7 @@ static void Event_AskAboutStrangePowers(void) {
 ///
 /// Reached by talking to Garet's father after Kalay.
 static void Event_AskAboutDora(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeDidYouHearAboutDora);
   Engine_EventAskYesNo(ACTOR_GARETS_FATHER, 0);
   Engine_EventEnd();
@@ -321,7 +321,7 @@ static void Event_AskAboutDora(void) {
 ///
 /// Reached by talking to Garet's mother after Kalay.
 static void Event_WorryAboutTravelersHealth(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeHopeDidntGet);
   Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARETS_MOTHER, 0);
   Engine_EventEnd();
@@ -476,7 +476,7 @@ static void Event_TalkToWeaponMerchant(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     Engine_EventSetMessage(MsgValeYouCameBack);
     Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
@@ -503,7 +503,7 @@ static void Event_TalkToArmorMerchant(void) {
   if (FACING_IS_NORTH(actor->facing)) {
     Engine_ShopOpen(2, ACTOR_ARMOR_MERCHANT);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       Engine_EventSetMessage(MsgValeTheRumorWasTrue);
     } else {
@@ -532,7 +532,7 @@ static void Event_TalkToItemMerchant(void) {
     Engine_ShopOpen(3, ACTOR_ITEM_MERCHANT);
   } else {
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventSetMessage(MsgValeWhenDidYouComeBack);
       Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
       Engine_EventEnd();
@@ -540,7 +540,7 @@ static void Event_TalkToItemMerchant(void) {
       if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         ValeInteriorsShops_GiveFarewellHerb();
       } else {
-        Engine_EventBegin();
+        Engine_EventStart();
         Engine_EventSetMessage(MsgValeAWiseManFleesWhen);
         Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
@@ -583,7 +583,7 @@ static void Event_GaretComesHome(void) {
 
   // The party walks in while Garet's grandfather dozes, sleep drifting up
   // from him.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_ActorSetSpritePriority(MIA, 1);

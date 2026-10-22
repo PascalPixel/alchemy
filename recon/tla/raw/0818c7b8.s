@@ -21,7 +21,7 @@ Func_0818c7b8:
 	movs r0, #0
 	mov r8, r3
 	mov r10, r2
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	mov r3, r11
 	cmp r3, #0
 	bne .L_0818c7f2

@@ -20,7 +20,7 @@
 ///   Entry points    dispatch.c: BattleEffect_RunTableEffect,
 ///                   BattleEffect_RunSceneEffect; positions.c:
 ///                   BattleEffect_DispatchByIdRange
-///   Canvas          canvas.c: BattleEffect_BeginCanvasLayer,
+///   Canvas          canvas.c: BattleEffect_StartCanvasLayer,
 ///                   BattleEffect_EndCanvasLayer, BattleEffect_WipeCanvas,
 ///                   BattleEffect_ProcessPendingGraphicsTransfer
 ///   Blitters        blitter.c: BattleEffect_BuildBlitter; mirrored_wall.c:

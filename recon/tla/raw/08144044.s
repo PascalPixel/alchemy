@@ -22,7 +22,7 @@ BattleEffect_RunHaunt:
 	ldr r3, [r3, #96]
 	lsls r5, r5, #4
 	str r3, [sp, #32]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #36]
 	movs r3, #224
 	lsls r3, r3, #3

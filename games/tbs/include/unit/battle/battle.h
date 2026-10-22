@@ -270,7 +270,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
                                   s32 retry);
 #endif
 void Dma_StopAllThenRunHook(void);
-void BattleEvent_BeginPhase(s32 cue);
+void BattleEvent_StartPhase(s32 cue);
 s32 BattleEvent_SchedulePhase(s32 frames);
 void BattleEvent_Playback(void);
 void BattleEvent_Reset(void);

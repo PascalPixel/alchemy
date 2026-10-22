@@ -36,7 +36,7 @@ extern u8 gMapCellBuffer[];
 extern u16 gData_08197410[];
 extern const u8 Data_08199ec5[];
 
-void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 value);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -112,9 +112,9 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   if (mode <= 1)
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   else
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];

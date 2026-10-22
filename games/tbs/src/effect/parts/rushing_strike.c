@@ -112,7 +112,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
 
   // The top half, and the bottom half flipped; mirrored on side 1.
   if (work->effect->side == 0) {

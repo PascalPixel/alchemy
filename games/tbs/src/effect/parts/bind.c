@@ -158,7 +158,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   if (work->effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
                                    DJINNI_ANCHOR_OVER_TARGET, &originX,
@@ -336,7 +336,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
 
   // Setup, as for Bind: the rune, and the flares at 0x1000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);

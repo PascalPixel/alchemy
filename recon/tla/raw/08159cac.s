@@ -20,7 +20,7 @@ BattleEffect_RunSpire:
 	movs r0, #1
 	ldr r1, [r5, #96]
 	str r1, [sp, #24]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08159d0c
 	movs r2, #128
 	lsls r2, r2, #19

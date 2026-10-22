@@ -781,7 +781,7 @@ static void Event_EnterSparklingPassage(void) {
 
   eventWork = gEventWork;
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_228);
 #ifdef UBFIX
   leader->update = VenusLighthouse_EmitPassageSparkTrail;
@@ -809,7 +809,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Camera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = 0;
     Actor_SetPosition(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16,
@@ -863,7 +863,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   struct EffectOptions options;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -1046,7 +1046,7 @@ static s32 Event_JumpAcrossGap(void) {
 #endif
     if (SceneData_FindSlotAtPosition(&landing, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, &landing) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Object_SetMode(leader, ANIMATION_LEADER_SPRING);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
@@ -1139,7 +1139,7 @@ const struct ScenePlacement *VenusLighthouse_GetPlacements(void) {
 /// Searching a locked door, in VenusLighthouseSecondFloor to
 /// VenusLighthouseFourthFloor. "The door is tightly locked."
 static void Event_SearchLockedDoor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   Engine_EventEnd();
 }
@@ -1152,7 +1152,7 @@ static void Event_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 3);
   Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
   flickersLeft = 10;
@@ -1180,7 +1180,7 @@ static void Event_HearOfTheAttack(void) {
 /// Talking to the scholar at Venus Lighthouse Entry plays it; it's the inside
 /// of Venus Lighthouse the scholar has waited to see.
 static void Event_TalkToWaitingScholar(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVenusIveWaitedLongSeeIts);
   Engine_EventShowMessageAndWait(ACTOR_WAITING_SCHOLAR, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_WAITING_SCHOLAR, 2);
@@ -1195,7 +1195,7 @@ static void Event_CarryPillarPastWall(void) {
   struct FieldActor *pillar;
 
   pillar = Object_GetById(ACTOR_WALL_PILLAR);
-  Engine_EventBegin();
+  Engine_EventStart();
   if (pillar->x.fixed >> 20 == 54 || pillar->z.fixed >> 20 == 6) {
     Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED);
   }
@@ -1216,7 +1216,7 @@ static void Event_ReadRelief(void) {
 #if !TBS_PATCH_1 || TBS_PATCH_2
   struct EventWork *work = gEventWork;
 #endif
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
@@ -1278,7 +1278,7 @@ static void Event_JumpDown(void) {
   s32 landingQuarterZ;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gVenusLeaderDazedScript);
   Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
   Actor_SetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_GREY);
@@ -1358,7 +1358,7 @@ static void Event_SearchStatue(void) {
   work = (struct FieldWork *)gEventWork;
   work->revealFrames = 0;
   work->busy = 1;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgVenusStatueSpeaksIsaacSoulYe, 1);
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
@@ -1422,7 +1422,7 @@ static void Event_MovePillarTowardWall(void) {
   walkAcceleration = PIXELS(2) / 5;
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   garetX = 824;
-  Engine_EventBegin();
+  Engine_EventStart();
   actor = Object_GetById(ACTOR_WALL_PILLAR);
   if (actor->x.fixed >> 20 == 53) {
     if (Engine_GameFlagIsSet(conversationFlag) == 0) {
@@ -1470,7 +1470,7 @@ static void Event_MovePillarTowardWall(void) {
 /// 50): as Move, with Garet's remark at the wall.
 static void Event_PushPillarTowardWall(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   VenusLighthouse_PushAdjacentPillar();
   Engine_EventWait(20);
   Engine_EventEnd();
@@ -1484,7 +1484,7 @@ static void Event_MovePillarOntoSwitch(void) {
   s32 switchHeight;
 
   pillar = Object_GetById(ACTOR_FLOOR_SWITCH_STATUE);
-  Engine_EventBegin();
+  Engine_EventStart();
   if (pillar->x.fixed >> 20 == 42) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(SE_188);
@@ -1513,7 +1513,7 @@ static void Event_StepOnFloorSwitch(void) {
     leader->terrainHeight = 0;
     leader->y.fixed = 0;
   } else if (!GameFlag_IsSet(FLAG_SCENE_TEMP_01)) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventWait(5);
     Map_CopyCellsTo(52, 50, 42, 49, 1, 1);
     Map_CopyCellsTo(52, 117, 41, 117, 3, 5);
@@ -1535,7 +1535,7 @@ static void Event_TalkToScholarByDoor(void) {
   work = (struct FieldWork *)gEventWork;
   work->revealFrames = 0;
   work->busy = 1;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVenusThoughtIdExploreAfterDoor);
   Actor_FaceActor(ACTOR_DOOR_SCHOLAR, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(10);
@@ -1563,7 +1563,7 @@ static void Event_FallThroughFloor(void) {
   zero = 0;
 #endif
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
 #if TBS_PATCH_3
   motionFlags = (u8 *)&leader->motionFlags;
   zero = 0;
@@ -1631,7 +1631,7 @@ static void Event_MoveDepthPillar(void) {
   s32 row;
 
   Object_GetById(ACTOR_FIRST_DEPTH_PILLAR);
-  Engine_EventBegin();
+  Engine_EventStart();
   destinationColumn = 12;
   destinationRow = 44;
   Map_CopyCellAttributes(19, 44, 4, 1, destinationColumn, destinationRow);
@@ -1654,7 +1654,7 @@ static void Event_MoveDepthPillar(void) {
 /// In VenusLighthouseFirstFloor, pushing one of the three pillars in a row.
 static void Event_PushDepthPillar(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellAttributes(19, 44, 4, 1, 12, 44);
   VenusLighthouse_PushAdjacentPillar();
   Event_MoveDepthPillar();
@@ -1695,7 +1695,7 @@ static void Event_MoveCarryPillar(void) {
 /// gap, else push the pillar.
 static void Event_JumpOrPushCarryPillar(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Event_JumpAcrossGap() == 0) {
     Event_LiftCarryPillar();
     VenusLighthouse_PushAdjacentPillar();
@@ -1746,7 +1746,7 @@ VenusLighthouse_ReleaseFallenCarryPillar(struct FieldActor *pillar) {
 static void Event_CarryPillarAcrossGap(void) {
   struct FieldActor *pillar;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   pillar = Object_GetById(ACTOR_FIRST_CARRY_PILLAR);
   if (pillar->x.fixed >> 20 == 8) {
     OverlayObject_WaitUntilIdle(pillar);
@@ -1789,7 +1789,7 @@ static void Event_StepOnWallSwitch(void) {
   if (column >= 308 && column <= 315 && leaderZ >= 532 && leaderZ < 540) {
     leader->y.fixed = -PIXELS(2);
     if (!GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_AudioPlayCue(SE_161);
       GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED);
       Map_CopyCellsTo(26, 33, 19, 33, 1, 1);
@@ -1862,7 +1862,7 @@ static void Event_MoveGatePillar(void) {
   occlusionEffect = 0;
   pillar = Object_GetById(ACTOR_GATE_PILLAR);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellAttributes(109, 43, 7, 5, 45, 43);
   flags = &pillar->priorityFlags;
   if ((2 & pillar->priorityFlags) != 0) {
@@ -1931,7 +1931,7 @@ static void Event_MoveGatePillar(void) {
 /// gate: jump the gap, else push the pillar, which may sink into its socket.
 static void Event_JumpOrPushGatePillar(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Event_JumpAcrossGap() == 0) {
     Map_CopyCellAttributes(109, 43, 7, 5, 45, 43);
     VenusLighthouse_PushAdjacentPillar();
@@ -1956,7 +1956,7 @@ static void Event_MoveSwitchPillar(void) {
   u32 switchIndex;
   s32 savedPriority;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
   // Find pillars on unoccupied switch cells before committing any sinking
   // motion.
@@ -2076,7 +2076,7 @@ static void Event_MoveSwitchPillar(void) {
 /// In VenusLighthouseThirdFloor, walking into the gap or one of the three
 /// pillars: jump the gap, else push the pillar, which may sink into a socket.
 static void Event_JumpOrPushSwitchPillar(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Event_JumpAcrossGap() == 0) {
     Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
     VenusLighthouse_PushAdjacentPillar();
@@ -2216,7 +2216,7 @@ static void Event_CarryFloatingPillar(void) {
   s32 column;
   s32 row;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Handle completed destinations and fallen pillars before reordering a new
   // stack.
   for (pillarIndex = 0; pillarIndex < 4; pillarIndex++) {
@@ -2311,7 +2311,7 @@ static void Event_CarryFloatingPillar(void) {
 /// (TRIGGER_FLOATING_PILLARS and the gaps beside it).
 static void Event_PushPuzzlePillar(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   VenusLighthouse_PushAdjacentPillar();
   Engine_EventEnd();
 }
@@ -2341,7 +2341,7 @@ static void Event_StepOnWestWallSwitch(void) {
   if (column >= 532 && column <= 539 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -PIXELS(2);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Map_CopyCellsTo(63, 29, 33, 20, 1, 1);
       Engine_AudioPlayCue(SE_161);
       Map_CopyCellsTo(44, 83, 44, 80, 3, 3);
@@ -2415,7 +2415,7 @@ static void Event_StepOnEastWallSwitch(void) {
   if (column >= 788 && column <= 795 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -PIXELS(2);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Map_CopyCellsTo(63, 29, 49, 20, 1, 1);
       Engine_AudioPlayCue(SE_161);
       Engine_EventWait(30);
@@ -2484,7 +2484,7 @@ static void Event_MoveSocketPillar(void) {
 
   occlusionEffect = 0;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Event_Begin();
+  Event_Start();
 #if TBS_PATCH_3
   Field_EndBusyAndReveal();
 #endif
@@ -2624,7 +2624,7 @@ static void Event_MoveSocketPillar(void) {
 /// jump the gap, else push the pillar, which may sink into a socket.
 static void Event_JumpOrPushSocketPillar(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Event_JumpAcrossGap() == 0) {
     {
       Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
@@ -2644,7 +2644,7 @@ static void Event_JumpOrPushSocketPillar(void) {
 /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING, where
 /// VenusLighthouse_RaiseLeaderWithSpray lands him on ACTOR_RISING_PLATFORM).
 static void Event_EnterRisingPassage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 712);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
@@ -3387,7 +3387,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   u32 particleIndex;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   FieldEffect_SetQueuedSoundAndPlay(SE_170);
@@ -3481,7 +3481,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   struct EffectOptions *effectOptions;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   FieldEffect_SetQueuedSoundAndPlay(SE_170);
@@ -3547,7 +3547,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   struct EffectOptions *effectOptions;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   FieldEffect_SetQueuedSoundAndPlay(SE_170);
@@ -3646,7 +3646,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   platform = Object_GetById(ACTOR_RISING_PLATFORM);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);

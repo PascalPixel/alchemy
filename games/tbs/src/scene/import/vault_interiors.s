@@ -30,7 +30,7 @@
 	.set import.Djinn_Transfer, 1
 	.set import.PartyInventory_HasSpace, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.FieldScene_PrepareActors, 1
 	.set import.Event_PrepareObjectAndApplyValue, 1
@@ -84,7 +84,7 @@
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_ActorLookup, 1
 	.set import.Engine_PsynergyPlayEffect, 1
-	.set import.Engine_PsynergyBegin, 1
+	.set import.Engine_PsynergyStart, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.FieldEffect_End, 1

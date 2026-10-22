@@ -21,7 +21,7 @@ BattleEffect_RunOrbitingSpirals:
 	ldr r2, [r5, #96]
 	movs r0, #0
 	str r2, [sp, #28]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081443cc
 	movs r2, #128
 	lsls r2, r2, #19

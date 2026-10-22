@@ -44,7 +44,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(work->effect->side, draw);

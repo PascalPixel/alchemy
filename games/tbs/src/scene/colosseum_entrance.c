@@ -47,7 +47,7 @@
 ///   and FLAG_COLOSSO_CLEARED_TRIAL_SEEN record. On the finals day
 ///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE keeps the party's items
 ///   (InventorySnapshot_Take) for Babi's Palace to give back, and the waiting
-///   room's line asks whether Isaac is ready (Event_FinalsBegin). Each finals
+///   room's line asks whether Isaac is ready (Event_FinalsStart). Each finals
 ///   stage returns to its own entrance here
 ///   (COLOSSEUM_FROM_COLOSSEUM_*_MATCH_*), and FLAG_COLOSSO_FIRST_MATCH_WON and
 ///   FLAG_COLOSSO_SECOND_MATCH_WON choose which stage the long passages lead to
@@ -315,7 +315,7 @@ enum ColosseumWaitingRoomActor {
 enum ColosseumEntranceTrigger {
   /// Before the gates at the Colosseum Entrance (Event_CrowdRecognizesIsaac).
   TRIGGER_BEFORE_GATES = 10,
-  /// The line before the waiting room's east passage (Event_FinalsBegin).
+  /// The line before the waiting room's east passage (Event_FinalsStart).
   TRIGGER_FINALS_LINE = 12,
   /// The cells behind it (Event_RearmFinalsStart).
   TRIGGER_BEHIND_FINALS_LINE = 13
@@ -434,7 +434,7 @@ const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
 /// (FLAG_BABI_SAVED) the colosseum is already full, and only the scalpers have
 /// seats.
 static void Event_DiscussSeating(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
     Engine_EventSetMessage(MsgColosseumColosseumAlreadyFullIfReally);
     Engine_EventShowMessage(ACTOR_VILLAGER_SEATING, 0);
@@ -448,7 +448,7 @@ static void Event_DiscussSeating(void) {
 /// At the Colosseum Entrance, an old woman: the Lucky Guess makes the battles
 /// better; on the finals day, a good spot costs too much.
 static void Event_DiscussLuckyGuessSeats(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
     Engine_ActorShowEmote(ACTOR_OLD_WOMAN_GOOD_SPOT,
                           EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -465,7 +465,7 @@ static void Event_DiscussLuckyGuessSeats(void) {
 /// one picked; on the finals day a scalper, busy with a customer, asks if the
 /// party wants seats.
 static void Event_DiscussLuckyGuessWinnings(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     Engine_ActorRunRepeatedMotion(ACTOR_SCALPER, 2);
     Engine_EventSetMessage(MsgColosseumHoldOnSecond);
@@ -485,7 +485,7 @@ static void Event_DiscussLuckyGuessWinnings(void) {
 /// finals day he recognizes Isaac as Babi's pick and refuses him, as finalists
 /// may not play (FLAG_LUCKY_GUESS_REFUSED_ISAAC: said once).
 static void Event_OfferLuckyGuess(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_BABI_SAVED) != 0) {
     if (GameFlag_IsSet(FLAG_LUCKY_GUESS_REFUSED_ISAAC) != 0) {
       Engine_EventSetMessage(MsgColosseumLookImSorryButWe);
@@ -522,7 +522,7 @@ static void Event_TalkToAzart(void) {
   struct FieldActor *contestant;
 
   contestant = Object_GetById(ACTOR_AZART);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorStop(ACTOR_AZART);
   Engine_ActorFaceEachOther(ACTOR_AZART, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumImRatedAsSecondBest);
@@ -550,7 +550,7 @@ static void Event_TalkToAzart(void) {
 /// In the Colosseum's waiting room, Galahad, the third seed, jumps.
 /// "Waah! Don't frighten me!"
 static void Event_TalkToGalahad(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetAttachedEffect(ACTOR_GALAHAD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(ACTOR_GALAHAD, 2);
@@ -564,7 +564,7 @@ static void Event_TalkToGalahad(void) {
 /// In the Colosseum's waiting room, Satrage, the fourth-ranked, opens his eyes
 /// and names himself.
 static void Event_TalkToSatrage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgColosseumWhoHaveComeQuestionMe);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   Engine_ActorFaceEachOther(ACTOR_SATRAGE, ACTOR_PARTY_LEADER, 20);
@@ -579,7 +579,7 @@ static void Event_TalkToSatrage(void) {
 /// In the Colosseum's waiting room, Dekka psyches himself up; the first time,
 /// Navampa explains he will not answer (FLAG_NAVAMPA_SPOKE_FOR_DEKKA).
 static void Event_TalkToDekka(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_DEKKA, 2);
   Engine_EventSetMessage(MsgColosseumDekkaMustWinFinalsDekka);
   Event_ShowMessageAndWait(ACTOR_DEKKA, 0, 20);
@@ -603,7 +603,7 @@ static void Event_TalkToDekka(void) {
 /// In the Colosseum's waiting room, Navampa of Gondowan, the sixth-ranked,
 /// introduces himself.
 static void Event_TalkToNavampa(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceEachOther(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumAmNavampaGondowanSixthRanked);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
@@ -619,7 +619,7 @@ static void Event_TalkToNavampa(void) {
 /// In the Colosseum's waiting room, Buford, the seventh seed: anyone could win
 /// today.
 static void Event_TalkToBuford(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumImBufordSeventhSeed);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
@@ -637,7 +637,7 @@ static void Event_TalkToBuford(void) {
 /// In the Colosseum's waiting room, the soldier asks whether Isaac is ready
 /// for the finals.
 static void Event_AskIfReadyForFinals(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceEachOther(ACTOR_FINALS_SOLDIER, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumYouReadyForFinals);
   Engine_EventOpenMessage(ACTOR_FINALS_SOLDIER, 0);
@@ -661,7 +661,7 @@ static void Event_CrowdRecognizesIsaac(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
                       20);
@@ -904,13 +904,13 @@ static void Event_CrowdRecognizesIsaac(void) {
 /// asked whether he is ready, Isaac can still wait; if he is, the warriors
 /// grumble, line up by rank and march out, and Isaac follows them out by the
 /// east passage (COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST).
-static void Event_FinalsBegin(void) {
+static void Event_FinalsStart(void) {
   struct FieldActor *actor;
   const s32 *script;
 
   if (Engine_GameFlagIsSet(FLAG_FINALS_LINE_ARMED) != 0) {
     Engine_GameFlagSet(FLAG_FINALS_LINE_REACHED);
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 872, 120);
     ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST);
@@ -1055,7 +1055,7 @@ static void Event_RearmFinalsStart(void) {
 static void Event_TalkToTrialAttendant(void) {
   s32 clearedTrialSeen;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   clearedTrialSeen = GameFlag_IsSet(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
   if (clearedTrialSeen != 0) {
     Engine_ActorFaceEachOther(ACTOR_TRIAL_ATTENDANT, ACTOR_PARTY_LEADER, 40);
@@ -1092,7 +1092,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   struct FieldActor *actor;
   s32 facing;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Event_PlayCue(SE_247);
   Engine_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH, ANIMATION_WALK);
@@ -1213,7 +1213,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 /// (COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS): the attendant says the warrior
 /// failed, or after the second trial that he cleared it.
 static void ColosseumEntrance_ExplainTrial(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 
   Engine_EventOpenScreen();
@@ -1245,7 +1245,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   struct FieldActor *trialEffect;
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Event_PlayCue(SE_247);
   Engine_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH, ANIMATION_WALK);
@@ -1510,7 +1510,7 @@ static inline void ColosseumEntrance_PositionPartyForBriefing(void) {
 static void ColosseumEntrance_ExplainPartySupport(void) {
   s32 flag;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   ColosseumEntrance_PositionPartyForBriefing();
   Engine_TaskWait(1);
   Camera_MoveTo(-1, -1, -1, 0);
@@ -1724,7 +1724,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
     Party_RemoveActiveOwner(JENNA);
     Party_AddActiveOwner(MIA);
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_ESCORTING_SOLDIER, PIXELS(712), PIXELS(588));
   Engine_TaskWait(1);
   Engine_CameraFollowActor(ACTOR_ESCORTING_SOLDIER, 1);
@@ -1756,7 +1756,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   struct FieldActor *contestant;
 
   contestant = Object_GetById(ACTOR_AZART);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -1804,7 +1804,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
 /// (COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST or
 /// COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH).
 static void ColosseumEntrance_WalkToEastExit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Engine_EventOpenScreen();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
@@ -1826,7 +1826,7 @@ static void ColosseumEntrance_WalkToEastExit(void) {
 static void ColosseumEntrance_CelebrateAdvancement(void) {
   const s32 *actions;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   ColosseumEntrance_PositionPartyForBriefing();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1883,7 +1883,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
     Party_RemoveActiveOwner(JENNA);
     Party_AddActiveOwner(MIA);
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_ESCORTING_SOLDIER, PIXELS(868), PIXELS(588));
   Engine_TaskWait(1);
   Engine_CameraFollowActor(ACTOR_ESCORTING_SOLDIER, 1);
@@ -1909,7 +1909,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
 /// Isaac walks alone into Colosseum Final 2, where his friends take their turns
 /// to lend a hand (COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST).
 static void ColosseumEntrance_WalkToWestExit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Engine_EventOpenScreen();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
@@ -1929,7 +1929,7 @@ static void ColosseumEntrance_WalkToWestExit(void) {
 static void ColosseumEntrance_CelebrateBothWins(void) {
   const s32 *actions;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   ColosseumEntrance_PositionPartyForBriefing();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -2556,7 +2556,7 @@ struct SceneEvent gColosseumEventsFromColosseumAzartMatchWest[] = {
     {EVENT_TALK, ACTOR_GONG_SOLDIER, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceWhenTheGongSoundsTheFinals)},
     {EVENT_TOUCH, TRIGGER_FINALS_LINE, FLAG_FINALS_LINE_REACHED,
-     EVENT_SCRIPT(Event_FinalsBegin)},
+     EVENT_SCRIPT(Event_FinalsStart)},
     {EVENT_TOUCH, TRIGGER_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_RearmFinalsStart)},
     {SCENE_EVENTS_END},

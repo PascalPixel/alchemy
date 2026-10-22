@@ -62,7 +62,7 @@ extern const u16 gData_08197410[];
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
@@ -72,7 +72,7 @@ void ObjectGroup_TickMemberTimers(void);
 // Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 width, s32 height);
-// BattleEventRuntime_BeginPhase through its far call.
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
@@ -108,7 +108,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)slots->battleFxWork[0];
   canvas = slots->battleFxWork[1];
   sheet = slots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
 

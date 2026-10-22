@@ -57,7 +57,7 @@ extern char ResourceId_FlashBurstSheet;
 extern u16 gData_08197410[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_FetchRectangleBlitters(
@@ -66,7 +66,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
@@ -100,7 +100,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;

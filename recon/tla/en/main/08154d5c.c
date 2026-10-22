@@ -49,7 +49,7 @@ extern const s8 Data_08198422[];
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
 void BattleEffect_EndCanvasLayer(void);
@@ -100,7 +100,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   heap = Ram_HeapSlots;
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0815585c(effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5,
                 &screen, &world);
   {

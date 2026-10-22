@@ -23,7 +23,7 @@ BattleEffect_RunGeode:
 	str r2, [sp, #76]
 	ldr r3, [r3]
 	str r3, [sp, #64]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, [sp, #84]
 	add r2, sp, #128
 	ldr r1, [r3, #4]

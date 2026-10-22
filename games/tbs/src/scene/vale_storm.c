@@ -696,7 +696,7 @@ s32 ValeStorm_Initialize(void) {
   // stands by the door.
   Engine_ActorSetAnimation(ACTOR_FELIX, ANIMATION_FELIX_CLING);
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Actor_SetPosition(ACTOR_GARET, PIXELS(400), PIXELS(611));
@@ -707,7 +707,7 @@ s32 ValeStorm_Initialize(void) {
     Engine_ActorSetAnimation(ACTOR_GARET, ANIMATION_GARET_DRAG);
     Engine_EventEnd();
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetPosition(ACTOR_GARETS_CHEST, PIXELS(424), PIXELS(627));
     Actor_WalkToAndWait(ACTOR_GARETS_CHEST, 424, 619);
     Engine_ActorSetAnimation(ACTOR_GARETS_CHEST, ANIMATION_NOD);
@@ -732,7 +732,7 @@ s32 ValeStorm_Initialize(void) {
 static void Event_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   FieldEffect_StartGroundParticles();
   FieldEffect_StartLightning();
   FieldEffect_LastLightning();
@@ -850,7 +850,7 @@ static void Event_FirstRockFalls(void) {
 
   if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_PASSED) != 0) {
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
       rock = Object_GetById(ACTOR_FIRST_ROCK);
       rockSprite = rock->sprite;
@@ -927,7 +927,7 @@ static void Event_SecondRockFalls(void) {
 
   if (GameFlag_IsSet(FLAG_VALE_STORM_SECOND_ROCK_PASSED) != 0) {
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (GameFlag_IsSet(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
       rock = Object_GetById(ACTOR_FIRST_ROCK + 1);
       // A rumble, then the rock rolls down the slope from the north-east.
@@ -999,7 +999,7 @@ static void ValeStorm_ApplySecondRockCollision(void) {
 /// FLAG_VALE_STORM_THIRD_ROCK_PASSED.
 static void Event_ThirdRockFalls(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_THIRD_ROCK_PASSED) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (GameFlag_IsSet(FLAG_VALE_STORM_THIRD_ROCK_FELL) == 0) {
       struct FieldActor *actor = Actor_Get(ACTOR_FIRST_ROCK + 2);
       struct FieldActor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1076,7 +1076,7 @@ static void Event_FourthRockFalls(void) {
 
   if (GameFlag_IsSet(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) != 0) {
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (GameFlag_IsSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL) == 0) {
       rock = Object_GetById(ACTOR_FIRST_ROCK + 3);
       // A rumble, then the rock rolls in from the east.
@@ -1141,7 +1141,7 @@ static void ValeStorm_ApplyFourthRockCollision(void) {
 static void ValeStorm_BumpIntoShovingMan(void) {
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 262, 810);
   Actor_SetPosition(ACTOR_SHOVING_MAN, PIXELS(262), PIXELS(805));
   Actor_WalkTo(ACTOR_SHOVING_MAN, 262, 825);
@@ -1175,7 +1175,7 @@ static void ValeStorm_BumpIntoShovingMan(void) {
 static void Event_HearGaretStruggling(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_HEARD_GARET) == 0) {
     if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventSetMessage(MsgValeUghHrnghhh);
       Event_ShowMessageAndWait(ACTOR_GARET, 0, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -1197,7 +1197,7 @@ static void Event_HearGaretStruggling(void) {
 static void Event_GaretCallsAfterIsaac(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
       Engine_GameFlagIsSet(FLAG_VALE_STORM_HEARD_GARET) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ActorRunRepeatedMotion(ACTOR_GARET, 2);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeDontLeaveMeHere);
@@ -1212,7 +1212,7 @@ static void Event_GaretCallsAfterIsaac(void) {
 /// brings him along.
 static void Event_TalkToGaret(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeBoulderNeedGet);
@@ -1221,7 +1221,7 @@ static void Event_TalkToGaret(void) {
     Engine_EventEnd();
   } else {
     if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventSetMessage(MsgValeWantDumpStuff);
       ValeStorm_GaretLeavesHisChest();
       Engine_EventEnd();
@@ -1291,7 +1291,7 @@ static void Event_UnusedGaretJoinsIsaac(void) {
   s32 message;
 
   if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     message = MsgValeHey;
@@ -1343,7 +1343,7 @@ static void Event_WarnAboutMtAleph(void) {
   struct FieldActor *leader;
   struct FieldActor *initialLeader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   initialLeader = Actor_Get(ACTOR_PARTY_LEADER);
   if (initialLeader != NULL) {
     Actor_SetPosition(ACTOR_GARET, initialLeader->x.fixed,
@@ -1426,9 +1426,9 @@ static void Event_WatchBoulderFall(void) {
   s32 boulderHeight;
 
   if (GameFlag_IsSet(FLAG_VALE_BOULDER_FELL) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Event_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
-    Scene_BeginCutscenePsynergy();
+    Scene_StartCutscenePsynergy();
     Engine_TaskWait(1);
     Event_PlayCue(SE_141);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1660,7 +1660,7 @@ static void Event_WatchAttemptToSaveFelix(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_KYLE, PIXELS(192), PIXELS(1214));
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
   Engine_ActorSetAnimation(ACTOR_KYLE, ANIMATION_KYLE_REACH_OUT);
@@ -2050,7 +2050,7 @@ static void Event_TalkAboutSavingFelix(void) {
   s32 facing = FACING_SOUTHEAST;
   const s32 *pulseScript;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_KYLE, ANIMATION_STAND);
   Engine_EventWait(10);
   Engine_ActorFaceEachOther(ACTOR_KYLE, ACTOR_PARTY_LEADER, 20);
@@ -2098,7 +2098,7 @@ static void Event_BoulderSweepsThemAway(void) {
   } else {
     if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     } else {
-      Engine_EventBegin();
+      Engine_EventStart();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
       Actor_SetSpeed(ACTOR_JENNA, PIXELS(1), PIXELS(1) / 2);
@@ -2691,7 +2691,7 @@ static void Event_StrongmanTriesToGoForHelp(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   villager = Object_GetById(ACTOR_EXHAUSTED_STRONGMAN);
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO) != 0) {
     Engine_ActorStop(ACTOR_EXHAUSTED_STRONGMAN);
     Engine_EventWait(10);
@@ -2761,7 +2761,7 @@ static void Event_StrongmanTriesToGoForHelp(void) {
 /// and Kyle away; sets FLAG_VALE_STORM_GARET_LEFT, which has the two meet the
 /// strangers on the way (vale_gate.c).
 static void ValeStorm_GaretFollowsIsaac(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ActorStop(ACTOR_GARET);
   Scheduler_RemoveCallback(ValeStorm_CopyLeaderSpritePriority);
@@ -2821,7 +2821,7 @@ static void ValeStorm_RebuildRiverbank(void) {
 static void Event_FightThirdMonster(void) {
   struct EventWork *state;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   state = gEventWork;
   state->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -2839,7 +2839,7 @@ static void Event_FightThirdMonster(void) {
 static void Event_FightFourthMonster(void) {
   struct EventWork *state;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   state = gEventWork;
   state->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -2997,7 +2997,7 @@ static void ValeStorm_CopyLeaderSpritePriority(void) {
 /// In Vale on the stormy night, searching a broken door: it won't open, the
 /// impact having knocked it off its hinges.
 static void Event_SearchBrokenDoor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
 }
@@ -3005,7 +3005,7 @@ static void Event_SearchBrokenDoor(void) {
 /// In Vale on the stormy night, searching the chest Garet was trying to save.
 /// "It's Garet's chest of valuables."
 static void Event_SearchValuablesChest(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgValeSChestValuables, 1);
   Engine_EventEnd();
 }

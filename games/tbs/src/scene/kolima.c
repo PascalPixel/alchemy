@@ -323,7 +323,7 @@ const struct ScenePlacement *Kolima_GetPlacements(void) {
 static void Kolima_TalkToHealer(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 facing = leader->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FACING_IS_NORTH(facing)) {
     Engine_SanctumOpen(ACTOR_HEALER);
   } else {
@@ -367,7 +367,7 @@ static void Kolima_EnterDoor(void) {
   s32 x = 0;
   s32 y = 0;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   switch (work->touchedTrigger) {
   case KOLIMA_TO_INN:
@@ -412,7 +412,7 @@ static void Kolima_EnterDoor(void) {
 static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
   Engine_CameraWaitForMove();
@@ -588,7 +588,7 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
 
 /// Begins Mind Read on one of Kolima's villagers turned into a tree.
 static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
-  Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
+  Engine_PsynergyStart(ABILITY_MIND_READ, 1);
   Engine_PsynergySetTarget(actorId, targetId);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
@@ -642,7 +642,7 @@ static void Kolima_WitnessForestCurse(void) {
   u32 *secondCurtainState;
 
   // Enter the deserted village and let Ivan inspect one of its trees.
-  Engine_EventBegin();
+  Engine_EventStart();
   partyLayout = &gKolima_MiaInParty;
   *partyLayout = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   actor = Object_GetById(ACTOR_LEADERS_PSYNERGY_FIELD);

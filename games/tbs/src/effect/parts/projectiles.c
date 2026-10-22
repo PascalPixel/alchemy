@@ -48,7 +48,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   if (element > ELEMENT_JUPITER) {
@@ -441,9 +441,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   // The canvas's BG priority: 0 for Ice Blessing, 1 for the others. A
   // Djinni prelude then opens the layer again at priority 0.
   if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   if (work->effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
                                    DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);

@@ -5,7 +5,7 @@ struct CanvasJob {
   s32 side;
 };
 
-void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 layer);
 void Func_0815585c(struct CanvasJob *job, s32 flags, s32 *b, s32 *a);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -14,7 +14,7 @@ void BattleEffect_RunKite(struct CanvasJob *job) {
   s32 b[3];
   s32 a[3];
 
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0815585c(job, ((job->side ^ 1) << 4) | 7, b, a);
   BattleEffect_EndCanvasLayer();
 }

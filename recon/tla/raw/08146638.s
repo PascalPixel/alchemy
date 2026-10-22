@@ -28,7 +28,7 @@ BattleEffect_RunAstralBlast:
 	bl GetBattleObjectSlotFar
 	ldr r6, [r0]
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r0, .L_081469ac
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

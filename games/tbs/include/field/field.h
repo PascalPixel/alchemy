@@ -287,7 +287,7 @@ void FieldScene_PrepareActors(struct ScenePlacement *entry);
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
-void WorldMap_BeginStillView(void);
+void WorldMap_StartStillView(void);
 s32 Math_Atan2(s32 dy, s32 dx);
 #ifndef OWN_Object_Destroy
 void Object_Destroy(struct DispatchObject *work);

@@ -390,7 +390,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   roundedFacing = (leader->facing + 0x2000) & 0xc000;
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   if (GameFlag_IsSet(FLAG_ATTENDANT_SHOWED_BEDS) == 0) {
     GameFlag_Set(FLAG_ATTENDANT_SHOWED_BEDS);
@@ -444,7 +444,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
 static void BabiPalace_OfferRest(s32 actorId) {
   s32 question;
 
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   if (GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
@@ -503,7 +503,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   const s32 *indigestionScript;
 
   actor = Actor_Get(actorId);
-  Event_Begin();
+  Event_Start();
   indigestionScript = gBabiPalace_IndigestionScript;
   Actor_SetActionScript(actorId, indigestionScript);
   Event_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
@@ -539,7 +539,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
 /// to Lalivero alone; the first time, she feels it, ends the Psynergy and
 /// asks about it. "Did you just..."
 static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
-  Event_Begin();
+  Event_Start();
   Event_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
   Event_ShowMessage(actorId, 0);
   if (GameFlag_IsSet(FLAG_SHEBA_NOTICED_MIND_READ) == 0) {
@@ -575,7 +575,7 @@ static void BabiPalace_AskAboutEasternShores(s32 actorId) {
 static void BabiPalace_OfferCloakBall(void) {
   s32 msg;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   msg = MsgTolbiFoundCloakBall;
   Engine_EventSetMessage(msg);
@@ -610,7 +610,7 @@ static void BabiPalace_OfferCloakBall(void) {
 static void BabiPalace_WakeFromFinalsDream(void) {
   struct FieldActor *leader;
 
-  Event_Begin();
+  Event_Start();
   Event_SetMessage(MsgTolbiGetUp);
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 0;
@@ -742,7 +742,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   roundedFacing = (leader->facing + 0x2000) & -0x4000;
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessage(MsgTolbiLikeSleep);
   Event_OpenMessage(-1, 0);
@@ -886,7 +886,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
 /// into the cave before; then they leave.
 static void BabiPalace_HearSoldiersReport(void) {
   GameFlag_Set(FLAG_IODEM_HEARD_SOLDIERS);
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessage(MsgTolbiIodemIodem);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 424);
@@ -1149,7 +1149,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   struct EventWork *event;
   struct DisplayTransitionState *work;
 
-  Event_Begin();
+  Event_Start();
   Event_SetMessage(MsgTolbiCallsName);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIMATION_IN_BED_LYING);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1406,7 +1406,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_PlayCue(MUS_030);
-  Event_Begin();
+  Event_Start();
   Event_SetMessage(MsgTolbiWaitingCompanions);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -2317,7 +2317,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  Event_Begin();
+  Event_Start();
   Event_PlayCue(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
@@ -2345,7 +2345,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 /// Walking north into the palace's door from outside: it opens and the leader
 /// goes in.
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
-  Event_Begin();
+  Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gBabiPalace_DoorCells, 36, 10);
@@ -2361,7 +2361,7 @@ static void BabiPalace_LeaveThroughAnimatedDoor(void) {
 static void BabiPalace_PassOnBabisWord(void) {
   s32 question;
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -2436,7 +2436,7 @@ static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
 /// Searching the well outside the palace. "It's filled with fresh, clean
 /// water."
 static void BabiPalace_ExamineWell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgTolbiItsFilledWithFreshClean, 1);
   Engine_EventEnd();

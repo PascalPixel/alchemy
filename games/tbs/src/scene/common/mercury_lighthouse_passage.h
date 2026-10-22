@@ -10,7 +10,7 @@
 /// and after half a second the screen fades and the party takes exit.
 static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_228);
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
@@ -38,7 +38,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct FieldActor *record;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_228);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);

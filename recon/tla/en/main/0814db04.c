@@ -93,7 +93,7 @@ extern u16 Data_081982de[];        // ☀️ gBoreas_FallCells
 extern u8 Data_081982d8[];         // ☀️ gBoreas_FallWidths
 extern u8 Data_081982db[];         // ☀️ gBoreas_FallHeights
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void);                // ☀️ BattleEffect_ConfigureEffectDisplay
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_EndCanvasLayer(void);                // ☀️ BattleEffect_EndCanvasLayer
@@ -111,7 +111,7 @@ void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
 void ResourceObject_ReleaseFar(void *object);
 void Func_0814cca8(void); // ☀️ BattleEffect_SetupBlendedDisplay
 void Render_ResetTransformState(void);
-void Func_081180e8(s32 phase); // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -152,7 +152,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   dots = Ram_HeapSlots->unk64[0];
   step = 1;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;

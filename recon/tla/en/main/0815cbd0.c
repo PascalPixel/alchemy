@@ -66,7 +66,7 @@ extern char ResourceId_SpiderWebSheet;
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 // The middle between the first and the last target.
 void Func_0815e22c(struct EffectPosition *middle);
 // Copies the canvas to VRAM when a transfer is pending.
@@ -78,7 +78,7 @@ void ObjectGroup_TickMemberTimers(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleEventRuntime_BeginPhase through its far call.
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // Flashes an actor in a palette for some frames.
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
@@ -102,7 +102,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleEffect_BeginCanvasLayer(2);
+  BattleEffect_StartCanvasLayer(2);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1000;
   Func_0815e22c(&middle);

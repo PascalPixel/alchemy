@@ -26,7 +26,7 @@ BattleEffect_RunSparkGroups:
 	cmp r3, #0
 	bne .L_08149be6
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r5, #48
 	movs r4, #60
 	str r4, [sp, #28]
@@ -37,7 +37,7 @@ BattleEffect_RunSparkGroups:
 	cmp r1, #1
 	bne .L_08149c16
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r5, #238
 	ldr r4, [sp, #48]
 	lsls r5, r5, #7
@@ -58,7 +58,7 @@ BattleEffect_RunSparkGroups:
 	b .L_08149c38
 .L_08149c16:
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r2, r10
 	add r5, sp, #64
 	ldr r0, [r2, #8]

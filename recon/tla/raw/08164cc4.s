@@ -24,7 +24,7 @@ BattleEffect_RunParticleStreams:
 	ldr r3, [r3, #92]
 	lsls r0, r0, #6
 	str r3, [r1]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #128
 	ldr r3, .L_08164d04
 	lsls r2, r2, #19

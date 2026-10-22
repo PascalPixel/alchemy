@@ -67,14 +67,14 @@ extern char ResourceId_VioletPaletteD;
 extern char ResourceId_RedPaletteB;
 extern char ResourceId_CyanPalette;
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -116,7 +116,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
   camera = heap->cameraWork;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
 
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.

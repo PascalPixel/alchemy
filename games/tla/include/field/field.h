@@ -85,7 +85,7 @@ void EffectRuntime_StopCurrentObject(void);
 s32 Event_SpawnObjectTable(s32 event_id, s32 state);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
                                           struct FacingObject *second);
-void Field_BeginPaletteTransition(s32 mode);
+void Field_StartPaletteTransition(s32 mode);
 void Field_DispatchTypeHandler(s32 kind);
 void Field_EndActorSpriteEffect(s32 mode);
 void FieldEvent_RunTypeHandler(void);

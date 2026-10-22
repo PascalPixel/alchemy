@@ -212,7 +212,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Map_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                 destinationRow);
   SE(SE_206);
-  EV_BEGIN();
+  EV_START();
   Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance);
   OBJECT_MODE(selectedActorId, ANIMATION_LEADER_SPIN_AWAY);
   Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
@@ -389,7 +389,7 @@ static void Event_FightTret(void) {
   struct FieldActor *leader;
 
   hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
-  EV_BEGIN();
+  EV_START();
   SE(AUDIO_CUE_FADE_BGM);
   MESSAGE_SET(MsgTretHmHrooom);
   Engine_EventShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
@@ -492,7 +492,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindOwner(ITEM_HERMES_WATER);
   SE(AUDIO_CUE_FADE_BGM);
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   OBJECT_SPEED(GARET, 0xcccc, 0x6666);
   OBJECT_SPEED(IVAN, 0xcccc, 0x6666);
@@ -1077,7 +1077,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   s32 velocityX;
   s32 velocityZ;
 
-  EV_BEGIN();
+  EV_START();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);

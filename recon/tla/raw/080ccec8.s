@@ -123,7 +123,7 @@ Func_080ccec8:
 	bne .L_080ccfae
 	movs r5, #32
 .L_080ccfae:
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	ldr r2, [sp, #24]
 	movs r3, #1
 	adds r2, #91
@@ -251,7 +251,7 @@ Func_080ccec8:
 	mov r1, r8
 	cmp r1, #132
 	bne .L_080cd106
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	movs r0, #0
 	bl EventRuntime_ResolvePendingActions
 	mov r0, r10

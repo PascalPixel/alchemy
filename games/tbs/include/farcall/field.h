@@ -186,7 +186,7 @@ void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *obj,
                                              s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
 /// menu or event can use the window and VBlank.
-void WorldMap_BeginStillViewFar(void);
+void WorldMap_StartStillViewFar(void);
 /// Reloads the world map area's palette and tiles after the still view and
 /// returns to the perspective view.
 void Map_LoadAreaGraphicsFar(void);

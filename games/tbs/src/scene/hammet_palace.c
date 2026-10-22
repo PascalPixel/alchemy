@@ -170,7 +170,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Talking to one of the people of Hammet Palace before Hammet is free: he
 /// hopes for his release. `Lord Hammet will be released soon. Right?`
 static void Event_AskWhetherHammetWillBeReleased(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgKalayLordHammetWillReleasedSoon);
   Engine_EventAskYesNo(ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, 0);
   EV_END();
@@ -180,7 +180,7 @@ static void Event_AskWhetherHammetWillBeReleased(void) {
 /// worries for Hammet's silk trade. `Has the legacy of Lord Hammet's silk
 /// trading come to an end?`
 static void Event_AskWhetherSilkTradeHasEnded(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgKalayHasLegacyLordHammetsSilk);
   Engine_EventAskYesNo(ACTOR_ASKING_ABOUT_THE_SILK_TRADE, 0);
   EV_END();
@@ -193,7 +193,7 @@ static void Event_AskWhetherSilkTradeHasEnded(void) {
 /// back, and to fulfill their quest.
 static void Event_LayanaScoldsLunpaVisit(void) {
 
-  EV_BEGIN();
+  EV_START();
   Engine_ActorShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   MESSAGE_SET(MsgKalayIsaacSneakedIntoLunpaThats);
   Engine_EventShowMessageAndWait(ACTOR_LAYANA, 0, 10);
@@ -214,7 +214,7 @@ static void Event_LeaveThroughDoor(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  EV_BEGIN();
+  EV_START();
   WAIT(10);
   if (work->touchedTrigger == 4) {
     SE(SE_188);
@@ -326,7 +326,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   s32 advanceAfterReply;
   const s32 *partyScript;
 
-  EV_BEGIN();
+  EV_START();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
@@ -836,7 +836,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   s32 v5;
   const s32 *partyScript;
 
-  EV_BEGIN();
+  EV_START();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Camera_MoveTo(PIXELS(864), -1, PIXELS(536), 0);

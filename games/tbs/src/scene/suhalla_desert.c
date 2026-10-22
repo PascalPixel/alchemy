@@ -266,7 +266,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   Actor_Get(stormIdCopy);
   captureActive = GameFlag_IsSet(FLAG_SCENE_TEMP_0F);
   if (captureActive == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetAttachedEffect(selectedActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Engine_ActorSetAnimation(selectedActorId, ANIMATION_LEADER_LOOK_AROUND);
@@ -352,7 +352,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   appearanceRestored = Engine_GameFlagIsSet(FLAG_STORMS_RISEN);
   leaderX = selectedActor->x.part.pixel;
   leaderZ = selectedActor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_SANDSTORM);
   // Grow over 16 frames and, the first time, fade the haze in with it.
   frame = 0;
@@ -470,7 +470,7 @@ static void Event_IodemAsksWhetherToPressOn(void) {
       GameFlag_IsSet(0x1b7) == 0 &&
       GameFlag_IsSet(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA);
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgSuhallaNowhereFound);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -648,7 +648,7 @@ static void Event_StormCarriesPartyAway(void) {
   stormId = FieldGameFlag_GetByte(FLAG_SCENE_TEMP_18);
   selectedActor = Object_GetById(gGameState.selectedActor);
   storm = Object_GetById(stormId);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_AudioPlayCue(SE_219);
   // BUG: the native passes an actor id where the sprite helper needs a pointer.

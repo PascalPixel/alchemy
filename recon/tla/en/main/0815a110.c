@@ -151,7 +151,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 height);
 void EffectPosition_ProjectScaledBattler(s32 actor,
@@ -179,7 +179,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
-// BattleEventRuntime_BeginPhase through its far call.
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
@@ -215,7 +215,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   if (effect->prelude == 1)
     Func_0815585c(effect, PREPARE(7, effect->side, 2), screen, otherPoint);

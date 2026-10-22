@@ -45,9 +45,9 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (effect->side == 1)
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   else
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);

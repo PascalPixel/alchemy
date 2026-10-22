@@ -71,7 +71,7 @@
 
 #define PHASE_RESULTS 134
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
                    s32 *screenY); // BattleEffect_RunDjinniEntrance
 void BattleEffect_FetchRectangleBlitters(
@@ -79,7 +79,7 @@ void BattleEffect_FetchRectangleBlitters(
     DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_ArmBg2AffineHBlankDma(void); // BattleEffect_ArmBg2AffineHBlankDma
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
@@ -126,7 +126,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
 
   // Open the canvas on BG2 over the target's side.
-  BattleEffect_BeginCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(0x2000);
   Func_0815585c(effect, 6 | effect->side << 4 | 2 << 5, screenX, screenY);
   {
     /* FAKEMATCH: the native loads the BG2CNT halfword from the pool before it

@@ -76,14 +76,14 @@ extern const u16 gData_08199340[]; // a textured square
 extern const u16 gData_08199210[]; // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Func_0815585c(struct BattleEffectArgument *effect, s32 placement,
                    s32 *center, s32 *base); // BattleEffect_RunDjinniEntrance
@@ -128,7 +128,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
     s32 row;
     s32 column;

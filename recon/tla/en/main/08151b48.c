@@ -2,7 +2,7 @@
 
 // Twin: The Broken Seal's BattleEffect_RunRay (effect.c), call for
 // call, with The Lost Age's changes: on its own side the canvas begins
-// filled (BattleEffect_BeginTiledCanvasFilled), with BG control 0x2001; the
+// filled (BattleEffect_StartTiledCanvasFilled), with BG control 0x2001; the
 // blitters come through BattleEffect_LoadBlitter (BLIT_MAX 1, BLIT_ADDITIVE 0); and
 // outside variant 2 the bolts center on the midpoint of the targets
 // (Func_0815e22c), the canvas scrolled to it and clamped to 0-112, with
@@ -35,15 +35,15 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleEffect_BeginTiledCanvas(s32 bgControl);
-void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void Func_0815e22c(struct EffectPosition *midpoint);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -91,9 +91,9 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   xOffset = 0;
   if (effect->side == 0)
-    BattleEffect_BeginTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(0x2001);
   else
-    BattleEffect_BeginTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(0x2001);
   if (effect->variant == 2)
     REG_BG2PA = 0x80; // twice as wide
   else

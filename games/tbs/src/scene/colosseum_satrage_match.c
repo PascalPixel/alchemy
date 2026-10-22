@@ -478,7 +478,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 
   pusher = Object_GetById(gGameState.selectedActor);
   log = Object_GetById(logId);
-  Engine_EventBegin();
+  Engine_EventStart();
   {
     destinationX =
         ((pusher->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
@@ -573,7 +573,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
     offsetX = 0;
     offsetZ = (halfCellZ - log->z.fixed) / 2;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(pusher, 8);
   Engine_EventWait(6);
   log->speed = 0x8000;
@@ -834,7 +834,7 @@ static void Event_ReachArena(void) {
 
   resultBase = 2;
   SceneState_EmptyHook();
-  Engine_EventBegin();
+  Engine_EventStart();
   opponentFinishedFirst = ColosseumSatrageMatch_ApproachFinishAndTakeItem(
       ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   ColosseumSatrageMatch_WaitForOpponentFinish();
@@ -887,7 +887,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Engine_ActorDestroy(PRIZE_A);
   Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(OPPONENT, PIXELS(88), PIXELS(256));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(256));
   // BUG: 0x4000 is FACING_SOUTH, passed where Actor_FaceActor takes an actor
@@ -1112,7 +1112,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   actor = Object_GetById(attendantId);
   attendantX = actor->x.part.pixel;
   attendantZ = actor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(attendantId, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
@@ -1185,7 +1185,7 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
   if (gGameState.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(attendant, 1);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoStageDubbedMini);
@@ -1231,7 +1231,7 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
   if (gGameState.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(attendant, 2);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoShiftingFloorStage);
@@ -1277,7 +1277,7 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
   if (gGameState.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     result = Colosso_GreetAtStage(attendant, 3);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoLogRollingStage);
@@ -1334,7 +1334,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   result = Colosso_GreetAtStage(attendant, 4);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoFansJustCallWall);
@@ -1432,7 +1432,7 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   result = Colosso_GreetAtStage(attendant, 5);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoPlaceCalledBoard);
@@ -1511,7 +1511,7 @@ static void ColosseumSatrageMatch_StartLetteringAnimation(u32 mode,
 /// (mode 0), or for the race `Match 2`, then 3, 2, 1 and `Go!`.
 static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
@@ -1524,7 +1524,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   }
 
   Engine_AudioPlayCue(SE_247);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   {

@@ -298,7 +298,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Party_RestorePpOfLitElements();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(GARET), 0);
@@ -435,7 +435,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   s32 id;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   id = SceneActor_FindNearestFloatingPlatform();
   gMercuryLighthouseAerie_PlatformUnderfoot = id;
   if (id != 0) {
@@ -487,7 +487,7 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -925,7 +925,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(344), PIXELS(224));
   Actor_SetPosition(GARET, PIXELS(328), PIXELS(224));
@@ -1474,7 +1474,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   struct MapLayerScroll *lift;
 
   lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-  Engine_EventBegin();
+  Engine_EventStart();
   lift->offsetY = PIXELS(896);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -1503,7 +1503,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 152);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 60);
@@ -1743,7 +1743,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// Nothing calls it. In the game, Alex and Saturos warp over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
-  Engine_PsynergyBegin(ABILITY_PLY, 1);
+  Engine_PsynergyStart(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(ACTOR_ALEX, ACTOR_LIFT_STATUE);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);

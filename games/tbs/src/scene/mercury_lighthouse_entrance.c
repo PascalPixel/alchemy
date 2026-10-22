@@ -254,7 +254,7 @@ const struct ScenePlacement *MercuryLighthouseEntrance_GetPlacements(void) {
 /// "He who honors the heart of the goddess shall stand at the center of
 /// all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgMercuryWhoHonorsHeart, 1);
   Engine_EventEnd();
@@ -308,7 +308,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
   leaderRow = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
   if (leaderColumn == 12 && leaderRow == 32) {
-    Engine_EventBegin();
+    Engine_EventStart();
     // Fade the scene before releasing fifteen sparks above the pool.
     ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
     Engine_ColorBufferInterpolate(60);
@@ -397,7 +397,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 /// begins; afterwards the party comes back at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_LIZARD_MAN, 2);
   Engine_EventWait(20);
   gEventWork->startTransition =
@@ -494,7 +494,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // The first time, the leader drops from 130 pixels up and lands in a
     // burst; until Ply has been used, the inscription's words appear.
     GameFlag_Set(FLAG_DROP_FROM_ABOVE_SEEN);
-    Engine_EventBegin();
+    Engine_EventStart();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
@@ -556,7 +556,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_MapRedraw();
     Engine_TaskWait(1);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -591,7 +591,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   struct FieldActor *mia;
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   actor = Object_GetById(ACTOR_FIRST_EAST_STATUE);
   actor->scaleX = -Q16_ONE;
   actor = Object_GetById(ACTOR_FIRST_EAST_STATUE + 1);
@@ -674,7 +674,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
 
   if (GameFlag_IsSet(FLAG_MIA_GOES_IN_SEEN) == 0) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
-    Engine_EventBegin();
+    Engine_EventStart();
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
     actor->scaleX = -Q16_ONE;
     actor = Object_GetById(ACTOR_FIRST_EAST_STATUE + 1);

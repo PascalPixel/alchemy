@@ -181,7 +181,7 @@ static void Event_PushWestPillar(void) {
   s32 offsetX;
 
   work = gEventWork;
-  EV_BEGIN();
+  EV_START();
   OBJECT_MODE(ACTOR_PARTY_LEADER, 8);
   WAIT(20);
   OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -209,7 +209,7 @@ UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 /// Whirlwind on the second ivy at Goma Cave Entrance: it is blown away for
 /// good.
 static void Event_BlowAwayIvy(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
   EV_END();
 }
@@ -283,7 +283,7 @@ static void Event_IvanRejoins(void) {
 #if TBS_PATCH_1
   FieldEffect_PlayQueuedSound();
 #endif
-  EV_BEGIN();
+  EV_START();
   WAIT(30);
   MESSAGE_SET(MsgGomaNoUsePsynergy);
   OBJECT_SPEED(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
@@ -490,7 +490,7 @@ static void Event_MoveStump(void) {
   s32 column;
   struct FieldActor *stump;
 
-  EV_BEGIN();
+  EV_START();
   column = Object_GetById(ACTOR_STUMP)->x.fixed >> 20;
   if (column == 11) {
     GomaCaveEntrance_LeapStump(ACTOR_STUMP);

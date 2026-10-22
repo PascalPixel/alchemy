@@ -22,7 +22,7 @@ BattleEffect_RunMercury:
 	ldr r3, [r3, #100]
 	movs r0, #0
 	str r3, [sp, #20]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r2, sp
 	adds r2, #32
 	adds r1, r2, #0

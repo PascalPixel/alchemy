@@ -25,7 +25,7 @@ BattleEffect_RunVoidBeam:
 	str r2, [sp, #52]
 	ldr r3, [r3, #100]
 	str r3, [sp, #48]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, [sp, #72]
 	movs r4, #224
 	lsls r4, r4, #3

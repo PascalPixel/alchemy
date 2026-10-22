@@ -69,7 +69,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // Setup: the narrow canvas, the shard sheet and the sparkle dots in the
   // sheet slot, then the display; window 1 hides BG2.
-  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkles, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
@@ -292,7 +292,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // Setup: the bolt pictures go after the spark cells, which the particle
   // sheet decodes at the start of work->sheet; window 1 hides BG2.
-  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_FALLING_CELL, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,

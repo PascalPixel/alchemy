@@ -22,7 +22,7 @@ BattleEffect_RunGround:
 	ldr r3, [r3, #48]
 	movs r0, #0
 	str r3, [sp, #32]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #56]
 	movs r3, #64
 	ldr r1, [r2, #4]

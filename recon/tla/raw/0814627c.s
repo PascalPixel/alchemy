@@ -24,7 +24,7 @@ BattleEffect_RunTriangleStrike:
 	ldr r5, [r3, #100]
 	ldr r3, [r3, #48]
 	str r3, [sp, #52]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081462e4
 	movs r2, #128
 	lsls r2, r2, #19

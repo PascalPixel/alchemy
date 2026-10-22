@@ -169,7 +169,7 @@ static void Event_UpdateRoomTint(void) {
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
     paletteActive = GameFlag_IsSet(FLAG_SCENE_TEMP_01);
     if (paletteActive == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       ColorBuffer_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_SCENE_TEMP_01);
@@ -187,7 +187,7 @@ static void Event_UpdateRoomTint(void) {
     }
   } else {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_SCENE_TEMP_00);
@@ -203,7 +203,7 @@ static void Event_UpdateRoomTint(void) {
 /// Sets FLAG_SCENE_TEMP_00 and clears _01 and _02.
 static void Event_RestorePlainTint(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
     Engine_ColorBufferInterpolate(20);
     GameFlag_Set(FLAG_SCENE_TEMP_00);
@@ -224,7 +224,7 @@ static void Event_UpdateRoomTintInverse(void) {
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
     paletteActive = GameFlag_IsSet(FLAG_SCENE_TEMP_00);
     if (paletteActive == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_SCENE_TEMP_00);
@@ -234,7 +234,7 @@ static void Event_UpdateRoomTintInverse(void) {
     }
   } else {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       ColorBuffer_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_SCENE_TEMP_01);
@@ -339,7 +339,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Event_UpdateRoomTint();
   }
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FOUND) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     // The leader walks in as the music changes.
     Engine_EventSetMessage(MsgSolSanctumFound);
     Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
@@ -611,7 +611,7 @@ static void Event_KradenStopsPartyLeaving(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
   Engine_EventSetMessage(MsgSolSanctumWayLeadsOutSanctum);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
@@ -868,7 +868,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   s32 fourFrameFlashes;
   s32 twoFrameFlashes;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom();
   // Kraden turns, startled: "What's happening?"
   Engine_EventSetMessage(MsgSolSanctumWhatsHappeningAtTheTrap);
@@ -923,7 +923,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
 /// SceneId_SolSanctumStatue, where Kraden explains the trap.
 static void SolSanctumLunaSolRooms_SpringTrap(void) {
   s32 flash;
-  Engine_EventBegin();
+  Engine_EventStart();
   SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom();
   gSolSanctumLunaSolRooms_Light1Timer = 0;
   gSolSanctumLunaSolRooms_Light2Timer = 0;
@@ -1015,7 +1015,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   s32 fourFrameFlashes;
   s32 twoFrameFlashes;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Toggle the shown lights only where the quarters are lit now.
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
       GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN) != 0) {
@@ -1102,7 +1102,7 @@ static void Event_KradenSeesLunaPictureChange(void) {
   } else {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() == 0) {
     } else {
-      Engine_EventBegin();
+      Engine_EventStart();
       Actor_SetPosition(ACTOR_KRADEN, PIXELS(577), PIXELS(147));
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 1);
       Camera_MoveTo(PIXELS(574), -1, PIXELS(184), 1);
@@ -1197,7 +1197,7 @@ static void Event_RiseToElementalStarRoom(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     // Isaac steps onto the symbol and Kraden comes out beside him.
     Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     Camera_MoveTo(PIXELS(287), -1, PIXELS(148), 1);
@@ -1545,7 +1545,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   struct FieldActor *leader;
   struct ColorBuffer *palette;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // The screen opens all white on Isaac and Garet, then fades to the tint.
   Camera_MoveTo(PIXELS(286), -1, PIXELS(134), 0);
   Engine_MapRedraw();
@@ -1645,7 +1645,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
 /// once Isaac has agreed to look farther up the passage, otherwise "Just wait
 /// over there."
 static void Event_TalkToKraden(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN) != 0) {
     Engine_EventSetMessage(MsgSolSanctumKradenLetMeKnowWhat);
   } else {

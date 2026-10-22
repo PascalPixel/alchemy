@@ -79,7 +79,7 @@ extern s32 Data_08199200[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -144,7 +144,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   // Set up the canvas and a clipped MAX blitter, mirrored to face the
   // target; mirror the rune's corner into the sheet; load the sparks, the
   // sword and the flash.
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   if (effect->side == 0)
     BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,

@@ -5422,7 +5422,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_fr_02008d74
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3
@@ -5736,7 +5736,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_es_02008d70
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3
@@ -6056,7 +6056,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_02008d7c
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3

@@ -33,7 +33,7 @@ BattleEffect_RunEclipse:
 	str r3, [sp, #72]
 	ldr r2, [r2, #36]
 	str r2, [sp, #68]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_08179e6c
 	ldr r4, [sp, #96]
 	movs r3, #0

@@ -171,7 +171,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 /// The actor stands still and says the selected message.
 static void VaultInteriorsRevisit_ShowStandingActorDialogue(s32 actor) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(actor, ANIMATION_STAND);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
@@ -213,7 +213,7 @@ static void Event_HusbandLongsForColosso(void) {
 /// Sets FLAG_WELCOMED_BACK, after which the mayor only warns of their revenge,
 /// and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 static void Event_WelcomeIsaacBack(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
   Engine_ActorFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetAnimation(ACTOR_MAYOR, ANIMATION_STAND);
@@ -257,7 +257,7 @@ static void Event_UnusedOfferLeftoverBones(void) {
 /// room, a no a nod. Her talk row needs FLAG_SCENE_TEMP_50 clear, that is, the
 /// leader not standing beside the floor Bone.
 static void Event_OfferBones(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
@@ -303,7 +303,7 @@ static void Event_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_MAYOR, 1);
   Engine_EventEnd();
   // Keep the actor paused through the conversation, then resume action 2.
@@ -324,7 +324,7 @@ static void Event_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(VAULT_WEAPON_STOCK, ACTOR_VAULT_WEAPON_MERCHANT);
@@ -342,7 +342,7 @@ static void Event_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(VAULT_ARMOR_STOCK, ACTOR_VAULT_ARMOR_MERCHANT);
@@ -360,7 +360,7 @@ static void Event_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(VAULT_ITEM_STOCK, ACTOR_VAULT_ITEM_MERCHANT);
@@ -378,7 +378,7 @@ static void Event_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_InnOpen(VAULT_INN, ACTOR_VAULT_INNKEEPER);
@@ -393,7 +393,7 @@ static void Event_TalkToInnkeeper(void) {
 /// Mind Read on the girl at the inn: hungry while cooking, or, once a Bone was
 /// given, wondering whether "he" has a calcium deficiency.
 static void Event_ReadBoneGiverMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
   } else {

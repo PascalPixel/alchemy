@@ -20,7 +20,7 @@ BattleEffect_RunCool:
 	movs r0, #1
 	str r3, [sp, #20]
 	mov r9, r1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816ecb8
 	movs r2, #128
 	lsls r2, r2, #19

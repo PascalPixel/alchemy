@@ -58,7 +58,7 @@ extern char ResourceId_GreyCrescentSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
 
-void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode);
 void *Resource_GetTableEntry(s32 id);
@@ -99,7 +99,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up the canvas and a clipped MAX blitter, mirrored to face the target
   // and flipped upside down for Echo Cut.
-  BattleEffect_BeginTiledCanvas(0);
+  BattleEffect_StartTiledCanvas(0);
   if (mode == 0) {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
     if (effect->side != 0)

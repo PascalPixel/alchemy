@@ -53,7 +53,7 @@ FieldEvent_WaitFrames:
 	.global Func_02001080
 	.thumb_func
 Func_02001080:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001088
 	.thumb_func
 Func_02001088:

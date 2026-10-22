@@ -102,7 +102,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 /// Starts the leader's animation for leaving through an exit: centres it on
 /// its tile, at the tile's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
-/// Called by the two ObjectEffect_BeginContextEffect functions below.
+/// Called by the two ObjectEffect_StartContextEffect functions below.
 void ObjectEffect_PrepareContextEffect(s32 animation) {
   u32 zero;
   u8 param;
@@ -135,7 +135,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
 /// FLAG_EXIT_ARRIVAL_PENDING makes the next scene play the matching arrival
 /// (ObjectEffect_RunPendingFlagEvent). Called by the exit handling in events.c,
 /// after it plays SE_STAIRS_UP.
-void ObjectEffect_BeginContextEffect26(void) {
+void ObjectEffect_StartContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE);
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_PENDING);
 }
@@ -143,7 +143,7 @@ void ObjectEffect_BeginContextEffect26(void) {
 /// Leaves through an EXIT_STYLE_ANIMATED_ALTERNATE exit
 /// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in FLAG_EXIT_ARRIVAL_ALTERNATE.
 /// Called by the exit handling in events.c, after it plays SE_STAIRS_DOWN.
-void ObjectEffect_BeginContextEffect25(void) {
+void ObjectEffect_StartContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE_ALTERNATE);
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_ALTERNATE);
 }

@@ -44,10 +44,10 @@
 #define HI(v) (((s16 *)&(v))[1])
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
@@ -97,7 +97,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   // Set up: half-and-half blending, the max and additive blitters, the
   // spray band and the fire column into the work sheet, the sparks into the
   // sheet slot, and the transfer at three quarters.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   /* FAKEMATCH: the one-pass block places the first literal pool after the
    * second Resource_LoadAndDecompress, as the native does; without it the
    * pool lands one load later and every pooled offset after it shifts

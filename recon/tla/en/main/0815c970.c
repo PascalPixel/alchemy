@@ -69,7 +69,7 @@ extern const u8 gData_081986ce[];
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
@@ -79,7 +79,7 @@ void ObjectGroup_TickMemberTimers(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleEventRuntime_BeginPhase through its far call.
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
@@ -109,7 +109,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   slots = Ram_HeapSlots;
   work = (struct BattleEffectWork *)slots->battleFxWork[0];
   canvas = slots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = 0x100;
   if (effect->side == 1) {
     BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT,

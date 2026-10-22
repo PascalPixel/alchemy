@@ -34,7 +34,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_Data17F;
 extern u16 gData_08197410[];
 
-void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -68,7 +68,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Iwram_CopyWords((void *)0x05000000,
                   Resource_GetTableEntry((s32)&ResourceId_Data17F), 128);

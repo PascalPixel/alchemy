@@ -89,11 +89,11 @@ extern s32 gCameraSceneParameters[]; // unsized: sized, word 4 folds
 extern const s8 gData_08199210[];    // a quad's four corners, x y z for each
 extern const u8 gData_08199340[];    // the quad's face
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);               // ☀️ ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase);          // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase);          // ☀️ BattleEvent_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
@@ -133,7 +133,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
 
   // The mode's canvas, sheets and palette.
   if (mode == QUADS_MERCURY) {

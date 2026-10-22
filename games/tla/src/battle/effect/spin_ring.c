@@ -5,7 +5,7 @@ struct ObjectRuntime *Object_GetById(u32 actor);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_ResolvePendingActions(s32 skip);
 void EventRuntime_StartScreen(void);
 void EventRuntime_WaitDelay(void);
@@ -28,7 +28,7 @@ void Func_080e37e0(s32 actor) {
 
   object->update = BattleEffect_SpinObject;
   object->scaleX = 0;
-  EventRuntime_Begin();
+  EventRuntime_Start();
   EventRuntime_ResolvePendingActions(0);
   ObjectDispatch_SetSingleChildFlagsFar(Object_GetById(actor), 0);
   EventRuntime_StartScreen();

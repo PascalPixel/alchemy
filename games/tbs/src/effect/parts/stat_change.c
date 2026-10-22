@@ -118,7 +118,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
 
   // Bring out the Djinni of the mode's element; origin
   // receives where it appears, and x is scaled to the canvas, shown 1.25
@@ -469,7 +469,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
   if (mode == STAT_REDUCTION_DULL)
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
   else

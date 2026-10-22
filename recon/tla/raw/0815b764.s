@@ -90,7 +90,7 @@ BattleEffect_RunUlysses:
 	cmp r2, #32
 	bne .L_0815b7aa
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r1, .L_0815b8ec
 	ldr r0, .L_0815b8f0
 	ldrh r3, [r0]

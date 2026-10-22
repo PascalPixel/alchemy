@@ -127,7 +127,7 @@ extern u8 gData_08197826[];
 #define VOLLEY_DELAY 3   // frames between targets
 #define VOLLEY_SPARKS 4  // sparks on impact
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
@@ -202,7 +202,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   sheet = Ram_HeapSlots->unk64[0];
   seWait = 0;
   kind = effect->variant;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   if (effect->prelude == 1)
     Func_0815585c(effect, 1 | effect->side << 4 | 2 << 5, &screen, &world);
   REG_BLDALPHA = 0x1010;

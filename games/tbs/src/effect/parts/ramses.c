@@ -54,7 +54,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   // A wipe to black (colour 1) hides the battle; the desert backdrop loads
   // behind it, and a second wipe clears the canvas to show it.
@@ -119,7 +119,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   // Restart the background palette fade over 24 frames
-  // (Palette_StepFadeTransfer, added by BattleEffect_BeginCanvasLayer).
+  // (Palette_StepFadeTransfer, added by BattleEffect_StartCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
 

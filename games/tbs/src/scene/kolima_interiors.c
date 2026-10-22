@@ -191,7 +191,7 @@ const struct ScenePlacement *KolimaInteriors_GetPlacements(void) {
 static void KolimaInteriors_TalkToWeaponMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FACING_IS_NORTH(facing)) {
     Engine_ShopOpen(KOLIMA_WEAPON_SHOP, ACTOR_WEAPON_MERCHANT);
   } else {
@@ -207,7 +207,7 @@ static void KolimaInteriors_TalkToWeaponMerchant(void) {
 static void KolimaInteriors_TalkToArmorMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FACING_IS_NORTH(facing)) {
     Engine_ShopOpen(KOLIMA_ARMOR_SHOP, ACTOR_ARMOR_MERCHANT);
   } else {
@@ -222,7 +222,7 @@ static void KolimaInteriors_TalkToArmorMerchant(void) {
 static void KolimaInteriors_TalkToItemMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FACING_IS_NORTH(facing)) {
     Engine_ShopOpen(KOLIMA_ITEM_SHOP, ACTOR_ITEM_MERCHANT);
   } else {
@@ -238,7 +238,7 @@ static void KolimaInteriors_TalkToItemMerchant(void) {
 static void KolimaInteriors_TalkToInnkeeper(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (FACING_IS_NORTH(facing)) {
     Engine_InnOpen(KOLIMA_INN, ACTOR_INNKEEPER);

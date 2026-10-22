@@ -203,7 +203,7 @@ void MercuryLighthouse_ChargeLights(void) {
                ->actors[gGameState.selectedActor];
   if ((u32)state->levels > 2)
     return;
-  Engine_EventBegin();
+  Engine_EventStart();
   pillar = state->pillar;
   if (pillar == 0) {
     obj = Engine_ObjectCreate(26, leader->x.fixed, leader->y.fixed + 0x180000,
@@ -313,7 +313,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       to->collisionCode == state->terrainCode && state->levels == 0)
     return;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FieldObject_CheckMovementCollision(actor, (struct FieldPosition *)pos) !=
       0)
     return;

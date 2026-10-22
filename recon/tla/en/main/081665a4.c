@@ -61,7 +61,7 @@ extern u8 gData_08198a92[];  // ☀️ gRagnarok_StrikeColumns
 extern u8 gData_08198a98[];  // ☀️ gPlasma_FlashCells
 extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
@@ -70,7 +70,7 @@ void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);      // BattleEventRuntime_StartPhaseFar
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Audio_PlayCue(s32 cue);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -112,7 +112,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
   // Open the canvas, pose the user and place the columns.
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   Object_SetMode(user, 2);

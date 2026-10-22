@@ -231,8 +231,8 @@ void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void Func_08143001(void);
 void Func_08143489(void);
 void ObjectGroup_TickMemberTimers(void);
-void BattleEffect_BeginCanvasLayer(s32);
-void BattleEffect_BeginTiledCanvas(s32);
+void BattleEffect_StartCanvasLayer(s32);
+void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_FetchRectangleBlitters(s32, struct DrawFuncs *);
 void BattleEffect_RunSparkGroups(struct SummonAction *, s32);
@@ -360,9 +360,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
   if (kind == 41 || kind == 38 || kind == 62 || kind == 85 || kind == 86 ||
       kind == 87 || kind == 88)
-    BattleEffect_BeginTiledCanvas(0x2000);
+    BattleEffect_StartTiledCanvas(0x2000);
   else
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
 
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&Value_00000134, tiles, 0, 0);

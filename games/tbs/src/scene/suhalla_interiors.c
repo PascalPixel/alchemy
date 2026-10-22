@@ -248,7 +248,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_IsSet(FLAG_IODEM_AT_BABI_LIGHTHOUSE) == 0) {
     Event_PlayCue(MUS_030);
-    Event_Begin();
+    Event_Start();
     // Frame the speakers and bring the leader over before the dialogue.
     Camera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 160);

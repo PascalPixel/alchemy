@@ -22,7 +22,7 @@ BattleEffect_RunWhiplash:
 	movs r0, #1
 	mov r11, r1
 	str r2, [sp, #8]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r4, [sp, #24]
 	ldr r3, [r4, #4]
 	cmp r3, #0

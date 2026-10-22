@@ -93,7 +93,7 @@ PartyInventory_HasSpace:
 	.global Func_020006e4
 	.thumb_func
 Func_020006e4:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_020006ec
 	.thumb_func
 Func_020006ec:

@@ -355,7 +355,7 @@ static void Event_LandOnPlatform(void) {
   s32 platformId;
   s32 reboundStep;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   platformId = SceneActor_FindNearestFloatingPlatform();
   gVenusLighthouseAerie_LandedPlatform = platformId;
   if (platformId != 0) {
@@ -464,7 +464,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     VenusLighthouseAerie_StageShebasFall();
     break;
   case VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT:
-    Engine_EventBegin();
+    Engine_EventStart();
     if (Engine_GameFlagIsSet(FLAG_SHAMANS_ROD_OWNER) != 0) {
       Inventory_AddItem(0, ITEM_SHAMANS_ROD);
     } else if (Engine_GameFlagIsSet(FLAG_SHAMANS_ROD_OWNER + 1) != 0) {
@@ -508,7 +508,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
 
   // Bring the leader across on the moving platform, then reveal the party.
   arrivalPlatform = Object_GetById(ACTOR_RISING_PLATFORM);
-  Engine_EventBegin();
+  Engine_EventStart();
   VenusLighthouseAerie_ShowPartyMember(1, 0);
   VenusLighthouseAerie_ShowPartyMember(2, 0);
   VenusLighthouseAerie_ShowPartyMember(3, 0);
@@ -816,7 +816,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   s32 frame;
   s32 receiptMessage;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventGetViewCenter()->motionFlags = 0;
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(332), PIXELS(32), PIXELS(180), 1);
@@ -928,7 +928,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Engine_ActorFaceDirection(SHEBA, FACING_EAST, 20);
   Engine_ActorSetAnimationAndWait(SHEBA, ANIMATION_NOD);
   Engine_EventWait(40);
-  Scene_BeginCutscenePsynergy();
+  Scene_StartCutscenePsynergy();
   Engine_TaskWait(1);
   frame = 0;
   do {
@@ -1354,7 +1354,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   // Reuse the dialogue answer word for the later radial burst directions.
   u32 sceneStep;
 
-  Event_Begin();
+  Event_Start();
   Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   Actor_Get(GARET)->facing = FACING_WEST;
   Actor_SetPosition(GARET, PIXELS(328), PIXELS(168));
@@ -2031,7 +2031,7 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
 /// Plays Saturos and Menardi's defeat, the party's discussion and the beacon's
 /// eruption.
 static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   VenusLighthouseAerie_ShowSaturosAndMenardiFall();
   VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat();
   VenusLighthouseAerie_EruptBeacon();
@@ -2043,7 +2043,7 @@ static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
 /// clings to the broken aerie, then the world map returns with its music still
 /// playing (VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP).
 static void VenusLighthouseAerie_ShowShebaInDanger(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
   VenusLighthouseAerie_TryToPreventFall();
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
@@ -2066,7 +2066,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   struct FieldActor *actor;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventGetViewCenter()->motionFlags = 0;
   Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
   Map_CopyCellsTo(39, 72, 11, 72, 16, 20);

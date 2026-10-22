@@ -22,7 +22,7 @@ BattleEffect_RunAzul:
 	ldr r6, [r5, #100]
 	bl Func_0813ba50
 	movs r0, #3
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0815ce50
 	movs r2, #128
 	lsls r2, r2, #19

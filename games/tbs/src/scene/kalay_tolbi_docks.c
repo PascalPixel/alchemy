@@ -334,7 +334,7 @@ const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void) {
 /// TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK clears): the leader walks a few steps and
 /// a man on the docks hurries over to stand beside the party.
 static void KalayTolbiDocks_GreetArrivals(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   GameFlag_Set(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 296);
   Actor_SetSpeed(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 0x13333, 0x9999);
@@ -379,7 +379,7 @@ const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
 /// and he says that past Silk Road's end the way is across the Karagol Sea; no,
 /// and he suggests a long look around the ship.
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgKalayWantGoToTolbi);
   Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Engine_EventEnd();
@@ -390,7 +390,7 @@ static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
 /// expensive for the daughter's mother to come (sets
 /// FLAG_KALAY_DOCKS_CARRYING_MESSAGE); afterwards she repeats the message.
 static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
     Engine_EventSetMessage(MsgKalayGoingTakeShip);
     Event_OpenMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
@@ -414,12 +414,12 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
 static void KalayTolbiDocks_RemindBoardShip(void) {
 #if !TBS_PATCH_3
   ((void)Object_GetById(ACTOR_PARTY_LEADER));
-  Engine_EventBegin();
+  Engine_EventStart();
 #endif
   if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
 #if TBS_PATCH_3
-      Engine_EventBegin();
+      Engine_EventStart();
 #endif
       Engine_EventSetMessage(MsgKalayFinishedOutHereBoardShip);
       Event_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
@@ -444,7 +444,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   cardinalFacing = ((leader->facing + 0x2000) & ~0x3fff);
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
       Engine_EventSetMessage(MsgKalayFinishedOutHereBoardShip);
@@ -498,7 +498,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
 /// the tickets: hand one over to board, give it to the ticket taker, or wait
 /// on board for the ship to sail.
 static void KalayTolbiDocks_TalkToDockWorker(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     Engine_EventSetMessage(MsgKalayBoardWaitSetSail);
@@ -532,7 +532,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 #endif
 
   ticketPrice = 600;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     Engine_EventSetMessage(MsgKalayHandInTicketPlank);
     Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
@@ -597,7 +597,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 /// he will not believe they fought the monsters alone, for Kaja killed the
 /// Kraken.
 static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgKalayHearScaryTrip);
   Engine_EventAskYesNo(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 0);
   Engine_EventEnd();
@@ -605,7 +605,7 @@ static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
 
 /// Tolbi Docks: a young man asks whether the upset tourists got seasick.
 static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgKalayTouristsLookUpset);
   Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, 0);
   Engine_EventEnd();
@@ -615,7 +615,7 @@ static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
 /// party carries the message from her parents she asks for it and thanks them
 /// once it is given; otherwise she turns back to the sea.
 static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
     Actor_FaceActor(ACTOR_WAITING_DAUGHTER, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -660,7 +660,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 /// TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS, which in Kalay Docks is
 /// KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_PlayCue(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
@@ -820,7 +820,7 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Actor_SetPosition(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, PIXELS(328),
                     PIXELS(1424));
@@ -919,7 +919,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   struct FieldActor *actor;
 
   GameFlag_Set(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgKalayReturnedTicketCost);
   actor = Object_GetById(ACTOR_STRANDED_WOMAN);

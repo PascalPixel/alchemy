@@ -314,6 +314,6 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
 ///
 /// Nothing in The Broken Seal calls it; The Lost Age keeps it too.
 UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
-  BattleEffect_BeginTiledCanvas(1);
+  BattleEffect_StartTiledCanvas(1);
   BattleEffect_EndCanvasLayer();
 }

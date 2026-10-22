@@ -131,7 +131,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
     if ((s32)event->value < 0x10000) {
       s32 nearbyActor = Field_FindNearbyTalkTarget(gGameState.selectedActor);
-      FieldEvent_Begin();
+      FieldEvent_Start();
       Event_SetMessageId(event->value);
       FieldEvent_ShowMessageAndWait(nearbyActor, 0);
       FieldEvent_End();

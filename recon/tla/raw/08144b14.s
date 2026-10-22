@@ -21,7 +21,7 @@ Func_08144b14:
 	ldr r3, [r3, #96]
 	adds r5, r1, #0
 	str r3, [sp, #52]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r1, r11
 	ldr r3, [r1, #28]
 	cmp r3, #1

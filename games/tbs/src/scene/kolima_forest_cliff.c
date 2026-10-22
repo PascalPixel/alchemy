@@ -74,7 +74,7 @@ const struct ScenePlacement *KolimaForestCliff_GetPlacements(void) {
 /// become ground the party can cross (sets FLAG_SCENE_TEMP_01).
 static void KolimaForestCliff_PushLog(void) {
   struct StagedActorProbe result;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&result)) {
     SceneActor_MoveAndRedraw(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&

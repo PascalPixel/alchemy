@@ -21,7 +21,7 @@ Func_0816a2d8:
 	str r1, [sp, #8]
 	ldr r3, [r3, #96]
 	mov r9, r3
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, [sp, #12]
 	subs r3, #3
 	cmp r3, #2

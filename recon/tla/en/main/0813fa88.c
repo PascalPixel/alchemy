@@ -3,7 +3,7 @@
 // Twin: The Broken Seal's BattleEffect_StartElementStreaks, the start of the
 // light-streak backdrop the scenes raise behind the battle (BattleEffect_EndElementStreaks,
 // already C, takes it down; both are reached through the far-call table,
-// table_47.s). ⚓️ rebuilt it: instead of BattleEffect_BeginCanvasLayer it sets
+// table_47.s). ⚓️ rebuilt it: instead of BattleEffect_StartCanvasLayer it sets
 // the BG2 canvas up step by step, a frame at a time, as 0813eb70 does; it
 // fades the battle background's colours over 24 frames (BattleEffect_DimBackgroundStep), and
 // the streaks are halved into VRAM each frame (BattleEffect_TransferHalvedCanvas) rather than

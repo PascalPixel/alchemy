@@ -251,7 +251,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// whether it stopped in Xian, whose Master Feh is close to Master Hama.
 static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
   Engine_EventOpenMessage(ACTOR_MONK_ASKING_ABOUT_THE_EAST, 0);
 
@@ -269,7 +269,7 @@ static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
 /// The meditating monk explains meditation. He's in Lama Temple until Hsu is
 /// freed, and first asks whether the party knows what meditation is.
 static void LamaTemple_TalkToMeditatingMonk(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgMountainDoKnowMeditation);
   Engine_EventAskYesNo(ACTOR_MEDITATING_MONK, 0);
   Engine_EventEnd();
@@ -278,7 +278,7 @@ static void LamaTemple_TalkToMeditatingMonk(void) {
 /// The monk in Lama Temple who, until Hsu is freed, praises Master Hama as the
 /// greatest master of Chi.
 static void LamaTemple_TalkToChiMonk(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgMountainDidKnowMasterHamaGreatest);
   Engine_EventAskYesNo(ACTOR_CHI_MONK, 0);
   Engine_EventEnd();
@@ -305,7 +305,7 @@ static void LamaTemple_EnterHamasRoom(void) {
 /// Hama told him, and Garet, Ivan and Mia rejoin the party. Garet's two
 /// questions are yes or no choices.
 static void LamaTemple_RunHamasFarewell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_TEMPLE_HAMA, PIXELS(136), PIXELS(168));
   Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP, 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(144), PIXELS(200));
@@ -503,7 +503,7 @@ static void LamaTemple_RunHamasFarewell(void) {
 /// Searching the writing on a wall in Lama Temple reads its hint toward Reveal.
 static void LamaTemple_ReadWallWriting(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgMountainHeWhoHasPowerSee, 1);
   Engine_EventEnd();
@@ -535,7 +535,7 @@ static void LamaTemple_TalkToHealer(void) {
 
   u32 heading = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (FACING_IS_NORTH(heading)) {
     Engine_SanctumOpen(ACTOR_TRAVELING_HEALER);
   } else {
@@ -554,7 +554,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
   struct FieldActor *leader;
 
   if (GameFlag_IsSet(FLAG_FEIZHI_WENT_TO_HSU)) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetPosition(ACTOR_FEIZHI, PIXELS(536), PIXELS(216));
     Engine_EventSetMessage(MsgMountainYahhSilkRoadBouldersBlock);
     Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
@@ -618,7 +618,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
 /// asks whether she should return to Xian, and either way decides to keep
 /// looking for Hsu.
 static void AlpineCrossing_TalkToFeizhi(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_OpenMessage(ACTOR_FEIZHI, 0);
@@ -638,7 +638,7 @@ static void AlpineCrossing_TalkToFeizhi(void) {
 /// asks if he is okay, and he is unhurt but cannot move; none of them knows how
 /// to free him.
 static void AlpineCrossing_HamaReachesHsu(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   // Reveal Hsu's position before Hama and Feizhi discuss freeing him.
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -681,7 +681,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
 /// Temple.
 static void AlpineCrossing_LiftBoulder(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetAttachedEffect(ACTOR_HAMA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorStartRepeatedMotion(ACTOR_HAMA, 2);
@@ -804,7 +804,7 @@ static void AlpineCrossing_LiftBoulder(void) {
 /// Searching the signpost at the Alpine Crossing.
 /// "North: Altin Mine. West: Lama Temple."
 static void AlpineCrossing_ReadSignpost(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgMountainNorthAltinMineWestLama, 1);
   Engine_EventEnd();
@@ -861,7 +861,7 @@ static void AlpineCrossing_PrepareFrost(void) {
 /// leader each frame, and the cells beside it (and their copy at (20, 18))
 /// become walkable. Also run on entry while the pillar is already frozen.
 static void AlpineCrossing_FreezePuddle(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   // Stop the pillar and install its height-dependent drawing priority.
   Object_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags &=
@@ -888,7 +888,7 @@ static void AlpineCrossing_FreezePuddle(void) {
 /// climb: the two cells above it take the climbable attributes kept at
 /// (14, 6). Also run on entry while the vine is already grown.
 static void AlpineCrossing_GrowSprout(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
   Object_GetById(ACTOR_PLANT)->collisionFlags = (u8)~ACTOR_SOLID;
   Engine_GameFlagSet(FLAG_SPROUT_GROWN);

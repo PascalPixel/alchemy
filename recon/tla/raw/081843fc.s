@@ -36,7 +36,7 @@ BattleEffect_RunCatastrophe:
 	bl VramBlock_Reset93Far
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r6, #128
 	ldr r3, .L_08184484
 	lsls r6, r6, #19

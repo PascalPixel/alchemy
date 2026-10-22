@@ -63,7 +63,7 @@ extern s8 gHelmSplitter_CellBiasY[];
 extern u8 gHelmSplitter_CellWidths[];
 extern u8 gHelmSplitter_CellHeights[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -105,7 +105,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
   s32 i;
 
   // Set up the canvas and load the swirl and the spark sheets.
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_WRITE16_POOLED(REG_BLDALPHA, 0x1010);
   if (effect->variant == 0) {
     // FAKEMATCH: as above, but here the pin alone loads the value between

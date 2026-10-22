@@ -23,7 +23,7 @@ BattleEffect_RunFirePuppet:
 	ldr r2, [r3, #48]
 	str r2, [sp, #52]
 	ldr r5, [r3, #100]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r0, [sp, #68]
 	ldr r3, [r0, #4]
 	cmp r3, #0

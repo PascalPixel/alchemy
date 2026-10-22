@@ -79,8 +79,8 @@
 	import IoWriteQueue_Store32, IoWriteQueue_Store32Far
 	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
 	import Sound_LoadPresetParameters, Sound_LoadPresetParametersFar
-	import SerialRuntime_BeginSend, SerialRuntime_BeginSendFar
-	import SerialRuntime_BeginReceive, SerialRuntime_BeginReceiveFar
+	import SerialRuntime_StartSend, SerialRuntime_StartSendFar
+	import SerialRuntime_StartReceive, SerialRuntime_StartReceiveFar
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
 	import Scheduler_SetTaskFlags, Scheduler_SetTaskFlagsFar
 @ Field bank (far_call/FIELD.S)
@@ -125,7 +125,7 @@
 	import ObjectSystem_SuspendProjectionAndShowSprites, ObjectSystem_SuspendProjectionAndShowSpritesFar
 	import ObjectSystem_ResumeProjectionAndHideLayers, ObjectSystem_ResumeProjectionAndHideLayersFar
 	import ObjectDispatch_RegisterChildMetadata, ObjectDispatch_RegisterChildMetadataFar
-	import WorldMap_BeginStillView, WorldMap_BeginStillViewFar
+	import WorldMap_StartStillView, WorldMap_StartStillViewFar
 	import Map_LoadAreaGraphics, Map_LoadAreaGraphicsFar
 	import Animation_ApplyChildValues, Animation_ApplyChildValuesFar
 	import Engine_ObjectSetPartPalettes, Animation_ApplyChildValuesFar
@@ -229,7 +229,7 @@
 	import PartyInventory_HasSpace, PartyInventory_HasSpaceFar
 	import Party_RestoreHpPp, Party_RestoreHpPpFar
 	import Party_RestorePpOfLitElements, Party_RestorePpOfLitElementsFar
-	import Party_BeginChildhood, Party_BeginChildhoodFar
+	import Party_StartChildhood, Party_StartChildhoodFar
 	import Party_EndChildhood, Party_EndChildhoodFar
 	import Inventory_Discard, Inventory_DiscardFar
 	import Party_GetAverageLevel, Party_GetAverageLevelFar
@@ -243,7 +243,7 @@
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
 @ Object bank (far_call/OBJECT.S)
 	import Engine_EventWait, FieldEvent_WaitFramesFar
-	import Engine_EventBegin, FieldEvent_BeginFar
+	import Engine_EventStart, FieldEvent_StartFar
 	import Engine_EventEnd, FieldEvent_EndFar
 	import Event_CallWithLastActiveObjectId, Event_CallWithLastActiveObjectIdFar
 	import FieldScene_PrepareActors, Scene_AssignViewFlagsFar
@@ -355,14 +355,14 @@
 	import Engine_ItemShowFound, FieldEffect_StartEffectObject22Far
 	import Engine_MapObjectSetPosition, Marker_SetActorPositionFar
 	import Marker_MoveLeaderAway, Marker_MoveLeaderAwayFar
-	import WorldMap_BeginEvent, WorldMap_BeginEventFar
+	import WorldMap_StartEvent, WorldMap_StartEventFar
 	import WorldMap_EndEvent, WorldMap_EndEventFar
 	import Engine_ActorLookup, ObjectTable_GetFar
 	import FieldEffect_StartFadeOverlay, FieldEffect_StartFadeOverlayFar
 	import Engine_PsynergyPlayEffect, Field_DispatchTypeHandlerFar
 	import Field_DispatchTypeHandler, Field_DispatchTypeHandlerFar
 	import FieldEffect_LoadActionEffectResources, FieldEffect_LoadActionEffectResourcesFar
-	import Engine_PsynergyBegin, FieldEffect_LoadActionEffectResourcesFar
+	import Engine_PsynergyStart, FieldEffect_LoadActionEffectResourcesFar
 	import FieldEffect_SetupObjectPair, FieldEffect_SetupObjectPairFar
 	import Engine_PsynergySetTarget, FieldEffect_SetupObjectPairFar
 	import FieldEffect_StopCasterHook, FieldEffect_StopCasterHookFar

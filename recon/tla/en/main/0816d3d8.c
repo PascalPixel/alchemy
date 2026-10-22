@@ -69,7 +69,7 @@ extern u8 gData_081974ad[];
 extern u16 gData_081974bc[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
@@ -115,7 +115,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   {
     /* FAKEMATCH: the native loads the BG2PA halfword from the pool before it
      * starts the register's address; pinned to r3 in a one-pass block it

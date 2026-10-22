@@ -50,10 +50,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
 
   // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
-  // or 1.5 times, or twice as BattleEffect_BeginCanvasLayer left it.
+  // or 1.5 times, or twice as BattleEffect_StartCanvasLayer left it.
   if (work->effect->variant == EFFECT_VARIANT_BASIC)
     REG_BG2PA = Q_8_8(0.8);
   else if (work->effect->variant == EFFECT_VARIANT_STRONGER)

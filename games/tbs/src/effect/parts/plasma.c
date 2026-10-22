@@ -57,7 +57,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -264,15 +264,15 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == SPARK_GROUPS_NOVA) {
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
     originX = 60;
     originY = 48;
   } else if (mode == SPARK_GROUPS_DYNAMITE) {
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
     originX = 60;
     originY = 64;
   } else {
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     originX = screenPosition.x / 2;
     originY = screenPosition.y + 48;

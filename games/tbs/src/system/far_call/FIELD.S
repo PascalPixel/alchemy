@@ -74,7 +74,7 @@ FarCall_FieldTable:
 	overlay_veneer ObjectDispatch_SetChildFixedScale
 	export CheckMapPositionCellOccupiedFar, CheckMapPositionCellOccupied
 	export ObjectDispatch_RegisterChildMetadataFar, ObjectDispatch_RegisterChildMetadata
-	export WorldMap_BeginStillViewFar, WorldMap_BeginStillView
+	export WorldMap_StartStillViewFar, WorldMap_StartStillView
 	export Map_LoadAreaGraphicsFar, Map_LoadAreaGraphics
 	export Animation_ApplyChildValuesFar, Animation_ApplyChildValues
 	export ObjectGroup_SetChildValueUnlessFifteenFar, ObjectGroup_SetChildValueUnlessFifteen

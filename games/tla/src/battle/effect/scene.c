@@ -2,13 +2,13 @@
 #include "ram_buffer.h"
 #include "effect_slot.h"
 
-void Field_BeginPaletteTransition(s32 frames);
+void Field_StartPaletteTransition(s32 frames);
 
 /// Fades the palettes back to the saved ones over the given frames.
-void BattleEffect_FadeToSavedPalettes(s32 frames) { Field_BeginPaletteTransition(frames); }
+void BattleEffect_FadeToSavedPalettes(s32 frames) { Field_StartPaletteTransition(frames); }
 
 void BattleEffect_PrepareBufferInterpolation(void) {
-  Field_BeginPaletteTransition(8);
+  Field_StartPaletteTransition(8);
 }
 
 struct EffectVector {

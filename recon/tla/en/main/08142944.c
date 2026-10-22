@@ -96,7 +96,7 @@ extern char ResourceId_Data0DA;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_EffectPalette03;
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
@@ -151,7 +151,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
   work->framesSinceTransfer = 1;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];

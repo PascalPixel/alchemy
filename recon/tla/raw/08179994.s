@@ -22,7 +22,7 @@ BattleEffect_RunJuggle:
 	ldr r3, [r3, #100]
 	movs r0, #1
 	str r3, [sp, #52]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081799f4
 	movs r2, #128
 	lsls r2, r2, #19

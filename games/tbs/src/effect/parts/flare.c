@@ -41,7 +41,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);

@@ -67,7 +67,7 @@ extern const u8 Data_08199e68[];
 extern const s8 Data_08199e6c[];
 
 void Func_0813ba50(void);
-void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 value);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -138,7 +138,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   Func_0813ba50();
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,

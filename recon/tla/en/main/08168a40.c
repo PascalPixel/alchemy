@@ -81,7 +81,7 @@ extern u8 gData_08198ae3[];          // the row's heights
 extern u16 gData_08197410[];         // ☀️ gBattleEffect_MoteCells
 extern u32 gCameraSceneParameters[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_08163c2c(s32 mode, s32 value);
@@ -104,7 +104,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
@@ -143,7 +143,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
 
   // Open the canvas over the forest and spawn the row.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   REG_BG2CNT = 0x784;
   *(u16 *)0x05000000 = 0;

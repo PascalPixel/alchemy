@@ -71,7 +71,7 @@ extern const u16 gData_08199364[]; // a textured square
 extern const u16 Data_081991e0[];  // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
@@ -80,7 +80,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void Func_0815b434(void *map, s32 size, s32 scale); // a shaded disc
 void Func_0818caa8(void *picture, s32 x, s32 y, s32 size);
@@ -127,7 +127,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(104, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x1000, 0,

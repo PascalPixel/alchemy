@@ -156,7 +156,7 @@ static void Colosso_TakePlaceForMatch(void) {
   s32 *transition;
   s32 flagBase;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
   for (actorId = 8; actorId <= 66; actorId++) {
     struct FieldActor *actor = Object_GetById(actorId);
@@ -230,7 +230,7 @@ void Colosso_AskDoneCheering(s32 id) {
   Object_GetById(id);
   slot = gGameState.selectedActor;
   obj = Object_GetById(slot);
-  Engine_EventBegin();
+  Engine_EventStart();
   msg = MsgColossoCheering;
   Engine_EventSetMessage(msg);
   Engine_EventOpenMessage(id, 0);
@@ -279,7 +279,7 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   actor = Object_GetById(actorId);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (GetPartyMemberCount() <= 1) {
     Engine_EventSetMessage(MsgColossoIsaacDidGetGoodLook);

@@ -111,7 +111,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   if (mode == GROWING_COLUMNS_PILLARS) {
@@ -352,7 +352,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   BattleEffect_RunDjinniEntrance(effect, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
                                  effect->side, DJINNI_ANCHOR_CENTRE, &originX,
                                  &originY);
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
@@ -461,7 +461,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

@@ -25,7 +25,7 @@
 	.set import.Unit_LevelUpTo, 1
 	.set import.PartyInventory_HasSpace, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.endif
 	.ifdef TBS_EDITION_JA
 	.set import.Engine_EventEnd, 1

@@ -42,10 +42,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
@@ -113,7 +113,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   // Set up: the rune picture with its palette, the dots, the flares, the
   // Djinn with its palette, and a transfer that fades the canvas by 4 each
   // frame.
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   if (effect->prelude == 1)
     Func_0815585c(effect, effect->side << 4 | 3, origin, originSize);
   REG_BG2PA = 0x100;

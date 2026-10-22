@@ -21,7 +21,7 @@ BattleEffect_RunTorch:
 	movs r0, #128
 	lsls r0, r0, #6
 	str r3, [sp, #16]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #20]
 	movs r3, #70
 	ldr r1, [r2, #4]

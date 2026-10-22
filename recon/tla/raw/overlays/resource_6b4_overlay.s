@@ -1765,7 +1765,7 @@ Func_02000564:
 	movs r0, #8
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #1
-	bl Field_BeginPaletteTransition
+	bl Field_StartPaletteTransition
 	movs r1, #136
 	lsls r1, r1, #5
 	adds r1, #16
@@ -1920,7 +1920,7 @@ Func_02000564:
 	movs r0, #9
 	bl Object_SetModeById
 	movs r0, #32
-	bl Field_BeginPaletteTransition
+	bl Field_StartPaletteTransition
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r2, #5

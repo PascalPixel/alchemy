@@ -46,13 +46,13 @@
 #define BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void);         // Palette_StepFadeTransfer
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
@@ -118,11 +118,11 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   // Set up: the canvas (mode 7 with its prelude), the gold shells and the
   // smoke with their palettes, then the mode's palette.
   if (mode == 7) {
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
     Func_0815585c(effect, effect->side << 4 | 0x44, preludeOrigin, preludeSize);
     REG_BG2CNT = 0x785;
   } else {
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,

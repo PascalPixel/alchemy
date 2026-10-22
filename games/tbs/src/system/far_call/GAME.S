@@ -82,7 +82,7 @@ FarCall_GameTable:
 	export Unit_GetExperienceForLevelFar, Unit_GetExperienceForLevel
 	export Party_RestoreHpPpFar, Party_RestoreHpPp
 	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
-	export Party_BeginChildhoodFar, Party_BeginChildhood
+	export Party_StartChildhoodFar, Party_StartChildhood
 	export Party_EndChildhoodFar, Party_EndChildhood
 	overlay_veneer Unit_RatioNoOp
 	export Djinn_AddToLeastLoadedOwnerFar, Djinn_AddToLeastLoadedOwner

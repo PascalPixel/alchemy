@@ -22,7 +22,7 @@ BattleEffect_RunBolt:
 	str r1, [sp, #44]
 	ldr r2, [r5, #100]
 	str r2, [sp, #24]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r1, #19
 	movs r0, #104
 	bl BattleEffect_LoadBlitter

@@ -39,7 +39,7 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_PartyAddMembers, 1
 	.set import.Engine_PartyGiveItem, 1
@@ -84,7 +84,7 @@
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.Engine_PsynergyBegin, 1
+	.set import.Engine_PsynergyStart, 1
 	.set import.FieldEffect_End, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.FieldEffect_SetQueuedSoundAndPlay, 1

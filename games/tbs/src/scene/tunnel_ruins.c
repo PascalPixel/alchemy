@@ -271,7 +271,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 
   if (FieldObject_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(actor, target) == 0) {
-    EV_BEGIN();
+    EV_START();
     Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -467,7 +467,7 @@ static void Event_HopDownStep(void) {
   struct EffectOptions options;
   u32 i;
 
-  EV_BEGIN();
+  EV_START();
   Object_SetMode(leader, ANIMATION_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
   Object_SetMode(leader, 1);
@@ -558,7 +558,7 @@ const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
 /// Walking into the first pair of pillars pushes them along.
 /// Reached by walking into cell code 24 in TunnelRuinsGreatStatue.
 static void Event_PushFirstPillars(void) {
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   StagedActor_AdvancePair();
   TunnelRuins_UpdateFirstPillarCells();
@@ -582,7 +582,7 @@ static void Event_HopWest(void) {
 /// Walking into the second pair of pillars pushes them along.
 /// Reached by walking into cell code 26 in TunnelRuinsGreatStatue.
 static void Event_PushSecondPillars(void) {
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   StagedActor_AdvancePair();
   TunnelRuins_UpdateSecondPillarCells();
@@ -613,7 +613,7 @@ static void Event_HopEast(void) {
 /// Walking into the small pillars pushes the one in front along.
 /// Reached by walking into cell code 28 in TunnelRuinsGreatStatue.
 static void Event_PushSmallPillars(void) {
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   StagedActor_AdvancePair();
@@ -727,7 +727,7 @@ static void Event_SinkPillarA(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
 
-  EV_BEGIN();
+  EV_START();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_A);
   if ((actor->x.fixed >> 20) == 46) {
     WAIT(30);
@@ -774,7 +774,7 @@ static void Event_SinkPillarA(void) {
 /// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR).
 /// Reached by walking into cell code 29 in TunnelRuinsGreatStatue.
 static void Event_PushSinkingPillarA(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_SinkPillarA();
@@ -809,7 +809,7 @@ static void Event_SinkPillarB(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
 
-  EV_BEGIN();
+  EV_START();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_B);
   if ((actor->x.fixed >> 20) == 48) {
     if (FLAG_CHECK(FLAG_SCENE_TEMP_02) != 0) {
@@ -855,7 +855,7 @@ static void Event_SinkPillarB(void) {
 /// Reached by walking into cell code 30, or east into 32 before Douse has
 /// soaked it, in TunnelRuinsGreatStatue.
 static void Event_PushSinkingPillarB(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_SinkPillarB();
@@ -863,7 +863,7 @@ static void Event_PushSinkingPillarB(void) {
 
 /// As Douse begins on sinking pillar B, water splashes on it.
 /// Reached by Douse's first phase on sinking pillar B until it is soaked.
-static void Event_DouseBeginsOnPillarB(void) {
+static void Event_DouseStartsOnPillarB(void) {
   Actor_SetActionScript(ACTOR_SINKING_PILLAR_B, gTunnelRuins_DouseSplashScript);
 }
 
@@ -895,7 +895,7 @@ static void Event_FreezePuddleB(void) {
 /// open here.
 /// Reached by searching cell code 40 in TunnelRuinsGreatStatue.
 static void Event_ReadFirstStatue(void) {
-  EV_BEGIN();
+  EV_START();
   OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
@@ -910,14 +910,14 @@ static void Event_ReadFirstStatue(void) {
 /// happens.
 /// Reached by Move on the Douse pillar until FLAG_SCENE_TEMP_04 is set.
 static void Event_MoveDousePillar(void) {
-  EV_BEGIN();
+  EV_START();
   EV_END();
 }
 
 /// Walking into the Douse pillar pushes it along.
 /// Reached by walking into cell code 25 in TunnelRuinsLadyStatues.
 static void Event_PushDousePillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
   Event_MoveDousePillar();
@@ -927,7 +927,7 @@ static void Event_PushDousePillar(void) {
 /// puddle follows it from then on.
 /// Reached by Douse's first phase on the Douse pillar until it is soaked; sets
 /// FLAG_SCENE_TEMP_03 and gives the puddle its update hook.
-static void Event_DouseBeginsOnPillar(void) {
+static void Event_DouseStartsOnPillar(void) {
   struct FieldActor *puddle;
 
   Actor_SetActionScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
@@ -950,7 +950,7 @@ static void Event_FreezeDousePuddle(void) {
   s32 column;
   s32 row;
 
-  EV_BEGIN();
+  EV_START();
   Engine_ActorSetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
   OBJECT_MODE(ACTOR_DOUSE_PUDDLE, 1);
   Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 0);
@@ -1091,7 +1091,7 @@ static void Event_SetStoneOnBalance(void) {
   s32 j;
   s32 settledIndex;
 
-  EV_BEGIN();
+  EV_START();
   for (i = 0; i <= 2; i++) {
     if (Object_GetById(i + ACTOR_CARRY_STONE_A)->sprite->image.priority == 3 &&
         FLAG_CHECK(i + FLAG_SCENE_TEMP_00) == 0) {
@@ -1172,7 +1172,7 @@ static void Event_SetStoneOnBalance(void) {
 /// Walking into a pushable object pushes it along.
 /// Reached by walking into cell codes 28 and 30 in TunnelRuinsLadyStatues.
 static void Event_PushObject(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   EV_END();
 }
@@ -1182,7 +1182,7 @@ static void Event_PushObject(void) {
 /// Reached by Move on either east pillar; sets or clears
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST.
 static void Event_MoveEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
 
   if ((Object_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
     FLAG_SET(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
@@ -1203,7 +1203,7 @@ static void Event_MoveEastPillar(void) {
 /// Walking into an east pillar pushes it along, and its place is kept.
 /// Reached by walking east into cell code 29 in TunnelRuinsLadyStatues.
 static void Event_PushEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   Event_MoveEastPillar();
   EV_END();
@@ -1246,7 +1246,7 @@ static void Event_MoveLadyStatue(void) {
   s32 row;
 
   correctPositions = 0;
-  EV_BEGIN();
+  EV_START();
   Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   actor = Object_GetById(ACTOR_LADY_STATUE_A);
   column = actor->x.fixed;
@@ -1351,7 +1351,7 @@ static void Event_MoveLadyStatue(void) {
 /// the door.
 /// Reached by walking into cell code 41 in TunnelRuinsLadyStatues.
 static void Event_PushLadyStatue(void) {
-  EV_BEGIN();
+  EV_START();
   {
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   }
@@ -1364,7 +1364,7 @@ static void Event_PushLadyStatue(void) {
 /// statues. "The statue seems to speak to your soul..." Reached by searching
 /// cell code 42 in TunnelRuinsLadyStatues.
 static void Event_ReadSecondStatue(void) {
-  EV_BEGIN();
+  EV_START();
   OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   EV_END();
@@ -1373,7 +1373,7 @@ static void Event_ReadSecondStatue(void) {
 /// Searching the door in TunnelRuinsLadyStatues: it is tightly locked.
 /// Reached by searching cell code 20 in TunnelRuinsLadyStatues.
 static void Event_SearchLockedDoor(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   EV_END();
 }
@@ -2222,7 +2222,7 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_FreezePuddleA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_B, FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR, EVENT_SCRIPT(Event_SinkPillarB)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_FreezePuddleB)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DouseBeginsOnPillarB)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DouseStartsOnPillarB)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DousePillarB)},
     {SCENE_EVENTS_END},
 };
@@ -2265,7 +2265,7 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {SEARCH(SEARCH_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {SEARCH(SEARCH_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_MoveDousePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_DouseBeginsOnPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_DouseStartsOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PUDDLE, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_FreezeDousePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_STONE_A, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_STONE_B, CONDITION_ALWAYS, 0},

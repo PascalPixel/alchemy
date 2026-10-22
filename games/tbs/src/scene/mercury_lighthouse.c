@@ -459,7 +459,7 @@ static void MercuryLighthouse_ChargeLightsOnLower(void) {
 /// MercuryLighthouseExterior, searching trigger 10. "Strange forces are at
 /// work..."
 static void MercuryLighthouse_InspectBlockedPassage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
   Engine_EventEnd();
 }
@@ -535,7 +535,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
   struct StagedActorProbe probe;
   s32 column;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     // Each pipe controls one channel; restore the connected water tiles too.
     switch ((u32)probe.actorSlot) {
@@ -601,7 +601,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   struct EventWork *eventWork;
 
   eventWork = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   FieldScheduler_AddCallback(MercuryLighthouse_SparkleAroundLeader,
                              TASK_PRIORITY_SCENE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
@@ -632,7 +632,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
 /// while the gate is shut: it moves a step, and may come to rest on the floor
 /// switch.
 static void MercuryLighthouse_PushGateSwitchStatue(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   StagedActor_AdvancePair();
   Engine_EventEnd();
   MercuryLighthouse_OpenGateWithMovedStatue();
@@ -648,7 +648,7 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
 
   column = Object_GetById(ACTOR_GATE_STATUE)->x.fixed / PIXELS(16);
   row = Object_GetById(ACTOR_GATE_STATUE)->z.fixed / PIXELS(16);
-  Engine_EventBegin();
+  Engine_EventStart();
   if (column == 5 && row == 13) {
     Object_GetById(ACTOR_GATE_STATUE)->y.fixed += -PIXELS(2);
     statue = Object_GetById(ACTOR_GATE_STATUE);
@@ -677,7 +677,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
     x = Object_GetById(ACTOR_PARTY_LEADER)->x.part.pixel;
     z = Object_GetById(ACTOR_PARTY_LEADER)->z.part.pixel;
     if ((u32)(x - 84) <= 7 && z > 211 && z <= 219) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_GameFlagSet(FLAG_LEADER_ON_FLOOR_SWITCH);
       Engine_EventWait(5);
       Object_GetById(ACTOR_PARTY_LEADER)->y.fixed += -PIXELS(2);
@@ -697,7 +697,7 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
   struct FieldActor *leader;
 
   if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += PIXELS(2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -900,7 +900,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   s32 pillarId;
   s32 column;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     pillarId = probe.actorSlot;
     // The first pipe opens the stairs; the other starts or stops the
@@ -961,7 +961,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
 /// or 12) while the stair gate is shut: it moves a step and may come to rest on
 /// the floor switch.
 static void MercuryLighthouse_PushStairSwitchStatue(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   StagedActor_AdvancePair();
   Engine_EventEnd();
   MercuryLighthouse_OpenStairGateWithMovedStatue();
@@ -974,7 +974,7 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
   s32 column = Object_GetById(ACTOR_FALLEN_STATUE)->x.fixed / PIXELS(16);
   s32 row = Object_GetById(ACTOR_FALLEN_STATUE)->z.fixed / PIXELS(16);
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (column == 10 && row == 23) {
     struct FieldActor *statue;
     Object_GetById(ACTOR_FALLEN_STATUE)->y.fixed += -PIXELS(2);
@@ -1005,7 +1005,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
     return;
   if (z >= 380)
     return;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_GameFlagSet(FLAG_LEADER_ON_FLOOR_SWITCH);
   Engine_EventWait(5);
   Object_GetById(ACTOR_PARTY_LEADER)->y.fixed -= PIXELS(2);
@@ -1023,7 +1023,7 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   struct FieldActor *leader;
 
   if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += PIXELS(2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1235,7 +1235,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
   s32 destinationColumn;
   s32 startColumn;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     switch (probe.actorSlot) {
     case ACTOR_DOOR_ROOM_PIPE:
@@ -1330,7 +1330,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
 /// MercuryLighthouseUpper, pushing a crossing statue (walking into trigger 47):
 /// it moves a step and where the statues rest is saved.
 static void MercuryLighthouse_PushAndSaveCrossingStatuePositions(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   StagedActor_AdvancePair();
   MercuryLighthouse_SyncCrossingStatueFlags();
   Engine_EventEnd();
@@ -1344,7 +1344,7 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
   s32 positionFlag;
   s32 column;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Four pillars use paired flags for their two saved stopping columns.
   for (statueIndex = 0, positionFlag = FLAG_FIRST_ROW_STATUE; statueIndex <= 3;
        statueIndex++, positionFlag += 2) {
@@ -1385,7 +1385,7 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
 static void MercuryLighthouse_OpenMovedStatueCrossing(void) {
   s32 column;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   column = Object_GetById(ACTOR_GAP_STATUE)->x.fixed / PIXELS(16);
   if (column == 28) {
     Engine_GameFlagSet(FLAG_PASSAGE_STATUE_MOVED);
@@ -1438,7 +1438,7 @@ static void MercuryLighthouse_CycleEntrancePalette(void) {
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct FieldActor *mia;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_EventSetMessage(MsgImilSomebodyHere);
@@ -1487,7 +1487,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
 /// MercuryLighthouseExterior, talking to Mia again. "This statue is blocking
 /// the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventSetMessage(MSGNO(MsgImilStatueBlocksEntrance));
@@ -1544,7 +1544,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   if (column < 0)
     column += 0xfffff;
   column >>= 20;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (column != 51) {
   } else {
     // Mia turns: "Did you do that?"
@@ -1801,7 +1801,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 particleVelocityX;
   struct EffectOptions options;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventWait(20);
   // Remove the colored waterfall before rebuilding the passage tiles.
   MercuryLighthouse_FadePaletteToBlack();
@@ -2020,7 +2020,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
 /// "Fountain of Healing / Water of Hermes: It brings rejuvenation to all that
 /// lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgImilHermesHealingWaterFountain), 1);
   Engine_EventEnd();
@@ -2029,7 +2029,7 @@ static void MercuryLighthouse_ReadHermesFountainInscription(void) {
 /// MercuryLighthouseMiddle or MercuryLighthouseUpper, searching trigger 20: the
 /// door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   Engine_EventEnd();
@@ -2040,7 +2040,7 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
 /// water; carrying an Empty Bottle, the item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
     Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
@@ -2061,7 +2061,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 /// (USE_ITEM(ITEM_EMPTY_BOTTLE)) once Saturos is beaten: the bottle becomes
 /// Hermes' Water, once a visit.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   Engine_ItemShowFound(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
@@ -2079,7 +2079,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); on the
 /// second the motion runs alone.
 static void MercuryLighthouse_EnterRisingPassage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouseLower) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 472, 600);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
@@ -2557,7 +2557,7 @@ s32 MercuryLighthouse_Initialize(void) {
       }
       break;
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS_STATUE_FALLS:
-      Engine_EventBegin();
+      Engine_EventStart();
       SetEffectRecordMode(Object_GetById(ACTOR_FALLEN_STATUE), 1);
       Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
@@ -2622,7 +2622,7 @@ s32 MercuryLighthouse_Initialize(void) {
       Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
       Object_GetById(ACTOR_DOOR_STATUE)->motionFlags = keepPartyPosition;
       SetEffectRecordMode(Object_GetById(ACTOR_DOOR_STATUE), 1);
-      Engine_EventBegin();
+      Engine_EventStart();
       Camera_MoveTo(-1, -1, -1, 0);
       Engine_EventGetViewCenter()->motionFlags = keepPartyPosition;
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
@@ -2702,7 +2702,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   if (pillarColumn != 48) {
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   firstMessage = MsgMercurySavedMeAgain;
   Engine_EventSetMessage(firstMessage);
   Engine_EventWait(20);
@@ -2890,7 +2890,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
 
   effectWork = gEffectWork;
   Actor_SetPosition(ACTOR_PLY_TARGET, PIXELS(840), PIXELS(600));
-  Engine_PsynergyBegin(ABILITY_PLY, 1);
+  Engine_PsynergyStart(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(MIA, ACTOR_PLY_TARGET);
   flags = (u8)effectWork->messageMode | POSITIONED_MESSAGE_LOWER;
   effectWork->messageMode = flags;

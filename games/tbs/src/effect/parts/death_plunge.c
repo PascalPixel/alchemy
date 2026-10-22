@@ -57,7 +57,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -202,7 +202,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(1);
   // Invisible to start with.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
@@ -384,7 +384,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   camera = gCameraWork;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // Palette_StepFadeTransfer darkens the backdrop for 24 frames.
   work->fadeFrames = 24;
   work->fadeStep = 0;
@@ -546,7 +546,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
 /// Called through BattleEffect_RunShatteringOpeningFar by
 /// BattlePresentation_RunEntryTransition, as a battle opens. Allocates and
 /// frees its own work, canvas and sheet slots; sets up BG2 as the canvas
-/// itself, as BattleEffect_BeginCanvasLayer would; draws the disc in
+/// itself, as BattleEffect_StartCanvasLayer would; draws the disc in
 /// Ram_MapCellBuffer and copies it over 0x7800 bytes of BG character block 2;
 /// writes background colours 1 to 63 and palettes 6 to 13; reloads the battle
 /// backdrop on BG1 on frame 5, and on its way out restores gBgScroll[1], starts
@@ -596,7 +596,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
   work->effect = effect;
 
-  // Setup. Make BG2 the 128x128 canvas, as BattleEffect_BeginCanvasLayer does
+  // Setup. Make BG2 the 128x128 canvas, as BattleEffect_StartCanvasLayer does
   // but without its waits: twice the width, 16 lines down, inside both
   // windows.
   BattleEffect_ClearActorTimers();
@@ -952,7 +952,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // Setup, as for the element pillar: the backdrop darkens for 24 frames,
   // and the narrow canvas goes 12/16 over all of the background.
   work->fadeFrames = 24;
@@ -1149,7 +1149,7 @@ void BattleEffect_DrawStreaks(void) {
 /// the work and canvas slots, which the end frees; loads the element's
 /// colours over the first 64 of the background palette; adds
 /// BattleEffect_DrawStreaks and the canvas transfer to the scheduler, beside
-/// the backdrop fade BattleEffect_BeginCanvasLayer adds.
+/// the backdrop fade BattleEffect_StartCanvasLayer adds.
 ///
 /// element: the element (enum Element), which picks the palette: Venus
 ///          yellow, Mercury blue, Mars red, Jupiter violet, and a dusty grey
@@ -1161,7 +1161,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
 
   work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

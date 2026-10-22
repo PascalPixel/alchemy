@@ -49,11 +49,11 @@
 #define HI(v) (((s16 *)&(v))[1])
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);      // ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
@@ -152,7 +152,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
   // Set up: the max and additive pair, the whirlwind with its palette, the
   // dots, and the transfer at half strength.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlwindSheet, work->sheet, 1,
                              1);

@@ -46,12 +46,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                   // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                   // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
-void Func_081180e8(s32 phase);              // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);              // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_ArmBg2AffineHBlankDma(void);                      // BattleEffect_ArmBg2AffineHBlankDma
@@ -104,7 +104,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   // Set up: half-and-half blending, the image with its palette, the crescent
   // panels into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
-  BattleEffect_BeginTiledCanvas(0x2000);
+  BattleEffect_StartTiledCanvas(0x2000);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,

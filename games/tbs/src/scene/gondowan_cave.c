@@ -229,7 +229,7 @@ static void Event_IodemAsksWhyTurningBack(void) {
 
   if (FLAG_CHECK(FLAG_IODEM_AT_BABI_LIGHTHOUSE) == 0 &&
       FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-    EV_BEGIN();
+    EV_START();
     // Bring Iodem out of the party before opening his question.
     Engine_ActorSetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -281,7 +281,7 @@ static void Event_IodemAsksWhyTurningBack(void) {
 /// with the party. `I've been waiting for you, Isaac! We should go to Babi
 /// Lighthouse soon.`
 static void Event_IodemRejoins(void) {
-  EV_BEGIN();
+  EV_START();
   OBJECT_FACE(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   OBJECT_FACE(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
@@ -351,7 +351,7 @@ static void Event_LeaveToWorldMapEast(void) {
   struct EventWork *event;
 
   event = gEventWork;
-  EV_BEGIN();
+  EV_START();
   if (FLAG_CHECK(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     GameFlag_Clear(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
@@ -375,7 +375,7 @@ static void Event_JumpAcross(void) { Engine_LeaderCheckAhead(); }
 /// less it spins and leaps into the water, freeing the cell where it stood.
 static void Event_MoveStump(void) {
   Object_GetById(ACTOR_STUMP);
-  EV_BEGIN();
+  EV_START();
   {
     struct FieldActor *actor = Object_GetById(ACTOR_STUMP);
 
@@ -405,7 +405,7 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
 /// Move on the pillar in GondowanCave, and after each push: past column 42 it
 /// drops into the water with a splash, for good.
 static void Event_MovePillar(void) {
-  EV_BEGIN();
+  EV_START();
   if ((Object_GetById(ACTOR_PILLAR)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;

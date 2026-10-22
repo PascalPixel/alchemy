@@ -23,7 +23,7 @@ BattleEffect_RunRamses:
 	ldr r3, [r3, #100]
 	mov r11, r1
 	str r3, [sp, #48]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08165b20
 	movs r3, #160

@@ -88,7 +88,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     }
   }
 
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);

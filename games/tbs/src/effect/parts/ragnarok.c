@@ -53,7 +53,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   // effect or the battle reads it afterwards; the Lost Age's Ragnarok may show.
   effect->variant = EFFECT_VARIANT_STRONGER;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(work->effect->side, blit);
   // The user takes its leap pose and animates fast until the end: an

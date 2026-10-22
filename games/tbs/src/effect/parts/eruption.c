@@ -67,7 +67,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Smoke Bomb's palette is a ramp of greys, two levels to each step of
   // brightness, 0 to 31; Blast takes the fire streak's.

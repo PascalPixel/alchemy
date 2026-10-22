@@ -26,11 +26,11 @@ Func_0818f620:
 	cmp r2, #1
 	bhi .L_0818f652
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	b .L_0818f658
 .L_0818f652:
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 .L_0818f658:
 	ldr r2, .L_0818f688
 	movs r3, #128

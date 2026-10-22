@@ -9,10 +9,10 @@ Game_RunFar:
 	.thumb_func
 FieldEvent_WaitFramesFar:
 	overlay_veneer EventRuntime_Wait
-	.global EventRuntime_BeginFar
+	.global EventRuntime_StartFar
 	.thumb_func
-EventRuntime_BeginFar:
-	overlay_veneer EventRuntime_Begin
+EventRuntime_StartFar:
+	overlay_veneer EventRuntime_Start
 	.global EventRuntime_EndFar
 	.thumb_func
 EventRuntime_EndFar:

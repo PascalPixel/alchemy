@@ -21,7 +21,7 @@ BattleEffect_RunWhirlwind:
 	movs r0, #1
 	ldr r1, [r5, #96]
 	str r1, [sp, #32]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08148f00
 	movs r2, #128
 	lsls r2, r2, #19

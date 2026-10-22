@@ -37,7 +37,7 @@ BattleEffect_RunMegiddo:
 	adds r0, r1, #0
 	bl BattleMotion_ApproachTargetFar
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0818ff84
 	movs r2, #128
 	lsls r2, r2, #19

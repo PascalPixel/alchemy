@@ -1,4 +1,4 @@
-// Near miss, differ 10 of 270: The Broken Seal's BattleEffect_BeginCanvasLayer with
+// Near miss, differ 10 of 270: The Broken Seal's BattleEffect_StartCanvasLayer with
 // ⚓️'s Func_0813ba50 call, DISPCNT 0x1741, Palette_StepFadeTransfer at 0x480,
 // Func_0814355c for the display registers and one more work word cleared. The
 // BLDCNT and WININ rows take BattleEffect_OpenCanvasLayer's devices (canvas.c),
@@ -43,7 +43,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl) {
+void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleFxWork[1];

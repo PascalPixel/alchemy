@@ -42,7 +42,7 @@ Func_0813f518:
 	add r3, r11
 	str r0, [r3]
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #180

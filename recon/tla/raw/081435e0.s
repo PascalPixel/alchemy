@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleEffect_BeginCanvasLayer
+	.global BattleEffect_StartCanvasLayer
 	.thumb_func
-BattleEffect_BeginCanvasLayer:
+BattleEffect_StartCanvasLayer:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

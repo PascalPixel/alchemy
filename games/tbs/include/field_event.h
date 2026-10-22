@@ -3,12 +3,12 @@
 
 /// @file
 /// The scene script layer: the engine services a scene's events call, declared
-/// once (Engine_EventBegin, Engine_ActorJump, Engine_EventSetMessage and the
+/// once (Engine_EventStart, Engine_ActorJump, Engine_EventSetMessage and the
 /// rest), with the constants and small inlines scenes share.
 ///
 /// It is a habit of the whole game written once, as declarations and macros: a
 /// layer, not a compiler-steering device (AGENTS.md S2). The event.h commands
-/// and field_service.h are written over it. A scene's event reads `EV_BEGIN();
+/// and field_service.h are written over it. A scene's event reads `EV_START();
 /// Engine_ActorStop(9); OBJECT_FACE(9, ACTOR_PARTY_LEADER, 0); EV_END();`.
 
 #include "unit/object/object.h"
@@ -129,9 +129,9 @@ struct MapCellAnim {
 // Imports of main-image routines. EventRequestExit, ActorSetPosition,
 // ActorSetAnimation and RandomNext have differing argument counts at their
 // call sites, as measured in the bytes, so retain old-style declarations.
-/// Opens an event (FieldEvent_Begin): closes any timed notice, stops the
+/// Opens an event (FieldEvent_Start): closes any timed notice, stops the
 /// leader and makes it the speaker.
-void Engine_EventBegin(void);
+void Engine_EventStart(void);
 /// Closes an event (FieldEvent_End): the camera follows the leader again and
 /// FLAG_LURE_CAP is refreshed.
 void Engine_EventEnd(void);
@@ -363,7 +363,7 @@ void Engine_ActorWalkByAndWait(s32 actor, s32 dx, s32 dz);
 s32 Engine_LeaderCheckAhead(void);
 /// Prepares the work and spark tiles of a field Psynergy effect for ability
 /// (FieldEffect_LoadActionEffectResources).
-void Engine_PsynergyBegin(s32 ability, s32 flags);
+void Engine_PsynergyStart(s32 ability, s32 flags);
 /// Records an effect's caster and target; with no target the effect plays 16
 /// pixels in front of the caster (FieldEffect_SetupObjectPair).
 void Engine_PsynergySetTarget(s32 caster, s32 target);

@@ -26,7 +26,7 @@ BattleEffect_RunNeptune:
 	ldr r2, [r5, #100]
 	lsls r6, r6, #4
 	str r2, [sp, #56]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08169440
 	movs r3, #160

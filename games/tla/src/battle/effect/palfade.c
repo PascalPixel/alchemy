@@ -15,7 +15,7 @@ void GameFlag_SetBit(s32 flag);
 // slot's name (BattleEffect_GetObjectPriority); those two editions keep it on their
 // scaffold (S4).
 #if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
-void Field_BeginColorTransition(s32 frames, s32 color) {
+void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->eventWork;
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
@@ -32,7 +32,7 @@ void Field_BeginColorTransition(s32 frames, s32 color) {
 }
 #endif
 
-void Field_BeginPaletteTransition(s32 frames) {
+void Field_StartPaletteTransition(s32 frames) {
   u8 *state = Ram_HeapSlots->eventWork;
   s32 colors = (s32)(state + 0x222);
 

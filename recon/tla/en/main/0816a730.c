@@ -64,11 +64,11 @@ extern char ResourceId_BlastSheet;
 extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
 extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
@@ -121,7 +121,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
 
   // Open the canvas and load the pictures.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   {
     /* FAKEMATCH: the native loads the BG2PA halfword from the pool before it
      * starts the register's address; pinned to r3 in a one-pass block it does,

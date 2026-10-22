@@ -314,7 +314,7 @@ const struct ScenePlacement *Bilibin_GetPlacements(void) {
 /// Searching the well in Bilibin: the leader peers in, and its bottom cannot
 /// be seen.
 static void Event_InspectWell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgBilibinBottomNotVisibleLooksVery, 1);
   Engine_EventEnd();
@@ -338,7 +338,7 @@ const struct SceneEvent *Bilibin_GetEvents(void) {
 /// The Bilibin Barricade's sign forbids passing without a permit. Searching it
 /// shows Lord McCoy's notice that no one may pass without one.
 static void Event_ReadRestrictedAreaSign(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgBilibinAreaOffLimitsThoseWithout, 1);
   Engine_EventEnd();
 }
@@ -346,7 +346,7 @@ static void Event_ReadRestrictedAreaSign(void) {
 /// Searching the sign in the Bilibin Treasury, which calls it McCoy's hidden
 /// warehouse. `McCoy's Hidden Warehouse / Do Not Enter!`
 static void Event_ReadWarehouseSign(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
   Engine_EventEnd();
 }
@@ -356,7 +356,7 @@ static void Event_ReadWarehouseSign(void) {
 /// the fallen one, says so.
 /// `There is a tree that looks like a person.`
 static void Event_InspectHumanShapedTree(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgBilibinThereTreeLooksLikePerson, 1);
   Engine_EventEnd();
 }
@@ -366,7 +366,7 @@ static void Event_InspectHumanShapedTree(void) {
 /// flag FLAG_PLACE_TEMP_01 remembers the first look until the party leaves
 /// Bilibin's group of scenes.
 static void Event_ExamineTreeMan(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinItsTreeButAlmostLooks);
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_01) != 0) {
     gEventWork->message++;
@@ -380,7 +380,7 @@ static void Event_ExamineTreeMan(void) {
 /// there before the curse is lifted, and asks whether the party saw it; on
 /// yes, he says it was once a man who came under a curse.
 static void Event_AskAboutEntranceTree(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinDidSeeTreeAtEntrance);
   Engine_EventAskYesNo(ACTOR_VILLAGER_ASKS_ABOUT_TREE, 0);
   Engine_EventEnd();
@@ -390,7 +390,7 @@ static void Event_AskAboutEntranceTree(void) {
 /// Bilibin before the curse is lifted, and either way he says the barricade
 /// blocks the road.
 static void Event_AskAboutSoutheastRoute(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinHaveTriedHeadingSoutheastFrom);
   Engine_EventAskYesNo(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
   Engine_EventEnd();
@@ -400,7 +400,7 @@ static void Event_AskAboutSoutheastRoute(void) {
 /// once the curse is lifted, and asks whether the party can believe he was a
 /// tree.
 static void Event_AskAboutBeingATree(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinWasTurnedIntoTreeFor);
   Engine_EventAskYesNo(ACTOR_FORMER_TREE_MAN, 0);
   Engine_EventEnd();
@@ -410,7 +410,7 @@ static void Event_AskAboutBeingATree(void) {
 /// curse is lifted, and asks whether the party are the three young warriors who
 /// broke it.
 static void Event_AskAboutCurseBreakers(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinCurseWasBrokenThanksEfforts);
   Engine_EventAskYesNo(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
   Engine_EventEnd();
@@ -420,7 +420,7 @@ static void Event_AskAboutCurseBreakers(void) {
 /// the curse is lifted, and asks whether the party has been there, up north,
 /// and seen its lighthouse.
 static void Event_AskAboutImil(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinHaveEverBeenVillageImil);
   Engine_EventAskYesNo(ACTOR_STRONGMAN_IMIL_TOWER, 0);
   Engine_EventEnd();
@@ -444,7 +444,7 @@ static void Event_OpenDoorAndLeave(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   // Freeze placed actors before the exit cells start animating.
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < BILIBIN_ACTOR_SLOT_COUNT;
        actorSlot++) {
@@ -496,7 +496,7 @@ static void Event_PullJillFromRiver(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   jillTree = Object_GetById(ACTOR_JILL_TREE);
   if ((jillTree->x.fixed >> 20) == 6) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ActorSetSpritePriority(ACTOR_JILL_TREE, 1);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(20);
@@ -564,7 +564,7 @@ static void Event_JillGivesHardNut(void) {
       GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) == 0)
     return;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // The camera moves over to the three; the friend nearer the leader speaks
   // first.
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
@@ -748,7 +748,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   // The statue may have moved onto the leader while this event was running.
   if (leaderColumn == 16) {
     if (leaderRow == 13) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
@@ -878,7 +878,7 @@ static void Bilibin_SetUpTreasury(void) {
       gGameState.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
-      Engine_EventBegin();
+      Engine_EventStart();
       leader->y.fixed = PIXELS(16);
       Engine_CameraMoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
       Engine_MapRedraw();

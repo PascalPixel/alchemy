@@ -23,7 +23,7 @@ BattleEffect_RunBreak:
 	ldr r2, [r5, #100]
 	str r2, [sp, #16]
 	ldr r6, [r5, #48]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #0
 	ldr r1, [sp, #16]
 	movs r3, #0

@@ -44,11 +44,11 @@ Func_0815f16c:
 .L_0815f1b8:
 	movs r0, #128
 	lsls r0, r0, #6
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	b .L_0815f1c8
 .L_0815f1c2:
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 .L_0815f1c8:
 	ldr r3, .L_0815f208
 	movs r2, #128

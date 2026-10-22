@@ -277,7 +277,7 @@ static void Event_TakeTouchedExit(void) {
 static void Event_WatchWoundedSoldiers(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLaliveroMoreTolbisSoldiersLayDefeated);
   // The party walks in from the south; the two soldiers lie on the ground.
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(248), PIXELS(424));
@@ -476,7 +476,7 @@ static void Event_IodemGivesBlackOrb(void) {
   struct FieldActor *leader;
 
   GameFlag_Set(FLAG_IODEM_FAREWELL_SEEN);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLaliveroWhereGoingIsaacIodemAsked);
   // Garet reminds the leader that Iodem asked them to wait; the answer
   // picks Mia's reply.
@@ -809,7 +809,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
 /// Lalivero, trigger 51 after Venus Lighthouse: Garet turns the leader back
 /// toward Babi's ship and the wharf the guard was keeping.
 static void Event_TurnBackToTheShip(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLaliveroWhereGoingArentWeTaking);
   Event_ShowMessage(GARET, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);

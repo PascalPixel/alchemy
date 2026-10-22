@@ -33,7 +33,7 @@
 
 #define SE(n) Event_PlayCue(n)
 
-#define EV_BEGIN() Engine_EventBegin()
+#define EV_START() Engine_EventStart()
 #define EV_END() Engine_EventEnd()
 
 #endif

@@ -57,7 +57,7 @@ BattleEffect_RunIris:
 	lsls r0, r0, #6
 	str r1, [sp, #192]
 	str r6, [r2]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08192d48
 	movs r3, #160

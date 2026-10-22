@@ -23,7 +23,7 @@ BattleEffect_RunRagingHeat:
 	str r1, [sp, #60]
 	ldr r2, [r5, #100]
 	str r2, [sp, #44]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081793f4
 	movs r2, #128
 	lsls r2, r2, #19

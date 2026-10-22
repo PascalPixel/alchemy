@@ -21,7 +21,7 @@ BattleEffect_RunUndeadSword:
 	movs r0, #0
 	mov r10, r2
 	ldr r5, [r3, #100]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816a794
 	movs r2, #128
 	lsls r2, r2, #19

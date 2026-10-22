@@ -77,7 +77,7 @@ Func_02000138:
 .L_020081cc:
 	movs r0, #128
 	bl Func_02005a68
-	bl ObjectEffect_BeginContextEffect26
+	bl ObjectEffect_StartContextEffect26
 	adds r0, r6, #4
 	bl Func_02005990
 	b .L_020081ea

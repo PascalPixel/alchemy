@@ -90,7 +90,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   slots = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = 0;
 
   // Each resource holds two pictures: the first fills work->imageStorage, up

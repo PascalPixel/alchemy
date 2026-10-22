@@ -22,7 +22,7 @@ BattleEffect_RunDiamondBerg:
 	str r1, [sp, #32]
 	ldr r2, [r6, #100]
 	mov r8, r2
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816bcd8
 	movs r2, #128
 	lsls r2, r2, #19

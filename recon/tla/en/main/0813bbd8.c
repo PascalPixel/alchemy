@@ -55,7 +55,7 @@ extern char ResourceId_IceShardSheet;
 extern char ResourceId_SparkleDots;
 extern u16 gMapCellBuffer[];
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
@@ -65,7 +65,7 @@ s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -102,7 +102,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
-  BattleEffect_BeginCanvasLayer(0x2001);
+  BattleEffect_StartCanvasLayer(0x2001);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);

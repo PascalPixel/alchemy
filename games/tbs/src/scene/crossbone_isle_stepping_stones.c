@@ -574,7 +574,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 #endif
     if (StagedActor_FindAtTile(position, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, position) == 0) {
-      EV_BEGIN();
+      EV_START();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
@@ -674,7 +674,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Walking into a pillar in CrossboneIsleSteppingStones: jump two cells across
 /// it where the cells allow, otherwise push it.
 static void Event_JumpOrPushPillar(void) {
-  EV_BEGIN();
+  EV_START();
   if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0)
     StagedActor_AdvancePair();
   EV_END();
@@ -685,7 +685,7 @@ static void Event_JumpOrPushPillar(void) {
 static void Event_PushPillar(void) {
   struct StagedActorProbe out;
 
-  EV_BEGIN();
+  EV_START();
   if (StagedActor_FindClearPosition(&out) != 0)
     SceneActor_MoveAndRedraw(out);
   EV_END();
@@ -809,7 +809,7 @@ static void Event_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct FieldActor *water;
 
-  EV_BEGIN();
+  EV_START();
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
   Engine_CameraWaitForMove();
@@ -1132,7 +1132,7 @@ static void Event_MovePillar(void) {
 /// Walking into a pillar in CrossboneIsleStackedPillars: jump across if
 /// possible, otherwise push it, and the pillars settle.
 static void Event_JumpOrPushStackedPillar(void) {
-  EV_BEGIN();
+  EV_START();
 #if TBS_PATCH_3
   Object_GetById(ACTOR_PARTY_LEADER)->y.fixed =
       Map_GetTerrainHeight(Object_GetById(ACTOR_PARTY_LEADER)->terrainId,
@@ -1224,7 +1224,7 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
   struct FieldActor *actor;
 
   actor = Object_GetById(id);
-  EV_BEGIN();
+  EV_START();
 #ifdef UBFIX
   actor->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
@@ -1251,7 +1251,7 @@ static void Event_FreezeSecondPuddle(void) {
 
 /// Frost begins on the third puddle in CrossboneIsleDragonStatue: note whether
 /// the leader stands on it.
-static void Event_FrostBeginsOnThirdPuddle(void) {
+static void Event_FrostStartsOnThirdPuddle(void) {
   struct FieldActor *leader;
   struct FieldActor *puddle;
   u8 *effects;
@@ -1380,7 +1380,7 @@ static void Event_FreezeThirdPuddle(void) {
   set = Engine_GameFlagIsSet(LEADER_ON_THIRD_PUDDLE_FLAG);
   if (set == 0) {
     Engine_GameFlagSet(FIRST_FROZEN_PUDDLE_FLAG + 2);
-    EV_BEGIN();
+    EV_START();
     Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
     Engine_CameraMoveTo(PIXELS(312), -1, PIXELS(184), 1);
     Engine_CameraWaitForMove();
@@ -1425,7 +1425,7 @@ static void Event_StartMovingSinkingPillar(void) {
   s32 x;
   s32 z;
 
-  EV_BEGIN();
+  EV_START();
 
   x = pillar->x.fixed >> 20;
   z = pillar->z.fixed >> 20;
@@ -1441,7 +1441,7 @@ static void Event_MoveSinkingPillar(void) {
   s32 alreadyLowered;
 
   pillar = Object_GetById(ACTOR_SINKING_BOULDER);
-  EV_BEGIN();
+  EV_START();
   StagedActor_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
                                          (pillar->z.fixed >> 20), 1, 1, 255);
   if ((pillar->x.fixed >> 20) == 16) {
@@ -1463,7 +1463,7 @@ static void Event_MoveSinkingPillar(void) {
 static void Event_PushSinkingPillar(void) {
   struct StagedActorProbe probe;
 
-  EV_BEGIN();
+  EV_START();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   } else {
@@ -1998,7 +1998,7 @@ struct SceneEvent gCrossboneIsleDragonStatueEvents[] = {
      FIRST_FROZEN_PUDDLE_FLAG + 1, EVENT_SCRIPT(Event_FreezeSecondPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_THIRD_PUDDLE, FIRST_FROZEN_PUDDLE_FLAG + 2,
-     EVENT_SCRIPT(Event_FrostBeginsOnThirdPuddle)},
+     EVENT_SCRIPT(Event_FrostStartsOnThirdPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS),
      ACTOR_THIRD_PUDDLE, FIRST_FROZEN_PUDDLE_FLAG + 2,
      EVENT_SCRIPT(Event_FrostRaisesPillar)},

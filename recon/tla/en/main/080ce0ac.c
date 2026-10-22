@@ -57,7 +57,7 @@ s32 GameFlag_Test(s32 flag);
 void UiText_DrawQuantity(s32 value, s32 slot);
 s32 EventRuntime_GetControlledOwner(void);
 s32 Field_FindNearbyTalkTarget(s32 id);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_SetMessage(s32 message);
 void EventRuntime_ShowMessageAndWait(s32 actor, s32 flags);
 void EventRuntime_End(void);
@@ -132,7 +132,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
     if ((s32)event->value < 0x10000) {
       s32 objref = Field_FindNearbyTalkTarget(EventRuntime_GetControlledOwner());
 
-      EventRuntime_Begin();
+      EventRuntime_Start();
       EventRuntime_SetMessage(event->value);
       EventRuntime_ShowMessageAndWait(objref, 0);
       EventRuntime_End();

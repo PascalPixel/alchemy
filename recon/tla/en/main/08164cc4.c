@@ -111,7 +111,7 @@ extern u16 Data_08198a48[];    // ☀️ gParticleStreams_FlashCells
 extern u16 Data_08198a56[];    // ☀️ gParticleStreams_FlashSizes
 extern u16 gData_08197410[];   // ☀️ gBattleEffect_MoteCells
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
@@ -140,7 +140,7 @@ void SceneTransform_ApplyYaw(s32 yaw);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void BattleActor_CommitPlacementFar(void);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Transform_SetLookAt(s32 *eye, s32 *position);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -213,7 +213,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  BattleEffect_BeginCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.

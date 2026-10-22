@@ -488,7 +488,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// slot's block when it has one; with that slot free, the
 /// world map takes a new, uncleared block there, kept until the scene ends,
 /// whose step is then leftover memory.
-void WorldMap_BeginEvent(void) {
+void WorldMap_StartEvent(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *transition;
 
@@ -502,11 +502,11 @@ void WorldMap_BeginEvent(void) {
       transition->step = 0;
     }
     work->camera->movementState = 1;
-    WorldMap_BeginStillViewFar();
+    WorldMap_StartStillViewFar();
   }
 }
 
-/// Ends what WorldMap_BeginEvent started: on the world map, reloads
+/// Ends what WorldMap_StartEvent started: on the world map, reloads
 /// the area's graphics and sets the camera's movement state back to 0.
 void WorldMap_EndEvent(void) {
   struct FieldWork *work;

@@ -11,7 +11,7 @@
 /// take more. With no room for it, ACTOR_GIRL_AT_THE_INN (as both scenes name
 /// her) shakes their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (PartyInventory_HasSpace() == 0) {
     Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN,
                                     ANIMATION_SHAKE_HEAD);

@@ -368,7 +368,7 @@ const struct SceneEvent *Imil_GetEvents(void) {
 /// man sneezes and shivers, waiting for Mia; once she travels with the party,
 /// he says that even her healing can't help them all.
 static void Imil_TalkToFreezingYoungMan(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilEvenIfMiaHealsUs));
   } else {
@@ -386,7 +386,7 @@ static void Imil_TalkToFreezingYoungMan(void) {
 /// should be here by now, or, once she has joined the party, he can't
 /// understand why anyone would exercise in the cold.
 static void Imil_ReadFreezingYoungMansMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilCantUnderstandWhyAnyOne));
   } else {
@@ -399,7 +399,7 @@ static void Imil_ReadFreezingYoungMansMind(void) {
 /// A small boy in Imil, until Saturos is beaten, turns to the leader and asks
 /// whether he is new in Imil.
 static void Imil_GreetVisitor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_GREETING_BOY, ACTOR_PARTY_LEADER, 10);
   Engine_EventSetMessage(MSGNO(MsgImilHiNewInImil));
   Engine_EventAskYesNo(ACTOR_GREETING_BOY, 0);
@@ -410,7 +410,7 @@ static void Imil_GreetVisitor(void) {
 /// turns to the leader and goes back to counting; once Saturos is beaten, he
 /// wonders what he trained so hard for.
 static void Imil_TalkToStrongmanKeepingInShape(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilCountingAfterDeparture));
@@ -455,7 +455,7 @@ static void Imil_TalkToOldMan(void) {
   struct FieldActor *oldWoman;
 
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_FaceActor(ACTOR_OLD_MAN, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryReallySayDie);
@@ -463,7 +463,7 @@ static void Imil_TalkToOldMan(void) {
     Engine_EventEnd();
   } else {
     if (GameFlag_IsSet(FLAG_IMIL_MET_MIA) != 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_SIT_UP);
       Engine_MapAnimateCells(gImil_CellStepsA, 10, 69);
       Engine_EventSetMessage(MsgMercuryFeelMuchBetter);
@@ -472,7 +472,7 @@ static void Imil_TalkToOldMan(void) {
       Map_AnimateCells(gImil_CellStepsB, 10, 69);
       Engine_EventEnd();
     } else {
-      Engine_EventBegin();
+      Engine_EventStart();
       oldMan = Object_GetById(ACTOR_OLD_MAN);
       oldMan->timer = 10;
       Actor_SetActionScript(ACTOR_OLD_MAN, gImil_ShiverScript);
@@ -508,7 +508,7 @@ static void Imil_TalkToOldMan(void) {
 /// whether the party wants weapons, cannot sell them until he is cured, and
 /// blames the travellers from the south for the disease.
 static void Imil_AskAboutWeapons(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantWeapons));
   Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   Engine_EventEnd();
@@ -517,7 +517,7 @@ static void Imil_AskAboutWeapons(void) {
 /// The restaurant owner of Imil, a young man, until Saturos is beaten, offers
 /// the menu.
 static void Imil_AskAboutRestaurantMenu(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantSeeRestaurantMenu));
   Engine_EventAskYesNo(ACTOR_RESTAURANT_OWNER, 0);
   Engine_EventEnd();
@@ -529,7 +529,7 @@ static void Imil_AskAboutRestaurantMenu(void) {
 /// FLAG_IMIL_MIA_SENT_FOR); once Mia has joined the party, the apprentice says
 /// everyone counts on her.
 static void Imil_TalkToSecondApprentice(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilEveryoneCountsOnMiaThats));
     Engine_EventShowMessage(ACTOR_SECOND_APPRENTICE, 0);
@@ -545,7 +545,7 @@ static void Imil_TalkToSecondApprentice(void) {
 /// Mind Read on the second apprentice in the Imil Sanctum, until Saturos is
 /// beaten: Mia had a bad feeling, or, once she has joined, they must help her.
 static void Imil_ReadSecondApprenticeMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
@@ -558,7 +558,7 @@ static void Imil_ReadSecondApprenticeMind(void) {
 /// The old woman of the old couple asks what happened at the lighthouse. She's
 /// in their house after Mia's healing and until Saturos is beaten.
 static void Imil_TalkToOldWoman(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MSGNO(MsgImilHappenedInLighthouseNortheast));
   Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -569,7 +569,7 @@ static void Imil_TalkToOldWoman(void) {
 /// beaten: about Mia's clan, her husband's exaggerating, or Mia running all
 /// over town.
 static void Imil_ReadOldWomanMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilMiaClanOnceLivedHere));
   } else if (Engine_GameFlagIsSet(FLAG_IMIL_MIA_SENT_FOR) != 0) {
@@ -588,7 +588,7 @@ static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 /// After Mia's visit, Mind Read across the bed in the old couple's house
 /// reaches the old man: he admires Mia, and wishes he had a daughter like her.
 static void Imil_ReadOldManInBedMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MSGNO(MsgImilMiaIsAGoodGirlI));
   Engine_EventShowMessage(ACTOR_OLD_MANS_BED, 0);
   Engine_EventEnd();
@@ -598,7 +598,7 @@ static void Imil_ReadOldManInBedMind(void) {
 /// he thinks the party are not bad people, or, once Mia has joined, he feels
 /// grown up serving as a healer.
 static void Imil_ReadApprenticeMind(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
@@ -618,7 +618,7 @@ static void Imil_OpenDoorAndExit(void) {
   s32 exit;
 
   event = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   for (i = ACTOR_FIRST_PLACED; i <= 65; i++) {
     actor = Object_GetById(i);
     if (actor != NULL) {
@@ -666,7 +666,7 @@ static void Imil_TalkToWeaponMerchant(void) {
       Engine_ShopOpen(SHOP_IMIL_WEAPONS, ACTOR_WEAPON_MERCHANT);
       return;
     }
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ActorFaceActor(ACTOR_WEAPON_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryCatchUpLostOpportunity);
@@ -675,7 +675,7 @@ static void Imil_TalkToWeaponMerchant(void) {
     Engine_EventEnd();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_CameraSetSpeed(PIXELS(6), PIXELS(3) / 4);
       Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
@@ -702,7 +702,7 @@ static void Imil_TalkToArmorMerchant(void) {
       Engine_ShopOpen(SHOP_IMIL_ARMOR, ACTOR_ARMOR_MERCHANT);
       return;
     }
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ActorFaceActor(ACTOR_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryShameStoreClosed);
@@ -711,7 +711,7 @@ static void Imil_TalkToArmorMerchant(void) {
     Engine_EventEnd();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_CameraSetSpeed(PIXELS(6), PIXELS(3) / 4);
       Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
@@ -738,7 +738,7 @@ static void Imil_TalkToItemMerchant(void) {
       Engine_ShopOpen(SHOP_IMIL_ITEMS, ACTOR_ITEM_MERCHANT);
       return;
     }
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ActorFaceActor(ACTOR_ITEM_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Engine_EventSetMessage(MsgMercuryRecoveredThanksFountain);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
@@ -746,7 +746,7 @@ static void Imil_TalkToItemMerchant(void) {
     Engine_EventEnd();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventSetMessage(MsgMercuryMomsSickGetWhatever);
       Engine_EventShowMessage(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
@@ -775,7 +775,7 @@ static void Imil_TalkToInnkeeper(void) {
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
     Engine_InnOpen(INN_IMIL, ACTOR_INNKEEPER);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
     if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilItsAlmostTimeForLeave));
@@ -797,7 +797,7 @@ static void Imil_TalkToApprentice(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (GameFlag_IsSet(FLAG_IMIL_APPRENTICE_OFFERED_HEALING) == 0) {
       Engine_EventSetMessage(MSGNO(MsgImilMayOnlyStudentButCan));
       Event_ShowMessage(ACTOR_APPRENTICE, 0);
@@ -806,7 +806,7 @@ static void Imil_TalkToApprentice(void) {
     Engine_EventEnd();
     Engine_SanctumOpen(ACTOR_APPRENTICE);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilMiaGoingOnJourneyWith));
       Event_ShowMessage(ACTOR_APPRENTICE, 0);
@@ -958,7 +958,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   const s32 *table;
   struct EventWork *work;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(MIA, PIXELS(182), PIXELS(150));
   Camera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
   Engine_TaskWait(1);
@@ -1190,7 +1190,7 @@ static void Imil_OldManBobsAndSpeaks(void) {
 static void Imil_MiaCastsPlyOnOldMan(void) {
   struct FieldFxScene *work;
 
-  Engine_PsynergyBegin(ABILITY_PLY, 1);
+  Engine_PsynergyStart(ABILITY_PLY, 1);
   work = gEffectWork;
   Engine_PsynergySetTarget(MIA, ACTOR_OLD_MAN);
   work->finishCallback = Imil_OldManBobsAndSpeaks;
@@ -1358,7 +1358,7 @@ static void Imil_PlaceMovedSnowman(void) {
 static void Imil_LeaveNorth(void) {
   struct FieldActor *work;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   work = Object_GetById(ACTOR_PARTY_LEADER);
   work->facing = FACING_NORTH;
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -1370,7 +1370,7 @@ static void Imil_LeaveNorth(void) {
 /// Coming back out of Imil Falls Cave (IMIL_FROM_IMIL_FALLS_CAVE), the leader
 /// walks down into the village.
 static void Imil_ArriveFromFallsCave(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 232, 204);
@@ -1385,7 +1385,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   struct FieldActor *leader;
   struct EventWork *work;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 690, 200);
@@ -1594,7 +1594,7 @@ static void Imil_RunIceSlide(void) {
       return;
     }
 
-    Engine_EventBegin();
+    Engine_EventStart();
 
     probe.x = (subject->x.fixed & 0xfff00000) + PIXELS(8);
     probe.y = subject->y.fixed;

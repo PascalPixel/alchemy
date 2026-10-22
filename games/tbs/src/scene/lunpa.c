@@ -149,7 +149,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
 static void Event_CatchFloatingNut(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_LUNPA_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
@@ -272,7 +272,7 @@ static void Event_HideSecrets(void) {
 /// Searching the well (TRIGGER_WELL), in Lunpa or at the Lunpa Fortress Gates:
 /// frogs croak in it.
 static void Event_SearchWell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgLunpaWellFrogs, 1);
   Engine_EventEnd();
@@ -297,7 +297,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Lunpa, before Donpa's judgment: the west guard on the road in asks whether
 /// the party wants to enter Lunpa, and turns them away either way.
 static void Event_TalkToWestGuard(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_EventSetMessage(MsgLunpaWestGuardAsksAboutEntering);
   Engine_EventAskYesNo(ACTOR_WEST_GUARD, 0);
@@ -308,7 +308,7 @@ static void Event_TalkToWestGuard(void) {
 /// Dodonpa's authorization, or, once the guards suspect Kalay, asks whether
 /// the party came from there and whether they are here to save Hammet.
 static void Event_TalkToEastGuard(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_EventSetMessage(MsgLunpaEastGuardDemandsAuthorization);
     Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
@@ -352,7 +352,7 @@ static void Event_ReadEastGuardsThoughts(void) {
 /// Lunpa, before Donpa's judgment: a man asks how long the party has been
 /// in Lunpa.
 static void Event_AskAboutLengthOfStay(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLunpaVillagerAAsksHowLong);
   Engine_EventAskYesNo(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA, 0);
   Engine_EventEnd();
@@ -361,7 +361,7 @@ static void Event_AskAboutLengthOfStay(void) {
 /// Lunpa, before Donpa's judgment: a stout man asks whether Dodonpa
 /// kidnapped Hammet for ransom.
 static void Event_AskAboutHammetsKidnapping(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLunpaVillagerCAsksAboutKidnapping);
   Engine_EventAskYesNo(ACTOR_MAN_ON_HAMMETS_KIDNAPPING, 0);
   Engine_EventEnd();
@@ -370,7 +370,7 @@ static void Event_AskAboutHammetsKidnapping(void) {
 /// Lunpa, before Donpa's judgment: a small boy asks whether the party wants
 /// to see Donpa, who is in the fortress.
 static void Event_AskAboutSeeingDonpa(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLunpaVillagerGAsksAboutDonpa);
   Engine_EventAskYesNo(ACTOR_BOY_ASKING_TO_SEE_DONPA, 0);
   Engine_EventEnd();
@@ -379,7 +379,7 @@ static void Event_AskAboutSeeingDonpa(void) {
 /// Lunpa, after Donpa's judgment: a woman shivers and complains that it
 /// has become colder.
 static void Event_ComplainAboutCold(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_WOMAN_WITH_NO_FREEDOM, 3);
   Engine_EventSetMessage(MsgLunpaVillagerBShivers);
   Engine_EventShowMessage(ACTOR_WOMAN_WITH_NO_FREEDOM, 0);
@@ -389,7 +389,7 @@ static void Event_ComplainAboutCold(void) {
 /// Lunpa, after Donpa's judgment: a woman offers to explain the commotion
 /// at the fortress.
 static void Event_AskAboutFortressCommotion(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgLunpaVillagerDAsksAboutCommotion);
   Engine_EventAskYesNo(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD, 0);
   Engine_EventEnd();
@@ -487,7 +487,7 @@ static void Lunpa_WatchForFortressApproach(void) {
 /// Garet reminds the leader they cannot go into the fortress, and the leader
 /// steps back.
 static void Event_GaretTurnsLeaderBack(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_EventSetMessage(MsgLunpaGaretRefusesToReturn);
   Event_ShowMessage(GARET, 0);
@@ -509,7 +509,7 @@ static void Event_EnterDoor(void) {
   s32 doorIndex;
 
   fieldWork = (struct FieldWork *)gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   // Freeze placed actors before opening the selected door and crossing it.
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
     placedActor = Actor_Get(actorId);
@@ -553,7 +553,7 @@ static void Event_EnterHiddenPassage(void) {
 /// the top of the steps, into Lunpa Fortress.
 static void Event_EnterFortress(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_42);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
@@ -616,7 +616,7 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
 /// guards step in front of the fortress door and the gateway closes.
 static void Event_GuardsBlockGate(void) {
   if (gGameState.cloaked == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 2);
     Actor_ShowEmote(ACTOR_RIGHT_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 15);
     Engine_EventWait(30);
@@ -656,7 +656,7 @@ static void Event_GuardsCatchParty(void) {
     return;
   }
   GameFlag_Set(FLAG_SCENE_TEMP_44);
-  Engine_EventBegin();
+  Engine_EventStart();
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
@@ -772,7 +772,7 @@ static void Lunpa_KickUpLeaderDust(void) {
 /// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_CAUGHT, after being
 /// caught in the fortress: the guards throw the leader out and down the steps.
 static void Event_GuardsThrowLeaderOut(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(160), PIXELS(128));
   Actor_SetPosition(ACTOR_LEFT_GUARD, PIXELS(152), PIXELS(112));
   Actor_SetPosition(ACTOR_RIGHT_GUARD, PIXELS(168), PIXELS(112));
@@ -861,13 +861,13 @@ static void Event_GuardsThrowLeaderOut(void) {
 /// after slipping out of the fortress: the leader casts Cloak and slips round
 /// the guards.
 static void Event_LeaderSneaksOut(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Actor_WalkTo(ACTOR_PARTY_LEADER, 152, 168);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_EventWait(20);
   // Cast Cloak before following the route around the guards.
-  Engine_PsynergyBegin(ABILITY_CLOAK, 1);
+  Engine_PsynergyStart(ABILITY_CLOAK, 1);
   Engine_PsynergySetTarget(ACTOR_PARTY_LEADER, 0);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);

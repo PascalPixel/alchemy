@@ -186,7 +186,7 @@ commands of `event.h` over the engine calls of `field_event.h`.
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
 /// the first stops and stares, and the second throws the party out.
 static void Event_PatrolPairThrowsPartyOut(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
@@ -198,7 +198,7 @@ static void Event_PatrolPairThrowsPartyOut(void) {
 }
 ```
 
-`EV_BEGIN` stops the leader and makes it the speaker, and `EV_END` returns the
+`EV_START` stops the leader and makes it the speaker, and `EV_END` returns the
 camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an actor.
 `OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`

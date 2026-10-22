@@ -72,12 +72,12 @@ extern char ResourceId_RevealMaskD;
 extern char ResourceId_RevealMaskE;
 extern char ResourceId_RevealMaskF;
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                // 7, 7, flags, mode)
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
@@ -110,7 +110,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
     REG_BLDCNT = 0;
   REG_BLDALPHA = 0x1010;

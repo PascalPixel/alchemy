@@ -18,7 +18,7 @@
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Object_GetById, 1
 	.set import.Engine_ActorSetSpeed, 1

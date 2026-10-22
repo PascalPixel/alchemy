@@ -27,7 +27,7 @@ BattleEffect_RunRagnarok:
 	ldr r0, [r0]
 	str r0, [sp, #36]
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08166618
 	movs r2, #128
 	lsls r2, r2, #19

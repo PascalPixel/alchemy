@@ -34,7 +34,7 @@
 #include "ram_buffer.h"
 #include "serial_runtime.h"
 
-s32 SerialRuntime_BeginSend(void *source, s32 size);
+s32 SerialRuntime_StartSend(void *source, s32 size);
 s32 SerialRuntime_GetActiveTransfers(void);
 void MemFree(void *block);
 
@@ -59,7 +59,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 BattleLink_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginSend(state, 20);
+    s32 status = SerialRuntime_StartSend(state, 20);
 
     disconnected = 0;
     timeout = 300;
@@ -77,7 +77,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       }
     }
     if (allocationSize) {
-      status = SerialRuntime_BeginSend(actions, allocationSize);
+      status = SerialRuntime_StartSend(actions, allocationSize);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {
@@ -98,7 +98,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 BattleLink_ReceiveActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginReceive(state);
+    s32 status = SerialRuntime_StartReceive(state);
 
     disconnected = 0;
     timeout = 300;
@@ -121,7 +121,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       return -1;
     result = state->count;
     if (state->count) {
-      status = SerialRuntime_BeginReceive(actions + count);
+      status = SerialRuntime_StartReceive(actions + count);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {

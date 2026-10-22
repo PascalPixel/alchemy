@@ -33,7 +33,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // The way the leader faces, to the nearest quarter turn.
   djinni = Object_GetById(djinniId);
   dir = (Object_GetById(gGameState.selectedActor)->facing + 0x2000) & 0xc000;
-  FieldEvent_Begin();
+  FieldEvent_Start();
   WaitFrames(10);
   AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
@@ -149,8 +149,8 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   }
 
   if (owner >= 0) {
-    FieldEvent_Begin();
-    WorldMap_BeginEvent();
+    FieldEvent_Start();
+    WorldMap_StartEvent();
     if (slot != -1) {
       // On the world map the actors far from the view are removed while the
       // effect plays and placed again after it.

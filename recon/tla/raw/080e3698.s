@@ -56,7 +56,7 @@ Func_080e3698:
 	mov r11, r1
 	str r2, [sp, #4]
 	str r3, [sp, #0]
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	movs r0, #0
 	bl EventRuntime_ResolvePendingActions
 	bl EventRuntime_StartScreen

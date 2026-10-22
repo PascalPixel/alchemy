@@ -80,12 +80,12 @@ extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 // The sparks live in the map cell buffer.
 extern struct EffectStep gMapCellBuffer[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                  // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);             // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 void BattleEffect_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
@@ -125,17 +125,17 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
 
   // The burst's origin on the canvas.
   if (kind == SPARKS_FIXED) {
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
     originX = 60;
     originY = 48;
   } else if (kind == SPARKS_ORANGE) {
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
     originX = 60;
     originY = 64;
     work->fadeFrames = 24;
     work->fadeStep = 0;
   } else {
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
     EffectPosition_ProjectScaledBattler(effect->actor, &pos);
     originX = pos.x / 2;
     originY = pos.y + 48;

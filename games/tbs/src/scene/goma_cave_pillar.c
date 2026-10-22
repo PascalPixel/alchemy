@@ -250,7 +250,7 @@ static void Event_MoveWestPillar(void) {
   if (x < 0)
     x += 0xfffff;
   x >>= 20;
-  EV_BEGIN();
+  EV_START();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
     Engine_GameFlagClear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
@@ -351,7 +351,7 @@ static void Event_PushStumpOver(void) {
 
   stump = Object_GetById(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
-  EV_BEGIN();
+  EV_START();
   if (column == 25) {
     overlayActor = Object_GetById(ACTOR_STUMP_SHADOW);
     zero = 0;
@@ -464,7 +464,7 @@ static void GomaCavePillar_SettleEastPillar(void) {
 /// Move on the east pillar in Goma Cave, until it is in its place
 /// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE).
 static void Event_MoveEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
   GomaCavePillar_SettleEastPillar();
   EV_END();
 }
@@ -472,7 +472,7 @@ static void Event_MoveEastPillar(void) {
 /// Walking into the east pillar in Goma Cave pushes it a step, until it is in
 /// its place.
 static void Event_PushEastPillar(void) {
-  EV_BEGIN();
+  EV_START();
   StagedActor_AdvancePair();
   GomaCavePillar_SettleEastPillar();
   EV_END();
@@ -498,7 +498,7 @@ static void Event_JumpGapWest(void) {
   destination->y = Object_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   destination->z = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
-    EV_BEGIN();
+    EV_START();
     Object_SetMode(leader, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -557,7 +557,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 /// good.
 static void Event_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
-  EV_BEGIN();
+  EV_START();
   OBJECT_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_WITNESS, 2);
   OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);

@@ -197,7 +197,7 @@ before it returns.
 
 Most effects draw into a canvas of 128 by 128 pixels, one byte each, which
 `BG2` shows blended over the battle and stretched to twice its width
-(`BattleEffect_BeginCanvasLayer`). An effect copies pictures onto the canvas
+(`BattleEffect_StartCanvasLayer`). An effect copies pictures onto the canvas
 through blitters, ARM routines `BattleEffect_BuildBlitter` assembles at run time
 for one combination of size, mirroring, clipping and blend mode, and moves
 particles over it. It never writes video memory itself: it sets

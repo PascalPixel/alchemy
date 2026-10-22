@@ -136,7 +136,7 @@ extern const u16 gUlysses_DropFrames[];
 extern const u8 gUlysses_BeamPalette[];
 extern const u8 gUlysses_BeamSprite[];
 
-void BattleEffect_BeginCanvasLayer(s32);
+void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
 void Func_08179e6c(void);
 s32 BattleEffect_LoadBlitter(s32, s32);
@@ -232,7 +232,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   work = SYSTEM->summon;
   ctl = SYSTEM->control;
   bank = SYSTEM->bank;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   Func_08179e6c();
   BattleEffect_LoadBlitter(104, 3);

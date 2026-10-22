@@ -57,7 +57,7 @@ extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_ParticleSpritesD;
 extern u16 gMapCellBuffer[];
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
@@ -67,7 +67,7 @@ s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -107,7 +107,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   canvas = heapCache[24];
 
   // Set up the canvas, the drop pictures and the droplets.
-  BattleEffect_BeginCanvasLayer(0x2001);
+  BattleEffect_StartCanvasLayer(0x2001);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + 0x604, 1, 1);

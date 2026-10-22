@@ -92,7 +92,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
   particleSheet = (u8 *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the wipe fills the canvas with, are
   // black.

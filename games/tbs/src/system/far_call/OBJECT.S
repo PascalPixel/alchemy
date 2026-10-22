@@ -7,7 +7,7 @@ FarCall_ObjectTable:
 	export Field_RunSceneFar, Field_RunScene
 	export Game_RunFar, Game_Run
 	export FieldEvent_WaitFramesFar, FieldEvent_WaitFrames
-	export FieldEvent_BeginFar, FieldEvent_Begin
+	export FieldEvent_StartFar, FieldEvent_Start
 	export FieldEvent_EndFar, FieldEvent_End
 	overlay_veneer Event_RunObjectHookAndWait
 	export Event_CallWithLastActiveObjectIdFar, Event_CallWithLastActiveObjectId
@@ -127,7 +127,7 @@ FarCall_ObjectTable:
 	export Marker_SetActorPositionFar, Marker_SetActorPosition
 	overlay_veneer Marker_Hide
 	export Marker_MoveLeaderAwayFar, Marker_MoveLeaderAway
-	export WorldMap_BeginEventFar, WorldMap_BeginEvent
+	export WorldMap_StartEventFar, WorldMap_StartEvent
 	export WorldMap_EndEventFar, WorldMap_EndEvent
 	overlay_veneer ObjectTable_ResetForObject
 	overlay_veneer Event_SpawnObjectTable

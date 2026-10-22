@@ -151,9 +151,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   // The canvas adds its full colour to everything under it.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 

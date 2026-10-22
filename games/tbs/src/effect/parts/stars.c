@@ -57,7 +57,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
@@ -242,7 +242,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   graphics = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(

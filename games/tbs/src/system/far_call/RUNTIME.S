@@ -92,8 +92,8 @@ FarCall_RuntimeTable:
 	overlay_veneer SerialRuntime_WaitForStatusMask
 	export SerialRuntime_RemoveIrqHandlersFar, SerialRuntime_RemoveIrqHandlers
 	export Sound_LoadPresetParametersFar, Sound_LoadPresetParameters
-	export SerialRuntime_BeginSendFar, SerialRuntime_BeginSend
-	export SerialRuntime_BeginReceiveFar, SerialRuntime_BeginReceive
+	export SerialRuntime_StartSendFar, SerialRuntime_StartSend
+	export SerialRuntime_StartReceiveFar, SerialRuntime_StartReceive
 	overlay_veneer SerialRuntime_WaitForSend
 	overlay_veneer SerialRuntime_WaitForReceive
 	overlay_veneer SerialRuntime_WaitForTransfers

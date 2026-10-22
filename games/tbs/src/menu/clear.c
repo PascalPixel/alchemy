@@ -532,7 +532,7 @@ menu_top:;
         break;
       }
     }
-    Party_BeginChildhood();
+    Party_StartChildhood();
     gGameState.scene = (s32)&SceneId_ValeInteriorsInn;
     gGameState.entrance = 20;
     goto leave;
@@ -705,7 +705,7 @@ menu_top:;
 
       UiText_DrawResource(MsgClearSendingData, (struct UiWindow *)v6, 0, 4);
       Engine_TaskWait(10);
-      SerialRuntime_BeginSend(gSaveBuffer, 0x1004);
+      SerialRuntime_StartSend(gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.

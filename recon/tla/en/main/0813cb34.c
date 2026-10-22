@@ -66,7 +66,7 @@ extern char ResourceId_OrangePaletteA;
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_GreenPalette;
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
@@ -74,7 +74,7 @@ s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -126,9 +126,9 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
   if (mode == POOL_SOOTHE)
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
 
   // Motes draw at their maximum; the second blitter, mirrored top to
   // bottom, is loaded but not used.

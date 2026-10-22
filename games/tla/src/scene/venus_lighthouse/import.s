@@ -94,10 +94,10 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Engine_EventWait:
 	overlay_veneer FieldEvent_WaitFramesFar
-	.global Engine_EventBegin
+	.global Engine_EventStart
 	.thumb_func
-Engine_EventBegin:
-	overlay_veneer EventRuntime_BeginFar
+Engine_EventStart:
+	overlay_veneer EventRuntime_StartFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:

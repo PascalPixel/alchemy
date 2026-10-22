@@ -23,7 +23,7 @@
 	.set import.Djinn_Transfer, 1
 	.set import.PartyInventory_Discard, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Event_PrepareObjectAndApplyValue, 1
 	.set import.Party_RemoveOwnerRestored, 1

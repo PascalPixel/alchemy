@@ -108,7 +108,7 @@ extern s32 Data_081991c0[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -174,7 +174,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up the canvas, a clipped additive blitter, the sparks, and the
   // card's picture and its extras.
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                 BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));

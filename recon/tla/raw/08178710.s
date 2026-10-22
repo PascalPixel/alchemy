@@ -24,7 +24,7 @@ BattleEffect_RunRisingDragon:
 	str r2, [sp, #60]
 	ldr r3, [r3, #100]
 	str r3, [sp, #56]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r4, [sp, #84]
 	ldr r3, [r4, #4]
 	cmp r3, #0

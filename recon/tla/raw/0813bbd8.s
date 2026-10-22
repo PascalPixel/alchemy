@@ -24,7 +24,7 @@ BattleEffect_RunIce:
 	adds r0, #1
 	str r3, [sp, #16]
 	mov r9, r1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0813bc40
 	movs r2, #128
 	lsls r2, r2, #19

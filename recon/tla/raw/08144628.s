@@ -23,7 +23,7 @@ Func_08144628:
 	str r1, [sp, #60]
 	ldr r3, [r3, #48]
 	str r3, [sp, #52]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #64]
 	movs r3, #224
 	lsls r3, r3, #3

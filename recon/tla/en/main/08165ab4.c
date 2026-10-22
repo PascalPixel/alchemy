@@ -88,7 +88,7 @@ extern u16 gData_08198a76[];          // ☀️ gEruption_PuffCells
 extern u16 gData_08198a84[];          // ☀️ gCybele_EmberSizes
 extern u16 gData_08197410[];          // ☀️ gBattleEffect_MoteCells
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_08163c2c(s32 mode, s32 value);
@@ -113,7 +113,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
@@ -149,7 +149,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   cells = Ram_HeapSlots->unk64[0];
 
   // Open the canvas over a black backdrop and spawn the objects.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0;

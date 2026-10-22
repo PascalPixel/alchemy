@@ -239,7 +239,7 @@ void Display_ApplyBg2Reference(void) {
 /// frame into background palettes 6 to 13, so the effect stands out.
 ///
 /// Runs each frame as a scheduler callback added by
-/// BattleEffect_BeginCanvasLayer and BattleEffect_OpenCanvasLayer, and by
+/// BattleEffect_StartCanvasLayer and BattleEffect_OpenCanvasLayer, and by
 /// BattleEffect_RunRingAndSparkScene; BattleEffect_EndCanvasLayer and
 /// BattleEffect_EndElementStreaks remove it. It does nothing until the effect
 /// sets work->fadeFrames, which it counts down while counting
@@ -260,7 +260,7 @@ void Palette_StepFadeTransfer(void) {
 
 /// Clears every target's flash timer (work->actorTimers).
 ///
-/// Called as the canvas opens, by BattleEffect_BeginCanvasLayer,
+/// Called as the canvas opens, by BattleEffect_StartCanvasLayer,
 /// BattleEffect_OpenCanvasLayer and BattleEffect_SetupCanvasTileMap, and by
 /// BattleEffect_RunShatteringOpening, which opens its own.
 void BattleEffect_ClearActorTimers(void) {
@@ -305,7 +305,7 @@ void ObjectGroup_TickMemberTimers(void) {
 /// BattleEffect_EndCanvasLayer restores.
 ///
 /// Called at the start of nearly every canvas effect, directly or through
-/// EFFECT_BEGIN_NARROW_CANVAS, and by BattleEffect_BeginTiledCanvas. Waits five
+/// EFFECT_START_NARROW_CANVAS, and by BattleEffect_StartTiledCanvas. Waits five
 /// frames of its own. Writes BLDCNT, BLDALPHA, BG2CNT and BG2's affine
 /// registers, the windows, WININ and WINOUT, and queues DISPCNT; writes BG2's
 /// map in screen block 7, clears the canvas in its slot and in character block
@@ -315,7 +315,7 @@ void ObjectGroup_TickMemberTimers(void) {
 /// in work->savedBg1X and savedBg1Y.
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
-void BattleEffect_BeginCanvasLayer(s32 bgControl) {
+void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
   void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
@@ -385,17 +385,17 @@ void BattleEffect_BeginCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 }
 
-/// Opens the canvas layer as BattleEffect_BeginCanvasLayer does, but with the
+/// Opens the canvas layer as BattleEffect_StartCanvasLayer does, but with the
 /// windows off until the end, the backdrop palette starting half faded, and
 /// a 24-frame fade. It neither saves BG1's scroll nor resets the shake.
 ///
 /// Nothing in the build calls it or takes its address. Writes the same
-/// registers, map and canvas as BattleEffect_BeginCanvasLayer and sets
+/// registers, map and canvas as BattleEffect_StartCanvasLayer and sets
 /// work->fadeFrames to 24.
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
-  // The tile-map loop is written out here and in BattleEffect_BeginCanvasLayer:
+  // The tile-map loop is written out here and in BattleEffect_StartCanvasLayer:
   // shared, both compile 4 bytes shorter.
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
@@ -463,16 +463,16 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
 /// Called by BattleEffect_RunRay, BattleEffect_RunCondemn,
 /// BattleEffect_RunCastingImpact and
 /// BattleEffect_InitializeTilemapAndFlushQueue. Opens the layer through
-/// BattleEffect_BeginCanvasLayer, then rewrites BG2CNT and BG2's map in screen
+/// BattleEffect_StartCanvasLayer, then rewrites BG2CNT and BG2's map in screen
 /// block 7.
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
-void BattleEffect_BeginTiledCanvas(s32 bgControl) {
+void BattleEffect_StartTiledCanvas(s32 bgControl) {
   s32 row;
   s32 column;
   s32 offset;
 
-  BattleEffect_BeginCanvasLayer(bgControl);
+  BattleEffect_StartCanvasLayer(bgControl);
   REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
   offset = 0;

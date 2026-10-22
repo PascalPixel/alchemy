@@ -20,7 +20,7 @@ BattleEffect_RunThorn:
 	mov r9, r0
 	movs r0, #1
 	str r1, [sp, #48]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08154fe0
 	movs r2, #128
 	lsls r2, r2, #19

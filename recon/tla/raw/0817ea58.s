@@ -29,7 +29,7 @@ BattleEffect_RunDaedalus:
 	ldr r7, .L_0817eb0c
 	ldr r3, [r5, #36]
 	str r3, [sp, #128]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	bl Func_08179e6c
 	movs r1, #3

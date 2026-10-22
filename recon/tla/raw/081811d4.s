@@ -21,7 +21,7 @@ BattleEffect_RunVengeance:
 	ldr r3, [r3, #96]
 	movs r5, #7
 	mov r8, r3
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	ldr r3, .L_08181218
 	movs r2, #128
 	lsls r2, r2, #19

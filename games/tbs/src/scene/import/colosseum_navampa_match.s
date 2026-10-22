@@ -58,7 +58,7 @@
 	.set import.Party_RemoveActiveOwner, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_EventChooseYesNo, 1
 	.set import.Object_GetById, 1

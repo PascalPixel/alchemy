@@ -27,7 +27,7 @@ BattleEffect_RunCruelRuin:
 	str r3, [sp, #108]
 	bl Func_0813ba50
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0813fdf4
 	movs r2, #128
 	lsls r2, r2, #19

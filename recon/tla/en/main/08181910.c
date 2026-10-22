@@ -32,7 +32,7 @@ struct RenderModel {
   u8 scrollV;
 };
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
@@ -64,7 +64,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
@@ -81,8 +81,8 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void BattleEffect_BeginTiledCanvas(s32 bgControl);
-void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
@@ -147,9 +147,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   if (effect->side == 0) {
-    BattleEffect_BeginTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(0x2001);
   } else {
-    BattleEffect_BeginTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(0x2001);
   }
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x610;

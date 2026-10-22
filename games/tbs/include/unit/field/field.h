@@ -428,7 +428,7 @@ void WorldMap_UpdateView(void);
 void Map_UpdateCurrentTileBlock(void);
 void Map_PreloadCurrentTileBlock(void);
 void MapAnimation_PresentFrame(void);
-void WorldMap_BeginStillView(void);
+void WorldMap_StartStillView(void);
 void Map_ShowBg1FromBuffer(void);
 void Map_LoadAreaGraphics(void);
 void Map_LoadDefaultCellsAndUpdateBlock(void);

@@ -30,7 +30,7 @@ Func_08171bb0:
 	bl Unit_Get
 	str r0, [sp, #52]
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r5, [sp, #88]
 	cmp r5, #1
 	bhi .L_08171c1c

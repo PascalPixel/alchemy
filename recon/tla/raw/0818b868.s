@@ -22,7 +22,7 @@ BattleEffect_RunTripleChomp:
 	str r1, [sp, #52]
 	ldr r2, [r5, #100]
 	str r2, [sp, #36]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0818b8cc
 	movs r2, #128
 	lsls r2, r2, #19

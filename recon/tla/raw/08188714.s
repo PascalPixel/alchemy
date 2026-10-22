@@ -20,7 +20,7 @@ BattleEffect_RunDeathPlunge:
 	movs r0, #0
 	ldr r3, [r3, #96]
 	str r3, [sp, #48]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #52]
 	movs r3, #224
 	lsls r3, r3, #3

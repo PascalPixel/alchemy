@@ -25,7 +25,7 @@ BattleEffect_RunHealingMotes:
 	ldr r3, [r3, #100]
 	str r2, [sp, #48]
 	str r3, [sp, #56]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	cmp r7, #13
 	bne .L_0814ef84
 	ldr r3, [sp, #72]

@@ -58,9 +58,9 @@ Func_02002220:
 	.thumb_func
 Func_02002228:
 	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
-	.global SerialRuntime_BeginReceive
+	.global SerialRuntime_StartReceive
 	.thumb_func
-SerialRuntime_BeginReceive:
+SerialRuntime_StartReceive:
 	overlay_veneer Party_CheckFar
 	.global Unit_Get
 	.thumb_func

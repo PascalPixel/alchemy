@@ -20,7 +20,7 @@ BattleEffect_RunCurse:
 	movs r0, #1
 	ldr r1, [r5, #92]
 	str r1, [sp, #20]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0814b1bc
 	movs r2, #128
 	lsls r2, r2, #19

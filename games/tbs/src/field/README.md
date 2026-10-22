@@ -382,7 +382,7 @@ chooses between the two graphics sets of `gWorldMap_GraphicsResources` by the
 32-pixel region under the point it is given: the second set where it is
 `WORLD_MAP_REGION_SNOWFIELD`.
 
-When a menu or event starts, `WorldMap_BeginStillView` draws the current
+When a menu or event starts, `WorldMap_StartStillView` draws the current
 affine frame into ordinary 256-colour tiles on `BG1` with `TileMap_DrawRows`,
 an ARM routine run from RAM (through `TileMap_DrawRowsFromRam`), and switches
 the display to `DISPCNT_MODE_0`, in which no background is affine.

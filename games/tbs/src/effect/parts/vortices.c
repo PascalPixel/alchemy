@@ -55,7 +55,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -207,7 +207,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);

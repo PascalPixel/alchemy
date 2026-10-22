@@ -67,7 +67,7 @@ extern u8 Data_0819844c[];
 extern u16 Data_08198454[];
 extern s8 Data_08198445[];
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -117,7 +117,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0x1010;

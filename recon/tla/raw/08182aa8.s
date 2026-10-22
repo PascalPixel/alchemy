@@ -28,7 +28,7 @@ BattleEffect_RunCoatlicue:
 	mov r10, r3
 	bl Func_0813ba50
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_08179e6c
 	ldr r3, [sp, #72]
 	movs r4, #239

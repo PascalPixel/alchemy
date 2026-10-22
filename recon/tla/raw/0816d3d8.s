@@ -20,7 +20,7 @@ BattleEffect_RunStoneJustice:
 	movs r0, #1
 	str r2, [sp, #40]
 	mov r11, r1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0816d438
 	movs r2, #128
 	lsls r2, r2, #19

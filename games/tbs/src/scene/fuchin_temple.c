@@ -215,7 +215,7 @@ enum {
 static void FuchinTemple_FeizhiLeavesForHsu(void);
 static void FuchinTemple_FehSeesChi(void);
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ);
-static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target);
+static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target);
 static void FuchinTemple_FinishMindReadDemonstration(void);
 static void FuchinTemple_SpawnNyunpasParticles(void);
 static void FuchinTemple_AnimateRevealLesson(void);
@@ -296,7 +296,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Kolima now?") and is remembered; no means the party came through the forest.
 /// Later talks go on to the tale of the forest.
 static void Event_YoungManFromKolimaAsksAboutBridge(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianHowDidGetHereBridge);
   if (FLAG_CHECK(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
     gEventWork->message += 4;
@@ -318,7 +318,7 @@ static void Event_YoungManFromKolimaAsksAboutBridge(void) {
 /// world's concerns. Is he watching over us?"
 static void Event_BoyMonkSpeaksOfNyunpa(void) {
 
-  EV_BEGIN();
+  EV_START();
   if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED) != 0) {
     MESSAGE_SET(MsgXianNowHeTrulyBeyondWorlds);
     Engine_EventAskYesNo(ACTOR_ADMIRING_BOY_MONK, 0);
@@ -349,7 +349,7 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   struct EffectOptions options;
 
   monk = Object_GetById(ACTOR_FALLS_MONK);
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianAlreadyHeardTest);
   Engine_EventShowMessageAndWait(ACTOR_FALLS_MONK, 0, 20);
   // The monk leaps aside and lands in a puff of dust.
@@ -387,7 +387,7 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
 /// way back is open again. "Young master, did you complete the test?" Then
 /// "Master Nyunpa is waiting for you... Proceed to the temple."
 static void Event_MonkAsksWhetherTestIsDone(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);
   OBJECT_FACE(ACTOR_FALLS_MONK, ACTOR_PARTY_LEADER, 0);
   WAIT(10);
@@ -421,7 +421,7 @@ static void Event_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
   struct FieldActor *nyunpa;
 
-  EV_BEGIN();
+  EV_START();
   // Revisit an earlier refusal, or introduce the offer through Mind Read.
   alreadyDeclinedTrial = FLAG_CHECK(FLAG_NYUNPA_TEST_DECLINED);
   if (alreadyDeclinedTrial != 0) {
@@ -437,7 +437,7 @@ static void Event_NyunpaOffersTest(void) {
     MESSAGE_SET(MsgXianMustSurviveTestGrottoBefore);
   } else {
     MESSAGE_SET(MsgXianMmmmWhoWhoSpeaksMy);
-    FuchinTemple_BeginMindReadDemonstration(ACTOR_PARTY_LEADER, ACTOR_NYUNPA);
+    FuchinTemple_StartMindReadDemonstration(ACTOR_PARTY_LEADER, ACTOR_NYUNPA);
     WAIT(30);
     Event_ShowMessage(ACTOR_NYUNPA, 0);
     FuchinTemple_FinishMindReadDemonstration();
@@ -457,7 +457,7 @@ static void Event_NyunpaOffersTest(void) {
       WAIT(20);
       Event_ShowMessage(ACTOR_NYUNPA, 0);
       WAIT(20);
-      FuchinTemple_BeginMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
+      FuchinTemple_StartMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
       WAIT(30);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       WAIT(50);
@@ -476,7 +476,7 @@ static void Event_NyunpaOffersTest(void) {
     Event_OpenMessage(ACTOR_NYUNPA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
       OBJECT_EMOTE(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-      FuchinTemple_BeginMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
+      FuchinTemple_StartMindReadDemonstration(ACTOR_NYUNPA, ACTOR_PARTY_LEADER);
       WAIT(30);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       WAIT(50);
@@ -549,7 +549,7 @@ static void Event_NyunpaOffersTest(void) {
 /// notices.
 /// "You enjoy reading the minds of others, do you not?"
 static void Event_NyunpaFeelsMindRead(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianEnjoyReadingMindsOthersDo);
   Engine_EventAskYesNo(ACTOR_NYUNPA, 0);
   EV_END();
@@ -559,7 +559,7 @@ static void Event_NyunpaFeelsMindRead(void) {
 /// (ACTOR_WELCOMING_STUDENT): the student asks whether the party came to watch.
 /// "This is Master Feh's school... You came to watch?"
 static void Event_StudentWelcomesToSchool(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianMasterFehsSchoolCameWatch);
   Engine_EventAskYesNo(ACTOR_WELCOMING_STUDENT, 0);
   EV_END();
@@ -568,7 +568,7 @@ static void Event_StudentWelcomesToSchool(void) {
 /// Talking to the student who practices jumping in Master Feh's school in Xian:
 /// he lands, talks about jumping (or Lama Temple, or Hsu), then jumps on.
 static void Event_TalkToJumpingStudent(void) {
-  EV_BEGIN();
+  EV_START();
 
   Object_GetById(ACTOR_JUMPING_STUDENT)->paused = 0;
 
@@ -610,7 +610,7 @@ static void Event_TalkToJumpingStudent(void) {
 /// Master Feh. "Master Feh is very busy. Do you still wish to see him?" Yes: if
 /// the tree falls to Chi from the line, he will take the party to Feh.
 static void Event_StudentAsksAboutFeh(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianMasterFehVeryBusyDo);
   Engine_EventAskYesNo(ACTOR_TREE_STUDENT, 0);
   EV_END();
@@ -868,7 +868,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
 /// Move on the training tree in Master Feh's school in Xian: it topples, and
 /// the students react; it does not count as Chi.
 static void Event_MoveTree(void) {
-  EV_BEGIN();
+  EV_START();
 
   if (Object_GetById(ACTOR_PARTY_LEADER)->facing > FACING_SOUTH &&
       Object_GetById(ACTOR_PARTY_LEADER)->facing < FACING_NORTH) {
@@ -892,7 +892,7 @@ static void Event_PushTreeByHand(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u16 facing;
 
-  EV_BEGIN();
+  EV_START();
   OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   WAIT(20);
 
@@ -921,7 +921,7 @@ static void Event_ForceTree(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u16 facing;
 
-  EV_BEGIN();
+  EV_START();
 
   facing = leader->facing;
   if ((u16)(facing - FACING_SOUTHEAST) <= 0x3fff) {
@@ -1229,7 +1229,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 /// "Warrior, will you show me your Chi?"
 static void Event_FehAsksToSeeChi(void) {
 
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianWarriorWillShowMeYour);
   MESSAGE_OPEN(ACTOR_FEH, 0);
 
@@ -1460,7 +1460,7 @@ static void FuchinTemple_FehSeesChi(void) {
 /// once Hsu is known to be trapped: the student asks about the flood. "Water
 /// monsters flooded Altin. Did you defeat them, warrior?"
 static void Event_StudentAsksAboutAltin(void) {
-  EV_BEGIN();
+  EV_START();
   MESSAGE_SET(MsgXianWaterMonstersFloodedAltinDid);
   Engine_EventAskYesNo(ACTOR_PUNCHING_STUDENT, 0);
   EV_END();
@@ -1471,7 +1471,7 @@ static void Event_StudentAsksAboutAltin(void) {
 /// opens and Isaac walks through (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). "It is
 /// locked."
 static void Event_OpenLockedDoor(void) {
-  EV_BEGIN();
+  EV_START();
   if (FLAG_CHECK(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
       FLAG_CHECK(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
     Engine_MessageShowCentered(MsgXianItIsLocked, 1);
@@ -1497,7 +1497,7 @@ static void Event_TalkToHealer(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   facing = leader->facing;
-  EV_BEGIN();
+  EV_START();
 
   if (FACING_IS_NORTH(facing)) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1513,7 +1513,7 @@ static void Event_TalkToHealer(void) {
 /// entrusts the world to Isaac. "Isaac... Is that you...? I am... counting on
 /// you... to bring peace... to the world..."
 static void Event_ReadNyunpasLastWish(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorRunRepeatedMotion(ACTOR_NYUNPA, 2);
   MESSAGE_SET(MsgXianIsaacAmCountingOnBring);
   MESSAGE_PUT(ACTOR_NYUNPA, 0);
@@ -1582,7 +1582,7 @@ static UNUSED void FuchinTemple_HopLeaderWest(void) {
 /// Unused: hops the leader by a pixel offset, waiting for the movement to
 /// finish; only the three unused hops above call it.
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, offsetZ);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
@@ -1599,7 +1599,7 @@ static void Event_EnterWaterfallGrotto(void) {
   struct FieldActor *leader;
   SchedulerCallback particleTask;
 
-  EV_BEGIN();
+  EV_START();
   // Keep the entry effect alive until the leader has moved into the fade.
   particleTask = FuchinTemple_SpawnGrottoEntryParticle;
   FieldScheduler_AddCallback(particleTask, TASK_PRIORITY_SCENE);
@@ -1630,7 +1630,7 @@ static void Event_LeaveTemple(void) {
 /// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
 /// trigger 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void Event_EnterTemple(void) {
-  EV_BEGIN();
+  EV_START();
   SE(SE_188);
   Map_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -1651,7 +1651,7 @@ static void Event_EnterTemple(void) {
 static void FuchinTemple_NyunpaTeachesKi(void) {
   struct FieldActor *nyunpa;
 
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   OBJECT_WALK(ACTOR_PARTY_LEADER, 168, 504);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1759,7 +1759,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
 static void FuchinTemple_RunHamasRevealLesson(void) {
   struct FieldActor *leader;
 
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
   OBJECT_WALK(ACTOR_PARTY_LEADER, 472, 536);
   Engine_EventOpenScreen();
@@ -2421,11 +2421,11 @@ s32 Scene_Initialize(void) {
 /// Starts Mind Read from caster on target as part of a cutscene, without the
 /// window that announces its name. Nyunpa's Mind Read events carry
 /// PSYNERGY_SCRIPT_PLAYS_EFFECT, so the field plays nothing of its own.
-static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target) {
+static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
   struct FieldFxScene *effect;
 
   Engine_GameFlagSet(FLAG_PSYNERGY_EFFECT);
-  Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
+  Engine_PsynergyStart(ABILITY_MIND_READ, 1);
   effect = gEffectWork;
   Engine_PsynergySetTarget(caster, target);
   effect->active = 0;

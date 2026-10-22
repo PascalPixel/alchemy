@@ -275,7 +275,7 @@ static void Event_LeaveForWorldMap(void) {
 /// time the party nears the passage north (cell code 10): the two guards step
 /// together in front of it, and the map cells around them change.
 static void Event_GuardsBlockPassage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_WEST_GUARD, 136, 384);
@@ -306,7 +306,7 @@ static void Event_IodemQuestionsGuards(void) {
   s32 destinationColumn;
 #endif
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 438);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -419,7 +419,7 @@ static void Event_IodemQuestionsGuards(void) {
 /// must show travel papers it does not have; no, and he calls them strange.
 /// Afterwards, wounded, he vows to settle the score.
 static void Event_TalkToEastGuard(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
     Engine_EventSetMessage(MsgSuhallaPityColossoVictor);
@@ -454,7 +454,7 @@ static void Event_TalkToEastGuard(void) {
 static void Event_SoldierVanishes(void) {
   unsigned int beat;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
   Event_ShowMessageAndWait(ACTOR_VANISHING_SOLDIER, 0, 10);

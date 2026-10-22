@@ -35,7 +35,7 @@ struct JumpEventWork {
 extern struct MapCell gMapCellBuffer[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_End(void);
 void WaitFrames(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
@@ -121,7 +121,7 @@ again:
     // Crouch, then jump there.
     if (leader->animationKind == 1)
       spriteFlags = ((struct JumpSprite *)leader->animation)->flags;
-    EventRuntime_Begin();
+    EventRuntime_Start();
     Object_SetMode(leader, 6);
     WaitFrames(6);
     Audio_PlayCue(152);

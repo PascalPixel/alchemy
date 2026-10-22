@@ -13,7 +13,7 @@ extern u8 MsgYouHereTo[];
 void Animation_ApplyChildValues();
 void BattleEffect_SnapScaleToFull();
 void BattleEffect_StartItemBreak();
-void Field_BeginPaletteTransition();
+void Field_StartPaletteTransition();
 void Func_020013f8();
 void Func_02001430();
 void Func_02001438();
@@ -185,7 +185,7 @@ void Func_02000818(void) {
   Call2((void (*)())Func_020015c8, (s32)Object_GetById(21), 0);
   ((void (*)())Func_020015c0)();
   ((void (*)())Func_020015b8)();
-  Call1((void (*)())Field_BeginPaletteTransition, 8);
+  Call1((void (*)())Field_StartPaletteTransition, 8);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 16, 0, 0);
@@ -224,7 +224,7 @@ void Func_02000818(void) {
   Call2((void (*)())Func_020015c8, (s32)Object_GetById(21), 0);
   ((void (*)())Func_020015c0)();
   ((void (*)())Func_020015b8)();
-  Call1((void (*)())Field_BeginPaletteTransition, 8);
+  Call1((void (*)())Field_StartPaletteTransition, 8);
   Call3((void (*)())ObjectMotion_ArmCallback, 16, 0, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 17, 0x3000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 19, 0x5000, 0);

@@ -333,7 +333,7 @@ static void LemurianShip_SetSail(void) {
   struct FieldActor *ship;
   struct EventWork *event;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Map_CopyCellAttributes(18, 0, 3, 1, 18, 12);
   // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
@@ -606,7 +606,7 @@ static void Event_RaiseTheShip(void) {
 
   map = gMapWork[0];
 
-  Event_Begin();
+  Event_Start();
   Field_EndBusyAndReveal();
   // The leader steps to the water's edge; the backdrop brightens 16 steps.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 232);

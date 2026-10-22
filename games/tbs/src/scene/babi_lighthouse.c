@@ -238,7 +238,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   s32 velocity[3];
 
   // Start above the room with movement disabled until the fall begins.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -289,7 +289,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   struct FieldActor *leader;
 
   // Start above the room with movement disabled until the fall begins.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -364,7 +364,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   if (((leader->x.fixed >> 20) == 6 || (leader->x.fixed >> 20) == 18) &&
       (leader->z.fixed >> 20) == 20) {
     leader->targetX = ACTOR_NO_TARGET;
@@ -393,7 +393,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
 
 /// Walking into one of the pillars at the Babi Lighthouse Entry pushes it.
 static void BabiLighthouse_PushLedgePillar(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   StagedActor_AdvancePair();
   BabiLighthouse_JumpFromLedge();
   Engine_EventEnd();
@@ -436,7 +436,7 @@ static void BabiLighthouse_JumpIntoPit(void) {
 /// Walking south into the east pit of BabiLighthouseLuff's west room: the
 /// leader jumps in and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomEastPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   BabiLighthouse_JumpIntoPit();
   Engine_EventRequestExit(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST);
   Engine_EventEnd();
@@ -445,7 +445,7 @@ static void BabiLighthouse_DropFromWestRoomEastPit(void) {
 /// Walking south into the pit of BabiLighthouseLuff's east room: the pit mask
 /// is placed by it, and the leader jumps in and drops into the south room.
 static void BabiLighthouse_DropFromEastRoomPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   OverlayObject_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
   BabiLighthouse_JumpIntoPit();
   Engine_EventRequestExit(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
@@ -456,7 +456,7 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
 /// the pit mask and a capped pillar are placed by it, and the leader jumps in
 /// and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   OverlayObject_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
   OverlayObject_PrepareObject(PIXELS(121), 0, PIXELS(286),
                               SPRITE_CAPPED_PILLAR);
@@ -469,7 +469,7 @@ static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
 /// Walking south into the northwest pit of BabiLighthouseLuff's west room: the
 /// leader jumps in and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   BabiLighthouse_JumpIntoPit();
   Engine_EventRequestExit(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST);
@@ -478,7 +478,7 @@ static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
 
 /// Searching the locked door in BabiLighthouseLuff. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgBabiSeemsLocked, 1);
   Engine_EventEnd();
@@ -506,7 +506,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -769,7 +769,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
 static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
-  Engine_EventBegin();
+  Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiTheDoor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -872,7 +872,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   BabiLighthouse_CloseTruthDoor();
   GameFlag_Clear(FLAG_BEYOND_DOOR);
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -1067,7 +1067,7 @@ static void BabiLighthouse_OpenTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
     Engine_AudioPlayCue(SE_GATE_MOVE);
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetDestination(ACTOR_LEFT_DOOR, 280, 240);
     Actor_SetDestination(ACTOR_RIGHT_DOOR, 328, 240);
     Engine_ActorWaitForMove(ACTOR_LEFT_DOOR);
@@ -1086,7 +1086,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
     GameFlag_Clear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
     Engine_AudioPlayCue(SE_GATE_MOVE);
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetDestination(ACTOR_LEFT_DOOR, 296, 240);
     Actor_SetDestination(ACTOR_RIGHT_DOOR, 312, 240);
     Engine_ActorWaitForMove(ACTOR_LEFT_DOOR);
@@ -1107,7 +1107,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (work->revealActive != 0) {
     if (Engine_GameFlagIsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 

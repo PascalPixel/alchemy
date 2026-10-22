@@ -158,7 +158,7 @@ Func_0200039c:
 	adds r0, #128
 	bl Unit_Get
 	adds r6, r0, #0
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0
@@ -219,7 +219,7 @@ Func_0200039c:
 	mov r9, r0
 	movs r0, #1
 	bl Djinn_GetRecoveryTable
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0
@@ -371,7 +371,7 @@ Func_0200039c:
 	adds r0, #128
 	bl Unit_Get
 	adds r6, r0, #0
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0
@@ -432,7 +432,7 @@ Func_0200039c:
 	mov r9, r0
 	movs r0, #1
 	bl Djinn_GetRecoveryTable
-	bl SerialRuntime_BeginReceive
+	bl SerialRuntime_StartReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0

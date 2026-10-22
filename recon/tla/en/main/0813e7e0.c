@@ -101,7 +101,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   work->framesSinceTransfer = 1;
   Func_08191530(effect);
 
-  // Make BG2 a 128x128 canvas, as BattleEffect_BeginCanvasLayer does.
+  // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = 32;

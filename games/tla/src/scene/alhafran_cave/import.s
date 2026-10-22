@@ -105,7 +105,7 @@ FieldEvent_WaitFrames:
 	.global Func_02001430
 	.thumb_func
 Func_02001430:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_02001438
 	.thumb_func
 Func_02001438:
@@ -422,18 +422,18 @@ Func_020015a0:
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
-	.global Field_BeginPaletteTransition
+	.global Field_StartPaletteTransition
 	.thumb_func
-Field_BeginPaletteTransition:
-	overlay_veneer Field_BeginPaletteTransitionFar
+Field_StartPaletteTransition:
+	overlay_veneer Field_StartPaletteTransitionFar
 	.endif
 	.endif
 	.global Func_020015b0

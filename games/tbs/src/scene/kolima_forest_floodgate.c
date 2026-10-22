@@ -248,7 +248,7 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
   Engine_CameraMoveTo(PIXELS(264), -1, PIXELS(448), 1);
   Engine_CameraWaitForMove();
@@ -347,7 +347,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 /// log: the leader shoves it west to x 72.
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Engine_EventWait(6);
   Engine_AudioPlayCue(SE_HEAVY_MOVE);
@@ -374,7 +374,7 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 /// log: the leader shoves it east to x 104.
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Engine_EventWait(6);
   Engine_AudioPlayCue(SE_HEAVY_MOVE);
@@ -584,7 +584,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Vector_AddPolarOffset(0x80000, facing, point);
   actor = run->actor;
   quarter = facing / 0x4000;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Engine_EventWait(6);
   actor->speed = PIXELS(1) / 2;

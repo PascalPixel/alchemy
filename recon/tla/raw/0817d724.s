@@ -27,7 +27,7 @@ BattleEffect_RunRisingDragonEnemy:
 	str r2, [sp, #60]
 	bl Func_0813ba50
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r1, #19
 	movs r0, #104
 	bl BattleEffect_LoadBlitter

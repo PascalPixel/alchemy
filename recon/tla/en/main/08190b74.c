@@ -71,7 +71,7 @@ extern const u8 Data_081991a4[];
 extern const s16 Data_08199f2a[];
 extern const s16 Data_08199f2e[];
 
-void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 value);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -142,7 +142,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);

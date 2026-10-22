@@ -27,14 +27,14 @@ void Func_02003180();
 void Func_02003228();
 void Func_02003310();
 
-void FelixWake_BeginStep(void) {}
+void FelixWake_StartStep(void) {}
 
 void FelixWake_EndStep(void) {}
 
 void FelixWake_WaitForButton(void) {
   s32 frames = 180;
 
-  FelixWake_BeginStep();
+  FelixWake_StartStep();
 wait:
   if (--frames != -1) {
     Task_Wait(1);
@@ -51,8 +51,8 @@ void Func_02002c64(void) {
   s32 answer;
   s32 leader;
 
-  FelixWake_BeginStep();
-  Engine_EventBegin();
+  FelixWake_StartStep();
+  Engine_EventStart();
   Func_02003310(0);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Task_Wait(1);
@@ -73,17 +73,17 @@ void Func_02002c64(void) {
   Event_WaitTransitionFrames();
   Task_Wait(10);
   FelixWake_WaitForButton();
-  FelixWake_BeginStep();
+  FelixWake_StartStep();
   Motion_SetVarCbAndRefresh(gPartyState.currentOwner, 2);
   Task_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
-  FelixWake_BeginStep();
+  FelixWake_StartStep();
   Engine_ActorSetAnimation(gPartyState.currentOwner, 42);
   Task_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
-  FelixWake_BeginStep();
+  FelixWake_StartStep();
   Engine_ActorSetAnimation(gPartyState.currentOwner, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
                                      1);
@@ -100,28 +100,28 @@ void Func_02002c64(void) {
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
-    FelixWake_BeginStep();
+    FelixWake_StartStep();
     Engine_ActorSetAnimation(gPartyState.currentOwner, 46);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
-    FelixWake_BeginStep();
+    FelixWake_StartStep();
     Engine_EventShowMessage(11, 0);
     Task_Wait(1);
     Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(20);
-    FelixWake_BeginStep();
+    FelixWake_StartStep();
     Engine_ActorSetAnimation(gPartyState.currentOwner, 47);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
-    FelixWake_BeginStep();
+    FelixWake_StartStep();
     Engine_ActorSetAnimation(gPartyState.currentOwner, 48);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
-    FelixWake_BeginStep();
+    FelixWake_StartStep();
     Engine_EventShowMessage(11, 0);
     Task_Wait(1);
     Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
@@ -132,7 +132,7 @@ void Func_02002c64(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 384, 746);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(20);
-    FelixWake_BeginStep();
+    FelixWake_StartStep();
     Engine_EventShowMessage(11, 0);
     Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
   }

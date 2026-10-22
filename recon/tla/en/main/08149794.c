@@ -9,7 +9,7 @@
 
 // Same frame and instruction count; what is left is single-row order: the
 // native builds the sheet offset 0x700 (movs r7, #224; lsls) before
-// BattleEffect_BeginCanvasLayer where agscc builds it after, the argument
+// BattleEffect_StartCanvasLayer where agscc builds it after, the argument
 // registers of the two BattleEffect_LoadBlitter calls in the other order, and pool
 // offsets that move with them.
 
@@ -66,12 +66,12 @@ extern u8 Data_081979cc[];   // ☀️ gPlasma_Columns, 7 for each side
 extern u16 Data_081979c0[];  // ☀️ gPlasma_Sparks: sparks, shake
 extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                  // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);             // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -103,7 +103,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);

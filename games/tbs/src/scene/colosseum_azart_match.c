@@ -338,7 +338,7 @@ static void Event_DousePipe(void) {
 
   GameFlag_Set(FLAG_PIPES_MOVED);
   actor = Object_GetById(PIPE_WEST);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
   Object_SetMode(actor, 3);
@@ -369,7 +369,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
 
   leader = Object_GetById(gGameState.selectedActor);
   actor = Object_GetById(actorId);
-  Engine_EventBegin();
+  Engine_EventStart();
   {
     x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
     z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
@@ -490,7 +490,7 @@ static void Event_PushPipeworksPillar(void) {
   leader = Object_GetById(leaderId);
   actor = Object_GetById(PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(leaderId, ANIMATION_PUSH);
   Engine_EventWait(6);
   actor->speed = PIXELS(1) / 2;
@@ -521,7 +521,7 @@ static void Event_PushPipeworksPillar(void) {
   Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
   none = GameFlag_IsSet(FLAG_PIPES_MOVED);
   if (none != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Camera_MoveTo(PIXELS(552), -1, PIXELS(200), 1);
     Engine_CameraWaitForMove();
@@ -531,7 +531,7 @@ static void Event_PushPipeworksPillar(void) {
     return;
   }
   GameFlag_Set(FLAG_PIPES_MOVED);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
   Engine_CameraWaitForMove();
@@ -572,7 +572,7 @@ static void Event_ReachArena(void) {
 
   base = 0;
   ColosseumAzartMatch_NoOp();
-  Engine_EventBegin();
+  Engine_EventStart();
   approach = ColosseumAzartMatch_CollectFinishItem(ITEM_IRON_SHIELD,
                                                    ITEM_PADDED_GLOVES);
   ColosseumAzartMatch_WaitForStageReady();
@@ -632,7 +632,7 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Engine_ActorDestroy(PRIZE_A);
   Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(OPPONENT, PIXELS(1320), PIXELS(192));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1288), PIXELS(192));
   // BUG: 0x4000 is FACING_SOUTH, passed where Actor_FaceActor takes an actor
@@ -812,7 +812,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   actor = Object_GetById(guide);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
@@ -945,7 +945,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
   if (gGameState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(scene);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     path = Colosso_GreetAtStage(scene, 1);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoCallRockChallenge);
@@ -1017,7 +1017,7 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
   if (gGameState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     path = Colosso_GreetAtStage(attendant, 2);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoAreaCalledPipeworks);
@@ -1078,7 +1078,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
   if (gGameState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(scene);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     path = Colosso_GreetAtStage(scene, 3);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoTheyCallBrokenBridge);
@@ -1123,7 +1123,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Colosso_AskDoneCheering(scene);
     return;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   path = Colosso_GreetAtStage(scene, 4);
   if (path == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoPlaceNormallyCalledLumberWater);
@@ -1224,7 +1224,7 @@ static void ColosseumAzartMatch_SelectPresentationScript(u32 mode, u32 param) {
 /// (round 0), or for the race `Match 1`, then 3, 2, 1 and `Go!`.
 static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
   if (round == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
@@ -1235,7 +1235,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Engine_EventEnd();
   } else {
     Engine_AudioPlayCue(SE_247);
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     gColosseumAzartMatch_LetteringTitle[15] = round * 60;

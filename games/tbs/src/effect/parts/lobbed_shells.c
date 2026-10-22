@@ -122,7 +122,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_CELLS and the

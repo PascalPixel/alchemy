@@ -30,7 +30,7 @@ BattleEffect_RunDaedalusAlt:
 	adds r2, #4
 	strh r3, [r2]
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08180cf8
 	movs r2, #128
 	lsls r2, r2, #19

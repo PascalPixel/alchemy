@@ -24,7 +24,7 @@ struct DescriptorEntry {
 extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
-void BattleEffect_BeginTiledCanvas(s32 mode);
+void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
@@ -37,6 +37,6 @@ s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
-  BattleEffect_BeginTiledCanvas(1);
+  BattleEffect_StartTiledCanvas(1);
   BattleEffect_EndCanvasLayer();
 }

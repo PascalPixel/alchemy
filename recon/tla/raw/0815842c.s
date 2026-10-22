@@ -20,7 +20,7 @@ BattleEffect_RunHail:
 	mov r11, r0
 	movs r0, #0
 	str r3, [sp, #16]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r2, [sp, #20]
 	movs r3, #65
 	ldr r1, [r2, #4]

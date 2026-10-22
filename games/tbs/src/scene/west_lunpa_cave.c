@@ -251,7 +251,7 @@ static void Event_HammetFindsBunza(void) {
   if (GameFlag_IsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetPosition(ACTOR_BUNZA, PIXELS(144), PIXELS(400));
     Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
     Actor_WalkTo(ACTOR_BUNZA, 184, 400);
@@ -371,7 +371,7 @@ static void Reunion_Converse(void) {
   s32 plan;
 
   // Arrange the reunion while the screen is closed, then reveal the group.
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(GARET, PIXELS(200), PIXELS(544));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(184), PIXELS(544));
   Actor_SetPosition(MIA, PIXELS(168), PIXELS(544));

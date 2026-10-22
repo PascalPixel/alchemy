@@ -89,7 +89,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
 
   // Setup. The EarthWall images, coloured with the Mars Djinn palette (the
   // Fireball palette for Recovery), each palette replacing the one before.

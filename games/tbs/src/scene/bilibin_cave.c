@@ -273,7 +273,7 @@ static void Event_HideRevealedPath(void) {
 /// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveRapier), until it is
 /// out: it goes out for good.
 static void Event_DouseRapierRoomFire(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
   Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   Engine_EventEnd();
@@ -283,7 +283,7 @@ static void Event_DouseRapierRoomFire(void) {
 /// it goes out, and the puddle beside it freezes into a pillar the party can
 /// walk over.
 static void Event_DouseIceRoomFire(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   Engine_EventWait(40);
@@ -300,7 +300,7 @@ static void Event_DouseIceRoomFire(void) {
 /// from freezing: clears the Psynergy's child effect and plays the ice melting
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 actor) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetChildValue(actor, 0);
   Engine_EventWait(40);
   Engine_AudioPlayCue(SE_HIDDEN_PASSAGE_OPEN);
@@ -353,7 +353,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0 ||
       GameFlag_IsSet(FLAG_PLACE_TEMP_04) != 0) {
     if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventWait(40);
       Event_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
@@ -365,7 +365,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     GameFlag_Set(FLAG_PLACE_TEMP_02);
   } else {
     if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) != 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_EventWait(40);
       Event_PlayCue(SE_220);
       destinationCellX = 36;

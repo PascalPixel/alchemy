@@ -32,7 +32,7 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Party_RemoveOwnerRestored, 1
 	.set import.Engine_EventChooseYesNo, 1
 	.set import.Object_GetById, 1
@@ -72,7 +72,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowPicture, 1
-	.set import.Engine_PsynergyBegin, 1
+	.set import.Engine_PsynergyStart, 1
 	.set import.FieldEffect_End, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

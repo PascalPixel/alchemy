@@ -59,7 +59,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   // Setup. The entrance (over the first target) mirrors the Djinni when the
   // targets are enemies (side ^ 1), and returns where it ends in djinnX and
   // djinnY.

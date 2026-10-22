@@ -253,7 +253,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// McCoy's Palace, before the reward: a woman with fair hair asks about going
 /// to Kolima. "Oh, are you willing to go to Kolima Forest?"
 static void Event_AskAboutGoingToKolima(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinYouWillingGoKolimaForest);
   Engine_EventAskYesNo(ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST, 0);
   Engine_EventEnd();
@@ -262,7 +262,7 @@ static void Event_AskAboutGoingToKolima(void) {
 /// McCoy's Palace, after the reward: the woman with Lady McCoy's silk
 /// nightgown screams, then turns to the party. "AAAAH!!!"
 static void Event_TalkToWomanInMiladysNightgown(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_ShowEmote(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
                   EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 2);
@@ -282,7 +282,7 @@ static void Event_TalkToWomanInMiladysNightgown(void) {
 /// "You are a fine warrior." After, "It's very reckless for such young
 /// warriors to face the holy tree..."
 static void Event_TalkToOldManPraisingTheWarriors(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinFineWarrior);
   if (GameFlag_IsSet(FLAG_OLD_MAN_HAS_PRAISED) != 0) {
     Engine_EventSetMessage(MsgBilibinItsVeryRecklessForSuch);
@@ -295,7 +295,7 @@ static void Event_TalkToOldManPraisingTheWarriors(void) {
 /// McCoy's Palace, after the reward: a soldier saw the party go to Kolima.
 /// "I was watching from here. After all that fuss, you still went to Kolima?"
 static void Event_TalkToSoldierWatchingKolima(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinWasWatchingFromHereAfter);
   Engine_EventAskYesNo(ACTOR_SOLDIER_WATCHING_KOLIMA, 0);
   Engine_EventEnd();
@@ -308,7 +308,7 @@ static void Event_TalkToSoldierWatchingKolima(void) {
 /// Unused: with flag 0x84d set he would say `Pick any one of the four
 /// treasures.` instead, but nothing in the game names or sets that flag.
 static void Event_TalkToSoldierShowingTheReward(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_CHOOSING_REWARD) != 0) {
     Engine_EventSetMessage(MsgBilibinMayChooseOnlyOneItem);
@@ -330,7 +330,7 @@ static void Event_TalkToSoldierShowingTheReward(void) {
 /// responsibilities." Then "You looked very courageous walking toward
 /// Kolima."
 static void Event_ReadOldMansThoughtsOnTheWarriors(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgBilibinSometimesWeNeedChildrenRemind);
   if (GameFlag_IsSet(FLAG_OLD_MAN_THOUGHTS_READ) != 0) {
     Engine_EventSetMessage(MsgBilibinLookedVeryCourageousWalkingToward);
@@ -343,7 +343,7 @@ static void Event_ReadOldMansThoughtsOnTheWarriors(void) {
 /// McCoy's Palace, the treasure room: Mind Read on the soldier who keeps the
 /// treasure, whose thoughts follow the curse and the reward.
 static void Event_ReadRewardSoldiersThoughts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_CHOOSING_REWARD) != 0) {
     Engine_EventSetMessage(MsgBilibinNonethelessIfYourLuckSour);
@@ -382,7 +382,7 @@ static void Event_WalkThroughDoor(void) {
     Map_ClearLayerEntryFlag(1);
     Map_ClearLayerEntryFlag(2);
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventWait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
@@ -399,14 +399,14 @@ static void Event_WalkThroughDoor(void) {
 
 /// The chest is empty. "Isaac checked the chest... but it was empty."
 static void McCoyPalace_ShowChestEmpty(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgBilibinIsaacCheckedChestButWas, 1);
   Engine_EventEnd();
 }
 
 /// The chest is locked. "The treasure chest is locked."
 static void McCoyPalace_ShowChestLocked(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgBilibinTreasureChestLocked, 1);
   Engine_EventEnd();
 }
@@ -469,7 +469,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   emitterHandle =
       FieldEffect_PlayCueAndStartEmitterOnTarget(0, chestActorId, itemId);
@@ -495,7 +495,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
 static void Event_CaptainAsksPartyToChoose(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (Engine_GameFlagIsSet(FLAG_REWARD_OFFERED) != 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Actor_ShowEmote(ACTOR_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHWEST + FACING_STEP, 10);
       Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
@@ -515,7 +515,7 @@ static void Event_CaptainAsksPartyToChoose(void) {
 /// McCoy."
 static void Event_CaptainSeesPartyOff(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_CAPTAIN, 0);
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 622, 764);
@@ -652,7 +652,7 @@ static void Event_AudienceWithMcCoy(void) {
   struct FieldActor *actor;
 
   // Stage the first audience, or place the leader for a return visit.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_EventGetViewCenter()->motionFlags = 0;
@@ -1098,7 +1098,7 @@ leave:
 /// rejected, asks them not to go to Kolima and lets slip that the barricade may
 /// not need a key.
 static void Event_CaptainHintsAtBarricade(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -1171,7 +1171,7 @@ static void Event_McCoyRewardsParty(void) {
   struct FieldActor *actor;
   s32 advanceAlternateReply;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Reveal the approach, then walk the leader and the captain into the
   // audience.
   Camera_MoveTo(-1, -1, -1, 0);
@@ -1446,7 +1446,7 @@ static void Event_McCoyRewardsParty(void) {
 static void Event_PresentRewardChests(void) {
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Restore the chest-row collision patches before presenting the reward.
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventGetViewCenter()->motionFlags = 0;

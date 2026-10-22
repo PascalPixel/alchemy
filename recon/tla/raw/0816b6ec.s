@@ -24,7 +24,7 @@ Func_0816b6ec:
 	ldr r2, [r3, #48]
 	str r2, [sp, #32]
 	ldr r5, [r3, #100]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r3, r9
 	cmp r3, #0
 	bne .L_0816b748

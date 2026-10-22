@@ -11,7 +11,7 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.SceneEvents_UpdateInView, 1
 	.set import.Engine_PartyGiveItem, 1

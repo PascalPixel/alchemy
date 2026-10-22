@@ -26,7 +26,7 @@ BattleEffect_RunTrident:
 	ldr r2, [r5, #100]
 	movs r6, #2
 	str r2, [sp, #36]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0818cbdc
 	movs r2, #128
 	lsls r2, r2, #19

@@ -64,7 +64,7 @@ extern const u8 Data_081991c0[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_08199210[];
 
-void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -124,7 +124,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   graphics = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, gData_02014000,

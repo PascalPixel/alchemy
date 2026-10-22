@@ -473,7 +473,7 @@ s32 FieldScene_RunEntrySetup(void) {
 /// ACTOR_GLYPH_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
 /// (312, 416).
 static void ItemLevel_RunMotionTest(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_GLYPH_BROWSER, ANIMATION_WALK);
   Engine_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIMATION_SHAKE_HEAD);
   ObjectMotion_WaitForAnimationChange(ACTOR_GLYPH_BROWSER);

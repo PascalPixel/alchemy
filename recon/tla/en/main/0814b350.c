@@ -49,7 +49,7 @@ extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 extern u16 Data_0819744c[];  // ☀️ gBattleEffect_PuffCells
 extern u8 Data_0819745e[];   // ☀️ gBattleEffect_PuffSizes
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_FetchRectangleBlitters(
@@ -92,7 +92,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);

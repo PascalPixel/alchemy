@@ -168,7 +168,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // Begin: in Outer Space the user leaps up with a sound. The stream's
   // direction is 1 when that user stands on side 1, otherwise -1.
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0x2000);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   /* FAKEMATCH(temporary): mode tested through direction, so the arm reloads
    * mode where CSE would put 1; as if (mode == PARTICLE_STREAMS_OUTER_SPACE),
    * 1 of 1532 instructions differ in tbs-en. */

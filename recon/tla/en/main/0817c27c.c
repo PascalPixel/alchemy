@@ -65,7 +65,7 @@ extern char ResourceId_EffectPalette02;
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
 extern const u16 gData_08197410[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -109,7 +109,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   u8 *sparkCels = heap->unk64[0];
   s32 i;
 
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
     draw[0] = (DrawRectangle)heap->unk64[1];

@@ -114,7 +114,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the first wipe fills the canvas with,
   // are black.
@@ -272,7 +272,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     // 81 + i / 4, mote i spins about the formation's centre on its own axes
     // while its radius shrinks by 2 a frame to nothing, and nearer motes are
     // drawn larger. The radius is a plain integer, at most 87, below the near
-    // depth of the projection BattleEffect_BeginCanvasLayer sets (96 in the
+    // depth of the projection BattleEffect_StartCanvasLayer sets (96 in the
     // same units), so Render_ProjectPoint does not project the rotated point:
     // its x, its y less 16 and its depth, which grows towards the viewer, are
     // used as pixels.

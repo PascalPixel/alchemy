@@ -21,7 +21,7 @@ BattleEffect_RunVine:
 	movs r0, #0
 	str r2, [sp, #12]
 	mov r10, r1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r3, r9
 	ldr r1, [r3, #4]
 	movs r3, #132

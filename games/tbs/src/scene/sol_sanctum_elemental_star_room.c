@@ -190,7 +190,7 @@ static void Event_BagVenusStar(void) {
   s32 itemOwner;
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Flash the room before revealing the crossings for this star.
   Engine_AudioPlayCue(SE_141);
   for (i = 0; i != 6; i++) {
@@ -293,7 +293,7 @@ static void Event_BagMercuryStar(void) {
   s32 itemOwner;
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_PlayCue(SE_141);
   for (i = 0; i != 6; i++) {
     ColorBuffer_ApplyTarget(0x404a4e, 1);
@@ -393,7 +393,7 @@ static void Event_BagMercuryStar(void) {
 /// hostages, Felix is unmasked, and Alex takes the three stars. Sets
 /// FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, which ends the row.
 static void Event_BagJupiterStarAndMeetSaturos(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   SolSanctumElementalStarRoom_BagJupiterStar();
   SolSanctumElementalStarRoom_RevealSaturosAndMenardi();
   SolSanctumElementalStarRoom_DemandElementalStars();
@@ -1185,7 +1185,7 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   struct FieldActor *alex;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetBuiltinAction(JENNA, ACTOR_ACTION_IDLE);
   Actor_SetBuiltinAction(ACTOR_KRADEN, ACTOR_ACTION_IDLE);
   Actor_SetBuiltinAction(ACTOR_MENARDI, ACTOR_ACTION_IDLE);
@@ -1239,7 +1239,7 @@ static void Event_TakeMarsStar(void) {
   s32 itemOwner;
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_PlayCue(SE_141);
   for (pass = 0; pass != 6; pass++) {
     ColorBuffer_ApplyTarget(0x4039d2, 1);
@@ -1310,7 +1310,7 @@ static void Event_TakeMarsStar(void) {
 /// Elemental Star Room: talking to Kraden, about the stars still to bag, or,
 /// once Alex holds them, Kraden's regret: "I am responsible for all of this."
 static void Event_TalkToKraden(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     Engine_EventSetMessage(MsgSolSanctumKradenIAmResponsible);
     Engine_EventShowMessage(ACTOR_KRADEN, 0);
@@ -1329,7 +1329,7 @@ static void Event_TalkToKraden(void) {
 /// Elemental Star Room: talking to Jenna, or Mind Read on her, about the stars,
 /// or once Alex holds them, her brother alive.
 static void Event_TalkToJenna(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     Engine_EventSetMessage(MsgSolSanctumJennaMyBrotherIsAlive);
     Engine_EventShowMessage(JENNA, 0);
@@ -1347,7 +1347,7 @@ static void Event_TalkToJenna(void) {
 
 /// Elemental Star Room: talking to Saturos, who demands the last star.
 static void Event_TalkToSaturos(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSolSanctumSaturosBringTheFinalStar);
   Engine_EventShowMessage(ACTOR_SATUROS, 0);
   Engine_EventEnd();
@@ -1356,7 +1356,7 @@ static void Event_TalkToSaturos(void) {
 /// Elemental Star Room: talking to Menardi, or Mind Read on her; she demands
 /// the last gem.
 static void Event_TalkToMenardi(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSolSanctumMenardiBringTheFinalGem);
   Engine_EventShowMessage(ACTOR_MENARDI, 0);
   Engine_EventEnd();
@@ -1364,7 +1364,7 @@ static void Event_TalkToMenardi(void) {
 
 /// Elemental Star Room: talking to Felix, who says nothing. "..."
 static void Event_TalkToFelix(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSolSanctumFelixSilence);
   Engine_EventShowMessage(ACTOR_FELIX, 0);
   Engine_EventEnd();
@@ -1372,7 +1372,7 @@ static void Event_TalkToFelix(void) {
 
 /// Elemental Star Room: talking to Alex: only one star is left.
 static void Event_TalkToAlex(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSolSanctumAlexOnlyOneLeft);
   Engine_EventShowMessage(ACTOR_ALEX, 0);
   Engine_EventEnd();
@@ -1381,7 +1381,7 @@ static void Event_TalkToAlex(void) {
 /// Elemental Star Room: walking north back the way the party
 /// came, has Kraden call it back. "There aren't any Elemental Stars out there!"
 static void Event_KradenStopsPartyLeaving(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSolSanctumNoStarsOutThere);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Engine_EventEnd();
@@ -1427,7 +1427,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   s32 kradenMessageSpeaker;
   s32 zero;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellAttributes(27, 16, 5, 1, 27, 17);
   Camera_MoveTo(PIXELS(471), -1, PIXELS(261), 0);
   Engine_CameraWaitForMove();

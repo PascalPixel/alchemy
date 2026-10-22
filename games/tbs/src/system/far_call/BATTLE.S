@@ -33,7 +33,7 @@ FarCall_BattleTable:
 	export Camera_ConfigureSceneFar, Camera_ConfigureScene
 	export GetMotionRecordFar, GetMotionRecord
 	export BattlePresentation_SetActorModesFar, BattlePresentation_SetActorModes
-	export BattleEvent_BeginPhaseFar, BattleEvent_BeginPhase
+	export BattleEvent_StartPhaseFar, BattleEvent_StartPhase
 	export Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped
 	export DjinnRecovery_TickFar, DjinnRecovery_Tick
 	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette

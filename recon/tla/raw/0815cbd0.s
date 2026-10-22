@@ -20,7 +20,7 @@ BattleEffect_RunSpiderWeb:
 	sub sp, #20
 	mov r10, r3
 	mov r11, r2
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0815cc30
 	movs r2, #128
 	lsls r2, r2, #19

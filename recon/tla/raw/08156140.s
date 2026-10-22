@@ -29,7 +29,7 @@ BattleEffect_RunProjectileVolley:
 	str r3, [sp, #108]
 	ldr r4, [r4, #24]
 	str r4, [sp, #100]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r5, [sp, #148]
 	ldr r3, [r5, #28]
 	cmp r3, #1

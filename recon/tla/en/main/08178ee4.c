@@ -7,7 +7,7 @@
 // effect's spill comes first, as the native; one between BG2PA's pinned
 // 0x100 and its store so the pool load comes before the address.
 // Left:
-// - the native loads gMapCellBuffer into r6 before BattleEffect_BeginTiledCanvas
+// - the native loads gMapCellBuffer into r6 before BattleEffect_StartTiledCanvas
 // (here after it).
 // - both BattleEffect_LoadBlitter calls set r1 before r0 in the native; sched2 breaks
 // the tie by RTL order here (the two moves are symmetric in the
@@ -67,7 +67,7 @@ extern const u8 gData_081993e0[];
 extern const u8 gData_081993e8[];
 extern const u16 gData_081993f0[];
 
-void BattleEffect_BeginTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 s32 Trig_Sin(s32 angle);
@@ -112,7 +112,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
   parts = Ram_MapCellBuffer;
-  BattleEffect_BeginTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(0x2001);
   {
     /* FAKEMATCH: the native loads BG2PA's 0x100 from the pool before it
      * starts the register address; pinned behind a one-pass block it does

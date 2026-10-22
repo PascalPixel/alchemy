@@ -480,7 +480,7 @@ const struct ScenePlacement *ValeGate_GetPlacements(void) {
 /// Reached by searching cell code 100 in every table but the farewell's.
 /// Clears FLAG_NOTHING_HAPPENS.
 static void Event_UsePsynergyStone(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgValeCheckedThePsynergyStone, 1);
   Engine_AudioPlayCue(SE_RECOVERY);
   Party_AddPp(999, 0);
@@ -515,7 +515,7 @@ const struct SceneEvent *ValeGate_GetEvents(void) {
 /// Reached by talking to ACTOR_MAN_ASKING_ABOUT_MEDITATION on the day the
 /// story begins.
 static void Event_AskAboutMeditation(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeMeditateOnMtAlephDaily);
   Engine_ActorFaceEachOther(ACTOR_MAN_ASKING_ABOUT_MEDITATION,
                             ACTOR_PARTY_LEADER, 2);
@@ -529,7 +529,7 @@ static void Event_AskAboutMeditation(void) {
 /// Reached by talking to ACTOR_WOMAN_RECALLING_STORM on the day the story
 /// begins.
 static void Event_RecallThreeYearsAgo(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeADifficultTimeThreeYears);
   Engine_ActorFaceEachOther(ACTOR_WOMAN_RECALLING_STORM, ACTOR_PARTY_LEADER, 2);
   Engine_EventAskYesNo(ACTOR_WOMAN_RECALLING_STORM, 0);
@@ -542,7 +542,7 @@ static void Event_RecallThreeYearsAgo(void) {
 ///
 /// Reached by talking to ACTOR_FIRST_CHILD on the day the story begins.
 static void Event_AskAboutTheTravelers(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeDidTheTravelersMeetThe);
   Engine_ActorFaceEachOther(ACTOR_FIRST_CHILD, ACTOR_PARTY_LEADER, 2);
   Engine_EventAskYesNo(ACTOR_FIRST_CHILD, 0);
@@ -563,7 +563,7 @@ static void Event_DemonstratePsynergy(void) {
   s32 shakes;
   s32 *origin;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     message = MsgValeArentWorriedCrossing;
     Engine_EventSetMessage(message);
@@ -592,7 +592,7 @@ static void Event_DemonstratePsynergy(void) {
     Engine_ActorStartRepeatedMotion(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 2);
     Engine_EventWait(15);
     // Flash the caster before starting the palette cycle and camera shake.
-    Scene_BeginCutscenePsynergy();
+    Scene_StartCutscenePsynergy();
     shakes = 0;
     for (i = 0; i < 40; i++) {
       ValeGate_FlashPsynergyPalette(
@@ -635,7 +635,7 @@ static void Event_DemonstratePsynergy(void) {
 /// ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN after Kalay; the story state picks the
 /// question.
 static void Event_AskAboutJourney(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     Engine_EventSetMessage(MsgValeAnythingInterestingOnYourTrip);
     Engine_EventOpenMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
@@ -666,7 +666,7 @@ static void Event_AskAboutJourney(void) {
 /// the debug menus, setting FLAG_PARTY_LEFT_VALE without the prologue's flags,
 /// reach it.
 static void Event_TalkAboutFallenStone(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_HUT_OWNER, ANIMATION_STAND);
   Engine_ActorFaceActor(ACTOR_HUT_OWNER, ACTOR_PARTY_LEADER, 20);
   Engine_ActorFaceActor(ACTOR_HUT_OWNER, ACTOR_FALLEN_STONE_SPOT, 40);
@@ -694,7 +694,7 @@ static void Event_BoyLiftsSmallRock(void) {
   s32 savedMotionFlags;
   struct FieldActor *rock;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 760);
   Engine_ActorFaceEachOther(ACTOR_STORM_ROCK_LIFTING_BOY, ACTOR_PARTY_LEADER,
                             30);
@@ -706,7 +706,7 @@ static void Event_BoyLiftsSmallRock(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   // Charge the caster's display, then start both palette updates.
-  Scene_BeginCutscenePsynergy();
+  Scene_StartCutscenePsynergy();
   for (i = 0; i < 40; i++) {
     ValeGate_FlashPsynergyPalette(Object_GetById(ACTOR_STORM_ROCK_LIFTING_BOY));
     Engine_TaskWait(1);
@@ -746,7 +746,7 @@ static void Event_BoyLiftsSmallRock(void) {
 /// Reached by talking to ACTOR_STORM_GIRL_WHO_SAW_JENNA on the stormy
 /// night.
 static void Event_TalkAboutHelping(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceEachOther(ACTOR_STORM_GIRL_WHO_SAW_JENNA, ACTOR_PARTY_LEADER,
                             10);
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
@@ -765,7 +765,7 @@ static void Event_TalkAboutHelping(void) {
 /// Reached by talking to ACTOR_AFTER_KALAY_WELCOMING_YOUNG_MAN after Kalay.
 /// Sets FLAG_VALE_WELCOMED_HOME.
 static void Event_WelcomeIsaacHome(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_VALE_WELCOMED_HOME) != 0) {
     Engine_EventSetMessage(MsgValeThisIsVale);
   } else {
@@ -785,7 +785,7 @@ static void Event_WelcomeIsaacHome(void) {
 /// restarts the search.
 static void Event_PsynergyStoneIsGone(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_AFTER_KALAY_HUT_OWNER);
-  Engine_EventBegin();
+  Engine_EventStart();
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
@@ -1087,7 +1087,7 @@ static void Event_SentToAidElders(void) {
       Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
     // The camera goes to the villagers by the stone. Garet's grandfather: go
     // aid the elders, the Boulder is too heavy for them.
-    Engine_EventBegin();
+    Engine_EventStart();
     Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
     Engine_CameraMoveTo(PIXELS(197), -1, PIXELS(768), 1);
     Camera_WaitForArrival();
@@ -1253,7 +1253,7 @@ static void Event_MeetSurvivingTravelers(void) {
   struct FieldActor *camera;
 
   camera = Camera_GetEventObject();
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   // The screen opens on the storm at the west path, where Isaac comes in from
@@ -1452,7 +1452,7 @@ static void Event_TravelersLeaveAfterBattle(void) {
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_CameraMoveTo(PIXELS(64), PIXELS(144), PIXELS(350), 0);
@@ -1544,7 +1544,7 @@ static void Event_DepartForQuest(void) {
   // The village gathers at the gate to see Isaac and Garet off; the camera
   // starts on the two children up the path.
   Party_RestoreHpPp(1);
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
   Camera_MoveTo(PIXELS(180), PIXELS(16), PIXELS(618), 0);
   Engine_MapRedraw();

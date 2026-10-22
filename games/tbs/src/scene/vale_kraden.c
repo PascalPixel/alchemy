@@ -203,7 +203,7 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
 static void Event_TalkToBoyByTheFence(void) {
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeIllClimbTheFenceSomeday);
     Event_ShowMessage(ACTOR_BOY_BY_THE_FENCE, 0);
@@ -242,7 +242,7 @@ static void Event_KradenPlansSanctumVisit(void) {
 
   if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     // Isaac walks up to Kraden, who greets him.
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Engine_EventSetMessage(MsgValeKradenOhIsaac);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
@@ -498,7 +498,7 @@ static void Event_KradenSetsOff(void) {
   struct FieldActor *actor;
   s32 facing;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(GARET, PIXELS(216), PIXELS(264));
   Actor_SetPosition(JENNA, PIXELS(248), PIXELS(264));
@@ -592,7 +592,7 @@ static void Event_MeetSaturosAndMenardi(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_PlayCue(AUDIO_CUE_FADE_BGM);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
@@ -813,7 +813,7 @@ static void Event_OverhearKraden(void) {
 
   if (GameFlag_IsSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) != 0) {
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     // Kraden wonders aloud who they were, while Garet and Jenna step out of
     // Isaac behind him.
@@ -922,7 +922,7 @@ s32 ValeKraden_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldEffect_StartGroundParticles();
     FieldEffect_StartLightning();
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ActorSetPosition(ACTOR_BOY_BY_THE_FENCE, 0, 0);
     Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
     Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
@@ -961,7 +961,7 @@ s32 ValeKraden_Initialize(void) {
     Engine_ActorSetPosition(ACTOR_EAST_ROCK, 0, 0);
     Engine_ActorSetPosition(GARET, 0, 0);
     Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
-    Engine_EventBegin();
+    Engine_EventStart();
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gGameState.entrance == VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH) {
         Event_KradenSetsOff();
@@ -1006,13 +1006,13 @@ static void Event_TalkToRockslideSurvivor(void) {
 
   if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) == 0) {
     if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP) != 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
       Engine_EventSetMessage(MsgValeSaveYourselves);
       Engine_EventShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
       Engine_EventEnd();
     } else {
-      Engine_EventBegin();
+      Engine_EventStart();
       Engine_ActorStop(ACTOR_ROCKSLIDE_SURVIVOR);
       Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 1);
       // He gasps out the rockslide and the monsters; Isaac and Garet hurry
@@ -1105,7 +1105,7 @@ static void Event_TalkToRockslideSurvivor(void) {
 static void Event_FightFirstMonster(void) {
   struct EventWork *work;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   work = gEventWork;
   work->startTransition =
@@ -1126,7 +1126,7 @@ static void Event_FightFirstMonster(void) {
 static void Event_FightSecondMonster(void) {
   struct EventWork *work;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   work = gEventWork;
   work->startTransition =
@@ -1145,7 +1145,7 @@ static void Event_FightSecondMonster(void) {
 /// Reached by talking to the cottage visitor (ACTOR_COTTAGE_VISITOR) in the
 /// events after Kalay.
 static void Event_TalkToCottageVisitor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeMemoriesOfThisCottage);
   Engine_EventAskYesNo(ACTOR_COTTAGE_VISITOR, 0);
   Engine_EventEnd();

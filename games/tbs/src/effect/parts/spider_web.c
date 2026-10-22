@@ -59,7 +59,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
   if (work->effect->side == 1) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
@@ -174,7 +174,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   canvas = *(void **)size;
   work = *(struct BattleEffectWork **)(size - 4);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(2);
+  BattleEffect_StartCanvasLayer(2);
   transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
   *(u16 *)transparent = 0x1000; // REG_BLDALPHA: invisible to start with

@@ -24,7 +24,7 @@ void Unit_Calculate(s32 owner);
 void GameFlag_RefreshLureCap(void);
 u32 Runtime_GetBuildStampTime(void);
 void GameState_InitializeDefaults(void);
-void Party_BeginChildhood(void);
+void Party_StartChildhood(void);
 void Party_EndChildhood(void);
 void Party_RestoreHpPp(s32 cureConditions);
 void Party_RestorePpOfLitElements(void);

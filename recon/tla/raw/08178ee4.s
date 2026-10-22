@@ -23,7 +23,7 @@ BattleEffect_RunHeartbreak:
 	adds r0, #1
 	mov r11, r1
 	ldr r6, .L_08178f50
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	ldr r3, .L_08178f4c
 	movs r2, #128
 	lsls r2, r2, #19

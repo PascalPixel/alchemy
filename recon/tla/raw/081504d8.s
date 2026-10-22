@@ -20,7 +20,7 @@ SummonEffect_RunCanvasEffect:
 	movs r0, #0
 	ldr r3, [r3, #96]
 	str r3, [sp, #48]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #128
 	ldr r3, .L_08150528
 	lsls r2, r2, #19

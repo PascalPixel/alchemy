@@ -11,7 +11,7 @@ static void Vault_ShowThought(s32 actorId) {
   s32 zero = 0;
 
   *paused = 1;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(actorId, ANIMATION_STAND);
   Engine_EventWait(2);
   Engine_EventShowMessage(actorId, 0);

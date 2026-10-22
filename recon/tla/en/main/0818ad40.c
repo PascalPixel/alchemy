@@ -95,8 +95,8 @@ extern u8 gData_0819751a[];
 extern u8 Data_081992b0[];
 extern s32 Data_081991e0[];
 
-void BattleEffect_BeginTiledCanvas(s32 bgControl);
-void BattleEffect_BeginTiledCanvasFilled(s32 bgControl);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -167,11 +167,11 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
-  BattleEffect_BeginTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(0x2001);
   if (effect->side == 0)
-    BattleEffect_BeginTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(0x2001);
   else
-    BattleEffect_BeginTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(0x2001);
   REG_BLDALPHA = 0x210;
   if (mode == CARD_SWORD) {
     if (effect->side == 0)

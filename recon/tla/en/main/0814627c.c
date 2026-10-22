@@ -12,7 +12,7 @@
 // are a load one row from its neighbour.
 
 // Tried (2026-10-15): alchemy permute 10 minutes (56, through four
-// rewrites: REG_BG2PA written before BeginCanvasLayer, which would undo the
+// rewrites: REG_BG2PA written before StartCanvasLayer, which would undo the
 // layer's own 0x80 and was rejected; the work pointer copied; &vector
 // through a pointer temporary; and a 0x03000000 integer held from the setup
 // for the second blitter's read). The last, written as the tagged heap
@@ -43,10 +43,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
@@ -104,7 +104,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
 
   // Set up: the rune picture with its palette, the dots, the flares, and a
   // transfer that fades the canvas by 4 each frame.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);

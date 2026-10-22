@@ -40,11 +40,11 @@ BattleEffect_RunProjectileVolleyB:
 	bne .L_081526aa
 .L_081526a2:
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	b .L_081526b0
 .L_081526aa:
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 .L_081526b0:
 	ldr r5, [sp, #84]
 	ldr r3, [r5, #28]

@@ -145,7 +145,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
   // Motes drawn for each target: 16, but 24 for Demon Fire and 32 for Drown.
   count = 16;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_TAINT) {
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
@@ -397,7 +397,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   sheep = PARTICLES;
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0);
+  EFFECT_START_NARROW_CANVAS(0);
   // Drawn solid.
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
@@ -519,7 +519,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   canvas = slot[0];
   work = slot[-1];
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(1);
   // Drawn solid.
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,

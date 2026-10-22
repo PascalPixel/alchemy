@@ -32,7 +32,7 @@ Func_08142944:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_081429c4
 	movs r2, #128
 	lsls r2, r2, #19

@@ -16,7 +16,7 @@
 struct ObjectRuntime *Object_GetById(u32 actor);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void EventRuntime_Begin(void);
+void EventRuntime_Start(void);
 void EventRuntime_ResolvePendingActions(s32 skip);
 void EventRuntime_StartScreen(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
@@ -49,7 +49,7 @@ void Func_080e3698(s32 actor) {
   y = object->y;
   z = object->z;
   spin = 0;
-  EventRuntime_Begin();
+  EventRuntime_Start();
   EventRuntime_ResolvePendingActions(0);
   EventRuntime_StartScreen();
   for (i = 0; i < 128; i++) {

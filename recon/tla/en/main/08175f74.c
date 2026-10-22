@@ -217,7 +217,7 @@ extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 extern u8 gData_08143001[];
 
-void BattleEffect_BeginCanvasLayer(s32);
+void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Func_08163c2c(s32, s32);
@@ -315,7 +315,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   savedWidth = DISPLAY_1120->unk4;
   glyphs = SYSTEM_WORK->glyphs;
   scene = SYSTEM_WORK->scene;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   REG_BG2CNT = 0x784;
   PLTT[0] = (u32)&Value_00000000;

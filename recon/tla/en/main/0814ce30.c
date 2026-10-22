@@ -69,7 +69,7 @@ extern u8 Data_0819823e[];  // ☀️ gCybele_SparkSizes
 extern u16 Data_08198244[]; // ☀️ gCybele_EmberOffsets
 extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
@@ -84,7 +84,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void *GetMotionRecordFar(void *object, s32 index);
 void Render_ResetTransformState(void);
 void ResourceObject_ReleaseFar(void *object);
-void Func_081180e8(s32 phase); // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -135,7 +135,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
   // The canvas, unscaled and moved 32 pixels left, the vine sheet and two
   // transparent blitters, the second mirrored.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,

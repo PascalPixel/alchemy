@@ -23,7 +23,7 @@ BattleEffect_RunNirvana:
 	str r2, [sp, #24]
 	ldr r3, [r6, #100]
 	str r3, [sp, #20]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #0
 	ldr r1, [sp, #20]
 	movs r3, #0

@@ -25,13 +25,13 @@ BattleEffect_RunLifeShear:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 	b .L_0818194a
 .L_08181940:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleEffect_BeginTiledCanvasFilled
+	bl BattleEffect_StartTiledCanvasFilled
 .L_0818194a:
 	ldr r3, .L_08181978
 	movs r2, #128

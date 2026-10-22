@@ -138,7 +138,7 @@ struct ModelDraw {
   s32 tail;
 };
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
@@ -147,7 +147,7 @@ s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
@@ -202,9 +202,9 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   if (mode == 8)
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   if (mode == 8) {
     work->fadeFrames = 24;

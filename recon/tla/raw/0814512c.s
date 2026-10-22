@@ -26,7 +26,7 @@ Func_0814512c:
 	cmp r2, #7
 	bne .L_08145180
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, [sp, #52]
 	add r2, sp, #64
 	ldr r1, [r3, #4]
@@ -46,7 +46,7 @@ Func_0814512c:
 	.4byte 0x00000785
 .L_08145180:
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #128
 	ldr r3, .L_081451c0
 	lsls r2, r2, #19

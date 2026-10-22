@@ -77,7 +77,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from
   // the top, so the screen goes black before the formation is spawned.
-  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;

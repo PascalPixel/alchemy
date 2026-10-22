@@ -52,7 +52,7 @@ void Func_02003310();
 void Func_02001ee0(void) {
   struct ObjectRuntime *actor = Object_GetById(5);
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Call1((void (*)())Func_02003310, 0);
   Func_0200161c();
   DriftScene_Prepare();

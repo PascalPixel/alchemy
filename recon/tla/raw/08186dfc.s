@@ -29,7 +29,7 @@ BattleEffect_RunHaures:
 	str r4, [sp, #72]
 	ldr r3, [r3]
 	str r3, [sp, #68]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08186e70
 	movs r3, #160

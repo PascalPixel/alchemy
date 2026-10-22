@@ -179,7 +179,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 /// Stands the actor still while showing the message already selected.
 static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(actor, ANIMATION_STAND);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
@@ -188,7 +188,7 @@ static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
 /// The party is recognized. "You're the warriors who captured the thieves a
 /// while back, aren't you? You've returned to Vault!"
 static void Event_RecognizeThiefCatchers(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
   Engine_GameFlagSet(FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY);
   Engine_EventSetMessage(MsgVaultWarriorsWhoCaptured);
@@ -211,7 +211,7 @@ static void Event_TalkOfLunpaThieves(void) {
 /// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES (0x868).
 static void Event_PraisePartyStrength(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
   Engine_GameFlagSet(FLAG_PARTY_PRAISED);
   Engine_GameFlagSet(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
@@ -240,7 +240,7 @@ static void Event_GreetWarriorGuy(void) {
   s32 text;
 
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
-  Engine_EventBegin();
+  Engine_EventStart();
   text = MsgVaultWarriorGuy;
   Engine_EventSetMessage(text);
   Engine_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
@@ -269,7 +269,7 @@ static void Event_WishEldersWereBrave(void) {
   actor = Object_GetById(ACTOR_GIRL_ROUND_THE_WELL);
   originalFacing = actor->facing;
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultWishVaultsElders);
   Engine_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
   Engine_ActorFaceEachOther(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
@@ -284,7 +284,7 @@ static void Event_WishEldersWereBrave(void) {
 /// jail?" Yes: how did the thugs break out? No: the thieves broke out and got
 /// away.
 static void Event_AskAboutJailbreak(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultGuysCheckJail);
   Engine_ActorFaceEachOther(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
   Engine_EventOpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
@@ -299,7 +299,7 @@ static void Event_AskAboutJailbreak(void) {
 /// Mind Read on the welcoming young man before he has spoken: he turns and
 /// recognizes the party.
 static void Event_ReadMindAndRecognizeThiefCatchers(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_WELCOMING_YOUNG_MAN, 1);
   Engine_EventWait(20);
   Engine_ActorFaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 20);
@@ -321,7 +321,7 @@ static void Event_ReadMindOnDodonpa(void) {
 
 /// Mind Read before the old man has spoken: he turns and praises the party.
 static void Event_ReadMindAndPraisePartyStrength(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_MAYORS_VISITOR, 1);
   Engine_EventWait(20);
   Engine_ActorFaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
@@ -345,7 +345,7 @@ static void Event_ReadMindOnWinter(void) {
 /// brave, or, before the boy has spoken, the greeting.
 static void Event_ReadMindOnFeelingBrave(void) {
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_BOY_ROUND_THE_WELL_SPOKE) != 0) {
     Engine_EventSetMessage(MsgVaultWatchingGuysMakes);
     VaultRevisit_ShowStandingActorMessage(ACTOR_BOY_ROUND_THE_WELL);
@@ -363,7 +363,7 @@ static void Event_ReadMindOnScaredGrownUps(void) {
     struct FieldActor *actor = Object_GetById(ACTOR_GIRL_ROUND_THE_WELL);
     actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultGrownUpsAlways);
   VaultRevisit_ShowStandingActorMessage(ACTOR_GIRL_ROUND_THE_WELL);
   Engine_EventEnd();
@@ -382,7 +382,7 @@ static void Event_ReadMindOnJailKey(void) {
 
   requestHeard = GameFlag_IsSet(FLAG_ASKED_ABOUT_JAIL);
   if (requestHeard == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIMATION_STAND);
     Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_ON_WATCH, 1);
@@ -433,7 +433,7 @@ static void VaultRevisit_JumpActorToAndWait(int actor, int x, int z,
 /// from the world map makes Sap jump out of hiding and walk to the bell, at
 /// (408, 120), and sets FLAG_VAULT_DJINNI_CALLED_BY_BELL.
 static void Event_RingBell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_PlayCue(SE_100);
   Engine_EventWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
@@ -577,7 +577,7 @@ static inline void VaultRevisit_DogJumpAtPassage(void) {
 /// arrivals.
 static void Event_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_VAULT_DOG, 2);
   Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -614,7 +614,7 @@ static void Event_RevealPassage(void) {
 /// The dog barks; carrying a Bone before it has shown the passage lets the
 /// party give it one: the main menu opens as the talk ends.
 static void Event_TalkToDog(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgVaultRuffRrruff2);
   Engine_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Engine_ActorFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
@@ -632,7 +632,7 @@ static void Event_TalkToDog(void) {
 
 /// Describes the water heard at the bottom of the well.
 static void Event_PeerIntoWell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgVaultCanHearWaterRumblingDown, 1);
   Engine_EventEnd();

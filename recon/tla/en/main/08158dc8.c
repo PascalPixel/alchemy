@@ -27,7 +27,7 @@
 #include "ram_buffer.h"
 #include "macros.h"
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
@@ -44,7 +44,7 @@ void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObj
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_0816442c(s32 group, s32 x, s32 y); // BattleEffect_PlaceFormationObjects
 void Func_0816467c(s32 group, s32 x, s32 y); // BattleEffect_RunImpactBurst
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
@@ -144,7 +144,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,

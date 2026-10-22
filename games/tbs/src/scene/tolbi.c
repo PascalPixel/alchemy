@@ -247,7 +247,7 @@ static void Tolbi_TalkToOlderBrother(void) {
 
   kid = Object_GetById(TOLBI_OLDER_BROTHER);
   facing = kid->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
   kid->timer |= KID_TALKING;
   if (work->psynergyRequest == 0) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
@@ -285,7 +285,7 @@ static void Tolbi_TalkToYoungerSister(void) {
 
   kid = Object_GetById(TOLBI_YOUNGER_SISTER);
   facing = kid->facing;
-  Engine_EventBegin();
+  Engine_EventStart();
   kid->timer |= KID_TALKING;
   if (work->psynergyRequest == 0) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
@@ -330,7 +330,7 @@ const struct SceneEvent *Tolbi_SelectEvents(void) {
 /// whether someone can live to be more than 100 years old; either way the talk
 /// turns to Babi, who is older still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiSomeoneLiveMore);
   Engine_EventAskYesNo(TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
   Engine_EventEnd();
@@ -339,7 +339,7 @@ static void Tolbi_AskAboutLivingPastHundred(void) {
 /// The father asks whether children really do love souvenirs, and owns up to
 /// loving them himself.
 static void Tolbi_TalkToFather(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiChildrenLoveSouvenirs);
   Engine_EventAskYesNo(TOLBI_FATHER, 0);
   Engine_EventEnd();
@@ -348,7 +348,7 @@ static void Tolbi_TalkToFather(void) {
 /// The mother turns to her crying boy, then back to promise better sweets
 /// later on. "Be patient, little guy."
 static void Tolbi_TalkToMother(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiPatientLittleGuy);
   Actor_FaceDirection(TOLBI_MOTHER, FACING_NORTH, 0);
   Engine_EventShowMessage(TOLBI_MOTHER, 0);
@@ -359,7 +359,7 @@ static void Tolbi_TalkToMother(void) {
 
 /// The crying boy turns, stamps twice and wails for sweets.
 static void Tolbi_TalkToCryingBoy(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_FaceDirection(TOLBI_CRYING_BOY, FACING_SOUTH, 0);
   Engine_ActorStartRepeatedMotion(TOLBI_CRYING_BOY, 2);
   Engine_EventSetMessage(MsgTolbiWaahBuySweets);
@@ -370,7 +370,7 @@ static void Tolbi_TalkToCryingBoy(void) {
 /// During the festival the scalper sleeps under the archway: the inns are
 /// full.
 static void Tolbi_TalkToSleepingScalper(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiInnsFullStaying);
   Engine_EventShowMessage(TOLBI_SCALPER, 0);
   Engine_EventEnd();
@@ -379,7 +379,7 @@ static void Tolbi_TalkToSleepingScalper(void) {
 /// After Colosso, TOLBI_FINALS_FAN asks whether the party was in the finals.
 /// The question is anchored to the father, who has left town by then.
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiFinalsWerent);
   Engine_EventAskYesNo(TOLBI_FATHER, 0);
   Engine_EventEnd();
@@ -387,7 +387,7 @@ static void Tolbi_AskWhetherPartyWasInFinals(void) {
 
 /// After Colosso, the snack vendor gives the party his leftover corn, once.
 static void Tolbi_TalkToSnackVendor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_TOLBI_CORN_GIVEN) == 0) {
     Engine_GameFlagSet(FLAG_TOLBI_CORN_GIVEN);
     Engine_EventSetMessage(MsgTolbiLeftovers);
@@ -411,7 +411,7 @@ static void Tolbi_EnterDoor(void) {
   u32 actorId;
   s32 door;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= 65; actorId++) {
     struct FieldActor *actor = Object_GetById(actorId);
     if (actor != NULL) {
@@ -515,7 +515,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 /// The visitor at the spring's gate asks whether the party wants to test its
 /// luck. On yes he steps aside for good and the way to Tolbi Spring opens.
 static void Tolbi_TalkToSpringVisitor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ActorFaceDirection(TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
@@ -558,7 +558,7 @@ static void Tolbi_RequestTouchedExit(void) {
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Actor_SetSpeed(TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorSetSpeed(TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);

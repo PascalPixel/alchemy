@@ -51,7 +51,7 @@
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
@@ -64,7 +64,7 @@ void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
                    s32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
                    s32 *target);  // BattleEffect_RunDjinniEntrance
@@ -179,9 +179,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   sheet = Ram_HeapSlots->unk64[0];
   if (mode == 10 || mode == 11 || mode == 13 || mode == 14 || mode == 15 ||
       mode == 17 || mode == 18 || mode == 19)
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   else
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
 
   // The prelude: a Djinni behind the user, Mars for modes 9, 22 and 24 and
   // Venus otherwise.

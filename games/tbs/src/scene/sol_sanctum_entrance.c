@@ -269,7 +269,7 @@ static void Event_OpenDoorAndEnter(void) {
   s32 width;
   s32 height;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // The door opens over three frames.
   width = 3;
   height = 2;
@@ -299,7 +299,7 @@ static void Event_OpenDoorAndEnter(void) {
 /// can be used.
 static void Event_InspectFirstMinotaurRelief(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
@@ -346,7 +346,7 @@ static void Event_SetFirstSmallJewel(void) {
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
     } else {
-      Engine_EventBegin();
+      Engine_EventStart();
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
       oneCell = 1;
@@ -379,7 +379,7 @@ static void Event_InspectSecondMinotaurRelief(void) {
 
   struct EventWork *work;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
@@ -409,7 +409,7 @@ static void Event_SetSecondSmallJewel(void) {
 
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
       GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Field_EndBusyAndReveal();
     // The eye sparkles, then the doorway opens.
     Engine_AudioPlayCue(SE_GEM_SET);
@@ -792,7 +792,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -884,7 +884,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
 
@@ -1106,7 +1106,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Engine_EventOpenScreen();
@@ -1254,7 +1254,7 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
 /// Sol Entrance: searching the other door . "The door is
 /// tightly locked."
 static void Event_DoorTightlyLocked(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   Engine_EventEnd();
 }

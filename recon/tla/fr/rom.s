@@ -3347,10 +3347,10 @@ Func_08142944:
 Func_0814355c:
 	.incbin "baserom.gba", 0x0014355c, 0x00000084
 	.section .rom.001435e0, "ax"
-	.global BattleEffect_BeginCanvasLayer
-	.type BattleEffect_BeginCanvasLayer, %function
+	.global BattleEffect_StartCanvasLayer
+	.type BattleEffect_StartCanvasLayer, %function
 	.thumb_func
-BattleEffect_BeginCanvasLayer:
+BattleEffect_StartCanvasLayer:
 	.incbin "baserom.gba", 0x001435e0, 0x00000260
 	.section .rom.00143d80, "ax"
 	.incbin "baserom.gba", 0x00143d80, 0x00000134

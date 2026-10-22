@@ -92,7 +92,7 @@ extern const u16 gData_08197410[];
 extern const u8 gData_08198c6c[];
 extern const u8 Data_08198df8[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
@@ -152,7 +152,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   s32 brightness;
   s32 spawned;
 
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   if (mode == 0)
     REG_BLDALPHA = 0x0c10;
   else

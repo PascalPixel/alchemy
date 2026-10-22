@@ -382,7 +382,7 @@ const struct ScenePlacement *Vale_GetPlacements(void) {
 
 /// Catch on the Nut in Vale: the party gets it.
 static void Event_CatchNut(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_VALE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
@@ -392,7 +392,7 @@ static void Event_CatchNut(void) {
 
 /// The same Nut after Kalay, where it is ACTOR_NUT_AFTER_KALAY.
 static void Event_CatchNutAfterKalay(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_NUT_AFTER_KALAY, 0, 0);
   Engine_GameFlagSet(FLAG_VALE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
@@ -413,7 +413,7 @@ const struct SceneEvent *Vale_GetEvents(void) {
 /// A little girl in Vale (ACTOR_GIRL_JEALOUS_OF_GARET) asks about the mayor
 /// before the party leaves, and speaks of the tremors after.
 static void Event_TalkAboutTheMayorAndTremors(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeTheGroundStillShakes);
     Engine_EventShowMessage(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
@@ -431,7 +431,7 @@ static void Event_TalkAboutTheMayorAndTremors(void) {
 /// party has left, says Kraden has not come back.
 static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeKradenHasntComeBack);
     Engine_EventShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
@@ -453,7 +453,7 @@ static void Event_WarnAboutGoingBeyondKradensCottage(void) {
 /// Garet's sister scolds him in Vale; afterwards she only threatens him.
 /// "Garet, you make me so mad sometimes!"
 static void Event_ArgueWithGaretsSister(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS) == 0) {
     GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
     Engine_EventSetMessage(MsgValeYouMakeMeSoMad);
@@ -479,7 +479,7 @@ static void Event_ArgueWithGaretsSister(void) {
 /// mended (FLAG_SCENE_TEMP_02) she frets about the hole clumsy Garet left;
 /// otherwise, since it will not rain for a while, Isaac can fix it later.
 static void Event_DoraFretsAboutTheRoof(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
     Engine_EventSetMessage(MsgValeIToldGaretItWas);
   } else {
@@ -492,7 +492,7 @@ static void Event_DoraFretsAboutTheRoof(void) {
 /// Back from Kalay, a young man in Vale (ACTOR_YOUNG_MAN_ASKING_FOR_JENNA) asks
 /// whether Jenna is back.
 static void Event_AskWhetherJennaHasReturned(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER,
                             ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
   Engine_EventSetMessage(MsgValeIsJennaBackYet);
@@ -504,7 +504,7 @@ static void Event_AskWhetherJennaHasReturned(void) {
 /// Back from Kalay, a woman in Vale (ACTOR_WOMAN_FEELING_TREMORS) feels
 /// another tremor, and the view shakes.
 static void Event_ReactToAnotherTremor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_TaskWait(10);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -519,7 +519,7 @@ static void Event_ReactToAnotherTremor(void) {
 /// eruption. He (ACTOR_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
 /// the talk sets group flag FLAG_PLACE_TEMP_07.
 static void Event_AskAboutTheLackOfTravelers(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorRunRepeatedMotion(ACTOR_MAN_MISSING_TRAVELERS, 2);
   Engine_EventWait(20);
   Engine_ActorFaceActor(ACTOR_MAN_MISSING_TRAVELERS, ACTOR_PARTY_LEADER, 20);
@@ -608,7 +608,7 @@ static void Event_EnterValeInteriorsShops(void) {
 static void Event_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
       Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgValeYouCantBeIsaac);
     Engine_EventOpenMessage(ACTOR_DORA, 0);
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -671,7 +671,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   jenna = Object_GetById(JENNA);
-  Engine_EventBegin();
+  Engine_EventStart();
   jenna->x.fixed = leader->x.fixed;
   jenna->y.fixed = leader->y.fixed;
   jenna->z.fixed = leader->z.fixed;
@@ -716,7 +716,7 @@ static void Event_WatchThePuppies(void) {
 
   if (Engine_GameFlagIsSet(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
     map = gMapWork[0];
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
     Engine_EventWait(2);
@@ -760,7 +760,7 @@ static void Event_TurnBackFromThePuppies(void) {
   s32 msg;
 
   if (GameFlag_IsSet(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     msg = MsgValeRrruffRrrruff;
     Engine_EventSetMessage(msg);
@@ -776,7 +776,7 @@ static void Event_TurnBackFromThePuppies(void) {
 /// Touch cell 100 in Vale: the passage's collision changes and the leader
 /// moves through it from its northern end (FLAG_SCENE_TEMP_04 set).
 static void Event_EnterNorthernPassage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   Vale_MoveActorAlongLowerZPath(ACTOR_PARTY_LEADER, 10, 11, 1);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_04);
@@ -786,7 +786,7 @@ static void Event_EnterNorthernPassage(void) {
 /// Touch cell 101 in Vale: the leader moves back through the passage, and its
 /// collision is restored (FLAG_SCENE_TEMP_04 cleared).
 static void Event_ReturnThroughSouthernPassage(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER, 13, 10, 1);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_04);
   Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
@@ -802,7 +802,7 @@ static void Event_WarnAgainstSneakingUpMtAleph(void) {
   struct FieldActor *actor;
 
   guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
   Engine_ActorJump(ACTOR_PARTY_LEADER, 5, 0);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 215, 403);
@@ -870,7 +870,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
 
   replyActions = guardActions;
   guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorStartRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
   Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -942,7 +942,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
   u8 *leaderMotion;
   s32 i;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   actor = Engine_EventGetViewCenter();
   actor->motionFlags = 0;
@@ -1620,7 +1620,7 @@ static void Event_GaretMeetsHisSister(void) {
   struct FieldActor *record;
   s32 msg;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_GARETS_SISTER_AFTER_KALAY, ACTOR_PARTY_LEADER, 20);
   msg = MsgValeAh;
@@ -1709,7 +1709,7 @@ static void Event_GaretMeetsHisSister(void) {
 static void Event_GaretAsksToProtectFamily(void) {
   struct FieldActor *record;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(PIXELS(357), -1, PIXELS(738), 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 367, 745);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -1803,7 +1803,7 @@ UNUSED static void Event_UnusedWaterBurstsByTheRiver(void) {
   struct FieldActor *actor;
   const s32 *actions;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   actor = Actor_Get(ACTOR_FIRST_WATER);
   Engine_ActorSetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_FIRST_WATER + 1);
@@ -1956,7 +1956,7 @@ static void Event_MendingTheRoof(void) {
   moveHand = Object_GetById(ACTOR_OPENING_MOVE_HAND);
 
   // Prepare the damaged house and start Isaac's hammering behind the caption.
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ((struct FieldActor *)Engine_EventGetViewCenter())->motionFlags = 0;
@@ -2083,7 +2083,7 @@ static void Event_MendingTheRoof(void) {
 
   // Garet trains his Psynergy: the hand of Move pushes the pillar, shedding
   // sparkles.
-  Scene_BeginCutscenePsynergy();
+  Scene_StartCutscenePsynergy();
   Engine_ActorSetAnimation(GARET, ANIMATION_CAST_PSYNERGY);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | GARET, 0, 20);
   Event_PlayCue(SE_131);
@@ -2285,7 +2285,7 @@ static void Event_RoofMended(void) {
   SchedulerCallback callbackF;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -2350,7 +2350,7 @@ static void Event_RoofMended(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
-  Scene_BeginCutscenePsynergy();
+  Scene_StartCutscenePsynergy();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_CAST_PSYNERGY);
   FieldScheduler_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_SCENE);
   for (i = 0; i < 40; i++) {
@@ -3163,7 +3163,7 @@ static void Vale_PlayStepSound(void) {
 
 /// Searching a locked door in Vale (search code 24).
 static void Event_SearchTheLockedDoor(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
 }

@@ -169,7 +169,7 @@ static inline u32 XianInteriors_GetLeaderFacing(void) {
 static void XianInteriors_TalkToWeaponMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Engine_ShopOpen(XIAN_WEAPON_STOCK, ACTOR_XIAN_WEAPON_MERCHANT);
@@ -189,7 +189,7 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
 static void XianInteriors_TalkToArmorMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Engine_ShopOpen(XIAN_ARMOR_STOCK, ACTOR_XIAN_ARMOR_MERCHANT);
@@ -211,7 +211,7 @@ static void XianInteriors_TalkToItemMerchant(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Engine_ShopOpen(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
@@ -231,7 +231,7 @@ static void XianInteriors_TalkToInnkeeper(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
     Engine_InnOpen(XIAN_INN, ACTOR_XIAN_INNKEEPER);
   } else {
@@ -250,7 +250,7 @@ static void XianInteriors_TalkToInnkeeper(void) {
 /// about Lamakan Desert too. A yes: no one can use Silk Road; a no: it is good
 /// to hear the desert is fine.
 static void XianInteriors_AskAboutSilkRoad(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
   Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
   Engine_EventEnd();
@@ -260,7 +260,7 @@ static void XianInteriors_AskAboutSilkRoad(void) {
 /// the news of Hsu whether the monsters in Altin spat water. A yes: how
 /// strange; a no: but why would Feizhi lie?
 static void XianInteriors_AskAboutAltinMonsters(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
   Engine_EventAskYesNo(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
   Engine_EventEnd();
@@ -271,7 +271,7 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
 /// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear); she welcomes the party, looks at
 /// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void XianInteriors_FeizhiThanksParty(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianWarriorWelcome);
   Engine_EventShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
   Engine_ActorFaceActor(ACTOR_FEIZHI, ACTOR_HSU, 0);

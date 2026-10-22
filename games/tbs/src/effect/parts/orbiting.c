@@ -34,7 +34,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(work->effect->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
@@ -137,7 +137,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
-  EFFECT_BEGIN_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
@@ -249,7 +249,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
                              work->sheet + TARGET_BURSTS_CELLS, 0, 0);

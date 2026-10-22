@@ -311,7 +311,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
 static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
@@ -476,7 +476,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct EventWork *work;
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 32;
@@ -830,7 +830,7 @@ static void Event_JumpSouth(void) {
 /// Nothing calls it; the player moves the statue there with Move instead.
 UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Object_GetById(ACTOR_NORTHWEST_STATUE);
     Actor_SetSpeed(ACTOR_NORTHWEST_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_WalkToAndWait(ACTOR_NORTHWEST_STATUE, 504, 152);
@@ -1116,7 +1116,7 @@ static void Event_CenterStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(288), PIXELS(128), 0);
   if (statue != NULL) {
     statueZ = statue->z.fixed;
-    Engine_EventBegin();
+    Engine_EventStart();
     if ((statueZ >> 20) == 8) {
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_07) == 0) {
         leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1195,7 +1195,7 @@ static void Event_PushCenterStatueNorth(void) {
   movingActor = Object_GetById(ACTOR_CENTER_STATUE);
   if (movingActor != 0) {
     if ((movingActor->z.fixed >> 20) == 8) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Event_PlayCue(SE_PUSH);
       Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -1310,7 +1310,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   s32 statueX;
   s32 statueZ;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_AudioPlayCue(SE_PUSH);
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -1573,7 +1573,7 @@ static void SolSanctumStatue_OpenSeal(void) {
   s32 pulse;
 
   exitResult = 0;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (!Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
     // Show the configured seal and flash its two tile states.
     Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -1641,7 +1641,7 @@ static void SolSanctumStatue_OpenSeal(void) {
 /// Called when the left beam statue reaches its place in front of the centre,
 /// until the centre statue has moved. Sets FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING.
 static void SolSanctumStatue_ShineLeftBeam(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -1666,7 +1666,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
 /// Draws the right beam and opens the floor when the left beam is also lit.
 /// As the left one; sets FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING.
 static void SolSanctumStatue_ShineRightBeam(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);

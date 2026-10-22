@@ -68,7 +68,7 @@ extern const u8 Data_08198517[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
@@ -80,7 +80,7 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
-// BattleEventRuntime_BeginPhase through its far call.
+// BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
@@ -113,7 +113,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   // Setup: the canvas, the blitter pair for the caster's side, the water.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Func_0815585c(effect, PREPARE(1, effect->side, 2), screen, otherPoint);
   BattleEffect_FetchRectangleBlitters(effect->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,

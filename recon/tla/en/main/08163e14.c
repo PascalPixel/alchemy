@@ -66,7 +66,7 @@ extern u8 gData_0819896a[];        // the pillars' feet, x and y
 extern const u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
@@ -75,7 +75,7 @@ void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
 void BattleEffect_SpawnObjects(s32 count, s32 resource,
                    s32 priority); // BattleEffect_SpawnObjects
-void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Audio_PlayCue(s32 cue);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
@@ -112,7 +112,7 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   cells = Ram_HeapSlots->unk64[0];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_FetchRectangleBlitters(0, draw);
 

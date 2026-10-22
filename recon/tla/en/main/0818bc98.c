@@ -105,7 +105,7 @@ extern s32 Data_081991c0[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -171,9 +171,9 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   // otherwise) and the jaws' texture, then each breath's own sheet: the Beam
   // computes 16 fading rings of 32 x 32.
   if (mode != BREATH_BEAM)
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_BeginCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   if (mode == BREATH_PIKE)
     Iwram_CopyWords((void *)0x05000000,

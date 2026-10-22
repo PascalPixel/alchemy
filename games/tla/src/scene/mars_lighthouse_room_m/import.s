@@ -295,7 +295,7 @@ FieldEvent_WaitFrames:
 	.global Func_020031e0
 	.thumb_func
 Func_020031e0:
-	overlay_veneer EventRuntime_BeginFar
+	overlay_veneer EventRuntime_StartFar
 	.global Func_020031e8
 	.thumb_func
 Func_020031e8:
@@ -512,10 +512,10 @@ Func_020032a8:
 	.thumb_func
 Func_020032b0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectEffect_BeginContextEffect25Far
+	overlay_veneer ObjectEffect_StartContextEffect25Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectEffect_BeginContextEffect25Far
+	overlay_veneer ObjectEffect_StartContextEffect25Far
 	.else
 	overlay_veneer Func_080c8918
 	.endif

@@ -19,7 +19,7 @@
 // and every stack offset moves (differ 132). Tried for the slot: the
 // step or source pointer, angle or speed at function scope, a particles
 // pointer, stars set in each block.
-// - after BattleEffect_BeginCanvasLayer, REG_BLDALPHA's 0x1010 is loaded from
+// - after BattleEffect_StartCanvasLayer, REG_BLDALPHA's 0x1010 is loaded from
 // the pool before the register address: a u16 pinned to r3 with a
 // one-pass block fixes it (the empty asm of f18284c.c instead moves the
 // halfword pool by four estimated bytes). Another one-pass block before
@@ -64,7 +64,7 @@
 extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SmokeSheet;
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -121,7 +121,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   } while (0);
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   {
     /* FAKEMATCH: the native loads BLDALPHA's 0x1010 from the pool before
      * it starts the register address; pinned behind a one-pass block it

@@ -331,7 +331,7 @@ static void Event_TalkToInnWorker(void) {
 
   side = Leader_GetSide();
   GameFlag_Set(FLAG_INN_WORKER_APOLOGIZED);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_FieldEndBusyAndReveal();
   Engine_EventSetMessage(MsgLaliveroImSorry);
   Engine_EventWait(50);
@@ -364,7 +364,7 @@ static void Event_TalkToInnWorker(void) {
 static void Event_IodemCallsOut(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_FieldEndBusyAndReveal();
   Engine_EventWait(10);
   Engine_CameraMoveTo(PIXELS(120), -1, PIXELS(96), 1);
@@ -422,7 +422,7 @@ const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
 static void Event_ReportToFaran(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Party_RestoreHpPp(1);
   // The party walks in to Faran and Iodem, and the others step out.
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(96), PIXELS(184));

@@ -325,7 +325,7 @@ const struct ScenePlacement *Xian_GetPlacements(void) {
 /// Hsu. "Young warriors, very gallant! You came through Mogall Forest?" A yes
 /// earns respect; a no is a lie, since Silk Road from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianYoungWarriorsVeryGallantCame);
   Engine_EventAskYesNo(ACTOR_WOMAN_ON_YOUNG_WARRIORS, 0);
   Engine_EventEnd();
@@ -350,7 +350,7 @@ static void Xian_TalkToWaterCarrier(void) {
   s32 scaleX;
 
   puddle = Object_GetById(ACTOR_SPILLED_WATER);
-  Engine_EventBegin();
+  Engine_EventStart();
   leaderMustStepAside = 0;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = NULL;
@@ -486,7 +486,7 @@ static void Xian_FreezeSpilledWater(void) {
   s32 stationaryMotionFlags;
   s32 puddleX;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Object_GetById(ACTOR_SPILLED_WATER)->priorityFlags &=
       ~ACTOR_PRIORITY_UNDERFOOT;
   stationaryMotionFlags = 0;
@@ -512,7 +512,7 @@ static void Xian_TalkToKungFuStudent(void) {
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   demonstrationSeen = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02);
   if (demonstrationSeen != 0) {
     Engine_ActorFaceActor(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
@@ -604,7 +604,7 @@ static void Xian_TalkToKungFuStudent(void) {
 /// yes: she hopes they will go west; a no: very few warriors would call
 /// themselves weak.
 static void Xian_TalkToFeizhi(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgXianWarriorsFromSchoolStrongWarriors);
   Engine_EventAskYesNo(ACTOR_FEIZHI, 0);
   Engine_EventEnd();
@@ -628,7 +628,7 @@ static void Xian_JumpOverSpilledWater(void) {
     FieldVector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
                                landing);
     if (FieldObject_CheckMovementCollision(leader, landing) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Object_SetMode(leader, ANIMATION_LEADER_SPRING);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
@@ -670,7 +670,7 @@ static void Xian_WalkThroughExit(s32 exitId) {
 static void Xian_OpenDoorAndLeave(void) {
   struct EventWork *event = gEventWork;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   switch (event->touchedTrigger) {
   case XIAN_TO_HOUSE:
@@ -715,7 +715,7 @@ static void Xian_OpenDoorAndLeave(void) {
 static void Xian_StrikeTrainingTreeWithForce(void) {
   SchedulerCallback rotationCallback;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetActionScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
   rotationCallback = Xian_RotateTrainingTree;
   FieldScheduler_AddCallback(rotationCallback, TASK_PRIORITY_SCENE);
@@ -750,7 +750,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
 static void Xian_MoveAsideForWaterCarrier(void) {
   struct FieldActor *carrier;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetBuiltinAction(ACTOR_WOMAN_CARRYING_WATER, ACTOR_ACTION_IDLE);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = 0;

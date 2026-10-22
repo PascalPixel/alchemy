@@ -22,7 +22,7 @@ BattleEffect_RunMars:
 	ldr r3, [r3, #100]
 	movs r0, #0
 	str r3, [sp, #16]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r2, sp
 	adds r2, #28
 	adds r1, r2, #0

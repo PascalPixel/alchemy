@@ -78,13 +78,13 @@ extern u8 gData_08197492[];  // ☀️ gBattleEffect_GlintCellWidths
 extern u8 gData_08197498[];  // ☀️ gBattleEffect_GlintCellHeights
 extern u8 Data_08197a34[];   // ☀️ gTargetMotes_GlintFlips
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                  // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_ArmBg2AffineHBlankDma(void);                  // ☀️ BattleEffect_ArmBg2AffineHBlankDma
 void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);             // ☀️ BattleEvent_BeginPhaseFar
+void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
@@ -120,7 +120,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   count = 16;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   if (mode == 0) {
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);

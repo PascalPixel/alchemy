@@ -28,11 +28,11 @@ Func_0813d098:
 	cmp r3, #8
 	bne .L_0813d0ce
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	b .L_0813d0d4
 .L_0813d0ce:
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 .L_0813d0d4:
 	movs r2, #128
 	ldr r3, .L_0813d110

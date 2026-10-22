@@ -65,7 +65,7 @@ extern u8 gData_08198a9e[];  // ☀️ gPlasma_FlashCells
 extern s32 gData_08198aa4[]; // the dust's four gravities
 extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -74,7 +74,7 @@ void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_Build
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Func_0815b634(void);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
@@ -114,7 +114,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
   cells = Ram_HeapSlots->unk64[0];
 
   // Open the canvas on BG1 over the target and build the blitters.
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   centerX = target.x / 2;

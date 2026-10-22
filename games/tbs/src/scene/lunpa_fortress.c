@@ -617,7 +617,7 @@ static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
 
-  EV_BEGIN();
+  EV_START();
   itemEffect = Engine_FieldFxPlayCueAndStartEmitterOnTarget(0, actorId, itemId);
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
     OBJECT_MODE(actorId, 2);
@@ -760,7 +760,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
 /// the first stops and stares, and the second throws the party out.
 static void Event_PatrolPairThrowsPartyOut(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
@@ -1187,7 +1187,7 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
 /// the party out through Event_PatrolPairThrowsPartyOut instead. The first
 /// patrol would stop, ask who the party is and send it out.
 static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   Actor_SetBuiltinAction(UPPER_FLOOR_FIRST_PATROL, ACTOR_ACTION_IDLE);
   Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
@@ -1210,8 +1210,8 @@ static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
 /// A guard who caught the party sends it back to the Lunpa Fortress Gates.
 /// "Who are you? How did you get in here?"
 static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
-  EV_BEGIN();
-  EV_BEGIN();
+  EV_START();
+  EV_START();
   Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 1);
   Engine_ActorSetDestinationOffset(actorId, 0, 0);
   Actor_SetBuiltinAction(actorId, ACTOR_ACTION_IDLE);
@@ -1435,7 +1435,7 @@ static void Event_FightThreeGuards(void) {
 
 /// The three guards lie beaten where they fought.
 static void LunpaFortress_PlaceThreeBeatenGuards(void) {
-  EV_BEGIN();
+  EV_START();
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_A, 688, 88);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_B, 704, 88);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_C, 720, 96);
@@ -1468,7 +1468,7 @@ static void Event_FightEastGuard(void) {
 /// LunpaFortressGroundFloor, trigger 50 or seen by the entrance guard: the
 /// party is sent back to the Lunpa Fortress Gates. "Who are you?"
 static void Event_EntranceGuardThrowsPartyOut(void) {
-  EV_BEGIN();
+  EV_START();
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
@@ -1497,7 +1497,7 @@ static void Event_EntranceGuardThrowsPartyOut(void) {
 static void Event_SentriesThrowPartyOut(void) {
   s32 challengeMessage;
 
-  EV_BEGIN();
+  EV_START();
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
@@ -1719,7 +1719,7 @@ static void Event_FindHammet(void) {
   if (FLAG_CHECK(FLAG_PLACE_TEMP_01) != 0)
     return;
   FLAG_SET(FLAG_SCENE_TEMP_70);
-  EV_BEGIN();
+  EV_START();
   // A retry skips the introduction but repeats Dodonpa's trap and battle.
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_TRAP_SEEN) != 0) {
     OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1995,7 +1995,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   FLAG_SET(FLAG_DODONPA_LOCKED_UP);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenToadonpaDoor(4);
-  EV_BEGIN();
+  EV_START();
   leader = Actor_Get(TOADONPA_HAMMET);
   Engine_ActorSetSpriteFlags(leader, 1);
   OBJECT_POSITION_SET(ACTOR_PARTY_LEADER, 456, 184);
@@ -2734,7 +2734,7 @@ static void Event_TalkToAttendant(void) {
   s32 whisperMessage;
   s32 familyMessage;
 
-  EV_BEGIN();
+  EV_START();
   if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
     MESSAGE_SET(MsgLunpaDonpaGrateful);
     // XXX: likely a slip for UPPER_FLOOR_ATTENDANT, because the line is the
@@ -2927,7 +2927,7 @@ static void Event_TalkToStartledOldMan(void) {
     MESSAGE_SET(MsgLunpaWontTellAnyone);
     MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
-    EV_BEGIN();
+    EV_START();
     OBJECT_FACE(GROUND_FLOOR_STARTLED_OLD_MAN, ACTOR_PARTY_LEADER, 0);
     if (FLAG_CHECK(FLAG_SCENE_TEMP_27) == 0) {
       Engine_ActorJump(GROUND_FLOOR_STARTLED_OLD_MAN, 4, 0);
@@ -3247,7 +3247,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED)) {
     LunpaFortress_OpenSecondSwitchPassage();
   }
-  EV_BEGIN();
+  EV_START();
   sceneActor = Actor_Get(CAVE_FIRST_SWITCH_COVER);
   if (sceneActor != 0) {
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

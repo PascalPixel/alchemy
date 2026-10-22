@@ -621,7 +621,7 @@ void GameState_InitializeDefaults(void) {
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
 /// then take their childhood forms. Called by the file select screen when a
 /// new game starts the prologue.
-void Party_BeginChildhood(void) {
+void Party_StartChildhood(void) {
   GameFlag_SetBit(FLAG_CHILDHOOD);
   Unit_UpdateClass(ISAAC);
   Unit_UpdateClass(GARET);

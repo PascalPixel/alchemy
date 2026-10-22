@@ -13,7 +13,7 @@ void Game_RunFar(s32 mode);
 void FieldEvent_WaitFramesFar(s32 frames);
 /// Opens an event: closes any timed notice, stops the leader and resets the
 /// message and timing state.
-void FieldEvent_BeginFar(void);
+void FieldEvent_StartFar(void);
 /// Closes an event: gives the camera back to the leader and refreshes
 /// FLAG_LURE_CAP.
 void FieldEvent_EndFar(void);
@@ -282,8 +282,8 @@ void Marker_SetActorPositionFar(s32 id, s32 x, s32 y);
 void Marker_MoveLeaderAwayFar(void);
 /// On the world map, freezes the perspective view and the camera while an
 /// event or menu runs; elsewhere it does nothing.
-void WorldMap_BeginEventFar(void);
-/// Undoes WorldMap_BeginEvent, reloading the area's graphics.
+void WorldMap_StartEventFar(void);
+/// Undoes WorldMap_StartEvent, reloading the area's graphics.
 void WorldMap_EndEventFar(void);
 /// Returns the actor in a slot, or NULL; scene overlays look actors up
 /// through it.

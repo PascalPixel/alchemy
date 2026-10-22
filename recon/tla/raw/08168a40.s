@@ -23,7 +23,7 @@ BattleEffect_RunKirin:
 	ldr r2, [r5, #100]
 	adds r5, #176
 	str r2, [sp, #68]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r3, .L_08168aa8
 	movs r2, #128

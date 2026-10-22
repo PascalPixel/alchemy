@@ -291,9 +291,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER ||
       mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE ||
       mode == CASTING_IMPACT_IMPACT_ASURA) {
-    BattleEffect_BeginTiledCanvas(0);
+    BattleEffect_StartTiledCanvas(0);
   } else {
-    BattleEffect_BeginCanvasLayer(0);
+    BattleEffect_StartCanvasLayer(0);
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -437,7 +437,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
                                       casterScreen = &casterPos);
   BattleEffect_FetchRectangleBlitters(work->effect->side, drawPair = blitters);
   // The background palette fade over 24 frames (Palette_StepFadeTransfer,
-  // added by BattleEffect_BeginCanvasLayer).
+  // added by BattleEffect_StartCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
   casterActor = GetBattleObjectSlotFar(work->effect->actor)->object;

@@ -21,7 +21,7 @@
 ///
 /// The effect layer ripples throughout.
 ///
-/// Opens the tiled canvas (BattleEffect_BeginTiledCanvas) and adds
+/// Opens the tiled canvas (BattleEffect_StartTiledCanvas) and adds
 /// BattleEffect_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
 /// the burst's pieces into Ram_MapCellBuffer; moves the target's object; and
 /// reloads the battle backdrop on BG1 before it closes the layer. It never
@@ -50,7 +50,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
    * setup calls; as the literal 0, 31 of 580 instructions differ in tbs-en. */
   zero = 0;
   work->effect = effect;
-  BattleEffect_BeginTiledCanvas(0);
+  BattleEffect_StartTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 

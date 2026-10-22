@@ -69,7 +69,7 @@ void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
 void BattlePresentation_SetActorModesFar(u16 *actors, s32 mode);
 /// Starts playback of the targets' results as an effect's blow lands, with
 /// `cue` as the hit's sound (0 keeps the one set); see EFFECT_SHOW_DAMAGE.
-void BattleEvent_BeginPhaseFar(s32 cue);
+void BattleEvent_StartPhaseFar(s32 cue);
 /// Copies `count` colours with each channel scaled by `scale` (16.16, at most
 /// 1), to darken a palette; returns 0.
 s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,

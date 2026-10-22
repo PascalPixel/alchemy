@@ -11,7 +11,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 void MusicPlayer_StartSong(struct SoundPlayer *player,
                            const struct SequenceHeader *header);
 void MusicPlayer_Stop(struct SoundPlayer *player);
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
+void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 void AudioCommand_InvokeSlot35(void *block);
 extern struct SoundWork gSound_Work;

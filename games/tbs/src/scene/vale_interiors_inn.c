@@ -355,7 +355,7 @@ const struct SceneEvent *ValeInteriorsInn_GetEvents(void) {
 /// whatever he answers. "Hey... Boy..." Reached by talking to ACTOR_MASKED_MAN
 /// before the party leaves Vale (gValeInteriorsInn_Events).
 static void Event_AskIsaacHisBusiness(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 2);
   Engine_EventWait(30);
   Engine_EventSetMessage(MsgValeHeyBoy);
@@ -383,7 +383,7 @@ static void Event_AskIsaacHisBusiness(void) {
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
   Engine_EventSetMessage(MsgValeTheMaskedManWasFelix);
   Engine_EventOpenMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
@@ -603,7 +603,7 @@ static void Event_DoraWakesIsaac(void) {
   }
   sprite = Object_GetById(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
   Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
@@ -768,7 +768,7 @@ static void Event_HurryToThePlaza(void) {
 
   actor = Object_GetById(ACTOR_FLAME);
   sprite = actor->sprite;
-  Engine_EventBegin();
+  Engine_EventStart();
   // The villagers stay out of sight; ACTOR_FLAME starts shaking.
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
@@ -901,7 +901,7 @@ static void Event_TalkToInnkeeper(void) {
   if ((u32)(actor->facing + -0x2000) > 0x9000) {
     Engine_InnOpen(0, ACTOR_INNKEEPER);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     if (GameFlag_IsSet(FLAG_REACHED_KALAY) != 0) {
       Engine_ActorRunRepeatedMotion(ACTOR_INNKEEPER, 2);
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
@@ -933,7 +933,7 @@ static void Event_TalkToInnkeeper(void) {
 /// the row below plays the same line as a plain message, which leaves
 /// FLAG_VALE_MAN_SAW_ISAAC_GROWN clear for Mind Read to play this once.
 static void Event_RemarkIsaacHasGrown(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
   Engine_EventSetMessage(MsgValeYouveGrownSoMuch);
   Engine_EventShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
@@ -947,7 +947,7 @@ static void Event_RemarkIsaacHasGrown(void) {
 /// Reached back from Kalay once he has welcomed Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void Event_ReadInnkeepersThoughts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeDoraWouldntLetHimStay);
   Engine_EventShowMessage(ACTOR_INNKEEPER, 0);
   Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
@@ -958,7 +958,7 @@ static void Event_ReadInnkeepersThoughts(void) {
 /// with illness. Reached back from Kalay once he has remarked on Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void Event_ReadThoughtsAboutDorasIllness(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgValeDoraWasStruckWithIllness);
   Engine_EventShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
   Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
@@ -973,7 +973,7 @@ static void Event_VisitSickDora(void) {
   struct FieldActor *leader;
   s32 firstMessage;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // Isaac steps up to the bed. "Cough, cough! Who is it? Is it the innkeeper?"
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 569, 393);
@@ -1094,7 +1094,7 @@ static void Event_VisitSickDora(void) {
 static void Event_TalkToDora(void) {
   s32 message;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
     Object_SetTargetAndCallback(ACTOR_DORA,
                                 ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
@@ -1133,7 +1133,7 @@ static void Event_ShowMythrilBag(void) {
   GlyphTransfer *glyph;
   u8 clear;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1285,7 +1285,7 @@ UNUSED static void ValeInteriorsInn_CyclePaletteWithoutParticles(void) {
 /// Catch plays from Dora on the tunic, then its objects are released.
 /// Called by Event_DoraWakesIsaac as Dora hands Isaac his tunic.
 static void ValeInteriorsInn_DemonstrateCatch(void) {
-  Engine_PsynergyBegin(ABILITY_CATCH, 1);
+  Engine_PsynergyStart(ABILITY_CATCH, 1);
   Engine_PsynergySetTarget(ACTOR_DORA, ACTOR_TUNIC);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);

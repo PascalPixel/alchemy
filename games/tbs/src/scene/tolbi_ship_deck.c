@@ -797,7 +797,7 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
   s32 random;
   s32 wait;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Engine_EventSetMessage(MsgTolbiShipNowWeHaveProtectShip);
     Event_ShowMessage(KALAY_CREW_MEMBER, 0);
@@ -830,7 +830,7 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
   s32 random;
   s32 wait;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Engine_EventSetMessage(MsgTolbiShipHaveMakeThemPromiseHelp);
     Event_ShowMessage(KALAY_TOUR_GUIDE, 0);
@@ -858,7 +858,7 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
 /// At Tolbi, ARRIVED_ASKS_ABOUT_COLOSSO asks whether the party is headed for
 /// Colosso too.
 static void TolbiShipDeck_AskHeadedForColosso(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgTolbiShipHeadedColosso);
   Engine_EventAskYesNo(ARRIVED_ASKS_ABOUT_COLOSSO, 0);
   Engine_EventEnd();
@@ -892,7 +892,7 @@ static void TolbiShipDeck_GoBelow(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   throughDoor = 0;
   switch (work->touchedTrigger) {
   case TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD:
@@ -920,7 +920,7 @@ static void TolbiShipDeck_GoBelow(void) {
 /// hatch.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
   if ((u16)(Object_GetById(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     TolbiShipDeck_GoBelow();
@@ -938,7 +938,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct FieldActor *record;
 
   if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Field_EndBusyAndReveal();
     Actor_FaceActor(ACTOR_PARTY_LEADER, KALAY_CREWMAN, 10);
     Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
@@ -1059,7 +1059,7 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
 
   if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Field_EndBusyAndReveal();
       TolbiShipDeck_ConfrontCrewman();
       Actor_SetSpeed(KALAY_CREWMAN, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1105,7 +1105,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 
   if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
-      Engine_EventBegin();
+      Engine_EventStart();
       Field_EndBusyAndReveal();
       TolbiShipDeck_ConfrontCrewman();
       Actor_SetSpeed(KALAY_CREWMAN, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1360,7 +1360,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   struct FieldActor *record;
   u8 bits;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_CrewPlacements);
   Engine_TaskWait(1);
@@ -1396,7 +1396,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
 static void TolbiShipDeck_SetUpAfterKraken(void) {
   struct FieldActor *record;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_CrewPlacements);
   Engine_TaskWait(1);
@@ -1426,7 +1426,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   s32 facing;
 
   ((struct MapScrollWork *)gMapWork[0])->minX = PIXELS(65);
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_KrakenPlacements);
   Engine_TaskWait(1);
@@ -1462,7 +1462,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
 static void TolbiShipDeck_DepartFromKalay(void) {
   struct FieldActor *record;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(KALAY_CREWMAN, 0, 0);
@@ -1489,7 +1489,7 @@ static void TolbiShipDeck_DepartFromKalay(void) {
 static void TolbiShipDeck_DepartWithParty(void) {
   struct FieldActor *record;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_CrewPlacements);
   Engine_TaskWait(1);
@@ -1550,7 +1550,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
 /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS: sea monsters are
 /// sighted. "Aye, Captain! Sea monsters!"
 static void TolbiShipDeck_SightSeaMonsters(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_CrewPlacements);
   Engine_TaskWait(1);
@@ -1579,7 +1579,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   s32 zero;
   const s32 *shared;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_CrewPlacements);
   Engine_TaskWait(1);
@@ -1644,7 +1644,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
 /// crew while more of them climb aboard.
 static void TolbiShipDeck_MonstersAttackCrew(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Event_CallWithLastActiveObjectId(
@@ -1751,7 +1751,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   s32 frame;
   const s32 *sailorActions;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
   record = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(record, 0);
@@ -1873,7 +1873,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
 static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_KrakenPlacements);
   Engine_TaskWait(1);
@@ -1988,7 +1988,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
 static void TolbiShipDeck_ThankForKraken(void) {
   struct FieldActor *record;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_CrewPlacements);
   Engine_TaskWait(1);
@@ -2043,7 +2043,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
 static void TolbiShipDeck_SightLand(void) {
   struct FieldActor *record;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
   record = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(record, 0);
@@ -2210,7 +2210,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
     }
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   record = Object_GetById(ACTOR_PARTY_LEADER);
@@ -2686,7 +2686,7 @@ static void TolbiShipDeck_Turn(s32 actorId, s32 facing) {
 /// TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_ISLAND leads on below decks, toward
 /// the island.
 static void TolbiShipDeck_SightIsland(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   sSeaScroll[0] = 0x40000;
   sSeaSpeed[0] = -0x8000;
   Event_CallWithLastActiveObjectId(
@@ -2761,7 +2761,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   struct FieldActor *leader;
   u8 bits;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 180, 0x28e);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -2857,7 +2857,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
 /// scene moves on. "How was it, Isaac? Did you explore the island
 /// thoroughly?"
 static void TolbiShipDeck_ReturnFromIsland(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(
       (struct ScenePlacement *)gTolbiShipDeck_TourGuidePlacements);
   Engine_TaskWait(1);

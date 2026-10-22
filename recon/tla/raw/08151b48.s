@@ -29,13 +29,13 @@ BattleEffect_RunRay:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleEffect_BeginTiledCanvasFilled
+	bl BattleEffect_StartTiledCanvasFilled
 	b .L_08151b8a
 .L_08151b80:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleEffect_BeginTiledCanvas
+	bl BattleEffect_StartTiledCanvas
 .L_08151b8a:
 	ldr r1, [sp, #40]
 	ldr r3, [r1, #24]

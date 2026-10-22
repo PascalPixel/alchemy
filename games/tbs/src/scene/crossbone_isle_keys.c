@@ -295,7 +295,7 @@ static void Event_BaneFirstEscape(void) {
 
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
     FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
-    EV_BEGIN();
+    EV_START();
     Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveToActor(ACTOR_BANE, 1);
     Engine_CameraWaitForMove();
@@ -325,7 +325,7 @@ static void Event_BaneSecondEscape(void) {
     escapeComplete = FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
     if (escapeComplete == 0) {
       FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
-      EV_BEGIN();
+      EV_START();
 
       // Focus on the Djinni before its next jump away.
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -379,7 +379,7 @@ static void Event_BaneLastEscape(void) {
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0 &&
       FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) == 0) {
     FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
-    EV_BEGIN();
+    EV_START();
 
     // Restore the sprite before the last jump and winding escape path.
     djinni = Object_GetById(ACTOR_BANE);
@@ -458,7 +458,7 @@ static void Event_BaneKeepsAway(void) {
 
 /// Halt on Bane in CrossboneIsleBane: it freezes in place.
 static void Event_HaltBane(void) {
-  EV_BEGIN();
+  EV_START();
   OBJECT_MODE(ACTOR_BANE, 0);
   EV_END();
 }
@@ -681,7 +681,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
 static void Event_DodgeFirstPursuer(void) {
   struct FieldActor *leader;
 
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   OBJECT_SPEED(ACTOR_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
   SE(SE_188);
@@ -722,7 +722,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
 static void Event_DodgeSecondPursuer(void) {
   struct FieldActor *leader;
 
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   OBJECT_SPEED(ACTOR_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
@@ -791,7 +791,7 @@ static void Event_DodgeThirdPursuer(void) {
   struct FieldActor *leader;
 
   if (gGameState.pausedObject != ACTOR_THIRD_STATUE) {
-    EV_BEGIN();
+    EV_START();
     OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     OBJECT_SPEED(ACTOR_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     SE(SE_188);
@@ -820,7 +820,7 @@ static void Event_DodgeFourthPursuer(void) {
   s32 leaderColumn;
 
   if (gGameState.pausedObject != ACTOR_FOURTH_STATUE) {
-    EV_BEGIN();
+    EV_START();
     OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_ActorSetSpeed(ACTOR_FOURTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_AudioPlayCue(SE_188);
@@ -876,7 +876,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
 static void Event_DodgeFifthPursuer(void) {
   struct FieldActor *leader;
 
-  EV_BEGIN();
+  EV_START();
   OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   OBJECT_SPEED(ACTOR_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
@@ -898,7 +898,7 @@ static void Event_DodgeFifthPursuer(void) {
 
 /// Reveal in CrossboneIsleStatues: the translucent layer over the room
 /// vanishes while it lasts.
-static void Event_BeginRevealBlend(void) {
+static void Event_StartRevealBlend(void) {
   u32 coefficient = 208;
 
   coefficient <<= 4;
@@ -1636,7 +1636,7 @@ struct SceneEvent gCrossboneIsleStatuesEvents[] = {
     { EVENT_RAISED, TRIGGER_FIFTH_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DodgeFifthPursuer) },
     { EVENT_RAISED, TRIGGER_SECOND_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DodgeSecondPursuer) },
     { EVENT_RAISED, TRIGGER_FIRST_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DodgeFirstPursuer) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BeginRevealBlend) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StartRevealBlend) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EndRevealBlend) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIRST_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_SECOND_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },

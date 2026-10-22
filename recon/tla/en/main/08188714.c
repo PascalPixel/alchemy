@@ -74,7 +74,7 @@ extern s32 gData_08199210[];
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 s32 BattleUnit_GetEffectHeightFar(s32 objectId);
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -144,7 +144,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
 
   // Set up the canvas, the flash sheet, the jaw's texture and a clipped MAX
   // blitter.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);

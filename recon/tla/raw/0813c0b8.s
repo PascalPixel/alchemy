@@ -22,7 +22,7 @@ BattleEffect_RunDouse:
 	lsls r0, r0, #6
 	adds r0, #1
 	str r1, [sp, #28]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_0813c11c
 	movs r2, #128
 	lsls r2, r2, #19

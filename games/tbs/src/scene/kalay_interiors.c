@@ -265,7 +265,7 @@ const struct SceneEvent *KalayInteriors_GetEvents(void) {
 /// of the tour. `Please finish eating if you are taking the tour! We'll be
 /// leaving soon!`
 static void KalayInteriors_TalkToTourGuide(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgKalayPleaseFinishEatingIfTaking);
   Engine_EventShowMessage(ACTOR_TOUR_GUIDE, 0);
   Engine_GameFlagSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
@@ -275,7 +275,7 @@ static void KalayInteriors_TalkToTourGuide(void) {
 /// Someone asks whether the party knows the continent south of Tolbi. They're
 /// in one of Kalay's houses, and answer either way the party replies.
 static void KalayInteriors_AskAboutSouthernContinent(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
   Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
   Engine_EventEnd();
@@ -291,7 +291,7 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
     Engine_InnOpen(KALAY_INN, ACTOR_INNKEEPER);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
 
     if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       Engine_EventSetMessage(MsgKalayOurInnFeelsEmptyNow);
@@ -317,7 +317,7 @@ static void KalayInteriors_TalkToHealer(void) {
   if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
     Engine_SanctumOpen(ACTOR_HEALER);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgKalayCanLiveInPeaceIn);
     Engine_EventShowMessage(ACTOR_HEALER, 0);
     Engine_EventEnd();
@@ -333,7 +333,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   s32 doorIndex;
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   // Prevent idle movement while the doorway cells are animated.
   for (slot = ACTOR_FIRST_PLACED; slot <= ACTOR_LAST_SLOT; slot++) {

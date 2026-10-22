@@ -66,7 +66,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   // The canvas at its own width, opaque: the pillars hide what is behind.
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;

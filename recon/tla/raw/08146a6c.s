@@ -24,7 +24,7 @@ BattleEffect_RunShiningStar:
 	str r2, [sp, #24]
 	ldr r3, [r5, #48]
 	str r3, [sp, #20]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r0, .L_08146de0
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

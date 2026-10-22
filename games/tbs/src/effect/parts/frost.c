@@ -55,7 +55,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
   /* FAKEMATCH(temporary): the motes, columns, chips and puffs draw through a

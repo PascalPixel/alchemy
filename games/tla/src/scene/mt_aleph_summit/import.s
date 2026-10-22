@@ -226,16 +226,16 @@ Func_02001564:
 	overlay_veneer Func_080c87f8
 	.endif
 	.endif
-	.global Field_BeginPaletteTransition
+	.global Field_StartPaletteTransition
 	.thumb_func
-Field_BeginPaletteTransition:
+Field_StartPaletteTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.else
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_StartPaletteTransitionFar
 	.endif
 	.endif
 	.global Func_02001574

@@ -28,11 +28,11 @@ BattleEffect_RunFire:
 	cmp r3, #1
 	bne .L_08151076
 	movs r0, #1
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	b .L_0815107c
 .L_08151076:
 	movs r0, #0
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 .L_0815107c:
 	movs r1, #224
 	lsls r1, r1, #3

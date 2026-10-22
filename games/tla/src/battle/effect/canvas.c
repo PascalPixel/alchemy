@@ -28,7 +28,7 @@ void Audio_PlayCue(s32 cue);
 void BattleEffect_ClearActorTimers(void);
 void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
-void BattleEffect_BeginCanvasLayer(s32 bg_control);
+void BattleEffect_StartCanvasLayer(s32 bg_control);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
@@ -135,12 +135,12 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 }
 
-void BattleEffect_BeginTiledCanvas(s32 bg_control) {
+void BattleEffect_StartTiledCanvas(s32 bg_control) {
   s32 row;
   s32 col;
   s32 offset;
 
-  BattleEffect_BeginCanvasLayer(bg_control);
+  BattleEffect_StartCanvasLayer(bg_control);
   REG_BG2CNT = bg_control | 0x4784;
   offset = 0;
   for (row = 0; row != 16; row++) {
@@ -158,12 +158,12 @@ void BattleEffect_BeginTiledCanvas(s32 bg_control) {
   }
 }
 
-void BattleEffect_BeginTiledCanvasFilled(s32 bg_control) {
+void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
   s32 row;
   s32 col;
   s32 offset;
 
-  BattleEffect_BeginCanvasLayer(bg_control);
+  BattleEffect_StartCanvasLayer(bg_control);
   REG_BG2CNT = bg_control | 0x4784;
   offset = 0;
   for (row = 0; row != 16; row++) {

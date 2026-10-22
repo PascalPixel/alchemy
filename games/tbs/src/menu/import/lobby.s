@@ -12,8 +12,8 @@
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
 	.set import.Sound_LoadPresetParameters, 1
-	.set import.SerialRuntime_BeginSend, 1
-	.set import.SerialRuntime_BeginReceive, 1
+	.set import.SerialRuntime_StartSend, 1
+	.set import.SerialRuntime_StartReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1
 	.set import.Scheduler_SetTaskFlags, 1
 	.set import.Engine_MapRedraw, 1
@@ -40,7 +40,7 @@
 	.set import.GameFlag_SetByte, 1
 	.set import.Party_CountActiveOwners, 1
 	.set import.Party_RestoreHpPp, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_EventChooseYesNo, 1
 	.set import.Object_GetById, 1

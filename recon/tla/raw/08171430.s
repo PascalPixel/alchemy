@@ -22,7 +22,7 @@ BattleEffect_RunLightSurge:
 	ldr r1, [r5, #96]
 	str r1, [sp, #60]
 	ldr r6, [r5, #100]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08171494
 	movs r2, #128
 	lsls r2, r2, #19

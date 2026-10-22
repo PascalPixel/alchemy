@@ -29,7 +29,7 @@ Func_080d7524:
 	lsls r3, r3, #8
 	ands r1, r3
 	str r1, [sp, #8]
-	bl EventRuntime_Begin
+	bl EventRuntime_Start
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #173

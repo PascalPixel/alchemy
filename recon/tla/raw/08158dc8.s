@@ -33,7 +33,7 @@ BattleEffect_RunThor:
 	ldr r3, [r3, #100]
 	movs r6, #192
 	str r3, [sp, #104]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	ldr r3, .L_08158e44
 	movs r2, #128
 	lsls r2, r2, #19

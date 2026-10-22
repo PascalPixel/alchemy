@@ -36,7 +36,7 @@ BattleEffect_RunCharon:
 	movs r5, #240
 	ldr r2, [r2, #36]
 	str r2, [sp, #68]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	bl Func_0813ba50
 	ldr r3, .L_08175ff8
 	movs r2, #128

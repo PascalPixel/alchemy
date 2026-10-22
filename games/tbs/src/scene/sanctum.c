@@ -288,7 +288,7 @@ const struct SceneEvent *Sanctum_GetEvents(void) {
 /// afterwards; on the later visit (SANCTUM_FROM_VAULT_REVISIT), the statue
 /// polished.
 static void Event_TalkAboutGoldenStatue(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
     Engine_EventSetMessage(MsgSanctumWhenStrayFromYourWorldly);
@@ -312,7 +312,7 @@ static void Event_TalkAboutGoldenStatue(void) {
 /// later visit, the statue cleaned up.
 static void Event_ReadMindAboutGoldenStatue(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Engine_EventSetMessage(MsgSanctumWonderIfEverSeeOur);
@@ -336,7 +336,7 @@ static void Event_ReadMindAboutGoldenStatue(void) {
 /// "Are you sure?" Changing his mind, Isaac can accept after all, and the
 /// quest goes on as if he had accepted at once.
 static void Event_ReconsiderQuest(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSanctumAreYouSure);
   Engine_EventOpenMessage(ACTOR_HEALER, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -402,7 +402,7 @@ static void Event_ReconsiderQuest(void) {
 /// be: in every edition but the Japanese, that friend is Ivan, placed for it;
 /// in the Japanese, Garet.
 static void Event_AskAboutNewAdepts(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
 #if TBS_PATCH_1
   Event_CallWithLastActiveObjectId(gSanctum_IvanPlacement);
   Engine_TaskWait(1);
@@ -424,7 +424,7 @@ static void Event_AskAboutNewAdepts(void) {
 /// who asks whether Isaac feels any change in his Psynergy.
 static void Event_AskAboutPsynergyChanges(void) {
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorFaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(10);
   Engine_EventSetMessage(MsgSanctumDoFeelAnyChangeIn);
@@ -486,7 +486,7 @@ s32 Sanctum_Initialize(void) {
 /// that the choice is final: "Once you step outside the village, you cannot
 /// take back your decision."
 static void Event_WarnBeforeLeaving(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
   Engine_CameraMoveToActor(GARET, 1);
   Engine_CameraWaitForMove();
@@ -509,7 +509,7 @@ static void Event_WarnBeforeLeaving(void) {
 static void Event_LeaveAfterRefusing(void) {
   struct ColorBuffer *paletteWork;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
   Engine_ActorSetAnimation(GARET, 0);
   Engine_ActorSetAnimation(ACTOR_DORA, 0);
@@ -607,7 +607,7 @@ static inline void Sanctum_ShowAllEmotes(void) {
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   // A repeat visit skips the account of Sol Sanctum.
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) != 0) {
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
@@ -2075,7 +2075,7 @@ static void Event_TalkToHealer(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     Engine_EventSetMessage(MsgSanctumPathSolSanctumStillClosed);
   else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
@@ -2100,7 +2100,7 @@ static void Event_TalkToHealerOnVisit(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
 
   entrance = gGameState.entrance;
 
@@ -2138,7 +2138,7 @@ static void Event_TalkAboutCurse(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
     Engine_EventSetMessage(MsgSanctumCurseMayOverButWe);
   else
@@ -2155,7 +2155,7 @@ static void Event_TalkAboutAltinMonsters(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSanctumWasAfterEerieNightWhen);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0)
     Engine_EventSetMessage(MsgSanctumSavedAltinFromMonstersClearly);
@@ -2171,7 +2171,7 @@ static void Event_TalkAboutJourneyFromXian(void) {
     return;
   }
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgSanctumCameXianFromVeryDistant);
   Engine_EventShowMessage(ACTOR_HEALER, 0);
   Engine_EventEnd();

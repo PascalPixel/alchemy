@@ -270,7 +270,7 @@ const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
 /// Master Hsu is still trapped, he is rescued without the party (see the file
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
     if (GameFlag_IsSet(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -472,7 +472,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
       break;
     }
   }
-  Engine_EventBegin();
+  Engine_EventStart();
   // Three lines a mark, one for each member. They come right after Alpine
   // Crossing's signpost (`North: Altin Mine West: Lama Temple`) and have no
   // names of their own, so they count from a Fuchin Temple message two before

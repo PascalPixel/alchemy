@@ -28,7 +28,7 @@ BattleEffect_RunProcne:
 	str r2, [sp, #88]
 	ldr r3, [r3, #100]
 	str r3, [sp, #80]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	mov r3, sp
 	adds r3, #112
 	adds r1, r3, #0

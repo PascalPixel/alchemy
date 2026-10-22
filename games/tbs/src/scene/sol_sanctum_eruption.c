@@ -189,7 +189,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   particleWorkSlot = &gParticleWork;
   sparkles = *particleWorkSlot;
 #endif
-  Engine_EventBegin();
+  Engine_EventStart();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
   Event_PlayCue(SE_141);
@@ -1221,7 +1221,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
-  Scene_BeginCutscenePsynergy();
+  Scene_StartCutscenePsynergy();
   Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);

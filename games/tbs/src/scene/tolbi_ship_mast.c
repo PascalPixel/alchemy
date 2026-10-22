@@ -324,7 +324,7 @@ static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 static void TolbiShipMast_FindAnchorCharm(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ItemShowFound(ITEM_ANCHOR_CHARM, 3);
     Engine_PartyGiveItem(ITEM_ANCHOR_CHARM, 0);
     Engine_GameFlagSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND);
@@ -360,7 +360,7 @@ s32 TolbiShipMast_Initialize(void) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
-      Engine_EventBegin();
+      Engine_EventStart();
       Field_ClimbUp();
       leader->y.fixed = PIXELS(56);
       Camera_MoveTo(-1, -1, -1, 0);
@@ -402,7 +402,7 @@ s32 TolbiShipMast_Initialize(void) {
 
 /// Frames the lookout with the leader moved out of view, then announces course.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Camera_GetEventObject()->motionFlags = 0;
@@ -418,7 +418,7 @@ static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
 static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(164), PIXELS(321));
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -467,7 +467,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   s32 scale;
   void (*update)(union FieldObject *);
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Event_CallWithLastActiveObjectId(gTolbiShipMast_FirstAttackPlacements);
   Engine_TaskWait(1);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -591,7 +591,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   struct FieldActor *approachingActor;
   struct FieldActor *leader;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(leader, 0);
@@ -704,7 +704,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   u32 frame;
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_TaskWait(1);
@@ -809,7 +809,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
 /// off, then the lookout announces land, and the rowing balance chooses the
 /// exit.
 static void TolbiShipMast_AnnounceLand(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Event_CallWithLastActiveObjectId(gTolbiShipMast_BirdPlacements);

@@ -91,7 +91,7 @@ extern const u8 gData_081991f0[];
 extern const s32 gData_081994d0[];
 extern const s32 gData_081994e0[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -137,7 +137,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   s32 x;
 
   // Build the three cels from their halves.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
                              work->sheet + PICTURE_OFFSET, 1, 1);
   Iwram_ClearWords(work->sheet, 0x4000);

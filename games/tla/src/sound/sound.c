@@ -52,7 +52,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 void MusicPlayer_StartSong(struct SoundPlayer *player,
                            const struct SequenceHeader *header);
 void MusicPlayer_Stop(struct SoundPlayer *player);
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
+void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 extern struct SoundWork gSound_Work;
 extern struct CgbNote gSound_CgbNotes[4];
@@ -102,7 +102,7 @@ static __inline__ void MusicPlayer_SetFadeParameters(struct SoundPlayer *player,
 }
 
 /// Begins a fade that stops and clears tracks when its volume reaches zero.
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed) {
+void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed, SOUND_FADE_FULL_VOLUME);
 }
 
@@ -208,7 +208,7 @@ void Audio_ResumeAllPlayers(void) {
 }
 
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed) {
-  MusicPlayer_BeginFadeOut(player, speed);
+  MusicPlayer_StartFadeOut(player, speed);
 }
 
 /// Begins a fade that preserves track state for later resumption.

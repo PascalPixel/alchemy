@@ -28,7 +28,7 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.PartyInventory_Discard, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_PartyGiveItem, 1
 	.set import.Object_GetById, 1

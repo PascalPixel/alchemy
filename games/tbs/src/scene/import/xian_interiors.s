@@ -9,7 +9,7 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_EventWait, 1
-	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventStart, 1
 	.set import.Engine_EventEnd, 1
 	.set import.SceneTable_Prepare, 1
 	.set import.Object_GetById, 1

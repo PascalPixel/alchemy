@@ -66,7 +66,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   // Setup. The sheet is the first field of the work block, so the pictures
   // decode to `work` itself: three 20x32 lights.
   Resource_DecodeType01(

@@ -90,7 +90,7 @@ extern u8 gData_08199d94[];
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
@@ -150,7 +150,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
 
   // Set up the canvas, then let the caster lunge.
-  BattleEffect_BeginCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;

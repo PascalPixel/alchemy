@@ -53,7 +53,7 @@ extern const struct SparkleFrame gFieldEffect_SparkleFrames[32];
 void Event_UpdateDebugSkip(void);
 void FieldEvent_WaitFrames(s32 frames);
 void Leader_StopMoving(void);
-void FieldEvent_Begin(void);
+void FieldEvent_Start(void);
 void FieldEvent_End(void);
 void Event_NoOpHookA(void);
 void Event_NoOpHook(void);
@@ -248,8 +248,8 @@ void Field_StartEncounterTransition(s32 unused);
 s32 Field_StartEncounterTransition(s32 unused);
 #endif
 void ObjectEffect_PrepareContextEffect(s32 animation);
-void ObjectEffect_BeginContextEffect26(void);
-void ObjectEffect_BeginContextEffect25(void);
+void ObjectEffect_StartContextEffect26(void);
+void ObjectEffect_StartContextEffect25(void);
 void ObjectEffect_EndContextEffect(s32 animation);
 s32 ObjectEffect_RunPendingFlagEvent(void);
 

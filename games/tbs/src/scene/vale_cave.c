@@ -345,7 +345,7 @@ static void Event_MoveWestCratesIntoHole(void) {
   struct FieldActor *leftEffect;
   struct FieldActor *rightEffect;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Object_GetById(ACTOR_WEST_CRATES)->x.fixed >> 20 == 23) {
     // Move the leader aside before the crates start sinking.
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
@@ -392,7 +392,7 @@ static void Event_MoveEastCratesIntoHole(void) {
   struct FieldActor *leftEffect;
   struct FieldActor *rightEffect;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (Object_GetById(ACTOR_EAST_CRATES)->x.fixed >> 20 == 27) {
     leftEffect = OverlayObject_PrepareObject(
         Object_GetById(ACTOR_EAST_CRATES)->x.fixed - PIXELS(8), 0,
@@ -430,7 +430,7 @@ static void Event_MoveEastCratesIntoHole(void) {
 /// Reached by walking into cell code 24 in the second room, until
 /// FLAG_SCENE_TEMP_01 is set.
 static void Event_PushEastCratesIntoHole(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   StagedActor_AdvancePair();
   Engine_EventEnd();
   Event_MoveEastCratesIntoHole();
@@ -463,7 +463,7 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
   // Keep the normal motion flags while staging the hop.
   if (FieldObject_CheckMovementCollision(
           leader, (struct FieldPosition *)landingPosition) == 0) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -495,7 +495,7 @@ static void Event_KiteRunsOff(void) {
 
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
     GameFlag_Set(FLAG_SCENE_TEMP_00);
-    Engine_EventBegin();
+    Engine_EventStart();
     Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     Engine_CameraFollowActor(ACTOR_KITE, 1);
     Engine_CameraWaitForMove();
@@ -533,7 +533,7 @@ static void Event_KiteRunsBehindLedge(void) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
       GameFlag_Set(FLAG_SCENE_TEMP_01);
       GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
-      Engine_EventBegin();
+      Engine_EventStart();
       Actor_SetAttachedEffect(ACTOR_KITE,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Engine_ActorRunRepeatedMotion(ACTOR_KITE, 2);
@@ -594,7 +594,7 @@ static void Event_KiteKeepsAway(void) {
 ///
 /// Reached by Halt on Kite in the second room.
 static void Event_HaltKite(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetAnimation(ACTOR_KITE, 0);
   Engine_EventEnd();
 }
@@ -610,7 +610,7 @@ static void Event_PushLogOverEdge(void) {
   s32 clearedRows;
   struct StagedActorProbe probe;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
@@ -662,7 +662,7 @@ static void Event_PushLogOffLedge(void) {
   struct FieldActor *pushedLog;
   s32 stationaryMotion;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventWait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
@@ -707,7 +707,7 @@ static void Event_PushLogOffLedge(void) {
 static void Event_PushLogNorth(void) {
   struct StagedActorProbe probe;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the collision footprint.

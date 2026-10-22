@@ -418,7 +418,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginSend(state, LINK_PACKET_BYTES);
+    s32 status = SerialRuntime_StartSend(state, LINK_PACKET_BYTES);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
@@ -436,7 +436,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       }
     }
     if (allocationSize) {
-      status = SerialRuntime_BeginSend(actions, allocationSize);
+      status = SerialRuntime_StartSend(actions, allocationSize);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {
@@ -461,7 +461,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
     // (serial_runtime.h), so every read here loads it again.
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginReceive(state);
+    s32 status = SerialRuntime_StartReceive(state);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
@@ -484,7 +484,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       return -1;
     result = state->count;
     if (state->count) {
-      status = SerialRuntime_BeginReceive(actions + count);
+      status = SerialRuntime_StartReceive(actions + count);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {

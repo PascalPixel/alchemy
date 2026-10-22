@@ -356,11 +356,11 @@ Sound_LoadPresetParametersFar:
 	.global Func_08000380
 	.thumb_func
 Func_08000380:
-	overlay_veneer SerialRuntime_BeginSend
+	overlay_veneer SerialRuntime_StartSend
 	.global Party_CheckFar
 	.thumb_func
 Party_CheckFar:
-	overlay_veneer SerialRuntime_BeginReceive
+	overlay_veneer SerialRuntime_StartReceive
 	.global Func_08000390
 	.thumb_func
 Func_08000390:

@@ -39,7 +39,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   // The motes for the sparks are in the battle sheet's slot.
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_BeginTiledCanvas(1);
+  BattleEffect_StartTiledCanvas(1);
   // Destruct Ray stretches the canvas across the screen; the others show it
   // at its own width over the targets' half (on side 1, moved 128 pixels).
   // BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the targets.

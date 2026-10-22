@@ -122,16 +122,16 @@ BattleEffect_StepVector3Far:
 Func_080c87e8:
 	overlay_veneer BattleEffect_GetObjectPriority
 	.ifdef TLA_EDITION_ES
-	.global Field_BeginPaletteTransitionFar
+	.global Field_StartPaletteTransitionFar
 	.thumb_func
-Field_BeginPaletteTransitionFar:
-	overlay_veneer Field_BeginPaletteTransition
+Field_StartPaletteTransitionFar:
+	overlay_veneer Field_StartPaletteTransition
 	.else
 	.ifdef TLA_EDITION_IT
-	.global Field_BeginPaletteTransitionFar
+	.global Field_StartPaletteTransitionFar
 	.thumb_func
-Field_BeginPaletteTransitionFar:
-	overlay_veneer Field_BeginPaletteTransition
+Field_StartPaletteTransitionFar:
+	overlay_veneer Field_StartPaletteTransition
 	.else
 	.global Func_080c87f0
 	.thumb_func
@@ -148,7 +148,7 @@ Func_080c87f8:
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_StartArcEffect
 .else
-	overlay_veneer Field_BeginColorTransition
+	overlay_veneer Field_StartColorTransition
 .endif
 .endif
 	.ifdef TLA_EDITION_ES
@@ -163,10 +163,10 @@ Field_EndActorSpriteEffectFar:
 Field_EndActorSpriteEffectFar:
 	overlay_veneer BattleEffect_EndArcEffect
 	.else
-	.global Field_BeginPaletteTransitionFar
+	.global Field_StartPaletteTransitionFar
 	.thumb_func
-Field_BeginPaletteTransitionFar:
-	overlay_veneer Field_BeginPaletteTransition
+Field_StartPaletteTransitionFar:
+	overlay_veneer Field_StartPaletteTransition
 	.endif
 	.endif
 	.global BattleEffect_StartArcEffectFar

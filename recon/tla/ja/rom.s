@@ -1479,10 +1479,10 @@ Game_RunFar:
 FieldEvent_WaitFramesFar:
 	.incbin "baserom.gba", 0x000c8010, 0x00000008
 	.section .rom.000c8018, "ax"
-	.global EventRuntime_BeginFar
-	.type EventRuntime_BeginFar, %function
+	.global EventRuntime_StartFar
+	.type EventRuntime_StartFar, %function
 	.thumb_func
-EventRuntime_BeginFar:
+EventRuntime_StartFar:
 	.incbin "baserom.gba", 0x000c8018, 0x00000008
 	.section .rom.000c8020, "ax"
 	.global EventRuntime_EndFar
@@ -2129,10 +2129,10 @@ Func_080c87f0:
 Func_080c87f8:
 	.incbin "baserom.gba", 0x000c87f8, 0x00000008
 	.section .rom.000c8800, "ax"
-	.global Field_BeginPaletteTransitionFar
-	.type Field_BeginPaletteTransitionFar, %function
+	.global Field_StartPaletteTransitionFar
+	.type Field_StartPaletteTransitionFar, %function
 	.thumb_func
-Field_BeginPaletteTransitionFar:
+Field_StartPaletteTransitionFar:
 	.incbin "baserom.gba", 0x000c8800, 0x00000008
 	.section .rom.000c8808, "ax"
 	.global BattleEffect_StartArcEffectFar
@@ -2209,10 +2209,10 @@ Func_080c88f0:
 ObjectMotion_ResetTargetsAndVelocityFar:
 	.incbin "baserom.gba", 0x000c88f8, 0x00000008
 	.section .rom.000c8900, "ax"
-	.global ObjectEffect_BeginContextEffect26Far
-	.type ObjectEffect_BeginContextEffect26Far, %function
+	.global ObjectEffect_StartContextEffect26Far
+	.type ObjectEffect_StartContextEffect26Far, %function
 	.thumb_func
-ObjectEffect_BeginContextEffect26Far:
+ObjectEffect_StartContextEffect26Far:
 	.incbin "baserom.gba", 0x000c8900, 0x00000018
 	.section .rom.000c8918, "ax"
 	.global Func_080c8918
@@ -3863,10 +3863,10 @@ Func_08142944:
 Func_0814355c:
 	.incbin "baserom.gba", 0x0014355c, 0x00000084
 	.section .rom.001435e0, "ax"
-	.global BattleEffect_BeginCanvasLayer
-	.type BattleEffect_BeginCanvasLayer, %function
+	.global BattleEffect_StartCanvasLayer
+	.type BattleEffect_StartCanvasLayer, %function
 	.thumb_func
-BattleEffect_BeginCanvasLayer:
+BattleEffect_StartCanvasLayer:
 	.incbin "baserom.gba", 0x001435e0, 0x00000260
 	.section .rom.00143d80, "ax"
 	.incbin "baserom.gba", 0x00143d80, 0x00000134

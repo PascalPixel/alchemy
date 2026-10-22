@@ -25,7 +25,7 @@ BattleEffect_RunTargetMotes:
 	add r6, r11
 	str r3, [sp, #68]
 	str r1, [sp, #52]
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r2, #1
 	ldr r0, .L_0814aa34
 	adds r1, r6, #0

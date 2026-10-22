@@ -430,7 +430,7 @@ const struct ScenePlacement *Kalay_GetPlacements(void) {
 
 /// Searching the well in Kalay: the party peers in, and it is very clean.
 static void Kalay_SearchWell(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgKalayVeryCleanMaintained, 1);
   Engine_EventEnd();
@@ -439,7 +439,7 @@ static void Kalay_SearchWell(void) {
 /// Catch at the Kalay Tunnel Entrance pulls in the Nut floating there, until it
 /// is caught (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).
 static void Kalay_CatchTunnelEntranceNut(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_ActorSetPosition(ACTOR_TUNNEL_ENTRANCE_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
@@ -475,7 +475,7 @@ const struct SceneEvent *Kalay_GetEvents(void) {
 /// A man in Kalay tells why he moved there: he left Tolbi, afraid of Babi, who
 /// has ruled it for more than a hundred years.
 static void Kalay_TalkAboutLeavingHome(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgKalayCameKalayBecauseDidntLike);
   Engine_EventAskYesNo(ACTOR_MAN_WHO_LEFT_TOLBI, 0);
   Engine_EventEnd();
@@ -492,7 +492,7 @@ static void Kalay_AskAboutCaveAccess(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   relativeFacing = (leader->facing + 0xfffff000) << 16;
   if (relativeFacing > 0x60000000) {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgKalayDoWantGoCaveUp);
@@ -514,7 +514,7 @@ static void Kalay_AskAboutCaveAccess(void) {
 /// Tunnel (KalayTunnelTreasureRoom) once Hammet is home, and means the time she
 /// told the party to leave.
 static void Kalay_TalkAboutLayana(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Engine_EventSetMessage(MsgKalayLayanaWasVeryHardOn);
   Engine_EventAskYesNo(ACTOR_WAITING_MAN, 0);
   Engine_EventEnd();
@@ -532,7 +532,7 @@ static void Kalay_TalkToWeaponMerchant(void) {
   if (relativeFacing > 0x80000000) {
     Engine_ShopOpen(22, ACTOR_WEAPON_MERCHANT);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgKalayLordHammetSellsHisBest);
     Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     Engine_EventEnd();
@@ -551,7 +551,7 @@ static void Kalay_TalkToArmorMerchant(void) {
   if (relativeFacing <= 0x7ffe0000) {
     Engine_ShopOpen(23, ACTOR_ARMOR_MERCHANT);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgKalayDidFindNeededInWeapon);
     Engine_EventAskYesNo(ACTOR_ARMOR_MERCHANT, 0);
     Engine_EventEnd();
@@ -569,7 +569,7 @@ static void Kalay_TalkToItemMerchant(void) {
   if (relativeFacing > 0xC0000000) {
     Engine_ShopOpen(24, ACTOR_ITEM_MERCHANT);
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     Engine_EventSetMessage(MsgKalayLadyLayanaSharedInLord);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Engine_EventEnd();
@@ -587,7 +587,7 @@ static void Kalay_OpenDoorAndExit(void) {
   s32 door;
 
   event = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_SLOT; i++) {
     actor = Object_GetById(i);
     if (actor != NULL) {
@@ -626,7 +626,7 @@ static __inline__ void Kalay_AnimatePalaceDoor(void) {
 /// Walking north into the door of Hammet Palace (HammetPalaceGrounds, trigger
 /// 2): it opens and the leader walks in.
 static void Kalay_EnterPalace(void) {
-  Engine_EventBegin();
+  Engine_EventStart();
   Kalay_AnimatePalaceDoor();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -661,7 +661,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  Engine_EventBegin();
+  Engine_EventStart();
   if (GameFlag_IsSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
       GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
     Event_CallWithLastActiveObjectId(gKalay_TourGroupPlacements);
@@ -1580,7 +1580,7 @@ static void Kalay_AlternateGuidesPacing(void) {
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct FieldActor *actor;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(192), PIXELS(342));
@@ -1778,7 +1778,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   s32 southFacing;
   const s32 *exitActions;
 
-  Engine_EventBegin();
+  Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2135,7 +2135,7 @@ static void Kalay_UpdateTunnelPassages(void) {
   } else if ((firstStatue->x.fixed >> 19) > 29) {
   } else {
     frostEffect = Object_GetById(ACTOR_PUDDLE);
-    Engine_EventBegin();
+    Engine_EventStart();
     Map_CopyCellAttributes(7, 44, 1, 1, firstPassageOpen, 1);
     i = 67;
     width = 1;
@@ -2193,7 +2193,7 @@ static void Kalay_UpdateTunnelPassages(void) {
   if (GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
   } else if ((secondStatue->x.fixed >> 19) > 87) {
   } else {
-    Engine_EventBegin();
+    Engine_EventStart();
     i = 67;
     width = 1;
     height = 5;

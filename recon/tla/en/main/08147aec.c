@@ -43,12 +43,12 @@
 #define HI(v) (((s16 *)&(v))[1])
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_BeginCanvasLayer(s32 bgControl);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                   // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                   // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
-void Func_081180e8(s32 phase);              // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);              // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
@@ -108,7 +108,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
   // Set up: half-and-half blending, the max and additive pair, the flashes
   // with their palette, the streaks, the dots, and in mode 1 the lightning
   // palette.
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   REG_BG2CNT = 0x784;
   BattleEffect_FetchRectangleBlitters(0, draw);

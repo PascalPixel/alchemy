@@ -1,6 +1,6 @@
 // Draft, differ 188 of 468 (no device): the cloud swirl that
 // Func_0813e7e0 runs after setting up the effect blocks, written from the
-// listing (twins: BattleEffect_BeginCanvasLayer 0.45 by shape,
+// listing (twins: BattleEffect_StartCanvasLayer 0.45 by shape,
 // BattleEffect_RunOrbitingSkulls 0.60 by call order). The rotation goes
 // through six IO_WRITE_QUEUE_PUSH writes a frame, in the queue's order
 // (value, address, control), as the native's inline pushes are.
@@ -31,7 +31,7 @@ extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
 
-void BattleEffect_BeginCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 value);
 s32 Func_08196404(s32 slot, s32 width, s32 height, s32 flags, s32 mode);
@@ -71,7 +71,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   transition = Ram_HeapSlots->transitionWork;
-  BattleEffect_BeginCanvasLayer(3);
+  BattleEffect_StartCanvasLayer(3);
   REG_DISPCNT = 0x7741;
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f42;

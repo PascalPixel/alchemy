@@ -9,7 +9,7 @@
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 /// 0xfeff stops, and 0xffff loops to the start. MapAnimation_StartChannels
 /// schedules it (order 0xc80); the world map's still view
-/// (WorldMap_BeginStillView) suspends it. Moves each channel's cursor and timer
+/// (WorldMap_StartStillView) suspends it. Moves each channel's cursor and timer
 /// in the map work.
 void MapAnimation_Update(void) {
   // Each channel is written (mapState->anim + channelIndex): as

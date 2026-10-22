@@ -69,7 +69,7 @@ extern char ResourceId_IceTileSheet;
 extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
-void BattleEffect_BeginCanvasLayer(s32 control);
+void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
@@ -110,7 +110,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   sheet = Runtime_AllocateHeapBlock(SLOT_BATTLE_SHEET, 0x60e);
   work->framesSinceTransfer = 1;
   work->effect = effect;
-  BattleEffect_BeginCanvasLayer(0);
+  BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = 0x100c;

@@ -18,7 +18,7 @@ BattleEffect_RunSabreDance:
 	movs r0, #0
 	sub sp, #32
 	mov r10, r3
-	bl BattleEffect_BeginCanvasLayer
+	bl BattleEffect_StartCanvasLayer
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_0817b718

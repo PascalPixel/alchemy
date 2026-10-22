@@ -234,9 +234,9 @@ s32 Field_RunScene(s32 entrance) {
           Scene_RunTouchOrExit(work->action);
           work->busy = 0;
           work->action = 0;
-        } else if (work->input != 0) {
-          Field_RunPushTileEvent(work->input);
-          work->input = 0;
+        } else if (work->pushTile != 0) {
+          Field_RunPushTileEvent(work->pushTile);
+          work->pushTile = 0;
         } else if (work->examine != 0) {
           // Examine the actor or tile ahead, or open the menu if neither has an
           // event.
@@ -250,7 +250,7 @@ s32 Field_RunScene(s32 entrance) {
           }
           if (mode != 0) {
             // 0x1000 keeps actor 0's request non-zero; the handler masks it.
-            work->descriptor = object | 0x1000;
+            work->talk = object | 0x1000;
             work->menu = 0;
           } else {
             mode = Object_GetTriggerTileAheadOfCurrent();
@@ -283,22 +283,22 @@ s32 Field_RunScene(s32 entrance) {
           GameFlag_ClearBitFar(FLAG_MENU_OPEN);
           GameFlag_RefreshLureCapFar();
           work->menu = 0;
-        } else if ((s16)work->descriptor != 0) {
+        } else if ((s16)work->talk != 0) {
           WorldMap_BeginEvent();
-          Scene_TalkToActor(work->descriptor & 0xfff);
+          Scene_TalkToActor(work->talk & 0xfff);
           WorldMap_EndEvent();
-          work->descriptor = 0;
+          work->talk = 0;
         } else if (work->tile != 0) {
           WorldMap_BeginEvent();
           Field_SearchTile(work->tile);
           WorldMap_EndEvent();
           work->tile = 0;
-        } else if (work->command != 0) {
+        } else if (work->psynergy != 0) {
           UiTimedNotice_CloseIfActiveFar();
           WorldMap_BeginEvent();
-          Field_UsePsynergy(work->command);
+          Field_UsePsynergy(work->psynergy);
           WorldMap_EndEvent();
-          work->command = 0;
+          work->psynergy = 0;
         } else if (work->item != 0) {
           WorldMap_BeginEvent();
           Field_UseItem(work->item, work->itemArgument);

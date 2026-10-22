@@ -443,7 +443,7 @@ static void Event_ReadLeftGuardsThoughts(void) {
       GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = GameFlag_IsSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
-      ((struct FieldWork *)gEventWork)->command = recognizedHammet;
+      ((struct FieldWork *)gEventWork)->psynergy = recognizedHammet;
       Engine_PsynergyCancel();
       Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
       Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);

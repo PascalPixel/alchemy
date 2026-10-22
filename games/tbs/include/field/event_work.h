@@ -22,13 +22,13 @@ struct EventWork {
   struct SceneEvent *events;           ///< the scene's event table
   struct FieldActor *actors[8];        ///< the party's characters, ids 0 to 7
   struct FieldActor *placedActors[58]; ///< the placed actors, from id 8
-  u8 unk11c[0x50];         ///< FieldWork's markers; not named by TBS code
-  s16 touchedTrigger;      ///< the step event a touch or exit event answers
-  u8 unk16e[2];            ///< FieldWork's input request; not named by TBS code
-  u16 requestedExit;       ///< the exit kind taken, which ends the scene
-  u16 unk172;              ///< FieldWork's menu request; scenes set it to 1
-  u8 unk174[6];            ///< FieldWork's examine, start and descriptor
-  s16 facingTrigger;       ///< the collision code ahead, which a search answers
+  u8 unk11c[0x50];    ///< FieldWork's markers; not named by TBS code
+  s16 touchedTrigger; ///< the step event a touch or exit event answers
+  u8 unk16e[2];       ///< FieldWork's pushTile request; not named by TBS code
+  u16 requestedExit;  ///< the exit kind taken, which ends the scene
+  u16 unk172;         ///< FieldWork's menu request; scenes set it to 1
+  u8 unk174[6];       ///< FieldWork's examine, start and talk
+  s16 facingTrigger;  ///< the collision code ahead, which a search answers
   u16 encounterEnemyGroup; ///< the next battle's enemy group, 0 for none
   s16 psynergyRequest;   ///< a field Psynergy to use, as owner << 10 | Psynergy
   u8 unk180[2];          ///< FieldWork's item request; not named by TBS code

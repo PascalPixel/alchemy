@@ -668,7 +668,7 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 // treated its request members as a halfword array. Named owner access adds
 // eight bytes to each of the three patrol callbacks in the EN trial.
 #ifdef UBFIX
-#define PATROL_PSYNERGY_REQUEST(work) ((work)->command)
+#define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
 #define PATROL_ITEM_REQUEST(work) ((work)->item)
 #define PATROL_RAISED_TRIGGER(work) ((work)->event)
 #else

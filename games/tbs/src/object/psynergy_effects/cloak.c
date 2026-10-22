@@ -76,7 +76,7 @@ void FieldFx_CheckCloakTile(void) {
   }
 
   if (tile[2] != CLOAK_TILE)
-    field->command = CLOAK_END;
+    field->psynergy = CLOAK_END;
 }
 
 /// Ends Cloak: stops the tile check and makes the leader blink back into
@@ -173,9 +173,9 @@ void FieldFx_StartCloak(void) {
   Scheduler_AddOrUpdateCallback(check, 0xc80);
   gGameState.cloaked = 1;
   check();
-  if (field->command == CLOAK_END) {
+  if (field->psynergy == CLOAK_END) {
     FieldFx_EndCloak();
-    field->command = n;
+    field->psynergy = n;
   }
 }
 

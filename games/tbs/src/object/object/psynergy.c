@@ -14,7 +14,7 @@
 /// the effect aim at the actor ahead, and the effects that act on it (Force,
 /// Frost, Reveal) find it themselves. An after event whose trigger has flag
 /// 0x400 plays the effect itself. Called by Field_RunScene for the Psynergy
-/// request (work->command); sets work->resolvingAction while the effect plays.
+/// request (work->psynergy); sets work->resolvingAction while the effect plays.
 /// On the world map, placed actors far from the view are destroyed for the
 /// effect, and all placed actors are placed again afterwards. Returns 0
 /// whatever happens; Field_RunScene ignores it.

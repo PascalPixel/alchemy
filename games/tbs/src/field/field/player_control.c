@@ -31,7 +31,7 @@
 
 /// What a shortcut key's assignment requests: its top two bits.
 enum FieldShortcutKind {
-  FIELD_SHORTCUT_PSYNERGY = 0, ///< fieldWork->command, an ability
+  FIELD_SHORTCUT_PSYNERGY = 0, ///< fieldWork->psynergy, an ability
   FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
 };
 
@@ -60,7 +60,7 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 /// request id, the assignment's low 14 bits, even when it raised an event
 /// instead; a shortcut with nothing assigned returns 0, as no key pressed does.
 ///
-/// Called by Field_CheckConfiguredKeys. Sets fieldWork->command,
+/// Called by Field_CheckConfiguredKeys. Sets fieldWork->psynergy,
 /// fieldWork->item or fieldWork->event, which the scene loop (run_scene.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
@@ -80,7 +80,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
   } else {
     switch (assignmentKind) {
     case FIELD_SHORTCUT_PSYNERGY:
-      Field_StoreHalfword(&fieldWork->command, requestId);
+      Field_StoreHalfword(&fieldWork->psynergy, requestId);
       break;
     case FIELD_SHORTCUT_ITEM:
       Field_StoreHalfword(&fieldWork->item, requestId);

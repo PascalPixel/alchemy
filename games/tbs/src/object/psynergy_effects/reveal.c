@@ -60,7 +60,7 @@ void FieldFx_WatchLeaderDistance(void) {
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED 0x2000
     // | ABILITY_REVEAL 0x90), which runs its ending events.
-    u16 *slot = (u16 *)&work->command;
+    u16 *slot = (u16 *)&work->psynergy;
     u32 request = 0x2090;
 
     *slot = request;

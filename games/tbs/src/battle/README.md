@@ -560,7 +560,7 @@ playback does with each.
   `Summon_IsEntrySecondaryFlagged` reads a bit of the enemy class table that
   `../effect/parts/beams.c` also tests; neither concerns summons. Naming the
   second needs the classes that set that bit, compared in renders.
-- XXX: a round has no take-apart picture. One frame per event of a Quake
+- XXX (picture): a round has no take-apart picture. One frame per event of a Quake
   turn, beside the queue with the event playing marked, would show the rules
   and the effect meeting; a battlefield render with each place's position
   (`BattlePlacement_`) and an ability's range markers would show distance.

@@ -700,7 +700,7 @@ which plays an ability in a built tbs-en edition over a plain grey backdrop.
   largest picture its runners decode there would settle it.
 - XXX: which critical versions `EFFECT_KIND_CRITICAL_OFFSET` reaches in each
   range of kinds.
-- No picture yet takes an effect apart. Three would show a mechanism this page
+- XXX (picture): no picture yet takes an effect apart. Three would show a mechanism this page
   explains: the canvas alone beside the battle it is blended over, with the
   stretch to twice its width; one effect frame by frame under each
   `enum CanvasTransferMode`, to show trails fading by level; and the particle

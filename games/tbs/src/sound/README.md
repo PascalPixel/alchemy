@@ -178,6 +178,6 @@ proven name keeps its number (`MUS_070`, `SE_188`).
   game.
 - XXX: why sound effects that name `SOUND_PLAYER_EFFECT_LAST` search only
   players 4 to 7.
-- XXX: no picture yet takes a frame's sound apart, such as the eight players'
+- XXX (picture): no picture yet takes a frame's sound apart, such as the eight players'
   tracks drawn as rows while a fanfare silences the music and it fades back
   in.

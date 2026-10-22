@@ -221,6 +221,6 @@ the sort orders from the item types they list.
   gives the likely reason.
 - XXX: what `gMenu_ListOrderMode0` to `Mode2` order for the player; naming
   them needs each order's item types read against the English item names.
-- XXX: no picture yet takes a screen apart into its windows and the menu
+- XXX (picture): no picture yet takes a screen apart into its windows and the menu
   work's views; a render of the Item screen with each window outlined and
   labelled by the struct that draws it would show it.

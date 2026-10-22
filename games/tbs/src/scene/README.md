@@ -269,6 +269,6 @@ their English text. Overlay numbers are their rows of the resource directory.
 - XXX: what the exit styles' leaving animations 26 and 25 and arrivals 24 and
   23 show (`enum ExitStyle`); a recording of an exit of each style would
   settle it.
-- XXX: the guide has no picture. A frame of a scene with each actor labelled by
+- XXX (picture): the guide has no picture. A frame of a scene with each actor labelled by
   its placement row and actor number, and each event cell by its collision
   code, would show how the tables meet the map.

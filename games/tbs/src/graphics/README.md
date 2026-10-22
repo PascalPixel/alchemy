@@ -207,8 +207,8 @@ draw.
 - XXX: why the credits borrow flash-library cells instead of having globals
   of their own. Another user of the same cells, or a link map of Camelot's
   build, would settle it.
-- XXX: no picture yet shows the tile ring: the 32 rows of sprite tile memory
+- XXX (picture): no picture yet shows the tile ring: the 32 rows of sprite tile memory
   drawn a tile to a pixel as the names scroll, with each row filled as
   `DisplayScroll_RenderEnteringLine` draws it.
-- XXX: no picture yet takes the title intro apart into its two scrolling
+- XXX (picture): no picture yet takes the title intro apart into its two scrolling
   backgrounds and its rising sprites.

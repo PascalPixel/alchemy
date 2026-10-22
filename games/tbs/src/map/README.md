@@ -287,6 +287,6 @@ pointer the loader stores to it, although `MapScrollWork`
 - XXX: which code may use `gActorSpriteSlots` and `gDecodeBuffer` while a map
   is loaded, given that the cells fill them; a trace of their writers outside
   a battle would settle it.
-- No picture yet shows a grid's three planes beside the cell words
+- XXX (picture): no picture yet shows a grid's three planes beside the cell words
   `Tile_ConvertMap` weaves from them, or a tile animation channel copying its
   frames; renders of both belong beside their sections here.

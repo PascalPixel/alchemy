@@ -289,6 +289,6 @@ named by their linker symbols, made from their English text.
   start.
 - XXX: `unknownBeforeValues` in `struct UiRenderWork`, the bytes before the
   argument table, which the TBS code never names.
-- XXX: no picture yet takes the window layer apart: the shared tilemap drawn
+- XXX (picture): no picture yet takes the window layer apart: the shared tilemap drawn
   alone beside the canvas tiles and the render outputs of one screen, which
   `alchemy-devtools render` could show from a tbs-en build.

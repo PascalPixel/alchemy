@@ -141,6 +141,6 @@ show. `test.c` keeps one empty function nothing calls, `DebugMenu_NoOp`, marked
 - XXX: likely a benchmark for the text buffer, the Japanese loop in
   `DebugMenu_GivePartyDjinn`, because it fills a local buffer sixteen times
   with 32 to 47 letters and nothing reads the result.
-- XXX: the level and menu test rooms have no picture; a frame of each with its
+- XXX (picture): the level and menu test rooms have no picture; a frame of each with its
   actors labelled by number and event would show what the tables above
   describe.

@@ -231,6 +231,6 @@ from the town scenes that open them.
   names would reach `include/unit/shop/shop.h` too.
 - XXX: what inn row 9 was for; a town with an inn door and no inn row would
   settle it.
-- XXX: no picture yet takes a counter apart; the shop's stock row drawn beside
+- XXX (picture): no picture yet takes a counter apart; the shop's stock row drawn beside
   the Buy and Artifacts lists it produces, before and after another town's
   first visit, would show the counters at work.

@@ -329,6 +329,6 @@ rules select them.
   `Event_ShowMessageAtPosition` entry points. Their position limits resemble
   pixels, but their window service takes tiles; a caller would settle the
   conversion ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
-- XXX: the request loop has no take-apart picture: a frame-by-frame strip of
+- XXX (picture): the request loop has no take-apart picture: a frame-by-frame strip of
   the request fields as a cutscene raises an exit with another request would
   show the order.

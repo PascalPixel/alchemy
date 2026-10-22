@@ -380,6 +380,6 @@ recovered from the original.
   table; a script that uses one would show whether that was meant.
 - XXX: why the Thumb object update is used rather than the ARM copy (see [Routines run
   from RAM](#routines-run-from-ram)).
-- No picture yet takes a sprite apart into its four animation layers and the
+- XXX (picture): no picture yet takes a sprite apart into its four animation layers and the
   composed buffer, or shows the world map's scanline table as the scale of
   each line; renders of both belong beside their sections here.

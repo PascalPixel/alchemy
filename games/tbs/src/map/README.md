@@ -2,9 +2,9 @@
 
 ![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
 
-This folder holds the map data, as editable tables: 182 layered maps for the
-towns, dungeons and interiors, the world map's ground and default cells, and
-the opponents' recorded paths in the Colosso finals. It holds no code. Each
+The map data is kept as editable tables: 182 layered maps for the towns,
+dungeons and interiors, the world map's ground and default cells, and the
+opponents' recorded paths in the Colosso finals. There is no code here. Each
 scene's row of `gField_SceneTable` ([`../field/scenes.s`](../field/scenes.s))
 gives a map number, which picks a row of `gMap_LayeredScenes`
 ([`../field/layered.tsv`](../field/layered.tsv)): the map's header, palette,
@@ -12,38 +12,13 @@ three tile sheets and layer data. `Map_LoadLayeredScene`
 ([`../field/field/map_layers.c`](../field/field/map_layers.c)) loads it, and
 [Field](../field/README.md) describes how the engine draws and scrolls it.
 
-## Files
-
-| Path | What it holds |
-| --- | --- |
-| `map_000/` to `map_179/` | one layered map each: its `map.s` and the tables it places |
-| `gondowan_passage/`, `venus_entrance/` | two more layered maps, Gondowan Passage and Venus Lighthouse's entrance, built like the others |
-| `world/blocks.tsv` | the world map's ground (`Field_PerspectiveDataA`) |
-| `default/` | the world map's default cells, tile animation and block attributes (`Field_DefaultMapCells` and the tables after it) |
-| `colosso/` | the opponents' recorded paths, with the Colosso lettering placed after them |
-| `map.s` | places `world/` and `default/` |
-| `map.inc` | the `map_header`, `map_layer` and `map_block` macros every `map.s` uses |
-
-The map numbers are the order of the directories, not numbers the game gives
-its maps.
-
-## Words
-
-- A **cell** is a 16 by 16 pixel square, one 32-bit word once loaded
-  (`struct MapCell` in [`map.h`](../../include/map.h)).
-- A **block** (a metatile) is the picture of a cell: 2 by 2 of the 8-pixel
-  tiles, stored as the four BG map entries that draw them, top left, top
-  right, bottom left, bottom right.
-- A **shape** is the form of the ground in a cell: a terrain kind and three
-  height samples.
-- A **collision code** says what standing on, pushing against or searching a
-  cell does (`enum MapCellCode`).
-- A **layer** is one of the map's three backgrounds, each a window onto the
-  one cell grid.
-- A **plane** is one value per cell over the whole 128 by 128 grid.
-- A **marker** is a cell where a chest or a Psynergy Stone can stand.
-
 ## Cells
+
+A cell is one 16 by 16 pixel square of a layered map, a 32-bit word once
+loaded, which says what is drawn there, what the ground is shaped like and
+what standing on it does.
+
+![One screen of Goma Cave, and beside it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands 32 pixels above the floor, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; yellow outlines on the two doorway cells with the scene's own codes. The cave has no wall-coded cells; its walls are all height.](https://alchemy.pascalpixel.com/guides/map/cells.png)
 
 A loaded cell is one word. Its low halfword holds the block number in its low
 12 bits and four flag bits above, the layer and priority an object standing
@@ -73,15 +48,42 @@ surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
 ground 32 pixels high runs along the foot of each cliff, some of it cut along
 a cell's diagonal.
 
-![One screen of Goma Cave, and beside it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands 32 pixels above the floor, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; yellow outlines on the two doorway cells with the scene's own codes. The cave has no wall-coded cells; its walls are all height.](https://alchemy.pascalpixel.com/guides/map/cells.png)
-
 Collision and height belong to a layer: code that asks about the ground
 reads the cell in the window of the layer the object follows, so an object
 stands in one layer at a time ([Field](../field/README.md#the-ground-under-an-object)).
 
+A cell is `struct MapCell` in [`map.h`](../../include/map.h), and its code an
+`enum MapCellCode`.
+
+| Bits of the cell word | Field | Meaning |
+| --- | --- | --- |
+| 0 to 11 | `metatileAndFlags` | the block drawn in the cell |
+| 12 to 15 | `metatileAndFlags` | flags: the layer and priority an object standing there takes (15 and 14 read by `Map_GetCellHighFlags`) |
+| 16 to 23 | `collisionCode` | the collision code |
+| 24 to 31 | `attributeB` | the shape, a row of the map's shape table |
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| (open ground) | 0 | nothing happens |
+| `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST` | 1 to 239 | the scene's own touch, exit and search events |
+| `MAP_CELL_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with encounters of its own: grounds 1 and 2 of the scene's zones |
+| `MAP_CELL_JAR` | 242 | a search spot with lines of its own |
+| `MAP_CELL_BARREL` | 243 | a search spot with lines of its own |
+| `MAP_CELL_WOODEN_BOX` | 244 | a search spot with lines of its own |
+| `MAP_CELL_GRAVE` | 245 | a search spot with lines of its own |
+| `MAP_CELL_BOOKS` | 246 | a search spot with lines of its own |
+| `MAP_CELL_WELL` | 247 | a search spot with lines of its own |
+| `MAP_CELL_JUMP_FORWARD_UNREACHED` | 249 | jumps forward like `MAP_CELL_JUMP_FORWARD`, but never reaches `Field_RunPushTileEvent` |
+| `MAP_CELL_HAZARD` | 250 | ground that hurts the party over time: the Lamakan Desert's sand |
+| `MAP_CELL_LEDGE` | 252 | jumped down with Down held |
+| `MAP_CELL_CLIMB` | 253 | climbed up or down with Up or Down held |
+| `MAP_CELL_JUMP_FORWARD` | 254 | jumped across |
+| `MAP_CELL_WALL` | 255 | blocks whatever the heights |
+
 ## A map's tables
 
-Each layered map keeps its tables in its directory:
+Each layered map is a directory of tables, one for each part of the map,
+which `map.s` assembles behind the map's header.
 
 | File | What it is | Built as |
 | --- | --- | --- |
@@ -103,6 +105,9 @@ are hexadecimal, one row of the grid per line.
 
 ### The header
 
+The header says where the camera may go, how each of the three layers is
+placed and scrolled, and where each part of the map starts.
+
 The header is one `map_header` line and three `map_layer` lines in `map.s`,
 read as `struct LayeredSceneHeader`. It gives the camera's bounds in 8-pixel
 tiles, each layer's priority (0 leaves the layer off) and the char block its
@@ -114,7 +119,97 @@ Six offsets from the header's start follow: the blocks, the shapes, the cell
 grid, the tile animation, the blend script and the markers. An offset of 0
 means the map has none of that part.
 
+`struct LayeredSceneHeader` and `struct LayeredSceneLayer` are defined in
+`field/field/map_layers.c`, and the `map_header` and `map_layer` macros that
+write them in `map.inc`.
+
+| Field | Unit | Meaning |
+| --- | --- | --- |
+| `origin[4]` | 8-pixel tiles | the camera's bounds: left, top, right and bottom |
+| `priority[3]` | | each layer's BG priority, 1 to 3; 0 leaves the layer off |
+| `charBase[3]` | | each layer's BG char block |
+| `reserved` | | 0 in every map; nothing reads it |
+| `layers[n].x`, `.y` | 8-pixel tiles | the layer's origin |
+| `layers[n].scrollX`, `.scrollY` | sixteenths of the view's motion | the layer's parallax |
+| `layers[n].speedX`, `.speedY` | sixteenths of a pixel a frame | the layer's drift |
+| `layers[n].periodX`, `.periodY` | 8-pixel tiles | where the layer wraps |
+| `tiles` | bytes from the header | the blocks |
+| `collision` | bytes from the header | the shapes |
+| `tilemap` | bytes from the header | the cell grid |
+| `animation` | bytes from the header | the tile animation script, or 0 for none |
+| `blend` | bytes from the header | the blend script, or 0 for none |
+| `markers` | bytes from the header | the marker list, read in place |
+
+## How the build makes a map
+
+`tools/ags-graphics` turns each table into the bytes the game reads, and
+packs each stream exactly as Camelot's packer did.
+
+```mermaid
+flowchart LR
+    tsv["NAME.tsv"] -->|"ags-graphics: the FORM"| raw["NAME.FORM"]
+    raw -->|"the lz codec"| packed["NAME.FORM.lz"]
+    patch["NAME_patch.tsv"] -.->|"the byte the packer saw"| packed
+    packed --> maps["map.s places it"]
+    maps --> rom["the map's row of<br/>gMap_LayeredScenes"]
+```
+
+The tool chooses what to do from the name of the file it is asked to write,
+`NAME.FORM[.CODEC]`, made from `NAME.tsv` (the `Makefile`'s asset rules). A
+map uses these forms:
+
+- `table`: the shapes and markers, one record per row, each column's type
+  giving its size.
+- `plane`: a grid plane, written out whole, row by row, with `fill` in every
+  cell the table leaves out.
+- `parts`: the grid, the encodings of the files it lists one after another.
+- `delta0`, `delta1`, `delta2`: the blocks, halfwords behind a method byte
+  (`enum MapBlockPacking`) that `TileMap_DecodeStagedBuffer` undoes. Method 0
+  stores them as they are, 2 XORs each with the one before, and 1 does the
+  same with all the high bytes stored before all the low bytes. Each `map.s`
+  names the method its stream uses.
+- `script`: the tile animation and blend scripts below.
+
+The codec `lz` then packs each stream as Camelot's packer did, and the bytes
+must come out identical. Where the original stream is followed by stray bytes
+the packer left in its buffer, `map.s` places them as literal bytes with a
+`PACKER:` comment naming what wrote them. Where Camelot changed a stream after
+packing it, a `_patch.tsv` lists each changed byte: its position, the byte
+the packer saw, the byte that shipped, and the proof. The table holds what
+shipped, and the patch gives the packer the byte it packed, so the packer
+makes the same choices and the stream still decodes to the edited map. Only
+Gondowan Passage's grid and Venus Lighthouse's entrance's grid, with its
+Spanish and French versions, have patches.
+
+An edition's own version of a table (`grid_es.tsv`, `markers_ja.tsv`) is
+chosen in `map.s` with `.ifdef TBS_EDITION_*`, and editions that agree share
+one file: Venus Lighthouse's entrance has a French grid and a Spanish one, and
+the Italian edition uses the Spanish. A map whose whole data differs by
+edition has a block of its `map.s` for each. A map that uses another map's
+table names that map's file.
+
+`enum MapBlockPacking` is in `field/field_internal.h`.
+
+| Name | Value | Form | Meaning |
+| --- | --- | --- | --- |
+| `MAP_BLOCKS_RAW` | 0 | `delta0` | the blocks as they are |
+| `MAP_BLOCKS_SPLIT_DELTA` | 1 | `delta1` | all the high bytes, then all the low bytes, each value XORed with the one before |
+| `MAP_BLOCKS_DELTA` | 2 | `delta2` | each value XORed with the one before |
+
 ## Loading a map
+
+`Map_LoadLayeredScene` unpacks each part of a map into its own fixed buffer
+in EWRAM, and weaves the grid's three planes into one word per cell.
+
+```mermaid
+flowchart LR
+    blocks["blocks"] --> gMapBlocks
+    shapes["shapes"] --> gMapCollision
+    grid["grid: three planes"] --> buffer["Ram_MapCellBuffer"]
+    buffer -->|"Tile_ConvertMap"| cells["128 by 128 cell words,<br/>64 KB"]
+    scripts["tile animation,<br/>blend script"] --> after["the space after the shapes"]
+    markers["markers"] -.->|"a pointer only"| work["the map work"]
+```
 
 `Map_LoadLayeredScene` decodes each part into a fixed buffer in EWRAM: the
 blocks into `gMapBlocks`, the shapes into `gMapCollision`, the grid into
@@ -142,19 +237,33 @@ also loads sprites there. The tile animation only reads from
 `Ram_DecodeBuffer`, at offsets that land past it. [System](../system/README.md) has the
 EWRAM layout.
 
+| Plane, in stored order | Size | Values |
+| --- | --- | --- |
+| collision codes | 16 KB | a byte a cell |
+| shapes | 16 KB | a byte a cell |
+| blocks | 32 KB | a halfword a cell |
+| the woven cell words | 64 KB | a word a cell, from the start of `Ram_MapCellBuffer` |
+
 ### One grid, three layers
+
+The three layers are windows onto the one grid, each starting at the cell
+its origin names.
 
 All three layers are windows onto the one grid. Each layer's origin picks
 the cell its window starts at (half its tile position, since a cell is 2 by 2
 tiles), so a map lays its layers out side by side or one above another:
 `map_000`'s start at tiles 0, 60 and 120 across, and Venus Lighthouse's
-entrance puts them at (0, 0), (64, 0) and (0, 68).
+entrance puts them at (0, 0), (64, 0) and (0, 68). The picture at the top of
+this page shows Goma Cave's three windows in its grid.
 
 The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
 layer on `BG1`; [Field](../field/README.md#layered-maps-on-screen) explains
 how their priorities put actors between them.
 
 ### Placeholder blocks
+
+A placeholder is a cell whose block is 4,095, and it marks the first place in
+the grid a block is used.
 
 A cell whose block is 4,095, the highest 12 bits can hold, is a placeholder.
 As the map is converted, `Tile_ConvertMap` gives each placeholder a fresh
@@ -171,6 +280,9 @@ blocks, since the numbering depends only on the placeholders.
 
 ### Chests and Psynergy Stones
 
+The marker list names the cells where a chest or a Psynergy Stone can stand,
+each with the scene event that decides whether one does.
+
 The marker list is (column, row, id) triples, a cell and the trigger of a
 scene event, ended by 255, 255. When a scene loads, `Field_PlaceMapMarkers`
 ([`../object/object/markers.c`](../object/object/markers.c)) places an
@@ -181,65 +293,54 @@ event that gives one, until it is taken. A marker the scene has no event for
 takes no slot. 76 maps place `map_000/markers.table`, which holds only the end
 marker.
 
+| Name | Value | Meaning |
+| --- | --- | --- |
+| a marker's id | 100 to 239 | the trigger of the scene event that places it |
+| the end marker | column 255, row 255 | ends the list |
+| `MARKER_MAX` | 10 | markers placed on a map (`include/unit/object/object.h`) |
+
 ### Tile animation and blend scripts
+
+Two scripts of halfwords, run each frame as tasks, make a map's tiles move
+and its layers blend over time.
+
+![Vale where Garet's sister stands, beside the 512 tiles of its ground layer's character block in grey, 32 to a row: every few frames one group of tiles in the block's lower half is rewritten by the tile animation and outlined in red, while the rest stay as they are](https://alchemy.pascalpixel.com/guides/map/tile-animation.gif)
 
 Both scripts are runs of halfwords, run each frame as tasks
 (`field/map_animation.c`). The tile animation copies new tiles over old ones
 on a timer, for the parts of a map that move by themselves. In its table,
-`channel n` (`0xfd00 + n`) starts channel n of the 16 at the next halfword.
-Each `frame` is four values: the source tile, how many tiles, the destination
-tile and the frames to wait. `jump n` (`0xfe00 + n`) goes to halfword 2n of
-the channel's script, `stop` (`0xfeff`) halts the channel, and `end`
-(`0xffff`) loops it to its start. A source tile from 1,536 on is copied from
-RAM at `Ram_DecodeBuffer` plus its offset, which lands in `gMapLayerData`, and
-a lower one from elsewhere in video memory; the line is 512 for a map whose
-animations copy 64-byte tiles (`MapState.wideTiles`).
-
-![Vale where Garet's sister stands, beside the 512 tiles of its ground layer's character block in grey, 32 to a row: every few frames one group of tiles in the block's lower half is rewritten by the tile animation and outlined in red, while the rest stay as they are](https://alchemy.pascalpixel.com/guides/map/tile-animation.gif)
+`channel n` (`0xfd00 + n`) starts channel n of the 16 at the next halfword;
+only the low four bits pick the channel, and a marker with bit 7 set starts
+it paused. Each `frame` is four values: the source tile, how many tiles, the
+destination tile and the frames to wait. `jump n` (`0xfe00 + n`) goes to
+halfword 2n of the channel's script, `stop` (`0xfeff`) halts the channel,
+and `end` (`0xffff`) loops it to its start. A source tile from 1,536 on is
+copied from RAM at `Ram_DecodeBuffer` plus its offset, which lands in
+`gMapLayerData`, and a lower one from elsewhere in video memory; the line is
+512 for a map whose animations copy 64-byte tiles (`MapState.wideTiles`).
 
 The blend script changes how the layers blend over time. `control` sets
 `REG_BLDCNT`; `level` sets `REG_BLDALPHA`, or `REG_BLDY` when the control's
 mode is not alpha blending, and waits its second value in frames. `jump`,
 `stop` and `end` act as in the tile animation.
 
-## How the build makes a map
+The words are tested in `MapAnimation_Update` and `DisplayBlend_RunScript`,
+which have no names for them; the names are the tables' (`animation.tsv`,
+`blend.tsv`).
 
-`tools/ags-graphics` turns each table into the bytes the game reads, choosing
-what to do from the name of the file it is asked to write,
-`NAME.FORM[.CODEC]`, made from `NAME.tsv` (the `Makefile`'s asset rules). A
-map uses these forms:
-
-- `table`: the shapes and markers, one record per row, each column's type
-  giving its size.
-- `plane`: a grid plane, written out whole, row by row, with `fill` in every
-  cell the table leaves out.
-- `parts`: the grid, the encodings of the files it lists one after another.
-- `delta0`, `delta1`, `delta2`: the blocks, halfwords behind a method byte
-  (`enum MapBlockPacking`) that `TileMap_DecodeStagedBuffer` undoes. Method 0
-  stores them as they are, 2 XORs each with the one before, and 1 does the
-  same with all the high bytes stored before all the low bytes. Each `map.s`
-  names the method its stream uses.
-- `script`: the tile animation and blend scripts above.
-
-The codec `lz` then packs each stream as Camelot's packer did, and the bytes
-must come out identical. Where the original stream is followed by stray bytes
-the packer left in its buffer, `map.s` places them as literal bytes with a
-`PACKER:` comment naming what wrote them. Where Camelot changed a stream after
-packing it, a `_patch.tsv` lists each changed byte: its position, the byte
-the packer saw, the byte that shipped, and the proof. The table holds what
-shipped, and the patch gives the packer the byte it packed, so the packer
-makes the same choices and the stream still decodes to the edited map. Only
-Gondowan Passage's grid and Venus Lighthouse's entrance's grid, with its
-Spanish and French versions, have patches.
-
-An edition's own version of a table (`grid_es.tsv`, `markers_ja.tsv`) is
-chosen in `map.s` with `.ifdef TBS_EDITION_*`, and editions that agree share
-one file: Venus Lighthouse's entrance has a French grid and a Spanish one, and
-the Italian edition uses the Spanish. A map whose whole data differs by
-edition has a block of its `map.s` for each. A map that uses another map's
-table names that map's file.
+| Word | Value | Meaning |
+| --- | --- | --- |
+| `channel n` | `0xfd00 + n` | the tile animation's channel n starts at the next halfword |
+| `frame` | four values below `0xfd00` | source tile, tile count, destination tile, frames to wait |
+| `jump n` | `0xfe00 + n` | continue at halfword 2n of the channel's script |
+| `stop` | `0xfeff` | halt the channel |
+| `end` | `0xffff` | loop back to the channel's start |
+| a source tile from RAM | 1,536 on (512 for 64-byte tiles) | copied from `Ram_DecodeBuffer` plus its offset, rather than from video memory |
 
 ## The world map's data
+
+The world map's ground is one large grid of cells, packed a square at a time
+so that the game unpacks only the squares around the party.
 
 The world map's ground, `world/blocks.tsv` (`Field_PerspectiveDataA`), is one
 grid of 32-bit values in hexadecimal, 512 across and 320 down. The `blocks`
@@ -255,7 +356,17 @@ tile animation when the world map scene starts, and
 `Map_LoadDefaultCellsAndUpdateBlock` puts the cells back after the world map's
 still view ([Field](../field/README.md#the-world-map-view)).
 
+| Part | Size |
+| --- | --- |
+| the ground's grid | 512 by 320 values, 32 bits each |
+| a square | 16 by 16 values |
+| squares | 640, each packed on its own |
+| unpacked at once | the 2 by 2 squares around the party, in each of two ground layers |
+
 ## The Colosso paths
+
+In each Colosso final the opponent replays a recorded path of ground
+positions, one a frame.
 
 In each Colosso final the opponent replays a recorded path. `colosso/` holds
 three, each 7,200 points of ground in pixels, the size of the race's path
@@ -269,6 +380,12 @@ mirrored across the finish when asked, turning at most a sixteenth of a turn,
 and at the end walks it to the finish. Its recording mode writes down where
 an actor stands every frame and then plays it back with the opponent. The
 Colosso lettering, which differs by edition, is placed after the paths.
+
+| Table | Match |
+| --- | --- |
+| `opponent_path_a.tsv` | Azart |
+| `opponent_path_b.tsv` | Satrage |
+| `opponent_path_c.tsv` | Navampa |
 
 ## Design
 
@@ -293,6 +410,37 @@ and a layer's window can sit anywhere in the grid.
 - 16 tile animation channels (`struct MapState`).
 - `MARKER_MAX` (10) chests and Psynergy Stones placed on a map.
 
+## Files
+
+| Path | What it holds |
+| --- | --- |
+| `map_000/` to `map_179/` | one layered map each: its `map.s` and the tables it places |
+| `gondowan_passage/`, `venus_entrance/` | two more layered maps, Gondowan Passage and Venus Lighthouse's entrance, built like the others |
+| `world/blocks.tsv` | the world map's ground (`Field_PerspectiveDataA`) |
+| `default/` | the world map's default cells, tile animation and block attributes (`Field_DefaultMapCells` and the tables after it) |
+| `colosso/` | the opponents' recorded paths, with the Colosso lettering placed after them |
+| `map.s` | places `world/` and `default/` |
+| `map.inc` | the `map_header`, `map_layer` and `map_block` macros every `map.s` uses |
+
+The map numbers are the order of the directories, not numbers the game gives
+its maps.
+
+## Words used here
+
+- A **cell** is a 16 by 16 pixel square, one 32-bit word once loaded
+  (`struct MapCell` in [`map.h`](../../include/map.h)).
+- A **block** (a metatile) is the picture of a cell: 2 by 2 of the 8-pixel
+  tiles, stored as the four BG map entries that draw them, top left, top
+  right, bottom left, bottom right.
+- A **shape** is the form of the ground in a cell: a terrain kind and three
+  height samples.
+- A **collision code** says what standing on, pushing against or searching a
+  cell does (`enum MapCellCode`).
+- A **layer** is one of the map's three backgrounds, each a window onto the
+  one cell grid.
+- A **plane** is one value per cell over the whole 128 by 128 grid.
+- A **marker** is a cell where a chest or a Psynergy Stone can stand.
+
 ## Evidence and open questions
 
 The game keeps no names for any of this, so each part is named for what the
@@ -306,3 +454,9 @@ pointer the loader stores to it, although `MapScrollWork`
 The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
 `struct LayeredSceneHeader`) are 0 in every map of both games, and nothing
 reads them: the loader is the only code that reads the header.
+
+- XXX (picture): the header, one map's three layer windows, bounds and parallax drawn over its grid
+- XXX (picture): placeholder blocks, a map's grid with each block's first use marked as `Tile_ConvertMap` numbers it
+- XXX (picture): chests and Psynergy Stones, a map's markers drawn over it with the ones its scene places
+- XXX (picture): the world map's data, the squares unpacked around the party as it walks
+- XXX (picture): the Colosso paths, a recorded path drawn over the race's map

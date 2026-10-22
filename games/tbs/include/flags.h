@@ -1881,6 +1881,21 @@
 /// ★ Named from what the player sees: the grey pillar carved with spirals,
 /// set down on the floor beyond the wall (its render)
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED 0x987
+/// A chest on the first floor.
+/// ★ Named from the game: "Thunder Crown" (MsgItemName)
+#define FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN 0xf34
+/// A chest on the third floor.
+/// ★ Named from the game: "Dragon Scales" (MsgItemName)
+#define FLAG_VENUS_LIGHTHOUSE_DRAGON_SCALES 0xf35
+/// A chest on the fourth floor.
+/// ★ Named from the game: "Gaia Blade" (MsgItemName)
+#define FLAG_VENUS_LIGHTHOUSE_GAIA_BLADE 0xf36
+/// A chest on the ground floor.
+/// ★ Named from the game: "Lucky Cap" (MsgItemName)
+#define FLAG_VENUS_LIGHTHOUSE_LUCKY_CAP 0xf37
+/// A chest on the ground floor.
+/// ★ Named from the game: "Carry Stone" (MsgItemName)
+#define FLAG_VENUS_LIGHTHOUSE_CARRY_STONE 0xf38
 
 // World map
 /// The Black Orb did nothing on Babi's ship and was handed back.

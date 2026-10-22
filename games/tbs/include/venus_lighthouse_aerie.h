@@ -2,7 +2,8 @@
 #define ALCHEMY_VENUS_LIGHTHOUSE_AERIE_H
 
 /// @file
-/// Venus Lighthouse aerie's actors, entrances and exits.
+/// The Lighthouse Aerie's actors; its entrances and exits are in
+/// scene_links.h.
 
 #include "field_scene.h"
 #include "types.h"
@@ -10,56 +11,42 @@
 /// The aerie's actors, in the order of its placements; Garet, Ivan, Mia and
 /// Sheba keep their character numbers.
 enum {
-  /// The aerie floor around the beacon, in four sections: the first two move
-  /// west and the last two (drawn mirrored) east when the aerie breaks.
-  ACTOR_AERIE_WEST_SECTION_A = 8,
-  ACTOR_AERIE_WEST_SECTION_B = 9,
-  ACTOR_AERIE_EAST_SECTION_A = 10,
-  ACTOR_AERIE_EAST_SECTION_B = 11,
-  /// Six pillars the leader jumps across, and the one that carries him up to
+  /// The four statues around the beacon (SPRITE_STATUE_WITH_WREATH), the east
+  /// two drawn mirrored. When the beacon erupts and splits the aerie, the west
+  /// two move west with their half and the east two east.
+  /// ★ Named from what the player sees: four statues of a woman with a green
+  /// wreath around the beacon (spr_258.png)
+  ACTOR_BEACON_STATUE_SOUTHWEST = 8,
+  ACTOR_BEACON_STATUE_NORTHWEST = 9,
+  ACTOR_BEACON_STATUE_NORTHEAST = 10,
+  ACTOR_BEACON_STATUE_SOUTHEAST = 11,
+  /// Six round platforms (SPRITE_FLOATING_PLATFORM) the leader jumps across,
+  /// each dipping under him as he lands, and the one that carries him up to
   /// the aerie.
-  ACTOR_FIRST_PILLAR = 12,
-  ACTOR_LAST_PILLAR = 17,
-  ACTOR_MOVING_PILLAR = 18,
+  /// ★ Named from what the player sees: round floating platforms
+  /// (spr_242.png)
+  ACTOR_FIRST_PLATFORM = 12,
+  ACTOR_LAST_PLATFORM = 17,
+  ACTOR_RISING_PLATFORM = 18,
+  /// ★ Named from the game: "Menardi!" (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_MENARDI = 19,
+  /// ★ Named from the game: "Saturos and Menardi were their names"
+  /// (MsgValeKradenOhIsaac)
   ACTOR_SATUROS = 20,
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX = 21,
-  /// What carries the Venus Star to the beacon.
+  /// A blank actor (SPRITE_BLANK) that carries the Venus Star to the beacon.
   ACTOR_STAR_CARRIER = 22,
-  /// The light the rising particles circle as the party is lifted away.
+  /// The light the rising particles circle as the party is lifted away
+  /// (SPRITE_BLUE_ORB).
   ACTOR_PARTICLE_SOURCE = 23,
-  /// The beacon's beam, in five segments from the bottom up; particles circle
-  /// the first.
-  ACTOR_BEAM_1 = 24,
-  ACTOR_BEAM_2 = 25,
-  ACTOR_BEAM_3 = 26,
-  ACTOR_BEAM_4 = 27,
-  ACTOR_BEAM_5 = 28
+  /// The beacon's beam, in five segments (SPRITE_BANDED_COLUMN) from the
+  /// bottom up; particles circle the lowest.
+  ACTOR_BEAM_BOTTOM = 24,
+  ACTOR_BEAM_LOWER = 25,
+  ACTOR_BEAM_MIDDLE = 26,
+  ACTOR_BEAM_UPPER = 27,
+  ACTOR_BEAM_TOP = 28
 };
-
-enum AerieEntrance {
-  /// Up from Venus Lighthouse: the party rides a pillar up to the aerie.
-  AERIE_ENTRANCE_ARRIVAL = 1,
-  /// Back from the battle with Saturos and Menardi, and from the one with
-  /// their fused form.
-  AERIE_ENTRANCE_AFTER_FIRST_BATTLE = 2,
-  AERIE_ENTRANCE_AFTER_SECOND_BATTLE = 3,
-  /// From the world map, onto the broken aerie: Sheba falls and Felix leaps
-  /// after her.
-  AERIE_ENTRANCE_SHEBAS_FALL = 4,
-  /// Back from a lost battle.
-  AERIE_ENTRANCE_DEFEAT = 9,
-  /// From the world map, after the beacon is lit: a look back at Felix and
-  /// Sheba on the broken aerie.
-  AERIE_ENTRANCE_SHEBA_IN_DANGER = 93
-};
-
-enum AerieExit {
-  AERIE_EXIT_TO_WORLD_MAP = 1,
-  AERIE_EXIT_AFTER_SHEBAS_FALL = 2,
-  AERIE_EXIT_AFTER_DEFEAT = 9
-};
-
-enum { WORLD_MAP_ENTRANCE_FROM_AERIE = 73 };
 
 #endif

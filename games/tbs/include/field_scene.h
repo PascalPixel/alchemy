@@ -38,6 +38,9 @@ enum { FACING_STEP = 0x1000 };
 enum {
   SCENE_TABLE_END = -1, ///< in the first column, ends a table
   CONDITION_ALWAYS = -1,
+  /// A placement's condition the scene fills in with whether the actor lies
+  /// in view (Scene_AssignViewFlags), so only the room entered is populated.
+  CONDITION_IN_VIEW = 0,
   CONDITION_FLAG_SET = 0x1000 ///< the flag must be set, not clear
 };
 

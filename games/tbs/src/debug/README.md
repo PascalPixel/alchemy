@@ -89,6 +89,9 @@ Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
 and `BROWSER_PAGE_STEP` (thirty) with R and L, skips numbers whose item has no
 icon, and gives the chosen item to the first member with room.
 
+
+![The level room in English at twice the GBA's size, with no map behind it, each actor on screen labelled with its number: the leader 0, the item browser 8, the level editor 11 and the ability browser 12](https://alchemy.pascalpixel.com/guides/debug/level-room.png)
+
 The room's event table differs by edition. The ability browser has an event
 only in English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French,
 Spanish and Italian keep its code and its actor. Force cast at the glyph
@@ -107,6 +110,8 @@ placed actors, from 8, open the picker a full party drops an item with, give
 out Djinn and treasure, wound and afflict Isaac and Garet, and run a preset
 shop (`Shop_OpenDebugShop`) with 200000 coins, broken equipment and afflicted
 members.
+
+![The menu test room at twice the GBA's size, with no map behind it, each actor labelled with its number: the leader 0, Garet 1, Ivan 2, Mia 3 and Jenna 5 in the first column, and the placed actors 8 to 17 beside them](https://alchemy.pascalpixel.com/guides/debug/menu-room.png)
 
 Actors 16 and 17 changed most. In Japanese they are plain talk events: 16
 opens the character selector, whose choice nothing uses, and 17 an item
@@ -148,6 +153,3 @@ content, which is why one overlay serves them all.
   for; it fills a buffer nothing reads with 32 to 47 copies of a letter, so it
   changes nothing the code or the player can see, and whatever it once fed is
   gone from every edition.
-- XXX (picture): the level and menu test rooms have no picture; a frame of each with its
-  actors labelled by number and event would show what the tables above
-  describe.

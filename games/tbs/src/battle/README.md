@@ -85,6 +85,8 @@ remember their place between turns. A
 pick the enemy cannot use (too little PP, a seal, no target worth it) is
 drawn again, and after 18 failed picks the enemy defends.
 
+![Two Gryphons against Isaac, Garet, Ivan and Mia, at the moment the first Gryphon casts Bind. Beside the screen, the Gryphon's eight actions from its row of `enemies.tsv`, each in its own colour with its chance under `ACTION_STRATEGY_FALLING` from `gBattleCommand_SelectionWeights` drawn as a bar: Wing Flutter 53 in 256, Tornado 47, Twin Beaks 41, Impact 35, Attack 29, Sonic Slash 23, Bind 17 (the one played) and Ward 11, with the rolls each takes. Below, a strip of the 256 rolls in the colour of the action the game took when `BattleCommand_SelectAutomatic` was run from the same moment with its roll answered with that number: rolls 0 to 52 take Wing Flutter, 53 to 99 Tornado, 100 to 140 Twin Beaks and so on to 245 to 255 for Ward, each span as wide as its chance.](https://alchemy.pascalpixel.com/guides/battle/enemy-actions.png)
+
 | Strategy | Value | How the place is picked |
 | --- | --- | --- |
 | `ACTION_STRATEGY_EVEN` | 0 | at random, 32 in 256 each |
@@ -109,6 +111,8 @@ always gives the party the first strike. When the party strikes first, no
 enemy acts in that round and running away cannot fail. When the enemies do,
 the party chooses no commands, and two to five enemies, drawn at random, act
 once each. The mode returns to normal at the round's end.
+
+![The same random encounter with four enemies, the Lizard King, a Harridan and two Stone Soldiers, opened twice, side by side as two columns of moments. Left, the first-strike roll (1 in 16) came up, `Battle_Random` answered 0 in `Battle_RunEncounter`: `Isaac's party attacks first!` with `encounterMode` `BATTLE_ENCOUNTER_PARTY_FIRST`, Ivan's attack as the round's first action, Garet's as its fourth and last, and the second round's command menu with the mode back to `BATTLE_ENCOUNTER_NORMAL`; four party members act and no enemy does. Right, that roll failed and the surprise roll (1 in 32) came up: `Isaac's party was caught by surprise!` with `BATTLE_ENCOUNTER_ENEMIES_FIRST`, a Stone Soldier's Blast as the first action and the Lizard King's Ice Blessing as the third and last, then the second round's command menu; three of the four enemies act and the party chooses no commands.](https://alchemy.pascalpixel.com/guides/battle/first-strikes.png)
 
 `BattleEscape_CheckSuccess` (`round.c`) gives a 50 percent chance, plus 20
 for each failed try in the battle, plus 5 for each level the party's average
@@ -222,6 +226,8 @@ The plan makes the rolls the effect must know before it plays: whether a plain
 Attack misses or lands a critical hit, and how many blows a multiple-blow
 ability strikes.
 
+![Isaac attacks a copy of Ivan three times, each a row of four moments with what each roll decided and the plan for the target below it, the rolls answered at `Battle_Random`. A miss: no unleash, the hit roll (1 in 32 misses) misses, no critical; `Ivan nimbly dodges the blow!`, and the plan has no blow landing. A critical hit: no unleash, the hit roll lands, the critical roll (1 in 32) comes up; Isaac's blow bursts in light and Ivan takes 110 damage, the plan holding one blow and `CRITICAL_HIT`. A triple blow: wearing the Swift Sword, the unleash roll unleashes Sonic Smash and the extra blows roll (153 in 256) comes up; `Isaac's Swift Sword lets out a howl! Sonic Smash!`, and Ivan takes 281 damage, the plan holding three blows and the effect's variant showing three.](https://alchemy.pascalpixel.com/guides/battle/plan-rolls.png)
+
 A plain Attack never misses a target that cannot act (down, asleep, stunned,
 charmed or held by Ground). Otherwise it misses one time in 32, and a deluded
 attacker also misses 153 times in 256; the Djinn tutorial's attack always
@@ -252,6 +258,8 @@ effect is rolled per target in `BattleTarget_Execute`.
 
 The plan records how its action is staged, from `actflags.tsv` and
 `actstat.tsv`, and the announcement the player reads before it plays.
+
+![Isaac's Quake at Garet, Ivan and Mia played seven times in a grid, frame for frame, `BattlePlan.outcome` rewritten as `BattleCommand_BuildPlan` returns to one of `PLAN_SHOW_CAST` (Quake's own) to `PLAN_SHOW_FULL_SCREEN`. Under `PLAN_SHOW_CAST`, `PLAN_SHOW_SUMMON` and `PLAN_SHOW_FULL_SCREEN` rings of light gather round Isaac before the rock pillars rise; under `PLAN_SHOW_ITEM` and `PLAN_SHOW_DJINNI` the pillars rise with no gathering; under `PLAN_SHOW_ENEMY_CAST` yellow streaks burst round Isaac in place of the rings; and under `PLAN_SHOW_FLEE` Isaac turns and runs and the battle ends, the screen black. The six that cast deal the same damage, `Garet takes 14 damage!!!`, `Ivan takes 15 damage!` and `Mia takes 12 damage!`.](https://alchemy.pascalpixel.com/guides/battle/staging.gif)
 
 `actflags.tsv` gives the plan's presentation flags: the effect kind in the
 low twelve bits (`STAGING_KIND_MASK`), its variant above them, and the bits
@@ -385,6 +393,8 @@ from nothing at 0 to double at 200, and an ability with no element heals as
 if at 100. The multipliers are counted in 256ths (`FULL_RATE`), and every
 result rounds down.
 
+![Above, `gElement_PowerResistCurve`'s five points read from the ROM and drawn as the damage multiplier by the actor's Power less the target's Resist, in points from -200 to +200: a cast's line from 0 times to 2 times, and a blow's line, halved, from 0.5 to 1.5 times, both flat past either end, with a key for the lines and marks. On them, where each call of `Battle_GetElementMultiplier` put its target: for Isaac's Quake, Ivan at +52 and 1.26 times, Mia at +51 and 1.25 times, and Isaac's own copy at -30 and 0.85 times on the cast's line; for an attack at Ivan, -8 and 0.98 times on the blow's line. Below, the two battles: Quake, reading `Isaac takes 10 damage.` and `Mia takes 12 damage!`, and the attack, Isaac's Arctic Blade unleashing Blizzard.](https://alchemy.pascalpixel.com/guides/battle/element-multiplier.png)
+
 A unit's Power and Resist come from its element levels
 (`gElement_PowerResistByLevel`) or, for an enemy, its element preset, with
 the equipment's added by `Unit_Calculate`. A Resistance stage adds 20 Resist in
@@ -495,6 +505,8 @@ in `BattleTarget_Execute` and the notes on `enum AbilityEffect`
 ([`battle_unit.h`](../../include/battle/battle_unit.h)) give each effect's
 detail; the rules they share are these.
 
+![The four against one Vermin: in the first round Ivan casts Delude and Isaac Impair at the Vermin and Mia casts Guard on Isaac, and in each later round the four defend. Above, the screen as each counter changes other than by counting down, told in words: `Vermin is wrapped in delusion!`, the Vermin deluded for 7 turns; `Vermin's Defense drops by 2!`, its Defense -2 stages for 7 turns; `Isaac's Defense rises by 50!`, +2 stages for 7 turns; `Vermin sees clearly once again!`, its delusion ending early with 5 turns left; and `Isaac's Defense returns to normal!` with `Vermin's Defense returns to normal!`, both back to normal as their turns run out. Below, a table of the counters read from each `BattleUnit` as each of ten rounds starts: the Vermin's Defense -2 stages with 6 turns down to 1, its delusion 6 and 5 turns left then none, and Isaac's Defense +2 stages with 6 turns down to 1, then normal.](https://alchemy.pascalpixel.com/guides/battle/added-effects.png)
+
 - A stat change moves Attack, Defense or Resistance one or two stages,
   between `STAT_STAGE_MIN` and `STAT_STAGE_MAX`, for `STAT_CHANGE_TURNS`.
   A stage is an eighth of Attack or Defense. The number in the message is
@@ -540,6 +552,8 @@ detail; the rules they share are these.
 
 Once a target has been dealt with, the damage it took may wake it and may feed
 a haunted actor's evil spirit.
+
+![Isaac, haunted, casts Quake at copies of Garet, Ivan and Mia, the copy of Ivan asleep since an earlier round with 6 turns of sleep left; `BattleTarget_Execute`'s wake and haunt rolls are answered 0, so both come up. Garet loses 14 HP and, awake, has no wake roll; the evil spirit's share is 3 HP (14 / 4), its total so far 3 HP. Ivan loses 15 HP and the roll wakes him (`Ivan wakes from slumber!`); the total reaches 6 HP. Mia loses 12 HP and the total reaches 9 HP. At the turn's end the spirit takes its 9 HP, `A curse does 9 damage to Isaac!`, his HP falling from 625 to 616.](https://alchemy.pascalpixel.com/guides/battle/after-target.png)
 
 Losing HP or PP wakes a sleeping target one time in four, unless it fell
 asleep this round. A haunted actor, one time in four for each target it took
@@ -746,11 +760,3 @@ side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the
 enemies' column, and `BattleClass_HasHeavyImpact` reads the class bit that
 makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
 bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
-
-- XXX (picture): enemy actions: an enemy's eight abilities with the weights its strategy picks them by.
-- XXX (picture): first strikes and escape: the round the party strikes first beside one the enemies do.
-- XXX (picture): the element multiplier: `gElement_PowerResistCurve` drawn as its line, with each target of one cast marked on it.
-- XXX (picture): rolls made in advance: a miss, a critical hit and a triple blow beside the plan's rolls.
-- XXX (picture): staging: one ability under each outcome, `PLAN_SHOW_CAST` to `PLAN_SHOW_FULL_SCREEN`.
-- XXX (picture): applying the added effect: a unit's stat stages and status counters as they change and count down.
-- XXX (picture): after each target: a sleeping target woken by damage, and the evil spirit's share.

@@ -41,9 +41,10 @@
 ///   and 14, 15 and 16) at both ends of its run, then the end each log's flag
 ///   says it is not at is overwritten with a wall cell of the water
 ///   (https://alchemy.pascalpixel.com/places/fuchin-falls-cave-entrance/log-rebuild.png:
-///   the track's cells with their collision codes, entered with none, then
-///   one, two and three of FLAG_PLACE_TEMP_01 to _03 set, the cells changed
-///   from the first outlined). In the third room the
+///   the track's cells tinted by what each does, a wall, a way out or the
+///   push that moves a log, entered with none, then one, two and three of
+///   FLAG_PLACE_TEMP_01 to _03 set, the cells changed from the first
+///   outlined). In the third room the
 ///   logs block one another, so where a log stops depends on where the others
 ///   lie; in the second and third rooms the leader hops across gaps a log's
 ///   stop leaves.

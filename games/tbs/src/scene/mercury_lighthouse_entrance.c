@@ -34,8 +34,9 @@
 ///   the heart 11 and cells on the pool's rim 31, the codes the hops and
 ///   lights below answer, while the water between them stays a wall
 ///   (https://alchemy.pascalpixel.com/places/mercury-lighthouse-entrance/pool-ply-cells.png:
-///   the pool's cells with their codes, entered by the goddess's room before
-///   and after Ply, the cells whose words changed outlined). From then on
+///   the pool's cells tinted by what each does, a wall, a hop, or the lights
+///   given or taken, entered by the goddess's room before and after Ply, the
+///   cells Ply changed outlined). From then on
 ///   the pool's heart
 ///   (cell code 11) gives the leader up to three lights, each hop into the
 ///   water spends one, and landing in it without one sinks the leader back to

@@ -48,8 +48,9 @@
 /// column 58 and into cell (58, 11): one pair of copies by phase once the
 /// last lift has stopped, another while it moves
 /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/lifts.gif:
-/// two cycles, the copied cells outlined with their codes and the phase and
-/// timer written above).
+/// two cycles, the copied cells outlined and tinted by what each does, a wall,
+/// a jump across or open ground, under the phase in words, the lifts lining
+/// up or parting, and the frames to its next change).
 ///
 /// Open questions: none.
 

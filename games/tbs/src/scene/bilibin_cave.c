@@ -43,8 +43,8 @@
 /// MAP_CELL_JUMP_FORWARD
 /// (https://alchemy.pascalpixel.com/places/bilibin-cave-ice/third-puddle-melt.gif:
 /// the fourth torch, put a cell west of (35, 23), moved onto it with Move, its
-/// cell outlined in yellow and the two rewritten cells in red with their
-/// codes).
+/// cell outlined in yellow and the two rewritten cells in red, each labelled
+/// with what it does, encounter ground and then a jump across).
 /// FLAG_PLACE_TEMP_03 and FLAG_PLACE_TEMP_04 remember which torch stands there
 /// and FLAG_PLACE_TEMP_02 that the pillar has melted, so coming back from
 /// SceneId_BilibinCaveRapier puts the torches and the pillar back; leaving

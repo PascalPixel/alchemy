@@ -44,8 +44,9 @@
 ///
 /// In every set: a Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; ACTOR_NUT, or
 /// ACTOR_NUT_AFTER_KALAY), a pillar to push or Move, whose column the setup
-/// restores from FLAG_PLACE_TEMP_14 to _16, a passage the leader moves through
-/// on touch cells 100 and 101 (FLAG_SCENE_TEMP_04 while inside), and cells of
+/// restores from FLAG_PLACE_TEMP_14 to _16, a ladder up onto the roof of
+/// Isaac's house, climbed on touch cells 100 and 101 (FLAG_SCENE_TEMP_04 while
+/// on the roof), and cells of
 /// an upper path that change while the leader is on it (FLAG_SCENE_TEMP_10);
 /// after a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Exits:
 /// VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol Entrance (SceneId_SolEntrance),
@@ -773,8 +774,9 @@ static void Event_TurnBackFromThePuppies(void) {
   }
 }
 
-/// Touch cell 100 in Vale: the passage's collision changes and the leader
-/// moves through it from its northern end (FLAG_SCENE_TEMP_04 set).
+/// Touch cell 100 in Vale, at the foot of the ladder beside Isaac's house:
+/// walking north into it climbs the leader up onto the roof, whose cells
+/// change so it can be walked (FLAG_SCENE_TEMP_04 set while there).
 static void Event_EnterNorthernPassage(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -783,8 +785,9 @@ static void Event_EnterNorthernPassage(void) {
   Engine_EventEnd();
 }
 
-/// Touch cell 101 in Vale: the leader moves back through the passage, and its
-/// collision is restored (FLAG_SCENE_TEMP_04 cleared).
+/// Touch cell 101 in Vale, at the top of the ladder beside Isaac's house:
+/// walking south into it climbs the leader back down, and the roof's cells
+/// are put back (FLAG_SCENE_TEMP_04 cleared).
 static void Event_ReturnThroughSouthernPassage(void) {
   Engine_EventBegin();
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER, 13, 10, 1);
@@ -1486,7 +1489,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
 /// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (entrance
 /// 17, once), floats the Nut, places the pillar by its column, sets the
 /// watching man going, removes the puppies once Saturos and Menardi have
-/// been met, and after a battle restores the passage's and the upper path's
+/// been met, and after a battle restores the roof's and the upper path's
 /// cells.
 s32 Vale_Initialize(void) {
   struct FieldActor *actor;
@@ -1831,7 +1834,9 @@ UNUSED static void Event_UnusedWaterBurstsByTheRiver(void) {
   Engine_EventEnd();
 }
 
-/// Traverses the passage toward lower Z, changing animations at its lip.
+/// Walks an actor to the foot of the ladder beside Isaac's house and climbs
+/// it onto the roof, in `approachAnimationId` on the rungs and
+/// `departureAnimationId` over the eaves.
 static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
                                           s32 departureAnimationId,
                                           s32 resumeMotion) {
@@ -1866,8 +1871,8 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
   Engine_ActorSetAnimation(actorId, ANIM_STAND);
 }
 
-/// Traverses the passage toward higher Z and restores falling motion if
-/// requested.
+/// Climbs an actor down the ladder beside Isaac's house from the roof, and
+/// restores falling motion if requested.
 static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
                                            s32 departureAnimationId,
                                            s32 resumeMotion) {

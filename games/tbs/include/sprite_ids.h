@@ -21,6 +21,18 @@ enum SpriteId {
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
   SPRITE_SOLDIER = 0x98,
+  /// The statues of Sol Sanctum's statue room and Luna and Sol rooms.
+  /// ★ Named from what the player sees: a winged statue holding a blue orb
+  /// (its sprite sheet, spr_201.png)
+  SPRITE_WINGED_STATUE = 0xc9,
+  /// The centre statue of Sol Sanctum's statue room.
+  /// ★ Named from what the player sees: a winged statue bearing a sun disc on
+  /// its head (its sprite sheet, spr_202.png)
+  SPRITE_SUN_DISC_STATUE = 0xca,
+  /// The centre statue once it has sunk into the floor, only its disc showing.
+  /// ★ Named from what the player sees: a round sun disc lying flat (its
+  /// sprite sheet, spr_204.png)
+  SPRITE_SUN_DISC = 0xcc,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
   /// as Sol Sanctum's statues stand on its seals (its render)
   SPRITE_STONE_STATUE = 0xcb,

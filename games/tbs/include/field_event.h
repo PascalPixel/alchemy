@@ -50,7 +50,10 @@ enum ActorAnimation {
   ANIM_STAND = 1,
   ANIM_WALK = 2,
   ANIM_NOD = 3,
-  ANIM_SHAKE_HEAD = 4
+  ANIM_SHAKE_HEAD = 4,
+  /// The leader leaning into what it pushes, as scenes play it while a statue
+  /// or stone pillar slides ahead of it.
+  ANIM_PUSH = 8
 };
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's

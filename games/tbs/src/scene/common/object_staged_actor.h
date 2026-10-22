@@ -392,9 +392,9 @@ found:
 
 /// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
-/// SE_239 while the leader follows half a cell, and it stops with SE_288 and
-/// SE_213. Its cells are blocked (collision 255) at its new place, through the
-/// map's layer 1 offset, and its old place is given back what was under it.
+/// SE_239 while the leader follows half a cell, and it stops with SE_STOP_SLOT3
+/// and SE_213. Its cells are blocked (collision 255) at its new place, through
+/// the map's layer 1 offset, and its old place is given back what was under it.
 UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   struct MapScrollWork *workspace;
   struct FieldActor *actor;
@@ -500,7 +500,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   Engine_ActorSetAnimation(0, 1);
   Object_GetById(0)->update = NULL;
   FieldObject_WaitForMove(actor);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_213);
 
   actor->x.fixed = probe.position.x;

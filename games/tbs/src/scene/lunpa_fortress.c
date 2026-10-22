@@ -1620,7 +1620,7 @@ static void LunpaFortress_ActivateLeverTrap(void) {
   Map_SetShake(0x40000, 0x40000, 0x10000);
   SE(SE_141);
   WAIT(80);
-  SE(SE_288);
+  SE(SE_STOP_SLOT3);
   WAIT(5);
   SE(SE_145);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
@@ -2121,7 +2121,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   Actor_SetDestinationOffset(TOADONPA_BOSS, -24, 0);
   Actor_SetDestinationOffset(TOADONPA_BOSS_PART, -24, 0);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  SE(SE_288);
+  SE(SE_STOP_SLOT3);
   WAIT(60);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   OBJ_DIR(GARET, FACING_NORTH, 0);

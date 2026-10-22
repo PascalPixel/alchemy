@@ -2023,7 +2023,7 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   Engine_PsynergyLowerHands();
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
   FieldFx_End();
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
 }
 
@@ -2312,7 +2312,7 @@ static void AltinPeak_StopCartAndJumpOff(struct FieldActor *object) {
   struct AnimationObject *sprite;
   struct FieldActor *leader;
 
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_232);
   x = object->x.fixed & 0xfff00000;
   centerZ = PIXELS(8);
@@ -2420,11 +2420,11 @@ static void AltinPeak_TurnCartLeft(struct FieldActor *object) {
   Engine_AudioPlayCue(SE_233);
 }
 
-/// The cart rolls over a marked cell: SE_288 plays, and SE_184 and SE_233
-/// follow as its countdown runs out.
+/// The cart rolls over a marked cell: SE_STOP_SLOT3 plays, and SE_184 and
+/// SE_233 follow as its countdown runs out.
 static void AltinPeak_StartCartCountdown(struct FieldActor *object) {
   object->work = 33;
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 }
 
 /// Rolls the cart on by a frame and picks its animation from the terrain ahead

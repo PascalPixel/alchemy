@@ -376,7 +376,7 @@ static void Event_PushStumpOver(void) {
     WAIT(3);
     // It tips over the edge.
     Engine_ActorSetSpeed(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
-    Engine_AudioPlayCue(SE_288);
+    Engine_AudioPlayCue(SE_STOP_SLOT3);
     Engine_ActorSetDestination(ACTOR_STUMP, 416, 200);
     movedActor = Object_GetById(ACTOR_STUMP);
     Engine_ActorSetSpriteFlags(movedActor, 0);

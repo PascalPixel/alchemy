@@ -671,7 +671,7 @@ static void RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
   REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
   gOrbGlowActive = 0;
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
   Event_PlayCue(SE_145);

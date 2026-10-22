@@ -633,7 +633,7 @@ static void CollapseFromHeat(void) {
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
   }
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

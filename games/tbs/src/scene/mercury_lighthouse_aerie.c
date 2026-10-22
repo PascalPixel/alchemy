@@ -948,7 +948,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
   Actor_SetPosition(ACTOR_ALEX, PIXELS(312), PIXELS(112));
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 60);
   Event_ShowMessageAndWait(MIA, 0, 30);

@@ -522,8 +522,8 @@
 #define SE_237 237
 /// A thing pushed one cell: the Colosso matches and Vault Cave's pillar.
 #define SE_238 238
-/// A log or pillar rolling (on player 3, until SE_288 cuts it): the Colosso,
-/// Kolima Forest's floodgate and the scenes' staged rolls.
+/// A log or pillar rolling (on player 3, until SE_STOP_SLOT3 cuts it): the
+/// Colosso, Kolima Forest's floodgate and the scenes' staged rolls.
 #define SE_239 239
 /// A log pushed over: Kolima Forest, Mogall Forest, Vale Cave, the Colosso,
 /// Crossbone Isle, and monsters attacking the Tolbi-bound ship.
@@ -579,7 +579,7 @@
 /// A song with no tracks on player 3, which stops the loop playing there: every
 /// scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
-#define SE_288 288
+#define SE_STOP_SLOT3 288
 /// not a sound: fades player 3 out (AUDIO_CUE_FADE_SLOT3)
 #define SE_289 289
 /// An effect pair spawned in the eruption at Sol Sanctum.

@@ -1199,7 +1199,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(200), PIXELS(8));
   Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_MoveToAndWait(ACTOR_WISE_ONE, 200, 72);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_HEALER, 2);
   Engine_ActorSetAnimation(ACTOR_HEALER, 0);
@@ -1234,7 +1234,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne = Object_GetById(ACTOR_WISE_ONE);
     wiseOne->scaleY += -Q16_ONE / 100;
   }
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Actor_SetChildValue(ACTOR_WISE_ONE, 0);
   Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
   Engine_EventWait(40);

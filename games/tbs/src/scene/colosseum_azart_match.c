@@ -361,7 +361,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   Engine_AudioPlayCue(SE_226);
   FieldObject_WaitForMove(leader);
   Object_SetMode(actor, 2);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_EventEnd();
 }
 
@@ -479,7 +479,7 @@ static void Event_PushPipeworksPillar(void) {
   Engine_ActorSetAnimation(leaderId, 1);
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_213);
   Engine_EventWait(15);
   Engine_EventEnd();
@@ -1494,7 +1494,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
   Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(target);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

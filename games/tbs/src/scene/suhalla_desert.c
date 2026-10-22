@@ -779,7 +779,7 @@ s32 Scene_Initialize(void) {
   } else if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
     SuhallaDesert_SetUpSecondSceneStorms();
   } else {
-    Engine_AudioPlayCue(SE_288);
+    Engine_AudioPlayCue(SE_STOP_SLOT3);
   }
   if (gGameState.entrance == ENTRANCE_DEFAULT) {
     map->flags &= ~DISPCNT_BG1_ON;

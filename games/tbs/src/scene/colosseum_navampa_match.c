@@ -643,11 +643,11 @@ static void Event_RollLongLog(void) {
     column = 84;
     Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
     Map_CopyCellAttributes(86, 9, 1, 1, column, 12);
-    Event_PlayCue(SE_288);
+    Event_PlayCue(SE_STOP_SLOT3);
     Event_PlayCue(SE_240);
   } else {
     Object_SetMode(log, 1);
-    Event_PlayCue(SE_288);
+    Event_PlayCue(SE_STOP_SLOT3);
     Event_PlayCue(SE_213);
     column = x >> 20;
     Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
@@ -666,7 +666,7 @@ static s32 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(
     struct ScriptInterpreter *interpreter) {
   Map_SetLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_217);
   return 0;
 }
@@ -2186,7 +2186,7 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
 
   Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(target);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

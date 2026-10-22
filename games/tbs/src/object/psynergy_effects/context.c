@@ -67,7 +67,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 level;
 
   AudioCommand_PlayFar(gGameState.sceneCue);
-  AudioCommand_PlayFar(SE_288);
+  AudioCommand_PlayFar(SE_STOP_SLOT3);
   AudioCommand_PlayFar(SE_147);
   if (work->mode == MODE_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and

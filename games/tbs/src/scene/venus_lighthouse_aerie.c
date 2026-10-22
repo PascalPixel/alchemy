@@ -482,7 +482,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVING_PILLAR), 1);
   Actor_SetDestination(ACTOR_MOVING_PILLAR, 515, 171);
   Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, 516, 121);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
   ObjectMotion_WaitForAnimationChange(0);
@@ -2310,7 +2310,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   struct FieldActor *actor;
 
   Engine_AudioPlayCue(MUS_SILENCE);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);

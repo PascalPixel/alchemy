@@ -235,12 +235,12 @@ void Game_Run(s32 mode) {
   Scheduler_ResetTaskTable();
   Scheduler_ResetTaskTable();
   for (;;) {
-    // FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_288 for one scene
+    // FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_STOP_SLOT3 for one scene
     // change, then clears itself.
     if (GameFlag_TestFar(FLAG_SKIP_SCENE_CHANGE_SOUND))
       GameFlag_ClearBitFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
-      AudioCommand_PlayFar(SE_288);
+      AudioCommand_PlayFar(SE_STOP_SLOT3);
     record = &table[gGameState.scene];
     entrance = gGameState.entrance;
 

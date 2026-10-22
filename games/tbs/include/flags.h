@@ -1260,7 +1260,7 @@
 #define FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND 0xf14
 /// Master Feh, in his school in Xian, has asked to see Isaac's Chi and Isaac
 /// agreed; Feh and his students wait for it. Cleared once Feh sees the tree
-/// fall from the line (FLAG_FEH_SAW_CHI).
+/// fall from the line (FLAG_FEH_SAW_KI).
 /// ★ Named from the game: "Warrior, let me see your Chi now."
 /// (MsgFuchinTempleWarriorLetMeSeeYourChi)
 #define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
@@ -1273,7 +1273,9 @@
 /// and seen that it is not Chi but Fuchin's Ki, which releases the mind's
 /// energy as Chi releases the body's. His students' lines and his place in the
 /// school follow it.
-#define FLAG_FEH_SAW_CHI 0x89b
+/// ★ Named from the game: "Fuchin's Ki releases the mind's energy"
+/// (MsgXianYaTreeFell)
+#define FLAG_FEH_SAW_KI 0x89b
 
 // Crossbone Isle
 /// The four blue doors in a row, then the red door: each is set once a Blue

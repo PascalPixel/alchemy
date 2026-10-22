@@ -47,7 +47,7 @@
 ///   Isaac twice says no); when he sees the tree fall from the line, he knows
 ///   it is not Chi, which he learned from Master Hama of Lama Temple, but
 ///   Fuchin's Ki, which releases the mind's energy as Chi releases the body's
-///   (FLAG_FEH_SAW_CHI). Moving the tree with Move or pushing it by hand does
+///   (FLAG_FEH_SAW_KI). Moving the tree with Move or pushing it by hand does
 ///   not count, and FLAG_FEH_SCHOOL_SAW_TREE_FALL keeps the students asking for
 ///   Chi from the line. Each of these flags picks the students' lines and Feh's
 ///   place; once Hsu is known to be trapped (FLAG_XIAN_HEARD_HSU_TRAPPED),
@@ -584,7 +584,7 @@ static void Event_TalkToJumpingStudent(void) {
 
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0) {
     MESSAGE_SET(MsgXianHsuDidNotPracticeJumping);
-  } else if (Engine_GameFlagIsSet(FLAG_FEH_SAW_CHI) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_FEH_SAW_KI) != 0) {
     MESSAGE_SET(MsgXianLamaTempleFarWestIn);
   } else {
     MESSAGE_SET(MsgXianFlexibilityJumpingVeryImportantIn);
@@ -934,7 +934,7 @@ static void Event_ForceTree(void) {
 
   if (leader->z.part.pixel <= 209) {
     if (Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU) == 0 ||
-        Engine_GameFlagIsSet(FLAG_FEH_SAW_CHI) != 0) {
+        Engine_GameFlagIsSet(FLAG_FEH_SAW_KI) != 0) {
       FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_NOT_FROM_LINE);
     } else {
       FuchinTemple_StudentsSeeTreeFall();
@@ -943,7 +943,7 @@ static void Event_ForceTree(void) {
     return;
   }
 
-  if (Engine_GameFlagIsSet(FLAG_FEH_SAW_CHI) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_FEH_SAW_KI) != 0) {
     FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_SEEN_BEFORE);
   } else if (Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU) == 0) {
     FuchinTemple_FeizhiLeavesForHsu();
@@ -1447,7 +1447,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
   OBJ_DIR(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
   GameFlag_Clear(FLAG_FEH_WAITS_TO_SEE_CHI);
-  FLAG_SET(FLAG_FEH_SAW_CHI);
+  FLAG_SET(FLAG_FEH_SAW_KI);
 }
 
 /// Talking to a student (ACTOR_PUNCHING_STUDENT) in Master Feh's school in Xian
@@ -2333,7 +2333,7 @@ s32 Scene_Initialize(void) {
         trainingTree->sprite->rotation = 0x8000;
         if (Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU)) {
           Engine_ActorSetPosition(ACTOR_FEH, PIXELS(248), PIXELS(208));
-          if (!Engine_GameFlagIsSet(FLAG_FEH_SAW_CHI)) {
+          if (!Engine_GameFlagIsSet(FLAG_FEH_SAW_KI)) {
             Engine_ActorSetPosition(ACTOR_MESSENGER_STUDENT, PIXELS(256),
                                     PIXELS(240));
             Object_GetById(ACTOR_FEH)->update = FuchinTemple_FaceLeader;
@@ -2747,15 +2747,15 @@ struct SceneEvent gFuchinTempleEvents[] = {
     { EVENT_TALK, ACTOR_JUMPING_STUDENT, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), EVENT_SCRIPT(Event_TalkToJumpingStudent) },
     { EVENT_TALK, ACTOR_WATCHING_STUDENT, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MSGNO(MsgFuchinTempleFeizhiPredictedHsusDangerHerProphecy) },
     { EVENT_TALK, ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MSGNO(MsgFuchinTempleHsuIsRestingFeizhiIsWatching) },
-    { EVENT_TALK, ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTemplePracticeEveryoneChiHasItsLimits) },
-    { EVENT_TALK, ACTOR_WELCOMING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleWarriorYouAreGreatYouHave) },
-    { EVENT_TALK, ACTOR_KICKING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleEveryoneWantsToLearnTheChi) },
-    { EVENT_TALK, ACTOR_PUNCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleConcentrateEnergyIntoTheHandsAnd) },
-    { EVENT_TALK, ACTOR_JUMPING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), EVENT_SCRIPT(Event_TalkToJumpingStudent) },
-    { EVENT_TALK, ACTOR_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleIDidNotThinkMuchOf) },
-    { EVENT_TALK, ACTOR_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleWhereDidFeizhiGoIAm) },
-    { EVENT_TALK, ACTOR_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleMasterHsuIsLateICan) },
-    { EVENT_TALK, ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleIWillLearnChiIWill) },
+    { EVENT_TALK, ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTemplePracticeEveryoneChiHasItsLimits) },
+    { EVENT_TALK, ACTOR_WELCOMING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleWarriorYouAreGreatYouHave) },
+    { EVENT_TALK, ACTOR_KICKING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleEveryoneWantsToLearnTheChi) },
+    { EVENT_TALK, ACTOR_PUNCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleConcentrateEnergyIntoTheHandsAnd) },
+    { EVENT_TALK, ACTOR_JUMPING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), EVENT_SCRIPT(Event_TalkToJumpingStudent) },
+    { EVENT_TALK, ACTOR_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleIDidNotThinkMuchOf) },
+    { EVENT_TALK, ACTOR_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleWhereDidFeizhiGoIAm) },
+    { EVENT_TALK, ACTOR_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleMasterHsuIsLateICan) },
+    { EVENT_TALK, ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleIWillLearnChiIWill) },
     { EVENT_TALK, ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorUseYourChiFromThe) },
     { EVENT_TALK, ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorPleaseUseYourChiFrom) },
     { EVENT_TALK, ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleWarriorLetMeSeeYourChi) },
@@ -2782,15 +2782,15 @@ struct SceneEvent gFuchinTempleEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JUMPING_STUDENT, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MSGNO(MsgFuchinTempleWhenABoulderFallsJumpRepeat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATCHING_STUDENT, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MSGNO(MsgFuchinTempleWhereDidFeizhiGainThePower) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MSGNO(MsgFuchinTempleMasterFehIsVeryWorriedAbout) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleCanSuchAYoungWarriorReally) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleYourChiIsFuchinTemplesHow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KICKING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleIDontCareWhichChiIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUNCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleMasterHamasChiCanShatterBoulders) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JUMPING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleFollowSilkRoadStraightPassThrough) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleWarriorYouUseWeaponsAndChi) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleFeizhiIsNotInTheFeh) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleFeizhiWorriesOnlyAboutMasterHsu) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_CHI), MSGNO(MsgFuchinTempleLearningChiIsVeryHardMaster) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleCanSuchAYoungWarriorReally) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleYourChiIsFuchinTemplesHow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KICKING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleIDontCareWhichChiIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUNCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleMasterHamasChiCanShatterBoulders) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JUMPING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleFollowSilkRoadStraightPassThrough) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleWarriorYouUseWeaponsAndChi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleFeizhiIsNotInTheFeh) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleFeizhiWorriesOnlyAboutMasterHsu) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleLearningChiIsVeryHardMaster) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorTheRulesRequireYouTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleSoCloseWarriorUseChiFrom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEH, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleWarriorShowMeYourChiI) },

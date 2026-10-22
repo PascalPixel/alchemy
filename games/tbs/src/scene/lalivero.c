@@ -27,16 +27,12 @@
 /// Helm.
 ///
 /// Open questions:
-/// - XXX: whether entrances 90 and 91 (ENTRANCE_FROM_AERIE and
-///   ENTRANCE_FROM_AERIE_QUIETLY) are reached from anywhere, since no exit
-///   names them and the aerie leads into Faran's house; a search of every
-///   exit table and the debug menus' scene select would settle it.
 /// - XXX: what the three cells at the north exit, given the attributes of cell
 ///   (20, 23) after Venus Lighthouse, change; the map's collision codes, or a
 ///   recording of the leader walking north there, would settle it.
-/// - XXX: why the first visit gives one of its five cells, at x 78, far from
-/// the
-///   soldiers, the same attributes; the map at that cell would settle it.
+/// - XXX: why the first visit gives one of its five cells, at x 78, far
+///   from the soldiers, the same attributes; the map at that cell would
+///   settle it.
 /// - XXX: why the chest asks the leader to face west on the first visit and
 ///   not on the second; a recording of both visits would show whether it can
 ///   be opened from another side.

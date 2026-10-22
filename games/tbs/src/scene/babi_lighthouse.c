@@ -55,9 +55,6 @@
 /// - XXX: what animation 22 shows as the leader lands in
 ///   BabiLighthouse_LandWithParticles; his sprite's animation table, or a
 ///   recording of the landing, would settle a name in enum ActorAnimation.
-/// - XXX: what the three gEffectScripts lifetimes (22, 44 and 126 frames) are
-///   chosen for; the effects that pick them by mode (field_effect.h) would
-///   settle names for them, shared with every overlay that carries them.
 
 #include "game_state.h"
 #include "version.h"

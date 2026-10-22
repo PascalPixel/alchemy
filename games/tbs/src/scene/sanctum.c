@@ -14,8 +14,19 @@
 ///   After the eruption the Great Healer brings Isaac and Garet in from Vale
 ///   (vale_eruption.c) to SANCTUM_FROM_VALE_ERUPTION, where Dora, the Mayor
 ///   and the healers hear what happened on the mountain, acted out in sepia
-///   (Sanctum_ReenactSolSanctum), and the Great Healer asks Isaac to take on
-///   the Wise One's quest (Sanctum_RequestQuestAcceptance). Accepting plays
+///   (Sanctum_ReenactSolSanctum): the colour buffer turns every background
+///   and sprite palette to PALETTE_TRANSFORM_SEPIA for the account and fades
+///   back to PALETTE_TRANSFORM_PLAIN over 60 frames after it
+///   (https://alchemy.pascalpixel.com/places/sanctum/account-sepia.gif: the
+///   account's first ten seconds and its last five, beside the 16 background
+///   and 16 sprite palettes). The Great Healer asks Isaac to take on the Wise
+///   One's quest (Sanctum_RequestQuestAcceptance). Each time his Psynergy
+///   shows, ACTOR_HEALER_AFTERIMAGE, a copy of him in SPRITE_COLOR_RED_TINT,
+///   jumps round him by a few pixels a frame (Sanctum_UpdateHealerAfterimage)
+///   while effects circle him (Sanctum_SpawnOrbitingEffect)
+///   (https://alchemy.pascalpixel.com/places/sanctum/healer-afterimages.gif:
+///   the screen, the healer boxed, beside the sprites and the sprites without
+///   the afterimage). Accepting plays
 ///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
 ///   SANCTUM_TO_VALE_GATE takes the two to SceneId_ValeGate (vale_gate.c).
 ///   Refusing leaves the room to gSanctum_QuestEvents: the Great Healer asks
@@ -49,9 +60,7 @@
 /// - Sanctum, the name the game gives every other entrance, which leaves only
 ///   SANCTUM_UNUSED; no exit leads there, and it places nobody.
 ///
-/// Open questions:
-/// - XXX (picture): the account of Sol Sanctum in sepia, with the Great
-///   Healer's afterimages and the effects that circle him.
+/// Open questions: none.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -1547,7 +1556,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
       struct AnimationEntry *entry = sprite->entries[entryIndex];
 
       if (entry != 0 && entry->script != 0) {
-        entry->param = 10;
+        entry->param = SPRITE_COLOR_RED_TINT;
       }
     }
   }

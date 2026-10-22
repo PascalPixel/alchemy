@@ -52,7 +52,10 @@
 /// or, on the stormy night, back to the storm's map (SceneId_ValeStorm), and
 /// the exit row of cell code 11 to VALE_GATE_TO_GOMA_CAVE_STREAM, which the
 /// exit table sends to Goma Cave (SceneId_GomaCaveStream,
-/// GOMA_CAVE_STREAM_FROM_VALE_GATE).
+/// GOMA_CAVE_STREAM_FROM_VALE_GATE). Code 11 lies on one cell, (11, 28), in
+/// every state of the scene, the cell north of where the party arrives from
+/// Goma Cave (VALE_GATE_FROM_GOMA_CAVE_STREAM, at (186, 474)), so that way back
+/// is the way in (render probe vale-gate).
 ///
 /// Three debug entrances are in no entrance table and no exit leads to them:
 /// VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE replays the strangers' departure,
@@ -66,15 +69,16 @@
 /// ValeGate_Initialize hides the storm's Jenna by number without testing
 /// FLAG_VALE_STORM, and by day that number is his (a BUG, fixed by BUGFIX).
 ///
-/// Open questions:
-/// - XXX: what ACTOR_STORM_ROCK_SPOT, the invisible actor on the small rock's
-///   spot, is for, since nothing reads it after the setup; a recording of
-///   Event_BoyLiftsSmallRock with the actor drawn would show whether it is
-///   the rock's shadow or a block in the path.
-/// - XXX: whether the exit row of cell code 11 (VALE_GATE_TO_GOMA_CAVE_STREAM)
-///   lies on any cell of the map; the map's collision codes would settle it.
-/// - XXX (picture): the Psynergy displays, a villager's sprite cycling its
-///   palettes while sparks rise and fall about him.
+/// A villager showing Psynergy (Event_DemonstratePsynergy by day,
+/// Event_BoyLiftsSmallRock on the stormy night) flashes white
+/// (ValeGate_FlashPsynergyPalette), then cycles through his colour modes while
+/// pairs of sparks rise and fall about him every 16 frames
+/// (ValeGate_CyclePsynergyPaletteAndSpawnEffects)
+/// (https://alchemy.pascalpixel.com/places/vale-gate/psynergy-display.gif: the
+/// strongman's display by day, the screen with him boxed beside the sprites
+/// alone and the 16 sprite palettes).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "flags.h"
@@ -267,9 +271,15 @@ enum ValeGateStormActor {
   /// ★ Named from what the player sees: a small rock floating beside the
   /// boy who lifts it (its render)
   ACTOR_STORM_SMALL_ROCK,
-  /// An invisible actor on ACTOR_STORM_SMALL_ROCK's spot at three fifths of its
-  /// size, which nothing moves or reads after the setup (an open question).
-  ACTOR_STORM_ROCK_SPOT,
+  /// The small rock's shadow: a blank actor on ACTOR_STORM_SMALL_ROCK's spot
+  /// at three fifths of its size, whose sprite draws only its shadow, while
+  /// the setup turns off the rock's own. It blocks nothing the rock does not
+  /// already block, and nothing moves it, so the shadow stays on the ground as
+  /// the boy lifts the rock (render probe vale-gate: the sprites with it and
+  /// without it).
+  /// ★ Named from what the player sees: the shadow under the floating rock
+  /// (render probe vale-gate)
+  ACTOR_STORM_SMALL_ROCK_SHADOW,
   /// Rested at the Psynergy Stone, the strongman vale_storm.c calls
   /// ACTOR_EXHAUSTED_STRONGMAN. "Great! I'm all charged up!"
   /// ★ Named from the game: "all charged up" (MsgValeGoAidElders)
@@ -1001,7 +1011,7 @@ s32 ValeGate_Initialize(void) {
         actor->scaleY = 3 * Q16_ONE / 10;
         actor = Object_GetById(ACTOR_STORM_SMALL_ROCK);
         Engine_ActorSetSpriteFlags(actor, 0);
-        actor = Object_GetById(ACTOR_STORM_ROCK_SPOT);
+        actor = Object_GetById(ACTOR_STORM_SMALL_ROCK_SHADOW);
         actor->scaleX = 3 * Q16_ONE / 5;
         actor->scaleY = 3 * Q16_ONE / 5;
         Engine_ActorSetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, 5);
@@ -1934,21 +1944,22 @@ static void ValeGate_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
   Engine_EventWait(frames);
 }
 
-/// A villager calling up Psynergy: palette 7 for two frames in four, and a
-/// pair of sparks every 16 frames.
+/// A villager calling up Psynergy: drawn SPRITE_COLOR_WHITE for two frames in
+/// four, and a pair of sparks every 16 frames.
 static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Engine_ObjectSetPartPalettes(actor, 7);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_WHITE);
   } else {
-    Engine_ObjectSetPartPalettes(actor, 0);
+    Engine_ObjectSetPartPalettes(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     ValeGate_SpawnEffectPair(actor);
   }
 }
 
-/// A villager using Psynergy: palettes 0 to 5 in turn, and a pair of sparks
-/// every 16 frames.
+/// A villager using Psynergy: colour modes SPRITE_COLOR_NORMAL to
+/// SPRITE_COLOR_BRG, the sprite and its five swaps of colour channels, in turn,
+/// and a pair of sparks every 16 frames.
 static void
 ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
@@ -1960,7 +1971,8 @@ ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycles the lifted rock through palettes 0 to 5, a step every second frame.
+/// Cycles the lifted rock through colour modes SPRITE_COLOR_NORMAL to
+/// SPRITE_COLOR_BRG, a step every second frame.
 static void ValeGate_CyclePsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);

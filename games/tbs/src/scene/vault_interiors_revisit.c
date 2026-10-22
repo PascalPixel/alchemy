@@ -9,8 +9,11 @@
 /// Colosso, the festival about to begin in Tolbi. The rooms, by entrance:
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
 ///   house: he says a cat ate his precious stone, and his wife does not
-///   believe him. Arriving here sets him on the floor and copies a block of
-///   cells into the room.
+///   believe him. Arriving here sets him on the floor and takes the stone off
+///   his table: the 4-by-3 block of cells copied from (0, 120) to (8, 67)
+///   lies under map layer 2's window, at the table, and draws it bare where
+///   the first visit's house (vault_interiors.c) draws the sparkling stone on
+///   it (render probe vault-interiors-revisit, the room before and after).
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
 ///   doubts the thieves were from Lunpa.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and
@@ -37,10 +40,7 @@
 /// two barrels and a wooden box keep the first visit's flags, so what the
 /// party took then stays taken, and two bookcases can be read.
 ///
-/// Open questions:
-/// - XXX: what the 4-by-3 block of cells copied from (0, 120) to (8, 67) on
-///   arriving at the gem owner's house shows; a render of the room before and
-///   after the copy would settle it.
+/// Open questions: none.
 
 #include "game_state.h"
 #include "unit/scene/vault_interiors_revisit.h"
@@ -409,7 +409,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// Opens the room through a window transition. Entering the house at
 /// VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST sets its owner on the
-/// floor and copies a block of cells; entering the inn
+/// floor and takes the stone off his table; entering the inn
 /// (VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST, or from upstairs by
 /// VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS)
 /// places the floor Bone beside the girl and starts
@@ -423,7 +423,8 @@ s32 Scene_Initialize(void) {
   entrance = gGameState.entrance;
 
   if (entrance == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST) {
-    // Set the gem owner back on the floor and copy in the replacement cells.
+    // Draw the table bare, its stone gone, and set the gem owner back on the
+    // floor.
     Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
     clearedState = 0;
     Object_GetById(ACTOR_GEM_OWNER)->motionFlags = clearedState;

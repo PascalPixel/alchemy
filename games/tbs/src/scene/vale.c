@@ -62,9 +62,15 @@
 /// FLAG_SCENE_TEMP_41 pauses the man who watches Isaac while a menu is open.
 /// The TBS_PATCH_4 editions also set Dora's sprite priority before Kalay.
 ///
-/// Open questions:
-/// - XXX (picture): the opening's Psynergy, Garet's sprite cycling its
-///   palettes while the hand of Move pushes the pillar and sheds sparkles.
+/// In the opening Garet trains his Psynergy on the pillar: his sprite flashes
+/// white, then cycles through its colour modes with sparks about him, while
+/// the hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west, the
+/// pillar cycling its colour modes too, and sheds sparkles
+/// (https://alchemy.pascalpixel.com/places/vale/opening-move.gif: the screen,
+/// Garet, the pillar and the hand boxed, beside the sprites alone and the 16
+/// sprite palettes).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -2896,7 +2902,8 @@ static void Vale_UpdateLeaderPaletteAndEffects(void) {
   Vale_CycleActorPaletteAndSpawnEffects(Object_GetById(ACTOR_PARTY_LEADER));
 }
 
-/// Cycles the pillar's palette while Garet's Psynergy moves it in the opening.
+/// Cycles the pillar's colour modes while Garet's Psynergy moves it in the
+/// opening.
 static void Vale_CycleOpeningPillarPalette(void) {
   Vale_CycleActorPalette(Object_GetById(ACTOR_OPENING_PILLAR));
 }
@@ -3192,8 +3199,8 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
 
 #include "common/object_orbit.h"
 
-/// Someone calling up Psynergy: palette 7 for two frames in four, and the
-/// world map's linked sparks every 16 frames.
+/// Someone calling up Psynergy: drawn SPRITE_COLOR_WHITE (7) for two frames in
+/// four, and the world map's linked sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor) {
 
   if ((gFrameCount & 2) != 0)
@@ -3204,8 +3211,9 @@ static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor) {
     WorldMap_CreateLinkedEffects(actor);
 }
 
-/// Someone using Psynergy: palettes 0 to 5 in turn, and sparks every 16
-/// frames.
+/// Someone using Psynergy: colour modes SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG
+/// (0 to 5), the sprite and its five swaps of colour channels, in turn, and
+/// sparks every 16 frames.
 static void Vale_CycleActorPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0)
     Engine_ObjectSetPartPalettes(actor, (gFrameCount >> 1) % 6);
@@ -3213,7 +3221,8 @@ static void Vale_CycleActorPaletteAndSpawnEffects(struct FieldActor *actor) {
     WorldMap_CreateLinkedEffects(actor);
 }
 
-/// What Psynergy moves: palettes 0 to 5 in turn, a step every second frame.
+/// What Psynergy moves: colour modes SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG in
+/// turn, a step every second frame.
 static void Vale_CycleActorPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0)
     Engine_ObjectSetPartPalettes(actor, (gFrameCount >> 1) % 6);

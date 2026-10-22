@@ -38,14 +38,18 @@
 /// Both of Kraden's visits hold Jenna and Garet in place beside the leader,
 /// then walk them back into the party; any other arrival hides them. Retreat
 /// does not work here, a callback draws three rows of sprites that drift
-/// sideways at different speeds (SolSanctumStatue_UpdateScrollingSprites), and
+/// sideways at different speeds (SolSanctumStatue_UpdateScrollingSprites): the
+/// clouds of the sky seen between the pillars of the colonnade along the
+/// room's north wall, 80 pixels down the map at the lowest priority, so they
+/// pass in front of the sky and behind the pillars; the rows move an eighth, a
+/// quarter and a half of a pixel a frame, the fastest drawn lowest
+/// (https://alchemy.pascalpixel.com/places/sol-sanctum-statue/sky-rows.gif: the
+/// top of the screen twice its size, above the sprites alone and the
+/// backgrounds alone, the clouds drifting behind the pillars), and
 /// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and
 /// shakes, as the rest of the sanctum does.
 ///
-/// Open questions:
-/// - XXX (picture): what the three drifting rows of sprites
-///   (graphics/sol_sanctum_statue/rows.png) are; a render of the room with the
-///   rows outlined would show it.
+/// Open questions: none.
 
 #include "game_state.h"
 #include "version.h"
@@ -750,8 +754,8 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
   map->origin = savedOrigin;
 }
 
-/// Draws the three parallax rows while they overlap the screen. Run each frame
-/// as a callback that SolSanctumStatue_InitializeScrollingSprites adds.
+/// Draws the three rows of sky clouds while they overlap the screen. Run each
+/// frame as a callback that SolSanctumStatue_InitializeScrollingSprites adds.
 static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapScrollWork *map = gMapWork[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;
@@ -835,7 +839,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 
 /// Restores the room's statues, beams and seals from their flags and plays
 /// Kraden's two visits. Called by Field_RunScene once the actors exist.
-/// Sets FLAG_RETREAT_BLOCKED; starts the parallax rows; at
+/// Sets FLAG_RETREAT_BLOCKED; starts the sky's cloud rows; at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED plays
 /// SolSanctumStatue_ExplainTrapDisarmed and at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED

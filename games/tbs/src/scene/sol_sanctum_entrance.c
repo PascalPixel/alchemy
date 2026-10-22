@@ -36,15 +36,14 @@
 /// a relief while its Small Jewel is held asks for the field menu as the search
 /// ends, so that the jewel can be used on it at once.
 ///
-/// Open questions:
-/// - XXX: whether FLAG_SCENE_TEMP_34 is ever set while the first relief room's
-///   table is read, since the two rooms are entered separately; a return to
-///   the first relief room after a battle (FLAG_KEEP_PARTY_POSITION) would
-///   settle it.
-/// - XXX: what the six cells before the door become once Isaac and Garet are
-///   back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH); likely cells that no
-///   longer open the door, which walking north into it at that point would
-///   settle.
+/// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH)
+/// the door no longer opens: Sol Entrance's setup makes the three wall cells
+/// across the door SOL_ENTRANCE_CELL_LOCKED_DOOR, copied from the other door,
+/// and the three SOL_ENTRANCE_CELL_DOOR cells before it plain ground, so the
+/// leader walks up to the door and stops, and searching it finds it "tightly
+/// locked" (render probe sol-entrance).
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -133,8 +132,11 @@
 
 // Scene flags, cleared on every ordinary entrance:
 // - FLAG_SCENE_TEMP_34: set on entering the second relief room; the
-//   Move rows of the first relief room apply only while it is clear (see the
-//   open questions above).
+//   Move rows of the first relief room apply only while it is clear, which
+//   it always is there: only the second room's entrances set it, every
+//   ordinary entrance into the first room clears it, and a return after a
+//   battle comes back by the entrance the party last came in by, so the
+//   condition never stops a Move.
 
 // An exit's flag word of -1 stands for no flag: GameFlag_TestFar reads it as
 // flag 0xfff, which nothing sets, so the exit is always taken.
@@ -657,8 +659,9 @@ s32 SolSanctumEntrance_Initialize(void) {
 /// (FLAG_RETREAT_BLOCKED), and after the eruption
 /// SolSanctumEntrance_UpdateEruptionRumbles shakes the ground now and then.
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH),
-/// the six cells before the door take the collision of other cells (an open
-/// question above); once the party has left Vale (FLAG_PARTY_LEFT_VALE), the
+/// the door is locked: its row becomes SOL_ENTRANCE_CELL_LOCKED_DOOR and the
+/// cells before it plain ground; once the party has left Vale
+/// (FLAG_PARTY_LEFT_VALE), the
 /// man who warns everyone away, placed off the map until then, stands in the
 /// path and the three cells across it change.
 static void SolSanctumEntrance_ApplyEntryState(void) {

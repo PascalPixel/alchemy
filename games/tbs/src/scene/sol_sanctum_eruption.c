@@ -27,12 +27,15 @@
 /// (SolSanctumEruption_RaiseElementalArcs), and the Wise One glows through a
 /// cycle of palettes.
 ///
-/// Open questions:
-/// - XXX: what game flag 0x100, set as the scene ends, marks; nothing else sets
-///   or reads it by number, so a read of its byte or of the flag range would
-///   settle it.
-/// - XXX (picture): what ACTOR_RISING_EFFECT, a blank actor scaled with each
-///   departing actor, draws; a render of Alex rising away would show it.
+/// Saturos's group and their hostages leave one by one from the platform
+/// where the party arrived (SolSanctumEruption_RaiseAndShrinkActor): each walks
+/// onto it, rises 30 pixels at full size, then rises on as he shrinks away,
+/// over a shadow that shrinks with him (ACTOR_PLATFORM_SHADOW;
+/// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif:
+/// the departures, the platform's actor boxed on the screen, beside the
+/// sprites and the sprites without it, where the shadow is gone).
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "game_state.h"
@@ -137,7 +140,7 @@ const u32 *SolSanctumEruption_GetExits(void) {
   return gSolSanctumEruption_Exits;
 }
 
-/// Returns Garet and Jenna, then the rising effect (ACTOR_RISING_EFFECT),
+/// Returns Garet and Jenna, then the platform's shadow (ACTOR_PLATFORM_SHADOW),
 /// Kraden, Saturos, Menardi, Felix masked and unmasked, Alex, the Wise One
 /// (ACTOR_WISE_ONE) and sixteen crystals (from ACTOR_FIRST_CRYSTAL), all placed
 /// off the map until the cutscene moves them.
@@ -568,27 +571,28 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Party_RemoveOwnerRestored(JENNA);
 }
 
-/// Lifts one departing actor and shrinks it together with the paired effect.
+/// Lifts one departing actor and shrinks it together with its shadow on the
+/// platform (ACTOR_PLATFORM_SHADOW).
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   struct FieldActor *actor;
-  struct FieldActor *departureEffect;
+  struct FieldActor *shadow;
   struct FieldActor *spriteOwner;
   u8 frame;
 
-  departureEffect = Object_GetById(ACTOR_RISING_EFFECT);
-  departureEffect->scaleX = Q16_ONE;
-  departureEffect->scaleY = Q16_ONE;
+  shadow = Object_GetById(ACTOR_PLATFORM_SHADOW);
+  shadow->scaleX = Q16_ONE;
+  shadow->scaleY = Q16_ONE;
   Engine_ActorWalkToAndWait(actorId, 471, 290);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
   Engine_EventWait(10);
-  Actor_SetPosition(ACTOR_RISING_EFFECT, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
   actor = Object_GetById(actorId);
   spriteOwner = Object_GetById(actorId);
   Engine_ActorSetSpriteFlags(spriteOwner, 0);
   Actor_SetChildValue(actorId, 0x100);
   actor->motionFlags = 0;
   Event_PlayCue(SE_201);
-  // Rise at full size, then shrink the actor and its departure effect together.
+  // Rise at full size, then shrink the actor and its shadow together.
   frame = 0;
   do {
     actor->y.fixed += PIXELS(1) / 2;
@@ -601,13 +605,13 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
     actor->y.fixed += PIXELS(1) / 10;
     actor->scaleX -= Q16_ONE / 100;
     actor->scaleY -= Q16_ONE / 100;
-    departureEffect->scaleX -= Q16_ONE / 100;
-    departureEffect->scaleY -= Q16_ONE / 100;
+    shadow->scaleX -= Q16_ONE / 100;
+    shadow->scaleY -= Q16_ONE / 100;
     Engine_EventWait(1);
     frame++;
   } while (frame != 90);
   Actor_SetPosition(actorId, 0, 0);
-  Actor_SetPosition(ACTOR_RISING_EFFECT, 0, 0);
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
 }
 
 /// Unused: an empty function nothing calls.
@@ -1507,8 +1511,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Engine_EventRequestExit(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
-  // XXX: flag 0x100 is set nowhere else, and nothing in the repository reads
-  // it by number; a read of its byte or range would say what it marks.
+  // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
+  // table, script or function, and render probe flag-reads, watching every
+  // flag test and every byte and nibble read in the scenes after the
+  // eruption, sees none.
   GameFlag_Set(0x100);
 }
 

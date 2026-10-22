@@ -61,10 +61,12 @@
 /// ValeStorm) or between this scene's own parts.
 ///
 /// Open questions:
-/// - XXX: what ACTOR_BLANK_AFTER_KALAY, the blank actor beside the burly man
-///   at the inn back from Kalay, is for; whether it is solid, from the inn's
-///   render with the actor outlined, would show if it holds the man's place
-///   or blocks a way.
+/// - XXX (no evidence): what ACTOR_BLANK_AFTER_KALAY, the blank actor beside
+///   the burly man at the inn back from Kalay, was meant to do; it draws
+///   nothing once the setup turns off its shadow, and though it is solid it
+///   stands where the innkeeper and the burly man already close the way (the
+///   leader walking north between them stops at the man with it and without
+///   it, render probe vale-inn), so nothing the player can do shows a use.
 /// - XXX (no evidence): whether the talk row of Event_RemarkIsaacHasGrown was
 ///   meant to test FLAG_VALE_MAN_SAW_ISAAC_GROWN, as its Mind Read row does;
 ///   the tables show only what plays (the same line either way, the script
@@ -198,8 +200,10 @@ enum ValeInteriorsInnAfterKalayActor {
   /// illness.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   ACTOR_MAN_ISAAC_HAS_GROWN = ACTOR_FIRST_PLACED + 8,
-  /// SPRITE_BLANK, a blank square, beside ACTOR_MAN_ISAAC_HAS_GROWN; no event
-  /// answers it, and the setup only takes away its shadow (an open question).
+  /// SPRITE_BLANK, a solid actor that draws nothing, beside
+  /// ACTOR_MAN_ISAAC_HAS_GROWN; no event answers it, the setup takes away the
+  /// shadow its blank sprite would draw, and it closes no way the innkeeper
+  /// and the man do not (an open question).
   ACTOR_BLANK_AFTER_KALAY
 };
 

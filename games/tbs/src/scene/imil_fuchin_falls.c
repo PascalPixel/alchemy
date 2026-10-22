@@ -75,14 +75,7 @@
 ///   (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET). The first room's inscription points
 ///   the way: `The dragon's flame illuminates the path of truth in darkness.`
 ///
-/// Open questions:
-/// - XXX: why walking north into the third room's trigger 24 floats the fourth
-///   log 80 pixels south (Fuchin_ThirdRoom_MoveFourthLogSouthFromLowerStop),
-///   where the third log's matching trigger 19 floats it 80 pixels north;
-///   triggers 21 to 24 are one column of cells (columns 10 to 12, rows 40 to
-///   43 of map_064's grid_collision.tsv), so it is likely a slip in the table,
-///   and a recording of the push from the cells south of it would settle it
-///   (the renderer's event recording follows an exit out of the room instead).
+/// Open questions: none.
 
 #include "script.h"
 #include "game_state.h"
@@ -796,11 +789,16 @@ static void Fuchin_ThirdRoom_MoveFourthLogSouthFromMiddle(void) {
   Fuchin_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: walking
-/// north into trigger 24 floats the fourth log 80 pixels south (its stops
-/// clear). XXX: the table and the move disagree on the direction; the map
-/// around trigger 24 would settle which is meant.
-static void Fuchin_ThirdRoom_MoveFourthLogSouthFromLowerStop(void) {
+/// Unused: walking north into trigger 24 in Fuchin Falls Cave's third room
+/// would float the fourth log 80 pixels south (its stops clear). Trigger 24's
+/// cells reach the room only from their copy at columns 10 to 12, row 43, which
+/// Fuchin_RebuildDragonsEyeRoomLogs makes with the log at FLAG_PLACE_TEMP_12,
+/// and no move sets that flag, so the room never has a trigger 24 (in tbs-en
+/// it appears there only with the flag set by hand; walking north on the log
+/// then carries the leader 80 pixels south, past the log's south end, where
+/// the rebuild puts the log back). XXX: likely a slip for a move north,
+/// because the third log's matching trigger 19 floats it north.
+static void Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 80);
   Engine_AudioPlayCue(SE_289);
@@ -809,10 +807,11 @@ static void Fuchin_ThirdRoom_MoveFourthLogSouthFromLowerStop(void) {
   Fuchin_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing
-/// the fourth log south (trigger 24) floats it 48 pixels south (its stops
-/// clear).
-static void Fuchin_ThirdRoom_MoveFourthLogSouthFromLastStop(void) {
+/// Unused: pushing the fourth log south from trigger 24 in Fuchin Falls Cave's
+/// third room would float it 48 pixels south (its stops clear), back to its
+/// south end; the room never has a trigger 24, as
+/// Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLowerStop says.
+static void Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLastStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 48);
   Engine_AudioPlayCue(SE_289);
@@ -1239,6 +1238,8 @@ static void Fuchin_RebuildDragonsEyeRoomLogs(void) {
       Map_CopyCellAttributes(10, 42, 3, 1, column, 27);
     }
   } else if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_12) != 0) {
+    // Unused: no move sets FLAG_PLACE_TEMP_12, so the log never lies here and
+    // the room never gets trigger 24.
     Fuchin_PlaceLogAtCell(ACTOR_FOURTH_LOG, 15, 28);
     {
       s32 column = 14;
@@ -2158,8 +2159,8 @@ struct SceneEvent gImilFuchinFalls_ThirdRoomEvents[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_MoveFourthLogSouthFromUpperStop) },
     { TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_HopWest) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_MoveFourthLogSouthFromMiddle) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_MoveFourthLogSouthFromLowerStop) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_MoveFourthLogSouthFromLastStop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLowerStop) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_UnusedMoveFourthLogSouthFromLastStop) },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_AnimateFourthLog) },
     { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_AnimateFourthLog) },
     { EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_AnimateFourthLog) },

@@ -12,8 +12,14 @@
 ///   and VALE_KRADEN_FROM_VALE_SOUTH, and the two paths lead back
 ///   (VALE_KRADEN_TO_VALE_STORM_NORTH and VALE_KRADEN_TO_VALE_STORM_SOUTH). A
 ///   rockslide has broken the fence and let monsters in: Initialize starts the
-///   lightning, leaves the two rocks that Isaac cannot budge across the way and
-///   blocks the cells around them, and lays a hurt man by the fence. Talking to
+///   lightning, leaves the two rocks that Isaac cannot budge across the way,
+///   copies MAP_CELL_WALL over the path's cells below the west rock and under
+///   the east one, two of which by day hold Event_MeetSaturosAndMenardi's cell
+///   code 7
+///   (https://alchemy.pascalpixel.com/places/vale-kraden/rockslide-cells.png:
+///   the room on the stormy night and by day, the rocks boxed and the six
+///   cells outlined with their collision codes), and lays a hurt man by the
+///   fence. Talking to
 ///   him, or walking up to him (cell code 20), plays
 ///   Event_TalkToRockslideSurvivor: asked whether he will die, a yes leaves him
 ///   giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a no has him find he
@@ -55,12 +61,7 @@
 /// place name is not shown again. The jar's row finds nothing on the stormy
 /// night, and after Kalay it is there only from the third patch on.
 ///
-/// Open questions:
-/// - XXX: what Lift on the boulder by the fence (ACTOR_FENCE_BOULDER) shows,
-///   since its event row runs no script; casting Lift on it in a play-through
-///   would settle it.
-/// - XXX (picture): the stormy night's rockslide, the two rocks across the
-///   path and the cells around them blocked.
+/// Open questions: none.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -101,7 +102,10 @@ enum ValeKradenActor {
   /// A boulder by the fence, with the sprite of the boulder Lift raises at the
   /// Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in Gondowan Cave. Its
   /// Lift row runs no script, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
-  /// and the stormy night's events have no row for it.
+  /// and the stormy night's events have no row for it. Cast on it, Lift's two
+  /// hands close on it and burst into sparkles, the boulder stays where it is,
+  /// and no message follows, since the row answers the cast (render probe
+  /// kraden-lift, by day and after the party has left Vale).
   /// ★ Named from the game: "did you lift the boulder?"
   /// (MsgMountainIsaacDidLiftBoulder), said of the same sprite
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,

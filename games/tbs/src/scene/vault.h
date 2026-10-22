@@ -8,10 +8,17 @@
 /// The cells Vault's touch and search events answer; the exits have codes of
 /// their own.
 enum VaultCell {
-  /// Switches the passage to its alternate collision.
-  VAULT_CELL_PASSAGE_ALTERNATE = 1,
-  /// Restores the passage's usual collision.
-  VAULT_CELL_PASSAGE_USUAL = 2,
+  /// Either end of the rope bridge in the town's south-east, where stepping
+  /// on raises the path that runs under the bridge to the bridge's deck
+  /// (Vault_RaisePathToBridge).
+  /// ★ Named from what the player sees: the rope bridge the leader walks
+  /// across (render probe vault-bridge)
+  VAULT_CELL_BRIDGE_END = 1,
+  /// The three cells west of the bridge's west end, where stepping off
+  /// lowers the path back under the bridge (Vault_LowerPathUnderBridge).
+  /// ★ Named from what the player sees: the rope bridge the leader walks
+  /// across (render probe vault-bridge)
+  VAULT_CELL_WEST_OF_BRIDGE = 2,
   /// The door of the house where a man keeps a sparkling rock the volcano
   /// threw.
   VAULT_CELL_GEM_OWNERS_HOUSE_DOOR = 5,

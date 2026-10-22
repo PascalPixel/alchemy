@@ -35,10 +35,17 @@
 ///   introduce themselves ("I am Mia, from Imil."), and his father is left
 ///   pacing. The villagers now worry about Dora, ill since Isaac left.
 ///
-/// Open questions:
-/// - XXX (picture): the letters Z rising and growing from Garet's sleeping
-///   grandfather (ValeInteriorsShops_SpawnSleepZ), three at frames 10, 20
-///   and 30 of every 180.
+/// While Garet's grandfather dozes in Event_GaretComesHome, three letters Z
+/// (ACTOR_FIRST_SLEEP_Z and the two after it) rise from him, one at each of
+/// frames 10, 20 and 30 of every 180 (ValeInteriorsShops_SpawnSleepZ): each
+/// starts 24 pixels above him at two fifths of its size and grows a fortieth
+/// a frame as it climbs ever more slowly and drifts right ever faster
+/// (ValeInteriorsShops_AdvanceSleepZ)
+/// (https://alchemy.pascalpixel.com/places/vale-interiors-shops/sleep-z.gif:
+/// two cycles, the screen with the grandfather and the three letters boxed and
+/// the cycle's frame written, beside the sprites alone).
+///
+/// Open questions: none.
 
 #include "script.h"
 #include "game_state.h"

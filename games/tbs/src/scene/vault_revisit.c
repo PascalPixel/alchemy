@@ -28,13 +28,20 @@
 /// VAULT_JAIL_FROM_VAULT_REVISIT, where a lone prisoner sits in the thieves'
 /// place.
 ///
+/// The inn's roof is mended: the 3-by-3 block of cells Scene_Initialize
+/// copies from (45, 41) to (8, 45) lies under map layer 2's window, on the
+/// inn's roof, and draws the thatch whole where vault.c's town shows the hole
+/// the fiery rock burnt in it (render probe vault-revisit, the town before
+/// and after).
+///
 /// Open questions:
-/// - XXX: what configured object 223, which Scene_Initialize creates at
-///   (128, 420), is; a render of the scene with the object outlined would
-///   settle it.
-/// - XXX: what the 3-by-3 block of cells Scene_Initialize copies from
-///   (45, 41) to (8, 45) shows, which vault.c does not copy; a render of the
-///   map before and after the copy would settle it.
+/// - XXX (no evidence): why Scene_Initialize, as vault.c's does, creates a
+///   still object of sprite 223 (spr_223.png, a wooden crate) at (128, 420),
+///   on the well, that shows nothing: its 32-by-64 sprite entry is in the
+///   sprite list but its tiles in video memory are blank, it is neither solid
+///   nor a target (ACTOR_NOT_TARGETED), and nothing refers to it (render probe
+///   vault-revisit); nothing in the ROM or a render says what it was meant to
+///   show.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -646,9 +653,9 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 
 /// Sets up Vault as the party finds it after reaching Kalay.
 /// On arrival it restores the passage's collision (common/vault_toggle.h),
-/// creates configured object 223 at (128, 420) and copies a 3-by-3 block of
-/// cells from (45, 41) to (8, 45), which vault.c does not (both open
-/// questions in the file's opening comment), and hooks the two children round
+/// creates the still object of sprite 223 on the well that shows nothing (an
+/// open question), mends the inn's roof, which vault.c leaves holed, and
+/// hooks the two children round
 /// the well to Vault_UpdateWalkingVillager. The dog waits at the hidden
 /// passage once it has shown it. Coming in by a gate (ENTRANCE_DEFAULT to
 /// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
@@ -663,9 +670,10 @@ s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   s32 mode;
 
-  // Restore the passage cells and the town's ambient effect.
+  // Keep the bridge deck after a battle, and mend the inn's roof.
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00))
     Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
+  // A still object on the well that shows nothing (an open question).
   OverlayObject_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
   Map_CopyCellsTo(45, 41, 8, 45, 3, 3);
   Engine_TaskWait(1);
@@ -908,8 +916,8 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { EVENT_EXIT, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
     { EVENT_EXIT, VAULT_CELL_CAVE_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
     { EVENT_EXIT, VAULT_CELL_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
-    { EVENT_TOUCH, VAULT_CELL_PASSAGE_ALTERNATE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
-    { EVENT_TOUCH, VAULT_CELL_PASSAGE_USUAL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
+    { EVENT_TOUCH, VAULT_CELL_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
+    { EVENT_TOUCH, VAULT_CELL_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterChildsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), VAULT_CELL_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },

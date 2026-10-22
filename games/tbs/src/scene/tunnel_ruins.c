@@ -724,8 +724,8 @@ static void Event_SinkPillarA(void) {
   s32 randomX;
   struct FieldActor *actor;
   s32 randomZ;
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
 
   EV_START();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_A);
@@ -734,10 +734,10 @@ static void Event_SinkPillarA(void) {
     overlay = OverlayObject_PrepareObject(PIXELS(744), 0, PIXELS(184),
                                           SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
-    effectOptions = &options;
-    effectOptions->startScaleX = 3 * Q16_ONE / 5;
-    effectOptions->startScaleY = 3 * Q16_ONE / 5;
-    effectOptions->palette = 7;
+    options = &optionsStorage;
+    options->startScaleX = 3 * Q16_ONE / 5;
+    options->startScaleY = 3 * Q16_ONE / 5;
+    options->palette = 7;
     Actor_Get(ACTOR_SINKING_PILLAR_A)->motionFlags = 0;
     Engine_AudioPlayCue(SE_PUSH);
     for (i = 0; i < 16; i++) {
@@ -750,7 +750,7 @@ static void Event_SinkPillarA(void) {
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
            PIXELS(128)),
-          0, 0, 0, 0x90000, effectOptions);
+          0, 0, 0, 0x90000, options);
     }
     Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     WAIT(30);
@@ -806,8 +806,8 @@ static void Event_SinkPillarB(void) {
   s32 randomZ;
   s32 effectX;
   s32 effectZ;
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
 
   EV_START();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_B);
@@ -815,10 +815,10 @@ static void Event_SinkPillarB(void) {
     if (FLAG_CHECK(FLAG_SCENE_TEMP_02) != 0) {
       WAIT(30);
       overlay = OverlayObject_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
-      effectOptions = &options;
-      effectOptions->startScaleX = 3 * Q16_ONE / 5;
-      effectOptions->startScaleY = 3 * Q16_ONE / 5;
-      effectOptions->palette = 7;
+      options = &optionsStorage;
+      options->startScaleX = 3 * Q16_ONE / 5;
+      options->startScaleY = 3 * Q16_ONE / 5;
+      options->palette = 7;
       Actor_Get(ACTOR_SINKING_PILLAR_B)->motionFlags = 0;
       Engine_AudioPlayCue(SE_PUSH);
       for (i = 0; i < 16; i++) {
@@ -829,7 +829,7 @@ static void Event_SinkPillarB(void) {
         randomZ = Engine_RandomNext();
         effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
                    PIXELS(224));
-        FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, effectOptions);
+        FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, options);
       }
       Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
       WAIT(30);

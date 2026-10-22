@@ -248,13 +248,13 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
             s32 phase = frame % 12;
 
             if (phase == 0) {
-              struct MotionObject *obj =
+              struct MotionObject *object =
                   GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
               ObjectGroup_UpdateMembers(work->effect->actors[k],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, -1, 0);
-              obj->velocityY = 0x48000;
-              obj->verticalMotionStrength = 0xab85;
+              object->velocityY = 0x48000;
+              object->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
               ObjectGroup_UpdateMembers(work->effect->actors[k], 0, POSE_DAMAGE,

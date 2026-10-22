@@ -1985,8 +1985,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(union FieldObject *object) {
-  struct FieldActor *spark = &object->actor;
+static void Sanctum_UpdateRisingSpark(union FieldObject *fieldObject) {
+  struct FieldActor *spark = &fieldObject->actor;
   s32 scale;
   s32 timer;
 

@@ -491,7 +491,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 /// unit with no place. Called throughout the battle parts.
 struct BattleObj *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
-  struct BattleObj *objects = battle->slots;
+  struct BattleObj *battleObjects = battle->slots;
   s32 placementIndex;
   // Enemy unit ids 128 to 133 index placement 8 to 13.
   if (unitId > ALLY_MAX) {
@@ -501,7 +501,7 @@ struct BattleObj *BattleObject_Get(s32 unitId) {
   if (battle->placement[placementIndex] == 0xFF) {
     return NULL;
   }
-  return &objects[battle->placement[placementIndex]];
+  return &battleObjects[battle->placement[placementIndex]];
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite. Called

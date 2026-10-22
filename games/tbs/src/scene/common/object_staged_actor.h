@@ -181,8 +181,8 @@ static s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 #ifdef UBFIX
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the way.
-static void StagedActor_StopBlockedMotion(union FieldObject *object) {
-  struct FieldActor *actor = (struct FieldActor *)object;
+static void StagedActor_StopBlockedMotion(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the way.
@@ -565,7 +565,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
 /// Block large thing id's cells (collision 255) where it stands, through the
 /// map's layer 1 offset; returns 0 when its sprite is no large thing.
 UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
-  struct MapScrollWork *work = gMapWork[0];
+  struct MapScrollWork *map = gMapWork[0];
   struct FieldActor *actor = Object_GetById(id);
   struct StagedActorProbe probe;
   u32 idx = 0;
@@ -610,8 +610,8 @@ UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   probe.position.z += gStagedActor_FootprintBounds[offset + 1] << 16;
   probe.position.x >>= 20;
   probe.position.z >>= 20;
-  idx = work->layers[1].offsetX >> 20;
-  dstZ = work->layers[1].offsetY >> 20;
+  idx = map->layers[1].offsetX >> 20;
+  dstZ = map->layers[1].offsetY >> 20;
   Engine_MapCopyCellAttributes(probe.position.x, probe.position.z, width,
                                height, idx + probe.position.x,
                                dstZ + probe.position.z);

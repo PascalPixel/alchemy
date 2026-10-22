@@ -918,7 +918,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 /// slot of the same number. The item, Psynergy and Status screens call it for
 /// the window that holds their icons; the sprites are that window's render
 /// outputs and go back to the pool when it closes.
-void Menu_SpawnIconEntries(struct InventoryMenuState *state,
+void Menu_SpawnIconEntries(struct InventoryMenuState *menu,
                            struct UiWindow *window) {
   struct RenderOutput **firstIcons;
   s32 firstSlot;
@@ -932,7 +932,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
 
   firstSlot = 0;
   firstY = 0xA8;
-  firstIcons = &state->entryIcons[0];
+  firstIcons = &menu->entryIcons[0];
   do {
     *firstIcons++ = RenderOutput_CreateFromResourceFar(
         ICON_KIND_ITEM, firstSlot, window, 0xF8, firstY);
@@ -941,7 +941,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
 
   secondSlot = 8;
   secondY = 0xA8;
-  secondIcons = &state->entryIcons[8];
+  secondIcons = &menu->entryIcons[8];
   do {
     *secondIcons++ = RenderOutput_CreateFromResourceFar(
         ICON_KIND_ITEM, secondSlot, window, 0x100, secondY);
@@ -950,7 +950,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
 
   remainingSlot = 16;
   remainingY = 0xA8;
-  remainingIcons = &state->entryIcons[16];
+  remainingIcons = &menu->entryIcons[16];
   do {
     *remainingIcons++ = RenderOutput_CreateFromResourceFar(
         ICON_KIND_ITEM, remainingSlot, window, 0x100, remainingY);
@@ -1981,11 +1981,11 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
 /// can wear it.
 s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   s32 itemId = inventoryEntry;
-  struct ItemDefinition *itemDefinition;
+  struct ItemDefinition *item;
   s32 result = ITEM_USE_MODE_UNUSABLE;
 
   itemId &= ITEM_ID_MASK;
-  itemDefinition = Item_GetDirectFar(itemId);
+  item = Item_GetDirectFar(itemId);
 
   if (FieldEffect_HasTriggerFar(itemId) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
@@ -1993,11 +1993,11 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
 
   {
     struct BattleAct *action =
-        BattleAction_Get(itemDefinition->actionId & OWNER_ACTION_ID_MASK);
+        BattleAction_Get(item->actionId & OWNER_ACTION_ID_MASK);
 
-    if (itemDefinition->actionId != 0) {
-      if (itemDefinition->type != ITEM_TYPE_NONE) {
-        if (itemDefinition->useType != ITEM_USE_TEACHES) {
+    if (item->actionId != 0) {
+      if (item->type != ITEM_TYPE_NONE) {
+        if (item->useType != ITEM_USE_TEACHES) {
           if (Item_CanOwnerEquip(ownerId, itemId) != 0) {
             result = ITEM_USE_MODE_CHOOSE_MEMBER;
           }

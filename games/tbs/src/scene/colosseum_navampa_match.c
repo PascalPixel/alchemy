@@ -2128,7 +2128,7 @@ static s32 ColosseumNavampaMatch_PlaceFinishItemAboveActor(
 /// Moves to the available finish item, equips it and announces it.
 static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
                                                         s32 secondItem) {
-  struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
+  struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
   struct FieldActor *actor;
   s32 opponentFinishedFirst;
   s32 x;
@@ -2138,17 +2138,17 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
 
   opponentFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
   actor = Object_GetById(gGameState.selectedActor);
-  if (work->finishX < actor->x.fixed) {
-    x = work->finishX + PIXELS(12);
+  if (gauge->finishX < actor->x.fixed) {
+    x = gauge->finishX + PIXELS(12);
   } else {
-    x = work->finishX - PIXELS(12);
+    x = gauge->finishX - PIXELS(12);
   }
   if (opponentFinishedFirst != 0) {
-    z = work->finishZ + PIXELS(16);
-    itemActorId = &work->finishItemActorB;
+    z = gauge->finishZ + PIXELS(16);
+    itemActorId = &gauge->finishItemActorB;
   } else {
-    z = work->finishZ - PIXELS(16);
-    itemActorId = &work->finishItemActorA;
+    z = gauge->finishZ - PIXELS(16);
+    itemActorId = &gauge->finishItemActorA;
   }
   linkedItemActor = &actor->timer;
   *linkedItemActor = *itemActorId;

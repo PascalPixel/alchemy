@@ -668,11 +668,11 @@ static void Xian_WalkThroughExit(s32 exitId) {
 /// the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188) and
 /// XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
-  struct EventWork *event = gEventWork;
+  struct EventWork *work = gEventWork;
 
   Engine_EventStart();
 
-  switch (event->touchedTrigger) {
+  switch (work->touchedTrigger) {
   case XIAN_TO_HOUSE:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_HouseDoorOpens, 81, 18);
@@ -705,7 +705,7 @@ static void Xian_OpenDoorAndLeave(void) {
     break;
   }
 
-  Xian_WalkThroughExit(event->touchedTrigger);
+  Xian_WalkThroughExit(work->touchedTrigger);
   Engine_EventEnd();
 }
 

@@ -563,13 +563,13 @@ static void Event_KiteKeepsAway(void) {
   s32 routeIndex;
   const u8 *walkTargetBytes;
   s32 targetZOffset;
-  struct EventWork *event;
+  struct EventWork *work;
 
-  event = gEventWork;
+  work = gEventWork;
   if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
     if (gGameState.pausedObject != ACTOR_KITE) {
       // Preserve the speed reads before resolving this route point.
-      routeIndex = event->touchedTrigger;
+      routeIndex = work->touchedTrigger;
       djinni = Object_GetById(ACTOR_KITE);
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       djinni->speed = leader->speed;

@@ -22,7 +22,7 @@ typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 /// and the ObjectSystemWork's count of bytes composed; takes heap slot
 /// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
 /// it again.
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemWork *system;
@@ -77,8 +77,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
 
   // Step each layer's script: read commands until one shows a frame for a
   // while, else count the current frame's time down.
-  for (i = 0; i < obj->count; i++) {
-    layer = obj->entries[i];
+  for (i = 0; i < animation->count; i++) {
+    layer = animation->entries[i];
     if (layer == 0) {
       continue;
     }
@@ -94,7 +94,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       switch (frame) {
       case ANIMATION_COMMAND_PLAY:
         Animation_SetWorkEntry(layer, arg);
-        obj->lastNo = arg;
+        animation->lastNo = arg;
         break;
       case ANIMATION_COMMAND_JUMP:
         layer->pos = arg;
@@ -121,7 +121,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
         // layer stops being stepped and drawn even when another one ended; a
         // sprite whose layer other than the last ends would show whether that
         // is a bug.
-        obj->count--;
+        animation->count--;
         goto select_direction;
       // Unused commands, skipped. 251 is not among them: it shows as a frame.
       case 242:
@@ -191,20 +191,20 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     }
     if (layer->frame != frame) {
       layer->frame = frame;
-      obj->dirty = 1;
+      animation->dirty = 1;
     }
   }
 
-  if (obj->dirty != 0) {
-    size = obj->width * obj->height;
+  if (animation->dirty != 0) {
+    size = animation->width * animation->height;
     pixels = MemAlloc(size);
     Iwram_ClearWords(pixels, size);
 
     // Sort the visible layers by priority (0-3), then by index, with an
     // insertion sort on keys of (priority << 8) | index.
     drawCount = -1;
-    for (i = obj->count - 1; i >= 0; i--) {
-      layer = obj->entries[i];
+    for (i = animation->count - 1; i >= 0; i--) {
+      layer = animation->entries[i];
       if (layer == 0) {
         continue;
       }
@@ -244,7 +244,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     // unpacked first, or drawn through a scratch buffer when the layer has a
     // draw parameter.
     for (i = 0; i < drawCount; i++) {
-      layer = obj->entries[*(u8 *)&drawOrder[i]];
+      layer = animation->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == SPRITE_FRAME_TYPE01) {
         Resource_DecodeType01(layer->frames[layer->frame], pixels);
       } else if (layer->mode == SPRITE_FRAME_LZ) {
@@ -267,7 +267,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
 
     // Outline: a pixel whose four neighbours are all drawn becomes the fill
     // colour, and any other drawn pixel the edge colour.
-    if ((obj->flags & SPRITE_FLAG_OUTLINED) != 0) {
+    if ((animation->flags & SPRITE_FLAG_OUTLINED) != 0) {
       u8 *inside;
       u8 edge;
       u8 fill;
@@ -277,8 +277,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       u8 *dst;
 
       inside = MemAlloc(size);
-      w = obj->width;
-      h = obj->height;
+      w = animation->width;
+      h = animation->height;
       edge = system->edge;
       fill = system->fill;
       Iwram_ClearWords(inside, size);
@@ -311,14 +311,14 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
 
     // Upload the pixels to the sprite's tiles in VRAM.
     // The tile number counts 32-byte tiles.
-    tile = VramCache_Load(obj->slot, size, 0);
+    tile = VramCache_Load(animation->slot, size, 0);
     {
       void *vram = (void *)(OBJ_VRAM0 + (tile << 5));
-      ((SpriteUploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(pixels, obj->width,
-                                                            obj->height, vram);
+      ((SpriteUploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(
+          pixels, animation->width, animation->height, vram);
     }
-    obj->image.tile = tile;
-    obj->dirty = 0;
+    animation->image.tile = tile;
+    animation->dirty = 0;
     system->used += size;
     MemFree(pixels);
   }

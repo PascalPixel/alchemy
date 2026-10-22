@@ -16,9 +16,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s32 scale;
   s32 remaining;
   struct FieldActor *djinni;
-  struct FieldFxScene *effectScene;
+  struct FieldFxScene *scene;
   struct FieldActor *leader;
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   s8 *slotState;
 
   djinni = Object_GetById(djinniId);
@@ -27,7 +27,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectScene = gEffectWork;
+  scene = gEffectWork;
   // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201090);
@@ -58,20 +58,20 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One spark a frame into each of the 24 effect slots.
-  slot = effectScene->slots;
+  effect = scene->effects;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, FieldEffect_UpdatePhasedRadialParticle);
-    EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    EffectSlot_SetCallback(effect, FieldEffect_UpdatePhasedRadialParticle);
+    EffectSlot_SetObjectMode(effect, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
-    slot->scaleY = scale;
-    slot->scaleX = scale;
+    effect->scaleY = scale;
+    effect->scaleX = scale;
     remaining--;
     WaitFrames(1);
-    slot++;
+    effect++;
   } while (remaining >= 0);
 
   WaitFrames(60);
@@ -87,7 +87,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     WaitFrames(20);
     nextState = MARS_SPARK_STOPPING;
-    slotState = &effectScene->slots[0].state;
+    slotState = &scene->effects[0].state;
     remaining = 23;
     do {
       if (slotState[5] != 0)
@@ -108,9 +108,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   {
     s32 nextState;
 
-    slotState = (s8 *)effectScene;
+    slotState = (s8 *)scene;
     nextState = MARS_SPARK_LEAVING;
-    slotState += offsetof(struct FieldFxScene, slots) +
+    slotState += offsetof(struct FieldFxScene, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
     do {
@@ -124,8 +124,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // The leader stops pulsing. Storing NULL through the cleared slot cursor,
   // as the bytes do: a plain NULL store differs by 9.
   WaitFrames(10);
-  slot = NULL;
-  leader->update = (void *)slot;
+  effect = NULL;
+  leader->update = (void *)effect;
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   // Fade the palette back from the tint and free the effect slots.

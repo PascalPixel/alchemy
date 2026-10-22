@@ -412,7 +412,7 @@ static void AltmillerCave_DarkenToLevel5(void) {
 /// dark rooms evenly.
 static void AltmillerCave_InitializeDarkness(void) {
   u8 **workCells = (u8 **)&gEventWork;
-  struct DisplayTransitionState *transition;
+  struct DisplayTransitionState *state;
 
   {
     struct EventWork *work = (struct EventWork *)*workCells;
@@ -424,23 +424,23 @@ static void AltmillerCave_InitializeDarkness(void) {
   // UB: the fourth following pointer cell lies past scalar gEventWork.
   // Its named load adds eight bytes in the native EN trial (0x98 to 0xa0).
 #ifdef UBFIX
-  transition = gDisplayTransition;
+  state = gDisplayTransition;
 #else
-  transition = (struct DisplayTransitionState *)workCells[4];
+  state = (struct DisplayTransitionState *)workCells[4];
 #endif
   {
-    u16 *slot = &transition->value;
+    u16 *slot = &state->value;
     s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
     *slot = value;
   }
   if (Engine_GameFlagIsSet(FLAG_DARKNESS_BY_STEPS) != 0) {
     {
-      s16 *slot = &transition->mask;
+      s16 *slot = &state->mask;
       s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
       *slot = value;
     }
     {
-      s16 *slot = &transition->active;
+      s16 *slot = &state->active;
       s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WINOUT;
       *slot = value;
     }
@@ -448,12 +448,12 @@ static void AltmillerCave_InitializeDarkness(void) {
     return;
   }
   {
-    s16 *slot = &transition->mask;
+    s16 *slot = &state->mask;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WININ;
     *slot = value;
   }
   {
-    s16 *slot = &transition->active;
+    s16 *slot = &state->active;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
     *slot = value;
   }
@@ -551,7 +551,7 @@ static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
 /// Frost's first phase on AltmillerCaveSquall's puddle: notes whether its place
 /// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
-  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
+  struct FieldFxScene *scene = (struct FieldFxScene *)gEffectWork;
   struct FieldActor *target = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
@@ -560,18 +560,18 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
   position.z = target->z.fixed;
 
   if (FieldObject_CheckMovementCollision(target, &position) > 0) {
-    effect->childMode = 1;
+    scene->childMode = 1;
   }
 }
 
 /// Frost on AltmillerCaveSquall's puddle, unless blocked: it freezes and its
 /// cell takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
-  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
+  struct FieldFxScene *scene = (struct FieldFxScene *)gEffectWork;
   struct FieldActor *puddle = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
-  blocked = effect->childMode;
+  blocked = scene->childMode;
   if (blocked == 0) {
     Map_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     if (puddle != 0) {
@@ -899,7 +899,7 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
 /// and he invites the party to Colosso's finals; Garet asks whether they
 /// should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
-  struct DisplayTransitionState *display;
+  struct DisplayTransitionState *state;
   struct FieldActor *actor;
   struct FieldActor *leader;
   s32 i;
@@ -1209,9 +1209,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0);
   // The cave brightens as two men from Tolbi arrive: "Babi!" The light
   // widens to fill the screen and BG1 fades out.
-  display = gDisplayTransition;
+  state = gDisplayTransition;
   {
-    u16 *slot = &display->value;
+    u16 *slot = &state->value;
     s32 value = ALTMILLER_CAVE_LIGHT_FULL;
 
     *slot = value;
@@ -1226,7 +1226,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_TaskWait(7);
   }
   {
-    u16 *slot = (u16 *)&display->active;
+    u16 *slot = (u16 *)&state->active;
     s32 value = ALTMILLER_CAVE_BRIGHTENING_WINOUT;
 
     *slot = value;
@@ -1539,13 +1539,13 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_TaskWait(7);
   }
   {
-    u16 *slot = &display->value;
+    u16 *slot = &state->value;
     s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
 
     *slot = value;
   }
   {
-    u16 *slot = (u16 *)&display->active;
+    u16 *slot = (u16 *)&state->active;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
 
     *slot = value;
@@ -2245,7 +2245,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   position.y = PIXELS(24);
   position.z = PIXELS(144);
   Camera_WorldToScreen(&position);
-  fragment = work->slots;
+  fragment = work->effects;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
     s32 scale;
 
@@ -2269,7 +2269,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   {
     s32 mode = 2;
     // Walk the state bytes within the complete slot array representation.
-    u8 *stateCursor = (u8 *)&work->slots + offsetof(struct EffectSlot, state);
+    u8 *stateCursor = (u8 *)&work->effects + offsetof(struct EffectSlot, state);
 
     for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
       if (((s8 *)stateCursor)[offsetof(struct EffectSlot, active) -

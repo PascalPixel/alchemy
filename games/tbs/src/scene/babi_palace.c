@@ -1146,8 +1146,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   struct FieldActor *actor;
   s32 step;
   s32 pick;
-  struct EventWork *event;
-  struct DisplayTransitionState *work;
+  struct EventWork *work;
+  struct DisplayTransitionState *state;
 
   Event_Start();
   Event_SetMessage(MsgTolbiCallsName);
@@ -1160,39 +1160,39 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_EAST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
-  event = gEventWork;
-  event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  event->transitionFrames = 12;
+  work = gEventWork;
+  work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transitionFrames = 12;
   Task_Wait(1);
   DisplayTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
   // UB: HEAP_SLOT_TRANSITION lies past scalar gEventWork. Its named load adds
   // four bytes in the native English trial (0x82c to 0x830).
 #ifdef UBFIX
-  work = gDisplayTransition;
+  state = gDisplayTransition;
 #else
-  work = (struct DisplayTransitionState *)((u8 **)&gEventWork)[4];
+  state = (struct DisplayTransitionState *)((u8 **)&gEventWork)[4];
 #endif
-  work->value = 0;
-  work->mask = 0x1f1f;
-  work->active = 1;
+  state->value = 0;
+  state->mask = 0x1f1f;
+  state->active = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   for (step = 1; step <= 5; step++) {
     Task_Wait(3);
-    work->value = step;
+    state->value = step;
   }
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(30);
   for (step = 5; step <= 31; step++) {
     Task_Wait(3);
-    work->value = step;
+    state->value = step;
   }
-  work->active = 31;
-  event = gEventWork;
-  event->startTransition =
+  state->active = 31;
+  work = gEventWork;
+  work->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  event->transitionFrames = 24;
+  work->transitionFrames = 24;
   Event_Wait(20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 40);

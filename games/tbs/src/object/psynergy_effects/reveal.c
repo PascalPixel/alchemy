@@ -78,20 +78,20 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// (FieldEffect_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
 /// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunReveal(void) {
-  struct FieldWork *field;
-  struct DisplayTransitionState *transition;
+  struct FieldWork *work;
+  struct DisplayTransitionState *state;
   struct FieldActor *target;
   s32 eventTarget;
   void *event;
   s32 frame;
 
-  field = WORK_SLOT(HEAP_SLOT_EVENT);
+  work = WORK_SLOT(HEAP_SLOT_EVENT);
   ObjectDispatch_ApplyValueToKind200Children(6);
   DisplayTransition_InitializeBattleEffectState(8);
-  transition = WORK_SLOT(HEAP_SLOT_TRANSITION);
+  state = WORK_SLOT(HEAP_SLOT_TRANSITION);
   target = ObjectTable_Get(gGameState.selectedActor);
-  transition->centreX = target->x.fixed;
-  transition->centreY = target->z.fixed - target->y.fixed;
+  state->centreX = target->x.fixed;
+  state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
   // turns grey (PALETTE_TRANSFORM_GREY, 0x10001) in one frame.
   ColorBuffer_SetSource(0x10000, 0);
@@ -99,7 +99,7 @@ void FieldEffect_RunReveal(void) {
   ColorBuffer_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
-  field->revealActive = 0;
+  work->revealActive = 0;
 #endif
   WaitFrames(1);
   event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
@@ -110,16 +110,16 @@ void FieldEffect_RunReveal(void) {
 
   // Record the centre (in pixels) and the time in the event work, and put
   // markers nearby.
-  field->revealActive = 1;
-  field->revealCenterX = transition->centreX / 0x10000;
-  field->revealCenterY = transition->centreY / 0x10000;
-  field->revealFrames = 600;
-  field->effectTimerRunning = 1;
+  work->revealActive = 1;
+  work->revealCenterX = state->centreX / 0x10000;
+  work->revealCenterY = state->centreY / 0x10000;
+  work->revealFrames = 600;
+  work->effectTimerRunning = 1;
   FieldEffect_SpawnNearbyMarkers();
   frame = 0;
   do {
     WaitFrames(1);
-    transition->value = frame;
+    state->value = frame;
     frame++;
   } while (frame <= 18);
   Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);

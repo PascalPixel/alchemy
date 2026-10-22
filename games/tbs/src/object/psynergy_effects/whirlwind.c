@@ -31,10 +31,11 @@ struct WhirlwindOrbit {
   u8 unk2c[28];
   s32 gravity; ///< vertical deceleration, in 16.16 pixels per frame squared
   u8 unk4c[24];
-  u16 timer;                                 ///< frames so far
-  s16 pause;                                 ///< frames left of a sharp turn
-  struct WhirlwindOrbit *anchor;             ///< orb at the centre of the orbit
-  void (*update)(union FieldObject *object); ///< engine's per-frame callback
+  u16 timer;                     ///< frames so far
+  s16 pause;                     ///< frames left of a sharp turn
+  struct WhirlwindOrbit *anchor; ///< orb at the centre of the orbit
+  void (*update)(
+      union FieldObject *fieldObject); ///< engine's per-frame callback
 };
 
 /// The shared effect-spawning source, at its place in the ROM.
@@ -45,8 +46,8 @@ struct WhirlwindOrbit {
 /// Per-frame update of a particle: moves by its velocity, slowing its x and z
 /// velocity a little, and changes its scale and spin. Assigned by
 /// FieldEffect_SpawnRadialParticleRing for Carry's landing particles.
-void FieldEffect_UpdateParticleMotionAndScale(union FieldObject *object) {
-  struct FieldEffect *effect = &object->effect;
+void FieldEffect_UpdateParticleMotionAndScale(union FieldObject *fieldObject) {
+  struct FieldEffect *effect = &fieldObject->effect;
 
   effect->x += effect->velocity.x;
   effect->y += effect->velocity.y;
@@ -157,15 +158,16 @@ void FieldEffect_CircleAnchor(union FieldObject *fieldObject) {
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
 void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
-  struct MotionObject *obj = (struct MotionObject *)fieldObject;
+  struct MotionObject *object = (struct MotionObject *)fieldObject;
   s32 scale;
 
-  scale = obj->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
-  obj->scaleY = scale;
-  obj->scaleX = scale;
+  scale = object->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
+  object->scaleY = scale;
+  object->scaleX = scale;
   if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
-    Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)obj, 0, 0, 0);
-    ((struct ScriptMotionObject *)obj)->hook = 0;
+    Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)object, 0, 0,
+                                        0);
+    ((struct ScriptMotionObject *)object)->hook = 0;
   }
 }
 

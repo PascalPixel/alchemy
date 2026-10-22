@@ -15,7 +15,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
   struct FieldFxScene *scene;
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   s32 scale;
   s32 remainingParticles;
 
@@ -48,21 +48,21 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
   AudioCommand_PlayFar(SE_164);
-  slot = scene->slots;
+  effect = scene->effects;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
   do {
-    EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
-    EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    EffectSlot_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
+    EffectSlot_SetObjectMode(effect, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               (Random16() * 7) >> 16);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
-    slot->scaleY = scale;
-    slot->scaleX = scale;
+    effect->scaleY = scale;
+    effect->scaleX = scale;
     remainingParticles--;
     WaitFrames(1);
-    slot++;
+    effect++;
   } while (remainingParticles >= 0);
 
   // The leader turns to face south (0x4000) and plays animation 28.

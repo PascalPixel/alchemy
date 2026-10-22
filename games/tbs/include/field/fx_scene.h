@@ -24,7 +24,7 @@ struct ArcEffectObject {
   s16 step;                        ///< frames since the arcs started
   /// FieldActor.linkedObject; no code reads it through this view.
   struct FieldActor *linkedObject;
-  void (*callback)(union FieldObject *object); ///< run each frame
+  void (*callback)(union FieldObject *fieldObject); ///< run each frame
 };
 
 /// The work of a Psynergy effect scene: its caster and target, where it takes
@@ -60,7 +60,7 @@ struct FieldFxScene {
   /// The target's update hook and script, saved at the start and restored
   /// when Move or Carry lets it go.
   ///@{
-  void (*savedCallback)(union FieldObject *object);
+  void (*savedCallback)(union FieldObject *fieldObject);
   const s32 *savedScript;
   ///@}
   u8 unk40[4];     ///< not named by TBS code
@@ -75,7 +75,7 @@ struct FieldFxScene {
   s32 savedShakeY;
   s32 savedShakeDecay;
   ///@}
-  struct EffectSlot slots[24];
+  struct EffectSlot effects[24];
   u8 unk718[2];    ///< not named by TBS code
   s16 arcTileSlot; ///< resource entry of Avoid's falling arcs' tiles
   s8 messageMode;  ///< the announcement's box mode: 1, a scene adds 8
@@ -88,7 +88,7 @@ STATIC_ASSERT(offsetof(struct FieldFxScene, action) == 0x1c);
 STATIC_ASSERT(offsetof(struct FieldFxScene, savedCallback) == 0x38);
 STATIC_ASSERT(offsetof(struct FieldFxScene, tileSlot) == 0x46);
 STATIC_ASSERT(offsetof(struct FieldFxScene, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct FieldFxScene, slots) == 0x58);
+STATIC_ASSERT(offsetof(struct FieldFxScene, effects) == 0x58);
 STATIC_ASSERT(offsetof(struct FieldFxScene, arcTileSlot) == 0x71a);
 STATIC_ASSERT(offsetof(struct FieldFxScene, messageMode) == 0x71c);
 

@@ -32,15 +32,15 @@
 /// colour 1 and fill colour 4. His position and facing are kept for
 /// Colosso_RestoreWarrior.
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
-  struct ObjectSystemWork *objects;
+  struct ObjectSystemWork *system;
   struct FieldActor *actor;
   struct AnimationObject *sprite;
   s32 i;
 
-  objects = gMenuCtrlWork;
+  system = gMenuCtrlWork;
   actor = Object_GetById(id);
-  objects->edge = 1;
-  objects->fill = 4;
+  system->edge = 1;
+  system->fill = 4;
   gColosso_WarriorStartX = actor->x.fixed;
   gColosso_WarriorStartZ = actor->z.fixed;
   sprite = (struct AnimationObject *)actor->sprite;
@@ -84,12 +84,12 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 /// position and facing with his motion stopped, and the outline colours are
 /// the field's again (edge 15, fill 0).
 void Colosso_RestoreWarrior(s32 id) {
-  struct ObjectSystemWork *objects;
+  struct ObjectSystemWork *system;
   struct FieldActor *actor;
   s32 zero;
   u8 *control;
 
-  objects = gMenuCtrlWork;
+  system = gMenuCtrlWork;
   actor = Object_GetById(id);
   if (gGameState.movementMode == 1) {
     gGameState.movementMode = 0;
@@ -100,12 +100,12 @@ void Colosso_RestoreWarrior(s32 id) {
     Engine_EventWait(30);
   }
   zero = 0;
-  // Stored as bytes through a pointer, the plain-C form of objects->fill and
-  // objects->edge this site matches with (scene/README.md): a struct-field
+  // Stored as bytes through a pointer, the plain-C form of system->fill and
+  // system->edge this site matches with (scene/README.md): a struct-field
   // store at a varying address may pass the load of gColosso_WarriorStartX
   // (fixed_scalar_and_varying_struct_p), and a byte store is no struct
   // reference.
-  control = (u8 *)objects;
+  control = (u8 *)system;
   control[offsetof(struct ObjectSystemWork, fill)] = zero;
   control[offsetof(struct ObjectSystemWork, edge)] = 15;
   actor->x.fixed = gColosso_WarriorStartX;

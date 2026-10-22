@@ -273,10 +273,10 @@ struct DisplayRegisters {
 /// storm also sets BattleWork.background to the aerie's storm backdrop.
 void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
-  struct BattlePresentationWork presentation;
+  struct BattlePresentationWork work;
   u16 unitIds[14];
   u16 visibleUnitIds[14];
-  struct BattleBackgroundView *background;
+  struct BattleBackgroundView *view;
   s32 *timer;
   u16 *tilemap;
   s32 tile;
@@ -284,12 +284,12 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   u32 column;
   s32 count;
   s32 id;
-  struct BattleObj *object;
+  struct BattleObj *battleObject;
   struct BattleWork *battle;
   u16 *visibleUnits;
   s32 visibleCount;
 
-  background = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   timer = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
   if (encounterId != TRANSITION_STORM_FORMATION) {
     // The curtain: its seven edge tiles, and the display off while BG1 is
@@ -320,14 +320,14 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     }
     // Tile 128 solid colour 3 and tile 136 clear; BG1 shows the curtain
     // from screen block 12 behind BG0, whose priority is raised by 2.
-    background->secondMode = BATTLE_BACKGROUND_FLAT;
-    background->mode = BATTLE_BACKGROUND_FLAT;
-    background->busy = 0;
+    view->secondMode = BATTLE_BACKGROUND_FLAT;
+    view->mode = BATTLE_BACKGROUND_FLAT;
+    view->busy = 0;
     Dma_Fill32Cell(fill, 0x33333333, CURTAIN_TILE(0), 0x20);
     Dma_Fill32Cell(fill, 0, CURTAIN_TILE(8), 0x20);
     REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
     REG_BG0CNT |= BGCNT_PRIORITY(2);
-    background->mode = BATTLE_BACKGROUND_PLANE;
+    view->mode = BATTLE_BACKGROUND_PLANE;
     // A closed curtain: solid rows 0 to 20, clear below.
     tilemap = (u16 *)BG_SCREEN_BLOCK(12);
     for (index = 0; index <= 31; index++) {
@@ -388,8 +388,8 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     // The storm: every unit but the Fusion Dragon drawn at 0.7
     // scale (16.16), the display blank but for the windows.
     battle = WORK_SLOT(HEAP_SLOT_BATTLE);
-    background->secondMode = BATTLE_BACKGROUND_FLAT;
-    background->busy = 0;
+    view->secondMode = BATTLE_BACKGROUND_FLAT;
+    view->busy = 0;
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)unitIds);
     for (index = 0; index != count; index++) {
       // The list's index taken as a unit id: 0 to 7, then 128 onward.
@@ -399,9 +399,9 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       id = index + 120;
       if ((s32)index <= ALLY_MAX)
         id = index;
-      object = BattleObject_Get(id);
+      battleObject = BattleObject_Get(id);
       if (Unit_GetFar(id)->classId != ENEMY_FUSION_DRAGON)
-        object->scale = 0xb333;
+        battleObject->scale = 0xb333;
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |
@@ -413,12 +413,11 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
 
       // The enemies alone take part in the shattering opening.
       battle->background = (u32)&ResourceId_VenusLighthouseAerieStormBackdrop;
-      presentation.effect.count = BattleParty_ListActorIds(
-          BATTLE_SIDE_ENEMIES, presentation.effect.actors);
-      presentation.effect.actors[presentation.effect.count] =
-          BATTLE_UNIT_LIST_END;
-      BattleObject_SpawnObjectsForList(presentation.effect.actors, 0);
-      BattleEffect_RunShatteringOpeningFar(&presentation.effect);
+      work.effect.count =
+          BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, work.effect.actors);
+      work.effect.actors[work.effect.count] = BATTLE_UNIT_LIST_END;
+      BattleObject_SpawnObjectsForList(work.effect.actors, 0);
+      BattleEffect_RunShatteringOpeningFar(&work.effect);
       BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
     }

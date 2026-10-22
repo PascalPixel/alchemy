@@ -209,7 +209,7 @@ void Map_UpdateWorldMapMarkers(void) {
   s32 nearestName;
   s32 height;
   s32 width;
-  struct FieldPosition pos;
+  struct FieldPosition position;
   struct WorldMapWork *work;
   struct FieldActor *placeActor;
   s32 cursorY;
@@ -266,20 +266,20 @@ void Map_UpdateWorldMapMarkers(void) {
     // The d-pad: faster the longer it is held.
     angle = gWorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
     if (angle != 0xffff) {
-      pos.x = work->cursorX.fixed;
-      pos.y = 0;
-      pos.z = work->cursorY.fixed;
-      Vector_AddPolarOffset(work->cursorSpeed, angle, &pos);
-      if (pos.x < PIXELS(WORLD_MAP_CURSOR_MIN_X))
-        pos.x = PIXELS(WORLD_MAP_CURSOR_MIN_X);
-      if (pos.x > PIXELS(WORLD_MAP_CURSOR_MAX_X))
-        pos.x = PIXELS(WORLD_MAP_CURSOR_MAX_X);
-      if (pos.z < 0)
-        pos.z = 0;
-      if (pos.z > PIXELS(WORLD_MAP_CURSOR_MAX_Y))
-        pos.z = PIXELS(WORLD_MAP_CURSOR_MAX_Y);
-      work->cursorX.fixed = pos.x;
-      work->cursorY.fixed = pos.z;
+      position.x = work->cursorX.fixed;
+      position.y = 0;
+      position.z = work->cursorY.fixed;
+      Vector_AddPolarOffset(work->cursorSpeed, angle, &position);
+      if (position.x < PIXELS(WORLD_MAP_CURSOR_MIN_X))
+        position.x = PIXELS(WORLD_MAP_CURSOR_MIN_X);
+      if (position.x > PIXELS(WORLD_MAP_CURSOR_MAX_X))
+        position.x = PIXELS(WORLD_MAP_CURSOR_MAX_X);
+      if (position.z < 0)
+        position.z = 0;
+      if (position.z > PIXELS(WORLD_MAP_CURSOR_MAX_Y))
+        position.z = PIXELS(WORLD_MAP_CURSOR_MAX_Y);
+      work->cursorX.fixed = position.x;
+      work->cursorY.fixed = position.z;
       if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
         work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
     } else {
@@ -365,12 +365,12 @@ void Map_UpdateWorldMapMarkers(void) {
         if (work->cursorSpeed < PIXELS(2))
           work->cursorSpeed = PIXELS(2);
         angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
-        pos.x = work->cursorX.fixed;
-        pos.y = 0;
-        pos.z = work->cursorY.fixed;
-        Vector_AddPolarOffset(work->cursorSpeed, (u16)angle, &pos);
-        work->cursorX.fixed = pos.x;
-        work->cursorY.fixed = pos.z;
+        position.x = work->cursorX.fixed;
+        position.y = 0;
+        position.z = work->cursorY.fixed;
+        Vector_AddPolarOffset(work->cursorSpeed, (u16)angle, &position);
+        work->cursorX.fixed = position.x;
+        work->cursorY.fixed = position.z;
         if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
           work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
       }
@@ -436,26 +436,26 @@ void Map_UpdateWorldMapMarkers(void) {
 /// task stops before map graphics are restored, so neither uses the other's
 /// scratch storage. The picture argument is unused; the resource is fixed.
 void Map_ShowWorldMap(s32 picture) {
-  struct MapState *map = WORK_SLOT(HEAP_SLOT_MAP);
-  struct FieldWork *field =
+  struct MapState *mapState = WORK_SLOT(HEAP_SLOT_MAP);
+  struct FieldWork *work =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
   s32 resource = (s32)&ResourceId_WorldMapPicture;
   struct MapAnimation *layer;
-  u8 savedFlags[sizeof(map->anim) / sizeof(map->anim[0])];
+  u8 savedFlags[sizeof(mapState->anim) / sizeof(mapState->anim[0])];
   s32 i;
   u8 *graphics;
   s32 savedStatus;
   s16 blend;
 
-  if (field->mode != MODE_WORLD_MAP)
+  if (work->mode != MODE_WORLD_MAP)
     return;
-  field->camera->movementState = 1;
-  savedStatus = field->transitionFrames;
-  field->transitionFrames = 6;
+  work->camera->movementState = 1;
+  savedStatus = work->transitionFrames;
+  work->transitionFrames = 6;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  layer = map->anim;
+  layer = mapState->anim;
   for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
     savedFlags[i] = layer->paused;
     layer->paused = 1;
@@ -493,7 +493,7 @@ void Map_ShowWorldMap(s32 picture) {
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Map_LoadAreaGraphicsFar();
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
-  layer = map->anim;
+  layer = mapState->anim;
   for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
     layer->paused = savedFlags[i];
     layer++;
@@ -501,8 +501,8 @@ void Map_ShowWorldMap(s32 picture) {
   menu->suspended = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  field->transitionFrames = savedStatus;
-  field->camera->movementState = 0;
+  work->transitionFrames = savedStatus;
+  work->camera->movementState = 0;
 }
 
 /// On the world map, shows only the scene actors within 320 pixels sideways,
@@ -550,10 +550,10 @@ void Field_UpdateObjectVisibilityBounds(void) {
 /// times as far (FieldEffect_ScheduleRatioTransition). Field_RunScene runs it
 /// for event -889; the overlay tasks are suspended meanwhile.
 void FieldEffect_RunVisibilityTransition(void) {
-  struct FieldWork *field =
+  struct FieldWork *work =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
 
-  if (field->mode == MODE_WORLD_MAP) {
+  if (work->mode == MODE_WORLD_MAP) {
     Scheduler_SuspendOverlayTasks();
     Field_UpdateObjectVisibilityBounds();
     Leader_StopMoving();

@@ -200,10 +200,10 @@ enum { MAP_OBJECT_PASSAGE = 100 };
 /// priority off. The first worker from Xian at the Alpine Crossing runs it
 /// from his placement.
 static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
-  union FieldObject *object = (union FieldObject *)interpreter;
-  object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->actor.sprite->image.priority = 3;
-  object->actor.sprite->shadow.priority = 3;
+  union FieldObject *fieldObject = (union FieldObject *)interpreter;
+  fieldObject->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  fieldObject->actor.sprite->image.priority = 3;
+  fieldObject->actor.sprite->shadow.priority = 3;
   return 0;
 }
 
@@ -212,11 +212,11 @@ static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
 // UB: update hooks return void. Plain void removes the native zero result
 // and changes its return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void Leader_FaceFeizhi(union FieldObject *object) {
+static void Leader_FaceFeizhi(union FieldObject *fieldObject) {
 #else
-static s32 Leader_FaceFeizhi(union FieldObject *object) {
+static s32 Leader_FaceFeizhi(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *leader = (struct FieldActor *)object;
+  struct FieldActor *leader = (struct FieldActor *)fieldObject;
   struct FieldActor *feizhi;
 
   feizhi = Object_GetById(ACTOR_FEIZHI);
@@ -832,11 +832,11 @@ static void AlpineCrossing_HidePath(void) {
 // UB: this update hook has no result. Plain void changes the native return
 // sequence from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
 #ifdef UBFIX
-static void Pillar_SortAgainstLeader(union FieldObject *object) {
+static void Pillar_SortAgainstLeader(union FieldObject *fieldObject) {
 #else
-static s32 Pillar_SortAgainstLeader(union FieldObject *object) {
+static s32 Pillar_SortAgainstLeader(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *pillar = (struct FieldActor *)object;
+  struct FieldActor *pillar = (struct FieldActor *)fieldObject;
   if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {

@@ -591,7 +591,7 @@ static void Houses_TalkToInnkeeper(void) {
 /// in two halves by hand; the others play their opening pictures.
 static void Village_EnterDoor(void) {
   u32 actorId;
-  struct EventWork *event;
+  struct EventWork *work;
   struct FieldActor *actor;
   s32 doorIndex;
   u8 *doorBytes;
@@ -601,7 +601,7 @@ static void Village_EnterDoor(void) {
   s32 row;
   s32 rightColumn;
 
-  event = gEventWork;
+  work = gEventWork;
   Engine_EventStart();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
     actor = Object_GetById(actorId);
@@ -614,7 +614,7 @@ static void Village_EnterDoor(void) {
   // number by shifts; indexing the structs loads the fields differently.
   doorBytes = (u8 *)gAltinVillage_Doors;
   doorIndex =
-      ((*(u16 *)&event->touchedTrigger - FIRST_DOOR_TRIGGER) << 16) >> 16;
+      ((*(u16 *)&work->touchedTrigger - FIRST_DOOR_TRIGGER) << 16) >> 16;
   doorByteOffset = doorIndex << 3;
   coordinatesByteOffset = doorByteOffset + 4;
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
@@ -658,7 +658,7 @@ static void Village_EnterDoor(void) {
     }
   }
   Engine_EventWait(10);
-  Engine_EventRequestExit(event->touchedTrigger);
+  Engine_EventRequestExit(work->touchedTrigger);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();

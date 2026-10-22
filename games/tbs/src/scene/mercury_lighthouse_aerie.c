@@ -1518,8 +1518,8 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
 
 /// Saturos and Alex warp out in a column of sparkles and vanish.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
   struct FieldActor *left;
   struct FieldActor *right;
   u32 i;
@@ -1533,12 +1533,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   Engine_ActorSetChildValue(ACTOR_ALEX, 0x100);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 0);
-  effectOptions = &options;
-  effectOptions->priority = 1;
-  effectOptions->palette = 5;
-  effectOptions->type = SPRITE_PARTICLE;
-  effectOptions->startScaleX = 2 * Q16_ONE / 5;
-  effectOptions->startScaleY = 3 * Q16_ONE;
+  options = &optionsStorage;
+  options->priority = 1;
+  options->palette = 5;
+  options->type = SPRITE_PARTICLE;
+  options->startScaleX = 2 * Q16_ONE / 5;
+  options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
     Engine_EventWait(1);
     if (i & 1) {
@@ -1553,7 +1553,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
                         left->z.fixed, 0, PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        effectOptions);
+                        options);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
@@ -1566,7 +1566,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
                         right->z.fixed, 0, PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        effectOptions);
+                        options);
     }
   }
   Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
@@ -1575,8 +1575,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
 
 /// Saturos and Alex warp in where they have been placed.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
   struct FieldActor *left;
   struct FieldActor *right;
   u32 i;
@@ -1588,12 +1588,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   Engine_AudioPlayCue(SE_190);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 0);
-  effectOptions = &options;
-  effectOptions->priority = 1;
-  effectOptions->palette = 5;
-  effectOptions->type = SPRITE_PARTICLE;
-  effectOptions->startScaleX = 2 * Q16_ONE / 5;
-  effectOptions->startScaleY = 3 * Q16_ONE;
+  options = &optionsStorage;
+  options->priority = 1;
+  options->palette = 5;
+  options->type = SPRITE_PARTICLE;
+  options->startScaleX = 2 * Q16_ONE / 5;
+  options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
     Engine_EventWait(1);
     if (i & 1) {
@@ -1608,7 +1608,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
                         left->z.fixed, 0, -PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        effectOptions);
+                        options);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
@@ -1621,7 +1621,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
                         right->z.fixed, 0, -PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        effectOptions);
+                        options);
     }
     if (i == 20) {
       Actor_SetChildValue(ACTOR_SATUROS, 0x100);

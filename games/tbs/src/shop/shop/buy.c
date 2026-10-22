@@ -253,7 +253,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
   s32 zero;
   s32 highlightFrame;
   s16 itemId;
-  struct ItemDefinition *definition;
+  struct ItemDefinition *item;
   struct RenderOutput *icon;
 
   shop = gMenuWork;
@@ -286,7 +286,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
            (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
-        definition = Item_GetDirectFar(itemId);
+        item = Item_GetDirectFar(itemId);
         // Depth slots: the items 252, the chosen one 253, the prices 251
         icon =
             RenderOutput_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
@@ -297,7 +297,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
           icon->animStep = highlightFrame;
           icon->sentinel = 253;
         }
-        icon = Shop_CreatePriceSprite(definition->price, window, priceX, 0);
+        icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
         icon->sentinel = 251;
       }
     }
@@ -744,7 +744,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
-  struct ItemDefinition *definition = Item_GetDirectFar(itemId);
+  struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedSlot;
   struct UiWindow *itemWindow;
 
@@ -754,7 +754,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (Item_CanOwnerEquip(unitId, itemId) == 0)
     return 0;
 
-  replacedSlot = Inventory_FindEquippedFar(unitId, definition->type);
+  replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   if (replacedSlot != -1) {
     struct ItemDefinition *oldInfo =
         Item_GetDirectFar(unit->inventory[replacedSlot]);
@@ -773,7 +773,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (itemWindow != 0)
     Shop_DrawUnitGrid(itemWindow, unitId);
 
-  if (definition->flags & ITEM_CURSED) {
+  if (item->flags & ITEM_CURSED) {
     AudioCommand_PlayFar(SE_103);
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);

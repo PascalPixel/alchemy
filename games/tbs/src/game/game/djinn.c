@@ -81,7 +81,7 @@ s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinnIndex) {
 /// can be set, and by battle to tell which Djinn can be unleashed.
 s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
   struct BattleUnit *unit = Unit_Get(owner);
-  struct DjinnRecoveryList *recoveryList;
+  struct DjinnRecoveryList *list;
   s32 entryIndex;
   s32 recoveryTurns;
 
@@ -96,19 +96,19 @@ s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
   if ((unit->djinnActive[element] & (1 << djinnIndex)) != 0)
     return 0;
 
-  recoveryList = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                       (owner < 0 || owner > PIERS)))
-                      ->list;
-  for (entryIndex = 0; entryIndex < recoveryList->count; entryIndex++) {
-    if (element == recoveryList->entries[entryIndex].element &&
-        djinnIndex == recoveryList->entries[entryIndex].index)
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
+               (owner < 0 || owner > PIERS)))
+              ->list;
+  for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
+    if (element == list->entries[entryIndex].element &&
+        djinnIndex == list->entries[entryIndex].index)
       break;
   }
   // Ready when not listed, on standby (DJINN_RECOVERY_AFTER_BATTLE) or
   // recovered (0); not while recovering or held by a summon
   // (DJINN_RECOVERY_SUMMONED).
-  if (entryIndex == recoveryList->count ||
-      ((recoveryTurns = recoveryList->entries[entryIndex].turns) <= 0 &&
+  if (entryIndex == list->count ||
+      ((recoveryTurns = list->entries[entryIndex].turns) <= 0 &&
        recoveryTurns != DJINN_RECOVERY_SUMMONED))
     return 1;
   return 0;
@@ -159,23 +159,23 @@ u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinnIndex) {
 /// gap. Returns 1 when it was there. Called when a Djinni is set again, by the
 /// Djinn menu and by battle's recovery.
 s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
-  struct DjinnRecoveryList *recoveryList;
+  struct DjinnRecoveryList *list;
   s32 removed = 0;
   s32 entryIndex;
 
-  recoveryList = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                       (owner < 0 || owner > PIERS)))
-                      ->list;
-  for (entryIndex = 0; entryIndex < recoveryList->count; entryIndex++) {
-    if (element == recoveryList->entries[entryIndex].element &&
-        djinnIndex == recoveryList->entries[entryIndex].index) {
-      recoveryList->count--;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
+               (owner < 0 || owner > PIERS)))
+              ->list;
+  for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
+    if (element == list->entries[entryIndex].element &&
+        djinnIndex == list->entries[entryIndex].index) {
+      list->count--;
       removed = 1;
       break;
     }
   }
-  for (; entryIndex < recoveryList->count; entryIndex++) {
-    recoveryList->entries[entryIndex] = recoveryList->entries[entryIndex + 1];
+  for (; entryIndex < list->count; entryIndex++) {
+    list->entries[entryIndex] = list->entries[entryIndex + 1];
   }
   return removed;
 }
@@ -186,20 +186,19 @@ s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
 /// capacity. Called when a Djinni joins, by the Djinn menu's standby command,
 /// by battle and by the scene where Flint joins.
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
-  struct DjinnRecoveryList *recoveryList;
+  struct DjinnRecoveryList *list;
   s32 entryIndex;
 
   DjinnRecovery_Remove(owner, element, djinnIndex);
-  recoveryList =
-      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(owner > PIERS))
-           ->list;
-  entryIndex = recoveryList->count;
-  recoveryList->entries[entryIndex].element = element;
-  recoveryList->entries[entryIndex].index = djinnIndex;
-  recoveryList->entries[entryIndex].unitId = owner;
-  recoveryList->entries[entryIndex].turns = DJINN_RECOVERY_AFTER_BATTLE;
-  recoveryList->count = entryIndex + 1;
-  return (u32 *)&recoveryList->count;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(owner > PIERS))
+              ->list;
+  entryIndex = list->count;
+  list->entries[entryIndex].element = element;
+  list->entries[entryIndex].index = djinnIndex;
+  list->entries[entryIndex].unitId = owner;
+  list->entries[entryIndex].turns = DJINN_RECOVERY_AFTER_BATTLE;
+  list->count = entryIndex + 1;
+  return (u32 *)&list->count;
 }
 
 /// Moves a Djinni from one unit to another, keeping it set or on standby.

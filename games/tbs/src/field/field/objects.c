@@ -122,9 +122,9 @@ void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
 /// (system/far_call/FIELD.S) is unnamed.
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
                                   s32 *screenPosition) {
-  struct MapScrollWork *mapWork = gMapWork[0];
+  struct MapScrollWork *map = gMapWork[0];
 #ifndef UBFIX
-  s32 *viewCoordinates = &mapWork->viewX;
+  s32 *viewCoordinates = &map->viewX;
 #endif
   s32 viewX;
   s32 viewZ;
@@ -134,8 +134,8 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
   // UB: viewY is a separate member, not a second element of viewX.
   // Direct member loads change the EN save set and load order (96 bytes each).
 #ifdef UBFIX
-  viewX = mapWork->viewX & 0xffff0000;
-  viewZ = mapWork->viewY & 0xffff0000;
+  viewX = map->viewX & 0xffff0000;
+  viewZ = map->viewY & 0xffff0000;
 #else
   viewX = viewCoordinates[0] & 0xffff0000;
   viewZ = viewCoordinates[1] & 0xffff0000;
@@ -170,17 +170,16 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 /// HEAP_SLOT_MENU_CONTROL for the ObjectSystemWork and HEAP_SLOT_OBJECT_POOL
 /// for the objects, and sets the sprite outline colours.
 void ObjectSystem_Initialize(s32 controlMode) {
-  struct ObjectSystemWork *objectSystem;
+  struct ObjectSystemWork *system;
   struct ObjectRuntime *objectPool;
   volatile u32 fill;
 
-  objectSystem =
-      Runtime_AllocateBlock(HEAP_SLOT_MENU_CONTROL, sizeof(*objectSystem));
+  system = Runtime_AllocateBlock(HEAP_SLOT_MENU_CONTROL, sizeof(*system));
   objectPool = Runtime_AllocateBlock(HEAP_SLOT_OBJECT_POOL,
                                      FIELD_OBJECT_COUNT * sizeof(*objectPool));
   ObjectSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, FIELD_OBJECT_COUNT * sizeof(*objectPool));
-  Dma_Fill32Cell(fill, 0, objectSystem, sizeof(*objectSystem));
+  Dma_Fill32Cell(fill, 0, system, sizeof(*system));
   // The scheduler runs higher orders first: the objects move (0xc8a) before
   // the camera follows them (0xc80).
   if (controlMode == MODE_BATTLE)
@@ -196,8 +195,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
     gIwram_Data2 = 0;
     gIwram_Data1 = 0;
   }
-  objectSystem->edge = 15;
-  objectSystem->fill = 0;
+  system->edge = 15;
+  system->fill = 0;
 }
 
 /// Unused: an empty function nothing calls.

@@ -666,13 +666,13 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *event = gEventWork;
+  struct EventWork *work = gEventWork;
 
   if (!FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
       gGameState.pausedObject != ACTOR_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
     Engine_GameFlagSet(PURSUER_AFTER_LEADER_FLAG);
-    event->raisedTrigger = TRIGGER_FIRST_CHASE;
+    work->raisedTrigger = TRIGGER_FIRST_CHASE;
   }
 }
 

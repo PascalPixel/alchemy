@@ -319,7 +319,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Jumps the leader to the requested destination when nothing blocks it there;
 /// returns 1 when it jumped. Only the editions before the first patch have it;
 /// the patched ones look ahead instead (Engine_LeaderCheckAhead).
-static s32 VaultInteriors_TryJumpTo(struct FieldPosition *pos) {
+static s32 VaultInteriors_TryJumpTo(struct FieldPosition *position) {
   struct FieldActor *leader;
   u8 *flags;
   u8 savedMotionFlags;
@@ -327,7 +327,7 @@ static s32 VaultInteriors_TryJumpTo(struct FieldPosition *pos) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   flags = &leader->motionFlags;
   savedMotionFlags = *flags;
-  if (FieldObject_CheckMovementCollision(leader, pos) == 0) {
+  if (FieldObject_CheckMovementCollision(leader, position) == 0) {
     Engine_EventStart();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
@@ -338,9 +338,9 @@ static s32 VaultInteriors_TryJumpTo(struct FieldPosition *pos) {
     leader->velocityY = PIXELS(4);
     *flags &= 0x7e;
     Engine_ActorSetSpriteFlags(leader, 0);
-    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
-                              ((union FieldCoordinate *)&pos->x)->part.pixel,
-                              ((union FieldCoordinate *)&pos->z)->part.pixel);
+    Engine_ActorMoveToAndWait(
+        ACTOR_PARTY_LEADER, ((union FieldCoordinate *)&position->x)->part.pixel,
+        ((union FieldCoordinate *)&position->z)->part.pixel);
     Object_SetMode(leader, 6);
     Engine_ActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     Engine_TaskWait(6);
@@ -363,7 +363,7 @@ static void Event_JumpAcrossRoofGap(void) {
   s32 z;
 #if !TBS_PATCH_1
   struct FieldPosition target;
-  struct FieldPosition *pos;
+  struct FieldPosition *position;
   struct FieldActor *leader;
 #endif
 
@@ -373,11 +373,11 @@ static void Event_JumpAcrossRoofGap(void) {
     Engine_LeaderCheckAhead();
 #else
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    pos = &target;
-    SET_POSITION(pos, leader->x.fixed,
+    position = &target;
+    SET_POSITION(position, leader->x.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->z.fixed - PIXELS(30));
-    VaultInteriors_TryJumpTo(pos);
+    VaultInteriors_TryJumpTo(position);
 #endif
     x = 42;
     z = 85;
@@ -388,11 +388,11 @@ static void Event_JumpAcrossRoofGap(void) {
     Engine_LeaderCheckAhead();
 #else
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    pos = &target;
-    SET_POSITION(pos, leader->x.fixed,
+    position = &target;
+    SET_POSITION(position, leader->x.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->z.fixed + PIXELS(30));
-    VaultInteriors_TryJumpTo(pos);
+    VaultInteriors_TryJumpTo(position);
 #endif
     x = 42;
     z = 85;
@@ -2678,9 +2678,9 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   struct FieldActor *actor;
   s32 aftermath;
   s32 rod;
-  struct EventWork *event;
+  struct EventWork *work;
 
-  event = gEventWork;
+  work = gEventWork;
   GameFlag_Set(FLAG_VAULT_THIEVES_JAILED);
   // With the screen still closed, the chests go back along the wall and the
   // thieves stand tied before the mayor.
@@ -3112,7 +3112,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   {
-    u16 *slot = &event->message;
+    u16 *slot = &work->message;
     s32 saved = (s16)*slot;
 
     if (VaultInteriors_GetIvanVenusDjinnCount() != 0) {

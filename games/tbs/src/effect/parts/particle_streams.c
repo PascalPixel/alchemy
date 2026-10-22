@@ -174,13 +174,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
    * 1 of 1532 instructions differ in tbs-en. */
   direction = mode;
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
-    struct MotionObject *object =
+    struct MotionObject *animation =
         GetBattleObjectSlotFar(work->effect->actor)->object;
 
     // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
     // 0.57 pixels a frame lost each frame.
-    object->velocityY = 0xa0000;
-    object->verticalMotionStrength = 0x91eb;
+    animation->velocityY = 0xa0000;
+    animation->verticalMotionStrength = 0x91eb;
     ObjectGroup_UpdateMembers(work->effect->actor, -1, POSE_LEAP, -1, 0);
     AudioCommand_PlayFar(SE_145);
     direction = work->effect->side == 1 ? mode : -1;
@@ -201,13 +201,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // spawned object.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct AnimationObject *object =
+      struct AnimationObject *animation =
           ResourceObject_CreateFar(483 + i * SPRITE_SECOND_PART);
 
-      work->objects[i] = object;
-      if (object != 0) {
-        object->flags = 0;
-        AnimationObject_SelectAnimationFar(object, 2);
+      work->objects[i] = animation;
+      if (animation != 0) {
+        animation->flags = 0;
+        AnimationObject_SelectAnimationFar(animation, 2);
         work->objects[i]->image.priority = 3;
       }
     }
@@ -310,7 +310,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     // One pointer serves both slot reads: two separate reads of gWorkSlot
     // make the function 0xe48 bytes long, where tbs-en's is 0xe38.
     void **slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
-    struct BattlePresentationTransition *presentation = slots[0];
+    struct BattlePresentationTransition *transition = slots[0];
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
@@ -322,7 +322,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
     Scheduler_AddOrUpdateCallback(BattleEffect_ArmPaletteHBlankDma, 0x4fe);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
-    presentation->active = 1;
+    transition->active = 1;
     work->frame = 0;
     frame = 0;
     do {
@@ -505,7 +505,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       work->frame++;
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
     WaitFrames(1);
-    presentation->active = 0;
+    transition->active = 0;
     Scheduler_RemoveCallback(BattleEffect_AdvanceBg2OnInterval);
     Scheduler_RemoveCallback(BattleEffect_ArmPaletteHBlankDma);
     Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);

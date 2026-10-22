@@ -193,15 +193,15 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
 /// Casting Reveal in Tret Tree: the window transition and BG1's blend over the
 /// rest of the screen are set again, as when the scene opened.
 static void Event_CastReveal(void) {
-  struct DisplayTransitionState *transition;
+  struct DisplayTransitionState *state;
 
   DisplayTransition_InitializeBattleEffectState(9);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  transition = gDisplayTransition;
-  TretTreeBranch_SetRevealWindow(transition);
+  state = gDisplayTransition;
+  TretTreeBranch_SetRevealWindow(state);
 }
 
 /// Returns the scene's exit, touch, talk and Reveal events.
@@ -234,7 +234,7 @@ s32 TretTreeBranch_Initialize(void) {
 #ifndef UBFIX
   u8 **eventSlot = (u8 **)&gEventWork;
 #endif
-  struct DisplayTransitionState *transition;
+  struct DisplayTransitionState *state;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
@@ -246,11 +246,11 @@ s32 TretTreeBranch_Initialize(void) {
   // UB: HEAP_SLOT_TRANSITION lies past scalar gEventWork. Its named load adds
   // six bytes in the native EN trial (0x6a to 0x70).
 #ifdef UBFIX
-  transition = gDisplayTransition;
+  state = gDisplayTransition;
 #else
-  transition = (struct DisplayTransitionState *)eventSlot[4];
+  state = (struct DisplayTransitionState *)eventSlot[4];
 #endif
-  TretTreeBranch_SetRevealWindow(transition);
+  TretTreeBranch_SetRevealWindow(state);
 
   TretTreeBranch_StartBg3Split();
   return 0;

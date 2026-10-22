@@ -153,13 +153,13 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
 /// steer to a target do.
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   s32 unit;
-  struct AnimationObject *object;
+  struct AnimationObject *animation;
 
   Dma_Fill32(0, effect, sizeof *effect);
-  object = ResourceObject_CreateFar(kind);
-  effect->object = object;
-  if (object != NULL)
-    object->image.priority = 0;
+  animation = ResourceObject_CreateFar(kind);
+  effect->object = animation;
+  if (animation != NULL)
+    animation->image.priority = 0;
   EffectSlot_SetPosition(effect, x, z);
   /* FAKEMATCH(temporary): 1.0 in a local set before maxSpeed takes r2 beside
      2.0, which lets sched2 load the object ahead of the three stores; as the
@@ -189,8 +189,8 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
 /// Frees an effect slot and its sprite, clearing the slot to zero (inactive).
 /// Slot callbacks call it on their own slot as their last state; the slot
 /// update then neither moves nor draws it.
-void FieldEffect_ClearOwnedSlot(struct EffectSlot *slot) {
-  if (slot->object)
-    ResourceObject_ReleaseFar(slot->object);
-  Dma_Fill32(0, slot, sizeof *slot);
+void FieldEffect_ClearOwnedSlot(struct EffectSlot *effect) {
+  if (effect->object)
+    ResourceObject_ReleaseFar(effect->object);
+  Dma_Fill32(0, effect, sizeof *effect);
 }

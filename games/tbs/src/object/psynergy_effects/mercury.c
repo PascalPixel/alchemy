@@ -19,10 +19,10 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *copy;
   struct FieldActor *previous;
   struct AnimationObject *resource;
-  struct FieldFxScene *effectScene;
+  struct FieldFxScene *scene;
   struct FieldActor **cursor;
   struct FieldActor **list;
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   s8 *slotState;
   s32 kind;
   s32 remaining;
@@ -36,7 +36,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
 
   // Tint the screen blue (red 4, green 4, blue 16).
   FieldEffect_InitializeSlots();
-  effectScene = gEffectWork;
+  scene = gEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
   WaitFrames(30);
   // Unpause the Djinni, so its script and motion run.
@@ -115,17 +115,17 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  slot = effectScene->slots;
+  effect = scene->effects;
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
-    EffectSlot_Initialize(slot, 240, position.x, position.z);
-    EffectSlot_SetCallback(slot, FieldEffect_UpdateRandomTargetParticle);
-    EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+    EffectSlot_Initialize(effect, 240, position.x, position.z);
+    EffectSlot_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
+    EffectSlot_SetObjectMode(effect, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_BLUE_TINT);
     remaining--;
     WaitFrames(1);
-    slot++;
+    effect++;
   } while (remaining >= 0);
 
   // After 120 frames every droplet still in use takes its last fall.
@@ -136,8 +136,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     s32 nextState;
 
     nextState = MERCURY_DROPLET_LAST_FALL;
-    slotState = (s8 *)effectScene;
-    slotState += offsetof(struct FieldFxScene, slots) +
+    slotState = (s8 *)scene;
+    slotState += offsetof(struct FieldFxScene, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = MERCURY_PARTICLE_MAX - 1;
     do {

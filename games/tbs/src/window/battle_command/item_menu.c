@@ -58,7 +58,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 /// with its reason ("It's broken.", and the classifier's messages). The
 /// item command runs it (Battle_CollectPartyCommands).
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   s32 drawnFirstEntry;
   s32 drawnRow;
   s32 cursorHandle;
@@ -76,14 +76,14 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
   s32 unusableReason;
   s32 result;
   s32 i;
-  struct CursorSprite cursor;
+  struct CursorSprite cursorStorage;
   struct MenuSprite *iconSprite;
-  struct CursorSprite *cursorSprite;
+  struct CursorSprite *sprite;
   u16 messageText[64];
   s32 iconSlots[BATTLE_LIST_ROWS];
   struct MenuSprite sprites[BATTLE_LIST_ROWS];
 
-  render = UI_WORK;
+  work = UI_WORK;
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);
@@ -112,10 +112,10 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
   Vram_CopyTile(UI_TILE_FRAME_BOTTOM_TEE, 0x210);
   Vram_CopyTile(UI_TILE_FRAME_BOTTOM_TEE, 0x211);
 
-  cursorSprite = &cursor;
+  sprite = &cursorStorage;
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      render->menuBusy = 1;
+      work->menuBusy = 1;
       Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
                           window->width - 2, 1, 15);
       Ui_FillVramBlockPattern();
@@ -175,8 +175,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
 
       Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
                           window->width - 2, 1, 14);
-      render->dirty = 1;
-      render->menuBusy = 0;
+      work->dirty = 1;
+      work->menuBusy = 0;
     }
 
     // Each frame: the current page's number lit 12 frames in 16, and the
@@ -199,7 +199,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
           window->width - (count + 4) / BATTLE_LIST_ROWS - 3, pageTile, 0);
       UiWindow_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                                pageTile, 0);
-      UiRender_MarkRow(render, window->y - 1);
+      UiRender_MarkRow(work, window->y - 1);
     }
 
     for (i = 0; i < iconCount; i++) {
@@ -209,18 +209,18 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
 
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    /* FAKEMATCH(dead): cursorSprite set again to the cursor each frame orders
+    /* FAKEMATCH(dead): sprite set again to the cursor each frame orders
      * the spill slots of the cursor address and row * 2 as the native frame
      * does; without it, 28 of 770 instructions differ in tbs-en. */
-    cursorSprite = &cursor;
-    ((u32 *)cursorSprite)[1] = MENU_SPRITE_SIZE_16;
-    ((u32 *)cursorSprite)[2] = 0;
-    cursorSprite->tile =
+    sprite = &cursorStorage;
+    ((u32 *)sprite)[1] = MENU_SPRITE_SIZE_16;
+    ((u32 *)sprite)[2] = 0;
+    sprite->tile =
         VramCache_Reload(cursorHandle, (s32)gResource_FixedBlockBTiles);
-    cursorSprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    cursorSprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {
-      Runtime_PushSlotEntry(cursorSprite, 242);
+      Runtime_PushSlotEntry(sprite, 242);
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);

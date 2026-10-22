@@ -101,7 +101,7 @@ s32 ItemMenu_Run(void);
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 s32 ItemMenu_Use(void);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
-void Menu_SpawnIconEntries(struct InventoryMenuState *state,
+void Menu_SpawnIconEntries(struct InventoryMenuState *menu,
                            struct UiWindow *window);
 void ItemMenu_HideAllIcons(void);
 void ItemMenu_HidePageIcons(void);

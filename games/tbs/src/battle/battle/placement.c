@@ -380,10 +380,10 @@ s32 Enemy_Update(void) {
     s32 unitId = battle->enemyIds[enemyIndex];
 
     if (unitId != BATTLE_UNIT_REMOVED) {
-      struct BattleObj *object = BattleObject_Get(unitId);
+      struct BattleObj *battleObject = BattleObject_Get(unitId);
 
-      object->anchorX = xPositions[enemyIndex] * 65536;
-      object->anchorZ = zPositions[enemyIndex] * 65536;
+      battleObject->anchorX = xPositions[enemyIndex] * 65536;
+      battleObject->anchorZ = zPositions[enemyIndex] * 65536;
     }
   }
 }

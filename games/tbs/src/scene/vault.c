@@ -180,7 +180,7 @@ Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *entity = (struct FieldActor *)fieldObject;
-  struct UiRenderWork *render = (struct UiRenderWork *)gWindowWork[0];
+  struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
   u8 *workspace = gWindowWork[12];
   s32 flag = 0;
   s32 selector = 18;
@@ -194,7 +194,7 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  if (*(s16 *)(workspace + 376) != 0 || render->mode != 0) {
+  if (*(s16 *)(workspace + 376) != 0 || work->mode != 0) {
     selector = 26;
     flag = 1;
   }
@@ -234,12 +234,12 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 /// any Venus Djinni with Isaac and leaves the party.
 static void Event_IvanStaysBehind(void) {
   struct FieldActor *actor;
-  struct EventWork *eventWork;
+  struct EventWork *work;
 
-  eventWork = gEventWork;
+  work = gEventWork;
   if (GameFlag_IsSet(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_IsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
-    Engine_EventRequestExit(eventWork->touchedTrigger -
+    Engine_EventRequestExit(work->touchedTrigger -
                             (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
@@ -250,7 +250,7 @@ static void Event_IvanStaysBehind(void) {
     Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  if (eventWork->touchedTrigger == VAULT_CELL_SOUTH_GATE) {
+  if (work->touchedTrigger == VAULT_CELL_SOUTH_GATE) {
     Actor_WalkToAndWait(IVAN, 400, 448);
   } else {
     Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
@@ -272,7 +272,7 @@ static void Event_IvanStaysBehind(void) {
     Engine_TaskWait(20);
   }
   Party_RemoveOwnerRestored(IVAN);
-  Engine_EventRequestExit(eventWork->touchedTrigger -
+  Engine_EventRequestExit(work->touchedTrigger -
                           (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -297,9 +297,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventOpenMessage(speaker, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
-    struct EventWork *eventWork = gEventWork;
+    struct EventWork *work = gEventWork;
 
-    ++eventWork->message;
+    ++work->message;
   }
   Engine_EventShowMessage(speaker, 0);
 }

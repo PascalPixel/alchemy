@@ -10,13 +10,13 @@
 // EFFECT_USE_ flags.
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
-void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object) {
-  object->effect.x += object->effect.velocity.x;
-  object->effect.y += object->effect.velocity.y;
-  object->effect.z += object->effect.velocity.z;
-  object->effect.scaleX += object->effect.scaleRateX;
-  object->effect.scaleY += object->effect.scaleRateY;
-  object->effect.sprite->rotation += object->effect.spin;
+void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *fieldObject) {
+  fieldObject->effect.x += fieldObject->effect.velocity.x;
+  fieldObject->effect.y += fieldObject->effect.velocity.y;
+  fieldObject->effect.z += fieldObject->effect.velocity.z;
+  fieldObject->effect.scaleX += fieldObject->effect.scaleRateX;
+  fieldObject->effect.scaleY += fieldObject->effect.scaleRateY;
+  fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
 }
 
 // Compile the effect-spawning body once for the resident far-call version

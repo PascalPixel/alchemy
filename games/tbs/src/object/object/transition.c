@@ -86,7 +86,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
   s32 *viewLeader;
   s32 *viewInverse7;
 #endif
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *object;
   u32 i;
   s32 k;
   s32 lineCount;
@@ -339,9 +339,9 @@ void DisplayTransition_UpdateScanlineTable(void) {
     cameraY = viewInverse[1] & 0xffff0000;
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
-    obj = ObjectTable_Get(gGameState.selectedActor);
-    centerX = (obj->x - ax) / 0x10000;
-    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
+    object = ObjectTable_Get(gGameState.selectedActor);
+    centerX = (object->x - ax) / 0x10000;
+    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
     // its index, and the value is not used.
     gFrameCount;
@@ -456,9 +456,9 @@ void DisplayTransition_UpdateScanlineTable(void) {
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
 #endif
-    obj = ObjectTable_Get(gGameState.selectedActor);
-    centerX = (obj->x - ax) / 0x10000;
-    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
+    object = ObjectTable_Get(gGameState.selectedActor);
+    centerX = (object->x - ax) / 0x10000;
+    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;
@@ -506,11 +506,11 @@ void DisplayTransition_UpdateScanlineTable(void) {
     ax = viewInverse7[0] & 0xffff0000;
     cameraY = viewInverse7[1] & 0xffff0000;
 #endif
-    obj = ObjectTable_Get(gGameState.selectedActor);
-    centerX = (obj->x - ax) / 0x10000;
+    object = ObjectTable_Get(gGameState.selectedActor);
+    centerX = (object->x - ax) / 0x10000;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
-    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 8;
+    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;

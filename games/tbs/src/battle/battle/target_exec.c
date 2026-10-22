@@ -139,7 +139,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   s32 actorId;
   s32 abilityId;
   s32 elementBonus; // elemental power less resistance
-  struct BattleWork *work;
+  struct BattleWork *battle;
   s32 halveDefense; // the attack counts half the target's Defense
   s32 multiplier;   // 0 on a miss, 2 or 3 for a double or triple blow
   s32 damageDealt;  // HP or PP the target lost (negative if healed)
@@ -163,7 +163,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   // 1. Setup
   //------------------------------------------------------------------
   elementBonus = 0;
-  work = gBattleWork;
+  battle = gBattleWork;
   halveDefense = 0;
   damageDealt = 0;
   leaveOneHp = 0;
@@ -275,7 +275,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
     classId = actor->classId;
     newUnitId = Enemy_GetFreeSlot();
     if (ability->effect == ABILITY_EFFECT_CALL_HELP)
-      classId = BattleFormation_GetRandomMember(work->enemyGroup);
+      classId = BattleFormation_GetRandomMember(battle->enemyGroup);
     if (hit != 0 && Enemy_CheckRoom(classId) != 0 && newUnitId >= 0) {
       s32 suffix;
 
@@ -290,13 +290,13 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
         s32 i;
 
         for (i = 0; i < BATTLE_ENEMY_CAPACITY; i++) {
-          if (work->enemyIds[i] == BATTLE_UNIT_REMOVED) {
-            work->enemyIds[i] = newUnitId;
+          if (battle->enemyIds[i] == BATTLE_UNIT_REMOVED) {
+            battle->enemyIds[i] = newUnitId;
             break;
           }
-          if (work->enemyIds[i] == BATTLE_UNIT_LIST_END) {
-            work->enemyIds[i] = newUnitId;
-            work->enemyIds[i + 1] = BATTLE_UNIT_LIST_END;
+          if (battle->enemyIds[i] == BATTLE_UNIT_LIST_END) {
+            battle->enemyIds[i] = newUnitId;
+            battle->enemyIds[i + 1] = BATTLE_UNIT_LIST_END;
             break;
           }
         }
@@ -305,11 +305,12 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       // (the anchors are 16.16 fixed point).
       Enemy_Update();
       {
-        struct BattleObj *obj;
+        struct BattleObj *battleObject;
 
-        obj = BattleObject_Get(newUnitId);
-        BattleObject_Make(obj, newUnitId, obj->anchorX / 0x10000,
-                          obj->anchorZ / 0x10000);
+        battleObject = BattleObject_Get(newUnitId);
+        BattleObject_Make(battleObject, newUnitId,
+                          battleObject->anchorX / 0x10000,
+                          battleObject->anchorZ / 0x10000);
       }
       BattleObject_Put();
       {
@@ -346,7 +347,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       // battle's BattlePresentation_RunAction clears none.
       hit = 0;
       for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
-        if (work->actions[i].unitId == targetId) {
+        if (battle->actions[i].unitId == targetId) {
           hit = 1;
           break;
         }
@@ -1252,7 +1253,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
       PUSH_MESSAGE(MsgChallenge);
       target->challenge = 1;
       if (IS_PARTY_UNIT(targetId))
-        work->challengeFlag |= 2;
+        battle->challengeFlag |= 2;
       break;
 
     // The target loses its next action (BattleCommand_BuildPlan).

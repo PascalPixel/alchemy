@@ -693,13 +693,13 @@ s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
 /// only once the rectangle reaches row 29. The Djinn menu dims its windows
 /// with palette 6 behind the help and the second chooser.
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   u16 *tileCursor;
   s32 column;
   u32 tile;
   u32 masked;
 
-  render = (struct UiRenderWork *)gWindowWork[0];
+  work = (struct UiRenderWork *)gWindowWork[0];
   palette <<= 12;
   if (x < 0) {
     width += x;
@@ -716,7 +716,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
 
   if (width > 0 && height > 0) {
     do {
-      tileCursor = &((u16 (*)[32])render->tilemap)[y][x];
+      tileCursor = &((u16 (*)[32])work->tilemap)[y][x];
       for (column = width; column != 0; column--) {
         tile = *tileCursor;
         if (((tile >> 12) & 15) == 15) {
@@ -725,7 +725,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
         }
         tileCursor++;
       }
-      UiRender_MarkRow(render, y);
+      UiRender_MarkRow(work, y);
       height--;
       y++;
     } while (height != 0);
@@ -751,7 +751,7 @@ s32 DjinnMenu_ShowHelp(void) {
   struct UiWindow *helpWindow;
   struct UiWindow *statusWindow;
   struct DjinnMenuWork *menu;
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   s32 result;
   s32 previous;
   s32 selection;
@@ -762,7 +762,7 @@ s32 DjinnMenu_ShowHelp(void) {
   s32 listMessage;
 
   menu = WORK_SLOT(HEAP_SLOT_MENU);
-  render = WORK_SLOT(HEAP_SLOT_WINDOW);
+  work = WORK_SLOT(HEAP_SLOT_WINDOW);
   result = 0;
   previous = 0;
   selection = 0;
@@ -830,9 +830,9 @@ s32 DjinnMenu_ShowHelp(void) {
     }
     // Before the next topic: free the page arrow's VRAM slot the text took
     // (99: none), and stop the text's channel typing.
-    if (render->glyphResource != 99) {
-      Resource_ResetEntry(render->glyphResource);
-      render->glyphResource = 99;
+    if (work->glyphResource != 99) {
+      Resource_ResetEntry(work->glyphResource);
+      work->glyphResource = 99;
     }
     ((struct UiRenderWork *)gWindowWork[0])->pageArrowShown = 0;
     RenderOutput_PrepareForRedrawFar(helpWindow);

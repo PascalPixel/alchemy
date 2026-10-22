@@ -46,7 +46,7 @@ s32 PsynergyMenu_Run(void) {
 #if TBS_PATCH_2
   void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);
 #endif
-  struct PsynergyMenuState *state =
+  struct PsynergyMenuState *menu =
       Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 owner;
   s32 unused;
@@ -57,9 +57,9 @@ s32 PsynergyMenu_Run(void) {
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
   UiWindow_InitializeWork(0);
-  state->ownerCount = Party_ListActiveOwnersFar(state->ownerTable);
+  menu->ownerCount = Party_ListActiveOwnersFar(menu->ownerTable);
   ItemMenu_Initialize(0, 3, 0, 7);
-  state->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
+  menu->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenBankHighlight(14);
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
@@ -77,12 +77,12 @@ s32 PsynergyMenu_Run(void) {
     struct EventWork *target = WORK_SLOT(HEAP_SLOT_EVENT);
     u16 request;
     // The action looked up here is not used.
-    BattleAction_Get(OWNER_ACTION_ID_MASK & state->paneAction[0]);
+    BattleAction_Get(OWNER_ACTION_ID_MASK & menu->paneAction[0]);
     request = psynergy | (owner << 10);
     target->psynergyRequest = request;
   }
   // Close the menu and give the screen back to the field.
-  RenderOutput_ClearListFar((void *)state->statusWindow);
+  RenderOutput_ClearListFar((void *)menu->statusWindow);
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 1;
   ItemMenu_Close();
   UiWindow_DrawFrameFar(0, 0, 30, 20);

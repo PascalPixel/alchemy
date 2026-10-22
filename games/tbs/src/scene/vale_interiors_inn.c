@@ -124,7 +124,7 @@ static void Event_DoraWakesIsaac(void);
 static void Event_HurryToThePlaza(void);
 static void ValeInteriorsInn_RestoreRoomPatch(void);
 static void Event_ShowMythrilBag(void);
-static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object);
+static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject);
 static void ValeInteriorsInn_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
@@ -587,7 +587,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;
-  struct MapScrollWork *mapWork;
+  struct MapScrollWork *map;
   struct FieldActor *viewCenter;
   struct EventWork **eventSlot;
 
@@ -596,10 +596,10 @@ static void Event_DoraWakesIsaac(void) {
      the map work and view centre; as reads in place, 11 of 430 instructions
      differ in tbs-en (13 with the view centre first). */
   {
-    struct EventWork *event = *eventSlot;
+    struct EventWork *work = *eventSlot;
 
-    mapWork = *(struct MapScrollWork **)Ram_MapWork;
-    viewCenter = event->viewCenter;
+    map = *(struct MapScrollWork **)Ram_MapWork;
+    viewCenter = work->viewCenter;
   }
   sprite = Object_GetById(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
@@ -631,10 +631,10 @@ static void Event_DoraWakesIsaac(void) {
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_EventWait(40);
   // Widen the camera bounds and reveal the lightning outside.
-  mapWork->minX = PIXELS(328);
-  mapWork->minY = PIXELS(600);
-  mapWork->maxX = PIXELS(624);
-  mapWork->maxY = PIXELS(816);
+  map->minX = PIXELS(328);
+  map->minY = PIXELS(600);
+  map->maxX = PIXELS(624);
+  map->maxY = PIXELS(816);
   viewCenter->x.fixed = PIXELS(564);
   viewCenter->y.fixed = 0;
   viewCenter->z.fixed = PIXELS(691);
@@ -1178,35 +1178,35 @@ static void Event_ShowMythrilBag(void) {
 /// Unused: an update hook that flashes between two palettes and gives off a
 /// pair of effects every sixteen frames; no actor is given it.
 UNUSED static void
-ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *object) {
+ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *fieldObject) {
   if ((gFrameCount & 2) != 0) {
-    Engine_ObjectSetPartPalettes(&object->actor, 7);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, 7);
   } else {
-    Engine_ObjectSetPartPalettes(&object->actor, 0);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriorsInn_SpawnEffectPair(object);
+    ValeInteriorsInn_SpawnEffectPair(fieldObject);
   }
 }
 
 /// Cycles six palettes on odd frames and periodically emit paired effects.
 static void
-ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *object) {
+ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
-    Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriorsInn_SpawnEffectPair(object);
+    ValeInteriorsInn_SpawnEffectPair(fieldObject);
   }
 }
 
 /// Advances deterministically through six palettes on odd frames.
 static void
-ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *object) {
+ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
-    Engine_ObjectSetPartPalettes(&object->actor, slot);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, slot);
   }
 }
 
@@ -1215,8 +1215,8 @@ ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *object) {
 
 /// Copies the parent's terrain height into two oppositely moving vertical
 /// effects.
-static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
-  struct FieldActor *parent = &object->actor;
+static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
+  struct FieldActor *parent = &fieldObject->actor;
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *part;

@@ -177,7 +177,7 @@ enum MapStepCheck {
 };
 
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir);
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale);
@@ -212,7 +212,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos);
 void Map_RenderAnimatedTileFramesForObject(u8 *sprite);
 void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count);
 void ObjectDispatch_SelectAnimation(void *raw, s32 no);
-void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *obj, s32 val);
+void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *object, s32 val);
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter);
 s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter);
 void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,

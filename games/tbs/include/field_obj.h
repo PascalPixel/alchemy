@@ -118,7 +118,7 @@ struct FieldActor {
   /// The object its action script follows or faces.
   struct FieldActor *linkedObject;
   /// Called each frame before the object's script, while the object is live.
-  void (*update)(union FieldObject *object);
+  void (*update)(union FieldObject *fieldObject);
 };
 
 STATIC_ASSERT(offsetof(struct FieldActor, facing) == 0x06);

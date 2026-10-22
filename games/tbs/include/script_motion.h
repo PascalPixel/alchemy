@@ -75,7 +75,7 @@ struct ScriptMotionObject {
   /// and the linked object; not named here.
   u8 unk62[10];
   /// Called each frame before its script.
-  void (*hook)(union FieldObject *object);
+  void (*hook)(union FieldObject *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct ScriptMotionObject) == 0x70);

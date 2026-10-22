@@ -580,13 +580,13 @@ static void Kalay_TalkToItemMerchant(void) {
 /// houses, the inn or the Sanctum: everyone stops, the door opens and the
 /// leader walks in.
 static void Kalay_OpenDoorAndExit(void) {
-  struct EventWork *event;
+  struct EventWork *work;
   struct FieldActor *actor;
   s16 *trigger;
   u32 i;
   s32 door;
 
-  event = gEventWork;
+  work = gEventWork;
   Engine_EventStart();
   for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_SLOT; i++) {
     actor = Object_GetById(i);
@@ -594,7 +594,7 @@ static void Kalay_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  trigger = &event->touchedTrigger;
+  trigger = &work->touchedTrigger;
   door = *trigger - 1;
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   {

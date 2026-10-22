@@ -771,9 +771,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Sets a scene up as the party enters: a capture goes on spinning, Reveal's
 /// color is saved, and the first two scenes set up their storms.
 s32 Scene_Initialize(void) {
-  struct MapState *map;
+  struct MapState *mapState;
 
-  map = WORK_SLOT(HEAP_SLOT_MAP);
+  mapState = WORK_SLOT(HEAP_SLOT_MAP);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SCENE_TEMP_10) != 0) {
@@ -794,7 +794,7 @@ s32 Scene_Initialize(void) {
     Engine_AudioPlayCue(SE_STOP_SLOT3);
   }
   if (gGameState.entrance == ENTRANCE_DEFAULT) {
-    map->flags &= ~DISPCNT_BG1_ON;
+    mapState->flags &= ~DISPCNT_BG1_ON;
   }
   return 0;
 }

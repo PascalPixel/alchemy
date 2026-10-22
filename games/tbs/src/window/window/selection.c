@@ -218,7 +218,7 @@ void SelectionScreen_Draw(void) {
   s32 entryIndex = 0;
   s32 slot;
   s32 axisStep;
-  struct EffectPosition pos;
+  struct EffectPosition position;
 
   node = state->head;
   // Move and queue the visible row before drawing its overlays. An icon
@@ -252,12 +252,12 @@ void SelectionScreen_Draw(void) {
       slot = 241;
       if (cursor->kind != ICON_KIND_NONE) {
         if (BattleMotion_ProjectScaledPositionFar(
-                node->base, EffectPosition_Coordinates(&pos)) != -1) {
-          cursor->targetX = pos.x;
-          cursor->targetY = pos.y;
+                node->base, EffectPosition_Coordinates(&position)) != -1) {
+          cursor->targetX = position.x;
+          cursor->targetY = position.y;
           if (cursor->scale == 0) {
-            cursor->x = pos.x;
-            cursor->y = pos.y;
+            cursor->x = position.x;
+            cursor->y = position.y;
             cursor->scale = 1;
           }
         }

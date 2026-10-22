@@ -546,13 +546,13 @@ void RenderOutput_Release(struct RenderOutput *entry) {
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
                                                 s32 entry, s32 x, s32 y,
                                                 u16 *spacing, s32 flags) {
-  struct UiChannelSlot *slot = UI_WORK->channels;
+  struct UiChannelSlot *channel = UI_WORK->channels;
   struct UiChannelSlot *found = NULL;
   u32 i;
 
-  for (i = 0; i != UI_MESSAGE_CHANNEL_COUNT; i++, slot++) {
-    if (slot->work == NULL) {
-      found = slot;
+  for (i = 0; i != UI_MESSAGE_CHANNEL_COUNT; i++, channel++) {
+    if (channel->work == NULL) {
+      found = channel;
       break;
     }
   }
@@ -588,17 +588,17 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
 /// there. Returns the channel, or NULL when all three are busy.
 struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
                                                 s32 entry, s32 keepPosition) {
-  struct UiChannelSlot *slot;
+  struct UiChannelSlot *channel;
   struct UiChannelSlot *selected;
   u16 *spacing;
   u16 zero;
   u32 index;
 
-  slot = UI_WORK->channels;
+  channel = UI_WORK->channels;
   selected = 0;
-  for (index = 0; index != UI_MESSAGE_CHANNEL_COUNT; slot++, index++) {
-    if (slot->work == 0 || slot->work->state != 0) {
-      selected = slot;
+  for (index = 0; index != UI_MESSAGE_CHANNEL_COUNT; channel++, index++) {
+    if (channel->work == 0 || channel->work->state != 0) {
+      selected = channel;
       break;
     }
   }
@@ -658,13 +658,13 @@ s32 Ui_FillVramBlockPattern(void) {
 /// (battle/battle/auto_battle.c) calls it after playing each action, so the
 /// next battle message starts on a clear canvas at its first line.
 void UiWork_ResetFreeChannel(void) {
-  struct UiChannelSlot *slot = UI_WORK->channels;
+  struct UiChannelSlot *channel = UI_WORK->channels;
   struct UiChannelSlot *selection = 0;
   s32 i;
 
-  for (i = 0; i != UI_MESSAGE_CHANNEL_COUNT; slot++, i++) {
-    if (slot->work == 0 || slot->work->state != 0) {
-      selection = slot;
+  for (i = 0; i != UI_MESSAGE_CHANNEL_COUNT; channel++, i++) {
+    if (channel->work == 0 || channel->work->state != 0) {
+      selection = channel;
       break;
     }
   }

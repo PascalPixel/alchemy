@@ -96,7 +96,7 @@
 /// member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 Menu_OpenCharacterSelector(void) {
-  struct CharacterMenuState *state =
+  struct CharacterMenuState *menu =
       Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 result;
   s32 index;
@@ -106,16 +106,16 @@ s32 Menu_OpenCharacterSelector(void) {
   WaitFrames(1);
   UiWindow_InitializeWork(0);
 
-  state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
+  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
   Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
-  state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
+  menu->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < CHARACTER_SELECTOR_OWNER_COUNT; index++)
-    state->ownerY[index] = 30;
-  state->page = CHARACTER_MENU_PAGE_CHOOSER;
+    menu->ownerY[index] = 30;
+  menu->page = CHARACTER_MENU_PAGE_CHOOSER;
 
   result = CharacterSelector_Run();
 
-  RenderOutput_ClearListFar(state->statusWindow);
+  RenderOutput_ClearListFar(menu->statusWindow);
   ItemMenu_Close();
   gMenuCtrlWork->suspended = 0;
   WaitFrames(1);
@@ -149,7 +149,7 @@ s32 CharacterSelector_Run(void) {
 /// work and the two saved copies, taken from the alternate pool, are freed
 /// before returning.
 s32 StatusMenu_Run(void) {
-  struct CharacterMenuState *state =
+  struct CharacterMenuState *menu =
       Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   void *palette = Runtime_BumpAllocateAlternatePool(64);
   void *tiles = Runtime_BumpAllocateAlternatePool(STATUS_SAVED_TILE_BYTES);
@@ -161,8 +161,8 @@ s32 StatusMenu_Run(void) {
   WaitFrames(1);
   Menu_SuspendFieldTasks();
   UiWindow_InitializeWork(0);
-  state->page = CHARACTER_MENU_PAGE_STATUS;
-  state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
+  menu->page = CHARACTER_MENU_PAGE_STATUS;
+  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
   Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
 #if !TBS_PATCH_1
@@ -185,26 +185,26 @@ s32 StatusMenu_Run(void) {
   Iwram_FillWords(BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
-  state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
+  menu->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < MENU_ROW_COUNT; index++)
-    state->ownerY[index] = 30;
+    menu->ownerY[index] = 30;
   if (Party_SumDjinnCountsFar(-1) != 0)
-    FourObjectMotion_InitializeTopRow(state->selectorWindow, 0);
+    FourObjectMotion_InitializeTopRow(menu->selectorWindow, 0);
   // The four Djinn figures in a row 32 pixels apart, at screen y 128.
   for (index = 0; index < 4; index++) {
-    state->rowX[index] = 130 + index * 32;
-    state->rowY[index] = 128;
+    menu->rowX[index] = 130 + index * 32;
+    menu->rowY[index] = 128;
   }
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_CancelSoundReset();
-  state->page = CHARACTER_MENU_PAGE_STATUS;
+  menu->page = CHARACTER_MENU_PAGE_STATUS;
 
   result = Menu_RunActionFlow();
 
   // Close, and put the palettes and tiles back.
   Menu_EnsureCancelSound();
-  RenderOutput_ClearListFar(state->statusWindow);
+  RenderOutput_ClearListFar(menu->statusWindow);
   FourObjectMotion_ClearSlotsAndSchedule();
   Menu_ResumeFieldTasks();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
@@ -242,7 +242,7 @@ enum StatusMenuStep {
 /// back round to the status page; B on any page goes back to the member row.
 /// Returns -1 when the player backs out of the member row or presses Start.
 s32 Menu_RunActionFlow(void) {
-  struct CharacterMenuState *state = gMenuWork;
+  struct CharacterMenuState *menu = gMenuWork;
   s32 step = STATUS_STEP_MEMBER;
   s32 finished = step;
   s32 result = 0;
@@ -251,7 +251,7 @@ s32 Menu_RunActionFlow(void) {
   while (!finished && !GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
     case STATUS_STEP_MEMBER:
-      state->selectedSlots[0] = finished;
+      menu->selectedSlots[0] = finished;
       if (CharacterMenu_SelectOwner(0) == -1) {
         result = -1;
         finished = 1;
@@ -259,19 +259,19 @@ s32 Menu_RunActionFlow(void) {
       step = STATUS_STEP_STATUS;
       break;
     case STATUS_STEP_STATUS:
-      state->ownerCursors[0]->active = ICON_HIDDEN;
+      menu->ownerCursors[0]->active = ICON_HIDDEN;
       result = CharacterMenu_SelectCommand();
       step = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
       break;
     case STATUS_STEP_PSYNERGY:
-      state->ownerCursors[0]->active = ICON_HIDDEN;
+      menu->ownerCursors[0]->active = ICON_HIDDEN;
       result = PsynergyMenu_SelectAction();
       step = STATUS_STEP_MEMBER;
       if (result != -1)
         step = STATUS_STEP_EQUIPMENT;
       break;
     case STATUS_STEP_EQUIPMENT:
-      state->ownerCursors[0]->active = ICON_HIDDEN;
+      menu->ownerCursors[0]->active = ICON_HIDDEN;
       result = ItemMenu_SelectItem();
       // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
       changed = ~result;
@@ -671,18 +671,18 @@ s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
 /// not used.
 void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
                                              s32 unused2, s32 unused3) {
-  struct CharacterMenuState *state;
+  struct CharacterMenuState *menu;
 
-  state = gMenuWork;
-  PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(state), 2, 2, 8, 0);
-  state->unknownWindow028 = 0;
-  state->statusWindow = 0;
-  state->helpWindow = 0;
-  state->actionWindow = 0;
-  state->selectedColumn = 0;
-  state->selectedRow = 0;
-  state->columnCount = 8;
-  state->rowCount = 2;
+  menu = gMenuWork;
+  PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
+  menu->unknownWindow028 = 0;
+  menu->statusWindow = 0;
+  menu->helpWindow = 0;
+  menu->actionWindow = 0;
+  menu->selectedColumn = 0;
+  menu->selectedRow = 0;
+  menu->columnCount = 8;
+  menu->rowCount = 2;
 }
 
 /// Shows member resource's status in the status window (0, 5, 30 by 15),
@@ -2109,9 +2109,9 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 /// Moves all 32 entry icons off screen, to (248, 168), before a screen lays
 /// them out again.
 void ItemMenu_PositionCategory(void) {
-  struct InventoryMenuState *state = gMenuWork;
+  struct InventoryMenuState *menu = gMenuWork;
   s32 x = 248;
-  struct RenderOutput **entry = state->entryIcons;
+  struct RenderOutput **entry = menu->entryIcons;
   s32 y = 168;
   s32 remaining = 31;
 
@@ -2190,11 +2190,11 @@ void ItemMenu_ApplyFlags(const u8 *flags) {
 /// Moves the five ailment icons (the first category sprites) off screen,
 /// before they are shown again or while another view covers them.
 void ItemMenu_ResetCategory(void) {
-  struct InventoryMenuState *state = gMenuWork;
+  struct InventoryMenuState *menu = gMenuWork;
   s32 index;
 
   for (index = 0; index < 5; index++) {
-    struct RenderOutput *object = state->categoryIcons[index];
+    struct RenderOutput *object = menu->categoryIcons[index];
 
     if (object != 0) {
       object->x = 248;
@@ -2207,7 +2207,7 @@ void ItemMenu_ResetCategory(void) {
 
 /// Loads each enabled ailment's icon into its category resource slot.
 s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled) {
-  struct InventoryMenuState *state = gMenuWork;
+  struct InventoryMenuState *menu = gMenuWork;
   s32 index = 0;
 
   do {
@@ -2234,7 +2234,7 @@ s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled) {
         break;
       }
       Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN, kind,
-                                     (u8)state->categoryIcons[index]->index, 0);
+                                     (u8)menu->categoryIcons[index]->index, 0);
     }
     index++;
   } while (index <= 4);

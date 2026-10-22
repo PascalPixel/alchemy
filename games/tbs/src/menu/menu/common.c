@@ -132,7 +132,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   s32 created;
   struct ItemDefinition *def;
   u32 item;
-  struct InventoryMenuState *state;
+  struct InventoryMenuState *menu;
   struct BattleUnit *unit;
   struct UiWindow *window;
   s32 ailmentRows;
@@ -140,14 +140,14 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   u8 ailments[8];
 
   created = 0;
-  state = gMenuWork;
+  menu = gMenuWork;
   unit = Unit_GetFar(owner);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created = UiWindow_UpdateOrCreate(&state->statusWindow, 0, 5, 13, 12,
+    created = UiWindow_UpdateOrCreate(&menu->statusWindow, 0, 5, 13, 12,
                                       WINDOW_KEEP_EXISTING | 2);
-  window = state->statusWindow;
+  window = menu->statusWindow;
 
   // The name, then each ailment the member has, one row each; the level
   // takes the third row when no more than one ailment is shown.
@@ -156,7 +156,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     // top 88 by 32 pixels a frame later. A new window is blank.
     if (!created) {
       WaitFrames(1);
-      UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
+      UiWindow_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
     CharacterMenu_BuildAvailability(ailments, 1, owner);
@@ -191,11 +191,11 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   // Clear the lower part and redraw the member's portrait.
   if (!created) {
     WaitFrames(1);
-    UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 32, 88, 80);
+    UiWindow_ClearInteriorTilesFar(menu->statusWindow, 0, 32, 88, 80);
   }
   RenderOutput_ClearListFar(window);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    state->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
+    menu->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
 
   switch (mode & STATUS_PANEL_KIND_MASK) {
   case STATUS_PANEL_EXPERIENCE:
@@ -225,7 +225,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     // unit back as it was.
     backup = MemAlloc(sizeof(struct BattleUnit));
     Owner_Copy(backup, unit);
-    if (state->equipPreview)
+    if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);

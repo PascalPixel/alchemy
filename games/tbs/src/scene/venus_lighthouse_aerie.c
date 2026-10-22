@@ -162,7 +162,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void);
 static void VenusLighthouseAerie_AdvanceActorRise(struct FieldActor *actor);
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
 static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object);
+VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject);
 
 /// The aerie's event cells.
 enum VenusLighthouseAerieTrigger {
@@ -256,19 +256,19 @@ VenusLighthouseAerie_PulseActorScale(struct ScriptInterpreter *interpreter) {
 /// Moves a particle, damps its horizontal velocity and updates its scale and
 /// spin.
 static void
-VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *object) {
-  s32 velocityX = object->effect.velocity.x;
+VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *fieldObject) {
+  s32 velocityX = fieldObject->effect.velocity.x;
   s32 velocityZ;
 
-  object->effect.x += velocityX;
-  object->effect.y += object->effect.velocity.y;
-  velocityZ = object->effect.velocity.z;
-  object->effect.z += velocityZ;
-  object->effect.velocity.x = velocityX - velocityX / 22;
-  object->effect.velocity.z = velocityZ - velocityZ / 20;
-  object->effect.scaleX += object->effect.scaleRateX;
-  object->effect.scaleY += object->effect.scaleRateY;
-  object->effect.sprite->rotation += object->effect.spin;
+  fieldObject->effect.x += velocityX;
+  fieldObject->effect.y += fieldObject->effect.velocity.y;
+  velocityZ = fieldObject->effect.velocity.z;
+  fieldObject->effect.z += velocityZ;
+  fieldObject->effect.velocity.x = velocityX - velocityX / 22;
+  fieldObject->effect.velocity.z = velocityZ - velocityZ / 20;
+  fieldObject->effect.scaleX += fieldObject->effect.scaleRateX;
+  fieldObject->effect.scaleY += fieldObject->effect.scaleRateY;
+  fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
 }
 
 /// Turns the falling actor sprite until its rotation leaves the negative
@@ -3205,18 +3205,18 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 /// Moves a linked particle along its horizontal ellipse and preserves its
 /// target.
 static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object) {
+VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject) {
   struct FieldActor *anchor;
   s32 spin;
 
-  anchor = object->actor.linkedObject;
-  spin = object->effect.spin;
-  object->effect.x =
-      anchor->x.fixed + Engine_MathCos(spin) * (object->actor.speed + 28);
-  object->effect.z = Engine_MathSin(spin) * 16 + PIXELS(164);
-  object->actor.targetX = object->effect.x;
-  object->actor.targetZ = object->effect.z;
-  object->effect.spin -= 0x200;
+  anchor = fieldObject->actor.linkedObject;
+  spin = fieldObject->effect.spin;
+  fieldObject->effect.x =
+      anchor->x.fixed + Engine_MathCos(spin) * (fieldObject->actor.speed + 28);
+  fieldObject->effect.z = Engine_MathSin(spin) * 16 + PIXELS(164);
+  fieldObject->actor.targetX = fieldObject->effect.x;
+  fieldObject->actor.targetZ = fieldObject->effect.z;
+  fieldObject->effect.spin -= 0x200;
 }
 
 s32 gEffectScript0[] = {

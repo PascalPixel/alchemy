@@ -304,7 +304,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 speedRoll;
   s32 velocityY;
   struct EffectOptions *effectData;
-  struct EffectOptions effectOptions;
+  struct EffectOptions options;
 
   leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
   leaderRow = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
@@ -318,7 +318,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(40);
     sparkIndex = 0;
-    effectData = &effectOptions;
+    effectData = &options;
     velocityZ = 0;
     do {
       effectData->priority = 1;

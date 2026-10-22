@@ -35,7 +35,7 @@ extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 /// is the class's palette).
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
-  struct ObjectSystemWork *work;
+  struct ObjectSystemWork *system;
   struct ResourceSlot *record;
   struct ResourceSlotNumber *entry;
   u32 *offset;
@@ -50,8 +50,8 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
   if (slot >= RESOURCE_SLOT_COUNT)
     return 0;
-  work = gMenuCtrlWork;
-  record = &work->slots[slot];
+  system = gMenuCtrlWork;
+  record = &system->slots[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << 12) | number;
   record->buffer = buffer;

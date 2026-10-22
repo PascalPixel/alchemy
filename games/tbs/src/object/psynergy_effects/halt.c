@@ -83,7 +83,7 @@ void FieldEffect_RunHalt(void) {
   struct FieldFxScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;
   struct MotionObject *orb;
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   struct EffectVector pos;
   struct EffectVector from;
   struct EffectVector to;
@@ -136,17 +136,18 @@ void FieldEffect_RunHalt(void) {
 
   // Particles 4 pixels round it fly out, then come back to the effect's
   // position.
-  slot = &scene->slots[0];
+  effect = &scene->effects[0];
   for (i = 0; i < 16; i++) {
     pos.x = orb->x;
     pos.y = orb->y + (8 << 16);
     pos.z = orb->z;
     Camera_WorldToScreen((struct EffectVector *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
-    EffectSlot_Initialize(slot, SPRITE_SPARKLE, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, FieldEffect_UpdateRadialCamera);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, SPRITE_COLOR_WHITE);
-    slot++;
+    EffectSlot_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
+    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialCamera);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
+                                              SPRITE_COLOR_WHITE);
+    effect++;
   }
 
   pos.x = orb->x;

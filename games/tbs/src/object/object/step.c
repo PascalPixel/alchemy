@@ -70,7 +70,7 @@ s32 Field_CountRequests(void) {
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct ObjectRuntime *leader;
-  struct MapState *map;
+  struct MapState *mapState;
   union PolarOffsetPosition position;
   u8 *tile;
   s32 fixedX;
@@ -79,7 +79,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   work = WORK_SLOT(HEAP_SLOT_EVENT);
   leader = (struct ObjectRuntime *)work->actors[gGameState.selectedActor];
 
-  map = WORK_SLOT(HEAP_SLOT_MAP);
+  mapState = WORK_SLOT(HEAP_SLOT_MAP);
 
   if (leader == 0)
     return 0;
@@ -108,7 +108,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     tile = (u8 *)gMapBlocks + ((tileX + (tileY << 5)) << 2);
   } else {
     // Map cells are 16 pixels square, 128 to a row.
-    tile = (u8 *)map->layers[MAP_LAYER_GROUND].cells;
+    tile = (u8 *)mapState->layers[MAP_LAYER_GROUND].cells;
 
     fixedX = position.vector.x;
     if (fixedX < 0)
@@ -199,7 +199,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * set keeps the load order and the 44-byte frame; as struct BattleUnit, 2
    * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
-  struct MapState *map = WORK_SLOT(HEAP_SLOT_MAP);
+  struct MapState *mapState = WORK_SLOT(HEAP_SLOT_MAP);
   s32 leaderId = gGameState.selectedActor;
   struct ObjectRuntime *leader = (struct ObjectRuntime *)work->actors[leaderId];
   s16 previousHp[8];
@@ -236,7 +236,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
                                               (((z / 0x200000) & 31) << 5)];
   } else {
     if ((u32)layer <= MAP_LAYER_OVERHEAD)
-      tile = map->layers[layer].cells;
+      tile = mapState->layers[layer].cells;
     else
       tile = (struct MapCell *)gMapCellBuffer;
     tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
@@ -490,16 +490,16 @@ s32 Party_ApplyPoisonDamage(void) {
 /// whose step is then leftover memory.
 void WorldMap_StartEvent(void) {
   struct FieldWork *work;
-  struct DisplayTransitionState *transition;
+  struct DisplayTransitionState *state;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   if (work->mode == MODE_WORLD_MAP) {
-    transition = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, 0x540);
-    if ((transition != NULL) && (transition->step != 0)) {
-      transition->start = 0;
-      transition->end = 0;
-      transition->duration = 1;
-      transition->step = 0;
+    state = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, 0x540);
+    if ((state != NULL) && (state->step != 0)) {
+      state->start = 0;
+      state->end = 0;
+      state->duration = 1;
+      state->step = 0;
     }
     work->camera->movementState = 1;
     WorldMap_StartStillViewFar();

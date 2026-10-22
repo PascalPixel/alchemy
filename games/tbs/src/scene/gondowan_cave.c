@@ -348,9 +348,9 @@ static void Event_ReadSoldierMind(void) {
 /// game sets, three unnamed flags and the pillar's are first put into one
 /// arrangement.
 static void Event_LeaveToWorldMapEast(void) {
-  struct EventWork *event;
+  struct EventWork *work;
 
-  event = gEventWork;
+  work = gEventWork;
   EV_START();
   if (FLAG_CHECK(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
@@ -360,7 +360,7 @@ static void Event_LeaveToWorldMapEast(void) {
     FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     FLAG_SET(0x9a4);
   }
-  Engine_EventRequestExit(event->touchedTrigger);
+  Engine_EventRequestExit(work->touchedTrigger);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   EV_END();

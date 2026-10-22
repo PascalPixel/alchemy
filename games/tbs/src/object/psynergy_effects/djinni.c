@@ -198,29 +198,30 @@ void FieldObject_PlaceSceneActors(void) {
     if (event - DJINNI_EVENT_0 <= 80 && gGameState.sceneChangeReason > 0) {
       for (id = 8; id <= 65; id++) {
         struct ScenePlacement *desc = Scene_FindActorPlacement(id);
-        struct ObjectRuntime *obj;
+        struct ObjectRuntime *object;
 
         if (desc == NULL ||
             desc->condition - FLAG_DJINNI_0 != event - DJINNI_EVENT_0)
           continue;
-        obj = ObjectTable_Get(id);
-        if (obj == NULL)
+        object = ObjectTable_Get(id);
+        if (object == NULL)
           continue;
         // Without DJINN_NO_HOP, back at its placement in a new actor's
         // ground state: no ground height yet, following the terrain and
         // falling.
         if (flags == 0) {
-          obj->terrainHeight = flags;
-          obj->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-          Object_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
+          object->terrainHeight = flags;
+          object->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+          Object_SetPositionAndResetMotionFar(object, desc->x, desc->y,
+                                              desc->z);
         } else {
           struct ObjectRuntime *leader =
               ObjectTable_Get(gGameState.selectedActor);
 
-          Object_SetPositionAndResetMotionFar(obj, leader->x, leader->y,
+          Object_SetPositionAndResetMotionFar(object, leader->x, leader->y,
                                               leader->z - (32 << 16));
         }
-        ObjectDispatch_SelectAnimationFar(obj, 1);
+        ObjectDispatch_SelectAnimationFar(object, 1);
       }
     }
   }
@@ -310,14 +311,14 @@ void FieldEffect_InitializeSlots(void) {
 /// frame. Pairs with FieldEffect_InitializeSlots.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
   struct FieldFxScene *scene = gEffectWork;
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   s32 i;
 
   Scheduler_RemoveCallback(FieldEffect_UpdateAllSlots);
   for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
-    slot = &scene->slots[i];
-    if (slot->active != 0)
-      FieldEffect_ClearOwnedSlot(slot);
+    effect = &scene->effects[i];
+    if (effect->active != 0)
+      FieldEffect_ClearOwnedSlot(effect);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
   WaitFrames(1);

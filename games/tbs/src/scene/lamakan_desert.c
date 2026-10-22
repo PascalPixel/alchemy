@@ -679,18 +679,18 @@ static void LamakanDesert_BatheInOasis(void) {
 /// frame adds a step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct FieldActor *actor;
-  struct EventWork *event;
+  struct EventWork *work;
   struct EffectOptions params;
   s32 dx;
   s32 z;
   s32 phase;
   actor = Object_GetById(gGameState.selectedActor);
-  event = gEventWork;
+  work = gEventWork;
   if (actor->targetX == ACTOR_NO_TARGET) {
     return;
   }
   gGameState.hazardSteps++;
-  if (event->touchedTrigger == LAMAKAN_DESERT_CELL_SLOPE) {
+  if (work->touchedTrigger == LAMAKAN_DESERT_CELL_SLOPE) {
     return;
   }
   if (actor->speed <= 0x10000) {
@@ -820,10 +820,10 @@ static void LamakanDesert_SlideDownDune(void) {
 
   HeatGauge_CountStep();
   {
-    struct EventWork *event = gEventWork;
+    struct EventWork *work = gEventWork;
 
     id = gGameState.selectedActor;
-    center = event->viewCenter;
+    center = work->viewCenter;
   }
   actor = Object_GetById(id);
   // First check for a ledge immediately below the sliding actor.

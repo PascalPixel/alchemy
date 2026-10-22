@@ -235,11 +235,11 @@ static s32 FuchinTemple_ClearScriptedActorSpriteFlags(
 // UB: update hooks return void. The native produces an unused zero result;
 // plain void changes five instructions in the English build.
 #ifdef UBFIX
-static void FuchinTemple_FaceLeader(union FieldObject *object) {
+static void FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
 #else
-static s32 FuchinTemple_FaceLeader(union FieldObject *object) {
+static s32 FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *actor = (struct FieldActor *)object;
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *player = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = ArcTan2(player->z.fixed - actor->z.fixed,
                           player->x.fixed - actor->x.fixed);
@@ -2422,13 +2422,13 @@ s32 Scene_Initialize(void) {
 /// window that announces its name. Nyunpa's Mind Read events carry
 /// PSYNERGY_SCRIPT_PLAYS_EFFECT, so the field plays nothing of its own.
 static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
-  struct FieldFxScene *effect;
+  struct FieldFxScene *scene;
 
   Engine_GameFlagSet(FLAG_PSYNERGY_EFFECT);
   Engine_PsynergyStart(ABILITY_MIND_READ, 1);
-  effect = gEffectWork;
+  scene = gEffectWork;
   Engine_PsynergySetTarget(caster, target);
-  effect->active = 0;
+  scene->active = 0;
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(PSYNERGY_STEP_ON_TARGET);
   Engine_TaskWait(1);
@@ -2469,12 +2469,13 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 
 /// Hama's and Ivan's update hook during the Reveal lesson: they glow, drawn red
 /// and blue in turn every two frames.
-static void FuchinTemple_AlternateLessonChildEffect(union FieldObject *object) {
+static void
+FuchinTemple_AlternateLessonChildEffect(union FieldObject *fieldObject) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    ObjectGroup_SetChildValue((struct FieldActor *)object,
+    ObjectGroup_SetChildValue((struct FieldActor *)fieldObject,
                               SPRITE_COLOR_RED_TINT);
   } else {
-    ObjectGroup_SetChildValue((struct FieldActor *)object,
+    ObjectGroup_SetChildValue((struct FieldActor *)fieldObject,
                               SPRITE_COLOR_BLUE_TINT);
   }
 }

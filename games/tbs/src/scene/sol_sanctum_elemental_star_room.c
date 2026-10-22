@@ -2221,8 +2221,8 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
 
 /// Emits sparks while Alex disappears and reappears.
 static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
   struct FieldActor *alex;
   u32 frame;
   s32 x;
@@ -2231,12 +2231,12 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   alex = Object_GetById(ACTOR_ALEX);
   Engine_AudioPlayCue(SE_190);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 0);
-  effectOptions = &options;
-  effectOptions->priority = 1;
-  effectOptions->palette = 5;
-  effectOptions->type = 0x11c;
-  effectOptions->startScaleX = 2 * Q16_ONE / 5;
-  effectOptions->startScaleY = 3 * Q16_ONE;
+  options = &optionsStorage;
+  options->priority = 1;
+  options->palette = 5;
+  options->type = 0x11c;
+  options->startScaleX = 2 * Q16_ONE / 5;
+  options->startScaleY = 3 * Q16_ONE;
   for (frame = 0; frame <= 31; frame++) {
     Engine_EventWait(1);
     if (!(frame & 1)) {
@@ -2251,7 +2251,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
                         alex->z.fixed, 0, -PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        effectOptions);
+                        options);
     }
     if (frame == 20)
       Engine_ActorSetChildValue(ACTOR_ALEX, 0x100);

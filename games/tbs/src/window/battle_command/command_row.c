@@ -39,7 +39,7 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 /// presses the keys for the player.
 s32 Menu_RunCommandRow(s32 mode) {
   u8 party[4];
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   struct SelectionWork *selectionUi;
   struct BattleMenuWork *navigation;
   s32 stripDirty, tradeCount, pulseScale, command;
@@ -48,7 +48,7 @@ s32 Menu_RunCommandRow(s32 mode) {
   s32 iconSlot;
   s32 i, kindCount;
 
-  render = UI_WORK;
+  work = UI_WORK;
   // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
   iconSlot = VramCache_AllocEntry(0x400);
   stripDirty = 1;
@@ -136,7 +136,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     // 0x0600f800), the UI tilemap cleared to 0 over them.
     if (stripDirty != 0) {
       stripDirty = 0;
-      render->menuBusy = 1;
+      work->menuBusy = 1;
       if (mode != COMMAND_ROW_PARTY) {
         s32 panel;
         s32 count;
@@ -144,8 +144,8 @@ s32 Menu_RunCommandRow(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(render->tilemap + (entryIndex + 17) * 32 + panel * 3 +
-                WINDOW_X - 18 + (col & 3)) = UI_TILE(0x7f);
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + WINDOW_X -
+                18 + (col & 3)) = UI_TILE(0x7f);
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -167,7 +167,7 @@ s32 Menu_RunCommandRow(s32 mode) {
               vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
                   tmp = panel * 16 + entryIndex * 4 + col + offset;
               tmp = col & mask;
-              *(render->tilemap + (entryIndex + 17) * 32 + panel * 3 + tmp -
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + tmp -
                 count * 3 + WINDOW_X) = 0;
             }
           }
@@ -179,7 +179,7 @@ s32 Menu_RunCommandRow(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(render->tilemap + (entryIndex + 17) * 32 + panel * 3 + 2 +
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 2 +
                 (col & 3)) = UI_TILE(0x7f);
           }
         }
@@ -205,7 +205,7 @@ s32 Menu_RunCommandRow(s32 mode) {
               vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
                   tmp = panel * 16 + entryIndex * 4 + col + offset;
               tmp = col & mask;
-              *(render->tilemap + (entryIndex + 17) * 32 + panel * 3 + tmp -
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + tmp -
                 count * 3 + 20) = 0;
             }
           }
@@ -325,7 +325,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     IoWriteQueue_Store16((u32)&REG_DISPCNT,
                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
-    render->menuBusy = 0;
+    work->menuBusy = 0;
     WaitFrames(1);
   }
   if (mode != COMMAND_ROW_PARTY)
@@ -335,7 +335,7 @@ s32 Menu_RunCommandRow(s32 mode) {
   // Every icon names the same entry, so it is released once per icon.
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
     Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
-  render->menuBusy = 1;
+  work->menuBusy = 1;
   UiWork_Finalize(selectionUi->window, 1);
   // Cover the strip again: seven panels of UI_TILE(0x7f) from column 5.
   {
@@ -347,13 +347,13 @@ s32 Menu_RunCommandRow(s32 mode) {
          * addresses; as a plain store, 2 of 1037 instructions differ in
          * tbs-en. */
         for (col = 0; col <= 2; col++)
-          *(volatile u16 *)(render->tilemap + (entryIndex + 17) * 32 +
-                            panel * 3 + 5 + (col & 3)) = UI_TILE(0x7f);
+          *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
+                            5 + (col & 3)) = UI_TILE(0x7f);
       }
     }
   }
   // Restore the normal BG1 handler after clearing the command strip.
-  render->dirty = 1;
+  work->dirty = 1;
   WaitFrames(1);
   Scheduler_RemoveCallback(Graphics_SetBg1Priority3);
   Runtime_SetIrqHandler(2, 0, 0);
@@ -362,7 +362,7 @@ s32 Menu_RunCommandRow(s32 mode) {
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       0x20000);
   MemFree(selectionUi);
-  render->menuBusy = 0;
+  work->menuBusy = 0;
   WaitFrames(1);
   return command;
 }
@@ -374,7 +374,7 @@ s32 Menu_RunCommandRow(s32 mode) {
 /// UiWindow_SetTileAttributeBitRect clips; each row changed is marked for
 /// upload.
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
-  struct UiRenderWork *render = UI_WORK;
+  struct UiRenderWork *work = UI_WORK;
 
   paletteBit &= 1;
   paletteBit <<= 12;
@@ -396,7 +396,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 
   if (width > 0 && height > 0) {
     do {
-      u16 *cell = &((u16 (*)[32])render->tilemap)[y][x];
+      u16 *cell = &((u16 (*)[32])work->tilemap)[y][x];
       s32 remaining = width;
 
       if (remaining != 0) {
@@ -409,7 +409,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
         } while (remaining != 0);
       }
 
-      UiRender_MarkRow(render, y);
+      UiRender_MarkRow(work, y);
       height--;
       y++;
     } while (height != 0);

@@ -539,16 +539,16 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 /// Called by BattlePresentation_ApplyUnitDamage.
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
-  struct AnimationObject *object;
+  struct AnimationObject *animation;
   if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
-    object = BattleObject_Get(unitId)->object->records;
-    AnimationObject_SelectAnimationFar(object, POSE_DAMAGE);
-    actorData = object->entries[0];
+    animation = BattleObject_Get(unitId)->object->records;
+    AnimationObject_SelectAnimationFar(animation, POSE_DAMAGE);
+    actorData = animation->entries[0];
     actorData->param = SPRITE_COLOR_GREY;
     actorData->frame = 0xFF;
     WaitFrames(4);
-    Map_RenderAnimatedTileFramesForObjectFar((u8 *)object);
+    Map_RenderAnimatedTileFramesForObjectFar((u8 *)animation);
     BattleObject_MarkForRelease(unitId);
   }
 }

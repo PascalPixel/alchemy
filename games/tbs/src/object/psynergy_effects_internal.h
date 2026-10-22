@@ -98,7 +98,7 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The effect slots of a Psynergy effect's scene (gEffectWork->slots).
+/// The effect slots of a Psynergy effect's scene (gEffectWork->effects).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
 /// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
@@ -134,15 +134,15 @@ FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
 /// FieldEffect_UpdateAllEffectSlots (setup.c) and FieldEffect_UpdateAllSlots
 /// (djinni.c) run it once a frame.
 static __inline__ void FieldEffect_UpdateSceneSlots(void) {
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   s32 remainingSlots;
 
-  slot = ((struct FieldFxScene *)gEffectWork)->slots;
+  effect = ((struct FieldFxScene *)gEffectWork)->effects;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
-    EffectSlot_Update(slot);
-    slot++;
+    EffectSlot_Update(effect);
+    effect++;
   } while (remainingSlots >= 0);
 }
 
@@ -185,7 +185,7 @@ struct CaptureObject {
   u16 timer; ///< as DescendingOrbitObject.timer
   u16 angle; ///< work: as DescendingOrbitObject.angle
   struct FieldActor *linkedObject;
-  void (*callback)(union FieldObject *object); ///< update: run each frame
+  void (*callback)(union FieldObject *fieldObject); ///< update: run each frame
 };
 
 /// Defines a per-frame update that spins an object 1/8 turn a frame while its
@@ -333,7 +333,7 @@ struct SparkObject {
   /// emitter, which -1 holds still.
   s16 phase;
   u8 unk66[6];
-  void (*update)(union FieldObject *object); ///< run each frame
+  void (*update)(union FieldObject *fieldObject); ///< run each frame
 };
 
 /// The states of an effect slot particle that flies out and back: Halt's,

@@ -612,12 +612,12 @@ static void Imil_ReadApprenticeMind(void) {
 /// stops, the door opens and the leader walks in; the Sanctum's door
 /// (IMIL_TO_IMIL_INTERIORS_NORTHEAST) has its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
-  struct EventWork *event;
+  struct EventWork *work;
   struct FieldActor *actor;
   u32 i;
   s32 exit;
 
-  event = gEventWork;
+  work = gEventWork;
   Engine_EventStart();
   for (i = ACTOR_FIRST_PLACED; i <= 65; i++) {
     actor = Object_GetById(i);
@@ -625,7 +625,7 @@ static void Imil_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  exit = (s16)(event->touchedTrigger - 50);
+  exit = (s16)(work->touchedTrigger - 50);
   if (exit == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     Engine_AudioPlayCue(SE_188);
   } else {
@@ -1220,24 +1220,24 @@ static void Imil_InitializeRisingEffect(struct FieldActor *work) {
 
 /// Moves and enlarges an ambient effect, then releases it when its timer
 /// expires.
-static void Imil_UpdateRisingEffect(union FieldObject *object) {
-  object->effect.x += (s16)object->effect.spin << 8;
-  object->effect.y += PIXELS(1) / 2;
-  object->effect.scaleX += 3 * Q16_ONE / 100;
-  object->effect.scaleY += 3 * Q16_ONE / 100;
-  object->effect.spin += 2;
-  if (--object->effect.countdown == 0) {
-    Engine_ObjectDispatchRelease(&object->actor);
+static void Imil_UpdateRisingEffect(union FieldObject *fieldObject) {
+  fieldObject->effect.x += (s16)fieldObject->effect.spin << 8;
+  fieldObject->effect.y += PIXELS(1) / 2;
+  fieldObject->effect.scaleX += 3 * Q16_ONE / 100;
+  fieldObject->effect.scaleY += 3 * Q16_ONE / 100;
+  fieldObject->effect.spin += 2;
+  if (--fieldObject->effect.countdown == 0) {
+    Engine_ObjectDispatchRelease(&fieldObject->actor);
   }
 }
 
 /// Initializes a newly created ambient effect for its one-second rise.
-static inline void Imil_StartRisingEffect(union FieldObject *object) {
-  if (object != NULL) {
-    Imil_InitializeRisingEffect(&object->actor);
-    object->effect.countdown = 60;
-    object->effect.update = Imil_UpdateRisingEffect;
-    Object_SetMode(&object->actor, 5);
+static inline void Imil_StartRisingEffect(union FieldObject *fieldObject) {
+  if (fieldObject != NULL) {
+    Imil_InitializeRisingEffect(&fieldObject->actor);
+    fieldObject->effect.countdown = 60;
+    fieldObject->effect.update = Imil_UpdateRisingEffect;
+    Object_SetMode(&fieldObject->actor, 5);
   }
 }
 
@@ -1247,33 +1247,33 @@ static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (tagged in frame.h); the six editions
   // build the same bytes without it
   volatile u32 *frame;
-  union FieldObject *object;
+  union FieldObject *fieldObject;
 
   frame = &gFrameCount;
   if (((u32)*frame % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(463),
-                                                0, PIXELS(292));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(463), 0, PIXELS(292));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 30) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(320),
-                                                PIXELS(32), PIXELS(356));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(320), PIXELS(32), PIXELS(356));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 10) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(118),
-                                                0, PIXELS(70));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(118), 0, PIXELS(70));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 50) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(342),
-                                                0, PIXELS(124));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(342), 0, PIXELS(124));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 80) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(431),
-                                                0, PIXELS(171));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(431), 0, PIXELS(171));
+    Imil_StartRisingEffect(fieldObject);
   }
 }
 
@@ -1539,7 +1539,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
-static void Imil_TurnSlidingActor(union FieldObject *object) {
+static void Imil_TurnSlidingActor(union FieldObject *fieldObject) {
   struct FieldActor *actor;
   s32 z;
   s32 t;
@@ -1547,7 +1547,7 @@ static void Imil_TurnSlidingActor(union FieldObject *object) {
   u16 prev;
   s32 n;
 
-  actor = &object->actor;
+  actor = &fieldObject->actor;
   n = (u16)actor->timer;
   z = 0;
   t = ((s16 *)&actor->timer)[z];

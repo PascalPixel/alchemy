@@ -24,7 +24,7 @@ struct Effect05Object {
   /// gFieldEffect_CommonParticleScript frees it.
   s16 phase;
   u8 reserved60[0xc];
-  void (*callback)(union FieldObject *object); ///< per-frame update
+  void (*callback)(union FieldObject *fieldObject); ///< per-frame update
 };
 
 /// The effect scene (struct FieldFxScene, gEffectWork) as Douse reads it;

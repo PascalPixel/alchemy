@@ -89,8 +89,8 @@ s32 BattleEvent_SchedulePhase(s32 frames) {
 void BattleEvent_Playback(void) {
   u16 selection[8];
   struct AnimationObject *records[4];
-  struct BattleWork *work = gBattleWork;
-  struct BattleEventState *events = &work->events;
+  struct BattleWork *battle = gBattleWork;
+  struct BattleEventState *events = &battle->events;
 
   /// Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
   /// the last step of a fallen enemy's dissolve.
@@ -101,7 +101,7 @@ void BattleEvent_Playback(void) {
   }
 
   // Idle until the effect's blow lands; ready once every target is played.
-  if (work->events.phase == BATTLE_PLAYBACK_IDLE)
+  if (battle->events.phase == BATTLE_PLAYBACK_IDLE)
     return;
   for (;;) {
     if (events->phase == BATTLE_PLAYBACK_READY)
@@ -109,11 +109,11 @@ void BattleEvent_Playback(void) {
     if (events->phase == BATTLE_PLAYBACK_RESOLVE_TARGET) {
       // Resolve the next target, which queues its events, then play them;
       // with none left, playback is ready.
-      if (events->queue.targetIndex < work->plan.targetCount) {
+      if (events->queue.targetIndex < battle->plan.targetCount) {
         events->queue.count = 0;
         events->eventIndex = 0;
         events->timer = 0;
-        BattleTarget_Execute(&work->plan, events->queue.targetIndex);
+        BattleTarget_Execute(&battle->plan, events->queue.targetIndex);
         events->queue.targetIndex++;
         events->phase = BATTLE_PLAYBACK_DISPATCH;
       } else {
@@ -275,7 +275,7 @@ void BattleEvent_Playback(void) {
       s32 x = 0;
 
       if (events->displaySource == -1)
-        events->displaySource = work->promptSlot;
+        events->displaySource = battle->promptSlot;
       UiWork_ClearValueNameTablesFar();
       IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);

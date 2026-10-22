@@ -777,9 +777,9 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
 /// (VenusLighthouse_ArriveThroughSparkPassage).
 static void Event_EnterSparklingPassage(void) {
   struct FieldActor *leader;
-  struct EventWork *eventWork;
+  struct EventWork *work;
 
-  eventWork = gEventWork;
+  work = gEventWork;
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventStart();
   Engine_AudioPlayCue(SE_228);
@@ -799,7 +799,7 @@ static void Event_EnterSparklingPassage(void) {
   Engine_EventWait(30);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(eventWork->touchedTrigger);
+  Engine_EventRequestExit(work->touchedTrigger);
   Engine_EventEnd();
 }
 
@@ -1773,7 +1773,7 @@ static void Event_CarryPillarAcrossGap(void) {
 /// bringing the party back.
 static void Event_StepOnWallSwitch(void) {
   struct EffectOptions options;
-  struct MapLayerScroll *scrollLayer;
+  struct MapLayerScroll *layer;
   struct FieldActor *leader;
   s32 column;
   s32 leaderZ;
@@ -1781,7 +1781,7 @@ static void Event_StepOnWallSwitch(void) {
   u32 frame;
   s32 dustX;
 
-  scrollLayer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+  layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   column = leader->x.part.pixel;
   leaderZ = leader->z.part.pixel;
@@ -1803,7 +1803,7 @@ static void Event_StepOnWallSwitch(void) {
       // Scroll the layer while replacing the wall edge and emitting dust along
       // it.
       for (frame = 0; frame <= 479; frame++, tileDelay--) {
-        scrollLayer->offsetX += PIXELS(1) / 5;
+        layer->offsetX += PIXELS(1) / 5;
         dustX -= PIXELS(1) / 5;
         options.priority = 2;
         options.startScaleX =
@@ -1830,8 +1830,8 @@ static void Event_StepOnWallSwitch(void) {
         }
         Engine_TaskWait(1);
       }
-      scrollLayer->offsetX += PIXELS(1) / 2;
-      scrollLayer->offsetX = scrollLayer->offsetX / PIXELS(1) << 16;
+      layer->offsetX += PIXELS(1) / 2;
+      layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       Map_CopyCellAttributes(15, 32, 3, 1, 9, 32);
       Map_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       Engine_AudioPlayCue(SE_STOP_SLOT3);
@@ -2325,7 +2325,7 @@ static void Event_PushPuzzlePillar(void) {
 /// bringing the party back.
 static void Event_StepOnWestWallSwitch(void) {
   struct EffectOptions options;
-  struct MapLayerScroll *scrollLayer;
+  struct MapLayerScroll *layer;
   struct FieldActor *leader;
   s32 column;
   s32 leaderZ;
@@ -2333,7 +2333,7 @@ static void Event_StepOnWestWallSwitch(void) {
   u32 frame;
   s32 dustX;
 
-  scrollLayer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+  layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   column = leader->x.part.pixel;
   leaderZ = leader->z.part.pixel;
@@ -2355,7 +2355,7 @@ static void Event_StepOnWestWallSwitch(void) {
       // Move the west wall while its visible edge exposes successive tile
       // strips.
       for (frame = 0; frame <= 319; frame++, tileDelay--) {
-        scrollLayer->offsetX += PIXELS(1) / 5;
+        layer->offsetX += PIXELS(1) / 5;
         if (dustX >= PIXELS(576) && frame > 40) {
           dustX -= PIXELS(1) / 5;
           options.priority = 2;
@@ -2376,8 +2376,8 @@ static void Event_StepOnWestWallSwitch(void) {
         }
         Engine_TaskWait(1);
       }
-      scrollLayer->offsetX += PIXELS(1) / 2;
-      scrollLayer->offsetX = scrollLayer->offsetX / PIXELS(1) << 16;
+      layer->offsetX += PIXELS(1) / 2;
+      layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       Engine_AudioPlayCue(SE_STOP_SLOT3);
       Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -2399,7 +2399,7 @@ static void Event_StepOnWestWallSwitch(void) {
 /// bringing the party back.
 static void Event_StepOnEastWallSwitch(void) {
   struct EffectOptions options;
-  struct MapLayerScroll *scrollLayer;
+  struct MapLayerScroll *layer;
   struct FieldActor *leader;
   s32 column;
   s32 leaderZ;
@@ -2407,7 +2407,7 @@ static void Event_StepOnEastWallSwitch(void) {
   u32 frame;
   s32 dustX;
 
-  scrollLayer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+  layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   column = leader->x.part.pixel;
   leaderZ = leader->z.part.pixel;
@@ -2428,7 +2428,7 @@ static void Event_StepOnEastWallSwitch(void) {
       // Move the east wall in the opposite direction, keeping its distinct dust
       // limits.
       for (frame = 0; frame <= 319; frame++, tileDelay--) {
-        scrollLayer->offsetX -= PIXELS(1) / 5;
+        layer->offsetX -= PIXELS(1) / 5;
         dustX += PIXELS(1) / 5;
         if (dustX >= PIXELS(712) && dustX < PIXELS(752)) {
           options.priority = 2;
@@ -2449,8 +2449,8 @@ static void Event_StepOnEastWallSwitch(void) {
         }
         Engine_TaskWait(1);
       }
-      scrollLayer->offsetX += PIXELS(1) / 2;
-      scrollLayer->offsetX = scrollLayer->offsetX / PIXELS(1) << 16;
+      layer->offsetX += PIXELS(1) / 2;
+      layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       Engine_AudioPlayCue(SE_STOP_SLOT3);
       Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -3290,10 +3290,10 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   s32 particleX;
 
   {
-    struct EventWork *event = gEventWork;
+    struct EventWork *work = gEventWork;
 
     actorId = gGameState.selectedActor;
-    viewCenter = event->viewCenter;
+    viewCenter = work->viewCenter;
   }
   actor = Object_GetById(actorId);
   nextPosition.x =
@@ -3471,14 +3471,14 @@ static void VenusLighthouse_EmitEastPassageParticles(void) {
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST.
 static void VenusLighthouse_AnimateWestTileWave(void) {
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
   u32 extraBursts;
   s32 zero;
   u32 row;
   s32 rowOffset;
   s32 particleZ;
   u32 particleIndex;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions *options;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventStart();
@@ -3493,19 +3493,19 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Engine_CameraMoveTo(PIXELS(440), -1, PIXELS(360), 1);
   extraBursts = 0;
   row = 0;
-  effectOptions = &options;
+  options = &optionsStorage;
   rowOffset = 0;
   do {
-    Rubble_SetScaleAndSpin(&options);
+    Rubble_SetScaleAndSpin(&optionsStorage);
   // Repeat particle bursts on the fourth row before advancing the copied tiles.
   again:
     particleZ = 0xc00000;
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn(
-          (((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x1a00000, 0,
-          particleZ, 0, zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-          effectOptions);
+      FieldEffect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) +
+                            0x1a00000,
+                        0, particleZ, 0, zero, zero,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
       particleZ += 0x40000;
     }
     Engine_TaskWait(3);
@@ -3537,14 +3537,14 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST.
 static void VenusLighthouse_AnimateEastTileWave(void) {
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
   u32 extraBursts;
   s32 zero;
   u32 row;
   s32 rowOffset;
   s32 particleZ;
   u32 particleIndex;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions *options;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventStart();
@@ -3559,19 +3559,19 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Engine_CameraMoveTo(PIXELS(568), -1, PIXELS(360), 1);
   extraBursts = 0;
   row = 0;
-  effectOptions = &options;
+  options = &optionsStorage;
   rowOffset = 0;
   do {
-    Rubble_SetScaleAndSpin(&options);
+    Rubble_SetScaleAndSpin(&optionsStorage);
   // Keep this route task scheduling after each completed row.
   again:
     particleZ = 0xc00000;
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn(
-          (((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x2200000, 0,
-          particleZ, 0, zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-          effectOptions);
+      FieldEffect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) +
+                            0x2200000,
+                        0, particleZ, 0, zero, zero,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
       particleZ += 0x40000;
     }
     Engine_TaskWait(3);
@@ -3604,15 +3604,15 @@ static void VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
 static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions = &options;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options = &optionsStorage;
   s32 framePhase;
   s32 particleX, particleY, particleZ, riseSpeed;
 
-  effectOptions->priority = 1;
-  effectOptions->palette = 5;
-  effectOptions->type = 286;
-  effectOptions->script = gVenusSprayScript;
+  options->priority = 1;
+  options->palette = 5;
+  options->type = 286;
+  options->script = gVenusSprayScript;
   framePhase = gFrameCount & 3;
   if (framePhase == 0) {
     if ((gFrameCount & 7) == 0) {
@@ -3628,7 +3628,7 @@ static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
     FieldEffect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
-                      effectOptions);
+                      options);
   }
 #ifdef UBFIX
   return;

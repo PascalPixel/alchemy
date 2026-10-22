@@ -390,8 +390,8 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
 /// Scatters a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
   struct Vector3 *emissionVelocity;
   struct FieldActor *actor;
   u32 directionIndex;
@@ -400,8 +400,8 @@ static void MogallForest_SpawnPuffRing(s32 id) {
 
   actor = Object_GetById(id);
   Engine_AudioPlayCue(SE_188);
-  effectOptions = &options;
-  effectOptions->priority = 1;
+  options = &optionsStorage;
+  options->priority = 1;
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
     emissionVelocity = &velocity;
     emissionVelocity->x = Engine_MathCos(directionIndex << 12);
@@ -413,7 +413,7 @@ static void MogallForest_SpawnPuffRing(s32 id) {
     emissionVelocity->x = x;
     FieldEffect_Spawn(actor->x.fixed, PIXELS(16), actor->z.fixed, x,
                       emissionVelocity->y + PIXELS(1) / 10, z,
-                      EFFECT_USE_PRIORITY, effectOptions);
+                      EFFECT_USE_PRIORITY, options);
   }
 }
 

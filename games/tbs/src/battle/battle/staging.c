@@ -181,7 +181,7 @@ s32 BattlePresentation_BuildTargetList(struct BattlePlan *plan,
 /// runs; an enemy that gets away is taken out of the lists and its object
 /// released.
 s32 BattlePresentation_RunEscape(struct BattlePlan *plan) {
-  struct BattlePresentationTransition *presentation =
+  struct BattlePresentationTransition *transition =
       WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *scene = WORK_SLOT(HEAP_SLOT_BATTLE);
   /* FAKEMATCH(temporary): completed cleared a halfword at a time, which keeps
@@ -195,8 +195,8 @@ s32 BattlePresentation_RunEscape(struct BattlePlan *plan) {
 
   completed.halves[0] = 0;
   completed.halves[1] = 0;
-  presentation->targetYaw = YAW_PARTY_TURN;
-  presentation->active = 1;
+  transition->targetYaw = YAW_PARTY_TURN;
+  transition->active = 1;
   BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
 
   // The party: each member that can move runs, the last listed first, eight
@@ -243,7 +243,7 @@ s32 BattlePresentation_RunEscape(struct BattlePlan *plan) {
     BattlePresentation_WaitForAdvance();
   }
 
-  presentation->active = 0;
+  transition->active = 0;
   return completed.value;
 }
 
@@ -717,7 +717,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
   s32 targetOrFadeIndex;
   s32 inventoryEntry;
   struct BattleUnit *unit;
-  struct ItemDefinition *itemDefinition;
+  struct ItemDefinition *item;
   struct BattlePresentationTransition *transition = gTransitionWork;
   s32 targetYaw;
 
@@ -794,8 +794,8 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
   // Spend the item, by its use type.
   unit = Unit_GetFar(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
-  itemDefinition = Item_GetDirectFar(inventoryEntry);
-  if (itemDefinition->useType == ITEM_USE_CONSUMED) {
+  item = Item_GetDirectFar(inventoryEntry);
+  if (item->useType == ITEM_USE_CONSUMED) {
     s32 result = Inventory_RemoveFar(selection->unitId, selection->parameter);
     s32 index = selection->parameter;
     if (result == ITEM_REMOVED_SLOT_GONE) {
@@ -812,7 +812,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
         }
       }
     }
-  } else if (itemDefinition->useType == ITEM_USE_MAY_BREAK) {
+  } else if (item->useType == ITEM_USE_MAY_BREAK) {
     // One time in eight it breaks, shown at once.
     if ((Battle_RandomFar() & 7) == 0) {
       BattleEvent_Push(BATTLE_EVENT_ITEM_NAME,
@@ -821,7 +821,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattleEvent_DispatchQueued();
     }
-  } else if (itemDefinition->useType == ITEM_USE_EMPTIES) {
+  } else if (item->useType == ITEM_USE_EMPTIES) {
     // Hermes' Water becomes one Empty Bottle, the slot's other bits dropped;
     // any other such item stays as it was.
     if ((inventoryEntry & ITEM_ID_MASK) == ITEM_HERMES_WATER)

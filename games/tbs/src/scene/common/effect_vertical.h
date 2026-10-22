@@ -11,8 +11,9 @@
 
 /// Rises beside the linked actor, expanding and shrinking over half a sine
 /// wave.
-static void FieldEffect_AnimateVerticalPositive(union FieldObject *object) {
-  struct FieldActor *self = &object->actor;
+static void
+FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
+  struct FieldActor *self = &fieldObject->actor;
   struct FieldActor *anchor;
   s32 frame;
   s32 amplitude;
@@ -35,8 +36,9 @@ static void FieldEffect_AnimateVerticalPositive(union FieldObject *object) {
 }
 
 /// Mirrors the rising particle vertically and passes behind the linked actor.
-static void FieldEffect_AnimateVerticalNegative(union FieldObject *object) {
-  struct FieldActor *self = &object->actor;
+static void
+FieldEffect_AnimateVerticalNegative(union FieldObject *fieldObject) {
+  struct FieldActor *self = &fieldObject->actor;
   struct FieldActor *anchor;
   s32 frame;
   s32 amplitude;

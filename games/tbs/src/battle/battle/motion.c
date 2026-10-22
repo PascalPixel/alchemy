@@ -251,7 +251,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   s32 x2;
   s32 z1;
   s32 z2;
-  struct FixedPointPosition pos;
+  struct FixedPointPosition position;
 
   first = BattleObject_Get(firstId)->object;
   secondSlot = BattleObject_Get(secondId);
@@ -274,11 +274,11 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
     z2 = second->z;
   }
 
-  pos.x = (x1 + x2) / 2;
-  pos.y = 0;
-  pos.z = (z1 + z2) / 2;
+  position.x = (x1 + x2) / 2;
+  position.y = 0;
+  position.z = (z1 + z2) / 2;
 
-  BattleMotion_ReservedNoOp83B0(&pos, 0x1000);
+  BattleMotion_ReservedNoOp83B0(&position, 0x1000);
 }
 
 /// The hit flash's sprite layer, sprite 283: a star burst that grows and

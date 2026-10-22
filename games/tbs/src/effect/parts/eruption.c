@@ -238,12 +238,12 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
     return;
   }
   do {
-    struct AnimationObject *object = ResourceObject_CreateFar(source);
+    struct AnimationObject *animation = ResourceObject_CreateFar(source);
 
-    work->objects[entryIndex] = object;
-    if (object != 0) {
-      object->flags = 0;
-      AnimationObject_SelectAnimationFar(object, entryIndex);
+    work->objects[entryIndex] = animation;
+    if (animation != 0) {
+      animation->flags = 0;
+      AnimationObject_SelectAnimationFar(animation, entryIndex);
       work->objects[entryIndex]->image.priority = priority;
     }
     entryIndex++;

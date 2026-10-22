@@ -129,7 +129,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   struct MenuSprite statusSprites[11];
   struct MenuSprite nameSprite;
   struct StatusCursor cursor;
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   struct UiWindow *statusWindow;
   struct UiWindow *helpWindow;
   s32 ownerIndex;
@@ -157,7 +157,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   struct BattleMenuWork *navigation;
   s32 iconX;
 
-  render = UI_WORK;
+  work = UI_WORK;
   redraw = OWNER_STATUS_REDRAW_ALL;
   ownerIndex = -1;
   portraitSlot = VramCache_AllocEntry(0x200);
@@ -752,7 +752,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                                       0, 4);
       MemFree(helpText);
       redraw = 0;
-      render->dirty = 1;
+      work->dirty = 1;
     }
 
     // The condition icons, 15 pixels apart from x 112 on the first row;
@@ -760,12 +760,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     statusSprite = statusSprites;
     statusSlot = statusSlots;
     {
-      struct VramBlockCacheEntry *cache;
+      struct VramBlockCacheEntry *entry;
 
-      for (i = 0, cache = gVramBlockCache, iconX = 112; i <= 10; i++) {
+      for (i = 0, entry = gVramBlockCache, iconX = 112; i <= 10; i++) {
         statusSprite->oam.word.attr01 = 0x40000400;
         statusSprite->oam.word.attr23 = 0;
-        statusSprite->oam.f.tile = cache[*statusSlot++].offset >> 5;
+        statusSprite->oam.f.tile = entry[*statusSlot++].offset >> 5;
         statusSprite->oam.f.x = iconX;
         statusSprite->oam.f.y = (u8)(statusWindow->y * 8 + 8);
         if (statusKinds[i] > OWNER_CONDITION_NORMAL) {

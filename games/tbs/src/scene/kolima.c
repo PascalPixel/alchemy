@@ -567,13 +567,13 @@ s32 Kolima_Initialize(void) {
 /// 500 pixels out of sight on the others.
 static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
                                                        s32 visibleOnOddFrames) {
-  struct FieldActor *field = Object_GetById(actorId);
-  if (field != NULL) {
-    field->motionFlags = 0;
+  struct FieldActor *actor = Object_GetById(actorId);
+  if (actor != NULL) {
+    actor->motionFlags = 0;
     if (visibleOnOddFrames ? (gFrameCount & 1) : !(gFrameCount & 1)) {
-      field->y.fixed = 0;
+      actor->y.fixed = 0;
     } else {
-      field->y.fixed = PIXELS(500);
+      actor->y.fixed = PIXELS(500);
     }
   }
 }

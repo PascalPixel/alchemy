@@ -258,12 +258,12 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
 /// Effect slot callback of a particle that flies 30 pixels out from where it
 /// started, comes back and is freed. It goes out straight at up to 4 pixels a
 /// frame and comes back turning at most 1/64 turn a frame, so it curves home.
-void FieldEffect_UpdateOrbitAndReturn(struct EffectSlot *slot) {
+void FieldEffect_UpdateOrbitAndReturn(struct EffectSlot *effect) {
   // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
   // changes native instructions; retain the immediate retry until a plain form
   // matches.
   struct EffectVector position;
-  s8 *statePtr = &slot->state;
+  s8 *statePtr = &effect->state;
   s32 state;
 
 next_state:
@@ -271,21 +271,21 @@ next_state:
   if (state == OUT_AND_BACK_AIM_OUT) {
     u32 angle;
 
-    position.x = slot->originX;
-    position.z = slot->originZ;
+    position.x = effect->originX;
+    position.z = effect->originZ;
     angle = Random16();
     Vector_AddPolarOffset(30 << 16, (u16)angle, &position);
-    slot->targetX = position.x;
-    slot->targetZ = position.z;
-    slot->acceleration = 4 << 16;
-    slot->maxSpeed = 4 << 16;
-    slot->limitTurnStep = state;
+    effect->targetX = position.x;
+    effect->targetZ = position.z;
+    effect->acceleration = 4 << 16;
+    effect->maxSpeed = 4 << 16;
+    effect->limitTurnStep = state;
     (*statePtr)++;
     return;
   }
 
   if (state == OUT_AND_BACK_FLYING_OUT) {
-    if (EffectSlot_HasPendingTarget(slot) == 0) {
+    if (EffectSlot_HasPendingTarget(effect) == 0) {
       (*statePtr)++;
       goto next_state;
     }
@@ -293,17 +293,17 @@ next_state:
   }
 
   if (state == OUT_AND_BACK_AIM_BACK) {
-    slot->targetX = slot->originX;
-    slot->targetZ = slot->originZ;
-    slot->maxTurnStep = 0x400;
-    slot->limitTurnStep = 1;
+    effect->targetX = effect->originX;
+    effect->targetZ = effect->originZ;
+    effect->maxTurnStep = 0x400;
+    effect->limitTurnStep = 1;
     (*statePtr)++;
     return;
   }
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      EffectSlot_HasPendingTarget(slot) == 0)
-    FieldEffect_ClearOwnedSlot(slot);
+      EffectSlot_HasPendingTarget(effect) == 0)
+    FieldEffect_ClearOwnedSlot(effect);
 }
 
 /// When Move is cast with no target, the hand appears beside the caster for 30
@@ -394,21 +394,21 @@ void *FieldEffect_StartItemBreak(void *object) {
 /// 0xffff: 0x10000 from a multiple of 1/16) when it is smaller, then waits,
 /// at most 600 frames, for it to arrive at its target. Called by both Move
 /// effects on the hand.
-void FieldEffect_SnapScaleToFull(struct MotionObject *obj) {
+void FieldEffect_SnapScaleToFull(struct MotionObject *object) {
   s32 next;
   s32 scale;
 
-  if (obj != NULL) {
-    scale = obj->scaleX;
+  if (object != NULL) {
+    scale = object->scaleX;
     if (scale <= 0xffff) {
       do {
         next = scale + 0x1000;
         scale = next;
       } while (next <= 0xffff);
-      obj->scaleX = next;
-      obj->scaleY = next;
+      object->scaleX = next;
+      object->scaleY = next;
     }
-    FieldObject_WaitForMoveFar(obj);
+    FieldObject_WaitForMoveFar(object);
   }
 }
 

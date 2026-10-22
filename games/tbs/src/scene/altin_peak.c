@@ -144,7 +144,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void);
 static void AltinPeak_RestoreWestExitRoom(void);
 static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing);
 static void AltinPeak_SpawnDebris(void);
-static void AltinPeak_SparkleIce(union FieldObject *object);
+static void AltinPeak_SparkleIce(union FieldObject *fieldObject);
 static void AltinPeak_BeastFreezesSecondPuddle(void);
 static void AltinPeak_AwardFrostJewelAndDrain(void);
 static void AltinPeak_DrainAfterSecondBeast(void);
@@ -328,11 +328,11 @@ static void AltinPeak_TalkToDjinni(void) {
 // hooks return void. Plain void removes the native zero result and changes its
 // return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void AltinPeak_ShadowFollowBoulder(union FieldObject *object) {
+static void AltinPeak_ShadowFollowBoulder(union FieldObject *fieldObject) {
 #else
-static s32 AltinPeak_ShadowFollowBoulder(union FieldObject *object) {
+static s32 AltinPeak_ShadowFollowBoulder(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *follower = (struct FieldActor *)object;
+  struct FieldActor *follower = (struct FieldActor *)fieldObject;
   struct FieldActor *actor = Object_GetById(ACTOR_FALLING_BOULDER);
 
   follower->x.fixed = actor->x.fixed;
@@ -1249,8 +1249,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// Update callback of the hopping water beast: once a second it leaps up and
 /// lands with a splash (SE_SPLASH) that shakes the screen briefly.
-static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
-  struct FieldActor *beast = &object->actor;
+static void AltinPeak_UpdateBeastHops(union FieldObject *fieldObject) {
+  struct FieldActor *beast = &fieldObject->actor;
   s16 *shakeDelay = (s16 *)&beast->work;
 
   // The route owns timer (hop phase), work (shake delay) and the effect's
@@ -1260,12 +1260,12 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   }
   if (beast->velocityY == 0) {
-    Object_SetMode(&object->actor, 1);
+    Object_SetMode(&fieldObject->actor, 1);
     beast->y.fixed -= PIXELS(3) / 2;
     if (beast->y.fixed < beast->terrainHeight) {
-      if (object->effect.countdown != 0) {
+      if (fieldObject->effect.countdown != 0) {
         Engine_AudioPlayCue(SE_SPLASH);
-        object->effect.countdown = 0;
+        fieldObject->effect.countdown = 0;
         beast->work = 4;
         Map_SetShake(PIXELS(1), 0, Q16_ONE);
       }
@@ -1277,8 +1277,8 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
   }
   if (beast->timer == 0) {
     Engine_AudioPlayCue(SE_JUMP);
-    object->effect.countdown = 1;
-    Object_SetMode(&object->actor, 2);
+    fieldObject->effect.countdown = 1;
+    Object_SetMode(&fieldObject->actor, 2);
     beast->velocityY = PIXELS(3);
   }
   if (++beast->timer == 60)
@@ -1909,8 +1909,8 @@ static void AltinPeak_InitializeSpray(struct FieldActor *spray) {
 /// Update callback of a spray particle: it grows while drifting away from the
 /// beast, then curls and flattens when its movement timer runs low. The timer
 /// can start another curl; the separate lifetime still ends after 20 updates.
-static void AltinPeak_DriftSpray(union FieldObject *object) {
-  struct FieldActor *spray = &object->actor;
+static void AltinPeak_DriftSpray(union FieldObject *fieldObject) {
+  struct FieldActor *spray = &fieldObject->actor;
 
   switch (gAltinPeak_SprayDirection) {
   case FACING_EAST:
@@ -1946,7 +1946,7 @@ static void AltinPeak_DriftSpray(union FieldObject *object) {
     spray->timer -= 2;
   else
     spray->timer = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
-  if (--object->effect.countdown == 0)
+  if (--fieldObject->effect.countdown == 0)
     Engine_ObjectDispatchRelease(spray);
 }
 
@@ -2019,8 +2019,8 @@ static void AltinPeak_SpawnDebris(void) {
 
 /// Update callback of the frozen second puddle: its ice glints every eight
 /// frames.
-static void AltinPeak_SparkleIce(union FieldObject *object) {
-  struct FieldActor *actor = (struct FieldActor *)object;
+static void AltinPeak_SparkleIce(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
 
   s32 framePhase = gFrameCount & 7;
 

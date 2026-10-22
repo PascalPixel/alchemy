@@ -503,12 +503,12 @@ static void Event_GaretTurnsLeaderBack(void) {
 /// Lunpa, walking north into a doorway: the door opens and the leader goes
 /// into the home, shop, inn or temple behind it.
 static void Event_EnterDoor(void) {
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   struct FieldActor *placedActor;
   u32 actorId;
   s32 doorIndex;
 
-  fieldWork = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   Engine_EventStart();
   // Freeze placed actors before opening the selected door and crossing it.
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
@@ -518,7 +518,7 @@ static void Event_EnterDoor(void) {
     }
   }
   Event_PlayCue(SE_DOOR_OPEN);
-  doorIndex = fieldWork->action - TRIGGER_FIRST_HOME_DOOR;
+  doorIndex = work->action - TRIGGER_FIRST_HOME_DOOR;
   Map_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                    gLunpaDoors[doorIndex].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -528,7 +528,7 @@ static void Event_EnterDoor(void) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
     Engine_EventWait(10);
   }
-  Engine_EventRequestExit(fieldWork->action);
+  Engine_EventRequestExit(work->action);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
@@ -713,12 +713,12 @@ static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
 /// guards, the party is caught.
 static void Event_CloakFades(void) {
 #if TBS_PATCH_1
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
 #endif
   struct FieldActor *leader;
 
 #if TBS_PATCH_1
-  fieldWork = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
 #endif
   Engine_GameFlagClear(FLAG_SCENE_TEMP_41);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_40);
@@ -727,7 +727,7 @@ static void Event_CloakFades(void) {
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
     Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
-    fieldWork->event = TRIGGER_PARTY_SPOTTED;
+    work->event = TRIGGER_PARTY_SPOTTED;
 #else
     Event_GuardsCatchParty();
 #endif
@@ -739,16 +739,16 @@ static void Event_CloakFades(void) {
 /// Every frame at the Lunpa Fortress Gates: an uncloaked leader in front of
 /// the guards is spotted.
 static void Lunpa_WatchForUncloakedParty(void) {
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   struct FieldActor *leader;
 
-  fieldWork = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (gGameState.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
     Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
-    fieldWork->event = TRIGGER_PARTY_SPOTTED;
+    work->event = TRIGGER_PARTY_SPOTTED;
   }
 }
 

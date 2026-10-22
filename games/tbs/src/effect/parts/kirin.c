@@ -303,9 +303,9 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
   i = 0;
   do {
-    struct AnimationObject *object = work->objects[i];
+    struct AnimationObject *animation = work->objects[i];
 
-    object->image.priority = 3;
+    animation->image.priority = 3;
     i++;
   } while (i != KIRIN_OBJECTS);
 

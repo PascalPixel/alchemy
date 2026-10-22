@@ -37,9 +37,9 @@
 /// (BattleMenuWork.chosenDjinn), is refused. Battle_CollectPartyCommands runs
 /// it for the Djinn command; the Djinn tutorial presses A every 60 frames.
 s32 Battle_SelectAbility(s32 owner, s32 unused) {
-  struct CursorSprite cursor;
+  struct CursorSprite cursorStorage;
   u16 messageText[64];
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   struct UiWindow *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
@@ -55,7 +55,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   s32 previewPages;
   struct BattleMenuWork *navigation;
   struct BattleUnit *unit;
-  struct DjinnRecoveryList *recovery;
+  struct DjinnRecoveryList *list;
   struct UiWindow *listWindow;
   struct UiWindow *iconWindow;
   struct PartyStatusWindow *partyStatus;
@@ -75,9 +75,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   s32 djinnIndex;
   s32 i;
   s32 j;
-  struct CursorSprite *cursorSprite;
+  struct CursorSprite *sprite;
 
-  render = UI_WORK;
+  work = UI_WORK;
   previewWindow = 0;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
@@ -112,20 +112,20 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         // Owned but not set: look for its recovery in its side's list
         // (units above 7 are enemies). When it is not there, k ends at the
         // count and the turns read come from the first unused entry.
-        recovery = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                         (u32)owner > 7 ? 1 : 0))
-                        ->list;
-        for (k = 0; k < recovery->count; k++) {
-          if (recovery->entries[k].unitId == owner &&
-              recovery->entries[k].element == element &&
-              recovery->entries[k].index == djinnIndex) {
+        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+                     (u32)owner > 7 ? 1 : 0))
+                    ->list;
+        for (k = 0; k < list->count; k++) {
+          if (list->entries[k].unitId == owner &&
+              list->entries[k].element == element &&
+              list->entries[k].index == djinnIndex) {
             break;
           }
         }
         v = (u32)((element << 8) | djinnIndex | DJINN_ENTRY_STANDBY);
         *entryCursor = v;
-        if (recovery->entries[k].turns > 0) {
-          v |= (u32)(recovery->entries[k].turns << DJINN_ENTRY_RECOVERY_SHIFT);
+        if (list->entries[k].turns > 0) {
+          v |= (u32)(list->entries[k].turns << DJINN_ENTRY_RECOVERY_SHIFT);
           *entryCursor = v;
         }
         djinnCount++;
@@ -134,12 +134,12 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     }
   }
   djinnEntries[djinnCount] = DJINN_ENTRY_END;
-  render->dirty = 1;
+  work->dirty = 1;
 
-  /* FAKEMATCH(dead): cursorSprite set before the loop, which sets it again,
+  /* FAKEMATCH(dead): sprite set before the loop, which sets it again,
    * keeps the native allocation; without it, 197 of 1201 instructions differ
    * in tbs-en. */
-  cursorSprite = &cursor;
+  sprite = &cursorStorage;
   for (;;) {
     // Rebuild descriptions only when the selection or preview page changes:
     // the message ("Cannot use the same Djinni twice.", "Ready to summon."
@@ -150,7 +150,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         redraw != 0) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
-      render->menuBusy = 1;
+      work->menuBusy = 1;
       Ui_SetRectHighlight(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
                           listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
@@ -235,12 +235,12 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         BATTLE_MENU_MESSAGE_COPY(MsgBattleNoDjinn, messageText,
                                  BATTLE_MENU_MESSAGE_CAPACITY);
       }
-      render->menuBusy = 0;
+      work->menuBusy = 0;
       if (previewPage == 0) {
-        render->menuBusy = 1;
+        work->menuBusy = 1;
         UiWork_Finalize(messageWindow, 1);
         messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
-        render->menuBusy = (u8)previewPage;
+        work->menuBusy = (u8)previewPage;
       }
       UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -290,8 +290,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       Ui_SetRectHighlight(listWindow->x + 1,
                           listWindow->y + selectedRow * 2 + 1,
                           listWindow->width - 2, 1, 14);
-      render->dirty = 1;
-      render->menuBusy = 0;
+      work->dirty = 1;
+      work->menuBusy = 0;
     }
 
     // Each frame: the current page's number lit 12 frames in 16 (steady while
@@ -323,7 +323,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         UiWindow_SetTilemapEntry(listWindow, UI_TILE_FRAME_TOP_RIGHT,
                                  listWindow->width - 2, -1, 0);
       }
-      UiRender_MarkRow(render, listWindow->y - 1);
+      UiRender_MarkRow(work, listWindow->y - 1);
     }
 
     // Tutorial input replaces live keys but uses the same navigation below.
@@ -421,7 +421,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
                                    0);
           UiWindow_SetTilemapEntry(previewWindow, 0xf335,
                                    previewWindow->width - 2, -1, 0);
-          UiRender_MarkRow(render, previewWindow->y);
+          UiRender_MarkRow(work, previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != 0) {
@@ -512,18 +512,18 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       cursorPos.x = cx - 2;
     }
     cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
-    /* FAKEMATCH(dead): cursorSprite set again to the cursor it already points
+    /* FAKEMATCH(dead): sprite set again to the cursor it already points
      * at keeps the native reload; without it, 18 of 1201 instructions differ
      * in tbs-en. */
-    cursorSprite = &cursor;
-    ((u32 *)cursorSprite)[1] = MENU_SPRITE_SIZE_16;
-    ((u32 *)cursorSprite)[2] = 0;
-    cursorSprite->tile =
+    sprite = &cursorStorage;
+    ((u32 *)sprite)[1] = MENU_SPRITE_SIZE_16;
+    ((u32 *)sprite)[2] = 0;
+    sprite->tile =
         VramCache_Reload(cursorSlot, (s32)gResource_FixedBlockBTiles);
-    cursorSprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
-    cursorSprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
+    sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0) {
-      Runtime_PushSlotEntry(cursorSprite, 242);
+      Runtime_PushSlotEntry(sprite, 242);
     }
     // In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
     // the element of a ready standby Djinni under the cursor blinks between

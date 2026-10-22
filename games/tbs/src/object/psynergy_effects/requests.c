@@ -15,12 +15,12 @@
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
-  struct FieldWork *field = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  field->battle = Encounter_GetEnemyGroupAtSlot(zone, slot);
+  work->battle = Encounter_GetEnemyGroupAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
-  if (field->mode == MODE_WORLD_MAP) {
+  if (work->mode == MODE_WORLD_MAP) {
     struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
@@ -36,24 +36,24 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 /// reads the pending event to make the Djinni join or hide it. About 20
 /// scenes reach it through Field_RequestDjinnBattleFar.
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
-  struct FieldWork *field;
-  struct GameState *gameState;
+  struct FieldWork *work;
+  struct GameState *state;
   s32 skipHop;
 
-  field = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   skipHop = flag & DJINN_NO_HOP;
   flag &= 0xff;
 
   if (skipHop == 0)
     Djinn_RunBattleStartHop(flag);
 
-  gameState = &gGameState;
+  state = &gGameState;
   // DJINN_NO_HOP rides along: it tells FieldObject_PlaceSceneActors to put
   // the Djinni back 32 pixels north of the leader, not at its placement.
-  gameState->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
-  field->battle = Encounter_GetDjinnEnemyGroup(no);
-  if (field->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(gameState->selectedActor);
+  state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
+  work->battle = Encounter_GetDjinnEnemyGroup(no);
+  if (work->mode == MODE_WORLD_MAP) {
+    struct ObjectRuntime *leader = ObjectTable_Get(state->selectedActor);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }

@@ -148,7 +148,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
   struct FieldActor *self = &fieldObject->actor;
   u8 **workAreas = gWindowWork;
   struct UiRenderWork *ui = (struct UiRenderWork *)workAreas[0];
-  struct FieldWork *field =
+  struct FieldWork *work =
       (struct FieldWork *)workAreas[HEAP_SLOT_EVENT - HEAP_SLOT_WINDOW];
   u16 *kidFlags = (u16 *)&self->timer;
   s32 force = 0;
@@ -171,7 +171,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if ((s16)field->talk != 0 || ui->mode != 0) {
+  if ((s16)work->talk != 0 || ui->mode != 0) {
     range = 26;
     if ((*kidFlags & KID_TALKING) != 0) {
       force = 1;
@@ -438,14 +438,14 @@ static void Tolbi_EnterDoor(void) {
 /// The update of TOLBI_OLD_MAN, who during the festival says he is 65 and that
 /// Babi was already old when he was born: gives him the leader's sprite
 /// priority every frame, for both of his sprite parts.
-static void Tolbi_CopyLeaderPriority(union FieldObject *object) {
+static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
   s32 priority;
 
-  if (object != NULL) {
+  if (fieldObject != NULL) {
     priority = Object_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
-    object->actor.priorityFlags = 0;
-    object->actor.sprite->image.priority = priority;
-    object->actor.sprite->shadow.priority = priority;
+    fieldObject->actor.priorityFlags = 0;
+    fieldObject->actor.sprite->image.priority = priority;
+    fieldObject->actor.sprite->shadow.priority = priority;
   }
 }
 

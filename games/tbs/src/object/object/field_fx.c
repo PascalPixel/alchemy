@@ -22,7 +22,8 @@ struct EffectObj {
   u8 pad2[4];
   struct AnimationObject *animation;
   u8 pad3[24];
-  void (*updateHook)(union FieldObject *object); ///< frame hook at offset 0x6c
+  void (*updateHook)(
+      union FieldObject *fieldObject); ///< frame hook at offset 0x6c
 };
 
 STATIC_ASSERT(sizeof(struct EffectObj) == 0x70);
@@ -86,14 +87,14 @@ void Marker_MoveLeaderAway(void) {
 /// Starts the particle script and its first child at priority 1, if the spawn
 /// succeeded. Allocation failure leaves the effect absent. The script sinks
 /// the sparkle a quarter pixel a frame for 60 frames, then frees it.
-static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
+static inline void Object_InitializeSparkle(struct ObjectRuntime *object) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
-  if (obj != 0) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  if (object != 0) {
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                  gFieldEffect_ParticleScript);
-    ObjectDispatch_SelectAnimationFar(obj, 0);
-    ((struct AnimationObject *)obj->animation)->image.priority = 1;
+    ObjectDispatch_SelectAnimationFar(object, 0);
+    ((struct AnimationObject *)object->animation)->image.priority = 1;
   }
 }
 
@@ -104,7 +105,7 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *emitter = (struct ObjectRuntime *)fieldObject;
   union PolarOffsetPosition position;
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *object;
   u32 randomRadius;
 
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
@@ -122,9 +123,9 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   position.vector.z = emitter->z;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  obj = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                     position.vector.z);
-  Object_InitializeSparkle(obj);
+  object = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                        position.vector.z);
+  Object_InitializeSparkle(object);
 }
 
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
@@ -355,7 +356,7 @@ void FieldEffect_ClearRandomParticles(void) {
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   const struct FieldActor *source = (const struct FieldActor *)fieldObject;
   union PolarOffsetPosition position;
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *object;
   u32 randomRadius;
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
@@ -370,9 +371,9 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   position.vector.z = source->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  obj = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                     position.vector.z);
-  Object_InitializeSparkle(obj);
+  object = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                        position.vector.z);
+  Object_InitializeSparkle(object);
 }
 
 /// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object

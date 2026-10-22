@@ -86,9 +86,9 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
     work->savedCallback = target->hook;
     work->savedScript = (const s32 *)target->script;
     {
-      struct AnimationObject *anim =
+      struct AnimationObject *animation =
           ((struct ObjectRuntime *)target)->animation;
-      u8 pal = anim->entries[0]->param;
+      u8 pal = animation->entries[0]->param;
 
       work->savedPalette = pal;
     }
@@ -145,7 +145,7 @@ void FieldEffect_End(void) {
   map = *(struct MapScrollWork **)((u8 *)sceneCell - 192);
 #endif
   for (remaining = 0; remaining < 24; remaining++) {
-    sceneObject = &scene->slots[remaining];
+    sceneObject = &scene->effects[remaining];
     if (sceneObject->active != 0)
       FieldEffect_ClearOwnedSlot(sceneObject);
   }

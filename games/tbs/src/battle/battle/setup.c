@@ -14,7 +14,7 @@
 /// background's perspective. Runs as a scheduler callback that
 /// Battle_RunEncounter adds with order 0xc7f: in the main-loop pass, after
 /// the tasks of order 0xc80 (the objects' camera, the sprite priorities and
-/// event playback). Changes work->linkMisses and linkPaused,
+/// event playback). Changes battle->linkMisses and linkPaused,
 /// the camera's yaw and the transition's frame count, the transform state,
 /// and through BattleCamera_SetRange the background's affine page.
 void BattlePresentation_UpdateCamera(void) {
@@ -24,13 +24,13 @@ void BattlePresentation_UpdateCamera(void) {
   struct BattleCamera *camera = gCameraWork;
   struct BattlePresentationTransition *transition =
       WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
-  struct BattleWork *work = gBattleWork;
+  struct BattleWork *battle = gBattleWork;
 #else
   void **slot = (void **)&gCameraWork;
   struct BattleCamera *camera = slot[0];
   struct BattlePresentationTransition *transition =
       slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
-  struct BattleWork *work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+  struct BattleWork *battle = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
 #endif
   struct FixedPointPosition eyeOffset;
   s32 *focus;
@@ -39,18 +39,18 @@ void BattlePresentation_UpdateCamera(void) {
 
   // The link check: a missed frame counts only while the link is down, and
   // any frame with it up resets the count.
-  if (work->twoSided != 0) {
+  if (battle->twoSided != 0) {
     if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-      work->linkMisses++;
-      if (work->linkMisses > LINK_MAX_MISSED_FRAMES) {
-        work->linkPaused = 1;
+      battle->linkMisses++;
+      if (battle->linkMisses > LINK_MAX_MISSED_FRAMES) {
+        battle->linkPaused = 1;
       }
     } else {
       linkId = SIO_MULTI_PLAYER_ID();
-      if (work->linkSide != linkId) {
-        work->linkPaused = 1;
+      if (battle->linkSide != linkId) {
+        battle->linkPaused = 1;
       }
-      work->linkMisses = 0;
+      battle->linkMisses = 0;
     }
   }
 

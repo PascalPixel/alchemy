@@ -60,7 +60,7 @@ struct MotionObject {
   /// FieldActor's paused, timer, linkedObject and the bytes between; not
   /// named by TBS code through this view.
   u8 unk5b[0x11];
-  void (*update)(union FieldObject *object); ///< run first each frame
+  void (*update)(union FieldObject *fieldObject); ///< run first each frame
 };
 
 /// A sprite of an animation record, as battle objects set its palette and

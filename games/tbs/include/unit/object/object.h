@@ -130,8 +130,8 @@ void Battle_SelectTerrainBackdrop(s32 behavior);
 #ifdef UBFIX
 void FieldEffect_SelectBattleCue(s32 zone, s32 slot);
 #endif
-void FieldEffect_ShrinkObjectAndDestroySlow(union FieldObject *object);
-void FieldEffect_ShrinkObjectAndDestroyFast(union FieldObject *object);
+void FieldEffect_ShrinkObjectAndDestroySlow(union FieldObject *fieldObject);
+void FieldEffect_ShrinkObjectAndDestroyFast(union FieldObject *fieldObject);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 

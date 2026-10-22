@@ -53,13 +53,13 @@ void Field_PlaceMapMarkers(void) {
 #endif
   s32 markerCount = 0;
   u8 *list = map->markers;
-  struct MarkerSlot *slot = work->markers;
+  struct MarkerSlot *marker = work->markers;
   const struct SceneEvent *event;
   struct ScriptObjectRuntime *markerActor;
   u32 column;
   u32 row;
 
-  Dma_Fill32(0, slot, sizeof(struct MarkerSlot) * MARKER_MAX);
+  Dma_Fill32(0, marker, sizeof(struct MarkerSlot) * MARKER_MAX);
   // A map without a marker list places nothing.
   if (list == NULL)
     return;
@@ -102,11 +102,11 @@ void Field_PlaceMapMarkers(void) {
           markerActor->homeZ = markerActor->z / 0x10000;
           markerActor->unk23 = 1;
           markerActor->flags59 = 1;
-          slot->id = event->trigger;
-          slot->object = (struct ObjectRuntime *)markerActor;
-          slot->column = markerActor->x / 0x100000;
-          slot->row = markerActor->z / 0x100000;
-          slot++;
+          marker->id = event->trigger;
+          marker->object = (struct ObjectRuntime *)markerActor;
+          marker->column = markerActor->x / 0x100000;
+          marker->row = markerActor->z / 0x100000;
+          marker++;
           markerCount++;
           if (markerCount >= MARKER_MAX)
             return;
@@ -130,11 +130,11 @@ void Field_PlaceMapMarkers(void) {
           markerActor->homeZ = markerActor->z / 0x10000;
           markerActor->flags59 = 1;
           markerActor->unk23 = 1;
-          slot->object = (struct ObjectRuntime *)markerActor;
-          slot->id = event->trigger;
-          slot->column = markerActor->x / 0x100000;
-          slot->row = markerActor->z / 0x100000;
-          slot++;
+          marker->object = (struct ObjectRuntime *)markerActor;
+          marker->id = event->trigger;
+          marker->column = markerActor->x / 0x100000;
+          marker->row = markerActor->z / 0x100000;
+          marker++;
           markerCount++;
           if (markerCount >= MARKER_MAX)
             return;
@@ -155,12 +155,12 @@ void Field_PlaceMapMarkers(void) {
 s32 Marker_FindSlot(s32 id) {
   s32 slotIndex;
   s32 matchingSlot;
-  struct MarkerSlot *slot;
+  struct MarkerSlot *marker;
 
-  slot = ((struct FieldWork *)gEventWork)->markers;
+  marker = ((struct FieldWork *)gEventWork)->markers;
   matchingSlot = -1;
-  for (slotIndex = 0; slotIndex <= MARKER_MAX - 1; slotIndex++, slot++) {
-    if (slot->id == id) {
+  for (slotIndex = 0; slotIndex <= MARKER_MAX - 1; slotIndex++, marker++) {
+    if (marker->id == id) {
       matchingSlot = slotIndex;
       break;
     }

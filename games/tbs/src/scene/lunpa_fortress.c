@@ -815,9 +815,9 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   struct MapLayerScroll *patrolLayer =
       &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_OVERHEAD];
 #ifdef UBFIX
-  struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 #else
-  s16 *fieldWork = *(s16 **)&gMapWork[19];
+  s16 *work = *(s16 **)&gMapWork[19];
 #endif
 
   Engine_EventGetViewCenter();
@@ -828,8 +828,8 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
-      PATROL_ITEM_REQUEST(fieldWork) != 0) {
+  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
+      PATROL_ITEM_REQUEST(work) != 0) {
     guard->paused = 1;
   } else if (!FLAG_CHECK(FLAG_SCENE_TEMP_14)) {
     guard->paused = 0;
@@ -841,7 +841,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       LunpaFortress_IsGuardNearViewCenter(UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(UPPER_FLOOR_HALL_PATROL) &&
           gGameState.cloaked != 0) {
-        SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), CLOAK_NEAR_GUARD);
+        SetSceneValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
         return;
       }
       if (gGameState.cloaked == 0) {
@@ -851,7 +851,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
         }
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_14)) {
-        SetSceneValue(&PATROL_RAISED_TRIGGER(fieldWork),
+        SetSceneValue(&PATROL_RAISED_TRIGGER(work),
                       TRIGGER_HALL_PATROL_SPOTTED);
       }
     }
@@ -893,9 +893,9 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   struct MapLayerScroll *patrolLayer =
       &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_OVERHEAD];
 #ifdef UBFIX
-  struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 #else
-  s16 *fieldWork = *(s16 **)&gMapWork[19];
+  s16 *work = *(s16 **)&gMapWork[19];
 #endif
 
   if (gFrameCount & 1) {
@@ -905,8 +905,8 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
-      PATROL_ITEM_REQUEST(fieldWork) != 0) {
+  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
+      PATROL_ITEM_REQUEST(work) != 0) {
     guard->paused = 1;
   } else if (!FLAG_CHECK(FLAG_SCENE_TEMP_14)) {
     guard->paused = 0;
@@ -917,7 +917,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
       if (LunpaFortress_IsLeaderNearGuard(GROUND_FLOOR_PATROL_GUARD) &&
           gGameState.cloaked != 0) {
-        SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), CLOAK_NEAR_GUARD);
+        SetSceneValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
         return;
       }
       if (gGameState.cloaked == 0) {
@@ -927,7 +927,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
         }
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_14)) {
-        SetSceneValue(&PATROL_RAISED_TRIGGER(fieldWork),
+        SetSceneValue(&PATROL_RAISED_TRIGGER(work),
                       TRIGGER_GROUND_FLOOR_PATROL_SPOTTED);
       }
     }

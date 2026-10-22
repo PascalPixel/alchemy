@@ -1,20 +1,21 @@
 /// @file
-/// Sol Sanctum (SceneId_SolSanctumMaze), the room that holds the
-/// second Small Jewel.
+/// Sol Sanctum (SceneId_SolSanctumMaze), the room that holds the second Small
+/// Jewel.
 ///
-/// Both its ways out (SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH and
-/// _NORTH) lead into SceneId_SolSanctumReliefs, the rooms inside
-/// Sol Sanctum's door, with two minotaur reliefs and the statues the party
-/// pushes or moves with Move; it leads back in by
-/// SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST and _EAST. The room places
-/// no actors; its one event of its own is the chest
-/// (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND). Each relief in
-/// SceneId_SolSanctumReliefs has a sparkling right eye and an empty socket for
-/// the left, and the jewel from this chest is the one the second relief takes,
-/// `You hear the sound of shifting stone.` The entry code is
-/// SolSanctumRooms_Initialize, which this room shares with
-/// SceneId_SolSanctumCorridor: once Mt. Aleph has erupted the room rumbles and
-/// shakes.
+/// It is reached from two rooms of SceneId_SolSanctumReliefs
+/// (sol_sanctum_entrance.c) and leads back to them:
+/// SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH to the room of steps off the
+/// first relief room, and SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH to the
+/// second relief room. It places nobody; its one event besides the exits is
+/// the chest (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND), whose jewel opens the
+/// second minotaur relief. Its setup, SolSanctumRooms_Initialize
+/// (common/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumCorridor
+/// shares: once Mt. Aleph has erupted, the room rumbles and shakes.
+///
+/// Open questions:
+/// - XXX: what the leaving animation of EXIT_STYLE_ANIMATED_ALTERNATE on the
+///   south exit shows; a recording of the party taking that exit would settle
+///   it.
 
 #include "unit/scene/sol_sanctum_maze.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"
@@ -56,7 +57,8 @@ const struct SceneEvent *Scene_GetEvents(void) { return gSolSanctumMazeEvents; }
 #include "common/sol_sanctum_init_zoom.h"
 
 struct SceneEntrance gSolSanctumMazeEntrances[] = {
-    {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH, CONDITION_ALWAYS, 424, 0,
      615, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH, CONDITION_ALWAYS, 376, 0,

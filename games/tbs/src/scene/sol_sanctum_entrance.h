@@ -26,7 +26,7 @@ enum {
 
 /// The statues, placed after Kraden. They share one sprite, which Kraden calls
 /// statues ("More statues..."). Outside the two rooms below, Sol Sanctum places
-/// one, in the statue nook off the first relief hall
+/// one, in the statue nook off the first relief room
 /// (SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM).
 enum {
   /// ★ Named from the game: "More statues..."
@@ -34,7 +34,7 @@ enum {
   ACTOR_STATUE = ACTOR_FIRST_PLACED + 1
 };
 
-/// The first relief hall's eleven statues: the two that can be pushed,
+/// The first relief room's eleven statues: the two that can be pushed,
 /// then nine that cannot.
 enum {
   /// ★ Named from the game: "More statues..."
@@ -49,7 +49,7 @@ enum {
   ACTOR_FIRST_FIXED_STATUE
 };
 
-/// The second relief hall's row of six, each of which can be pushed.
+/// The second relief room's row of six, each of which can be pushed.
 enum {
   /// ★ Named from the game: "More statues..."
   /// (MsgSolSanctumMoreStatuesOutOfReach)

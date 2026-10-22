@@ -1,17 +1,17 @@
 /// @file
-/// Sol Sanctum (SceneId_SolSanctumCorridor), a passage between two parts of
-/// the sanctum's rooms inside its door, SceneId_SolSanctumReliefs
-/// (sol_sanctum_entrance.c), which Isaac, Garet, Jenna and Kraden explore
-/// together.
+/// Sol Sanctum (SceneId_SolSanctumCorridor), a passage that joins two rooms of
+/// SceneId_SolSanctumReliefs (sol_sanctum_entrance.c).
 ///
-/// It places nobody and holds no event of its own: its only rows are its two
-/// exits, the passage's two ends, which both lead back to
-/// SceneId_SolSanctumReliefs (SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST
-/// and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST), and the party comes
-/// back in through the same doors. Its setup is the one it shares with
-/// SceneId_SolSanctumMaze (sol_sanctum_maze.c), SolSanctumRooms_Initialize:
+/// It places nobody and has no events but its two exits, one at each end:
+/// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST leads into the room
+/// with the chest and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST into
+/// the room with the stepping stones. Its setup, SolSanctumRooms_Initialize
+/// (common/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumMaze shares:
 /// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles
 /// and shakes.
+///
+/// Open questions:
+/// - None.
 
 #include "unit/scene/sol_sanctum_corridor.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"

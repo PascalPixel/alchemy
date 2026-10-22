@@ -12,8 +12,14 @@
 ///   and VALE_KRADEN_FROM_VALE_SOUTH, and the two paths lead back
 ///   (VALE_KRADEN_TO_VALE_STORM_NORTH and VALE_KRADEN_TO_VALE_STORM_SOUTH). A
 ///   rockslide has broken the fence and let monsters in: Initialize starts the
-///   lightning, leaves the two rocks that Isaac cannot budge across the way and
-///   blocks the cells around them, and lays a hurt man by the fence. Talking to
+///   lightning, leaves the two rocks that Isaac cannot budge across the way,
+///   copies MAP_CELL_WALL over the path's cells below the west rock and under
+///   the east one, two of which by day hold Event_MeetSaturosAndMenardi's cell
+///   code 7
+///   (https://alchemy.pascalpixel.com/places/vale-kraden/rockslide-cells.png:
+///   the room on the stormy night and by day, the rocks boxed and the six
+///   cells outlined with their collision codes), and lays a hurt man by the
+///   fence. Talking to
 ///   him, or walking up to him (cell code 20), plays
 ///   Event_TalkToRockslideSurvivor: asked whether he will die, a yes leaves him
 ///   giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a no has him find he
@@ -55,9 +61,7 @@
 /// place name is not shown again. The jar's row finds nothing on the stormy
 /// night, and after Kalay it is there only from the third patch on.
 ///
-/// Open questions:
-/// - XXX (picture): the stormy night's rockslide, the two rocks across the
-///   path and the cells around them blocked.
+/// Open questions: none.
 
 #include "game_state.h"
 #include "unit/import.h"

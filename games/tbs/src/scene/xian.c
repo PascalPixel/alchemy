@@ -1,28 +1,18 @@
 /// @file
-/// SceneId_Xian, the village of kinu, silk, reached through Mogall Forest,
-/// which sends its silk along Silk Road to Tolbi and where martial arts are
-/// taught at Master Feh's school. Its houses, shops and inn are
-/// xian_interiors.c; the school itself is a room of the Fuchin Temple overlay
+/// SceneId_Xian, the village of Xian. Its houses, shops and inn are
+/// xian_interiors.c; Master Feh's school is a room of the Fuchin Temple overlay
 /// (FuchinTempleInteriors, which XIAN_TO_FUCHIN_TEMPLE_INTERIORS leads into;
 /// fuchin_temple.c).
 ///
 /// The village's talk turns on FLAG_XIAN_HEARD_HSU_TRAPPED, which Master
 /// Hama's Reveal lesson at Lama Temple sets: every villager's talk and Mind
-/// Read has a row for each side of it. Before, they welcome the travelers who
-/// came through Mogall Forest (one asks; a no, claiming Altin, is a lie,
-/// since Silk Road is blocked) and talk of silk, kung fu and Master Feh's
-/// school. Feizhi, Master Feh's daughter, stands by the village's south exit
-/// once she has left the school sure that Hsu is in danger
-/// (FLAG_FEIZHI_WENT_TO_HSU, set in fuchin_temple.c), asking whether the
-/// party, "the warriors from the school", are strong, and hoping someone will
-/// take her west; she is gone once she has found the road blocked at Alpine
-/// Crossing (FLAG_FEIZHI_SAW_ROCKSLIDE) or Xian has heard the news.
-/// After, the villagers say that Hsu, Master Feh's apprentice, was trapped
-/// under a boulder in a rockslide on Silk Road, that everyone went to clear
-/// the rocks, and that young warriors saved Altin. Xian_Initialize then also
-/// turns ACTOR_BOY_ON_SILK_CLOTHES west and stands the kung fu student where
-/// her strike leaves her, and Xian_GetPlacements turns
-/// ACTOR_MUSCULAR_MAN_ON_DISASTERS to face the party.
+/// Read has a row for each side of it, and after it Xian_Initialize also turns
+/// ACTOR_BOY_ON_SILK_CLOTHES west and stands the kung fu student where her
+/// strike leaves her, and Xian_GetPlacements turns
+/// ACTOR_MUSCULAR_MAN_ON_DISASTERS to face the party. Feizhi stands by the
+/// village's south exit from FLAG_FEIZHI_WENT_TO_HSU (set in fuchin_temple.c)
+/// until she has found the road blocked at Alpine Crossing
+/// (FLAG_FEIZHI_SAW_ROCKSLIDE) or Xian has heard the news.
 ///
 /// Two small scenes run on scene flags, which last until the party next
 /// enters a scene other than by returning from a battle:
@@ -51,10 +41,11 @@
 ///
 /// Open questions:
 ///
-/// - XXX: why Xian places three crates as actors (ACTOR_FIRST_CRATE on), in
-///   palette 15 and drawn under the others, where the map could draw them; a
-///   render of the village with them hidden would show what they cover.
-
+/// - XXX (no evidence): why Xian places three crates as actors
+///   (ACTOR_FIRST_CRATE on) that Xian_Initialize makes invisible
+///   (SPRITE_COLOR_HIDDEN), not solid and never a target, so that the player
+///   neither sees nor meets them; nothing in the ROM reads them again, so only
+///   the authors' intent would explain them.
 #include "game_state.h"
 #include "djinn_ids.h"
 #include "unit/import.h"
@@ -161,9 +152,8 @@ enum XianActor {
   /// Mist, a Mercury Djinni.
   /// ★ Named from the game: "Mist" (MsgDjinnName)
   ACTOR_MIST,
-  /// The first of three crates, drawn under the actors and never a target.
-  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
-  /// sheet draws it (its render)
+  /// The first of three crates placed with SPRITE_CRATE, which Xian_Initialize
+  /// hides (SPRITE_COLOR_HIDDEN): the player never sees them.
   ACTOR_FIRST_CRATE
 };
 
@@ -824,8 +814,8 @@ s32 Xian_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
     Engine_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
   }
-  // Draw the three crates under the actors, as
-  // OverlayObject_CreateConfiguredObject draws its objects.
+  // Set the three crates up as OverlayObject_CreateConfiguredObject sets up
+  // its objects: still, not solid, never a target and hidden.
   for (crateIndex = 0; crateIndex <= 2; crateIndex++) {
     struct FieldActor *actor;
     actor = Object_GetById(crateIndex + ACTOR_FIRST_CRATE);
@@ -833,7 +823,7 @@ s32 Xian_Initialize(void) {
     actor->motionFlags = 0;
     actor->collisionFlags = ACTOR_NOT_TARGETED;
     Engine_ActorSetSpriteFlags(actor, 0);
-    ObjectGroup_SetChildValue(actor, 15);
+    ObjectGroup_SetChildValue(actor, SPRITE_COLOR_HIDDEN);
     actor->priorityFlags = (actor->priorityFlags & ~ACTOR_PRIORITY_AUTOMATIC) |
                            ACTOR_PRIORITY_UNDERFOOT;
   }
@@ -854,7 +844,8 @@ s32 Xian_Initialize(void) {
     FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer,
                                TASK_PRIORITY_SCENE);
   }
-  Engine_ActorSetChildValue(ACTOR_WOMAN_CARRYING_WATER, 2);
+  // The water carrier's sprite is drawn with its green and blue swapped.
+  Engine_ActorSetChildValue(ACTOR_WOMAN_CARRYING_WATER, SPRITE_COLOR_RBG);
   Object_GetById(ACTOR_WOMAN_CARRYING_WATER)->update =
       XIAN_WATER_CARRIER_UPDATE;
   actor = Object_GetById(ACTOR_TRAINING_TREE);

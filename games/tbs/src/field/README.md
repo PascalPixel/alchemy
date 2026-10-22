@@ -159,7 +159,7 @@ block `HEAP_SLOT_OBJECT_POOL`, and the handlers are the rows of
 What the player sees of an object is its sprite, built from up to four
 pictures laid over each other, each playing its own animation.
 
-![Isaac attacking in a battle, the screen on the left and his sprite taken apart on the right. Its three layers are each composed alone: `entries[0]`, sprite 300, his body; `entries[1]`, sprite 320, his sword; and `entries[2]`, sprite 510, a dark ellipse along the bottom of its 64 by 64 picture. Beside them is the buffer composed from all three, read back from video memory: the ellipse under his feet, the body over it and the sword over the body. As he winds up, swings and lands, the body's and the sword's frame numbers change together, from 1 to 5 standing, then 13, 15 and 17 for the swing, 7 and 9 as he lands, while the ellipse stays at frame 0.](https://alchemy.pascalpixel.com/guides/field/sprite-layers.gif)
+![Isaac's sprite in a battle is three pictures laid over each other: a dark shadow, drawn first, then his body, then his sword on top. The game combines them into one picture and redraws it whenever any layer moves on to another frame. As he attacks, his body and his sword change frame together, so each pose shows the sword in his hand, while the shadow stays the same.](https://alchemy.pascalpixel.com/illustrations/field/sprite-layers.svg)
 
 The game redraws a sprite whenever one of its layers changes frame. In a
 battle, Isaac's body, his sword and the shadow under his feet are three layers
@@ -194,11 +194,12 @@ three layers: his body (`BattleObject.resource`) and his weapon
 order, so the weapon lies over the body; the layer at priority 0 is drawn
 first, so its shadow lies under his feet. The body and the weapon play scripts
 with the same frame numbers, so each change of pose changes both and redraws
-the whole buffer. In the picture each layer is drawn alone by the game's own
-`Sprite_ComposeAnimationFrame`: as it is called for Isaac's sprite, the other
-layers' priority is raised past 3 and every layer's `step` set to 0, so the
-scripts stand still while it composes, and the buffer is read back from video
-memory before the machine is put back as it was.
+the whole buffer. The party is seen from behind in a battle, so the facing
+table adds 1 to each frame a script names: the script of his swing names
+frames 12, 14 and 16, and the sheets' frames 13, 15 and 17 are drawn. The
+picture composes those frames from the sprite sheets themselves (`spr_300.png`,
+`spr_320.png` and `spr_510.png` in [`../graphics/sprite`](../graphics/sprite))
+in the order `Sprite_ComposeAnimationFrame` uses.
 
 A sprite is a `struct AnimationObject`, and each of its layers a
 `struct AnimationEntry`; the colour tables are `gResourceSlot_ConversionTables`
@@ -248,7 +249,7 @@ sprites that are not held are not drawn and give up their video memory.
 Before each step the leader takes, the game tests the ground ahead, and
 against a wall it tries other directions so the leader slides along it.
 
-![Isaac in Vale walks right into the wall beside the Sanctum, then up and right along it, the screen at twice its size beside a box around his feet magnified six times. Every point `Map_CheckObjectStep` tested for him that frame is marked, green where the ground was open and red where it was not, with a line to it from his feet, and the heading the step took in yellow. Walking freely he makes five probes, 8 pixels the way the pad points and 22.5 and 45 degrees either side, all open; against the wall the pad's way fails and up to 14 probes fan out round him, the first heading whose five probes all pass sliding him along the wall.](https://alchemy.pascalpixel.com/guides/field/player-probes.gif)
+![The leader seen from above, with the direction pad held to the right. Before each step the game checks the ground 8 pixels away in five directions: the way the pad points, and 22.5 and 45 degrees to either side. On open ground all five are clear, and the leader steps the way the pad points. Walking into a slanting wall, three of the five land beyond the wall, so the game tries other headings, nearest first: 22.5, then 45, then 67.5 degrees to either side, each needing five clear checks of its own. Here the first to pass is 67.5 degrees towards the open side, so the leader slides along the wall instead of stopping.](https://alchemy.pascalpixel.com/illustrations/world/probe-fan.svg)
 
 The leader walks at one pixel a frame, and runs at one and a half while a
 dash button is held. Before each step the game tests the ground 8 pixels
@@ -621,7 +622,7 @@ The field scenes sampled for a sprite with more than one drawn layer (Vale,
 Bilibin's item shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map)
 have none: the leader on the world map has a second layer,
 `SPRITE_BLANK_32`, which draws nothing even in a forest, where the player
-control gives it priority 1. The take-apart picture of a sprite's layers is
-therefore of a battle unit, whose sprite is the same `struct AnimationObject`
+control gives it priority 1. The picture of a sprite's layers is therefore of
+a battle unit, whose sprite is the same `struct AnimationObject`
 composed by the same `Sprite_ComposeAnimationFrame`.
 

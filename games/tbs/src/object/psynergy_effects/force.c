@@ -33,8 +33,8 @@ void FieldEffect_RunForce(void) {
   struct FieldActor *projectile;
   struct FieldActor *copy;
   struct FieldActor *caster;
-  struct FieldFxScene *scene;
-  struct EffectSlot *slot;
+  struct FieldEffectScene *scene;
+  struct EffectSlot *effect;
   struct AnimationObject *sharedAnimation;
   void *event;
   s32 scale;
@@ -45,22 +45,22 @@ void FieldEffect_RunForce(void) {
   target = scene->child;
   FieldEffect_FadeToEffectColor();
   AudioCommand_PlayFar(SE_130);
-  slot = scene->slots;
+  effect = scene->effects;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
     caster = scene->mainObject;
     FieldEffect_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
-    EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, FieldEffect_UpdateRadialBurst);
-    EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+    EffectSlot_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
+    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialBurst);
+    EffectSlot_SetObjectMode(effect, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_BLUE_TINT);
-    slot->scaleY = 0xb333; // 0.7
-    slot->scaleX = 0xb333;
+    effect->scaleY = 0xb333; // 0.7
+    effect->scaleX = 0xb333;
     WaitFrames(2);
-    slot++;
+    effect++;
   }
 
   // The shot: 8 pixels in front of the caster, growing from 0.25 to full

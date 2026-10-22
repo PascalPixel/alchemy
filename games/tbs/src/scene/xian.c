@@ -160,7 +160,7 @@ enum XianActor {
 };
 
 /// SPRITE_PUDDLE's animation once Frost has frozen it into ice.
-enum { PUDDLE_ANIM_FROZEN = 5 };
+enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The trigger the water carrier raises when the leader has stood in her way
 /// for two seconds.
@@ -668,11 +668,11 @@ static void Xian_WalkThroughExit(s32 exitId) {
 /// the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188) and
 /// XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
-  struct EventWork *event = gEventWork;
+  struct EventWork *work = gEventWork;
 
   Engine_EventStart();
 
-  switch (event->touchedTrigger) {
+  switch (work->touchedTrigger) {
   case XIAN_TO_HOUSE:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_HouseDoorOpens, 81, 18);
@@ -705,7 +705,7 @@ static void Xian_OpenDoorAndLeave(void) {
     break;
   }
 
-  Xian_WalkThroughExit(event->touchedTrigger);
+  Xian_WalkThroughExit(work->touchedTrigger);
   Engine_EventEnd();
 }
 
@@ -835,7 +835,7 @@ s32 Xian_Initialize(void) {
   }
   // Restore the frozen puddle and callbacks when re-entering the village.
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01)) {
-    Engine_ActorSetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIM_FROZEN);
+    Engine_ActorSetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIMATION_FROZEN);
     {
       s32 puddleX = Object_GetById(ACTOR_SPILLED_WATER)->x.fixed;
 
@@ -889,14 +889,14 @@ const s32 *gEffectScripts[] = {
 /// (424, 216) and back, pausing at each end.
 s32 gXian_WaterCarrierRoute[] = {
     SC_SET(SW_SPEED, 0x6666),
-    SC_SET(SW_ACCEL, 0x1999),
+    SC_SET(SW_ACCELERATION, 0x1999),
     SC_WAIT(60),
     SC_LABEL(1),
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_WAIT(60),
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_WAIT(180),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(424), 0, PIXELS(232)),
     SC_SYNC,
     SC_MOVE(PIXELS(424), 0, PIXELS(216)),
@@ -904,11 +904,11 @@ s32 gXian_WaterCarrierRoute[] = {
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_EAST + FACING_STEP),
     SC_WAIT(10),
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_WAIT(60),
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_WAIT(120),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(424), 0, PIXELS(232)),
     SC_SYNC,
     SC_MOVE(PIXELS(280), 0, PIXELS(232)),
@@ -921,11 +921,11 @@ s32 gXian_WaterCarrierRoute[] = {
 s32 gXian_TrainingTreeJump[] = {
     SC_SET(SW_SNAP, 0),
     SC_SET(SW_SPEED, 0x30000),
-    SC_SET(SW_ACCEL, 0x18000),
+    SC_SET(SW_ACCELERATION, 0x18000),
     SC_MOVE(PIXELS(168), PIXELS(48), PIXELS(312)),
     SC_SYNC,
     SC_SET(SW_SPEED, 0x30000),
-    SC_SET(SW_ACCEL, 0x1999),
+    SC_SET(SW_ACCELERATION, 0x1999),
     SC_SET(SW_SNAP, 1),
     SC_MOVE(PIXELS(168), PIXELS(16), PIXELS(312)),
     SC_SYNC,

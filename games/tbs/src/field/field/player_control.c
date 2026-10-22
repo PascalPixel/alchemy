@@ -60,30 +60,29 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 /// request id, the assignment's low 14 bits, even when it raised an event
 /// instead; a shortcut with nothing assigned returns 0, as no key pressed does.
 ///
-/// Called by Field_CheckConfiguredKeys. Sets fieldWork->psynergy,
-/// fieldWork->item or fieldWork->event, which the scene loop (run_scene.c)
+/// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
+/// work->item or work->event, which the scene loop (run_scene.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = 0x3FFF & encodedAssignment;
-  struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 
   if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
-    Field_StoreHalfword(&fieldWork->event, FIELD_EVENT_MENUS_RAISED);
-  } else if (fieldWork->mode == MODE_WORLD_MAP) {
+    Field_StoreHalfword(&work->event, FIELD_EVENT_MENUS_RAISED);
+  } else if (work->mode == MODE_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      Field_StoreHalfword(&fieldWork->event,
-                          (u16)FIELD_EVENT_WORLD_MAP_PICTURE);
+      Field_StoreHalfword(&work->event, (u16)FIELD_EVENT_WORLD_MAP_PICTURE);
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
-      Field_StoreHalfword(&fieldWork->event, (u16)FIELD_EVENT_WORLD_MAP_ZOOM);
+      Field_StoreHalfword(&work->event, (u16)FIELD_EVENT_WORLD_MAP_ZOOM);
     }
   } else {
     switch (assignmentKind) {
     case FIELD_SHORTCUT_PSYNERGY:
-      Field_StoreHalfword(&fieldWork->psynergy, requestId);
+      Field_StoreHalfword(&work->psynergy, requestId);
       break;
     case FIELD_SHORTCUT_ITEM:
-      Field_StoreHalfword(&fieldWork->item, requestId);
+      Field_StoreHalfword(&work->item, requestId);
       break;
     }
   }
@@ -98,21 +97,21 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 /// Only the first configured key pressed this frame counts, in that order.
 ///
 /// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
-/// and SC_KEY_COUNT. Sets fieldWork->menu, examine or start.
+/// and SC_KEY_COUNT. Sets work->menu, examine or start.
 s32 Field_CheckConfiguredKeys(void) {
-  struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 result = 0;
 
-  if (fieldWork == NULL)
+  if (work == NULL)
     return 0;
   if (gKeysPressed & gGameState.selectKeys) {
-    fieldWork->menu = 1;
+    work->menu = 1;
     result = 1;
   } else if (gKeysPressed & gGameState.aKeys) {
-    fieldWork->examine = 1;
+    work->examine = 1;
     result = 1;
   } else if (gKeysPressed & gGameState.startKeys) {
-    fieldWork->start = 1;
+    work->start = 1;
     result = 1;
   } else if (gKeysPressed & gGameState.firstShortcutKeys) {
     result = Field_RequestShortcut(gGameState.firstShortcut);

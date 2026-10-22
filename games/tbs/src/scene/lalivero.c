@@ -2,7 +2,7 @@
 /// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
 /// story brings the party here twice, and Lalivero_GetPlacements and
 /// Lalivero_GetEvents choose the town's people and events for each visit by
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE, set at Venus Lighthouse's aerie.
+/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
 /// On the first visit the party comes in from the world map with Iodem, and
 /// Event_WatchWoundedSoldiers plays once (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN):
@@ -181,7 +181,7 @@ const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
 /// The townsfolk, who stand differently once the party is back from Venus
 /// Lighthouse.
 const struct ScenePlacement *Lalivero_GetPlacements(void) {
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroPlacementsAfterLighthouse;
   }
   return gLaliveroPlacements;
@@ -819,7 +819,7 @@ static void Event_TurnBackToTheShip(void) {
 /// What the party can talk to, touch and search, which changes once they are
 /// back from Venus Lighthouse.
 const struct SceneEvent *Lalivero_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroEventsAfterLighthouse;
   }
   return gLaliveroEvents;
@@ -829,17 +829,17 @@ const struct SceneEvent *Lalivero_GetEvents(void) {
 /// the wounded soldiers of the first visit (and its cutscene), or the sign at
 /// the north exit after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
-  union FieldObject *object;
+  union FieldObject *fieldObject;
   struct AnimationObject *sprite;
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
-    GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
     GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
   if (gGameState.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
-    GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 24;
@@ -858,11 +858,11 @@ s32 Lalivero_Initialize(void) {
 
   // The Black Orb Iodem hands over is drawn from its item icon, floating
   // 10 pixels up.
-  object = (union FieldObject *)Actor_Get(ACTOR_BLACK_ORB);
-  object->actor.retainSpriteCache = 1;
-  object->actor.motionFlags = 0;
-  sprite = object->actor.sprite;
-  object->actor.y.fixed = PIXELS(10);
+  fieldObject = (union FieldObject *)Actor_Get(ACTOR_BLACK_ORB);
+  fieldObject->actor.retainSpriteCache = 1;
+  fieldObject->actor.motionFlags = 0;
+  sprite = fieldObject->actor.sprite;
+  fieldObject->actor.y.fixed = PIXELS(10);
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -871,7 +871,7 @@ s32 Lalivero_Initialize(void) {
   Engine_VramLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
   Engine_HeapRelease(HEAP_SLOT_GLYPH_TRANSFER);
 
-  if (GameFlag_IsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
+  if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     // A sign now stands at the north exit, and the three open cells of the
     // gap in the north wall become wall, closing the way north.
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_NORTH_EXIT_SIGN), 0);
@@ -887,16 +887,16 @@ s32 Lalivero_Initialize(void) {
     // party with their own collision off, and the two cells each covers
     // become wall instead. The third cell copied, at x 78, lies outside the
     // town's 32 columns, where the camera never goes, and changes nothing.
-    object = (union FieldObject *)Actor_Get(ACTOR_WEST_SOLDIER);
-    object->actor.collisionFlags = 0;
-    object->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->actor.sprite->flags = 0;
-    object->actor.sprite->rotation = FACING_NORTH;
-    object = (union FieldObject *)Actor_Get(ACTOR_EAST_SOLDIER);
-    object->actor.collisionFlags = 0;
-    object->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->actor.sprite->flags = 0;
-    object->actor.sprite->rotation = FACING_SOUTH;
+    fieldObject = (union FieldObject *)Actor_Get(ACTOR_WEST_SOLDIER);
+    fieldObject->actor.collisionFlags = 0;
+    fieldObject->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    fieldObject->actor.sprite->flags = 0;
+    fieldObject->actor.sprite->rotation = FACING_NORTH;
+    fieldObject = (union FieldObject *)Actor_Get(ACTOR_EAST_SOLDIER);
+    fieldObject->actor.collisionFlags = 0;
+    fieldObject->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    fieldObject->actor.sprite->flags = 0;
+    fieldObject->actor.sprite->rotation = FACING_SOUTH;
     Map_CopyCellAttributes(20, 23, 1, 1, 13, 23);
     Map_CopyCellAttributes(20, 23, 1, 1, 14, 23);
     Map_CopyCellAttributes(20, 23, 1, 1, 78, 23);
@@ -908,15 +908,15 @@ s32 Lalivero_Initialize(void) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
       // the cutscene.
-      object = (union FieldObject *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
-      object->actor.paused = 1;
-      object = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
-      object->actor.paused = 1;
+      fieldObject = (union FieldObject *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      fieldObject->actor.paused = 1;
+      fieldObject = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      fieldObject->actor.paused = 1;
       Event_WatchWoundedSoldiers();
-      object = (union FieldObject *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
-      object->actor.paused = 0;
-      object = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
-      object->actor.paused = 0;
+      fieldObject = (union FieldObject *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      fieldObject->actor.paused = 0;
+      fieldObject = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      fieldObject->actor.paused = 0;
     }
   }
   return 0;

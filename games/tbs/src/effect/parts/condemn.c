@@ -37,7 +37,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   struct MotionObject *target;
   /* FAKEMATCH(dead): a second position nothing uses gives the frame its 76
    * bytes; as one position, 2 of 580 instructions differ in tbs-en. */
-  struct EffectPosition pos[2];
+  struct EffectPosition position[2];
   s32 swing[2];
   s32 drawPanel;
   s32 panelColumn;
@@ -120,11 +120,11 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     }
     // Frame 64: the last pass, on the first target.
     if (frame == 64) {
-      EffectPosition_ProjectScaledBattler(work->effect->actors[0], pos);
+      EffectPosition_ProjectScaledBattler(work->effect->actors[0], position);
       if (work->effect->side == 1) {
-        swing[0] = (pos[0].x - 128) << 16;
+        swing[0] = (position[0].x - 128) << 16;
       } else {
-        swing[0] = (pos[0].x - 64) << 16;
+        swing[0] = (position[0].x - 64) << 16;
       }
       swing[1] = 0;
       drawPanel = 0;

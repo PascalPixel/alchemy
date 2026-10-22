@@ -109,7 +109,7 @@ void LinkBattle_SendParty(void) {
 s32 LinkBattle_SendParty(void) {
 #endif
   u8 *buffer;
-  struct BattleWork *work;
+  struct BattleWork *battle;
   s32 j;
   struct DjinnRecoveryList *list;
   s32 size;
@@ -121,9 +121,9 @@ s32 LinkBattle_SendParty(void) {
   size = LINK_PARTY_UNIT_BYTES;
   buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
   noSlot = 0xff;
-  work = gBattleWork;
+  battle = gBattleWork;
   for (i = 7; i >= 0; i--)
-    work->ownerSlots[i] = noSlot;
+    battle->ownerSlots[i] = noSlot;
 
   // The members, each marked as the opponent's.
   count = BattleParty_PrepareActiveOwners(owners);
@@ -131,7 +131,7 @@ s32 LinkBattle_SendParty(void) {
     Iwram_CopyWords(buffer, Unit_GetFar(owners[i]), size);
     ((struct BattleUnit *)buffer)->side = BATTLE_UNIT_PARTY;
     // FIRST_ENEMY_UNIT + i, in a byte.
-    work->ownerSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
+    battle->ownerSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
     if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
@@ -159,7 +159,7 @@ s32 LinkBattle_SendParty(void) {
   } while (0);
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count; j++)
-    list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
+    list->entries[j].unitId = battle->ownerSlots[list->entries[j].unitId];
   if (SerialRuntime_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     SerialRuntime_WaitForSend();
     WaitFrames(1);
@@ -213,20 +213,20 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
 /// Called by BattlePresentation_BuildActions. Writes the first eight bytes
 /// of gSerialTransfer.payload.
 s32 BattlePresentation_WaitSync(void) {
-  struct BattleWork *work = gBattleWork;
+  struct BattleWork *battle = gBattleWork;
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
   s32 i;
 
-  if (work->twoSided != 0) {
-    u32 other = work->linkSide ^ 1;
+  if (battle->twoSided != 0) {
+    u32 other = battle->linkSide ^ 1;
 
     // gLinkPeerSignatures[other]: a peer's payload holds four bytes before
     // its signature.
     peer = (u16 *)(gSerialPeerPayloads[other] + 4);
     signature = (u16 *)gSerialTransfer.payload;
-    if (work->linkPaused == 0) {
+    if (battle->linkPaused == 0) {
       // The other console is in step once its second pair reads "EC".
       signature[0] = 'E';
       signature[1] = 'X';
@@ -261,7 +261,7 @@ s32 BattlePresentation_WaitSync(void) {
 /// Battle_RunEncounter. Writes the first sixteen bytes of
 /// gSerialTransfer.payload.
 s32 BattlePresentation_SyncTurn(void) {
-  struct BattleWork *work = gBattleWork;
+  struct BattleWork *battle = gBattleWork;
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
@@ -269,10 +269,10 @@ s32 BattlePresentation_SyncTurn(void) {
    * instruction touches; without it, 8 of 232 instructions differ in tbs-en. */
   UNUSED u16 spare[10];
 
-  if (work->twoSided != 0) {
-    peer = gLinkPeerSignatures[work->linkSide ^ 1];
+  if (battle->twoSided != 0) {
+    peer = gLinkPeerSignatures[battle->linkSide ^ 1];
     signature = (u16 *)gSerialTransfer.payload;
-    if (work->linkPaused != 0)
+    if (battle->linkPaused != 0)
       return -1;
 
     // Publish "ex"/"TU" while both sides still agree on the earlier phase.

@@ -505,7 +505,7 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
 static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
-  GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
+  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED);
   Engine_EventStart();
   Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);
@@ -1151,7 +1151,7 @@ BabiLighthouse_FindActorAhead(struct FieldActor *actor) {
 /// effect's childOption, so that once Carry lets go the effect waits for the
 /// pillar to bounce up and land, and rings it with dust (carry.c).
 static void BabiLighthouse_LandCarriedPillarInDust(void) {
-  ((struct FieldFxScene *)gEffectWork)->childOption = 1;
+  ((struct FieldEffectScene *)gEffectWork)->childOption = 1;
 }
 
 /// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its

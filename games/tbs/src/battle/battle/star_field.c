@@ -7,8 +7,8 @@
 /// One of the star field's sparks, drawn inward to the centre. Sixteen live
 /// in SparkWork.sparks; a spent one starts again while the field is young.
 struct Spark {
-  s32 pos[6]; ///< x, y, z, then their velocities, in 1/1024 canvas pixels
-  s32 life;   ///< frames left
+  s32 motion[6]; ///< x, y, z, then their velocities, in 1/1024 canvas pixels
+  s32 life;      ///< frames left
 };
 
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
@@ -89,15 +89,15 @@ s32 ElementGlow_UpdateStarField(void) {
     // each axis's velocity loses 1/128 and gains a pull of 1.1875 (0x13000)
     // towards the centre, the axis's share of its distance.
     if (life != 0) {
-      distance = FixedSqrt((spark->pos[0] >> 8) * (spark->pos[0] >> 8) +
-                           (spark->pos[1] >> 8) * (spark->pos[1] >> 8) +
-                           (spark->pos[2] >> 8) * (spark->pos[2] >> 8));
+      distance = FixedSqrt((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
+                           (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
+                           (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
       if (distance <= 0xfff) {
         spark->life = 0;
       } else {
         scale = Iwram_RatioMulQ14(distance, 0x10000);
         spark->life--;
-        axisPosition = spark->pos;
+        axisPosition = spark->motion;
         for (axis = 2; axis >= 0; axis--) {
           coordinate = *axisPosition;
           acceleration =
@@ -116,23 +116,23 @@ s32 ElementGlow_UpdateStarField(void) {
       angle = Random16();
       radius = Random16() + 0x10000;
       halfRadius = radius >> 1;
-      spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
-      spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
-      if (spark->pos[0] & 1)
-        spark->pos[0] = -spark->pos[0];
-      if (spark->pos[1] & 1)
-        spark->pos[1] = -spark->pos[1];
-      spark->pos[2] = (Random16() + 0x8000) >> 2;
-      spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
-      spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
-      spark->pos[5] = 0;
+      spark->motion[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
+      spark->motion[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
+      if (spark->motion[0] & 1)
+        spark->motion[0] = -spark->motion[0];
+      if (spark->motion[1] & 1)
+        spark->motion[1] = -spark->motion[1];
+      spark->motion[2] = (Random16() + 0x8000) >> 2;
+      spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
+      spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
+      spark->motion[5] = 0;
       life = spark->life = (radius >> 13) + 1;
     }
     // Drawn about the canvas's centre (64, 64), 1 to 4 pixels square by its
     // life left, 4 from three frames left.
     if (life != 0) {
-      x = (spark->pos[0] >> 10) + 64;
-      y = (spark->pos[1] >> 10) + 64;
+      x = (spark->motion[0] >> 10) + 64;
+      y = (spark->motion[1] >> 10) + 64;
       frame = life;
       if (frame < 0)
         frame = 0;
@@ -147,8 +147,8 @@ s32 ElementGlow_UpdateStarField(void) {
   // eight frames apiece, then is no longer drawn.
   draw = (DrawFunc)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   for (ring = work->rings, ringIndex = 2; ringIndex >= 0; ringIndex--, ring++) {
-    ring->x += ring->velX;
-    ring->y += ring->velY;
+    ring->x += ring->velocityX;
+    ring->y += ring->velocityY;
     ringX = ring->x >> 10;
     ringY = ring->y >> 10;
     phase = 3 - ring->age / 8;
@@ -236,16 +236,16 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     u32 halfRadius = radius >> 1;
 
     spark = &work->sparks[effectIndex];
-    spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
-    spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
-    if (spark->pos[0] & 1)
-      spark->pos[0] = -spark->pos[0];
-    if (spark->pos[1] & 1)
-      spark->pos[1] = -spark->pos[1];
-    spark->pos[2] = (Random16() + 0x8000) >> 2;
-    spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
-    spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
-    spark->pos[5] = 0;
+    spark->motion[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
+    spark->motion[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
+    if (spark->motion[0] & 1)
+      spark->motion[0] = -spark->motion[0];
+    if (spark->motion[1] & 1)
+      spark->motion[1] = -spark->motion[1];
+    spark->motion[2] = (Random16() + 0x8000) >> 2;
+    spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
+    spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
+    spark->motion[5] = 0;
     spark->life = (radius >> 13) + 1;
   }
   for (effectIndex = 0; effectIndex < 3; effectIndex++) {
@@ -256,8 +256,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     angle = effectIndex * 0x5555;
     ring->x = Iwram_MulQ16(Trig_Cos(angle), radius);
     ring->y = Iwram_MulQ16(Trig_Sin(angle), radius);
-    ring->velX = Iwram_MulQ16(Trig_Cos(angle), 0x200);
-    ring->velY = Iwram_MulQ16(Trig_Sin(angle), 0x200);
+    ring->velocityX = Iwram_MulQ16(Trig_Cos(angle), 0x200);
+    ring->velocityY = Iwram_MulQ16(Trig_Sin(angle), 0x200);
     ring->age = 0;
   }
   work->frames = 0;

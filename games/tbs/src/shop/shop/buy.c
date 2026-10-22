@@ -66,7 +66,7 @@ next_page:
                        selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
       shop->mode = 4;
       Shop_DrawStock(stockWindow, selectionIndex);
-      Shop_DrawMsg(messageWindow, itemId + MsgItemPlainName);
+      Shop_DrawMessage(messageWindow, itemId + MsgItemPlainName);
       RenderOutput_RedrawSavedRectFar(priceWindow);
       Shop_DrawItemPrice(priceWindow, itemId, stockDefinition->price,
                          SHOP_PRICE_KIND_BUY);
@@ -253,7 +253,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
   s32 zero;
   s32 highlightFrame;
   s16 itemId;
-  struct ItemDefinition *definition;
+  struct ItemDefinition *item;
   struct RenderOutput *icon;
 
   shop = gMenuWork;
@@ -268,7 +268,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
       zero = 0;
       icon->kind = zero;
       icon->active = UI_SPRITE_HOP_UP;
-      icon->animStep = zero;
+      icon->animationStep = zero;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
       icon = RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 216,
@@ -276,7 +276,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
       zero = 0;
       icon->kind = zero;
       icon->active = UI_SPRITE_HOP_DOWN_2;
-      icon->animStep = zero;
+      icon->animationStep = zero;
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {
@@ -286,7 +286,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
            (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
-        definition = Item_GetDirectFar(itemId);
+        item = Item_GetDirectFar(itemId);
         // Depth slots: the items 252, the chosen one 253, the prices 251
         icon =
             RenderOutput_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
@@ -294,10 +294,10 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
         if (stockIndex == selected) {
           icon->active = UI_SPRITE_SWELL;
           highlightFrame = 10;
-          icon->animStep = highlightFrame;
+          icon->animationStep = highlightFrame;
           icon->sentinel = 253;
         }
-        icon = Shop_CreatePriceSprite(definition->price, window, priceX, 0);
+        icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
         icon->sentinel = 251;
       }
     }
@@ -369,7 +369,7 @@ draw:
 
 /// Shows `message`, an item's description, in the help window; a NULL window
 /// is ignored. Called by the counters' lists each time the cursor moves.
-void Shop_DrawMsg(struct UiWindow *window, s32 message) {
+void Shop_DrawMessage(struct UiWindow *window, s32 message) {
   if (window != 0) {
 #if TBS_PATCH_1
     RenderOutput_RedrawSavedRectFar(window);
@@ -446,7 +446,7 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
     }
     previewSlot = index;
   } else {
-    replacedItemId = unit->inventory[previewSlot] & ITEM_ID_MASK;
+    replacedItemId = unit->inventory[previewSlot] & INVENTORY_ITEM_ID_MASK;
   }
   // Borrow a live slot so Unit_Calculate includes every equipment effect;
   // restore both the slot and the stats before returning to the counter.
@@ -743,8 +743,8 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
-  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
-  struct ItemDefinition *definition = Item_GetDirectFar(itemId);
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+  struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedSlot;
   struct UiWindow *itemWindow;
 
@@ -754,7 +754,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (Item_CanOwnerEquip(unitId, itemId) == 0)
     return 0;
 
-  replacedSlot = Inventory_FindEquippedFar(unitId, definition->type);
+  replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   if (replacedSlot != -1) {
     struct ItemDefinition *oldInfo =
         Item_GetDirectFar(unit->inventory[replacedSlot]);
@@ -773,7 +773,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (itemWindow != 0)
     Shop_DrawUnitGrid(itemWindow, unitId);
 
-  if (definition->flags & ITEM_CURSED) {
+  if (item->flags & ITEM_CURSED) {
     AudioCommand_PlayFar(SE_103);
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);
@@ -797,7 +797,7 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   if (slot == -1) {
     return 0;
   }
-  itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   if (Item_GetDirectFar(itemId)->type == ITEM_TYPE_PSYNERGY) {
     return 0;
   }

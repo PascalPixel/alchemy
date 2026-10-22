@@ -61,7 +61,7 @@ s32 Shop_SelectRepair(s32 unitId) {
         inventoryCount = Inventory_CountFar(unitId);
         if (slot > inventoryCount - 1)
           slot = inventoryCount - 1;
-        itemId = ITEM_ID_MASK & unit->inventory[slot];
+        itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
         window = shop->itemWindow;
         x = slot % SHOP_INVENTORY_COLUMNS * 16;
         y = slot / SHOP_INVENTORY_COLUMNS * 16 + 8;
@@ -70,7 +70,7 @@ s32 Shop_SelectRepair(s32 unitId) {
         repairCost = Shop_RepairPrice(unit->inventory[slot]);
         Shop_DrawItemPrice(priceWindow, itemId, repairCost,
                            SHOP_PRICE_KIND_REPAIR);
-        Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
+        Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
       }
       if ((gKeysPressed & KEY_A) != 0) {
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
@@ -138,7 +138,7 @@ s32 Shop_SelectRepair(s32 unitId) {
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
-  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
   u32 repairCost = Shop_RepairPrice(unit->inventory[slot]);

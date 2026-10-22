@@ -407,15 +407,15 @@ s32 Battle_ProcessRoundEnd(void) {
         }
         // Regeneration, capped at the maximum, for a unit still standing.
         if (unit->hp != 0) {
-          if (unit->hpRegen != 0 && unit->hp != unit->maxHp) {
+          if (unit->hpRegen != 0 && unit->hp != unit->hpMax) {
             hpAmount = unit->hpRegen;
-            if (unit->hp + hpAmount > unit->maxHp) {
-              hpAmount = unit->maxHp - unit->hp;
+            if (unit->hp + hpAmount > unit->hpMax) {
+              hpAmount = unit->hpMax - unit->hp;
             }
             Unit_AddHpFar(unitId, hpAmount);
             UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
             UiWork_PushValueSlotFar(hpAmount, VALUE_NUMBER);
-            if (unit->hp == unit->maxHp) {
+            if (unit->hp == unit->hpMax) {
               UiText_ShowMessageAndWaitCoreFar(MsgHpFull);
             } else {
               UiText_ShowMessageAndWaitCoreFar(MsgHpRecover);
@@ -423,15 +423,15 @@ s32 Battle_ProcessRoundEnd(void) {
             AudioCommand_PlayFar(SE_175);
             BattlePresentation_WaitForAdvance();
           }
-          if (unit->ppRegen != 0 && unit->pp != unit->maxPp) {
+          if (unit->ppRegen != 0 && unit->pp != unit->ppMax) {
             ppAmount = unit->ppRegen;
-            if (unit->pp + ppAmount > unit->maxPp) {
-              ppAmount = unit->maxPp - unit->pp;
+            if (unit->pp + ppAmount > unit->ppMax) {
+              ppAmount = unit->ppMax - unit->pp;
             }
             Unit_AddPpFar(unitId, ppAmount);
             UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
             UiWork_PushValueSlotFar(ppAmount, VALUE_NUMBER);
-            if (unit->pp == unit->maxPp) {
+            if (unit->pp == unit->ppMax) {
               UiText_ShowMessageAndWaitCoreFar(MsgPpFull);
             } else {
               UiText_ShowMessageAndWaitCoreFar(MsgPpRecover);
@@ -686,7 +686,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     poison = &unit->poison;
     // A tenth of the maximum HP, a fifth for deadly poison (POISON_DEADLY).
     if (*poison != 0) {
-      s32 damage = unit->maxHp * *poison / 10;
+      s32 damage = unit->hpMax * *poison / 10;
       struct BattleWork *state = gBattleWork;
       BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);

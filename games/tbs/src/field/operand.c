@@ -23,7 +23,7 @@ const OperandFunc gScript_OperandHandlerTable[41] = {
     Script_SetOrCompareVelocityY,        // 0x0d SW_VELOCITY_Y
     Script_SetOrCompareVelocityZ,        // 0x0e SW_VELOCITY_Z
     Script_SetOrCompareSpeedLimit,       // 0x0f SW_SPEED
-    Script_SetOrCompareAcceleration,     // 0x10 SW_ACCEL
+    Script_SetOrCompareAcceleration,     // 0x10 SW_ACCELERATION
     Script_SetOrCompareTargetX,          // 0x11 SW_TARGET_X
     Script_SetOrCompareTargetY,          // 0x12 SW_TARGET_Y
     Script_SetOrCompareTargetZ,          // 0x13 SW_TARGET_Z

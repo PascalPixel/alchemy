@@ -23,12 +23,12 @@
 ///   Kraden's visitors and of Vale's law that keeps Psynergy secret from
 ///   outsiders, and the jars and the barrel hold coins, an Antidote and a
 ///   Smoke Bomb, each found once.
-/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE), Jenna having been
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Jenna having been
 ///   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
 ///   VALE_INTERIORS_SHOPS_FROM_VALE_NORTH), the villagers talk of the quest and
 ///   of Felix, and the item merchant gives Isaac a Herb as a farewell gift
 ///   (FLAG_VALE_FAREWELL_HERB_RECEIVED).
-/// - Back from Kalay (FLAG_REACHED_KALAY), with Ivan and Mia in the party. The
+/// - Back from Kalay (FLAG_KALAY_REACHED), with Ivan and Mia in the party. The
 ///   first time the party enters Garet's house, Event_GaretComesHome plays
 ///   (FLAG_GARET_CAME_HOME): his parents are wondering whether to look for
 ///   him when his grandmother sees him, the family greets him, Ivan and Mia
@@ -207,14 +207,14 @@ const u32 *ValeInteriorsShops_GetExits(void) {
 }
 
 /// Selects the placements for the day the story begins, after the party has
-/// left Vale (FLAG_PARTY_LEFT_VALE), or after Kalay (FLAG_REACHED_KALAY), and
+/// left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay (FLAG_KALAY_REACHED), and
 /// marks which of their actors are in view.
 const struct ScenePlacement *ValeInteriorsShops_GetPlacements(void) {
   struct ScenePlacement *table;
 
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
     table = gValeInteriorsShops_PlacementsAfterKalay;
-  } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT)) {
     table = gValeInteriorsShops_PlacementsAfterLeaving;
   } else {
     table = gValeInteriorsShops_Placements;
@@ -229,9 +229,9 @@ const struct ScenePlacement *ValeInteriorsShops_GetPlacements(void) {
 const struct SceneEvent *ValeInteriorsShops_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriorsShops_StormEvents;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     return gValeInteriorsShops_EventsAfterKalay;
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gValeInteriorsShops_EventsAfterLeaving;
   return gValeInteriorsShops_Events;
 }
@@ -437,7 +437,7 @@ s32 ValeInteriorsShops_Initialize(void) {
     FieldEffect_ResumeLightning();
   }
   // The returning party gets the household reunion only on its first visit.
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     if (gGameState.entrance == VALE_INTERIORS_SHOPS_FROM_VALE_EAST) {
       if (Engine_GameFlagIsSet(FLAG_GARET_CAME_HOME) == 0) {
         Event_GaretComesHome();
@@ -447,7 +447,7 @@ s32 ValeInteriorsShops_Initialize(void) {
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
   if (gGameState.entrance == VALE_INTERIORS_SHOPS_FROM_VALE_NORTH) {
-    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
       Engine_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454),
                               PIXELS(150));
       actor = Object_GetById(ACTOR_JENNAS_GRANDMOTHER);
@@ -477,11 +477,11 @@ static void Event_TalkToWeaponMerchant(void) {
   }
 
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Engine_EventSetMessage(MsgValeYouCameBack);
     Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
       Engine_EventSetMessage(MsgValeValeFeelsEmpty);
     } else {
       Engine_EventSetMessage(MsgValeGoodWeaponsDrawOutStrength);
@@ -504,10 +504,10 @@ static void Event_TalkToArmorMerchant(void) {
     Engine_ShopOpen(2, ACTOR_ARMOR_MERCHANT);
   } else {
     Engine_EventStart();
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
       Engine_EventSetMessage(MsgValeTheRumorWasTrue);
     } else {
-      if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         Engine_EventSetMessage(MsgValeImNotSadJustGo);
       } else {
         Engine_EventSetMessage(MsgValeGoodArmorDrawsOutStrength);
@@ -531,13 +531,13 @@ static void Event_TalkToItemMerchant(void) {
   if (FACING_IS_NORTH(actor->facing)) {
     Engine_ShopOpen(3, ACTOR_ITEM_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
       Engine_EventStart();
       Engine_EventSetMessage(MsgValeWhenDidYouComeBack);
       Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
       Engine_EventEnd();
     } else {
-      if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         ValeInteriorsShops_GiveFarewellHerb();
       } else {
         Engine_EventStart();
@@ -952,11 +952,11 @@ s32 gValeInteriorsShops_FaceTargetScript[] = {
 
 s32 gValeInteriorsShops_FatherPacingScript[] = {
     SC_SET(SW_SPEED, PIXELS(3) / 5),
-    SC_SET(SW_ACCEL, PIXELS(3) / 10),
-    SC_ARG(2),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 10),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(784), 0, PIXELS(405)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(40),
     SC_LABEL(1),
     SC_ADD(SW_FACING, -1024),
@@ -967,10 +967,10 @@ s32 gValeInteriorsShops_FatherPacingScript[] = {
     SC_ADD(SW_FACING, -1024),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(3)),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(819), 0, PIXELS(405)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_LABEL(2),
     SC_ADD(SW_FACING, -2048),
     SC_WAIT(1),
@@ -980,10 +980,10 @@ s32 gValeInteriorsShops_FatherPacingScript[] = {
 };
 
 s32 gValeInteriorsShops_PartyLeavesScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(808), 0, PIXELS(508)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,

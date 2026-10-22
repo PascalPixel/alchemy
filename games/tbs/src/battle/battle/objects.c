@@ -33,7 +33,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
-      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
+      struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -77,7 +77,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   {
     count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
-      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
+      struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -107,7 +107,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   {
     count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
-      struct BattleObj *slot = BattleObject_Get(unitIds[unitIndex]);
+      struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
       if (slot != 0) {
         object = slot->object;
@@ -134,7 +134,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   }
 }
 
-// The status icons' bits in BattleObj.activeConditions
+// The status icons' bits in BattleObject.activeConditions
 #define ICON_POISON 0x01
 #define ICON_VENOM 0x02 ///< deadly poison
 #define ICON_STUN 0x04
@@ -152,9 +152,10 @@ void BattleObject_UpdateSpritePriorities(void) {
 /// BattleEvent_Playback, Battle_ProcessRoundEnd,
 /// BattleObject_ResetRuntimeFields and BattleObject_SpawnObjectsForList.
 #ifdef UBFIX
-void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
+void BattleUnit_BuildStatusFlags(s32 unitId,
+                                 struct BattleObject *battleObject) {
 #else
-s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
+s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject) {
 #endif
   struct BattleUnit *unit = Unit_GetFar(unitId);
   s8 poison = unit->poison;
@@ -192,8 +193,8 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 /// The icons' first animations, for units 32 pixels wide and for the rest:
 /// each adds the icon's bit number (ICON_POISON's 0 up), so sprites 340 to
 /// 353 and 355 to 368.
-#define ICON_ANIM_NARROW 340
-#define ICON_ANIM_WIDE 355
+#define ICON_ANIMATION_NARROW 340
+#define ICON_ANIMATION_WIDE 355
 
 /// Shows a unit's status icons one after another, each for
 /// ICON_CYCLE_FRAMES frames, switching at once when the shown status ends,
@@ -202,9 +203,9 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 /// cycleTimer, selectedCondition, animation and animationEntry, and
 /// registers or unregisters the icon on its first sprite.
 #ifdef UBFIX
-void BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
+void BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 #else
-s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
+s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 #endif
   struct AnimationEntry *shownIcon;
   struct AnimationEntry *icon;
@@ -254,9 +255,9 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
       // Units 32 pixels wide take their own set of icon animations.
       if (iconAnimation >= 0) {
         if (record->width == 32)
-          iconAnimation += ICON_ANIM_NARROW;
+          iconAnimation += ICON_ANIMATION_NARROW;
         else
-          iconAnimation += ICON_ANIM_WIDE;
+          iconAnimation += ICON_ANIMATION_WIDE;
       }
 
       if (battleObject->animationEntry != 0 && changed != 0) {
@@ -326,7 +327,7 @@ s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
 /// BattleObject_SpawnObjectsForList; BATTLE.S also gives it an unnamed
 /// overlay veneer, which nothing in the source calls.
 void ReleaseBattleObjectRecords(s32 unitId) {
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct MotionObject *object;
   s32 recordIndex;
   struct AnimationObject *record;
@@ -349,7 +350,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 }
 
 /// The effect layer a body 32 pixels wide takes instead of
-/// BattleObj.effect's (see BATTLE_OBJ_NO_EFFECT, placement.c).
+/// BattleObject.effect's (see BATTLE_OBJ_NO_EFFECT, placement.c).
 #define NARROW_EFFECT_SPRITE 0x1ff
 
 /// Readies the sprites of the units in list: releases those of every place
@@ -364,7 +365,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct MotionObject *object;
   struct AnimationObject *record;
   struct SpriteEntry *entry;
@@ -489,9 +490,9 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 
 /// Returns unitId's battle object, through its place, or null for a
 /// unit with no place. Called throughout the battle parts.
-struct BattleObj *BattleObject_Get(s32 unitId) {
+struct BattleObject *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
-  struct BattleObj *objects = battle->slots;
+  struct BattleObject *battleObjects = battle->slots;
   s32 placementIndex;
   // Enemy unit ids 128 to 133 index placement 8 to 13.
   if (unitId > ALLY_MAX) {
@@ -501,7 +502,7 @@ struct BattleObj *BattleObject_Get(s32 unitId) {
   if (battle->placement[placementIndex] == 0xFF) {
     return NULL;
   }
-  return &objects[battle->placement[placementIndex]];
+  return &battleObjects[battle->placement[placementIndex]];
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite. Called
@@ -554,7 +555,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 /// BattleEvent_Playback, BattlePresentation_RunEscape, BattleMotion_ShowDowned,
 /// BattleObject_DestroyTemporaryObject and the auto battle.
 s32 BattleObject_MarkForRelease(s32 unitId) {
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   BattleMotion_ReleaseObjectSlotByValue(unitId);
   battleObject = BattleObject_Get(unitId);
   battleObject->active = 1;
@@ -571,7 +572,7 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
 #endif
   s32 unitId;
   s32 placementIndex;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
 
   placementIndex = 0;
   do {
@@ -613,9 +614,9 @@ s32 Camera_ApplyTransformByFlag(void) {
   Render_ResetTransformState();
   if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS) != 0) {
     Iwram_TransformMatrix((s32 *)gCamera_FlagTransformWork);
-    Transform_ApplyLookAt(camera->eye, camera->pos);
+    Transform_ApplyLookAt(camera->eye, camera->focus);
   } else {
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
   }
 }
 
@@ -665,12 +666,12 @@ void Camera_InitializeDefaultTransform(void) {
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;
   camera->distance = 255 << 17;
-  SET_VECTOR(camera->pos, 0, 0, 0);
-  camera->followPos = 0;
+  SET_VECTOR(camera->focus, 0, 0, 0);
+  camera->followPosition = 0;
   camera->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&camera->pos[0]);
+  SceneTransform_ApplyPosition(&camera->focus[0]);
   SceneTransform_ApplyYaw((s16)camera->yaw);
   SceneTransform_ApplyPitch((s16)camera->pitch);
 

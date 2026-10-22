@@ -13,20 +13,20 @@
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
 /// Scene commands reach it through Map_SetShake and Map_SetScreenShakeFar.
 void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
-  struct MapScrollWork *work;
+  struct MapScrollWork *map;
 
   // A negative argument leaves that value alone, so a scene can change the
   // decay without restarting the shake, or start one axis only. The view
   // updates read the same three words on the world map (PerspectiveWork).
-  work = gMapWork[0];
+  map = gMapWork[0];
   if (shakeX >= 0) {
-    work->shakeX = shakeX;
+    map->shakeX = shakeX;
   }
   if (shakeY >= 0) {
-    work->shakeY = shakeY;
+    map->shakeY = shakeY;
   }
   if (shakeDecay >= 0) {
-    work->shakeDecay = shakeDecay;
+    map->shakeDecay = shakeDecay;
   }
 }
 
@@ -34,21 +34,21 @@ void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
 /// limit for a shake whose decay never settles. Scene imports reach it as
 /// Map_WaitForShakeToSettleFar; it stops further shake after the wait.
 void Map_WaitForShakeToSettle(void) {
-  struct MapScrollWork *work;
+  struct MapScrollWork *map;
   s32 waitedFrames;
 
-  work = gMapWork[0];
+  map = gMapWork[0];
   waitedFrames = 0;
   // 300 frames is five seconds; 255 in 16.16 is just under 1/256 pixel.
   // A decay of 1.0 or more never settles, so the limit ends the wait.
   while (waitedFrames < MAP_SHAKE_SETTLE_FRAMES &&
-         (work->shakeX > MAP_SHAKE_SETTLE_MAX_AMPLITUDE ||
-          work->shakeY > MAP_SHAKE_SETTLE_MAX_AMPLITUDE)) {
+         (map->shakeX > MAP_SHAKE_SETTLE_MAX_AMPLITUDE ||
+          map->shakeY > MAP_SHAKE_SETTLE_MAX_AMPLITUDE)) {
     WaitFrames(1);
     waitedFrames++;
   }
   // A zero decay makes the next view update's shake its last.
-  work->shakeDecay = 0;
+  map->shakeDecay = 0;
 }
 
 /// The copied ARM kernel reads the BG2 affine row from each 32-byte pair and

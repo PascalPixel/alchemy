@@ -1728,17 +1728,17 @@ static void Fuchin_SearchDragonStatue(void) {
 /// The dragon statue room goes dark again when Reveal ends. That happens in
 /// Fuchin Falls Cave only before the eye is set.
 static void Fuchin_EndRevealLighting(void) {
-  struct FieldFxScene *scene;
-  struct DisplayTransitionState *transition;
+  struct FieldEffectScene *scene;
+  struct DisplayTransitionState *state;
 
   if (gGameState.entrance <=
       FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
     scene = *(gWorkSlot + 56);
-    transition = *(gWorkSlot + 31);
+    state = *(gWorkSlot + 31);
     scene->childOption = 1;
-    transition->nextMode = 0;
-    transition->duration = 1;
-    transition->step = 1;
+    state->nextMode = 0;
+    state->duration = 1;
+    state->step = 1;
     Engine_ColorBufferApplySource(0, 1);
     Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
     Engine_ColorBufferInterpolate(16);
@@ -1748,8 +1748,8 @@ static void Fuchin_EndRevealLighting(void) {
 
 /// Turns the actor sliding on Imil Falls Cave's ice gradually toward the held
 /// direction.
-static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
-  struct FieldActor *actor = &object->actor;
+static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *fieldObject) {
+  struct FieldActor *actor = &fieldObject->actor;
   s32 timer;
   s32 direction;
   u16 facing;

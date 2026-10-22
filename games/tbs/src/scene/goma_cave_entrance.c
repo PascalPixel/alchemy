@@ -84,7 +84,7 @@ enum GomaCaveEntranceActor {
   /// A second stump, always sunk until only its top shows, that the party
   /// walks over.
   /// ★ Named from what the player sees: a stump sunk to its cut top, the last
-  /// frame of STUMP_ANIM_SINK in spr_212.png (its render)
+  /// frame of STUMP_ANIMATION_SINK in spr_212.png (its render)
   ACTOR_SUNKEN_STUMP,
   /// Unused: two Move hands and a third stump, placed at the map's origin
   /// outside the camera's bounds. Nothing in the overlay addresses them, and
@@ -227,7 +227,7 @@ s32 Scene_Initialize(void) {
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   WAIT(10);
   FieldEffect_SetQueuedSoundAndPlay(SE_170);
-  OBJECT_MODE(ACTOR_SUNKEN_STUMP, STUMP_ANIM_SINK);
+  OBJECT_MODE(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   Object_GetById(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
     struct FieldActor *record = Object_GetById(ACTOR_STUMP);
@@ -247,7 +247,7 @@ s32 Scene_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
     Engine_ActorSetPosition(ACTOR_STUMP, PIXELS(136), PIXELS(196));
     Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    OBJECT_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
+    OBJECT_MODE(ACTOR_STUMP, STUMP_ANIMATION_SINK);
     Map_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     Map_CopyCellAttributes(43, 11, 3, 1, 12, 11);
   }
@@ -507,7 +507,7 @@ static void Event_MoveStump(void) {
 /// announcement is lowered to a fixed place (POSITIONED_MESSAGE_LOWER), since
 /// it would otherwise be placed by where the leader, not Ivan, stands.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
-  struct FieldFxScene *effectWork;
+  struct FieldEffectScene *effectWork;
   u8 flags;
 
   effectWork = gEffectWork;
@@ -534,7 +534,7 @@ static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then hops on into the pool under the waterfall with a splash and sinks
-/// (STUMP_ANIM_SPLASH).
+/// (STUMP_ANIMATION_SPLASH).
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
   struct EffectOptions params;
@@ -594,7 +594,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
       stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, p);
   Engine_AudioPlayCue(SE_CAST);
-  OBJECT_MODE(stumpId, STUMP_ANIM_SPLASH);
+  OBJECT_MODE(stumpId, STUMP_ANIMATION_SPLASH);
   Engine_MapWaitWorkValuesBelow256();
 }
 

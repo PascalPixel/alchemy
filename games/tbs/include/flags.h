@@ -546,7 +546,7 @@
 /// question the wounded soldiers in Suhalla, or to ask in Gondowan Passage why
 /// the party is turning back.
 /// ★ Named from the game: "Oh! Iodem..." (MsgBabiYoureSureTheyWentThrough)
-#define FLAG_IODEM_AT_BABI_LIGHTHOUSE 0x98a
+#define FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED 0x98a
 /// The party has opened the stone door before Iodem and Faran, who saw it shut
 /// again and stay behind, leaving Sheba's rescue to the party.
 /// ★ Named from the game: "I don't believe it! The door opened!"
@@ -825,7 +825,7 @@
 /// Sheba's fall, as the party is taken to Lalivero. Lalivero and its buildings
 /// then read their tables for after the lighthouse.
 /// ★ Named from its area name: Venus Lighthouse
-#define FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE 0x9a7
+#define FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED 0x9a7
 /// Out of Gateway Cave, Iodem saw a ship off the coast at Idejima, took it for
 /// Babi's and handed over the Black Orb (WorldMap_RunBlackOrbScene). Back from
 /// Venus Lighthouse, it picks the version of the report to Faran that knows
@@ -879,7 +879,7 @@
 /// Vault on the world map leads straight in.
 /// ★ Named from the game: "You're not from Kalay, are you?"
 /// (MsgLunpaEastGuardAsksIfFrom)
-#define FLAG_GUARDS_SUSPECT_KALAY 0x85a
+#define FLAG_LUNPA_GUARDS_SUSPECT_KALAY 0x85a
 /// After Donpa's judgment, the left guard at the Lunpa Fortress Gates has
 /// half recognized Hammet with the party, then dismissed it; his thoughts
 /// afterwards say the man looks like that merchant.
@@ -1023,12 +1023,12 @@
 /// learned the word Psynergy, and her Ply has opened the door for her to go in.
 /// Afterwards she is gone from outside and the statue stays moved.
 /// ★ Named from its area name: Mercury Lighthouse
-#define FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE 0x871
+#define FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA 0x871
 /// Back from the battle with the Lizard Man on the lighthouse's ground floor,
 /// Mia has nodded to the leader and gone on deeper into the lighthouse. Until
 /// then, coming in by the door replays the Lizard Man blocking her way.
 /// ★ Named from its area name: Mercury Lighthouse
-#define FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE 0x872
+#define FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA 0x872
 /// Move has pushed aside the second statue that blocked Mia, and she has
 /// joined the party with Fizz, a Mercury Djinni. Afterwards she is gone from
 /// that spot and the statue stays where it was pushed.
@@ -1367,7 +1367,7 @@
 /// its later scene and the Sanctum's talk changes. XXX: the patched editions
 /// also set it on beating Lamakan Desert's Manticore; why is not known.
 /// ★ Named from its area name: Kalay
-#define FLAG_REACHED_KALAY 0x87a
+#define FLAG_KALAY_REACHED 0x87a
 /// Catch has taken the Nut floating in Vale.
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_VALE_NUT_CAUGHT 0xfd0
@@ -1708,7 +1708,7 @@
 /// Layana has told the party that going into Lunpa is too dangerous.
 /// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
-#define FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS 0x913
+#define FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS 0x913
 /// Hammet, back home, has met the party in Layana's room.
 /// ★ Named from the game: "his companions... Perfect timing!"
 /// (MsgKalayItsIvanHisCompanionsPerfect)

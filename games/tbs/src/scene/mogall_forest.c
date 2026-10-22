@@ -175,7 +175,7 @@ enum MogallForestQuartzActor {
   ACTOR_SECOND_AREA_SOUTH_APE_STUMP,
   /// Quartz, a Venus Djinni, placed until the party has it.
   /// ★ Named from the game: "Quartz" (MsgDjinnName)
-  ACTOR_QUARTZ
+  ACTOR_SECOND_AREA_QUARTZ
 };
 
 /// Actors of the third area (SceneId_MogallForestKillerApe), numbered in the
@@ -314,7 +314,7 @@ enum {
 /// Mogall Forest, the second area: talking to Quartz, a Venus Djinni, starts
 /// the Djinni battle.
 static void MogallForest_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(ACTOR_QUARTZ, DJINNI_QUARTZ);
+  Field_RequestDjinnBattle(ACTOR_SECOND_AREA_QUARTZ, DJINNI_QUARTZ);
 }
 
 /// Jumps the leader to an unobstructed fixed-point position and restores
@@ -390,8 +390,8 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
 /// Scatters a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
   struct Vector3 *emissionVelocity;
   struct FieldActor *actor;
   u32 directionIndex;
@@ -400,8 +400,8 @@ static void MogallForest_SpawnPuffRing(s32 id) {
 
   actor = Object_GetById(id);
   Engine_AudioPlayCue(SE_188);
-  effectOptions = &options;
-  effectOptions->priority = 1;
+  options = &optionsStorage;
+  options->priority = 1;
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
     emissionVelocity = &velocity;
     emissionVelocity->x = Engine_MathCos(directionIndex << 12);
@@ -413,7 +413,7 @@ static void MogallForest_SpawnPuffRing(s32 id) {
     emissionVelocity->x = x;
     FieldEffect_Spawn(actor->x.fixed, PIXELS(16), actor->z.fixed, x,
                       emissionVelocity->y + PIXELS(1) / 10, z,
-                      EFFECT_USE_PRIORITY, effectOptions);
+                      EFFECT_USE_PRIORITY, options);
   }
 }
 
@@ -1736,7 +1736,7 @@ const s32 *gEffectScripts[] = {
 
 /// The script of each rock moved with Move: it is drawn in greys.
 s32 gMogallForest_RockScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_TIMER, SPRITE_COLOR_GREY),
     SC_CALL(MogallForest_CopyTimerToChild),
     SC_END,
@@ -2013,7 +2013,7 @@ struct SceneEvent gMogallForestQuartz_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_MOVED, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeHidesAgain) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeShowsWay) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_MOGALL_FOREST_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
-    { EVENT_TALK, ACTOR_QUARTZ, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_StartDjinnBattle) },
+    { EVENT_TALK, ACTOR_SECOND_AREA_QUARTZ, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_StartDjinnBattle) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

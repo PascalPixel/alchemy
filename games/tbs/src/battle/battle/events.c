@@ -212,7 +212,7 @@ void BattleObject_DestroyTemporaryObject(s32 unitId) {
 s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 #endif
   struct BattleUnit *enemy;
-  struct BattleObj *slot;
+  struct BattleObject *slot;
 
   enemy = Unit_GetFar(unitId);
   if (enemy->side == BATTLE_UNIT_ENEMY) {
@@ -276,7 +276,8 @@ u32 BattleEvent_DispatchQueued(void) {
         UiWork_PushValueSlotFar(queue->operands[eventIndex], VALUE_NUMBER);
         break;
       case BATTLE_EVENT_ITEM_NAME:
-        UiWork_PushValueSlotFar(queue->operands[eventIndex] & ITEM_ID_MASK,
+        UiWork_PushValueSlotFar(queue->operands[eventIndex] &
+                                    INVENTORY_ITEM_ID_MASK,
                                 VALUE_ITEM_NAME);
         break;
       case BATTLE_EVENT_ABILITY_NAME:

@@ -48,7 +48,7 @@ extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerReady; ///< 1 once the task table is set up
 extern struct SchedulerTask gSchedulerTaskTable[];
 
-void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
+void Runtime_CallWorkEntryWithArguments(s32 arg0, s32 arg1);
 
 void Scheduler_RunCallbacksByKey(s32 key);
 s32 Scheduler_CountCallbacksByKey(s32 key);

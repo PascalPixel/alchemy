@@ -15,7 +15,7 @@
 /// a sealed member's, can be chosen. The Psynergy command runs it
 /// (Battle_CollectPartyCommands), listing only abilities usable in battle.
 s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   s32 drawnFirstEntry;
   s32 firstEntry;
   s32 drawnRow;
@@ -41,7 +41,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   struct MenuSprite sprites[BATTLE_LIST_ROWS];
   s32 glyph;
 
-  render = UI_WORK;
+  work = UI_WORK;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
@@ -74,7 +74,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   iconSprite = &cursor;
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      render->menuBusy = 1;
+      work->menuBusy = 1;
       Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
                           window->width - 2, 1, 15);
       Ui_FillVramBlockPattern();
@@ -109,20 +109,20 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           sprites[i].oam.f.tile = glyph;
 
           if ((action->flags & ACTION_USABLE_IN_BATTLE) == 0) {
-            UiWork_SetParamNibble(4);
+            UiWork_SetParameterNibble(4);
           } else if (action->ppCost > unit->pp) {
-            UiWork_SetParamNibble(2);
+            UiWork_SetParameterNibble(2);
           } else if (unit->psySeal != 0) {
-            UiWork_SetParamNibble(9);
+            UiWork_SetParameterNibble(9);
           }
 
           // The name and cost take BG palette 5 (UiRenderWork.level).
-          render->level = 5;
+          work->level = 5;
           UiText_DrawCharacterAtOffset(encodedAction + MsgAbilityName, window,
                                        16, i * 16);
           UiText_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
-          UiWork_SetParamNibble(15);
-          render->level = 15;
+          UiWork_SetParameterNibble(15);
+          work->level = 15;
 
           // Element 4 is none: no element icon.
           if (action->element != 4) {
@@ -156,8 +156,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
 
       Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
                           window->width - 2, 1, 14);
-      render->dirty = 1;
-      render->menuBusy = 0;
+      work->dirty = 1;
+      work->menuBusy = 0;
     }
 
     // Each frame: the current page's number lit 12 frames in 16, and the
@@ -179,7 +179,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3,
           pageTile, 0);
       UiWindow_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
-      UiRender_MarkRow(render, window->y - 1);
+      UiRender_MarkRow(work, window->y - 1);
     }
 
     for (i = 0; i < iconCount; i++) {

@@ -226,7 +226,8 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
   s32 farExtent;
 
   for (i = 0; i <= 5; i++) {
-    if (actor->sprite->entries[0]->animId == gStagedActor_FootprintKinds[i]) {
+    if (actor->sprite->entries[0]->animationId ==
+        gStagedActor_FootprintKinds[i]) {
       probe->footprintIndex = i;
       break;
     }
@@ -598,24 +599,24 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 
 /// Moves the particle while damping its velocity, growing it, and advancing
 /// rotation.
-static void
-CrossboneIsleSteppingStones_UpdateDampedParticle(union FieldObject *object) {
+static void CrossboneIsleSteppingStones_UpdateDampedParticle(
+    union FieldObject *fieldObject) {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
 
-  object->effect.x += object->effect.velocity.x;
-  object->effect.y += object->effect.velocity.y;
-  object->effect.z += object->effect.velocity.z;
-  velocityX = object->effect.velocity.x;
-  velocityY = object->effect.velocity.y;
-  velocityZ = object->effect.velocity.z;
-  object->effect.velocity.x = velocityX - Math_Divide(velocityX, 10);
-  object->effect.velocity.y = velocityY - Math_Divide(velocityY, 3);
-  object->effect.velocity.z = velocityZ - Math_Divide(velocityZ, 10);
-  object->effect.scaleX += object->effect.scaleRateX;
-  object->effect.scaleY += object->effect.scaleRateY;
-  object->effect.sprite->rotation += object->effect.spin;
+  fieldObject->effect.x += fieldObject->effect.velocity.x;
+  fieldObject->effect.y += fieldObject->effect.velocity.y;
+  fieldObject->effect.z += fieldObject->effect.velocity.z;
+  velocityX = fieldObject->effect.velocity.x;
+  velocityY = fieldObject->effect.velocity.y;
+  velocityZ = fieldObject->effect.velocity.z;
+  fieldObject->effect.velocity.x = velocityX - Math_Divide(velocityX, 10);
+  fieldObject->effect.velocity.y = velocityY - Math_Divide(velocityY, 3);
+  fieldObject->effect.velocity.z = velocityZ - Math_Divide(velocityZ, 10);
+  fieldObject->effect.scaleX += fieldObject->effect.scaleRateX;
+  fieldObject->effect.scaleY += fieldObject->effect.scaleRateY;
+  fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
 }
 
 /// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in the
@@ -1159,8 +1160,8 @@ static void Event_ClimbUp(void) { Field_ClimbUp(); }
 /// below, jump, or climb down.
 static void Event_PushOrClimbDown(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldPosition pos;
-  struct FieldPosition *p = &pos;
+  struct FieldPosition position;
+  struct FieldPosition *p = &position;
 
   p->x = leader->x.fixed;
   p->y = leader->y.fixed;

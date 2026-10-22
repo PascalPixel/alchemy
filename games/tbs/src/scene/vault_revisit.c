@@ -1,7 +1,7 @@
 /// @file
 /// Vault (SceneId_VaultRevisit), the town once the party has reached Kalay, on
 /// the same map as Vault's first scene (vault.c). The world map still leads
-/// into the first scene, but once FLAG_REACHED_KALAY is set its setup sends
+/// into the first scene, but once FLAG_KALAY_REACHED is set its setup sends
 /// the party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
 /// Cave, the jail and the houses (vault_interiors_revisit.c) lead back here
 /// directly. This scene replaces the first for the rest of the game.
@@ -737,9 +737,9 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gVaultRevisit_BoyRoundTheWellScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(136), 0, PIXELS(376)),
     SC_SYNC,
@@ -762,9 +762,9 @@ s32 gVaultRevisit_BoyRoundTheWellScript[] = {
 };
 
 s32 gVaultRevisit_GirlRoundTheWellScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(120), 0, PIXELS(424)),
     SC_SYNC,

@@ -51,7 +51,7 @@ extern struct SceneEvent gKalay_TunnelCaveEvents[];
 extern struct SceneEvent gKalay_TunnelPassageEvents[];
 extern struct SceneEvent gKalay_TunnelEvents[];
 extern u16 gKalay_DoorCellSteps[];
-extern struct MapCellAnim gKalay_DoorCells[];
+extern struct MapCellAnimation gKalay_DoorCells[];
 extern s32 gKalay_TunnelParticleScript[];
 
 #endif

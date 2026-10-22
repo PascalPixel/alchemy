@@ -486,28 +486,28 @@ static void Event_ReturnFromMtAleph(void) {
 
 /// Isaac walks down from the path to the villagers before the sanctum.
 s32 gValeEruption_LeaderWalksDown[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(128), 0, PIXELS(378)),
-    SC_SYNC,   SC_MOVE(PIXELS(203), 0, PIXELS(378)),
-    SC_SYNC,   SC_MOVE(PIXELS(212), 0, PIXELS(472)),
-    SC_SYNC,   SC_MOVE(PIXELS(214), 0, PIXELS(472)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(128), 0, PIXELS(378)),
+    SC_SYNC,         SC_MOVE(PIXELS(203), 0, PIXELS(378)),
+    SC_SYNC,         SC_MOVE(PIXELS(212), 0, PIXELS(472)),
+    SC_SYNC,         SC_MOVE(PIXELS(214), 0, PIXELS(472)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 /// Garet follows him, stopping a little above.
 s32 gValeEruption_GaretWalksDown[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(128), 0, PIXELS(378)),
-    SC_SYNC,   SC_MOVE(PIXELS(203), 0, PIXELS(378)),
-    SC_SYNC,   SC_MOVE(PIXELS(214), 0, PIXELS(455)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(128), 0, PIXELS(378)),
+    SC_SYNC,         SC_MOVE(PIXELS(203), 0, PIXELS(378)),
+    SC_SYNC,         SC_MOVE(PIXELS(214), 0, PIXELS(455)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 /// Isaac, then Garet, walk through the sanctum's door.
 s32 gValeEruption_EnterSanctum[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(255), 0, PIXELS(452)),
-    SC_SYNC,   SC_MOVE(PIXELS(255), 0, PIXELS(390)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(255), 0, PIXELS(452)),
+    SC_SYNC,         SC_MOVE(PIXELS(255), 0, PIXELS(390)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 

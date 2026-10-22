@@ -223,7 +223,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// SC_ARG(v): switches the object's sprites to animation v.
+/// SC_ANIMATION(v): switches the object's sprites to animation v.
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_SelectAnimation(interpreter,
                                  interpreter->script[interpreter->cursor + 1]);

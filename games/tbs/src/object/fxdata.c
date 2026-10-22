@@ -174,7 +174,7 @@ const u16 gColorBuffer_ChannelCurveContrast[32] = {
 /// sound 256 + voice as it types (FieldEffect_GetResourceId), so the values
 /// step by 4. FieldEffect_FindDefinition compares the first 130 and returns
 /// the last, never compared, as the default.
-const struct FieldFxDefinition gFieldEffect_DefinitionTable[131] = {
+const struct FieldEffectDefinition gFieldEffect_DefinitionTable[131] = {
     {0, 16, 0x00},
     {1, 16, 0x00},
     {2, 16, 0x00},
@@ -486,7 +486,7 @@ const s32 gFieldEffect_SourceHoldScript[] = {
 const s32 gFieldEffect_FragmentScript[] = {
     SC_SYNC,
     SC_SET(SW_SPEED, 0x1000),
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_WAIT(10),
     SC_FREE,
 };
@@ -514,7 +514,7 @@ const s32 gFieldEffect_BurstParticleObjectScript[] = {
 };
 
 /// The same four bytes as gFieldEffect_QuadrantModes; nothing reads them.
-const u8 gUnused_BattleFxBytes[4] = {3, 1, 2, 1};
+const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 
 /// Waits to arrive, sets off SpawnHeavyImpactEffect (lift.c) and frees the
 /// object.

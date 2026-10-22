@@ -148,7 +148,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
   struct FieldActor *self = &fieldObject->actor;
   u8 **workAreas = gWindowWork;
   struct UiRenderWork *ui = (struct UiRenderWork *)workAreas[0];
-  struct FieldWork *field =
+  struct FieldWork *work =
       (struct FieldWork *)workAreas[HEAP_SLOT_EVENT - HEAP_SLOT_WINDOW];
   u16 *kidFlags = (u16 *)&self->timer;
   s32 force = 0;
@@ -171,7 +171,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if ((s16)field->talk != 0 || ui->mode != 0) {
+  if ((s16)work->talk != 0 || ui->mode != 0) {
     range = 26;
     if ((*kidFlags & KID_TALKING) != 0) {
       force = 1;
@@ -438,14 +438,14 @@ static void Tolbi_EnterDoor(void) {
 /// The update of TOLBI_OLD_MAN, who during the festival says he is 65 and that
 /// Babi was already old when he was born: gives him the leader's sprite
 /// priority every frame, for both of his sprite parts.
-static void Tolbi_CopyLeaderPriority(union FieldObject *object) {
+static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
   s32 priority;
 
-  if (object != NULL) {
+  if (fieldObject != NULL) {
     priority = Object_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
-    object->actor.priorityFlags = 0;
-    object->actor.sprite->image.priority = priority;
-    object->actor.sprite->shadow.priority = priority;
+    fieldObject->actor.priorityFlags = 0;
+    fieldObject->actor.sprite->image.priority = priority;
+    fieldObject->actor.sprite->shadow.priority = priority;
   }
 }
 
@@ -679,16 +679,16 @@ static void Tolbi_FreezePuddle(void) {
 /// The action script of a mirrored actor: flips its sprite and passes 7 on.
 s32 gTolbiMirroredActor[] = {
     SC_SET(SW_SCALE_X, -Q16_ONE),
-    SC_ARG(7),
+    SC_ANIMATION(7),
     SC_END,
 };
 
 /// The older brother runs a loop of eight points, 32 pixels across, south-east
 /// of the fountain.
 s32 gTolbiOlderBrotherRun[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(352), 0, PIXELS(352)),
     SC_SYNC,
@@ -711,9 +711,9 @@ s32 gTolbiOlderBrotherRun[] = {
 
 /// The younger sister runs the same loop half a lap ahead.
 s32 gTolbiYoungerSisterRun[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(368), 0, PIXELS(320)),
     SC_SYNC,
@@ -1052,7 +1052,7 @@ u16 gTolbiDoorOpening[] = {
 };
 
 /// The doors, in the order of their triggers 1 to 9, by map cell.
-struct MapCellAnim gTolbiDoors[] = {
+struct MapCellAnimation gTolbiDoors[] = {
     {gTolbiDoorOpening, 48, 6},  {gTolbiDoorOpening, 63, 4},
     {gTolbiDoorOpening, 71, 8},  {gTolbiDoorOpening, 71, 4},
     {gTolbiDoorOpening, 66, 21}, {gTolbiDoorOpening, 61, 24},

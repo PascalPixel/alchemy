@@ -397,8 +397,8 @@ done:
 /// A field actor (struct FieldActor), seen with its position as one vector.
 struct Object {
   u8 pad0[6];
-  u16 angle;               ///< 1/65536 turns
-  struct EffectVector pos; ///< 16.16 fixed-point pixels
+  u16 angle;                    ///< 1/65536 turns
+  struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
   u8 kind; ///< ObjectRuntime's terrainId: the map layer of its ground
   u8 pad2[0x2d];
@@ -430,9 +430,9 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
   workBytes = *(u8 **)Ram_EventWork;
   mapBytes = *(u8 **)Ram_MapWork;
   if (leader != 0) {
-    probePosition.vector.x = leader->pos.x;
-    probePosition.vector.y = leader->pos.y;
-    probePosition.vector.z = leader->pos.z;
+    probePosition.vector.x = leader->position.x;
+    probePosition.vector.y = leader->position.y;
+    probePosition.vector.z = leader->position.z;
     Vector_AddPolarOffset(0x100000, leader->angle, probePosition.coordinates);
     // World map blocks are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
@@ -452,8 +452,8 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
     if (collisionCode >= MAP_CELL_JAR && collisionCode <= MAP_CELL_WELL) {
       terrainHeight = Map_GetTerrainHeightFar(
           leader->kind, probePosition.vector.x, probePosition.vector.z);
-      if (terrainHeight >= leader->pos.y &&
-          terrainHeight <= leader->pos.y + 0x400000) {
+      if (terrainHeight >= leader->position.y &&
+          terrainHeight <= leader->position.y + 0x400000) {
         result = collisionCode;
       }
     } else if (Scene_FindEvent(EVENT_SEARCH, collisionCode) != 0) {

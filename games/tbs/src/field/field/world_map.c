@@ -199,7 +199,7 @@ s32 Map_InitializePerspectiveScene(void) {
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   frameWork = Runtime_AllocateHeapBlock(HEAP_SLOT_MAP_FRAME,
                                         sizeof(struct MapFrameWork));
-  cameraPosition = camera->pos;
+  cameraPosition = camera->focus;
   affinePages = frameWork->pages;
   farPlane = 0x1fe0000;
   perspective->farPlane = farPlane;
@@ -208,7 +208,7 @@ s32 Map_InitializePerspectiveScene(void) {
   perspective->zoom = 0x10000;
   zoomTransitionFrames = &perspective->zoomTransitionFrames;
   camera->unk18 = 0;
-  camera->followPos = 0;
+  camera->followPosition = 0;
   *zoomTransitionFrames = 0;
   // A first view from the origin at pitch and yaw 0, so the scanline
   // table and the first affine page exist before the first frame; the
@@ -522,7 +522,7 @@ void WorldMap_UpdateView(void) {
   struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   struct MapFrameWork *frameWork = WORK_SLOT(HEAP_SLOT_MAP_FRAME);
   struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
-  s32 *cameraPosition = camera->pos;
+  s32 *cameraPosition = camera->focus;
   s32 *followedPosition = perspective->origin;
   struct MapAffinePair(*affinePages)[160] = frameWork->pages;
   s32 distance = perspective->farPlane;

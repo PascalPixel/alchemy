@@ -204,7 +204,7 @@ void Ui_LoadWindowGraphics(void) {
 
 /// Loads the basic sprite palettes (palettes 0 to 13). Called by
 /// Ui_LoadWindowGraphics and the field object setup.
-void Palette_LoadBasicObjColors(void) {
+void Palette_LoadBasicSpriteColors(void) {
   Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);
 }

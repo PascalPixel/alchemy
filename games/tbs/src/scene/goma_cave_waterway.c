@@ -143,7 +143,7 @@ s32 Scene_Initialize(void) {
         stump = Object_GetById(ACTOR_STUMP);
         Engine_ActorSetSpriteFlags(stump, 0);
         Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        OBJECT_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
+        OBJECT_MODE(ACTOR_STUMP, STUMP_ANIMATION_SINK);
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -152,8 +152,8 @@ s32 Scene_Initialize(void) {
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveWaterway_SpinStump(union FieldObject *object) {
-  struct AnimationObject *sprite = object->actor.sprite;
+static void GomaCaveWaterway_SpinStump(union FieldObject *fieldObject) {
+  struct AnimationObject *sprite = fieldObject->actor.sprite;
 
   sprite->rotation -= 0x800;
 }
@@ -161,7 +161,8 @@ static void GomaCaveWaterway_SpinStump(union FieldObject *object) {
 #include "common/object_waitdown.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
-/// then hops on into the water with a splash and sinks (STUMP_ANIM_SPLASH).
+/// then hops on into the water with a splash and sinks
+/// (STUMP_ANIMATION_SPLASH).
 static void GomaCaveWaterway_LeapStump(s32 stumpId) {
   struct FieldActor *stump;
   u32 i;
@@ -219,7 +220,7 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
                         EFFECT_SCALE_TO_TARGET,
                     &options);
   Engine_AudioPlayCue(SE_CAST);
-  OBJECT_MODE(stumpId, STUMP_ANIM_SPLASH);
+  OBJECT_MODE(stumpId, STUMP_ANIMATION_SPLASH);
   Map_WaitForShakeToSettle();
 }
 

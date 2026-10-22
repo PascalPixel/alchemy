@@ -107,9 +107,9 @@ void ReelGame_TransferCanvas(void) {
   struct BattleEffectWork *work;
   u8 *buf;
 
-  work = gBattleFxWork[0];
+  work = gBattleEffectWork[0];
   if (work->transferPending == 1) {
-    buf = gBattleFxWork[1];
+    buf = gBattleEffectWork[1];
     switch (work->transferMode) {
     case 1:
       // Then fill the canvas with transferValue.
@@ -218,7 +218,7 @@ void ReelGame_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80; // 0.5 in 8-bit fixed point
-  u8 *canvas = ((u8 **)gBattleFxWork)[1];
+  u8 *canvas = ((u8 **)gBattleEffectWork)[1];
   s32 step;
   s32 i;
   s32 x;
@@ -324,7 +324,7 @@ struct ReelWork {
   u8 unk0a4[4];
   s32 timer;
   s32 winningLines[7];
-  struct OamShadow obj[128];
+  struct OamShadow oam[128];
   struct UiWindow *window;
   struct UiWindow *subWindow;
   u8 unk4d0[8];
@@ -371,8 +371,8 @@ void ReelGame_RunFrame(void) {
   s32 i;
 
   work = ((struct ReelWork **)
-              gBattleFxWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
-  fx = gBattleFxWork[0];
+              gBattleEffectWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
+  fx = gBattleEffectWork[0];
   sprite = 0;
   objMode = 0x400;
 
@@ -759,16 +759,16 @@ void ReelGame_RunFrame(void) {
       x = 208;
       y = 32;
     }
-    work->obj[sprite].attr01 =
+    work->oam[sprite].attr01 =
         ((x - 12) << 16) | objMode | (y + 8) | 0x80006000;
-    work->obj[sprite].attr2 = (v << 4) + 0x2b0;
+    work->oam[sprite].attr2 = (v << 4) + 0x2b0;
     sprite++;
-    work->obj[sprite].attr01 =
+    work->oam[sprite].attr01 =
         ((x + 12) << 16) | objMode | (y + 8) | 0x90006000;
-    work->obj[sprite].attr2 = (v << 4) + 0x2b0;
+    work->oam[sprite].attr2 = (v << 4) + 0x2b0;
     sprite++;
-    work->obj[sprite].attr01 = (x << 16) | objMode | y | 0x80002000;
-    work->obj[sprite].attr2 = 0x1f0;
+    work->oam[sprite].attr01 = (x << 16) | objMode | y | 0x80002000;
+    work->oam[sprite].attr2 = 0x1f0;
     sprite++;
   }
 
@@ -778,15 +778,15 @@ void ReelGame_RunFrame(void) {
 
 #if (LANGUAGE == LANGUAGE_SPANISH)
       if (i == 0)
-        work->obj[sprite].attr01 =
+        work->oam[sprite].attr01 =
             (((*(s16 *)((u8 *)&p->x + 2) + 0x1f0) & 0x1ff) << 16) | objMode |
             ((*(s16 *)((u8 *)&p->y + 2) + 0x108) & 255) | 0xb0000000;
       else
 #endif
-        work->obj[sprite].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
+        work->oam[sprite].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
                                    ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) |
                                    0x80000000;
-      work->obj[sprite].attr2 =
+      work->oam[sprite].attr2 =
           ((gReelGame_TitleLetterTiles[i] << 4) + REEL_TITLE_TILES) | 0xf000;
       p->y += p->velocityY;
       p->velocityY += 0x4000;
@@ -805,42 +805,42 @@ void ReelGame_RunFrame(void) {
   }
 
   for (k = 0; k != 14; k++) {
-    work->obj[sprite].attr01 = (gReelGame_FrameSpriteX[k] << 16) | objMode |
+    work->oam[sprite].attr01 = (gReelGame_FrameSpriteX[k] << 16) | objMode |
                                gReelGame_FrameSpriteY[k] | 0x80006000;
     if (k <= 3)
-      work->obj[sprite].attr2 = 0x4e0;
+      work->oam[sprite].attr2 = 0x4e0;
     else
-      work->obj[sprite].attr2 = 0x4e8;
+      work->oam[sprite].attr2 = 0x4e8;
     sprite++;
   }
 
   for (i = 0; i != 5; i++) {
     if (work->reels[i].held == 0) {
-      work->obj[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 0x8000207c;
-      work->obj[sprite].attr2 = 0x460;
+      work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 0x8000207c;
+      work->oam[sprite].attr2 = 0x460;
     } else {
-      work->obj[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 0x8000207c;
-      work->obj[sprite].attr2 = 0x480;
+      work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 0x8000207c;
+      work->oam[sprite].attr2 = 0x480;
     }
     sprite++;
   }
 
   for (i = 0; i != 5; i++) {
-    work->obj[sprite].attr01 = objMode | ((i * 16 + 32) << 16) | 0x80006003;
+    work->oam[sprite].attr01 = objMode | ((i * 16 + 32) << 16) | 0x80006003;
     if (i == work->spins)
-      work->obj[sprite].attr2 = (i * 32 + 0x210) | 0x400;
+      work->oam[sprite].attr2 = (i * 32 + 0x210) | 0x400;
     else
-      work->obj[sprite].attr2 = (i * 32 + 0x220) | 0x400;
+      work->oam[sprite].attr2 = (i * 32 + 0x220) | 0x400;
     sprite++;
   }
 
   for (col = 0; col != 7; col++) {
-    work->obj[sprite].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
+    work->oam[sprite].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
                                objMode | (col * 16 + 5) | 0x80002000;
     if (col > 3 - work->bet && col < work->bet + 3)
-      work->obj[sprite].attr2 = 0x5d0;
+      work->oam[sprite].attr2 = 0x5d0;
     else
-      work->obj[sprite].attr2 = 0x510;
+      work->oam[sprite].attr2 = 0x510;
     sprite++;
   }
 
@@ -848,9 +848,9 @@ void ReelGame_RunFrame(void) {
     struct Reel *reel = &work->reels[i];
 
     for (col = 0; col != 7; col++) {
-      work->obj[sprite].attr01 = (col * 16 + reel->position % 16 + 4) |
+      work->oam[sprite].attr01 = (col * 16 + reel->position % 16 + 4) |
                                  ((i * 32 + 40) << 16) | 0x80006000;
-      work->obj[sprite].attr2 =
+      work->oam[sprite].attr2 =
           (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
       sprite++;
     }
@@ -863,32 +863,32 @@ void ReelGame_RunFrame(void) {
     else if (work->timer <= 55)
       lever = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
   }
-  work->obj[sprite].attr01 = lever | objMode | 0x80d06000;
-  work->obj[sprite].attr2 = 0x500;
+  work->oam[sprite].attr01 = lever | objMode | 0x80d06000;
+  work->oam[sprite].attr2 = 0x500;
   sprite++;
 
   for (k = 0; k != 8; k++) {
-    work->obj[sprite].attr01 = objMode | (k * 16 + 12) | 0x80ce6000;
+    work->oam[sprite].attr01 = objMode | (k * 16 + 12) | 0x80ce6000;
     if (k == 0)
-      work->obj[sprite].attr2 = 0x540;
+      work->oam[sprite].attr2 = 0x540;
     else if (k == 1)
-      work->obj[sprite].attr2 = 0x550;
+      work->oam[sprite].attr2 = 0x550;
     else if (k == 6)
-      work->obj[sprite].attr2 = 0x570;
+      work->oam[sprite].attr2 = 0x570;
     else if (k == 7)
-      work->obj[sprite].attr2 = 0x580;
+      work->oam[sprite].attr2 = 0x580;
     else
-      work->obj[sprite].attr2 = 0x560;
+      work->oam[sprite].attr2 = 0x560;
     sprite++;
   }
 
   while (sprite != 128) {
-    work->obj[sprite].attr01 = 0x40f02000;
-    work->obj[sprite].attr2 = 0;
+    work->oam[sprite].attr01 = 0x40f02000;
+    work->oam[sprite].attr2 = 0;
     sprite++;
   }
 
-  Dma_Set(work->obj, OAM, (sprite * 2) | (DMA_ENABLE | DMA_32BIT) << 16,
+  Dma_Set(work->oam, OAM, (sprite * 2) | (DMA_ENABLE | DMA_32BIT) << 16,
           REG_DMA3);
 }
 
@@ -908,8 +908,8 @@ void ReelGame_InitializeTitle(void) {
   s32 message;
 
   state = ((struct ReelWork **)
-               gBattleFxWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
-  work = gBattleFxWork[0];
+               gBattleEffectWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
+  work = gBattleEffectWork[0];
   left = 0;
   for (i = 0; i != 0x800; i++)
     REEL_SPARKS[i].variant = 0;
@@ -1296,7 +1296,7 @@ void LzPack_ResetSlotBuckets(void) {
 
   for (index = 0; index < 0x400; index++) {
     gFlash_Handler3->nodes[index].slot = index;
-    gFlash_Handler3->nodes[index].prev = NULL;
+    gFlash_Handler3->nodes[index].previous = NULL;
   }
   bucket = gFlash_Handler3->bucket;
   for (index = 0xFF; index >= 0; index--) {
@@ -1308,21 +1308,22 @@ void LzPack_ResetSlotBuckets(void) {
 void LzPack_InsertSlotNode(s32 index) {
   struct LzPackWork *work = gFlash_Handler3;
 
-  work->nodes[index].prev =
+  work->nodes[index].previous =
       (struct LzPackNode *)&work->bucket[work->bucketBySlot[index]];
   work->nodes[index].next = work->bucket[work->bucketBySlot[index]];
   work->bucket[work->bucketBySlot[index]] = &work->nodes[index];
   if (work->nodes[index].next != NULL)
-    work->nodes[index].next->prev = &work->nodes[index];
+    work->nodes[index].next->previous = &work->nodes[index];
 }
 
 /// Removes window position slot from its chain.
 void LzPack_RemoveSlotNode(s32 slot) {
-  if (gFlash_Handler3->nodes[slot].prev != NULL) {
+  if (gFlash_Handler3->nodes[slot].previous != NULL) {
     if (gFlash_Handler3->nodes[slot].next != NULL)
-      gFlash_Handler3->nodes[slot].next->prev =
-          gFlash_Handler3->nodes[slot].prev;
-    gFlash_Handler3->nodes[slot].prev->next = gFlash_Handler3->nodes[slot].next;
+      gFlash_Handler3->nodes[slot].next->previous =
+          gFlash_Handler3->nodes[slot].previous;
+    gFlash_Handler3->nodes[slot].previous->next =
+        gFlash_Handler3->nodes[slot].next;
   }
 }
 
@@ -1387,20 +1388,20 @@ void LzPack_CopyBufferedBytes(u8 *destination) {
   struct LzPackWork *work = gFlash_Handler3;
   s32 index;
 
-  for (index = 0; index != work->outCnt; index++) {
-    destination[work->outTotal] = work->outBuf[index];
+  for (index = 0; index != work->outCount; index++) {
+    destination[work->outTotal] = work->outBuffer[index];
     work->outTotal++;
   }
 }
 
 /// Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
-/// PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
+/// PACK_DISTANCE_MAX back) for the bytes at window position start; matchLength
 /// stays 1 for none.
 static __inline__ void LzPack_FindWindowMatch(s32 start) {
   struct LzPackNode *node;
   s32 len;
 
-  gFlash_Handler3->matchLen = 1;
+  gFlash_Handler3->matchLength = 1;
   if (gFlash_Handler3->bucketBySlot[start] == -1) {
     return;
   }
@@ -1417,9 +1418,9 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
             break;
           }
         }
-        if (gFlash_Handler3->matchLen < len) {
+        if (gFlash_Handler3->matchLength < len) {
           gFlash_Handler3->matchOffset = dist;
-          gFlash_Handler3->matchLen = len;
+          gFlash_Handler3->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1439,9 +1440,9 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
             break;
           }
         }
-        if (gFlash_Handler3->matchLen < len) {
+        if (gFlash_Handler3->matchLength < len) {
           gFlash_Handler3->matchOffset = dist;
-          gFlash_Handler3->matchLen = len;
+          gFlash_Handler3->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1470,76 +1471,80 @@ UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   gFlash_Handler3 = (struct LzPackWork *)gMapCellBuffer;
   LzPack_ResetSlotBuckets();
   gFlash_Handler3->inputLimit = size;
-  gFlash_Handler3->pos = 0;
+  gFlash_Handler3->position = 0;
   gFlash_Handler3->inputCursor = 0;
   gFlash_Handler3->outTotal = 0;
   gFlash_Handler3->flagMask = 0x80;
-  gFlash_Handler3->outBuf[0] = 0;
-  gFlash_Handler3->outCnt = 1;
+  gFlash_Handler3->outBuffer[0] = 0;
+  gFlash_Handler3->outCount = 1;
   LzPack_ConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
 
-  while (gFlash_Handler3->bucketBySlot[gFlash_Handler3->pos] != -1) {
-    LzPack_FindWindowMatch(gFlash_Handler3->pos);
+  while (gFlash_Handler3->bucketBySlot[gFlash_Handler3->position] != -1) {
+    LzPack_FindWindowMatch(gFlash_Handler3->position);
     if (defer == 0) {
-      len = gFlash_Handler3->matchLen;
-      if (gFlash_Handler3->matchLen > 1) {
+      len = gFlash_Handler3->matchLength;
+      if (gFlash_Handler3->matchLength > 1) {
         saveOffset = gFlash_Handler3->matchOffset;
         saveLen = len;
-        LzPack_FindWindowMatch((gFlash_Handler3->pos + 1) & PACK_WINDOW_MASK);
-        if (gFlash_Handler3->matchLen > 2) {
-          reach[0] = gFlash_Handler3->matchLen + 1;
-          LzPack_FindWindowMatch((gFlash_Handler3->pos + len) &
+        LzPack_FindWindowMatch((gFlash_Handler3->position + 1) &
+                               PACK_WINDOW_MASK);
+        if (gFlash_Handler3->matchLength > 2) {
+          reach[0] = gFlash_Handler3->matchLength + 1;
+          LzPack_FindWindowMatch((gFlash_Handler3->position + len) &
                                  PACK_WINDOW_MASK);
-          reach[1] = gFlash_Handler3->matchLen + len;
+          reach[1] = gFlash_Handler3->matchLength + len;
           if (reach[0] >= reach[1]) {
             saveLen = 1;
             defer = 1;
           }
         }
         gFlash_Handler3->matchOffset = saveOffset;
-        gFlash_Handler3->matchLen = saveLen;
+        gFlash_Handler3->matchLength = saveLen;
       }
     }
 
-    if (gFlash_Handler3->matchLen > 1) {
+    if (gFlash_Handler3->matchLength > 1) {
       defer = 0;
-      gFlash_Handler3->outBuf[0] |= gFlash_Handler3->flagMask;
-      if (gFlash_Handler3->matchLen <= 16) {
+      gFlash_Handler3->outBuffer[0] |= gFlash_Handler3->flagMask;
+      if (gFlash_Handler3->matchLength <= 16) {
         code = ((gFlash_Handler3->matchOffset << 4) & ~0xfff) |
                (gFlash_Handler3->matchOffset & 0xff) |
-               (((gFlash_Handler3->matchLen - 1) << 8) & 0xf00);
-        gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = (u16)code >> 8;
-        gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = code;
+               (((gFlash_Handler3->matchLength - 1) << 8) & 0xf00);
+        gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] =
+            (u16)code >> 8;
+        gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] = code;
       } else {
         code = ((gFlash_Handler3->matchOffset << 4) & ~0xfff) |
                (gFlash_Handler3->matchOffset & 0xff);
-        gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = (u16)code >> 8;
-        gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = code;
-        gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] =
-            gFlash_Handler3->matchLen - 17;
+        gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] =
+            (u16)code >> 8;
+        gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] = code;
+        gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] =
+            gFlash_Handler3->matchLength - 17;
       }
     } else {
-      gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] =
-          gFlash_Handler3->bucketBySlot[gFlash_Handler3->pos];
-      gFlash_Handler3->matchLen = 1;
+      gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] =
+          gFlash_Handler3->bucketBySlot[gFlash_Handler3->position];
+      gFlash_Handler3->matchLength = 1;
     }
 
-    LzPack_ConsumeSlotBytes(gFlash_Handler3->pos + PACK_LOOKAHEAD,
-                            gFlash_Handler3->matchLen, input);
-    gFlash_Handler3->pos =
-        (gFlash_Handler3->pos + gFlash_Handler3->matchLen) & PACK_WINDOW_MASK;
+    LzPack_ConsumeSlotBytes(gFlash_Handler3->position + PACK_LOOKAHEAD,
+                            gFlash_Handler3->matchLength, input);
+    gFlash_Handler3->position =
+        (gFlash_Handler3->position + gFlash_Handler3->matchLength) &
+        PACK_WINDOW_MASK;
     gFlash_Handler3->flagMask >>= 1;
     if (gFlash_Handler3->flagMask == 0) {
       LzPack_CopyBufferedBytes(dst);
       gFlash_Handler3->flagMask = 0x80;
-      gFlash_Handler3->outBuf[0] = 0;
-      gFlash_Handler3->outCnt = 1;
+      gFlash_Handler3->outBuffer[0] = 0;
+      gFlash_Handler3->outCount = 1;
     }
   }
 
-  gFlash_Handler3->outBuf[0] |= gFlash_Handler3->flagMask;
-  gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = 0;
-  gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = 0;
+  gFlash_Handler3->outBuffer[0] |= gFlash_Handler3->flagMask;
+  gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] = 0;
+  gFlash_Handler3->outBuffer[gFlash_Handler3->outCount++] = 0;
   LzPack_CopyBufferedBytes(dst);
   return gFlash_Handler3->outTotal;
 }

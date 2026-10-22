@@ -9,7 +9,7 @@
 /// events of its own. Its one placed actor is the stump the party pushes over
 /// the edge up there with Move: once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL),
 /// entering finds it sunk in the pond until only its top shows
-/// (STUMP_ANIM_SINK), drawn underfoot with no collision flags. The five by
+/// (STUMP_ANIMATION_SINK), drawn underfoot with no collision flags. The five by
 /// five cells around it, open water in the room's render
 /// (places/goma-cave-pond/map-1.png), are replaced by a copy that adds
 /// MAP_CELL_JUMP_FORWARD cells, so the leader can jump across the water by
@@ -82,7 +82,7 @@ s32 Scene_Initialize(void) {
   work->transitionFrames = 24;
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     OBJECT_POSITION_SET(ACTOR_FALLEN_STUMP, 216, 136);
-    OBJECT_MODE(ACTOR_FALLEN_STUMP, STUMP_ANIM_SINK);
+    OBJECT_MODE(ACTOR_FALLEN_STUMP, STUMP_ANIMATION_SINK);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FALLEN_STUMP), 0);
     Object_GetById(ACTOR_FALLEN_STUMP)->priorityFlags =
         ACTOR_PRIORITY_UNDERFOOT;

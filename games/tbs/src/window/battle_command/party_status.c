@@ -174,7 +174,7 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
   u32 recoloured;
 
   if (work->menuState == 0) {
-    Dma_Set((const void *)Palette_GetBasicObjColors(),
+    Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(14, 0), DMA_COPY16(16), REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
   }
@@ -304,16 +304,16 @@ void PartyStatus_Draw(s32 flags) {
   for (i = 0; i != count; i++) {
     struct BattleUnit *unit = Unit_GetFar(members[i]);
     s32 hp = unit->hp;
-    s32 maxHp = unit->maxHp;
+    s32 hpMax = unit->hpMax;
     s32 barLength;
     s32 current;
 
     if (hp == 0)
-      UiWork_SetParamNibble(2);
-    else if (hp <= maxHp / 4)
-      UiWork_SetParamNibble(4);
+      UiWork_SetParameterNibble(2);
+    else if (hp <= hpMax / 4)
+      UiWork_SetParameterNibble(4);
     else
-      UiWork_SetParamNibble(15);
+      UiWork_SetParameterNibble(15);
     // The numbers' tiles take BG palette 14 in the field and 5 in battle
     // (UiRenderWork.level); the name keeps palette 15.
     work->level = 14;
@@ -324,11 +324,11 @@ void PartyStatus_Draw(s32 flags) {
     work->level = 15;
     UiText_DrawStringAtOffset(unit->name, window,
                               (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    UiWork_SetParamNibble(15);
-    if (unit->maxHp != 0) {
+    UiWork_SetParameterNibble(15);
+    if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
       current = unit->hp;
-      barLength = ((current * 40) / unit->maxHp);
+      barLength = ((current * 40) / unit->hpMax);
       if (barLength == 0 && current != 0)
         barLength = 1;
       UiWindow_DrawStatusBarTiles(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1,
@@ -341,9 +341,9 @@ void PartyStatus_Draw(s32 flags) {
       UiText_DrawPrefixedNumberAtOffset(unit->pp, window,
                                         (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                         y * 8 + 16, 1);
-      if (unit->maxPp != 0) {
+      if (unit->ppMax != 0) {
         current = unit->pp;
-        barLength = ((current * 40) / unit->maxPp);
+        barLength = ((current * 40) / unit->ppMax);
         if (barLength == 0 && current != 0)
           barLength = 1;
         UiWindow_DrawStatusBarTiles(
@@ -360,14 +360,14 @@ void PartyStatus_Draw(s32 flags) {
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     BattleParty_CountStandbyDjinnFar(0, standbyDjinn);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_VENUS, 0,
-                             row, 0);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_MERCURY, 2,
-                             row, 0);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_MARS, 0,
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_VENUS,
+                             0, row, 0);
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MERCURY,
+                             2, row, 0);
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MARS, 0,
                              row + 1, 0);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_JUPITER, 2,
-                             row + 1, 0);
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_JUPITER,
+                             2, row + 1, 0);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[0] + '0', 1, row);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[1] + '0', 3, row);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[2] + '0', 1, row + 1);

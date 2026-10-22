@@ -318,7 +318,7 @@ UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
   s32 zoom;
 #endif
   struct BattleCamera *camera = gCameraWork;
-  s32 *focus = camera->pos;
+  s32 *focus = camera->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
@@ -371,7 +371,7 @@ UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
 void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y,
                                              s32 zoom) {
   struct BattleCamera *camera = gCameraWork;
-  s32 *focus = camera->pos;
+  s32 *focus = camera->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
@@ -533,7 +533,7 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
 /// storm (BattlePresentation_RunEntryTransition), by the staging (staging.c)
 /// and by auto battle (auto_battle.c).
 void BattlePresentation_SetActorRecordMode(s32 actorId, s32 mode) {
-  struct BattleObj *slot = BattleObject_Get(actorId);
+  struct BattleObject *slot = BattleObject_Get(actorId);
   struct MotionObject *object;
   struct AnimationObject *record;
   struct AnimationObject **records;

@@ -249,7 +249,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
 ///          that changes colours also restarts its frame.
 /// animation: the pose each group switches to (enum BattlePose), or -1 for
 ///            none.
-/// timerSlot: the actor timer (gBattleFxWork's actorTimers) to set, or -1;
+/// timerSlot: the actor timer (gBattleEffectWork's actorTimers) to set, or -1;
 ///            ObjectGroup_TickMemberTimers restores the battler's palette
 ///            when it runs out.
 /// timerFrames: the frames that timer counts.
@@ -261,7 +261,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
 /// and each part's param and frame (0xff restarts it).
 void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
                                s32 timerSlot, s32 timerFrames) {
-  struct BattleObj *slot;
+  struct BattleObject *slot;
   struct AnimationObject *group;
   struct BattleEffectWork *work;
   s32 groupIndex;
@@ -293,9 +293,9 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
                 part != (struct AnimationEntry *)slot->effectEntry &&
                 part != (struct AnimationEntry *)slot->animationEntry) {
               if (palette == 0)
-                part->param = BattleMotion_GetSlotPaletteFar(actorId);
+                part->colorMode = BattleMotion_GetSlotPaletteFar(actorId);
               else
-                part->param = palette;
+                part->colorMode = palette;
               part->frame = 0xff;
             }
             partIndex++;

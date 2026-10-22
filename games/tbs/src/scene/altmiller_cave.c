@@ -250,7 +250,7 @@ enum {
 #define ALTMILLER_CAVE_BRIGHTENING_WINOUT (WINOUT_WIN01_ALL | WINOUT_WINOBJ_ALL)
 
 /// The puddle's animation once Frost has frozen it.
-enum { PUDDLE_ANIM_FROZEN = 5 };
+enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 static void AltmillerCave_ReleaseWallBurst(void);
 
@@ -412,7 +412,7 @@ static void AltmillerCave_DarkenToLevel5(void) {
 /// dark rooms evenly.
 static void AltmillerCave_InitializeDarkness(void) {
   u8 **workCells = (u8 **)&gEventWork;
-  struct DisplayTransitionState *transition;
+  struct DisplayTransitionState *state;
 
   {
     struct EventWork *work = (struct EventWork *)*workCells;
@@ -424,23 +424,23 @@ static void AltmillerCave_InitializeDarkness(void) {
   // UB: the fourth following pointer cell lies past scalar gEventWork.
   // Its named load adds eight bytes in the native EN trial (0x98 to 0xa0).
 #ifdef UBFIX
-  transition = gDisplayTransition;
+  state = gDisplayTransition;
 #else
-  transition = (struct DisplayTransitionState *)workCells[4];
+  state = (struct DisplayTransitionState *)workCells[4];
 #endif
   {
-    u16 *slot = &transition->value;
+    u16 *slot = &state->value;
     s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
     *slot = value;
   }
   if (Engine_GameFlagIsSet(FLAG_DARKNESS_BY_STEPS) != 0) {
     {
-      s16 *slot = &transition->mask;
+      s16 *slot = &state->mask;
       s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
       *slot = value;
     }
     {
-      s16 *slot = &transition->active;
+      s16 *slot = &state->active;
       s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WINOUT;
       *slot = value;
     }
@@ -448,12 +448,12 @@ static void AltmillerCave_InitializeDarkness(void) {
     return;
   }
   {
-    s16 *slot = &transition->mask;
+    s16 *slot = &state->mask;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WININ;
     *slot = value;
   }
   {
-    s16 *slot = &transition->active;
+    s16 *slot = &state->active;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
     *slot = value;
   }
@@ -487,7 +487,7 @@ static void AltmillerCave_StartReveal(void) {
 /// Reveal's light ends: the cave darkens again and AltmillerCaveDraught's rocks
 /// lose their colors.
 static void AltmillerCave_EndReveal(void) {
-  struct FieldFxScene *work = (struct FieldFxScene *)gEffectWork;
+  struct FieldEffectScene *work = (struct FieldEffectScene *)gEffectWork;
 
   if (Engine_GameFlagIsSet(FLAG_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
@@ -505,11 +505,11 @@ static void AltmillerCave_EndReveal(void) {
 /// Retreat's first phase: the Psynergy's first actor faces south, and its
 /// object is copied into a new one for the effect to use.
 static void AltmillerCave_StartRetreat(void) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
   struct FieldActor *original;
   struct FieldActor *replacement;
 
-  work = (struct FieldFxScene *)gEffectWork;
+  work = (struct FieldEffectScene *)gEffectWork;
   original = work->mainObject;
   Engine_ActorFaceDirection(work->firstObjectId, FACING_SOUTH, 0);
   Animation_ApplyChildValues((struct DispatchObject *)original, 0);
@@ -551,7 +551,7 @@ static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
 /// Frost's first phase on AltmillerCaveSquall's puddle: notes whether its place
 /// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
-  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
+  struct FieldEffectScene *scene = (struct FieldEffectScene *)gEffectWork;
   struct FieldActor *target = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
@@ -560,18 +560,18 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
   position.z = target->z.fixed;
 
   if (FieldObject_CheckMovementCollision(target, &position) > 0) {
-    effect->childMode = 1;
+    scene->childMode = 1;
   }
 }
 
 /// Frost on AltmillerCaveSquall's puddle, unless blocked: it freezes and its
 /// cell takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
-  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
+  struct FieldEffectScene *scene = (struct FieldEffectScene *)gEffectWork;
   struct FieldActor *puddle = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
-  blocked = effect->childMode;
+  blocked = scene->childMode;
   if (blocked == 0) {
     Map_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     if (puddle != 0) {
@@ -899,7 +899,7 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
 /// and he invites the party to Colosso's finals; Garet asks whether they
 /// should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
-  struct DisplayTransitionState *display;
+  struct DisplayTransitionState *state;
   struct FieldActor *actor;
   struct FieldActor *leader;
   s32 i;
@@ -1209,9 +1209,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0);
   // The cave brightens as two men from Tolbi arrive: "Babi!" The light
   // widens to fill the screen and BG1 fades out.
-  display = gDisplayTransition;
+  state = gDisplayTransition;
   {
-    u16 *slot = &display->value;
+    u16 *slot = &state->value;
     s32 value = ALTMILLER_CAVE_LIGHT_FULL;
 
     *slot = value;
@@ -1226,7 +1226,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_TaskWait(7);
   }
   {
-    u16 *slot = (u16 *)&display->active;
+    u16 *slot = (u16 *)&state->active;
     s32 value = ALTMILLER_CAVE_BRIGHTENING_WINOUT;
 
     *slot = value;
@@ -1539,13 +1539,13 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_TaskWait(7);
   }
   {
-    u16 *slot = &display->value;
+    u16 *slot = &state->value;
     s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
 
     *slot = value;
   }
   {
-    u16 *slot = (u16 *)&display->active;
+    u16 *slot = (u16 *)&state->active;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
 
     *slot = value;
@@ -2102,7 +2102,8 @@ s32 AltmillerCave_Initialize(void) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE,
+                               PUDDLE_ANIMATION_FROZEN);
       Map_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     } else {
       Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=
@@ -2213,8 +2214,8 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
     fragment->acceleration = PIXELS(5);
-    fragment->maxSpeed = PIXELS(5);
-    fragment->limitTurnStep = currentPhase;
+    fragment->speedMax = PIXELS(5);
+    fragment->turnStepLimited = currentPhase;
     (*phase)++;
     if ((gFrameTick & 3) == 0)
       Engine_AudioPlayCue(SE_HEAVY_IMPACT);
@@ -2233,19 +2234,19 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
 /// The wall bursts: 24 pieces fly out from the ring's center, the wall's
 /// cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
   struct EffectVector position;
   struct EffectSlot *fragment;
   s32 fragmentIndex;
 
   FieldEffect_InitializeSlots();
-  work = (struct FieldFxScene *)gEffectWork;
+  work = (struct FieldEffectScene *)gEffectWork;
   Shop_SaveAndTintFieldPalette(0x202108);
   position.x = PIXELS(504);
   position.y = PIXELS(24);
   position.z = PIXELS(144);
   Camera_WorldToScreen(&position);
-  fragment = work->slots;
+  fragment = work->effects;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
     s32 scale;
 
@@ -2269,7 +2270,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   {
     s32 mode = 2;
     // Walk the state bytes within the complete slot array representation.
-    u8 *stateCursor = (u8 *)&work->slots + offsetof(struct EffectSlot, state);
+    u8 *stateCursor = (u8 *)&work->effects + offsetof(struct EffectSlot, state);
 
     for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
       if (((s8 *)stateCursor)[offsetof(struct EffectSlot, active) -
@@ -2479,32 +2480,32 @@ u32 gAltmillerCave_PulseScales[] = {
 
 /// The two men from Tolbi walk in to Babi.
 s32 gAltmillerCave_GuardsArrivePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, -PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(64), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, -PIXELS(64)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 /// Babi and the two men walk out of the room, each by his own path.
 s32 gAltmillerCave_SecondGuardLeavePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(48), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_FirstGuardLeavePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, PIXELS(16)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2513,12 +2514,12 @@ s32 gAltmillerCave_FirstGuardLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(32), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_BabiLeavePath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2527,7 +2528,7 @@ s32 gAltmillerCave_BabiLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 

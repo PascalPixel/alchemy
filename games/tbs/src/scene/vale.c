@@ -3,8 +3,8 @@
 /// Isaac's house, the houses of Garet's family and of Jenna's grandparents,
 /// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
 /// placements and events come in three sets, chosen by the story flags: before
-/// the party leaves Vale, after it has left (FLAG_PARTY_LEFT_VALE) and back
-/// from Kalay (FLAG_REACHED_KALAY); VALE_FROM_TITLE has a set of its own. In
+/// the party leaves Vale, after it has left (FLAG_VALE_PARTY_LEFT) and back
+/// from Kalay (FLAG_KALAY_REACHED); VALE_FROM_TITLE has a set of its own. In
 /// story order:
 ///
 /// - The day the story begins, three years after the storm
@@ -31,11 +31,11 @@
 ///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
 ///   cottage, Garet's sister scolds him, and Dora says Isaac can fix the hole
 ///   later.
-/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE): Dora will not open
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): Dora will not open
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
 ///   away."), and the villagers speak of the tremors and of Kraden, who has
 ///   not come back.
-/// - Back from Kalay (FLAG_REACHED_KALAY): Garet meets his sister (group flag
+/// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (group flag
 ///   FLAG_PLACE_TEMP_03) and asks one of his family to protect it while he is
 ///   gone (FLAG_PLACE_TEMP_04), a young man asks whether Jenna is back
 ///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
@@ -374,9 +374,9 @@ const struct ScenePlacement *Vale_GetPlacements(void) {
   u8 *scene_state = (u8 *)&gGameState;
   if (((struct GameState *)scene_state)->entrance == VALE_FROM_TITLE)
     return gVale_RepairPlacements;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     return gVale_PlacementsAfterKalay;
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_PlacementsAfterLeaving;
   return gVale_Placements;
 }
@@ -404,9 +404,9 @@ static void Event_CatchNutAfterKalay(void) {
 /// Vale's events for the story so far: before leaving, after leaving, or back
 /// from Kalay.
 const struct SceneEvent *Vale_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     return gVale_EventsAfterKalay;
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_EventsAfterLeaving;
   return gVale_Events;
 }
@@ -415,7 +415,7 @@ const struct SceneEvent *Vale_GetEvents(void) {
 /// before the party leaves, and speaks of the tremors after.
 static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_EventSetMessage(MsgValeTheGroundStillShakes);
     Engine_EventShowMessage(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   } else {
@@ -433,7 +433,7 @@ static void Event_TalkAboutTheMayorAndTremors(void) {
 static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_EventSetMessage(MsgValeKradenHasntComeBack);
     Engine_EventShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else if (Engine_GameFlagIsSet(flag) == 0) {
@@ -607,8 +607,8 @@ static void Event_EnterValeInteriorsShops(void) {
 /// and before Kalay, Dora will not open. "My Isaac would keep his promise...
 /// Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
 static void Event_EnterIsaacsHouse(void) {
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
-      Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0 &&
+      Engine_GameFlagIsSet(FLAG_KALAY_REACHED) == 0) {
     Engine_EventStart();
     Engine_EventSetMessage(MsgValeYouCantBeIsaac);
     Engine_EventOpenMessage(ACTOR_DORA, 0);
@@ -1500,7 +1500,7 @@ s32 Vale_Initialize(void) {
     Event_MendingTheRoof();
   } else {
     if (!Engine_GameFlagIsSet(FLAG_VALE_NUT_CAUGHT)) {
-      if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+      if (!Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
         Scene_FloatNut(ACTOR_NUT);
       } else {
         Scene_FloatNut(ACTOR_NUT_AFTER_KALAY);
@@ -1508,7 +1508,7 @@ s32 Vale_Initialize(void) {
     }
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
     Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
-    actor = Object_GetById((Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) +
+    actor = Object_GetById((Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) +
                            ACTOR_PILLAR);
     Engine_ActorSetSpriteFlags(actor, 0);
     if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_14)) {
@@ -1526,7 +1526,7 @@ s32 Vale_Initialize(void) {
     FieldScheduler_AddCallback(Vale_AdjustPillarPriorityForLeaderHeight,
                                TASK_PRIORITY_SCENE);
 #if TBS_PATCH_4
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04)) {
           Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -1537,9 +1537,9 @@ s32 Vale_Initialize(void) {
       }
     } else {
 #else
-    if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+    if (!Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
 #endif
-      if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE)) {
+      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT)) {
         actor = Object_GetById(ACTOR_DORA);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_DORA), 0);
         actor->scaleX = 0x28f;
@@ -1550,7 +1550,7 @@ s32 Vale_Initialize(void) {
         Engine_ActorSetPosition(ACTOR_FIRST_PUPPY + 1, 0, 0);
         Engine_ActorSetPosition(ACTOR_FIRST_PUPPY + 2, 0, 0);
       }
-      set = Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE);
+      set = Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT);
       if (set == 0) {
         if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
           if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH)) {
@@ -1571,7 +1571,7 @@ s32 Vale_Initialize(void) {
           Engine_GameFlagClear(FLAG_SCENE_TEMP_41);
         }
         if (gGameState.entrance != VALE_FROM_TITLE &&
-            !Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+            !Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephGuardPause,
                                      TASK_PRIORITY_SCENE);
         }
@@ -3119,7 +3119,7 @@ static void Vale_UpdateParticlePosition(struct FieldActor *particle,
 static void Event_PushPillar(void) {
 #if !TBS_PATCH_1
   // Japanese edition only: look up the pillar but do not use the return value.
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY))
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED))
     Object_GetById(ACTOR_PILLAR_AFTER_KALAY);
   else
     Object_GetById(ACTOR_PILLAR);
@@ -3137,7 +3137,7 @@ static void Event_SettleMovedPillar(void) {
   s32 column;
 
   Map_CopyCellAttributes(17, 0, 3, 1, 22, 36);
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY))
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED))
     actor = Object_GetById(ACTOR_PILLAR_AFTER_KALAY);
   else
     actor = Object_GetById(ACTOR_PILLAR);
@@ -3195,7 +3195,7 @@ static void Vale_SynchronizeAlephGuardPause(void) {
 static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *pillar;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     pillar = Object_GetById(ACTOR_PILLAR_AFTER_KALAY);
   else
     pillar = Object_GetById(ACTOR_PILLAR);
@@ -3273,16 +3273,16 @@ s32 gStagedActor_FootprintBounds[] = {
 /// 1 to 3, of which the warning events act on the two pauses, 1 and 2.
 s32 gVale_AlephGuardPatrol[] = {
     SC_SET(SW_SPEED, PIXELS(1) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 4),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 4),
     SC_SET(SW_TIMER, 2),
     SC_LABEL(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(296), 0, PIXELS(456)),
     SC_SYNC,
     SC_SET(SW_TIMER, 3),
     SC_MOVE(PIXELS(296), 0, PIXELS(420)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
@@ -3296,34 +3296,34 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(296), 0, PIXELS(456)),
     SC_SYNC,
     SC_SET(SW_TIMER, 2),
     SC_MOVE(PIXELS(256), 0, PIXELS(456)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(15),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(60),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(212), 0, PIXELS(456)),
     SC_SYNC,
     SC_SET(SW_TIMER, 1),
     SC_MOVE(PIXELS(212), 0, PIXELS(388)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(40),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(212), 0, PIXELS(429)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_WAIT(5),
@@ -3337,13 +3337,13 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(5),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(212), 0, PIXELS(456)),
     SC_SYNC,
     SC_SET(SW_TIMER, 2),
     SC_MOVE(PIXELS(256), 0, PIXELS(456)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(5),
@@ -3375,23 +3375,23 @@ s32 gVale_LeaderHammers[] = {
 // Garet and Jenna walk to the front of Isaac's house to watch him on the roof.
 
 s32 gVale_GaretWalksToTheHouse[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(300), 0, PIXELS(880)),
     SC_SYNC,
     SC_MOVE(PIXELS(300), 0, PIXELS(904)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_END,
 };
 
 s32 gVale_JennaWalksToTheHouse[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(300), 0, PIXELS(904)),
     SC_SYNC,
     SC_MOVE(PIXELS(321), 0, PIXELS(904)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_END,
 };
@@ -3399,7 +3399,7 @@ s32 gVale_JennaWalksToTheHouse[] = {
 /// A spout of water grows from a tenth of its size north of the strongman by
 /// the river and vanishes (Event_UnusedWaterBurstsByTheRiver).
 s32 gVale_UnusedWaterGrows[] = {
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(PIXELS(266), 0, PIXELS(1230)),
     SC_SET(SW_SCALE_X, 0x1999),
     SC_SET(SW_SCALE_Y, 0x1999),
@@ -3420,7 +3420,7 @@ s32 gVale_SparkleScript[] = {
     SC_FREE,
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(1) / 16),
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_WAIT(10),
     SC_FREE,
 };
@@ -3782,32 +3782,32 @@ u16 gVale_WestHouseDoorOpens[] = {
 // from either of the guard's pauses (Vale_AskAboutSneakingToAleph).
 
 s32 gVale_FirstWarningLeaderPath[] = {
-    SC_ARG(5), SC_MOVE(PIXELS(199), 0, PIXELS(446)),
-    SC_SYNC,   SC_MOVE(PIXELS(215), 0, PIXELS(472)),
-    SC_SYNC,   SC_MOVE(PIXELS(239), 0, PIXELS(461)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(5), SC_MOVE(PIXELS(199), 0, PIXELS(446)),
+    SC_SYNC,         SC_MOVE(PIXELS(215), 0, PIXELS(472)),
+    SC_SYNC,         SC_MOVE(PIXELS(239), 0, PIXELS(461)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVale_FirstWarningGuardPath[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(199), 0, PIXELS(446)),
-    SC_SYNC,   SC_MOVE(PIXELS(215), 0, PIXELS(472)),
-    SC_SYNC,   SC_MOVE(PIXELS(239), 0, PIXELS(461)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(199), 0, PIXELS(446)),
+    SC_SYNC,         SC_MOVE(PIXELS(215), 0, PIXELS(472)),
+    SC_SYNC,         SC_MOVE(PIXELS(239), 0, PIXELS(461)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVale_LeaderFromWestPath[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
-    SC_ARG(5),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
+    SC_ANIMATION(5),
     SC_MOVE(PIXELS(224), 0, PIXELS(458)),
     SC_SYNC,
     SC_MOVE(PIXELS(256), 0, PIXELS(458)),
     SC_SYNC,
     SC_MOVE(PIXELS(256), 0, PIXELS(474)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
@@ -3817,13 +3817,13 @@ s32 gVale_LeaderFromWestPath[] = {
 
 s32 gVale_GuardFromFirstPausePath[] = {
     SC_SET(SW_SPEED, PIXELS(3) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1)),
-    SC_ARG(2),
+    SC_SET(SW_ACCELERATION, PIXELS(1)),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(216), 0, PIXELS(458)),
     SC_SYNC,
     SC_MOVE(PIXELS(256), 0, PIXELS(456)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(5),
@@ -3833,13 +3833,13 @@ s32 gVale_GuardFromFirstPausePath[] = {
 
 s32 gVale_LeaderPushedBackPath[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
-    SC_ARG(5),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
+    SC_ANIMATION(5),
     SC_MOVE(PIXELS(256), 0, PIXELS(458)),
     SC_SYNC,
     SC_MOVE(PIXELS(256), 0, PIXELS(474)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
@@ -3849,11 +3849,11 @@ s32 gVale_LeaderPushedBackPath[] = {
 
 s32 gVale_GuardFromSecondPausePath[] = {
     SC_SET(SW_SPEED, PIXELS(3) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1)),
-    SC_ARG(2),
+    SC_SET(SW_ACCELERATION, PIXELS(1)),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(256), 0, PIXELS(456)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(5),

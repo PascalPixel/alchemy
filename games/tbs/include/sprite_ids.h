@@ -702,60 +702,60 @@ enum SpriteId {
 enum StumpAnimation {
   /// Sinks until only its cut top shows, level with the ground or the water,
   /// which leaves it afloat in Gondowan Cave's river.
-  STUMP_ANIM_SINK = 2,
-  STUMP_ANIM_SPLASH = 3 ///< drops into water with a splash
+  STUMP_ANIMATION_SINK = 2,
+  STUMP_ANIMATION_SPLASH = 3 ///< drops into water with a splash
 };
 
 /// SPRITE_PUDDLE's animations (spr_227.tsv): the puddle, the ice pillar Frost
 /// makes of it, and the steps between.
 enum PuddleAnimation {
-  PUDDLE_ANIM_PUDDLE = 1,
-  PUDDLE_ANIM_FREEZE = 2,  ///< rises from the puddle into an ice pillar
-  PUDDLE_ANIM_LOW_ICE = 3, ///< held at the second step of freezing
-  PUDDLE_ANIM_PILLAR = 5,  ///< the ice pillar, still
-  PUDDLE_ANIM_MELT = 6     ///< sinks from the pillar back into a puddle
+  PUDDLE_ANIMATION_PUDDLE = 1,
+  PUDDLE_ANIMATION_FREEZE = 2,  ///< rises from the puddle into an ice pillar
+  PUDDLE_ANIMATION_LOW_ICE = 3, ///< held at the second step of freezing
+  PUDDLE_ANIMATION_PILLAR = 5,  ///< the ice pillar, still
+  PUDDLE_ANIMATION_MELT = 6     ///< sinks from the pillar back into a puddle
 };
 
 /// SPRITE_WATER_BEAST's animations beyond its standing frame (spr_190.tsv).
 enum WaterBeastAnimation {
-  WATER_BEAST_ANIM_LEAP = 2, ///< stretched out, legs down, as in mid-jump
+  WATER_BEAST_ANIMATION_LEAP = 2, ///< stretched out, legs down, as in mid-jump
   /// Two low crouches in turn, a quarter of a second each: as one spits
   /// water, and between its high jumps.
-  WATER_BEAST_ANIM_SPIT = 3
+  WATER_BEAST_ANIMATION_SPIT = 3
 };
 
 /// SPRITE_WARRIOR_IN_GOLDEN_HELMET's animations at the end of a Colosso
 /// finals match (spr_062.tsv).
 enum GoldenHelmetWarriorAnimation {
-  WARRIOR_ANIM_DEFEATED = 8,        ///< slumped to the ground
-  WARRIOR_ANIM_FIGHTING_STANCE = 9, ///< braced to fight
-  WARRIOR_ANIM_ARMS_RAISED = 10     ///< both arms raised in victory
+  WARRIOR_ANIMATION_DEFEATED = 8,        ///< slumped to the ground
+  WARRIOR_ANIMATION_FIGHTING_STANCE = 9, ///< braced to fight
+  WARRIOR_ANIMATION_ARMS_RAISED = 10     ///< both arms raised in victory
 };
 
 /// SPRITE_BABI's animations that scenes set by number (spr_052.tsv).
 enum BabiAnimation {
   /// Lying in bed, only his head on the pillow showing, its two frames
   /// alternating.
-  BABI_ANIM_IN_BED = 5
+  BABI_ANIMATION_IN_BED = 5
 };
 
 /// SPRITE_LOG_NORTH_SOUTH's animations (spr_205.tsv) as a log tips into a
 /// river
 /// (places/kolima-forest-entrance/events/KolimaForestEntrance_PushLog.gif).
 enum LogAnimation {
-  LOG_ANIM_ROLL_WEST = 3, ///< rolling over toward the west
-  LOG_ANIM_FLOAT = 4,     ///< bobbing in the water
-  /// Drops into the water with a ring of spray, then LOG_ANIM_FLOAT.
-  LOG_ANIM_DROP_IN = 8
+  LOG_ANIMATION_ROLL_WEST = 3, ///< rolling over toward the west
+  LOG_ANIMATION_FLOAT = 4,     ///< bobbing in the water
+  /// Drops into the water with a ring of spray, then LOG_ANIMATION_FLOAT.
+  LOG_ANIMATION_DROP_IN = 8
 };
 
 /// SPRITE_SPLASH's animations (spr_214.tsv), as Kolima Forest's floodgate
 /// plays them
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 enum SplashAnimation {
-  SPLASH_ANIM_BURST = 1, ///< one burst of spray, then nothing
+  SPLASH_ANIMATION_BURST = 1, ///< one burst of spray, then nothing
   /// Spray churning for about 120 frames, then dying away to nothing.
-  SPLASH_ANIM_CHURN = 2
+  SPLASH_ANIMATION_CHURN = 2
 };
 
 /// The face animations of SPRITE_TRET and SPRITE_TRET_RAISED (spr_055.tsv):
@@ -787,9 +787,10 @@ enum LaurelFaceAnimation {
 
 /// SPRITE_TORCH's animations (spr_246.tsv).
 enum TorchAnimation {
-  TORCH_ANIM_UNLIT = 1, ///< a cold torch, its bowl grey with ash
-  TORCH_ANIM_LIT = 2,   ///< a flame flickering in the bowl
-  TORCH_ANIM_GO_OUT = 3 ///< the flame dies in smoke, then TORCH_ANIM_UNLIT
+  TORCH_ANIMATION_UNLIT = 1, ///< a cold torch, its bowl grey with ash
+  TORCH_ANIMATION_LIT = 2,   ///< a flame flickering in the bowl
+  TORCH_ANIMATION_GO_OUT =
+      3 ///< the flame dies in smoke, then TORCH_ANIMATION_UNLIT
 };
 
 #endif

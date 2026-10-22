@@ -7,7 +7,7 @@
 ///   (gBabiPalace_DoorCells, BabiPalace_LeaveThroughAnimatedDoor).
 /// - SceneId_BabiPalace, the palace's rooms on one map, joined by exits into
 ///   the same scene and by doors that open by the map's tile animation
-///   channels (enum BabiPalaceDoorAnim, BabiPalace_LeaveThroughDoor). One
+///   channels (enum BabiPalaceDoorAnimation, BabiPalace_LeaveThroughDoor). One
 ///   door leads to Babi's scholars (BABI_PALACE_TO_VALE_INTERIORS_INN, held by
 ///   vale_interiors_inn.c) and one into the Colosseum Tunnel
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
@@ -260,10 +260,10 @@ enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 /// scene entry pauses them, so every door is drawn shut; the recording of
 /// BabiPalace_LeaveThroughDoor shows one swing open
 /// (https://alchemy.pascalpixel.com/places/babi-palace/events/BabiPalace_LeaveThroughDoor.gif).
-enum BabiPalaceDoorAnim {
-  BABI_PALACE_MEETING_ROOM_DOOR_ANIM = 1, ///< the throne room's door
-  BABI_PALACE_OTHER_DOORS_ANIM = 2,       ///< every door without its own
-  BABI_PALACE_OVEN_ROOM_DOOR_ANIM = 4     ///< the oven room's door
+enum BabiPalaceDoorAnimation {
+  BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION = 1, ///< the throne room's door
+  BABI_PALACE_OTHER_DOORS_ANIMATION = 2,       ///< every door without its own
+  BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION = 4     ///< the oven room's door
 };
 
 /// The leader's animations in the big bedroom's bed, after the four shared
@@ -303,9 +303,9 @@ static inline void BabiPalace_WalkIntoLeader(s32 member) {
 }
 
 static inline void BabiPalace_CloseDoors(void) {
-  Map_SetLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIM);
-  Map_SetLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIM);
-  Map_SetLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIM);
+  Map_SetLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
+  Map_SetLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIMATION);
+  Map_SetLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
 }
 
 /// After a night in the palace's beds: the party's HP and PP are full,
@@ -319,8 +319,8 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
   ownerCount = FieldParty_ListActiveOwners(owners);
   for (i = 0; i < ownerCount; i++) {
     state = Unit_Get(owners[i]);
-    state->hp = state->maxHp;
-    state->pp = state->maxPp;
+    state->hp = state->hpMax;
+    state->pp = state->ppMax;
     Engine_OwnerRecalculateRatios(owners[i]);
   }
   Party_AddActiveOwner(GARET);
@@ -1146,8 +1146,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   struct FieldActor *actor;
   s32 step;
   s32 pick;
-  struct EventWork *event;
-  struct DisplayTransitionState *work;
+  struct EventWork *work;
+  struct DisplayTransitionState *state;
 
   Event_Start();
   Event_SetMessage(MsgTolbiCallsName);
@@ -1160,39 +1160,39 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_EAST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
-  event = gEventWork;
-  event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  event->transitionFrames = 12;
+  work = gEventWork;
+  work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transitionFrames = 12;
   Task_Wait(1);
   DisplayTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
   // UB: HEAP_SLOT_TRANSITION lies past scalar gEventWork. Its named load adds
   // four bytes in the native English trial (0x82c to 0x830).
 #ifdef UBFIX
-  work = gDisplayTransition;
+  state = gDisplayTransition;
 #else
-  work = (struct DisplayTransitionState *)((u8 **)&gEventWork)[4];
+  state = (struct DisplayTransitionState *)((u8 **)&gEventWork)[4];
 #endif
-  work->value = 0;
-  work->mask = 0x1f1f;
-  work->active = 1;
+  state->value = 0;
+  state->mask = 0x1f1f;
+  state->active = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   for (step = 1; step <= 5; step++) {
     Task_Wait(3);
-    work->value = step;
+    state->value = step;
   }
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(30);
   for (step = 5; step <= 31; step++) {
     Task_Wait(3);
-    work->value = step;
+    state->value = step;
   }
-  work->active = 31;
-  event = gEventWork;
-  event->startTransition =
+  state->active = 31;
+  work = gEventWork;
+  work->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  event->transitionFrames = 24;
+  work->transitionFrames = 24;
   Event_Wait(20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 40);
@@ -2322,16 +2322,16 @@ static void BabiPalace_LeaveThroughDoor(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   if (work->touchedTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
-    Map_ClearLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIM);
+    Map_ClearLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
     Event_Wait(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
     if (work->touchedTrigger == BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM) {
-      Map_ClearLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIM);
+      Map_ClearLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
       Event_Wait(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     } else {
-      Map_ClearLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIM);
+      Map_ClearLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIMATION);
       Event_Wait(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     }
@@ -2511,7 +2511,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       }
       // After Colosso Babi lies in his bed, with no shadow
       // (https://alchemy.pascalpixel.com/places/babi-palace_colosso-over/map-18.png).
-      Actor_SetAnimation(ACTOR_BABI, BABI_ANIM_IN_BED);
+      Actor_SetAnimation(ACTOR_BABI, BABI_ANIMATION_IN_BED);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_BABI), 0);
     } else if (GameFlag_IsSet(FLAG_BABI_SAVED) &&
                !GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {

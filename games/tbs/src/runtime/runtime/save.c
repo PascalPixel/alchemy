@@ -39,8 +39,8 @@ enum {
 /// gWorkSlot, and need it allocated.
 s32 SaveState_InitializeWorkspace(void) {
   struct SaveWorkspace *work;
-  struct SaveSlotHeader header;
-  struct SaveSlotHeader *slot;
+  struct SaveSlotHeader headerStorage;
+  struct SaveSlotHeader *header;
   u32 index;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_SAVE, sizeof(*work));
@@ -66,16 +66,17 @@ s32 SaveState_InitializeWorkspace(void) {
     work->recordId[index] = SAVE_RECORD_NONE;
     work->sequence[index] = 0;
     status = SaveState_ReadSlotAndCheckChecksum(index);
-    START_DMA(&work->slot, &header, DMA_COPY_WORDS(4));
+    START_DMA(&work->slot, &headerStorage, DMA_COPY_WORDS(4));
     WAIT_DMA();
-    slot = &header;
+    header = &headerStorage;
 
     // Not a save sector, or one for no record, or a damaged one: it stays
     // free. A sector with the signature still keeps its sequence number.
-    if (SaveState_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
+    if (SaveState_CompareBytes(header->signature, (u8 *)gSave_Signature, 7) !=
+        0)
       continue;
-    work->sequence[index] = slot->sequence;
-    record = slot->recordId;
+    work->sequence[index] = header->sequence;
+    record = header->recordId;
     id = record;
     if (id >= SAVE_RECORD_NONE)
       continue;
@@ -90,7 +91,7 @@ s32 SaveState_InitializeWorkspace(void) {
     if (status < index) {
       do {
         if (work->recordId[status] == (u8)record) {
-          if (work->sequence[status] < slot->sequence)
+          if (work->sequence[status] < header->sequence)
             work->occupied[status] = 0;
           else
             work->occupied[index] = 0;

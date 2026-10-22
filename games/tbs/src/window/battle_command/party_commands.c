@@ -351,7 +351,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       case COMMAND_ICON_PSYNERGY: {
         struct MenuSprite *iconSprite;
         struct BattleAct *ability;
-        struct UiRenderWork *ui;
+        struct UiRenderWork *work;
         u16 *list;
         u8 *pick;
         s32 cost;
@@ -401,7 +401,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        ui = UI_WORK;
+        work = UI_WORK;
         commandWindow = UiWindow_Create(8, 17, 18, 3, 6);
         state->icons[0].oam.f.x = 40;
         iconSprite->oam.word.attr01 = 0x40000400;
@@ -415,19 +415,19 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
-        ui->level = 5;
+        work->level = 5;
         if ((s32)ability->ppCost > (s32)unit->pp) {
-          UiWork_SetParamNibble(2);
+          UiWork_SetParameterNibble(2);
         } else if (unit->psySeal != 0) {
-          UiWork_SetParamNibble(9);
+          UiWork_SetParameterNibble(9);
         }
         UiText_DrawCharacterAtOffset(parameter + MsgAbilityName, commandWindow,
                                      16, 0);
         UiText_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        ui->level = 15;
-        UiWork_SetParamNibble(15);
+        work->level = 15;
+        UiWork_SetParameterNibble(15);
         // 61471 is 0xf01f, the PP label's first tile; 20481 below is 0x5001,
-        // SUMMON_ELEMENT_TILE.
+        // LIST_TILE_SUMMON_ELEMENT.
         UiWindow_SetTilemapEntry(commandWindow, 61471, 11, 0, 0);
         UiWindow_SetTilemapEntry(commandWindow, PSYNERGY_COST_SECOND_TILE, 12,
                                  0, 0);
@@ -504,7 +504,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
             summon->nameMessageId & 0x3fff, handle);
         state->iconShown[1] = 1;
         if (ok == 0) {
-          UiWork_SetParamNibble(2);
+          UiWork_SetParameterNibble(2);
         }
         UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->nameMessageId +
                                          MsgAbilityName,
@@ -608,11 +608,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         }
         commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
         state->icons[0].oam.f.x = 64;
-        UiWork_SetParamNibble(2);
+        UiWork_SetParameterNibble(2);
         UiWindow_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
         UiText_DrawCharacterAtOffset(element * 20 + index + MsgDjinnName,
                                      commandWindow, 16, 0);
-        UiWork_SetParamNibble(15);
+        UiWork_SetParameterNibble(15);
         command->range = 1;
         WaitFrames(1);
         AudioCommand_PlayFar(SE_MENU_CONFIRM);

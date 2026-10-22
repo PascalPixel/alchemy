@@ -29,7 +29,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
                                      struct MercuryLighthouseLights *st) {
   struct FieldActor *actor;
   struct FieldActor *obj;
-  struct AnimationObject *anim;
+  struct AnimationObject *animation;
   struct MapCell *cell;
   s32 z;
   s32 flag;
@@ -50,15 +50,15 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj = Engine_ObjectCreate(26, actor->x.fixed, actor->y.fixed + 0x180000, z);
     if (obj != 0) {
       obj->terrainHeight = actor->terrainHeight;
-      anim = obj->sprite;
+      animation = obj->sprite;
       Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
       obj->linkedObject = actor;
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
-      if (anim != 0) {
-        AnimationObject_SelectAnimation(anim, 6 - st->levels);
-        anim->flags = 0;
-        anim->image.priority = 1;
+      if (animation != 0) {
+        AnimationObject_SelectAnimation(animation, 6 - st->levels);
+        animation->flags = 0;
+        animation->image.priority = 1;
       }
       st->pillar = obj;
     }
@@ -71,15 +71,15 @@ void MercuryLighthouse_RestoreLights(s32 region,
     if (obj == 0)
       return;
     obj->terrainHeight = actor->terrainHeight;
-    anim = obj->sprite;
+    animation = obj->sprite;
     Engine_ObjectSetScript(obj, gMercuryLighthouse_RampScript);
     obj->motionFlags = 0;
     obj->timer = 0;
     obj->priorityFlags = 2;
     obj->speed = 0x40000;
-    if (anim != 0) {
-      AnimationObject_SelectAnimation(anim, 6);
-      anim->flags = 0;
+    if (animation != 0) {
+      AnimationObject_SelectAnimation(animation, 6);
+      animation->flags = 0;
     }
     st->stepEffect = obj;
   } else {

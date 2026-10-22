@@ -115,7 +115,7 @@ enum SuhallaGateDewActor {
 
 /// SPRITE_SPROUT's animations as the sprouts here stand: half grown or fully
 /// grown (spr_238's frames 3 and 6).
-enum { SPROUT_ANIM_HALF_GROWN = 3, SPROUT_ANIM_GROWN = 4 };
+enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
 /// Suhalla Gate's second scene (SceneId_SuhallaGateDew): talking to Dew, a
 /// Mercury Djinni, starts its battle.
@@ -222,11 +222,13 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (scene == (s32)&SceneId_SuhallaGateDew) {
-    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIM_GROWN);
-    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIM_GROWN);
-    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 2, SPROUT_ANIM_HALF_GROWN);
-    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIM_GROWN);
-    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIM_HALF_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 2,
+                             SPROUT_ANIMATION_HALF_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 4,
+                             SPROUT_ANIMATION_HALF_GROWN);
     // UB: the scene places only actors up to ACTOR_DEW, so there is no actor
     // 15 and Object_GetById returns NULL (watched in tbs-en as the scene
     // loads from each of its entrances); the store goes to the BIOS, which
@@ -504,7 +506,7 @@ s32 gSuhallaGateWoundedNoCollision[] = {
 #endif
 
 s32 gSuhallaGateWounded[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_END,
 };
 
@@ -516,7 +518,7 @@ s32 gSuhallaGateWoundedFlippedNoCollision[] = {
 
 s32 gSuhallaGateWoundedFlipped[] = {
     SC_SET(SW_SCALE_X, -Q16_ONE),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_END,
 };
 

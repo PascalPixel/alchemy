@@ -454,11 +454,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   }
 
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct AnimationObject *obj = ResourceObject_CreateFar(390);
-    work->objects[i] = obj;
-    if (obj != 0) {
-      obj->flags = 0;
-      AnimationObject_SelectAnimationFar(obj, (i % 3));
+    struct AnimationObject *animation = ResourceObject_CreateFar(390);
+    work->objects[i] = animation;
+    if (animation != 0) {
+      animation->flags = 0;
+      AnimationObject_SelectAnimationFar(animation, (i % 3));
       work->objects[i]->image.priority = 0;
     }
   }

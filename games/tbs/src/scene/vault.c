@@ -5,7 +5,7 @@
 /// search for Hammet's stolen Shaman's Rod plays out, are vault_interiors.c.
 /// Scene_GetPlacements and Scene_GetEvents choose their tables by
 /// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
-/// (FLAG_REACHED_KALAY) Scene_Initialize sends it straight on to the town's
+/// (FLAG_KALAY_REACHED) Scene_Initialize sends it straight on to the town's
 /// later scene (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit,
 /// vault_revisit.c).
 ///
@@ -180,7 +180,7 @@ Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *entity = (struct FieldActor *)fieldObject;
-  struct UiRenderWork *render = (struct UiRenderWork *)gWindowWork[0];
+  struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
   u8 *workspace = gWindowWork[12];
   s32 flag = 0;
   s32 selector = 18;
@@ -194,7 +194,7 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  if (*(s16 *)(workspace + 376) != 0 || render->mode != 0) {
+  if (*(s16 *)(workspace + 376) != 0 || work->mode != 0) {
     selector = 26;
     flag = 1;
   }
@@ -234,12 +234,12 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 /// any Venus Djinni with Isaac and leaves the party.
 static void Event_IvanStaysBehind(void) {
   struct FieldActor *actor;
-  struct EventWork *eventWork;
+  struct EventWork *work;
 
-  eventWork = gEventWork;
+  work = gEventWork;
   if (GameFlag_IsSet(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_IsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
-    Engine_EventRequestExit(eventWork->touchedTrigger -
+    Engine_EventRequestExit(work->touchedTrigger -
                             (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
@@ -250,7 +250,7 @@ static void Event_IvanStaysBehind(void) {
     Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  if (eventWork->touchedTrigger == VAULT_CELL_SOUTH_GATE) {
+  if (work->touchedTrigger == VAULT_CELL_SOUTH_GATE) {
     Actor_WalkToAndWait(IVAN, 400, 448);
   } else {
     Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
@@ -272,7 +272,7 @@ static void Event_IvanStaysBehind(void) {
     Engine_TaskWait(20);
   }
   Party_RemoveOwnerRestored(IVAN);
-  Engine_EventRequestExit(eventWork->touchedTrigger -
+  Engine_EventRequestExit(work->touchedTrigger -
                           (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -297,9 +297,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventOpenMessage(speaker, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
-    struct EventWork *eventWork = gEventWork;
+    struct EventWork *work = gEventWork;
 
-    ++eventWork->message;
+    ++work->message;
   }
   Engine_EventShowMessage(speaker, 0);
 }
@@ -869,9 +869,9 @@ s32 Scene_Initialize(void) {
   s32 lowBit;
   s32 zero;
 
-  // Once the party has reached Kalay (FLAG_REACHED_KALAY), the town is its
+  // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later scene, SceneId_VaultRevisit (vault_revisit.c).
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Engine_EventRequestExit(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's
@@ -1163,13 +1163,13 @@ const s32 *gEffectScripts[] = {
 /// for as long as the scene lasts.
 s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_SET(SW_SPEED, PIXELS(2) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_SET(SW_FACING, FACING_WEST),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(312)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(20),
@@ -1181,13 +1181,13 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(10),
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_WAIT(240),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(200), 0, PIXELS(312)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(20),
@@ -1199,19 +1199,19 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(10),
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_WAIT(240),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
     SC_SET(SW_SPEED, PIXELS(2) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_SET(SW_COLLISION, 129),
     SC_SET(SW_RADIUS, 0x280000),
     SC_LABEL(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WANDER_HOME(0x80000, 0x100000, 0x180000),
     SC_SYNC,
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
@@ -1220,9 +1220,9 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
 /// ACTOR_BOY_ROUND_THE_WELL's walk, round eight points for as long as the scene
 /// lasts.
 s32 gVault_BoyRoundTheWellRoute[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(136), 0, PIXELS(376)),
     SC_SYNC,
@@ -1247,9 +1247,9 @@ s32 gVault_BoyRoundTheWellRoute[] = {
 /// ACTOR_GIRL_ROUND_THE_WELL's walk round the same eight points, half a circle
 /// apart.
 s32 gVault_GirlRoundTheWellRoute[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
     SC_LABEL(1),
     SC_MOVE(PIXELS(120), 0, PIXELS(424)),
     SC_SYNC,

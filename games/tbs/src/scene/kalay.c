@@ -75,7 +75,7 @@
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY up into the town
 ///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM).
 ///
-/// Every scene sets FLAG_REACHED_KALAY on entry. Kalay and Hammet Palace's
+/// Every scene sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's
 /// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
 /// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets place flag
 /// FLAG_PLACE_TEMP_21, which changes what Layana says, and once Hammet is free
@@ -296,7 +296,7 @@ enum KalayTunnelActor {
 };
 
 /// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
-enum { PUDDLE_ANIM_FROZEN = 5 };
+enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
 /// passages (place flags) while the party stays in the tunnel's scenes.
@@ -580,13 +580,13 @@ static void Kalay_TalkToItemMerchant(void) {
 /// houses, the inn or the Sanctum: everyone stops, the door opens and the
 /// leader walks in.
 static void Kalay_OpenDoorAndExit(void) {
-  struct EventWork *event;
+  struct EventWork *work;
   struct FieldActor *actor;
   s16 *trigger;
   u32 i;
   s32 door;
 
-  event = gEventWork;
+  work = gEventWork;
   Engine_EventStart();
   for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_SLOT; i++) {
     actor = Object_GetById(i);
@@ -594,7 +594,7 @@ static void Kalay_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  trigger = &event->touchedTrigger;
+  trigger = &work->touchedTrigger;
   door = *trigger - 1;
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   {
@@ -1180,12 +1180,12 @@ static void Kalay_CatchTownNut(void) {
   Engine_PartyGiveItem(ITEM_NUT, 0);
 }
 
-/// Every scene of the overlay sets FLAG_REACHED_KALAY, then prepares its own
+/// Every scene of the overlay sets FLAG_KALAY_REACHED, then prepares its own
 /// people and cells.
 s32 Kalay_Initialize(void) {
   s32 scene;
 
-  Engine_GameFlagSet(FLAG_REACHED_KALAY);
+  Engine_GameFlagSet(FLAG_KALAY_REACHED);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_Kalay) {
     Kalay_PrepareTown();
@@ -1203,11 +1203,11 @@ s32 Kalay_Initialize(void) {
 
 /// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets place
 /// flag FLAG_PLACE_TEMP_21; once Hammet is free (FLAG_DODONPA_LOCKED_UP) the
-/// palace's FLAG_IVAN_REPORTED_TO_LAYANA, FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS
-/// and FLAG_KALAY_TUNNEL_OPEN are set too, so its earlier scenes count as seen
-/// and the passage is open. Coming up from the Kalay Tunnel
-/// (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its statue moved aside, and
-/// until it is caught the Nut circles in the air.
+/// palace's FLAG_IVAN_REPORTED_TO_LAYANA,
+/// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
+/// set too, so its earlier scenes count as seen and the passage is open. Coming
+/// up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its
+/// statue moved aside, and until it is caught the Nut circles in the air.
 static void Kalay_PrepareTown(void) {
   OrbitingSceneObject *nut;
   s32 found;
@@ -1216,7 +1216,7 @@ static void Kalay_PrepareTown(void) {
 
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
-    Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+    Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
   }
@@ -1261,7 +1261,7 @@ static void Kalay_PrepareTown(void) {
 static void Kalay_PrepareHammetPalace(void) {
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
-    Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+    Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
   }
@@ -1400,7 +1400,7 @@ static void Kalay_PrepareTunnel(void) {
     if (GameFlag_IsSet(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       Actor_Get(ACTOR_PUDDLE);
       column = 9;
-      Engine_ActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_FROZEN);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 14);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 45);
       {
@@ -2408,25 +2408,25 @@ s32 gKalay_TileStepByFacing[] = {
 };
 
 s32 gKalay_TourGroupWalkScript[] = {
-    SC_ARG(2), SC_MOVE_BY(-PIXELS(80), 0, 0), SC_SYNC,
-    SC_ARG(1), SC_SET(SW_TIMER, 1),           SC_WAIT(1),
+    SC_ANIMATION(2), SC_MOVE_BY(-PIXELS(80), 0, 0), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_TIMER, 1),           SC_WAIT(1),
     SC_END,
 };
 
 s32 gKalay_TourGroupLeaveScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(-PIXELS(72), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(100), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(100), 0, 0),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_TIMER, 1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(192), 0, PIXELS(222)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
@@ -2440,36 +2440,36 @@ s32 gKalay_TouristFidgetScript[] = {
 };
 
 s32 gKalay_GuideCountScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(228), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(212), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(192), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(178), 0, PIXELS(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gKalay_GuidePaceScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(164), 0, PIXELS(278)),
     SC_SYNC,
     SC_MOVE(PIXELS(182), 0, PIXELS(304)),
@@ -2478,7 +2478,7 @@ s32 gKalay_GuidePaceScript[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(246), 0, PIXELS(296)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, 0xd000),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
@@ -2493,10 +2493,10 @@ s32 gKalay_HeadGuideStopScript[] = {
     SC_SET(SW_VELOCITY_Y, 0),
     SC_SET(SW_VELOCITY_Z, 0),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(184), 0, PIXELS(294)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
@@ -2511,10 +2511,10 @@ s32 gKalay_SecondGuideStopScript[] = {
     SC_SET(SW_VELOCITY_Y, 0),
     SC_SET(SW_VELOCITY_Z, 0),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(198), 0, PIXELS(300)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_SET(SW_TIMER, 1),
     SC_WAIT(1),
@@ -2522,10 +2522,10 @@ s32 gKalay_SecondGuideStopScript[] = {
 };
 
 s32 gKalay_HeadGuideReturnScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(178), 0, PIXELS(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_SET(SW_TIMER, 0),
     SC_WAIT(1),
@@ -2533,14 +2533,14 @@ s32 gKalay_HeadGuideReturnScript[] = {
 };
 
 s32 gKalay_SecondGuideReturnScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(255), 0, PIXELS(289)),
     SC_SYNC,
     SC_MOVE(PIXELS(265), 0, PIXELS(280)),
     SC_SYNC,
     SC_MOVE(PIXELS(284), 0, PIXELS(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_SET(SW_TIMER, 0),
     SC_WAIT(1),
@@ -2553,10 +2553,10 @@ s32 gKalay_PartyFidgetScript[] = {
 };
 
 s32 gKalay_PartyGatherScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(388), 0, PIXELS(300)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
@@ -2988,7 +2988,7 @@ u16 gKalay_DoorCellSteps[] = {
     MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim gKalay_DoorCells[] = {
+struct MapCellAnimation gKalay_DoorCells[] = {
     {gKalay_DoorCellSteps, 36, 10}, {gKalay_DoorCellSteps, 57, 7},
     {gKalay_DoorCellSteps, 57, 11}, {gKalay_DoorCellSteps, 57, 23},
     {gKalay_DoorCellSteps, 52, 25}, {gKalay_DoorCellSteps, 39, 14},

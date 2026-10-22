@@ -32,7 +32,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
 
   unit = Unit_GetFar(ownerId);
   menu = gMenuWork;
-  itemId = ITEM_ID_MASK & unit->inventory[slot];
+  itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
                                      ownerId, targetId, 1);
@@ -123,14 +123,14 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
-        if (target->hp == target->maxHp) {
+        if (target->hp == target->hpMax) {
           if (partyResultShown == 0)
             messageOffset = ITEM_USE_RESULT_HP_FULL;
         } else {
           target->hp += amount;
-          if (target->hp > target->maxHp) {
-            amount -= target->hp - target->maxHp;
-            target->hp = target->maxHp;
+          if (target->hp > target->hpMax) {
+            amount -= target->hp - target->hpMax;
+            target->hp = target->hpMax;
             if (partyResultShown == 0)
               messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
           } else if (partyResultShown == 0) {
@@ -196,14 +196,14 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
 
     case ABILITY_KIND_HEAL_PP:
-      if (target->pp == target->maxPp) {
+      if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
-        if (target->pp > target->maxPp) {
-          amount -= target->pp - target->maxPp;
-          target->pp = target->maxPp;
+        if (target->pp > target->ppMax) {
+          amount -= target->pp - target->ppMax;
+          target->pp = target->ppMax;
           if (partyResultShown == 0)
             messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
@@ -233,13 +233,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     // an HP and a PP restore no ability has (actions.tsv).
     switch (effect->effect) {
     case ABILITY_EFFECT_RESTORE_HP:
-      if (target->hp <= 0 || target->hp == target->maxHp) {
+      if (target->hp <= 0 || target->hp == target->hpMax) {
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
         target->hp += amount;
-        if (target->hp > target->maxHp) {
-          target->hp = target->maxHp;
+        if (target->hp > target->hpMax) {
+          target->hp = target->hpMax;
           if (partyResultShown == 0)
             messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
@@ -251,13 +251,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
 
     case ABILITY_EFFECT_RESTORE_PP:
-      if (target->pp == target->maxPp) {
+      if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
-        if (target->pp > target->maxPp) {
-          target->pp = target->maxPp;
+        if (target->pp > target->ppMax) {
+          target->pp = target->ppMax;
           if (partyResultShown == 0)
             messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
@@ -270,7 +270,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
-        target->hp = target->maxHp;
+        target->hp = target->hpMax;
         Unit_UpdateRatiosFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
@@ -285,7 +285,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     // used from the menus. Dew gives 7/10 of maximum HP here.
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
-        target->hp = target->maxHp / 2;
+        target->hp = target->hpMax / 2;
         Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
@@ -296,7 +296,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
-        target->hp = target->maxHp * 7 / 10;
+        target->hp = target->hpMax * 7 / 10;
         Unit_UpdateRatiosFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;

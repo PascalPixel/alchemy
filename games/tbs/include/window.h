@@ -97,7 +97,7 @@ STATIC_ASSERT(offsetof(struct UiRenderWork, dirty) == RENDER_DIRTY_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, lineSpacing) ==
               RENDER_WORD2_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, outline) == RENDER_WORD_OFFSET);
-STATIC_ASSERT(offsetof(struct UiRenderWork, colour) == RENDER_PARAM_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, colour) == RENDER_PARAMETER_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, entries) ==
               RENDER_ENTRY_TABLE_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, messageStart) ==

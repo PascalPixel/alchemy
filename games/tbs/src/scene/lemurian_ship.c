@@ -208,7 +208,7 @@ static void Ship_UpdateSwell(void) {
    * tbs-en. */
   volatile u16 blend;
   struct FixedPointPosition place;
-  struct FixedPointPosition *pos;
+  struct FixedPointPosition *position;
   struct MapScrollWork *map;
   struct FieldActor *actor;
   s32 swell;
@@ -255,13 +255,14 @@ static void Ship_UpdateSwell(void) {
     x = map->viewX & -0x10000;
     z = map->viewY & -0x10000;
     x += Random_Next() * 240;
-    pos = &place;
-    pos->x = x;
-    pos->y = 0;
+    position = &place;
+    position->x = x;
+    position->y = 0;
     z += Random_Next() * 160;
     z += 0x1e0000;
-    pos->z = z;
-    actor = Object_Create(SPRITE_WATER_DROP, pos->x, pos->y, pos->z);
+    position->z = z;
+    actor =
+        Object_Create(SPRITE_WATER_DROP, position->x, position->y, position->z);
     if (actor != 0) {
       actor->update = Spray_Update;
       actor->timer = 60;
@@ -329,9 +330,9 @@ static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
 /// and sends the party to the clear screen (SceneId_Title,
 /// TITLE_FROM_LEMURIAN_SHIP).
 static void LemurianShip_SetSail(void) {
-  struct MapScrollWork *scroll;
+  struct MapScrollWork *map;
   struct FieldActor *ship;
-  struct EventWork *event;
+  struct EventWork *work;
 
   Engine_EventStart();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -540,13 +541,13 @@ static void LemurianShip_SetSail(void) {
   MusicCommand_SetPitchAndUpdateFrequency(240);
   Curtain_Start();
   Engine_EventWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
-  scroll = gMapWork[0];
+  map = gMapWork[0];
   ship = Object_GetById(GANGWAY_NORTH);
   ship->acceleration = 131;
   ship->speed = 0x20000;
-  scroll->layers[MAP_LAYER_GROUND].speedX = -0x3000;
+  map->layers[MAP_LAYER_GROUND].speedX = -0x3000;
   ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
-  scroll->layers[MAP_LAYER_GROUND].speedX = -0x6000;
+  map->layers[MAP_LAYER_GROUND].speedX = -0x6000;
   ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
   Engine_EventWait(80);
   Engine_EventWait(100);
@@ -554,10 +555,10 @@ static void LemurianShip_SetSail(void) {
   Engine_CameraMoveTo(PIXELS(808), -1, PIXELS(168), 1);
   Engine_EventWait(300);
   // Fade out to the clear screen.
-  event = gMapWork[19];
-  event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work = gMapWork[19];
+  work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
-  event->transitionFrames = 96;
+  work->transitionFrames = 96;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
@@ -1033,7 +1034,7 @@ u32 gShipGlowStep[] = {
 };
 
 s32 gLeaderBoardsShip[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-16)),
@@ -1042,14 +1043,14 @@ s32 gLeaderBoardsShip[] = {
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-56)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
     SC_CALL(Leader_StepOnDeck),
@@ -1057,21 +1058,21 @@ s32 gLeaderBoardsShip[] = {
 };
 
 s32 gGaretBoardsShip[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, PIXELS(-32)),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, 0x80000),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-40)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
     SC_CALL(Garet_StepOnDeck),
@@ -1079,7 +1080,7 @@ s32 gGaretBoardsShip[] = {
 };
 
 s32 gIvanBoardsShip[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(PIXELS(-20), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-32)),
@@ -1088,14 +1089,14 @@ s32 gIvanBoardsShip[] = {
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
     SC_CALL(Ivan_StepOnDeck),
@@ -1103,7 +1104,7 @@ s32 gIvanBoardsShip[] = {
 };
 
 s32 gMiaBoardsShip[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-8)),
@@ -1112,14 +1113,14 @@ s32 gMiaBoardsShip[] = {
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-8)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_CALL(Mia_StepOnDeck),
     SC_END,
 };

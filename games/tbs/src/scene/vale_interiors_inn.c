@@ -22,7 +22,7 @@
 ///   VALE_INTERIORS_INN_TO_VALE leads into the storm (ValeStorm) instead of
 ///   Vale (gValeInteriorsInn_StormExits). Kyle dies that night, as the village
 ///   says later.
-/// - Vale before the party leaves (FLAG_PARTY_LEFT_VALE clear): from Kraden's
+/// - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
 ///   cottage (ValeKraden's VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG) the
 ///   party arrives at VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, inside
 ///   it, where the Mythril Bag rises and wobbles before Kraden as he prepares
@@ -33,11 +33,11 @@
 ///   with me?" and sends Isaac off whatever he answers; at the inn the talk is
 ///   of three strange travellers staying there, one of them masked, and the
 ///   innkeeper offers a room.
-/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE): the villagers talk
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): the villagers talk
 ///   of the eruption and of Jenna, whom the visitors kidnapped, and one asks
 ///   whether the masked man was Felix, Jenna's brother, and whether Jenna can
 ///   be trusted.
-/// - Back from Kalay (FLAG_REACHED_KALAY): Dora lies ill. The innkeeper
+/// - Back from Kalay (FLAG_KALAY_REACHED): Dora lies ill. The innkeeper
 ///   welcomes Isaac home and a burly grey-haired man at the inn
 ///   (ACTOR_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's place flags
 ///   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
@@ -124,7 +124,7 @@ static void Event_DoraWakesIsaac(void);
 static void Event_HurryToThePlaza(void);
 static void ValeInteriorsInn_RestoreRoomPatch(void);
 static void Event_ShowMythrilBag(void);
-static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object);
+static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject);
 static void ValeInteriorsInn_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
@@ -300,9 +300,9 @@ const struct ScenePlacement *ValeInteriorsInn_GetPlacements(void) {
 
   if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE)
     return gValeInteriorsInn_ScholarsPlacements;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     table = gValeInteriorsInn_PlacementsAfterKalay;
-  else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     table = gValeInteriorsInn_PlacementsAfterLeaving;
   else
     table = gValeInteriorsInn_Placements;
@@ -341,10 +341,10 @@ const struct SceneEvent *ValeInteriorsInn_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeInteriorsInn_StormEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gValeInteriorsInn_EventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeInteriorsInn_EventsAfterLeaving;
   }
   return gValeInteriorsInn_Events;
@@ -522,7 +522,7 @@ s32 ValeInteriorsInn_Initialize(void) {
       ValeInteriorsInn_RestoreRoomPatch();
     }
     Engine_ActorSetSpritePriority(ACTOR_INNKEEPER, 1);
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
       actor = Object_GetById(ACTOR_BLANK_AFTER_KALAY);
       Engine_ActorSetSpriteFlags(actor, 0);
       if (gGameState.entrance == VALE_INTERIORS_INN_FROM_VALE ||
@@ -587,7 +587,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;
-  struct MapScrollWork *mapWork;
+  struct MapScrollWork *map;
   struct FieldActor *viewCenter;
   struct EventWork **eventSlot;
 
@@ -596,10 +596,10 @@ static void Event_DoraWakesIsaac(void) {
      the map work and view centre; as reads in place, 11 of 430 instructions
      differ in tbs-en (13 with the view centre first). */
   {
-    struct EventWork *event = *eventSlot;
+    struct EventWork *work = *eventSlot;
 
-    mapWork = *(struct MapScrollWork **)Ram_MapWork;
-    viewCenter = event->viewCenter;
+    map = *(struct MapScrollWork **)Ram_MapWork;
+    viewCenter = work->viewCenter;
   }
   sprite = Object_GetById(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
@@ -631,10 +631,10 @@ static void Event_DoraWakesIsaac(void) {
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_EventWait(40);
   // Widen the camera bounds and reveal the lightning outside.
-  mapWork->minX = PIXELS(328);
-  mapWork->minY = PIXELS(600);
-  mapWork->maxX = PIXELS(624);
-  mapWork->maxY = PIXELS(816);
+  map->minX = PIXELS(328);
+  map->minY = PIXELS(600);
+  map->maxX = PIXELS(624);
+  map->maxY = PIXELS(816);
   viewCenter->x.fixed = PIXELS(564);
   viewCenter->y.fixed = 0;
   viewCenter->z.fixed = PIXELS(691);
@@ -902,7 +902,7 @@ static void Event_TalkToInnkeeper(void) {
     Engine_InnOpen(0, ACTOR_INNKEEPER);
   } else {
     Engine_EventStart();
-    if (GameFlag_IsSet(FLAG_REACHED_KALAY) != 0) {
+    if (GameFlag_IsSet(FLAG_KALAY_REACHED) != 0) {
       Engine_ActorRunRepeatedMotion(ACTOR_INNKEEPER, 2);
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
       if (GameFlag_IsSet(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
@@ -914,7 +914,7 @@ static void Event_TalkToInnkeeper(void) {
       Event_AskYesNo(ACTOR_INNKEEPER, 0);
       Actor_FaceDirection(ACTOR_INNKEEPER, FACING_WEST + FACING_STEP, 10);
     } else {
-      if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         Engine_EventSetMessage(MsgValeTheVisitorsCausedTheEruption);
       } else {
         Engine_EventSetMessage(MsgValeTheThreeTravelersSeemOdd);
@@ -1178,35 +1178,35 @@ static void Event_ShowMythrilBag(void) {
 /// Unused: an update hook that flashes between two palettes and gives off a
 /// pair of effects every sixteen frames; no actor is given it.
 UNUSED static void
-ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *object) {
+ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *fieldObject) {
   if ((gFrameCount & 2) != 0) {
-    Engine_ObjectSetPartPalettes(&object->actor, 7);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, 7);
   } else {
-    Engine_ObjectSetPartPalettes(&object->actor, 0);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriorsInn_SpawnEffectPair(object);
+    ValeInteriorsInn_SpawnEffectPair(fieldObject);
   }
 }
 
 /// Cycles six palettes on odd frames and periodically emit paired effects.
 static void
-ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *object) {
+ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
-    Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriorsInn_SpawnEffectPair(object);
+    ValeInteriorsInn_SpawnEffectPair(fieldObject);
   }
 }
 
 /// Advances deterministically through six palettes on odd frames.
 static void
-ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *object) {
+ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
-    Engine_ObjectSetPartPalettes(&object->actor, slot);
+    Engine_ObjectSetPartPalettes(&fieldObject->actor, slot);
   }
 }
 
@@ -1215,13 +1215,13 @@ ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *object) {
 
 /// Copies the parent's terrain height into two oppositely moving vertical
 /// effects.
-static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
-  struct FieldActor *parent = &object->actor;
+static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
+  struct FieldActor *parent = &fieldObject->actor;
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *part;
   struct AnimationObject *sprite;
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
@@ -1294,62 +1294,62 @@ static void ValeInteriorsInn_DemonstrateCatch(void) {
 }
 
 s32 gValeInteriorsInn_LeaveHouseScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
-    SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(748)),
-    SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(691)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
+    SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(748)),
+    SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(691)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_DoraLeavesScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValeInteriorsInn_IsaacLeavesScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
-    SC_SYNC,   SC_MOVE(PIXELS(387), 0, PIXELS(661)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
+    SC_SYNC,         SC_MOVE(PIXELS(387), 0, PIXELS(661)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValeInteriorsInn_DoraRunsAheadScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
-    SC_SYNC,   SC_MOVE(PIXELS(508), 0, PIXELS(402)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
+    SC_SYNC,         SC_MOVE(PIXELS(508), 0, PIXELS(402)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_IsaacRunsAheadScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
-    SC_SYNC,   SC_MOVE(PIXELS(468), 0, PIXELS(390)),
-    SC_SYNC,   SC_MOVE(PIXELS(486), 0, PIXELS(393)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
+    SC_SYNC,         SC_MOVE(PIXELS(468), 0, PIXELS(390)),
+    SC_SYNC,         SC_MOVE(PIXELS(486), 0, PIXELS(393)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_DoraRunsBackScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
-    SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
-    SC_SYNC,   SC_MOVE(PIXELS(455), 0, PIXELS(450)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
+    SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
+    SC_SYNC,         SC_MOVE(PIXELS(455), 0, PIXELS(450)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_IsaacRunsBackScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
-    SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
-    SC_SYNC,   SC_MOVE(PIXELS(481), 0, PIXELS(443)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
+    SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
+    SC_SYNC,         SC_MOVE(PIXELS(481), 0, PIXELS(443)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeInteriorsInn_RunToPlazaScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
-    SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(513)),
-    SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(589)),
-    SC_SYNC,   SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
+    SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(513)),
+    SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(589)),
+    SC_SYNC,         SC_END,
 };
 
 s32 gValeInteriorsInn_FlameShakesScript[] = {
@@ -1359,7 +1359,7 @@ s32 gValeInteriorsInn_FlameShakesScript[] = {
 };
 
 s32 gValeInteriorsInn_FlameRisesScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x13333),
     SC_WAIT(3),
@@ -1387,7 +1387,7 @@ s32 gValeInteriorsInn_FlameRisesScript[] = {
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(3)),
     SC_POSITION(0, 0, 0),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

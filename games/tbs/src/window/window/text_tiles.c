@@ -563,7 +563,7 @@ void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
 /// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
 /// figures with it (menu/menu/common.c, battle_command/party_status.c), and
 /// set colour 15 back after.
-void UiWork_SetParamNibble(s32 param) {
+void UiWork_SetParameterNibble(s32 param) {
   struct UiRenderWork *work = UI_WORK;
 
   work->colour = param & 15;

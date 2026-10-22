@@ -27,7 +27,7 @@ struct AnimationObject;
 struct BattleActionRecord;
 struct BattleEffectArgument;
 struct BattleAct;
-struct BattleObj;
+struct BattleObject;
 struct BattleUnit;
 struct DispatchObject;
 struct EffectLaunch;

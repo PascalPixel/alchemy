@@ -220,9 +220,9 @@ struct LayeredSceneHeader {
 /// REG_DISPCNT; and registers Map_UpdateLayerScroll with the scheduler.
 s32 Map_LoadLayeredScene(s32 index) {
   struct LayeredSceneEntry *sceneResources;
-  struct MapScrollWork *work;
+  struct MapScrollWork *map;
   struct LayeredSceneHeader *sceneHeader;
-  struct MapLayerScroll *mapLayer;
+  struct MapLayerScroll *layer;
   struct LayeredSceneLayer *layerSource;
   s32 *viewX;
   s32 *viewY;
@@ -237,8 +237,8 @@ s32 Map_LoadLayeredScene(s32 index) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
   sceneResources = &gMap_LayeredScenes[index];
-  work = Runtime_AllocateBlock(HEAP_SLOT_MAP, sizeof(struct MapScrollWork));
-  Iwram_ClearWords(work, sizeof(struct MapScrollWork));
+  map = Runtime_AllocateBlock(HEAP_SLOT_MAP, sizeof(struct MapScrollWork));
+  Iwram_ClearWords(map, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map001);
   // The header's offsets count from the header itself. The blocks are
@@ -265,21 +265,21 @@ s32 Map_LoadLayeredScene(s32 index) {
   }
   // The marker list is not decoded: Field_PlaceMapMarkers reads it in place
   // through this pointer (MarkerMap.markers).
-  work->script = (u8 *)sceneHeader + sceneHeader->markers;
+  map->script = (u8 *)sceneHeader + sceneHeader->markers;
   // The header's bounds and origins are in 8-pixel tiles; << 19 makes them
   // 16.16 pixels. The view starts at (0, 0) until the camera is centred.
-  work->minX = sceneHeader->origin[0] << 19;
-  work->minY = sceneHeader->origin[1] << 19;
-  work->maxX = sceneHeader->origin[2] << 19;
-  work->maxY = sceneHeader->origin[3] << 19;
-  viewX = &work->viewX;
+  map->minX = sceneHeader->origin[0] << 19;
+  map->minY = sceneHeader->origin[1] << 19;
+  map->maxX = sceneHeader->origin[2] << 19;
+  map->maxY = sceneHeader->origin[3] << 19;
+  viewX = &map->viewX;
   *viewX = 0;
-  viewY = &work->viewY;
+  viewY = &map->viewY;
   *viewY = 0;
-  work->enabled[0] = sceneHeader->priority[0];
-  work->enabled[1] = sceneHeader->priority[1];
-  work->enabled[2] = sceneHeader->priority[2];
-  mapLayer = work->layers;
+  map->enabled[0] = sceneHeader->priority[0];
+  map->enabled[1] = sceneHeader->priority[1];
+  map->enabled[2] = sceneHeader->priority[2];
+  layer = map->layers;
   layerSource = sceneHeader->layers;
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
     u32 x = layerSource->x;
@@ -289,46 +289,46 @@ s32 Map_LoadLayeredScene(s32 index) {
     s32 baseX;
     s32 baseY;
 
-    mapLayer->offsetX = baseX = x << 19;
-    mapLayer->offsetY = baseY = y << 19;
+    layer->offsetX = baseX = x << 19;
+    layer->offsetY = baseY = y << 19;
     // Parallax and drift are signed sixteenths; * 4096 makes them 16.16.
     scrollX = layerSource->scrollX * 4096;
     scrollY = layerSource->scrollY * 4096;
-    mapLayer->scaleX = scrollX;
-    mapLayer->scaleY = scrollY;
-    mapLayer->speedX = layerSource->speedX * 4096;
-    mapLayer->speedY = layerSource->speedY * 4096;
-    mapLayer->maskX = layerSource->periodX;
-    mapLayer->maskY = layerSource->periodY;
-    mapLayer->phaseX = 0;
-    mapLayer->phaseY = 0;
+    layer->scaleX = scrollX;
+    layer->scaleY = scrollY;
+    layer->speedX = layerSource->speedX * 4096;
+    layer->speedY = layerSource->speedY * 4096;
+    layer->maskX = layerSource->periodX;
+    layer->maskY = layerSource->periodY;
+    layer->phaseX = 0;
+    layer->phaseY = 0;
     // The layer's window starts at the cell under its origin tile (a cell is
     // 2x2 tiles, 128 cells to a row).
-    mapLayer->cells =
+    layer->cells =
         (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
-    mapLayer->x = Iwram_MulQ16(*viewX, scrollX) + baseX;
-    mapLayer->y = Iwram_MulQ16(*viewY, scrollY) + baseY;
+    layer->x = Iwram_MulQ16(*viewX, scrollX) + baseX;
+    layer->y = Iwram_MulQ16(*viewY, scrollY) + baseY;
     layerSource++;
-    mapLayer++;
+    layer++;
   }
   // The ground, middle and overhead layers show on BG3, BG2 and BG1, a
   // layer only where its priority
   // is not zero. Each BGCNT takes the priority as it is, its char block from
   // the header and screen blocks 5, 6 and 7.
-  work->flags = DISPCNT_OBJ_ON;
-  if (work->enabled[0] != 0)
-    work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
-  if (work->enabled[1] != 0)
-    work->flags |= DISPCNT_BG2_ON;
-  if (work->enabled[2] != 0)
-    work->flags |= DISPCNT_BG1_ON;
-  displayFlags = work->enabled[0] | BGCNT_CHAR_BASE(sceneHeader->charBase[0]) |
+  map->flags = DISPCNT_OBJ_ON;
+  if (map->enabled[0] != 0)
+    map->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
+  if (map->enabled[1] != 0)
+    map->flags |= DISPCNT_BG2_ON;
+  if (map->enabled[2] != 0)
+    map->flags |= DISPCNT_BG1_ON;
+  displayFlags = map->enabled[0] | BGCNT_CHAR_BASE(sceneHeader->charBase[0]) |
                  BGCNT_SCREEN_BASE(5);
   REG_BG3CNT = displayFlags;
-  Io_Write16(work->enabled[1] | BGCNT_CHAR_BASE(sceneHeader->charBase[1]) |
+  Io_Write16(map->enabled[1] | BGCNT_CHAR_BASE(sceneHeader->charBase[1]) |
                  BGCNT_SCREEN_BASE(6),
              &REG_BG2CNT);
-  Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
+  Io_Write16(map->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
                  BGCNT_SCREEN_BASE(7),
              &REG_BG1CNT);
   // A set FLAG_KEEP_LAYER_GRAPHICS skips loading the graphics once, and is
@@ -372,7 +372,7 @@ s32 Map_LoadLayeredScene(s32 index) {
     }
   }
   // Only BG0, the windows, is shown here; DisplayTransition_Start ORs
-  // work->flags into REG_DISPCNT when the scene fades in.
+  // map->flags into REG_DISPCNT when the scene fades in.
   displayFlags = 0;
   REG_MOSAIC = displayFlags;
   REG_BLDCNT = displayFlags;
@@ -397,13 +397,13 @@ s32 Map_LoadLayeredScene(s32 index) {
 /// camera event commands after they move the camera, and by about 35 scene
 /// scripts through Engine_MapRedraw.
 void Map_CenterOnFollowedPoint(void) {
-  struct MapScrollWork *work = gMapWork[0];
+  struct MapScrollWork *map = gMapWork[0];
   s32 x;
   s32 depth;
   s32 height;
   s32 *followedPosition;
 
-  followedPosition = work->origin;
+  followedPosition = map->origin;
   x = 0;
   height = 0;
   depth = 0;
@@ -485,11 +485,11 @@ void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
 /// that scrolls into view, and sets its BG scroll.
 ///
 /// Registered with the scheduler by Map_LoadLayeredScene (priority 0xc85),
-/// and called by Map_CenterOnFollowedPoint. Sets work->viewX and viewY,
-/// decays work->shakeX and shakeY, advances each drifting layer's phase, and
+/// and called by Map_CenterOnFollowedPoint. Sets map->viewX and viewY,
+/// decays map->shakeX and shakeY, advances each drifting layer's phase, and
 /// writes each layer's position and gBgScroll entry.
 void Map_UpdateLayerScroll(void) {
-  struct MapScrollWork *work;
+  struct MapScrollWork *map;
   struct MapLayerScroll *layer;
   s32 *origin;
   s32 x, y;
@@ -497,9 +497,9 @@ void Map_UpdateLayerScroll(void) {
   s32 baseX, baseY;
   u32 layerIndex;
 
-  work = gMapWork[0];
-  origin = work->origin;
-  layer = work->layers;
+  map = gMapWork[0];
+  origin = map->origin;
+  layer = map->layers;
   if (origin == 0)
     return;
 
@@ -512,10 +512,10 @@ void Map_UpdateLayerScroll(void) {
   // The bounds shrink by the shake so a shaken view stays on the map; the
   // right and bottom bounds lose the 240x160 screen. A map smaller than
   // that keeps its top left in view.
-  minX = work->minX + work->shakeX;
-  maxX = work->maxX - work->shakeX - FIELD_VIEW_WIDTH;
-  minY = work->minY + work->shakeY;
-  maxY = work->maxY - work->shakeY - FIELD_VIEW_HEIGHT;
+  minX = map->minX + map->shakeX;
+  maxX = map->maxX - map->shakeX - FIELD_VIEW_WIDTH;
+  minY = map->minY + map->shakeY;
+  maxY = map->maxY - map->shakeY - FIELD_VIEW_HEIGHT;
   if (minX > maxX)
     maxX = minX;
   if (minY > maxY)
@@ -526,25 +526,25 @@ void Map_UpdateLayerScroll(void) {
   // A shake offsets the view by the amplitude times the difference of two
   // random fractions (between -1 and 1), then scales the amplitude by
   // shakeDecay for the next frame.
-  if (work->shakeX != 0) {
+  if (map->shakeX != 0) {
     s32 shakeRollA = Random16();
     s32 shakeRollB = Random16();
-    s32 shakeAmplitude = work->shakeX;
+    s32 shakeAmplitude = map->shakeX;
     baseX += Iwram_MulQ16(shakeAmplitude, shakeRollA - shakeRollB);
-    work->shakeX = Iwram_MulQ16(shakeAmplitude, work->shakeDecay);
+    map->shakeX = Iwram_MulQ16(shakeAmplitude, map->shakeDecay);
   }
-  if (work->shakeY != 0) {
+  if (map->shakeY != 0) {
     s32 shakeRollA = Random16();
     s32 shakeRollB = Random16();
-    s32 shakeAmplitude = work->shakeY;
+    s32 shakeAmplitude = map->shakeY;
     baseY += Iwram_MulQ16(shakeAmplitude, shakeRollA - shakeRollB);
-    work->shakeY = Iwram_MulQ16(shakeAmplitude, work->shakeDecay);
+    map->shakeY = Iwram_MulQ16(shakeAmplitude, map->shakeDecay);
   }
-  work->viewX = baseX;
-  work->viewY = baseY;
+  map->viewX = baseX;
+  map->viewY = baseY;
   for (layerIndex = 0; layerIndex < 3; layerIndex++, layer++) {
-    baseX = Iwram_MulQ16(work->viewX, layer->scaleX);
-    baseY = Iwram_MulQ16(work->viewY, layer->scaleY);
+    baseX = Iwram_MulQ16(map->viewX, layer->scaleX);
+    baseY = Iwram_MulQ16(map->viewY, layer->scaleY);
     // A drifting layer wraps at its period: maskX and maskY are in 8-pixel
     // tiles, and the mask keeps the pixel and fraction bits below them.
     if (layer->speedX != 0) {
@@ -584,29 +584,29 @@ void Map_UpdateLayerScroll(void) {
 
 /// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
 /// and redraws every enabled layer's BG map around it. Called by
-/// Map_CenterOnFollowedPoint. Sets work->viewX and viewY, and advances each
+/// Map_CenterOnFollowedPoint. Sets map->viewX and viewY, and advances each
 /// drifting layer's phase by one frame.
 void Map_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
-  struct MapScrollWork *work = gMapWork[0];
-  struct MapLayerScroll *layer = work->layers;
+  struct MapScrollWork *map = gMapWork[0];
+  struct MapLayerScroll *layer = map->layers;
 
   x -= FIELD_VIEW_FOCUS_X;
   y -= FIELD_VIEW_FOCUS_Y;
-  CLAMP(x, work->minX, work->maxX - FIELD_VIEW_WIDTH);
-  CLAMP(y, work->minY, work->maxY - FIELD_VIEW_HEIGHT);
-  work->viewX = x;
-  work->viewY = y;
+  CLAMP(x, map->minX, map->maxX - FIELD_VIEW_WIDTH);
+  CLAMP(y, map->minY, map->maxY - FIELD_VIEW_HEIGHT);
+  map->viewX = x;
+  map->viewY = y;
 
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
-    if (work->enabled[layerIndex]) {
+    if (map->enabled[layerIndex]) {
       u32 rows = 22;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           metatileRow, metatileColumn;
 
-      x = Iwram_MulQ16(work->viewX, layer->scaleX);
-      y = Iwram_MulQ16(work->viewY, layer->scaleY);
+      x = Iwram_MulQ16(map->viewX, layer->scaleX);
+      y = Iwram_MulQ16(map->viewY, layer->scaleY);
       if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x = (x + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);
@@ -635,9 +635,9 @@ void Map_SetCameraCenter(s32 x, s32 y) {
         sourceColumn = (x / 2) & 127;
         screenColumnOffset = x & 30;
         for (metatileColumn = 0; metatileColumn <= 15; metatileColumn++) {
-          u32 *map = (u32 *)Ram_MapCellBuffer;
-          map += sourceRow + sourceColumn;
-          Map_CopyMetatileToScreen(map, screenMap, screenRowOffset,
+          u32 *cells = (u32 *)Ram_MapCellBuffer;
+          cells += sourceRow + sourceColumn;
+          Map_CopyMetatileToScreen(cells, screenMap, screenRowOffset,
                                    screenColumnOffset);
           sourceColumn = (sourceColumn + 1) & 127;
           screenColumnOffset = (screenColumnOffset + 2) & 30;
@@ -654,19 +654,19 @@ struct MapTilePosition {
   s32 x, y;
 };
 
-/// Copies the block numbers of a rectangle of cells from (srcX, srcY) to
+/// Copies the block numbers of a rectangle of cells from (sourceX, sourceY) to
 /// (dstX, dstY), width by height cells, keeping each destination's
 /// attributes, and redraws the copied cells that are on screen. It does what
 /// Map_CopyCellIndexRect does, with the destination before the size.
 ///
 /// Called by Map_PlayMetatileCopySequence, and by about 40 scene scripts
 /// through Map_CopyMetatileIndicesRectFar (Engine_MapCopyCellsTo).
-void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
+void Map_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
   /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
    * schedule of the cell loop; as a plain body (the offset computed once, two
    * word stores), 96 of 141 instructions differ in tbs-en. */
-  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
   struct MapTilePosition visibleLayers[3];
@@ -820,14 +820,14 @@ void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 ///< the cell's attributes
 
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from
-/// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell
-/// lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go to
-/// that layer's BG map in VRAM too. Called by about 15 scene scripts through
+/// (sourceX, sourceY) to (dstX, dstY), width by height cells. Where a copied
+/// cell lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go
+/// to that layer's BG map in VRAM too. Called by about 15 scene scripts through
 /// Map_CopyMetatileCellsRectFar (Engine_MapCopyCells).
-void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y = dstY;
-  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[y * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
   struct MapTilePosition visibleLayers[3];
@@ -939,12 +939,12 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/// Copies only the attributes of a rectangle of cells, from (srcX, srcY) to
-/// (dstX, dstY), width by height cells, keeping each destination cell's
+/// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
+/// to (dstX, dstY), width by height cells, keeping each destination cell's
 /// block number. Nothing is redrawn: the attributes (flags, collision code and
 /// shape) do not show. Called by about 65 scene scripts through
 /// Map_CopyCellAttributeRectFar (Engine_MapCopyCellAttributes).
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *destinationCells = MAP_CELLS;
   u32 *sourceCells = destinationCells;
@@ -952,7 +952,7 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   u16 columnIndex;
 
   destinationCells += (dstY << 7) + dstX;
-  sourceCells += (srcY << 7) + srcX;
+  sourceCells += (sourceY << 7) + sourceX;
 
   for (rowIndex = 0; rowIndex < height; rowIndex++) {
     u32 *destinationCell = destinationCells + (rowIndex << 7);
@@ -966,18 +966,18 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/// Copies only the block numbers of a rectangle of cells, from (srcX, srcY)
-/// to (dstX, dstY), width by height cells, keeping each destination cell's
-/// attributes; cells in a visible area update the BG maps too. Called by
+/// Copies only the block numbers of a rectangle of cells, from (sourceX,
+/// sourceY) to (dstX, dstY), width by height cells, keeping each destination
+/// cell's attributes; cells in a visible area update the BG maps too. Called by
 /// seven scene scripts through Map_CopyCellIndexRectFar
 /// (Engine_MapCopyCellsLayered).
-void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                           s32 dstY) {
+void Map_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
+                           s32 dstX, s32 dstY) {
   /* FAKEMATCH(temporary): the word and index temporaries set the registers and
    * the 36-byte frame; as a plain body (the offset computed once, two word
    * stores), 94 of 142 instructions differ in tbs-en. */
   s32 y;
-  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+  u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[dstY * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
   struct MapTilePosition visibleLayers[3];

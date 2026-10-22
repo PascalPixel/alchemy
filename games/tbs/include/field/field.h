@@ -81,10 +81,10 @@ struct OverlayActorState {
 /// The Colosso opponent's path player, at the start of gSceneState: the path in
 /// ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
 struct PathRecorder {
-  s16 mode;   ///< 1 plays the path, 2 records it, 9 finished
-  s16 mirror; ///< nonzero mirrors the path across the finish
-  s16 actor;  ///< the actor id moved along the path
-  u16 pos;    ///< the next halfword of ColossoRaceWork.path, x then z
+  s16 mode;      ///< 1 plays the path, 2 records it, 9 finished
+  s16 mirror;    ///< nonzero mirrors the path across the finish
+  s16 actor;     ///< the actor id moved along the path
+  u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
   /// Frames the actor has not moved; from 3 it stands (Object_SetMode 1).
   s16 still;
 };
@@ -262,7 +262,7 @@ extern struct MenuSprite gHeatGauge_Sprites[];
 extern u8 Render_DecodeFrame[];
 #endif
 /// The statue scene's three scrolling strips, packed (Resource_DecodeByteLz).
-extern u8 gSolSanctumStatue_SpriteRowsGfx[];
+extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
 /// gStagedActor_FootprintBounds; each scene with them defines its own.
 extern u32 gStagedActor_FootprintKinds[];

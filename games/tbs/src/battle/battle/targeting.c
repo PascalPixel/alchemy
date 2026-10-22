@@ -231,7 +231,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       break;                                                                   \
     case ABILITY_EFFECT_HEAL_HP_60:                                            \
     case ABILITY_EFFECT_HEAL_HP_30:                                            \
-      if ((unit)->hp < (unit)->maxHp)                                          \
+      if ((unit)->hp < (unit)->hpMax)                                          \
         (applies) = 1;                                                         \
       break;                                                                   \
     case ABILITY_EFFECT_BREAK:                                                 \
@@ -298,7 +298,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
           (applies)++;                                                         \
         break;                                                                 \
       case ABILITY_KIND_HEAL_HP - 1:                                           \
-        if ((unit)->hp != 0 && (unit)->hp < (unit)->maxHp)                     \
+        if ((unit)->hp != 0 && (unit)->hp < (unit)->hpMax)                     \
           (applies)++;                                                         \
         break;                                                                 \
       case ABILITY_KIND_EFFECT - 1:                                            \
@@ -436,8 +436,8 @@ scan_complete:
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
         } else {
-          value = thisUnit->maxHp;
-          nextValue = nextUnit->maxHp;
+          value = thisUnit->hpMax;
+          nextValue = nextUnit->hpMax;
         }
         if (value < nextValue) {
           temp = unitIds[innerIndex];

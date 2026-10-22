@@ -41,10 +41,11 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   *position++ = x / 0x10000;
   *position = z / 0x10000;
   if ((object->animationKind & 15) == OBJECT_SPRITE_ONE)
-    *position -=
-        (s8)Resource_GetMetadataRecordFar(
-            ((struct AnimationObject *)object->animation)->entries[0]->animId)
-            ->boxX;
+    *position -= (s8)Resource_GetMetadataRecordFar(
+                     ((struct AnimationObject *)object->animation)
+                         ->entries[0]
+                         ->animationId)
+                     ->boxX;
   return 0;
 }
 
@@ -118,7 +119,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
 
   // No shadow as the leader leaves.
   context->flags = zero;
-  effect->param = param;
+  effect->colorMode = param;
   // Positions are 16.16 fixed point and tiles 16 pixels: keep the tile and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
   object->x = (object->x & 0xFFF00000) + 0x80000;
@@ -165,7 +166,7 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   zero = 0;
   mask = 0xfff00000;
   spriteAnimation->flags = zero;
-  eff->param = SPRITE_COLOR_HIDDEN;
+  eff->colorMode = SPRITE_COLOR_HIDDEN;
   leader->x = (leader->x & mask) + 0x80000;
   leader->z &= mask;
   ObjectDispatch_SelectAnimationFar(leader, animation);

@@ -110,15 +110,15 @@ enum ActorAnimation {
 #define SPEAKER_WINDOW_ABOVE 0x4000   ///< the message window above the speaker
 #define SPEAKER_WINDOW_BELOW 0x8000   ///< the message window never above it
 
-/// One step of a cell animation: copy the width by height cells at srcX, srcY
-/// over the destination, then wait frames.
-#define MAP_CELL_STEP(srcX, srcY, width, height, frames)                       \
-  (srcX), (srcY), (width), (height), (frames)
+/// One step of a cell animation: copy the width by height cells at sourceX,
+/// sourceY over the destination, then wait frames.
+#define MAP_CELL_STEP(sourceX, sourceY, width, height, frames)                 \
+  (sourceX), (sourceY), (width), (height), (frames)
 #define MAP_CELL_STEPS_END 0xffff ///< a source column that ends the steps
 
 /// A cell animation, such as a door opening: its steps and the cell they are
 /// copied to (Map_PlayMetatileCopySequence, which blocks until the last).
-struct MapCellAnim {
+struct MapCellAnimation {
   /// MAP_CELL_STEP records, ended by MAP_CELL_STEPS_END, for
   /// Map_PlayMetatileCopySequence.
   const u16 *steps;
@@ -250,15 +250,17 @@ void Engine_CameraMoveToActor(s32 actor, s32 pan);
 /// Waits, 600 frames at most, for the camera to arrive, then two frames more
 /// (Camera_WaitForArrival).
 void Engine_CameraWaitForMove(void);
-/// Copies a rectangle of cells whole, block and attributes, from (srcX, srcY)
-/// to (destX, destY), and redraws those on screen (Map_CopyMetatileCellsRect).
-void Engine_MapCopyCells(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                         s32 destY);
+/// Copies a rectangle of cells whole, block and attributes, from (sourceX,
+/// sourceY) to (destinationX, destinationY), and redraws those on screen
+/// (Map_CopyMetatileCellsRect).
+void Engine_MapCopyCells(s32 sourceX, s32 sourceY, s32 width, s32 height,
+                         s32 destinationX, s32 destinationY);
 /// Copies only the attributes of a rectangle of cells (flags, collision code
 /// and shape), keeping each destination's block, so nothing on screen changes
 /// (Map_CopyCellAttributeRect).
-void Engine_MapCopyCellAttributes(s32 srcX, s32 srcY, s32 width, s32 height,
-                                  s32 destX, s32 destY);
+void Engine_MapCopyCellAttributes(s32 sourceX, s32 sourceY, s32 width,
+                                  s32 height, s32 destinationX,
+                                  s32 destinationY);
 /// Centres the camera on the point the map follows and scrolls the layers there
 /// (Map_CenterOnFollowedPoint).
 void Engine_MapRedraw(void);
@@ -332,9 +334,11 @@ void Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
 /// (Object_SetMoveTarget).
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x,
                               s32 fixed_y, s32 fixed_z);
-/// Plays a cell animation's MAP_CELL_STEP records onto the cell at (destX,
-/// destY), returning only after the last (Map_PlayMetatileCopySequence).
-void Engine_MapAnimateCells(const u16 *steps, s32 destX, s32 destY);
+/// Plays a cell animation's MAP_CELL_STEP records onto the cell at
+/// (destinationX, destinationY), returning only after the last
+/// (Map_PlayMetatileCopySequence).
+void Engine_MapAnimateCells(const u16 *steps, s32 destinationX,
+                            s32 destinationY);
 /// Moves the actor of a marker to (x, z) on the ground, in 16.16 pixels; -1
 /// keeps the centre of its cell on that axis (Marker_SetActorPosition).
 void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
@@ -420,14 +424,14 @@ void Engine_ActorsRefresh(void);
 /// Copies the block numbers of a rectangle of cells, keeping each destination's
 /// attributes, and redraws the copied cells on screen
 /// (Map_CopyMetatileIndicesRect). It takes the destination before the size.
-void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                           s32 height);
+void Engine_MapCopyCellsTo(s32 sourceX, s32 sourceY, s32 destinationX,
+                           s32 destinationY, s32 width, s32 height);
 /// Copies the block numbers of a rectangle of cells, keeping each destination's
 /// attributes (Map_CopyCellIndexRect). XXX: the routine and its callers
 /// (lalivero.c) pass the size before the destination, as the parameter names
 /// here do not.
-void Engine_MapCopyCellsLayered(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                s32 width, s32 height);
+void Engine_MapCopyCellsLayered(s32 sourceX, s32 sourceY, s32 destinationX,
+                                s32 destinationY, s32 width, s32 height);
 /// Sets the colours the colour buffer shows now (ColorBuffer_SetSource): value
 /// is one colour, a PALETTE_TRANSFORM_ value or a ready buffer, and mode picks
 /// all palettes (0), the BG's (1) or the OBJ's (2).
@@ -582,16 +586,20 @@ static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
 
 /// Changes part of the room in place, copying whole cells, picture and
 /// collision alike, from another part of the map.
-static inline void Map_CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
-                                 s32 destX, s32 destY) {
-  Engine_MapCopyCells(srcX, srcY, width, height, destX, destY);
+static inline void Map_CopyCells(s32 sourceX, s32 sourceY, s32 width,
+                                 s32 height, s32 destinationX,
+                                 s32 destinationY) {
+  Engine_MapCopyCells(sourceX, sourceY, width, height, destinationX,
+                      destinationY);
 }
 
 /// Changes where the party can walk in part of the room, copying only the
 /// cells' collision and flags.
-static inline void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width,
-                                          s32 height, s32 destX, s32 destY) {
-  Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
+static inline void Map_CopyCellAttributes(s32 sourceX, s32 sourceY, s32 width,
+                                          s32 height, s32 destinationX,
+                                          s32 destinationY) {
+  Engine_MapCopyCellAttributes(sourceX, sourceY, width, height, destinationX,
+                               destinationY);
 }
 
 /// Sets shake amplitudes in fixed-point pixels and the per-frame decay factor.
@@ -654,8 +662,9 @@ enum ObjectBlendMode { OBJECT_BLEND_NORMAL = 0, OBJECT_BLEND_TRANSLUCENT = 1 };
 
 /// Plays a cell animation, such as a door opening, and holds the scene until
 /// its last step.
-static inline void Map_AnimateCells(const u16 *steps, s32 destX, s32 destY) {
-  Engine_MapAnimateCells(steps, destX, destY);
+static inline void Map_AnimateCells(const u16 *steps, s32 destinationX,
+                                    s32 destinationY) {
+  Engine_MapAnimateCells(steps, destinationX, destinationY);
 }
 
 /// Moves a marker's actor to a point on the ground.
@@ -690,16 +699,19 @@ static inline void Actor_SetChildValue(s32 actor, s32 value) {
 
 /// Changes what part of the room shows, copying the cells' pictures but not
 /// their collision.
-static inline void Map_CopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                   s32 width, s32 height) {
-  Engine_MapCopyCellsTo(srcX, srcY, destX, destY, width, height);
+static inline void Map_CopyCellsTo(s32 sourceX, s32 sourceY, s32 destinationX,
+                                   s32 destinationY, s32 width, s32 height) {
+  Engine_MapCopyCellsTo(sourceX, sourceY, destinationX, destinationY, width,
+                        height);
 }
 
 /// Changes the pictures of part of the room as Map_CopyCellsTo does, through
 /// Map_CopyCellIndexRect, which takes the size first.
-static inline void Map_CopyCellsLayered(s32 srcX, s32 srcY, s32 destX,
-                                        s32 destY, s32 width, s32 height) {
-  Engine_MapCopyCellsLayered(srcX, srcY, destX, destY, width, height);
+static inline void Map_CopyCellsLayered(s32 sourceX, s32 sourceY,
+                                        s32 destinationX, s32 destinationY,
+                                        s32 width, s32 height) {
+  Engine_MapCopyCellsLayered(sourceX, sourceY, destinationX, destinationY,
+                             width, height);
 }
 
 /// Sets the colours the screen shows now, where a scene's colour fade starts.

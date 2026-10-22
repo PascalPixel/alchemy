@@ -4150,17 +4150,17 @@ s32 gTolbiShipInteriors_TurnSteps[] = {
 
 /// The warriors walk out of the hold.
 s32 gTolbiShipInteriors_LeaveHold[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(168), 0, PIXELS(500)),
-    SC_SYNC,   SC_MOVE(PIXELS(168), 0, PIXELS(584)),
-    SC_SYNC,   SC_CALL(TolbiShipInteriors_ResetActor),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(168), 0, PIXELS(500)),
+    SC_SYNC,         SC_MOVE(PIXELS(168), 0, PIXELS(584)),
+    SC_SYNC,         SC_CALL(TolbiShipInteriors_ResetActor),
     SC_END,
 };
 
 /// Those gathered in the captain's quarters walk out.
 s32 gTolbiShipInteriors_LeaveCaptainsQuarters[] = {
     SC_SET(SW_SPEED, PIXELS(1)),
-    SC_SET(SW_ACCEL, PIXELS(1) / 2),
-    SC_ARG(2),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(456), 0, PIXELS(674)),
     SC_SYNC,
     SC_MOVE(PIXELS(456), 0, PIXELS(712)),
@@ -4189,22 +4189,22 @@ s32 gTolbiShipInteriors_AnchorCharmPulse[] = {
 
 /// The party's followers walk into the leader by the rowing deck's stairs.
 s32 gTolbiShipInteriors_FollowersRejoinByStairs[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(434), 0, PIXELS(166)),
-    SC_SYNC,   SC_CALL(TolbiShipInteriors_ResetActor),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(434), 0, PIXELS(166)),
+    SC_SYNC,         SC_CALL(TolbiShipInteriors_ResetActor),
     SC_END,
 };
 
 /// The same, in the middle of the rowing deck.
 s32 gTolbiShipInteriors_FollowersRejoinMidDeck[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(438), 0, PIXELS(300)),
-    SC_SYNC,   SC_CALL(TolbiShipInteriors_ResetActor),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(438), 0, PIXELS(300)),
+    SC_SYNC,         SC_CALL(TolbiShipInteriors_ResetActor),
     SC_END,
 };
 
 /// The same, by the first row of seats.
 s32 gTolbiShipInteriors_FollowersRejoinBySeats[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(432), 0, PIXELS(168)),
-    SC_SYNC,   SC_CALL(TolbiShipInteriors_ResetActor),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(432), 0, PIXELS(168)),
+    SC_SYNC,         SC_CALL(TolbiShipInteriors_ResetActor),
     SC_END,
 };
 
@@ -4236,14 +4236,14 @@ s32 gTolbiShipInteriors_MonsterBob[] = {
 
 /// A rower walks up the stairs and is freed.
 s32 gTolbiShipInteriors_LeaveByStairs[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(132)),
-    SC_SYNC,   SC_MOVE(PIXELS(444), 0, PIXELS(132)),
-    SC_SYNC,   SC_FREE,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(408), 0, PIXELS(132)),
+    SC_SYNC,         SC_MOVE(PIXELS(444), 0, PIXELS(132)),
+    SC_SYNC,         SC_FREE,
 };
 
 /// A rower steps into the aisle.
 s32 gTolbiShipInteriors_StepIntoAisle[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(416), 0, PIXELS(186)),
     SC_SYNC,
     SC_END,

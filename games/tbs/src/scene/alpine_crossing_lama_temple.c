@@ -172,11 +172,11 @@ enum {
   ANIMATION_FEIZHI_CROUCH = 5,
   /// SPRITE_TURNING_ROCK's mossy rock (spr_293.png's frame 1); its first
   /// animations show frame 0, a purple glow.
-  TURNING_ROCK_ANIM_MOSSY = 2,
+  TURNING_ROCK_ANIMATION_MOSSY = 2,
   ANIMATION_HSU_STRUGGLE = 5,
   ANIMATION_MONK_MEDITATE = 5,
-  PUDDLE_ANIM_FROZEN = 5,
-  SPROUT_ANIM_GROWN = 4
+  PUDDLE_ANIMATION_FROZEN = 5,
+  SPROUT_ANIMATION_GROWN = 4
 };
 
 /// Map triggers that the events below refer to.
@@ -200,10 +200,10 @@ enum { MAP_OBJECT_PASSAGE = 100 };
 /// priority off. The first worker from Xian at the Alpine Crossing runs it
 /// from his placement.
 static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
-  union FieldObject *object = (union FieldObject *)interpreter;
-  object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->actor.sprite->image.priority = 3;
-  object->actor.sprite->shadow.priority = 3;
+  union FieldObject *fieldObject = (union FieldObject *)interpreter;
+  fieldObject->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  fieldObject->actor.sprite->image.priority = 3;
+  fieldObject->actor.sprite->shadow.priority = 3;
   return 0;
 }
 
@@ -212,11 +212,11 @@ static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
 // UB: update hooks return void. Plain void removes the native zero result
 // and changes its return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void Leader_FaceFeizhi(union FieldObject *object) {
+static void Leader_FaceFeizhi(union FieldObject *fieldObject) {
 #else
-static s32 Leader_FaceFeizhi(union FieldObject *object) {
+static s32 Leader_FaceFeizhi(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *leader = (struct FieldActor *)object;
+  struct FieldActor *leader = (struct FieldActor *)fieldObject;
   struct FieldActor *feizhi;
 
   feizhi = Object_GetById(ACTOR_FEIZHI);
@@ -832,11 +832,11 @@ static void AlpineCrossing_HidePath(void) {
 // UB: this update hook has no result. Plain void changes the native return
 // sequence from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
 #ifdef UBFIX
-static void Pillar_SortAgainstLeader(union FieldObject *object) {
+static void Pillar_SortAgainstLeader(union FieldObject *fieldObject) {
 #else
-static s32 Pillar_SortAgainstLeader(union FieldObject *object) {
+static s32 Pillar_SortAgainstLeader(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *pillar = (struct FieldActor *)object;
+  struct FieldActor *pillar = (struct FieldActor *)fieldObject;
   if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
@@ -915,7 +915,7 @@ s32 Scene_Initialize(void) {
     Engine_ActorSetAnimation(ACTOR_MEDITATING_MONK, ANIMATION_MONK_MEDITATE);
     Engine_ActorSetAnimation(ACTOR_MONK_SENSING_ANXIETY,
                              ANIMATION_MONK_MEDITATE);
-    Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIM_MOSSY);
+    Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIMATION_MOSSY);
     Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
     if (Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
@@ -935,11 +935,11 @@ s32 Scene_Initialize(void) {
     Object_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIMATION_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
     if (Engine_GameFlagIsSet(FLAG_SPROUT_GROWN)) {
-      Engine_ActorSetAnimation(ACTOR_PLANT, SPROUT_ANIM_GROWN);
+      Engine_ActorSetAnimation(ACTOR_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
     if (gGameState.entrance ==
@@ -1013,7 +1013,7 @@ s32 gAlpineCrossing_WorkerPlacementScript[] = {
 
 /// Feizhi's run down the path toward Hsu, walking, then standing.
 s32 gAlpineCrossing_FeizhiPath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(392), 0, PIXELS(232)),
     SC_SYNC,
     SC_MOVE(PIXELS(376), 0, PIXELS(232)),
@@ -1026,13 +1026,13 @@ s32 gAlpineCrossing_FeizhiPath[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(296), 0, PIXELS(344)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 /// The party leader follows Feizhi most of the way.
 s32 gAlpineCrossing_LeaderPath[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(392), 0, PIXELS(232)),
     SC_SYNC,
     SC_MOVE(PIXELS(376), 0, PIXELS(232)),
@@ -1043,20 +1043,20 @@ s32 gAlpineCrossing_LeaderPath[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(328), 0, PIXELS(328)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_END,
 };
 
 /// Hsu, pinned under the boulder, struggles now and then.
 s32 gAlpineCrossing_HsuStruggle[] = {
-    SC_ARG(ANIMATION_STAND),
-    SC_ARG(ANIMATION_HSU_STRUGGLE),
+    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_HSU_STRUGGLE),
     SC_WAIT(240),
-    SC_ARG(ANIMATION_STAND),
-    SC_ARG(ANIMATION_HSU_STRUGGLE),
+    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_HSU_STRUGGLE),
     SC_WAIT(60),
-    SC_ARG(ANIMATION_STAND),
-    SC_ARG(ANIMATION_HSU_STRUGGLE),
+    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_HSU_STRUGGLE),
     SC_WAIT(300),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_END,

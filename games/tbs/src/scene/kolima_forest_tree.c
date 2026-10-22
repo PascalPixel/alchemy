@@ -1061,27 +1061,27 @@ static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
 #include "common/kolima_palette.h"
 
 s32 gKolimaForestTree_GaretApproachActions[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(312), 0, PIXELS(230)), SC_SYNC,
-    SC_ARG(1), SC_SET(SW_FACING, FACING_NORTH),      SC_WAIT(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(312), 0, PIXELS(230)), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_NORTH),      SC_WAIT(1),
     SC_END,
 };
 
 s32 gKolimaForestTree_IvanApproachActions[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(346), 0, PIXELS(224)), SC_SYNC,
-    SC_ARG(1), SC_SET(SW_FACING, FACING_NORTH),      SC_WAIT(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(346), 0, PIXELS(224)), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_NORTH),      SC_WAIT(1),
     SC_END,
 };
 
 s32 gKolimaForestTree_MiaApproachActions[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(333), 0, PIXELS(240)), SC_SYNC,
-    SC_ARG(1), SC_SET(SW_FACING, FACING_NORTH),      SC_WAIT(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(333), 0, PIXELS(240)), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_NORTH),      SC_WAIT(1),
     SC_END,
 };
 
 s32 gKolimaForestTree_RejoinPartyActions[] = {
-    SC_ARG(2),  SC_MOVE(PIXELS(328), 0, PIXELS(212)),
-    SC_SYNC,    SC_POSITION(0, 0, 0),
-    SC_WAIT(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(328), 0, PIXELS(212)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
+    SC_WAIT(1),      SC_END,
 };
 
 struct SceneEntrance gKolimaForestTreeEntrances[] = {

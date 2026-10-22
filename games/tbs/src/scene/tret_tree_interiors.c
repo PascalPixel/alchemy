@@ -718,9 +718,9 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
 s32 TretTreeInteriors_EnterRoom(void) {
   struct FieldActor *tret;
   struct FieldActor *actor;
-  struct MapScrollWork *mapWork;
+  struct MapScrollWork *map;
   struct MapLayerScroll *layer;
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   s32 entrance;
   s32 selectedActorId;
 
@@ -747,11 +747,11 @@ s32 TretTreeInteriors_EnterRoom(void) {
   }
   if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
     TretTreeInteriors_ApplyFlaggedMapPatches();
-  mapWork = WORK_SLOT(8);
+  map = WORK_SLOT(8);
   // Match the first layer's parallax offset and scale to the room bounds.
-  layer = &mapWork->layers[0];
-  layer->offsetX += Iwram_MulQ16(mapWork->minX + PIXELS(160), 0x1999);
-  layer->offsetY += Iwram_MulQ16(mapWork->minY + PIXELS(136), 0x1999);
+  layer = &map->layers[0];
+  layer->offsetX += Iwram_MulQ16(map->minX + PIXELS(160), 0x1999);
+  layer->offsetY += Iwram_MulQ16(map->minY + PIXELS(136), 0x1999);
   layer->scaleX = 0xe666;
   layer->scaleY = 0xe666;
   // The map draws four cocoons already torn: the first step on them breaks
@@ -762,8 +762,8 @@ s32 TretTreeInteriors_EnterRoom(void) {
   FLAG_SET(FLAG_SCENE_TEMP_13);
   Engine_TaskWait(1);
   TretTreeInteriors_ApplyPostBattleState(0);
-  fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
-  fieldWork->transition =
+  work = WORK_SLOT(HEAP_SLOT_EVENT);
+  work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   entrance = gGameState.entrance;
   selectedActorId = gGameState.selectedActor;
@@ -820,13 +820,13 @@ static void TretPalette_UpdateSceneTint(void) {
   s32 green;
   s32 blue;
   u32 color;
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   struct ColorBuffer *paletteWork;
 
-  fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
+  work = WORK_SLOT(HEAP_SLOT_EVENT);
   paletteWork = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
   sourceColors = paletteWork->palette;
-  if (fieldWork->psynergy != 0)
+  if (work->psynergy != 0)
     return;
   if ((gFrameCount & 31) != 0)
     return;
@@ -1180,34 +1180,34 @@ const s32 *gEffectScripts[] = {
 /// The party gathers in front of Tret before the battle (Event_FightTret),
 /// each walking to its own place.
 s32 gTretTreeInteriors_LeaderGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(80)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gTretTreeInteriors_GaretGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(148), 0, PIXELS(90)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gTretTreeInteriors_IvanGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(182), 0, PIXELS(90)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gTretTreeInteriors_MiaGathersActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(104)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
@@ -1230,7 +1230,7 @@ s32 gTretTreeInteriors_FaceSinksActions[] = {
 
 /// Garet, Ivan and Mia walk back to the leader and are put away.
 s32 gTretTreeInteriors_RejoinLeaderActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(166), 0, PIXELS(80)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

@@ -47,7 +47,7 @@
 /// - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP,
 ///   VenusLighthouseAerie_StageShebasFall): Sheba and Felix fall, and the party
 ///   is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE)
-///   with FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
+///   with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set.
 ///
 /// A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
@@ -162,7 +162,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void);
 static void VenusLighthouseAerie_AdvanceActorRise(struct FieldActor *actor);
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
 static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object);
+VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject);
 
 /// The aerie's event cells.
 enum VenusLighthouseAerieTrigger {
@@ -183,31 +183,31 @@ enum { CHILD_VALUE_BLINK = 0x100 };
 enum {
   /// Saturos standing, two pictures alternating at long intervals
   /// (spr_032.tsv).
-  SATUROS_ANIM_BREATHE = 8,
-  SATUROS_ANIM_LIE = 9, ///< lying on his side
+  SATUROS_ANIMATION_BREATHE = 8,
+  SATUROS_ANIMATION_LIE = 9, ///< lying on his side
   /// Saturos falling into the lighthouse: upright, then half his height, then
   /// only his top above the floor.
-  SATUROS_ANIM_TIP = 10,
-  SATUROS_ANIM_SLUMP = 11,
-  SATUROS_ANIM_SINK = 12,
+  SATUROS_ANIMATION_TIP = 10,
+  SATUROS_ANIMATION_SLUMP = 11,
+  SATUROS_ANIMATION_SINK = 12,
   /// Menardi standing, her hair blown back (spr_033.tsv).
-  MENARDI_ANIM_STAND_WINDSWEPT = 5,
-  MENARDI_ANIM_LIE = 7, ///< lying on her side
-  /// Menardi falling into the lighthouse, as SATUROS_ANIM_TIP to _SINK.
-  MENARDI_ANIM_TIP = 8,
-  MENARDI_ANIM_SLUMP = 9,
-  MENARDI_ANIM_SINK = 10,
+  MENARDI_ANIMATION_STAND_WINDSWEPT = 5,
+  MENARDI_ANIMATION_LIE = 7, ///< lying on her side
+  /// Menardi falling into the lighthouse, as SATUROS_ANIMATION_TIP to _SINK.
+  MENARDI_ANIMATION_TIP = 8,
+  MENARDI_ANIMATION_SLUMP = 9,
+  MENARDI_ANIMATION_SINK = 10,
   /// Garet on his knees, Ivan and Mia lying down, as the party lies on the
   /// broken aerie (spr_001.tsv to spr_003.tsv).
   ANIMATION_PARTY_KNOCKED_DOWN = 18,
   ANIMATION_LEADER_KNOCKED_DOWN = 19, ///< Isaac lying on his back (spr_000.tsv)
-  FELIX_ANIM_KNEEL = 5, ///< Felix crouched on one knee (spr_035.tsv)
+  FELIX_ANIMATION_KNEEL = 5, ///< Felix crouched on one knee (spr_035.tsv)
   /// Sheba hanging from the broken aerie by one hand, seen from the side
   /// (spr_006.tsv).
-  SHEBA_ANIM_HANG_ONE_HAND = 5,
-  SHEBA_ANIM_HANG = 6, ///< hanging by both hands, seen from behind
-  /// Her grip slipping for a moment, then SHEBA_ANIM_HANG again.
-  SHEBA_ANIM_SLIP = 7
+  SHEBA_ANIMATION_HANG_ONE_HAND = 5,
+  SHEBA_ANIMATION_HANG = 6, ///< hanging by both hands, seen from behind
+  /// Her grip slipping for a moment, then SHEBA_ANIMATION_HANG again.
+  SHEBA_ANIMATION_SLIP = 7
 };
 
 // The aerie's scene flags:
@@ -256,19 +256,19 @@ VenusLighthouseAerie_PulseActorScale(struct ScriptInterpreter *interpreter) {
 /// Moves a particle, damps its horizontal velocity and updates its scale and
 /// spin.
 static void
-VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *object) {
-  s32 velocityX = object->effect.velocity.x;
+VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *fieldObject) {
+  s32 velocityX = fieldObject->effect.velocity.x;
   s32 velocityZ;
 
-  object->effect.x += velocityX;
-  object->effect.y += object->effect.velocity.y;
-  velocityZ = object->effect.velocity.z;
-  object->effect.z += velocityZ;
-  object->effect.velocity.x = velocityX - velocityX / 22;
-  object->effect.velocity.z = velocityZ - velocityZ / 20;
-  object->effect.scaleX += object->effect.scaleRateX;
-  object->effect.scaleY += object->effect.scaleRateY;
-  object->effect.sprite->rotation += object->effect.spin;
+  fieldObject->effect.x += velocityX;
+  fieldObject->effect.y += fieldObject->effect.velocity.y;
+  velocityZ = fieldObject->effect.velocity.z;
+  fieldObject->effect.z += velocityZ;
+  fieldObject->effect.velocity.x = velocityX - velocityX / 22;
+  fieldObject->effect.velocity.z = velocityZ - velocityZ / 20;
+  fieldObject->effect.scaleX += fieldObject->effect.scaleRateX;
+  fieldObject->effect.scaleY += fieldObject->effect.scaleRateY;
+  fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
 }
 
 /// Turns the falling actor sprite until its rotation leaves the negative
@@ -1256,7 +1256,7 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct FieldFxScene *sceneWork = gEffectWork;
+  struct FieldEffectScene *sceneWork = gEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_131);
@@ -1370,14 +1370,14 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   actor->timer = 10;
   actor->facing = FACING_NORTH + FACING_STEP;
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(294), PIXELS(212));
-  Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIM_LIE);
+  Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_LIE);
   Actor_SetActionScript(ACTOR_SATUROS, gVenusLighthouseAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
   actor = Actor_Get(ACTOR_MENARDI);
   actor->timer = 10;
   actor->facing = FACING_EAST;
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(286), PIXELS(192));
-  Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIM_LIE);
+  Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_LIE);
   Actor_SetActionScript(ACTOR_MENARDI, gVenusLighthouseAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
   Event_GetViewCenter()->motionFlags = 0;
@@ -1475,7 +1475,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Event_Wait(20);
   Actor_Get(ACTOR_SATUROS)->scaleX = -Q16_ONE;
   Event_PlayCue(SE_161);
-  Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIM_BREATHE);
+  Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_BREATHE);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_MENARDI, ANIMATION_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 1);
@@ -1488,7 +1488,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_Get(ACTOR_MENARDI)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_MENARDI)->scaleX = -Q16_ONE;
   Event_PlayCue(SE_161);
-  Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIM_STAND_WINDSWEPT);
+  Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_STAND_WINDSWEPT);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_Wait(20);
@@ -2059,7 +2059,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
 
 /// Back from the world map (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP): stages the
 /// broken aerie for Sheba's fall and the party's escape, plays them, sets
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE and leaves for Lalivero
+/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED and leaves for Lalivero
 /// (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE).
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct FieldActor *leader;
@@ -2113,9 +2113,9 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   actor->z.fixed = PIXELS(222);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
-  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIM_KNEEL);
+  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
   Actor_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
-  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_HANG_ONE_HAND);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
   Engine_ActorSetSpriteFlags(Actor_Get(SHEBA), 0);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHWEST);
   actor->x.fixed -= PIXELS(16);
@@ -2142,7 +2142,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   VenusLighthouseAerie_PlayShebasFall();
-  GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   Engine_EventRequestExit(VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE);
 }
 
@@ -2215,17 +2215,17 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->x.fixed = PIXELS(308);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIM_TIP);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_TIP);
   Engine_EventWait(20);
   actor->x.fixed = PIXELS(306);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIM_SLUMP);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_SLUMP);
   Engine_EventWait(12);
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(21);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIM_SINK);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_SINK);
   Engine_EventWait(8);
   Engine_ActorDestroy(ACTOR_SATUROS);
 
@@ -2233,17 +2233,17 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->x.fixed = PIXELS(294);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIM_TIP);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_TIP);
   Engine_EventWait(20);
   actor->x.fixed = PIXELS(300);
   actor->y.fixed = PIXELS(27);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIM_SLUMP);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_SLUMP);
   Engine_EventWait(12);
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(17);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIM_SINK);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_SINK);
   Engine_EventWait(8);
   Engine_ActorDestroy(ACTOR_MENARDI);
   Engine_EventWait(160);
@@ -2476,9 +2476,9 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   actor->z.fixed += PIXELS(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
-  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIM_KNEEL);
+  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
   Actor_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
-  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_HANG_ONE_HAND);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
   Engine_ActorSetSpriteFlags(Object_GetById(SHEBA), 0);
   Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   Engine_ColorBufferApplyTarget(0x4063ff, 0);
@@ -2701,11 +2701,11 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 20);
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Event_ShowMessageAndWait(SHEBA, 0, 20);
-  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_HANG);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIMATION_HANG);
   Engine_EventWait(10);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
-  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_SLIP);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIMATION_SLIP);
   Event_ShowMessageAndWait(SHEBA, 0, 20);
   Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
@@ -2724,7 +2724,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 40);
-  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIM_KNEEL);
+  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
   Engine_EventWait(10);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FELIX), 0);
   Engine_ActorSetAnimation(ACTOR_FELIX, 0);
@@ -3205,18 +3205,18 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 /// Moves a linked particle along its horizontal ellipse and preserves its
 /// target.
 static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object) {
+VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject) {
   struct FieldActor *anchor;
   s32 spin;
 
-  anchor = object->actor.linkedObject;
-  spin = object->effect.spin;
-  object->effect.x =
-      anchor->x.fixed + Engine_MathCos(spin) * (object->actor.speed + 28);
-  object->effect.z = Engine_MathSin(spin) * 16 + PIXELS(164);
-  object->actor.targetX = object->effect.x;
-  object->actor.targetZ = object->effect.z;
-  object->effect.spin -= 0x200;
+  anchor = fieldObject->actor.linkedObject;
+  spin = fieldObject->effect.spin;
+  fieldObject->effect.x =
+      anchor->x.fixed + Engine_MathCos(spin) * (fieldObject->actor.speed + 28);
+  fieldObject->effect.z = Engine_MathSin(spin) * 16 + PIXELS(164);
+  fieldObject->actor.targetX = fieldObject->effect.x;
+  fieldObject->actor.targetZ = fieldObject->effect.z;
+  fieldObject->effect.spin -= 0x200;
 }
 
 s32 gEffectScript0[] = {
@@ -3241,10 +3241,10 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gVenusLighthouseAerie_JoinLeaderAction[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(492), 0, PIXELS(164)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
@@ -3252,8 +3252,8 @@ s32 gVenusLighthouseAerie_JoinLeaderAction[] = {
 
 s32 gVenusLighthouseAerie_StepBackWestAction[] = {
     SC_SET(SW_SPEED, PIXELS(1) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 10),
-    SC_ARG(ANIMATION_WALK),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 10),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(-PIXELS(8), 0, 0),
     SC_SYNC,
     SC_END,
@@ -3261,8 +3261,8 @@ s32 gVenusLighthouseAerie_StepBackWestAction[] = {
 
 s32 gVenusLighthouseAerie_StepBackEastAction[] = {
     SC_SET(SW_SPEED, PIXELS(1) / 5),
-    SC_SET(SW_ACCEL, PIXELS(1) / 10),
-    SC_ARG(ANIMATION_WALK),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 10),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE_BY(PIXELS(8), 0, 0),
     SC_SYNC,
     SC_END,
@@ -3307,7 +3307,7 @@ s32 gVenusLighthouseAerie_BeamEndAction[] = {
 s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_LABEL(1),
     SC_ADD(SW_Y, PIXELS(1)),
     SC_WAIT(1),
@@ -3320,7 +3320,7 @@ s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
 s32 gVenusLighthouseAerie_RiseParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_LABEL(1),
     SC_ADD(SW_Y, -PIXELS(1)),
     SC_WAIT(1),
@@ -3331,7 +3331,7 @@ s32 gVenusLighthouseAerie_RiseParticleScript[] = {
 };
 
 s32 gVenusLighthouseAerie_WalkOutAction[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(268), 0, PIXELS(186)),
     SC_SYNC,
     SC_MOVE(PIXELS(268), 0, PIXELS(252)),
@@ -3344,7 +3344,7 @@ s32 gVenusLighthouseAerie_WalkOutAction[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(200), 0, PIXELS(200)),
     SC_SYNC,
-    SC_ARG(ANIMATION_STAND),
+    SC_ANIMATION(ANIMATION_STAND),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
@@ -3373,7 +3373,7 @@ s32 gVenusLighthouseAerie_LeapAction[] = {
 };
 
 s32 gVenusLighthouseAerie_PartyExitAction[] = {
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(330), 0, PIXELS(173)),
     SC_SYNC,
     SC_FREE,
@@ -3487,7 +3487,7 @@ struct SceneEvent gVenusLighthouseAerieEvents[] = {
 s32 gVenusLighthouseAerie_BesideParticleScript[] = {
     SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
     SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_WAIT(30),
     SC_FREE,
 };

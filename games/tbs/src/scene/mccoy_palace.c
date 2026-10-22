@@ -147,10 +147,10 @@ enum McCoyPalaceActor {
 /// Animations of the reward chests' sprite, SPRITE_CHEST, from its animation
 /// table (graphics/sprite/spr_020.tsv).
 enum {
-  CHEST_ANIM_OPEN_EMPTY = 2, ///< the lid up over an empty chest, held
+  CHEST_ANIMATION_OPEN_EMPTY = 2, ///< the lid up over an empty chest, held
   /// The lid lifted on the treasure for six frames, then shut again (the
   /// sprite's animation 1, closed).
-  CHEST_ANIM_PEEK_AND_SHUT = 5
+  CHEST_ANIMATION_PEEK_AND_SHUT = 5
 };
 
 /// The palace's temporary flags: the scene flags last until the party leaves
@@ -475,14 +475,14 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
       FieldEffect_PlayCueAndStartEmitterOnTarget(0, chestActorId, itemId);
 
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
-    Engine_ActorSetAnimation(chestActorId, CHEST_ANIM_OPEN_EMPTY);
+    Engine_ActorSetAnimation(chestActorId, CHEST_ANIMATION_OPEN_EMPTY);
     Engine_GameFlagSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     Engine_GameFlagSet(chestFlag);
     Engine_GameFlagClear(FLAG_REWARD_OFFERED);
     Engine_GameFlagClear(FLAG_CHOOSING_REWARD);
   } else {
     Engine_AudioPlayCue(SE_125);
-    Engine_ActorSetAnimation(chestActorId, CHEST_ANIM_PEEK_AND_SHUT);
+    Engine_ActorSetAnimation(chestActorId, CHEST_ANIMATION_PEEK_AND_SHUT);
   }
 
   Engine_ObjectDispatchRelease((struct FieldActor *)emitterHandle);
@@ -1506,14 +1506,14 @@ s32 gPalace_FacingActions[] = {
 };
 
 s32 gPalace_PacingActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(842), 0, PIXELS(696)),
     SC_SYNC,
     SC_MOVE(PIXELS(842), 0, PIXELS(636)),
     SC_SYNC,
     SC_MOVE(PIXELS(876), 0, PIXELS(634)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
     SC_WAIT(1),
     SC_END,

@@ -98,7 +98,7 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The effect slots of a Psynergy effect's scene (gEffectWork->slots).
+/// The effect slots of a Psynergy effect's scene (gEffectWork->effects).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
 /// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
@@ -110,8 +110,8 @@
 /// gaps are FieldActor fields this view does not use.
 struct Object {
   u8 pad0[6];
-  u16 angle;               ///< FieldActor.facing, 1/65536 turns
-  struct EffectVector pos; ///< 16.16 fixed-point pixels
+  u16 angle;                    ///< FieldActor.facing, 1/65536 turns
+  struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
   u8 kind; ///< FieldActor.terrainId; not read through this view
   u8 pad2[0x2d];
@@ -134,15 +134,15 @@ FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
 /// FieldEffect_UpdateAllEffectSlots (setup.c) and FieldEffect_UpdateAllSlots
 /// (djinni.c) run it once a frame.
 static __inline__ void FieldEffect_UpdateSceneSlots(void) {
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   s32 remainingSlots;
 
-  slot = ((struct FieldFxScene *)gEffectWork)->slots;
+  effect = ((struct FieldEffectScene *)gEffectWork)->effects;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
-    EffectSlot_Update(slot);
-    slot++;
+    EffectSlot_Update(effect);
+    effect++;
   } while (remainingSlots >= 0);
 }
 
@@ -185,7 +185,7 @@ struct CaptureObject {
   u16 timer; ///< as DescendingOrbitObject.timer
   u16 angle; ///< work: as DescendingOrbitObject.angle
   struct FieldActor *linkedObject;
-  void (*callback)(union FieldObject *object); ///< update: run each frame
+  void (*callback)(union FieldObject *fieldObject); ///< update: run each frame
 };
 
 /// Defines a per-frame update that spins an object 1/8 turn a frame while its
@@ -211,7 +211,7 @@ struct CaptureObject {
 /// A particle's sprite (struct AnimationObject), seen as the two fields
 /// Douse and Mind Read set on it; the notes give the AnimationObject fields
 /// at the same offsets.
-struct WaveFxSprite {
+struct WaveEffectSprite {
   u32 unk00[2];
   u8 unk08;
   u32 unk09_0 : 2;
@@ -258,7 +258,7 @@ static inline void FieldEffect_InitializeFallingFragment(
 /// pixels. Carry's and Lift's no-target effects are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
-    struct FieldFxScene *work;                                                 \
+    struct FieldEffectScene *work;                                             \
     struct MotionObject *obj;                                                  \
     struct MotionObject *pair[2];                                              \
     struct ScatterPosition pos;                                                \
@@ -333,7 +333,7 @@ struct SparkObject {
   /// emitter, which -1 holds still.
   s16 phase;
   u8 unk66[6];
-  void (*update)(union FieldObject *object); ///< run each frame
+  void (*update)(union FieldObject *fieldObject); ///< run each frame
 };
 
 /// The states of an effect slot particle that flies out and back: Halt's,

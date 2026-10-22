@@ -866,7 +866,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
   struct SaveSummary *summary;
   struct RenderOutput *modePicture;
   s32 summaryDirty;
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   u32 buildStamp;
   struct ShopRuntime *spriteWork;
   s32 result;
@@ -881,7 +881,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
   struct RenderOutput *modePicture;
   s32 cursorStyle;
   s32 summaryDirty;
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   u32 buildStamp;
   struct ShopRuntime *spriteWork;
   struct ShopCursor fileCursor;
@@ -899,7 +899,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
   partyWindow = NULL;
   djinnWindow = NULL;
   summaryDirty = 1;
-  render = *(gWorkSlot + HEAP_SLOT_WINDOW);
+  work = *(gWorkSlot + HEAP_SLOT_WINDOW);
   buildStamp = Runtime_GetBuildStampTimeFar();
   // Start on the first file the mode allows.
   // BUG: when none is, the jump to done returns SAVE_MENU_NO_FILE without
@@ -980,7 +980,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
     } else {
       UiText_DrawString(summary->name, fileList, SAVE_SLOT_NAME_X, y);
       UiText_DrawResource(summary->area + MsgDebugEntryName, fileList, 62, y);
-      render->dirty = 1;
+      work->dirty = 1;
     }
   }
   UiWindow_DrawDividerLine(fileList, 0, 2, 27, 2);
@@ -1058,7 +1058,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
       UiText_DrawString(summary->name, fileList, SAVE_SLOT_NAME_X, y);
       UiText_DrawResource(save->summary[i].area + MsgDebugEntryName, fileList,
                           72, y);
-      render->dirty = 1;
+      work->dirty = 1;
     }
   }
   UiWindow_DrawDividerLine(fileList, 0, 2, 27, 2);

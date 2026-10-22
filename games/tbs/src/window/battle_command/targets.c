@@ -382,10 +382,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow = UiWindow_Create(helpColumn, 8, 9, 3, 6);
 #endif
           }
-            UiWork_SetParamNibble(2);
+            UiWork_SetParameterNibble(2);
             UiText_DrawCharacterAtOffset(MsgTargetSetDjinni, conditionWindow, 0,
                                          0);
-            UiWork_SetParamNibble(15);
+            UiWork_SetParameterNibble(15);
             break;
           case TARGET_HINT_HP: {
             s32 anchor;
@@ -422,7 +422,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             UiText_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
             UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
                                       conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
+            UiText_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_PP: {
             s32 anchor;
@@ -438,7 +438,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             UiText_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
             UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
                                       conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
+            UiText_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_REVIVE: {
             s32 anchor;
@@ -634,10 +634,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (count != 0)
               break;
           no_condition:
-            UiWork_SetParamNibble(2);
+            UiWork_SetParameterNibble(2);
             UiText_DrawCharacterAtOffset(MsgTargetNoEffect, conditionWindow, 0,
                                          0);
-            UiWork_SetParamNibble(15);
+            UiWork_SetParameterNibble(15);
             break;
           }
         }
@@ -710,7 +710,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           marker->affine = 0;
         else
           marker->affine = 1;
-        marker->param = matrix;
+        marker->matrix = matrix;
         Runtime_PushSlotEntry((s32 *)marker, 240);
       }
     }

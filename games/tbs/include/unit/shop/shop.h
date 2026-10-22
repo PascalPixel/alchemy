@@ -47,7 +47,7 @@ enum ShopPriceKind {
   SHOP_PRICE_KIND_REPAIR = 2 ///< repairing: it is not broken
 };
 
-void Shop_DrawMsg(struct UiWindow *window, s32 message);
+void Shop_DrawMessage(struct UiWindow *window, s32 message);
 void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId);
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId);
 void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId);
@@ -76,14 +76,14 @@ s32 ShopStock_GetType(s32 stockRow);
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
 s32 Shop_CanServe(s32 unitId, s32 serviceKind);
 s32 Shop_CountUnits(void);
-s32 Shop_MsgByMode(s32 messageId);
+s32 Shop_MessageByMode(s32 messageId);
 void UiMessage_ShowResolvedAndWait(s32 messageId);
 void UiMessage_ShowResolvedAndRestoreState(s32 messageId);
 s32 Shop_ConfirmAct(s32 unitId);
 s32 Sanctum_RunPartyService(void);
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
 void Shop_HiliteUnit(struct UiWindow *window, s32 selected);
-void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId);
+void Shop_DrawSelectMessage(struct UiWindow *target, s32 unitId);
 void Shop_UpdateBurstSparkle(struct EffectSlot *effect);
 void Shop_ResetEffects(void);
 void Shop_RunPartyMemberIconBurst(s32 member);

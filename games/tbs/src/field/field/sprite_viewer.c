@@ -154,7 +154,7 @@ restart:
     } else {
       Ui_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
     }
-    Ui_SetGridColumnParameter(i, layers[i].colorMode);
+    Ui_SetGridColumnColorMode(i, layers[i].colorMode);
     Ui_FillGridColumnFromMetadata(i, layers[i].animationIndex);
   }
   // The copies are drawn each frame by the task below, from the ring's
@@ -279,7 +279,7 @@ next:
       if (layers[selectedLayer].enabled != 0) {
         Ui_SetGridColumnNumber(selectedLayer, layers[selectedLayer].spriteId);
         Ui_SetGridColumnPriority(selectedLayer, layers[selectedLayer].priority);
-        Ui_SetGridColumnParameter(selectedLayer,
+        Ui_SetGridColumnColorMode(selectedLayer,
                                   layers[selectedLayer].colorMode);
         Ui_FillGridColumnFromMetadata(selectedLayer,
                                       layers[selectedLayer].animationIndex);
@@ -334,7 +334,7 @@ next:
         break;
       }
       if (layers[selectedLayer].enabled != 0) {
-        Ui_SetGridColumnParameter(selectedLayer,
+        Ui_SetGridColumnColorMode(selectedLayer,
                                   layers[selectedLayer].colorMode);
       }
       goto next;
@@ -551,7 +551,7 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
 
 /// Sets the colour mode (SpriteColorMode, the layer's draw parameter) or the
 /// priority of one layer of the viewer's ten sprites.
-UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
+UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnColorMode, colorMode)
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
 /// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
@@ -571,7 +571,7 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
     s32 initialFrame = 0;
 
     if (entry->scripts != 0) {
-      metadata = Resource_GetMetadataRecordFar(entry->animId);
+      metadata = Resource_GetMetadataRecordFar(entry->animationId);
       if (animationIndex < metadata->animationCount) {
         // Copy n starts n frames (16 timer units each) late, at normal
         // speed, with no frame drawn yet.
@@ -579,7 +579,7 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
         entry->script = entry->scripts[animationIndex];
         entry->timer = spriteIndex * ANIMATION_NORMAL_STEP;
         entry->step = ANIMATION_NORMAL_STEP;
-        entry->pos = initialFrame;
+        entry->scriptOffset = initialFrame;
         entry->frameBase = initialFrame;
         entry->frame = 0xff;
       }
@@ -605,7 +605,7 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
        spriteIndex++) {
     struct AnimationEntry *entry = spriteGroup->entries[layerIndex];
 
-    entry->animId = spriteId;
+    entry->animationId = spriteId;
     Animation_InitializeWorkFromMetadata(entry);
     spriteGroup++;
   }

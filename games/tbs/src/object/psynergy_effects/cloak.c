@@ -21,7 +21,7 @@ void FieldEffect_CheckCloakTile(void) {
 #ifndef UBFIX
   u32 slot;
 #endif
-  struct FieldWork *field;
+  struct FieldWork *work;
   struct ObjectRuntime *leader;
   u8 *tile;
   s32 x;
@@ -30,7 +30,7 @@ void FieldEffect_CheckCloakTile(void) {
 #ifndef UBFIX
   slot = (u32)&gEventWork;
 #endif
-  field = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   leader = ObjectTable_Get(gGameState.selectedActor);
 #ifdef UBFIX
   tile = gMapWork[0];
@@ -41,7 +41,7 @@ void FieldEffect_CheckCloakTile(void) {
 #endif
 
   // Whole blocks or cells, rounded toward zero as a division would be.
-  if (field->mode == MODE_WORLD_MAP) {
+  if (work->mode == MODE_WORLD_MAP) {
     u32 tx;
     u32 ty;
 
@@ -77,7 +77,7 @@ void FieldEffect_CheckCloakTile(void) {
   }
 
   if (tile[2] != CLOAK_TILE)
-    field->psynergy = CLOAK_END;
+    work->psynergy = CLOAK_END;
 }
 
 /// Ends Cloak: stops the tile check and makes the leader blink back into
@@ -87,41 +87,41 @@ void FieldEffect_CheckCloakTile(void) {
 /// frames. The leader ends with its shadow back.
 /// FieldEvent_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldEffect_EndCloak(void) {
-  struct ObjectRuntime *obj;
-  struct AnimationObject *anim;
+  struct ObjectRuntime *object;
+  struct AnimationObject *animation;
   struct AnimationEntry *entry;
   u32 i;
 
-  obj = ObjectTable_Get(gGameState.selectedActor);
-  anim = obj->animation;
-  entry = anim->entries[0];
+  object = ObjectTable_Get(gGameState.selectedActor);
+  animation = object->animation;
+  entry = animation->entries[0];
 
   AudioCommand_PlayFar(SE_CAST);
   Scheduler_RemoveCallback(FieldEffect_CheckCloakTile);
-  ObjectDispatch_SelectAnimationFar(obj, 0);
-  ((struct ScriptMotionObject *)obj)->hook = 0;
+  ObjectDispatch_SelectAnimationFar(object, 0);
+  ((struct ScriptMotionObject *)object)->hook = 0;
 
   for (i = 0; i < 5; ++i) {
-    entry->param = SPRITE_COLOR_WHITE;
-    anim->dirty = 1;
-    anim->flags = SPRITE_FLAG_OUTLINED;
+    entry->colorMode = SPRITE_COLOR_WHITE;
+    animation->dirty = 1;
+    animation->flags = SPRITE_FLAG_OUTLINED;
     WaitFrames(2);
-    anim->dirty = 1;
-    anim->flags = 0;
+    animation->dirty = 1;
+    animation->flags = 0;
     WaitFrames(2);
   }
 
   for (i = 0; i < 5; ++i) {
-    entry->param = SPRITE_COLOR_WHITE;
-    anim->dirty = 1;
-    anim->flags = 0;
+    entry->colorMode = SPRITE_COLOR_WHITE;
+    animation->dirty = 1;
+    animation->flags = 0;
     WaitFrames(2);
-    entry->param = SPRITE_COLOR_NORMAL;
-    anim->dirty = 1;
+    entry->colorMode = SPRITE_COLOR_NORMAL;
+    animation->dirty = 1;
     WaitFrames(2);
   }
 
-  anim->flags = SPRITE_FLAG_SHADOW;
+  animation->flags = SPRITE_FLAG_SHADOW;
   gGameState.cloaked = 0;
 }
 
@@ -143,7 +143,7 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// (Encounter_SelectEnemyGroup). Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
-  struct FieldWork *field = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
   struct AnimationObject *animation = leader->animation;
   struct AnimationEntry *entry = animation->entries[0];
@@ -155,7 +155,7 @@ void FieldEffect_StartCloak(void) {
   ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
   do {
-    entry->param = SPRITE_COLOR_WHITE;
+    entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = SPRITE_FLAG_OUTLINED;
     WaitFrames(2);
@@ -165,7 +165,7 @@ void FieldEffect_StartCloak(void) {
     n++;
   } while (n <= 9);
   n = 0;
-  entry->param = n;
+  entry->colorMode = n;
   animation->flags = SPRITE_FLAG_OUTLINED;
   animation->dirty = 1;
   // Check the tile at once: off a Cloak tile, unhide and drop the request
@@ -174,9 +174,9 @@ void FieldEffect_StartCloak(void) {
   Scheduler_AddOrUpdateCallback(check, 0xc80);
   gGameState.cloaked = 1;
   check();
-  if (field->psynergy == CLOAK_END) {
+  if (work->psynergy == CLOAK_END) {
     FieldEffect_EndCloak();
-    field->psynergy = n;
+    work->psynergy = n;
   }
 }
 

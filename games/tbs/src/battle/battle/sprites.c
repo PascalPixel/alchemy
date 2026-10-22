@@ -210,9 +210,9 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 }
 
 /// Returns the weapon sprite a party member's attack shows for the kind of
-/// weapon they have equipped (gBattleUnit_WeaponAnims tables), or 0 for no
+/// weapon they have equipped (gBattleUnit_WeaponAnimations tables), or 0 for no
 /// weapon, for Felix, or for a unit that is no party member. Called by
-/// BattleObject_Make, which keeps it in BattleObj.overlay for
+/// BattleObject_Make, which keeps it in BattleObject.overlay for
 /// BattleObject_SpawnObjectsForList to add as a layer of the body sprite.
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   struct BattleUnit *unit;
@@ -229,21 +229,21 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
         BattleUnit_GetWeaponKind(unit->inventory[slot] & WEAPON_ITEM_MASK);
     switch (unit->classId) {
     case ISAAC:
-      weaponSprite = gBattleUnit_WeaponAnimsIsaac[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimationsIsaac[weaponKind];
       break;
     case GARET:
-      weaponSprite = gBattleUnit_WeaponAnimsGaret[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimationsGaret[weaponKind];
       break;
     case IVAN:
-      weaponSprite = gBattleUnit_WeaponAnimsIvan[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimationsIvan[weaponKind];
       break;
     case MIA:
-      weaponSprite = gBattleUnit_WeaponAnimsMia[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimationsMia[weaponKind];
       break;
     case FELIX:
       break;
     case JENNA:
-      weaponSprite = gBattleUnit_WeaponAnimsJenna[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimationsJenna[weaponKind];
       break;
     }
   }

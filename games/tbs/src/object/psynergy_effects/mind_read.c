@@ -4,10 +4,10 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Work slot 22 of the wave effect, 0x298 bytes (gBattleBgFxWork). It lives
+/// Work slot 22 of the wave effect, 0x298 bytes (gBattleBgEffectWork). It lives
 /// from RunSceneTransitionEffect to FieldEffect_FinishSceneAndReleaseHeapBlock,
 /// after the conversation Mind Read reads.
-struct WaveFxWork {
+struct WaveEffectWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
   /// turn; 160 of each page's 162 are used.
   u16 lines[2][162];
@@ -33,7 +33,7 @@ struct WaveFxWork {
 /// after the after event; meanwhile the message windows show thoughts
 /// (Ui_FillBank15PaletteGrey sets the window mode).
 void RunSceneTransitionEffect(s32 x, s32 y) {
-  struct WaveFxWork *work;
+  struct WaveEffectWork *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_MIND_READ, 0x298);
   FieldEffect_FadeToEffectColor();
@@ -55,11 +55,11 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
 void FieldEffect_FinishSceneAndReleaseHeapBlock(void) {
   void *work;
 
-  work = *(void **)((u32)&gBattleBgFxWork);
+  work = *(void **)((u32)&gBattleBgEffectWork);
   Ui_SetBank15PaletteAndClearRenderMode();
   Scheduler_RemoveCallback(FieldEffect_UpdateMindReadWave);
   Animation_ApplyChildPalette((struct MotionObject *)Object_GetById(
-                                  ((struct WaveFxWork *)work)->sourceId),
+                                  ((struct WaveEffectWork *)work)->sourceId),
                               1);
   FieldEffect_FadeFromEffectColor();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MIND_READ);
@@ -71,13 +71,13 @@ void FieldEffect_FinishSceneAndReleaseHeapBlock(void) {
 /// every 60 frames sends three particles (object 281) from the target to the
 /// caster, with sound 130.
 void FieldEffect_UpdateMindReadWave(void) {
-  struct WaveFxWork *work = gBattleBgFxWork;
+  struct WaveEffectWork *work = gBattleBgEffectWork;
   u16 *line;
   u32 scanline;
   struct FieldActor *caster;
   struct FieldActor *target;
   struct FieldActor *particle;
-  struct WaveFxSprite *sprite;
+  struct WaveEffectSprite *sprite;
   struct EffectVector from;
   struct EffectVector to;
   struct AnimationMetadata *meta;
@@ -124,7 +124,7 @@ void FieldEffect_UpdateMindReadWave(void) {
       to.z = target->z.fixed;
       particle = (struct FieldActor *)Object_CreateFar(281, to.x, to.y, to.z);
       if (particle != 0) {
-        sprite = (struct WaveFxSprite *)particle->sprite;
+        sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;
         particle->speed = 0xa3d7; // 0.64 pixels a frame
         particle->acceleration = 0xa3d7;
@@ -153,7 +153,7 @@ void FieldEffect_UpdateMindReadWave(void) {
 /// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
 /// scroll for each scanline from the wave's shown page.
 void FieldEffect_ArmBg0HBlankDma(void) {
-  struct WaveFxWork *work = gBattleBgFxWork;
+  struct WaveEffectWork *work = gBattleBgEffectWork;
   if (!work->delay) {
     u16 *line = work->lines[work->page];
     volatile u16 *dma = REG_DMA0;
@@ -169,7 +169,7 @@ void FieldEffect_ArmBg0HBlankDma(void) {
 /// Moves the wave's hue on 4 degrees and works out its colour, each channel
 /// 4 to 11.
 void FieldEffect_AdvanceHueCycle(void) {
-  struct WaveFxWork *work = gBattleBgFxWork;
+  struct WaveEffectWork *work = gBattleBgEffectWork;
   s32 r = 0;
   s32 g = 0;
   s32 b = 0;

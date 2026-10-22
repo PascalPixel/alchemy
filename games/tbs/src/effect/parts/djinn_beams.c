@@ -56,7 +56,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
   s32 i;
   s32 k;
 
-  cursor = gBattleFxWork;
+  cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);

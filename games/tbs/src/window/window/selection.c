@@ -65,7 +65,7 @@ void UiGlyph_ResetWorkState(void) {
   visual->mosaic = 0;
   visual->colors = 1;
   visual->affine = 0;
-  visual->param = 0;
+  visual->matrix = 0;
   visual->size = 1;
   visual->shape = 0;
   visual->priority = 0;
@@ -125,10 +125,10 @@ void SelectionScreen_BuildEntries(u32 unused) {
     SelectionScreen_SetupIcon(kind, base, node, 0);
     if (screen->head == 0) {
       screen->head = node;
-      node->prev = 0;
+      node->previous = 0;
     } else {
       previous->next = node;
-      node->prev = previous;
+      node->previous = previous;
     }
     node->next = 0;
     rowPosition++;
@@ -218,7 +218,7 @@ void SelectionScreen_Draw(void) {
   s32 entryIndex = 0;
   s32 slot;
   s32 axisStep;
-  struct EffectPosition pos;
+  struct EffectPosition position;
 
   node = state->head;
   // Move and queue the visible row before drawing its overlays. An icon
@@ -227,7 +227,7 @@ void SelectionScreen_Draw(void) {
   while (node != 0) {
     sprite = &node->sprite;
     sprite->affine = 0;
-    sprite->param = 0;
+    sprite->matrix = 0;
     sprite->x = node->x;
     sprite->y = node->y;
     slot = 240;
@@ -252,12 +252,12 @@ void SelectionScreen_Draw(void) {
       slot = 241;
       if (cursor->kind != ICON_KIND_NONE) {
         if (BattleMotion_ProjectScaledPositionFar(
-                node->base, EffectPosition_Coordinates(&pos)) != -1) {
-          cursor->targetX = pos.x;
-          cursor->targetY = pos.y;
+                node->base, EffectPosition_Coordinates(&position)) != -1) {
+          cursor->targetX = position.x;
+          cursor->targetY = position.y;
           if (cursor->scale == 0) {
-            cursor->x = pos.x;
-            cursor->y = pos.y;
+            cursor->x = position.x;
+            cursor->y = position.y;
             cursor->scale = 1;
           }
         }
@@ -285,7 +285,7 @@ void SelectionScreen_Draw(void) {
     commandSprite = &transfer->sprite;
     commandSprite->mode = 0;
     commandSprite->affine = 0;
-    commandSprite->param = 0;
+    commandSprite->matrix = 0;
     commandSprite->mosaic = 0;
     commandSprite->colors = 1;
     commandSprite->size = 2;
@@ -302,7 +302,7 @@ void SelectionScreen_Draw(void) {
       state->transform.scaleX = transfer->scale;
       state->transform.scaleY = transfer->scale;
       state->transform.angle = 0;
-      commandSprite->param = AffineMatrix_BuildForEffect(&state->transform);
+      commandSprite->matrix = AffineMatrix_BuildForEffect(&state->transform);
       commandSprite->affine = 3;
       commandSprite->x += 0xfff0;
       commandSprite->y += 0xf0;
@@ -332,13 +332,13 @@ void SelectionScreen_Draw(void) {
       state->transform.scaleX = node->scale;
       state->transform.scaleY = node->scale;
       state->transform.angle = 0;
-      sprite->param = AffineMatrix_BuildForEffect(&state->transform);
+      sprite->matrix = AffineMatrix_BuildForEffect(&state->transform);
       sprite->affine = 3;
       sprite->x += 0xfff8;
       sprite->y += 0xf8;
     } else {
       sprite->affine = 0;
-      sprite->param = 0;
+      sprite->matrix = 0;
     }
     if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
       if (state->records[14].kind == ICON_KIND_COMMAND) {
@@ -591,7 +591,7 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
     arrow->mosaic = 0;
     arrow->colors = 1;
     arrow->affine = 0;
-    arrow->param = 0;
+    arrow->matrix = 0;
     arrow->size = 0;
     arrow->shape = 2;
     arrow->priority = 0;
@@ -1011,7 +1011,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     }
     node->next = last;
     last->next = NULL;
-    last->prev = node;
+    last->previous = node;
     node = screen->head;
     do {
       WaitFrames(1);
@@ -1020,7 +1020,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     Resource_ResetEntry(node->slot);
     node->kind = ICON_KIND_NONE;
     node = node->next;
-    node->prev = NULL;
+    node->previous = NULL;
   } else {
     entryIndex = screen->top;
     base = screen->bases[entryIndex];
@@ -1039,9 +1039,9 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     node->scaleEnd = 256;
     first = node;
     node = screen->head;
-    node->prev = first;
+    node->previous = first;
     first->next = node;
-    first->prev = NULL;
+    first->previous = NULL;
     screen->head = first;
     node = first;
     for (;;) {
@@ -1061,7 +1061,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
       node = node->next;
     Resource_ResetEntry(node->slot);
     node->kind = ICON_KIND_NONE;
-    node->prev->next = NULL;
+    node->previous->next = NULL;
   }
 }
 
@@ -1243,7 +1243,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
     }
   }
   screen->head = node;
-  node->prev = NULL;
+  node->previous = NULL;
   node->next = NULL;
   // The chosen icons line up from x 4, 16 pixels apart; the new one goes
   // after the last, reaching its place over two frames, and its record moves
@@ -1291,11 +1291,11 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
     while (node->next != NULL)
       node = node->next;
     node->next = other;
-    other->prev = node;
+    other->previous = node;
     other->next = NULL;
   } else {
     screen->path = other;
-    other->prev = NULL;
+    other->previous = NULL;
     other->next = NULL;
   }
   return chosenIndex;

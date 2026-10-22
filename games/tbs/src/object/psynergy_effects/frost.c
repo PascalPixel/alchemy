@@ -85,7 +85,7 @@ void FieldEffect_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
 /// The target is the actor in scene->child. With childMode the target is left
 /// as it is and only the particles appear.
 void FieldEffect_RunFrostOnTarget(s32 unused) {
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
   struct FieldActor *target = scene->child;
 
   if (target != 0) {
@@ -113,7 +113,7 @@ void FieldEffect_RunFrost(void) {
   s32 eventTarget;
   struct EffectVector pos;
   struct EffectVector *p;
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct FieldActor *target;
   struct FieldActor *particle;
   void *event;

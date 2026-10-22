@@ -15,7 +15,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   struct ItemBreakFragmentObject *fragment;
   u32 radius;
 
-  liftedObject = ((struct FieldFxScene *)gEffectWork)->child;
+  liftedObject = ((struct FieldEffectScene *)gEffectWork)->child;
   position.x = liftedObject->x.fixed;
   position.y = liftedObject->y.fixed - Random16() * 16 + (24 << 16);
   position.z = liftedObject->z.fixed;
@@ -53,7 +53,7 @@ FieldEffect_CheckRaisedTargetCollision(struct FieldActor *target,
 ///
 /// Where the way is blocked a buzzer sounds.
 void FieldEffect_SteerLiftedTarget(s32 targetId) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
   struct FieldActor *src;
   struct FieldActor *target;
   struct FieldActor *shards[CARRY_SHARD_MAX];

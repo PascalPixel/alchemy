@@ -119,7 +119,7 @@ static void Gate_DrawPropped(void) {
   struct FieldActor *pillar;
 
   pillar = Actor_Get(ACTOR_GATE_PUDDLE);
-  Engine_ActorSetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIM_FROZEN);
+  Engine_ActorSetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
   if (pillar != NULL) {
     Engine_ActorSetSpriteFlags(pillar, 0);
     pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
@@ -1024,10 +1024,10 @@ s32 Scene_Initialize(void) {
       Gate_DrawPropped();
     }
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
-      Engine_ActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
     }
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04) != 0) {
-      Engine_ActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
     }
   }
   return 0;

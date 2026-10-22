@@ -19,8 +19,8 @@ gColosso_WarriorStartZ:
 	.global gColosso_MarkerEndX
 gColosso_MarkerEndX:
 	.space 4
-	.global gColosso_LetteringParam
-gColosso_LetteringParam:
+	.global gColosso_LetteringParameter
+gColosso_LetteringParameter:
 	.space 4
 	.global gColosso_ModeScaleStart
 gColosso_ModeScaleStart:

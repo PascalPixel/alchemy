@@ -779,7 +779,7 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
       do {
         struct AnimationEntry *entry = *entries++;
         if (entry != 0 && entry->script != 0) {
-          entry->param = param;
+          entry->colorMode = param;
         }
         remaining--;
       } while (remaining != 0);
@@ -805,7 +805,7 @@ void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param) {
       do {
         struct AnimationEntry *part = *entry++;
         if (part != NULL && part->script != 0) {
-          part->param = param;
+          part->colorMode = param;
         }
         count--;
       } while (count != 0);
@@ -962,7 +962,8 @@ s32 ObjectTable_ReadActiveValue(s32 actor) {
 #endif
 
   if (entry != 0 && entry->animationKind == OBJECT_SPRITE_ONE)
-    sprite = ((struct AnimationObject *)entry->animation)->entries[0]->animId;
+    sprite =
+        ((struct AnimationObject *)entry->animation)->entries[0]->animationId;
   return sprite;
 }
 
@@ -978,8 +979,9 @@ s32 ObjectTable_FindActiveByValue(s32 sprite) {
   for (index = 8; index <= 65; index++) {
     object = (struct ObjectRuntime *)state->actors[index];
     if (object != 0 && object->animationKind == OBJECT_SPRITE_ONE &&
-        ((struct AnimationObject *)object->animation)->entries[0]->animId ==
-            sprite) {
+        ((struct AnimationObject *)object->animation)
+                ->entries[0]
+                ->animationId == sprite) {
       result = index;
       break;
     }

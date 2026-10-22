@@ -19,7 +19,7 @@
 s32 OwnerAction_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   struct UiWindow *list;
   s32 pageCounts[2];
   s32 selectedPages[2];
@@ -203,7 +203,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   // 0x296 of palette 15 between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
-    UiWork_SetParamNibbleFar(2);
+    UiWork_SetParameterNibbleFar(2);
   }
   UiText_DrawCharacterAtOffsetFar(
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -213,11 +213,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                               DJINN_ELEMENT(menu->pairEntries[0]) +
                                   DJINN_ELEMENT_TILE,
                               5, row, zero = 0);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
     if ((menu->pairEntries[1] & DJINN_ENTRY_IS_SET) == 0) {
-      UiWork_SetParamNibbleFar(2);
+      UiWork_SetParameterNibbleFar(2);
     }
     UiText_DrawCharacterAtOffsetFar(
         DJINN_ELEMENT(menu->pairEntries[1]) * DJINN_PER_ELEMENT +
@@ -226,10 +226,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     UiWindow_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[1]) + DJINN_ELEMENT_TILE, 5, 2, mode);
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   } else if (mode - 2 <= 1) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
-      UiWork_SetParamNibbleFar(2);
+      UiWork_SetParameterNibbleFar(2);
     }
     UiText_DrawCharacterAtOffsetFar(
         DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -238,7 +238,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     UiWindow_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
     UiWindow_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
   }
 
@@ -246,7 +246,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     s32 pressedKeys;
     s32 repeatedKeys;
 
-    render = (struct UiRenderWork *)gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     backdrop = menu->backdrop;
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
@@ -277,10 +277,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         break;
       case 10:
         if (backdrop->tutorialTimer == 60) {
-          struct UiWindow *work;
+          struct UiWindow *window;
 
-          Iwram_CopyWords(saved, render, size);
-          work =
+          Iwram_CopyWords(saved, work, size);
+          window =
               UiText_OpenMessageWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
            * keeps the window copy before it as the ROM does; as a plain
@@ -293,10 +293,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
           while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
           }
-          UiWork_FinalizeFar(work, 1);
-          Iwram_CopyWords(render, saved, size);
+          UiWork_FinalizeFar(window, 1);
+          Iwram_CopyWords(work, saved, size);
           UiWindow_MarkVisibleTileAttributesFar();
-          render->dirty = 1;
+          work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
@@ -310,11 +310,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         break;
       case 11:
         if (backdrop->tutorialTimer == 60) {
-          struct UiWindow *work;
+          struct UiWindow *window;
 
-          Iwram_CopyWords(saved, render, size);
-          work = UiText_OpenMessageWindowFar(MsgDjinnTutorialClassPsynergy, 8,
-                                             0, 1);
+          Iwram_CopyWords(saved, work, size);
+          window = UiText_OpenMessageWindowFar(MsgDjinnTutorialClassPsynergy, 8,
+                                               0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
            * keeps the window copy before it as the ROM does; as a plain
            * statement, 13 of 1045 instructions differ in tbs-en. */
@@ -326,10 +326,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
           while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
           }
-          UiWork_FinalizeFar(work, 1);
-          Iwram_CopyWords(render, saved, size);
+          UiWork_FinalizeFar(window, 1);
+          Iwram_CopyWords(work, saved, size);
           UiWindow_MarkVisibleTileAttributesFar();
-          render->dirty = 1;
+          work->dirty = 1;
           WaitFrames(1);
           redraw = 1;
           backdrop->tutorialTimer = 0;
@@ -366,7 +366,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                                           128, 16);
         }
       }
-      render->menuBusy = 1;
+      work->menuBusy = 1;
       RenderOutput_PrepareForRedrawFar(menu->window);
       RenderOutput_PrepareForRedrawFar(menu->secondWindow);
       if ((redraw >> 1) != 0) {
@@ -409,7 +409,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                                   selectedPages[0] + 1, 1);
         break;
       }
-      render->menuBusy = 0;
+      work->menuBusy = 0;
     }
 
     // The Psynergy list's page numbers on the right window's top border:
@@ -438,7 +438,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                                     list->width - pageCounts[page] - 3, top, 0);
         UiWindow_SetTilemapEntryFar(list, UI_PAGE_ARROW_RIGHT, list->width - 2,
                                     top, 0);
-        UiRender_MarkRow(render, list->y);
+        UiRender_MarkRow(work, list->y);
       }
     }
 
@@ -586,7 +586,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   s32 frame;
   struct UiWindow **leftWindowSlot;
   struct UiWindow **rightWindowSlot;
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   u32 pressedKeys;
   u32 repeatedKeys;
   struct DjinnMenuWork *menu;
@@ -640,11 +640,11 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
                                   16);
   side = 0;
   while (1) {
-    render = (struct UiRenderWork *)gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
     if (redraw) {
-      render->menuBusy = 1;
+      work->menuBusy = 1;
       RenderOutput_PrepareForRedrawFar(menu->window);
       RenderOutput_PrepareForRedrawFar(menu->secondWindow);
       DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], 0, 0,
@@ -652,7 +652,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
       DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[0], 0,
                                 0, DJINN_PREVIEW_NO_CHANGE,
                                 selectedPages[0] + 1, 1);
-      render->menuBusy = 0;
+      work->menuBusy = 0;
     }
     if (counts[side] > 1) {
       window = menu->secondWindow;
@@ -669,7 +669,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
                                   window->width - counts[side] - 3, -1, 0);
       UiWindow_SetTilemapEntryFar(window, UI_PAGE_ARROW_RIGHT,
                                   window->width - 2, -1, 0);
-      UiRender_MarkRow(render, window->y);
+      UiRender_MarkRow(work, window->y);
     }
     // blink is worked out as the preview's step is, and not used; the Djinni
     // figure stays below the screen.

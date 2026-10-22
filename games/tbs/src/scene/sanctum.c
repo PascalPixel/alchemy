@@ -37,8 +37,8 @@
 ///   Great Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART,
 ///   which skips the account (FLAG_SCENE_TEMP_01), or leave by
 ///   SANCTUM_TO_CLEAR to SceneId_Clear. After the party has left Vale
-///   (FLAG_PARTY_LEFT_VALE), and again after it has reached Kalay
-///   (FLAG_REACHED_KALAY), the three talk of what the eruption and the Wise One
+///   (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay
+///   (FLAG_KALAY_REACHED), the three talk of what the eruption and the Wise One
 ///   changed.
 /// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_VAULT_INTERIORS). Its
 ///   healer and the other person there (ACTOR_SANCTUM_MEMBER) miss a gold
@@ -248,9 +248,9 @@ const struct ScenePlacement *Sanctum_GetPlacements(void) {
 
 /// Chooses the events by entrance, and in Vale Sanctum before and after the
 /// quest by story flag: gSanctum_ValeEvents before the party has left Vale,
-/// gSanctum_ValeEventsAfterLeaving once it has (FLAG_PARTY_LEFT_VALE) and
+/// gSanctum_ValeEventsAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
 /// gSanctum_ValeEventsAfterKalay once it has reached Kalay
-/// (FLAG_REACHED_KALAY); gSanctum_QuestEvents for the quest's visits
+/// (FLAG_KALAY_REACHED); gSanctum_QuestEvents for the quest's visits
 /// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED).
 const struct SceneEvent *Sanctum_GetEvents(void) {
@@ -274,10 +274,10 @@ const struct SceneEvent *Sanctum_GetEvents(void) {
     break;
   }
 
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gSanctum_ValeEventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     return gSanctum_ValeEventsAfterLeaving;
   }
   return gSanctum_ValeEvents;
@@ -1559,7 +1559,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
       struct AnimationEntry *entry = sprite->entries[entryIndex];
 
       if (entry != 0 && entry->script != 0) {
-        entry->param = SPRITE_COLOR_RED_TINT;
+        entry->colorMode = SPRITE_COLOR_RED_TINT;
       }
     }
   }
@@ -1985,8 +1985,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(union FieldObject *object) {
-  struct FieldActor *spark = &object->actor;
+static void Sanctum_UpdateRisingSpark(union FieldObject *fieldObject) {
+  struct FieldActor *spark = &fieldObject->actor;
   s32 scale;
   s32 timer;
 
@@ -2076,9 +2076,9 @@ static void Event_TalkToHealer(void) {
   }
 
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     Engine_EventSetMessage(MsgSanctumPathSolSanctumStillClosed);
-  else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+  else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     Engine_EventSetMessage(MsgSanctumMyControlOverPsynergyHas);
   else
     Engine_EventSetMessage(MsgSanctumWieldersPsynergyCalledAdeptsAdepts);
@@ -2179,9 +2179,9 @@ static void Event_TalkAboutJourneyFromXian(void) {
 
 // clang-format off
 u32 gSanctum_LeaderCircleScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(5) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 2),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
     SC_LABEL(1),
     SC_MOVE(PIXELS(204), 0, PIXELS(188)),
     SC_SYNC,
@@ -2200,14 +2200,14 @@ u32 gSanctum_LeaderCircleScript[] = {
     SC_MOVE(PIXELS(192), 0, PIXELS(168)),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 u32 gSanctum_GaretCircleScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(5) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 2),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
     SC_LABEL(1),
     SC_MOVE(PIXELS(204), 0, PIXELS(156)),
     SC_SYNC,
@@ -2226,7 +2226,7 @@ u32 gSanctum_GaretCircleScript[] = {
     SC_MOVE(PIXELS(208), 0, PIXELS(168)),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

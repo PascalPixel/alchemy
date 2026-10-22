@@ -146,7 +146,7 @@ select_again:
   abilityId = enemy->actions[selection];
   request->command = COMMAND_ABILITY;
   if (useItem != 0 && retry != 0) {
-    if (!(ITEM_ID_MASK & unit->inventory[0])) {
+    if (!(INVENTORY_ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
       if (enemy->targetStrategy == STRATEGY_MOST_HP) {
         request->command = COMMAND_ITEM;

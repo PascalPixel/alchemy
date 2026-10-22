@@ -461,7 +461,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 static void TolbiShipMast_RunAvastScene(void) {
   s32 *placement = ((struct MapScrollWork *)gMapWork[0])->origin;
   struct FieldActor *actor;
-  struct EventWork **event;
+  struct EventWork **work;
   s32 x;
   s32 zero = 0;
   s32 scale;
@@ -473,8 +473,8 @@ static void TolbiShipMast_RunAvastScene(void) {
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Actor_SetActionScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  event = (struct EventWork **)(gMapWork + (HEAP_SLOT_EVENT - HEAP_SLOT_MAP));
-  (*event)->startTransition =
+  work = (struct EventWork **)(gMapWork + (HEAP_SLOT_EVENT - HEAP_SLOT_MAP));
+  (*work)->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -539,7 +539,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   Engine_ActorJump(ACTOR_LOOKOUT, 6, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_LOOKOUT, 3);
   Engine_EventShowMessageAndWait(ACTOR_LOOKOUT, 0, 20);
-  (*event)->startTransition =
+  (*work)->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();

@@ -502,9 +502,9 @@ static void ItemLevel_ShowGlyphCaptions(void) {
 /// at it, this sets the effect's childMode, and Force's shot then leaves its
 /// target where it is (object/psynergy_effects/force.c).
 static void ItemLevel_EnableEffectChildMode(void) {
-  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
+  struct FieldEffectScene *scene = (struct FieldEffectScene *)gEffectWork;
 
-  effect->childMode = 1;
+  scene->childMode = 1;
 }
 
 /// Returns the icon browser's status to the event dispatcher. Talking to

@@ -49,7 +49,7 @@ void AffineEffect_UpdateFrame(void) {
   // UB: native pointers traverse scalar link/span fields into adjacent fields
   // and records. Use their real owners under UBFIX. Plain OAM field accesses
   // and indexed scanlines each shrink the EN body from 0x348 to 0x344 bytes.
-  struct ResourceMenuWork *menu;
+  struct ResourceMenuWork *work;
   struct ResourceMenuEntry *entry;
   struct AffineTransform transform;
   s32 pulseScale;
@@ -62,10 +62,10 @@ void AffineEffect_UpdateFrame(void) {
 #ifndef UBFIX
   u16 *spanCursor;
 #endif
-  struct DisplayTransitionState *transition;
+  struct DisplayTransitionState *state;
 
-  menu = gMenuSelectWork;
-  entry = menu->entries;
+  work = gMenuSelectWork;
+  entry = work->entries;
   pulseScale = gUi_BounceScales[(gFrameCount * 2) & 31];
   pulseScale = (pulseScale - 256) / 4 + 304;
   transform.scaleX = pulseScale;
@@ -73,7 +73,7 @@ void AffineEffect_UpdateFrame(void) {
   transform.angle = 0;
   affineIndex = AffineMatrix_BuildForEffect(&transform);
   // Pulse only the selection; the other icons keep their normal OAM shape.
-  for (index = 0; index < menu->count; index++, entry++) {
+  for (index = 0; index < work->count; index++, entry++) {
 #ifndef UBFIX
     u32 *nativeAttributes;
 #endif
@@ -83,7 +83,7 @@ void AffineEffect_UpdateFrame(void) {
     x = entry->x;
     if (x == 0)
       continue;
-    if (index == menu->selection) {
+    if (index == work->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
 
       // On the top row the double-size box starts above the screen: its y
@@ -132,20 +132,20 @@ void AffineEffect_UpdateFrame(void) {
     Runtime_PushSlotEntry(entry, drawLayer);
   }
   // The top and bottom rows reveal opposite sides of the selected icon.
-  if (menu->row == 0) {
+  if (work->row == 0) {
     struct WindowBuffer *page;
 
     s32 halfWidth;
 
-    transition = (struct DisplayTransitionState *)gDisplayTransition;
-    if (transition == 0 || menu->count == 0)
+    state = (struct DisplayTransitionState *)gDisplayTransition;
+    if (state == 0 || work->count == 0)
       return;
-    page = (struct WindowBuffer *)transition->pages[transition->page];
-    packedSpan = menu->entries[menu->selection].x;
+    page = (struct WindowBuffer *)state->pages[state->page];
+    packedSpan = work->entries[work->selection].x;
     halfWidth = (pulseScale * 12 - 2817) / 256;
     packedSpan =
         ((packedSpan - halfWidth) << 8) + (packedSpan + halfWidth) + 23;
-    lastLine = menu->entries[menu->selection].y + 24;
+    lastLine = work->entries[work->selection].y + 24;
     lastLine += (pulseScale * 32 - 7937) / 512 + 1;
 #ifndef UBFIX
     spanCursor = &page->lines[24].span;
@@ -164,8 +164,8 @@ void AffineEffect_UpdateFrame(void) {
 #endif
       } while (index < lastLine);
     }
-    packedSpan = menu->entries[0].x;
-    if (menu->selection == 0)
+    packedSpan = work->entries[0].x;
+    if (work->selection == 0)
       packedSpan -= (pulseScale * 12 - 2817) / 256;
     packedSpan <<= 8;
 #ifndef UBFIX
@@ -187,15 +187,15 @@ void AffineEffect_UpdateFrame(void) {
 
     s32 halfWidth;
 
-    transition = (struct DisplayTransitionState *)gDisplayTransition;
-    if (transition == 0 || menu->count == 0)
+    state = (struct DisplayTransitionState *)gDisplayTransition;
+    if (state == 0 || work->count == 0)
       return;
-    page = (struct WindowBuffer *)transition->pages[transition->page];
-    packedSpan = menu->entries[menu->selection].x;
+    page = (struct WindowBuffer *)state->pages[state->page];
+    packedSpan = work->entries[work->selection].x;
     halfWidth = (pulseScale * 12 - 2817) / 256;
     packedSpan =
         ((packedSpan - halfWidth) << 8) + (packedSpan + halfWidth) + 23;
-    firstLine = menu->entries[menu->selection].y;
+    firstLine = work->entries[work->selection].y;
     firstLine -= (pulseScale * 32 - 7937) / 512 + 1;
 #ifndef UBFIX
     spanCursor = &page->lines[firstLine].span;
@@ -214,8 +214,8 @@ void AffineEffect_UpdateFrame(void) {
 #endif
       } while (index <= 135);
     }
-    packedSpan = menu->entries[0].x;
-    if (menu->selection == 0)
+    packedSpan = work->entries[0].x;
+    if (work->selection == 0)
       packedSpan -= (pulseScale * 12 - 2817) / 256;
     packedSpan <<= 8;
 #ifndef UBFIX
@@ -425,24 +425,24 @@ void Menu_AppendResourceEntry(s32 icon) {
 /// wide and 3 tall, follows them; the centring counts two thirds of the
 /// window's width.
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
-  struct ResourceMenuWork *menu = gMenuSelectWork;
+  struct ResourceMenuWork *work = gMenuSelectWork;
   s32 x;
   s32 i;
   s32 count;
 
-  menu->width = width + 2;
-  menu->resourceBase = resourceBase;
-  menu->row = row;
-  count = menu->count;
-  x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
-  for (i = 0; i < menu->count; i++) {
-    struct ResourceMenuEntry *entry = &menu->entries[i];
+  work->width = width + 2;
+  work->resourceBase = resourceBase;
+  work->row = row;
+  count = work->count;
+  x = 15 - (count * 3 + work->width * 2 / 3) / 2;
+  for (i = 0; i < work->count; i++) {
+    struct ResourceMenuEntry *entry = &work->entries[i];
 
     entry->x = x * 8;
     entry->y = row * 8;
     x += 3;
   }
-  menu->window = UiWindow_Create(x, row, menu->width, 3, 2);
+  work->window = UiWindow_Create(x, row, work->width, 3, 2);
 }
 
 /// Places icons at three-tile intervals from (x, y), then creates their label

@@ -34,24 +34,24 @@ s32 Field_TryJumpForward(void) {
   u8 saved = *flags;
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 spriteFlags = 1;
-  struct FieldPosition position;
-  struct FieldPosition *pos;
+  struct FieldPosition positionStorage;
+  struct FieldPosition *position;
   struct ObjectRuntime *platform;
 
-  pos = &position;
+  position = &positionStorage;
 again:
   // The middle of the tile in front, then of the tile beyond. The tile
   // jumped over may be a wall or a drop, but not ground too high; the landing
   // must be open.
-  SET_POSITION(pos, (leader->x & 0xfff00000) + 0x80000, leader->y,
+  SET_POSITION(position, (leader->x & 0xfff00000) + 0x80000, leader->y,
                (leader->z & 0xfff00000) + 0x80000);
-  Vector_AddPolarOffset(0x100000, angle, pos);
-  if (Map_CheckObjectStepFar(leader, pos) == MAP_STEP_TOO_HIGH)
+  Vector_AddPolarOffset(0x100000, angle, position);
+  if (Map_CheckObjectStepFar(leader, position) == MAP_STEP_TOO_HIGH)
     return -1;
-  SET_POSITION(pos, (leader->x & 0xfff00000) + 0x80000, leader->y,
+  SET_POSITION(position, (leader->x & 0xfff00000) + 0x80000, leader->y,
                (leader->z & 0xfff00000) + 0x80000);
-  Vector_AddPolarOffset(0x200000, angle, pos);
-  if (Map_CheckObjectStepFar(leader, pos) == MAP_STEP_OPEN) {
+  Vector_AddPolarOffset(0x200000, angle, position);
+  if (Map_CheckObjectStepFar(leader, position) == MAP_STEP_OPEN) {
     // Suspend terrain following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
     // motion and sprite flags after landing, before returning field control.
@@ -70,8 +70,8 @@ again:
                                           spriteFlags & 0xfe);
     ObjectMotion_SetPositionAndCommit(
         gGameState.selectedActor,
-        ((union FieldCoordinate *)&pos->x)->part.pixel,
-        ((union FieldCoordinate *)&pos->z)->part.pixel);
+        ((union FieldCoordinate *)&position->x)->part.pixel,
+        ((union FieldCoordinate *)&position->z)->part.pixel);
     ObjectDispatch_SelectAnimationFar(leader, 6);
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
                                           spriteFlags);
@@ -102,7 +102,7 @@ again:
       work->walkingDistance +=
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
     // Landed on another jump spot: stand, then jump again.
-    if (GetMapCellCollisionFar(leader->terrainId, pos->x, pos->z) ==
+    if (GetMapCellCollisionFar(leader->terrainId, position->x, position->z) ==
         MAP_CELL_JUMP_FORWARD_UNREACHED) {
       ObjectDispatch_SelectAnimationFar(leader, 1);
       WaitFrames(6);

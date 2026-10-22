@@ -311,7 +311,7 @@ static void Event_TalkToInnkeeper(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-      Engine_InnOpen(INN_LUNPA, ACTOR_INNKEEPER);
+      Engine_InnOpen(LUNPA_INN, ACTOR_INNKEEPER);
       return;
     }
   }

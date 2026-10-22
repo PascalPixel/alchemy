@@ -48,14 +48,14 @@ enum RetreatParticleState {
 /// screen position (8 pixels lower) in a direction within 1/8 turn of up the
 /// screen, at up to 5 pixels a frame, and starts again from the main object on
 /// arrival until it takes its last flight.
-void FieldEffect_UpdateRadialLaunch(struct EffectSlot *slot) {
+void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
   struct EffectVector pos;
   struct FieldActor *main;
   s32 state;
   u32 spread;
 
-  main = ((struct FieldFxScene *)gEffectWork)->mainObject;
-  state = slot->state;
+  main = ((struct FieldEffectScene *)gEffectWork)->mainObject;
+  state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
     pos.x = main->x.fixed;
@@ -63,33 +63,33 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *slot) {
     pos.z = main->z.fixed;
     Camera_WorldToScreen(&pos);
 
-    slot->x = pos.x;
-    slot->z = pos.z + (8 << 16);
-    slot->originZ = slot->z;
-    slot->originX = slot->x;
-    pos.z = slot->originZ;
-    pos.x = slot->originX;
+    effect->x = pos.x;
+    effect->z = pos.z + (8 << 16);
+    effect->originZ = effect->z;
+    effect->originX = effect->x;
+    pos.z = effect->originZ;
+    pos.x = effect->originX;
 
     spread = Random16();
     Vector_AddPolarOffset(
         120 << 16, ((spread << 13) >> 16) - ((Random16() << 13) >> 16) + 0xc000,
         &pos);
 
-    slot->targetX = pos.x;
-    slot->targetZ = pos.z;
-    slot->acceleration = 5 << 16;
-    slot->maxSpeed = 5 << 16;
-    slot->limitTurnStep = state;
-    slot->state++;
+    effect->targetX = pos.x;
+    effect->targetZ = pos.z;
+    effect->acceleration = 5 << 16;
+    effect->speedMax = 5 << 16;
+    effect->turnStepLimited = state;
+    effect->state++;
 
     if ((gFrameCount & 2) != 0)
       AudioCommand_PlayFar(SE_246);
   } else if (state == RETREAT_PARTICLE_FLYING) {
-    if (EffectSlot_HasPendingTarget(slot) == 0)
-      slot->state--;
+    if (EffectSlot_HasPendingTarget(effect) == 0)
+      effect->state--;
   } else if (state == RETREAT_PARTICLE_LAST_FLIGHT) {
-    if (EffectSlot_HasPendingTarget(slot) == 0)
-      FieldEffect_ClearOwnedSlot(slot);
+    if (EffectSlot_HasPendingTarget(effect) == 0)
+      FieldEffect_ClearOwnedSlot(effect);
   }
 }
 
@@ -106,10 +106,10 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *slot) {
 /// Field_UsePsynergy or Field_UseItem) then leaves the scene. Called by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;
   struct EffectVector pos;
-  struct EffectSlot *slot;
+  struct EffectSlot *effect;
   u8 last;
   u32 i;
 
@@ -143,20 +143,20 @@ void FieldEffect_RunRetreat(void) {
   pos.z = obj->z.fixed;
   Camera_WorldToScreen(&pos);
   i = 0;
-  slot = scene->slots;
+  effect = scene->effects;
   do {
     s32 scale;
-    EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, FieldEffect_UpdateRadialLaunch);
-    EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+    EffectSlot_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
+    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
+    EffectSlot_SetObjectMode(effect, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
-    slot->scaleY = scale;
-    slot->scaleX = scale;
+    effect->scaleY = scale;
+    effect->scaleX = scale;
     i++;
     WaitFrames(1);
-    slot++;
+    effect++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(70);
 
@@ -164,8 +164,8 @@ void FieldEffect_RunRetreat(void) {
   i = 0;
   last = RETREAT_PARTICLE_LAST_FLIGHT;
   do {
-    if (scene->slots[i].active != 0)
-      scene->slots[i].state = last;
+    if (scene->effects[i].active != 0)
+      scene->effects[i].state = last;
     i++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(40);
@@ -279,7 +279,7 @@ struct DescendingArcSprite {
 /// FieldEffect_UpdatePairedArcSpawner, so arc is Avoid's caster.
 void FieldEffect_SpawnDescendingArcParticles(struct FieldActor *arc) {
   struct FieldActor *source = arc;
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
   struct FieldActor *leader = scene->mainObject;
   struct FieldActor *objects[2];
   struct FieldActor *object;

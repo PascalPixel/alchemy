@@ -33,11 +33,11 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 /// work's resourceSlots, which ItemMenu_Run and DjinnMenu_Run free as they
 /// close.
 void Menu_ResetTwoResourceEntries(void) {
-  struct InventoryMenuState *state;
+  struct InventoryMenuState *menu;
 
-  state = gMenuWork;
-  Resource_ResetEntry((u16)state->resourceSlots[0]);
-  Resource_ResetEntry((u16)state->resourceSlots[1]);
+  menu = gMenuWork;
+  Resource_ResetEntry((u16)menu->resourceSlots[0]);
+  Resource_ResetEntry((u16)menu->resourceSlots[1]);
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
@@ -106,7 +106,7 @@ s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
       return -1;
   }
   object->kind = 0;
-  object->animStep = 0;
+  object->animationStep = 0;
   object->active = ICON_SHOWN;
   return 1;
 }
@@ -144,7 +144,7 @@ s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
       return -1;
   }
   object->kind = 0;
-  object->animStep = 0;
+  object->animationStep = 0;
   object->active = ICON_SHOWN;
   return 1;
 }

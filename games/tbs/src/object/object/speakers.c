@@ -8,8 +8,8 @@
 /// gFieldEffect_DefinitionTable, or its last entry, the default, when there is
 /// none. The search stops after 0x82 entries, all but the table's last of its
 /// 131.
-struct FieldFxDefinition *FieldEffect_FindDefinition(u32 id) {
-  struct FieldFxDefinition *entry = gFieldEffect_DefinitionTable;
+struct FieldEffectDefinition *FieldEffect_FindDefinition(u32 id) {
+  struct FieldEffectDefinition *entry = gFieldEffect_DefinitionTable;
   u32 definitionIndex = 0;
 
   if (entry->id != id) {
@@ -28,7 +28,7 @@ struct FieldFxDefinition *FieldEffect_FindDefinition(u32 id) {
 /// actor must exist: a NULL from ObjectTable_Get is read through. Called by
 /// FieldEffect_GetFlags.
 s32 FieldEffect_GetAnimationValue(s32 id) {
-  struct FieldFxSpeakerObject *object = ObjectTable_Get(id);
+  struct FieldEffectSpeakerObject *object = ObjectTable_Get(id);
 
   if (object->kind != 1 || object->animation == NULL ||
       object->animation->value28 == NULL) {

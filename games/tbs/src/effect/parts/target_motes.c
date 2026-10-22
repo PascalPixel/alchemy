@@ -140,7 +140,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
   s32 *row;
   s32 i;
 
-  cursor = gBattleFxWork;
+  cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   // Motes drawn for each target: 16, but 24 for Demon Fire and 32 for Drown.
   count = 16;

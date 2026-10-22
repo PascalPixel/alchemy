@@ -87,7 +87,7 @@ enum HeapSlot {
   HEAP_SLOT_SELECTION_WORKSPACE = 19,
   /// The option screen's work (struct WorkspaceWork, gSelectionWork).
   HEAP_SLOT_OPTIONS = 20,
-  /// Mind Read's wave work (struct WaveFxWork).
+  /// Mind Read's wave work (struct WaveEffectWork).
   HEAP_SLOT_MIND_READ = 22,
   /// A field scene's struct FieldWork, which scenes read as struct EventWork
   /// (gEventWork); Field_RunScene takes it and frees it on the way out.
@@ -121,7 +121,7 @@ enum HeapSlot {
   HEAP_SLOT_FADE_OVERLAY = 36,
   /// The battle message display (struct BattleDisplayWork).
   HEAP_SLOT_BATTLE_DISPLAY = 37,
-  /// The running battle effect's own work (gBattleFxWork). Lucky Dice keeps
+  /// The running battle effect's own work (gBattleEffectWork). Lucky Dice keeps
   /// its own work in this slot and the next two.
   HEAP_SLOT_BATTLE_EFFECT = 39,
   /// The running battle effect's pixel canvas.
@@ -163,12 +163,12 @@ enum HeapSlot {
   /// and the shop; each takes it on opening and releases it on closing. The
   /// save screen takes it for its sprite work (struct ShopRuntime).
   HEAP_SLOT_MENU = 55,
-  /// The Psynergy effect's work (struct FieldFxScene, gEffectWork). A field
+  /// The Psynergy effect's work (struct FieldEffectScene, gEffectWork). A field
   /// Psynergy holds it from FieldEffect_LoadActionEffectResources to
   /// FieldEffect_End, a Djinni's joining from
   /// FieldEffect_InitializeSlots to
   /// FieldEffect_ClearActiveSlotsAndScheduleUpdates.
-  HEAP_SLOT_FX = 56,
+  HEAP_SLOT_EFFECT = 56,
   /// The battle command menus' work (struct BattleMenuWork).
   HEAP_SLOT_BATTLE_COMMANDS = 57,
   /// A command icon menu's work (struct ResourceMenuWork).

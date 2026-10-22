@@ -63,7 +63,7 @@
 	.set import.Engine_EventSetNextDestination, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_FieldFxPlayCueAndStartEmitterOnTarget, 1
+	.set import.Engine_FieldEffectPlayCueAndStartEmitterOnTarget, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_PsynergyCancel, 1
 	.set import.Engine_DjinnJoinParty, 1

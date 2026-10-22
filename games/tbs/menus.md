@@ -9,6 +9,12 @@ sanctums and inns.
 
 ## Windows
 
+A window is a framed rectangle of the one tilemap on `BG0`, opened in a
+slot of the window system's work block and zoomed open and closed a frame at
+a time.
+
+![Ten frames of a message window opening over Vale, left to right and down: a thin bar appears at the top of the screen and grows taller and wider frame by frame to its full size, and then the first letters, `You`, and Garet's sister's portrait follow.](https://alchemy.pascalpixel.com/guides/window/window-open.png)
+
 Every window is a framed rectangle of one tilemap, 32 tiles wide and 20
 tall (`work->tilemap`, copied to `UI_TILEMAP_VRAM`), shown on `BG0`, the
 background in front of the three map layers
@@ -26,8 +32,6 @@ has closed. The zoom is stepped by `UiWork_ProcessDirectWork`, the first
 step of `UiWork_ProcessAll`, the window system's task, which runs once a
 frame while the code that opened the window waits.
 
-![Ten frames of a message window opening over Vale, left to right and down: a thin bar appears at the top of the screen and grows taller and wider frame by frame to its full size, and then the first letters, `You`, and Garet's sister's portrait follow.](https://alchemy.pascalpixel.com/guides/window/window-open.png)
-
 A window's text is drawn in one of three ways, chosen by its flags:
 
 - into the bitmap tiles of the text canvas (`UI_WINDOW_TEXT_CANVAS`, at
@@ -43,11 +47,34 @@ Letters, icons and portraits that ride on a window are its render outputs
 (`struct RenderOutput`), kept in a list per window.
 `UiWork_AnimateSpriteSlots` moves each one every frame by its `UI_SPRITE_`
 motion, and its picture occupies a slot of the sprite VRAM cache until
-`Resource_ResetEntry` frees it. [Windows](src/window/README.md) has the
-work block's layout and the screens built directly from windows: the save
-file menu, name entry and the battle menus.
+`Resource_ResetEntry` frees it.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `HEAP_SLOT_WINDOW` | 15 | the heap slot of the window system's work block |
+| `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese edition, 8 in the others |
+| `UI_WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
+| `UI_WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
+| `UI_OUTPUT_COUNT` | 64 | render outputs at a time |
+
+[Windows](src/window/README.md#windows) has the work block's layout and the
+screens built directly from windows: the save file menu, name entry and the
+battle menus.
 
 ## Messages
+
+A message is decoded whole into a ring of codes and then typed into a window
+by a channel, a few characters a frame.
+
+![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+
+```mermaid
+flowchart LR
+    msg["message symbol<br/>(MsgGameSaved)"] --> decode["UiText_BuildRenderEntries:<br/>Huffman trees, arguments, articles"]
+    decode --> ring["work->entries:<br/>the decoded-text ring"]
+    ring --> channel["UiText_QueueRenderEntries:<br/>one of three channels"]
+    channel --> window["typed into a window<br/>each frame by UiWork_ProcessAll"]
+```
 
 A message is shown in three steps, each done by different code:
 
@@ -78,13 +105,31 @@ A message is shown in three steps, each done by different code:
 A message window sizes and places itself to fit its text on the screen
 (`UiWindow_FitOnScreen`).
 
-![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
-
 The text itself is in the PO catalogs under `games/tbs/text`, one per
 language, and the code names each message by its linker symbol
 (`MsgGameSaved`). XXX: why there are three channels is not known.
 
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `TEXT_WORK_BLOCK` | 50 | the heap slot the tree walker is copied into while a message decodes |
+| `UI_ARGUMENT_SLOT_COUNT` | 8 | message arguments at a time |
+
+[Windows](src/window/README.md#decoding-a-message) goes through decoding,
+[the ring](src/window/README.md#the-decoded-text-ring) and
+[typing](src/window/README.md#typing).
+
 ## Field menu screens
+
+The field menu is a row of icons in the window code that calls one of four
+screens, each an ordinary function with its own command loop.
+
+```mermaid
+flowchart TD
+    icons["Menu_RunTopSelection:<br/>the row of icons"] -->|"far call, MENU.S"| screen["PsynergyMenu_Run, DjinnMenu_Run,<br/>ItemMenu_Run or StatusMenu_Run"]
+    screen -->|"backs out or Start"| icons
+    screen -->|"field Psynergy or item"| request["the field's Psynergy or item request"]
+    request --> field["Field_RunScene hands it<br/>to Field_UsePsynergy"]
+```
 
 The field menu's row of icons is drawn by `Menu_RunTopSelection` in the
 window code. `Menu_SelectTopEntry` leaves out the Djinn icon while the party
@@ -101,6 +146,15 @@ All four screens work in one heap block, `HEAP_SLOT_MENU`
 it through its own struct (`InventoryMenuState`, `PsynergyMenuState`,
 `CharacterMenuState`, `DjinnMenuWork`), takes it as it opens and releases it
 as it closes.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `HEAP_SLOT_MENU` | 55 | the screens' and the counters' work block, `gMenuWork` |
+| `MENU_WORK_SIZE` | `0xa70` (2,672 bytes) | its size |
+| `HEAP_SLOT_MENU_CONTROL` | 6 | the object system's work, whose `suspended` field holds the field still |
+| `FLAG_MENU_START_PRESSED` | `0x150` | Start was pressed: every loop of the screen returns |
+| `FLAG_PALETTE_BLEND_HELD` | `0x152` | the palette blend stops while a screen is open |
+| `FLAG_WEATHER_HELD` | `0x166` | the weather stops while a screen is open |
 
 ### The field behind the menu
 
@@ -150,10 +204,15 @@ code, not the menu's ([Scenes](src/scene/README.md)).
 
 ![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
 
-[Menus](src/menu/README.md) goes through each screen's steps, the status
-panel and the item sort orders.
+[Menus](src/menu/README.md#the-screens) goes through each screen's steps,
+the status panel and the item sort orders.
 
 ## Shops
+
+A counter is a shop, a sanctum or an inn, run by the scene that has one and
+working in the menu's heap block.
+
+![Bilibin's weapon shop, stock row 7, opened twice, each time with its Buy list and its Artifacts list. On a new game no counter is above 0 before Isaac talks to the keeper; the first visit adds 1 to the Witch's Wand's counter, Buy shows the row's five weapons from the Long Sword to the Heavy Mace, and Artifacts shows the Witch's Wand alone for 860 coins. After Vault's weapon shop has been opened, the Magic Rod's counter is already 1 before he talks; the visit adds the Witch's Wand's again, Buy shows the same five weapons, and Artifacts shows the Magic Rod for 380 coins as well as the Witch's Wand.](https://alchemy.pascalpixel.com/guides/shop/shop-counters.png)
 
 A scene opens a shop with `Shop_Run`, passing its stock row and the keeper
 whose portrait the lines show. The stock row is a row of `sStockTable`: up
@@ -191,8 +250,16 @@ party finds one with every bag full, keeps its work in `HEAP_SLOT_MENU` as
 `struct ShopRuntime`, taken by `Shop_InitializeCursorWork` and released by
 `Shop_ReleaseCursorWork`. Scenes reach the counters through their import
 tables, and other banks through the far-call table
-`system/far_call/SHOP.S`. [Shops](src/shop/README.md) has the prices, the
-sanctum's services and the inn.
+`system/far_call/SHOP.S`.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `FLAG_SHOP_ARTIFACTS_STOCKED` | `0x400` | the first of the flags, one a stock row, set on a shop's first visit |
+| `HEAP_SLOT_MENU` | 55 | the counter's work, `struct ShopRuntime` |
+
+[Shops](src/shop/README.md#shops) has the prices,
+[the sanctum's services](src/shop/README.md#sanctums) and
+[the inn](src/shop/README.md#inns).
 
 ## Why the layer is shaped this way
 

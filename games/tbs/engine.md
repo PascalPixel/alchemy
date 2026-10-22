@@ -57,8 +57,11 @@ task does it isn't known.
 `window`, `game` and the rest), each at an address fixed per edition, with
 unused space after it. Each bank begins with a far-call table of 8-byte
 jumps, one for each function another bank calls, and a caller in another bank
-always calls the table entry (`WaitFramesFar` for `WaitFrames`), never the
-function's own address.
+normally calls the table entry (`WaitFramesFar` for `WaitFrames`) rather than
+the function's own address. Not every call does: the auto-battle code
+(`src/battle/battle/auto_battle.c`) calls `WaitFrames` directly. XXX: which
+calls skip the table, and why, isn't known; a count of direct calls between
+banks in the link map would settle how common it is.
 
 Distance isn't the reason: a Thumb `bl` reaches 4 MB either way, and the main
 image is a little over 1.5 MB. The tables let a bank change size within its

@@ -17,18 +17,19 @@ const struct SceneEvent *Scene_GetEvents(void);
 s32 BabiPalace_ApplyEntryState(void);
 extern u16 gBabiPalace_DoorCells[];
 extern s32 gBabiPalace_IndigestionScript[];
-extern struct SceneEntrance gBabiPalace_EntrancesOther[];
-extern struct SceneEntrance gBabiPalace_Entrances2[];
+extern struct SceneEntrance gBabiPalace_Entrances[];
+extern struct SceneEntrance gBabiPalace_OutsideEntrances[];
 extern struct SceneRegion gBabiPalace_Regions[];
 extern u32 gBabiPalace_Exits[];
-extern struct ScenePlacement gBabiPalace_Placements2[];
-extern struct ScenePlacement gBabiPalace_PlacementsOther[];
-extern struct ScenePlacement gBabiPalace_PlacementsColosso[];
+extern struct ScenePlacement gBabiPalace_OutsidePlacements[];
+extern struct ScenePlacement gBabiPalace_PlacementsBabiMissing[];
+extern struct ScenePlacement gBabiPalace_PlacementsFinals[];
 extern struct ScenePlacement gBabiPalace_PlacementsAfterColosso[];
-extern struct SceneEvent gBabiPalace_EventsOther[];
-extern struct SceneEvent gBabiPalace_EventsColosso[];
+extern struct SceneEvent gBabiPalace_EventsBabiMissing[];
+extern struct SceneEvent gBabiPalace_EventsFinals[];
 extern struct SceneEvent gBabiPalace_EventsAfterColosso[];
-extern struct SceneEvent gBabiPalace_Events2[];
-extern struct SceneEvent gBabiPalace_Events2Colosso[];
+extern struct SceneEvent gBabiPalace_OutsideEventsBabiMissing[];
+extern struct SceneEvent gBabiPalace_OutsideEventsFinals[];
+extern struct SceneEvent gBabiPalace_OutsideEventsAfterColosso[];
 
 #endif

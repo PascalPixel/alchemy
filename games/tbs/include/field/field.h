@@ -156,9 +156,6 @@ extern u32 gScanlineAngle;
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 #endif
-/// The events of Babi's palace's second map once FLAG_COLOSSO_OVER is set
-/// (Scene_GetEvents).
-extern struct SceneEvent gBabiPalace_Events2AfterColosso[];
 /// The lighthouse transition's frames, packed (type 01), decoded 0x1000 bytes
 /// after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedFrames[];

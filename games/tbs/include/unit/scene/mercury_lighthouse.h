@@ -20,7 +20,7 @@ extern s32 gEffectScript2[];
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];
-extern s32 gMercuryLighthouse_RiseScript[];
+extern s32 gMercuryLighthouse_RippleScript[];
 extern s32 gMercuryLighthouse_SparkScript[];
 extern s32 gMercuryLighthouse_RampScript[];
 extern s32 gMercuryLighthouse_ScaleCounterScript[];

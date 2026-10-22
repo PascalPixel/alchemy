@@ -283,6 +283,8 @@ enum PsynergyPhase {
 #define USE_ITEM_ON_ACTOR(item) (EVENT_ITEM | EVENT_ITEM_ON_ACTOR | (item) << 8)
 
 #define SEARCH(target) (EVENT_SEARCH | (target) << 4)
+/// A search made while facing the given way, as a counter is searched across.
+#define SEARCH_FACING(facing) (EVENT_SEARCH | EVENT_TOUCH_FACING | (facing))
 
 /// What a search event is on, SEARCH()'s control bits 8..4. Target n shows
 /// message MsgTileChecked + n as the leader checks it, unless the trigger has

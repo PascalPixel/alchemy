@@ -39,7 +39,7 @@
 ///   up. A Psynergy Stone can be found here.
 ///
 /// Every arrival sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
-/// regain PP faster. On the aerie Retreat is blocked, the beacon's flame
+/// regain PP faster. On the aerie Retreat is blocked, the beacon
 /// flickers and sheds sparks by callback
 /// (MercuryLighthouseAerie_FlickerBeacon), and the platforms start 50 pixels
 /// down. Jenna, Kraden, Felix and Menardi are placed only on the first arrival:
@@ -50,6 +50,17 @@
 /// loads this overlay and the same map. The setup does nothing for it, and no
 /// exit, table or code leads there; only the debug scene selector, which
 /// reaches every scene, can.
+///
+/// Open questions:
+/// - XXX (no evidence): what MercuryLighthouseAerie_UnusedAlexCastsPly was
+///   for, Ply cast on the lift's statue; nothing calls it, so neither the ROM
+///   nor a render shows it in a scene.
+/// - XXX: what the songs MUS_029 and MUS_061 are called, which play as Alex
+///   appears and as Saturos and Menardi are confronted; the sound test's
+///   names or the game's credits would let songs.h name them.
+/// - XXX (picture): the platforms dipping under the leader and the lift's
+///   ride, its riders found by height (MercuryLighthouseAerie_FindLiftRiders),
+///   drawn as the scene's sprites over its map.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -84,6 +95,8 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
+#include "io_reg.h"
 #include "ability_ids.h"
 
 /// The aerie's actors. The party and Jenna stand in their own slots. The
@@ -92,7 +105,11 @@
 /// Saturos..."), Menardi (Saturos: "Menardi... Wait!") and Alex (Mia:
 /// "Alex!"). Saturos is fought as ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
 enum MercuryLighthouseAerieActor {
-  ACTOR_BEACON_FLAME = ACTOR_FIRST_PLACED, ///< flickers and sheds sparks
+  /// Flickers between two sizes and sheds sparks while in view
+  /// (MercuryLighthouseAerie_FlickerBeacon).
+  /// ★ Named from what the player sees: the swirling blue ball of light the
+  /// lit beacon shows (spr_244.png)
+  ACTOR_BEACON = ACTOR_FIRST_PLACED,
   /// A statue, drawn as the lighthouse's statues all are, standing on
   /// the lift; it rides up and down with it.
   ACTOR_LIFT_STATUE,
@@ -107,10 +124,10 @@ enum MercuryLighthouseAerieActor {
   /// The two platforms that stand on the lift and go up and down with it.
   /// ★ Named from what the player sees: round white platforms below the lift's
   /// statue (its render)
-  ACTOR_LIFT_PLATFORM_1 = ACTOR_FIRST_PLATFORM + 3,
+  ACTOR_FIRST_LIFT_PLATFORM = ACTOR_FIRST_PLATFORM + 3,
   /// ★ Named from what the player sees: round white platforms below the lift's
   /// statue (its render)
-  ACTOR_LIFT_PLATFORM_2,
+  ACTOR_SECOND_LIFT_PLATFORM,
   /// ★ Named from the game: "Kraden!" (MsgMercuryLighthouseAlreadyLit)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED + 12,
   /// ★ Named from the game: "Felix" (MsgCharacterName)
@@ -132,17 +149,17 @@ enum {
   FLAG_ON_PLATFORM = FLAG_SCENE_TEMP_50,
   /// ★ Named from what the player sees: the lift rising to the aerie with a
   /// statue on it (its render)
-  FLAG_LIFT_UP = FLAG_SCENE_TEMP_00 + 0x51,
+  FLAG_LIFT_UP = FLAG_SCENE_TEMP_51,
   /// Set on every arrival but the first: Jenna, Kraden, Felix and Menardi
   /// are placed only before it.
   /// ★ Named from the game: "leave our hostages"
   /// (MsgMercuryLighthouseAlreadyLit)
-  FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_00 + 0x53
+  FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_53
 };
 
 enum {
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_PSYNERGY_STONE = 0x350
+  FLAG_PSYNERGY_STONE = FLAG_PLACE_TEMP_50
 };
 
 static void MercuryLighthouseAerie_PartyArrives(void);
@@ -206,7 +223,8 @@ s32 MercuryLighthouseAerie_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouseAerie) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-    FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon, 0xc80);
+    FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
+                               TASK_PRIORITY_SCENE);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Engine_ActorSetSpritePriority(GARET, 1);
     Engine_ActorSetSpritePriority(IVAN, 1);
@@ -217,7 +235,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Engine_ActorSetSpritePriority(ACTOR_SATUROS, 1);
     Engine_ActorSetSpritePriority(ACTOR_MENARDI, 1);
     Engine_ActorSetSpritePriority(ACTOR_ALEX, 1);
-    Engine_ActorSetSpritePriority(ACTOR_BEACON_FLAME, 1);
+    Engine_ActorSetSpritePriority(ACTOR_BEACON, 1);
     Engine_ActorSetSpritePriority(ACTOR_LIFT_STATUE, 1);
     Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE, 1);
     Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 1, 1);
@@ -227,7 +245,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
       Engine_ActorSetSpritePriority(i, 1);
       Object_GetById(i)->motionFlags = 4;
       Object_GetById(i)->priorityFlags |= 2;
-      Object_GetById(i)->y.fixed = -0x328000;
+      Object_GetById(i)->y.fixed = -(PIXELS(50) + PIXELS(1) / 2);
     }
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
         (actor = SceneActor_FindNearestFloatingPlatform()) != 0 &&
@@ -242,8 +260,8 @@ s32 MercuryLighthouseAerie_Initialize(void) {
                                0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3),
                                0);
-    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -0x10000;
-    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -0x10000;
+    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
+    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
     if (gGameState.entrance == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
@@ -291,23 +309,23 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Event_PlayCue(SE_141);
-  Map_SetShake(0x50000, 0x50000, 0x10000);
+  Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Event_PlayCue(SE_289);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_MapRenderWaitForValues();
   Engine_EventWait(30);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Camera_SetSpeed(0xcccc, 0x1999);
+  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
   Engine_CameraWaitForMove();
-  ColorBuffer_ApplySource(0x10000, 0);
-  ColorBuffer_ApplyTarget(0x10005, 0);
+  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
   Engine_ColorBufferInterpolate(50);
   Engine_EventWait(50);
-  ColorBuffer_ApplyTarget(0x7fff, 0);
+  ColorBuffer_ApplyTarget(RGB(31, 31, 31), 0);
   Engine_ColorBufferInterpolate(30);
   Engine_EventWait(30);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(504), PIXELS(168));
@@ -319,7 +337,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_ActorSetAnimation(IVAN, 19);
   Engine_ActorSetAnimation(MIA, 19);
   Engine_EventWait(10);
-  ColorBuffer_ApplyTarget(0x10000, 0);
+  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(30);
   Engine_EventWait(30);
   Engine_EventWait(80);
@@ -348,9 +366,9 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  Actor_SetSpeed(MIA, 0xcccc, 0x6666);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   Engine_ActorSetAnimation(IVAN, ANIM_WALK);
   Engine_ActorSetAnimation(MIA, ANIM_WALK);
@@ -425,25 +443,25 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
     actor = Object_GetById(gMercuryLighthouseAerie_PlatformUnderfoot);
     actor->motionFlags = 0;
     leader->motionFlags &= 0xfe;
-    actor->y.fixed -= 0x30000;
-    leader->y.fixed -= 0x30000;
-    leader->terrainHeight -= 0x30000;
+    actor->y.fixed -= PIXELS(3);
+    leader->y.fixed -= PIXELS(3);
+    leader->terrainHeight -= PIXELS(3);
     Engine_TaskWait(2);
-    actor->y.fixed -= 0x20000;
-    leader->y.fixed -= 0x20000;
-    leader->terrainHeight -= 0x20000;
+    actor->y.fixed -= PIXELS(2);
+    leader->y.fixed -= PIXELS(2);
+    leader->terrainHeight -= PIXELS(2);
     Engine_TaskWait(10);
-    actor->y.fixed += 0x20000;
-    leader->y.fixed += 0x20000;
-    leader->terrainHeight += 0x20000;
+    actor->y.fixed += PIXELS(2);
+    leader->y.fixed += PIXELS(2);
+    leader->terrainHeight += PIXELS(2);
     Engine_TaskWait(4);
-    actor->y.fixed += 0x20000;
-    leader->y.fixed += 0x20000;
-    leader->terrainHeight += 0x20000;
+    actor->y.fixed += PIXELS(2);
+    leader->y.fixed += PIXELS(2);
+    leader->terrainHeight += PIXELS(2);
     Engine_TaskWait(4);
-    actor->y.fixed += 0x10000;
-    leader->y.fixed += 0x10000;
-    leader->terrainHeight += 0x10000;
+    actor->y.fixed += PIXELS(1);
+    leader->y.fixed += PIXELS(1);
+    leader->terrainHeight += PIXELS(1);
   }
   Engine_EventEnd();
 }
@@ -455,8 +473,8 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Object_GetById(ACTOR_FIRST_PLATFORM)->motionFlags = 4;
   Object_GetById(ACTOR_FIRST_PLATFORM + 1)->motionFlags = 4;
   Object_GetById(ACTOR_FIRST_PLATFORM + 2)->motionFlags = 4;
-  Object_GetById(ACTOR_LIFT_PLATFORM_1)->motionFlags = 4;
-  Object_GetById(ACTOR_LIFT_PLATFORM_2)->motionFlags = 4;
+  Object_GetById(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
+  Object_GetById(ACTOR_SECOND_LIFT_PLATFORM)->motionFlags = 4;
   Object_GetById(ACTOR_FIRST_PLATFORM + 5)->motionFlags = 4;
 }
 
@@ -470,11 +488,11 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
-  Actor_Get(ACTOR_LIFT_PLATFORM_1)->motionFlags &= 0xfa;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x0000cccc, 0x00006666);
-  Actor_SetSpeed(GARET, 0x0000cccc, 0x00006666);
-  Actor_SetSpeed(IVAN, 0x0000cccc, 0x00006666);
-  Actor_SetSpeed(MIA, 0x0000cccc, 0x00006666);
+  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
@@ -503,13 +521,13 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventWait(50);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
-  Camera_SetSpeed(0x18000, 0x3000);
+  Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Camera_MoveTo(PIXELS(328), PIXELS(40), PIXELS(176), 1);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Actor_SetSpeed(GARET, 0x18000, 0xC000);
+  Actor_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkToAndWait(GARET, 328, 216);
   Engine_CameraWaitForMove();
-  Actor_SetSpeed(GARET, 0x0000cccc, 0x00006666);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_EventWait(60);
   Camera_MoveTo(PIXELS(344), PIXELS(24), PIXELS(232), 1);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
@@ -519,7 +537,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
-  Actor_SetSpeed(MIA, 0x18000, 0xC000);
+  Actor_SetSpeed(MIA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkToAndWait(MIA, 328, 232);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(MIA, 0, 20);
@@ -580,7 +598,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorSetAnimation(MIA, 0x10);
   Event_ShowMessageAndWait(MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetPosition(JENNA, PIXELS(216), PIXELS(200));
   Event_ShowMessageAndWait(JENNA, 0, 20);
   Actor_SetPosition(JENNA, PIXELS(120), PIXELS(160));
@@ -600,7 +618,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(GARET, FACING_WEST, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
-  Camera_SetSpeed(0x30000, 0x6000);
+  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
@@ -637,7 +655,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  Actor_SetSpeed(ACTOR_FELIX, 0x0000cccc, 0x00006666);
+  Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FELIX, 104, 168);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 20);
@@ -653,9 +671,9 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  Camera_SetSpeed(0x18000, 0x3000);
+  Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Camera_MoveTo(PIXELS(232), PIXELS(40), PIXELS(152), 1);
-  Actor_SetSpeed(ACTOR_SATUROS, 0x0000cccc, 0x00006666);
+  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_SATUROS, 272, 128);
   Actor_WalkToAndWait(ACTOR_SATUROS, 264, 152);
   Actor_WalkToAndWait(ACTOR_SATUROS, 280, 168);
@@ -728,7 +746,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Camera_SetSpeed(0x30000, 0x6000);
+  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   Engine_CameraWaitForMove();
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
@@ -772,8 +790,8 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 30);
-  Actor_SetSpeed(JENNA, 0x0000b333, 0x00005999);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x0000b333, 0x00005999);
+  Actor_SetSpeed(JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(7) / 10, PIXELS(7) / 20);
   Actor_WalkTo(JENNA, 128, 144);
   Actor_WalkToAndWait(ACTOR_KRADEN, 120, 136);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
@@ -787,12 +805,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorSetAnimation(ACTOR_MENARDI, 3);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Engine_EventWait(40);
-  Actor_SetSpeed(ACTOR_MENARDI, 0x30000, 0x20000);
-  Actor_Get(ACTOR_MENARDI)->velocityY = 0x40000;
+  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(3), PIXELS(2));
+  Actor_Get(ACTOR_MENARDI)->velocityY = PIXELS(4);
   Event_PlayCue(SE_JUMP);
   Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), 0);
-  Object_GetById(ACTOR_LIFT_PLATFORM_1)->motionFlags = 4;
+  Object_GetById(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
   Engine_ActorMoveToAndWait(ACTOR_MENARDI, 104, 168);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
   Actor_Get(ACTOR_MENARDI)->motionFlags = 3;
@@ -804,11 +822,11 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(JENNA, 0, 20);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 0);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 0);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 1);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 1);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
@@ -821,7 +839,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_SetSpeed(GARET, 0x18000, 0xC000);
+  Actor_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkToAndWait(GARET, 312, 216);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 10);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
@@ -833,7 +851,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_SetSpeed(GARET, 0x20000, 0x10000);
+  Actor_SetSpeed(GARET, PIXELS(2), PIXELS(1));
   Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(GARET, 328, 224);
   Engine_EventWait(1);
@@ -953,11 +971,11 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageAndWait(MIA, 0, 30);
   Event_PlayCue(MUS_029);
-  Camera_SetSpeed(0x0000cccc, 0x00001999);
+  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_EventGetViewCenter()->motionFlags = 0;
   Camera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_ALEX, 0x0000cccc, 0x00006666);
+  Actor_SetSpeed(ACTOR_ALEX, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_ALEX, 344, 136);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH + FACING_STEP, 20);
   Engine_CameraWaitForMove();
@@ -1198,13 +1216,13 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(IVAN, FACING_WEST, 20);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Camera_SetSpeed(0x30000, 0x6000);
+  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   {
     struct MapLayerScroll *lift;
     void **cells;
     Camera_MoveTo(PIXELS(152), -1, PIXELS(216), 1);
     lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-    lift->offsetY = 0x3800000;
+    lift->offsetY = PIXELS(896);
     cells = gMapWork;
     Engine_MapRedraw();
     Engine_TaskWait(1);
@@ -1213,11 +1231,11 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
     Object_GetById(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
     Map_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
-    Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 0);
-    Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 0);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+    Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
     MercuryLighthouseAerie_RaiseLift();
-    Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 1);
-    Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+    Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 20);
@@ -1304,12 +1322,12 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 20);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 0);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 0);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 1);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 1);
-  Event_PlayCue(MUS_017);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Camera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   Engine_CameraWaitForMove();
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
@@ -1327,7 +1345,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
   Engine_ActorSetAnimation(MIA, 0x10);
-  Actor_Get(MIA)->scaleX = -0x10000;
+  Actor_Get(MIA)->scaleX = -Q16_ONE;
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -1337,7 +1355,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_EventWait(20);
   Engine_EventOpenMessage(IVAN, 0);
   Engine_ActorSetAnimation(MIA, ANIM_STAND);
-  Actor_Get(MIA)->scaleX = 0x10000;
+  Actor_Get(MIA)->scaleX = Q16_ONE;
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
@@ -1370,8 +1388,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetSpeed(MIA, 0x0000cccc, 0x00006666);
-  Actor_SetSpeed(GARET, 0x0000cccc, 0x00006666);
+  Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(MIA, 328, 216);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1440,7 +1458,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     struct MapLayerScroll *lift =
         &((struct MapScrollWork *)gMapWork[0])->layers[2];
 
-    lift->offsetY = 0x4000000;
+    lift->offsetY = PIXELS(1024);
   }
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -1457,7 +1475,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
 
   lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
   Engine_EventBegin();
-  lift->offsetY = 0x3800000;
+  lift->offsetY = PIXELS(896);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Object_GetById(ACTOR_LIFT_STATUE)->motionFlags = 0;
@@ -1465,16 +1483,16 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Object_GetById(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
   Object_GetById(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Engine_CameraSetSpeed(0xcccc, 0x1999);
+  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(128), -1, PIXELS(184), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
   Map_CopyCellsTo(29, 74, 4, 74, 5, 4);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 0);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 0);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_RaiseLift();
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 1);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 1);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_LIFT_UP);
   Engine_EventEnd();
@@ -1486,11 +1504,11 @@ static void MercuryLighthouseAerie_CallLift(void) {
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 152);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 60);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_1, 0);
-  Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 0);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventRequestExit(
@@ -1518,21 +1536,21 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   effectOptions = &options;
   effectOptions->priority = 1;
   effectOptions->palette = 5;
-  effectOptions->type = 0x11c;
-  effectOptions->startScaleX = 0x6666;
-  effectOptions->startScaleY = 0x30000;
+  effectOptions->type = SPRITE_PARTICLE;
+  effectOptions->startScaleX = 2 * Q16_ONE / 5;
+  effectOptions->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
     Engine_EventWait(1);
     if (i & 1) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
-      x += -0xc0000;
+      x += -PIXELS(12);
       FieldFx_Spawn(x,
                     left->y.fixed +
                         ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        -0x100000,
-                    left->z.fixed, 0, 0x40000, 0,
+                        -PIXELS(16),
+                    left->z.fixed, 0, PIXELS(4), 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     effectOptions);
@@ -1540,12 +1558,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
-      x += -0xc0000;
+      x += -PIXELS(12);
       FieldFx_Spawn(x,
                     right->y.fixed +
                         ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        -0x100000,
-                    right->z.fixed, 0, 0x40000, 0,
+                        -PIXELS(16),
+                    right->z.fixed, 0, PIXELS(4), 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     effectOptions);
@@ -1573,21 +1591,21 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   effectOptions = &options;
   effectOptions->priority = 1;
   effectOptions->palette = 5;
-  effectOptions->type = 0x11c;
-  effectOptions->startScaleX = 0x6666;
-  effectOptions->startScaleY = 0x30000;
+  effectOptions->type = SPRITE_PARTICLE;
+  effectOptions->startScaleX = 2 * Q16_ONE / 5;
+  effectOptions->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
     Engine_EventWait(1);
     if (i & 1) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
-      x += -0xc0000;
+      x += -PIXELS(12);
       FieldFx_Spawn(x,
                     left->y.fixed +
                         ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        0x200000,
-                    left->z.fixed, 0, -0x40000, 0,
+                        PIXELS(32),
+                    left->z.fixed, 0, -PIXELS(4), 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     effectOptions);
@@ -1595,12 +1613,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
-      x += -0xc0000;
+      x += -PIXELS(12);
       FieldFx_Spawn(x,
                     right->y.fixed +
                         ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                        0x200000,
-                    right->z.fixed, 0, -0x40000, 0,
+                        PIXELS(32),
+                    right->z.fixed, 0, -PIXELS(4), 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     effectOptions);
@@ -1715,7 +1733,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
       speed = 0xccc;
     Engine_TaskWait(1);
   }
-  lift->offsetY = 0x4000000;
+  lift->offsetY = PIXELS(1024);
   Engine_MapRedraw();
   Engine_TaskWait(2);
 }
@@ -1733,25 +1751,26 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   FieldFx_End();
 }
 
-/// A beacon spark's update: it swings round the flame it is linked to, its
+/// A beacon spark's update: it swings round the beacon it is linked to, its
 /// angle (its timer, in 1/65536 turns) stepping back each frame; its speed
 /// holds the swing's radius in pixels, less 28.
 static void
 MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
   struct FieldActor *spark = &fieldObject->actor;
-  struct FieldActor *flame;
+  struct FieldActor *beacon;
   u16 angle;
 
-  flame = spark->linkedObject;
+  beacon = spark->linkedObject;
   angle = spark->timer;
-  spark->x.fixed = flame->x.fixed + Engine_MathCos(angle) * (spark->speed + 28);
-  spark->z.fixed = (Engine_MathSin(angle) << 4) + 0x900000;
+  spark->x.fixed =
+      beacon->x.fixed + Engine_MathCos(angle) * (spark->speed + 28);
+  spark->z.fixed = (Engine_MathSin(angle) << 4) + PIXELS(144);
   spark->targetX = spark->x.fixed;
   spark->targetZ = spark->z.fixed;
   spark->timer -= 0x200;
 }
 
-/// Every frame: while the view is near the top the beacon flame flickers
+/// Every frame: while the view is near the top the beacon flickers
 /// between two sizes, and every 16 frames it throws off a spark that swings
 /// round it.
 static void MercuryLighthouseAerie_FlickerBeacon(void) {
@@ -1764,22 +1783,22 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   s32 tick;
   u32 angle;
 
-  beacon = Object_GetById(ACTOR_BEACON_FLAME);
+  beacon = Object_GetById(ACTOR_BEACON);
   map = gMapWork[0];
   height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
   if (((union FieldCoordinate *)&map->viewY)->part.pixel <= 129) {
     if (gFrameCount & 1) {
-      Engine_ActorSetPosition(ACTOR_BEACON_FLAME, PIXELS(304), PIXELS(144));
-      scale = 0x10000;
-      Object_GetById(ACTOR_BEACON_FLAME)->scaleX = scale;
+      Engine_ActorSetPosition(ACTOR_BEACON, PIXELS(304), PIXELS(144));
+      scale = Q16_ONE;
+      Object_GetById(ACTOR_BEACON)->scaleX = scale;
     } else {
-      Engine_ActorSetPosition(ACTOR_BEACON_FLAME, PIXELS(304), PIXELS(151));
-      scale = 0x14ccc;
-      Object_GetById(ACTOR_BEACON_FLAME)->scaleX = scale;
+      Engine_ActorSetPosition(ACTOR_BEACON, PIXELS(304), PIXELS(151));
+      scale = 13 * Q16_ONE / 10;
+      Object_GetById(ACTOR_BEACON)->scaleX = scale;
     }
-    Object_GetById(ACTOR_BEACON_FLAME)->scaleY = scale;
+    Object_GetById(ACTOR_BEACON)->scaleY = scale;
   } else {
-    Actor_SetPosition(ACTOR_BEACON_FLAME, PIXELS(8), PIXELS(8));
+    Actor_SetPosition(ACTOR_BEACON, PIXELS(8), PIXELS(8));
   }
   if (beacon == NULL) {
     return;
@@ -1788,9 +1807,9 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   if (tick != 0) {
     return;
   }
-  spark = Object_Create(SPRITE_PARTICLE, beacon->x.fixed + 0x80000,
-                        beacon->y.fixed + height + 0x80000, beacon->z.fixed);
-  height = height / 0x60000;
+  spark = Object_Create(SPRITE_PARTICLE, beacon->x.fixed + PIXELS(8),
+                        beacon->y.fixed + height + PIXELS(8), beacon->z.fixed);
+  height = height / PIXELS(6);
   height <<= 16;
   if (spark == NULL) {
     return;
@@ -1861,7 +1880,7 @@ struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { JENNA, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(160), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0xf4, CONDITION_ALWAYS, 7,
+    { SPRITE_MERCURY_BEACON, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(304), PIXELS(40), PIXELS(144), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1873,17 +1892,17 @@ struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
         PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(440), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(472), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(504), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(104), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(136), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(168), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_KRADEN, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(152), FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -1921,8 +1940,8 @@ struct SceneEvent gMercuryLighthouseAerieEvents[] = {
 s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;
 
 s32 gMercuryLighthouseAerie_SparkScript[] = {
-    SC_SET(SW_SCALE_Y, 0x16666),
-    SC_SET(SW_SCALE_X, 0x16666),
+    SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
     SC_ARG(4),
     SC_WAIT(30),
     SC_FREE,

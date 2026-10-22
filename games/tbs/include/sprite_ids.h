@@ -17,6 +17,13 @@ enum SpriteId {
   /// counter, or that a scene draws an item's icon on, as for the Nuts that
   /// Catch takes.
   SPRITE_BLANK = 0x16,
+  /// Rings spreading out, grey in its first animation and blue in its second,
+  /// as Mercury Lighthouse's pools ripple around the leader.
+  /// ★ Named from what the player sees: rings spreading on water
+  /// (spr_024.png)
+  SPRITE_RIPPLE = 0x18,
+  /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
+  SPRITE_LIZARD_MAN = 0xc0,
   /// The soldiers of Babi's Tolbi, and the Colosseum's officials, drawn alike.
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
@@ -49,10 +56,26 @@ enum SpriteId {
   /// ★ Named from what the player sees: a tree stump (its render)
   SPRITE_STUMP = 0xd4,
   SPRITE_DUST_PUFF = 222, ///< a puff of dust kicked up where an actor stands
+  /// ★ Named from what the player sees: a wooden crate (spr_223.png)
+  SPRITE_CRATE = 0xdf,
+  /// ★ Named from what the player sees: a snowman with a red cap and a green
+  /// scarf (spr_234.png)
+  SPRITE_SNOWMAN = 0xea,
   /// The statues of Mercury Lighthouse.
   /// ★ Named from what the player sees: a blue statue of a woman holding a
   /// jar (its render)
   SPRITE_BLUE_STATUE = 0xe0,
+  /// The stone pipe sections Move pushes in Mercury Lighthouse to join its
+  /// channels, and the short upright pipes beside them.
+  /// ★ Named from what the player sees: a stone pipe section lying west to
+  /// east (spr_228.png)
+  SPRITE_PIPE_WEST_EAST = 0xe4,
+  /// ★ Named from what the player sees: a stone pipe section lying north to
+  /// south (spr_229.png)
+  SPRITE_PIPE_NORTH_SOUTH = 0xe5,
+  /// ★ Named from what the player sees: a short capped pipe standing upright
+  /// (spr_230.png)
+  SPRITE_PIPE_STUB = 0xe6,
   /// A puddle of water, which Frost freezes into a pillar of ice.
   /// ★ Named from what the player sees: a puddle of water (its render)
   SPRITE_PUDDLE = 0xe3,
@@ -67,6 +90,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round floating platform (its
   /// render)
   SPRITE_FLOATING_PLATFORM = 0xf2,
+  /// The lit beacon of Mercury Lighthouse.
+  /// ★ Named from what the player sees: a swirling blue ball of light
+  /// (spr_244.png)
+  SPRITE_MERCURY_BEACON = 0xf4,
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH = 0xf6,
@@ -87,6 +114,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: a sparkle of light that shrinks away
   /// (its render)
   SPRITE_SPARKLE = 285,
+  /// ★ Named from what the player sees: a four-pointed glint that shrinks
+  /// to a dot (spr_286.png)
+  SPRITE_GLINT = 286,
   /// The statues that chase the leader in Crossbone Isle, and those of the
   /// Tunnel Ruins and Venus Lighthouse.
   /// ★ Named from what the player sees: a statue of a woman in a long robe

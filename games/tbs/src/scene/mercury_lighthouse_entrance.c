@@ -68,6 +68,21 @@
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST
 /// each have two rows, chosen by whether the channels upstairs run
 /// (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
+///
+/// Open questions:
+/// - XXX: what the sounds are that this floor plays by number (the Lizard
+///   Man's step SE_118, the sparks' SE_246, the flash SE_220, the drop's
+///   SE_204 and SE_188, the passages' arrival SE_170); recordings of the
+///   Lizard Man scene, Ply at the pool and the drop would let songs.h name
+///   them.
+/// - XXX: what the leader's animation 22 shows as he lands from the hole
+///   above; the leader sprite's sheet would settle it.
+/// - XXX (no evidence): what the two unused six-statue entrances
+///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH and _MIDDLE) were
+///   for; no exit or code leads to them, so nothing in the ROM shows them in
+///   use.
+/// - XXX (picture): the pool's cells before and after Ply, the routes the
+///   copied cell attributes open drawn over the room's collision map.
 
 #include "script.h"
 #include "animspr.h"
@@ -138,7 +153,7 @@ enum MercuryLighthouseEntranceActor {
 /// Scene flags, kept while the party stays here.
 enum {
   FLAG_MIA_GOES_IN_SEEN = FLAG_SCENE_TEMP_50,
-  FLAG_DROP_FROM_ABOVE_SEEN = FLAG_SCENE_TEMP_00 + 0x51,
+  FLAG_DROP_FROM_ABOVE_SEEN = FLAG_SCENE_TEMP_51,
   /// The Lizard Man has stepped into the leader's column.
   /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
   FLAG_LIZARD_MAN_STEPPED_ASIDE = FLAG_SCENE_TEMP_05
@@ -190,9 +205,9 @@ MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
 #include "common/mercury_lighthouse_palette_cycle.h"
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching cell code 21
-/// keeps sparkles rising from the leader while there.
-static void MercuryLighthouseEntrance_SparkleAtLeader(void) {
-  MercuryLighthouse_SparkleAtLeader();
+/// keeps blue ripples spreading from the leader while there.
+static void MercuryLighthouseEntrance_RippleAroundLeader(void) {
+  MercuryLighthouse_RippleAroundLeader();
 }
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching cell code 31
@@ -241,7 +256,7 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Engine_EventEnd();
 }
 
-#include "common/mercury_lighthouse_risedrop.h"
+#include "common/mercury_lighthouse_passage.h"
 
 /// Mercury Lighthouse: walking north into cell code 67, a sparkling passage,
 /// leaves by MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_TO_DRY_FOUNTAIN.
@@ -286,15 +301,15 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   struct EffectOptions *effectData;
   struct EffectOptions effectOptions;
 
-  leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / 0x100000;
-  leaderRow = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / 0x100000;
+  leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
+  leaderRow = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
   if (leaderColumn == 12 && leaderRow == 32) {
     Engine_EventBegin();
     // Fade the scene before releasing fifteen sparks above the pool.
-    ColorBuffer_ApplyTarget(0x10000, 0);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(120);
-    ColorBuffer_ApplyTarget(0x10005, 1);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(40);
     sparkIndex = 0;
@@ -303,7 +318,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     do {
       effectData->priority = 1;
       {
-        u16 effectType = 0x11e;
+        u16 effectType = SPRITE_GLINT;
 
         effectData->type = effectType;
       }
@@ -329,7 +344,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                                TASK_PRIORITY_SCENE);
     Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
     Map_CopyCellAttributes(70, 32, 13, 7, 6, 32);
-    ColorBuffer_ApplyTarget(0x10000, 0);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(120);
     Engine_EventEnd();
@@ -362,7 +377,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   leaderX = leader->x.fixed;
-  leaderColumn = leaderX / 0x100000;
+  leaderColumn = leaderX / PIXELS(16);
   Engine_GameFlagSet(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   if (leaderColumn == 7) {
     Actor_SetActionScript(ACTOR_LIZARD_MAN,
@@ -438,9 +453,9 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // Both doorway entrances mirror the east side's statues.
     // Fall through.
   case MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_FROM_GODDESS:
-    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -0x10000;
-    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -0x10000;
-    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -0x10000;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
     Engine_TaskWait(1);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_WEST_WATERFALLS:
@@ -501,23 +516,25 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
                     velocity[1], velocity[2], EFFECT_USE_PALETTE | 1, &options);
     }
     Engine_AudioPlayCue(SE_188);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
-    Map_SetShake(0x50000, 0x50000, 0x10000);
-    Map_SetShake(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     Actor_Get(ACTOR_PARTY_LEADER)->gravity = 0x10000;
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0x4000;
     if (!GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
-      ColorBuffer_ApplySource(0x10000, 0);
-      ColorBuffer_ApplyTarget(0x10003, 1);
+      ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_EventWaitForScreen();
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Engine_EventWait(30);
       UiText_ShowCenteredMessage(MsgMercuryWhoHonorsHeart, 0, 0);
-      ColorBuffer_ApplyTarget(0x10000, 0);
+      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
       Engine_ColorBufferInterpolate(30);
     }
     Engine_EventEnd();
@@ -571,18 +588,18 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 
   Engine_EventBegin();
   actor = Object_GetById(ACTOR_FIRST_EAST_STATUE);
-  actor->scaleX = -0x10000;
+  actor->scaleX = -Q16_ONE;
   actor = Object_GetById(ACTOR_FIRST_EAST_STATUE + 1);
-  actor->scaleX = -0x10000;
+  actor->scaleX = -Q16_ONE;
   actor = Object_GetById(ACTOR_FIRST_EAST_STATUE + 2);
-  actor->scaleX = -0x10000;
+  actor->scaleX = -Q16_ONE;
   Actor_SetPosition(MIA, PIXELS(136), PIXELS(184));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(136), PIXELS(296));
   Actor_SetPosition(ACTOR_LIZARD_MAN, PIXELS(136), PIXELS(152));
-  Actor_SetSpeed(MIA, 0x18000, 0xc000);
-  Actor_SetSpeed(ACTOR_LIZARD_MAN, 0x18000, 0xc000);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Engine_CameraSetSpeed(0xcccc, 0x1999);
+  Actor_SetSpeed(MIA, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_LIZARD_MAN, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(136), -1, PIXELS(184), 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -654,11 +671,11 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
     Engine_EventBegin();
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
-    actor->scaleX = -0x10000;
+    actor->scaleX = -Q16_ONE;
     actor = Object_GetById(ACTOR_FIRST_EAST_STATUE + 1);
-    actor->scaleX = -0x10000;
+    actor->scaleX = -Q16_ONE;
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
-    actor->scaleX = -0x10000;
+    actor->scaleX = -Q16_ONE;
     Actor_SetPosition(MIA, PIXELS(136), PIXELS(144));
     Actor_FaceDirection(MIA, FACING_SOUTH, 10);
     gEventWork->startTransition =
@@ -683,15 +700,15 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
 
 #include "common/mercury_lighthouse_lights.h"
 
-/// Spawns the short-lived rising effect at an actor's position.
-static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
+/// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames.
+static void MercuryLighthouse_SpawnRipple(struct FieldActor *source) {
   struct FieldActor *effect = Engine_ObjectCreate(
-      24, source->x.fixed, source->y.fixed, source->z.fixed);
+      SPRITE_RIPPLE, source->x.fixed, source->y.fixed, source->z.fixed);
 
   if (effect != 0) {
     struct AnimationObject *sprite = (struct AnimationObject *)effect->sprite;
 
-    Engine_ObjectSetScript(effect, gMercuryLighthouseEntrance_RiseScript);
+    Engine_ObjectSetScript(effect, gMercuryLighthouseEntrance_RippleScript);
     effect->motionFlags = 0;
     effect->terrainId = 1;
     effect->priorityFlags = 2;
@@ -746,7 +763,7 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gMercuryLighthouseEntrance_RiseScript[] = {
+s32 gMercuryLighthouseEntrance_RippleScript[] = {
     SC_WAIT(30),
     SC_FREE,
 };
@@ -783,8 +800,8 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {
-    SC_SET(SW_SPEED, 0x20000),
-    SC_SET(SW_ACCEL, 0x20000),
+    SC_SET(SW_SPEED, PIXELS(2)),
+    SC_SET(SW_ACCEL, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
     SC_ARG(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(152)),
@@ -795,8 +812,8 @@ s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepWest[] = {
-    SC_SET(SW_SPEED, 0x20000),
-    SC_SET(SW_ACCEL, 0x20000),
+    SC_SET(SW_SPEED, PIXELS(2)),
+    SC_SET(SW_ACCEL, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
     SC_ARG(2),
     SC_MOVE(PIXELS(120), 0, PIXELS(152)),
@@ -807,8 +824,8 @@ s32 gMercuryLighthouseEntrance_LizardManStepWest[] = {
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepEast[] = {
-    SC_SET(SW_SPEED, 0x20000),
-    SC_SET(SW_ACCEL, 0x20000),
+    SC_SET(SW_SPEED, PIXELS(2)),
+    SC_SET(SW_ACCEL, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
     SC_ARG(2),
     SC_MOVE(PIXELS(152), 0, PIXELS(152)),
@@ -887,23 +904,23 @@ u32 gMercuryLighthouseEntrance_Exits[] = {
 struct ScenePlacement gMercuryLighthouseEntrance_Placements[] = {
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0xc0, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_LIZARD_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, 7,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(88), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, 7,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(88), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, 7,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(88), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, 7,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(184), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, 7,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(184), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, 7,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(200), 0, PIXELS(512), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -911,8 +928,8 @@ struct ScenePlacement gMercuryLighthouseEntrance_Placements[] = {
 struct SceneEvent gMercuryLighthouseEntrance_Events[] = {
     { TOUCH_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
     { EVENT_TOUCH, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_LoseLights) },
-    { 0xa02, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { EVENT_TOUCH, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_SparkleAtLeader) },
+    { TOUCH_WALKING | EVENT_TOUCH_QUICK, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { EVENT_TOUCH, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_RippleAroundLeader) },
     { TOUCH_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
     { EVENT_TOUCH, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_ChargeLights) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReturnToDoorway) },
@@ -954,17 +971,17 @@ struct SceneEvent gMercuryLighthouseEntrance_Events[] = {
 
 /// Each spark pulses in size four times, then is released.
 s32 gMercuryLighthouseEntrance_SparkBurstScript[] = {
-    SC_SET(SW_SCALE_Y, 0x10000),
-    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, Q16_ONE),
     SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 0xa000),
-    SC_SET(SW_SCALE_X, 0xa000),
+    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
     SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 0x4000),
-    SC_SET(SW_SCALE_X, 0x4000),
+    SC_SET(SW_SCALE_Y, Q16_ONE / 4),
+    SC_SET(SW_SCALE_X, Q16_ONE / 4),
     SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 0xa000),
-    SC_SET(SW_SCALE_X, 0xa000),
+    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
     SC_WAIT(6),
     SC_LOOP(4, SC_TOP),
     SC_WAIT(1),

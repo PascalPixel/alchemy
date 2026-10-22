@@ -378,7 +378,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     Engine_AudioPlayCue(SE_241);
     for (i = 0;; i++) {
       if ((i & 15) == 0)
-        OverlayObject_SpawnKind24AtObject(actor);
+        MercuryLighthouse_SpawnRipple(actor);
       if (i > 31 && gKeysPressed != 0)
         break;
       Engine_TaskWait(1);
@@ -389,14 +389,14 @@ void MercuryLighthouse_HopAcrossPool(void) {
     actor->z.fixed = state->targetZ;
     Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   }
-  state->sparkTimer = 0;
+  state->rippleTimer = 0;
   Engine_EventEnd();
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
-/// Touch trigger 21: while the leader stands there, a sparkle rises from them
-/// every 10 to 39 frames.
-void MercuryLighthouse_SparkleAtLeader(void) {
+/// Touch trigger 21: while the leader stands there, a blue ripple spreads from
+/// him every 10 to 39 frames.
+void MercuryLighthouse_RippleAroundLeader(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *point;
 
@@ -404,11 +404,11 @@ void MercuryLighthouse_SparkleAtLeader(void) {
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   point = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
               ->actors[gGameState.selectedActor];
-  if (state->sparkTimer != 0) {
-    state->sparkTimer--;
+  if (state->rippleTimer != 0) {
+    state->rippleTimer--;
   } else {
-    OverlayObject_SpawnKind24AtObject(point);
-    state->sparkTimer = ((u32)(Engine_RandomNext() * 30) >> 16) + 10;
+    MercuryLighthouse_SpawnRipple(point);
+    state->rippleTimer = ((u32)(Engine_RandomNext() * 30) >> 16) + 10;
   }
 }
 

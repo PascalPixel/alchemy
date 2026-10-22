@@ -7,6 +7,6 @@ void MercuryLighthouse_ChargeLights(void);
 
 void MercuryLighthouse_LoseLights(void);
 void MercuryLighthouse_HopAcrossPool(void);
-void MercuryLighthouse_SparkleAtLeader(void);
+void MercuryLighthouse_RippleAroundLeader(void);
 
 #endif

@@ -1100,9 +1100,11 @@
 /// Set as the three thieves attack the party in the loft, before the battle.
 /// ★ Named from the game: "Get 'em!!!" (MsgVaultVaultCutFree)
 #define FLAG_VAULT_THIEVES_ATTACKED 0x854
-/// Set when, back in Vault after the thieves broke out, the mayor or the
-/// villager who spoke with him has warned the party of them.
-/// XXX: no scene here reads it; its reader would say what it gates.
+/// Set when, back in Vault, the party hears that the thieves it caught have
+/// broken out: from the mayor's welcome in his house, or from the old man who
+/// was talking about the party with him. The clear password carries it.
+/// ★ Named from the game: "Those thieves you caught have escaped from jail."
+/// (MsgVaultIsaacYouveComeBackVault)
 #define FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
 /// A wooden box's Nut.
 /// ★ Named from the game: "Nut" (MsgItemName)
@@ -1187,10 +1189,20 @@
 /// Whirlwind has blown the second ivy at Goma Cave Entrance away.
 /// ★ Named from the game: "trapped in the ivy" (MsgGomaNoUsePsynergy)
 #define FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY 0x866
-#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869 ///< after the party caught Forge
+/// Set once the man in Goma Cave who fought Forge has seen it join the party,
+/// cheered and walked off for good; until then he stands by the Djinni.
+/// ★ Named from the game: "When I returned, I saw it again..."
+/// (MsgVaultDidYouSeeSomethingStrangeOver)
+#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869
 
 // Hammet's palace
-#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912 ///< that Hammet is still in Lunpa
+/// Set once the guards have brought Ivan and the party to Lady Layana and she
+/// has sent everyone back to their posts. Until then Hammet Palace's guards
+/// turn the party away at the door; Kalay's scenes set it whenever
+/// FLAG_DODONPA_LOCKED_UP is set.
+/// ★ Named from the game: "I must report this to Lady Layana!"
+/// (MsgKalayLordHammetsPalaceLordAway)
+#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912
 /// Layana has told the party that going into Lunpa is too dangerous.
 /// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
@@ -1201,22 +1213,66 @@
 #define FLAG_HAMMET_BACK_HOME_SEEN 0x914
 /// The Kalay Tunnel, the passage under the palace to Hammet's treasure, is open
 /// to the party: Layana opens it in thanks once Hammet is home, and Kalay's
-/// scenes set it whenever FLAG_DODONPA_LOCKED_UP is set.
+/// scenes set it whenever FLAG_DODONPA_LOCKED_UP is set. The palace's passage
+/// door and the tunnel's way through are drawn open, and its guard turns away.
+/// ★ Named from the game: "Layana ordered the door to the underground path
+/// opened." (MsgHammetPalaceLayanaOrderedTheDoorToThe)
 #define FLAG_KALAY_TUNNEL_OPEN 0x915
 
 // Fuchin Temple and Master Feh's school
-/// Nyunpa is enlightened, beyond words: he has passed away.
+/// Nyunpa has died, enlightened, at Fuchin Temple. Mogall Forest sets it once
+/// he has taught the party Force and the Killer Ape is beaten; from then on he
+/// no longer answers, and the monks grieve.
+/// ★ Named from the game: "Master Nyunpa reached enlightenment during his
+/// lifetime." (MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis)
 #define FLAG_NYUNPA_ENLIGHTENED 0x88f
-/// The visitor from Kolima heard that the bridge is open again.
+/// The young man from Kolima at Fuchin Temple asked whether the bridge is open
+/// again and the party said yes; from then on he skips the question.
+/// ★ Named from the game: "Is the bridge open again?"
+/// (MsgXianHowDidGetHereBridge)
 #define FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN 0x890
-#define FLAG_NYUNPA_TEST_ACCEPTED 0x891 ///< the test of the waterfall grotto
-#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892 ///< the monk stepped aside
-#define FLAG_NYUNPA_TAUGHT_FORCE 0x893        ///< the power the monks call Ki
+/// Isaac has taken Nyunpa's test of the waterfall grotto, and Nyunpa sends him
+/// to the monk beneath the falls, who will let the party in.
+/// ★ Named from the game: "Will you take the test?" (MsgXianFollowThemDoNot)
+#define FLAG_NYUNPA_TEST_ACCEPTED 0x891
+/// The monk beneath the falls at Fuchin Temple has heard of the test, leapt
+/// aside and let the party into the waterfall grotto, Fuchin Falls Cave; he
+/// stands aside on every visit after.
+/// ★ Named from the game: "You will be permitted to enter the grotto."
+/// (MsgXianDoNotWorryWillPermitted)
+#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892
+/// Back from the grotto with the Orb of Force, Isaac has heard Nyunpa name the
+/// power Ki, "force" in the western world, which makes the monsters hiding in
+/// Mogall Forest show themselves. Nyunpa can die enlightened only after this.
+/// ★ Named from the game: "I will teach you, as I promised."
+/// (MsgXianExcellentIsaac)
+#define FLAG_NYUNPA_TAUGHT_FORCE 0x893
+/// Coming out of the grotto with the Orb of Force, Isaac has been asked by the
+/// monk beneath the falls whether he passed, and sent on to Nyunpa; until then
+/// the way back from the grotto stays closed.
+/// ★ Named from the game: "Young master, did you complete the test?"
+/// (MsgXianYoungMasterDidCompleteTest)
 #define FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST 0x894
-/// The Orb of Force's chest in Fuchin Falls has been opened.
+/// The Orb of Force's chest in Fuchin Falls Cave has been opened, the end of
+/// Nyunpa's test. It brings on the monk's question and Nyunpa's lesson, and
+/// ends Garet's warning about falling rocks at Altin Peak.
+/// ★ Named from the game: "Orb of Force" (MsgItemName)
 #define FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND 0xf14
+/// Master Feh, in his school in Xian, has asked to see Isaac's Chi and Isaac
+/// agreed; Feh and his students wait for it. Cleared once Feh sees the tree
+/// fall from the line (FLAG_FEH_SAW_CHI).
+/// ★ Named from the game: "Warrior, let me see your Chi now."
+/// (MsgFuchinTempleWarriorLetMeSeeYourChi)
 #define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
+/// Isaac has twice refused to show Master Feh his Chi. Feh then asks again
+/// whenever he is spoken to, and a yes sets FLAG_FEH_WAITS_TO_SEE_CHI.
+/// ★ Named from the game: "Why won't you show me, warrior?"
+/// (MsgFuchinTempleIWantToSeeTheChi)
 #define FLAG_FEH_CHI_DEMONSTRATION_DECLINED 0x899
+/// Master Feh has watched the tree in his school fall to Force from the line
+/// and seen that it is not Chi but Fuchin's Ki, which releases the mind's
+/// energy as Chi releases the body's. His students' lines and his place in the
+/// school follow it.
 #define FLAG_FEH_SAW_CHI 0x89b
 
 // Crossbone Isle
@@ -1276,11 +1332,21 @@
 // pursuers is after the leader.
 
 // Sol Sanctum
-/// Kraden has found the hall of statues. "This is it! We've found it!"
+/// Kraden has found the heart of Sol Sanctum, the mark of the sun on the floor
+/// of the Luna and Sol rooms, and talked the others into going a little
+/// farther; Retreat is blocked from then on.
+/// ★ Named from the game: "This is it! We've found it!" (MsgSolSanctumFound)
 #define FLAG_SOL_SANCTUM_FOUND 0x809
-/// Kraden has seen the Luna and Sol rooms and asked the party to search on.
+/// Kraden has found the picture of Luna, wondered how the rooms of Luna and Sol
+/// are connected and asked Isaac to look farther up the passage; he waits by
+/// the picture from then on.
+/// ★ Named from the game: "Luna and Sol." (MsgSolSanctumLunaSolRooms)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN 0x80a
-/// A statue stands on its seal and the seal's light shines.
+/// The northwest statue in the statue room stands on its seal, and its quarter
+/// of the pictures in the Luna and Sol rooms is lit; the first of four flags.
+/// Springing the trap clears all four.
+/// ★ Named from what the player sees: the statue pushed onto its square
+/// shines a beam of light across the room (its render)
 #define FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN 0x80b
 /// As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the northeast statue.
 /// ★ Named from what the player sees: the statue pushed onto its square
@@ -1298,19 +1364,31 @@
 /// ★ Named from what the player sees: all four quarters of the pictures in
 /// the Luna and Sol rooms lit (its render)
 #define FLAG_SOL_SANCTUM_ALL_SEALS_OPEN 0x80f
-/// Kraden has seen the picture of Luna change to Sol.
+/// With all four seals open, Kraden has seen the picture of Luna change to Sol
+/// and guessed that something else must have changed too.
+/// ★ Named from the game: "The picture of Luna changed to Sol!"
+/// (MsgSolSanctumThePictureOfLunaChanged)
 #define FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED 0x810
-/// Kraden has seen the symbol on the floor change.
+/// Kraden has seen the symbol on the floor change from Sol to Luna; searching
+/// it then opens the way up to the Elemental Star Room.
+/// ★ Named from the game: "Look! The symbol on the floor!"
+/// (MsgSolSanctumLookSymbolFloor)
 #define FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN 0x811
-/// The statues' lights have flashed and fallen through the Luna room.
+/// The trap has sprung: the first statue set before the trap was disarmed
+/// flashed its light, lights fell through the Luna room, Kraden cried out, and
+/// every seal closed again. After that a seal opened too soon closes at once.
+/// ★ Named from what the player sees: lights falling through the Luna room
+/// around Kraden as the trap springs (its render)
 #define FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN 0x812
 /// The statues' lights have flashed as Kraden stood among them, after the
 /// trap was disarmed, and he has run off to see.
 /// ★ Named from the game: "must have found something!"
 /// (MsgSolSanctumWhatsHappeningAtTheTrap)
 #define FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING 0x813
-/// The volcano has erupted and the sanctum's rooms rumble and shake. The
-/// volcano is Mt. Aleph.
+/// The volcano has erupted, as the Wise One sends Isaac and Garet out of the
+/// collapsing Elemental Star Room. Mt. Aleph is the volcano: from then on
+/// every room of Sol Sanctum rumbles and shakes, and the field music changes.
+/// ★ Named from the game: "It's erupting..." (MsgSolSanctumReturnStarToBag)
 #define FLAG_SOL_SANCTUM_ERUPTED 0x814
 /// The statues beside the hall's centre shine their beams.
 /// ★ Named from the game: "two beams of light shot out from them"
@@ -1320,8 +1398,15 @@
 /// ★ Named from the game: "two beams of light shot out from them"
 /// (MsgSolSanctumKradenYouFoundIt)
 #define FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING 0x817
+/// With both beams shining, the center statue has slid into the hole that
+/// opened before it, disarming the trap; from then on the seals stay open.
+/// ★ Named from the game: "And dropped the statue into it after that."
+/// (MsgSolSanctumKradenYouFoundIt)
 #define FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED 0x818
-/// The floor has opened over the way up to the Elemental Star room.
+/// The floor at the symbol in the Luna and Sol rooms has opened, and Isaac,
+/// then Kraden, have risen through it to the Elemental Star Room.
+/// ★ Named from what the player sees: the floor at the symbol opening on the
+/// way up to the Elemental Star Room (its render)
 #define FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN 0x819
 /// Kraden has praised Isaac after the seals' lights flashed.
 /// ★ Named from the game: "You found it" (MsgSolSanctumYouFoundIt)
@@ -1346,38 +1431,82 @@
 /// ★ Named from what the player sees: a quarter of each picture in the Luna
 /// and Sol rooms lit for each statue in place (its render)
 #define FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN 0x829
+/// On the first arrival in the Elemental Star Room, Kraden has explained the
+/// four elements and their stars and given out the Mythril Bags.
+/// ★ Named from the game: "Legend holds that the four Elemental Stars contain
+/// the purified essence of each element."
+/// (MsgSolSanctumKradenTheElementsAreThe)
 #define FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED 0x83b
+/// Isaac has put the Venus Star in a Mythril Bag, opening new crossings between
+/// the pedestals.
+/// ★ Named from the game: "put the Venus Star in a Mythril Bag."
+/// (MsgSolSanctumVenusStarBagged)
 #define FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED 0x83c
+/// As FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, for the Mercury Star.
+/// ★ Named from the game: "put the Mercury Star in a Mythril Bag."
+/// (MsgSolSanctumPutMercuryStar)
 #define FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED 0x83d
-/// The Jupiter Star is bagged and Alex holds the four Elemental Stars.
+/// The Jupiter Star is bagged, Saturos and Menardi hold Jenna and Kraden, and
+/// Garet has handed Alex three Elemental Stars; Alex demands the Mars Star too.
+/// The captors stand round their hostages on every visit after.
+/// ★ Named from the game: "handed over the Elemental Stars."
+/// (MsgSolSanctumGuessTakeElemental)
 #define FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX 0x83e
+/// With the Mars Star taken, the Elemental Star Room has collapsed and the Wise
+/// One has sent Isaac and Garet out; set with FLAG_SOL_SANCTUM_ERUPTED, it ends
+/// the search of the Mars Star's pedestal.
+/// ★ Named from the game: "this chamber is collapsing."
+/// (MsgSolSanctumReturnStarToBag)
 #define FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED 0x83f
-/// Isaac agreed to look farther on while Kraden studies the rooms.
+/// Isaac agreed to look farther up the passage while Kraden studies the rooms;
+/// spoken to, Kraden then asks to hear what he finds.
+/// ★ Named from the game: "would you look farther up the passage?"
+/// (MsgSolSanctumMeanLookFarther)
 #define FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN 0x896
 /// The chests: the Small Jewel for each minotaur relief, and a Herb.
 /// ★ Named from the game: "Small Jewel" (MsgItemName)
 #define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND 0xf01
+/// The chest in Sol Sanctum's maze room holds the second Small Jewel, which
+/// fills the second minotaur relief's empty eye.
+/// ★ Named from the game: "Small Jewel" (MsgItemName)
 #define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND 0xf02
 /// The Luna and Sol rooms' chest.
 /// ★ Named from the game: "Herb" (MsgItemName)
 #define FLAG_SOL_SANCTUM_HERB_FOUND 0xf40
 
 // Sanctum
-/// Isaac accepted the Great Healer's request to go to Sol Sanctum.
+/// After the eruption, Isaac has accepted the Great Healer's request in Vale's
+/// Sanctum to recover the Elemental Stars, and the Wise One's guidance sends
+/// him and Garet off the next day. Vale's field music changes with it.
+/// ★ Named from the game: "will you accept responsibility for the fate of the
+/// land?" (MsgSanctumIsaacWillAcceptResponsibilityFor)
 #define FLAG_SANCTUM_QUEST_ACCEPTED 0x9f0
 
 // Venus Lighthouse
-/// The man at the entrance has told of the attack and is gone.
+/// The wounded soldier at Venus Lighthouse Entry has told of the attack,
+/// flickered and vanished; he is gone on every visit after.
+/// ★ Named from the game: "attacked by strange... wanderers..."
+/// (MsgFieldVenusLighthouseWasAttackedBy)
 #define FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD 0x981
-/// The path the statue opened: the first or the second of its two.
+/// The statue on Venus Lighthouse's ground floor has opened the first of its
+/// two paths. One of this and FLAG_VENUS_LIGHTHOUSE_SECOND_PATH is set once the
+/// statue has spoken, and each search switches them; the Tunnel Ruins under
+/// Babi Lighthouse redraw their rooms to match.
+/// ★ Named from the game: "The path long closed"
+/// (MsgVenusStatueSpeaksIsaacSoulYe)
 #define FLAG_VENUS_LIGHTHOUSE_FIRST_PATH 0x982
 /// As FLAG_VENUS_LIGHTHOUSE_FIRST_PATH, the statue's other path.
 /// ★ Named from the game: "The path long closed"
 /// (MsgVenusStatueSpeaksIsaacSoulYe)
 #define FLAG_VENUS_LIGHTHOUSE_SECOND_PATH 0x983
-/// Garet has said the block by the wall can go no farther.
+/// Move has pushed the pillar on Venus Lighthouse's ground floor up to the
+/// wall, and Garet has said they can push it no farther but might carry it.
+/// ★ Named from what the player sees: a grey pillar carved with spirals,
+/// pushed up against the wall (its render)
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL 0x986
-/// Carry has set that block down beyond the wall.
+/// Carry has set that pillar down beyond the wall, where it stays.
+/// ★ Named from what the player sees: the grey pillar carved with spirals,
+/// set down on the floor beyond the wall (its render)
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED 0x987
 
 // World map

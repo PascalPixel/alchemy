@@ -145,13 +145,15 @@ enum ActorBehavior {
 };
 
 /// How a placed actor turns when the leader talks to it (Scene_TalkToActor).
-/// With 0, 1 or 3 the leader stops and the two are linked; 3, unnamed, makes
-/// the actor follow the leader once the talk is over.
+/// With all but TALK_KEEP_FACING the leader stops and the two are linked.
 enum ActorTalkFacing {
   TALK_FACE_PARTY = 0,
   /// Faces the party, then turns back to its old heading.
   TALK_FACE_PARTY_AND_BACK = 1,
-  TALK_KEEP_FACING = 2
+  TALK_KEEP_FACING = 2,
+  /// Faces the party, then keeps turning to face the leader once the talk is
+  /// over (gObjectMotion_LinkedActionScript).
+  TALK_FACE_PARTY_THEN_WATCH = 3
 };
 
 /// ScenePlacement.flags: the actor takes the previous actor's sprite
@@ -238,7 +240,7 @@ enum ExitStyle {
 /// When a Psynergy event runs around its effect, control bits 30..28.
 enum PsynergyPhase {
   /// After the effect (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase. With
-  /// trigger bit 0x400 the event plays the effect itself.
+  /// PSYNERGY_SCRIPT_PLAYS_EFFECT the event plays the effect itself.
   PSYNERGY_PHASE_AFTER_CAST = 0,
   PSYNERGY_PHASE_BEFORE_CAST = 1, ///< once the PP is paid, before the effect
   /// After a Psynergy that runs out by itself has ended:
@@ -265,6 +267,10 @@ enum PsynergyPhase {
 #define EVENT_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability)                                             \
   (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
+/// A bit of an after-cast Psynergy event's trigger, beside the actor's number:
+/// Field_UsePsynergy then clears FLAG_PSYNERGY_EFFECT and plays no effect of
+/// its own, leaving it to the event's script.
+#define PSYNERGY_SCRIPT_PLAYS_EFFECT 0x400
 /// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
 /// is for an area.
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \

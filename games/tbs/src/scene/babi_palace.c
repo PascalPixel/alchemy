@@ -446,11 +446,11 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   Engine_EventOpenMessage(actorId, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
-    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | 2, 0x28);
+    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
     Engine_EventSetMessage(question + 1);
   } else {
     Engine_EventWait(10);
-    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | 5, 0x28);
+    Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
     Engine_EventSetMessage(question + 2);
   }
   Engine_EventShowMessage(actorId, 0);
@@ -478,7 +478,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_Wait(60);
   Event_ShowMessage(actorId, 0);
   Event_Wait(20);
-  Actor_ShowEmote(actorId, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(actorId, 2);
   Event_Wait(30);
   Actor_RunRepeatedMotion(actorId, 2);
@@ -506,7 +506,7 @@ static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
     GameFlag_Set(FLAG_SHEBA_NOTICED_MIND_READ);
     Psynergy_Cancel();
     Event_Wait(50);
-    Actor_ShowEmote(actorId, EMOTE_IN_FRONT, 70);
+    Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
     Actor_FaceActor(actorId, ACTOR_PARTY_LEADER, 40);
     Event_ShowMessage(actorId, 0);
     Event_Wait(30);
@@ -616,17 +616,17 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_Wait(30);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_Wait(20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 6, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
@@ -899,7 +899,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_WalkToAndWait(ACTOR_IODEM, 584, 360);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_IODEM, 32768, 0);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 131072, 65536);
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 131072, 65536);
@@ -923,18 +923,18 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 65536, 32768);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 8, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 65536, 32768);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 8, 0);
   Event_Wait(20);
@@ -956,13 +956,13 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
@@ -976,7 +976,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, 22, 60);
@@ -988,7 +988,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
@@ -1001,13 +1001,13 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -1019,7 +1019,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
   Event_Wait(20);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
@@ -1037,7 +1037,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
@@ -1048,13 +1048,13 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -1100,7 +1100,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
@@ -1195,12 +1195,12 @@ static void BabiPalace_WakeAfterFinals(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   event->transitionFrames = 24;
   Event_Wait(20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 50);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 40);
   Actor_RunRepeatedMotion(GARET, 2);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   Event_Wait(30);
   Event_ShowMessage(IVAN, 0);
@@ -1230,14 +1230,14 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(20);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 50);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Event_OpenMessage(IVAN, 0);
   if (Event_ChooseYesNo(-1, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(GARET, 4, 13);
     Actor_Jump(GARET, 4, 30);
     Event_ShowMessage(GARET, 0);
@@ -1246,7 +1246,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(GARET, 4, 13);
     Actor_Jump(GARET, 4, 30);
     gEventWork->message++;
@@ -1272,7 +1272,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(50);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   Event_Wait(35);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 8, 50);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(MIA, ANIM_NOD);
   Event_Wait(30);
@@ -1285,7 +1285,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     Event_ShowMessage(GARET, 0);
     pick = 0;
     gEventWork->message++;
@@ -1293,7 +1293,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     gEventWork->message++;
     pick = 1;
     Event_ShowMessage(GARET, 0);
@@ -1318,7 +1318,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(50);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   Event_Wait(35);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 8, 50);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(MIA, ANIM_NOD);
   Event_Wait(30);
@@ -1345,7 +1345,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_ShowMessage(GARET, 0);
   }
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_Wait(10);
   Actor_SetAnimationAndWait(GARET, ANIM_NOD);
   Event_Wait(30);
@@ -1596,7 +1596,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceActor(IVAN, GARET, 30);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 6, 50);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
@@ -1626,7 +1626,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -1647,7 +1647,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   }
 
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1660,14 +1660,14 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -1686,10 +1686,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 50);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -1713,10 +1713,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(40);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_BABI, IVAN, 40);
@@ -1772,7 +1772,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -1788,13 +1788,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 70);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -1811,7 +1811,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1826,7 +1826,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1876,10 +1876,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(30);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_BABI, 20, 40);
@@ -1901,7 +1901,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -1912,10 +1912,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(30);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -1935,7 +1935,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1952,7 +1952,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1979,16 +1979,16 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 50);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_BABI, 20, 30);
@@ -2008,7 +2008,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -2017,7 +2017,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -2030,7 +2030,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2039,13 +2039,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(GARET, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(GARET, ACTOR_PARTY_LEADER, 50);
@@ -2057,23 +2057,23 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_OpenMessage(IVAN, 0);
   if (Event_ChooseYesNo(ACTOR_BABI, 0) == 0) {
     Event_Wait(10);
@@ -2140,7 +2140,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_OpenMessage(ACTOR_IODEM, 0);
   if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_ShowMessage(GARET, 0);
     gEventWork->message++;
   } else {
@@ -2154,7 +2154,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2163,12 +2163,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
@@ -2185,8 +2185,8 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 80);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 70);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
@@ -2199,7 +2199,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 6, 50);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -2207,16 +2207,16 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | 8, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_OpenMessage(ACTOR_BABI, 0);
   if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
-    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Event_ShowMessage(ACTOR_BABI, 0);
     gEventWork->message++;
   } else {
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+    Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     gEventWork->message++;
     Event_ShowMessage(ACTOR_BABI, 0);
   }
@@ -2234,12 +2234,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -2426,7 +2426,7 @@ static void BabiPalace_PassOnBabisWord(void) {
     Actor_FaceEachOther(ACTOR_FIRST_GUARD, ACTOR_SECOND_GUARD, 30);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUARD, ANIM_NOD);
     Event_Wait(30);
-    Actor_ShowEmote(ACTOR_FIRST_GUARD, EMOTE_IN_FRONT | 2, 50);
+    Actor_ShowEmote(ACTOR_FIRST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Actor_FaceDirection(ACTOR_FIRST_GUARD, 20480, 0);
     Actor_FaceDirection(ACTOR_SECOND_GUARD, 12288, 0);
     Event_Wait(20);

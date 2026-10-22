@@ -419,7 +419,7 @@ static void Imil_TalkToOldMan(void) {
       Engine_EventSetMessage(MsgMercuryOoohHelpMe);
       Engine_EventShowMessage(ACTOR_OLD_MAN, 0);
       Engine_ActorStop(ACTOR_OLD_WOMAN);
-      Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT, 40);
+      Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
       Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_NORTH + FACING_STEP, 10);
       Engine_ActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
       Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 20);
@@ -954,10 +954,10 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
 
   // Play the healing effect, then let the old man respond.
   Imil_MiaCastsPlyOnOldMan();
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(MIA, 0, 40);
   Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
-  Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimation(ACTOR_OLD_MAN, 7);
   Map_AnimateCells(gImil_CellStepsA, 10, 69);
   Engine_EventWait(10);
@@ -974,7 +974,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_FaceDirection(ACTOR_OLD_WOMAN, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 10);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 30);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(MIA, FACING_WEST, 10);
   Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 10);
@@ -990,7 +990,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   }
   Camera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
   Object_RefreshSelectorById(MIA);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_ShowMessageAndWait(MIA, 0, 40);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Engine_EventWait(10);
@@ -1019,7 +1019,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(MIA, 0, 40);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 0, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(MIA, 0);
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(GARET);
@@ -1370,9 +1370,9 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(60);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 5, 60);
-  Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_APPRENTICE, 1);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
@@ -1422,14 +1422,14 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 80);
-  Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Engine_ActorSetAnimation(ACTOR_SECOND_APPRENTICE, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            20);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 60);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);

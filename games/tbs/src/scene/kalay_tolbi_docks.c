@@ -626,14 +626,15 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
     Engine_EventEnd();
   } else {
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_WAITING_DAUGHTER, EMOTE_IN_FRONT, 50);
+    Actor_ShowEmote(ACTOR_WAITING_DAUGHTER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                    50);
     Actor_FaceActor(ACTOR_WAITING_DAUGHTER, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgKalaySilkRoadBlocked);
     Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) != 0) {
       Engine_EventWait(20);
-      Actor_ShowEmote(ACTOR_WAITING_DAUGHTER, 0x102, 40);
+      Actor_ShowEmote(ACTOR_WAITING_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
       Event_OpenMessage(ACTOR_WAITING_DAUGHTER, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
@@ -845,7 +846,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Camera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, EMOTE_IN_FRONT, 50);
+  Actor_ShowEmote(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_SetSpeed(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0x13333, 0x9999);
   Actor_WalkToAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 264, 1424);
   Actor_FaceDirection(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_WEST, 0);
@@ -858,7 +860,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_EventWait(10);
   Event_ShowMessage(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_EventWait(30);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Engine_EventWait(50);
@@ -928,10 +930,10 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | 7, 50);
+  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 4, 13);
   Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 4, 30);
@@ -945,7 +947,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_TOUR_GUIDE, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | 3, 55);
+  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 55);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x20000, 0x10000);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 16, 0);
   Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 7, 0);
@@ -974,7 +976,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | 2, 70);
+  Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTH + FACING_STEP, 0);
@@ -997,7 +999,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTHEAST, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
@@ -1023,7 +1025,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_WEST, 0);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0xcccc, 0x6666);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -8, 0);
@@ -1067,7 +1069,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_PlayCue(SE_159);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | 2, 50);
+  Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetSpeed(ACTOR_STRANDED_WOMAN, 0x18000, 0xc000);
   Actor_WalkByAndWait(ACTOR_STRANDED_WOMAN, 24, 0);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTH, 0);

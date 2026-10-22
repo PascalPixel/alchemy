@@ -293,15 +293,15 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceActorAndWait(2, 0x2000, 40);
   KolimaForestEntrance_FaceActorAndWait(2, 0x8000, 20);
   KolimaForestEntrance_FaceActorAndWait(2, 0x4000, 40);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(60);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   KolimaForestEntrance_FaceActorAndWait(0, 0x6000, 60);
   KolimaForestEntrance_FaceActorAndWait(3, 0x2000, 10);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   KolimaForestEntrance_FaceActorAndWait(0, 0xa000, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(40);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   KolimaForestEntrance_FaceActorAndWait(0, 0x6000, 10);
@@ -319,7 +319,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceActorAndWait(1, 0x6000, 20);
   KolimaForestEntrance_FaceActorAndWait(0, 0xe000, 30);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_EventWait(40);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   KolimaForestEntrance_FaceActorAndWait(0, 0x6000, 20);
@@ -347,7 +347,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_ShowMessageAndWait(IVAN, 40);
   if (gKolimaForestEntrance_MiaInParty != 0) {
     Engine_EventWait(40);
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Engine_EventWait(40);
     KolimaForestEntrance_ShowMessageAndWait(MIA, 40);
   } else {
@@ -407,10 +407,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_PlayCue(MUS_021);
   KolimaForestEntrance_ShowMessageAndWait(GARET, 80);
   KolimaForestEntrance_ShowMessageAndWait(IVAN, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   KolimaForestEntrance_ShowMessageAndWait(IVAN, 20);
   gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
@@ -428,10 +428,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(MIA, 2);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   KolimaForestEntrance_ShowMessageAndWait(GARET, 20);
   if (gKolimaForestEntrance_MiaInParty != 0) {
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     KolimaForestEntrance_ShowMessageAndWait(MIA, 10);
   } else {
     gEventWork->message += 1;
@@ -515,7 +515,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     KolimaForestEntrance_ShowMessageAndWait(MIA, 40);
   }
   Engine_ActorStartRepeatedMotion(GARET, 1);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventSetMessage(MsgKolimaWasOurPsynergy);
@@ -535,7 +535,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_ShowMessageAndWait(GARET, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
   KolimaForestEntrance_FaceActorAndWait(1, 0x2000, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(40);
   KolimaForestEntrance_FaceActorAndWait(1, 0x6000, 40);
   KolimaForestEntrance_FaceActorAndWait(1, 0x2000, 20);
@@ -549,7 +549,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_EventWait(20);
   KolimaForestEntrance_ShowMessageAndWait(GARET, 20);
   if (gKolimaForestEntrance_MiaInParty != 0) {
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
+    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(MIA, 2);
     Engine_EventWait(80);
@@ -594,8 +594,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   KolimaForestEntrance_FaceActorAndWait(0, 0x6000, 60);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Engine_EventWait(60);
   KolimaForestEntrance_FaceActorAndWait(0, 0xa000, 20);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
@@ -649,8 +649,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceActorAndWait(1, 0x4000, 10);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(80);
   KolimaForestEntrance_FaceActorAndWait(2, 0xe000, 10);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
@@ -667,7 +667,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_ShowMessageAndWait(GARET, 20);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   KolimaForestEntrance_ShowMessageAndWait(GARET, 20);
   Engine_ActorSetAnimation(IVAN, ANIM_NOD);
@@ -735,10 +735,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
   KolimaForestEntrance_ShowMessageAndWait(TRET, 80);
   KolimaForestEntrance_ShowMessageAndWait(LAUREL, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(60);
   KolimaForestEntrance_ShowMessageAndWait(LAUREL, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -751,10 +751,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_ActorSetAnimation(MIA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   KolimaForestEntrance_ShowMessageAndWait(LAUREL, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_EventWait(40);
   KolimaForestEntrance_ShowMessageAndWait(TRET, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -762,10 +762,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_FaceDirection(MIA, FACING_EAST, 0);
   KolimaForestEntrance_FaceActorAndWait(2, 0xc000, 40);
   KolimaForestEntrance_ShowMessageAndWait(LAUREL, 10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -810,10 +810,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   KolimaForestEntrance_FaceActorAndWait(3, 0, 20);
   KolimaForestEntrance_ShowMessageAndWait(TRET, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   KolimaForestEntrance_ShowMessageAndWait(LAUREL, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -866,9 +866,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Event_OpenMessage(GARET, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       KolimaForestEntrance_FaceActorAndWait(3, 0, 20);
-      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
-      Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
+      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+      Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
       Engine_EventWait(40);
       KolimaForestEntrance_FaceActorAndWait(1, 0x4000, 20);
       KolimaForestEntrance_ShowMessageAndWait(GARET, 10);
@@ -879,9 +879,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       KolimaForestEntrance_FaceActorAndWait(1, 0x2000, 20);
     } else {
       KolimaForestEntrance_FaceActorAndWait(3, 0, 20);
-      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 0);
-      Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
+      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+      Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
       Engine_EventWait(40);
       KolimaForestEntrance_FaceActorAndWait(1, 0x4000, 20);
       Engine_EventSetMessage(MsgKolimaHesAsStumpedAsWe);
@@ -907,7 +907,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Event_OpenMessage(IVAN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventWait(20);
-      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 3, 0);
+      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
       Engine_EventWait(40);
       KolimaForestEntrance_FaceActorAndWait(2, 0xe000, 10);
       KolimaForestEntrance_ShowMessageAndWait(IVAN, 10);
@@ -918,12 +918,12 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       } else {
         gEventWork->message += 1;
       }
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
       Engine_EventWait(40);
       Engine_ActorRunRepeatedMotion(GARET, 2);
       KolimaForestEntrance_ShowMessageAndWait(GARET, 20);
-      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
+      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
       Engine_EventWait(120);
       KolimaForestEntrance_ShowMessageAndWait(IVAN, 40);
       if (gKolimaForestEntrance_MiaInParty != 0) {
@@ -950,7 +950,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       Engine_ActorSetAnimation(MIA, ANIM_NOD);
       Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     } else {
-      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 0);
+      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
       Engine_EventWait(40);
       Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
       Engine_EventSetMessage(MsgKolimaThatsReliefIsaacThoughtYoud);
@@ -962,12 +962,12 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       } else {
         gEventWork->message += 1;
       }
-      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+      Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
       Engine_EventWait(40);
       Engine_ActorRunRepeatedMotion(GARET, 2);
       KolimaForestEntrance_ShowMessageAndWait(GARET, 20);
-      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 0);
+      Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
       Engine_EventWait(80);
       KolimaForestEntrance_ShowMessageAndWait(IVAN, 40);
       if (gKolimaForestEntrance_MiaInParty != 0) {

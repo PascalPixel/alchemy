@@ -599,7 +599,7 @@ static void CollapseFromHeat(void) {
                       EFFECT_SCALE_TO_TARGET,
                   &options);
   }
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 4, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
   hold = (u16 *)(work + 0xcba);
   progress = &gGameState.hazardSteps;
@@ -759,7 +759,7 @@ static void FallIntoPit(void) {
                                record->z.part.pixel);
   }
   Engine_EventWait(60);
-  Actor_ShowEmote(best, EMOTE_IN_FRONT | 4, 0);
+  Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Engine_EventWait(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;

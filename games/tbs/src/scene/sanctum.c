@@ -10,31 +10,22 @@
 ///   SANCTUM_VALE_UNUSED and SANCTUM_FROM_QUEST_RESTART), the Great Healer's,
 ///   entered from Vale at
 ///   SANCTUM_FROM_VALE. Before the trip up Mt. Aleph, the Great Healer and two
-///   other healers (ACTOR_WEST_HEALER and ACTOR_EAST_HEALER) speak of Psynergy:
-///   "Wielders of Psynergy are called Adepts." After the eruption, the Great
-///   Healer brings Isaac and Garet in from Vale (vale_eruption.c) to
-///   SANCTUM_FROM_VALE_ERUPTION, where Isaac's mother Dora, the Mayor, who is
-///   Garet's grandfather, and the two healers hear what happened on the
-///   mountain, Isaac and Garet acting it out in sepia
-///   (Sanctum_ReenactSolSanctum): Jenna and Kraden are prisoners. The Great
-///   Healer has seen the hovering stone in dreams: it is the Wise One, guardian
-///   of the Elemental Stars. Vale will be safe, but the elemental lighthouses
-///   will loose the stars' power upon the world, and recovering the stars is
-///   Isaac's and Garet's fate alone. Garet leaves the choice to Isaac
-///   (Sanctum_RequestQuestAcceptance). If he accepts, the Wise One appears to
-///   the Great Healer, who relays its guidance (find the lighthouses, seek the
-///   Djinn); the two are to leave the next day (Sanctum_ReceiveWiseOnesMission,
-///   FLAG_SANCTUM_QUEST_ACCEPTED), and SANCTUM_TO_VALE_GATE takes them to
-///   SceneId_ValeGate (vale_gate.c). If he refuses, the others talk of his
-///   choice, the Great
-///   Healer asks again when spoken to (Event_ReconsiderQuest), heading for the
-///   door draws a warning that the choice is final once outside the village,
-///   and leaving anyway ends the game: `And so the world began drifting toward
-///   its fated destruction...` The player can start again from the Great
-///   Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART, which
-///   skips the
-///   account, or leave by SANCTUM_TO_CLEAR to SceneId_Clear
-///   (Event_LeaveAfterRefusing). After the party has left Vale
+///   other healers (ACTOR_WEST_HEALER and ACTOR_EAST_HEALER) speak of Psynergy.
+///   After the eruption the Great Healer brings Isaac and Garet in from Vale
+///   (vale_eruption.c) to SANCTUM_FROM_VALE_ERUPTION, where Dora, the Mayor
+///   and the healers hear what happened on the mountain, acted out in sepia
+///   (Sanctum_ReenactSolSanctum), and the Great Healer asks Isaac to take on
+///   the Wise One's quest (Sanctum_RequestQuestAcceptance). Accepting plays
+///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
+///   SANCTUM_TO_VALE_GATE takes the two to SceneId_ValeGate (vale_gate.c).
+///   Refusing leaves the room to gSanctum_QuestEvents: the Great Healer asks
+///   again when spoken to (Event_ReconsiderQuest), the door draws a warning
+///   (FLAG_SCENE_TEMP_00), and leaving anyway ends the game
+///   (Event_LeaveAfterRefusing): `And so the world began drifting toward its
+///   fated destruction...` From there the player can start again from the
+///   Great Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART,
+///   which skips the account (FLAG_SCENE_TEMP_01), or leave by
+///   SANCTUM_TO_CLEAR to SceneId_Clear. After the party has left Vale
 ///   (FLAG_PARTY_LEFT_VALE), and again after it has reached Kalay
 ///   (FLAG_REACHED_KALAY), the three talk of what the eruption and the Wise One
 ///   changed.
@@ -57,6 +48,10 @@
 ///   the healer worries about earthquakes on Mt. Aleph.
 /// - Sanctum, the name the game gives every other entrance, which leaves only
 ///   SANCTUM_UNUSED; no exit leads there, and it places nobody.
+///
+/// Open questions:
+/// - XXX (picture): the account of Sol Sanctum in sepia, with the Great
+///   Healer's afterimages and the effects that circle him.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -117,7 +112,8 @@ enum SanctumActor {
   /// ★ Named from the game: "What is it, Great Healer?"
   /// (MsgSanctumWeHadIdeaTrueSanctum)
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
-  // Vale Sanctum (gSanctum_PlacementB, and gSanctum_PlacementD at the quest).
+  // Vale Sanctum (gSanctum_ValePlacements, and gSanctum_QuestPlacements at the
+  // quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
   /// and beards in long robes, as Mind Read hears a villager in
   /// vale_interiors_shops.c call the Sanctum's people: "The healers
@@ -131,7 +127,7 @@ enum SanctumActor {
   /// ★ Named from the game: "should only be used for"
   /// (MsgSanctumPsynergyIsAPowerThatShould)
   ACTOR_EAST_HEALER,
-  // The quest (gSanctum_PlacementD).
+  // The quest (gSanctum_QuestPlacements).
   /// Isaac's mother, a woman with fair hair tied up.
   /// ★ Named from the game: "Please, call me Dora."
   /// (MsgValeAsStubbornAsYourFather)
@@ -146,7 +142,7 @@ enum SanctumActor {
   /// Stars." (MsgSanctumWeHadIdeaTrueSanctum)
   ACTOR_WISE_ONE,
   ACTOR_HEALER_AFTERIMAGE, ///< a copy of the Great Healer for its afterimages
-  // Vault Sanctum and Bilibin Sanctum (gSanctum_PlacementC).
+  // Vault Sanctum and Bilibin Sanctum (gSanctum_VaultBilibinPlacements).
   /// The other person of the Sanctum, in the western healer's sprite (a man
   /// with long brown hair and a beard in a long robe), who wanders, and who
   /// speaks of the healer as someone else and of "our teachings" and "our
@@ -157,6 +153,8 @@ enum SanctumActor {
   /// Vault Sanctum's gold statue (the sprite of the one a chest gives back in
   /// vault_interiors.c), placed off the map until the thieves are jailed
   /// (FLAG_VAULT_THIEVES_JAILED).
+  /// ★ Named from the game: "our stolen gold statue"
+  /// (MsgSanctumWonderIfEverSeeOur)
   ACTOR_GOLD_STATUE
 };
 
@@ -215,60 +213,62 @@ const struct ScenePlacement *Sanctum_GetPlacements(void) {
   switch (gGameState.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
-    return gSanctum_PlacementB;
+    return gSanctum_ValePlacements;
 
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_VAULT_INTERIORS:
   case SANCTUM_FROM_BILIBIN:
-    return gSanctum_PlacementC;
+    return gSanctum_VaultBilibinPlacements;
 
   case SANCTUM_FROM_VALE_ERUPTION:
   case SANCTUM_FROM_QUEST_RESTART:
-    return gSanctum_PlacementD;
+    return gSanctum_QuestPlacements;
 
   case SANCTUM_FROM_ALTIN:
   case SANCTUM_FROM_XIAN:
-    return gSanctum_PlacementE;
+    return gSanctum_AltinXianPlacements;
 
   default:
-    return gSanctum_PlacementA;
+    return gSanctum_NoPlacements;
   }
 }
 
 /// Chooses the events by entrance, and in Vale Sanctum before and after the
-/// quest by story flag: table A before the party has left Vale, E once it has
-/// (FLAG_PARTY_LEFT_VALE), F once it has reached Kalay (FLAG_REACHED_KALAY); D
-/// for the quest's visits (SANCTUM_FROM_VALE_ERUPTION,
-/// SANCTUM_FROM_QUEST_RESTART and SANCTUM_QUEST_UNUSED).
+/// quest by story flag: gSanctum_ValeEvents before the party has left Vale,
+/// gSanctum_ValeEventsAfterLeaving once it has (FLAG_PARTY_LEFT_VALE) and
+/// gSanctum_ValeEventsAfterKalay once it has reached Kalay
+/// (FLAG_REACHED_KALAY); gSanctum_QuestEvents for the quest's visits
+/// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
+/// SANCTUM_QUEST_UNUSED).
 const struct SceneEvent *Sanctum_GetEvents(void) {
   switch (gGameState.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_INTERIORS:
-    return gSanctum_SceneTableB;
+    return gSanctum_VaultEvents;
   case SANCTUM_FROM_VAULT_REVISIT:
-    return gSanctum_SceneTableC;
+    return gSanctum_VaultRevisitEvents;
   case SANCTUM_FROM_VALE_ERUPTION:
   case SANCTUM_FROM_QUEST_RESTART:
   case SANCTUM_QUEST_UNUSED:
-    return gSanctum_SceneTableD;
+    return gSanctum_QuestEvents;
   case SANCTUM_FROM_XIAN:
-    return gSanctum_SceneTableI;
+    return gSanctum_XianEvents;
   case SANCTUM_FROM_ALTIN:
-    return gSanctum_SceneTableG;
+    return gSanctum_AltinEvents;
   case SANCTUM_FROM_BILIBIN:
-    return gSanctum_SceneTableH;
+    return gSanctum_BilibinEvents;
   default:
     break;
   }
 
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-    return gSanctum_SceneTableF;
+    return gSanctum_ValeEventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-    return gSanctum_SceneTableE;
+    return gSanctum_ValeEventsAfterLeaving;
   }
-  return gSanctum_SceneTableA;
+  return gSanctum_ValeEvents;
 }
 
 /// Vault Sanctum: talking to ACTOR_SANCTUM_MEMBER, about the stolen gold statue
@@ -338,8 +338,8 @@ static void Event_ReconsiderQuest(void) {
       Engine_EventOpenMessage(ACTOR_HEALER, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
-        if (Object_GetById(ACTOR_HEALER)->facing >= 0xa000 &&
-            Object_GetById(ACTOR_HEALER)->facing <= 0xe000) {
+        if (Object_GetById(ACTOR_HEALER)->facing >= FACING_NORTHWEST &&
+            Object_GetById(ACTOR_HEALER)->facing <= FACING_NORTHEAST) {
           Actor_SetSpeed(ACTOR_HEALER, PIXELS(1) / 2, PIXELS(1) / 4);
           Engine_ActorFaceDirection(ACTOR_HEALER, FACING_EAST, 0);
           Engine_EventWait(10);
@@ -392,7 +392,7 @@ static void Event_ReconsiderQuest(void) {
 static void Event_AskAboutNewAdepts(void) {
   Engine_EventBegin();
 #if TBS_PATCH_1
-  Event_CallWithLastActiveObjectId(gSanctum_PlacementSequenceB);
+  Event_CallWithLastActiveObjectId(gSanctum_IvanPlacement);
   Engine_TaskWait(1);
 #endif
   Engine_EventSetMessage(MsgSanctumIsaacYourNewFriendsAdepts);
@@ -509,13 +509,15 @@ static void Event_LeaveAfterRefusing(void) {
   Engine_ColorBufferInterpolate(120);
   Engine_EventWait(180);
   paletteWork = gPaletteBufferWork;
-  // Set colors 13-15 of target palette 2.
-  paletteWork->target[45] = 0x7c00;
-  paletteWork->target[46] = 0x7c00;
-  paletteWork->target[47] = 0x7c00;
+  // Colour 15 of the BG palette fades to white rather than sepia: its blue,
+  // green and red channels, target[3 * 15] to target[3 * 15 + 2], at 31.
+  paletteWork->target[45] = 31 << 10;
+  paletteWork->target[46] = 31 << 10;
+  paletteWork->target[47] = 31 << 10;
   paletteWork->page = 0;
   paletteWork->duration = 1;
   paletteWork->step = 1;
+  // Nothing reads this byte, so the store changes nothing.
   paletteWork->padding2a03 = 1;
   Engine_EventWait(1);
   UiText_ShowCenteredMessage(MsgSanctumWorldBeganDrifting, 1, 0);
@@ -589,7 +591,7 @@ static inline void Sanctum_ShowAllEmotes(void) {
 /// Great Healer explains the Wise One's warning, and asks Isaac to accept
 /// responsibility for the fate of the land. Accepting plays
 /// Sanctum_ReceiveWiseOnesMission, sets FLAG_SANCTUM_QUEST_ACCEPTED and takes
-/// SANCTUM_TO_VALE_GATE; refusing leaves the room to table D's events.
+/// SANCTUM_TO_VALE_GATE; refusing leaves the room to gSanctum_QuestEvents.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
@@ -2076,8 +2078,8 @@ static void Event_TalkToHealer(void) {
 /// Sanctum's services; otherwise the healer speaks of the gold statue or, on
 /// the later visit, of the earthquakes. Its case for the quest's entrances
 /// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
-/// SANCTUM_QUEST_UNUSED) passes to Event_ReconsiderQuest, though their table D
-/// calls that directly.
+/// SANCTUM_QUEST_UNUSED) passes to Event_ReconsiderQuest, though their events
+/// (gSanctum_QuestEvents) call that directly.
 static void Event_TalkToHealerOnVisit(void) {
   s32 entrance;
 
@@ -2293,11 +2295,11 @@ u32 gSanctum_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gSanctum_PlacementA[] = {
+struct ScenePlacement gSanctum_NoPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSanctum_PlacementB[] = {
+struct ScenePlacement gSanctum_ValePlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2312,14 +2314,14 @@ struct ScenePlacement gSanctum_PlacementB[] = {
 };
 
 #if TBS_PATCH_1
-struct ScenePlacement gSanctum_PlacementSequenceB[] = {
+struct ScenePlacement gSanctum_IvanPlacement[] = {
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 #endif
 
-struct ScenePlacement gSanctum_PlacementC[] = {
+struct ScenePlacement gSanctum_VaultBilibinPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -2329,7 +2331,7 @@ struct ScenePlacement gSanctum_PlacementC[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSanctum_PlacementD[] = {
+struct ScenePlacement gSanctum_QuestPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2349,13 +2351,13 @@ struct ScenePlacement gSanctum_PlacementD[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSanctum_PlacementE[] = {
+struct ScenePlacement gSanctum_AltinXianPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gSanctum_SceneTableA[] = {
+struct SceneEvent gSanctum_ValeEvents[] = {
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
     { EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
     { EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
@@ -2363,7 +2365,7 @@ struct SceneEvent gSanctum_SceneTableA[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableB[] = {
+struct SceneEvent gSanctum_VaultEvents[] = {
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealerOnVisit) },
     { EVENT_TALK, ACTOR_SANCTUM_MEMBER, FLAG_VAULT_THIEVES_JAILED, EVENT_SCRIPT(Event_TalkAboutGoldenStatue) },
     { EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutGoldenStatue) },
@@ -2373,7 +2375,7 @@ struct SceneEvent gSanctum_SceneTableB[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableC[] = {
+struct SceneEvent gSanctum_VaultRevisitEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT_REVISIT },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealerOnVisit) },
     { EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutGoldenStatue) },
@@ -2382,7 +2384,7 @@ struct SceneEvent gSanctum_SceneTableC[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableD[] = {
+struct SceneEvent gSanctum_QuestEvents[] = {
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReconsiderQuest) },
     { EVENT_TALK, GARET, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
     { EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
@@ -2394,7 +2396,7 @@ struct SceneEvent gSanctum_SceneTableD[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableE[] = {
+struct SceneEvent gSanctum_ValeEventsAfterLeaving[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
     { EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
@@ -2405,7 +2407,7 @@ struct SceneEvent gSanctum_SceneTableE[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableF[] = {
+struct SceneEvent gSanctum_ValeEventsAfterKalay[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
     { EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutNewAdepts) },
@@ -2416,7 +2418,7 @@ struct SceneEvent gSanctum_SceneTableF[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableG[] = {
+struct SceneEvent gSanctum_AltinEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutAltinMonsters) },
     // Unused: a copy of the row above, which always answers first.
@@ -2426,7 +2428,7 @@ struct SceneEvent gSanctum_SceneTableG[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableH[] = {
+struct SceneEvent gSanctum_BilibinEvents[] = {
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutCurse) },
     { EVENT_TALK, ACTOR_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumWillITurnIntoATree) },
@@ -2438,7 +2440,7 @@ struct SceneEvent gSanctum_SceneTableH[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSanctum_SceneTableI[] = {
+struct SceneEvent gSanctum_XianEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutJourneyFromXian) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },

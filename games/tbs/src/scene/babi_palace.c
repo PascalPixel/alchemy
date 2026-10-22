@@ -1,70 +1,61 @@
 /// @file
-/// Babi's Palace in Tolbi, the palace of Babi, the ruler of Tolbi, in two
-/// scenes that share this overlay and the area name Babi's Palace:
-/// SceneId_BabiPalaceEntrance, outside, between the town and the palace
-/// door, with two guards and a well, and SceneId_BabiPalace, the palace
-/// itself, a set of rooms joined by doors (BabiPalace_LeaveThroughDoor). From
-/// the palace one door leads into a room of Babi's scholars
-/// (BABI_PALACE_TO_VALE_INTERIORS_INN, which vale_interiors_inn.c holds) and
-/// another into the Colosseum Tunnel (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
-/// Each scene has three sets of placements and events, chosen by the story
-/// (Scene_GetPlacements, Scene_GetEvents): before Babi is saved, during the
-/// finals (FLAG_BABI_SAVED), and after Colosso (FLAG_COLOSSO_OVER).
-/// BabiPalace_ApplyEntryState plays the scenes that wait for the party on
-/// arrival, by the entrance it comes in by.
+/// Babi's Palace in Tolbi, two scenes under the area name Babi's Palace that
+/// share this overlay and one exit table:
 ///
-/// The party first comes here on the day Colosso should begin, with Babi
-/// missing. During Colosso visitors may enter, the guards outside say, and
-/// Babi opens rooms to the warriors who fight in it. Inside, an attendant
-/// leads the party to four beds (BabiPalace_ShowBeds), and searching them puts
-/// it to bed, talking it over the first night (BabiPalace_RestInPalaceBeds,
-/// FLAG_BABI_PALACE_FIRST_NIGHT); warriors nurse injuries before the trials,
-/// one doubled up with indigestion (gBabiPalace_IndigestionScript). Walking
-/// past Iodem (touch 60) plays BabiPalace_HearSoldiersReport: the soldiers he
-/// sent to search Altmiller Cave come back without Babi, Iodem tells how he
-/// has seen Babi vanish into that cave before, though this time his bed was
-/// not slept in, and leaves for the colosseum in Babi's stead
-/// (FLAG_IODEM_HEARD_SOLDIERS, after which he and the soldiers are gone). In
-/// another room is Sheba, a girl from the town of Lalivero on the Gondowan
-/// continent, held as Babi's guest; she says herself that he holds her
-/// hostage to complete his lighthouse in Lalivero. The first Mind Read on her
-/// she feels (BabiPalace_ReadShebasMind, FLAG_SHEBA_NOTICED_MIND_READ).
-/// Babi's diary reads `This Colosso may be my last...`. The story goes on in
-/// Altmiller Cave, where the party finds Babi and saves him
-/// (altmiller_cave.c).
+/// - SceneId_BabiPalaceEntrance, the court between the town and the palace
+///   door, with two guards and a well. Its door opens by a cell animation
+///   (gBabiPalace_DoorCells, BabiPalace_LeaveThroughAnimatedDoor).
+/// - SceneId_BabiPalace, the palace's rooms on one map, joined by exits into
+///   the same scene and by doors that open by the map's tile animation
+///   channels (enum BabiPalaceDoorAnim, BabiPalace_LeaveThroughDoor). One
+///   door leads to Babi's scholars (BABI_PALACE_TO_VALE_INTERIORS_INN, held by
+///   vale_interiors_inn.c) and one into the Colosseum Tunnel
+///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 ///
-/// During the finals the guards outside pass on Babi's word that he is
-/// waiting at the colosseum (BabiPalace_PassOnBabisWord), and one thanks the
-/// party once for saving him (BabiPalace_ThankForSavingBabi). Inside, the
-/// attendant offers a rest before the match (BabiPalace_OfferRest). A lost
-/// match brings the party back here by BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH
-/// (colosseum_azart_match.c, colosseum_satrage_match.c): its HP and PP are made
-/// full, Garet, Ivan and Mia rejoin and the inventory Colosso held is returned
-/// (BabiPalace_RestorePartyAndInventory), and the leader wakes from what his
-/// friends call a dream of fighting in the finals
-/// (BabiPalace_WakeFromFinalsDream), free to go back and try again.
+/// Each scene has three placement and event tables, and Scene_GetPlacements
+/// and Scene_GetEvents choose between them by two story flags: while Babi is
+/// missing, during the finals (FLAG_BABI_SAVED, set when the party saves him
+/// in Altmiller Cave) and after Colosso (FLAG_COLOSSO_OVER). The people inside
+/// stand in all three under other actor numbers, so each table has its own
+/// actor enum.
 ///
-/// The third match, won or lost, ends Colosso and brings the party back by
-/// BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH (colosseum_navampa_match.c): the
-/// leader wakes long after the finals, and Babi wants to see him
-/// (BabiPalace_WakeAfterFinals). Coming into the throne room
-/// (BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM) the first time plays
-/// BabiPalace_MeetBabiAfterColosso (FLAG_BABI_SPOKE_AFTER_COLOSSO): Babi
-/// praises the party's fighting, and has Iodem bring the victor's prize if it
-/// won (FLAG_WON_COLOSSO). He saw its Psynergy through his Cloak Ball, and
-/// tells of Lemuria, the city of an ancient people far out at sea, where he
-/// went at the time of the great flood, a hundred years ago, and whose draught
-/// has kept him alive since and is running out. He built Babi Lighthouse to
-/// find Lemuria again, and asks the party to sail his Lemurian ship, which only
-/// an Adept can; learning that it must beat Felix and the others to Venus
-/// Lighthouse, he sends Iodem with it, to meet at Gondowan Passage. The Cloak
-/// Ball on show (ACTOR_CLOAK_BALL, drawn from its item icon) Babi lends for the
-/// quest (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL), and Sheba
-/// has left for Lalivero with the soldiers going to Babi Lighthouse. Arriving
-/// by BABI_PALACE_AFTER_BABI_SAVED sets FLAG_BABI_SAVED, and by
-/// BABI_PALACE_AFTER_COLOSSO FLAG_COLOSSO_OVER as well
-/// (XXX: no exit table in the scenes leads to either; what does would say what
-/// they are for).
+/// While Babi is missing, the attendant shows the party four beds
+/// (BabiPalace_ShowBeds), which a search then sleeps in
+/// (BabiPalace_RestInPalaceBeds, with a talk the first night,
+/// FLAG_BABI_PALACE_FIRST_NIGHT). Stepping beside Iodem (TRIGGER_BESIDE_IODEM)
+/// plays BabiPalace_HearSoldiersReport once (FLAG_IODEM_HEARD_SOLDIERS, whose
+/// rows for Iodem and his soldiers place no one once it is set), and Sheba
+/// notices the first Mind Read on her (BabiPalace_ReadShebasMind,
+/// FLAG_SHEBA_NOTICED_MIND_READ).
+///
+/// During the finals the guards outside pass on Babi's word once
+/// (BabiPalace_PassOnBabisWord, FLAG_BABI_PALACE_GUARD_GAVE_WORD) and the
+/// attendant offers a rest (BabiPalace_OfferRest). The finals send the party
+/// back here by two entrances, which BabiPalace_ApplyEntryState answers by
+/// restoring the party and its inventory (BabiPalace_RestorePartyAndInventory)
+/// and playing a waking in the big bedroom: a lost first or second match by
+/// BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH (BabiPalace_WakeFromFinalsDream),
+/// the third match by BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH
+/// (BabiPalace_WakeAfterFinals).
+///
+/// After Colosso, entering the throne room by
+/// BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM the first time plays Babi's
+/// audience (BabiPalace_MeetBabiAfterColosso, FLAG_BABI_SPOKE_AFTER_COLOSSO),
+/// which gives the victor's prize when FLAG_WON_COLOSSO is set and ends with
+/// Babi sending Iodem with the party, to meet at Gondowan Passage. The Cloak
+/// Ball on show is an actor drawn from the item's icon until the party takes it
+/// (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
+///
+/// Open questions:
+/// - XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
+///   BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector,
+///   which enters any scene by entrance number, reaches them, and nothing in
+///   the ROM says why they set the story flags they set.
+/// - XXX: what Babi's animation 5, set on every entry after Colosso, shows; a
+///   render of the throne room after Colosso would settle it.
+/// - XXX (picture): the palace's doors opening by their tile animation
+///   channels (enum BabiPalaceDoorAnim), against the outside door's cell
+///   animation (gBabiPalace_DoorCells).
 
 #include "game_state.h"
 #include "heap_state.h"
@@ -103,8 +94,8 @@
 #include "songs.h"
 
 /// The palace's actors are placed by one of three tables, as the story goes on:
-/// before Babi is rescued (gBabiPalace_PlacementsOther), during the finals
-/// (gBabiPalace_PlacementsColosso) and after Colosso
+/// before Babi is rescued (gBabiPalace_PlacementsBabiMissing), during the
+/// finals (gBabiPalace_PlacementsFinals) and after Colosso
 /// (gBabiPalace_PlacementsAfterColosso). Each numbers its rows from
 /// ACTOR_FIRST_PLACED, with Garet, Ivan, Mia and Sheba in their own party
 /// slots, and most of the people stand in all three under other numbers. The
@@ -268,6 +259,42 @@ enum {
 /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
 enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
+/// The palace map's tile animation channels that open its doors, for
+/// Map_ClearLayerEntryFlag (play) and Map_SetLayerEntryFlag (pause). Each
+/// scene entry pauses them, so every door is drawn shut.
+enum BabiPalaceDoorAnim {
+  BABI_PALACE_MEETING_ROOM_DOOR_ANIM = 1, ///< the throne room's door
+  BABI_PALACE_OTHER_DOORS_ANIM = 2,       ///< every door without its own
+  BABI_PALACE_OVEN_ROOM_DOOR_ANIM = 4     ///< the oven room's door
+};
+
+/// The leader's animations in the big bedroom's bed, after the four shared
+/// ones (enum ActorAnimation). The nod and the shake of the head answer yes
+/// and no in BabiPalace_WakeAfterFinals.
+enum BabiPalaceBedAnimation {
+  ANIM_IN_BED_LYING = 31,
+  /// Sitting up: the leader is raised by 3 pixels as it starts.
+  ANIM_IN_BED_SITTING_UP = 32,
+  ANIM_IN_BED_NOD = 33,
+  ANIM_IN_BED_SHAKE_HEAD = 34
+};
+
+/// Collision codes the event tables answer besides the exits, whose codes are
+/// their exits' numbers.
+enum BabiPalaceTrigger {
+  /// The cells beside Iodem, while Babi is missing
+  /// (BabiPalace_HearSoldiersReport).
+  TRIGGER_BESIDE_IODEM = 60,
+  TRIGGER_BEDS = 70, ///< the big bedroom's four beds, searched to sleep
+  TRIGGER_WELL = 90  ///< the well outside the palace
+};
+
+static inline void BabiPalace_CloseDoors(void) {
+  Map_SetLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIM);
+  Map_SetLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIM);
+  Map_SetLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIM);
+}
+
 /// After a night in the palace's beds: the party's HP and PP are full,
 /// Garet, Ivan and Mia rejoin, and the inventory Colosso held is returned.
 static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
@@ -291,9 +318,9 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalaceEntrance) {
-    return gBabiPalace_Entrances2;
+    return gBabiPalace_OutsideEntrances;
   }
-  return gBabiPalace_EntrancesOther;
+  return gBabiPalace_Entrances;
 }
 
 /// The palace has no regions; the table is empty.
@@ -308,15 +335,15 @@ const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 /// rescue, during the finals or after Colosso.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalaceEntrance) {
-    return gBabiPalace_Placements2;
+    return gBabiPalace_OutsidePlacements;
   }
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalace_PlacementsAfterColosso;
   }
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-    return gBabiPalace_PlacementsColosso;
+    return gBabiPalace_PlacementsFinals;
   }
-  return gBabiPalace_PlacementsOther;
+  return gBabiPalace_PlacementsBabiMissing;
 }
 
 /// Asks a yes or no question; the answers are the two messages after it.
@@ -359,12 +386,12 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     Event_ShowMessage(actorId, 0);
     Event_Wait(10);
     facingBits = roundedFacing << 16;
-    facingOrMessage = 0x4000;
-    if (facingBits == (0x4000 << 16)) {
+    facingOrMessage = FACING_SOUTH;
+    if (facingBits == (FACING_SOUTH << 16)) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     }
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(actorId, 0, -48);
     Actor_WalkByAndWait(actorId, 64, 0);
     Actor_FaceDirection(actorId, facingOrMessage, 0);
@@ -426,7 +453,7 @@ static void BabiPalace_OfferRest(s32 actorId) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(actorId, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(actorId, -64, 0);
     Actor_WalkByAndWait(actorId, 0, 48);
   } else {
@@ -498,7 +525,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
 /// Mind Read on Sheba in the palace, while Babi is missing: she cannot escape
 /// to Lalivero alone; the first time, she feels it, ends the Psynergy and
 /// asks about it. "Did you just..."
-static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
+static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
   Event_Begin();
   Event_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
   Event_ShowMessage(actorId, 0);
@@ -575,12 +602,12 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 0;
   Task_Wait(1);
-  REG_DISPCNT = 0x1140;
+  REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Event_ShowMessage(-1, 0);
-  REG_DISPCNT = 0x140;
+  REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 1;
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 31);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
   Actor_SetPosition(GARET, PIXELS(120), PIXELS(104));
@@ -594,7 +621,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Engine_EventWaitForScreen();
   Event_Wait(20);
   gEventWork->transitionFrames = 24;
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(MIA, 16, 0);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   Event_Wait(20);
@@ -606,11 +633,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   leader->z.fixed += -0x30000;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->targetZ += -0x30000;
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 32);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
   Event_Wait(30);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 33);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
   Event_Wait(50);
   Actor_RunRepeatedMotion(GARET, 2);
   Event_Wait(30);
@@ -643,13 +670,13 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_OpenMessage(GARET, 0);
   if (Event_ChooseYesNo(-1, 0) != 0) {
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
     Event_Wait(20);
     Actor_SetAnimationAndWait(GARET, ANIM_NOD);
     Event_Wait(20);
     Event_ShowMessage(GARET, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
     Event_Wait(30);
     Actor_SetAnimationAndWait(GARET, ANIM_NOD);
     Event_Wait(20);
@@ -657,7 +684,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
     gEventWork->message += 1;
   } else {
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
     gEventWork->message += 2;
     Event_Wait(30);
     Actor_SetAnimationAndWait(GARET, ANIM_NOD);
@@ -665,12 +692,12 @@ static void BabiPalace_WakeFromFinalsDream(void) {
     Event_ShowMessage(GARET, 0);
   }
   Event_Wait(10);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(GARET, -16, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Event_Wait(35);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
@@ -683,9 +710,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_SetAnimation(GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(MIA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(MIA, 0x13333, 0x9999);
-  Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+  Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetAnimation(GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -735,10 +762,10 @@ static void BabiPalace_RestInPalaceBeds(void) {
     }
     Event_Wait(20);
     facing = roundedFacing;
-    if (facing == 0) {
+    if (facing == FACING_EAST) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 120);
     }
-    if (facing == 0x8000) {
+    if (facing == FACING_WEST) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 240, 120);
     }
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 120);
@@ -751,7 +778,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(GARET, 0x10000, 0x8000);
+    Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(GARET, 40, 0);
     Actor_WalkByAndWait(GARET, 0, -32);
     Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
@@ -765,7 +792,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+    Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(IVAN, -40, 0);
     Actor_WalkByAndWait(IVAN, 0, 40);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
@@ -779,7 +806,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(MIA, 0x10000, 0x8000);
+    Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(MIA, 40, 0);
     Actor_WalkByAndWait(MIA, 0, 40);
     Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
@@ -850,9 +877,9 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(GARET, 0x13333, 0x9999);
-    Actor_SetSpeed(IVAN, 0x13333, 0x9999);
-    Actor_SetSpeed(MIA, 0x13333, 0x9999);
+    Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetAnimation(GARET, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -894,15 +921,15 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Camera_MoveTo(PIXELS(560), -1, PIXELS(368), 1);
   Camera_WaitForMove();
-  Actor_SetSpeed(ACTOR_IODEM, 65536, 32768);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 40, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 584, 360);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(ACTOR_IODEM, 32768, 0);
-  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 131072, 65536);
-  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 131072, 65536);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_FIRST_SOLDIER, 528, 352);
   Actor_WalkToAndWait(ACTOR_SECOND_SOLDIER, 528, 368);
   Task_Wait(3);
@@ -927,7 +954,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 65536, 32768);
+  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 8, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
@@ -935,7 +962,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 65536, 32768);
+  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 8, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
@@ -979,7 +1006,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
-  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, 22, 60);
+  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_FaceActor(ACTOR_FIRST_SOLDIER, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
   Event_Wait(20);
@@ -1014,7 +1041,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
-  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, 22, 60);
+  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_FaceActor(ACTOR_FIRST_SOLDIER, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
   Event_Wait(20);
@@ -1061,7 +1088,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
-  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, 22, 60);
+  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_FaceActor(ACTOR_FIRST_SOLDIER, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
   Event_Wait(20);
@@ -1092,7 +1119,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_IODEM, 32768, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
@@ -1109,15 +1136,15 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(40);
-  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, 22, 60);
+  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_SECOND_SOLDIER, 16384, 0);
+  Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_SOUTH, 0);
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 85196, 42598);
-  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 85196, 42598);
+  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(13) / 10, PIXELS(13) / 20);
+  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(13) / 10, PIXELS(13) / 20);
   Actor_WalkBy(ACTOR_FIRST_SOLDIER, 0, 120);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 0, 120);
   Actor_SetPosition(ACTOR_FIRST_SOLDIER, 0, 0);
@@ -1125,7 +1152,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_IODEM, 52428, 26214);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
   Event_Wait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
@@ -1134,7 +1161,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_IODEM, 65536, 32768);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 120, 0);
   Actor_WalkByAndWait(ACTOR_IODEM, 60, 0);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
@@ -1152,7 +1179,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 
   Event_Begin();
   Event_SetMessage(MsgTolbiCallsName);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 31);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetPosition(GARET, PIXELS(104), PIXELS(104));
@@ -1210,7 +1237,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(MIA, 2);
   Event_Wait(30);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(MIA, 0, -40);
   Actor_WalkByAndWait(MIA, 32, 0);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
@@ -1220,11 +1247,11 @@ static void BabiPalace_WakeAfterFinals(void) {
   actor->z.fixed -= 0x30000;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->targetZ -= 0x30000;
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 32);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
   Event_Wait(30);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 33);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
   Event_Wait(40);
   Actor_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -1235,7 +1262,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_OpenMessage(IVAN, 0);
   if (Event_ChooseYesNo(-1, 0) == 0) {
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
     Event_Wait(20);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(GARET, 4, 13);
@@ -1244,7 +1271,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     gEventWork->message++;
   } else {
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
     Event_Wait(20);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(GARET, 4, 13);
@@ -1283,7 +1310,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_OpenMessage(IVAN, 0);
   if (Event_ChooseYesNo(-1, 0) == 0) {
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
     Event_Wait(20);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     Event_ShowMessage(GARET, 0);
@@ -1291,7 +1318,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     gEventWork->message++;
   } else {
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
     Event_Wait(20);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     gEventWork->message++;
@@ -1360,7 +1387,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Task_Wait(1);
   }
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, -8);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
@@ -1389,9 +1416,9 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_SetAnimation(GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(MIA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(MIA, 0x13333, 0x9999);
-  Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+  Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetAnimation(GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
@@ -1437,7 +1464,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_BABI, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1448,7 +1475,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   Camera_WaitForMove();
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 0x2f8);
   Event_Wait(10);
   Camera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
@@ -1481,7 +1508,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_IODEM, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -1497,13 +1524,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_IODEM, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Actor_Get(ACTOR_IODEM)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
     Event_Wait(40);
-    Actor_SetSpeed(ACTOR_BABI, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
     Event_Wait(40);
     Engine_UiTextDrawQuantity(ITEM_LURE_CAP, 2);
@@ -1569,7 +1596,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_BABI, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_BABI, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   Task_Wait(2);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
@@ -1892,7 +1919,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
-  Actor_SetSpeed(ACTOR_IODEM, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 24);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Actor_FaceActor(GARET, ACTOR_IODEM, 0);
@@ -1916,7 +1943,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
@@ -2261,7 +2288,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Object_LinkObjectAndSetCallback(GARET, 20);
   Object_LinkObjectAndSetCallback(MIA, 20);
   Object_LinkObjectAndSetCallback(IVAN, 20);
-  Actor_SetSpeed(ACTOR_IODEM, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 32);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -2291,7 +2318,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_BABI, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 24);
   Actor_WalkByAndWait(ACTOR_BABI, -80, 0);
   Event_Wait(10);
@@ -2318,9 +2345,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
   Event_Wait(30);
   Event_PlayCue(MUS_017);
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(IVAN, 0x13333, 0x9999);
-  Actor_SetSpeed(MIA, 0x13333, 0x9999);
+  Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetAnimation(GARET, ANIM_WALK);
   position = Actor_Get(ACTOR_PARTY_LEADER);
   if (position != 0)
@@ -2348,35 +2375,36 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
 }
 
 /// Walking north into one of the palace's doors: it opens (SE_DOOR_OPEN) and
-/// the leader walks through.
+/// the leader walks through. The door's touch trigger is the number of the exit
+/// it leads to, so the event table names each by its exit and the trigger is
+/// passed on as the exit. The throne room's door walks the leader straight
+/// north; the others first center the leader on the door.
 static void BabiPalace_LeaveThroughDoor(void) {
   struct EventWork *work;
 
   work = gEventWork;
   Event_Begin();
   Event_PlayCue(SE_DOOR_OPEN);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (work->touchedTrigger == 32) {
-    Map_ClearLayerEntryFlag(1);
+  if (work->touchedTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
+    Map_ClearLayerEntryFlag(BABI_PALACE_MEETING_ROOM_DOOR_ANIM);
     Event_Wait(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
-    if (work->touchedTrigger == 30) {
-      Map_ClearLayerEntryFlag(4);
+    if (work->touchedTrigger == BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM) {
+      Map_ClearLayerEntryFlag(BABI_PALACE_OVEN_ROOM_DOOR_ANIM);
       Event_Wait(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     } else {
-      Map_ClearLayerEntryFlag(2);
+      Map_ClearLayerEntryFlag(BABI_PALACE_OTHER_DOORS_ANIM);
       Event_Wait(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     }
   }
   Event_Wait(16);
   Event_RequestExit(work->touchedTrigger);
-  Map_SetLayerEntryFlag(1);
-  Map_SetLayerEntryFlag(2);
-  Map_SetLayerEntryFlag(4);
+  BabiPalace_CloseDoors();
   Event_End();
 }
 
@@ -2384,7 +2412,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 /// goes in.
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_Begin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gBabiPalace_DoorCells, 36, 10);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
@@ -2401,10 +2429,10 @@ static void BabiPalace_PassOnBabisWord(void) {
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
   Event_Begin();
   Field_EndBusyAndReveal();
-  Actor_FaceDirection(ACTOR_FIRST_GUARD, 20480, 0);
-  Actor_FaceDirection(ACTOR_SECOND_GUARD, 12288, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 272);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_Wait(20);
   question = MsgTolbiArent;
   Event_SetMessage(question);
@@ -2419,7 +2447,7 @@ static void BabiPalace_PassOnBabisWord(void) {
     Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
     Event_Wait(20);
     Actor_FaceEachOther(ACTOR_FIRST_GUARD, ACTOR_SECOND_GUARD, 60);
-    Actor_FaceDirection(ACTOR_SECOND_GUARD, 12288, 0);
+    Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_SECOND_GUARD, 2);
     Event_Wait(30);
@@ -2427,8 +2455,8 @@ static void BabiPalace_PassOnBabisWord(void) {
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUARD, ANIM_NOD);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_FIRST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Actor_FaceDirection(ACTOR_FIRST_GUARD, 20480, 0);
-    Actor_FaceDirection(ACTOR_SECOND_GUARD, 12288, 0);
+    Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_FIRST_GUARD, ANIM_SHAKE_HEAD);
     Event_Wait(20);
@@ -2484,20 +2512,20 @@ static void BabiPalace_ExamineWell(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalaceEntrance) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-      return gBabiPalace_Events2AfterColosso;
+      return gBabiPalace_OutsideEventsAfterColosso;
     }
     if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-      return gBabiPalace_Events2Colosso;
+      return gBabiPalace_OutsideEventsFinals;
     }
-    return gBabiPalace_Events2;
+    return gBabiPalace_OutsideEventsBabiMissing;
   }
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalace_EventsAfterColosso;
   }
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-    return gBabiPalace_EventsColosso;
+    return gBabiPalace_EventsFinals;
   }
-  return gBabiPalace_EventsOther;
+  return gBabiPalace_EventsBabiMissing;
 }
 
 /// Sets up the scene being entered: the doors, the Cloak Ball on show, and
@@ -2509,9 +2537,7 @@ s32 BabiPalace_ApplyEntryState(void) {
   u8 *buf;
   s32 set;
 
-  Map_SetLayerEntryFlag(1);
-  Map_SetLayerEntryFlag(2);
-  Map_SetLayerEntryFlag(4);
+  BabiPalace_CloseDoors();
   if (gGameState.entrance == BABI_PALACE_AFTER_BABI_SAVED) {
     GameFlag_Set(FLAG_BABI_SAVED);
   }
@@ -2532,10 +2558,12 @@ s32 BabiPalace_ApplyEntryState(void) {
         actor->retainSpriteCache = 1;
         actor->motionFlags = set;
         sprite = actor->sprite;
-        actor->y.fixed = 0x40000;
+        actor->y.fixed = PIXELS(4);
         sprite->count = set;
         sprite->image.fullColor = 0;
         sprite->image.palette = 0;
+        // The icon is drawn 0x400 bytes into the glyph buffer, as the 128 bytes
+        // of a 16 by 16 sprite.
         buf = Heap_Allocate(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
         Item_LoadIcon(ITEM_CLOAK_BALL);
         Vram_Load(sprite->slot, 128, buf + 0x400);
@@ -2557,20 +2585,23 @@ s32 BabiPalace_ApplyEntryState(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     // The attendant before the rescue and after Colosso; during the finals
     // ACTOR_FINALS_HURRYING_WARRIORS_ALONG has this number.
-    Actor_Get(ACTOR_BED_ATTENDANT)->collisionFlags |= 4;
+    Actor_Get(ACTOR_BED_ATTENDANT)->collisionFlags |= ACTOR_NEAR_TALK;
     if (gGameState.entrance == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
-      gGameState.entrance = 8;
+      // XXX: likely so that reloading the scene does not play the waking again,
+      // because only this entrance chooses it.
+      gGameState.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
     if (gGameState.entrance == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
       Actor_SetPosition(ACTOR_FINALS_ATTENDANT, PIXELS(56), PIXELS(120));
-      Actor_FaceDirection(ACTOR_FINALS_ATTENDANT, 0xf000, 0);
+      Actor_FaceDirection(ACTOR_FINALS_ATTENDANT,
+                          FACING_NORTHEAST + FACING_STEP, 0);
       BabiPalace_WakeFromFinalsDream();
-      gGameState.entrance = 8;
+      gGameState.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
   }
   return 0;
@@ -2599,7 +2630,7 @@ s32 gBabiPalace_IndigestionScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gBabiPalace_EntrancesOther[] = {
+struct SceneEntrance gBabiPalace_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { BABI_PALACE_FROM_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, 768, 0, 200, FACING_NORTH, 0, 512, 0, 1024, 224, 0 },
     { BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST, CONDITION_ALWAYS, 728, 0, 88, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
@@ -2645,7 +2676,7 @@ struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gBabiPalace_Entrances2[] = {
+struct SceneEntrance gBabiPalace_OutsideEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 264, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { BABI_PALACE_ENTRANCE_FROM_TOLBI, CONDITION_ALWAYS, 264, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { BABI_PALACE_ENTRANCE_FROM_BABI_PALACE, CONDITION_ALWAYS, 200, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2703,7 +2734,7 @@ u32 gBabiPalace_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBabiPalace_Placements2[] = {
+struct ScenePlacement gBabiPalace_OutsidePlacements[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2711,7 +2742,7 @@ struct ScenePlacement gBabiPalace_Placements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBabiPalace_PlacementsOther[] = {
+struct ScenePlacement gBabiPalace_PlacementsBabiMissing[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2742,7 +2773,7 @@ struct ScenePlacement gBabiPalace_PlacementsOther[] = {
         PIXELS(112), 0, PIXELS(552), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(728), 0, PIXELS(728), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6, CONDITION_ALWAYS, ACTOR_STAND,
+    { SHEBA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(600), 0, PIXELS(744), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(360), FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -2753,7 +2784,7 @@ struct ScenePlacement gBabiPalace_PlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBabiPalace_PlacementsColosso[] = {
+struct ScenePlacement gBabiPalace_PlacementsFinals[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2772,7 +2803,7 @@ struct ScenePlacement gBabiPalace_PlacementsColosso[] = {
         PIXELS(112), 0, PIXELS(552), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(728), 0, PIXELS(744), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SHEBA, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(600), 0, PIXELS(744), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2813,14 +2844,14 @@ struct ScenePlacement gBabiPalace_PlacementsAfterColosso[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gBabiPalace_EventsOther[] = {
+struct SceneEvent gBabiPalace_EventsBabiMissing[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
@@ -2828,7 +2859,7 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
     { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
     { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
@@ -2840,9 +2871,9 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
     { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
     { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
     { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
     { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
@@ -2851,9 +2882,9 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
     { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
     { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { EVENT_TOUCH, 60, FLAG_IODEM_HEARD_SOLDIERS, EVENT_SCRIPT(BabiPalace_HearSoldiersReport) },
+    { EVENT_TOUCH, TRIGGER_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT_SCRIPT(BabiPalace_HearSoldiersReport) },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutSoldiers) },
     { EVENT_TALK, ACTOR_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
@@ -2880,7 +2911,7 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ReadShebasMind) },
-    { SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -2892,14 +2923,14 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalace_EventsColosso[] = {
+struct SceneEvent gBabiPalace_EventsFinals[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
@@ -2907,7 +2938,7 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
     { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
     { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
@@ -2919,9 +2950,9 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
     { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
     { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
     { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
     { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
@@ -2930,7 +2961,7 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
     { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
     { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisSoldiersHaveGoneToSee) },
     { EVENT_TALK, ACTOR_FINALS_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatAreYouDoingHurryOver) },
@@ -2946,7 +2977,7 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
-    { SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -2964,8 +2995,8 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
@@ -2973,7 +3004,7 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
     { EVENT_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
     { EVENT_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
@@ -2985,9 +3016,9 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
     { EVENT_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
     { EVENT_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
     { EVENT_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
     { EVENT_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
@@ -2996,7 +3027,7 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
     { EVENT_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
     { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutMeetingBabi) },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutEasternShores) },
@@ -3021,7 +3052,7 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_TALK, ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSurprisedActorWasAllowed) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
-    { SEARCH(SEARCH_UNNAMED), 70, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_BEDS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -3033,20 +3064,20 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalace_Events2[] = {
+struct SceneEvent gBabiPalace_OutsideEventsBabiMissing[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNormallyNoOnesAllowedIntoBabis) },
     { EVENT_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSomeOfTheRoomsInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceShouldThePalaceReallyBeOpen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowManyPeopleWill) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalace_Events2Colosso[] = {
+struct SceneEvent gBabiPalace_OutsideEventsFinals[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
     { EVENT_TALK, ACTOR_SECOND_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
@@ -3055,18 +3086,18 @@ struct SceneEvent gBabiPalace_Events2Colosso[] = {
     { EVENT_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ThankForSavingBabi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSureTheySavedBabiButIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsADeliberateManHe) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalace_Events2AfterColosso[] = {
+struct SceneEvent gBabiPalace_OutsideEventsAfterColosso[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIveLostAllMyEnthusiasmSince) },
     { EVENT_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutRemainingWarriors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheEndOfAFestivalIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceAllTheHeroicWarriorsWhoTook) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

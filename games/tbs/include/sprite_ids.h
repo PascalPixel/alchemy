@@ -21,6 +21,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
   SPRITE_SOLDIER = 0x98,
+  /// The apes of Mogall Forest, which Force brings out of their hiding places.
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  SPRITE_APE = 0xbf,
   /// The statues of Sol Sanctum's statue room and Luna and Sol rooms.
   /// ★ Named from what the player sees: a winged statue holding a blue orb
   /// (its sprite sheet, spr_201.png)

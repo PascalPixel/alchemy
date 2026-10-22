@@ -1012,6 +1012,16 @@
 /// FLAG_NYUNPA_ENLIGHTENED.
 /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
 #define FLAG_MOGALL_FOREST_KILLER_APE_BEATEN 0x89e
+/// Catch has taken the Nut floating over the river in Mogall Forest's first
+/// area.
+/// ★ Named from the game: "Nut" (MsgItemName)
+#define FLAG_MOGALL_FOREST_NUT_CAUGHT 0xfd4
+/// The chest in Mogall Forest's second area.
+/// ★ Named from the game: "Apple" (MsgItemName)
+#define FLAG_MOGALL_FOREST_APPLE_CHEST 0xf1b
+/// The chest in Mogall Forest's third area.
+/// ★ Named from the game: "Elven Shirt" (MsgItemName)
+#define FLAG_MOGALL_FOREST_ELVEN_SHIRT_CHEST 0xf1a
 // Suhalla
 /// Iodem has questioned the two wounded soldiers in a house in Suhalla, who
 /// lost Sheba in a sandstorm and warn that monsters cause the storms. Stepping
@@ -1647,6 +1657,15 @@
 /// ★ Named from the game: "Fuchin's Ki releases the mind's energy"
 /// (MsgXianYaTreeFell)
 #define FLAG_FEH_SAW_KI 0x89b
+/// A jar in FuchinTempleInteriors.
+/// ★ Named from the game: "Unicorn Ring" (MsgItemName)
+#define FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR 0xf68
+/// A barrel in FuchinTempleInteriors.
+/// ★ Named from the game: "Antidote" (MsgItemName)
+#define FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL 0xf69
+/// The jar in Master Hama's room in Lama Temple.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_HAMAS_ROOM_COINS_JAR 0xf6a
 
 // Crossbone Isle
 /// The four blue doors in a row, then the red door: each is set once a Blue

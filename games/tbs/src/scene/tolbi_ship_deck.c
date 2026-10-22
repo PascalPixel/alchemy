@@ -233,7 +233,7 @@ enum TolbiShipDeckActor {
   /// aboard and go below.
   SEA_SECOND_ATTACK_MONSTER = SEA_FIRST_HOVERING_MONSTER + 4,
   /// The splash that swells for 24 frames at the rail where the last of them
-  /// leaps aboard out of the sea (SPRITE_WATER_SPLASH).
+  /// leaps aboard out of the sea (SPRITE_SPLASH).
   /// ★ Named from what the player sees: a spray of water at the rail (its
   /// render)
   SEA_SPLASH = SEA_SECOND_ATTACK_MONSTER + 3,
@@ -3392,7 +3392,7 @@ const struct ScenePlacement gTolbiShipDeck_SecondAttackPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_LIZARD_MONSTER, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WATER_SPLASH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_SPLASH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

@@ -123,7 +123,7 @@ enum GondowanCaveActor {
   ACTOR_PILLAR,
   /// Stands in for the pillar once it has dropped in; out of sight at first.
   /// It is drawn in the stump's sprite, splashing in (STUMP_ANIM_SPLASH) and
-  /// on later visits afloat (STUMP_ANIM_AFLOAT).
+  /// on later visits afloat (STUMP_ANIM_SINK).
   /// ★ Named from what the player sees: the pillar's top in the water, after
   /// the splash it drops in with (its render)
   ACTOR_DROPPED_PILLAR,
@@ -134,13 +134,6 @@ enum GondowanCaveActor {
   /// An invisible actor 16 pixels west of the boulder, which Lift takes away
   /// with it (the file's open questions ask what it does).
   ACTOR_BOULDER_SIDE
-};
-
-/// SPRITE_STUMP's animations once it is in the water, which the stump and the
-/// pillar's stand-in take.
-enum {
-  STUMP_ANIM_AFLOAT = 2, ///< afloat
-  STUMP_ANIM_SPLASH = 3  ///< landing with a splash, then afloat
 };
 
 // The leap event also runs after the shared staged-actor movement.
@@ -488,7 +481,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   OBJ_MODE(actorId, STUMP_ANIM_SPLASH);
   Map_WaitForShakeToSettle();
   WAIT(10);
-  OBJ_MODE(actorId, STUMP_ANIM_AFLOAT);
+  OBJ_MODE(actorId, STUMP_ANIM_SINK);
 }
 
 /// Unused: an empty function nothing calls.
@@ -518,11 +511,11 @@ s32 Scene_Initialize(void) {
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       OBJ_POS_SET(ACTOR_STUMP, 440, 308);
-      OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_AFLOAT);
+      OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
-      GondowanCave_PlaceDroppedPillar(STUMP_ANIM_AFLOAT);
+      GondowanCave_PlaceDroppedPillar(STUMP_ANIM_SINK);
     }
     actor = Actor_Get(ACTOR_BOULDER_SIDE);
     Engine_ActorSetSpriteFlags(actor, 0);

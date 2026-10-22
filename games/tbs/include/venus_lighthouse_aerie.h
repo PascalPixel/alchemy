@@ -40,7 +40,7 @@ enum {
   /// The light the rising particles circle as the party is lifted away
   /// (SPRITE_BLUE_ORB).
   ACTOR_PARTICLE_SOURCE = 23,
-  /// The beacon's beam, in five segments (SPRITE_BANDED_COLUMN) from the
+  /// The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the
   /// bottom up; particles circle the lowest.
   ACTOR_BEAM_BOTTOM = 24,
   ACTOR_BEAM_LOWER = 25,

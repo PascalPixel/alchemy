@@ -158,14 +158,6 @@ enum {
 #define SUHALLA_DESERT_HAZE_BLEND                                              \
   (BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
-/// Where a storm drops the party on the world map: outside Suhalla, or, for
-/// the second scene's fourth storm, at an entrance that resumes airborne
-/// travel.
-enum {
-  WORLD_MAP_STORM_DROP = WORLD_MAP_FROM_SUHALLA,
-  WORLD_MAP_STORM_DROP_FOURTH = 77
-};
-
 static void SuhallaDesert_SetUpFirstSceneStorms(void);
 static void SuhallaDesert_SetUpSecondSceneStorms(void);
 
@@ -680,9 +672,10 @@ static void Event_StormCarriesPartyAway(void) {
   Engine_GameFlagSet(FLAG_ARRIVE_FALLING);
   if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth &&
       FieldGameFlag_GetByte(FLAG_SCENE_TEMP_18) == ACTOR_FOURTH_STORM) {
-    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_STORM_DROP_FOURTH);
+    Event_SetDestination((s32)&SceneId_WorldMap,
+                         WORLD_MAP_FROM_SUHALLA_DESERT_STORM);
   } else {
-    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_STORM_DROP);
+    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
   }
 }
 

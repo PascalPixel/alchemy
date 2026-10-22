@@ -68,14 +68,11 @@ enum SpriteId {
   /// ★ Named from what the player sees: a green lizard-like monster (its
   /// render)
   SPRITE_LIZARD_MONSTER = 0xc6,
-  /// ★ Named from what the player sees: a spray of water rising and falling
-  /// (its render)
-  SPRITE_WATER_SPLASH = 0xd6,
   /// ★ Named from what the player sees: an oar dipping into the water with a
   /// splash (its render)
   SPRITE_OAR = 0xe1,
   /// The sign beside Tolbi Spring, Lalivero's and the Kolima Forest
-  /// floodgate's.
+  /// floodgate's, and the signposts on the world map.
   /// ★ Named from what the player sees: a wooden sign on a post (its render)
   SPRITE_SIGNPOST = 0x112,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
@@ -112,7 +109,7 @@ enum SpriteId {
   /// ★ Named from what the player sees: a large open hand (spr_215.png)
   SPRITE_MOVE_HAND = 0xd7,
   /// Spray thrown up where water is struck: where Goma Cave's stumps land,
-  /// and at Kolima Forest's floodgate.
+  /// at Kolima Forest's floodgate, and over the Tolbi-bound Ship's side.
   /// ★ Named from what the player sees: a splash of white and pale blue
   /// spray (spr_214.png)
   SPRITE_SPLASH = 0xd6,
@@ -146,6 +143,8 @@ enum SpriteId {
   /// ★ Named from what the player sees: a stone pipe section lying west to
   /// east (spr_228.png)
   SPRITE_PIPE_WEST_EAST = 0xe4,
+  /// The pipe sections Move pushes in Mercury Lighthouse, also placed in the
+  /// Lighthouse Aerie of Venus Lighthouse.
   /// ★ Named from what the player sees: a stone pipe section lying north to
   /// south (spr_229.png)
   SPRITE_PIPE_NORTH_SOUTH = 0xe5,
@@ -166,19 +165,12 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round floating platform (its
   /// render)
   SPRITE_FLOATING_PLATFORM = 0xf2,
-  /// The lit beacon of Mercury Lighthouse.
-  /// ★ Named from what the player sees: a swirling blue ball of light
-  /// (spr_244.png)
-  SPRITE_MERCURY_BEACON = 0xf4,
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH = 0xf6,
   /// A fire burning on the ground, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame (spr_247.png)
   SPRITE_FIRE = 0xf7,
-  /// ★ Named from what the player sees: a wooden signpost on a green post
-  /// (spr_274.png)
-  SPRITE_SIGNPOST = 0x112,
   /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
@@ -198,9 +190,8 @@ enum SpriteId {
   /// ★ Named from what the player sees: a statue of a woman with a green
   /// wreath, holding a sheaf (spr_258.png)
   SPRITE_STATUE_WITH_WREATH = 0x102,
-  /// ★ Named from what the player sees: a pale column in bands, drawn in four
-  /// frames (spr_229.png)
-  SPRITE_BANDED_COLUMN = 0xe5,
+  /// Mercury Lighthouse's lit beacon, and the orb at the top of Venus
+  /// Lighthouse.
   /// ★ Named from what the player sees: a blue orb with white swirls, turning
   /// (spr_244.png)
   SPRITE_BLUE_ORB = 0xf4,
@@ -215,7 +206,8 @@ enum SpriteId {
   /// ★ Named from what the player sees: a four-pointed glint that shrinks
   /// to a dot (spr_286.png)
   SPRITE_GLINT = 286,
-  /// The whirlwinds of the Suhalla Desert, which Douse stops.
+  /// The whirlwinds of the Suhalla Desert, which Douse stops, and the one
+  /// drawn on the world map beside it.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   SPRITE_SANDSTORM = 0x121,
   /// The lights of Altmiller Cave's rock puzzle, coloured by their palette.
@@ -608,9 +600,6 @@ enum SpriteId {
   /// ★ Named from what the player sees: a pink and white tower, where Babi
   /// Lighthouse's road begins (spr_272.png)
   SPRITE_WORLD_MAP_BABI_LIGHTHOUSE = 0x110,
-  /// ★ Named from what the player sees: a wooden signpost on a green pole
-  /// (spr_274.png)
-  SPRITE_WORLD_MAP_SIGNPOST = 0x112,
   /// ★ Named from what the player sees: a clump of tall green trees
   /// (spr_275.png)
   SPRITE_WORLD_MAP_FOREST = 0x113,
@@ -628,8 +617,6 @@ enum SpriteId {
   /// ★ Named from what the player sees: a grey gatehouse between green walls
   /// (spr_279.png)
   SPRITE_WORLD_MAP_GATEHOUSE = 0x117,
-  /// ★ Named from what the player sees: a white whirlwind (spr_289.png)
-  SPRITE_WHIRLWIND = 0x121,
   /// ★ Named from what the player sees: the wreck of a ship lying in the water
   /// (spr_501.png)
   SPRITE_SHIPWRECK = 0x1f5,
@@ -640,7 +627,8 @@ enum SpriteId {
 
 /// SPRITE_STUMP's animations beyond its standing frame (spr_212.tsv).
 enum StumpAnimation {
-  /// Sinks until only its cut top shows, level with the ground or the water.
+  /// Sinks until only its cut top shows, level with the ground or the water,
+  /// which leaves it afloat in Gondowan Cave's river.
   STUMP_ANIM_SINK = 2,
   STUMP_ANIM_SPLASH = 3 ///< drops into water with a splash
 };

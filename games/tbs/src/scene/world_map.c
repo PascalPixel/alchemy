@@ -274,7 +274,7 @@ enum WorldMapActor {
   ACTOR_PLACE_MOGALL_FOREST_SIGN,
   /// ★ Named from its area name: Kalay Tunnel Entrance
   ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE,
-  /// After three signposts (SPRITE_WORLD_MAP_SIGNPOST). Unused: they stand at
+  /// After three signposts (SPRITE_SIGNPOST). Unused: they stand at
   /// the map's origin, out of the player's reach, and no code moves them.
   /// ★ Named from its area name: Kolima Bridge
   ACTOR_PLACE_KOLIMA_BRIDGE = ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE + 4,
@@ -3553,11 +3553,11 @@ struct ScenePlacement gWorldMapPlacements[] = {
         PIXELS(7856), 0, PIXELS(1736), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WORLD_MAP_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
+    { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WORLD_MAP_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
+    { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_WORLD_MAP_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
+    { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WORLD_MAP_BRIDGE, CONDITION_ALWAYS, (s32)gWorldMapKolimaBridgeScript,
         PIXELS(7568), 0, PIXELS(1384), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3567,7 +3567,7 @@ struct ScenePlacement gWorldMapPlacements[] = {
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapAlignToMapScript,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_WHIRLWIND, FLAG_SCENE_TEMP_F1, (s32)gWorldMapStormScript,
+    { SPRITE_SANDSTORM, FLAG_SCENE_TEMP_F1, (s32)gWorldMapStormScript,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapIodemScript,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },

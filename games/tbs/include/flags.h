@@ -796,6 +796,24 @@
 /// ★ Named from the game: "Please wait for me outside Faran's house. I wish to
 /// speak with you." (MsgLaliveroPleaseWaitForMeOutside)
 #define FLAG_IODEM_ASKED_TO_MEET 0x9bc
+/// The jar in the street.
+/// ★ Named from the game: "Water of Life" (MsgItemName)
+#define FLAG_LALIVERO_WATER_OF_LIFE 0xfb6
+/// The stone pillar in the street.
+/// ★ Named from the game: "Psy Crystal" (MsgItemName)
+#define FLAG_LALIVERO_PSY_CRYSTAL 0xfb7
+/// The chest in the street.
+/// ★ Named from the game: "Warrior's Helm" (MsgItemName)
+#define FLAG_LALIVERO_WARRIORS_HELM 0xfb8
+/// A barrel in the shops' scene (LaliveroShops).
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_LALIVERO_SHOPS_LUCKY_MEDAL 0xfb9
+/// A barrel in the shops' scene (LaliveroShops).
+/// ★ Named from the game: "Antidote" (MsgItemName)
+#define FLAG_LALIVERO_SHOPS_ANTIDOTE 0xfba
+/// A barrel in Faran's house and the inn (LaliveroFaransHouse).
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_LALIVERO_FARANS_HOUSE_LUCKY_MEDAL 0xfbb
 // Lunpa
 /// Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then
 /// on Lunpa's east guard asks whether the party came from Kalay, and touching

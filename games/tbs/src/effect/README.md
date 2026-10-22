@@ -17,7 +17,7 @@ the damage from a task while the effect is still drawing is in
 An ability's row in `actflags.tsv` gives the effect kind, its variant and how
 the battle stages it, packed into one word of the plan.
 
-![Isaac casts Quake, Earthquake and Quake Sphere side by side, each from the frame its effect starts. Above each, read as `BattleFx_RunQuake` is entered, the plan's `presentationFlags` (`0x0001`, `0x1001` and `0x2001`) and the kind and variant the handler is handed: kind 1 each time, variants 0, 1 and 2 (basic, stronger, strongest). All three raise the same pillars of rock under Garet, Ivan and Mia and throw them into the air, the stronger variants keeping them up longer, and Garet takes 14, 37 and 67 damage.](https://alchemy.pascalpixel.com/guides/effect/effect-variants.gif)
+![Isaac casts Quake, Earthquake and Quake Sphere side by side, each from the frame its effect starts. Above each, the kind and variant fields of the plan's `presentationFlags`, read as `BattleEffect_RunQuake` is entered and named as `effect.h` names them, the same two the handler is handed: `BATTLE_EFFECT_QUAKE` each time, at `EFFECT_VARIANT_BASIC`, `EFFECT_VARIANT_STRONGER` and `EFFECT_VARIANT_STRONGEST`. All three raise the same pillars of rock under Garet, Ivan and Mia and throw them into the air, the stronger variants keeping them up longer, and Garet takes 14, 37 and 67 damage.](https://alchemy.pascalpixel.com/guides/effect/effect-variants.gif)
 
 Each ability, ids 0 to 518, has a row in
 [`battle/actflags.tsv`](../battle/actflags.tsv) (`gBattle_ActionFlags`). Its
@@ -601,7 +601,7 @@ target.
 The four summons that need one Djinni draw a small Djinni of their element and
 throw flames at the targets.
 
-![Venus, Mercury, Mars and Jupiter, each summoned with one Djinni against three of the party copied onto the enemy side, in four panels started together where each handler places its particles. Beside each screen, read after every frame, the first 32 slots of `work->particles`, lit orange while a flame moves or counts (Venus's ten columns rising, Mercury's five flames fired across, Mars's nine flames erupting along the arc, Jupiter's eight flameballs falling), and the first 512 of `PARTICLES`, lit by the life left in each mote as a flame shatters into its run of 32: Venus fills the first 16 of each run, Mercury and Jupiter all 32. Mars's 144 embers, nine runs of 16, never die and are lit while they move; they stop where they are when the attack ends.](https://alchemy.pascalpixel.com/guides/effect/djinn-attacks.gif)
+![Venus, Mercury, Mars and Jupiter, each summoned with one Djinni against three of the party copied onto the enemy side, in four panels started together where each handler places its particles. Beside each screen, read after every frame and keyed by colour, the flames in `work->particles`, lit orange while a flame moves or counts (Venus's ten columns rising, Mercury's five flames fired across, Mars's nine flames erupting along the arc, Jupiter's eight flameballs falling), and the motes in `PARTICLES`, a row of 32 slots for each flame, lit by the life left in each mote as its flame shatters: Venus fills the first 16 of each row, Mercury and Jupiter all 32. Mars's 144 embers, 16 for each of its nine flames, never die and are lit while they move; they stop where they are when the attack ends.](https://alchemy.pascalpixel.com/guides/effect/djinn-attacks.gif)
 
 The four are ordinary effect kinds, `BATTLE_EFFECT_VENUS` to `BATTLE_EFFECT_JUPITER`,
 in [`djinn_attacks.c`](parts/djinn_attacks.c). Each draws a small Djinni of its
@@ -664,7 +664,7 @@ copies, which only the gathering needs.
 The spark groups strike one burst of flashes and bouncing sparks, or three at
 the strongest variant, for Nova and its kin and for Dynamite.
 
-![Garet casts Supernova, the strongest variant, and three bursts go off 8 frames apart over the targets, each a white flash ringed by smaller flashes and a spray of sparks that bounce and fade. Beside the screen, read after every frame, each burst's 16 flashes in `work->particles` and its 192 sparks in `PARTICLES`: the flashes wait with their counts above 18 until their burst starts, then count down and are drawn for their last 18 frames, while flashes 12 to 15 of each burst are placed but never counted or drawn; all 576 sparks are placed with their lives before the first frame and each burst's start to fly 6 frames after its flash, lit by the life left.](https://alchemy.pascalpixel.com/guides/effect/spark-groups.gif)
+![Garet casts Supernova, the strongest variant, and three bursts go off 8 frames apart over the targets, each a white flash ringed by smaller flashes and a spray of sparks that bounce and fade. Beside the screen, read after every frame and keyed by colour, the first, second and third burst's 16 flashes in `work->particles` and 192 sparks in `PARTICLES`: the flashes wait until their burst starts, then count down and are drawn for their last 18 frames, while the last 4 of each burst's 16 are placed but never counted or drawn; all 576 sparks are placed with their lives before the first frame and each burst's start to fly 6 frames after its flash, lit by the life left.](https://alchemy.pascalpixel.com/guides/effect/spark-groups.gif)
 
 The spark groups ([`plasma.c`](parts/plasma.c)) strike their bursts
 `SPARK_GROUPS_SPACING` frames apart at `EFFECT_VARIANT_STRONGEST`. A burst is a
@@ -732,7 +732,7 @@ itself, and each mode copies its own palette over the burst's.
 A stat reduction breaks a dagger or a shield over each target into shards that
 fly off and darken.
 
-![Garet casts Debilitate, Impair at its stronger variant, at Isaac, Mia and Ivan: a shield in the glow orb's colours rises over each, breaks, and its shards fly off and darken to nothing. Beside the screen, read after every frame, `PARTICLES` 0 to 95 as a row of 32 for each of the effect's targets in `effect->actors` order: every shard is placed before the first frame, the first 24 of a row fly once that target's shield breaks, each row 4 or 5 screen frames after the one before, and stop when the target's shards are done; slots 24 to 31 of each row are never used.](https://alchemy.pascalpixel.com/guides/effect/stat-reductions.gif)
+![Garet casts Debilitate, Impair at its stronger variant, at Isaac, Mia and Ivan: a shield in the glow orb's colours rises over each, breaks, and its shards fly off and darken to nothing. Beside the screen, read after every frame and keyed by colour, `PARTICLES` as a row of 32 slots for each target, in the order `BattleEffect_RunImpair` is handed them in `effect->actors`: every shard is placed before the first frame, the first 24 of a row fly once that target's shield breaks, each row 4 or 5 frames after the one before, and stop when its shards are done; the last 8 of each row are never used.](https://alchemy.pascalpixel.com/guides/effect/stat-reductions.gif)
 
 A stat reduction ([`stat_change.c`](parts/stat_change.c)) shows a dagger or a
 shield over each target, 4 frames apart, and breaks it into
@@ -790,7 +790,7 @@ target's slots.
 A target strike plays repeated slashes or columns of light on the first
 target, for monster attacks such as Cannibal Fang, Poison Tail and Twin Beaks.
 
-![Isaac uses Twin Beaks and then Acid Bite on a copy of Ivan, each beside the slots the setup parks, read after every frame: 64 smoke puffs in `work->particles`, the 128 motes at the start of `PARTICLES` and the 512 sparks from `PARTICLES[512]`, all blue at `variant` -1. Each hit's frame is held, its newly set slots white and named. Twin Beaks's two slashes light smoke 0 to 7 and sparks 512 to 543, then smoke 16 to 23 and sparks 544 to 575, and only its sparks fly and fade. Acid Bite's three pink columns light smoke 0 to 7, motes 0 to 15 and sparks 512 to 575, then smoke 16 to 23, motes 16 to 31 and sparks 576 to 639, and the third hit sets that second group again; only its smoke rises, and its motes and sparks stay lit and still.](https://alchemy.pascalpixel.com/guides/effect/target-strikes.gif)
+![Isaac uses Twin Beaks and then Acid Bite on a copy of Ivan, each beside the slots `BattleEffect_RunTargetStrike` parks, read after every frame and keyed by colour: 64 smoke puffs in `work->particles`, 128 motes in `PARTICLES` and 512 sparks from `PARTICLES[512]` on, all parked and idle. Each hit's frame is held, its newly set slots white, with the group it lights and how many of each. Twin Beaks's two slashes light groups 1 and 2, 8 smoke puffs and 32 sparks each, and only its sparks fly and fade. Acid Bite's three pink columns light group 1 and then group 2, 8 smoke puffs, 16 motes and 64 sparks each, and the third hit lights group 2 again; only its smoke rises, and its motes and sparks stay lit and still.](https://alchemy.pascalpixel.com/guides/effect/target-strikes.gif)
 
 These attacks are styles of `BattleEffect_RunTargetStrike`
 ([`target_strike.c`](parts/target_strike.c)). A style

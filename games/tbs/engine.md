@@ -1,83 +1,71 @@
 # Engine
 
-![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
+![The console redraws its screen about sixty times a second, each picture a frame. It draws a picture line by line, from the top of the screen to the bottom, 160 lines. After the last line comes a pause about as long as 68 more lines, the vertical blank, when nothing is drawn. Then the next picture starts at the top. Changing the picture while it is being drawn would show half the change, so the game does its work during the frame and hands the finished picture to the hardware in the blank. On a timeline, each frame is a long stretch of drawing followed by a short blank, over and over.](https://alchemy.pascalpixel.com/illustrations/engine/frame-rate.svg)
 
-The engine is the code the field, the battles and the menus are built on:
-start-up, the frame loop and its tasks, the banked layout of the main image,
-the overlays that hold each place's code, and the sound driver's cues.
+Everything the player sees moves to one beat: the screen is redrawn about
+sixty times a second, and the game prepares one picture for each. The engine
+is the code that keeps that beat and that the field, the battles and the
+menus are built on. It starts the console, runs every frame and hands the
+finished picture over in the screen's blank moment, lets code wait without
+the screen freezing, splits the program into banks and swaps each place's
+code in and out of memory, and plays the music and sounds.
 
 ## Start-up
 
-Start-up takes the console from the cartridge header to the game's main loop,
-and never returns.
+Start-up takes the console from the moment it is switched on to the title
+screen, and never comes back.
 
-```mermaid
-flowchart LR
-    header["Cartridge header"] --> entry["System_Entry:<br/>the stacks"]
-    entry --> init["System_Initialize:<br/>IWRAM, heap, resident runtime,<br/>VBlank handler, sound, tasks"]
-    init --> run["Game_RunFar:<br/>one scene after another"]
-```
+![Start-up, in order. The cartridge's first instruction jumps to System_Entry, which sets up the stacks. System_Initialize then prepares memory: it clears IWRAM, empties the heap and copies the fast routines into IWRAM. It starts the services: the VBlank handler, the sound driver and an empty task table. It waits ten frames, then Game_Run runs one scene after another, starting with the title. Before each scene it drops the last scene's tasks and empties the heap. None of these steps returns.](https://alchemy.pascalpixel.com/illustrations/runtime/start-up.svg)
+
+Memory is put in order and the services everything relies on are started
+once; after that one loop runs scene after scene for as long as the console
+is on.
 
 The cartridge header jumps to `System_Entry` (`src/system/entry.s`), which
 sets up the interrupt and system stacks at the top of IWRAM and calls
 `System_Initialize`. That function clears IWRAM below the stacks, empties the
 heap, copies the resident runtime into IWRAM and points the interrupt vector
 at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
-resets the task table, waits ten frames and calls `Game_RunFar`.
+resets the task table, waits ten frames and calls `Game_RunFar`. Neither
+function returns. `Game_Run` loads one scene after another for as long as the
+game runs, starting with the title. A soft reset (A, B, Select and Start held
+together) sets `gResetRequested`, and the frame loop restarts the game from
+the cartridge's entry point. The title's intro, with the Nintendo and
+Camelot logos before it, is code in
+[Graphics](src/graphics/README.md#the-title-sequence).
 
-Neither function returns. `Game_Run` loads one scene after another for as
-long as the game runs, starting with the title. A soft reset (A, B, Select
-and Start held together) sets `gResetRequested`, and the frame loop restarts
-the game from the cartridge's entry point.
 [Runtime](src/runtime/README.md#start-up) goes through start-up step by step.
-The title's intro, with the Nintendo and Camelot logos before it, is code in
-[Graphics](src/graphics/README.md#the-title-sequence), beside the handwritten
-decoders that unpack tiles and animation frames for the rest of the game.
 
 ## Waiting and tasks
 
-Code lets time pass by calling `WaitFrames`, and work that must go on while
-it waits runs as a task the scheduler calls every frame.
+Code lets time pass by calling `WaitFrames`, and work that must go on while it
+waits runs as a task the scheduler calls every frame.
 
-```mermaid
-sequenceDiagram
-    participant C as Waiting code
-    participant W as WaitFrames
-    participant V as System_VBlankHandler
-    C->>W: WaitFrames(n)
-    loop n frames
-        W->>W: main-loop tasks, sprite list
-        W->>W: halt until VBlank
-        V->>V: sprite list, scroll, queued writes to the hardware
-        V->>V: VBlank tasks
-    end
-    W-->>C: returns
-```
+![Five frames of a field scene. An event's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
 
-There is no main loop that calls each part of the game once a frame. A menu
-screen, a cutscene or a battle effect is an ordinary function with a loop of
-its own, and when time has to pass it calls `WaitFrames(n)` and continues
-after `n` frames. Each frame, `WaitFrames` runs the main-loop tasks
+When a cutscene pauses, the code that runs it simply waits; the screen keeps
+moving because a short list of jobs, the tasks, runs once every frame
+whatever that code is doing. There is no main loop that calls each part of
+the game once a frame. A menu screen, a cutscene or a battle effect is an
+ordinary function with a loop of its own, and when time has to pass it calls
+`WaitFrames(n)` and continues after `n` frames.
+
+Each frame, `WaitFrames` runs the main-loop tasks
 (`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the sprite list
 (`Render_BuildOamList`) and halts the CPU until VBlank. The VBlank handler
 then copies the sprite list and scroll registers to the hardware, carries out
-the queued register writes and runs the VBlank tasks.
-
-Work that has to continue while a function waits is a task: a routine added
-with `Scheduler_AddOrUpdateCallback`, which the scheduler runs every frame
-however deep in its calls the waiting function is. Window animation, battle
-event playback (`BattleEvent_Playback`) and a scene's callbacks are tasks.
+the queued register writes and runs the VBlank tasks. A task is a routine
+added with `Scheduler_AddOrUpdateCallback`; window animation, battle event
+playback (`BattleEvent_Playback`) and a scene's callbacks are tasks.
 
 This design puts a bound on the stack. The system stack is 1,792 bytes of
-IWRAM, and the interrupt handlers and the sound mixer run on it too. A
-function waiting from deep in its own calls would leave the tasks too little
-room, so when the stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes
-above the heap's end, `WaitFrames` copies everything from the stack
-pointer up to that top into `gSavedStack` in EWRAM, runs its frames from the
-top and copies the stack back on return. Tasks therefore always start with the same 512 bytes. It also
-means a task must not call `WaitFrames`: the nested call would overwrite the
-outer caller's saved stack. XXX: nothing guards against this, and whether any
-task does it isn't known.
+IWRAM, and the interrupt handlers and the sound mixer run on it too. When the
+stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes above the heap's
+end, `WaitFrames` copies everything from the stack pointer up to that top into
+`gSavedStack` in EWRAM, runs its frames from the top and copies the stack back
+on return, so tasks always start with the same 512 bytes. It also means a task
+must not call `WaitFrames`: the nested call would overwrite the outer caller's
+saved stack. Nothing guards against it, and no task does.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -96,27 +84,26 @@ The main image's code is laid out in banks at fixed addresses, and a call
 from one bank to another goes through an 8-byte jump in the callee's far-call
 table.
 
-```mermaid
-flowchart LR
-    caller["a function in one bank"] -->|"bl WaitFramesFar"| table["the runtime bank's<br/>far-call table entry"]
-    table -->|"jump"| callee["WaitFrames"]
-```
+![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, AudioCommand_PlayFar, which jumps on to AudioCommand_Play wherever it lies in the sound bank. If the sound bank's code changes size, AudioCommand_Play moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
+
+The program is cut into banks so that one bank's code can change size without
+moving anything another bank depends on. Each bank starts at a fixed address
+with room to spare, and opens with a table of short jumps, one for each
+function other banks call. A call from another bank goes to the jump, and the
+jump goes on to the function wherever it is.
 
 `main.ld` places the main image's code in banks (`runtime`, `field`,
 `window`, `game` and the rest), each at an address fixed per edition, with
-unused space after it. Each bank begins with a far-call table of 8-byte
-jumps, one for each function another bank calls, and a caller in another bank
-normally calls the table entry (`WaitFramesFar` for `WaitFrames`) rather than
-the function's own address. Not every call does: the auto-battle code
-(`src/battle/battle/auto_battle.c`) calls `WaitFrames` directly. XXX: which
-calls skip the table, and why, isn't known; a count of direct calls between
-banks in the link map would settle how common it is.
+unused space after it. A caller in another bank calls the table entry
+(`AudioCommand_PlayFar` for `AudioCommand_Play`) rather than the function's
+own address. The runtime bank is the exception: every bank calls its
+functions directly, and its table (`WaitFramesFar` for `WaitFrames`) serves
+the overlays.
 
 Distance isn't the reason: a Thumb `bl` reaches 4 MB either way, and the main
-image is a little over 1.5 MB. The tables let a bank change size within its
-space without moving any address another bank depends on. XXX: likely Camelot
-linked each bank on its own against the others' tables, because fixed starts
-and tables are what that would need; the ROM shows only the result.
+image is a little over 1.5 MB. XXX: likely Camelot linked each bank on its own
+against the others' tables, because fixed starts and tables are what that
+would need; the ROM shows only the result.
 [System](src/system/README.md#why-the-program-is-cut-into-banks) has the
 memory map and the per-edition bank addresses.
 
@@ -125,11 +112,17 @@ memory map and the per-edition bank addresses.
 Each place's code is an overlay, unpacked into one fixed area of EWRAM when
 its scene loads, and it meets the main image only through two tables.
 
+![The cartridge holds each place's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new scene's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
+
+A town's people, events and cutscenes are code that is needed only while the
+party is there, and all the places' code together would not fit in RAM. So
+each place's code is packed on the cartridge and unpacked into the same
+32 KB area when the party arrives, over the place before it.
+
 An overlay is a compressed resource unpacked into `gOverlayArea`, 32 KB of
-EWRAM. There are 96 of them, listed in the
-scene table (`src/field/scenes.s`). Only one is loaded at a time, so overlays
-never call each other, and code several scenes need is copied into each of
-them (`src/scene/common/`).
+EWRAM. There are 96 of them, listed in the scene table (`src/field/scenes.s`).
+Only one is loaded at a time, so overlays never call each other, and code
+several scenes need is copied into each of them (`src/scene/common/`).
 
 An overlay and the main image meet at two tables, each in a fixed order:
 
@@ -152,10 +145,17 @@ branches as it unpacks it.
 Every sound is played by `AudioCommand_Play` with a cue number, whose range
 decides whether it is music, a fanfare or a sound from the song table.
 
-Below 80 a cue is music; from 80 to 99 (`AUDIO_JINGLE_FIRST`) a
-fanfare; from 100 (`AUDIO_SONG_FIRST`) an entry of the song table, played on
-the player its row names, which is how sound effects play. Cues 17, 18 and
-289 are controls rather than sounds.
+![Every sound starts as one call with a cue number, and the number's range decides what it is. Cues below 80 are music, played on the music player; asking for the music already chosen does nothing. Cues from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Cues from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three cues are controls instead of sounds: cue 17 fades the music out, cue 18 keeps the music that is playing, and cue 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
+
+The game asks for every sound the same way, with one number, and the number
+says what kind of sound it is. The sound driver has eight players, and each
+kind of sound has players of its own, so a sound effect never stops the
+music.
+
+Below 80 a cue is music; from 80 to 99 (`AUDIO_JINGLE_FIRST`) a fanfare;
+from 100 (`AUDIO_SONG_FIRST`) an entry of the song table, played on the
+player its row names, which is how sound effects play. Cues 17, 18 and 289
+are controls rather than sounds.
 
 A fanfare doesn't stop the music. The music's volume drops to 0 while it keeps
 playing, the fanfare plays on player 0, and once that player stops the music
@@ -179,15 +179,15 @@ and [the driver's lock](src/sound/README.md#the-drivers-lock).
 Three test scenes kept in the ROM are reached only from the debug scene
 selector.
 
-![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
+![No door, table or event of the game leads to the three test rooms. The only way in is the debug scene selector, which warps to any scene by number, and the field opens it only when the Start menu is opened with B held while debug mode is on. Debug mode is switched off at power-on, and nothing the player can reach switches it on, so in the released game the selector, and the rooms behind it, are never reached. From the selector come the Djinn room, which eight scenes share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
 
 The ROM keeps three test scenes: a room that hands out Djinn, a room for
 levels and for browsing items, icons and letters, and a room of shop and
 message tests. Only the debug scene selector reaches them, and only while
-`gDebugMode` is set. Each is an ordinary scene overlay, so they're the
-smallest complete examples of how a scene is built.
-[Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes through
-them.
+`gDebugMode` is set, which the released game never does. Each is an ordinary
+scene overlay, so they're the smallest complete examples of how a scene is
+built. [Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes
+through them.
 
 ## Limits
 

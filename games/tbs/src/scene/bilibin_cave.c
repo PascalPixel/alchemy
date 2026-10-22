@@ -599,7 +599,7 @@ static void Event_PushActorAhead(void) {
   target->velocityZ = (s32)blocker;
 
   // Resume the leader and refresh the mechanism affected by the moved actor.
-  Object_SetMode(leader, ANIM_STAND);
+  Object_SetMode(leader, ANIMATION_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 

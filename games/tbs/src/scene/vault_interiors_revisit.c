@@ -172,7 +172,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// The actor stands still and says the selected message.
 static void VaultInteriorsRevisit_ShowStandingActorDialogue(s32 actor) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(actor, ANIM_STAND);
+  Engine_ActorSetAnimation(actor, ANIMATION_STAND);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
 }
@@ -216,9 +216,9 @@ static void Event_WelcomeIsaacBack(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
   Engine_ActorFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
-  Engine_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_MAYOR, ANIMATION_STAND);
   Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_MAYOR, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -275,7 +275,8 @@ static void Event_OfferBones(void) {
     Engine_EventWait(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN,
+                                      ANIMATION_SHAKE_HEAD);
       Engine_EventWait(20);
       Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
       Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
@@ -288,7 +289,7 @@ static void Event_OfferBones(void) {
     // Declining selects the following line and the actor's response pose.
     gEventWork->message++;
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIMATION_NOD);
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }

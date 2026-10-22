@@ -348,18 +348,18 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Engine_EventWait(6);
   Engine_AudioPlayCue(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Engine_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
   Engine_ActorSetDestination(ACTOR_SHORT_LOG, 72, 176);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, -8, 0);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_ActorWaitForMove(ACTOR_SHORT_LOG);
   Engine_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
@@ -375,18 +375,18 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Engine_EventWait(6);
   Engine_AudioPlayCue(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Engine_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
   Engine_ActorSetDestination(ACTOR_SHORT_LOG, 104, 176);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_ActorWaitForMove(ACTOR_SHORT_LOG);
   Engine_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
@@ -585,7 +585,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   actor = run->actor;
   quarter = facing / 0x4000;
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Engine_EventWait(6);
   actor->speed = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
@@ -593,7 +593,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Object_SetMode(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->camera, (s32)actor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
@@ -601,7 +601,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
                              gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(SE_STOP_SLOT3);

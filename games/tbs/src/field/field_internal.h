@@ -81,13 +81,13 @@
 /// argument; a command below 239 shows that frame for `arg` frames at normal
 /// speed (the timer counts sixteenths, less AnimationEntry.step each frame).
 enum AnimationCommand {
-  ANIM_CMD_END = 239,      ///< blank the layer and stop its script
-  ANIM_CMD_SET_KIND = 240, ///< use facing table `arg`
-  ANIM_CMD_HOLD = 241,     ///< stay on this command and frame for good
-  ANIM_CMD_WAIT = 245,     ///< keep the current frame `arg` frames longer
-  ANIM_CMD_JUMP = 253,     ///< continue at script position `arg`
-  ANIM_CMD_PLAY = 254,     ///< switch to animation `arg`
-  ANIM_CMD_BLANK = 255     ///< show nothing for `arg`
+  ANIMATION_COMMAND_END = 239,      ///< blank the layer and stop its script
+  ANIMATION_COMMAND_SET_KIND = 240, ///< use facing table `arg`
+  ANIMATION_COMMAND_HOLD = 241,     ///< stay on this command and frame for good
+  ANIMATION_COMMAND_WAIT = 245, ///< keep the current frame `arg` frames longer
+  ANIMATION_COMMAND_JUMP = 253, ///< continue at script position `arg`
+  ANIMATION_COMMAND_PLAY = 254, ///< switch to animation `arg`
+  ANIMATION_COMMAND_BLANK = 255 ///< show nothing for `arg`
 };
 
 /// The engine's pool sizes, and the layer timer's step at normal speed.

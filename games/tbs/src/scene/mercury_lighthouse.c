@@ -605,7 +605,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   FieldScheduler_AddCallback(MercuryLighthouse_SparkleAroundLeader,
                              TASK_PRIORITY_SCENE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_AudioPlayCue(SE_228);
   // Each touched entry has its own landing point; the patched path waits first.
@@ -1451,7 +1451,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   mia->scaleX = -Q16_ONE;
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
   mia = Object_GetById(MIA);
   mia->scaleX = Q16_ONE;
   Engine_EventWait(20);
@@ -1459,13 +1459,13 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Event_OpenMessage(MIA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Event_ShowMessageAndWait(MIA, 0, 20);
     gEventWork->message += 1;
   } else {
     gEventWork->message += 1;
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Event_ShowMessageAndWait(MIA, 0, 20);
   }
   Engine_EventWait(20);
@@ -1477,7 +1477,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_GameFlagSet(FLAG_MIA_SENSED_SOMEONE_INSIDE);
@@ -1488,7 +1488,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
 /// the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventSetMessage(MSGNO(MsgImilStatueBlocksEntrance));
   Engine_EventShowMessageAndWait(MIA, 0, 20);
@@ -1560,11 +1560,11 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       gEventWork->message += 1;
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
       Engine_EventShowMessageAndWait(MIA, 0, 20);
     } else {
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
       Event_ShowMessageAndWait(MIA, 0, 20);
       gEventWork->message += 1;
     }
@@ -1591,13 +1591,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_ShowMessageAndWait(MIA, 0, 20);
     Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 20);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_EventWait(30);
     Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(IVAN, FACING_WEST, 20);
     Engine_EventShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(MIA, 0, 20);
     Engine_ActorWalkTo(MIA, 840, 656);
@@ -1616,13 +1616,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_EventOpenMessage(GARET, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
       Engine_EventShowMessageAndWait(GARET, 0, 20);
       gEventWork->message += 1;
     } else {
       gEventWork->message += 1;
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
       Engine_EventShowMessageAndWait(GARET, 0, 20);
     }
     Engine_ActorSetAnimation(MIA, 16);
@@ -1656,7 +1656,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_TaskRemoveCallback(MercuryLighthouse_CycleEntrancePalette);
     Engine_EventWait(20);
     // She nods, jumps up and goes in.
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(20);
     Actor_SetSpeed(MIA, PIXELS(3), PIXELS(3) / 2);
     Engine_ActorJump(MIA, 4, 0);
@@ -1672,18 +1672,18 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_FaceDirection(GARET, FACING_WEST, 0);
     Engine_ActorFaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_EventWait(20);
     // Garet and Ivan rejoin the leader.
-    Engine_ActorSetAnimation(GARET, ANIM_WALK);
+    Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
       Engine_ActorSetDestination(GARET, actor->x.part.pixel,
                                  actor->z.part.pixel);
     }
-    Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+    Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
       Actor_SetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
@@ -1943,7 +1943,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_FaceDirection(MIA, FACING_NORTH, 0);
     Engine_EventWait(60);
     Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(40);
     Actor_FaceDirection(MIA, FACING_NORTH, 20);
     Actor_WalkToAndWait(MIA, 792, 200);
@@ -1974,7 +1974,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 208);
     Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
@@ -1990,8 +1990,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     Engine_ActorFaceEachOther(GARET, IVAN, 20);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_EventWait(40);
     Actor_WalkToAndWait(GARET, 792, 216);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
@@ -2021,7 +2021,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
 /// lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgImilHermesHealingWaterFountain), 1);
   Engine_EventEnd();
 }
@@ -2030,7 +2030,7 @@ static void MercuryLighthouse_ReadHermesFountainInscription(void) {
 /// door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   Engine_EventEnd();
 }
@@ -2041,7 +2041,7 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
     Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
   else
@@ -2598,7 +2598,7 @@ s32 MercuryLighthouse_Initialize(void) {
       Engine_ColorBufferApplyTarget(0x10003, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_EventWaitForScreen();
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
       Engine_EventWait(30);
       UiText_ShowCenteredMessage(MsgMercuryHonorsGoddessRainbows, 0, 0);
       Engine_ColorBufferApplyTarget(128 << 9, 0);
@@ -2709,14 +2709,14 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventWait(60);
   Engine_ActorSetAnimation(MIA, 16);
   Engine_EventWait(50);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
   Engine_EventOpenMessage(MIA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     // Each "no" brings "Please, don't hide anything." until the party says
@@ -2725,10 +2725,10 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     Engine_ActorRunRepeatedMotion(MIA, 2);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(MIA, 0, 20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(MIA, 0, 20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(20);
     Engine_EventOpenMessage(MIA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
@@ -2736,7 +2736,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
       /* FAKEMATCH(wrapper): called through an unprototyped cast, which loads
        * r1 before r0; called by its prototype, 1 of 222 instructions differ in
        * tbs-en. */
-      MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, ANIM_SHAKE_HEAD);
+      MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, ANIMATION_SHAKE_HEAD);
       Engine_EventWait(20);
       questionMessage = firstMessage + 5;
       for (;;) {
@@ -2749,7 +2749,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
         /* FAKEMATCH(wrapper): called through an unprototyped cast, which
          * loads r1 before r0; called by its prototype, 1 of 222 instructions
          * differ in tbs-en. */
-        MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, ANIM_SHAKE_HEAD);
+        MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, ANIMATION_SHAKE_HEAD);
         Engine_EventWait(20);
         questionMessage = MsgMercuryDontHideTruth;
       }
@@ -2762,13 +2762,13 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_EventShowMessageAndWait(MIA, 0, 20);
   Engine_ActorSetAnimation(MIA, 16);
   Engine_EventShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
   Engine_ActorFaceActor(MIA, ACTOR_PARTY_LEADER, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Event_PrepareObjectAndApplyValue(MIA, 1);
@@ -2778,7 +2778,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Djinn_AddToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Djinn_Activate(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   UnitCalc(MIA);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Engine_ActorSetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -2845,9 +2845,9 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_EventWait(30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 704, 584);
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_SPRING);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAP);
   Actor_Get(ACTOR_PARTY_LEADER)->speed = PIXELS(3);
   Actor_Get(ACTOR_PARTY_LEADER)->acceleration = PIXELS(2);
   Engine_AudioPlayCue(SE_JUMP);
@@ -2857,7 +2857,7 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0x4000;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_SPRING);
   Engine_EventWait(6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
   Engine_AudioPlayCue(SE_LIFT);

@@ -174,7 +174,7 @@ static void Event_LeftThiefRegretsEscape(void) {
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_RightThiefRegretsStaying(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgVaultRightThiefRegretsStaying);
   Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);

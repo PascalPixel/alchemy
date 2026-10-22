@@ -605,10 +605,10 @@ static void AltmillerCave_HopSelectedActor(void) {
   }
   if (FieldObject_CheckMovementCollision(actor, &destination.position) == 0) {
     Engine_EventBegin();
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(actor, ANIM_LEADER_LEAP);
+    Object_SetMode(actor, ANIMATION_LEADER_LEAP);
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
@@ -616,7 +616,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ObjectMotionSetPositionAndCommit(
         ACTOR_PARTY_LEADER, components[0].part.pixel, components[2].part.pixel);
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(actor, 1);
     actor->motionFlags = motionFlags;
     Engine_EventEnd();
@@ -983,10 +983,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(MIA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Engine_TaskWait(1);
   AltmillerCave_FacePartyNorth();
   Engine_EventWait(30);
@@ -1009,14 +1009,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceActor(GARET, IVAN, 30);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_OpenMessage(ACTOR_BABI, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
     Engine_EventWait(30);
     Engine_EventSetMessage(MsgAltmillerWouldHaveRevealedMyselfSooner);
     Event_ShowMessage(ACTOR_BABI, 0);
@@ -1043,18 +1043,18 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   AltmillerCave_FacePartyNorth();
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(10);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(20);
@@ -1071,7 +1071,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(150);
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(40);
@@ -1104,7 +1104,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
@@ -1114,15 +1114,15 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(50);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_BABI, 2);
@@ -1137,7 +1137,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(10);
@@ -1146,14 +1146,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_BABI, 2);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(10);
@@ -1201,8 +1201,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_OpenMessage(ACTOR_BABI, 0);
   Engine_EventSetMessage(MsgAltmillerBabi);
@@ -1320,7 +1320,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Engine_EventWait(10);
@@ -1350,9 +1350,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_SOUTHEAST, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIMATION_NOD);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
@@ -1364,10 +1364,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   AltmillerCave_FacePartyNorth();
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -1384,10 +1384,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
   Engine_EventWait(40);
   Engine_ActorFollow(ACTOR_PARTY_LEADER, ACTOR_BABI);
   Engine_ActorFollow(GARET, ACTOR_BABI);
@@ -1399,8 +1399,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_WalkBy(ACTOR_SECOND_SOLDIER, 0, 48);
   Actor_WalkByAndWait(ACTOR_BABI, -16, 0);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 32);
-  Engine_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_STAND);
-  Engine_ActorSetAnimation(ACTOR_SECOND_SOLDIER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIMATION_STAND);
+  Engine_ActorSetAnimation(ACTOR_SECOND_SOLDIER, ANIMATION_STAND);
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(GARET);
   Engine_ActorStop(MIA);
@@ -1423,11 +1423,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceActor(GARET, ACTOR_BABI, 30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -1443,7 +1443,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
   Engine_EventWait(30);
   // Babi and the two men walk back toward the cave entrance.
   Actor_SetActionScript(ACTOR_SECOND_SOLDIER,
@@ -1481,7 +1481,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Engine_EventWait(20);
@@ -1496,22 +1496,22 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceActor(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIMATION_NOD);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_BABI, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_BABI, FACING_EAST, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIMATION_NOD);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_EAST, 0);
   Engine_EventWait(20);
@@ -1560,7 +1560,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(20);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
@@ -1588,18 +1588,18 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // Let Isaac answer the invitation and reunite the party.
   Engine_EventSetMessage(MsgAltmillerEitherWayWereStuckHere);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
@@ -1612,7 +1612,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     Engine_EventWait(30);
     Engine_EventSetMessage(MsgAltmillerGreatItsDecidedJustHave);
     Event_ShowMessage(GARET, 0);
@@ -1623,14 +1623,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_EventWait(30);
     Event_ShowMessage(IVAN, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
-    Engine_ActorSetAnimation(MIA, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_EventWait(30);
   } else {
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(30);
     Engine_EventSetMessage(MsgAltmillerDontLetMeDownLike);
     Event_ShowMessage(GARET, 0);
@@ -1641,11 +1641,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_EventWait(30);
     Event_ShowMessage(IVAN, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(30);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   }
@@ -1653,21 +1653,21 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(IVAN, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(IVAN);
   Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -1736,7 +1736,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -1754,7 +1754,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(30);
@@ -1802,7 +1802,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Actor_WalkByAndWait(GARET, 0, -16);
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 30);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     Engine_EventWait(20);
     Engine_EventShowMessage(GARET, 0);
   }
@@ -1816,9 +1816,9 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_EventWait(10);
   Engine_ActorFaceEachOther(IVAN, ACTOR_PARTY_LEADER, 30);
   Event_ShowMessage(IVAN, 0);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, MIA, 0);
   Actor_FaceActor(GARET, MIA, 0);
@@ -1829,15 +1829,15 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorWalkByAndWait(GARET, 0, 16);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(30);
   Engine_ActorFaceEachOther(MIA, IVAN, 30);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorWalkByAndWait(IVAN, 0, 16);
@@ -1853,18 +1853,18 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Engine_EventWait(10);
@@ -1912,24 +1912,24 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Engine_EventWait(20);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(10);
   Actor_FaceActor(ACTOR_PARTY_LEADER, MIA, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_FaceActor(GARET, MIA, 0);
   Engine_ActorFaceActor(IVAN, MIA, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Engine_ActorSetDestination(GARET, leader->x.part.pixel,
@@ -1937,7 +1937,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Engine_ActorSetDestination(IVAN, leader->x.part.pixel,
@@ -1945,7 +1945,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   Engine_ActorWaitForMove(IVAN);
   Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Engine_ActorSetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -1997,7 +1997,7 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_INVISIBLE_BABI, 0);
   Engine_EventWait(30);
   Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventEnd();
 }
@@ -2479,32 +2479,32 @@ u32 gAltmillerCave_PulseScales[] = {
 
 /// The two men from Tolbi walk in to Babi.
 s32 gAltmillerCave_GuardsArrivePath[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, -PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(64), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, -PIXELS(64)),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_END,
 };
 
 /// Babi and the two men walk out of the room, each by his own path.
 s32 gAltmillerCave_SecondGuardLeavePath[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(48), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_FirstGuardLeavePath[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, PIXELS(16)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2513,12 +2513,12 @@ s32 gAltmillerCave_FirstGuardLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(32), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_BabiLeavePath[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2527,7 +2527,7 @@ s32 gAltmillerCave_BabiLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_END,
 };
 

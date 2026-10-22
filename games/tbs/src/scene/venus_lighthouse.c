@@ -418,7 +418,7 @@ enum VenusLighthouseFourthFloorActor {
 enum {
   /// The hurt scholars and soldiers lying on the ground (spr_112.tsv and
   /// spr_152.tsv, the same pose).
-  ANIM_HURT_LYING = 5,
+  ANIMATION_HURT_LYING = 5,
   /// A light's sparkle, flickering between its two largest pictures
   /// (spr_284.tsv).
   PARTICLE_ANIM_FLICKER = 7
@@ -427,7 +427,7 @@ enum {
 /// An animation timer step for Object_SetActionById, in sixteenths of a frame
 /// taken off each frame: 16 plays an animation at its own speed, so 24 plays
 /// it half again as fast.
-enum { ANIM_STEPS_FAST = 24 };
+enum { ANIMATION_STEPS_FAST = 24 };
 
 /// The pieces of gold track a SPRITE_SPIRAL_PILLAR can carry, its animations
 /// from 3, each named by the two edges of its cell it joins as the pillar's
@@ -522,7 +522,7 @@ enum {
 #include "common/object_findslot.h"
 
 /// Pushing a pillar: the pillar ahead of the leader moves one cell on with him,
-/// leaning into it (ANIM_PUSH), when the cell beyond is free, nothing
+/// leaning into it (ANIMATION_PUSH), when the cell beyond is free, nothing
 /// stands on the pillar, and it is no statue (SW_VENUS_IMMOVABLE).
 static void VenusLighthouse_PushAdjacentPillar(void) {
   struct FieldPosition targetPosition;
@@ -576,7 +576,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
     return;
 
   // Move the pillar and leader together, then restore their standing state.
-  Object_SetMode(leader, ANIM_PUSH);
+  Object_SetMode(leader, ANIMATION_PUSH);
   moveRate = PIXELS(1) / 5;
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_PUSH);
@@ -600,7 +600,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   leader->velocityZ = transitionBusy;
   leader->x.fixed = leader->x.part.pixel << 16;
   leader->z.fixed = leader->z.part.pixel << 16;
-  Object_SetMode(leader, ANIM_STAND);
+  Object_SetMode(leader, ANIMATION_STAND);
 }
 
 /// Unused: fills collision codes in a rectangle of the requested map layer;
@@ -790,7 +790,7 @@ static void Event_EnterSparklingPassage(void) {
       (void (*)(union FieldObject *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
   leader->speed = PIXELS(1) / 5;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -897,7 +897,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Event_PlayCue(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
   Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
@@ -1047,10 +1047,10 @@ static s32 Event_JumpAcrossGap(void) {
     if (SceneData_FindSlotAtPosition(&landing, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, &landing) == 0) {
       Engine_EventBegin();
-      Object_SetMode(leader, ANIM_LEADER_SPRING);
+      Object_SetMode(leader, ANIMATION_LEADER_SPRING);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
-      Object_SetMode(leader, ANIM_LEADER_LEAP);
+      Object_SetMode(leader, ANIMATION_LEADER_LEAP);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -1058,7 +1058,7 @@ static s32 Event_JumpAcrossGap(void) {
       Engine_ActorSetSpriteFlags(leader, 0);
       Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, landing.x >> 16,
                                 landing.z >> 16);
-      Object_SetMode(leader, ANIM_LEADER_SPRING);
+      Object_SetMode(leader, ANIMATION_LEADER_SPRING);
       Engine_ActorSetSpriteFlags(leader, 1);
       *motionFlags = savedMotionFlags;
       Engine_EventEnd();
@@ -1217,7 +1217,7 @@ static void Event_ReadRelief(void) {
   struct EventWork *work = gEventWork;
 #endif
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
@@ -1304,9 +1304,9 @@ static void Event_JumpDown(void) {
       (void (*)(union FieldObject *))VenusLighthouse_EmitRisingParticles;
 #endif
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   Actor_SetChildValue(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   leader->update = 0;
   Engine_EventEnd();
 }
@@ -1359,7 +1359,7 @@ static void Event_SearchStatue(void) {
   work->revealFrames = 0;
   work->busy = 1;
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgVenusStatueSpeaksIsaacSoulYe, 1);
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
@@ -1438,7 +1438,7 @@ static void Event_MovePillarTowardWall(void) {
       Engine_ActorWalkToAndWait(GARET, garetX, 104);
       Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
       Engine_EventWait(20);
       Engine_EventSetMessage(MsgVenusHmmmWeCantPushBlock);
       Engine_EventShowMessageAndWait(GARET, 0, 20);
@@ -1449,11 +1449,11 @@ static void Event_MovePillarTowardWall(void) {
       Engine_ActorRunRepeatedMotion(GARET, 2);
       Engine_EventWait(20);
       Engine_EventShowMessageAndWait(GARET, 0, 20);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-      Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+      Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
       Engine_EventWait(30);
       Engine_ActorWalkToAndWait(GARET, garetX, 88);
-      Engine_ActorSetAnimation(GARET, ANIM_WALK);
+      Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       if (leader != 0) {
         Engine_ActorSetDestination(GARET, leader->x.part.pixel,
@@ -1580,7 +1580,7 @@ static void Event_FallThroughFloor(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3), PIXELS(3) / 2);
   Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel, 552);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
   Engine_EventWait(30);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1592,8 +1592,8 @@ static void Event_FallThroughFloor(void) {
     leader->facing = facing;
   }
   // The run cycle: his legs kick in the air as he falls.
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
-  Object_SetActionById(ACTOR_PARTY_LEADER, ANIM_STEPS_FAST);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_RUN);
+  Object_SetActionById(ACTOR_PARTY_LEADER, ANIMATION_STEPS_FAST);
   Engine_EventWait(40);
   // Start the fall only after the approach and descent animation have finished.
   leader->gravity = PIXELS(3) / 5;
@@ -2684,8 +2684,8 @@ const struct SceneEvent *VenusLighthouse_GetEvents(void) {
 }
 
 /// Lays one of the scholars or soldiers the wanderers hurt on the ground
-/// (ANIM_HURT_LYING), drawn behind the backgrounds' fronts, still and without
-/// the lower two bits of its collision.
+/// (ANIMATION_HURT_LYING), drawn behind the backgrounds' fronts, still and
+/// without the lower two bits of its collision.
 static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   struct FieldActor *actor;
   s32 collisionFlags;
@@ -2696,7 +2696,7 @@ static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   collisionFlags &= actor->collisionFlags;
   actor->collisionFlags = collisionFlags;
   Engine_ActorSetSpriteFlags(actor, 0);
-  Object_SetMode(actor, ANIM_HURT_LYING);
+  Object_SetMode(actor, ANIMATION_HURT_LYING);
   Engine_ActorSetSpritePriority(actorId, 3);
   {
     s32 priorityFlags = 2;
@@ -3322,12 +3322,12 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
                                                ATTACHED_EFFECT_ONCE);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + PIXELS(8));
-    Object_SetMode(actor, ANIM_LEADER_LEAP);
+    Object_SetMode(actor, ANIMATION_LEADER_LEAP);
     FieldObject_WaitForMove(actor);
     do {
       Engine_TaskWait(1);
     } while (actor->y.fixed != actor->terrainHeight);
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(3);
     return;
   }
@@ -3664,7 +3664,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_EventWait(24);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
   leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
   platform->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
   leader->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
@@ -3689,7 +3689,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   platform->motionFlags = 0;
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_EventWait(40);
 #ifdef UBFIX
   leader->update = VenusLighthouse_UpdateRisingSpray;

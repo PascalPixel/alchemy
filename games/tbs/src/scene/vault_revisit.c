@@ -180,7 +180,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Stands the actor still while showing the message already selected.
 static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(actor, ANIM_STAND);
+  Engine_ActorSetAnimation(actor, ANIMATION_STAND);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
 }
@@ -384,7 +384,7 @@ static void Event_ReadMindOnJailKey(void) {
   if (requestHeard == 0) {
     Engine_EventBegin();
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
-    Engine_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIMATION_STAND);
     Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_ON_WATCH, 1);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgVaultGuysCheckJail);
@@ -620,7 +620,7 @@ static void Event_TalkToDog(void) {
   Engine_ActorFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(2);
   Engine_EventShowMessage(ACTOR_VAULT_DOG, 0);
-  Engine_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_VAULT_DOG, ANIMATION_STAND);
 
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {

@@ -459,14 +459,14 @@ static void AltinPeak_RideCart(s32 log) {
   logActor = Object_GetById(ACTOR_CART);
   Field_EndBusyAndReveal();
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
   Engine_EventWait(10);
   Engine_AudioPlayCue(SE_JUMP);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(16) / 5, PIXELS(8) / 5);
   // Leap by the height between leader and cart, in quarter pixels, plus 4.
   leader->velocityY =
       ((ABS(logActor->y.fixed - leader->y.fixed) >> 14) << 14) + PIXELS(4);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAP);
   Engine_ObjectSetPosition(leader, logActor->x.fixed, logActor->y.fixed,
                            logActor->z.fixed);
   Engine_TaskWait(10);
@@ -890,11 +890,11 @@ static void AltinPeak_PushSpritzRoomPillar(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(ACTOR_SPRITZ_ROOM_PILLAR)->steeringFlags &=
       ~ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_PUSH);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 400, 424);
   Actor_SetDestination(ACTOR_SPRITZ_ROOM_PILLAR, 408, 424);
   Engine_ActorWaitForMove(ACTOR_SPRITZ_ROOM_PILLAR);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   AltinPeak_SettleSpritzRoomPillar();
   Engine_EventEnd();
 }
@@ -995,9 +995,9 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_SPRING);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 792, 140);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_PlayCue(SE_183);
@@ -1096,7 +1096,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 854, 584);
   if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
-    Engine_ActorSetAnimation(GARET, ANIM_STAND);
+    Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
     Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
@@ -1112,7 +1112,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     Engine_CameraWaitForMove();
     Actor_WalkToAndWait(GARET, 840, 552);
     Actor_WalkToAndWait(GARET, 854, 562);
-    Engine_ActorSetAnimation(GARET, ANIM_WALK);
+    Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
       Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
@@ -1152,7 +1152,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_WalkToAndWait(GARET, 800, 140);
     Actor_FaceDirection(GARET, FACING_NORTH, 20);
     Engine_EventSetMessage(message + 1);
-    Engine_ActorSetAnimation(GARET, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(GARET, 0, 10);
     Engine_ActorJump(GARET, 6, 0);
@@ -1202,7 +1202,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_MoveToAndWait(GARET, 786, 198);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_MoveToAndWait(GARET, 786, 246);
-    Engine_ActorSetAnimation(GARET, ANIM_STAND);
+    Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
     Actor_SetPosition(GARET, 0, 0);
     Engine_EventWait(40);
     AltinPeak_RunBoulderChase(10);
@@ -1326,7 +1326,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->actor.update = 0;
   beast->actor.paused = 0;
   Engine_EventWait(16);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
@@ -1348,7 +1348,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 374, 262);
   beast->actor.update = 0;
   Engine_EventWait(16);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHEAST + FACING_STEP,
@@ -1363,7 +1363,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_EventWait(10);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
                       20);
@@ -1375,7 +1375,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->actor.update = AltinPeak_UpdateBeastHops;
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 329, 219);
   beast->actor.update = 0;
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   Engine_EventWait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
@@ -1394,7 +1394,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   actor->velocityY = jumpSpeed;
   Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 295, 215);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_ActorSetSpriteFlags(actor, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1404,7 +1404,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   actor->velocityY = jumpSpeed;
   Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 260, 215);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 20);
@@ -1460,7 +1460,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   actor->actor.update = NULL;
   actor->actor.paused = 0;
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 40);
@@ -1473,7 +1473,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   movingActor->velocityY = PIXELS(4);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
   Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 86, 214);
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   movingActor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_ActorSetSpriteFlags(movingActor, 1);
   Engine_EventWait(10);
@@ -1491,7 +1491,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 120, 215);
   actor->actor.update = NULL;
   actor->actor.paused = 0;
-  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIMATION_STAND);
   Engine_EventWait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
@@ -2217,16 +2217,16 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Event_OpenMessage(IVAN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   } else {
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     Event_SkipMessages(1);
   }
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Engine_EventSetMessage(MsgAltinGuardianStatuesWereCreatedLong);
@@ -2266,20 +2266,20 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_ShowMessage(IVAN, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   // Return the companions and save the completed Hydros battle.
   party = gAltinPeak_RejoinScript;
@@ -2703,7 +2703,7 @@ s32 gAltinPeak_LeaderFleePath[] = {
     SC_SET(SW_TIMER, 1),
     SC_MOVE(PIXELS(854), 0, PIXELS(552)),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_LABEL(1),
     SC_ADD(SW_FACING, 1024),
     SC_LOOP(24, SC_TO(1)),
@@ -2722,28 +2722,28 @@ s32 gAltinPeak_DebrisScript[] = {
 
 /// Garet, Ivan and Mia step out beside the leader after the Hydros battle.
 s32 gAltinPeak_GaretScript[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(314), 0, PIXELS(126)),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_WAIT(10),
     SC_END,
 };
 
 s32 gAltinPeak_IvanScript[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(346), 0, PIXELS(126)),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_WAIT(10),
     SC_END,
 };
 
 s32 gAltinPeak_MiaScript[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(328), 0, PIXELS(138)),
     SC_SYNC,
-    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIMATION_STAND),
     SC_WAIT(10),
     SC_END,
 };
@@ -2761,7 +2761,7 @@ s32 gAltinPeak_StatueSinkScript[] = {
 
 /// Garet, Ivan and Mia walk back to the leader and rejoin the party.
 s32 gAltinPeak_RejoinScript[] = {
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(328), 0, PIXELS(118)),
     SC_SYNC,
     SC_POS(0, 0, 0),

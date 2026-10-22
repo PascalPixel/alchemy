@@ -161,12 +161,12 @@ enum ValeInteriorsShopsActor {
 /// animation tables and frames under graphics/sprite draw them.
 enum ValeInteriorsShopsAnimation {
   /// Garet's grandfather standing with his eyes shut, asleep (spr_117.png).
-  ANIM_GRANDFATHER_ASLEEP = 5,
+  ANIMATION_GRANDFATHER_ASLEEP = 5,
   /// Garet's grandfather glancing quickly from side to side (spr_117.png).
-  ANIM_GRANDFATHER_LOOK_ABOUT = 6,
+  ANIMATION_GRANDFATHER_LOOK_ABOUT = 6,
   /// Jenna's grandmother lying in bed, only her head on the pillow
   /// (spr_111.png).
-  ANIM_GRANDMOTHER_IN_BED = 5
+  ANIMATION_GRANDMOTHER_IN_BED = 5
 };
 
 // Forward declarations.
@@ -453,7 +453,7 @@ s32 ValeInteriorsShops_Initialize(void) {
       actor = Object_GetById(ACTOR_JENNAS_GRANDMOTHER);
       Engine_ActorSetSpriteFlags(actor, 0);
       Engine_ActorSetAnimation(ACTOR_JENNAS_GRANDMOTHER,
-                               ANIM_GRANDMOTHER_IN_BED);
+                               ANIMATION_GRANDMOTHER_IN_BED);
       Map_ClearLayerEntryFlag(4);
     }
   }
@@ -551,10 +551,10 @@ static void Event_TalkToItemMerchant(void) {
 
 /// Garet's grandparents and father nod.
 static inline void ValeInteriorsShops_FamilyNods(void) {
-  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIMATION_NOD);
 }
 
 /// Starts the repeated motion before waiting for the requested animation.
@@ -591,7 +591,8 @@ static void Event_GaretComesHome(void) {
   Actor_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(MIA, PIXELS(2) / 5, PIXELS(1) / 5);
-  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
+  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER,
+                           ANIMATION_GRANDFATHER_ASLEEP);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
   sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
   Engine_ActorSetSpriteFlags(sleepZ, 0);
@@ -610,7 +611,7 @@ static void Event_GaretComesHome(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
@@ -626,8 +627,8 @@ static void Event_GaretComesHome(void) {
   Actor_WalkTo(GARET, 792, 512);
   Actor_WalkTo(IVAN, 824, 504);
   Actor_WalkToAndWait(MIA, 818, 524);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Engine_EventWait(10);
   FieldObject_SetTargetAndCallback(ACTOR_PARTY_LEADER,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
@@ -653,7 +654,7 @@ static void Event_GaretComesHome(void) {
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_WalkToAndWait(ACTOR_GARETS_FATHER, 819, 405);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_FATHER, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH + FACING_STEP, 20);
   Engine_EventSetMessage(MsgValeHey2);
@@ -683,19 +684,19 @@ static void Event_GaretComesHome(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                ACTOR_GARETS_FATHER,
                            0, 10);
   ValeInteriorsShops_PlayRepeatedAnimationAndWait(ACTOR_GARETS_MOTHER,
-                                                  ANIM_NOD);
+                                                  ANIMATION_NOD);
   Engine_EventWait(20);
   ValeInteriorsShops_PlayRepeatedAnimationAndWait(ACTOR_GARETS_FATHER,
-                                                  ANIM_SHAKE_HEAD);
+                                                  ANIMATION_SHAKE_HEAD);
   ValeInteriorsShops_PlayRepeatedAnimationAndWait(ACTOR_GARETS_MOTHER,
-                                                  ANIM_NOD);
+                                                  ANIMATION_NOD);
   ValeInteriorsShops_PlayRepeatedAnimationAndWait(ACTOR_GARETS_FATHER,
-                                                  ANIM_SHAKE_HEAD);
+                                                  ANIMATION_SHAKE_HEAD);
   // Garet's grandmother sees him and chokes on her words; his mother asks if
   // she is choking, his father thinks she misses Garet too.
   Actor_ShowEmote(ACTOR_GARETS_GRANDMOTHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -708,22 +709,24 @@ static void Event_GaretComesHome(void) {
   Engine_EventWait(40);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                            40);
-  Engine_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_STILL);
+  Engine_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIMATION_STILL);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_MOTHER, 2);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER,
+                                  ANIMATION_SHAKE_HEAD);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_GRANDMOTHER, 2);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                            10);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_FATHER, ANIMATION_NOD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_FATHER, 0, 10);
   // No, it really is Garet: both parents turn and call his name together.
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER,
+                                  ANIMATION_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorJump(ACTOR_GARETS_GRANDMOTHER, 2, 0);
-  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                            10);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -739,14 +742,14 @@ static void Event_GaretComesHome(void) {
   Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   // His grandfather wakes, and the sleep stops drifting.
   Engine_TaskRemoveCallback(timedUpdate);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
-                                  ANIM_GRANDFATHER_LOOK_ABOUT);
+                                  ANIMATION_GRANDFATHER_LOOK_ABOUT);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
                            20);
@@ -764,7 +767,7 @@ static void Event_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       40);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
-                                  ANIM_GRANDFATHER_LOOK_ABOUT);
+                                  ANIMATION_GRANDFATHER_LOOK_ABOUT);
   Engine_EventWait(60);
   Engine_ActorJump(ACTOR_GARETS_GRANDFATHER, 6, 0);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
@@ -774,10 +777,10 @@ static void Event_GaretComesHome(void) {
   Actor_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(GARET, 789, 473);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_EAST + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIMATION_NOD);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 0);
@@ -791,7 +794,7 @@ static void Event_GaretComesHome(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Event_ShowMessage(ACTOR_GARETS_FATHER, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_MOTHER, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   // His mother knows he is leaving again soon; his grandparents are glad to
   // see him well.
@@ -800,20 +803,21 @@ static void Event_GaretComesHome(void) {
   Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER,
+                                  ANIMATION_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIMATION_NOD);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 10);
-  Engine_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIMATION_NOD);
   Engine_EventWait(20);
   // Garet introduces his new friends.
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -822,11 +826,11 @@ static void Event_GaretComesHome(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 20);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -836,7 +840,7 @@ static void Event_GaretComesHome(void) {
   Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   ValeInteriorsShops_FamilyNods();
   Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(MIA, 1);
@@ -864,22 +868,22 @@ static void Event_GaretComesHome(void) {
   Actor_FaceDirection(MIA, FACING_NORTHEAST + FACING_STEP, 40);
   Actor_FaceDirection(IVAN, FACING_WEST + FACING_STEP, 0);
   Actor_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   // His father: enough chit-chat, relax and enjoy your stay.
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_FATHER, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_GARETS_FATHER, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   partyScript = gValeInteriorsShops_PartyLeavesScript;

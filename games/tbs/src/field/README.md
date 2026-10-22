@@ -113,14 +113,14 @@ changes.
 ![Isaac attacking in a battle, the screen on the left and his sprite taken apart on the right. Its three layers are each composed alone: `entries[0]`, sprite 300, his body; `entries[1]`, sprite 320, his sword; and `entries[2]`, sprite 510, a dark ellipse along the bottom of its 64 by 64 picture. Beside them is the buffer composed from all three, read back from video memory: the ellipse under his feet, the body over it and the sword over the body. As he winds up, swings and lands, the body's and the sword's frame numbers change together, from 1 to 5 standing, then 13, 15 and 17 for the swing, 7 and 9 as he lands, while the ellipse stays at frame 0.](https://alchemy.pascalpixel.com/guides/field/sprite-layers.gif)
 
 Each layer of a sprite plays an animation script of byte pairs. A first byte
-below `ANIM_CMD_END` (239) is a frame to show and the second byte how long.
+below `ANIMATION_COMMAND_END` (239) is a frame to show and the second byte how long.
 The layer's timer counts sixteenths of a frame and loses
 `AnimationEntry.step` each frame, `ANIMATION_NORMAL_STEP` (16) at normal
 speed, so a layer can be made to play slower or faster. From 239 up, the
 first byte is a command (`enum AnimationCommand` in `field_internal.h`):
-`ANIM_CMD_END`, `ANIM_CMD_SET_KIND` (choose a facing table), `ANIM_CMD_HOLD`,
-`ANIM_CMD_WAIT`, `ANIM_CMD_JUMP`, `ANIM_CMD_PLAY` (switch animation) and
-`ANIM_CMD_BLANK`. The drawing code skips 242 to 244, 246 to 250 and 252 as
+`ANIMATION_COMMAND_END`, `ANIMATION_COMMAND_SET_KIND` (choose a facing table), `ANIMATION_COMMAND_HOLD`,
+`ANIMATION_COMMAND_WAIT`, `ANIMATION_COMMAND_JUMP`, `ANIMATION_COMMAND_PLAY` (switch animation) and
+`ANIMATION_COMMAND_BLANK`. The drawing code skips 242 to 244, 246 to 250 and 252 as
 unused, and shows 251 as an ordinary frame.
 
 When any layer's frame changes, `Sprite_ComposeAnimationFrame` redraws the
@@ -154,13 +154,13 @@ and `gRuntime_ByteRemapTable` (`remap0.tsv` to `remap3.tsv`).
 | `ANIMATION_OBJECT_COUNT` | 64 | sprites, and the layer records they share |
 | `ANIMATION_LAYER_COUNT` | 4 | layers a sprite composes, `AnimationObject.entries` |
 | `ANIMATION_NORMAL_STEP` | 16 | sixteenths of a frame off a layer's timer each frame: normal speed |
-| `ANIM_CMD_END` | 239 | blank the layer and stop its script |
-| `ANIM_CMD_SET_KIND` | 240 | use facing table `arg` |
-| `ANIM_CMD_HOLD` | 241 | stay on this command and frame for good |
-| `ANIM_CMD_WAIT` | 245 | keep the current frame `arg` frames longer |
-| `ANIM_CMD_JUMP` | 253 | continue at script position `arg` |
-| `ANIM_CMD_PLAY` | 254 | switch to animation `arg` |
-| `ANIM_CMD_BLANK` | 255 | show nothing for `arg` |
+| `ANIMATION_COMMAND_END` | 239 | blank the layer and stop its script |
+| `ANIMATION_COMMAND_SET_KIND` | 240 | use facing table `arg` |
+| `ANIMATION_COMMAND_HOLD` | 241 | stay on this command and frame for good |
+| `ANIMATION_COMMAND_WAIT` | 245 | keep the current frame `arg` frames longer |
+| `ANIMATION_COMMAND_JUMP` | 253 | continue at script position `arg` |
+| `ANIMATION_COMMAND_PLAY` | 254 | switch to animation `arg` |
+| `ANIMATION_COMMAND_BLANK` | 255 | show nothing for `arg` |
 
 ## Cameras and the frame
 

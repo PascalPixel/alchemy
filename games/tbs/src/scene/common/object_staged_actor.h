@@ -454,7 +454,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   StagedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                          horizontalExtent, verticalExtent, 0);
   Engine_ActorSetSpeed(0, 0x8000, 0x1999);
-  Engine_ActorSetAnimation(0, ANIM_PUSH);
+  Engine_ActorSetAnimation(0, ANIMATION_PUSH);
   Engine_EventWait(15);
 
   {

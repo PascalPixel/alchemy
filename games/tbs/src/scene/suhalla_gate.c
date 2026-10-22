@@ -282,7 +282,7 @@ static void Event_GuardsBlockPassage(void) {
   Actor_WalkToAndWait(ACTOR_EAST_GUARD, 152, 384);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
-  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_STAND);
   Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if TBS_PATCH_3
   Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -392,7 +392,7 @@ static void Event_IodemQuestionsGuards(void) {
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_IODEM, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -435,7 +435,7 @@ static void Event_TalkToEastGuard(void) {
 
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
       Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
-      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIMATION_SHAKE_HEAD);
       Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
       gEventWork->message += 2;

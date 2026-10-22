@@ -269,7 +269,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(selectedActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Engine_ActorSetAnimation(selectedActorId, ANIM_LEADER_LOOK_AROUND);
+    Engine_ActorSetAnimation(selectedActorId, ANIMATION_LEADER_LOOK_AROUND);
     storm = Object_GetById(stormIdCopy);
     if (storm != 0) {
       Actor_SetDestination(selectedActorId, storm->x.part.pixel,
@@ -393,7 +393,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
                               (leaderZ - 40));
     Engine_EventWait(1);
     Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_STAND);
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Engine_EventSetMessage(MsgSuhallaSandstorm);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
@@ -407,10 +407,10 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Engine_EventShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
-    Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
       Engine_ActorSetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -487,7 +487,7 @@ static void Event_IodemAsksWhetherToPressOn(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 444, 1240);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -500,13 +500,13 @@ static void Event_IodemAsksWhetherToPressOn(void) {
     Engine_EventWait(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_WalkToAndWait(ACTOR_IODEM, 440, 1256);
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,

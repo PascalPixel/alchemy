@@ -131,20 +131,20 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   WaitFrames(18);
 }
 
-/// Leaves through an EXIT_STYLE_ANIMATED exit (ANIM_LEADER_LEAVE);
+/// Leaves through an EXIT_STYLE_ANIMATED exit (ANIMATION_LEADER_LEAVE);
 /// FLAG_EXIT_ARRIVAL_PENDING makes the next scene play the matching arrival
 /// (ObjectEffect_RunPendingFlagEvent). Called by the exit handling in events.c,
 /// after it plays SE_STAIRS_UP.
 void ObjectEffect_BeginContextEffect26(void) {
-  ObjectEffect_PrepareContextEffect(ANIM_LEADER_LEAVE);
+  ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE);
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_PENDING);
 }
 
 /// Leaves through an EXIT_STYLE_ANIMATED_ALTERNATE exit
-/// (ANIM_LEADER_LEAVE_ALTERNATE), recorded in FLAG_EXIT_ARRIVAL_ALTERNATE.
+/// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in FLAG_EXIT_ARRIVAL_ALTERNATE.
 /// Called by the exit handling in events.c, after it plays SE_STAIRS_DOWN.
 void ObjectEffect_BeginContextEffect25(void) {
-  ObjectEffect_PrepareContextEffect(ANIM_LEADER_LEAVE_ALTERNATE);
+  ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE_ALTERNATE);
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_ALTERNATE);
 }
 
@@ -183,25 +183,25 @@ void ObjectEffect_EndContextEffect(s32 animation) {
 }
 
 /// Plays the leader's arrival for the way the last scene was left: through an
-/// EXIT_STYLE_ANIMATED exit (FLAG_EXIT_ARRIVAL_PENDING, ANIM_LEADER_ARRIVE,
-/// returns 1) or an EXIT_STYLE_ANIMATED_ALTERNATE one
-/// (FLAG_EXIT_ARRIVAL_ALTERNATE, ANIM_LEADER_ARRIVE_ALTERNATE, returns 2), or
-/// falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3). Returns 0
-/// when there is nothing to play. Called by Field_RunScene as the scene fades
-/// in, which waits out the fade itself only when this returns 0. Clears the
-/// flag it acts on.
+/// EXIT_STYLE_ANIMATED exit (FLAG_EXIT_ARRIVAL_PENDING,
+/// ANIMATION_LEADER_ARRIVE, returns 1) or an EXIT_STYLE_ANIMATED_ALTERNATE one
+/// (FLAG_EXIT_ARRIVAL_ALTERNATE, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns 2),
+/// or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
+/// Returns 0 when there is nothing to play. Called by Field_RunScene as the
+/// scene fades in, which waits out the fade itself only when this returns 0.
+/// Clears the flag it acts on.
 s32 ObjectEffect_RunPendingFlagEvent(void) {
   s32 result = 0;
   s32 flag = FLAG_EXIT_ARRIVAL_PENDING;
 
   if (GameFlag_TestFar(flag) != 0) {
-    ObjectEffect_EndContextEffect(ANIM_LEADER_ARRIVE);
+    ObjectEffect_EndContextEffect(ANIMATION_LEADER_ARRIVE);
     GameFlag_ClearBitFar(flag);
     result = 1;
   } else {
     flag = FLAG_EXIT_ARRIVAL_ALTERNATE;
     if (GameFlag_TestFar(flag) != 0) {
-      ObjectEffect_EndContextEffect(ANIM_LEADER_ARRIVE_ALTERNATE);
+      ObjectEffect_EndContextEffect(ANIMATION_LEADER_ARRIVE_ALTERNATE);
       GameFlag_ClearBitFar(flag);
       result = 2;
     } else {

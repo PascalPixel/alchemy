@@ -681,12 +681,13 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
     command = script[0];
     duration = script[1];
     script += 2;
-    if (command == ANIM_CMD_PLAY || command == ANIM_CMD_HOLD ||
-        command == ANIM_CMD_JUMP || command == ANIM_CMD_END) {
+    if (command == ANIMATION_COMMAND_PLAY ||
+        command == ANIMATION_COMMAND_HOLD ||
+        command == ANIMATION_COMMAND_JUMP || command == ANIMATION_COMMAND_END) {
       break;
     }
-    if (command == ANIM_CMD_WAIT || command == ANIM_CMD_BLANK ||
-        command < ANIM_CMD_END) {
+    if (command == ANIMATION_COMMAND_WAIT ||
+        command == ANIMATION_COMMAND_BLANK || command < ANIMATION_COMMAND_END) {
       durationSum += duration;
       frameCount--;
       if (frameCount == 0) {

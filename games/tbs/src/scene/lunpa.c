@@ -261,7 +261,7 @@ static void Event_HideSecrets(void) {
   MapObject_SetPosition(MAP_OBJECT_PSYNERGY_STONE, 0, 0);
   Map_CopyCells(32, 42, 3, 2, 1, 15);
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
-  Engine_ActorSetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_HIDDEN_PUDDLE, ANIMATION_STAND);
   puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
   puddle->update = NULL;
   Engine_ObjectSetPartPalettes(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
@@ -488,14 +488,14 @@ static void Lunpa_WatchForFortressApproach(void) {
 /// steps back.
 static void Event_GaretTurnsLeaderBack(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_EventSetMessage(MsgLunpaGaretRefusesToReturn);
   Event_ShowMessage(GARET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 100);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   GameFlag_Clear(FLAG_SCENE_TEMP_43);
   Engine_EventEnd();
 }
@@ -523,7 +523,7 @@ static void Event_EnterDoor(void) {
                    gLunpaDoors[doorIndex].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   if (doorIndex != DOOR_TEMPLE) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
     Engine_EventWait(10);
@@ -541,7 +541,7 @@ static void Event_EnterHiddenPassage(void) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
       Engine_EventWait(13);
       Engine_EventRequestExit(LUNPA_TO_VAULT_JAIL);
@@ -556,7 +556,7 @@ static void Event_EnterFortress(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
   Event_PlayCue(SE_DOOR_OPEN);
   Map_CopyCells(53, 4, 2, 2, 41, 4);
@@ -671,14 +671,14 @@ static void Event_GuardsCatchParty(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(2), PIXELS(1));
-  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(35);
   Engine_EventSetMessage(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
   Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   Engine_EventSetMessage(warningMessageBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIMATION_NOD);
   Engine_EventWait(25);
   Engine_EventSetMessage(warningMessageBase +
                          CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
@@ -794,7 +794,7 @@ static void Event_GuardsThrowLeaderOut(void) {
   Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 288);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 288);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_SCENE);
   Engine_EventWait(1);
@@ -806,11 +806,11 @@ static void Event_GuardsThrowLeaderOut(void) {
   Engine_EventWait(30);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   Event_PlayCue(SE_SCUFFLE);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
-  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIMATION_STAND);
+  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIMATION_STAND);
   Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);
   // Throw the leader down the steps, then wait for the first landing.
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FALLS;
@@ -821,7 +821,7 @@ static void Event_GuardsThrowLeaderOut(void) {
     Engine_EventWait(1);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SPRAWLED);
   Event_PlayCue(SE_LANDING_THUD);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -836,7 +836,7 @@ static void Event_GuardsThrowLeaderOut(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);
   Engine_EventWait(50);
   Engine_EventSetMessage(MsgLunpaGuardForbidsReturn);
@@ -849,8 +849,8 @@ static void Event_GuardsThrowLeaderOut(void) {
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 176, 200);
   Engine_ActorWaitForMove(ACTOR_LEFT_GUARD);
   Engine_ActorWaitForMove(ACTOR_RIGHT_GUARD);
-  Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
-  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIMATION_STAND);
+  Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIMATION_STAND);
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);

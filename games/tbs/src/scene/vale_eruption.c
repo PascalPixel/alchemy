@@ -142,12 +142,12 @@ static void Event_ReturnFromMtAleph(void) {
   const s32 *actionScript;
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER, ANIM_STILL);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, ANIM_STILL);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, ANIM_STILL);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 3, ANIM_STILL);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 4, ANIM_STILL);
-  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, ANIM_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER, ANIMATION_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, ANIMATION_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, ANIMATION_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 3, ANIMATION_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 4, ANIMATION_STILL);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, ANIMATION_STILL);
   Actor_WalkToAndWait(ACTOR_GARETS_SISTER, 265, 487);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
   Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
@@ -195,13 +195,13 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventWait(30);
   // Garet's sister doubts he is up there; her brother says someone saw him
   // climb.
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SISTER, ANIMATION_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_GARETS_SISTER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       0);
   Actor_FaceActor(ACTOR_GARETS_BROTHER, ACTOR_GARETS_SISTER, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIMATION_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
   // and the mayor and Dora wonder what Alchemy has to do with the eruption.
@@ -217,7 +217,7 @@ static void Event_ReturnFromMtAleph(void) {
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_DORA, 0);
   Engine_EventWait(60);
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
@@ -244,21 +244,21 @@ static void Event_ReturnFromMtAleph(void) {
   Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Camera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 120, 320);
   Actor_MoveToAndWait(GARET, 104, 320);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_EventWait(50);
   Actor_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   Actor_MoveToAndWait(GARET, 105, 342);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
@@ -270,23 +270,23 @@ static void Event_ReturnFromMtAleph(void) {
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(60);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
     Engine_EventWait(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Engine_ActorSetAnimation(GARET, ANIM_WALK);
+    Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
     Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_MoveToAndWait(GARET, 103, 320);
-    Engine_ActorSetAnimation(GARET, ANIM_STAND);
+    Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
   } else {
     Engine_EventWait(60);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
     Engine_EventWait(50);
     Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 120, 340);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   }
 
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
@@ -324,8 +324,8 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Object_RefreshSelectorById(GARET);
   Engine_EventWait(50);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
   Object_RefreshSelectorById(GARET);
   Engine_EventWait(60);
 
@@ -343,10 +343,10 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_CameraWaitForMove();
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
   Actor_SetSpeed(ACTOR_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIMATION_WALK);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 265, 455);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 246, 455);
-  Engine_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIMATION_STAND);
   Engine_EventWait(30);
 
   // "Where have you been?" "What happened?"
@@ -366,8 +366,8 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(40);
   // Dora notices who is missing.
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -407,8 +407,8 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(60);
 
   // "This is all very complicated... Come into the sanctum, both of you."
@@ -418,7 +418,7 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_GREAT_HEALER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GREAT_HEALER, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Engine_EventWait(20);
@@ -427,7 +427,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST + FACING_STEP,
                       0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIMATION_NOD);
   Engine_EventWait(50);
   Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
   Engine_EventWait(20);
@@ -436,8 +436,8 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventWait(40);
   Engine_ActorFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIMATION_NOD);
   Engine_EventWait(30);
 
   // The sanctum's door opens and everyone files inside.
@@ -454,7 +454,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 255, 460);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorRunRepeatedMotion(GARET, 1);

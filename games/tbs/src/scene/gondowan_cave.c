@@ -250,7 +250,7 @@ static void Event_IodemAsksWhyTurningBack(void) {
       OBJ_WALK(ACTOR_IODEM, 152, 232);
       GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
       Engine_ActorWaitForMove(ACTOR_IODEM);
-      OBJ_MODE(ACTOR_IODEM, ANIM_STAND);
+      OBJ_MODE(ACTOR_IODEM, ANIMATION_STAND);
       gGameState.savedScene = (s32)&SceneId_TolbiInteriors;
       gGameState.savedEntrance = TOLBI_INTERIORS_SANCTUM_NORTH;
     } else {
@@ -258,7 +258,7 @@ static void Event_IodemAsksWhyTurningBack(void) {
       // the party, and Isaac steps away from the trigger.
       gEventWork->message += 1;
       Event_ShowMessage(ACTOR_IODEM, 0);
-      OBJ_MODE(ACTOR_IODEM, ANIM_WALK);
+      OBJ_MODE(ACTOR_IODEM, ANIMATION_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
         Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -267,10 +267,10 @@ static void Event_IodemAsksWhyTurningBack(void) {
       Engine_ActorWaitForMove(ACTOR_IODEM);
       OBJ_POS_SET(ACTOR_IODEM, 0, 0);
       WAIT(30);
-      OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_WALK);
+      OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_WALK);
       Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-      OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+      OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
     }
     EV_END();
   }
@@ -284,12 +284,12 @@ static void Event_IodemRejoins(void) {
   EV_BEGIN();
   OBJ_FACE(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   OBJ_FACE(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   WAIT(10);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   MESSAGE_SET(MsgKaragolIveBeenWaitingForIsaac);
   MESSAGE_PUT(ACTOR_IODEM, 0);
-  OBJ_MODE(ACTOR_IODEM, ANIM_WALK);
+  OBJ_MODE(ACTOR_IODEM, ANIMATION_WALK);
   {
     struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 

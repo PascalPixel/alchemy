@@ -470,7 +470,7 @@ static void Event_OpenDoorAndLeave(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
@@ -509,7 +509,7 @@ static void Event_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
@@ -517,7 +517,7 @@ static void Event_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
@@ -525,7 +525,7 @@ static void Event_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 132, 186);
     leader->scaleX = Q16_ONE;
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -601,7 +601,7 @@ static void Event_JillGivesHardNut(void) {
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_WEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIMATION_NOD);
   Actor_SetAttachedEffect(ACTOR_JILL,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
@@ -611,8 +611,8 @@ static void Event_JillGivesHardNut(void) {
                       10);
   Engine_ActorRunRepeatedMotion(ACTOR_JILL, 1);
   Event_ShowMessageAndWait(ACTOR_JILL, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_JILL, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -621,15 +621,15 @@ static void Event_JillGivesHardNut(void) {
   Engine_EventWait(1);
   Object_GetById(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_JILL, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   Engine_MessageShowCentered(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gEventWork->message++;
   Engine_ItemShowFound(ITEM_HARD_NUT, 3);
   Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimationAndWait(ACTOR_JILL, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(1), PIXELS(1) / 2);
   Object_GetById(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -644,9 +644,9 @@ static void Event_JillGivesHardNut(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
   Event_ShowMessageAndWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIMATION_NOD);
+  Engine_ActorSetAnimation(ACTOR_GANG_MEMBER_WEST, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_JILL, ANIMATION_NOD);
   // From now on the three turn to face the leader wherever he goes.
   FieldObject_SetTargetAndCallback(ACTOR_GANG_MEMBER_EAST,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
@@ -913,7 +913,7 @@ static void Event_PushStatueOrCrates(void) {
         pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
     if (FieldObject_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
-      Object_SetMode(leader, ANIM_PUSH);
+      Object_SetMode(leader, ANIMATION_PUSH);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_PUSH);
       pushed->speed = PIXELS(1) / 5;
@@ -929,7 +929,7 @@ static void Event_PushStatueOrCrates(void) {
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
-      Object_SetMode(leader, ANIM_STAND);
+      Object_SetMode(leader, ANIMATION_STAND);
       // Each map derives its collision cells from this same moved actor.
       if (gGameState.scene == (s32)&SceneId_BilibinBarricade)
         Bilibin_UpdateCratesCells();

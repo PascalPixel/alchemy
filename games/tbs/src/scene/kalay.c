@@ -498,12 +498,12 @@ static void Kalay_AskAboutCaveAccess(void) {
     Engine_EventSetMessage(MsgKalayDoWantGoCaveUp);
     Engine_EventOpenMessage(ACTOR_TUNNEL_GUARD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-      Engine_ActorSetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIMATION_SHAKE_HEAD);
       Engine_EventShowMessage(ACTOR_TUNNEL_GUARD, 0);
     } else {
       message = &gEventWork->message;
       *message = *message + 1;
-      Engine_ActorSetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIMATION_NOD);
       Engine_EventShowMessage(ACTOR_TUNNEL_GUARD, 0);
     }
     Engine_EventEnd();
@@ -605,7 +605,7 @@ static void Kalay_OpenDoorAndExit(void) {
   }
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
   Engine_EventWait(10);
   Engine_EventRequestExit(*trigger);
@@ -630,7 +630,7 @@ static void Kalay_EnterPalace(void) {
   Kalay_AnimatePalaceDoor();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   Engine_EventWait(10);
   Engine_EventRequestExit(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
@@ -725,7 +725,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTHWEST + FACING_STEP,
                         10);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 1, ANIMATION_NOD);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
     Actor_SetAttachedEffect(ACTOR_FIRST_TOURIST + 5,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -738,14 +738,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 2);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIMATION_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
                         0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP,
                         20);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 5, ANIMATION_NOD);
     Engine_ActorRunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     Actor_SetAttachedEffect(ACTOR_HEAD_GUIDE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -762,7 +762,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIMATION_NOD);
     Engine_EventWait(20);
     headAgain = Actor_Get(ACTOR_HEAD_GUIDE);
     headAgain->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -775,11 +775,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_OURANOS, 1);
-    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIMATION_NOD);
     Event_ShowMessageAndWait(ACTOR_OURANOS, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIMATION_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_SECOND_GUIDE, 2);
     Actor_ShowEmote(ACTOR_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -811,16 +811,16 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAttachedEffect(ACTOR_SECOND_GUIDE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
-    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIMATION_SHAKE_HEAD);
     Actor_ShowEmote(ACTOR_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIMATION_NOD);
     Engine_ActorRunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_EAST, 60);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTHWEST + FACING_STEP, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIMATION_NOD);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_EAST, 0);
     Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_RunActionScriptAndWait(ACTOR_HEAD_GUIDE, gKalay_GuidePaceScript);
@@ -835,7 +835,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAttachedEffect(ACTOR_HEAD_GUIDE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
-    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIMATION_SHAKE_HEAD);
     message = MsgKalayShortOnePerson;
     Engine_EventSetMessage(message);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 40);
@@ -908,7 +908,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_SOUTH + FACING_STEP,
                         10);
     Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 1);
-    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 4,
+                                    ANIMATION_SHAKE_HEAD);
     message = MsgKalayDecideEnteringColosso;
     Engine_EventSetMessage(message);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
@@ -923,11 +924,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH + FACING_STEP,
                         10);
     message += 3;
-    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIMATION_SHAKE_HEAD);
     Engine_EventSetMessage(message);
     Event_ShowMessageAndWait(ACTOR_OURANOS, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIMATION_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_ShowEmote(ACTOR_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -966,20 +967,20 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageAndWait(ACTOR_SECOND_GUIDE, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_HEAD_GUIDE, 1);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIMATION_NOD);
     Event_ShowMessageAndWait(ACTOR_SECOND_GUIDE, 0, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIMATION_NOD);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_FIRST_TOURIST, 1);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST, 0, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST + 1, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(40);
-    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIMATION_NOD);
     Event_ShowMessageAndWait(ACTOR_SECOND_GUIDE, 0, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIMATION_NOD);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTHWEST + FACING_STEP,
@@ -992,14 +993,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
                         4);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTHWEST + FACING_STEP, 4);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 2, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 3, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 1, ANIMATION_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 2, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 3, ANIMATION_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 5, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIMATION_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIMATION_NOD);
     Engine_ActorJump(ACTOR_HEAD_GUIDE, 2, 40);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
@@ -1601,17 +1602,17 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_PALACE_GUARD, 184, 232);
   Actor_WalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 198, 232);
-  Engine_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIMATION_STAND);
   Engine_EventWait(20);
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PALACE_GUARD, ANIMATION_SHAKE_HEAD);
   Engine_EventSetMessage(MsgKalayLordHammetsPalaceLordAway);
   Event_ShowMessageAndWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH + FACING_STEP,
                       10);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1628,7 +1629,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_WalkToAndWait(IVAN, 202, 254);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(IVAN, 0, 10);
   Actor_ShowEmote(ACTOR_PALACE_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1655,12 +1656,12 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_PALACE_GUARD, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PALACE_GUARD, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_SECOND_PALACE_GUARD, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIMATION_NOD);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Event_ShowMessageAndWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 60);
@@ -1680,20 +1681,20 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
     gEventWork->message++;
   } else {
     gEventWork->message++;
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
   }
   Engine_ActorRunRepeatedMotion(ACTOR_SECOND_PALACE_GUARD, 2);
   Event_ShowMessageAndWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(IVAN, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PALACE_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Event_ShowMessageAndWait(IVAN, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PALACE_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1706,21 +1707,21 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_WEST, 10);
   Event_ShowMessageAndWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_EAST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PALACE_GUARD, ANIMATION_NOD);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessage(ACTOR_PALACE_GUARD, 0);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP,
                       10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Actor_SetSpeed(ACTOR_PALACE_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ActorSetSpeed(ACTOR_SECOND_PALACE_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   actor = Actor_Get(ACTOR_PALACE_GUARD);
@@ -1731,7 +1732,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_PALACE_GUARD, 168, 232);
   Actor_WalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 212, 232);
-  Engine_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIMATION_STAND);
   Engine_EventWait(20);
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1744,8 +1745,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 222);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Engine_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIMATION_NOD);
   Actor_WalkTo(ACTOR_PALACE_GUARD, 184, 232);
   Actor_WalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 198, 232);
   Actor_WalkTo(ACTOR_PALACE_GUARD, 188, 212);
@@ -1832,10 +1833,10 @@ static void Kalay_HammetReturnsToPalace(void) {
   *(u16 *)leaderPhase = motionPhase >> 12;
   Actor_SetActionScript(ACTOR_PARTY_LEADER, motionActions);
   Engine_ActorJump(ACTOR_BUNZA, 2, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventSetMessage(MsgKalayWeveArrivedHammet);
   Event_ShowMessageAndWait(ACTOR_BUNZA, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   object = Actor_Get(ACTOR_PARTY_LEADER);
   if (object != 0) {
     Actor_SetPosition(GARET, object->x.fixed, object->z.fixed);
@@ -1854,8 +1855,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkTo(GARET, 378, 310);
   Actor_WalkTo(IVAN, 400, 288);
   Actor_WalkToAndWait(MIA, 410, 308);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
@@ -1885,15 +1886,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ActorStop(MIA);
   Engine_TaskWait(1);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageAndWait(GARET, 0, 10);
@@ -1904,26 +1905,26 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH + FACING_STEP, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Actor_SetAttachedEffect(IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_BUNZA, 0, 10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
@@ -1934,22 +1935,22 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_ShowMessageAndWait(GARET, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_BUNZA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_BUNZA, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIMATION_NOD);
   Event_OpenMessage(ACTOR_HAMMET, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
@@ -1969,20 +1970,20 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 10);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(280), -1, PIXELS(200), 1);
   Actor_WalkToAndWait(ACTOR_HAMMET, 333, 222);
   Actor_WalkToAndWait(ACTOR_HAMMET, 284, 198);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_WEST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIMATION_NOD);
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIMATION_NOD);
   Actor_SetSpeed(ACTOR_TUNNEL_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_TUNNEL_GUARD, 268, 198);
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_NORTH, 10);
@@ -2018,12 +2019,12 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BUNZA, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Actor_WalkToAndWait(ACTOR_BUNZA, 420, 282);
   Actor_WalkToAndWait(ACTOR_BUNZA, 420, 312);
   Actor_WalkToAndWait(ACTOR_BUNZA, 439, 312);
@@ -2091,7 +2092,7 @@ static void Kalay_PushTunnelStatue(void) {
     SET_POSITION(target, statue->x.fixed + (moveStep & -0x10000),
                  statue->y.fixed, statue->z.fixed + (moveStep << 16));
     if (FieldObject_CheckMovementCollision(statue, target) <= 0) {
-      Object_SetMode(leader, ANIM_PUSH);
+      Object_SetMode(leader, ANIMATION_PUSH);
       pushSpeed = PIXELS(1) / 5;
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_PUSH);
@@ -2107,7 +2108,7 @@ static void Kalay_PushTunnelStatue(void) {
       statue->z.fixed = target->z;
       statue->velocityX = stoppedVelocity;
       statue->velocityZ = stoppedVelocity;
-      Object_SetMode(leader, ANIM_STAND);
+      Object_SetMode(leader, ANIMATION_STAND);
       Kalay_UpdateTunnelPassages();
     }
   }

@@ -646,9 +646,9 @@ static void Event_TakeCellKey(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   WAIT(10);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_ItemShowFound(ITEM_CELL_KEY, 3);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_PartyGiveItem(ITEM_CELL_KEY, 0);
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_CELL_KEY);
   Engine_ActorSetPosition(UPPER_FLOOR_CELL_KEY, 0, 0);
@@ -1217,7 +1217,7 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
   Actor_SetBuiltinAction(actorId, ACTOR_ACTION_IDLE);
   OBJ_MODE(actorId, 0);
   OBJ_FACE(actorId, ACTOR_PARTY_LEADER, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_ActorSetDestinationOffset(actorId, 0, 0);
   Actor_SetBuiltinAction(actorId, ACTOR_ACTION_IDLE);
   Engine_ActorStop(actorId);
@@ -1335,7 +1335,7 @@ static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId) {
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void Event_FightWestGuard(void) {
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   Engine_ActorShowEmote(UPPER_FLOOR_WEST_GUARD,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1353,7 +1353,7 @@ static void Event_FightWestGuard(void) {
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void Event_FightHallGuard(void) {
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   Engine_ActorShowEmote(UPPER_FLOOR_HALL_GUARD,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1373,7 +1373,7 @@ static void Event_FightHallGuard(void) {
 static void Event_FightThreeGuards(void) {
   s32 messageBase;
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   OBJ_MODE(UPPER_FLOOR_GUARD_A, 1);
   OBJ_MODE(UPPER_FLOOR_GUARD_B, 1);
   OBJ_MODE(UPPER_FLOOR_GUARD_C, 1);
@@ -1451,7 +1451,7 @@ static void LunpaFortress_PlaceThreeBeatenGuards(void) {
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void Event_FightEastGuard(void) {
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   Engine_ActorShowEmote(UPPER_FLOOR_EAST_GUARD,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1471,7 +1471,7 @@ static void Event_EntranceGuardThrowsPartyOut(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   OBJ_FACE(GROUND_FLOOR_ENTRANCE_GUARD, ACTOR_PARTY_LEADER, 0);
   SE(SE_MENU_CANCEL);
   Engine_ActorShowEmote(GROUND_FLOOR_ENTRANCE_GUARD,
@@ -1500,7 +1500,7 @@ static void Event_SentriesThrowPartyOut(void) {
   EV_BEGIN();
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   OBJ_EMOTE(GROUND_FLOOR_SECOND_SENTRY, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJ_EMOTE(GROUND_FLOOR_FIRST_SENTRY, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1774,7 +1774,7 @@ static void Event_FindHammet(void) {
                                    LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
-    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
     SE(AUDIO_CUE_FADE_BGM);
     WAIT(30);
     // Ivan recognizes Hammet before Dodonpa interrupts the reunion.
@@ -1804,9 +1804,9 @@ static void Event_FindHammet(void) {
     MESSAGE_SET(messageBase + 3);
     MESSAGE_PUT(TOADONPA_HAMMET, 0);
     WAIT(30);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
-    OBJ_MODE(IVAN, ANIM_STAND);
+    OBJ_MODE(IVAN, ANIMATION_STAND);
     Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 1);
     WAIT(20);
     OBJ_SPEED(TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1823,14 +1823,14 @@ static void Event_FindHammet(void) {
     MESSAGE_SET(messageBase + 4);
     MESSAGE_PUT(TOADONPA_HAMMET, 0);
     WAIT(40);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
     OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     WAIT(120);
     MESSAGE_SET(messageBase + 5);
     MESSAGE_PUT(TOADONPA_HAMMET, 0);
     WAIT(25);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(30);
     Engine_ActorSetAnimationAndWait(TOADONPA_HAMMET, 3);
     WAIT(40);
@@ -1919,7 +1919,7 @@ static void Event_FindHammet(void) {
     OBJ_WALK(MIA, 440, 216);
     Engine_ActorWaitForMove(MIA);
     OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     WAIT(10);
     MESSAGE_SET(messageBase + 17);
     MESSAGE_PUT(MIA, 0);
@@ -2054,9 +2054,9 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_SET((aftermathMessage + 5));
   MESSAGE_PUT(IVAN, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  OBJ_MODE(MIA, ANIM_SHAKE_HEAD);
+  OBJ_MODE(MIA, ANIMATION_SHAKE_HEAD);
   WAIT(80);
-  OBJ_MODE(MIA, ANIM_STAND);
+  OBJ_MODE(MIA, ANIMATION_STAND);
   MESSAGE_SET((aftermathMessage + 6));
   MESSAGE_PUT(MIA, 0);
   OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 65);
@@ -2076,9 +2076,9 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_SET((aftermathMessage + 10));
   MESSAGE_OPEN(MIA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    OBJ_MODE(IVAN, ANIM_NOD);
-    OBJ_MODE(GARET, ANIM_NOD);
-    OBJ_MODE(MIA, ANIM_NOD);
+    OBJ_MODE(IVAN, ANIMATION_NOD);
+    OBJ_MODE(GARET, ANIMATION_NOD);
+    OBJ_MODE(MIA, ANIMATION_NOD);
     OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     WAIT(60);
   } else {
@@ -2103,10 +2103,10 @@ static void Event_DonpaJudgesDodonpa(void) {
     OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
     OBJ_FACE(MIA, TOADONPA_HAMMET, 0);
     OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
-    OBJ_MODE(IVAN, ANIM_NOD);
-    OBJ_MODE(GARET, ANIM_NOD);
-    OBJ_MODE(MIA, ANIM_NOD);
-    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+    OBJ_MODE(IVAN, ANIMATION_NOD);
+    OBJ_MODE(GARET, ANIMATION_NOD);
+    OBJ_MODE(MIA, ANIMATION_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     WAIT(80);
     OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     OBJ_FACE(IVAN, TOADONPA_DODONPA, 0);
@@ -2139,10 +2139,10 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);
   WAIT(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJ_MODE(IVAN, ANIMATION_NOD);
+  OBJ_MODE(GARET, ANIMATION_NOD);
+  OBJ_MODE(MIA, ANIMATION_NOD);
   WAIT(100);
   SE(SE_226);
   OBJ_MODE(TOADONPA_DODONPA, 7);
@@ -2167,10 +2167,10 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_DIR(IVAN, FACING_SOUTH, 0);
   OBJ_DIR(MIA, FACING_NORTH, 0);
   WAIT(60);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  OBJ_MODE(MIA, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJ_MODE(GARET, ANIMATION_NOD);
+  OBJ_MODE(IVAN, ANIMATION_NOD);
+  OBJ_MODE(MIA, ANIMATION_NOD);
   WAIT(100);
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJ_SPEED(GARET, PIXELS(7) / 10, PIXELS(7) / 20);
@@ -2178,7 +2178,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_SPEED(MIA, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJ_WALK(ACTOR_PARTY_LEADER, 456, 184);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   OBJ_WALK(GARET, 464, 256);
   Engine_ActorWaitForMove(GARET);
@@ -2186,17 +2186,17 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorWaitForMove(GARET);
   OBJ_WALK(GARET, 440, 192);
   Engine_ActorWaitForMove(GARET);
-  OBJ_MODE(GARET, ANIM_STAND);
+  OBJ_MODE(GARET, ANIMATION_STAND);
   OBJ_DIR(GARET, FACING_SOUTH, 0);
   OBJ_WALK(MIA, 488, 248);
   Engine_ActorWaitForMove(MIA);
   OBJ_WALK(MIA, 488, 184);
   OBJ_WALK(IVAN, 472, 184);
   Engine_ActorWaitForMove(IVAN);
-  OBJ_MODE(IVAN, ANIM_STAND);
+  OBJ_MODE(IVAN, ANIMATION_STAND);
   OBJ_DIR(IVAN, FACING_SOUTH, 0);
   Engine_ActorWaitForMove(MIA);
-  OBJ_MODE(MIA, ANIM_STAND);
+  OBJ_MODE(MIA, ANIMATION_STAND);
   OBJ_DIR(MIA, FACING_SOUTH, 0);
   WAIT(30);
   WAIT(60);
@@ -2246,7 +2246,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_FACE(GARET, IVAN, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 75);
   OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
-  OBJ_MODE(GARET, ANIM_SHAKE_HEAD);
+  OBJ_MODE(GARET, ANIMATION_SHAKE_HEAD);
   MESSAGE_SET((punishmentMessage + 6));
   MESSAGE_PUT(GARET, 0);
   OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2255,7 +2255,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_PUT(TOADONPA_HAMMET, 0);
   OBJ_WALK(GARET, 448, 208);
   Engine_ActorWaitForMove(GARET);
-  OBJ_MODE(GARET, ANIM_STAND);
+  OBJ_MODE(GARET, ANIMATION_STAND);
   OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
   MESSAGE_SET((punishmentMessage + 8));
   MESSAGE_PUT(GARET, 0);
@@ -2265,7 +2265,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 9));
   MESSAGE_PUT(TOADONPA_HAMMET, 0);
-  OBJ_MODE(GARET, ANIM_SHAKE_HEAD);
+  OBJ_MODE(GARET, ANIMATION_SHAKE_HEAD);
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 10));
   MESSAGE_PUT(GARET, 0);
@@ -2300,7 +2300,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 110);
   OBJ_WALK(GARET, 456, 212);
   Engine_ActorWaitForMove(GARET);
-  OBJ_MODE(GARET, ANIM_STAND);
+  OBJ_MODE(GARET, ANIMATION_STAND);
   MESSAGE_SET((punishmentMessage + 16));
   MESSAGE_PUT(GARET, 0);
   OBJ_FACE(IVAN, GARET, 0);
@@ -2319,7 +2319,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_FACE(TOADONPA_DODONPA, TOADONPA_DODONPA, 0);
   OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
   WAIT(80);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   WAIT(30);
   MESSAGE_SET((punishmentMessage + 18));
   MESSAGE_PUT(GARET, 0);
@@ -2438,10 +2438,10 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_MODE(TOADONPA_DONPA, 3);
   WAIT(120);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, TOADONPA_DONPA, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(MIA, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJ_MODE(IVAN, ANIMATION_NOD);
+  OBJ_MODE(GARET, ANIMATION_NOD);
+  OBJ_MODE(MIA, ANIMATION_NOD);
   WAIT(120);
   OBJ_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 180);
   MESSAGE_SET((donpaMessage + 15));
@@ -2488,10 +2488,10 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 90);
   MESSAGE_SET((donpaMessage + 22));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  OBJ_MODE(MIA, ANIM_NOD);
-  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJ_MODE(IVAN, ANIMATION_NOD);
+  OBJ_MODE(MIA, ANIMATION_NOD);
+  OBJ_MODE(GARET, ANIMATION_NOD);
   OBJ_MODE(TOADONPA_HAMMET, 3);
   WAIT(80);
   OBJ_MODE(TOADONPA_DONPA, 4);
@@ -2507,11 +2507,11 @@ static void Event_DonpaJudgesDodonpa(void) {
   WAIT(50);
   MESSAGE_SET((donpaMessage + 25));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
-  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(GARET, ANIMATION_NOD);
   WAIT(70);
   MESSAGE_SET((donpaMessage + 26));
   MESSAGE_PUT(GARET, 0);
-  OBJ_MODE(MIA, ANIM_NOD);
+  OBJ_MODE(MIA, ANIMATION_NOD);
   MESSAGE_SET((donpaMessage + 27));
   MESSAGE_PUT(MIA, 0);
   OBJ_FACE(TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
@@ -2551,7 +2551,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
   WAIT(30);
-  OBJ_MODE(IVAN, ANIM_NOD);
+  OBJ_MODE(IVAN, ANIMATION_NOD);
   WAIT(100);
   MESSAGE_SET((donpaMessage + 37));
   MESSAGE_OPEN(IVAN, 0);
@@ -2560,30 +2560,30 @@ static void Event_DonpaJudgesDodonpa(void) {
     MESSAGE_PUT(TOADONPA_DONPA, 0);
   }
   WAIT(30);
-  OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(IVAN, ANIM_NOD);
-  OBJ_MODE(MIA, ANIM_NOD);
+  OBJ_MODE(GARET, ANIMATION_NOD);
+  OBJ_MODE(IVAN, ANIMATION_NOD);
+  OBJ_MODE(MIA, ANIMATION_NOD);
   WAIT(100);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   OBJ_MODE(TOADONPA_HAMMET, 3);
   WAIT(100);
   // Rejoin the companions, then escort Hammet out of the fortress.
-  OBJ_MODE(GARET, ANIM_WALK);
+  OBJ_MODE(GARET, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   OBJ_POS_SET(GARET, 0, 0);
-  OBJ_MODE(IVAN, ANIM_WALK);
+  OBJ_MODE(IVAN, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(IVAN, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(IVAN);
   OBJ_POS_SET(IVAN, 0, 0);
-  OBJ_MODE(MIA, ANIM_WALK);
+  OBJ_MODE(MIA, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -2606,7 +2606,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorRunRepeatedMotion(TOADONPA_DODONPA, 2);
   MESSAGE_SET((donpaMessage + 40));
   MESSAGE_PUT(TOADONPA_DODONPA, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(30);
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   OBJ_SPEED(TOADONPA_HAMMET, PIXELS(1), PIXELS(1) / 2);
@@ -2621,7 +2621,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorWaitForMove(TOADONPA_HAMMET);
   OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DONPA, 0);
   OBJ_DIR(TOADONPA_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(5);
   OBJ_MODE(TOADONPA_HAMMET, 3);
   WAIT(100);

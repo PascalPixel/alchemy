@@ -625,7 +625,7 @@ static void Event_HideRedKey(void) {
 static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
                                                 s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_PartyGiveItem(itemId, 0);
   Engine_ActorSetPosition(actorId, 0, 0);
   Engine_GameFlagSet(collectedFlag);

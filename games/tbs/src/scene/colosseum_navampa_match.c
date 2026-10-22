@@ -683,7 +683,7 @@ static void Event_RollLongLog(void) {
   Object_SetMode(log, mode);
   Engine_ObjectSetPosition(log, x, 0, z);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(actor, ANIM_WALK);
+  Engine_ActorSetAnimation(actor, ANIMATION_WALK);
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->viewCenter,
                              (s32)log);
@@ -698,7 +698,7 @@ static void Event_RollLongLog(void) {
   // At the eastern end the log settles at the end of its stage.
   if (x >= PIXELS(1328)) {
     GameFlag_Set(FLAG_LONG_LOG_IN_PLACE);
-    Engine_ActorSetAnimation(LONG_LOG, ANIM_NOD);
+    Engine_ActorSetAnimation(LONG_LOG, ANIMATION_NOD);
     Actor_SetDestinationOffset(LONG_LOG, 18, 6);
     Engine_EventWait(30);
     Object_SetMode(log, 8);
@@ -896,17 +896,17 @@ static void Event_ReachArena(void) {
   Actor_WalkTo(OPPONENT, 1528, 192);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
-  Engine_ActorSetAnimation(OPPONENT, ANIM_STAND);
+  Engine_ActorSetAnimation(OPPONENT, ANIMATION_STAND);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, OPPONENT, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(OPPONENT, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(OPPONENT, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
   Actor_WalkToAndWait(OPPONENT, 1520, 192);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
   Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
@@ -1060,7 +1060,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(864) != 0) {
-    Engine_ActorSetAnimation(GROWTH_PLANT, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(GROWTH_PLANT, ANIMATION_SHAKE_HEAD);
     Map_CopyCellAttributes(47, 61, 1, 4, 49, 61);
   }
 
@@ -1264,7 +1264,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   }
   Actor_SetActionScript(ACTOR_PARTY_LEADER,
                         gColosseumNavampaMatch_LeaderActionA);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CROUCH);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
@@ -1324,14 +1324,14 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WalkToAndWait(IVAN, 1488, 176);
   Actor_WalkTo(GARET, 1520, 184);
   Actor_WalkToAndWait(IVAN, 1504, 176);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTH, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(10);
   Object_LinkObjectAndSetCallback(IVAN, GARET);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessage(MIA, 0);
   Object_LinkObjectAndSetCallback(GARET, MIA);
@@ -1408,9 +1408,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Object_LinkObjectAndSetCallback(GARET, IVAN);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
   Engine_EventWait(60);
   // The companions begin to leave, then discuss the sleeping leader off-screen.
   Actor_WalkTo(MIA, 1464, 200);
@@ -1420,7 +1420,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WalkToAndWait(GARET, 1512, 184);
   Actor_WalkTo(GARET, 1368, 184);
   Engine_ActorWaitForMove(MIA);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
   Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
   Engine_EventWait(60);
   Actor_WalkToAndWait(MIA, 1432, 200);
@@ -1475,7 +1475,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteThirdFinals);
-  Engine_ActorSetAnimationAndWait(guideId, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(guideId, ANIMATION_NOD);
   Engine_EventShowMessage(guideId, 0);
   Engine_ActorRunRepeatedMotion(guideId, 2);
   Engine_EventShowMessage(guideId, 0);
@@ -1483,22 +1483,22 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Engine_EventShowMessage(guideId, 0);
   Engine_ActorRunRepeatedMotion(guideId, 2);
   Engine_EventShowMessage(guideId, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
@@ -1732,22 +1732,22 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       y = actor->y.fixed;
       x = actor->x.fixed;
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CLIMB);
       raisedHeight = PIXELS(6) + y;
       Engine_ObjectSetPosition(actor, x, raisedHeight, actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_EAST);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CLIMB_EAST);
       shiftedX = PIXELS(64) + x;
       Engine_ObjectSetPosition(actor, shiftedX, raisedHeight, actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CLIMB);
       Engine_ObjectSetPosition(actor, shiftedX, y + PIXELS(54), actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_WEST);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CLIMB_WEST);
       Engine_ObjectSetPosition(actor, x + PIXELS(48), y + PIXELS(54),
                                actor->z.fixed);
       FieldObject_WaitForMove(actor);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLING);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_CLING);
       Event_ShowMessage(guideId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1823,7 +1823,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
                                                       ATTACHED_EFFECT_ATTACH);
       Engine_EventWait(120);
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
 #if !TBS_PATCH_3
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_REMOVE);

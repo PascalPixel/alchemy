@@ -499,10 +499,10 @@ static void Event_JumpGapWest(void) {
   destination->z = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
     EV_BEGIN();
-    Object_SetMode(leader, ANIM_LEADER_SPRING);
+    Object_SetMode(leader, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(leader, ANIM_LEADER_LEAP);
+    Object_SetMode(leader, ANIMATION_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -511,7 +511,7 @@ static void Event_JumpGapWest(void) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
                               *(s16 *)((u8 *)destination + 2),
                               *(s16 *)((u8 *)destination + 10));
-    Object_SetMode(leader, ANIM_LEADER_SPRING);
+    Object_SetMode(leader, ANIMATION_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
     EV_END();
@@ -545,7 +545,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Engine_ActorJump(ACTOR_WITNESS, 4, 0);
     break;
   case 480:
-    OBJ_MODE(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
+    OBJ_MODE(ACTOR_WITNESS, ANIMATION_SHAKE_HEAD);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
@@ -563,7 +563,7 @@ static void Event_WitnessCheersForgeCaught(void) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   MESSAGE_SET(MsgGomaGotWowThatsPrettyImpressive);
   Event_ShowMessage(ACTOR_WITNESS, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIMATION_NOD);
   WAIT(30);
   Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   OBJ_SPEED(ACTOR_WITNESS, PIXELS(2), PIXELS(1));

@@ -418,7 +418,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
-    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIMATION_STAND);
     Engine_EventWait(20);
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
     Event_AskYesNo(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -432,7 +432,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
-    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIMATION_STAND);
     Engine_EventWait(20);
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -641,7 +641,7 @@ static void Imil_OpenDoorAndExit(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exit == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   } else {
@@ -983,7 +983,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   }
   Actor_WalkTo(GARET, 150, 234);
   Actor_WalkToAndWait(IVAN, 134, 234);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
   FieldObject_SetTargetAndCallback(
       ACTOR_PARTY_LEADER, ACTOR_LINK_KEEP_MOTION | MIA, gImil_FaceTargetScript);
   FieldObject_SetTargetAndCallback(GARET, ACTOR_LINK_KEEP_MOTION | MIA,
@@ -1004,9 +1004,9 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 40);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -1023,25 +1023,25 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Map_AnimateCells(gImil_CellStepsA, 10, 69);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Engine_EventWait(40);
   Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_BACK);
   Map_AnimateCells(gImil_CellStepsB, 10, 69);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(MIA, FACING_WEST, 10);
-  Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(40);
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   Object_GetById(MIA)->timer = 0;
@@ -1075,7 +1075,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Event_ShowMessage(MIA, 0);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
@@ -1398,7 +1398,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   work->transitionFrames = 48;
   Engine_EventOpenScreen();
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Actor_SetSpeed(MIA, PIXELS(3) / 5, PIXELS(3) / 10);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -1412,16 +1412,16 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_EventSetMessage(MSGNO(MsgImilMia));
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Actor_SetAttachedEffect(ACTOR_SECOND_APPRENTICE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_SetAttachedEffect(ACTOR_APPRENTICE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1437,7 +1437,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(60);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1477,13 +1477,13 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_APPRENTICE, 1);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_SECOND_APPRENTICE, 1);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
@@ -1491,36 +1491,36 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Engine_EventWait(20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 80);
   Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_SECOND_APPRENTICE, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_SECOND_APPRENTICE, ANIMATION_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            20);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIMATION_NOD);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIMATION_NOD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 60);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_APPRENTICE, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_APPRENTICE, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIMATION_NOD);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Actor_WalkToAndWait(MIA, 688, 200);
   Actor_SetPosition(MIA, 0, 0);

@@ -317,13 +317,13 @@ static void Event_WatchWoundedSoldiers(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
-  Engine_ActorSetAnimation(ACTOR_WEST_SOLDIER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WEST_SOLDIER, ANIMATION_STAND);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -333,12 +333,12 @@ static void Event_WatchWoundedSoldiers(void) {
   Engine_EventWait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EAST_SOLDIER, 30);
-  Engine_ActorSetAnimation(ACTOR_EAST_SOLDIER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_EAST_SOLDIER, ANIMATION_STAND);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
@@ -363,7 +363,7 @@ static void Event_WatchWoundedSoldiers(void) {
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventWait(20);
   // Iodem paces while they tell where the attackers went.
@@ -388,7 +388,7 @@ static void Event_WatchWoundedSoldiers(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_EAST_SOLDIER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_EAST_SOLDIER, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   Engine_EventWait(20);
@@ -406,7 +406,7 @@ static void Event_WatchWoundedSoldiers(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -447,13 +447,13 @@ static void Event_WatchWoundedSoldiers(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   // Iodem walks back into the leader.
   Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -493,13 +493,13 @@ static void Event_IodemGivesBlackOrb(void) {
   Engine_EventWait(10);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Event_ShowMessage(MIA, 0);
     gEventWork->message += 1;
   } else {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message += 1;
     Event_ShowMessage(MIA, 0);
@@ -508,19 +508,19 @@ static void Event_IodemGivesBlackOrb(void) {
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   // The party lines up facing Iodem's door.
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -16, 0);
   Actor_WalkBy(IVAN, 0, -16);
   Actor_WalkBy(MIA, 0, -8);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-  Engine_ActorSetAnimation(MIA, ANIM_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
@@ -552,20 +552,20 @@ static void Event_IodemGivesBlackOrb(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(40);
   Actor_WalkByAndWait(ACTOR_IODEM, 16, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Engine_EventWait(20);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -583,7 +583,7 @@ static void Event_IodemGivesBlackOrb(void) {
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -596,14 +596,14 @@ static void Event_IodemGivesBlackOrb(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(40);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -612,13 +612,13 @@ static void Event_IodemGivesBlackOrb(void) {
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_IODEM, 0);
     gEventWork->message += 1;
   } else {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message += 1;
     Event_ShowMessage(ACTOR_IODEM, 0);
@@ -640,7 +640,7 @@ static void Event_IodemGivesBlackOrb(void) {
   Engine_ActorJump(MIA, 4, 30);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
@@ -654,7 +654,7 @@ static void Event_IodemGivesBlackOrb(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -665,11 +665,11 @@ static void Event_IodemGivesBlackOrb(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   // He holds the orb out, the leader takes it, and he steps back.
   Actor_SetSpeed(ACTOR_BLACK_ORB, 0xcccc, 0x6666);
@@ -689,17 +689,17 @@ static void Event_IodemGivesBlackOrb(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(50);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
   Engine_EventWait(30);
   // Iodem goes back inside.
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
@@ -726,34 +726,34 @@ static void Event_IodemGivesBlackOrb(void) {
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
   Actor_SetSpeed(MIA, 0x13333, 0x9999);
   Actor_SetSpeed(IVAN, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(MIA);
   Actor_SetPosition(MIA, 0, 0);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(IVAN, leader->x.part.pixel, leader->z.part.pixel);
@@ -773,7 +773,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
@@ -786,14 +786,14 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Engine_EventWait(20);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
@@ -801,7 +801,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Engine_EventWait(65);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(IVAN, 0);
 }

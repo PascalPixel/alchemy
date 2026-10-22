@@ -2095,7 +2095,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
     gEventWork->message += 1;
     TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 1));
   }
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_ActorSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 1));
   TolbiShipInteriors_Turn(QUARTERS_CAPTAIN, FACING_WEST);
@@ -2116,21 +2116,21 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Actor_SetActionScript(QUARTERS_SEAN, action);
   Engine_EventWait(4);
   Actor_SetActionScript(QUARTERS_KAJA, action);
-  Engine_ActorSetAnimation(MIA, ANIM_WALK);
+  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
   actor = Object_GetById(IVAN);
   if (actor != 0) {
     Actor_SetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWaitForMove(MIA);
   Actor_SetPosition(MIA, 0, 0);
-  Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
   actor = Object_GetById(GARET);
   if (actor != 0) {
     Actor_SetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWaitForMove(IVAN);
   Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
@@ -2888,7 +2888,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     Engine_ActorFaceEachOther(ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
     Engine_EventSetMessage(MsgTolbiShipBackBroughtOarsman);
     TolbiShipInteriors_Say(KAJA_ROWING_SPEAKER);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     leftSeat = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), halfStep);
     Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, 168);
@@ -2937,7 +2937,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     }
     Engine_ActorFaceEachOther(ROWING_KAJA, ACTOR_PARTY_LEADER, 20);
     TolbiShipInteriors_Say(SPEAKER(ROWING_KAJA, 2));
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
     Actor_SetSpeed(ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
     if (leftSeat != 0) {
@@ -2963,7 +2963,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     TolbiShipInteriors_Say(KAJA_ROWING_SPEAKER);
     Engine_ActorSetAnimationAndWait(ROWING_KAJA, 4);
     TolbiShipInteriors_Say(KAJA_ROWING_SPEAKER);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_EventWait(20);
     Engine_EventRequestExit(TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD);
   }
@@ -3137,10 +3137,10 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     Actor_FaceDirection(MIA, arg, opt);
     break;
   case SHIP_PLAY_PARTY_ANIMATION:
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
-    Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-    Engine_ActorSetAnimation(MIA, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+    Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
     if (arg != 0) {
       ObjectMotion_WaitForAnimationChange(3);
     }
@@ -3512,7 +3512,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x198, 134);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x198, 152);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x1b0, 166);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -3533,8 +3533,8 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   Actor_WalkTo(GARET, 448, 168);
   Actor_SetSpeed(MIA, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(MIA, 458, 152);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_SOUTH, 40);
@@ -3832,10 +3832,10 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_Say(GARET);
   Actor_FaceDirection(IVAN, FACING_EAST, 0);
   TolbiShipInteriors_Turn(MIA, FACING_WEST);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
@@ -4089,7 +4089,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   Engine_ActorSetAnimationAndWait(fourthRower, 3);
   Actor_FaceDirection(ROWING_KAJA, FACING_EAST, 0);
   TolbiShipInteriors_Turn(ACTOR_PARTY_LEADER, FACING_WEST);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_ActorSetAnimationAndWait(ROWING_KAJA, 3);
   Actor_SetSpeed(ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ROWING_KAJA, 408, 132);

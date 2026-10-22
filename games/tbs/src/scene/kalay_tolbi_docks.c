@@ -475,7 +475,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
       ticketOwner = PartyInventory_FindOwner(ITEM_BOAT_TICKET);
       ticketSlot = Inventory_Find(ticketOwner, ITEM_BOAT_TICKET);
-      Engine_ActorSetAnimationAndWait(ACTOR_CHECKING_TICKETS, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_CHECKING_TICKETS, ANIMATION_NOD);
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1288);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
       gEventWork->message++;
@@ -565,19 +565,20 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 #endif
       if (Engine_EventChooseYesNo(-1, 0) == 1) {
         UiWork_Finalize(coinsWindow, 2);
-        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER,
+                                        ANIMATION_SHAKE_HEAD);
         Engine_EventWait(10);
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else if ((u32)ticketPrice > (u32)state->coins) {
         UiWork_Finalize(coinsWindow, 2);
-        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
         Engine_EventWait(10);
         gEventWork->message++;
         Event_PlayCue(SE_MENU_CANCEL);
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else {
         UiWork_Finalize(coinsWindow, 2);
-        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
         Engine_EventWait(10);
         gEventWork->message += 3;
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
@@ -857,7 +858,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_EventWait(20);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
-                                  ANIM_SHAKE_HEAD);
+                                  ANIMATION_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessage(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Engine_EventWait(20);
@@ -877,12 +878,12 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
   Engine_EventWait(30);
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -944,7 +945,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_TOUR_GUIDE, 0);
   Engine_EventWait(10);
@@ -959,7 +960,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x26666, 0x13333);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 16, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_ANGRY_YOUNG_MAN, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_ANGRY_YOUNG_MAN, ANIMATION_STAND);
   Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(ACTOR_TOUR_GUIDE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -983,7 +984,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BODYGUARD, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(10);
@@ -1037,7 +1038,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BODYGUARD, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(10);
@@ -1047,7 +1048,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x1cccc, 0xe666);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
@@ -1078,7 +1079,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(10);
   Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_BODYGUARD, ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(20);
@@ -1092,9 +1093,9 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_EAST, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIMATION_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventWait(10);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x10000, 0x8000);

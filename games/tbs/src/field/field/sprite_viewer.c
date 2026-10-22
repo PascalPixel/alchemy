@@ -114,11 +114,11 @@ restart:
   VramCache_Reset();
   ObjectSystem_Initialize(MODE_LAYERED_MAP);
   // With no map loaded, the map cell buffer holds layer 0's frames; a
-  // two-part sprite (ANIM_FACING_TWO_PART) puts its second part in the actor
-  // sprite buffer, as resource slot 1.
+  // two-part sprite (ANIMATION_FACING_TWO_PART) puts its second part in the
+  // actor sprite buffer, as resource slot 1.
   ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, layers[0].spriteId, 0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
-  if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART) {
+  if (spriteMetadata->drawKind == ANIMATION_FACING_TWO_PART) {
     ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, layers[0].spriteId + 1,
                       0);
   }
@@ -128,7 +128,7 @@ restart:
   for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
     spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
     spriteWork.resourceOffset = 0;
-    if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART && (i & 1) != 0) {
+    if (spriteMetadata->drawKind == ANIMATION_FACING_TWO_PART && (i & 1) != 0) {
       spriteWork.resourceOffset = 1;
     }
     spriteWork.sprite =
@@ -415,9 +415,9 @@ s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite). B
-/// held turns the ring. Called by Ui_RunIconMonitor when it starts and while
-/// Start moves the ring.
+/// pairs for ANIMATION_FACING_TWO_PART), 56 pixels out (40 for a two-part
+/// sprite). B held turns the ring. Called by Ui_RunIconMonitor when it starts
+/// and while Start moves the ring.
 void Map_BuildProbeRing(s32 centerX, s32 centerY,
                         struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
@@ -437,7 +437,7 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
   // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
   // are skipped.
   switch ((u32)facingKind) {
-  case ANIM_FACING_THREE_FRAMES:
+  case ANIMATION_FACING_THREE_FRAMES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -452,10 +452,10 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case ANIM_FACING_FIVE_FRAMES:
-  case ANIM_FACING_EIGHT_FRAMES:
-  case ANIM_FACING_EIGHT_NO_TABLE:
-  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
+  case ANIMATION_FACING_FIVE_FRAMES:
+  case ANIMATION_FACING_EIGHT_FRAMES:
+  case ANIMATION_FACING_EIGHT_NO_TABLE:
+  case ANIMATION_FACING_EIGHT_FRAMES_MIRRORED:
     for (facingIndex = 0; facingIndex < 8; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -470,8 +470,8 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case ANIM_FACING_FOUR_FRAMES:
-  case ANIM_FACING_SIX_FRAMES:
+  case ANIMATION_FACING_FOUR_FRAMES:
+  case ANIMATION_FACING_SIX_FRAMES:
     for (facingIndex = 0; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++) {
       angle = (u32)angle << 16;
@@ -487,7 +487,7 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     break;
   // Two places 40 pixels out, a quarter turn round and then
   // opposite it, each holding both of the sprite's parts.
-  case ANIM_FACING_TWO_PART:
+  case ANIMATION_FACING_TWO_PART:
     initialHeading = angle;
     angle = (s16)(initialHeading + 0x4000);
     facingIndex = 0;
@@ -631,28 +631,28 @@ void Battle_PlaceActorsByFormationKind(void) {
   facingPositions = WORK_SLOT(HEAP_SLOT_BATTLE);
 
   switch (facingKind) {
-  case ANIM_FACING_THREE_FRAMES:
+  case ANIMATION_FACING_THREE_FRAMES:
     angle = 0;
     step = 0x2aaa;
     count = 6;
     break;
-  case ANIM_FACING_FIVE_FRAMES:
-  case ANIM_FACING_EIGHT_FRAMES:
-  case ANIM_FACING_EIGHT_NO_TABLE:
-  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
+  case ANIMATION_FACING_FIVE_FRAMES:
+  case ANIMATION_FACING_EIGHT_FRAMES:
+  case ANIMATION_FACING_EIGHT_NO_TABLE:
+  case ANIMATION_FACING_EIGHT_FRAMES_MIRRORED:
     angle = 0;
     step = 0x2000;
     count = 8;
     break;
-  case ANIM_FACING_FOUR_FRAMES:
-  case ANIM_FACING_SIX_FRAMES:
+  case ANIMATION_FACING_FOUR_FRAMES:
+  case ANIMATION_FACING_SIX_FRAMES:
     angle = 0;
     step = 0x1999;
     count = 10;
     break;
   // The two parts at each place face the same way; the second place faces
   // half a turn from the first.
-  case ANIM_FACING_TWO_PART:
+  case ANIMATION_FACING_TWO_PART:
     angle = 0;
     step = 0;
     pairedFacingStep = 0x8000;

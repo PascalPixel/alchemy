@@ -13,7 +13,8 @@
 static void Vault_FindBone(void) {
   Engine_EventBegin();
   if (PartyInventory_HasSpace() == 0) {
-    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN,
+                                    ANIMATION_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
     Engine_EventShowMessage(ACTOR_GIRL_AT_THE_INN, 0);

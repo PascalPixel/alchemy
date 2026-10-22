@@ -375,7 +375,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   leader->motionFlags = 0;
 
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
   Engine_EventWait(10);
 

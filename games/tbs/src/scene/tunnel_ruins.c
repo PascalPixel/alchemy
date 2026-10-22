@@ -272,10 +272,10 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   if (FieldObject_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(actor, target) == 0) {
     EV_BEGIN();
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(actor, ANIM_LEADER_LEAP);
+    Object_SetMode(actor, ANIMATION_LEADER_LEAP);
 
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);
@@ -286,7 +286,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
                               TunnelRuins_GetLandingPixel(target->x),
                               TunnelRuins_GetLandingPixel(target->z));
-    Object_SetMode(actor, ANIM_LEADER_SPRING);
+    Object_SetMode(actor, ANIMATION_LEADER_SPRING);
     Engine_ActorSetSpriteFlags(actor, 1);
     Engine_TaskWait(6);
 
@@ -468,7 +468,7 @@ static void Event_HopDownStep(void) {
   u32 i;
 
   EV_BEGIN();
-  Object_SetMode(leader, ANIM_LEADER_SPRING);
+  Object_SetMode(leader, ANIMATION_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
   Object_SetMode(leader, 1);
   Engine_ActorSetSpriteFlags(leader, 0);
@@ -896,7 +896,7 @@ static void Event_FreezePuddleB(void) {
 /// Reached by searching cell code 40 in TunnelRuinsGreatStatue.
 static void Event_ReadFirstStatue(void) {
   EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
@@ -1365,7 +1365,7 @@ static void Event_PushLadyStatue(void) {
 /// cell code 42 in TunnelRuinsLadyStatues.
 static void Event_ReadSecondStatue(void) {
   EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   EV_END();
 }

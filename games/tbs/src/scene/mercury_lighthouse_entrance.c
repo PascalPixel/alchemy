@@ -255,7 +255,7 @@ const struct ScenePlacement *MercuryLighthouseEntrance_GetPlacements(void) {
 /// all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgMercuryWhoHonorsHeart, 1);
   Engine_EventEnd();
 }
@@ -523,7 +523,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Engine_AudioPlayCue(SE_188);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_LEADER_LEAN_BACK);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
@@ -536,7 +536,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_EventWaitForScreen();
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
       Engine_EventWait(30);
       UiText_ShowCenteredMessage(MsgMercuryWhoHonorsHeart, 0, 0);
       ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
@@ -689,7 +689,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Engine_EventWaitForScreen();
     Engine_EventWait(60);
     Actor_FaceActor(MIA, ACTOR_PARTY_LEADER, 0);
-    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_EventWait(30);
     Actor_WalkTo(MIA, 136, 72);
     Engine_EventWait(40);

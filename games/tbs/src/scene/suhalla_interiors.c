@@ -298,7 +298,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIMATION_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
@@ -316,7 +316,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Event_Wait(20);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIMATION_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
@@ -339,13 +339,13 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIMATION_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
@@ -367,11 +367,11 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(40);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIMATION_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
@@ -398,13 +398,13 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIMATION_NOD);
     Event_Wait(30);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIMATION_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
@@ -431,7 +431,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIMATION_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
@@ -459,7 +459,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
@@ -489,13 +489,13 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIMATION_NOD);
     Event_Wait(30);
     Event_PlayCue(MUS_030);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
-    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_IODEM, ANIMATION_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {

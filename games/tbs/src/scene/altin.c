@@ -387,7 +387,7 @@ static void Village_TalkToThirstyOldWoman(void) {
     Engine_EventSetMessage(MsgAltinOnesWhoDefeatedWaterBeasts);
     Event_AskYesNo(ACTOR_THIRSTY_OLD_WOMAN, 0);
   } else {
-    Engine_ActorSetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIMATION_SHAKE_HEAD);
     Engine_EventSetMessage(MsgAltinWeCantDrinkWaterMonsters);
     Event_ShowMessageAndWait(ACTOR_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
@@ -411,7 +411,8 @@ static void Village_TalkToThirstyOldWoman(void) {
       Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
       Engine_CameraWaitForMove();
     }
-    Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN,
+                                    ANIMATION_SHAKE_HEAD);
   }
   Engine_EventEnd();
 }
@@ -645,7 +646,7 @@ static void Village_EnterDoor(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
   } else {
@@ -737,7 +738,7 @@ static void Beast_HopAway(void) {
   Engine_EventWait(4);
   Map_SetShake(-1, -1, 0xe666);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIMATION_STAND);
 }
 
 /// After Move: remembers whether the pillar now stands in map column 22, the
@@ -953,7 +954,7 @@ static void Village_ScareOffBeast(void) {
   Camera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIMATION_STAND);
   // The spitting stops: its sound and its spray end.
   FieldEffect_SetQueuedSoundAndPlay(-1);
   Engine_TaskRemoveCallback(Beast_SpawnSpray);
@@ -969,7 +970,8 @@ static void Village_ScareOffBeast(void) {
   Beast_HopAway();
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN,
+                                  ANIMATION_SHAKE_HEAD);
   GameFlag_Set(FLAG_ALTIN_WATER_BEAST_LEFT);
   Engine_EventEnd();
 }
@@ -980,29 +982,29 @@ s32 gAltinHouses_CookScript[] = {
     SC_SET(SW_SPEED, 0x26666),
     SC_SET(SW_ACCEL, 0x13333),
     SC_LABEL(1),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(30),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(356), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(50),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(20),
-    SC_ARG(ANIM_WALK),
+    SC_ARG(ANIMATION_WALK),
     SC_MOVE(PIXELS(ALTIN_COOK_LAST_POT_X), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIM_NOD),
+    SC_ARG(ANIMATION_NOD),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_EAST + FACING_STEP),
     SC_WAIT(90),

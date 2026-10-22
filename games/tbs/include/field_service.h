@@ -35,7 +35,7 @@ static inline void Actor_RunRepeatedMotion(s32 actor, s32 repeats) {
   Engine_ActorRunRepeatedMotion(actor, repeats);
 }
 
-/// Switches an actor to an ActorAnimation, such as ANIM_NOD.
+/// Switches an actor to an ActorAnimation, such as ANIMATION_NOD.
 static inline void Actor_SetAnimation(s32 actor, s32 animation) {
   Engine_ActorSetAnimation(actor, animation);
 }

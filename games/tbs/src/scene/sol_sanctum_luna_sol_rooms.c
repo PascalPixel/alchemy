@@ -374,7 +374,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkTo(GARET, 280, 248);
     Actor_WalkToAndWait(JENNA, 296, 248);
-    Engine_ActorSetAnimation(GARET, ANIM_STAND);
+    Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
     Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
     Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -389,10 +389,10 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 60);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 20);
     Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Actor_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 10);
@@ -421,12 +421,12 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     // three wonder at turning back from the heart of the sanctum.
     Engine_EventShowMessage(GARET, 0);
     Engine_EventWait(60);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
     Engine_EventWait(40);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 20);
     Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     SolSanctumLunaSolRooms_ShowMessageAndWait(JENNA, 60);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -434,7 +434,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Engine_EventWait(20);
     SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
     Engine_EventWait(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -465,25 +465,25 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     // delighted: "Good! It's decided. Let's move ahead!"
     Engine_EventSetMessage(MsgSolSanctumPutWayDont);
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(JENNA, ANIMATION_SHAKE_HEAD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
                                               6);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 20);
     Engine_ActorJump(ACTOR_KRADEN, 6, 20);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 20);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 30);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(JENNA, ANIMATION_NOD);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
     // End the discussion and return the followers to Isaac.
     Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
-    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Engine_ActorSetDestination(ACTOR_KRADEN, leader->x.part.pixel,
@@ -491,7 +491,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     }
     Engine_ActorWaitForMove(ACTOR_KRADEN);
     Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
-    Engine_ActorSetAnimation(GARET, ANIM_WALK);
+    Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Engine_ActorSetDestination(GARET, leader->x.part.pixel,
@@ -499,7 +499,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     }
     Engine_ActorWaitForMove(GARET);
     Engine_ActorSetPosition(GARET, 0, 0);
-    Engine_ActorSetAnimation(JENNA, ANIM_WALK);
+    Engine_ActorSetAnimation(JENNA, ANIMATION_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Engine_ActorSetDestination(JENNA, leader->x.part.pixel,
@@ -570,9 +570,9 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Engine_EventSetMessage(request);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage((request + 1));
@@ -639,10 +639,10 @@ static void Event_KradenStopsPartyLeaving(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
-    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
     destinationActor = Object_GetById(ACTOR_PARTY_LEADER);
     if (destinationActor != 0) {
       Actor_SetDestination(ACTOR_KRADEN, destinationActor->x.part.pixel,
@@ -1079,7 +1079,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
     speaker = SPEAKER_WINDOW_BELOW | ACTOR_KRADEN;
     Engine_EventSetMessage(MsgSolSanctumYouFoundIt);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1118,9 +1118,9 @@ static void Event_KradenSeesLunaPictureChange(void) {
       Engine_EventWait(6);
       Engine_ActorJump(ACTOR_KRADEN, 6, 30);
       SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
-      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
       Engine_EventWait(2);
-      Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
       // Kraden: "But other than that, nothing looks different..."
       SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -1129,7 +1129,7 @@ static void Event_KradenSeesLunaPictureChange(void) {
       Engine_EventWait(30);
       // Kraden: a trap here, and this is all that happens?
       SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
-      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
       Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
       Engine_EventWait(6);
       Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1140,10 +1140,10 @@ static void Event_KradenSeesLunaPictureChange(void) {
           SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 6);
       Actor_WalkToAndWait(ACTOR_KRADEN, 576, 208);
       Engine_EventWait(40);
-      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
       Engine_EventWait(6);
       Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 2, PIXELS(1) / 4);
-      Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+      Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       if (leader != 0) {
         Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
@@ -1169,13 +1169,13 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 392, 168);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
   Engine_EventSetMessage(MsgSolSanctumLookSymbolFloor);
   Engine_ActorJump(ACTOR_KRADEN, 4, 30);
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
   Actor_WalkToAndWait(ACTOR_KRADEN, 376, 184);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(1608), PIXELS(1608));
@@ -1209,8 +1209,8 @@ static void Event_RiseToElementalStarRoom(void) {
     Actor_WalkToAndWait(ACTOR_KRADEN, 276, 136);
     Actor_WalkTo(ACTOR_KRADEN, 264, 136);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 136);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
     Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 20);
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
@@ -1247,18 +1247,18 @@ static void Event_RiseToElementalStarRoom(void) {
       Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
     }
     Object_LinkPair(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 30);
-    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     // Kraden: "Ah ha! This has to be it." and "Let's go, Isaac!"
     Engine_EventSetMessage(MsgSolSanctumHa);
     SolSanctumLunaSolRooms_ShowMessageAndWait(
         SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 6);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
+    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
     Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
     Engine_EventWait(60);
     // Raise Isaac first, then shrink his sprite into the passage.
     actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1593,7 +1593,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_EventSetMessage(MsgSolSanctumFloatingEyeThing);
   Engine_EventOpenMessage(1, 0);
   Engine_EventChooseYesNo(0, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_EventWait(40);
   Engine_AudioPlayCue(SE_107);
   Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
@@ -1616,9 +1616,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   // Garet: "Yeah, right! Let's get out of here..."
   SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ActorSetDestination(GARET, leader->x.part.pixel,

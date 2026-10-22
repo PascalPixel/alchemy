@@ -194,7 +194,7 @@ static void Event_PushWestPillar(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorWaitForMove(ACTOR_WEST_PILLAR);
   WAIT(20);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Event_MoveWestPillar();
   FieldEffect_PlayQueuedSound();
   EV_END();
@@ -296,14 +296,14 @@ static void Event_IvanRejoins(void) {
   Actor_WalkToAndWait(GARET, 264, 168);
   OBJ_DIR(GARET, FACING_SOUTHWEST, 20);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   WAIT(20);
   if (FLAG_CHECK(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
-    OBJ_MODE(GARET, ANIM_WALK);
+    OBJ_MODE(GARET, ANIMATION_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
@@ -326,7 +326,7 @@ static void Event_IvanRejoins(void) {
     WAIT(20);
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Actor_WalkToAndWait(IVAN, 264, 200);
     OBJ_WALK(ACTOR_PARTY_LEADER, 248, 168);
     Actor_WalkToAndWait(IVAN, 248, 184);
@@ -337,11 +337,11 @@ static void Event_IvanRejoins(void) {
     WAIT(20);
     OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     OBJ_DIR(IVAN, FACING_NORTHEAST, 20);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     WAIT(20);
     Event_ShowMessageAndWait(IVAN, 0, 20);
-    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     WAIT(20);
     OBJ_DIR(IVAN, FACING_WEST, 20);
     Event_ShowMessageAndWait(IVAN, 0, 120);
@@ -361,15 +361,15 @@ static void Event_IvanRejoins(void) {
     Engine_ActorRunRepeatedMotion(GARET, 2);
     WAIT(20);
     Event_ShowMessageAndWait(IVAN, 0, 20);
-    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     WAIT(20);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
     OBJ_DIR(IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
-    OBJ_MODE(IVAN, ANIM_STAND);
+    OBJ_MODE(IVAN, ANIMATION_STAND);
     WAIT(20);
 #if TBS_PATCH_1
     FieldEffect_PlayQueuedSound();
@@ -385,7 +385,7 @@ static void Event_IvanRejoins(void) {
     Actor_FaceActor(GARET, IVAN, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     WAIT(20);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 60);
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -402,7 +402,7 @@ static void Event_IvanRejoins(void) {
     GomaCaveEntrance_SayThenWait(GARET, 20);
     OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     WAIT(60);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
@@ -416,7 +416,7 @@ static void Event_IvanRejoins(void) {
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     WAIT(80);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -426,7 +426,7 @@ static void Event_IvanRejoins(void) {
     Actor_SetAttachedEffect(GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     WAIT(60);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -435,20 +435,20 @@ static void Event_IvanRejoins(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     Actor_FaceActor(GARET, IVAN, 0);
     WAIT(30);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 30);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     WAIT(20);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 40);
-    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
     WAIT(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
     Event_PrepareObjectAndApplyValue(IVAN, 1);
@@ -467,9 +467,9 @@ static void Event_IvanRejoins(void) {
     Actor_FaceActor(GARET, IVAN, 0);
     Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
     WAIT(20);
-    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-    OBJ_MODE(GARET, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    OBJ_MODE(GARET, ANIMATION_NOD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(50);
     OBJ_SPEED(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     OBJ_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);

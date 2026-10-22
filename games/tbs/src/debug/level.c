@@ -468,14 +468,14 @@ s32 FieldScene_RunEntrySetup(void) {
 
 #if !TBS_PATCH_1
 /// Runs the Japanese animation test, then moves ACTOR_LEVEL_EDITOR to its test
-/// position. Force cast at ACTOR_GLYPH_BROWSER: it takes ANIM_WALK and
-/// ACTOR_LEVEL_EDITOR ANIM_SHAKE_HEAD; once
+/// position. Force cast at ACTOR_GLYPH_BROWSER: it takes ANIMATION_WALK and
+/// ACTOR_LEVEL_EDITOR ANIMATION_SHAKE_HEAD; once
 /// ACTOR_GLYPH_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
 /// (312, 416).
 static void ItemLevel_RunMotionTest(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_GLYPH_BROWSER, ANIM_WALK);
-  Engine_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_GLYPH_BROWSER, ANIMATION_WALK);
+  Engine_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIMATION_SHAKE_HEAD);
   ObjectMotion_WaitForAnimationChange(ACTOR_GLYPH_BROWSER);
   Actor_SetPosition(ACTOR_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
   Engine_EventEnd();

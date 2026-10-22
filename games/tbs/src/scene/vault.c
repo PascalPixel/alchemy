@@ -263,7 +263,7 @@ static void Event_IvanStaysBehind(void) {
   Engine_EventSetMessage(MsgVaultLeavingImStillWorriedAbout);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | IVAN,
                            0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     Engine_EventSetMessage(MsgVaultWaitDontWantTakeYour);
@@ -327,7 +327,7 @@ static void Event_AskAboutFleeingTravelers(void) {
 
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThoseTravelersLeftInBig);
-  Engine_ActorSetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIMATION_STAND);
   Vault_FaceActorAndWait(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ACTOR_PARTY_LEADER,
                          2);
   Vault_AskYesNoAndShowReply(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS);
@@ -442,7 +442,7 @@ static void Event_LookForRoofer(void) {
 /// Stops an actor, faces the leader and shows the current message.
 static void Vault_ShowStandingActorMessage(s32 actor) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(actor, ANIM_STAND);
+  Engine_ActorSetAnimation(actor, ANIMATION_STAND);
   Vault_FaceActorAndWait(actor, ACTOR_PARTY_LEADER, 2);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
@@ -540,7 +540,7 @@ static void Event_ThankForCapturingThieves(void) {
 static void Event_AskAboutPrisoners(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThoseMenCapturedTheyreIn);
-  Engine_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIMATION_STAND);
   Vault_FaceActorAndWait(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(ACTOR_STRONGMAN_ON_WATCH);
   Engine_EventEnd();
@@ -565,7 +565,7 @@ static void Event_TalkToDogAfterCapture(void) {
   Engine_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
   Engine_EventShowMessage(ACTOR_VAULT_DOG, 0);
-  Engine_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_VAULT_DOG, ANIMATION_STAND);
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *menuRequest = &gEventWork->requestedMenu;
@@ -585,7 +585,8 @@ static void Event_ThankBeforeDeparture(void) {
   Engine_EventSetMessage(MsgVaultThankForOtherDayLeaving);
   Vault_FaceActorAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ACTOR_PARTY_LEADER,
                          2);
-  Engine_ActorSetAnimationAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF,
+                                  ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0);
   Engine_EventEnd();
@@ -936,9 +937,9 @@ s32 Scene_Initialize(void) {
           Engine_ActorRunRepeatedMotion(IVAN, 2);
           Engine_EventSetMessage(MsgVaultWelcomeBackTwo);
           Engine_EventShowMessageAndWait(IVAN, 0, 20);
-          Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+          Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
           Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+          Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
           actor = Object_GetById(ACTOR_PARTY_LEADER);
           if (actor != 0) {
             Engine_ActorSetDestination(IVAN, actor->x.part.pixel,
@@ -969,9 +970,9 @@ s32 Scene_Initialize(void) {
           Engine_ActorRunRepeatedMotion(IVAN, 2);
           Engine_EventSetMessage(MsgVaultWelcomeBackTwo);
           Engine_EventShowMessageAndWait(IVAN, 0, 20);
-          Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+          Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
           Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ActorSetAnimation(IVAN, ANIM_WALK);
+          Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
           actor = Object_GetById(ACTOR_PARTY_LEADER);
           if (actor != 0) {
             Engine_ActorSetDestination(IVAN, actor->x.part.pixel,

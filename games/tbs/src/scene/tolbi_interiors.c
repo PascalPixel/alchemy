@@ -185,7 +185,7 @@ static void TolbiInteriors_EnterDoor(void) {
                    gTolbiInteriorsDoors[doorIndex].y);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Engine_EventRequestExit(*trigger);
 }
 
@@ -240,7 +240,8 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN,
+                                  ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
   Engine_EventWait(30);
@@ -253,7 +254,7 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Actor_WalkByAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 16, 0);
   Actor_WalkByAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, 0, 32);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_MEDAL_WOMAN, ANIMATION_NOD);
   Engine_EventWait(20);
   Event_ShowMessage(TOLBI_INTERIORS_MEDAL_WOMAN, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
@@ -281,12 +282,13 @@ static void TolbiInteriors_WatchPassengersArgue(void) {
   Engine_ActorShowEmote(TOLBI_INTERIORS_PASSENGER_WIFE,
                         EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE,
+                                  ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(TOLBI_INTERIORS_PASSENGER_WIFE, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_THIRD_PASSENGER,
-                                  ANIM_SHAKE_HEAD);
+                                  ANIMATION_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(TOLBI_INTERIORS_THIRD_PASSENGER, 0);
   Engine_EventWait(10);
@@ -294,7 +296,8 @@ static void TolbiInteriors_WatchPassengersArgue(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(TOLBI_INTERIORS_ANGRY_PASSENGER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE,
+                                  ANIMATION_NOD);
   Engine_EventWait(30);
   Engine_EventEnd();
 }

@@ -1946,9 +1946,9 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_WalkTo(GARET, 240, 600);
   Actor_WalkTo(IVAN, 254, 600);
   Engine_ActorWalkToAndWait(MIA, 248, 616);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -2015,14 +2015,14 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Engine_ActorRunRepeatedMotion(SEA_KAJA, 1);
   Engine_EventSetMessage(MsgTolbiShipThankIsaacDidGoodAgainst);
   TolbiShipDeck_Say(SEA_KAJA);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_EventWait(40);
   Actor_FaceDirection(SEA_KAJA, FACING_SOUTH + FACING_STEP, 20);
   Actor_ShowEmote(SEA_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageAndWait(SEA_KAJA, 0, 40);
   TolbiShipDeck_Turn(SEA_KAJA, FACING_EAST);
   TolbiShipDeck_Say(SEA_KAJA);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_ActorSetAnimationAndWait(SEA_KAJA, 3);
   Actor_WalkToAndWait(SEA_KAJA, 182, 0x258);
   Actor_WalkToAndWait(SEA_KAJA, 216, 0x258);
@@ -2783,8 +2783,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Actor_WalkTo(GARET, 194, 0x280);
   Actor_WalkTo(IVAN, 198, 0x28e);
   Actor_WalkToAndWait(MIA, 194, 0x2a0);
-  Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
@@ -2798,10 +2798,10 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Engine_ActorRunRepeatedMotion(SEA_SEAN, 1);
   Event_OpenMessage(SEA_SEAN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
-    Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     TolbiShipDeck_Say(IVAN);
     TolbiShipDeck_Turn(MIA, FACING_NORTHWEST);
-    Engine_ActorSetAnimation(MIA, ANIM_NOD);
+    Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
     TolbiShipDeck_Say(MIA);
     TolbiShipDeck_Turn(GARET, FACING_SOUTHWEST);
     Engine_ActorRunRepeatedMotion(GARET, 1);
@@ -2928,7 +2928,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Turn(SEA_KAJA, FACING_WEST);
   TolbiShipDeck_Say(SPEAKER(SEA_KAJA, 2));
   TolbiShipDeck_Turn(ACTOR_PARTY_LEADER, FACING_NORTHEAST);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   Engine_ActorSetAnimationAndWait(SEA_KAJA, 3);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);

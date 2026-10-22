@@ -48,57 +48,59 @@ enum { TASK_PRIORITY_SCENE = 3200 };
 /// Animation numbers of an actor's sprite, for Engine_ActorSetAnimation.
 enum ActorAnimation {
   /// Standing still: nearly every sprite's first frame held, without the
-  /// blinks and small gestures of ANIM_STAND.
-  ANIM_STILL = 0,
-  ANIM_STAND = 1,
-  ANIM_WALK = 2,
-  ANIM_NOD = 3,
-  ANIM_SHAKE_HEAD = 4,
+  /// blinks and small gestures of ANIMATION_STAND.
+  ANIMATION_STILL = 0,
+  ANIMATION_STAND = 1,
+  ANIMATION_WALK = 2,
+  ANIMATION_NOD = 3,
+  ANIMATION_SHAKE_HEAD = 4,
   /// Running, leaning forward, four frames a step to the walk's six. This and
   /// the leader's other poses below are as Isaac's sprite (spr_000.png) draws
   /// them.
-  ANIM_LEADER_RUN = 5,
-  ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
-  ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
+  ANIMATION_LEADER_RUN = 5,
+  ANIMATION_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
+  ANIMATION_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
-  ANIM_PUSH = 8,
-  /// ANIM_STAND's idle with more glances to each side, as when a whirlwind
+  ANIMATION_PUSH = 8,
+  /// ANIMATION_STAND's idle with more glances to each side, as when a whirlwind
   /// catches the leader.
-  ANIM_LEADER_LOOK_AROUND = 9,
-  ANIM_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
-  ANIM_LEADER_CLING = 12,      ///< still on a wall, seen from behind
-  ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
-  ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
-  /// One leg forward, braced, held briefly: the frame ANIM_LEADER_LEAP holds
+  ANIMATION_LEADER_LOOK_AROUND = 9,
+  ANIMATION_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
+  ANIMATION_LEADER_CLING = 12,      ///< still on a wall, seen from behind
+  ANIMATION_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
+  ANIMATION_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
+  /// One leg forward, braced, held briefly: the frame ANIMATION_LEADER_LEAP
+  /// holds
   /// and the run starts on, as when he lunges into a fight or pulls someone
   /// from a river.
-  ANIM_LEADER_STRIDE = 16,
+  ANIMATION_LEADER_STRIDE = 16,
   /// Holding out a glowing hand, as the party's sprites cast Psynergy
   /// (spr_000.png, spr_001.png).
-  ANIM_CAST_PSYNERGY = 17,
+  ANIMATION_CAST_PSYNERGY = 17,
   /// Sitting waist-deep in water and splashing, as in a Lamakan Desert oasis.
-  ANIM_LEADER_BATHE = 18,
+  ANIMATION_LEADER_BATHE = 18,
   /// Lying collapsed on the ground; every party member's sheet maps this
   /// number to such a pose (spr_000.png to spr_003.png).
-  ANIM_COLLAPSE = 19,
-  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  ANIMATION_COLLAPSE = 19,
+  ANIMATION_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits (enum ExitStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
   /// seen side-on to full size facing the player, a leaving turns from his
   /// back to side-on as he shrinks and is then hidden. The alternate pair has
   /// its own drawings of the same turns.
   ///@{
-  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
-  ANIM_LEADER_ARRIVE = 24,
-  ANIM_LEADER_LEAVE_ALTERNATE = 25,
-  ANIM_LEADER_LEAVE = 26,
+  ANIMATION_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIMATION_LEADER_ARRIVE = 24,
+  ANIMATION_LEADER_LEAVE_ALTERNATE = 25,
+  ANIMATION_LEADER_LEAVE = 26,
   ///@}
-  /// Spinning round once, then drawn blank (ANIM_CMD_BLANK).
-  ANIM_LEADER_SPIN_AWAY = 27,
-  ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
-  /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost match.
-  ANIM_LEADER_CROUCH = 35
+  /// Spinning round once, then drawn blank (ANIMATION_COMMAND_BLANK).
+  ANIMATION_LEADER_SPIN_AWAY = 27,
+  ANIMATION_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// Held in ANIMATION_LEADER_SPRING's crouch, knees bent, as after a lost
+  /// match.
+  ANIMATION_LEADER_CROUCH = 35
 };
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's
@@ -192,10 +194,10 @@ void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
 /// Sends an actor (dx, dz) pixels from where it stands
 /// (ObjectMotion_OffsetPositionAndResetMotion).
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-/// Walks an actor toward (x, z), in pixels, in ANIM_WALK
+/// Walks an actor toward (x, z), in pixels, in ANIMATION_WALK
 /// (ObjectMotion_ResetAndSetPositionInMode2).
 void Engine_ActorWalkTo(s32 actor, s32 x, s32 z);
-/// Walks an actor (dx, dz) pixels from where it stands, in ANIM_WALK
+/// Walks an actor (dx, dz) pixels from where it stands, in ANIMATION_WALK
 /// (ObjectMotion_OffsetPositionAndReset).
 void Engine_ActorWalkBy(s32 actor, s32 dx, s32 dz);
 /// Waits for an actor to arrive, 600 frames at most, and stands it still
@@ -440,7 +442,7 @@ void Engine_ColorBufferInterpolate(s32 frames);
 /// for it, giving up after 600 frames (ObjectMotion_SetPositionAndCommit).
 void Engine_ActorMoveToAndWait(s32 actor, s32 x, s32 z);
 /// Walks an actor to (x, z), in pixels, waits for it to arrive and stands it in
-/// ANIM_STAND (ObjectMotion_SetPositionAndReset).
+/// ANIMATION_STAND (ObjectMotion_SetPositionAndReset).
 void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
 /// Throws an actor upward at height pixels per frame with a jump sound, then
 /// waits frames while gravity brings it down (ObjectMotion_Launch).

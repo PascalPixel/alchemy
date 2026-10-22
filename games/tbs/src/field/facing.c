@@ -5,7 +5,7 @@
 /// Facing tables: for each enum AnimationFacingKind, the frame to draw for
 /// each sector of the facing angle. Sprite_ComposeAnimationFrame adds the low
 /// three bits to the animation's base frame, and bit 7 (0x80) mirrors the
-/// sprite. ANIM_FACING_TWO_PART uses ANIM_FACING_FRONT_BACK's table.
+/// sprite. ANIMATION_FACING_TWO_PART uses ANIMATION_FACING_FRONT_BACK's table.
 /// gAnimationFacing_OneFrame has 16 entries, but a 16-bit angle shifted down
 /// 13 reads only the first eight. Sectors count from angle
 /// 0, which faces right; 0x4000 faces down the screen (gWorldMap_KeyHeadings).

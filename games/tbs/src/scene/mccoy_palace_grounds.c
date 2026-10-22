@@ -252,8 +252,8 @@ static void Event_TalkToEastGuard(void) {
       Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
       Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 1);
       Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
-      Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
-      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
+      Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_NOD);
+      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIMATION_NOD);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
       Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 1);
@@ -300,7 +300,7 @@ static void Event_EnterPalace(void) {
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Engine_EventWait(16);
   Engine_EventRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
@@ -406,8 +406,8 @@ static void Event_GuardsArrestParty(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIMATION_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   Engine_EventSetMessage(MsgBilibinUnderArrest);
@@ -435,7 +435,7 @@ static void Event_GuardsArrestParty(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_WalkTo(ACTOR_WEST_GUARD, 328, 262);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
-  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_STAND);
   McCoyPalaceGrounds_OpenGate();
   Engine_EventWait(40);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);

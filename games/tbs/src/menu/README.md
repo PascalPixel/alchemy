@@ -117,6 +117,8 @@ back and frees them before returning.
 
 ## The screens
 
+![The field menu open in Vale, pulled apart into its layers: the map's three layers at the back, the party status window and the label `Psynergy` on BG0, and Isaac and the four command icons as sprites in front](https://alchemy.pascalpixel.com/guides/menu/layers-3d.gif)
+
 Each screen is entered from the field menu by its `FIELD_MENU_` id through
 `system/far_call/MENU.S`, runs a command loop over its steps, and returns a
 result to the field menu. Every screen but Djinn returns -1 when the player backs out or presses

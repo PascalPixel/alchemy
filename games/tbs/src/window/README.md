@@ -128,6 +128,12 @@ width or height below 2 or above 30. Nothing checks that a window stays within
 the tilemap's 20 rows; the caller keeps it there. While `mode` is set every
 corner is the one round tile (`UI_TILE_FRAME_ROUND_CORNER`), flipped to fit.
 
+Pulled apart, a message shows the split: the window's frame is tiles of the
+shared tilemap on `BG0`, over the map's three layers, and the letters and the
+portrait it carries are sprites in front of everything.
+
+![Garet's sister talking in Vale, pulled apart into its layers: the map's ground, middle and overhead layers at the back, the message window's frame on BG0, and the letters of `You guys are so lucky, Garet.`, her portrait and the actors as sprites in front](https://alchemy.pascalpixel.com/guides/window/layers-3d.gif)
+
 A message window sizes itself to its text: `UiWindow_FitOnScreen`
 (`window/measure.c`) measures the message and moves the window so that it
 fits on the screen. While `mode` is set the fitted window is 2 tiles wider;
@@ -289,6 +295,3 @@ named by their linker symbols, made from their English text.
   start.
 - XXX: `unknownBeforeValues` in `struct UiRenderWork`, the bytes before the
   argument table, which the TBS code never names.
-- XXX (picture): no picture yet takes the window layer apart: the shared tilemap drawn
-  alone beside the canvas tiles and the render outputs of one screen, which
-  `alchemy-devtools render` could show from a tbs-en build.

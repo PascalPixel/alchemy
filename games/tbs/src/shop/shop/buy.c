@@ -446,7 +446,7 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
     }
     previewSlot = index;
   } else {
-    replacedItemId = unit->inventory[previewSlot] & ITEM_ID_MASK;
+    replacedItemId = unit->inventory[previewSlot] & INVENTORY_ITEM_ID_MASK;
   }
   // Borrow a live slot so Unit_Calculate includes every equipment effect;
   // restore both the slot and the stats before returning to the counter.
@@ -743,7 +743,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
-  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedSlot;
   struct UiWindow *itemWindow;
@@ -797,7 +797,7 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   if (slot == -1) {
     return 0;
   }
-  itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   if (Item_GetDirectFar(itemId)->type == ITEM_TYPE_PSYNERGY) {
     return 0;
   }

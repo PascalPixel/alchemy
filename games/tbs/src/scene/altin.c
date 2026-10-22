@@ -244,12 +244,10 @@ enum {
   FLAG_WATER_DRAINED = FLAG_SCENE_TEMP_42
 };
 
-enum {
-  SHOP_ALTIN_WEAPONS = 19,
-  SHOP_ALTIN_ARMOR = 20,
-  SHOP_ALTIN_ITEMS = 21,
-  INN_ALTIN = 6
-};
+enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
+
+/// Altin's inn, as Engine_InnOpen numbers the inns.
+enum { ALTIN_INN = 6 };
 
 /// The doors of the village, by their index in gAltinVillage_Doors.
 enum {
@@ -569,7 +567,7 @@ static void Houses_TalkToInnkeeper(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
-    Engine_InnOpen(INN_ALTIN, ACTOR_INNKEEPER);
+    Engine_InnOpen(ALTIN_INN, ACTOR_INNKEEPER);
     return;
   }
 

@@ -657,7 +657,7 @@ void Party_EndChildhood(void) {
     Unit_UpdateGauges(unit);
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-      if ((unit->inventory[slot] & ITEM_ID_MASK) == ITEM_MACHETE) {
+      if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == ITEM_MACHETE) {
         unit->inventory[slot] = ITEM_SHORT_SWORD;
         Inventory_Equip(owner, slot);
         break;

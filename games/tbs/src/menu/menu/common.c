@@ -143,7 +143,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   menu = gMenuWork;
   unit = Unit_GetFar(owner);
   item = unit->inventory[slot];
-  def = Item_GetDirectFar(item & ITEM_ID_MASK);
+  def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
     created = UiWindow_UpdateOrCreate(&menu->statusWindow, 0, 5, 13, 12,
                                       WINDOW_KEEP_EXISTING | 2);
@@ -909,7 +909,7 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
         if ((order[pass] & LIST_ORDER_EQUIPPED) &&
             (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
-        value = items[i] & ITEM_ID_MASK;
+        value = items[i] & INVENTORY_ITEM_ID_MASK;
         if (best < value) {
           bestSlot = i;
           best = value;

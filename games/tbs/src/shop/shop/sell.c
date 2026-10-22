@@ -116,7 +116,7 @@ s32 Shop_SelectSell(s32 unitId) {
         inventoryCount = Inventory_CountFar(unitId);
         if (slot > inventoryCount - 1)
           slot = inventoryCount - 1;
-        itemId = ITEM_ID_MASK & unit->inventory[slot];
+        itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
         window = shop->itemWindow;
         x = slot % SHOP_INVENTORY_COLUMNS * 16;
         Shop_PlaceCursor(window, x, slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
@@ -279,7 +279,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
-  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   u8 rare = item->flags & ITEM_RARE;
   s32 sellingReplacedItem = 0;

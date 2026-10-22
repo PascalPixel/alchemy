@@ -30,7 +30,7 @@ s32 Shop_ListAvailableArtifacts(void) {
       stockItems++;
     }
     itemId++;
-  } while (itemId <= ITEM_ID_MASK);
+  } while (itemId <= INVENTORY_ITEM_ID_MASK);
   shop->stockItemIds[count] = 0;
   shop->stockCount = count;
   return count;

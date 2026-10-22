@@ -12,7 +12,7 @@
 /// Battle_AwardSpoils, to hand them out best first.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
-  u32 itemId = inventoryEntry & ITEM_ID_MASK;
+  u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
   if (itemId == 0)
     return 0;
   {

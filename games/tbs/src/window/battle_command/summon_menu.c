@@ -156,7 +156,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
           s32 element;
 
           for (element = 0; element <= 3; element++) {
-            UiWindow_SetTilemapEntry(counts, element + SUMMON_ELEMENT_TILE,
+            UiWindow_SetTilemapEntry(counts, element + LIST_TILE_SUMMON_ELEMENT,
                                      element * 2, 0, 0);
             UiWindow_PutGlyph(counts, standby[element] + '0', element * 2 + 1,
                               0, GLYPH_DRAW_CHARACTER);
@@ -190,7 +190,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
                 window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
-                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE,
+                UiWindow_SetTilemapEntry(window,
+                                         element + LIST_TILE_SUMMON_ELEMENT,
                                          col * 2 + SUMMON_COST_X, y, 0);
                 UiWindow_PutGlyph(window, summon->djinnRequired[element] + '0',
                                   col * 2 + SUMMON_COST_X + 1, y,

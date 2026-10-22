@@ -32,7 +32,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
 
   unit = Unit_GetFar(ownerId);
   menu = gMenuWork;
-  itemId = ITEM_ID_MASK & unit->inventory[slot];
+  itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
                                      ownerId, targetId, 1);

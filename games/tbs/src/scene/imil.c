@@ -220,13 +220,11 @@ enum ImilTownFlag {
   FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 
-/// Imil's shops and inn, by their numbers in the shop and inn tables.
-enum {
-  SHOP_IMIL_WEAPONS = 10,
-  SHOP_IMIL_ARMOR = 11,
-  SHOP_IMIL_ITEMS = 12,
-  INN_IMIL = 4
-};
+/// Imil's shops, by their numbers in the shop table.
+enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
+
+/// Imil's inn, as Engine_InnOpen numbers the inns.
+enum { IMIL_INN = 4 };
 
 /// The weapon and armor counters' trigger cells in the houses: searching one
 /// facing north reaches its seller.
@@ -773,7 +771,7 @@ static void Imil_TalkToInnkeeper(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
-    Engine_InnOpen(INN_IMIL, ACTOR_INNKEEPER);
+    Engine_InnOpen(IMIL_INN, ACTOR_INNKEEPER);
   } else {
     Engine_EventStart();
     Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);

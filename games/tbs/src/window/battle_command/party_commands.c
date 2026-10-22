@@ -427,7 +427,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         work->level = 15;
         UiWork_SetParamNibble(15);
         // 61471 is 0xf01f, the PP label's first tile; 20481 below is 0x5001,
-        // SUMMON_ELEMENT_TILE.
+        // LIST_TILE_SUMMON_ELEMENT.
         UiWindow_SetTilemapEntry(commandWindow, 61471, 11, 0, 0);
         UiWindow_SetTilemapEntry(commandWindow, PSYNERGY_COST_SECOND_TILE, 12,
                                  0, 0);

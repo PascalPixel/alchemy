@@ -151,7 +151,7 @@ void BattleEvent_Playback(void) {
             break;
           case BATTLE_EVENT_ITEM_NAME:
             UiWork_PushValueSlotFar(events->queue.operands[eventIndex] &
-                                        ITEM_ID_MASK,
+                                        INVENTORY_ITEM_ID_MASK,
                                     VALUE_ITEM_NAME);
             break;
           case BATTLE_EVENT_ABILITY_NAME:

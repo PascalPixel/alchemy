@@ -241,12 +241,12 @@ enum {
   TOADONPA_DODONPA_STAND_IN
 };
 
-/// Triggers: the cell doors count from DOOR_TRIGGER_FIRST in each map, and a
+/// Triggers: the cell doors count from TRIGGER_DOOR_FIRST in each map, and a
 /// watching guard raises one of the TRIGGER_*_SPOTTED triggers.
 enum {
   TRIGGER_LOCKED_DOOR = 99,
   TRIGGER_SEALED_DOOR = 98,
-  DOOR_TRIGGER_FIRST = 40,
+  TRIGGER_DOOR_FIRST = 40,
   TRIGGER_PATROL_PAIR_SPOTTED = 91,
   TRIGGER_HALL_PATROL_SPOTTED,
   TRIGGER_GROUND_FLOOR_PATROL_SPOTTED,
@@ -264,7 +264,7 @@ enum { EXIT_THROWN_OUT = 60 };
 enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 
 /// The first of the flags that remember which cell doors the Cell Key opened,
-/// per map: one for each door trigger from DOOR_TRIGGER_FIRST.
+/// per map: one for each door trigger from TRIGGER_DOOR_FIRST.
 enum {
   TOADONPA_DOOR_FLAG = FLAG_PLACE_TEMP_50,
   CAVE_DOOR_FLAG = FLAG_PLACE_TEMP_55,
@@ -450,13 +450,13 @@ static void Event_UnlockToadonpaDoor(void) {
   fieldWork = gEventWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
-    doorIndex = doorTrigger - DOOR_TRIGGER_FIRST;
+    doorIndex = doorTrigger - TRIGGER_DOOR_FIRST;
     if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
       SE(SE_GATE_MOVE);
       Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      FLAG_SET(doorTrigger + (TOADONPA_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+      FLAG_SET(doorTrigger + (TOADONPA_DOOR_FLAG - TRIGGER_DOOR_FIRST));
     }
   }
 }
@@ -489,11 +489,11 @@ static void Event_UnlockCaveDoor(void) {
   fieldWork = gEventWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
-    LunpaFortress_OpenCaveDoor(doorTrigger - DOOR_TRIGGER_FIRST);
+    LunpaFortress_OpenCaveDoor(doorTrigger - TRIGGER_DOOR_FIRST);
     SE(SE_GATE_MOVE);
     Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    FLAG_SET(doorTrigger + (CAVE_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+    FLAG_SET(doorTrigger + (CAVE_DOOR_FLAG - TRIGGER_DOOR_FIRST));
   }
 }
 
@@ -516,11 +516,11 @@ static void Event_UnlockUpperFloorDoor(void) {
   fieldWork = gEventWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
-    LunpaFortress_OpenUpperFloorDoor(doorTrigger - DOOR_TRIGGER_FIRST);
+    LunpaFortress_OpenUpperFloorDoor(doorTrigger - TRIGGER_DOOR_FIRST);
     SE(SE_GATE_MOVE);
     Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    FLAG_SET(doorTrigger + (UPPER_FLOOR_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+    FLAG_SET(doorTrigger + (UPPER_FLOOR_DOOR_FLAG - TRIGGER_DOOR_FIRST));
   }
 }
 
@@ -547,11 +547,11 @@ static void Event_UnlockGroundFloorDoor(void) {
   fieldWork = gEventWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
-    LunpaFortress_OpenGroundFloorDoor(doorTrigger - DOOR_TRIGGER_FIRST);
+    LunpaFortress_OpenGroundFloorDoor(doorTrigger - TRIGGER_DOOR_FIRST);
     SE(SE_GATE_MOVE);
     Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    FLAG_SET(doorTrigger + (GROUND_FLOOR_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+    FLAG_SET(doorTrigger + (GROUND_FLOOR_DOOR_FLAG - TRIGGER_DOOR_FIRST));
   }
 }
 
@@ -1154,7 +1154,7 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
 
     if (playerX == 43 && playerZ > 28 && playerZ <= 31) {
       s16 *touchedTrigger = &gEventWork->touchedTrigger;
-      s32 doorTrigger = DOOR_TRIGGER_FIRST + 1;
+      s32 doorTrigger = TRIGGER_DOOR_FIRST + 1;
 
       *touchedTrigger = doorTrigger;
       Event_UnlockGroundFloorDoor();
@@ -1175,7 +1175,7 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
         (leader->facing == 0xc000 || leader->facing == 0x4000)) {
       s16 *touchedTrigger = &gEventWork->touchedTrigger;
-      s32 doorTrigger = DOOR_TRIGGER_FIRST;
+      s32 doorTrigger = TRIGGER_DOOR_FIRST;
 
       *touchedTrigger = doorTrigger;
       Event_UnlockUpperFloorDoor();
@@ -3789,12 +3789,12 @@ struct SceneEvent gLunpaFortressGroundFloorEvents[] = {
     { EVENT_EXIT, 19, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_TO_NORTHEAST_PASSAGE },
     { EVENT_EXIT, 20, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_PASSAGE },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_24, EVENT_SCRIPT(Event_EntranceGuardThrowsPartyOut) },
     { EVENT_TOUCH, 51, FLAG_SCENE_TEMP_25, EVENT_SCRIPT(Event_SentriesThrowPartyOut) },
     { EVENT_TALK, GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
@@ -3851,9 +3851,9 @@ struct SceneEvent gLunpaFortressUpperFloorEvents[] = {
     { EVENT_TOUCH, 32, FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightEastGuard) },
     { EVENT_TOUCH, 33, FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightWestGuard) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST, UPPER_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST, UPPER_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeCellKey) },
     { EVENT_TALK, UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeCellKey) },
     { EVENT_TALK, UPPER_FLOOR_DODONPAS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhereDodonpaIs) },
@@ -3893,10 +3893,10 @@ struct SceneEvent gLunpaFortressCaveEvents[] = {
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_SEALED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchSealedDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, CAVE_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockCaveDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, CAVE_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockCaveDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockCaveDoor) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockCaveDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, CAVE_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockCaveDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, CAVE_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockCaveDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockCaveDoor) },
+    { TOUCH_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockCaveDoor) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CratesSink) },
     { TOUCH_WALKING, 70, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushCrates) },
     { SEARCH(SEARCH_UNNAMED), 51, FLAG_SCENE_TEMP_18, EVENT_SCRIPT(Event_FlipSecondSwitch) },
@@ -3915,11 +3915,11 @@ struct SceneEvent gLunpaFortressEventsOther[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, TOADONPA_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, TOADONPA_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, TOADONPA_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 3, TOADONPA_DOOR_FLAG + 3, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 4, TOADONPA_DOOR_FLAG + 4, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, TOADONPA_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, TOADONPA_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, TOADONPA_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 3, TOADONPA_DOOR_FLAG + 3, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 4, TOADONPA_DOOR_FLAG + 4, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
     { EVENT_TOUCH, 20, FLAG_SCENE_TEMP_70, EVENT_SCRIPT(Event_FindHammet) },
     { EVENT_TALK, TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },

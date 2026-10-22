@@ -32,11 +32,13 @@ enum { FACING_STEP = 0x1000 };
   ((u32)((facing) - (FACING_NORTHWEST + 1)) <=                                 \
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
+/// In the first column of a scene table, ends the table.
+enum { SCENE_TABLE_END = -1 };
+
 /// A table row's condition: CONDITION_ALWAYS, a flag number that must be
 /// clear, or IF_FLAG_SET of a flag that must be set
 /// (GameFlag_IsConditionActive).
 enum {
-  SCENE_TABLE_END = -1, ///< in the first column, ends a table
   CONDITION_ALWAYS = -1,
   /// A placement's condition that Scene_AssignViewFlags replaces with whether
   /// the actor lies within the map's view bounds, in the scenes that call it,

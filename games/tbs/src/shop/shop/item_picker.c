@@ -163,7 +163,7 @@ s32 Shop_SelectUse(s32 unitId) {
       if (slot > inventoryCount - 1)
         slot = inventoryCount - 1;
 
-      itemId = unit->inventory[slot] & ITEM_ID_MASK;
+      itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
       window = shop->itemWindow;
       x = slot % SHOP_INVENTORY_COLUMNS << 4;
       y = (slot / SHOP_INVENTORY_COLUMNS << 4) + 8;
@@ -245,7 +245,7 @@ s32 Shop_SelectUse(s32 unitId) {
 /// cursor moves.
 void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
   struct BattleUnit *unit = Unit_GetFar(unitId);
-  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   u32 inventoryEntry = unit->inventory[slot];
   s32 quantity = (inventoryEntry >> INVENTORY_QUANTITY_SHIFT) + 1;
 

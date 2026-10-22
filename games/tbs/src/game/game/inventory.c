@@ -8,7 +8,7 @@
 /// equipped and quantity bits are ignored. Every bank that shows or uses an
 /// item calls it, through GAME.S as Item_GetDirectFar.
 struct ItemDefinition *Item_GetDirect(s32 item) {
-  return gItem_DefinitionTable + (item & ITEM_ID_MASK);
+  return gItem_DefinitionTable + (item & INVENTORY_ITEM_ID_MASK);
 }
 
 /// Returns whether the character can equip `item`: bit classId of the item's
@@ -65,7 +65,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   s32 itemId;
 
   owner = Unit_Get(owner)->inventory[slot];
-  itemId = ITEM_ID_MASK;
+  itemId = INVENTORY_ITEM_ID_MASK;
   itemId &= owner;
   owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
   owner++;
@@ -147,12 +147,13 @@ s32 Inventory_AddItem(s32 owner, s32 itemId) {
 
   if ((item->flags & ITEM_STACKABLE) != 0) {
     slot = 0;
-    if (((unit->inventory[slot] ^ itemId) & ITEM_ID_MASK) != 0) {
+    if (((unit->inventory[slot] ^ itemId) & INVENTORY_ITEM_ID_MASK) != 0) {
       do {
         slot++;
         if (slot >= INVENTORY_SLOTS)
           break;
-      } while (((unit->inventory[slot] ^ itemId) & ITEM_ID_MASK) != 0);
+      } while (((unit->inventory[slot] ^ itemId) & INVENTORY_ITEM_ID_MASK) !=
+               0);
     }
     if (slot != INVENTORY_SLOTS) {
       s32 entry = unit->inventory[slot];
@@ -214,7 +215,7 @@ s32 Inventory_Find(s32 owner, s32 itemId) {
   u16 *entry = inv->inventory;
 
   do {
-    if (((*entry++) & ITEM_ID_MASK) == itemId) {
+    if (((*entry++) & INVENTORY_ITEM_ID_MASK) == itemId) {
       return slot;
     }
     slot++;
@@ -337,7 +338,7 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
       struct ItemDefinition *item = Item_GetDirect(unit->inventory[slot]);
 
       if (item->type == type) {
-        return unit->inventory[slot] & ITEM_ID_MASK;
+        return unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
       }
     }
   }
@@ -388,7 +389,7 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
 /// Called by the shop's item picker before it lets an item go.
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct BattleUnit *unit = Unit_Get(owner);
-  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirect(itemId);
 
   if (itemId == 0) {
@@ -486,7 +487,7 @@ s32 ItemCounter_Adjust(s32 index, s32 delta) {
 /// the shops may sell: buying one takes one, discarding or selling puts one
 /// back.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
-  s32 itemIdMask = ITEM_ID_MASK;
+  s32 itemIdMask = INVENTORY_ITEM_ID_MASK;
   u8 counter;
   s32 result = 0;
 
@@ -505,11 +506,11 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 s32 Inventory_CountItem(s32 owner, s32 itemId) {
   struct BattleUnit *unit = Unit_Get(owner);
   s32 count = 0;
-  s32 itemIdOnly = itemId & ITEM_ID_MASK;
+  s32 itemIdOnly = itemId & INVENTORY_ITEM_ID_MASK;
   s32 slot = 0;
 
   do {
-    if ((unit->inventory[slot] & ITEM_ID_MASK) == itemIdOnly) {
+    if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == itemIdOnly) {
       struct ItemDefinition *item = Item_GetDirect(itemIdOnly);
 
       if (item->flags & ITEM_STACKABLE) {

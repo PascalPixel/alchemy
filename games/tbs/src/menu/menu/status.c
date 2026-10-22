@@ -1660,9 +1660,10 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
 #endif
   WaitFrames(1);
   if (menu->items[state->selectedIndex] != 0) {
-    MENU_DRAW_INFO_TEXT((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
-                            MsgItemPlainName,
-                        menu->infoWindow, 0, 0);
+    MENU_DRAW_INFO_TEXT(
+        (menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK) +
+            MsgItemPlainName,
+        menu->infoWindow, 0, 0);
   }
 
   // An item with an element shows its icon at tile column 27, in palette 0 on
@@ -1670,8 +1671,8 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
   // stops short of it.
   for (rowIndex = 0; rowIndex < PAGE_ROWS; rowIndex++) {
     if (rowIndex == state->row) {
-      item =
-          Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
+      item = Item_GetDirectFar(menu->items[state->selectedIndex] &
+                               INVENTORY_ITEM_ID_MASK);
       if (item->element != ELEMENT_NONE) {
         UiWindow_SetTilemapEntryFar(window, item->element + 1, 27,
                                     rowIndex * 2 + 1, 0);
@@ -1680,8 +1681,8 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
         Render_SetTilemapFlagRect(window, 14, rowIndex * 2 + 1, 14, 1, 14);
       }
     } else {
-      item =
-          Item_GetDirectFar(menu->items[firstEntry + rowIndex] & ITEM_ID_MASK);
+      item = Item_GetDirectFar(menu->items[firstEntry + rowIndex] &
+                               INVENTORY_ITEM_ID_MASK);
       if (item->element != ELEMENT_NONE) {
         UiWindow_SetTilemapEntryFar(window, item->element + 1, 27,
                                     rowIndex * 2 + 1, 4);
@@ -1700,7 +1701,8 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
   // The slots' name rows: weapon 1, head 3, shield 5, chest 7, each under
   // its label (ItemMenu_DrawCategory). Other worn items have no row.
   if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
-    item = Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
+    item = Item_GetDirectFar(menu->items[state->selectedIndex] &
+                             INVENTORY_ITEM_ID_MASK);
     switch (item->type) {
     case ITEM_TYPE_WEAPON:
       Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 1,
@@ -1756,7 +1758,7 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
       inventoryEntry = &menu->items[firstEntry];
       do {
         UiText_DrawCharacterAtOffsetFar(
-            (*inventoryEntry & ITEM_ID_MASK) + MsgItemName, window,
+            (*inventoryEntry & INVENTORY_ITEM_ID_MASK) + MsgItemName, window,
             SHOP_ITEM_NAME_X, (rowIndex << 4) + 8);
         rowIndex = (u8)(rowIndex + 1);
         inventoryEntry++;
@@ -2012,7 +2014,7 @@ void ItemMenu_DrawEquippedItemNames(struct UiWindow *window, u16 *items) {
 
   for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
     if (items[slotIndex] & INVENTORY_EQUIPPED) {
-      itemId = items[slotIndex] & ITEM_ID_MASK;
+      itemId = items[slotIndex] & INVENTORY_ITEM_ID_MASK;
       switch (Item_GetDirectFar(itemId)->type) {
       case ITEM_TYPE_WEAPON:
         UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
@@ -2082,7 +2084,8 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
     if (items[slotIndex] != 0 && (items[slotIndex] & INVENTORY_EQUIPPED) != 0) {
       icon = menu->entryIcons[slotIndex];
       if (icon != 0) {
-        switch (Item_GetDirectFar(items[slotIndex] & ITEM_ID_MASK)->type) {
+        switch (Item_GetDirectFar(items[slotIndex] & INVENTORY_ITEM_ID_MASK)
+                    ->type) {
         case ITEM_TYPE_WEAPON:
           icon->x = 216;
           icon->y = 32;

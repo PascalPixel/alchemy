@@ -824,7 +824,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
   } else if (item->useType == ITEM_USE_EMPTIES) {
     // Hermes' Water becomes one Empty Bottle, the slot's other bits dropped;
     // any other such item stays as it was.
-    if ((inventoryEntry & ITEM_ID_MASK) == ITEM_HERMES_WATER)
+    if ((inventoryEntry & INVENTORY_ITEM_ID_MASK) == ITEM_HERMES_WATER)
       inventoryEntry = ITEM_EMPTY_BOTTLE;
     unit->inventory[selection->parameter] = inventoryEntry;
   }

@@ -360,14 +360,14 @@ void PartyStatus_Draw(s32 flags) {
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     BattleParty_CountStandbyDjinnFar(0, standbyDjinn);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_VENUS, 0,
-                             row, 0);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_MERCURY, 2,
-                             row, 0);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_MARS, 0,
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_VENUS,
+                             0, row, 0);
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MERCURY,
+                             2, row, 0);
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MARS, 0,
                              row + 1, 0);
-    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_JUPITER, 2,
-                             row + 1, 0);
+    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_JUPITER,
+                             2, row + 1, 0);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[0] + '0', 1, row);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[1] + '0', 3, row);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[2] + '0', 1, row + 1);

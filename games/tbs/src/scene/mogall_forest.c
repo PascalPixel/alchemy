@@ -175,7 +175,7 @@ enum MogallForestQuartzActor {
   ACTOR_SECOND_AREA_SOUTH_APE_STUMP,
   /// Quartz, a Venus Djinni, placed until the party has it.
   /// ★ Named from the game: "Quartz" (MsgDjinnName)
-  ACTOR_QUARTZ
+  ACTOR_SECOND_AREA_QUARTZ
 };
 
 /// Actors of the third area (SceneId_MogallForestKillerApe), numbered in the
@@ -314,7 +314,7 @@ enum {
 /// Mogall Forest, the second area: talking to Quartz, a Venus Djinni, starts
 /// the Djinni battle.
 static void MogallForest_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(ACTOR_QUARTZ, DJINNI_QUARTZ);
+  Field_RequestDjinnBattle(ACTOR_SECOND_AREA_QUARTZ, DJINNI_QUARTZ);
 }
 
 /// Jumps the leader to an unobstructed fixed-point position and restores
@@ -2013,7 +2013,7 @@ struct SceneEvent gMogallForestQuartz_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_MOVED, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeHidesAgain) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeShowsWay) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_MOGALL_FOREST_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
-    { EVENT_TALK, ACTOR_QUARTZ, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_StartDjinnBattle) },
+    { EVENT_TALK, ACTOR_SECOND_AREA_QUARTZ, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_StartDjinnBattle) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

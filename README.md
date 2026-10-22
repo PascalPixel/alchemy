@@ -12,18 +12,22 @@ With the source, anyone can read how Golden Sun really works, from the damage fo
 
 ## What’s in it?
 
-The source, not a game to download. Building it gives you back the games exactly as Camelot shipped them, in Japanese, English, German, Spanish, French and Italian. Every picture, song and line of dialogue is Camelot’s own, taken from the cartridge into files you can open and edit. Remakes, mods and ports can grow from it in projects of their own.
+The source, not a game to download. Building it gives you back the games exactly as Camelot shipped them, in Japanese, English, German, Spanish, French and Italian. Every picture, song and line of dialogue is Camelot’s own, taken from the cartridge into files you can open and edit: PNGs, MIDI, WAV, and the text as translation catalogues. Remakes, mods and ports can grow from it in projects of their own.
 
-## Who’s making it?
+## How far along is it?
 
-Me! I’m Pascal Pixel, and I started Alchemy in July 2026 as a hobby, to enjoy making things again after a burnout. I build it with AI coding assistants. They propose C code, the build compares it with the cartridge, and only what matches stays. I decide what to tackle next, how the code is organized and named, and what counts as finished, and when something’s broken or stuck, that’s where I dig in.
-
-## Progress tracker
-
-The Broken Seal is fully rebuilt and builds from this repository alone, no cartridge needed. I’m still tidying up its code, naming things and writing the documentation. The Lost Age builds too and is well on its way, but the parts that aren’t rewritten yet still come from your own cartridge dump.
+The Broken Seal is fully rebuilt: every byte of all six editions comes from this repository, with no cartridge needed to build it. Now I’m making that code a pleasure to read, one place and one system at a time: real names from the game’s own text, comments that say why, and a guide for every folder. The Lost Age builds too and is well on its way, but the parts that aren’t rewritten yet still come from your own cartridge dump.
 
 <img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
 <img src="https://alchemy.pascalpixel.com/PROGRESS.png" width="838" alt="A map of the project's files by size" />
+
+## Where do I start reading?
+
+[The documentation](https://alchemy.pascalpixel.com/) explains how The Broken Seal works underneath, and it takes the game apart to show you. [Its front page](games/tbs/README.md) covers the big picture: the loop that runs one scene after another, the places and their flags. Four pages go a layer deeper: [the world](games/tbs/world.md) you walk around, [battles](games/tbs/battle.md), [menus, windows and shops](games/tbs/menus.md) and [the engine](games/tbs/engine.md) underneath them all. The places have pages of their own too, with maps of their rooms and recordings of their events.
+
+<img src="https://alchemy.pascalpixel.com/guides/field/layers-3d.gif" width="520" alt="Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front" />
+
+If you’d rather start in the code, [the source’s own guide](games/tbs/src/README.md) says what lives in which folder, and every folder has a guide of its own. [MATCHING.md](games/tbs/src/MATCHING.md) collects the plain C spellings that compile to the game’s exact instructions, for anyone who wants to help with The Lost Age.
 
 ## Can I build it myself?
 
@@ -38,9 +42,9 @@ Yes! [INSTALL.md](INSTALL.md) has the few commands it takes on Linux, macOS or W
 | French   | `42f3b262c16cfc5bde1fa2b25016fb74046de1b3` | `f14855c0f8c87a95cc52189e8e3b2bd9df186322` |
 | Italian  | `ca45e04b26b2f040ac63e679a459d21869f5f28d` | `57f1d005666b81645e55412658427e27099c5907` |
 
-## Where do I start reading?
+## Who’s making it?
 
-[The documentation](https://alchemy.pascalpixel.com/) explains how the games work underneath, like what happens in a battle round or how a town’s people and events are set up. If you’d rather start in the code, the battle effects are a good first stop: [their guide](games/tbs/src/effect/README.md) explains how everything drawn during a battle, from Psynergy to summons, is put on screen, and [MATCHING.md](games/tbs/src/MATCHING.md) collects the plain C spellings that compile to the game's exact instructions.
+Me! I’m Pascal Pixel, and I started Alchemy in July 2026 as a hobby, to enjoy making things again after a burnout. I build it with AI coding assistants. They propose C code, the build compares it with the cartridge, and only what matches stays. I decide what to tackle next, how the code is organized and named, and what counts as finished, and when something’s broken or stuck, that’s where I dig in. The rules they work by are all in [AGENTS.md](AGENTS.md), from what may count as matched to how a room gets its name, so you can see exactly what “done” means here.
 
 ## Acknowledgements
 
@@ -53,3 +57,4 @@ Thank you to:
 - Coaltergeist, for [camelot-gcc](https://github.com/Coaltergeist/camelot-gcc), the compiler Alchemy first built with before alchemy-gcc replaced it.
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy measures itself against, and whose [agbcc](https://github.com/pret/agbcc) builds the games’ sound and save code.
 - [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for the permuter that [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools) reimplements in Rust.
+- [mGBA](https://mgba.io), whose libmgba plays the builds for every picture and recording in the documentation.

@@ -1,7 +1,7 @@
 /// @file
-/// Vale (SceneId_ValeInteriorsShops): the insides of the
-/// village's houses and shops, all on one map. Each room is an entrance with a
-/// camera box of its own, named for the door it is entered by
+/// Vale (SceneId_ValeInteriorsShops): the insides of the village's houses and
+/// shops, all on one map. Each room is an entrance with a camera box of its
+/// own, named for the door it is entered by
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST and the rest), and its door takes the
 /// exit of the same number back out: four open onto the village (SceneId_Vale),
 /// and four onto the part of Vale with the Psynergy Stone (SceneId_ValeGate),
@@ -34,6 +34,14 @@
 ///   him when his grandmother sees him, the family greets him, Ivan and Mia
 ///   introduce themselves ("I am Mia, from Imil."), and his father is left
 ///   pacing. The villagers now worry about Dora, ill since Isaac left.
+///
+/// Open questions:
+/// - XXX: what the actor animations beyond enum ActorAnimation that the scene
+///   sets (Garet's grandfather asleep is 5) show; each sprite's animation table
+///   under graphics/sprite would settle it.
+/// - XXX (picture): the letters Z rising and growing from Garet's sleeping
+///   grandfather (ValeInteriorsShops_SpawnSleepZ), three at frames 10, 20
+///   and 30 of every 180.
 
 #include "script.h"
 #include "game_state.h"
@@ -86,21 +94,19 @@ enum ValeInteriorsShopsActor {
   /// ★ Named from the game: "he is my son" (MsgValeIAmConcernedForGaretBut)
   ACTOR_GARETS_MOTHER,
   /// Jenna's grandfather, a bent old man with a white beard and a cane. "My
-  /// granddaughter, Jenna, is finally happy
-  /// again..."
+  /// granddaughter, Jenna, is finally happy again..."
   /// ★ Named from the game: "My granddaughter,"
   /// (MsgValeMyGranddaughterJennaIsFinallyHappy)
   ACTOR_JENNAS_GRANDFATHER,
   /// Jenna's grandmother, an old woman with white hair. "Please return my
-  /// precious granddaughter, Jenna,
-  /// to me." Once Jenna is taken, ACTOR_WOMAN_ON_THE_SPITTING_IMAGE says she
-  /// "grew sick with despair", and she lies in bed.
+  /// precious granddaughter, Jenna, to me." Once Jenna is taken,
+  /// ACTOR_WOMAN_ON_THE_SPITTING_IMAGE says she "grew sick with despair", and
+  /// she lies in bed.
   /// ★ Named from the game: "Please return my precious granddaughter"
   /// (MsgValePleaseReturnMyPreciousGranddaughterJenna)
   ACTOR_JENNAS_GRANDMOTHER,
   /// A woman in a green dress in Jenna's grandparents' house. "Jenna is the
-  /// spitting image of her
-  /// mother, whom we lost that day..."
+  /// spitting image of her mother, whom we lost that day..."
   /// ★ Named from the game: "is the spitting image of her mother"
   /// (MsgValeJennaIsTheSpittingImageOf)
   ACTOR_WOMAN_ON_THE_SPITTING_IMAGE,
@@ -115,8 +121,7 @@ enum ValeInteriorsShopsActor {
   /// Psynergy." (MsgValeIfThereAreVisitorsInTown)
   ACTOR_WOMAN_ON_VISITORS_IN_TOWN,
   /// A young man with brown hair: "Do you ever dream of seeing the world
-  /// outside the
-  /// village?"
+  /// outside the village?"
   /// ★ Named from the game: "Do you ever dream of seeing the world outside
   /// the village?" (MsgValeDoYouEverDreamOfSeeing)
   ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING,
@@ -142,23 +147,24 @@ enum ValeInteriorsShopsActor {
   /// ★ Named from the game: "Good armor isn't just sturdy."
   /// (MsgValeGoodArmorDrawsOutStrength)
   ACTOR_ARMOR_MERCHANT,
-  /// Three sprites drifting up from Garet's sleeping grandfather.
-  ACTOR_FIRST_DRIFTING_SPRITE
+  /// Three letters Z that drift up from Garet's grandfather as he sleeps.
+  /// ★ Named from what the player sees: a white letter Z (spr_280.png)
+  ACTOR_FIRST_SLEEP_Z
 };
 
 // Forward declarations.
 static void Event_GaretComesHome(void);
-static void ValeInteriorsShops_SpawnDriftingSprite(void);
+static void ValeInteriorsShops_SpawnSleepZ(void);
 
 #include "common/object_facing.h"
 
-/// Moves and grows a sprite drifting up from Garet's sleeping grandfather.
+/// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///
-/// Called each frame by gValeInteriorsShops_DriftingSpriteScript; the actor's
+/// Called each frame by gValeInteriorsShops_SleepZScript; the actor's
 /// timer and work are its x and y steps in signed 8.8 pixels, set by
-/// ValeInteriorsShops_SpawnDriftingSprite.
-static s32 ValeInteriorsShops_AdvanceDriftingSprite(
-    struct ScriptInterpreter *interpreter) {
+/// ValeInteriorsShops_SpawnSleepZ.
+static s32
+ValeInteriorsShops_AdvanceSleepZ(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
 
   actor->x.fixed += (s16)actor->timer * 256;
@@ -270,12 +276,12 @@ static void ValeInteriorsShops_GiveFarewellHerb(void) {
   Engine_EventEnd();
 }
 
-/// A woman in a green dress tells of the culprits' strange powers. She stands
-/// in a house of Vale after the party has left, and asks Isaac about them.
+/// A woman in a green dress asks whether the people who caused the eruption
+/// had strange powers, in a house of Vale after the party has left.
 ///
 /// Reached by talking to ACTOR_WOMAN_ON_VISITORS_IN_TOWN after the party has
 /// left Vale.
-static void Event_AskAboutCulpritsPowers(void) {
+static void Event_AskAboutStrangePowers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeTheCulpritsHadStrangePowers);
   Engine_EventAskYesNo(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0);
@@ -549,9 +555,9 @@ ValeInteriorsShops_PlayRepeatedAnimationAndWait(s32 actorId, s32 animation) {
 /// Called by ValeInteriorsShops_Initialize from
 /// VALE_INTERIORS_SHOPS_FROM_VALE_EAST after Kalay, until FLAG_GARET_CAME_HOME
 /// is set; sets it. Adds and removes the callback
-/// ValeInteriorsShops_SpawnDriftingSprite, and leaves the father pacing.
+/// ValeInteriorsShops_SpawnSleepZ, and leaves the father pacing.
 static void Event_GaretComesHome(void) {
-  struct FieldActor *driftingSprite;
+  struct FieldActor *sleepZ;
   struct FieldActor *actor;
   s32 motionFlags;
   SchedulerCallback timedUpdate;
@@ -569,18 +575,18 @@ static void Event_GaretComesHome(void) {
   Actor_SetSpeed(MIA, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
-  driftingSprite = Actor_Get(ACTOR_FIRST_DRIFTING_SPRITE);
-  Engine_ActorSetSpriteFlags(driftingSprite, 0);
-  driftingSprite = Actor_Get(ACTOR_FIRST_DRIFTING_SPRITE + 1);
-  Engine_ActorSetSpriteFlags(driftingSprite, 0);
-  driftingSprite = Actor_Get(ACTOR_FIRST_DRIFTING_SPRITE + 2);
-  Engine_ActorSetSpriteFlags(driftingSprite, 0);
+  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
+  Engine_ActorSetSpriteFlags(sleepZ, 0);
+  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 1);
+  Engine_ActorSetSpriteFlags(sleepZ, 0);
+  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 2);
+  Engine_ActorSetSpriteFlags(sleepZ, 0);
   motionFlags = 0;
-  Object_GetById(ACTOR_FIRST_DRIFTING_SPRITE)->motionFlags = motionFlags;
-  Object_GetById(ACTOR_FIRST_DRIFTING_SPRITE + 1)->motionFlags = motionFlags;
-  Object_GetById(ACTOR_FIRST_DRIFTING_SPRITE + 2)->motionFlags = motionFlags;
-  timedUpdate = ValeInteriorsShops_SpawnDriftingSprite;
-  FieldScheduler_AddCallback(timedUpdate, 0xc80);
+  Object_GetById(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
+  Object_GetById(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
+  Object_GetById(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
+  timedUpdate = ValeInteriorsShops_SpawnSleepZ;
+  FieldScheduler_AddCallback(timedUpdate, TASK_PRIORITY_SCENE);
   Engine_TaskWait(1);
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
@@ -872,22 +878,22 @@ static void Event_GaretComesHome(void) {
 /// three at frames 10, 20 and 30 of every 180.
 ///
 /// A callback Event_GaretComesHome adds while the grandfather dozes.
-static void ValeInteriorsShops_SpawnDriftingSprite(void) {
+static void ValeInteriorsShops_SpawnSleepZ(void) {
   s32 actorId;
   u32 cycleFrame;
   struct FieldActor *actor;
   struct FieldActor *origin;
 
   cycleFrame = gFrameCount % 180;
-  actorId = ACTOR_FIRST_DRIFTING_SPRITE;
+  actorId = ACTOR_FIRST_SLEEP_Z;
   switch (cycleFrame) {
   case 10:
     break;
   case 20:
-    actorId = ACTOR_FIRST_DRIFTING_SPRITE + 1;
+    actorId = ACTOR_FIRST_SLEEP_Z + 1;
     break;
   case 30:
-    actorId = ACTOR_FIRST_DRIFTING_SPRITE + 2;
+    actorId = ACTOR_FIRST_SLEEP_Z + 2;
     break;
   default:
     return;
@@ -912,7 +918,7 @@ static void ValeInteriorsShops_SpawnDriftingSprite(void) {
     actor->timer = 25; // 25/256 pixel per frame.
     actor->work = 128; // 1/2 pixel per frame.
   }
-  Actor_SetActionScript(actorId, gValeInteriorsShops_DriftingSpriteScript);
+  Actor_SetActionScript(actorId, gValeInteriorsShops_SleepZScript);
 }
 
 s32 gValeInteriorsShops_FaceTargetScript[] = {
@@ -956,8 +962,8 @@ s32 gValeInteriorsShops_PartyLeavesScript[] = {
     SC_END,
 };
 
-s32 gValeInteriorsShops_DriftingSpriteScript[] = {
-    SC_CALL(ValeInteriorsShops_AdvanceDriftingSprite),
+s32 gValeInteriorsShops_SleepZScript[] = {
+    SC_CALL(ValeInteriorsShops_AdvanceSleepZ),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_POS(0, 0, 0),
@@ -1135,11 +1141,11 @@ struct ScenePlacement gValeInteriorsShops_PlacementsAfterKalay[] = {
         PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x118, CONDITION_ALWAYS, ACTOR_STAND,
+    { 280, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x118, CONDITION_ALWAYS, ACTOR_STAND,
+    { 280, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x118, CONDITION_ALWAYS, ACTOR_STAND,
+    { 280, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
@@ -1220,7 +1226,7 @@ struct SceneEvent gValeInteriorsShops_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
     { EVENT_TALK, ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
     { EVENT_TALK, ACTOR_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
-    { EVENT_TALK, ACTOR_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutCulpritsPowers) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutStrangePowers) },
     { EVENT_TALK, ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
     { EVENT_TALK, ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
     { EVENT_TALK, ACTOR_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },

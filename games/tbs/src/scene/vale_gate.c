@@ -13,7 +13,7 @@
 ///   show Jenna and a strongman whose Psynergy the Psynergy Stone has restored
 ///   the way to the river (FLAG_VALE_STORM_SENT_TO_AID_ELDERS). Others have
 ///   spent their Psynergy, and one lifts a small rock to show he has a little
-///   left (Event_DemonstrateLevitation). Later, when the Boulder has swept
+///   left (Event_BoyLiftsSmallRock). Later, when the Boulder has swept
 ///   Kyle, Jenna's parents and Felix away and Garet has gone after Isaac
 ///   (FLAG_VALE_STORM_GARET_LEFT), arriving here plays
 ///   Event_MeetSurvivingTravelers: Isaac overhears two strangers saying only
@@ -61,6 +61,20 @@
 /// (SceneId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_FLAGS sets a preset
 /// of story flags and takes VALE_GATE_TO_BILIBIN
 /// (ValeGate_SetProgressFlagsAndExit).
+///
+/// The hut's owner (ACTOR_HUT_OWNER) is never seen by day after the prologue:
+/// ValeGate_Initialize hides the storm's Jenna by number without testing
+/// FLAG_VALE_STORM, and by day that number is his (a BUG, fixed by BUGFIX).
+///
+/// Open questions:
+/// - XXX: what ACTOR_STORM_ROCK_SPOT, the invisible actor on the small rock's
+///   spot, is for, since nothing reads it after the setup; a recording of
+///   Event_BoyLiftsSmallRock with the actor drawn would show whether it is
+///   the rock's shadow or a block in the path.
+/// - XXX: whether the exit row of cell code 11 (VALE_GATE_TO_GOMA_CAVE_STREAM)
+///   lies on any cell of the map; the map's collision codes would settle it.
+/// - XXX (picture): the Psynergy displays, a villager's sprite cycling its
+///   palettes while sparks rise and fall about him.
 
 #include "game_state.h"
 #include "flags.h"
@@ -103,6 +117,7 @@
 #include "field_effect.h"
 #include "fixed_math.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 
 // Vale's place flags, kept while the party stays in Vale's scenes.
@@ -136,10 +151,9 @@ enum ValeGateActor {
 /// notes quote the day the story begins.
 enum ValeGateDayActor {
   /// An old man with a cane: "The Valeans are a chosen people." On the stormy
-  /// night, after the party
-  /// has left and back from Kalay, a question for Isaac instead
-  /// (Event_AskAboutJourney); after the party has left, "You saw the Wise
-  /// One?"
+  /// night, after the party has left and back from Kalay, a question for Isaac
+  /// instead (Event_AskAboutJourney); after the party has left, "You saw the
+  /// Wise One?"
   /// ★ Named from the game: "The Valeans are a chosen people."
   /// (MsgValeChosenPeople)
   ACTOR_CURIOUS_OLD_MAN = ACTOR_FIRST_PLACED + 3,
@@ -150,8 +164,7 @@ enum ValeGateDayActor {
   /// Psynergy?" (MsgValeOldWomanCannotUsePsynergy)
   ACTOR_OLD_WOMAN,
   /// A young man with brown hair: "Well, if it isn't Isaac. It's just another
-  /// quiet
-  /// day in Vale."
+  /// quiet day in Vale."
   /// ★ Named from the game: "It's just another quiet day in Vale."
   /// (MsgValeQuietDay)
   ACTOR_YOUNG_MAN_QUIET_DAY,
@@ -200,8 +213,11 @@ enum ValeGateDayActor {
   /// (MsgValeADifficultTimeThreeYears)
   ACTOR_WOMAN_RECALLING_STORM,
   /// The hut's owner, an old man with a cane, who back from Kalay finds "a big
-  /// hole in my roof". "Since
-  /// food is stored in this hut, it isn't scary at all..."
+  /// hole in my roof". "Since food is stored in this hut, it isn't scary at
+  /// all..." Once the prologue is over, ValeGate_Initialize hides him by day
+  /// as if he were the storm's ACTOR_STORM_JENNA (a BUG), so only a debug jump
+  /// past the prologue shows him; the renders show him by the hut with no
+  /// story flags set and gone once the party has left.
   /// ★ Named from the game: "Since food is stored in this hut"
   /// (MsgValeFoodStoredForWinter)
   ACTOR_HUT_OWNER = ACTOR_FIRST_PLACED + 18
@@ -229,7 +245,7 @@ enum ValeGateStormActor {
   /// (MsgValeFelixFellInRiver)
   ACTOR_STORM_WOMAN_HEARING_OF_FELIX,
   /// A small boy with fair hair who lifts ACTOR_STORM_SMALL_ROCK
-  /// (Event_DemonstrateLevitation). "I have some Psynergy left."
+  /// (Event_BoyLiftsSmallRock). "I have some Psynergy left."
   /// ★ Named from what the player sees: a small boy with fair hair holds a
   /// small rock up in the air with his Psynergy, "See?" (its render)
   ACTOR_STORM_ROCK_LIFTING_BOY,
@@ -237,8 +253,7 @@ enum ValeGateStormActor {
   /// ★ Named from the game: "went off that way!" (MsgValeWentOffWay)
   ACTOR_STORM_GIRL_WHO_SAW_JENNA,
   /// The two strongmen Garet's grandfather sends to aid the elders. "We can't
-  /// let the
-  /// Mt. Aleph Boulder destroy our village."
+  /// let the Mt. Aleph Boulder destroy our village."
   /// ★ Named from the game: "destroy our village" (MsgValeGoAidElders)
   ACTOR_STORM_FIRST_AIDE,
   /// ★ Named from the game: "help the elders" (MsgValeGoAidElders)
@@ -253,8 +268,7 @@ enum ValeGateStormActor {
   /// boy who lifts it (its render)
   ACTOR_STORM_SMALL_ROCK,
   /// An invisible actor on ACTOR_STORM_SMALL_ROCK's spot at three fifths of its
-  /// size. XXX: nothing here moves or reads it after the setup; what it marks
-  /// or blocks would say what it is for.
+  /// size, which nothing moves or reads after the setup (an open question).
   ACTOR_STORM_ROCK_SPOT,
   /// Rested at the Psynergy Stone, the strongman vale_storm.c calls
   /// ACTOR_EXHAUSTED_STRONGMAN. "Great! I'm all charged up!"
@@ -297,20 +311,18 @@ enum ValeGateFarewellActor {
   /// ★ Named from the game: "Dora is very late" (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_MAN_AWAITING_DORA,
   /// Garet's grandfather, the old man with white hair and a cane. "They can't
-  /// keep standing around here like this, or
-  /// they'll never leave."
+  /// keep standing around here like this, or they'll never leave."
   /// ★ Named from the game: "keep standing around here"
   /// (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_GRANDFATHER,
   /// Garet's sister, the young woman with an orange ponytail, who gives the
-  /// Herb. "I know not to drink stagnant water,
-  /// Sis!", Garet answers her.
+  /// Herb. "I know not to drink stagnant water, Sis!", Garet answers her.
   /// ★ Named from the game: "stagnant water" (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_SISTER,
   /// Garet's brother, the small boy with orange hair of vale.c's
-  /// ACTOR_GARETS_BROTHER, who
-  /// brings the Catch Beads: "Aunty Dora asked me to give this to you, Isaac."
-  /// Of Garet: "He's a pig! He'll eat anything that's not tied down!"
+  /// ACTOR_GARETS_BROTHER, who brings the Catch Beads: "Aunty Dora asked me to
+  /// give this to you, Isaac." Of Garet: "He's a pig! He'll eat anything that's
+  /// not tied down!"
   /// ★ Named from the game: "Aunty Dora asked me" (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_BROTHER,
   /// A woman with orange hair under a green headscarf: "As Garet's mother, I
@@ -325,12 +337,10 @@ enum ValeGateFarewellActor {
   ACTOR_FAREWELL_GARETS_FATHER,
   /// The rest of the crowd at the gate, ten who only nod and jump: an old man
   /// with a cane, an old woman, a young man with brown hair, a woman with fair
-  /// hair,
-  /// three strongmen, a burly grey-haired man, a woman in a green dress and a
-  /// stout man.
+  /// hair, three strongmen, a burly grey-haired man, a woman in a green dress
+  /// and a stout man.
   /// ★ Named from what the player sees: men, women and a young man of Vale in
-  /// their
-  /// sprites (its render)
+  /// their sprites (its render)
   ACTOR_FAREWELL_FIRST_CROWD_VILLAGER,
   /// The sprite of the dog of vault.c ("Woof! Woof!"), which runs past the
   /// children and later after ACTOR_FAREWELL_CAT.
@@ -391,8 +401,7 @@ enum ValeGateAfterKalayActor {
   /// (MsgValeNorthwestCrack)
   ACTOR_AFTER_KALAY_STRONGMAN_ON_CRACK,
   /// The hut's owner, the old man with a cane of ACTOR_HUT_OWNER, searching the
-  /// ground: "Hey! Where'd
-  /// that Psynergy Stone go?"
+  /// ground: "Hey! Where'd that Psynergy Stone go?"
   /// ★ Named from the game: "Where'd that Psynergy Stone go"
   /// (MsgValeThePsynergyStoneIsGone)
   ACTOR_AFTER_KALAY_HUT_OWNER
@@ -595,7 +604,7 @@ static void Event_DemonstratePsynergy(void) {
       Engine_EventWait(1);
     }
     // End the display and restore the strongman's ordinary appearance.
-    Engine_AudioPlayCue(SE_289);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
     Scheduler_RemoveCallback(ValeGate_UpdateShowingStrongmanPsynergy);
     Engine_TaskWait(1);
     Scene_EndCutscenePsynergy();
@@ -642,7 +651,10 @@ static void Event_AskAboutJourney(void) {
 /// after the party has left, the old man whose hut it is points out the large
 /// stone, and the camera looks at it.
 ///
-/// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale.
+/// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale; in a
+/// play-through ValeGate_Initialize has hidden him by then (a BUG), so only
+/// the debug menus, setting FLAG_PARTY_LEFT_VALE without the prologue's flags,
+/// reach it.
 static void Event_TalkAboutFallenStone(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_HUT_OWNER, ANIM_STAND);
@@ -667,10 +679,10 @@ static void Event_TalkAboutFallenStone(void) {
 /// Reached by talking to ACTOR_STORM_ROCK_LIFTING_BOY on the stormy night.
 /// Adds and removes the callbacks ValeGate_UpdateRockLiftingBoyPsynergy and
 /// ValeGate_UpdateSmallRockPalette.
-static void Event_DemonstrateLevitation(void) {
+static void Event_BoyLiftsSmallRock(void) {
   u32 i;
   s32 savedMotionFlags;
-  struct FieldActor *levitatingActor;
+  struct FieldActor *rock;
 
   Engine_EventBegin();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 760);
@@ -680,7 +692,8 @@ static void Event_DemonstrateLevitation(void) {
   Event_SayThenWait(ACTOR_STORM_ROCK_LIFTING_BOY, 20);
   ValeGate_FaceDirectionAndWait(ACTOR_STORM_ROCK_LIFTING_BOY, FACING_NORTHWEST,
                                 20);
-  Actor_SetAttachedEffect(ACTOR_STORM_ROCK_LIFTING_BOY, 0x102);
+  Actor_SetAttachedEffect(ACTOR_STORM_ROCK_LIFTING_BOY,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(20);
   // Charge the caster's display, then start both palette updates.
   Scene_BeginCutscenePsynergy();
@@ -694,14 +707,14 @@ static void Event_DemonstrateLevitation(void) {
                              TASK_PRIORITY_SCENE);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   // Suspend ordinary movement while lifting the target a little each frame.
-  levitatingActor = Object_GetById(ACTOR_STORM_SMALL_ROCK);
-  savedMotionFlags = levitatingActor->motionFlags;
-  levitatingActor->motionFlags = 0;
+  rock = Object_GetById(ACTOR_STORM_SMALL_ROCK);
+  savedMotionFlags = rock->motionFlags;
+  rock->motionFlags = 0;
   for (i = 0; i < 40; i++) {
-    levitatingActor->y.fixed += PIXELS(3) / 32;
+    rock->y.fixed += PIXELS(3) / 32;
     Engine_TaskWait(1);
   }
-  levitatingActor->motionFlags = savedMotionFlags;
+  rock->motionFlags = savedMotionFlags;
   Scheduler_RemoveCallback(ValeGate_UpdateRockLiftingBoyPsynergy);
   Scheduler_RemoveCallback(ValeGate_UpdateSmallRockPalette);
   Engine_TaskWait(1);
@@ -999,9 +1012,16 @@ s32 ValeGate_Initialize(void) {
           Engine_ActorSetSpriteFlags(actor, 0);
         }
       }
-      // XXX: by day these numbers are ACTOR_HUT_OWNER and a strongman out of
-      // sight; whether the flag is still set then would say if he is hidden.
+      // BUG: the test is meant for the stormy night, but the flag stays set,
+      // and by day these numbers are ACTOR_HUT_OWNER and a strongman already
+      // out of sight: the hut's owner is hidden from the prologue's end until
+      // Kalay, and his talk and Event_TalkAboutFallenStone never play.
+#ifdef BUGFIX
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0 &&
+          Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+#else
       if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+#endif
         Engine_ActorSetPosition(ACTOR_STORM_JENNA, 0, 0);
         Engine_ActorSetPosition(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
@@ -1222,14 +1242,14 @@ static void Event_MeetSurvivingTravelers(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   // The screen opens on the storm at the west path, where Isaac comes in from
-  // the river; the village music plays as he walks up and hears the first
+  // the river; the music fades out as he walks up and hears the first
   // traveler.
   Engine_CameraMoveTo(PIXELS(64), PIXELS(144), PIXELS(350), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Event_PrepareObjectAndApplyValue(1, 0);
   Engine_EventOpenScreen();
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   FieldFx_ResumeLightning();
   Engine_ActorSetPosition(ACTOR_FIRST_TRAVELER, PIXELS(105), PIXELS(267));
   Engine_TaskWait(1);
@@ -1375,8 +1395,10 @@ static void ValeGate_FightTravelers(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Event_SayThenWait(ACTOR_FIRST_TRAVELER, 20);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-  Engine_ActorSetAttachedEffect(ACTOR_STORM_GARET, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorSetAttachedEffect(ACTOR_STORM_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                       ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
   Actor_SetActionScript(ACTOR_SECOND_TRAVELER,
                         gValeGate_SecondTravelerLeapActions);
@@ -1414,7 +1436,7 @@ static void Event_TravelersLeaveAfterBattle(void) {
 
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
@@ -1660,7 +1682,7 @@ static void Event_DepartForQuest(void) {
                               actor->z.fixed);
     }
   }
-  priorityFlags = 0xfe;
+  priorityFlags = (u8)~ACTOR_PRIORITY_AUTOMATIC;
   Engine_TaskWait(2);
   Object_GetById(ACTOR_FAREWELL_DOG)->priorityFlags &= priorityFlags;
   Object_GetById(ACTOR_FAREWELL_CAT)->priorityFlags &= priorityFlags;
@@ -1912,7 +1934,8 @@ static void ValeGate_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
   Engine_EventWait(frames);
 }
 
-/// Flashes the caster's palette and emits paired effects every sixteen frames.
+/// A villager calling up Psynergy: palette 7 for two frames in four, and a
+/// pair of sparks every 16 frames.
 static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(actor, 7);
@@ -1924,7 +1947,8 @@ static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor) {
   }
 }
 
-/// Cycles six palette banks and emits the caster's paired effects.
+/// A villager using Psynergy: palettes 0 to 5 in turn, and a pair of sparks
+/// every 16 frames.
 static void
 ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
@@ -1936,7 +1960,7 @@ ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycles the levitated actor through six palette banks.
+/// Cycles the lifted rock through palettes 0 to 5, a step every second frame.
 static void ValeGate_CyclePsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);
@@ -1946,7 +1970,8 @@ static void ValeGate_CyclePsynergyPalette(struct FieldActor *actor) {
 
 #include "common/effect_vertical.h"
 
-/// Creates the two vertical Psynergy effects using the shared sprite tiles.
+/// Spawns a pair of Psynergy sparks, one rising and one falling
+/// (common/effect_vertical.h).
 static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
@@ -2001,7 +2026,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
 
 /// Updates the rock-lifting boy's Psynergy display.
 ///
-/// A callback Event_DemonstrateLevitation adds while the boy lifts.
+/// A callback Event_BoyLiftsSmallRock adds while the boy lifts.
 static void ValeGate_UpdateRockLiftingBoyPsynergy(void) {
   ValeGate_CyclePsynergyPaletteAndSpawnEffects(
       Object_GetById(ACTOR_STORM_ROCK_LIFTING_BOY));
@@ -2017,7 +2042,7 @@ static void ValeGate_UpdateShowingStrongmanPsynergy(void) {
 
 /// Updates the small rock's palette while it is lifted.
 ///
-/// A callback Event_DemonstrateLevitation adds while ACTOR_STORM_SMALL_ROCK
+/// A callback Event_BoyLiftsSmallRock adds while ACTOR_STORM_SMALL_ROCK
 /// rises.
 static void ValeGate_UpdateSmallRockPalette(void) {
   ValeGate_CyclePsynergyPalette(Object_GetById(ACTOR_STORM_SMALL_ROCK));
@@ -2090,8 +2115,12 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
 }
 
 // clang-format off
-u32 gValeGate_ChargedUpStrongmanActionsHead[] = {
-    0x1000000, 0x2020101, 0x3030302, 0x5040404, 0x6060505, 0x1000006, 0x3020201, 0x5040403,
+/// Unused: nothing refers to it. A run of palette numbers, 0 to 6 three times
+/// each and then 0 to 5 twice each, as a palette cycle of the Psynergy
+/// displays would step through them.
+u8 gValeGate_UnusedPaletteSteps[] = {
+    0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5,
+    5, 5, 6, 6, 6, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5,
 };
 
 s32 gValeGate_ChargedUpStrongmanActions[] = {
@@ -2421,7 +2450,7 @@ struct ScenePlacement gValeGate_Placements[] = {
         PIXELS(296), 0, PIXELS(568), FACING_EAST, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTHWEST, 3, 0 },
-    { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2472,7 +2501,7 @@ struct ScenePlacement gValeGate_StormPlacements[] = {
 #endif
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(250), 0, PIXELS(773), FACING_SOUTHWEST, 3, 0 },
-    { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2608,7 +2637,7 @@ struct SceneEvent gValeGate_StormEvents[] = {
     { EVENT_TALK, ACTOR_STORM_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgValeOldWomanCannotUsePsynergy) },
     { EVENT_TALK, ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgValeExhaustedFromFallingRocks) },
     { EVENT_TALK, ACTOR_STORM_WOMAN_HEARING_OF_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeFelixFellInRiver) },
-    { EVENT_TALK, ACTOR_STORM_ROCK_LIFTING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DemonstrateLevitation) },
+    { EVENT_TALK, ACTOR_STORM_ROCK_LIFTING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyLiftsSmallRock) },
     { EVENT_TALK, ACTOR_STORM_GIRL_WHO_SAW_JENNA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutHelping) },
     { EVENT_TALK, ACTOR_STORM_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeRaceAgainstTime) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenNorthwestDoor) },

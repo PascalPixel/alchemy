@@ -11,7 +11,7 @@ const struct ScenePlacement *ValeKraden_GetPlacements(void);
 const struct SceneEvent *ValeKraden_GetEvents(void);
 s32 ValeKraden_Initialize(void);
 extern s32 gValeKraden_RockslideSurvivorEscapeActions[];
-extern s32 gValeKraden_RockslideSurvivorSwayActions[];
+extern s32 gValeKraden_RockslideSurvivorSquashes[];
 extern s32 gValeKraden_FaceTargetActions[];
 extern struct SceneEntrance gValeKraden_Entrances[];
 extern u32 gValeKraden_Exits[];

@@ -54,6 +54,13 @@
 /// VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST clears FLAG_SHOW_LOCATION_NAME, so the
 /// place name is not shown again. The jar's row finds nothing on the stormy
 /// night, and after Kalay it is there only from the third patch on.
+///
+/// Open questions:
+/// - XXX: what Lift on the boulder by the fence (ACTOR_FENCE_BOULDER) shows,
+///   since its event row runs no script; casting Lift on it in a play-through
+///   would settle it.
+/// - XXX (picture): the stormy night's rockslide, the two rocks across the
+///   path and the cells around them blocked.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -84,6 +91,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 // FLAG_SCENE_TEMP_42: the cottage's gate stands open since Kraden went in.
 
@@ -94,6 +102,8 @@ enum ValeKradenActor {
   /// Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in Gondowan Cave. Its
   /// Lift row runs no script, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
   /// and the stormy night's events have no row for it.
+  /// ★ Named from the game: "did you lift the boulder?"
+  /// (MsgMountainIsaacDidLiftBoulder), said of the same sprite
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
   /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
@@ -101,15 +111,12 @@ enum ValeKradenActor {
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_EAST_ROCK,
   /// A young man with brown hair who lies by the broken fence on the stormy
-  /// night.
-  /// "Rockslide...destroyed
-  /// fence... Monsters everywhere..."
+  /// night. "Rockslide...destroyed fence... Monsters everywhere..."
   /// ★ Named from the game: "Rockslide...destroyed fence..."
   /// (MsgValeRockslideDestroyedFence)
   ACTOR_ROCKSLIDE_SURVIVOR,
   /// A small boy with fair hair, by day, younger than Isaac. "Do you hear those
-  /// awful growls coming from
-  /// the other side of this fence?"
+  /// awful growls coming from the other side of this fence?"
   /// ★ Named from the game: "I can't stop wondering what lies beyond this
   /// fence." (MsgValeWonderBeyondFence)
   ACTOR_BOY_BY_THE_FENCE,
@@ -187,8 +194,8 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
 /// the growls beyond it; once the party has left Vale, he means to climb it
 /// someday.
 ///
-/// Reached by talking to the boy by the fence
-/// (ACTOR_BOY_BY_THE_FENCE) in the day's events.
+/// Reached by talking to the boy by the fence (ACTOR_BOY_BY_THE_FENCE) in the
+/// day's events.
 static void Event_TalkToBoyByTheFence(void) {
   s32 message;
 
@@ -336,7 +343,8 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(JENNA, FACING_SOUTH, 16);
     // Kraden stops them: nothing can be done until what he was told is
     // confirmed.
-    Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
+    Actor_SetAttachedEffect(ACTOR_KRADEN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
@@ -544,7 +552,7 @@ static void Event_KradenSetsOff(void) {
   Actor_SetPosition(ACTOR_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   GameFlag_Set(FLAG_SCENE_TEMP_42);
   Engine_EventEnd();
 }
@@ -581,7 +589,7 @@ static void Event_MeetSaturosAndMenardi(void) {
   }
 
   Engine_EventBegin();
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Saturos is overheard: the villagers know little of Sol Sanctum.
@@ -771,7 +779,7 @@ static void Event_MeetSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
 
   ValeKraden_WalkTowardLeader(GARET);
   Engine_ActorWaitForMove(GARET);
@@ -931,7 +939,7 @@ s32 ValeKraden_Initialize(void) {
       actor->radius = collisionRadius;
     }
     Actor_SetActionScript(ACTOR_ROCKSLIDE_SURVIVOR,
-                          gValeKraden_RockslideSurvivorSwayActions);
+                          gValeKraden_RockslideSurvivorSquashes);
     if (Engine_GameFlagIsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
       Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     }
@@ -1146,8 +1154,9 @@ s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_END,
 };
 
-/// Alternates the survivor's width and height while he lies by the fence.
-s32 gValeKraden_RockslideSurvivorSwayActions[] = {
+/// The survivor squashes flat and recovers every 68 frames as he lies by the
+/// fence.
+s32 gValeKraden_RockslideSurvivorSquashes[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_ADD(SW_SCALE_X, Q16_ONE / 32),
     SC_WAIT(2),
@@ -1213,11 +1222,11 @@ u32 gValeKraden_Exits[] = {
 struct ScenePlacement gValeKraden_Placements[] = {
     { 0x127, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(72), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ROCK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSwayActions,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSquashes,
         PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(92), 0, PIXELS(268), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },

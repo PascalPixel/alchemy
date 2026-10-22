@@ -3,14 +3,13 @@
 /// sanctum's door, on the village's own map (SceneId_Vale's), where the
 /// villagers wait for Isaac and Garet.
 ///
-/// The scene falls between Sol Sanctum and the party's journey. On the
-/// mountain, Saturos and Menardi, with Alex and Felix, carried off Jenna and
-/// Kraden, and the Wise One saved Isaac and Garet as the volcano woke
-/// (sol_sanctum_eruption.c). The path down the mountain leads here, by
-/// VALE_ERUPTION_FROM_SOL_ENTRANCE (sol_sanctum_entrance.c's
-/// SOL_ENTRANCE_TO_VALE after the eruption). Gathered before the sanctum are
-/// the Great Healer, Garet's grandfather the mayor, Isaac's mother Dora,
-/// Garet's sister, and the guard who saw the two hanging around on his watch.
+/// The scene falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
+/// where Jenna and Kraden are carried off, and the party's journey. The path
+/// down the mountain leads here, by VALE_ERUPTION_FROM_SOL_ENTRANCE
+/// (sol_sanctum_entrance.c's SOL_ENTRANCE_TO_VALE after the eruption).
+/// Gathered before the sanctum are the Great Healer, Garet's grandfather the
+/// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
+/// saw the two hanging around on his watch.
 ///
 /// The scene has no events. ValeEruption_Initialize plays the whole scene on
 /// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (Event_ReturnFromMtAleph): the
@@ -21,9 +20,15 @@
 /// the scene's one exit takes the party into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
 /// One's quest (Sanctum_RequestQuestAcceptance). The tremors are Map_SetShake
-/// calls, each with a flash (FieldFx_LastLightning) and SE_145. The scene sets
-/// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
-/// scene does (sol_sanctum_entrance.c).
+/// calls, each with a flash (FieldFx_LastLightning) and SE_145, over a burst
+/// of red flashes on the warm colours (FieldFx_StartBufferBlend). The scene
+/// sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's
+/// entrance scene does (sol_sanctum_entrance.c).
+///
+/// Open questions:
+/// - XXX: what animation 0, which the setup gives the six villagers at the
+///   back, shows; their sprites' animation tables under graphics/sprite would
+///   settle it.
 
 #include "game_state.h"
 #include "unit/scene/vale_eruption.h"
@@ -56,8 +61,8 @@ enum ValeEruptionActor {
   /// ★ Named from the game: "Come into the sanctum" (MsgValeMtAlephWasInactive)
   ACTOR_GREAT_HEALER = ACTOR_FIRST_PLACED,
   /// Garet's grandfather, an old man with white hair and a cane, the mayor
-  /// (whom the Great Healer calls Mayor in
-  /// sanctum.c). "Oooh, my grandson! Will Garet be safe in this eruption?!?"
+  /// (whom the Great Healer calls Mayor in sanctum.c). "Oooh, my grandson! Will
+  /// Garet be safe in this eruption?!?"
   /// ★ Named from the game: "Oooh, my grandson!" (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
   /// Isaac's mother (Dora in sanctum.c). "Isaac and Garet went to Mr. Kraden's
@@ -66,15 +71,15 @@ enum ValeEruptionActor {
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
   /// Garet's sister, a young woman with an orange ponytail, whom Garet calls
-  /// Sis at the farewell (vale_gate.c). She
-  /// calls the mayor Grandpa, and ACTOR_GARETS_BROTHER calls her Sis. "Grandpa,
-  /// we don't even know if he's up there!"
+  /// Sis at the farewell (vale_gate.c). She calls the mayor Grandpa, and
+  /// ACTOR_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
+  /// up there!"
   /// ★ Named from the game: "we don't even know if he's up there"
   /// (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
   /// Garet's brother, the small boy with orange hair of vale.c's
-  /// ACTOR_GARETS_BROTHER, who says
-  /// someone saw Garet climb and is first to cry "Garet!"
+  /// ACTOR_GARETS_BROTHER, who says someone saw Garet climb and is first to cry
+  /// "Garet!"
   /// ★ Named from the game: "But, Sis, someone saw him"
   /// (MsgValeMtAlephWasInactive), to Garet's sister
   ACTOR_GARETS_BROTHER = ACTOR_FIRST_PLACED + 4,
@@ -150,7 +155,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
-  FieldFx_StartBufferBlend(0x10003, 0x10006);
+  FieldFx_StartBufferBlend(PALETTE_TRANSFORM_WARM, PALETTE_TRANSFORM_RED);
   FieldFx_LastLightning();
   Engine_TaskWait(60);
   Camera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);
@@ -162,7 +167,7 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventOpenScreen();
 
   // The camera pans up to the villagers as the ground shakes.
-  Camera_SetSpeed(0xcccc, 0x1999);
+  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(256), -1, PIXELS(500), 1);
   Engine_EventWait(20);
   Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -175,7 +180,7 @@ static void Event_ReturnFromMtAleph(void) {
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   FieldFx_LastLightning();
   Event_PlayCue(SE_145);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(60);
 
@@ -230,15 +235,15 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_SISTER, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_BROTHER, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GUARD, 2);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
 
   // Isaac and Garet come down the path, and Garet sees the villagers: "Uh-oh.
   // It's Grandpa and the others."
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  Actor_SetSpeed(GARET, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(258));
-  Camera_SetSpeed(0x18000, 0x3000);
+  Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Camera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Engine_EventWait(40);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -252,7 +257,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_EventWait(50);
-  Actor_SetSpeed(GARET, 0x18000, 0xc000);
+  Actor_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   Actor_MoveToAndWait(GARET, 105, 342);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
@@ -272,7 +277,7 @@ static void Event_ReturnFromMtAleph(void) {
     Engine_EventWait(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Engine_ActorSetAnimation(GARET, ANIM_WALK);
-    Actor_SetSpeed(GARET, Q16_ONE, 0x8000);
+    Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_MoveToAndWait(GARET, 103, 320);
     Engine_ActorSetAnimation(GARET, ANIM_STAND);
   } else {
@@ -289,7 +294,8 @@ static void Event_ReturnFromMtAleph(void) {
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
   // and the villagers turn to the path.
   Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
@@ -298,7 +304,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTHWEST, 0);
   // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
-  Camera_SetSpeed(0x30000, 0x6000);
+  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Engine_CameraMoveToActor(ACTOR_DORA, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(50);
@@ -318,27 +324,27 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_CameraWaitForMove();
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
-  Object_RefreshSelectorById(1);
+  Object_RefreshSelectorById(GARET);
   Engine_EventWait(50);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Object_RefreshSelectorById(1);
+  Object_RefreshSelectorById(GARET);
   Engine_EventWait(60);
 
   // "Come over here, both of you!" The two walk down to the villagers.
-  Camera_SetSpeed(Q16_ONE, 0x2000);
+  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
-  Actor_SetSpeed(GARET, Q16_ONE, 0x8000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);
   Engine_EventWait(30);
   Actor_SetActionScript(GARET, gValeEruption_GaretWalksDown);
-  Object_RefreshSelectorById(1);
+  Object_RefreshSelectorById(GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Engine_CameraWaitForMove();
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
-  Actor_SetSpeed(ACTOR_GREAT_HEALER, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 265, 455);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 246, 455);
@@ -444,8 +450,8 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventWait(30);
   Actor_WalkTo(ACTOR_GREAT_HEALER, 255, 390);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_GARETS_GRANDFATHER, 255, 390);
   Actor_WalkToAndWait(ACTOR_DORA, 255, 460);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 0);
@@ -460,7 +466,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_SetActionScript(ACTOR_PARTY_LEADER, actionScript);
   Engine_EventWait(40);
   Actor_SetActionScript(GARET, actionScript);
-  Object_RefreshSelectorById(1);
+  Object_RefreshSelectorById(GARET);
   Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
@@ -472,7 +478,7 @@ static void Event_ReturnFromMtAleph(void) {
   work->startTransition = 0;
   work->transitionFrames = 64;
   Engine_EventCloseScreen();
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);

@@ -212,7 +212,7 @@ that dependence takes, in story order.
 - **One scene that reads the flags.** Vale's town gate,
   [vale_gate.c](src/scene/vale_gate.c), is one scene for the whole game.
   `ValeGate_GetEvents` returns one of five event tables, tested in order:
-  after `FLAG_REACHED_KALAY`, after `FLAG_VALE_PARTY_LEFT`, the farewell
+  after `FLAG_KALAY_REACHED`, after `FLAG_VALE_PARTY_LEFT`, the farewell
   when the party arrives by `VALE_GATE_FROM_SANCTUM`, the storm while
   `FLAG_VALE_STORM` is set, and otherwise the day the story begins. Its exits
   and placements are chosen the same way. The storm ends here: the battle

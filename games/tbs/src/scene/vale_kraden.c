@@ -48,7 +48,7 @@
 ///   strangers are gone. A small boy at the fence hears growls beyond it, and a
 ///   jar holds an Elixir.
 /// - After the party has left Vale (FLAG_VALE_PARTY_LEFT) the child means to
-///   climb the fence one day, and after Kalay (FLAG_REACHED_KALAY) a woman with
+///   climb the fence one day, and after Kalay (FLAG_KALAY_REACHED) a woman with
 ///   fair hair visits the empty cottage, missing Kraden.
 ///
 /// By day the cottage's gate (Event_EnterCottage) leads into the cottage
@@ -156,10 +156,10 @@ const struct ScenePlacement *ValeKraden_GetPlacements(void) {
 }
 
 /// Selects the events for the current visit to Vale: after Kalay
-/// (FLAG_REACHED_KALAY), on the stormy night (FLAG_VALE_STORM), else the day
+/// (FLAG_KALAY_REACHED), on the stormy night (FLAG_VALE_STORM), else the day
 /// the story begins.
 const struct SceneEvent *ValeKraden_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gValeKraden_EventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -983,7 +983,7 @@ s32 ValeKraden_Initialize(void) {
             gValeKraden_FaceTargetActions);
       }
     }
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
       Actor_SetPosition(ACTOR_COTTAGE_VISITOR, PIXELS(132), PIXELS(264));
     }
     Engine_EventEnd();

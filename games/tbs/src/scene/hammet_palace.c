@@ -14,8 +14,8 @@
 ///   there (place flag FLAG_PLACE_TEMP_21, set by kalay.c's scenes), Layana
 ///   talks of Dodonpa's spies. Afterwards she stands elsewhere in her room,
 ///   and the first time they speak she scolds `Isaac, you sneaked into Lunpa?
-///   That's far too dangerous!` (FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from
-///   then on she talks of Dodonpa's greed.
+///   That's far too dangerous!` (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+///   from then on she talks of Dodonpa's greed.
 /// - Hammet's homecoming (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM, the
 ///   first time once Hammet is free, FLAG_DODONPA_LOCKED_UP;
 ///   FLAG_HAMMET_BACK_HOME_SEEN), in which Hammet sends the party on to
@@ -203,7 +203,7 @@ static void Event_LayanaScoldsLunpaVisit(void) {
   Engine_EventShowMessageAndWait(ACTOR_LAYANA, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LAYANA, ANIMATION_NOD);
   Engine_EventShowMessageAndWait(ACTOR_LAYANA, 0, 10);
-  Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+  Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
   EV_END();
 }
 
@@ -1139,7 +1139,7 @@ struct SceneEvent gHammetPalaceEvents[] = {
     { EVENT_EXIT, 13, CONDITION_ALWAYS, HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
     { EVENT_TALK, ACTOR_LAYANA, FLAG_PLACE_TEMP_21, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
-    { EVENT_TALK, ACTOR_LAYANA, FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS, EVENT_SCRIPT(Event_LayanaScoldsLunpaVisit) },
+    { EVENT_TALK, ACTOR_LAYANA, FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS, EVENT_SCRIPT(Event_LayanaScoldsLunpaVisit) },
     { EVENT_TALK, ACTOR_LAYANA, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
     { EVENT_TALK, ACTOR_LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceNoOneInKalayKnowsHammet) },
     { EVENT_TALK, ACTOR_HAMMET, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTakeYourShamansRodAndSet) },
@@ -1153,7 +1153,7 @@ struct SceneEvent gHammetPalaceEvents[] = {
     { EVENT_TALK, ACTOR_AFRAID_OF_DODONPAS_THUGS, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceIWonderIfAnyOfDodonpas) },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_THE_SILK_TRADE, FLAG_DODONPA_LOCKED_UP, EVENT_SCRIPT(Event_AskWhetherSilkTradeHasEnded) },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_THE_SILK_TRADE, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheSecretPassageIsLockedBecause) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS, MSGNO(MsgHammetPalaceIsThisTheRightDecisionHammet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS, MSGNO(MsgHammetPalaceIsThisTheRightDecisionHammet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceIDontCareAboutTheMoney) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoHappyHammetMadeIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMMET, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanasWordsPainHerMoreThan) },

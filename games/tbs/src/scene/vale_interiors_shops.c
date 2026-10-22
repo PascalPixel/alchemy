@@ -28,7 +28,7 @@
 ///   VALE_INTERIORS_SHOPS_FROM_VALE_NORTH), the villagers talk of the quest and
 ///   of Felix, and the item merchant gives Isaac a Herb as a farewell gift
 ///   (FLAG_VALE_FAREWELL_HERB_RECEIVED).
-/// - Back from Kalay (FLAG_REACHED_KALAY), with Ivan and Mia in the party. The
+/// - Back from Kalay (FLAG_KALAY_REACHED), with Ivan and Mia in the party. The
 ///   first time the party enters Garet's house, Event_GaretComesHome plays
 ///   (FLAG_GARET_CAME_HOME): his parents are wondering whether to look for
 ///   him when his grandmother sees him, the family greets him, Ivan and Mia
@@ -207,12 +207,12 @@ const u32 *ValeInteriorsShops_GetExits(void) {
 }
 
 /// Selects the placements for the day the story begins, after the party has
-/// left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay (FLAG_REACHED_KALAY), and
+/// left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay (FLAG_KALAY_REACHED), and
 /// marks which of their actors are in view.
 const struct ScenePlacement *ValeInteriorsShops_GetPlacements(void) {
   struct ScenePlacement *table;
 
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
     table = gValeInteriorsShops_PlacementsAfterKalay;
   } else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT)) {
     table = gValeInteriorsShops_PlacementsAfterLeaving;
@@ -229,7 +229,7 @@ const struct ScenePlacement *ValeInteriorsShops_GetPlacements(void) {
 const struct SceneEvent *ValeInteriorsShops_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriorsShops_StormEvents;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     return gValeInteriorsShops_EventsAfterKalay;
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gValeInteriorsShops_EventsAfterLeaving;
@@ -437,7 +437,7 @@ s32 ValeInteriorsShops_Initialize(void) {
     FieldEffect_ResumeLightning();
   }
   // The returning party gets the household reunion only on its first visit.
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     if (gGameState.entrance == VALE_INTERIORS_SHOPS_FROM_VALE_EAST) {
       if (Engine_GameFlagIsSet(FLAG_GARET_CAME_HOME) == 0) {
         Event_GaretComesHome();
@@ -477,7 +477,7 @@ static void Event_TalkToWeaponMerchant(void) {
   }
 
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Engine_EventSetMessage(MsgValeYouCameBack);
     Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   } else {
@@ -504,7 +504,7 @@ static void Event_TalkToArmorMerchant(void) {
     Engine_ShopOpen(2, ACTOR_ARMOR_MERCHANT);
   } else {
     Engine_EventStart();
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
       Engine_EventSetMessage(MsgValeTheRumorWasTrue);
     } else {
       if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -531,7 +531,7 @@ static void Event_TalkToItemMerchant(void) {
   if (FACING_IS_NORTH(actor->facing)) {
     Engine_ShopOpen(3, ACTOR_ITEM_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
       Engine_EventStart();
       Engine_EventSetMessage(MsgValeWhenDidYouComeBack);
       Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);

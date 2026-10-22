@@ -75,7 +75,7 @@
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY up into the town
 ///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM).
 ///
-/// Every scene sets FLAG_REACHED_KALAY on entry. Kalay and Hammet Palace's
+/// Every scene sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's
 /// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
 /// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets place flag
 /// FLAG_PLACE_TEMP_21, which changes what Layana says, and once Hammet is free
@@ -1180,12 +1180,12 @@ static void Kalay_CatchTownNut(void) {
   Engine_PartyGiveItem(ITEM_NUT, 0);
 }
 
-/// Every scene of the overlay sets FLAG_REACHED_KALAY, then prepares its own
+/// Every scene of the overlay sets FLAG_KALAY_REACHED, then prepares its own
 /// people and cells.
 s32 Kalay_Initialize(void) {
   s32 scene;
 
-  Engine_GameFlagSet(FLAG_REACHED_KALAY);
+  Engine_GameFlagSet(FLAG_KALAY_REACHED);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_Kalay) {
     Kalay_PrepareTown();
@@ -1203,11 +1203,11 @@ s32 Kalay_Initialize(void) {
 
 /// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets place
 /// flag FLAG_PLACE_TEMP_21; once Hammet is free (FLAG_DODONPA_LOCKED_UP) the
-/// palace's FLAG_IVAN_REPORTED_TO_LAYANA, FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS
-/// and FLAG_KALAY_TUNNEL_OPEN are set too, so its earlier scenes count as seen
-/// and the passage is open. Coming up from the Kalay Tunnel
-/// (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its statue moved aside, and
-/// until it is caught the Nut circles in the air.
+/// palace's FLAG_IVAN_REPORTED_TO_LAYANA,
+/// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
+/// set too, so its earlier scenes count as seen and the passage is open. Coming
+/// up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its
+/// statue moved aside, and until it is caught the Nut circles in the air.
 static void Kalay_PrepareTown(void) {
   OrbitingSceneObject *nut;
   s32 found;
@@ -1216,7 +1216,7 @@ static void Kalay_PrepareTown(void) {
 
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
-    Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+    Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
   }
@@ -1261,7 +1261,7 @@ static void Kalay_PrepareTown(void) {
 static void Kalay_PrepareHammetPalace(void) {
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
-    Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+    Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
   }

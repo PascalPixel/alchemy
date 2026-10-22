@@ -4,7 +4,7 @@
 /// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
 /// placements and events come in three sets, chosen by the story flags: before
 /// the party leaves Vale, after it has left (FLAG_VALE_PARTY_LEFT) and back
-/// from Kalay (FLAG_REACHED_KALAY); VALE_FROM_TITLE has a set of its own. In
+/// from Kalay (FLAG_KALAY_REACHED); VALE_FROM_TITLE has a set of its own. In
 /// story order:
 ///
 /// - The day the story begins, three years after the storm
@@ -35,7 +35,7 @@
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
 ///   away."), and the villagers speak of the tremors and of Kraden, who has
 ///   not come back.
-/// - Back from Kalay (FLAG_REACHED_KALAY): Garet meets his sister (group flag
+/// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (group flag
 ///   FLAG_PLACE_TEMP_03) and asks one of his family to protect it while he is
 ///   gone (FLAG_PLACE_TEMP_04), a young man asks whether Jenna is back
 ///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
@@ -374,7 +374,7 @@ const struct ScenePlacement *Vale_GetPlacements(void) {
   u8 *scene_state = (u8 *)&gGameState;
   if (((struct GameState *)scene_state)->entrance == VALE_FROM_TITLE)
     return gVale_RepairPlacements;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     return gVale_PlacementsAfterKalay;
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_PlacementsAfterLeaving;
@@ -404,7 +404,7 @@ static void Event_CatchNutAfterKalay(void) {
 /// Vale's events for the story so far: before leaving, after leaving, or back
 /// from Kalay.
 const struct SceneEvent *Vale_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     return gVale_EventsAfterKalay;
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_EventsAfterLeaving;
@@ -608,7 +608,7 @@ static void Event_EnterValeInteriorsShops(void) {
 /// Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
 static void Event_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0 &&
-      Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
+      Engine_GameFlagIsSet(FLAG_KALAY_REACHED) == 0) {
     Engine_EventStart();
     Engine_EventSetMessage(MsgValeYouCantBeIsaac);
     Engine_EventOpenMessage(ACTOR_DORA, 0);
@@ -1500,7 +1500,7 @@ s32 Vale_Initialize(void) {
     Event_MendingTheRoof();
   } else {
     if (!Engine_GameFlagIsSet(FLAG_VALE_NUT_CAUGHT)) {
-      if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+      if (!Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
         Scene_FloatNut(ACTOR_NUT);
       } else {
         Scene_FloatNut(ACTOR_NUT_AFTER_KALAY);
@@ -1508,7 +1508,7 @@ s32 Vale_Initialize(void) {
     }
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
     Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
-    actor = Object_GetById((Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) +
+    actor = Object_GetById((Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) +
                            ACTOR_PILLAR);
     Engine_ActorSetSpriteFlags(actor, 0);
     if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_14)) {
@@ -1526,7 +1526,7 @@ s32 Vale_Initialize(void) {
     FieldScheduler_AddCallback(Vale_AdjustPillarPriorityForLeaderHeight,
                                TASK_PRIORITY_SCENE);
 #if TBS_PATCH_4
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04)) {
           Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -1537,7 +1537,7 @@ s32 Vale_Initialize(void) {
       }
     } else {
 #else
-    if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+    if (!Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
 #endif
       if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT)) {
         actor = Object_GetById(ACTOR_DORA);
@@ -1571,7 +1571,7 @@ s32 Vale_Initialize(void) {
           Engine_GameFlagClear(FLAG_SCENE_TEMP_41);
         }
         if (gGameState.entrance != VALE_FROM_TITLE &&
-            !Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+            !Engine_GameFlagIsSet(FLAG_KALAY_REACHED)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephGuardPause,
                                      TASK_PRIORITY_SCENE);
         }
@@ -3119,7 +3119,7 @@ static void Vale_UpdateParticlePosition(struct FieldActor *particle,
 static void Event_PushPillar(void) {
 #if !TBS_PATCH_1
   // Japanese edition only: look up the pillar but do not use the return value.
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY))
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED))
     Object_GetById(ACTOR_PILLAR_AFTER_KALAY);
   else
     Object_GetById(ACTOR_PILLAR);
@@ -3137,7 +3137,7 @@ static void Event_SettleMovedPillar(void) {
   s32 column;
 
   Map_CopyCellAttributes(17, 0, 3, 1, 22, 36);
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY))
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED))
     actor = Object_GetById(ACTOR_PILLAR_AFTER_KALAY);
   else
     actor = Object_GetById(ACTOR_PILLAR);
@@ -3195,7 +3195,7 @@ static void Vale_SynchronizeAlephGuardPause(void) {
 static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *pillar;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     pillar = Object_GetById(ACTOR_PILLAR_AFTER_KALAY);
   else
     pillar = Object_GetById(ACTOR_PILLAR);

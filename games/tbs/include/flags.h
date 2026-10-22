@@ -1367,7 +1367,7 @@
 /// its later scene and the Sanctum's talk changes. XXX: the patched editions
 /// also set it on beating Lamakan Desert's Manticore; why is not known.
 /// ★ Named from its area name: Kalay
-#define FLAG_REACHED_KALAY 0x87a
+#define FLAG_KALAY_REACHED 0x87a
 /// Catch has taken the Nut floating in Vale.
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_VALE_NUT_CAUGHT 0xfd0
@@ -1708,7 +1708,7 @@
 /// Layana has told the party that going into Lunpa is too dangerous.
 /// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
-#define FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS 0x913
+#define FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS 0x913
 /// Hammet, back home, has met the party in Layana's room.
 /// ★ Named from the game: "his companions... Perfect timing!"
 /// (MsgKalayItsIvanHisCompanionsPerfect)

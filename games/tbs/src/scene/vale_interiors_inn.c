@@ -37,7 +37,7 @@
 ///   of the eruption and of Jenna, whom the visitors kidnapped, and one asks
 ///   whether the masked man was Felix, Jenna's brother, and whether Jenna can
 ///   be trusted.
-/// - Back from Kalay (FLAG_REACHED_KALAY): Dora lies ill. The innkeeper
+/// - Back from Kalay (FLAG_KALAY_REACHED): Dora lies ill. The innkeeper
 ///   welcomes Isaac home and a burly grey-haired man at the inn
 ///   (ACTOR_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's place flags
 ///   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
@@ -300,7 +300,7 @@ const struct ScenePlacement *ValeInteriorsInn_GetPlacements(void) {
 
   if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE)
     return gValeInteriorsInn_ScholarsPlacements;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     table = gValeInteriorsInn_PlacementsAfterKalay;
   else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
     table = gValeInteriorsInn_PlacementsAfterLeaving;
@@ -341,7 +341,7 @@ const struct SceneEvent *ValeInteriorsInn_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeInteriorsInn_StormEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gValeInteriorsInn_EventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -522,7 +522,7 @@ s32 ValeInteriorsInn_Initialize(void) {
       ValeInteriorsInn_RestoreRoomPatch();
     }
     Engine_ActorSetSpritePriority(ACTOR_INNKEEPER, 1);
-    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
       actor = Object_GetById(ACTOR_BLANK_AFTER_KALAY);
       Engine_ActorSetSpriteFlags(actor, 0);
       if (gGameState.entrance == VALE_INTERIORS_INN_FROM_VALE ||
@@ -902,7 +902,7 @@ static void Event_TalkToInnkeeper(void) {
     Engine_InnOpen(0, ACTOR_INNKEEPER);
   } else {
     Engine_EventStart();
-    if (GameFlag_IsSet(FLAG_REACHED_KALAY) != 0) {
+    if (GameFlag_IsSet(FLAG_KALAY_REACHED) != 0) {
       Engine_ActorRunRepeatedMotion(ACTOR_INNKEEPER, 2);
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
       if (GameFlag_IsSet(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {

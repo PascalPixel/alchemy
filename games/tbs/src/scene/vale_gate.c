@@ -40,7 +40,7 @@
 ///   crushed Psynergy Stones; a large Psynergy Stone has fallen on the hut,
 ///   whose roof ValeGate_Initialize redraws. Only now does the town gate lead
 ///   out (Event_LeaveThroughTownGate).
-/// - Back from Kalay (FLAG_REACHED_KALAY), the villagers welcome Isaac home,
+/// - Back from Kalay (FLAG_KALAY_REACHED), the villagers welcome Isaac home,
 ///   the hut's owner finds the stone gone, leaving a hole in his roof
 ///   (Event_PsynergyStoneIsGone), and a door in the north-east opens.
 ///
@@ -469,7 +469,7 @@ const struct ScenePlacement *ValeGate_GetPlacements(void) {
   if (gGameState.entrance == VALE_GATE_FROM_SANCTUM) {
     return gValeGate_DeparturePlacements;
   }
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gValeGate_PlacementsAfterKalay;
   }
   return gValeGate_Placements;
@@ -494,7 +494,7 @@ static void Event_UsePsynergyStone(void) {
 /// Selects the events: after Kalay, after the party has left, the farewell's
 /// (VALE_GATE_FROM_SANCTUM), the stormy night's, else the day's.
 const struct SceneEvent *ValeGate_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gValeGate_EventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -636,7 +636,7 @@ static void Event_DemonstratePsynergy(void) {
 /// question.
 static void Event_AskAboutJourney(void) {
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Engine_EventSetMessage(MsgValeAnythingInterestingOnYourTrip);
     Engine_EventOpenMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
@@ -974,7 +974,7 @@ s32 ValeGate_Initialize(void) {
   actor->scaleY = verticalScale;
   actor = Object_GetById(ACTOR_THIRD_IVY);
   actor->scaleY = verticalScale;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Map_CopyCellsTo(97, 2, 80, 5, 2, 2);
     Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
     Engine_MapRedraw();
@@ -2135,7 +2135,7 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_VALE_PARTY_LEFT);
   Engine_GameFlagSet(FLAG_VALE_FAREWELL_HERB_RECEIVED);
   Engine_GameFlagSet(FLAG_GARET_CAME_HOME);
-  Engine_GameFlagSet(FLAG_REACHED_KALAY);
+  Engine_GameFlagSet(FLAG_KALAY_REACHED);
 #else
   Engine_GameFlagSet(FLAG_TRET_DEFEATED);
   Engine_GameFlagSet(FLAG_KOLIMA_CURSE_LIFTED);

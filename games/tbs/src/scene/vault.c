@@ -5,7 +5,7 @@
 /// search for Hammet's stolen Shaman's Rod plays out, are vault_interiors.c.
 /// Scene_GetPlacements and Scene_GetEvents choose their tables by
 /// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
-/// (FLAG_REACHED_KALAY) Scene_Initialize sends it straight on to the town's
+/// (FLAG_KALAY_REACHED) Scene_Initialize sends it straight on to the town's
 /// later scene (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit,
 /// vault_revisit.c).
 ///
@@ -869,9 +869,9 @@ s32 Scene_Initialize(void) {
   s32 lowBit;
   s32 zero;
 
-  // Once the party has reached Kalay (FLAG_REACHED_KALAY), the town is its
+  // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later scene, SceneId_VaultRevisit (vault_revisit.c).
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Engine_EventRequestExit(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's

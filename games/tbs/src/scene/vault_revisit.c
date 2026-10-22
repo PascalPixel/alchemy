@@ -1,7 +1,7 @@
 /// @file
 /// Vault (SceneId_VaultRevisit), the town once the party has reached Kalay, on
 /// the same map as Vault's first scene (vault.c). The world map still leads
-/// into the first scene, but once FLAG_REACHED_KALAY is set its setup sends
+/// into the first scene, but once FLAG_KALAY_REACHED is set its setup sends
 /// the party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
 /// Cave, the jail and the houses (vault_interiors_revisit.c) lead back here
 /// directly. This scene replaces the first for the rest of the game.

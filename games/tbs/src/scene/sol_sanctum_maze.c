@@ -12,10 +12,12 @@
 /// (common/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumCorridor
 /// shares: once Mt. Aleph has erupted, the room rumbles and shakes.
 ///
-/// Open questions:
-/// - XXX: what the leaving animation of EXIT_STYLE_ANIMATED_ALTERNATE on the
-///   south exit shows; a recording of the party taking that exit would settle
-///   it.
+/// The south exit leaves down stairs (EXIT_STYLE_ANIMATED_ALTERNATE): walking
+/// north into its arch, the leader steps in and sinks out of sight as if down
+/// steps behind it, to SE_STAIRS_DOWN, and comes out walking down from a
+/// doorway in the room of steps (render probe maze-exit).
+///
+/// Open questions: none.
 
 #include "unit/scene/sol_sanctum_maze.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"

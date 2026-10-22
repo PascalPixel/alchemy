@@ -213,7 +213,7 @@ surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
 ground 32 pixels high runs along the foot of each cliff, some of it cut along
 a cell's diagonal.
 
-![One screen of Goma Cave, and beside it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands 32 pixels above the floor, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; yellow outlines on the two doorway cells with the scene's own codes. The cave has no wall-coded cells; its walls are all height.](https://alchemy.pascalpixel.com/guides/map/cells.png)
+![One screen of Goma Cave, and under it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands more than 8 pixels above the leader's, too high to step up, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; the doorway cell the leader stands in tinted blue for an exit row and labelled as the way down to the room of the pond, and two magenta cells at the top edge labelled as pushing the east stone pillar a step. The cave has no wall-coded cells; its walls are all height. A key under it says what each colour stands for.](https://alchemy.pascalpixel.com/guides/map/cells.png)
 
 | Name | Value | Meaning |
 | --- | --- | --- |

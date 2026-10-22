@@ -96,13 +96,30 @@ An event's kind says what starts it and what its trigger is:
 | `PSYNERGY_ON_ACTOR(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an actor, or anywhere | the actor's number, or 0 |
 | `EVENT_RAISED` | the scene's code raising a value | the value |
 
-The touch, exit and search rows meet the map through its collision codes: a
-cell whose code is one of the scene's own, 1 to 239, is answered by the first
-row of a matching kind with that code as its trigger. On the screen of Vale
-below, the codes at the doorsteps and beside the second house are touch
-rows', and the path's 19 has no row in the event table.
+Some spots on a map do something when the leader reaches them: a doorstep
+leads into a house when the leader walks into it, the edge of a village
+leads on to the next scene, a ladder climbs to a roof, and a chest or a
+bookcase answers the A button. The map marks each spot by the collision code
+of its cell, and the scene's event table says what that code does. Stepping
+on or walking into a cell runs the first touch row whose trigger is its code
+and whose condition holds, or failing one the first such exit row
+(`Scene_RunTouchOrExit`); pressing A facing it runs the first such search
+row. A code with no row does nothing. The scene's own codes are
+`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`, so the same code means
+different things in different scenes; the codes above them mean the same on
+every map ([Maps](../map/README.md#cells)).
 
-![A screen of Vale by day drawn from its map at twice the GBA's size, each cell with one of the scene's own collision codes tinted and labelled with the code: magenta for the cells a touch row names, such as 7 and 8 at the doorsteps of two houses and 100 and 101 beside the second, and grey for 19, three cells on a path that no row names](https://alchemy.pascalpixel.com/guides/scene/event-cells.png)
+On the screen of Vale below, on the day the story begins, each door is a
+touch row rather than an exit row: walking north into the doorstep runs a
+script, `Event_EnterIsaacsHouse` for Isaac's house, that opens the door,
+walks the leader in and only then asks for the exit, and that can refuse
+instead, as Dora does once the party has left Vale. Touch rows also climb the
+ladder beside Isaac's house (`Event_EnterNorthernPassage` up,
+`Event_ReturnThroughSouthernPassage` down) and put the upper path's cells
+back when the leader steps off it (`Event_ClearPathCellOverride`). Three
+cells of the path at the top carry a code no row answers.
+
+![A screen of Vale on the day the story begins, drawn from its map at twice the GBA's size, with each cell that carries one of the scene's own codes tinted and joined by a line to a label beside the picture saying what it does: in magenta, for touch rows, a door into a house and the door into Isaac's house (walk north into them), the ladder up onto the roof of Isaac's house (walk north into it) and down from the roof (walk south into it), and the cell where stepping off the upper path changes its cells back; in grey, three cells on the path at the top labelled no event. A key under it says what each colour stands for.](https://alchemy.pascalpixel.com/guides/scene/event-cells.png)
 
 A Psynergy event's phase (`enum PsynergyPhase`) says when it runs around the
 effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,

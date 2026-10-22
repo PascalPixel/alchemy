@@ -17,6 +17,13 @@ enum SpriteId {
   /// counter, or that a scene draws an item's icon on, as for the Nuts that
   /// Catch takes.
   SPRITE_BLANK = 0x16,
+  /// Rings spreading out, grey in its first animation and blue in its second,
+  /// as Mercury Lighthouse's pools ripple around the leader.
+  /// ★ Named from what the player sees: rings spreading on water
+  /// (spr_024.png)
+  SPRITE_RIPPLE = 0x18,
+  /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
+  SPRITE_LIZARD_MAN = 0xc0,
   /// The soldiers of Babi's Tolbi, and the Colosseum's officials, drawn alike.
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
@@ -92,6 +99,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: a sparkle of light that shrinks away
   /// (its render)
   SPRITE_SPARKLE = 285,
+  /// ★ Named from what the player sees: a four-pointed glint that shrinks
+  /// to a dot (spr_286.png)
+  SPRITE_GLINT = 286,
   /// The statues that chase the leader in Crossbone Isle, and those of the
   /// Tunnel Ruins and Venus Lighthouse.
   /// ★ Named from what the player sees: a statue of a woman in a long robe

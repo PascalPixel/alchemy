@@ -388,6 +388,8 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
     case COLOSSEUM_CLEARED_TRIAL_FROM_STANDS:
       table = gColosseumTrialGroundsPlacements;
       break;
+    // Entrance 8 has a table row but no exit leads to it (see the open
+    // questions).
     case 8:
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
     case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:

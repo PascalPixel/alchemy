@@ -890,7 +890,7 @@ s32 Map_Initialize(void) {
   }
   // Keep the bridge deck after a battle, and restore the two children's
   // proximity callbacks.
-  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE) != 0) {
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
   // A still object on the well that shows nothing (vault_revisit.c's open

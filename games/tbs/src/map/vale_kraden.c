@@ -93,7 +93,8 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-// FLAG_MAP_TEMP_42: the cottage's gate stands open since Kraden went in.
+// FLAG_VALE_KRADENS_GATE_OPEN: the cottage's gate stands open since Kraden went
+// in.
 
 /// The placed object events, numbered in the order of
 /// gValeKraden_ObjectEventTemplates; Garet and Jenna, placed between Kraden and
@@ -140,6 +141,9 @@ enum ValeKradenLocalId {
 };
 
 #include "common/object_facing.h"
+
+/// The gate of Kraden's cottage stands open since Kraden set off.
+#define FLAG_VALE_KRADENS_GATE_OPEN FLAG_MAP_TEMP_42
 
 const struct MapWarpDest *ValeKraden_GetWarpDests(void) {
   return gValeKraden_WarpDests;
@@ -514,8 +518,8 @@ static void EventScript_KradenPlansSanctumVisit(void) {
 ///
 /// Called by ValeKraden_Initialize on VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH
 /// unless the party keeps its position. Sets FLAG_SANCTUM_VISIT_PLANNED and
-/// FLAG_MAP_TEMP_42 (the gate stays open), and removes Kraden, Garet, Jenna,
-/// Saturos and Menardi.
+/// FLAG_VALE_KRADENS_GATE_OPEN (the gate stays open), and removes Kraden,
+/// Garet, Jenna, Saturos and Menardi.
 static void EventScript_KradenSetsOff(void) {
   struct ObjectEvent *objectEvent;
   s32 facing;
@@ -579,7 +583,7 @@ static void EventScript_KradenSetsOff(void) {
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-  GameFlag_Set(FLAG_MAP_TEMP_42);
+  GameFlag_Set(FLAG_VALE_KRADENS_GATE_OPEN);
   FieldScript_End();
 }
 
@@ -589,7 +593,7 @@ static void EventScript_KradenSetsOff(void) {
 /// Reached by walking north into metatile behavior 3, by day and after Kalay;
 /// takes VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH into the cottage.
 static void EventScript_EnterCottage(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_42) == 0) {
+  if (GameFlag_Get(FLAG_VALE_KRADENS_GATE_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gValeKraden_GateCells, 43, 8);
   }
@@ -926,14 +930,14 @@ static void EventScript_OverhearKraden(void) {
 /// Arriving in Kraden's part of Vale: places the object events for the storm or
 /// for the day, and plays the arrival from the cottage.
 ///
-/// The map's initialize entry. On the stormy night (FLAG_VALE_STORM) it
-/// starts the lightning, removes the day's people, lays the survivor by the
-/// fence (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
+/// The map's initialize entry. On the stormy night (FLAG_VALE_STORM) it starts
+/// the lightning, removes the day's people, lays the survivor by the fence
+/// (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
 /// rockslide covers. By day it removes the rocks and Garet, runs
 /// EventScript_KradenSetsOff from VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH,
 /// removes Kraden and the strangers once FLAG_SANCTUM_VISIT_PLANNED is set, and
-/// places the cottage visitor after Kalay. Clears FLAG_MAP_TEMP_42 when the
-/// party keeps its position.
+/// places the cottage visitor after Kalay. Clears FLAG_VALE_KRADENS_GATE_OPEN
+/// when the party keeps its position.
 s32 ValeKraden_Initialize(void) {
   struct ObjectEvent *objectEvent;
   s32 debrisRow;
@@ -943,7 +947,7 @@ s32 ValeKraden_Initialize(void) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_Clear(FLAG_MAP_TEMP_42);
+    GameFlag_Clear(FLAG_VALE_KRADENS_GATE_OPEN);
   }
   // The rockslide chapter replaces residents with debris and a survivor.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {

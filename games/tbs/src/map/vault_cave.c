@@ -1,31 +1,30 @@
 /// @file
-/// Vault Cave's overlay, which holds three rooms, each a map of its own and
-/// all named Vault Cave (MapId_VaultCavePassage, MapId_VaultCaveVambrace
-/// and MapId_VaultCaveMouth, map section 31). The cave opens off Vault as the
-/// party finds it on its return (MapId_VaultRevisit), whose warps
+/// Vault Cave's overlay, which holds three rooms, each a map of its own and all
+/// named Vault Cave (MapId_VaultCavePassage, MapId_VaultCaveVambrace and
+/// MapId_VaultCaveMouth, map section 31). The cave opens off Vault as the party
+/// finds it on its return (MapId_VaultRevisit), whose warps
 /// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
 /// lead in, through the hidden passage the dog shows and through a cave mouth
 /// in the town's northeast cliff. No story flag is read here and no one speaks:
 /// the cave is a side trip of puzzles for Move, Frost and Whirlwind, and only
 /// "The door is tightly locked." and "Isaac flipped the switch." are shown.
 ///
-/// - Vault Cave (MapId_VaultCavePassage), the way in from the
-///   hidden passage. VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the
-///   ladder down from that passage, where a region takes
-///   VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT back out to Vault
-///   (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also leads there
-///   (Map_Initialize). Searching the switch flips it (EventScript_FlipSwitch,
-///   FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch turns, the cave rumbles and
-///   shakes for eight seconds, and its map changes as it fades
-///   (VaultCave_RunRumble). The change reaches MapId_VaultCaveVambrace too:
-///   arriving in its northern room
+/// - Vault Cave (MapId_VaultCavePassage), the way in from the hidden passage.
+///   VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the ladder down from
+///   that passage, where a region takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
+///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also
+///   leads there (Map_Initialize). Searching the switch flips it
+///   (EventScript_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch
+///   turns, the cave rumbles and shakes for eight seconds, and its map changes
+///   as it fades (VaultCave_RunRumble). The change reaches
+///   MapId_VaultCaveVambrace too: arriving in its northern room
 ///   (VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH,
 ///   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH,
 ///   VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM and
-///   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST), Map_Initialize draws it closed
-///   until the switch is flipped and opens its cells after. Arriving down the
-///   ladder clears the flag again, so the switch is reset each time the party
-///   comes in from Vault; arriving in the pool room
+///   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST), Map_Initialize draws it closed until
+///   the switch is flipped and opens its cells after. Arriving down the ladder
+///   clears the flag again, so the switch is reset each time the party comes in
+///   from Vault; arriving in the pool room
 ///   (VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST,
 ///   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST,
 ///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST,
@@ -33,8 +32,8 @@
 ///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST) redraws the flipped switch
 ///   and its changed cells. The room's chest is a mimic (FIND_MIMIC, slot 3 of
 ///   ENCOUNTER_ZONE_MIMIC).
-/// - Vault Cave (MapId_VaultCaveVambrace). In its southern room a
-///   pillar (LOCALID_SOUTHERN_PILLAR) goes onto its switch by pushing
+/// - Vault Cave (MapId_VaultCaveVambrace). In its southern room a pillar
+///   (LOCALID_SOUTHERN_PILLAR) goes onto its switch by pushing
 ///   (EventScript_PushSouthernPillar) or Move (EventScript_MoveSouthernPillar);
 ///   once it rests there the puzzle chime plays and the switch opens the way
 ///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six drops of
@@ -44,19 +43,21 @@
 ///   map cell, and a drop falling onto it stops 32 pixels up instead of
 ///   reaching the floor (VaultCave_UpdateFrostControlledFallingObjects); while
 ///   the leader is 16 pixels or more above the floor, the puddles are drawn
-///   beneath him. The six frozen states are FLAG_MAP_TEMP_00 to _05, read by
-///   index, and the room's entry code freezes again every puddle whose flag is
-///   set. Whirlwind blows away ivy (LOCALID_IVY) for as long as the party
-///   stays in the cave (FLAG_WHIRLWIND_USED, a map section flag). A chest holds
-///   the Vambrace.
-/// - Vault Cave (MapId_VaultCaveMouth). In its northern room four
-///   water drops (LOCALID_FIRST_TIMED_WATER_DROP and the three after it) fall
-///   on a fixed schedule (gVaultCave_ScheduleFrames) while the party pushes or
-///   Moves a pillar (LOCALID_NORTHERN_PILLAR) onto its switch
-///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A water drop that lands on
-///   that pillar marks it struck (FLAG_NORTH_PILLAR_STRUCK, SE_204), and a
-///   struck pillar no longer opens the switch until the room is entered again.
-///   VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to Vault
+///   beneath him. The six frozen states are
+///   FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
+///   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, read by index, and the room's
+///   entry code freezes again every puddle whose flag is set. Whirlwind blows
+///   away ivy (LOCALID_IVY) for as long as the party stays in the cave
+///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, a map section flag). A chest holds the
+///   Vambrace.
+/// - Vault Cave (MapId_VaultCaveMouth). In its northern room four water drops
+///   (LOCALID_FIRST_TIMED_WATER_DROP and the three after it) fall on a fixed
+///   schedule (gVaultCave_ScheduleFrames) while the party pushes or Moves a
+///   pillar (LOCALID_NORTHERN_PILLAR) onto its switch
+///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A water drop that lands on that
+///   pillar marks it struck (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK, SE_204), and
+///   a struck pillar no longer opens the switch until the room is entered
+///   again. VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to Vault
 ///   (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
 ///
 /// Each room has a door that only says it is locked
@@ -136,29 +137,29 @@ enum {
   /// The upper western puddle, the first of the six.
   /// ★ Named from what the player sees: six puddles of water in the floor of
   /// the puddle room, under the falling drops (its render)
-  FLAG_WEST_UPPER_FROZEN = FLAG_MAP_TEMP_00,
+  FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
   /// ★ Named from what the player sees: the western puddle of the lower row
   /// (its render)
-  FLAG_WEST_LOWER_FROZEN = FLAG_MAP_TEMP_01,
+  FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN = FLAG_MAP_TEMP_01,
   /// ★ Named from what the player sees: the lower row's puddle just east of
   /// the western one (its render)
-  FLAG_INNER_WEST_LOWER_FROZEN = FLAG_MAP_TEMP_02,
+  FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN = FLAG_MAP_TEMP_02,
   /// ★ Named from what the player sees: the eastern puddle of the upper row
   /// (its render)
-  FLAG_EAST_UPPER_FROZEN = FLAG_MAP_TEMP_03,
+  FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN = FLAG_MAP_TEMP_03,
   /// ★ Named from what the player sees: the eastern puddle of the lower row
   /// (its render)
-  FLAG_EAST_LOWER_FROZEN = FLAG_MAP_TEMP_04,
+  FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN = FLAG_MAP_TEMP_04,
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
-  FLAG_FAR_EAST_FROZEN = FLAG_MAP_TEMP_05,
+  FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_MAP_TEMP_05,
   /// A water drop struck the northern pillar before it reached its switch.
   /// ★ Named from what the player sees: the pillar the leader pushes toward
   /// its switch in the northern room of MapId_VaultCaveMouth (its render)
-  FLAG_NORTH_PILLAR_STRUCK = FLAG_MAP_TEMP_07,
+  FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_MAP_TEMP_07,
   /// Whirlwind has blown the ivy away.
   /// ★ Named from the game: "Whirlwind" (MsgAbilityName)
-  FLAG_WHIRLWIND_USED = FLAG_MAPSEC_TEMP_00
+  FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_MAPSEC_TEMP_00
 };
 
 /// The object events of MapId_VaultCaveVambrace, numbering the rows of
@@ -181,10 +182,11 @@ enum VaultCaveVambraceLocalId {
   /// ★ Named from what the player sees: blue drops of water above the puddles
   /// (its render)
   LOCALID_FIRST_WATER_DROP,
-  /// The six puddles under the water drops, in their order and in the
-  /// order of their flags (FLAG_WEST_UPPER_FROZEN to FLAG_FAR_EAST_FROZEN).
-  /// Drawn as the puddle that Frost freezes into an ice pillar in
-  /// bilibin_cave.c; frozen, a puddle stops a water drop 32 pixels up.
+  /// The six puddles under the water drops, in their order and in the order of
+  /// their flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
+  /// FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). Drawn as the puddle that Frost
+  /// freezes into an ice pillar in bilibin_cave.c; frozen, a puddle stops a
+  /// water drop 32 pixels up.
   /// ★ Named from what the player sees: six blue puddles on the cave floor,
   /// each under a drop of water (its render)
   LOCALID_WEST_UPPER_PUDDLE = LOCALID_FIRST_WATER_DROP + 6,
@@ -203,8 +205,8 @@ enum VaultCaveVambraceLocalId {
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
   LOCALID_FAR_EAST_PUDDLE,
-  /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again, placed
-  /// until Whirlwind blows it away (FLAG_WHIRLWIND_USED).
+  /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again, placed until
+  /// Whirlwind blows it away (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
   /// ★ Named from what the player sees: leafy green ivy against the cave
   /// wall (its render)
   LOCALID_IVY
@@ -408,12 +410,11 @@ static void VaultCave_PushPillarAhead(void) {
   Object_SelectAnimation(leader, ANIM_STAND);
 }
 
-/// Whirlwind blows the ivy away.
-/// It is cast on LOCALID_IVY in the puddle room of MapId_VaultCaveVambrace,
-/// and the ivy stays gone for as long as the party stays in the cave
-/// (FLAG_WHIRLWIND_USED is a map section flag).
+/// Whirlwind blows the ivy away. It is cast on LOCALID_IVY in the puddle room
+/// of MapId_VaultCaveVambrace, and the ivy stays gone for as long as the party
+/// stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is a map section flag).
 static void EventScript_UseWhirlwind(void) {
-  GameFlag_Set(FLAG_WHIRLWIND_USED);
+  GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
 
 /// In any room of Vault Cave, searching the locked door only says so.
@@ -530,7 +531,7 @@ static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
 static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
-      if (GameFlag_Get(FLAG_NORTH_PILLAR_STRUCK) == 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
         Script_PlaySong(MUS_PUZZLE_SOLVED);
         VaultCave_ApplyNorthernSwitchCells();
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
@@ -572,7 +573,7 @@ static void EventScript_FreezeWestUpperPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  GameFlag_Set(FLAG_WEST_UPPER_FROZEN);
+  GameFlag_Set(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the lower western puddle, as on
@@ -588,7 +589,7 @@ static void EventScript_FreezeWestLowerPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  GameFlag_Set(FLAG_WEST_LOWER_FROZEN);
+  GameFlag_Set(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the inner lower western puddle.
@@ -604,7 +605,7 @@ static void EventScript_FreezeInnerWestLowerPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  GameFlag_Set(FLAG_INNER_WEST_LOWER_FROZEN);
+  GameFlag_Set(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the upper eastern puddle.
@@ -620,7 +621,7 @@ static void EventScript_FreezeEastUpperPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  GameFlag_Set(FLAG_EAST_UPPER_FROZEN);
+  GameFlag_Set(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the lower eastern puddle.
@@ -636,7 +637,7 @@ static void EventScript_FreezeEastLowerPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  GameFlag_Set(FLAG_EAST_LOWER_FROZEN);
+  GameFlag_Set(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the far eastern puddle.
@@ -652,7 +653,7 @@ static void EventScript_FreezeFarEastPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  GameFlag_Set(FLAG_FAR_EAST_FROZEN);
+  GameFlag_Set(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN);
 }
 
 /// Changes the puddles' draw priorities when the leader is above them.
@@ -846,8 +847,8 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
     if (VaultCave_ResetFallingObjectAtObjectEventCell(
             LOCALID_NORTHERN_PILLAR) != 0) {
       Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 1);
-      if (Script_GetFlag(FLAG_NORTH_PILLAR_STRUCK) == 0) {
-        GameFlag_Set(FLAG_NORTH_PILLAR_STRUCK);
+      if (Script_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
+        GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
         Script_PlaySong(SE_204);
       } else {
         Script_PlaySong(SE_106);
@@ -885,7 +886,8 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
       fallingObjectEvent =
           ObjectEvent_GetById((fallingIndex + LOCALID_FIRST_WATER_DROP));
-      stateValue = GameFlag_Get((fallingIndex + FLAG_WEST_UPPER_FROZEN));
+      stateValue = GameFlag_Get(
+          (fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
       if (stateValue != 0) {
         if (fallingObjectEvent->velocityY <= 0) {
           if (fallingObjectEvent->y.fixed > 0x20ffff) {
@@ -1028,7 +1030,7 @@ s32 Map_Initialize(void) {
     }
   }
   if (gSaveBlock.mapId == (s32)&MapId_VaultCaveVambrace) {
-    if (GameFlag_Get(FLAG_WHIRLWIND_USED) == 0) {
+    if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
       ObjectEvent_GetById(LOCALID_IVY)->scaleY = 0x18000;
     }
     switch (gSaveBlock.warpDest) {
@@ -1047,27 +1049,27 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH:
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
       VaultCave_StartFrostControlledFalls();
-      if (GameFlag_Get(FLAG_WEST_UPPER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN) != 0) {
         Import_ObjectEventSetAnimation(LOCALID_WEST_UPPER_PUDDLE, 5);
         EventScript_FreezeWestUpperPuddle();
       }
-      if (GameFlag_Get(FLAG_WEST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN) != 0) {
         Import_ObjectEventSetAnimation(LOCALID_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeWestLowerPuddle();
       }
-      if (GameFlag_Get(FLAG_INNER_WEST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN) != 0) {
         Import_ObjectEventSetAnimation(LOCALID_INNER_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeInnerWestLowerPuddle();
       }
-      if (GameFlag_Get(FLAG_EAST_UPPER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN) != 0) {
         Import_ObjectEventSetAnimation(LOCALID_EAST_UPPER_PUDDLE, 5);
         EventScript_FreezeEastUpperPuddle();
       }
-      if (GameFlag_Get(FLAG_EAST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN) != 0) {
         Import_ObjectEventSetAnimation(LOCALID_EAST_LOWER_PUDDLE, 5);
         EventScript_FreezeEastLowerPuddle();
       }
-      if (GameFlag_Get(FLAG_FAR_EAST_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN) != 0) {
         Import_ObjectEventSetAnimation(LOCALID_FAR_EAST_PUDDLE, 5);
         EventScript_FreezeFarEastPuddle();
       }
@@ -1094,7 +1096,7 @@ s32 Map_Initialize(void) {
   }
   if (gSaveBlock.mapId == (s32)&MapId_VaultCaveMouth) {
     Import_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
-    if (GameFlag_Get(FLAG_NORTH_PILLAR_STRUCK) == 0) {
+    if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
       Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
     }
     ObjectEvent_SetSpriteFlags(
@@ -1308,7 +1310,7 @@ struct ObjectEventTemplate gVaultCaveVambrace_ObjectEventTemplates[] = {
         PIXELS(424), 0, PIXELS(552), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(456), 0, PIXELS(536), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { SPRITE_IVY, FLAG_WHIRLWIND_USED, MOVEMENT_TYPE_STAND,
+    { SPRITE_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, MOVEMENT_TYPE_STAND,
         PIXELS(456), 0, PIXELS(456), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
@@ -1373,13 +1375,13 @@ struct MapEvent gVaultCaveVambrace_Events[] = {
     { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ShowLockedDoor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SOUTHERN_PILLAR, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(EventScript_MoveSouthernPillar) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, MB_VAULT_CAVE_SOUTHERN_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushSouthernPillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WEST_UPPER_PUDDLE, FLAG_WEST_UPPER_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestUpperPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WEST_LOWER_PUDDLE, FLAG_WEST_LOWER_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestLowerPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_INNER_WEST_LOWER_PUDDLE, FLAG_INNER_WEST_LOWER_FROZEN, EVENT_SCRIPT(EventScript_FreezeInnerWestLowerPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_EAST_UPPER_PUDDLE, FLAG_EAST_UPPER_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastUpperPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_EAST_LOWER_PUDDLE, FLAG_EAST_LOWER_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastLowerPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FAR_EAST_PUDDLE, FLAG_FAR_EAST_FROZEN, EVENT_SCRIPT(EventScript_FreezeFarEastPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY, FLAG_WHIRLWIND_USED, EVENT_SCRIPT(EventScript_UseWhirlwind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WEST_UPPER_PUDDLE, FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestUpperPuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestLowerPuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_INNER_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeInnerWestLowerPuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_EAST_UPPER_PUDDLE, FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastUpperPuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_EAST_LOWER_PUDDLE, FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastLowerPuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FAR_EAST_PUDDLE, FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeFarEastPuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_UseWhirlwind) },
     { MAP_EVENTS_END },
 };
 

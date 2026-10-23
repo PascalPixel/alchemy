@@ -133,10 +133,10 @@
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
 
 // Map flags, cleared on every ordinary arrival:
-// - FLAG_MAP_TEMP_34: set on entering the second relief room; the
-//   Move rows of the first relief room apply only while it is clear, which
-//   it always is there: only the second room's warp destinations set it, every
-//   ordinary warp destination into the first room clears it, and a return
+// - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief
+//   room; the Move rows of the first relief room apply only while it is clear,
+//   which it always is there: only the second room's warp destinations set it,
+//   every ordinary warp destination into the first room clears it, and a return
 //   after a battle comes back by the warp destination the party last came in
 //   by, so the condition never stops a Move.
 
@@ -456,10 +456,10 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
 }
 
 /// Sol Sanctum, the first relief room: Move on the west statue
-/// (LOCALID_WEST_STATUE) while FLAG_MAP_TEMP_34 is clear, and called by
-/// EventScript_PushStatue there. The column it stops in is saved: sets
-/// FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both when it
-/// stands in neither column.
+/// (LOCALID_WEST_STATUE) while FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is clear,
+/// and called by EventScript_PushStatue there. The column it stops in is saved:
+/// sets FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both when
+/// it stands in neither column.
 static void EventScript_WestStatueMoved(void) {
   struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_WEST_STATUE);
   s32 column;
@@ -585,6 +585,10 @@ static void EventScript_RowStatue6Moved(void) {
 
 #include "common/object_findcell.h"
 
+/// The party has entered the second relief room, which turns off Move on the
+/// first relief room's statues.
+#define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_MAP_TEMP_34
+
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell
 /// pushes it one cell, the leader behind it, if nothing is in the way, and its
 /// column is saved through the room's Moved events.
@@ -696,17 +700,18 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   }
 }
 
-/// Sets up Sol Sanctum (MapId_SolSanctumReliefs): after the eruption its
-/// rooms rumble and shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST
-/// and SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
+/// Sets up Sol Sanctum (MapId_SolSanctumReliefs): after the eruption its rooms
+/// rumble and shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST and
+/// SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
 /// relief's passage once it is open; SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, the
 /// way in, makes itself the Retreat point and plays Kraden's welcome until
 /// FLAG_SOL_SANCTUM_ENTERED is set. In the first relief room Kraden's talk of
 /// the hidden passage plays until FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and
 /// the two statues go back to their saved columns; in the second relief room
 /// Kraden sees the row of statues until FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is
-/// set, the six go back to their columns, FLAG_MAP_TEMP_34 is set and the
-/// second relief's doorway shows once it is open.
+/// set, the six go back to their columns,
+/// FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is set and the second relief's
+/// doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 warpDest;
   gFieldWork->transition =
@@ -790,7 +795,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
-    GameFlag_Set(FLAG_MAP_TEMP_34);
+    GameFlag_Set(FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
       MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
       MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
@@ -1571,8 +1576,8 @@ struct MapEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
     { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
     { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_WestStatueMoved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_EastStatueMoved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_WestStatueMoved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_EastStatueMoved) },
     { COORD_EVENT_WALKING, MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },

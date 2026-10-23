@@ -1,27 +1,26 @@
 /// @file
 /// Crossbone Isle, an island reached from the world map, and the main line of
-/// the cave beneath it, in three map sections by their area names:
-/// Crossbone Isle, Crossbone Isle Cave and the Pirate Ship.
+/// the cave beneath it, in three map sections by their area names: Crossbone
+/// Isle, Crossbone Isle Cave and the Pirate Ship.
 ///
 /// No one on the island speaks: it is a run of Psynergy puzzles and battles
-/// that ends with Deadbeard on the Pirate Ship. Its maps are met in this
-/// order:
+/// that ends with Deadbeard on the Pirate Ship. Its maps are met in this order:
 ///
-/// - Crossbone Isle (MapId_CrossboneIsle), the island itself, reached
-///   from the world map (WORLD_MAP_TO_CROSSBONE_ISLE;
-///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows two ivies
-///   away for good (flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the
-///   first also opening a cell; the second's and a fourth's map events are
-///   unused), Growth grows three plants so they can be crossed, for this visit
-///   only (flags from FLAG_FIRST_PLANT_GROWN; the first plant's map event is
-///   unused), two logs can be pushed, and a Nut circles until
-///   Catch takes it (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
+/// - Crossbone Isle (MapId_CrossboneIsle), the island itself, reached from the
+///   world map (WORLD_MAP_TO_CROSSBONE_ISLE; CROSSBONE_ISLE_TO_WORLD_MAP leads
+///   back to it). Whirlwind blows two ivies away for good (flags from
+///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the first also opening a cell;
+///   the second's and a fourth's map events are unused), Growth grows three
+///   plants so they can be crossed, for this visit only (flags from
+///   FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN; the first plant's map event is
+///   unused), two logs can be pushed, and a Nut circles until Catch takes it
+///   (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
-/// - Crossbone Isle Cave (MapId_CrossboneIsleCaveEntrance), the cave's
-///   mouth, with only its two warps.
+/// - Crossbone Isle Cave (MapId_CrossboneIsleCaveEntrance), the cave's mouth,
+///   with only its two warps.
 /// - Crossbone Isle Cave (MapId_CrossboneIsleFirstFloor to
-///   MapId_CrossboneIsleNinthFloor), the nine floors the cave descends
-///   through, all on one layout, each entered from the east
+///   MapId_CrossboneIsleNinthFloor), the nine floors the cave descends through,
+///   all on one layout, each entered from the east
 ///   (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
 ///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
 ///   map_warps.h names them room by room
@@ -41,22 +40,22 @@
 ///   floor a chest is a mimic (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN
 ///   once beaten). The side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
-/// - Crossbone Isle Cave (MapId_CrossboneIsleFloatingLogs), the ninth
-///   floor's side room: twelve logs floating on green water, which drift with
-///   the leader standing on them until another log or the shore stops them, and
+/// - Crossbone Isle Cave (MapId_CrossboneIsleFloatingLogs), the ninth floor's
+///   side room: twelve logs floating on green water, which drift with the
+///   leader standing on them until another log or the shore stops them, and
 ///   hops from log to log, lead to its four chests.
-/// - Crossbone Isle Cave (MapId_CrossboneIslePier), the ledge past the
-///   ninth floor where a wooden pier leads out to the Pirate Ship.
-/// - Pirate Ship (MapId_PirateShip), at the end. Stepping on coord event
-///   10 (EventScript_FightDeadbeard) sets off the battle with Deadbeard, the
-///   sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party
-///   comes back (WARP_DEST_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED
-///   is set and a chest with the Demon Mail appears. A second chest is a mimic
+/// - Crossbone Isle Cave (MapId_CrossboneIslePier), the ledge past the ninth
+///   floor where a wooden pier leads out to the Pirate Ship.
+/// - Pirate Ship (MapId_PirateShip), at the end. Stepping on coord event 10
+///   (EventScript_FightDeadbeard) sets off the battle with Deadbeard, the sixth
+///   group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party comes
+///   back (WARP_DEST_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is
+///   set and a chest with the Demon Mail appears. A second chest is a mimic
 ///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
 ///
-/// Map_Initialize restores each map as its flags say: the ivy and plants on
-/// the island, the sliding logs' footprints, the corridor's sunk pillars and
-/// the chests the mimics leave.
+/// Map_Initialize restores each map as its flags say: the ivy and plants on the
+/// island, the sliding logs' footprints, the corridor's sunk pillars and the
+/// chests the mimics leave.
 ///
 /// Open questions: none.
 
@@ -115,8 +114,9 @@ enum CrossboneIsleLocalId {
   /// grass (its render)
   LOCALID_FIRST_ISLE_LOG,
   /// The four plants Growth grows, crossable once grown for the rest of the
-  /// visit (four flags from FLAG_FIRST_PLANT_GROWN). The first is placed at
-  /// the map's origin, off stage (EventScript_UnusedGrowFirstPlant).
+  /// visit (four flags from FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN). The first
+  /// is placed at the map's origin, off stage
+  /// (EventScript_UnusedGrowFirstPlant).
   /// ★ Named from what the player sees: small sprouts on the cliff ledges
   /// (its render)
   LOCALID_FIRST_PLANT = LOCALID_FIRST_ISLE_LOG + 2,
@@ -135,7 +135,7 @@ enum CrossboneIsleLocalId {
 /// island's map: four map temp flags from this one, one a plant.
 /// ★ Named from what the player sees: small sprouts on the cliff ledges (its
 /// render)
-enum { FLAG_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40 };
+enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40 };
 
 /// The twelve floating logs of the ninth floor's side room
 /// (MapId_CrossboneIsleFloatingLogs), numbered in the order of
@@ -393,7 +393,7 @@ s32 Map_Initialize(void) {
     ObjectEvent_Get(LOCALID_ISLE_NUT)->targetX = PIXELS(129);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG + 1);
-    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN) != 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -402,7 +402,7 @@ s32 Map_Initialize(void) {
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), MB_CLIMB);
     }
-    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN + 1) != 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 1);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -411,7 +411,7 @@ s32 Map_Initialize(void) {
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), MB_CLIMB);
     }
-    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN + 2) != 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 2);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -420,7 +420,7 @@ s32 Map_Initialize(void) {
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), MB_CLIMB);
     }
-    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN + 3) != 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 3);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -641,7 +641,7 @@ static void EventScript_UnusedGrowFirstPlant(s32 localId) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
-  GameFlag_Set(FLAG_FIRST_PLANT_GROWN);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN);
 }
 
 /// Growth on Crossbone Isle's second plant.
@@ -656,7 +656,7 @@ static void EventScript_GrowSecondPlant(s32 localId) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
-  GameFlag_Set(FLAG_FIRST_PLANT_GROWN + 1);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1);
 }
 
 /// Growth on Crossbone Isle's third plant.
@@ -671,7 +671,7 @@ static void EventScript_GrowThirdPlant(s32 localId) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
-  GameFlag_Set(FLAG_FIRST_PLANT_GROWN + 2);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2);
 }
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
@@ -689,7 +689,7 @@ static void EventScript_GrowFourthPlant(s32 localId) {
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
   MapGrid_SetMetatileBehaviorAt(0, secondFixedX, secondFixedZ, MB_CLIMB);
-  GameFlag_Set(FLAG_FIRST_PLANT_GROWN + 3);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3);
 }
 
 /// Whirlwind on Crossbone Isle's first ivy: it is blown away for good, and
@@ -2311,10 +2311,10 @@ struct MapEvent gCrossboneIsle_CaveEntranceEvents[] = {
 
 struct MapEvent gCrossboneIsle_IsleEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT, FLAG_FIRST_PLANT_GROWN, EVENT_SCRIPT(EventScript_UnusedGrowFirstPlant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT + 1, FLAG_FIRST_PLANT_GROWN + 1, EVENT_SCRIPT(EventScript_GrowSecondPlant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT + 2, FLAG_FIRST_PLANT_GROWN + 2, EVENT_SCRIPT(EventScript_GrowThirdPlant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT + 3, FLAG_FIRST_PLANT_GROWN + 3, EVENT_SCRIPT(EventScript_GrowFourthPlant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN, EVENT_SCRIPT(EventScript_UnusedGrowFirstPlant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT + 1, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1, EVENT_SCRIPT(EventScript_GrowSecondPlant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT + 2, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2, EVENT_SCRIPT(EventScript_GrowThirdPlant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_FIRST_PLANT + 3, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3, EVENT_SCRIPT(EventScript_GrowFourthPlant) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(EventScript_UnusedBlowAwaySecondIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },

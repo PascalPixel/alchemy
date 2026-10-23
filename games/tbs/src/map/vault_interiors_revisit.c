@@ -5,17 +5,16 @@
 /// town: each of its six house doors leads to the warp destination here named
 /// for the same door, and each room leads back out through it.
 ///
-/// The thieves have broken out of jail, and the talk is of them and of
-/// Colosso, the festival about to begin in Tolbi. The rooms, by warp
-/// destination:
+/// The thieves have broken out of jail, and the talk is of them and of Colosso,
+/// the festival about to begin in Tolbi. The rooms, by warp destination:
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
-///   house: he says a cat ate his precious stone, and his wife does not
-///   believe him. Arriving here sets him on the floor and takes the stone off
-///   his table: the 4-by-3 block of cells copied from (0, 120) to (8, 67)
-///   lies under the window of the map grid's layer 2, at the table, and draws
-///   it bare where the first visit's house (vault_interiors.c) draws the
-///   sparkling stone on it (render probe vault-interiors-revisit, the room
-///   before and after).
+///   house: he says a cat ate his precious stone, and his wife does not believe
+///   him. Arriving here sets him on the floor and takes the stone off his
+///   table: the 4-by-3 block of cells copied from (0, 120) to (8, 67) lies
+///   under the window of the map grid's layer 2, at the table, and draws it
+///   bare where the first visit's house (vault_interiors.c) draws the sparkling
+///   stone on it (render probe vault-interiors-revisit, the room before and
+///   after).
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
 ///   doubts the thieves were from Lunpa.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and
@@ -27,7 +26,7 @@
 ///   shops.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house,
 ///   where the mayor welcomes Isaac back and warns that the thieves have
-///   escaped (FLAG_WELCOMED_BACK, a map section flag, and
+///   escaped (FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, a map section flag, and
 ///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES); a Mind Read on him before that
 ///   plays the welcome first.
 ///
@@ -36,11 +35,11 @@
 /// (FLAG_VAULT_BONE_RECEIVED, shared with vault_interiors.c, changes only her
 /// words), and searching the floor Bone (MB_VAULT_INTERIORS_INN_BARREL,
 /// Vault_FindBone) gives another. While the leader stands beside the floor
-/// Bone, Vault_UpdateBoneProximityFlag sets FLAG_MAP_TEMP_50, which disables
-/// her talk row, so that the A button there searches instead of talking. The
-/// shopkeepers open their shops only when spoken to across the counter. A jar,
-/// two barrels and a wooden box keep the first visit's flags, so what the
-/// party took then stays taken, and two bookcases can be read.
+/// Bone, Vault_UpdateBoneProximityFlag sets FLAG_VAULT_LEADER_BESIDE_BONE,
+/// which disables her talk row, so that the A button there searches instead of
+/// talking. The shopkeepers open their shops only when spoken to across the
+/// counter. A jar, two barrels and a wooden box keep the first visit's flags,
+/// so what the party took then stays taken, and two bookcases can be read.
 ///
 /// Open questions: none.
 
@@ -148,7 +147,7 @@ enum {
 /// Set once the mayor has told Isaac the thieves escaped from jail.
 /// ★ Named from the game: "You've come back to Vault!"
 /// (MsgVaultIsaacYouveComeBackVault)
-enum { FLAG_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00 };
+enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00 };
 
 // Shared map routines stay in their linked order.
 #include "common/vault_spotflag.h"
@@ -212,10 +211,10 @@ static void EventScript_HusbandLongsForColosso(void) {
 }
 
 /// In his house, the mayor welcomes Isaac back: the thieves he caught have
-/// escaped from jail, and Vault feared they would come after him. Asked
-/// whether the party has run into them, a yes and a no get different warnings.
-/// Sets FLAG_WELCOMED_BACK, after which the mayor only warns of their revenge,
-/// and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
+/// escaped from jail, and Vault feared they would come after him. Asked whether
+/// the party has run into them, a yes and a no get different warnings. Sets
+/// FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, after which the mayor only warns of
+/// their revenge, and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 static void EventScript_WelcomeIsaacBack(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultIsaacYouveComeBackVault);
@@ -233,7 +232,7 @@ static void EventScript_WelcomeIsaacBack(void) {
     gFieldWork->message++;
   }
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
-  GameFlag_Set(FLAG_WELCOMED_BACK);
+  GameFlag_Set(FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_End();
 }
@@ -259,8 +258,8 @@ static void EventScript_UnusedOfferLeftoverBones(void) {
 
 /// The girl at the inn offers leftover bones from dinner, or more of them once
 /// one was taken (FLAG_VAULT_BONE_RECEIVED); a yes gets a Bone if there is
-/// room, a no a nod. Her talk row needs FLAG_MAP_TEMP_50 clear, that is, the
-/// leader not standing beside the floor Bone.
+/// room, a no a nod. Her talk row needs FLAG_VAULT_LEADER_BESIDE_BONE clear,
+/// that is, the leader not standing beside the floor Bone.
 static void EventScript_OfferBones(void) {
   FieldScript_Start();
   ObjectEvent_LinkPair(LOCALID_GIRL_AT_THE_INN, LOCALID_PARTY_LEADER, 0);
@@ -441,7 +440,7 @@ s32 Map_Initialize(void) {
   } else if (warpDest == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST ||
              warpDest == VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS) {
     // Show the Bone lying in the room, and track whether the leader stands
-    // beside it (FLAG_MAP_TEMP_50).
+    // beside it (FLAG_VAULT_LEADER_BESIDE_BONE).
     Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
     FieldScheduler_AddCallback(Vault_UpdateBoneProximityFlag,
                                TASK_PRIORITY_MAP);
@@ -548,7 +547,7 @@ struct MapEvent gVaultInteriorsRevisit_Events[] = {
     { MAP_EVENT_TALK, LOCALID_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BoyDoubtsThievesWereFromLunpa) },
     { MAP_EVENT_TALK, LOCALID_COLOSSO_HUSBAND, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HusbandLongsForColosso) },
     { MAP_EVENT_TALK, LOCALID_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
-    { MAP_EVENT_TALK, LOCALID_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
+    { MAP_EVENT_TALK, LOCALID_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
     { MAP_EVENT_TALK, LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
     { MAP_EVENT_TALK, LOCALID_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
     { MAP_EVENT_TALK, LOCALID_BOY_ON_THE_THIEVES_ESCAPE, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
@@ -560,14 +559,14 @@ struct MapEvent gVaultInteriorsRevisit_Events[] = {
     { MAP_EVENT_TALK, LOCALID_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
     // Unused: the row above always answers the cook first.
     { MAP_EVENT_TALK, LOCALID_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedOfferLeftoverBones) },
-    { MAP_EVENT_TALK, LOCALID_GIRL_AT_THE_INN, FLAG_MAP_TEMP_50, EVENT_SCRIPT(EventScript_OfferBones) },
+    { MAP_EVENT_TALK, LOCALID_GIRL_AT_THE_INN, FLAG_VAULT_LEADER_BESIDE_BONE, EVENT_SCRIPT(EventScript_OfferBones) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COLOSSO_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(EventScript_ReadMindAndWelcomeIsaacBack) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_ReadMindAndWelcomeIsaacBack) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYOR, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_ON_THE_THIEVES_ESCAPE, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },

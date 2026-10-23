@@ -14,8 +14,8 @@
 /// MapId_LaliveroFaransHouse holds Faran's house, the inn and the way out to
 /// the wharf where Babi's ship lies (LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP).
 /// Before Venus Lighthouse an inn worker apologizes once for her distraction
-/// (EventScript_TalkToInnWorker, FLAG_INN_WORKER_APOLOGIZED) and goes back to
-/// her chores. The aerie of Venus Lighthouse leads in by
+/// (EventScript_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes
+/// back to her chores. The aerie of Venus Lighthouse leads in by
 /// LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
 /// EventScript_ReportToFaran: the party reports to Faran and Iodem, in one of
 /// two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Coord event 51 afterwards plays
@@ -194,7 +194,7 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 /// The map-section temp flag FLAG_MAPSEC_TEMP_00, which lasts until the party
 /// enters another map section: the inn worker has apologized. ★ Named from the
 /// game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
-enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
+enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct Object *interpreter) {
@@ -332,7 +332,7 @@ static void EventScript_TalkToInnWorker(void) {
   s16 side;
 
   side = LaliveroInteriors_LeaderGetSide();
-  GameFlag_Set(FLAG_INN_WORKER_APOLOGIZED);
+  GameFlag_Set(FLAG_LALIVERO_INN_WORKER_APOLOGIZED);
   FieldScript_Start();
   Field_EndBusyAndReveal();
   FieldScript_SetMessageId(MsgLaliveroImSorry);
@@ -866,7 +866,7 @@ s32 Map_Initialize(void) {
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
     objectEvent->sprite->image.priority = 2;
-    if (GameFlag_Get(FLAG_INN_WORKER_APOLOGIZED) != 0) {
+    if (GameFlag_Get(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
       ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                                   gLaliveroInteriors_InnWorkerChores);
     }
@@ -1203,8 +1203,8 @@ struct MapEvent gLaliveroInteriors_FaransHouseEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
-    { MAP_EVENT_TALK, LOCALID_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
+    { MAP_EVENT_TALK, LOCALID_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
     { MAP_EVENT_TALK, LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { MAP_EVENT_TALK, LOCALID_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },

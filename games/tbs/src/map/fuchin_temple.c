@@ -8,20 +8,20 @@
 ///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
 ///   anywhere here returns the party to FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, in
 ///   front of the traveling healer. The monk beneath the falls guards the
-///   waterfall grotto: once Nyunpa has set his test
-///   (FLAG_NYUNPA_TEST_ACCEPTED) he leaps aside
-///   (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the grotto leads into Fuchin Falls
-///   Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE); back out with
-///   the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he sends the
-///   party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
+///   waterfall grotto: once Nyunpa has set his test (FLAG_NYUNPA_TEST_ACCEPTED)
+///   he leaps aside (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the grotto leads into
+///   Fuchin Falls Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
+///   back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
+///   sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
 /// - Fuchin Temple (MapId_FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS or the default warp
 ///   destination), inside, where Nyunpa meditates. Mind Read on him offers the
 ///   test (EventScript_NyunpaOffersTest, again after
-///   FLAG_NYUNPA_TEST_DECLINED); back with the Orb, Map_Initialize plays his
-///   lesson on Ki (FuchinTemple_NyunpaTeachesKi, FLAG_NYUNPA_TAUGHT_FORCE).
-///   Once Mogall Forest has set FLAG_NYUNPA_ENLIGHTENED he sits withered
-///   (ANIM_NYUNPA_WITHERED) and Mind Read hears his last wish.
+///   FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED); back with the Orb,
+///   Map_Initialize plays his lesson on Ki (FuchinTemple_NyunpaTeachesKi,
+///   FLAG_NYUNPA_TAUGHT_FORCE). Once Mogall Forest has set
+///   FLAG_NYUNPA_ENLIGHTENED he sits withered (ANIM_NYUNPA_WITHERED) and Mind
+///   Read hears his last wish.
 /// - Xian (FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN and
 ///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE), Master Feh's kung fu
@@ -34,10 +34,11 @@
 ///   Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
 ///   FLAG_FEH_CHI_DEMONSTRATION_DECLINED after two refusals) and, seeing the
 ///   tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
-///   with Move or by hand only sets FLAG_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu
-///   is known to be trapped (FLAG_XIAN_HEARD_HSU_TRAPPED),
-///   Map_GetObjectEventTemplates removes the tree and two students.
-///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN leads out into Xian.
+///   with Move or by hand only sets
+///   FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu is known to be
+///   trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Map_GetObjectEventTemplates removes
+///   the tree and two students. FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN
+///   leads out into Xian.
 /// - Lama Temple (FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE), the room in which
 ///   Master Hama meditates. The first visit plays her lesson
@@ -49,10 +50,10 @@
 ///
 /// Open questions:
 ///
-/// - XXX (no evidence): why Map_Initialize places a crate painted solid
-///   black and translucent (ObjectEvent_PrepareObject) over the lattice door
-///   to Feh's house in his school; the school's renders are the same with and
-///   without it, so nothing the player sees shows what it was for.
+/// - XXX (no evidence): why Map_Initialize places a crate painted solid black
+///   and translucent (ObjectEvent_PrepareObject) over the lattice door to Feh's
+///   house in his school; the school's renders are the same with and without
+///   it, so nothing the player sees shows what it was for.
 #include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/fuchin_temple.h"
@@ -89,16 +90,16 @@
 #include "io_reg.h"
 
 // Fuchin Temple's map-section temp flags, which last until the party enters
-// another map section; FLAG_MAPSEC_TEMP_50 is the Psynergy Stone outside,
-// which then refills.
+// another map section; FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE is the Psynergy Stone
+// outside, which then refills.
 
 /// The party refused Nyunpa's test, so talking to him offers it again.
 /// ★ Named from the game: "Then I cannot tell you. Give up and go back from
 /// whence you came." (MsgXianThenCannotTellGiveUp)
-#define FLAG_NYUNPA_TEST_DECLINED FLAG_MAPSEC_TEMP_00
+#define FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED FLAG_MAPSEC_TEMP_00
 /// Feh's students saw the training tree fall, but not to Chi from the line.
 /// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
-#define FLAG_FEH_SCHOOL_SAW_TREE_FALL FLAG_MAPSEC_TEMP_01
+#define FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL FLAG_MAPSEC_TEMP_01
 
 /// The placed object events outside Fuchin Temple (FuchinTempleGrounds),
 /// numbered in the order of gFuchinTempleGroundsObjectEventTemplates.
@@ -229,6 +230,10 @@ static void FuchinTemple_AnimateRevealLesson(void);
 // Shared source, included in link order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
+
+/// The Psynergy Stone outside the temple has been taken; it refills once the
+/// party enters another map section.
+#define FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
 /// Clears the scripted object event's sprite flags and completes the script
 /// command.
@@ -432,15 +437,15 @@ static void EventScript_MonkAsksWhetherTestIsDone(void) {
 /// turn, guesses that they are following someone, warns of Mogall Forest and
 /// offers the test of the grotto. "Mmmm... Who is that? Who speaks to my mind?"
 /// Accepting it (FLAG_NYUNPA_TEST_ACCEPTED), he sends Isaac to the monk beneath
-/// the falls; refusing is remembered (FLAG_NYUNPA_TEST_DECLINED), and the next
-/// talk asks again.
+/// the falls; refusing is remembered (FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED),
+/// and the next talk asks again.
 static void EventScript_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
   struct ObjectEvent *nyunpa;
 
   SCRIPT_START();
   // Revisit an earlier refusal, or introduce the offer through Mind Read.
-  alreadyDeclinedTrial = GameFlag_Get(FLAG_NYUNPA_TEST_DECLINED);
+  alreadyDeclinedTrial = GameFlag_Get(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED);
   if (alreadyDeclinedTrial != 0) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 168, 504);
     WAIT(5);
@@ -532,7 +537,7 @@ static void EventScript_NyunpaOffersTest(void) {
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     MESSAGE_SET(MsgXianThenCannotTellGiveUp);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
-    GameFlag_Set(FLAG_NYUNPA_TEST_DECLINED);
+    GameFlag_Set(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED);
   } else {
     // "Do not worry. You will be permitted to enter the grotto." Nyunpa
     // glows as he calls to the monk.
@@ -884,7 +889,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   WAIT(40);
   ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 152);
   OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
-  GameFlag_Set(FLAG_FEH_SCHOOL_SAW_TREE_FALL);
+  GameFlag_Set(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL);
 }
 
 /// Move on the training tree in Master Feh's school in Xian: it topples, and
@@ -2801,7 +2806,7 @@ struct MapEvent gFuchinTempleGroundsEvents[] = {
     { MAP_EVENT_TALK, LOCALID_WORRIED_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
     { MAP_EVENT_TALK, LOCALID_ADMIRING_BOY_MONK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BoyMonkSpeaksOfNyunpa) },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { BG_EVENT(BG_EVENT_SILENT), 110, FLAG_MAPSEC_TEMP_50, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), 110, FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleIKnewMasterNyunpaWasFasting) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
@@ -2827,7 +2832,7 @@ struct MapEvent gFuchinTempleEvents[] = {
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TEST_ACCEPTED), MSGNO(MsgFuchinTempleSpeakToTheMonkStandingBeneath) },
-    { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TEST_DECLINED), EVENT_SCRIPT(EventScript_NyunpaOffersTest) },
+    { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED), EVENT_SCRIPT(EventScript_NyunpaOffersTest) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, CONDITION_ALWAYS, MSGNO(MsgXianNyunpaMeditates) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), EVENT_SCRIPT(EventScript_ReadNyunpasLastWish) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleNowThatIHavePassedMy) },
@@ -2848,8 +2853,8 @@ struct MapEvent gFuchinTempleEvents[] = {
     { MAP_EVENT_TALK, LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleWhereDidFeizhiGoIAm) },
     { MAP_EVENT_TALK, LOCALID_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleMasterHsuIsLateICan) },
     { MAP_EVENT_TALK, LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleIWillLearnChiIWill) },
-    { MAP_EVENT_TALK, LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorUseYourChiFromThe) },
-    { MAP_EVENT_TALK, LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorPleaseUseYourChiFrom) },
+    { MAP_EVENT_TALK, LOCALID_FEH, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorUseYourChiFromThe) },
+    { MAP_EVENT_TALK, LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorPleaseUseYourChiFrom) },
     { MAP_EVENT_TALK, LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleWarriorLetMeSeeYourChi) },
     { MAP_EVENT_TALK, LOCALID_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleFeizhiIsGoneItIsDangerous) },
     { MAP_EVENT_TALK, LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleFeizhiIsStrongerThanSheLooks) },
@@ -2883,8 +2888,8 @@ struct MapEvent gFuchinTempleEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleFeizhiIsNotInTheFeh) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleFeizhiWorriesOnlyAboutMasterHsu) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleLearningChiIsVeryHardMaster) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorTheRulesRequireYouTo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleSoCloseWarriorUseChiFrom) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEH, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorTheRulesRequireYouTo) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleSoCloseWarriorUseChiFrom) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleWarriorShowMeYourChiI) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleFeizhiIKnowIKnowHow) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleMyKickAndPunchAreVery) },

@@ -615,11 +615,11 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
-/// fight; the battle's group follows who took the shield.
-/// The arena's coord event row, in all three finals stages, waits on
-/// FLAG_MAP_TEMP_10 being clear, and nothing in the game sets it: no map
-/// code, no object script (none uses SC_FLAG_ON) and none of the main image's
-/// flag writers reaches it, so the arena is never closed.
+/// fight; the battle's group follows who took the shield. The arena's coord
+/// event row, in all three finals stages, waits on FLAG_COLOSSEUM_ARENA_CLOSED
+/// being clear, and nothing in the game sets it: no map code, no object script
+/// (none uses SC_FLAG_ON) and none of the main image's flag writers reaches it,
+/// so the arena is never closed.
 static void EventScript_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -1630,6 +1630,11 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
 #include "common/colosso_occupant.h"
 
+/// Closes the arena's coord event; nothing in the game sets it.
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
+/// The chest holding an Oil Drop has been opened.
+#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_MAPSEC_TEMP_09
+
 // clang-format off
 const u8 gColosso_LetteringPaletteOffsets[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
@@ -1796,9 +1801,9 @@ struct MapEvent gColosseumAzartMatch_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
-    { MAP_EVENT_COORD, 50, FLAG_MAP_TEMP_10, EVENT_SCRIPT(EventScript_ReachArena) },
+    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_MAPSEC_TEMP_08, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_09, FIND_ITEM(ITEM_OIL_DROP) },
+    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
     { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_MAPSEC_TEMP_0A, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },

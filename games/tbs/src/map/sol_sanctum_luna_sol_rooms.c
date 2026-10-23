@@ -83,6 +83,16 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
+/// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
+/// return after a battle keeps them.
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED FLAG_MAP_TEMP_00
+/// The rooms of Sol and Luna show SOL_SANCTUM_BLUE_TINT, so a return after a
+/// battle keeps it.
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED FLAG_MAP_TEMP_01
+/// The rooms of Sol and Luna show SOL_SANCTUM_WARM_TINT, so a return after a
+/// battle keeps it.
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED FLAG_MAP_TEMP_02
+
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
 // their own.
@@ -125,9 +135,10 @@ enum SolSanctumLunaSolRoomsMetatileBehavior {
 // Map flags, cleared at every ordinary warp destination; one of the three is
 // set at a time, for the colours the rooms show, so a return after a battle
 // keeps them:
-// - FLAG_MAP_TEMP_00: the plain colours (PALETTE_TINT_NONE);
-// - FLAG_MAP_TEMP_01: SOL_SANCTUM_BLUE_TINT;
-// - FLAG_MAP_TEMP_02: SOL_SANCTUM_WARM_TINT.
+// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED: the plain colours
+//   (PALETTE_TINT_NONE);
+// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED: SOL_SANCTUM_BLUE_TINT;
+// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED: SOL_SANCTUM_WARM_TINT.
 
 static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void);
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void);
@@ -168,22 +179,23 @@ const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void) {
 /// SOL_SANCTUM_BLUE_TINT, and Kraden sees the floor symbol changed the first
 /// time (and the Luna room, had he not yet). Also called by
 /// EventScript_KradenFindsHeartOfSanctum after the eruption. Sets one of
-/// FLAG_MAP_TEMP_00 and _01 and clears the other two tint flags; Kraden's
-/// scenes set FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED, clearing the other tint flags;
+/// Kraden's scenes set FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and
 /// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN.
 static void EventScript_UpdateRoomTint(void) {
   s32 paletteActive;
 
   // Test all four quarters' flags without skipping any flag reads.
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
-    paletteActive = Script_GetFlag(FLAG_MAP_TEMP_01);
+    paletteActive = Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
     if (paletteActive == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
       PaletteFade_StartInterpolation(20);
-      GameFlag_Set(FLAG_MAP_TEMP_01);
-      GameFlag_Clear(FLAG_MAP_TEMP_00);
-      GameFlag_Clear(FLAG_MAP_TEMP_02);
+      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
         SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms();
       }
@@ -195,13 +207,13 @@ static void EventScript_UpdateRoomTint(void) {
       FieldScript_End();
     }
   } else {
-    if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
       PaletteFade_StartInterpolation(20);
-      GameFlag_Set(FLAG_MAP_TEMP_00);
-      GameFlag_Clear(FLAG_MAP_TEMP_01);
-      GameFlag_Clear(FLAG_MAP_TEMP_02);
+      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       FieldScript_End();
     }
   }
@@ -209,15 +221,16 @@ static void EventScript_UpdateRoomTint(void) {
 
 /// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN fades the rooms
 /// back to plain colours. Also called by EventScript_KradenStopsPartyLeaving
-/// after the eruption. Sets FLAG_MAP_TEMP_00 and clears _01 and _02.
+/// after the eruption. Sets FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and clears
+/// the other two tint flags.
 static void EventScript_RestorePlainTint(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
     FieldScript_Start();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     PaletteFade_StartInterpolation(20);
-    GameFlag_Set(FLAG_MAP_TEMP_00);
-    GameFlag_Clear(FLAG_MAP_TEMP_01);
-    GameFlag_Clear(FLAG_MAP_TEMP_02);
+    GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+    GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
+    GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
     FieldScript_End();
   }
 }
@@ -226,29 +239,30 @@ static void EventScript_RestorePlainTint(void) {
 /// MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT the other way round. Until all four
 /// quarters are lit the rooms fade to SOL_SANCTUM_BLUE_TINT, and the first time
 /// Kraden sees the Luna room; afterwards back to plain colours. Sets one of
-/// FLAG_MAP_TEMP_00 and _01 and clears the other two.
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED, clearing the other tint flags.
 static void EventScript_UpdateRoomTintInverse(void) {
   s32 paletteActive;
 
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
-    paletteActive = Script_GetFlag(FLAG_MAP_TEMP_00);
+    paletteActive = Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
     if (paletteActive == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
       PaletteFade_StartInterpolation(20);
-      GameFlag_Set(FLAG_MAP_TEMP_00);
-      GameFlag_Clear(FLAG_MAP_TEMP_01);
-      GameFlag_Clear(FLAG_MAP_TEMP_02);
+      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       FieldScript_End();
     }
   } else {
-    if (Script_GetFlag(FLAG_MAP_TEMP_01) == 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED) == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
       PaletteFade_StartInterpolation(20);
-      GameFlag_Set(FLAG_MAP_TEMP_01);
-      GameFlag_Clear(FLAG_MAP_TEMP_00);
-      GameFlag_Clear(FLAG_MAP_TEMP_02);
+      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
         SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms();
       }
@@ -258,15 +272,16 @@ static void EventScript_UpdateRoomTintInverse(void) {
 }
 
 /// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT fades the
-/// rooms to SOL_SANCTUM_WARM_TINT. Sets FLAG_MAP_TEMP_02 and clears _00 and
-/// _01.
+/// rooms to SOL_SANCTUM_WARM_TINT. Sets
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED and clears the other two tint
+/// flags.
 static void EventScript_ApplySecondRoomTint(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED) == 0) {
     PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
     PaletteFade_StartInterpolation(20);
-    GameFlag_Set(FLAG_MAP_TEMP_02);
-    GameFlag_Clear(FLAG_MAP_TEMP_00);
-    GameFlag_Clear(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
+    GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+    GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   }
 }
 
@@ -840,8 +855,9 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
 
 /// Opens on Kraden in the Luna room in SOL_SANCTUM_BLUE_TINT, as a flash
 /// crosses it. Shared by the three scenes that play on arriving from
-/// MapId_SolSanctumStatue's statue puzzle. Sets FLAG_MAP_TEMP_01 and clears
-/// _00 and _02.
+/// MapId_SolSanctumStatue's statue puzzle. Sets
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED and clears the other two tint
+/// flags.
 static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CopyCellsTo(30, 43, 32, 40, 8, 3);
@@ -855,9 +871,9 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   WaitFrames(1);
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
   PaletteFade_StartInterpolation(20);
-  GameFlag_Set(FLAG_MAP_TEMP_01);
-  GameFlag_Clear(FLAG_MAP_TEMP_00);
-  GameFlag_Clear(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
@@ -1372,8 +1388,8 @@ static void EventScript_RiseToElementalStarRoom(void) {
 /// Sets up Sol Sanctum's rooms of Sol and Luna and plays the scene this warp
 /// destination calls for. Called by Map_Run once the object events exist.
 /// Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the way up
-/// opens, before the eruption; sets FLAG_MAP_TEMP_00 at an ordinary warp
-/// destination; copies each lit quarter into its
+/// opens, before the eruption; sets FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED at
+/// an ordinary warp destination; copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the disarmed trap's flash at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED, the trap
 /// at SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED (then
@@ -1399,17 +1415,17 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   }
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED) != 0) {
       PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
-    } else if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+    } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED) != 0) {
       PaletteFade_SetTarget(SOL_SANCTUM_WARM_TINT, 1);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
     }
   } else {
-    GameFlag_Set(FLAG_MAP_TEMP_00);
+    GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) != 0) {
       ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(120));
     }
@@ -1556,14 +1572,15 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
   FieldScript_WaitFrames(waitFrames);
 }
 
-/// Sol Sanctum after the eruption: the Wise One has sent Isaac and Garet out
-/// of the collapsing Elemental Star Room, and they appear here in a white
-/// flash, bewildered, as the rooms shake. Garet: "Did that floating eye thing
-/// save us?" A stronger tremor throws them aside, and they set off: "Let's get
-/// out of here..." Called by SolSanctumLunaSolRooms_Initialize at
+/// Sol Sanctum after the eruption: the Wise One has sent Isaac and Garet out of
+/// the collapsing Elemental Star Room, and they appear here in a white flash,
+/// bewildered, as the rooms shake. Garet: "Did that floating eye thing save
+/// us?" A stronger tremor throws them aside, and they set off: "Let's get out
+/// of here..." Called by SolSanctumLunaSolRooms_Initialize at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION until
 /// FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN is set; the caller sets it. Sets
-/// FLAG_MAP_TEMP_01 and clears _00 and _02.
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED and clears the other two tint
+/// flags.
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   struct ObjectEvent *leader;
   struct PaletteFade *palette;
@@ -1588,9 +1605,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
-  GameFlag_Set(FLAG_MAP_TEMP_01);
-  GameFlag_Clear(FLAG_MAP_TEMP_00);
-  GameFlag_Clear(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(60);
   WaitFrames(100);

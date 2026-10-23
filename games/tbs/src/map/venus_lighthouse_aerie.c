@@ -1,7 +1,7 @@
 /// @file
-/// Lighthouse Aerie (MapId_VenusLighthouseAerie), the top of Venus
-/// Lighthouse and the only map of this overlay: one scripted sequence cut by
-/// two battles and two trips to the world map. Each part starts in
+/// Lighthouse Aerie (MapId_VenusLighthouseAerie), the top of Venus Lighthouse
+/// and the only map of this overlay: one scripted sequence cut by two battles
+/// and two trips to the world map. Each part starts in
 /// VenusLighthouseAerie_Initialize from the warp destination the part before
 /// sent the party to, and every arrival blocks Retreat and sets
 /// FLAG_VENUS_LIGHTHOUSE_LIT. The parts, in the order the warp destinations
@@ -14,7 +14,7 @@
 ///   (MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
 ///   MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS): the leader jumps from one
 ///   to the next, and each stops bobbing and dips under him as he lands
-///   (FLAG_MAP_TEMP_50 while he stands on one).
+///   (FLAG_VENUS_AERIE_ON_PLATFORM while he stands on one).
 /// - The confrontation (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
 ///   EventScript_ConfrontSaturosAndMenardi): the Shaman's Rod is handed over,
 ///   remembered in FLAG_SHAMANS_ROD_HOLDER plus the member who carried it, and
@@ -32,15 +32,15 @@
 ///   (LOCALID_BEAM_BOTTOM to LOCALID_BEAM_TOP) rises, the aerie splits and its
 ///   statues move apart, and the light lifts the party away to the world map's
 ///   lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The beam's
-///   five segments are sprites stacked over the beacon, with particles
-///   rising round them, and the split is drawn by copying the map grid's cells
+///   five segments are sprites stacked over the beacon, with particles rising
+///   round them, and the split is drawn by copying the map grid's cells
 ///   (MapGrid_CopyCellsTo in VenusLighthouseAerie_EruptBeacon)
 ///   (https://alchemy.pascalpixel.com/places/venus-lighthouse-aerie/eruption.gif:
 ///   eight seconds from just before the segments stack, each numbered 1 to 5
 ///   from the bottom;
 ///   https://alchemy.pascalpixel.com/places/venus-lighthouse-aerie/eruption-layers-3d.gif:
-///   five and a half seconds in, pulled apart into its layers, the sky at
-///   the back, BG2, BG1 and BG0, and the sprites in front).
+///   five and a half seconds in, pulled apart into its layers, the sky at the
+///   back, BG2, BG1 and BG0, and the sprites in front).
 /// - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
 ///   VenusLighthouseAerie_ShowShebaInDanger): Sheba hangs from the broken
 ///   aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the world map
@@ -214,12 +214,12 @@ enum {
   SHEBA_ANIMATION_SLIP = 7
 };
 
-// The aerie's map flags:
-// FLAG_MAP_TEMP_34: Saturos and Menardi slide together as they fuse.
-// FLAG_MAP_TEMP_35: they grow as they fuse.
-// FLAG_MAP_TEMP_36: the beacon has erupted; its particles rise higher.
-// FLAG_MAP_TEMP_37: the light has lifted the party and flashed white.
-// FLAG_MAP_TEMP_50: the leader stands on a platform.
+// The aerie's map flags: FLAG_VENUS_AERIE_FUSION_SLIDING: Saturos and Menardi
+// slide together as they fuse. FLAG_VENUS_AERIE_FUSION_GROWING: they grow as
+// they fuse. FLAG_VENUS_AERIE_BEACON_ERUPTED: the beacon has erupted; its
+// particles rise higher. FLAG_VENUS_AERIE_PARTY_LIFTED: the light has lifted
+// the party and flashed white. FLAG_VENUS_AERIE_ON_PLATFORM: the leader stands
+// on a platform.
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -314,6 +314,17 @@ VenusLighthouseAerie_GetObjectEventTemplates(void) {
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
+/// Saturos and Menardi slide together as they fuse.
+#define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_MAP_TEMP_34
+/// Saturos and Menardi grow as they fuse.
+#define FLAG_VENUS_AERIE_FUSION_GROWING FLAG_MAP_TEMP_35
+/// The beacon has erupted, and its particles rise higher.
+#define FLAG_VENUS_AERIE_BEACON_ERUPTED FLAG_MAP_TEMP_36
+/// The beacon's light has lifted the party and flashed white.
+#define FLAG_VENUS_AERIE_PARTY_LIFTED FLAG_MAP_TEMP_37
+/// The leader stands on one of the floating platforms.
+#define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_MAP_TEMP_50
+
 /// Walking off the edge of a platform: if the ground two cells ahead is clear,
 /// the leader jumps across to it.
 static void EventScript_JumpToNextPlatform(void) {
@@ -334,7 +345,7 @@ static void EventScript_JumpToNextPlatform(void) {
   Vector_AddPolarOffset(PIXELS(32), angle, destination.coordinates);
   if (FieldObject_CheckMovementCollision(objectEvent, &destination.position) ==
       0) {
-    GameFlag_Clear(FLAG_MAP_TEMP_50);
+    GameFlag_Clear(FLAG_VENUS_AERIE_ON_PLATFORM);
     EventScript_FloatPlatforms();
     Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     WaitFrames(6);
@@ -355,8 +366,8 @@ static void EventScript_JumpToNextPlatform(void) {
 }
 
 /// Landing on a platform: it dips under the leader and springs back up.
-/// FLAG_MAP_TEMP_50 is set while the leader stands on a platform, so this
-/// runs once per landing.
+/// FLAG_VENUS_AERIE_ON_PLATFORM is set while the leader stands on a platform,
+/// so this runs once per landing.
 static void EventScript_LandOnPlatform(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct ObjectEvent *platform;
@@ -367,7 +378,7 @@ static void EventScript_LandOnPlatform(void) {
   platformId = ObjectEvent_FindNearestFloatingPlatform();
   gVenusLighthouseAerie_LandedPlatform = platformId;
   if (platformId != 0) {
-    GameFlag_Set(FLAG_MAP_TEMP_50);
+    GameFlag_Set(FLAG_VENUS_AERIE_ON_PLATFORM);
     platform = ObjectEvent_GetById(gVenusLighthouseAerie_LandedPlatform);
     platform->motionFlags = 0;
     leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
@@ -1948,9 +1959,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                    TASK_PRIORITY_MAP);
   ObjectEvent_StartRepeatedMotion(LOCALID_GARET, 2);
   Script_ShowMessage(LOCALID_GARET, 0);
-  GameFlag_Set(FLAG_MAP_TEMP_34);
+  GameFlag_Set(FLAG_VENUS_AERIE_FUSION_SLIDING);
   Script_ShowMessage(LOCALID_IVAN, 0);
-  GameFlag_Set(FLAG_MAP_TEMP_35);
+  GameFlag_Set(FLAG_VENUS_AERIE_FUSION_GROWING);
   VenusLighthouseAerie_FlashScreen();
   Script_Wait(20);
   VenusLighthouseAerie_FlashScreen();
@@ -2028,12 +2039,12 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   struct Sprite *sprite;
   s32 angle;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_36) == 0 &&
+  if (Script_GetFlag(FLAG_VENUS_AERIE_BEACON_ERUPTED) == 0 &&
       Math_RemainderUnsigned(gFrameCount, 3) != 0) {
     return;
   }
   center = ObjectEvent_Get(LOCALID_BEAM_BOTTOM);
-  if (GameFlag_Get(FLAG_MAP_TEMP_36) != 0) {
+  if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
     effect = ObjectEvent_Create(SPRITE_PARTICLE, center->x.fixed,
                                 (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
                                     center->y.fixed - PIXELS(28),
@@ -2084,7 +2095,7 @@ static void VenusLighthouseAerie_UpdateBeamObjectEvents(void) {
   if (pairParked != 0) {
     saturos->facing = 0;
     menardi->facing = 0;
-    if (GameFlag_Get(FLAG_MAP_TEMP_35) != 0) {
+    if (GameFlag_Get(FLAG_VENUS_AERIE_FUSION_GROWING) != 0) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_SATUROS, SPRITE_COLOR_WHITE);
       ObjectEvent_ConfigureSpriteColor(LOCALID_MENARDI, SPRITE_COLOR_WHITE);
       if (saturos->scaleX < 5 * Q16_ONE / 4) {
@@ -2102,7 +2113,7 @@ static void VenusLighthouseAerie_UpdateBeamObjectEvents(void) {
         ObjectEvent_ConfigureSpriteColor(LOCALID_MENARDI, SPRITE_COLOR_HIDDEN);
       }
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
+    if (GameFlag_Get(FLAG_VENUS_AERIE_FUSION_SLIDING) != 0) {
       if (saturos->x.fixed < PIXELS(312)) {
         saturos->x.fixed += PIXELS(1) / 16;
         menardi->x.fixed += PIXELS(1) / 16;
@@ -2499,7 +2510,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   PaletteFade_StartInterpolation(24);
   WaitFrames(60);
   Sound_PlaySong(SE_RUMBLE);
-  GameFlag_Set(FLAG_MAP_TEMP_36);
+  GameFlag_Set(FLAG_VENUS_AERIE_BEACON_ERUPTED);
   ObjectEvent_GetById(LOCALID_BEAM_BOTTOM)->y.fixed = -PIXELS(96);
   ObjectEvent_GetById(LOCALID_BEAM_LOWER)->y.fixed = -PIXELS(64);
   ObjectEvent_ConfigureSpriteColor(LOCALID_BEAM_MIDDLE, SPRITE_COLOR_WHITE);
@@ -2660,7 +2671,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
                              TASK_PRIORITY_MAP);
   do {
     WaitFrames(1);
-  } while (GameFlag_Get(FLAG_MAP_TEMP_37) == 0);
+  } while (GameFlag_Get(FLAG_VENUS_AERIE_PARTY_LIFTED) == 0);
   GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_KEEP_MUSIC);
@@ -3207,7 +3218,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   case 48:
     ObjectMotion_EnableActionAndResetMotion(LOCALID_BEACON_ORB);
-    Script_SetFlag(FLAG_MAP_TEMP_37);
+    Script_SetFlag(FLAG_VENUS_AERIE_PARTY_LIFTED);
     break;
   }
   if (spawnParticles) {
@@ -3590,8 +3601,8 @@ struct MapEvent gVenusLighthouseAerieEvents[] = {
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING,
      MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
-    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, FLAG_MAP_TEMP_50,
-     EVENT_SCRIPT(EventScript_LandOnPlatform)},
+    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+     FLAG_VENUS_AERIE_ON_PLATFORM, EVENT_SCRIPT(EventScript_LandOnPlatform)},
     {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_ConfrontSaturosAndMenardi)},
     {MAP_EVENTS_END},

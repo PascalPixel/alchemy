@@ -340,6 +340,11 @@ enum TolbiShipDeckMetatileBehavior {
 // Shared code, included where it sits in the ROM.
 #include "common/object_pulse.h"
 
+/// The door to the passengers' hold has been drawn open this visit.
+#define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_MAP_TEMP_71
+/// The door to the captain's quarters has been drawn open this visit.
+#define FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN FLAG_MAP_TEMP_72
+
 /// An action-script call: shows the object event's sprite. Returns 0 to end the
 /// call.
 static s32 TolbiShipDeck_ShowSprite(struct Object *interpreter) {
@@ -940,19 +945,19 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
 
 /// Opens the first door to below deck, once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_71) == 0) {
+  if (Script_GetFlag(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 94, 13, 94, 1, 3);
-    GameFlag_Set(FLAG_MAP_TEMP_71);
+    GameFlag_Set(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN);
   }
 }
 
 /// Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_72) == 0) {
+  if (Script_GetFlag(FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 108, 13, 108, 1, 2);
-    GameFlag_Set(FLAG_MAP_TEMP_72);
+    GameFlag_Set(FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN);
   }
 }
 
@@ -1302,8 +1307,8 @@ static void TolbiShipDeck_ApplyEntryState(void) {
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_Clear(FLAG_MAP_TEMP_71);
-    GameFlag_Clear(FLAG_MAP_TEMP_72);
+    GameFlag_Clear(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN);
+    GameFlag_Clear(FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipDeck_CopyUnderwayCells();

@@ -3,14 +3,14 @@
 /// he holds Hammet for ransom in Lunpa Fortress. Two map sections share this
 /// overlay, each a map of its own:
 ///
-/// - Lunpa (MapId_Lunpa, area name Lunpa): the town. Two guards keep the
-///   road in from the world map; doors lead into the homes, shops, inn and
-///   temple (LunpaInteriors, lunpa_interiors.c), roads to West Lunpa Cave and
-///   up to the Lunpa Fortress Gates, and a hidden passage to the jail
+/// - Lunpa (MapId_Lunpa, area name Lunpa): the town. Two guards keep the road
+///   in from the world map; doors lead into the homes, shops, inn and temple
+///   (LunpaInteriors, lunpa_interiors.c), roads to West Lunpa Cave and up to
+///   the Lunpa Fortress Gates, and a hidden passage to the jail
 ///   (LUNPA_TO_VAULT_JAIL, whose area name there is Lunpa).
-/// - Lunpa Fortress Gates (MapId_LunpaFortressGates, area name Lunpa
-///   Fortress Gates): the steps up to the fortress door, kept by two guards
-///   whom the party gets past under Cloak.
+/// - Lunpa Fortress Gates (MapId_LunpaFortressGates, area name Lunpa Fortress
+///   Gates): the steps up to the fortress door, kept by two guards whom the
+///   party gets past under Cloak.
 ///
 /// The getters choose by gSaveBlock.mapId, and the town's map events also by
 /// FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress sets: before
@@ -26,35 +26,37 @@
 /// opens the passage to the jail, which can be walked through only while Reveal
 /// shows it (EventScript_EnterHiddenPassage). Its map temp flags:
 ///
-/// - FLAG_MAP_TEMP_00: Frost has frozen the puddle.
-/// - FLAG_MAP_TEMP_01: the secrets are hidden, Reveal not shining.
-/// - FLAG_MAP_TEMP_02: the switch has opened the passage.
+/// - FLAG_LUNPA_PUDDLE_FROZEN: Frost has frozen the puddle.
+/// - FLAG_LUNPA_SECRETS_HIDDEN: the secrets are hidden, Reveal not shining.
+/// - FLAG_LUNPA_HIDDEN_PASSAGE_OPEN: the switch has opened the passage.
 ///
 /// At the gates, stepping uncloaked on the ground before the guards
 /// (MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND) brings them in front of the door,
 /// and an uncloaked leader among them, or one still among them as Cloak fades,
 /// is marched back down the steps (EventScript_GuardsCatchParty, raised as
-/// RAISED_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty). A party caught in
-/// the fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown
-/// down the steps; after the rescue it leaves the fortress by
+/// RAISED_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty). A party caught in the
+/// fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown down the
+/// steps; after the rescue it leaves the fortress by
 /// LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and sneaks past under
 /// Cloak. Every entry clears the fortress's puzzle and beaten-guard flags, so
 /// the fortress starts over. Between Donpa's judgment and the reunion in West
-/// Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from
-/// going back up (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH). Its map temp
-/// flags:
+/// Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going
+/// back up (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH). Its map temp flags:
 ///
-/// - FLAG_MAP_TEMP_40: the guards stand before the door.
-/// - FLAG_MAP_TEMP_41: Cloak has been cast at the gates.
-/// - FLAG_MAP_TEMP_42: the leader is going through the fortress door.
-/// - FLAG_MAP_TEMP_43: Garet's warning is under way.
-/// - FLAG_MAP_TEMP_44: the guards are marching the party down.
+/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR: the guards stand before the
+///   door.
+/// - FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST: Cloak has been cast at the gates.
+/// - FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS: the leader is going through
+///   the fortress door.
+/// - FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING: Garet's warning is under way.
+/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY: the guards are marching
+///   the party down.
 ///
 /// Open questions:
-/// - XXX (no evidence): where GATE_WARP_THIRD, the gates' third road, was
-///   meant to lead; gGateWarps has no row for it, so the engine's fallback
-///   sends it to LunpaFortressGroundFloor's default warp destination, and
-///   nothing else in the ROM names a destination for it.
+/// - XXX (no evidence): where GATE_WARP_THIRD, the gates' third road, was meant
+///   to lead; gGateWarps has no row for it, so the engine's fallback sends it
+///   to LunpaFortressGroundFloor's default warp destination, and nothing else
+///   in the ROM names a destination for it.
 
 #include "save_block.h"
 #include "version.h"
@@ -82,6 +84,23 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
+
+/// Frost has frozen the hidden puddle into an ice pillar to stand on.
+#define FLAG_LUNPA_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+/// The town's secrets are hidden: Reveal is not shining.
+#define FLAG_LUNPA_SECRETS_HIDDEN FLAG_MAP_TEMP_01
+/// The hidden switch has opened the passage to the jail.
+#define FLAG_LUNPA_HIDDEN_PASSAGE_OPEN FLAG_MAP_TEMP_02
+/// The guards have stepped in front of the fortress door.
+#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR FLAG_MAP_TEMP_40
+/// Cloak has been cast at the gates and has not yet faded.
+#define FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST FLAG_MAP_TEMP_41
+/// The leader is going through the fortress door.
+#define FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS FLAG_MAP_TEMP_42
+/// Garet's warning against going back up to the fortress is under way.
+#define FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING FLAG_MAP_TEMP_43
+/// The guards have caught the party and are marching it down the steps.
+#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY FLAG_MAP_TEMP_44
 
 /// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
 /// frames, then it moves away and is freed.
@@ -179,7 +198,7 @@ static void EventScript_FreezeHiddenPuddle(void) {
     pillar->motionFlags = OBJ_EVENT_FALLS;
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_LUNPA_PUDDLE_FROZEN);
 }
 
 /// Every frame while the pillar stands: draw it under the leader once the
@@ -225,12 +244,12 @@ static void EventScript_RevealSecrets(void) {
   ObjectEvent_SetPosition(LOCALID_HIDDEN_PUDDLE, PIXELS(232), PIXELS(72));
   ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE)->y.fixed = 0;
 #if TBS_PATCH_4
-  if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
+  if (GameFlag_Get(FLAG_LUNPA_PUDDLE_FROZEN)) {
     Lunpa_ApplyFrozenPuddleCollision();
   }
 #endif
   // The opened passage replaces the sparkle; otherwise show the hidden switch.
-  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     Lunpa_DrawHiddenPassageFrame(41, 49);
   } else {
     ObjectEvent_SetPosition(LOCALID_SWITCH_SPARKLE, PIXELS(56), PIXELS(268));
@@ -245,7 +264,7 @@ static void EventScript_RevealSecrets(void) {
     }
   }
   FieldScheduler_AddCallback(Lunpa_UpdateIcePillarDrawOrder, TASK_PRIORITY_MAP);
-  GameFlag_Clear(FLAG_MAP_TEMP_01);
+  GameFlag_Clear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
 /// Lunpa, as Reveal ends and on every entry: the secrets hide again.
@@ -261,13 +280,13 @@ static void EventScript_HideSecrets(void) {
   MapGrid_CopyCellAttributes(8, 16, 1, 1, 7, 16);
   TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, 0, 0);
   MapGrid_CopyCells(32, 42, 3, 2, 1, 15);
-  GameFlag_Clear(FLAG_MAP_TEMP_00);
+  GameFlag_Clear(FLAG_LUNPA_PUDDLE_FROZEN);
   Import_ObjectEventSetAnimation(LOCALID_HIDDEN_PUDDLE, ANIM_STAND);
   puddle = ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE);
   puddle->update = NULL;
   ObjectEvent_SetColorMode(ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE), 0);
   Task_Remove(Lunpa_UpdateIcePillarDrawOrder);
-  GameFlag_Set(FLAG_MAP_TEMP_01);
+  GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
 /// Searching the well (MB_LUNPA_WELL, MB_LUNPA_FORTRESS_GATES_WELL), in Lunpa
@@ -482,8 +501,9 @@ static void EventScript_ReadRightGuardsThoughts(void) {
 static void Lunpa_WatchForFortressApproach(void) {
   s32 leaderRow = ObjectEvent_Get(LOCALID_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_43) == 0 && leaderRow == 10) {
-    GameFlag_Set(FLAG_MAP_TEMP_43);
+  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING) == 0 &&
+      leaderRow == 10) {
+    GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING);
     gFieldWork->coordEvent = MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH;
   }
 }
@@ -502,7 +522,7 @@ static void EventScript_GaretTurnsLeaderBack(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 12);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  GameFlag_Clear(FLAG_MAP_TEMP_43);
+  GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING);
   FieldScript_End();
 }
 
@@ -545,8 +565,8 @@ static void EventScript_EnterDoor(void) {
 /// Lunpa, MB_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the jail once
 /// opened, while Reveal shows it.
 static void EventScript_EnterHiddenPassage(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
-    if (GameFlag_Get(FLAG_MAP_TEMP_01) == 0) {
+  if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
+    if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
@@ -560,7 +580,7 @@ static void EventScript_EnterHiddenPassage(void) {
 /// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR: through the
 /// fortress door at the top of the steps, into Lunpa Fortress.
 static void EventScript_EnterFortress(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_42);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS);
   FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
@@ -580,9 +600,9 @@ static void EventScript_EnterFortress(void) {
 static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
 
 /// Unused: plays the treasure fanfare for Reveal uncovering something, until
-/// FLAG_MAP_TEMP_01 is set; nothing calls it.
+/// FLAG_LUNPA_SECRETS_HIDDEN is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_01) == 0) {
+  if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
     Sound_PlaySong(MUS_TREASURE_FOUND);
   }
 }
@@ -590,10 +610,10 @@ UNUSED static void Lunpa_PlayRevealCue(void) {
 /// Lunpa: searching the switch Reveal shows opens the passage to the jail in
 /// five steps.
 static void EventScript_PressHiddenSwitch(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) != 0) {
     return;
   }
-  if (Script_GetFlag(FLAG_MAP_TEMP_02) != 0) {
+  if (Script_GetFlag(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     return;
   }
   // Open the passage over five map frames, then remember its final state.
@@ -610,7 +630,7 @@ static void EventScript_PressHiddenSwitch(void) {
   WaitFrames(10);
   Lunpa_DrawHiddenPassageFrame(41, 49);
   WaitFrames(10);
-  GameFlag_Set(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN);
 }
 
 /// Copies one open or blocked source cell across the three-cell gateway.
@@ -645,7 +665,7 @@ static void EventScript_GuardsBlockGate(void) {
                               0);
     FieldScript_SetMessageId(MsgLunpaGuardsWarnPartyAway);
     Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
-    GameFlag_Set(FLAG_MAP_TEMP_40);
+    GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR);
     Lunpa_CopyGatewayCollision(6, 11);
     FieldScript_End();
   }
@@ -656,7 +676,7 @@ static void UNUSED Lunpa_DoNothing(void) {}
 /// Lunpa Fortress Gates, casting Cloak: the gateway closes behind the guards.
 static void EventScript_CastCloak(void) {
   Lunpa_CopyGatewayCollision(6, 11);
-  GameFlag_Set(FLAG_MAP_TEMP_41);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST);
 }
 
 /// Lunpa Fortress Gates, raised when the guards spot the party: they wonder
@@ -665,10 +685,10 @@ static void EventScript_GuardsCatchParty(void) {
   struct ObjectEvent *leader;
   s32 warningMessageBase;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_44) != 0) {
+  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY) != 0) {
     return;
   }
-  GameFlag_Set(FLAG_MAP_TEMP_44);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY);
   FieldScript_Start();
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
@@ -734,8 +754,8 @@ static void EventScript_CloakFades(void) {
 #if TBS_PATCH_1
   work = gFieldWork;
 #endif
-  GameFlag_Clear(FLAG_MAP_TEMP_41);
-  GameFlag_Clear(FLAG_MAP_TEMP_40);
+  GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST);
+  GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240) &&
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
@@ -747,7 +767,7 @@ static void EventScript_CloakFades(void) {
 #endif
   }
   Lunpa_ReopenGateway();
-  GameFlag_Clear(FLAG_MAP_TEMP_44);
+  GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY);
 }
 
 /// Every frame at the Lunpa Fortress Gates: an uncloaked leader in front of
@@ -924,7 +944,7 @@ s32 Map_Initialize(void) {
     if (puddle != NULL) {
       ObjectEvent_SetSpriteFlags(puddle, 0);
     }
-    GameFlag_Set(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
   // Restore the gate's arrival cutscene and active detection tasks separately.
   if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressGates) {
@@ -1098,12 +1118,13 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
 
 #define LUNPA_SECRETS                                                          \
   {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_HIDDEN_PUDDLE,                \
-   FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_FreezeHiddenPuddle)},            \
+   FLAG_LUNPA_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeHiddenPuddle)},    \
       {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,        \
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSecrets)},             \
       {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,        \
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSecrets)},               \
-      {BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_HIDDEN_SWITCH, FLAG_MAP_TEMP_01,    \
+      {BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_HIDDEN_SWITCH,                      \
+       FLAG_LUNPA_SECRETS_HIDDEN,                                              \
        EVENT_SCRIPT(EventScript_PressHiddenSwitch)},                           \
       {BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_PSYNERGY_STONE,                     \
        FLAG_LUNPA_PSYNERGY_STONE, FIND_PSYNERGY_STONE},                        \
@@ -1208,9 +1229,9 @@ struct MapEvent gGateEvents[] = {
     { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_WARP_THIRD },
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastCloak) },
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CloakFades) },
-    { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR, FLAG_MAP_TEMP_42,
+    { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR, FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS,
       EVENT_SCRIPT(EventScript_EnterFortress) },
-    { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND, FLAG_MAP_TEMP_40,
+    { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND, FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR,
       EVENT_SCRIPT(EventScript_GuardsBlockGate) },
     { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_GaretTurnsLeaderBack) },

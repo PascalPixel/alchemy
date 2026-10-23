@@ -6,29 +6,28 @@
 /// holds the weapon and armor shops, another the item shop, a third the inn
 /// with the restaurant beside it, whose stairs
 /// (BILIBIN_INTERIORS_INN_TO_INN_UPSTAIRS and
-/// BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN) join it to its upstairs
-/// rooms; three other buildings hold villagers.
-/// BilibinInteriors_GetObjectEventTemplates leaves out the object events of the
-/// rooms not in view.
+/// BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms; three
+/// other buildings hold villagers. BilibinInteriors_GetObjectEventTemplates
+/// leaves out the object events of the rooms not in view.
 ///
 /// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
 /// clear) and one for after. Before, the townsfolk explain the tree at the
 /// village entrance, McCoy's palace and the Water of Hermes, and in the
-/// restaurant the head chef, born in Kolima, is too worried to cook. After,
-/// the head chef cooks so hard his kitchen cannot keep up: the first time the
-/// party talks to him (FLAG_MAPSEC_TEMP_00, kept until the party leaves
+/// restaurant the head chef, born in Kolima, is too worried to cook. After, the
+/// head chef cooks so hard his kitchen cannot keep up: the first time the party
+/// talks to him (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party leaves
 /// Bilibin) he shouts a string of orders and the kitchen worker answers, and
 /// from then on he sends the party to the waitress
 /// (EventScript_TalkToBusyChef).
 ///
 /// gBilibinInteriorsEvents keeps both times in one table, in the ROM's order:
 /// every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
-/// for afterwards, so the first row that matches picks the time. The
-/// merchants and the innkeeper open the shop or the inn only when the leader
-/// faces them across the counter (facing north), and otherwise talk of the
-/// time; Mind Read on the villager who admires Mia depends on whether she is in
-/// the party. Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg
-/// soup and omelettes in the ovens, and a book called "All About Items".
+/// for afterwards, so the first row that matches picks the time. The merchants
+/// and the innkeeper open the shop or the inn only when the leader faces them
+/// across the counter (facing north), and otherwise talk of the time; Mind Read
+/// on the villager who admires Mia depends on whether she is in the party.
+/// Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg soup and
+/// omelettes in the ovens, and a book called "All About Items".
 /// BilibinInteriors_Initialize opens the rooms with a window around the leader
 /// and draws one diner, LOCALID_BILIBIN_DINER, at a fixed sprite priority. He
 /// stands at the north edge of the restaurant's table, on cell (7, 49), which
@@ -60,6 +59,10 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
+
+/// The head chef has shouted his string of orders once, so from then on he
+/// sends the party to the waitress.
+#define FLAG_BILIBIN_CHEF_CALLED_ORDERS FLAG_MAPSEC_TEMP_00
 
 /// Bilibin's shops, as Shop_Run numbers the shops.
 enum {
@@ -357,9 +360,9 @@ static void EventScript_TalkToBusyChef(void) {
   // The test is the script layer's inline and the set below a direct call,
   // each as it matches: an inline call's argument is a pseudo of its own,
   // where a direct call keeps the flag number in a callee-saved register.
-  if (Script_GetFlag(FLAG_MAPSEC_TEMP_00) == 0) {
-    // The first time (FLAG_MAPSEC_TEMP_00, kept until the party leaves
-    // Bilibin), the chef shouts orders and the kitchen worker answers.
+  if (Script_GetFlag(FLAG_BILIBIN_CHEF_CALLED_ORDERS) == 0) {
+    // The first time (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
+    // leaves Bilibin), the chef shouts orders and the kitchen worker answers.
     FieldScript_SetMessageId(MsgBilibinTwoSpecialsOneDinnerOne);
     Script_ShowMessage(LOCALID_BILIBIN_CHEF, 0);
     ObjectEvent_FaceDirection(LOCALID_BILIBIN_CHEF, FACING_WEST, 20);
@@ -371,7 +374,7 @@ static void EventScript_TalkToBusyChef(void) {
     FieldScript_WaitFrames(60);
     Script_ShowMessage(LOCALID_BILIBIN_KITCHEN_WORKER, 0);
     FieldScript_WaitFrames(10);
-    GameFlag_Set(FLAG_MAPSEC_TEMP_00);
+    GameFlag_Set(FLAG_BILIBIN_CHEF_CALLED_ORDERS);
   }
   // Then, as every later time, he sends the party to the waitress.
   ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_CHEF, LOCALID_PARTY_LEADER, 0);

@@ -1,7 +1,7 @@
 /// @file
 /// Kolima Forest (MapId_KolimaForestEntrance), the first of the forest's five
-/// maps, entered from the world map (KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP).
-/// If the party comes here before it has been to Kolima, the curse's cutscene
+/// maps, entered from the world map (KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP). If
+/// the party comes here before it has been to Kolima, the curse's cutscene
 /// plays here instead of in the village
 /// (KolimaForestEntrance_WitnessForestCurse, until
 /// FLAG_KOLIMA_CURSE_WITNESSED): sparkles of Tret's glamour rain down, fields
@@ -12,12 +12,12 @@
 /// The fields flicker: the leader's and Mia's show on even frames and Ivan's
 /// and Garet's on odd ones, each lifted out of sight on the others
 /// (KolimaForestEntrance_FlickerPsynergyFields). A sparkle bursts where it
-/// lands only inside the boxes KolimaForestEntrance_BurstOnPsynergyField
-/// tests, two with Mia in the party and three without her
+/// lands only inside the boxes KolimaForestEntrance_BurstOnPsynergyField tests,
+/// two with Mia in the party and three without her
 /// (https://alchemy.pascalpixel.com/places/kolima-forest-entrance/psynergy-fields.png:
 /// two frames running without Mia and with her, each field's place labelled
-/// with whose it is, in colour on the frame it shows, and the boxes outlined
-/// in yellow).
+/// with whose it is, in colour on the frame it shows, and the boxes outlined in
+/// yellow).
 ///
 /// Three logs lie here, rolled by walking into them; the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can
@@ -26,9 +26,9 @@
 /// on into the forest (MapId_KolimaForestGlade),
 /// KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to the world map.
 ///
-/// FLAG_MAP_TEMP_00: the log is in the river. Like every map temp flag it is
-/// cleared when the party next comes in, so the log is back on the bank, but a
-/// battle keeps it.
+/// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER: the log is in the river. Like
+/// every map temp flag it is cleared when the party next comes in, so the log
+/// is back on the bank, but a battle keeps it.
 ///
 /// Open questions: none.
 
@@ -120,6 +120,10 @@ extern s32 gKolimaForestEntrance_SparkleSoundOn;
 
 #include "common/object_staged_object_event.h"
 
+/// The river log has tipped into the river and floats there as ground the party
+/// can cross.
+#define FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER FLAG_MAP_TEMP_00
+
 /// The end of a field's growing: if a sparkle has burst on a field, the field
 /// takes its next pose.
 static s32
@@ -176,7 +180,8 @@ KolimaForestEntrance_GetObjectEventTemplates(void) {
 /// Kolima Forest (MapId_KolimaForestEntrance), walking into a log: it rolls
 /// ahead until something stops it. The river log, stopped at the bank (cell
 /// column 20), tips over with a splash and floats in the water; its cells
-/// become ground the party can cross (sets FLAG_MAP_TEMP_00).
+/// become ground the party can cross (sets
+/// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER).
 static void KolimaForestEntrance_PushLog(void) {
   struct PushedObjectProbe res;
   FieldScript_Start();
@@ -197,7 +202,7 @@ static void KolimaForestEntrance_PushLog(void) {
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
       PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, MB_NORMAL);
-      GameFlag_Set(FLAG_MAP_TEMP_00);
+      GameFlag_Set(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
     }
@@ -219,7 +224,7 @@ const struct MapEvent *KolimaForestEntrance_GetEvents(void) {
 /// gone.
 s32 KolimaForestEntrance_Initialize(void) {
   Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
-  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);

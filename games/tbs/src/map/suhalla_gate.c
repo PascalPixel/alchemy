@@ -4,20 +4,19 @@
 /// in the order the pass is crossed:
 ///
 /// - SuhallaGateCheckpoint (MapId_SuhallaGateCheckpoint, area name Suhalla
-///   Gate): the gate itself, entered from the world map from the south and
-///   from the east, each into its own part of the map, with the house beside
-///   it (Gate to Suhalla, lunpa_interiors.c). Two soldiers keep the passage
-///   north.
-/// - SuhallaGateDew (MapId_SuhallaGateDew, area name Suhalla Gate): beyond
-///   the passage, in a west part and an east part, with Dew, a Mercury
-///   Djinni, and a chest.
-/// - Gateway Cave (MapId_GatewayCave, area name Gateway Cave): two caves
-///   out onto the world map, with a Psynergy Stone.
+///   Gate): the gate itself, entered from the world map from the south and from
+///   the east, each into its own part of the map, with the house beside it
+///   (Gate to Suhalla, lunpa_interiors.c). Two soldiers keep the passage north.
+/// - SuhallaGateDew (MapId_SuhallaGateDew, area name Suhalla Gate): beyond the
+///   passage, in a west part and an east part, with Dew, a Mercury Djinni, and
+///   a chest.
+/// - Gateway Cave (MapId_GatewayCave, area name Gateway Cave): two caves out
+///   onto the world map, with a Psynergy Stone.
 ///
 /// One warp table serves the three maps; the other getters choose by
-/// gSaveBlock.mapId, and SuhallaGateCheckpoint's object event templates also
-/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not
-/// otherwise named.
+/// gSaveBlock.mapId, and SuhallaGateCheckpoint's object event templates also by
+/// FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not otherwise
+/// named.
 ///
 /// Before Babi's audience after Colosso the guards turn the party away for want
 /// of travel papers, and metatile behavior 10 before the passage brings them
@@ -35,9 +34,9 @@
 /// so that Retreat from the house leads back out that way, and leaving for the
 /// world map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
 /// soldiers out without collision and patch the gate's cells around them, and
-/// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's
-/// Psynergy Stone is kept in a map section flag (FLAG_MAPSEC_TEMP_50), so it is
-/// back whenever the party returns from another map section.
+/// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's Psynergy
+/// Stone is kept in a map section flag (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so
+/// it is back whenever the party returns from another map section.
 ///
 /// Open questions: none.
 
@@ -68,6 +67,10 @@
 #include "songs.h"
 #include "item_ids.h"
 #include "fixed_math.h"
+
+/// Gateway Cave's Psynergy Stone has been found; a map section flag, so the
+/// stone is back once the party returns from another map section.
+#define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
 #if TBS_PATCH_3
 #define SUHALLA_GATE_RETREAT_MAP(currentMap) ((s32)&MapId_SuhallaGateCheckpoint)
@@ -701,6 +704,7 @@ struct MapEvent gGatewayCaveEvents[] = {
     {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
      GATEWAY_CAVE_SOUTH_TO_NORTH},
     {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
-    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_MAPSEC_TEMP_50, FIND_PSYNERGY_STONE},
+    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_GATEWAY_CAVE_PSYNERGY_STONE,
+     FIND_PSYNERGY_STONE},
     {MAP_EVENTS_END},
 };

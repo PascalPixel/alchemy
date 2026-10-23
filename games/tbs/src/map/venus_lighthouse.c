@@ -254,11 +254,11 @@ static void VenusLighthouse_AnimateWestTileWave(void);
 static void VenusLighthouse_AnimateEastTileWave(void);
 static void VenusLighthouse_RaiseLeaderWithSpray(void);
 
-// The lighthouse's map flags:
-// FLAG_MAP_TEMP_00: in the room with the floor switch, the pillar holds the
-// switch down; in the room of floating pillars, FLAG_MAP_TEMP_00 plus a
-// pillar's number (0 to 3): that pillar is set down in its place.
-// FLAG_MAP_TEMP_01: the leader stands on the floor switch.
+// The lighthouse's map flags: FLAG_MAP_TEMP_00: in the room with the floor
+// switch, the pillar holds the switch down; in the room of floating pillars,
+// FLAG_MAP_TEMP_00 plus a pillar's number (0 to 3): that pillar is set down in
+// its place. FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH: the leader stands on
+// the floor switch.
 
 // Each map numbers its object events by the rows of its own object event
 // template table, so each has an enum of its own; a row drawn as one of the
@@ -941,6 +941,10 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 
 #include "common/effect_radial.h"
 
+/// In VenusLighthouseGroundFloor, the leader stands on the floor switch and
+/// holds it down.
+#define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_MAP_TEMP_01
+
 // A light's update hook: every four frames a shrinking particle around it,
 // and now and then a sound while it moves.
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
@@ -1536,7 +1540,7 @@ static void EventScript_MovePillarOntoSwitch(void) {
 }
 
 /// In VenusLighthouseGroundFloor, standing on the floor switch presses it
-/// (FLAG_MAP_TEMP_01); stepping off releases it.
+/// (FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH); stepping off releases it.
 static void EventScript_StepOnFloorSwitch(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 x = leader->x.part.pixel;
@@ -1545,16 +1549,16 @@ static void EventScript_StepOnFloorSwitch(void) {
   if ((u32)(x - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-    GameFlag_Clear(FLAG_MAP_TEMP_01);
+    GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
     leader->motionFlags |= OBJ_EVENT_FOLLOWS_TERRAIN;
     leader->groundHeight = 0;
     leader->y.fixed = 0;
-  } else if (!Script_GetFlag(FLAG_MAP_TEMP_01)) {
+  } else if (!Script_GetFlag(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH)) {
     FieldScript_Start();
     FieldScript_WaitFrames(5);
     MapGrid_CopyCellsTo(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
-    GameFlag_Set(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
     Sound_PlaySong(SE_161);
     leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
     leader->groundHeight = -PIXELS(2);

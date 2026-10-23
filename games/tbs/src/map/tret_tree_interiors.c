@@ -1,7 +1,7 @@
 /// @file
-/// Tret Tree (MapId_TretTreeInteriors), the inside of Tret, the holy tree
-/// of Kolima Forest, and the first of Tret Tree's two maps. The party comes
-/// in from Kolima Forest (kolima_forest_tree.c) to face Tret's wrathful side.
+/// Tret Tree (MapId_TretTreeInteriors), the inside of Tret, the holy tree of
+/// Kolima Forest, and the first of Tret Tree's two maps. The party comes in
+/// from Kolima Forest (kolima_forest_tree.c) to face Tret's wrathful side.
 /// FLAG_TRET_DEFEATED, whether that battle is won and Tret has spoken with the
 /// party since, decides most of the map.
 ///
@@ -16,24 +16,25 @@
 /// through regions 28 to 36 pixels up (Map_GetWarpRegions).
 ///
 /// Webs hold cocoons, each a coord event (metatile behaviors 21 to 29, 31, 32
-/// and 50 to 59) with a temporary flag of its own (FLAG_MAP_TEMP_00 to _14).
-/// The first step on a cocoon tears it: its cell is redrawn and its flag set.
-/// The next step on a torn cocoon breaks through, and the leader spins and
-/// falls to the room below, arriving at the warp destination numbered as the
-/// cocoon (FLAG_ARRIVE_FALLING plays the landing): the cocoons 21 to 29 and 31
-/// and 32 drop the leader into one room and 50 to 59 into another
-/// (https://alchemy.pascalpixel.com/places/tret-tree-interiors/cocoons.png:
-/// the whole map, its six rooms where the grid lays them out, each cocoon's
-/// cells labelled with its metatile behavior and the warp destination of the
-/// same number ringed in the same colour). The layout draws four cocoons
-/// already torn (22, 52, 54 and 58) and the setup sets their flags, so they
-/// give way at the first step. A latch in the map state (sLastCocoon) keeps a
-/// step from counting twice until the leader walks on. Cocoon 50 is the way
-/// down to Tret: warp destinations 50, 40, 30 and 20 each let the leader fall
-/// on to the warp destination numbered ten lower, and at warp destination 10
-/// the leader lands in a ring of dust as the map shakes, in front of Tret. Torn
-/// cocoons stay torn across a battle: after one (FLAG_KEEP_PARTY_POSITION) the
-/// setup redraws them from gTretTreeInteriors_MapPatches.
+/// and 50 to 59) with a temporary flag of its own
+/// (FLAG_TRET_TREE_COCOON_21_TORN and the others). The first step on a cocoon
+/// tears it: its cell is redrawn and its flag set. The next step on a torn
+/// cocoon breaks through, and the leader spins and falls to the room below,
+/// arriving at the warp destination numbered as the cocoon (FLAG_ARRIVE_FALLING
+/// plays the landing): the cocoons 21 to 29 and 31 and 32 drop the leader into
+/// one room and 50 to 59 into another
+/// (https://alchemy.pascalpixel.com/places/tret-tree-interiors/cocoons.png: the
+/// whole map, its six rooms where the grid lays them out, each cocoon's cells
+/// labelled with its metatile behavior and the warp destination of the same
+/// number ringed in the same colour). The layout draws four cocoons already
+/// torn (22, 52, 54 and 58) and the setup sets their flags, so they give way at
+/// the first step. A latch in the map state (sLastCocoon) keeps a step from
+/// counting twice until the leader walks on. Cocoon 50 is the way down to Tret:
+/// warp destinations 50, 40, 30 and 20 each let the leader fall on to the warp
+/// destination numbered ten lower, and at warp destination 10 the leader lands
+/// in a ring of dust as the map shakes, in front of Tret. Torn cocoons stay
+/// torn across a battle: after one (FLAG_KEEP_PARTY_POSITION) the setup redraws
+/// them from gTretTreeInteriors_MapPatches.
 ///
 /// Tret's face (LOCALID_TRET) and a second Tret object event at the same spot
 /// speak his lines. Walking up to him (metatile behavior 40, while
@@ -116,9 +117,9 @@ enum {
 /// SPEAKER_WINDOW_BELOW.
 #define SPEAKER(localId) (SPEAKER_WINDOW_BELOW | (localId))
 
-// The map's temporary flags: FLAG_MAP_TEMP_00 to _14 are set the first
-// time each cocoon is stepped on, tearing it; the next step breaks through
-// (gTretTreeInteriors_MapPatches lists them).
+// The map's temporary flags: FLAG_TRET_TREE_COCOON_21_TORN and the others are
+// set the first time each cocoon is stepped on, tearing it; the next step
+// breaks through (gTretTreeInteriors_MapPatches lists them).
 
 #define COCOON_FALL_SPIN_FRAMES 30
 #define SWIRL_SPARK_LAST_FRAME 79
@@ -161,6 +162,74 @@ static s16 *sLastCocoon;
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+
+/// Cocoon 21 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_21_TORN FLAG_MAP_TEMP_00
+/// Cocoon 22 has been torn by a first step, so the next step on it drops the
+/// leader to the room below (the layout draws it torn, and the setup sets this
+/// flag).
+#define FLAG_TRET_TREE_COCOON_22_TORN FLAG_MAP_TEMP_01
+/// Cocoon 23 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_23_TORN FLAG_MAP_TEMP_02
+/// Cocoon 24 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_24_TORN FLAG_MAP_TEMP_03
+/// Cocoon 25 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_25_TORN FLAG_MAP_TEMP_04
+/// Cocoon 26 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_26_TORN FLAG_MAP_TEMP_05
+/// Cocoon 27 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_27_TORN FLAG_MAP_TEMP_06
+/// Cocoon 28 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_28_TORN FLAG_MAP_TEMP_07
+/// Cocoon 29 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_29_TORN FLAG_MAP_TEMP_08
+/// Cocoon 31 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_31_TORN FLAG_MAP_TEMP_09
+/// Cocoon 32 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_32_TORN FLAG_MAP_TEMP_0A
+/// Cocoon 50, the way down to Tret, has been torn by a first step, so the next
+/// step on it drops the leader to the room below.
+#define FLAG_TRET_TREE_COCOON_50_TORN FLAG_MAP_TEMP_0B
+/// Cocoon 51 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_51_TORN FLAG_MAP_TEMP_0C
+/// Cocoon 52 has been torn by a first step, so the next step on it drops the
+/// leader to the room below (the layout draws it torn, and the setup sets this
+/// flag).
+#define FLAG_TRET_TREE_COCOON_52_TORN FLAG_MAP_TEMP_0D
+/// Cocoon 53 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_53_TORN FLAG_MAP_TEMP_0E
+/// Cocoon 54 has been torn by a first step, so the next step on it drops the
+/// leader to the room below (the layout draws it torn, and the setup sets this
+/// flag).
+#define FLAG_TRET_TREE_COCOON_54_TORN FLAG_MAP_TEMP_0F
+/// Cocoon 55 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_55_TORN FLAG_MAP_TEMP_10
+/// Cocoon 56 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_56_TORN FLAG_MAP_TEMP_11
+/// Cocoon 57 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_57_TORN FLAG_MAP_TEMP_12
+/// Cocoon 58 has been torn by a first step, so the next step on it drops the
+/// leader to the room below (the layout draws it torn, and the setup sets this
+/// flag).
+#define FLAG_TRET_TREE_COCOON_58_TORN FLAG_MAP_TEMP_13
+/// Cocoon 59 has been torn by a first step, so the next step on it drops the
+/// leader to the room below.
+#define FLAG_TRET_TREE_COCOON_59_TORN FLAG_MAP_TEMP_14
 
 /// Returns the map's warp destinations, the cocoons' landing spots among them.
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -246,128 +315,128 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon21(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_00, 64, 35, 21);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_21_TORN, 64, 35, 21);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon22(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_01, 65, 35, 22);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_22_TORN, 65, 35, 22);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon23(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_02, 66, 35, 23);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_23_TORN, 66, 35, 23);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon24(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_03, 67, 35, 24);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_24_TORN, 67, 35, 24);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon25(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_04, 68, 35, 25);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_25_TORN, 68, 35, 25);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon26(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_05, 69, 35, 26);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_26_TORN, 69, 35, 26);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon27(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_06, 70, 35, 27);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_27_TORN, 70, 35, 27);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon28(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_07, 71, 35, 28);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_28_TORN, 71, 35, 28);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon29(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_08, 72, 35, 29);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_29_TORN, 72, 35, 29);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon31(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_09, 73, 35, 31);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_31_TORN, 73, 35, 31);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon32(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0A, 74, 35, 32);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_32_TORN, 74, 35, 32);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon50(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0B, 79, 35, 50);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_50_TORN, 79, 35, 50);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon51(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0C, 75, 35, 51);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_51_TORN, 75, 35, 51);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon52(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0D, 76, 35, 52);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_52_TORN, 76, 35, 52);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon53(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0E, 77, 35, 53);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_53_TORN, 77, 35, 53);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon54(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0F, 78, 35, 54);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_54_TORN, 78, 35, 54);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon55(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_10, 80, 35, 55);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_55_TORN, 80, 35, 55);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below. Cocoon 56 lands at the same spot as cocoon 54: their warp
 /// destinations agree.
 static void EventScript_StepOnCocoon56(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_11, 81, 35, 56);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_56_TORN, 81, 35, 56);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon57(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_12, 82, 35, 57);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_57_TORN, 82, 35, 57);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon58(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_13, 83, 35, 58);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_58_TORN, 83, 35, 58);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnCocoon59(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_14, 84, 35, 59);
+  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_COCOON_59_TORN, 84, 35, 59);
 }
 
 /// Walking on over a cocoon in Tret Tree clears the latch, so the next step on
@@ -769,10 +838,10 @@ s32 TretTreeInteriors_EnterRoom(void) {
   layer->scaleY = 0xe666;
   // The layout draws four cocoons already torn: the first step on them breaks
   // through.
-  GameFlag_Set(FLAG_MAP_TEMP_01);
-  GameFlag_Set(FLAG_MAP_TEMP_0D);
-  GameFlag_Set(FLAG_MAP_TEMP_0F);
-  GameFlag_Set(FLAG_MAP_TEMP_13);
+  GameFlag_Set(FLAG_TRET_TREE_COCOON_22_TORN);
+  GameFlag_Set(FLAG_TRET_TREE_COCOON_52_TORN);
+  GameFlag_Set(FLAG_TRET_TREE_COCOON_54_TORN);
+  GameFlag_Set(FLAG_TRET_TREE_COCOON_58_TORN);
   WaitFrames(1);
   TretTreeInteriors_ApplyPostBattleState(0);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
@@ -1153,27 +1222,27 @@ s32 gFieldEffect_LongScript[] = {
 /// cocoon's cell x/y.
 // clang-format off
 s16 gTretTreeInteriors_MapPatches[] = {
-    FLAG_MAP_TEMP_00, 1, 64, 35, 113, 6,
-    FLAG_MAP_TEMP_01, 0, 65, 35, 115, 6,
-    FLAG_MAP_TEMP_02, 1, 66, 35, 110, 8,
-    FLAG_MAP_TEMP_03, 1, 67, 35, 110, 10,
-    FLAG_MAP_TEMP_04, 1, 68, 35, 111, 12,
-    FLAG_MAP_TEMP_05, 1, 69, 35, 113, 12,
-    FLAG_MAP_TEMP_06, 1, 70, 35, 112, 14,
-    FLAG_MAP_TEMP_07, 1, 71, 35, 114, 14,
-    FLAG_MAP_TEMP_08, 1, 72, 35, 116, 14,
-    FLAG_MAP_TEMP_09, 1, 73, 35, 71, 23,
-    FLAG_MAP_TEMP_0A, 1, 74, 35, 77, 24,
-    FLAG_MAP_TEMP_0C, 1, 75, 35, 112, 24,
-    FLAG_MAP_TEMP_0D, 0, 76, 35, 114, 24,
-    FLAG_MAP_TEMP_0E, 1, 77, 35, 116, 24,
-    FLAG_MAP_TEMP_0F, 0, 78, 35, 112, 26,
-    FLAG_MAP_TEMP_0B, 1, 79, 35, 114, 26,
-    FLAG_MAP_TEMP_10, 1, 80, 35, 116, 26,
-    FLAG_MAP_TEMP_11, 1, 81, 35, 112, 28,
-    FLAG_MAP_TEMP_12, 1, 82, 35, 114, 28,
-    FLAG_MAP_TEMP_13, 0, 83, 35, 116, 28,
-    FLAG_MAP_TEMP_14, 1, 84, 35, 118, 28,
+    FLAG_TRET_TREE_COCOON_21_TORN, 1, 64, 35, 113, 6,
+    FLAG_TRET_TREE_COCOON_22_TORN, 0, 65, 35, 115, 6,
+    FLAG_TRET_TREE_COCOON_23_TORN, 1, 66, 35, 110, 8,
+    FLAG_TRET_TREE_COCOON_24_TORN, 1, 67, 35, 110, 10,
+    FLAG_TRET_TREE_COCOON_25_TORN, 1, 68, 35, 111, 12,
+    FLAG_TRET_TREE_COCOON_26_TORN, 1, 69, 35, 113, 12,
+    FLAG_TRET_TREE_COCOON_27_TORN, 1, 70, 35, 112, 14,
+    FLAG_TRET_TREE_COCOON_28_TORN, 1, 71, 35, 114, 14,
+    FLAG_TRET_TREE_COCOON_29_TORN, 1, 72, 35, 116, 14,
+    FLAG_TRET_TREE_COCOON_31_TORN, 1, 73, 35, 71, 23,
+    FLAG_TRET_TREE_COCOON_32_TORN, 1, 74, 35, 77, 24,
+    FLAG_TRET_TREE_COCOON_51_TORN, 1, 75, 35, 112, 24,
+    FLAG_TRET_TREE_COCOON_52_TORN, 0, 76, 35, 114, 24,
+    FLAG_TRET_TREE_COCOON_53_TORN, 1, 77, 35, 116, 24,
+    FLAG_TRET_TREE_COCOON_54_TORN, 0, 78, 35, 112, 26,
+    FLAG_TRET_TREE_COCOON_50_TORN, 1, 79, 35, 114, 26,
+    FLAG_TRET_TREE_COCOON_55_TORN, 1, 80, 35, 116, 26,
+    FLAG_TRET_TREE_COCOON_56_TORN, 1, 81, 35, 112, 28,
+    FLAG_TRET_TREE_COCOON_57_TORN, 1, 82, 35, 114, 28,
+    FLAG_TRET_TREE_COCOON_58_TORN, 0, 83, 35, 116, 28,
+    FLAG_TRET_TREE_COCOON_59_TORN, 1, 84, 35, 118, 28,
     -1, 0,
 };
 

@@ -263,25 +263,25 @@ enum StormNightMapSecFlag {
   /// does not play again.
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_FIRST_ROCK_PASSED = 0x310,
+  FLAG_VALE_STORM_FIRST_ROCK_PASSED = FLAG_MAPSEC_TEMP_10,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_SECOND_ROCK_PASSED = 0x311,
+  FLAG_VALE_STORM_SECOND_ROCK_PASSED = FLAG_MAPSEC_TEMP_11,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_THIRD_ROCK_PASSED = 0x312,
+  FLAG_VALE_STORM_THIRD_ROCK_PASSED = FLAG_MAPSEC_TEMP_12,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_FOURTH_ROCK_PASSED = 0x313
+  FLAG_VALE_STORM_FOURTH_ROCK_PASSED = FLAG_MAPSEC_TEMP_13
 };
 
 // Map flags, cleared on every ordinary arrival:
-// - FLAG_MAP_TEMP_05: the door of Isaac's house, from which Dora and Isaac
-//   came, stands open.
-// - FLAG_MAP_TEMP_06: the stout man has run out of the door of
+// - FLAG_VALE_ISAACS_DOOR_OPEN: the door of Isaac's house, from which Dora and
+//   Isaac came, stands open.
+// - FLAG_VALE_SHOVING_MANS_DOOR_OPEN: the stout man has run out of the door of
 //   VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH, leaving it open.
-// - FLAG_MAP_TEMP_10: the leader is on the upper path, whose metatile behaviors
-//   are swapped until the leader steps off it.
+// - FLAG_VALE_ON_UPPER_PATH: the leader is on the upper path, whose metatile
+//   behaviors are swapped until the leader steps off it.
 
 static s32 sShakeDone;
 static s32 sShakeShift;
@@ -304,6 +304,16 @@ static s32 ValeStorm_RerollHeadingOnCountdown(struct Object *interpreter) {
 
 #include "common/object_pulse.h"
 
+/// The door of Isaac's house, from which Dora and Isaac came out into the
+/// storm, stands open.
+#define FLAG_VALE_ISAACS_DOOR_OPEN FLAG_MAP_TEMP_05
+/// The stout man has run out of his door and shoved Isaac, leaving the door
+/// open.
+#define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_MAP_TEMP_06
+/// The leader is on the upper path, whose metatile behaviors are swapped until
+/// the leader steps off it.
+#define FLAG_VALE_ON_UPPER_PATH FLAG_MAP_TEMP_10
+
 /// Returns where the party appears;
 /// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA is where Dora and Isaac come
 /// out of the door of their house, from MapId_ValeInteriorsInn's
@@ -323,19 +333,19 @@ const struct ObjectEventTemplate *ValeStorm_GetObjectEventTemplates(void) {
 const struct MapEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
 /// In Vale on the stormy night, swaps the upper path's metatile behaviors as
-/// the leader steps onto it.
-/// Reached by stepping on metatile behavior 15. Sets FLAG_MAP_TEMP_10,
-/// which ValeStorm_Initialize reads to swap them again.
+/// the leader steps onto it. Reached by stepping on metatile behavior 15. Sets
+/// FLAG_VALE_ON_UPPER_PATH, which ValeStorm_Initialize reads to swap them
+/// again.
 static void EventScript_SetPathCellOverride(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_10);
+  GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 /// In Vale on the stormy night, restores the upper path's metatile behaviors as
-/// the leader steps off it.
-/// Reached by stepping on metatile behavior 14. Clears FLAG_MAP_TEMP_10.
+/// the leader steps off it. Reached by stepping on metatile behavior 14. Clears
+/// FLAG_VALE_ON_UPPER_PATH.
 static void EventScript_ClearPathCellOverride(void) {
-  GameFlag_Clear(FLAG_MAP_TEMP_10);
+  GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -415,18 +425,18 @@ static void EventScript_LeaveToValeInteriorsShopsEast(void) {
 /// VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH; afterwards the door opens as
 /// usual. "Huh? Isaac?" Reached by walking north into metatile behavior 7. The
 /// shove plays until FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or
-/// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets FLAG_MAP_TEMP_06;
-/// otherwise goes into a house of Vale (MapId_ValeInteriorsShops, at
-/// VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
+/// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets
+/// FLAG_VALE_SHOVING_MANS_DOOR_OPEN; otherwise goes into a house of Vale
+/// (MapId_ValeInteriorsShops, at VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
 static void EventScript_LeaveToValeInteriorsShops(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_06) == 0) {
+  if (Script_GetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 45, 39);
   }
   if (GameFlag_Get(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
       GameFlag_Get(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
     ValeStorm_BumpIntoShovingMan();
-    GameFlag_Set(FLAG_MAP_TEMP_06);
+    GameFlag_Set(FLAG_VALE_SHOVING_MANS_DOOR_OPEN);
   } else {
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 262, 805);
     FieldScript_WaitFrames(3);
@@ -441,7 +451,7 @@ static void EventScript_LeaveToValeInteriorsShops(void) {
 /// VALE_INTERIORS_INN_FROM_VALE in MapId_ValeInteriorsInn, where Vale's
 /// VALE_TO_VALE_INTERIORS_INN leads by day.
 static void EventScript_LeaveToValeInteriorsInn(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_05) == 0) {
+  if (GameFlag_Get(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gValeStorm_IsaacsDoorOpens, 50, 44);
   }
@@ -522,8 +532,8 @@ s32 ValeStorm_Initialize(void) {
   Map_QueueMusic(SE_170);
   Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_Clear(FLAG_MAP_TEMP_05);
-    GameFlag_Clear(FLAG_MAP_TEMP_06);
+    GameFlag_Clear(FLAG_VALE_ISAACS_DOOR_OPEN);
+    GameFlag_Clear(FLAG_VALE_SHOVING_MANS_DOOR_OPEN);
   }
   // Restore the rocks that have already fallen.
   if (GameFlag_Get(FLAG_VALE_STORM_FIRST_ROCK_FELL) != 0) {
@@ -694,7 +704,7 @@ s32 ValeStorm_Initialize(void) {
     Weather_StartRain();
     Weather_StartLightning();
   }
-  if (GameFlag_Get(FLAG_MAP_TEMP_10) != 0) {
+  if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH) != 0) {
     EventScript_SetPathCellOverride();
   }
   GameFlag_Set(FLAG_VALE_STORM);
@@ -748,13 +758,12 @@ s32 ValeStorm_Initialize(void) {
 }
 
 /// In Vale on the stormy night, Dora comes out into the storm with Isaac to
-/// Kyle, and the two send Isaac on to the plaza while they go to help.
-/// "Kyle... Will they be able to stop the Boulder?"
-/// Called by ValeStorm_Initialize on arrival by
-/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA until
+/// Kyle, and the two send Isaac on to the plaza while they go to help. "Kyle...
+/// Will they be able to stop the Boulder?" Called by ValeStorm_Initialize on
+/// arrival by VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA until
 /// FLAG_VALE_STORM_SENT_TO_PLAZA is set. Sets it and
-/// FLAG_MAP_TEMP_05, clears FLAG_SHOW_LOCATION_NAME, and
-/// removes Dora and Kyle.
+/// FLAG_VALE_ISAACS_DOOR_OPEN, clears FLAG_SHOW_LOCATION_NAME, and removes Dora
+/// and Kyle.
 static void EventScript_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
@@ -856,7 +865,7 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_GARET_DRAG);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
-  GameFlag_Set(FLAG_MAP_TEMP_05);
+  GameFlag_Set(FLAG_VALE_ISAACS_DOOR_OPEN);
   FieldScript_End();
 }
 

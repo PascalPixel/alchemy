@@ -284,20 +284,20 @@ enum {
   /// Frost has frozen the room's first puddle.
   /// ★ Named from what the player sees: a small puddle of water on the mine's
   /// floor (its render)
-  FLAG_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
+  FLAG_ALTIN_PEAK_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
   /// Frost has frozen AltinPeakFirstWaterBeast's second puddle or
   /// AltinPeakSpritz's second.
   /// ★ Named from what the player sees: a small puddle of water on the mine's
   /// floor (its render)
-  FLAG_SECOND_PUDDLE_FROZEN = FLAG_MAP_TEMP_01,
+  FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN = FLAG_MAP_TEMP_01,
   /// Frost has frozen AltinPeakSpritz's third puddle.
   /// ★ Named from what the player sees: a small puddle of water on the mine's
   /// floor (its render)
-  FLAG_THIRD_PUDDLE_FROZEN = FLAG_MAP_TEMP_04,
+  FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN = FLAG_MAP_TEMP_04,
   /// Garet has come out to look at AltinPeakFallingRocks's falling-rock sign.
   /// ★ Named from the game: "Watch for falling rocks!"
   /// (MsgAltinWatchFallingRocks)
-  FLAG_GARET_WATCHING_ROCKS = FLAG_MAP_TEMP_05
+  FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS = FLAG_MAP_TEMP_05
 };
 
 /// A chest searched while facing the given way.
@@ -558,7 +558,7 @@ static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  GameFlag_Set(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakFirstWaterBeast's second puddle, three cells across: the
@@ -571,7 +571,7 @@ static void AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle(void) {
   if (puddle != 0) {
     puddle->motionFlags = OBJ_EVENT_FALLS;
   }
-  GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakSpritz's first puddle.
@@ -585,7 +585,7 @@ static void AltinPeak_FreezeSpritzRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  GameFlag_Set(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakThirdWaterBeast's puddle.
@@ -599,7 +599,7 @@ static void AltinPeak_FreezeThirdWaterBeastRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  GameFlag_Set(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakPool's puddle.
@@ -613,7 +613,7 @@ static void AltinPeak_FreezePoolRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  GameFlag_Set(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakSpritz's second puddle.
@@ -627,7 +627,7 @@ static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakSpritz's third puddle.
@@ -641,7 +641,7 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN);
 }
 
 /// Interrupt handler while the water layer vanishes: each time, background 1
@@ -1046,7 +1046,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   leader->timer = 0;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gAltinPeak_LeaderFleePath);
-  if (GameFlag_Get(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(878), PIXELS(528));
     objectEvent = ObjectEvent_Get(LOCALID_GARET);
     objectEvent->facing = FACING_SOUTH + FACING_STEP;
@@ -1098,13 +1098,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Return Garet to the party if the warning sign brought him into the scene.
   FieldScript_WaitFrames(120);
-  if (Script_GetFlag(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (Script_GetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkTo(LOCALID_GARET, 824, 558);
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 854, 584);
-  if (Script_GetFlag(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (Script_GetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   }
@@ -1115,7 +1115,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   FieldCamera_WaitForArrival();
   Script_PlaySong(SE_148);
   FieldScript_WaitFrames(240);
-  if (GameFlag_Get(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     FieldCamera_MoveTo(PIXELS(854), 0, PIXELS(584), 1);
     FieldCamera_WaitForArrival();
@@ -1149,7 +1149,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
   if (GameFlag_Get(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) == 0) {
     // Bring Garet out to inspect the warning and demonstrate the danger.
-    GameFlag_Set(FLAG_GARET_WATCHING_ROCKS);
+    GameFlag_Set(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 790, 140);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 780, 140);
@@ -1658,7 +1658,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
     grid->flags &= 0xfdff;
     AltinPeak_MarkObjectEventTerrainCell(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE);
-    if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
+    if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
       Import_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(7, 13, 1, 1, 9, 13);
@@ -1668,7 +1668,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     }
     AltinPeak_MarkObjectEventTerrainCell(
         LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-    if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
+    if (GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN) != 0) {
       Import_ObjectEventSetAnimation(
           LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
           PUDDLE_ANIMATION_FROZEN);
@@ -1758,7 +1758,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE);
-  if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
     Import_ObjectEventSetAnimation(LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(23, 13, 1, 1, 25, 13);
@@ -1790,7 +1790,7 @@ static void AltinPeak_RestorePoolRoom(void) {
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_POOL_ROOM_PUDDLE);
-  if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
     pillar = ObjectEvent_Get(LOCALID_POOL_ROOM_PUDDLE);
     Import_ObjectEventSetAnimation(LOCALID_POOL_ROOM_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
@@ -1821,7 +1821,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   AltinPeak_SettleSpritzRoomPillar();
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_SPRITZ_ROOM_PUDDLE);
-  if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
     Import_ObjectEventSetAnimation(LOCALID_SPRITZ_ROOM_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 26, 26);
@@ -1833,7 +1833,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_SPRITZ_ROOM_SECOND_PUDDLE);
-  if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN) != 0) {
     Import_ObjectEventSetAnimation(LOCALID_SPRITZ_ROOM_SECOND_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(1, 0, 1, 1, 17, 10);
@@ -1845,7 +1845,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE);
-  if (GameFlag_Get(FLAG_THIRD_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN) != 0) {
     Import_ObjectEventSetAnimation(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(1, 0, 1, 1, 26, 15);
@@ -3134,9 +3134,9 @@ struct MapEvent gAltinPeak_FirstWaterBeastEvents[] = {
 
 struct MapEvent gAltinPeak_FirstWaterBeastEventsDrained[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN,
         EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomPuddle)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle)},
     {MAP_EVENTS_END},
 };
 
@@ -3180,7 +3180,7 @@ struct MapEvent gAltinPeak_SouthEntranceEvents[] = {
 
 struct MapEvent gAltinPeak_ThirdWaterBeastEvents[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeThirdWaterBeastRoomPuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeThirdWaterBeastRoomPuddle)},
     {MAP_EVENT_TALK, LOCALID_THIRD_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightThirdWaterBeast)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), PSYNERGY_SCRIPT_PLAYS_EFFECT | LOCALID_THIRD_WATER_BEAST, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltinPeak_FightThirdWaterBeast)},
@@ -3200,7 +3200,7 @@ struct MapEvent gAltinPeak_PoolEvents[] = {
     {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST},
     {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST},
     {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_POOL_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezePoolRoomPuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_POOL_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezePoolRoomPuddle)},
     {MAP_EVENT_TALK, LOCALID_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
     {BG_EVENT(BG_EVENT_SILENT), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipPoolRoomSwitch)},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN, FIND_MIMIC | 2},
@@ -3220,10 +3220,10 @@ struct MapEvent gAltinPeak_SpritzEvents[] = {
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SPRITZ_ROOM_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_SettleSpritzRoomPillar)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltinPeak_PushSpritzRoomPillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SPRITZ_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeSpritzRoomPuddle)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SPRITZ_ROOM_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SPRITZ_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeSpritzRoomPuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SPRITZ_ROOM_SECOND_PUDDLE, FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN,
         EVENT_SCRIPT(AltinPeak_FreezeSpritzRoomSecondPuddle)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SPRITZ_ROOM_THIRD_PUDDLE, FLAG_THIRD_PUDDLE_FROZEN,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SPRITZ_ROOM_THIRD_PUDDLE, FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN,
         EVENT_SCRIPT(AltinPeak_FreezeSpritzRoomThirdPuddle)},
     {MAP_EVENTS_END},
 };

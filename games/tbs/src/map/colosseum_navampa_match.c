@@ -954,9 +954,9 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
 
 /// Reaching Colosseum Final 3's arena: the leader takes a prize (the Claymore
 /// if first, the Hunter's Sword if second), and he and Navampa face off and
-/// fight; the battle's group follows who took the Claymore.
-/// The arena's coord event row waits on FLAG_MAP_TEMP_10 being clear, which
-/// nothing in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
+/// fight; the battle's group follows who took the Claymore. The arena's coord
+/// event row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which nothing in
+/// the game sets (colosseum_azart_match.c's EventScript_ReachArena).
 static void EventScript_ReachArena(void) {
   s32 place;
   s32 i;
@@ -2373,6 +2373,15 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
 
 #include "common/colosso_occupant.h"
 
+/// Closes the arena's coord event; nothing in the game sets it.
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
+/// The chest holding a Smoke Bomb has been opened.
+#define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_6A
+/// The chest holding a Nut has been opened.
+#define FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED FLAG_MAPSEC_TEMP_6B
+/// The chest holding a Sleep Bomb has been opened.
+#define FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_6C
+
 /// The Moving Sidewalk Stage's log where Force has knocked it off the belt,
 /// bobbing a pixel up and down.
 const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[] = {
@@ -2620,10 +2629,10 @@ struct MapEvent gColosseumNavampaMatchEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT_SCRIPT(EventScript_SettleStones) },
     { MAP_EVENT_COORD, 15, FLAG_ON_SCALES, EVENT_SCRIPT(EventScript_StepOnScales) },
     { MAP_EVENT_COORD, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT_SCRIPT(EventScript_StepOffScales) },
-    { MAP_EVENT_COORD, 50, FLAG_MAP_TEMP_10, EVENT_SCRIPT(EventScript_ReachArena) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_6A, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_MAPSEC_TEMP_6B, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_MAPSEC_TEMP_6C, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
+    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_PUDDLE, FLAG_SCALES_FROZEN, EVENT_SCRIPT(EventScript_FreezeOnScales) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT_SCRIPT(EventScript_HaltWall) },

@@ -3,28 +3,32 @@
 /// north and south under the bridge, and the 4-by-2 cells at (23, 26) are both
 /// the path below and the bridge's deck above: MB_VAULT_BRIDGE_END (vault.h)
 /// gives them the deck's ground, 32 pixels up, so the leader crosses on the
-/// bridge, and MB_VAULT_WEST_OF_BRIDGE gives them back the path's ground, so
-/// he walks under it (render probe vault-bridge: crossing either way he stays
-/// 32 pixels up, and walking the path he stays on the ground).
-/// FLAG_MAP_TEMP_00 remembers the deck, which each map restores on a
+/// bridge, and MB_VAULT_WEST_OF_BRIDGE gives them back the path's ground, so he
+/// walks under it (render probe vault-bridge: crossing either way he stays 32
+/// pixels up, and walking the path he stays on the ground).
+/// FLAG_VAULT_ON_BRIDGE remembers the deck, which each map restores on a
 /// kept-position return, such as after battle.
 #include "types.h"
 #include "object_event.h"
 #include "script_layer.h"
 #include "flags.h"
 
+/// The cells under Vault's rope bridge have the deck's ground, so the leader is
+/// on the bridge; kept through a battle.
+#define FLAG_VAULT_ON_BRIDGE FLAG_MAP_TEMP_00
+
 /// Gives the cells under the bridge the deck's ground, from a copy kept
 /// elsewhere in the map. MB_VAULT_BRIDGE_END reaches it; it sets
-/// FLAG_MAP_TEMP_00, keeping the deck across a kept-position return.
+/// FLAG_VAULT_ON_BRIDGE, keeping the deck across a kept-position return.
 static void Vault_RaisePathToBridge(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_VAULT_ON_BRIDGE);
   MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
 }
 
 /// Gives the cells under the bridge the path's ground again, from the path's
-/// cells north of the bridge, and clears FLAG_MAP_TEMP_00.
+/// cells north of the bridge, and clears FLAG_VAULT_ON_BRIDGE.
 /// MB_VAULT_WEST_OF_BRIDGE reaches it.
 static void Vault_LowerPathUnderBridge(void) {
-  GameFlag_Clear(FLAG_MAP_TEMP_00);
+  GameFlag_Clear(FLAG_VAULT_ON_BRIDGE);
   MapGrid_CopyCellAttributes(23, 23, 4, 2, 23, 26);
 }

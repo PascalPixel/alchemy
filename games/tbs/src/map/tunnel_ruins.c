@@ -1,21 +1,21 @@
 /// @file
-/// The Tunnel Ruins under Babi Lighthouse, two maps of Psynergy puzzles with
-/// no story event between Babi Lighthouse and Venus Lighthouse. Both have the
-/// area name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's
-/// three drops land, which the area names call Babi Lighthouse:
+/// The Tunnel Ruins under Babi Lighthouse, two maps of Psynergy puzzles with no
+/// story event between Babi Lighthouse and Venus Lighthouse. Both have the area
+/// name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's three
+/// drops land, which the area names call Babi Lighthouse:
 ///
-/// - TunnelRuinsGreatStatue (MapId_TunnelRuinsGreatStatue): entered from
-///   Babi Lighthouse's stone door. A statue in the first room speaks to the
-///   leader's soul; the rooms after it hold two pairs of pillars to push or
-///   Move, three small pillars with three patches of ivy for Whirlwind, and two
-///   pillars that sink into the floor once moved onto their columns, each then
-///   carrying a puddle for Frost.
-/// - TunnelRuinsLadyStatues (MapId_TunnelRuinsLadyStatues): a pillar that
-///   Douse soaks, two balance platforms weighed with carved stones by Carry,
-///   two false statues that Reveal makes vanish, two pillars that keep their
-///   places between visits, the room of four walkways over a pit, and five
-///   coloured statues of a woman that open the door to Venus Lighthouse once
-///   all five stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
+/// - TunnelRuinsGreatStatue (MapId_TunnelRuinsGreatStatue): entered from Babi
+///   Lighthouse's stone door. A statue in the first room speaks to the leader's
+///   soul; the rooms after it hold two pairs of pillars to push or Move, three
+///   small pillars with three patches of ivy for Whirlwind, and two pillars
+///   that sink into the floor once moved onto their columns, each then carrying
+///   a puddle for Frost.
+/// - TunnelRuinsLadyStatues (MapId_TunnelRuinsLadyStatues): a pillar that Douse
+///   soaks, two balance platforms weighed with carved stones by Carry, two
+///   false statues that Reveal makes vanish, two pillars that keep their places
+///   between visits, the room of four walkways over a pit, and five coloured
+///   statues of a woman that open the door to Venus Lighthouse once all five
+///   stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
 /// The getters choose by gSaveBlock.mapId; the object event templates of
 /// TunnelRuinsLadyStatues answer any other map number, and
@@ -35,23 +35,23 @@
 /// FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
-/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep map flags,
-/// which mean different things in each map:
+/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep map flags, which
+/// mean different things in each map:
 ///
-/// - TunnelRuinsGreatStatue: FLAG_MAP_TEMP_00 and FLAG_MAP_TEMP_01 are
-///   ivy A and B blown away beside the small pillars, and in the sinking
-///   pillars' room the two pillars' puddles frozen; FLAG_MAP_TEMP_02 is the
-///   south-east pillar soaked by Douse.
+/// - TunnelRuinsGreatStatue: FLAG_MAP_TEMP_00 and FLAG_MAP_TEMP_01 are ivy A
+///   and B blown away beside the small pillars, and in the sinking pillars'
+///   room the two pillars' puddles frozen; FLAG_MAP_TEMP_02 is the south-east
+///   pillar soaked by Douse.
 /// - TunnelRuinsLadyStatues: FLAG_MAP_TEMP_00 to FLAG_MAP_TEMP_02 are the
-///   carved stones set on the balance, FLAG_MAP_TEMP_03 the pillar soaked by
-///   Douse and FLAG_MAP_TEMP_04 its puddle frozen.
+///   carved stones set on the balance, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED
+///   the pillar soaked by Douse and FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN its
+///   puddle frozen.
 ///
 /// Each balance platform's timer is its weight: both start at 3, and a carved
 /// stone set on one adds one to it and takes one from the other, and
 /// gTunnelRuins_BalanceHeights turns each weight into the platform's height.
-/// Entering from the Great Statue's north sets the balance up empty; coming
-/// in by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it,
-/// one
+/// Entering from the Great Statue's north sets the balance up empty; coming in
+/// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-lady-statues/balance.png:
 /// the balance as each warp destination sets it up, each platform labelled with
@@ -532,6 +532,13 @@ static void EventScript_HopDownStep(void) {
 
 #include "common/effect_radial.h"
 
+/// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its puddle
+/// follows it.
+#define FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED FLAG_MAP_TEMP_03
+/// In TunnelRuinsLadyStatues, Frost has frozen the soaked pillar's puddle into
+/// a pillar of ice.
+#define FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN FLAG_MAP_TEMP_04
+
 /// The warp destinations of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other map number.
 const struct MapWarpDest *TunnelRuins_GetWarpDests(void) {
@@ -930,9 +937,9 @@ static void EventScript_ReadFirstStatue(void) {
   SCRIPT_END();
 }
 
-/// Moving the Douse pillar (until its puddle is frozen): nothing more
-/// happens.
-/// Reached by Move on the Douse pillar until FLAG_MAP_TEMP_04 is set.
+/// Moving the Douse pillar (until its puddle is frozen): nothing more happens.
+/// Reached by Move on the Douse pillar until
+/// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set.
 static void EventScript_MoveDousePillar(void) {
   SCRIPT_START();
   SCRIPT_END();
@@ -948,15 +955,15 @@ static void EventScript_PushDousePillar(void) {
 }
 
 /// As Douse begins on the pillar, water splashes on it and it is soaked; its
-/// puddle follows it from then on.
-/// Reached by Douse's first phase on the Douse pillar until it is soaked; sets
-/// FLAG_MAP_TEMP_03 and gives the puddle its update hook.
+/// puddle follows it from then on. Reached by Douse's first phase on the Douse
+/// pillar until it is soaked; sets FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED and
+/// gives the puddle its update hook.
 static void EventScript_DouseStartsOnPillar(void) {
   struct ObjectEvent *puddle;
 
   ObjectEvent_SetActionScript(LOCALID_DOUSE_PILLAR,
                               gTunnelRuins_DouseSplashScript);
-  GameFlag_Set(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
   puddle = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE);
 #ifdef UBFIX
   puddle->update = TunnelRuins_PuddleFollowsPillar;
@@ -967,9 +974,8 @@ static void EventScript_DouseStartsOnPillar(void) {
 }
 
 /// Frost on the pillar's puddle freezes it into a pillar of ice where it
-/// stands.
-/// Reached by Frost on the Douse pillar's puddle until FLAG_MAP_TEMP_04 is
-/// set; sets it.
+/// stands. Reached by Frost on the Douse pillar's puddle until
+/// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set; sets it.
 static void EventScript_FreezeDousePuddle(void) {
   struct ObjectEvent *objectEvent;
   s32 column;
@@ -986,7 +992,7 @@ static void EventScript_FreezeDousePuddle(void) {
     *flag &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
 
-  GameFlag_Set(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN);
 
   column = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->x.fixed;
   row = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->z.fixed >> 20;
@@ -1706,7 +1712,7 @@ s32 TunnelRuins_Initialize(void) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 15);
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE), 0);
       ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->motionFlags = 0;
-      if (!GameFlag_Get(FLAG_MAP_TEMP_04))
+      if (!GameFlag_Get(FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN))
         break;
       ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 0);
       OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 5);
@@ -2345,9 +2351,9 @@ struct MapEvent gTunnelRuinsEventsOther[] = {
     {BG_EVENT(BG_EVENT_SILENT), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSecondStatue)},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {BG_EVENT(BG_EVENT_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOUSE_PILLAR, FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_MoveDousePillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE) | 1 << 28, LOCALID_DOUSE_PILLAR, FLAG_MAP_TEMP_03, EVENT_SCRIPT(EventScript_DouseStartsOnPillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_DOUSE_PUDDLE, FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_FreezeDousePuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_MoveDousePillar)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE) | 1 << 28, LOCALID_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED, EVENT_SCRIPT(EventScript_DouseStartsOnPillar)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_DOUSE_PUDDLE, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeDousePuddle)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_CARRY_STONE, CONDITION_ALWAYS, 0},

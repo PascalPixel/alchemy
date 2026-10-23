@@ -1,7 +1,7 @@
 /// @file
-/// West Lunpa Cave (MapId_WestLunpaCave, area name West Lunpa Cave), the
-/// cave between Lunpa and the world map, with a gate across it, where the
-/// party meets Bunza on the way out of Lunpa with Hammet.
+/// West Lunpa Cave (MapId_WestLunpaCave, area name West Lunpa Cave), the cave
+/// between Lunpa and the world map, with a gate across it, where the party
+/// meets Bunza on the way out of Lunpa with Hammet.
 ///
 /// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
 /// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
@@ -17,12 +17,14 @@
 /// puzzle-solved tune. Frost also freezes a puddle to the south into a pillar
 /// that can be climbed, and one to the north. Its map flags:
 ///
-/// - FLAG_MAP_TEMP_00: the gate's puddle is frozen, propping the gate open.
-/// - FLAG_MAP_TEMP_01: the lowering switch has lowered the gate.
-/// - FLAG_MAP_TEMP_02: the gate is raised.
-/// - FLAG_MAP_TEMP_03: the north puddle is frozen.
-/// - FLAG_MAP_TEMP_04: the south puddle is frozen into a pillar, which
-///   changes one cell's metatile behavior.
+/// - FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate's puddle is frozen,
+///   propping the gate open.
+/// - FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has lowered the
+///   gate.
+/// - FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
+/// - FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen.
+/// - FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen into
+///   a pillar, which changes one cell's metatile behavior.
 ///
 /// Once Donpa has let the party leave Lunpa Fortress with Hammet
 /// (FLAG_DODONPA_LOCKED_UP), stepping onto
@@ -51,6 +53,17 @@
 #include "text/msg_ids.h"
 #include "fixed_math.h"
 
+/// The gate's puddle is frozen into a pillar, propping the gate open.
+#define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+/// The lowering switch has lowered the gate.
+#define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_MAP_TEMP_01
+/// The gate is raised.
+#define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_MAP_TEMP_02
+/// The north puddle is frozen into a pillar.
+#define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_MAP_TEMP_03
+/// The south puddle is frozen into a pillar that can be climbed.
+#define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_MAP_TEMP_04
+
 static void Reunion_Converse(void);
 static void WagonChoice_Run(void);
 static u8 WestLunpaCave_LeaderAnswersYes(void);
@@ -66,11 +79,12 @@ static void Party_StaysBehind(void);
 static void Party_RidesWagon(void);
 
 // The cave's map flags, the state of its gate puzzle:
-// FLAG_MAP_TEMP_00: the gate puddle is frozen, propping the gate open.
-// FLAG_MAP_TEMP_01: the lowering switch has lowered the gate.
-// FLAG_MAP_TEMP_02: the gate is raised.
-// FLAG_MAP_TEMP_03: the north puddle is frozen into a pillar.
-// FLAG_MAP_TEMP_04: the south puddle is frozen into a pillar.
+// FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate puddle is frozen, propping
+// the gate open. FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has
+// lowered the gate. FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
+// FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen into a
+// pillar. FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen
+// into a pillar.
 
 const struct MapWarpDest *Map_GetWarpDests(void) { return gCaveWarpDests; }
 
@@ -113,7 +127,7 @@ static void EventScript_FreezeSouthPuddle(void) {
     puddle->motionFlags = 0;
   }
   MapGrid_CopyCellAttributes(7, 32, 1, 1, 8, 32);
-  GameFlag_Set(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN);
 }
 
 /// Animates the raised gate resting on the frozen pillar, then opens the way
@@ -148,29 +162,29 @@ static void EventScript_FreezeGatePuddle(void) {
   struct ObjectEvent *pillar;
 
   pillar = ObjectEvent_Get(LOCALID_GATE_PUDDLE);
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN);
   if (pillar != NULL) {
     ObjectEvent_SetSpriteFlags(pillar, 0);
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
-  if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
+  if (Script_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
     Script_PlaySong(SE_GATE_MOVE);
     WestLunpaCave_GateDrawPropped();
     Script_PlaySong(MUS_PUZZLE_SOLVED);
-    GameFlag_Set(FLAG_MAP_TEMP_02);
+    GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
   }
 }
 
 /// In West Lunpa Cave, Frost on the north puddle: its pillar stays frozen when
 /// the party returns.
 static void EventScript_FreezeNorthPuddle(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN);
 }
 
 /// Lowers the gate in four-frame steps and restores the blocked cell
 /// attributes.
 static void WestLunpaCave_GateLower(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0) {
     MapGrid_CopyCells(41, 86, 2, 6, 21, 57);
     WaitFrames(4);
     MapGrid_CopyCells(43, 86, 2, 6, 21, 57);
@@ -196,13 +210,13 @@ static void WestLunpaCave_GateLower(void) {
 /// the gate comes down, unless it is down already or a frozen pillar props it
 /// open. "flipped the switch."
 static void EventScript_FlipLoweringSwitch(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_01) == 0) {
-    if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
+  if (Script_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
       WestLunpaCave_GateLower();
-      GameFlag_Set(FLAG_MAP_TEMP_01);
-      GameFlag_Clear(FLAG_MAP_TEMP_02);
+      GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
+      GameFlag_Clear(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
     }
   }
 }
@@ -226,13 +240,13 @@ static void WestLunpaCave_GateRaise(void) {
 /// the gate goes up, unless it is up already or propped open. "flipped the
 /// switch."
 static void EventScript_FlipRaisingSwitch(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
-    if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
+  if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
+    if (Script_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
       WestLunpaCave_GateRaise();
-      GameFlag_Set(FLAG_MAP_TEMP_02);
-      GameFlag_Clear(FLAG_MAP_TEMP_01);
+      GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
+      GameFlag_Clear(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
     }
   }
 }
@@ -1037,20 +1051,20 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_GATE_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_NORTH_PUDDLE), 0);
     ObjectEvent_GetById(LOCALID_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
-    if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0) {
       WestLunpaCave_GateLower();
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0) {
       WestLunpaCave_GateRaise();
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) != 0) {
       WestLunpaCave_GateDrawPropped();
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN) != 0) {
       Import_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN) != 0) {
       Import_ObjectEventSetAnimation(LOCALID_SOUTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }

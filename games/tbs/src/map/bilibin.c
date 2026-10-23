@@ -1,25 +1,25 @@
 /// @file
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three maps that
-/// share one overlay: MapId_Bilibin,
-/// MapId_BilibinTreasury and MapId_BilibinBarricade. The getters pick
-/// each map's tables by gSaveBlock.mapId, Bilibin_Initialize sets up the
-/// map being entered, and EventScript_PushStatueOrCrates serves all three.
+/// share one overlay: MapId_Bilibin, MapId_BilibinTreasury and
+/// MapId_BilibinBarricade. The getters pick each map's tables by
+/// gSaveBlock.mapId, Bilibin_Initialize sets up the map being entered, and
+/// EventScript_PushStatueOrCrates serves all three.
 ///
-/// Bilibin (MapId_Bilibin) is the town past Goma Cave, whose chief, Lord
-/// McCoy, has closed the road to Kolima. Almost everything here turns on
+/// Bilibin (MapId_Bilibin) is the town past Goma Cave, whose chief, Lord McCoy,
+/// has closed the road to Kolima. Almost everything here turns on
 /// FLAG_KOLIMA_CURSE_LIFTED, which the party sets in Kolima Forest when it
 /// heals Tret. Until then a man turned into a tree (LOCALID_TREE_MAN) stands at
-/// the entrance: a first look says it almost looks like a man, a second that
-/// it looks like a living person (FLAG_MAPSEC_TEMP_01 remembers the first until
-/// the party leaves Bilibin), and Mind Read hears `Help me... Somebody...`.
-/// Once the curse is lifted, Bilibin_RestoreVillageObjectEvents puts the man
-/// himself (LOCALID_FORMER_TREE_MAN) beside the empty spot and turns
-/// LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST and LOCALID_OLD_WOMAN_ROAD_BLOCKED
-/// about. Each of the ten villagers (LOCALID_YOUNG_MAN_WELCOME to
-/// LOCALID_VILLAGER_STRANGE_CREATURES) has two lines and two thoughts in
-/// gBilibinEvents, the row that needs the flag clear first, so the first row
-/// that matches picks the time; a few ask a yes-or-no question (the
-/// EventScript_AskAbout functions).
+/// the entrance: a first look says it almost looks like a man, a second that it
+/// looks like a living person (FLAG_BILIBIN_TREE_EXAMINED remembers the first
+/// until the party leaves Bilibin), and Mind Read hears `Help me...
+/// Somebody...`. Once the curse is lifted, Bilibin_RestoreVillageObjectEvents
+/// puts the man himself (LOCALID_FORMER_TREE_MAN) beside the empty spot and
+/// turns LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST and
+/// LOCALID_OLD_WOMAN_ROAD_BLOCKED about. Each of the ten villagers
+/// (LOCALID_YOUNG_MAN_WELCOME to LOCALID_VILLAGER_STRANGE_CREATURES) has two
+/// lines and two thoughts in gBilibinEvents, the row that needs the flag clear
+/// first, so the first row that matches picks the time; a few ask a yes-or-no
+/// question (the EventScript_AskAbout functions).
 ///
 /// Bilibin's doors (coord events 3 to 9, the numbers of the warps they take)
 /// open before the party walks in (EventScript_OpenDoorAndLeave): six lead into
@@ -30,22 +30,22 @@
 /// (LOCALID_IVY), gone when the party comes back out that way
 /// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no script, so
 /// Field_UsePsynergy only aims Whirlwind's effect at it and the ivy stays. And
-/// from the cell a statue
-/// (LOCALID_VILLAGE_STATUE) stands on, once Move or a push slides it aside.
-/// Bilibin_UpdateVillageStatueCells keeps the cells of the statue's lane in
-/// step and hops the leader clear if it lands on him; coming back out that way
-/// (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the party finds the statue moved.
+/// from the cell a statue (LOCALID_VILLAGE_STATUE) stands on, once Move or a
+/// push slides it aside. Bilibin_UpdateVillageStatueCells keeps the cells of
+/// the statue's lane in step and hops the leader clear if it lands on him;
+/// coming back out that way (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the party
+/// finds the statue moved.
 ///
-/// FLAG_MAPSEC_TEMP_04 is set while McCoy's gate guards have let the party in
-/// (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the palace
-/// (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the party
-/// for keeping McCoy waiting. The garden is another map section (map_headers.s
-/// gives Bilibin 8 and the garden 9), so Map_ResetFlagsOnEnter clears the
-/// flag on the way in and the guard never sees it set.
+/// FLAG_BILIBIN_KEEPING_MCCOY_WAITING is set while McCoy's gate guards have let
+/// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
+/// palace (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the
+/// party for keeping McCoy waiting. The garden is another map section
+/// (map_headers.s gives Bilibin 8 and the garden 9), so Map_ResetFlagsOnEnter
+/// clears the flag on the way in and the guard never sees it set.
 ///
-/// The Bilibin Treasury (MapId_BilibinTreasury) is what its sign calls
-/// `McCoy's Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he
-/// joins the party when spoken to (EventScript_GustJoins). A second statue
+/// The Bilibin Treasury (MapId_BilibinTreasury) is what its sign calls `McCoy's
+/// Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he joins
+/// the party when spoken to (EventScript_GustJoins). A second statue
 /// (LOCALID_TREASURY_STATUE) slides along one column, and
 /// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
 /// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
@@ -55,11 +55,11 @@
 ///
 /// The Bilibin Barricade (MapId_BilibinBarricade) is the road east to Kolima
 /// where McCoy's barricade stands, reached from the world map at either end.
-/// Its sign reads `This area is off-limits to all those without a permit.
-/// —Lord McCoy`, and a door there stays locked. A stack of crates
+/// Its sign reads `This area is off-limits to all those without a permit. —Lord
+/// McCoy`, and a door there stays locked. A stack of crates
 /// (LOCALID_BARRICADE_CRATES) slides a cell at a time under Move or a push, and
-/// Bilibin_UpdateCratesCells rewrites the ten cells of its lane after each
-/// move (its recording,
+/// Bilibin_UpdateCratesCells rewrites the ten cells of its lane after each move
+/// (its recording,
 /// places/bilibin-barricade/events/Bilibin_UpdateCratesCells.gif). By the river
 /// stand three trees, one on another's shoulders (LOCALID_BOTTOM_TREE,
 /// LOCALID_MIDDLE_TREE and LOCALID_JILL_TREE at one spot, 0, 32 and 48 pixels
@@ -264,6 +264,14 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 
 #include "common/object_facing.h"
 
+/// The party has looked once at the tree at Bilibin's entrance, so a second
+/// look says it looks like a living person.
+#define FLAG_BILIBIN_TREE_EXAMINED FLAG_MAPSEC_TEMP_01
+/// McCoy's gate guards have let the party in but it has not yet entered the
+/// palace; the garden guard who reads it is in another map section, so it is
+/// cleared before he can.
+#define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_MAPSEC_TEMP_04
+
 const struct MapWarpDest *Bilibin_GetWarpDests(void) {
   s16 mapId = gSaveBlock.mapId;
 
@@ -364,16 +372,16 @@ static void EventScript_InspectHumanShapedTree(void) {
 
 /// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
 /// almost looks like a man and, looked at again, like a living person.
-/// Map-section temp flag FLAG_MAPSEC_TEMP_01 remembers the first look until the
-/// party leaves Bilibin's map section.
+/// Map-section temp flag FLAG_BILIBIN_TREE_EXAMINED remembers the first look
+/// until the party leaves Bilibin's map section.
 static void EventScript_ExamineTreeMan(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
-  if (Script_GetFlag(FLAG_MAPSEC_TEMP_01) != 0) {
+  if (Script_GetFlag(FLAG_BILIBIN_TREE_EXAMINED) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_TREE_MAN, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_01);
+  GameFlag_Set(FLAG_BILIBIN_TREE_EXAMINED);
   FieldScript_End();
 }
 
@@ -685,7 +693,7 @@ s32 Bilibin_Initialize(void) {
 
 /// Sets up Bilibin: the tree or the man by FLAG_KOLIMA_CURSE_LIFTED, the ivy
 /// and the statue by the warp destination used, and map-section temp flag
-/// FLAG_MAPSEC_TEMP_04 for McCoy's garden guard.
+/// FLAG_BILIBIN_KEEPING_MCCOY_WAITING for McCoy's garden guard.
 static void Bilibin_RestoreVillageObjectEvents(void) {
 
   struct ObjectEvent *objectEvent;
@@ -720,7 +728,7 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
   Bilibin_UpdateVillageStatueCells();
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
       GameFlag_Get(FLAG_MCCOY_PALACE_VISITED) == 0) {
-    GameFlag_Set(FLAG_MAPSEC_TEMP_04);
+    GameFlag_Set(FLAG_BILIBIN_KEEPING_MCCOY_WAITING);
   }
 }
 

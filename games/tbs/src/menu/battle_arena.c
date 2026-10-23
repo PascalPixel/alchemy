@@ -46,6 +46,38 @@
 #include "songs.h"
 #include "heap.h"
 
+/// The attendant has asked the player to take part; every 300th call of
+/// BattleArena_PromptToParticipate clears it so she asks again.
+#define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_MAP_TEMP_00
+/// The linked partner has asked for a battle: its signature matches and it
+/// stands asked or in the circle.
+#define FLAG_BATTLE_ARENA_PARTNER_ASKED FLAG_MAP_TEMP_01
+/// The player has agreed to a battle.
+#define FLAG_BATTLE_ARENA_PLAYER_AGREED FLAG_MAP_TEMP_02
+/// The party is on its way into the battle.
+#define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_MAP_TEMP_03
+/// LOCALID_PARTY_ORDER_VISITOR has given the linked finals' limit of three
+/// allies, so the next talk explains how to change the party's order.
+#define FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT FLAG_MAP_TEMP_04
+/// The link was lost and the attendant has yet to say so.
+#define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_MAP_TEMP_05
+/// The first of eight flags, one per character from Isaac, each set while that
+/// character is in the battle party (BattleArena_RunRoundResult).
+#define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_MAP_TEMP_F0
+/// The attendant has explained the Battle Arena once; talking to her again
+/// offers to apply.
+#define FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED FLAG_MAPSEC_TEMP_00
+/// This console is the link's child (multiplayer id 1), which receives the
+/// parties first.
+#define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_MAPSEC_TEMP_02
+/// The link is up: both consoles were heard (LOBBY_LINK_READY_MASK).
+#define FLAG_BATTLE_ARENA_LINK_UP FLAG_MAPSEC_TEMP_03
+/// A linked battle has ended since the leader last walked south of z 224, so
+/// the party and the visitors speak of it.
+#define FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED FLAG_MAPSEC_TEMP_04
+/// The last linked battle was won.
+#define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_MAPSEC_TEMP_05
+
 // Link transfers use three unit records followed by one recovery-table record.
 /// The bytes sent for each member: a Unit (BATTLE_UNIT_SIZE, 0x14c)
 /// and the eight bytes after it. XXX: likely rounded up to whole 20-byte
@@ -74,36 +106,14 @@
 /// up.
 #define LOBBY_PEER_WAIT_FRAMES 25
 
-// The Battle Arena's flags, besides FLAG_MONSTER_BATTLE, FLAG_LINK_BATTLE
-// and the two byte flags flags.h names:
-// FLAG_MAP_TEMP_00: the attendant has asked the player to take part; every
-//   300th call of BattleArena_PromptToParticipate clears it, to ask again.
-// FLAG_MAP_TEMP_01: the linked partner has asked for a battle: its
-//   signature matches, and its state is LOBBY_SLOT_ASKED or
-//   LOBBY_SLOT_IN_CIRCLE.
-// FLAG_MAP_TEMP_02: the player has agreed to a battle.
-// FLAG_MAP_TEMP_03: the party is on its way into the battle.
-// FLAG_MAP_TEMP_04: the attendant's next explanation is the party order.
-// FLAG_MAP_TEMP_05: the link was lost, and the attendant has yet to say so.
-// FLAG_MAP_TEMP_F0 + n: character n is in the battle party, set on every
-//   arrival (BattleArena_RunRoundResult).
-// FLAG_LINK_BATTLE_ARRANGED: a linked battle has been arranged (with
-// FLAG_LINK_BATTLE): only the
-//   first three members take part (BattleArena_PartyContains).
-// The map section flags it uses (flags.h):
-// FLAG_MAPSEC_TEMP_00: the attendant has explained once; talking again offers
-// to apply. FLAG_MAPSEC_TEMP_02: this console is the link's child (multiplayer
-// id 1), which receives
-//   the parties first. BattleArena_PeerSlotMatches sets FLAG_MAPSEC_TEMP_02 and
-//   FLAG_MAPSEC_TEMP_03.
-// FLAG_MAPSEC_TEMP_03: the link is up (LOBBY_LINK_READY_MASK).
-// FLAG_MAPSEC_TEMP_04: a linked battle has ended since the leader last walked
-// south of z
-//   224; FLAG_MAPSEC_TEMP_05: it was won. The party's and visitors' lines read
-//   them.
-// FLAG_MAPSEC_TEMP_E8: the last linked battle broke off (Battle_Run).
-//   In a monster series, the byte flag at FLAG_MAPSEC_TEMP_E8 instead counts
-//   the victories, 0 to 2, towards a stronger monster.
+// The Battle Arena's flags, besides its own above, FLAG_MONSTER_BATTLE,
+// FLAG_LINK_BATTLE and the two byte flags flags.h names:
+// - FLAG_LINK_BATTLE_ARRANGED: a linked battle has been arranged (with
+//   FLAG_LINK_BATTLE): only the first three members take part
+//   (BattleArena_PartyContains).
+// - FLAG_MAPSEC_TEMP_E8: the last linked battle broke off (Battle_Run). In a
+//   monster series, the byte flag at FLAG_MAPSEC_TEMP_E8 instead counts the
+//   victories, 0 to 2, towards a stronger monster.
 
 /// The object events, numbering the rows of gBattleArenaObjectEventTemplates
 /// and gBattleArenaBattleObjectEventTemplates, which list the same people in
@@ -308,33 +318,33 @@ s32 BattleArena_SelectObjectEventTemplates(void) {
   return (s32)gBattleArenaObjectEventTemplates;
 }
 
-/// Returns 1 when the partner's payload holds slot's word in slot's column,
-/// 0 when it does not or there is no link. Also sets or clears map section
-/// flags FLAG_MAPSEC_TEMP_03 (the link is up) and FLAG_MAPSEC_TEMP_02 (this
-/// console is the child), and reads the other console's payload by them.
+/// Returns 1 when the partner's payload holds slot's word in slot's column, 0
+/// when it does not or there is no link. Also sets or clears map section flags
+/// FLAG_BATTLE_ARENA_LINK_UP (the link is up) and FLAG_BATTLE_ARENA_LINK_CHILD
+/// (this console is the child), and reads the other console's payload by them.
 static s32 BattleArena_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
   if ((gLinkStatus & LOBBY_LINK_READY_MASK) == LOBBY_LINK_READY_MASK) {
     // SIOCNT bits 4 and 5: 0 for the parent, 1 for the child.
     serialPlayerId = (REG_SIOCNT << 26) >> 30;
-    GameFlag_Set(FLAG_MAPSEC_TEMP_03);
+    GameFlag_Set(FLAG_BATTLE_ARENA_LINK_UP);
   } else {
-    GameFlag_Clear(FLAG_MAPSEC_TEMP_03);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
   }
   /* FAKEMATCH(one-pass): a loop left by break after its first pass, which
    * places the test after the body as the ROM does; as an if around the body,
    * 12 of 58 instructions differ in tbs-en. */
-  while (serialPlayerId >= 0 && GameFlag_Get(FLAG_MAPSEC_TEMP_03)) {
+  while (serialPlayerId >= 0 && GameFlag_Get(FLAG_BATTLE_ARENA_LINK_UP)) {
     const s32 *expected = &gBattleArena_SlotValues[slot];
 
     if (serialPlayerId != 0)
-      GameFlag_Set(FLAG_MAPSEC_TEMP_02);
+      GameFlag_Set(FLAG_BATTLE_ARENA_LINK_CHILD);
     else
-      GameFlag_Clear(FLAG_MAPSEC_TEMP_02);
+      GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_CHILD);
     {
       struct LinkPeerPayload *peer = (struct LinkPeerPayload *)
-          gLinkPeerSignatures[GameFlag_Get(FLAG_MAPSEC_TEMP_02) ^ 1];
+          gLinkPeerSignatures[GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD) ^ 1];
 
       if (peer->values[gBattleArena_SlotColumns[slot]] == *expected)
         return 1;
@@ -357,12 +367,12 @@ static void BattleArena_WriteSlotValue(s32 slot) {
 // modern build uses the task's actual function type to avoid an
 // incompatible indirect call.
 #ifdef UBFIX
-/// The task that watches the partner each frame in the Battle Arena.
-/// It forgets the partner after LOBBY_PEER_WAIT_FRAMES without a link, keeps
-/// FLAG_MAP_TEMP_01 current, raises LOBBY_EVENT_PROMPT once both
-/// sides agree and LOBBY_EVENT_DISCONNECTED when the
-/// link is lost while a battle is being arranged. BattleArena_RunRoundResult
-/// schedules it on every arrival; BattleArena_EnterBattle removes it.
+/// The task that watches the partner each frame in the Battle Arena. It forgets
+/// the partner after LOBBY_PEER_WAIT_FRAMES without a link, keeps
+/// FLAG_BATTLE_ARENA_PARTNER_ASKED current, raises LOBBY_EVENT_PROMPT once both
+/// sides agree and LOBBY_EVENT_DISCONNECTED when the link is lost while a
+/// battle is being arranged. BattleArena_RunRoundResult schedules it on every
+/// arrival; BattleArena_EnterBattle removes it.
 static void BattleArena_PollPeerReady(void) {
 #else
 static s32 BattleArena_PollPeerReady(void) {
@@ -376,12 +386,12 @@ static s32 BattleArena_PollPeerReady(void) {
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
   if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed > 0xe00000) {
-    GameFlag_Clear(FLAG_MAPSEC_TEMP_04);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
   if (work->raisedEvent != LOBBY_EVENT_DISCONNECTED) {
     BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
-    if (!GameFlag_Get(FLAG_MAPSEC_TEMP_03)) {
+    if (!GameFlag_Get(FLAG_BATTLE_ARENA_LINK_UP)) {
       // Without a link for 26 frames, clear every console's received payload
       // and go idle.
       if (++sBattleArenaWaitFrames > LOBBY_PEER_WAIT_FRAMES) {
@@ -400,34 +410,36 @@ static s32 BattleArena_PollPeerReady(void) {
       if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
           (BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
            BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
-        GameFlag_Set(FLAG_MAP_TEMP_01);
-        if (GameFlag_Get(FLAG_MAP_TEMP_02)) {
+        GameFlag_Set(FLAG_BATTLE_ARENA_PARTNER_ASKED);
+        if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED)) {
           work->raisedEvent = LOBBY_EVENT_PROMPT;
         }
         result = 1;
       } else {
-        GameFlag_Clear(FLAG_MAP_TEMP_01);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
         result = 0;
       }
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_01) && GameFlag_Get(FLAG_MAP_TEMP_02) &&
-        !GameFlag_Get(FLAG_MAP_TEMP_00)) {
+    if (GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED) &&
+        GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED) &&
+        !GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED)) {
       work->raisedEvent = LOBBY_EVENT_PROMPT;
     }
   }
   // The 25th frame without a link while a linked battle is being arranged:
   // report the link lost.
-  if ((Script_GetFlag(FLAG_MAP_TEMP_01) || GameFlag_Get(FLAG_MAP_TEMP_02)) &&
+  if ((Script_GetFlag(FLAG_BATTLE_ARENA_PARTNER_ASKED) ||
+       GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED)) &&
       !GameFlag_Get(FLAG_MONSTER_BATTLE) &&
       !BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       sBattleArenaWaitFrames > 24) {
     work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
-    GameFlag_Set(FLAG_MAP_TEMP_05);
-    GameFlag_Clear(FLAG_MAP_TEMP_01);
-    GameFlag_Clear(FLAG_MAP_TEMP_02);
+    GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
-  if (GameFlag_Get(FLAG_MAP_TEMP_05)) {
+  if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED)) {
     work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
   }
 #ifdef UBFIX
@@ -444,20 +456,21 @@ u32 gBattleArenaCallFrames;
 /// LOBBY_EVENT_PROMPT: the attendant asks the player into the circle once both
 /// consoles agree, and again after 300 calls. The line is "If you want to
 /// participate, please step into the circle!". Returns the flag's value when
-/// FLAG_MAP_TEMP_03 or _00 is set and nothing is shown; the path that
-/// shows the line returns nothing in the ROM (UB).
+/// FLAG_BATTLE_ARENA_ENTERING_BATTLE or FLAG_BATTLE_ARENA_ATTENDANT_ASKED is
+/// set and nothing is shown; the path that shows the line returns nothing in
+/// the ROM (UB).
 static s32 BattleArena_PromptToParticipate(void) {
   s32 set;
 
-  set = GameFlag_Get(FLAG_MAP_TEMP_03);
+  set = GameFlag_Get(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
   if (set != 0) {
     return set;
   }
   if (++gBattleArenaCallFrames == 300) {
     gBattleArenaCallFrames = 0;
-    GameFlag_Clear(FLAG_MAP_TEMP_00);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   }
-  set = Script_GetFlag(FLAG_MAP_TEMP_00);
+  set = Script_GetFlag(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   if (set != 0) {
     return set;
   }
@@ -465,7 +478,7 @@ static s32 BattleArena_PromptToParticipate(void) {
   FieldScript_SetMessageId(MsgLobbyWantParticipatePlease);
   FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
   WaitFrames(5);
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -474,19 +487,20 @@ static s32 BattleArena_PromptToParticipate(void) {
 
 /// LOBBY_EVENT_DISCONNECTED: the attendant says the link was disconnected.
 /// Publishes LOBBY_SLOT_IDLE and clears the raised trigger and
-/// FLAG_MAP_TEMP_00, _03 and _05. The original handler has no defined return
-/// value.
+/// FLAG_BATTLE_ARENA_ATTENDANT_ASKED, FLAG_BATTLE_ARENA_ENTERING_BATTLE and
+/// FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED. The original handler has no defined
+/// return value.
 static s32 BattleArena_ReportDisconnection(void) {
   struct FieldWork *work = gFieldWork;
 
   BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-  GameFlag_Clear(FLAG_MAP_TEMP_00);
-  GameFlag_Clear(FLAG_MAP_TEMP_03);
+  GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
+  GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
   FieldScript_Start();
   work->raisedEvent = LOBBY_EVENT_NONE;
   FieldScript_SetMessageId(MsgLobbyLinkDisconnected);
   FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
-  GameFlag_Clear(FLAG_MAP_TEMP_05);
+  GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -820,9 +834,9 @@ done:
 }
 
 /// Exchanges the two parties: the parent sends first, the child (map section
-/// flag FLAG_MAPSEC_TEMP_02) receives first. On success stores the partner's
-/// member count in FLAG_LINK_PARTY_COUNT and returns it; on failure resets the
-/// transfer state and returns a negative result.
+/// flag FLAG_BATTLE_ARENA_LINK_CHILD) receives first. On success stores the
+/// partner's member count in FLAG_LINK_PARTY_COUNT and returns it; on failure
+/// resets the transfer state and returns a negative result.
 static s32 BattleArena_ExchangePartyRecords(void) {
   s32 result;
   s32 receivedMemberCount;
@@ -834,7 +848,7 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   do {
     result = 0;
   } while (0);
-  receiveFirst = GameFlag_Get(FLAG_MAPSEC_TEMP_02);
+  receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);
   gLinkExchangeState = result;
   // Every failure reaches the one reset: as nested ifs before a single
   // if (result < 0), 16 of 62 instructions differ in tbs-en.
@@ -867,16 +881,16 @@ check:
 }
 
 /// Coord event 10, the circle: starts the battle. A monster battle starts at
-/// once. A linked one needs the attendant's call (FLAG_MAP_TEMP_00) and no
-/// lost link waiting to be reported (FLAG_MAP_TEMP_05); it publishes
-/// LOBBY_SLOT_IN_CIRCLE and waits for the partner to step in, giving up when
-/// the partner withdraws, the link is lost, or the partner neither asks nor
-/// stands in the circle for LOBBY_PEER_WAIT_FRAMES. The leader then walks in
-/// while the parties are exchanged; a failed exchange walks back, restarts the
-/// Battle Arena's polling and raises LOBBY_EVENT_DISCONNECTED. Sets where the
-/// battle returns to (warp destinations 8 and 9 for a monster battle, 10 and 11
-/// for a linked one) and requests it. The original returns have no defined
-/// status.
+/// once. A linked one needs the attendant's call
+/// (FLAG_BATTLE_ARENA_ATTENDANT_ASKED) and no lost link waiting to be reported
+/// (FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED); it publishes LOBBY_SLOT_IN_CIRCLE
+/// and waits for the partner to step in, giving up when the partner withdraws,
+/// the link is lost, or the partner neither asks nor stands in the circle for
+/// LOBBY_PEER_WAIT_FRAMES. The leader then walks in while the parties are
+/// exchanged; a failed exchange walks back, restarts the Battle Arena's polling
+/// and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle returns to (warp
+/// destinations 8 and 9 for a monster battle, 10 and 11 for a linked one) and
+/// requests it. The original returns have no defined status.
 static s32 BattleArena_EnterBattle(void) {
   struct FieldWork *work;
   s32 failed;
@@ -896,21 +910,21 @@ static s32 BattleArena_EnterBattle(void) {
   if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     FieldScript_Start();
   } else {
-    if (!GameFlag_Get(FLAG_MAP_TEMP_00))
+    if (!GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED))
       return LOBBY_NO_RESULT;
-    if (GameFlag_Get(FLAG_MAP_TEMP_05))
+    if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED))
       return LOBBY_NO_RESULT;
     FieldScript_Start();
-    GameFlag_Set(FLAG_MAP_TEMP_03);
+    GameFlag_Set(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       window = Message_OpenWindow(MsgLobbyAwaitingOpponent, 5, 4, 1);
     while (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       WaitFrames(1);
       cancelEntry = 0;
-      if (!GameFlag_Get(FLAG_MAP_TEMP_01))
+      if (!GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED))
         cancelEntry = 1;
-      if (GameFlag_Get(FLAG_MAP_TEMP_05))
+      if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED))
         cancelEntry = 1;
       if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
           !BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
@@ -921,12 +935,12 @@ static s32 BattleArena_EnterBattle(void) {
       }
       if (cancelEntry) {
         work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
-        GameFlag_Set(FLAG_MAP_TEMP_05);
-        GameFlag_Clear(FLAG_MAP_TEMP_01);
-        GameFlag_Clear(FLAG_MAP_TEMP_02);
+        GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
-        GameFlag_Clear(FLAG_MAP_TEMP_00);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
         break;
       }
     }
@@ -981,11 +995,11 @@ static s32 BattleArena_EnterBattle(void) {
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         FieldScheduler_AddCallback((TaskFunc)BattleArena_PollPeerReady, 0xc80);
         Task_SetFlags((TaskFunc)BattleArena_PollPeerReady, 1);
-        GameFlag_Clear(FLAG_MAP_TEMP_01);
-        GameFlag_Clear(FLAG_MAP_TEMP_02);
-        GameFlag_Clear(FLAG_MAPSEC_TEMP_03);
-        GameFlag_Clear(FLAG_MAP_TEMP_03);
-        GameFlag_Clear(FLAG_MAP_TEMP_00);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
         work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
         FieldScript_End();
         return LOBBY_NO_RESULT;
@@ -1028,8 +1042,8 @@ static s32 BattleArena_EnterBattle(void) {
 /// Talking to LOCALID_ATTENDANT, who arranges a battle. With no partner, offers
 /// a monster battle. With one, calls off a monster battle in waiting, then asks
 /// the player to apply or to accept the partner's request; a yes is published
-/// as LOBBY_SLOT_ASKED. Agreeing sets FLAG_MAP_TEMP_02, and for a linked
-/// battle FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original
+/// as LOBBY_SLOT_ASKED. Agreeing sets FLAG_BATTLE_ARENA_PLAYER_AGREED, and for
+/// a linked battle FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original
 /// handler's return value is ignored.
 static s32 BattleArena_ChooseBattleMode(void) {
   // Returns no value: r0 is whatever the last call left.
@@ -1063,7 +1077,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         GameFlag_Set(FLAG_MONSTER_BATTLE);
         GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
         GameFlag_Clear(FLAG_LINK_BATTLE);
-        GameFlag_Set(FLAG_MAP_TEMP_02);
+        GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_AGREED);
         messageId = messageBase + 7;
         gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
@@ -1083,10 +1097,10 @@ static s32 BattleArena_ChooseBattleMode(void) {
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       FieldScript_SetMessageId(MsgLobbyOpponentArrived);
       FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
-      GameFlag_Clear(FLAG_MAP_TEMP_02);
+      GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_02)) {
+    if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED)) {
       messageId = messageBase + 3;
       /* The first branch's answers jump into this block's message tail, and an
        * accepted challenge back into its opening: the listing keeps one copy of
@@ -1097,14 +1111,14 @@ static s32 BattleArena_ChooseBattleMode(void) {
       FieldScript_SetMessageId(messageId);
     open_message:
       FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
-    } else if (!GameFlag_Get(FLAG_MAP_TEMP_01) &&
-               !Script_GetFlag(FLAG_MAPSEC_TEMP_00)) {
+    } else if (!GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED) &&
+               !Script_GetFlag(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED)) {
       FieldScript_SetMessageId(messageBase);
       FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
-      GameFlag_Set(FLAG_MAPSEC_TEMP_00);
+      GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
     } else {
-      GameFlag_Set(FLAG_MAPSEC_TEMP_00);
-      if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
+      GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
+      if (GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED)) {
         FieldScript_SetMessageId(messageBase + 2);
       } else {
         FieldScript_SetMessageId(messageBase + 1);
@@ -1115,16 +1129,16 @@ static s32 BattleArena_ChooseBattleMode(void) {
         if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           GameFlag_Set(FLAG_LINK_BATTLE);
           GameFlag_Set(FLAG_LINK_BATTLE_ARRANGED);
-          if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
+          if (GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED)) {
             FieldScript_SetMessageId(messageBase + 3);
           } else {
             FieldScript_SetMessageId(messageBase + 4);
           }
           BattleArena_WriteSlotValue(LOBBY_SLOT_ASKED);
-          GameFlag_Set(FLAG_MAP_TEMP_02);
+          GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_AGREED);
           goto open_message;
         } else {
-          GameFlag_Set(FLAG_MAP_TEMP_05);
+          GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
         }
       } else {
         FieldScript_SetMessageId(messageBase);
@@ -1284,10 +1298,10 @@ static s32 BattleArena_PartyContains(s32 memberId) {
 UNUSED static void State_NoOp(void) {}
 
 /// Talking to Garet, Ivan, Mia or Jenna, who speaks of the last linked battle
-/// (map section flags FLAG_MAPSEC_TEMP_04 and FLAG_MAPSEC_TEMP_05) and whether
-/// they fought in it, or else of whether Isaac and they are in the battle
-/// party. Each message family holds one line per character, at local id - 1;
-/// Felix's holds "?".
+/// (map section flags FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED and
+/// FLAG_BATTLE_ARENA_LINK_BATTLE_WON) and whether they fought in it, or else of
+/// whether Isaac and they are in the battle party. Each message family holds
+/// one line per character, at local id - 1; Felix's holds "?".
 static s32 BattleArena_TalkByProgress(s32 localId) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = BattleArena_PartyContains(0);
@@ -1295,13 +1309,13 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
 
   FieldScript_Start();
   ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_04)) {
+  if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED)) {
 
-    // Isaac's flag is tested and the result dropped; messageBase first
-    // holds whether the speaker fought (FLAG_MAP_TEMP_F0 + local id).
-    Script_GetFlag(FLAG_MAP_TEMP_F0);
-    messageBase = GameFlag_Get(localId + 0x2f0);
-    if (GameFlag_Get(FLAG_MAPSEC_TEMP_05)) {
+    // Isaac's flag is tested and the result dropped; messageBase first holds
+    // whether the speaker fought (FLAG_BATTLE_ARENA_IN_PARTY_FIRST + local id).
+    Script_GetFlag(FLAG_BATTLE_ARENA_IN_PARTY_FIRST);
+    messageBase = GameFlag_Get(localId + FLAG_BATTLE_ARENA_IN_PARTY_FIRST);
+    if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_WON)) {
       if (messageBase)
         messageBase = MsgLobbyWonToldCountOn;
       else
@@ -1345,8 +1359,8 @@ static s32 BattleArena_LeaveArena(void) {
 /// LOCALID_OLD_MANS_ARENA_VISITOR, who wonders whether this is the old man's
 /// Battle Arena. Each says their first line unless a linked battle has ended
 /// since the leader last walked south of z 224 (map section flag
-/// FLAG_MAPSEC_TEMP_04), then their second after a win or their third after a
-/// loss (FLAG_MAPSEC_TEMP_05).
+/// FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED), then their second after a win or their
+/// third after a loss (FLAG_BATTLE_ARENA_LINK_BATTLE_WON).
 static s32 BattleArena_TalkToVisitor(s32 localId) {
   s32 message;
   s32 step = 0;
@@ -1365,8 +1379,8 @@ static s32 BattleArena_TalkToVisitor(s32 localId) {
     break;
   }
   ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_04))
-    step = 2 - (GameFlag_Get(FLAG_MAPSEC_TEMP_05) != 0);
+  if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED))
+    step = 2 - (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_WON) != 0);
   FieldScript_SetMessageId(message + step);
   FieldMessage_ShowAtObject(localId, 0);
   FieldScript_End();
@@ -1375,23 +1389,24 @@ static s32 BattleArena_TalkToVisitor(s32 localId) {
 #endif
 }
 
-/// Talking to LOCALID_PARTY_ORDER_VISITOR, who alternates, by FLAG_MAP_TEMP_04,
-/// between the linked finals' limit of three allies (worded for the party's
-/// size) and how to change the party's order.
+/// Talking to LOCALID_PARTY_ORDER_VISITOR, who alternates, by
+/// FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT, between the linked finals' limit of
+/// three allies (worded for the party's size) and how to change the party's
+/// order.
 static s32 BattleArena_ExplainPartyOrder(s32 localId) {
   s32 message;
 
   FieldScript_Start();
   ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
-  if (!Script_GetFlag(FLAG_MAP_TEMP_04)) {
+  if (!Script_GetFlag(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT)) {
     if (Party_CountMembers() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
     else
       message = MsgLobbyThreeAlliesFightLinked;
-    GameFlag_Set(FLAG_MAP_TEMP_04);
+    GameFlag_Set(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT);
   } else {
     message = MsgLobbyChangeOrderParty;
-    GameFlag_Clear(FLAG_MAP_TEMP_04);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT);
   }
   FieldScript_SetMessageId(message);
   FieldMessage_ShowAtObject(localId, 0);
@@ -1525,9 +1540,9 @@ s32 BattleArena_RunRoundResult(void) {
   }
   // Note who is in the battle party, for the members' lines.
   for (i = 0; i < 8; i++) {
-    GameFlag_Clear(0x2f0 + i);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_IN_PARTY_FIRST + i);
     if (BattleArena_PartyContains(i)) {
-      GameFlag_Set(0x2f0 + i);
+      GameFlag_Set(FLAG_BATTLE_ARENA_IN_PARTY_FIRST + i);
     }
   }
   // Warp destination 8, a monster battle won: offer the next one.
@@ -1629,7 +1644,7 @@ s32 BattleArena_RunRoundResult(void) {
       work = gFieldWork;
       GameFlag_Clear(FLAG_MAPSEC_TEMP_E8);
       work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
-      GameFlag_Clear(FLAG_MAPSEC_TEMP_04);
+      GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
       WaitFrames(20);
       BattleArena_InitializeSerial();
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -1643,8 +1658,8 @@ s32 BattleArena_RunRoundResult(void) {
       BattleArena_DrawThreeDigitValue(
           gSaveBlock.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
       BattleArena_SaveBattleResults();
-      GameFlag_Set(FLAG_MAPSEC_TEMP_04);
-      GameFlag_Set(FLAG_MAPSEC_TEMP_05);
+      GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
+      GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_WON);
     }
     FieldScript_End();
     // Warp destination 11, a linked battle lost: count the loss and end the
@@ -1662,8 +1677,8 @@ s32 BattleArena_RunRoundResult(void) {
       gSaveBlock.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
       BattleArena_SaveBattleResults();
     }
-    GameFlag_Set(FLAG_MAPSEC_TEMP_04);
-    GameFlag_Clear(FLAG_MAPSEC_TEMP_05);
+    GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_WON);
     FieldScript_End();
     // Arriving from the main menu: start the link, clear
     // FLAG_LINK_BATTLE_ARRANGED and reset the monster level. Idle sleep is

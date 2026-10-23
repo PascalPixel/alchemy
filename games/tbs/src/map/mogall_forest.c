@@ -242,59 +242,60 @@ enum MogallForestLogAnimation {
 /// (or, for two, moved on to a second hiding place) and each rolled log.
 enum {
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_FIRST_AREA_NORTH_APE_OUT = FLAG_MAPSEC_TEMP_00,
+  FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT = FLAG_MAPSEC_TEMP_00,
   /// The ape that leaps at the leader instead of pointing the way.
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_FIRST_AREA_ATTACKING_APE_OUT,
+  FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_FIRST_AREA_EAST_APE_OUT,
+  FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_SECOND_AREA_NORTH_APE_OUT,
+  FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_SECOND_AREA_EAST_APE_OUT,
+  FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_SECOND_AREA_SOUTH_APE_MOVED,
+  FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_SECOND_AREA_SOUTH_APE_OUT,
+  FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT,
   /// The ape that leaps at the leader instead of pointing the way.
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_THIRD_AREA_ATTACKING_APE_OUT,
+  FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_THIRD_AREA_MIDDLE_APE_OUT,
+  FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_THIRD_AREA_WEST_APE_OUT,
+  FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_THIRD_AREA_EAST_APE_MOVED,
+  FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED,
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_THIRD_AREA_EAST_APE_OUT,
+  FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
   /// ★ Named from what the player sees: a log pushed over the grass rolls into
   /// the river and lies across it (its render)
-  FLAG_FIRST_AREA_LOG_ROLLED = FLAG_MAPSEC_TEMP_10,
+  FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED = FLAG_MAPSEC_TEMP_10,
   /// ★ Named from what the player sees: the second area's log rolled into the
   /// river (its render)
-  FLAG_SECOND_AREA_LOG_ROLLED,
+  FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED,
   /// ★ Named from what the player sees: the third area's north log rolled into
   /// the river (its render)
-  FLAG_THIRD_AREA_NORTH_LOG_ROLLED,
+  FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED,
   /// ★ Named from what the player sees: the third area's south log rolled
   /// into the river (its render)
-  FLAG_THIRD_AREA_SOUTH_LOG_ROLLED,
+  FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED,
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50
+  FLAG_MOGALL_FOREST_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50
 };
 
 /// Map flag, kept while the party stays in the area.
 enum {
   /// ★ Named from what the player sees: the rock beside the log, moved with
   /// Move (its render)
-  FLAG_SOUTH_ROCK_SETTLED = FLAG_MAP_TEMP_14
+  FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_MAP_TEMP_14
 };
 
 // The third area's east ape: in the first patch it is placed only until it
 // has come out, and from the first patch on the hiding place that shares its
 // sprite too.
 #if TBS_PATCH_LEVEL == 1
-#define MOGALL_FOREST_EAST_OBJ_EVENT_CONDITION FLAG_THIRD_AREA_EAST_APE_OUT
+#define MOGALL_FOREST_EAST_OBJ_EVENT_CONDITION                                 \
+  FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #else
 #define MOGALL_FOREST_EAST_OBJ_EVENT_CONDITION CONDITION_ALWAYS
 #endif
@@ -302,7 +303,8 @@ enum {
 #if !TBS_PATCH_1
 #define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION CONDITION_ALWAYS
 #else
-#define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION FLAG_THIRD_AREA_EAST_APE_OUT
+#define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION                             \
+  FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #endif
 
 #include "common/object_staged_object_event.h"
@@ -480,7 +482,7 @@ const struct ObjectEventTemplate *MogallForest_GetObjectEventTemplates(void) {
 
 /// Mogall Forest, the first area: walking into a log (metatile behavior 20)
 /// pushes it; the river log pushed to row 26 rolls into the water and can be
-/// crossed. Sets FLAG_FIRST_AREA_LOG_ROLLED.
+/// crossed. Sets FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED.
 static void MogallForest_FirstArea_PushLog(void) {
   struct PushedObjectProbe probe;
 
@@ -489,7 +491,7 @@ static void MogallForest_FirstArea_PushLog(void) {
     ObjectEvent_MoveAndRedraw(probe);
     if (probe.objectEventSlot == LOCALID_FIRST_AREA_RIVER_LOG &&
         (probe.position.z >> 20) == 26) {
-      GameFlag_Set(FLAG_FIRST_AREA_LOG_ROLLED);
+      GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
       Import_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_ROLLING);
       ObjectEvent_SetSpeed(LOCALID_FIRST_AREA_RIVER_LOG, PIXELS(1) / 4,
@@ -611,7 +613,7 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
                               LOCALID_FIRST_AREA_NORTH_APE, 0);
   FieldScript_WaitFrames(10);
 
-  GameFlag_Set(FLAG_FIRST_AREA_NORTH_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_NORTH_APE_STUMP, 0, 0);
   Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_NORTH_APE, 0, 0);
 
@@ -653,7 +655,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.part.pixel, PIXELS(4));
 
   FieldScript_WaitFrames(10);
-  GameFlag_Set(FLAG_FIRST_AREA_ATTACKING_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_ATTACKING_APE_STUMP, 0, 0);
 
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -701,7 +703,7 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
                               0);
   FieldScript_WaitFrames(6);
 
-  GameFlag_Set(FLAG_FIRST_AREA_EAST_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_EAST_APE_STUMP, 0, 0);
 
   FieldScript_End();
@@ -743,7 +745,7 @@ static void MogallForest_SecondArea_PushLog(void) {
                (probe.position.x >> 20) == 35) {
 
       attributes = 0;
-      GameFlag_Set(FLAG_SECOND_AREA_LOG_ROLLED);
+      GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
       Import_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_ROLLING);
       ObjectMotion_OffsetPositionAndResetMotion(LOCALID_SECOND_AREA_RIVER_LOG,
@@ -838,7 +840,7 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
                               LOCALID_SECOND_AREA_NORTH_APE, 0);
   FieldScript_WaitFrames(6);
   Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_NORTH_APE, 0, 0);
-  GameFlag_Set(FLAG_SECOND_AREA_NORTH_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_NORTH_APE_STUMP, 0, 0);
   FieldScript_End();
 }
@@ -888,7 +890,7 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
   FieldScript_WaitFrames(6);
 
   Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_EAST_APE, 0, 0);
-  GameFlag_Set(FLAG_SECOND_AREA_EAST_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_EAST_APE_STUMP, 0, 0);
 
   FieldScript_End();
@@ -910,7 +912,7 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   creature = ObjectEvent_Get(LOCALID_SECOND_AREA_SOUTH_APE);
   ObjectEvent_SetSpriteFlags(creature, 0);
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_SECOND_AREA_SOUTH_APE_MOVED);
+  GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED);
   ObjectEvent_SetPosition(LOCALID_SECOND_AREA_SOUTH_APE_STUMP, PIXELS(424),
                           PIXELS(480));
   FieldScript_End();
@@ -963,7 +965,7 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_SOUTH_APE, 0, 0);
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_SECOND_AREA_SOUTH_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_SOUTH_APE_STUMP, 0, 0);
 
   FieldScript_End();
@@ -988,14 +990,14 @@ static void MogallForest_ThirdArea_PushLog(void) {
           MapGrid_CopyCellAttributes(26, 20, 2, 4, probe.position.x >> 20, 23);
           ObjectMotion_SetActionVariant(LOCALID_THIRD_AREA_NORTH_RIVER_LOG, 1);
           landed = 1;
-          GameFlag_Set(FLAG_THIRD_AREA_NORTH_LOG_ROLLED);
+          GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED);
         }
       } else {
         if (probe.position.x >> 20 == 40) {
           MapGrid_CopyCellAttributes(26, 20, 2, 4, probe.position.x >> 20, 32);
           ObjectMotion_SetActionVariant(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG, 1);
           landed = 1;
-          GameFlag_Set(FLAG_THIRD_AREA_SOUTH_LOG_ROLLED);
+          GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED);
         }
       }
       if (landed == 0) {
@@ -1110,7 +1112,7 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
     rock->motionFlags = 0;
     rock->groundHeight = -PIXELS(2);
     rock->y.fixed = -PIXELS(2);
-    GameFlag_Set(FLAG_SOUTH_ROCK_SETTLED);
+    GameFlag_Set(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
     PushedObject_FillGridAttributeRectangle(2, 43, 23, 1, 1, MB_WALL);
   }
   FieldScript_End();
@@ -1152,7 +1154,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   MogallForest_HopObjectEventTo(LOCALID_THIRD_AREA_ATTACKING_APE, leaderX,
                                 leaderForZ->z.part.pixel, PIXELS(6));
   FieldScript_WaitFrames(10);
-  GameFlag_Set(FLAG_THIRD_AREA_ATTACKING_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
@@ -1200,7 +1202,7 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_MIDDLE_APE, 0, 0);
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_THIRD_AREA_MIDDLE_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_MIDDLE_APE_STUMP, 0, 0);
 
   FieldScript_End();
@@ -1247,7 +1249,7 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_WEST_APE, 0, 0);
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_THIRD_AREA_WEST_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT);
   Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_WEST_APE_STUMP, 0, 0);
 
   FieldScript_End();
@@ -1269,7 +1271,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   creature = ObjectEvent_Get(LOCALID_THIRD_AREA_EAST_APE);
   ObjectEvent_SetSpriteFlags(creature, 0);
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_THIRD_AREA_EAST_APE_MOVED);
+  GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED);
   ObjectEvent_SetPosition(LOCALID_THIRD_AREA_EAST_APE_STUMP, PIXELS(744),
                           PIXELS(504));
   FieldScript_End();
@@ -1322,7 +1324,7 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_EAST_APE, 0, 0);
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_THIRD_AREA_EAST_APE_OUT);
+  GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT);
 
   FieldScript_End();
 }
@@ -1532,7 +1534,7 @@ s32 MogallForest_Initialize(void) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
         break;
       }
-      if (GameFlag_Get(FLAG_FIRST_AREA_NORTH_APE_OUT) != 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT) != 0) {
         break;
       }
       ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_AREA_NORTH_APE,
@@ -1569,7 +1571,7 @@ s32 MogallForest_Initialize(void) {
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_FIRST_AREA_EAST_APE), 0);
       Map_RedrawObjectEventFootprint(LOCALID_FIRST_AREA_LOG);
-      if (GameFlag_Get(FLAG_FIRST_AREA_LOG_ROLLED) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED) == 0) {
         Map_RedrawObjectEventFootprint(LOCALID_FIRST_AREA_RIVER_LOG);
         break;
       }
@@ -1591,13 +1593,13 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING:
-      if (GameFlag_Get(FLAG_SECOND_AREA_NORTH_APE_OUT) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT) == 0) {
         ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_AREA_NORTH_APE,
                                          SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_SECOND_AREA_NORTH_APE), 0);
       }
-      if (GameFlag_Get(FLAG_SECOND_AREA_EAST_APE_OUT) != 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT) != 0) {
         break;
       }
       ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_AREA_EAST_APE,
@@ -1609,7 +1611,7 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING:
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE:
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
-      if (GameFlag_Get(FLAG_SECOND_AREA_LOG_ROLLED) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED) == 0) {
         Map_RedrawObjectEventFootprint(LOCALID_SECOND_AREA_RIVER_LOG);
       } else {
 #if TBS_PATCH_1
@@ -1640,14 +1642,14 @@ s32 MogallForest_Initialize(void) {
                                        SPRITE_COLOR_GREY);
       ObjectEvent_GetById(LOCALID_SECOND_AREA_LOG)->collisionFlags |=
           OBJ_EVENT_NOT_TARGETED;
-      if (GameFlag_Get(FLAG_SECOND_AREA_SOUTH_APE_OUT) != 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT) != 0) {
         break;
       }
       ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_AREA_SOUTH_APE,
                                        SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_SECOND_AREA_SOUTH_APE), 0);
-      if (GameFlag_Get(FLAG_SECOND_AREA_SOUTH_APE_MOVED) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED) == 0) {
         break;
       }
       ObjectEvent_SetPosition(LOCALID_SECOND_AREA_SOUTH_APE, PIXELS(424),
@@ -1666,7 +1668,7 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING:
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER:
       WaitFrames(1);
-      if (GameFlag_Get(FLAG_THIRD_AREA_ATTACKING_APE_OUT) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT) == 0) {
         ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_ATTACKING_APE,
                                          SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
@@ -1674,7 +1676,7 @@ s32 MogallForest_Initialize(void) {
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_ATTACKING_APE_STUMP), 0);
       }
-      if (GameFlag_Get(FLAG_THIRD_AREA_MIDDLE_APE_OUT) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT) == 0) {
         ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_MIDDLE_APE,
                                          SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
@@ -1682,7 +1684,7 @@ s32 MogallForest_Initialize(void) {
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_MIDDLE_APE_STUMP), 0);
       }
-      if (GameFlag_Get(FLAG_THIRD_AREA_WEST_APE_OUT) != 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT) != 0) {
         break;
       }
       ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_WEST_APE,
@@ -1717,7 +1719,7 @@ s32 MogallForest_Initialize(void) {
                                          SPRITE_CRATE);
       Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_WEST_LOG);
       Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_SOUTHWEST_LOG);
-      if (GameFlag_Get(FLAG_THIRD_AREA_NORTH_LOG_ROLLED) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED) == 0) {
         Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_NORTH_RIVER_LOG);
       } else {
         WaitFrames(1);
@@ -1728,13 +1730,13 @@ s32 MogallForest_Initialize(void) {
         ObjectEvent_GetById(LOCALID_THIRD_AREA_NORTH_RIVER_LOG)
             ->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(26, 20, 2, 4, 42, 23);
-        GameFlag_Set(FLAG_SOUTH_ROCK_SETTLED);
+        GameFlag_Set(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
         ObjectEvent_SetPosition(LOCALID_THIRD_AREA_SOUTH_ROCK, PIXELS(632),
                                 PIXELS(440));
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_SOUTH_ROCK), 0);
       }
-      if (GameFlag_Get(FLAG_THIRD_AREA_SOUTH_LOG_ROLLED) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED) == 0) {
         Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG);
       } else {
         WaitFrames(1);
@@ -1756,12 +1758,12 @@ s32 MogallForest_Initialize(void) {
       WaitFrames(1);
       ObjectEvent_GetById(LOCALID_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=
           OBJ_EVENT_NOT_TARGETED;
-      if (GameFlag_Get(FLAG_THIRD_AREA_EAST_APE_OUT) == 0) {
+      if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT) == 0) {
         ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_EAST_APE,
                                          SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_EAST_APE), 0);
-        if (GameFlag_Get(FLAG_THIRD_AREA_EAST_APE_MOVED) != 0) {
+        if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED) != 0) {
           ObjectEvent_SetPosition(LOCALID_THIRD_AREA_EAST_APE_STUMP,
                                   PIXELS(744), PIXELS(504));
           ObjectEvent_SetPosition(LOCALID_THIRD_AREA_EAST_APE, PIXELS(744),
@@ -2014,17 +2016,17 @@ struct ObjectEventTemplate gMogallForestSign_ObjectEventTemplates[] = {
         PIXELS(488), 0, PIXELS(464), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(528), 0, PIXELS(504), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_FIRST_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_BLANK, FLAG_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_BLANK, FLAG_FIRST_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLANK, FLAG_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_NUT_CAUGHT, 7,
         PIXELS(632), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -2040,17 +2042,17 @@ struct ObjectEventTemplate gMogallForestQuartz_ObjectEventTemplates[] = {
         PIXELS(648), 0, PIXELS(512), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gMogallForest_RockScript,
         PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_SECOND_AREA_NORTH_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_SECOND_AREA_EAST_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_BLANK, FLAG_SECOND_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_BLANK, FLAG_SECOND_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLANK, FLAG_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_QUARTZ), MOVEMENT_TYPE_STAND,
         PIXELS(488), 0, PIXELS(568), FACING_EAST, TALK_FACING_PARTY, 0 },
@@ -2072,19 +2074,19 @@ struct ObjectEventTemplate gMogallForestKillerApe_ObjectEventTemplates[] = {
         PIXELS(696), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gMogallForest_RockScript,
         PIXELS(632), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_APE, FLAG_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_APE, FLAG_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_ObjectEventScript,
+    { SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_ObjectEventScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_APE, MOGALL_FOREST_EAST_OBJ_EVENT_CONDITION, (s32)gMogallForest_ObjectEventScript,
         PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_BLANK, FLAG_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_BLANK, FLAG_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLANK, FLAG_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
@@ -2109,9 +2111,9 @@ struct MapEvent gMogallForestSign_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_FirstArea_JumpNorth) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_FirstArea_JumpSouth) },
     { BG_EVENT(BG_EVENT_SILENT), 27, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_ReadBrokenSign) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_FIRST_AREA_NORTH_APE_STUMP, FLAG_FIRST_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_NorthApeShowsWay) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_FIRST_AREA_ATTACKING_APE_STUMP, FLAG_FIRST_AREA_ATTACKING_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_ApeAttacks) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_FIRST_AREA_EAST_APE_STUMP, FLAG_FIRST_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_EastApeShowsWay) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_FIRST_AREA_NORTH_APE_STUMP, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_NorthApeShowsWay) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_FIRST_AREA_ATTACKING_APE_STUMP, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_ApeAttacks) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_FIRST_AREA_EAST_APE_STUMP, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_EastApeShowsWay) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_MOGALL_FOREST_NUT_CAUGHT, EVENT_SCRIPT(MogallForest_CatchNut) },
     { MAP_EVENTS_END },
 };
@@ -2131,10 +2133,10 @@ struct MapEvent gMogallForestQuartz_Events[] = {
     { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH },
     { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_SecondArea_PushLog) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SECOND_AREA_ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_SecondArea_UpdateRock) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_NORTH_APE_STUMP, FLAG_SECOND_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_NorthApeShowsWay) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_EAST_APE_STUMP, FLAG_SECOND_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_EastApeShowsWay) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_MOVED, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeHidesAgain) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeShowsWay) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_NORTH_APE_STUMP, FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_NorthApeShowsWay) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_EAST_APE_STUMP, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_EastApeShowsWay) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_SOUTH_APE_STUMP, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeHidesAgain) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_SECOND_AREA_SOUTH_APE_STUMP, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeShowsWay) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_MOGALL_FOREST_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
     { MAP_EVENT_TALK, LOCALID_SECOND_AREA_QUARTZ, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_StartDjinnBattle) },
     { MAP_EVENTS_END },
@@ -2179,22 +2181,23 @@ struct MapEvent gMogallForestKillerApe_Events[] = {
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_THIRD_AREA_NORTH_ROCK,
      CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_ThirdArea_UpdateNorthRock)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_THIRD_AREA_SOUTH_ROCK,
-     FLAG_SOUTH_ROCK_SETTLED,
+     FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED,
      EVENT_SCRIPT(MogallForest_ThirdArea_UpdateSouthRock)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE),
-     LOCALID_THIRD_AREA_ATTACKING_APE_STUMP, FLAG_THIRD_AREA_ATTACKING_APE_OUT,
+     LOCALID_THIRD_AREA_ATTACKING_APE_STUMP,
+     FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_ApeAttacks)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_THIRD_AREA_MIDDLE_APE_STUMP,
-     FLAG_THIRD_AREA_MIDDLE_APE_OUT,
+     FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_MiddleApeShowsWay)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_THIRD_AREA_WEST_APE_STUMP,
-     FLAG_THIRD_AREA_WEST_APE_OUT,
+     FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_WestApeShowsWay)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_THIRD_AREA_EAST_APE_STUMP,
-     FLAG_THIRD_AREA_EAST_APE_MOVED,
+     FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED,
      EVENT_SCRIPT(MogallForest_ThirdArea_EastApeHidesAgain)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_THIRD_AREA_EAST_APE_STUMP,
-     FLAG_THIRD_AREA_EAST_APE_OUT,
+     FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_EastApeShowsWay)},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_MOGALL_FOREST_ELVEN_SHIRT_CHEST,
      FIND_ITEM(ITEM_ELVEN_SHIRT)},
@@ -2234,6 +2237,7 @@ struct MapEvent gMogallForestSidePaths_Events[] = {
      MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_SOUTHWEST},
     {MAP_EVENT_WARP, 18, CONDITION_ALWAYS,
      MOGALL_FOREST_SIDE_PATHS_TO_SOUTHEAST_CLEARING},
-    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_PSYNERGY_STONE, FIND_PSYNERGY_STONE},
+    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_MOGALL_FOREST_PSYNERGY_STONE,
+     FIND_PSYNERGY_STONE},
     {MAP_EVENTS_END},
 };

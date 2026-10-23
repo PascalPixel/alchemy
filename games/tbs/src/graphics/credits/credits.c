@@ -952,6 +952,10 @@ const void *gCredits_Lines[] = {
 
 #include "glyph_widths.h"
 
+/// A credits line has been drawn, so its scratch buffer holds the shadow row to
+/// carry.
+#define FLAG_CREDITS_LINE_DRAWN FLAG_MAP_TEMP_00
+
 /// A VBlank task added by Credits_InitTextSprites: maps the
 /// visible sixteen rows onto the tile ring and uploads their sprites. Advances
 /// one pixel every fourth frame until the end-of-text latch stops the scroll.
@@ -1106,15 +1110,15 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 #endif
     return -1;
   }
-  // The ninth raster row holds the shadow below this line. Carry it into
-  // the next line before clearing the rest of the reused scratch buffer.
-  // The buffer comes back at the same address each call (Free rewinds the
-  // pool), so the last line's ninth row is still there. FLAG_MAP_TEMP_00,
-  // here a line has been drawn, is clear on entering the map
-  // (Map_ResetFlagsOnEnter), so the first line starts from a clean buffer.
-  if (!GameFlag_GetFar(FLAG_MAP_TEMP_00)) {
+  // The ninth raster row holds the shadow below this line. Carry it into the
+  // next line before clearing the rest of the reused scratch buffer. The buffer
+  // comes back at the same address each call (Free rewinds the pool), so the
+  // last line's ninth row is still there. FLAG_CREDITS_LINE_DRAWN, here a line
+  // has been drawn, is clear on entering the map (Map_ResetFlagsOnEnter), so
+  // the first line starts from a clean buffer.
+  if (!GameFlag_GetFar(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
-    GameFlag_SetFar(FLAG_MAP_TEMP_00);
+    GameFlag_SetFar(FLAG_CREDITS_LINE_DRAWN);
   } else {
     Iwram_CopyWords(linePixels, linePixels + 0x800, 0x100);
     Iwram_FillWords(linePixels + 0x100, 0x800, 0);

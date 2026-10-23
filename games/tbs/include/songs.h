@@ -60,8 +60,9 @@
 /// finds the heart of Sol Sanctum, and after the battle with Tret.
 #define MUS_021 21
 /// Field music of Mercury Lighthouse's aerie, the Elemental Star room, the
-/// Lemurian ship, Venus Lighthouse's aerie once FLAG_MAPSEC_TEMP_51 is set
-/// there, and the world map reached from one of its warp destinations.
+/// Lemurian ship, Venus Lighthouse's aerie once its second battle has begun
+/// (FLAG_AERIE_SECOND_BATTLE_BEGUN in venus_lighthouse_aerie.c), and the world
+/// map reached from one of its warp destinations.
 #define MUS_022 22
 /// Field music of Altin Peak and the Lunpa Fortress, and of Vale once the
 /// stormy night's monster is fought (FLAG_VALE_STORM_MONSTER_FOUGHT); it also
@@ -88,9 +89,10 @@
 /// plays as Alex appears at Mercury Lighthouse, in the fight with Tret, on the
 /// ship's mast, and as Saturos and Menardi are confronted at Venus Lighthouse.
 #define MUS_029 29
-/// Field music of Venus Lighthouse's aerie once FLAG_MAPSEC_TEMP_50 is set
-/// there; it also plays as Babi meets the party in Altmiller Cave and after the
-/// Colosso, and as Iodem questions the wounded soldiers in Suhalla.
+/// Field music of Venus Lighthouse's aerie once its first battle has begun
+/// (FLAG_AERIE_FIRST_BATTLE_BEGUN in venus_lighthouse_aerie.c); it also plays
+/// as Babi meets the party in Altmiller Cave and after the Colosso, and as
+/// Iodem questions the wounded soldiers in Suhalla.
 #define MUS_030 30
 /// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the songs of
 /// nine or more tracks.

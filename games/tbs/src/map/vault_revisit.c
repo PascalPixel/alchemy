@@ -1,47 +1,46 @@
 /// @file
 /// Vault (MapId_VaultRevisit), the town once the party has reached Kalay, on
 /// the same layout as Vault's first map (vault.c). The world map still leads
-/// into the first map, but once FLAG_KALAY_REACHED is set its setup sends
-/// the party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
+/// into the first map, but once FLAG_KALAY_REACHED is set its setup sends the
+/// party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
 /// Cave, the jail and the houses (vault_interiors_revisit.c) lead back here
 /// directly. This map replaces the first for the rest of the game.
 ///
 /// The thieves the party caught have broken out of jail, and most townspeople
 /// say so, or speak of Hammet and Lunpa, in plain message rows. Four speak
 /// through scripts that remember who has spoken in map section flags
-/// (FLAG_WARRIOR_GUY_GREETED to FLAG_ASKED_ABOUT_JAIL), so that a Mind Read on
-/// one not yet spoken to plays the conversation first. The old man's praise
-/// also sets FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the mayor's welcome
-/// indoors does.
+/// (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED to
+/// FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL), so that a Mind Read on one not yet
+/// spoken to plays the conversation first. The old man's praise also sets
+/// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the mayor's welcome indoors does.
 ///
-/// Searching the bell rings it, and a ring while
-/// FLAG_VAULT_SAP_CALLED_BY_BELL is clear calls Sap, a Venus Djinni, out to
-/// stand by the bell; spoken to, Sap joins the party. Coming in by a gate
-/// clears the call, so Sap hides again until it has joined. The dog, given a
-/// Bone, runs to a spot and jumps there three times
-/// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c); Reveal then shows the
-/// hidden passage at that spot, whose cell (MB_VAULT_HIDDEN_PASSAGE) leads
-/// down into Vault Cave, and the cave mouth in the northeast cliff
+/// Searching the bell rings it, and a ring while FLAG_VAULT_SAP_CALLED_BY_BELL
+/// is clear calls Sap, a Venus Djinni, out to stand by the bell; spoken to, Sap
+/// joins the party. Coming in by a gate clears the call, so Sap hides again
+/// until it has joined. The dog, given a Bone, runs to a spot and jumps there
+/// three times (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c); Reveal then
+/// shows the hidden passage at that spot, whose cell (MB_VAULT_HIDDEN_PASSAGE)
+/// leads down into Vault Cave, and the cave mouth in the northeast cliff
 /// (MB_VAULT_CLIFF_CAVE_MOUTH) is a second way in. A wooden box holds a Nut,
 /// and the well rumbles with water. The cells the events answer are enum
 /// VaultMetatileBehavior (vault.h); the jail door brings the party in by
 /// VAULT_JAIL_FROM_VAULT_REVISIT, where a lone prisoner sits in the thieves'
 /// place.
 ///
-/// The inn's roof is mended: the 3-by-3 block of cells Map_Initialize
-/// copies from (45, 41) to (8, 45) lies under map grid layer 2's window, on the
-/// inn's roof, and draws the thatch whole where vault.c's town shows the hole
-/// the fiery rock burnt in it (render probe vault-revisit, the town before
-/// and after).
+/// The inn's roof is mended: the 3-by-3 block of cells Map_Initialize copies
+/// from (45, 41) to (8, 45) lies under map grid layer 2's window, on the inn's
+/// roof, and draws the thatch whole where vault.c's town shows the hole the
+/// fiery rock burnt in it (render probe vault-revisit, the town before and
+/// after).
 ///
 /// Open questions:
-/// - XXX (no evidence): why Map_Initialize, as vault.c's does, creates a
-///   still object of sprite 223 (spr_223.png, a wooden crate) at (128, 420),
-///   on the well, that shows nothing: its 32-by-64 sprite entry is in the
-///   sprite list but its tiles in video memory are blank, it is neither solid
-///   nor a target (OBJ_EVENT_NOT_TARGETED), and nothing refers to it (render
-///   probe vault-revisit); nothing in the ROM or a render says what it was
-///   meant to show.
+/// - XXX (no evidence): why Map_Initialize, as vault.c's does, creates a still
+///   object of sprite 223 (spr_223.png, a wooden crate) at (128, 420), on the
+///   well, that shows nothing: its 32-by-64 sprite entry is in the sprite list
+///   but its tiles in video memory are blank, it is neither solid nor a target
+///   (OBJ_EVENT_NOT_TARGETED), and nothing refers to it (render probe
+///   vault-revisit); nothing in the ROM or a render says what it was meant to
+///   show.
 
 #include "save_block.h"
 #include "djinn_ids.h"
@@ -142,19 +141,19 @@ enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 enum {
   /// ★ Named from the game: "Hey, it's that warrior guy!"
   /// (MsgVaultWarriorGuy)
-  FLAG_WARRIOR_GUY_GREETED = FLAG_MAPSEC_TEMP_00,
+  FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED = FLAG_MAPSEC_TEMP_00,
   /// ★ Named from the game: "You're the warriors who captured the thieves"
   /// (MsgVaultWarriorsWhoCaptured)
-  FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_MAPSEC_TEMP_05,
+  FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_MAPSEC_TEMP_05,
   /// ★ Named from the game: "You're all really strong"
   /// (MsgVaultTalkingMayorStrong)
-  FLAG_PARTY_PRAISED = FLAG_MAPSEC_TEMP_06,
+  FLAG_VAULT_REVISIT_PARTY_PRAISED = FLAG_MAPSEC_TEMP_06,
   /// ★ Named from the game: "I'm so glad you came back to Vault!"
   /// (MsgVaultWarriorGuy)
-  FLAG_BOY_ROUND_THE_WELL_SPOKE = FLAG_MAPSEC_TEMP_07,
+  FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE = FLAG_MAPSEC_TEMP_07,
   /// ★ Named from the game: "did you guys check out the jail?"
   /// (MsgVaultGuysCheckJail)
-  FLAG_ASKED_ABOUT_JAIL = FLAG_MAPSEC_TEMP_08
+  FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_MAPSEC_TEMP_08
 };
 
 // Shared effect and proximity routines precede the map's entry points.
@@ -191,7 +190,7 @@ static void EventScript_RecognizeThiefCatchers(void) {
   FieldScript_Start();
   ObjectMotion_SetAngleToward(LOCALID_WELCOMING_YOUNG_MAN, LOCALID_PARTY_LEADER,
                               2);
-  GameFlag_Set(FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY);
+  GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
   FieldScript_ShowMessageAndWait(LOCALID_WELCOMING_YOUNG_MAN, 0);
   FieldScript_End();
@@ -208,13 +207,13 @@ static void EventScript_TalkOfLunpaThieves(void) {
 }
 
 /// The old man was just talking about the party with the mayor: they are so
-/// strong, let those thieves attack. Sets FLAG_PARTY_PRAISED and
+/// strong, let those thieves attack. Sets FLAG_VAULT_REVISIT_PARTY_PRAISED and
 /// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES (0x868).
 static void EventScript_PraisePartyStrength(void) {
 
   FieldScript_Start();
   ObjectMotion_SetAngleToward(LOCALID_MAYORS_VISITOR, LOCALID_PARTY_LEADER, 2);
-  GameFlag_Set(FLAG_PARTY_PRAISED);
+  GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
   FieldScript_ShowMessageAndWait(LOCALID_MAYORS_VISITOR, 0);
@@ -231,10 +230,11 @@ static void EventScript_HopeVolcanoStaysCalm(void) {
   VaultRevisit_ShowStandingObjectEventMessage(LOCALID_OLD_WOMAN_ON_THE_VOLCANO);
 }
 
-/// The boy round the well stops circling. "Hey, it's that warrior guy!"
-/// and "Yeah, and Ivan, too." the first time (FLAG_WARRIOR_GUY_GREETED), then
-/// "I'm so glad you came back to Vault!" Bit 1 of the boy's timer keeps
-/// Vault_UpdateWalkingVillager from moving it while it talks.
+/// The boy round the well stops circling. "Hey, it's that warrior guy!" and
+/// "Yeah, and Ivan, too." the first time
+/// (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED), then "I'm so glad you came back to
+/// Vault!" Bit 1 of the boy's timer keeps Vault_UpdateWalkingVillager from
+/// moving it while it talks.
 static void EventScript_GreetWarriorGuy(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_BOY_ROUND_THE_WELL);
   u16 facing = objectEvent->facing;
@@ -246,12 +246,12 @@ static void EventScript_GreetWarriorGuy(void) {
   FieldScript_SetMessageId(text);
   Import_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   ObjectEvent_LinkPair(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER, 2);
-  if (Script_GetFlag(FLAG_WARRIOR_GUY_GREETED) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
     ObjectEvent_ShowEmote(LOCALID_BOY_ROUND_THE_WELL,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Script_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 0, 10);
     Script_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 0, 10);
-    GameFlag_Set(FLAG_WARRIOR_GUY_GREETED);
+    GameFlag_Set(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED);
   }
   FieldScript_SetMessageId(text + 2);
   Script_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 0, 10);
@@ -259,7 +259,7 @@ static void EventScript_GreetWarriorGuy(void) {
   WaitFrames(1);
   FieldScript_End();
   objectEvent->timer = 1;
-  GameFlag_Set(FLAG_BOY_ROUND_THE_WELL_SPOKE);
+  GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
 }
 
 /// The girl round the well stops. "I wish Vault's elders were as brave as you!"
@@ -294,7 +294,7 @@ static void EventScript_AskAboutJailbreak(void) {
     gFieldWork->message += 1;
   }
   FieldScript_ShowMessageAndWait(LOCALID_STRONGMAN_ON_WATCH, 0);
-  GameFlag_Set(FLAG_ASKED_ABOUT_JAIL);
+  GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   FieldScript_End();
 }
 
@@ -306,7 +306,7 @@ static void EventScript_ReadMindAndRecognizeThiefCatchers(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_WELCOMING_YOUNG_MAN, LOCALID_PARTY_LEADER,
                               20);
-  GameFlag_Set(FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY);
+  GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
   FieldScript_ShowMessageThenWait(LOCALID_WELCOMING_YOUNG_MAN, 0, 20);
   FieldScript_End();
@@ -328,7 +328,7 @@ static void EventScript_ReadMindAndPraisePartyStrength(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MAYORS_VISITOR, 1);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_MAYORS_VISITOR, LOCALID_PARTY_LEADER, 20);
-  GameFlag_Set(FLAG_PARTY_PRAISED);
+  GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
   FieldScript_ShowMessageThenWait(LOCALID_MAYORS_VISITOR, 0, 20);
@@ -350,12 +350,12 @@ static void EventScript_ReadMindOnFeelingBrave(void) {
   ObjectEvent_Get(LOCALID_BOY_ROUND_THE_WELL)->timer |=
       VAULT_PROXIMITY_REACTION_PAUSED;
   FieldScript_Start();
-  if (Script_GetFlag(FLAG_BOY_ROUND_THE_WELL_SPOKE) != 0) {
+  if (Script_GetFlag(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE) != 0) {
     FieldScript_SetMessageId(MsgVaultWatchingGuysMakes);
     VaultRevisit_ShowStandingObjectEventMessage(LOCALID_BOY_ROUND_THE_WELL);
   } else {
     EventScript_GreetWarriorGuy();
-    GameFlag_Set(FLAG_BOY_ROUND_THE_WELL_SPOKE);
+    GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
   }
   FieldScript_End();
   ObjectEvent_Get(LOCALID_BOY_ROUND_THE_WELL)->timer = 1;
@@ -386,7 +386,7 @@ static void EventScript_ReadMindOnJailKey(void) {
   s32 requestHeard;
   s32 unpaused;
 
-  requestHeard = Script_GetFlag(FLAG_ASKED_ABOUT_JAIL);
+  requestHeard = Script_GetFlag(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   if (requestHeard == 0) {
     FieldScript_Start();
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = 1;
@@ -404,7 +404,7 @@ static void EventScript_ReadMindOnJailKey(void) {
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = requestHeard;
     ObjectEvent_SetBuiltinAction(LOCALID_STRONGMAN_ON_WATCH, 2);
     FieldScript_End();
-    GameFlag_Set(FLAG_ASKED_ABOUT_JAIL);
+    GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   } else {
     FieldScript_SetMessageId(MsgVaultNotLikeEasy);
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = 1;
@@ -681,7 +681,7 @@ s32 Map_Initialize(void) {
   s32 mode;
 
   // Keep the bridge deck after a battle, and mend the inn's roof.
-  if (GameFlag_Get(FLAG_MAP_TEMP_00))
+  if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   // A still object on the well that shows nothing (an open question).
   ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
@@ -953,18 +953,18 @@ struct MapEvent gVaultRevisit_Events[] = {
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
     { MAP_EVENT_TALK, LOCALID_SAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToVenusDjinni) },
     { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_WELCOMING_YOUNG_MAN, FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY, EVENT_SCRIPT(EventScript_ReadMindAndRecognizeThiefCatchers) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_WELCOMING_YOUNG_MAN, FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY, EVENT_SCRIPT(EventScript_ReadMindAndRecognizeThiefCatchers) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_LUNPAS_THIEVES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnDodonpa) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAYORS_VISITOR, FLAG_PARTY_PRAISED, EVENT_SCRIPT(EventScript_ReadMindAndPraisePartyStrength) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAYORS_VISITOR, FLAG_VAULT_REVISIT_PARTY_PRAISED, EVENT_SCRIPT(EventScript_ReadMindAndPraisePartyStrength) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYORS_VISITOR, CONDITION_ALWAYS, MSGNO(MsgVaultThoseStupidThievesEscapedAndWe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_ON_THE_VOLCANO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnWinter) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_BOY_ROUND_THE_WELL, FLAG_BOY_ROUND_THE_WELL_SPOKE, EVENT_SCRIPT(EventScript_ReadMindOnFeelingBrave) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_BOY_ROUND_THE_WELL, FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE, EVENT_SCRIPT(EventScript_ReadMindOnFeelingBrave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnFeelingBrave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnScaredGrownUps) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_STRONGMAN_ON_WATCH, FLAG_ASKED_ABOUT_JAIL, EVENT_SCRIPT(EventScript_ReadMindOnJailKey) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_STRONGMAN_ON_WATCH, FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL, EVENT_SCRIPT(EventScript_ReadMindOnJailKey) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnJailKey) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },

@@ -132,6 +132,9 @@
 #include "fixed_math.h"
 #include "map_header.h"
 
+/// The visible anchor charm has been created this visit.
+#define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_MAP_TEMP_00
+
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another map section, and other map sections use the numbers for their
 // own.
@@ -3253,10 +3256,11 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
   }
 }
 
-/// Creates the visible anchor charm once a visit (FLAG_MAP_TEMP_00 records
-/// it) and retains it for departure scripts.
+/// Creates the visible anchor charm once a visit
+/// (FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN records it) and retains it for departure
+/// scripts.
 static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
-  s32 set = Script_GetFlag(FLAG_MAP_TEMP_00);
+  s32 set = Script_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   struct ObjectEvent *objectEvent;
   struct Sprite *sprite;
   u8 *buffer;
@@ -3275,7 +3279,7 @@ static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
   VramCache_Load(sprite->slot, 128, buffer + 0x400);
   FreeHeapSlot(17);
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   gTolbiShipInteriors_AnchorObject = objectEvent;
   return objectEvent;
 }

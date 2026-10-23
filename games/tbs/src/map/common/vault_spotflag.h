@@ -1,17 +1,21 @@
 /// @file
 /// Vault's interiors, before and after the thieves are caught: whether the
 /// leader stands beside the Bone on the floor, which the maps' event tables
-/// test through FLAG_MAP_TEMP_50.
+/// test through FLAG_VAULT_LEADER_BESIDE_BONE.
 #include "types.h"
 #include "object_event.h"
 #include "script_layer.h"
 #include "flags.h"
 
-/// Keeps the girl at the inn from offering another Bone too soon.
-/// She doesn't offer one while the leader stands beside the one on the floor.
-/// Each map adds this callback in the girl at the inn's house after the
-/// thieves are jailed. FLAG_MAP_TEMP_50 records proximity for the object event
-/// talk table.
+/// The leader stands beside the Bone on the inn's floor, so the girl at the
+/// inn's talk row gives way and the A button searches the Bone.
+#define FLAG_VAULT_LEADER_BESIDE_BONE FLAG_MAP_TEMP_50
+
+/// Keeps the girl at the inn from offering another Bone too soon. She doesn't
+/// offer one while the leader stands beside the one on the floor. Each map adds
+/// this callback in the girl at the inn's house after the thieves are jailed.
+/// FLAG_VAULT_LEADER_BESIDE_BONE records proximity for the object event talk
+/// table.
 static void Vault_UpdateBoneProximityFlag(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 fixedX = leader->x.fixed;
@@ -25,8 +29,8 @@ static void Vault_UpdateBoneProximityFlag(void) {
   row >>= 20;
 
   if ((u32)column <= 1 && row > 40 && row <= 42) {
-    GameFlag_Set(FLAG_MAP_TEMP_50);
+    GameFlag_Set(FLAG_VAULT_LEADER_BESIDE_BONE);
   } else {
-    GameFlag_Clear(FLAG_MAP_TEMP_50);
+    GameFlag_Clear(FLAG_VAULT_LEADER_BESIDE_BONE);
   }
 }

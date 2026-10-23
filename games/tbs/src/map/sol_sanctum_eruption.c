@@ -1,16 +1,16 @@
 /// @file
 /// Elemental Star Room (MapId_SolSanctumEruption), the chamber of
-/// MapId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as
-/// it collapses once the Mars Star is taken: one scripted scene, with no events
-/// of its own.
+/// MapId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as it
+/// collapses once the Mars Star is taken: one scripted scene, with no events of
+/// its own.
 ///
 /// SolSanctumEruption_Initialize plays it on arrival at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, in two parts:
 /// - SolSanctumEruption_PlayHostageScene: the chamber quakes, the Wise One
 ///   appears and stills it, and Saturos's group leaves with Jenna and Kraden,
 ///   rising out of the chamber one by one. Jenna leaves the party.
-/// - SolSanctumEruption_PlayWiseOneRescue: the Wise One has Isaac keep the
-///   Mars Star, then sends Isaac and Garet away in a white flash. It sets
+/// - SolSanctumEruption_PlayWiseOneRescue: the Wise One has Isaac keep the Mars
+///   Star, then sends Isaac and Garet away in a white flash. It sets
 ///   FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from then
 ///   on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, and takes
 ///   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol
@@ -21,16 +21,16 @@
 /// a varying rate (SolSanctumEruption_StepEmbers and
 /// SolSanctumEruption_UpdateEmberFrequency, callbacks the first part adds and
 /// the second removes); once Saturos's group starts to leave
-/// (FLAG_MAP_TEMP_46), they fall silently. The breaking floor's cells flicker
-/// by callback until the Wise One holds them, ten arcs of light rise at each of
-/// the chamber's four corners as the Wise One tells of the stars
-/// (SolSanctumEruption_RaiseElementalArcs), and the Wise One glows through a
-/// cycle of palettes.
+/// (FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING), they fall silently. The
+/// breaking floor's cells flicker by callback until the Wise One holds them,
+/// ten arcs of light rise at each of the chamber's four corners as the Wise One
+/// tells of the stars (SolSanctumEruption_RaiseElementalArcs), and the Wise One
+/// glows through a cycle of palettes.
 ///
-/// Saturos's group and their hostages leave one by one from the platform
-/// where the party arrived (SolSanctumEruption_RaiseAndShrinkObjectEvent): each
-/// walks onto it, rises 30 pixels at full size, then rises on as he shrinks
-/// away, over a shadow that shrinks with him (LOCALID_PLATFORM_SHADOW;
+/// Saturos's group and their hostages leave one by one from the platform where
+/// the party arrived (SolSanctumEruption_RaiseAndShrinkObjectEvent): each walks
+/// onto it, rises 30 pixels at full size, then rises on as he shrinks away,
+/// over a shadow that shrinks with him (LOCALID_PLATFORM_SHADOW;
 /// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif:
 /// the departures, the platform's object event boxed on the screen, beside the
 /// sprites and the sprites without it, where the shadow is gone).
@@ -78,6 +78,10 @@
 #include "item_ids.h"
 #include "fx_work.h"
 
+/// Saturos's group has started to leave, and the embers fall without their
+/// sound.
+#define FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING FLAG_MAP_TEMP_46
+
 static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
 static void SolSanctumEruption_ResetEmberEmission(void);
@@ -101,8 +105,8 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
 // Map flags, cleared on every ordinary arrival:
-// - FLAG_MAP_TEMP_46: set as Saturos's group starts to leave; from then on
-//   the embers fall without their sound (SE_246).
+// - FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING: set as Saturos's group starts to
+//   leave; from then on the embers fall without their sound (SE_246).
 
 /// The four corners of the chamber where SolSanctumEruption_RaiseElementalArcs
 /// raises lights, in the order the Wise One's scene visits them.
@@ -170,7 +174,8 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// as hostages, and the Wise One then rescues Isaac and Garet. Called by
 /// SolSanctumEruption_Initialize at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from
-/// MapId_SolSanctumElementalStarRoom. Sets FLAG_MAP_TEMP_46, plays
+/// MapId_SolSanctumElementalStarRoom. Sets
+/// FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING, plays
 /// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageScene(void) {
   void ObjectEvent_ShowEmote();
@@ -549,7 +554,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  GameFlag_Set(FLAG_MAP_TEMP_46);
+  GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING);
   // One by one they rise out of the chamber: Saturos, Kraden, Menardi, then
   // Jenna ("Isaac, Garet! Don't die!") and Felix, and last Alex, who regrets
   // leaving the Mars Star.
@@ -779,7 +784,7 @@ static void SolSanctumEruption_StepEmbers(void) {
     angle = Math_RemainderUnsigned(Import_RandomNext(), 0xffff);
     ember = ObjectEvent_GetById(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
-      if (GameFlag_Get(FLAG_MAP_TEMP_46) == 0)
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
         Sound_PlaySong(SE_246);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;

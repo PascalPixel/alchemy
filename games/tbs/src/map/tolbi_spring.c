@@ -1,43 +1,42 @@
 /// @file
-/// Two maps of Tolbi where the party plays for prizes whenever it is in
-/// town; neither has a story script.
+/// Two maps of Tolbi where the party plays for prizes whenever it is in town;
+/// neither has a story script.
 ///
-/// - Tolbi (MapId_TolbiGameRooms), the rooms of Lucky Dice and Lucky
-///   Wheels; TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI and
-///   TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI lead back into MapId_Tolbi.
-///   The Lucky Dice attendant asks ten coins for each level of the party's
-///   average level: the coin total is saved in the save block and the party
-///   goes to the Lucky Dice game, which returns to
-///   TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE, where the setup has the attendant
-///   announce the coins won or lost, with a fanfare by the size of the win. The
-///   Lucky Wheels attendant takes Game Tickets and warns when the bag has six
-///   free slots or fewer; the game returns to
-///   TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS with the prize categories won,
-///   and the setup has the attendant hand over an item for each, a different
-///   one of the category's three than last time (Moons choose any category), or
-///   offers another game when nothing was won. Signs give both games' rules and
-///   the Lucky Wheels prizes. A soldier talks of Lucky Dice until Babi is saved
-///   (FLAG_BABI_SAVED, the finals day), then of the scalpers at the Colosso
-///   finals, and is gone once they have been fought (FLAG_COLOSSO_OVER).
-/// - Tolbi Spring (MapId_TolbiSpring); TOLBI_SPRING_TO_TOLBI leads
-///   back into Tolbi (TOLBI_FROM_TOLBI_SPRING). Searching the spring raises
-///   it and blends it into view the first time in each visit
-///   (FLAG_MAP_TEMP_00), stands the leader with their back to it, and offers
-///   a coin or a Lucky Medal to toss. The toss is a small physics game: the
-///   token flies over the spring past four moving obstacles and is pulled
-///   toward the prize rings until it settles in one of five. A coin wins 20,
-///   10, 2 or 1 coins by ring, or nothing in the fifth; a medal wins an item
-///   drawn by weight from fifteen prizes, the nearer the centre the fewer and
-///   better (Assassin Blade first, Water of Life last), and the item won has
-///   its weight halved for later tosses. Where the token settles is
-///   measured from TOLBI_SPRING_CENTER_X and _Z, the rings ending at squared
-///   distances of 224, 624, 1,088 and 1,680 square pixels, which match the
-///   rings painted in the spring
+/// - Tolbi (MapId_TolbiGameRooms), the rooms of Lucky Dice and Lucky Wheels;
+///   TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI and
+///   TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI lead back into MapId_Tolbi. The
+///   Lucky Dice attendant asks ten coins for each level of the party's average
+///   level: the coin total is saved in the save block and the party goes to the
+///   Lucky Dice game, which returns to TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE,
+///   where the setup has the attendant announce the coins won or lost, with a
+///   fanfare by the size of the win. The Lucky Wheels attendant takes Game
+///   Tickets and warns when the bag has six free slots or fewer; the game
+///   returns to TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS with the prize
+///   categories won, and the setup has the attendant hand over an item for
+///   each, a different one of the category's three than last time (Moons choose
+///   any category), or offers another game when nothing was won. Signs give
+///   both games' rules and the Lucky Wheels prizes. A soldier talks of Lucky
+///   Dice until Babi is saved (FLAG_BABI_SAVED, the finals day), then of the
+///   scalpers at the Colosso finals, and is gone once they have been fought
+///   (FLAG_COLOSSO_OVER).
+/// - Tolbi Spring (MapId_TolbiSpring); TOLBI_SPRING_TO_TOLBI leads back into
+///   Tolbi (TOLBI_FROM_TOLBI_SPRING). Searching the spring raises it and blends
+///   it into view the first time in each visit (FLAG_TOLBI_SPRING_RISEN),
+///   stands the leader with their back to it, and offers a coin or a Lucky
+///   Medal to toss. The toss is a small physics game: the token flies over the
+///   spring past four moving obstacles and is pulled toward the prize rings
+///   until it settles in one of five. A coin wins 20, 10, 2 or 1 coins by ring,
+///   or nothing in the fifth; a medal wins an item drawn by weight from fifteen
+///   prizes, the nearer the centre the fewer and better (Assassin Blade first,
+///   Water of Life last), and the item won has its weight halved for later
+///   tosses. Where the token settles is measured from TOLBI_SPRING_CENTER_X and
+///   _Z, the rings ending at squared distances of 224, 624, 1,088 and 1,680
+///   square pixels, which match the rings painted in the spring
 ///   (https://alchemy.pascalpixel.com/places/tolbi-spring/toss.gif: a coin
 ///   tossed from the spring's edge, its path in yellow, the rings drawn at
 ///   those distances and labelled with what a coin wins in each). The spring
-///   opens to show the prize as it is given. In the editions before
-///   TBS_PATCH_1 the coin and medal counts show an `=` after each number.
+///   opens to show the prize as it is given. In the editions before TBS_PATCH_1
+///   the coin and medal counts show an `=` after each number.
 ///
 /// Open questions: none.
 
@@ -82,6 +81,9 @@
 #include "flags.h"
 #include "songs.h"
 #include "common/colosso_story_flags.h"
+
+/// The spring has risen and faded into view this visit.
+#define FLAG_TOLBI_SPRING_RISEN FLAG_MAP_TEMP_00
 
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
@@ -211,7 +213,7 @@ enum TolbiSpringMetatileBehavior {
   MB_TOLBI_SPRING_WATER = 80, ///< searched to toss a coin or medal
 };
 
-// FLAG_MAP_TEMP_00 is set once the spring has risen and faded in.
+// FLAG_TOLBI_SPRING_RISEN is set once the spring has risen and faded in.
 
 /// The spring's centre, which the prize rings pull the tossed token toward.
 #define TOLBI_SPRING_CENTER_X PIXELS(120)
@@ -315,8 +317,8 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 localId) {
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gSaveBlock.leaderLocalId;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
-    GameFlag_Set(FLAG_MAP_TEMP_00);
+  if (Script_GetFlag(FLAG_TOLBI_SPRING_RISEN) == 0) {
+    GameFlag_Set(FLAG_TOLBI_SPRING_RISEN);
     TolbiSpring_RiseAndFadeIn();
   }
   FieldScript_Start();
@@ -386,7 +388,7 @@ s32 TolbiSpring_Initialize(void) {
     FieldScript_StartScreenTransition();
     if (gSaveBlock.warpDest == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
-      if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
+      if (GameFlag_Get(FLAG_TOLBI_SPRING_RISEN)) {
         Io_SetBlendControl(0x3f42);
         Io_SetBlendAlpha(0x1000);
       }

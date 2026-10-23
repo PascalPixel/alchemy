@@ -86,6 +86,9 @@
 #include "audio_engine_symbols.h"
 #include "ability_ids.h"
 
+/// Both beams have opened the hole in the floor before the centre statue.
+#define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_MAP_TEMP_07
+
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another map section, and other map sections use the numbers for their
 // own.
@@ -123,8 +126,9 @@ enum SolSanctumStatueMetatileBehavior {
 };
 
 // Map flags, cleared on every ordinary arrival:
-// - FLAG_MAP_TEMP_07: both beams have opened the hole in the floor;
-//   until then, Move on the centre statue first walks the leader clear of it.
+// - FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN: both beams have opened the hole in the
+//   floor; until then, Move on the centre statue first walks the leader clear
+//   of it.
 
 static void SolSanctumStatue_InitializeScrollingSprites(void);
 static void EventScript_CenterStatueMoved(void);
@@ -274,8 +278,8 @@ static s32 SolSanctumStatue_SelectStoryWarp(void) {
 }
 
 /// Animates the floor opening before the centre statue once both beams shine,
-/// then lets the statue drop in if Move has already brought it there. Called
-/// by whichever beam shines second. Sets FLAG_MAP_TEMP_07.
+/// then lets the statue drop in if Move has already brought it there. Called by
+/// whichever beam shines second. Sets FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN.
 static void SolSanctumStatue_OpenCentralHole(void) {
   s32 flash;
 
@@ -297,7 +301,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   {
     MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   }
-  GameFlag_Set(FLAG_MAP_TEMP_07);
+  GameFlag_Set(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN);
   EventScript_CenterStatueMoved();
 }
 
@@ -1141,7 +1145,7 @@ static void EventScript_CenterStatueMoved(void) {
     statueZ = statue->z.fixed;
     FieldScript_Start();
     if ((statueZ >> 20) == 8) {
-      if (GameFlag_Get(FLAG_MAP_TEMP_07) == 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
         leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
         if ((u32)(leader->z.fixed >> 19) <= 17) {
           ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 289, 158);

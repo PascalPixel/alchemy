@@ -347,8 +347,8 @@ arrival and the map section's 256 when the party enters another map section
 ([the front page](../../README.md#game-flags) explains the ranges). Because
 the numbers are reused everywhere, each map says near its top (or beside a
 single use) what it keeps in them, and names those it gives a meaning in its own file
-(`FLAG_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40` in Crossbone Isle,
-`FLAG_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00` in Vault's houses).
+(`FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40` in Crossbone Isle,
+`FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00` in Vault's houses).
 
 The flags are in `games/tbs/include/flags.h`.
 

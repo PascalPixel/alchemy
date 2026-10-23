@@ -255,7 +255,7 @@ enum {
 /// attendant back.
 /// ★ Named from the game: "We have just enough extra beds in this room for
 /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
-enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_MAP_TEMP_00 };
+enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_MAP_TEMP_00 };
 
 /// The palace map's tileset animations that open its doors, for
 /// TilesetAnim_Resume (play) and TilesetAnim_Pause (pause).
@@ -397,8 +397,8 @@ static void BabiPalace_ShowBeds(s32 localId) {
   roundedFacing = (leader->facing + 0x2000) & 0xc000;
   Script_Start();
   Field_EndBusyAndReveal();
-  if (Script_GetFlag(FLAG_ATTENDANT_SHOWED_BEDS) == 0) {
-    GameFlag_Set(FLAG_ATTENDANT_SHOWED_BEDS);
+  if (Script_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
+    GameFlag_Set(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS);
     GameFlag_Clear(FLAG_BABI_PALACE_BEDS_OPEN);
     Script_SetMessage(MsgTolbiWeHaveJustEnoughExtra);
     Script_ShowMessage(localId, 0);
@@ -414,7 +414,7 @@ static void BabiPalace_ShowBeds(s32 localId) {
     ObjectEvent_WalkByAndWait(localId, 64, 0);
     ObjectEvent_FaceDirection(localId, facingOrMessage, 0);
   } else {
-    GameFlag_Clear(FLAG_ATTENDANT_SHOWED_BEDS);
+    GameFlag_Clear(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS);
     GameFlag_Set(FLAG_BABI_PALACE_BEDS_OPEN);
     ObjectEvent_FaceDirection(localId, FACING_SOUTH, 0);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 96);

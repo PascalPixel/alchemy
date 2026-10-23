@@ -901,9 +901,9 @@ static void EventScript_HaltLifts(void) {
 
 /// Reaching Colosseum Final 2's arena: the leader takes a prize (the Chain Mail
 /// if first, the Cotton Shirt if second), and he and Satrage face off and
-/// fight; the battle's group follows who took the mail.
-/// The arena's coord event row waits on FLAG_MAP_TEMP_10 being clear, which
-/// nothing in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
+/// fight; the battle's group follows who took the mail. The arena's coord event
+/// row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which nothing in the
+/// game sets (colosseum_azart_match.c's EventScript_ReachArena).
 static void EventScript_ReachArena(void) {
   s32 opponentFinishedFirst;
   s32 refreshCount;
@@ -2013,6 +2013,11 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 
 #include "common/colosso_occupant.h"
 
+/// Closes the arena's coord event; nothing in the game sets it.
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
+/// The chest holding a Smoke Bomb has been opened.
+#define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_39
+
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};
 
 // clang-format off
@@ -2214,9 +2219,9 @@ struct MapEvent gColosseumSatrageMatchEvents[] = {
     { COORD_EVENT_WALKING, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillarAndUpdateCells) },
     { COORD_EVENT_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillarAndUpdateCells) },
-    { MAP_EVENT_COORD, 50, FLAG_MAP_TEMP_10, EVENT_SCRIPT(EventScript_ReachArena) },
+    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_38, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 102, FLAG_MAPSEC_TEMP_39, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_MAPSEC_TEMP_3B, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_PUDDLE_WEST, FLAG_WEST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestTarget) },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_PUDDLE_EAST, FLAG_EAST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastTarget) },

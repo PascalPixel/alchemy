@@ -1,6 +1,6 @@
 /// @file
-/// The World Map (MapId_WorldMap), the one perspective map (layout/world)
-/// that joins the map sections, and the only map of this overlay. Its code does
+/// The World Map (MapId_WorldMap), the one perspective map (layout/world) that
+/// joins the map sections, and the only map of this overlay. Its code does
 /// three kinds of work.
 ///
 /// It lets the party into the map sections. Each map section stands on the map
@@ -24,24 +24,23 @@
 /// Venus, a Mars and a Mercury Djinni, stand on the map and, talked to or
 /// walked near, fight once a random battle is nearly due. A whirlwind near
 /// Crossbone Isle (LOCALID_STORM, put away while the Tolbi-bound Ship lies at
-/// anchor off the island) lifts the party for 180 frames when walked into,
-/// as the Suhalla Desert's storms do: Douse on it brings the party down into
-/// a battle, and when the time runs out it drops the party outside Suhalla
+/// anchor off the island) lifts the party for 180 frames when walked into, as
+/// the Suhalla Desert's storms do: Douse on it brings the party down into a
+/// battle, and when the time runs out it drops the party outside Suhalla
 /// (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING). The Turtle Boots are buried
 /// in the ground (MB_WORLD_MAP_TURTLE_BOOTS).
 ///
-/// And it plays the story's moments on the map, each run by
-/// WorldMap_Initialize for the warp destination another map sends the party to.
-/// In story order:
+/// And it plays the story's moments on the map, each run by WorldMap_Initialize
+/// for the warp destination another map sends the party to. In story order:
 /// - Leaving Vale (WORLD_MAP_FROM_VALE_GATE) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
-/// - Flint, the first Djinni, circles his spot until the party walks up to
-///   him (EventScript_MeetFlint); he joins, teaches how Djinn are set and put
-///   on standby, and a tutorial battle follows.
+/// - Flint, the first Djinni, circles his spot until the party walks up to him
+///   (EventScript_MeetFlint); he joins, teaches how Djinn are set and put on
+///   standby, and a tutorial battle follows.
 /// - Hammet's caravan: the first time the party touches Vault
-///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES), the caravan, cut off from Kalay by
-///   the destroyed bridge, turns north for Lunpa as the ground shakes and a
-///   rock falls beside it; then the party goes on into Vault. It sets
+///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES), the caravan, cut off from Kalay by the
+///   destroyed bridge, turns north for Lunpa as the ground shakes and a rock
+///   falls beside it; then the party goes on into Vault. It sets
 ///   FLAG_LUNPA_GUARDS_SUSPECT_KALAY.
 /// - Mercury Lighthouse lit (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT): the
 ///   lighthouse transition (WorldMap_PlayLighthouseTransition), then Mercury
@@ -49,8 +48,8 @@
 /// - Bunza's wagon: out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE)
 ///   Bunza, Hammet and the leader board it and it rolls off
 ///   (FLAG_BUNZAS_WAGON_LEFT); at the Kalay Tunnel Entrance
-///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader
-///   steps down.
+///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader steps
+///   down.
 /// - The Tolbi-bound Ship's crossing of the Karagol Sea: between the ship's
 ///   maps (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK to
 ///   _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
@@ -61,9 +60,9 @@
 ///   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI ends the crossing at Tolbi
 ///   (FLAG_TOLBI_SHIP_REACHED_TOLBI).
 /// - The Black Orb: out of Gateway Cave (WORLD_MAP_FROM_GATEWAY_CAVE) Iodem
-///   sees Babi's ship scuttled off the coast and gives Isaac the orb to use
-///   on it (FLAG_MAP_TEMP_34, FLAG_SAW_SHIP_AT_IDEJIMA), and calls him back
-///   if he walks into the cave again. Used on the wreck
+///   sees Babi's ship scuttled off the coast and gives Isaac the orb to use on
+///   it (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER, FLAG_SAW_SHIP_AT_IDEJIMA), and
+///   calls him back if he walks into the cave again. Used on the wreck
 ///   (MB_WORLD_MAP_SHIPWRECK) the orb does nothing; Iodem takes it back and the
 ///   party must go on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED). A defeat
 ///   meanwhile returns to WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the
@@ -140,6 +139,24 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
+
+/// The falling rock of Hammet's caravan scene has landed and shattered.
+#define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_MAP_TEMP_00
+/// Iodem has handed Isaac the Black Orb and waits for it to be used on the
+/// wreck off Gateway Cave.
+#define FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER FLAG_MAP_TEMP_34
+/// The map's ordinary object event templates (gWorldMapObjectEventTemplates)
+/// are in use rather than a scripted moment's.
+#define FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS FLAG_MAP_TEMP_35
+/// The storm holds the party up in the air, where Douse can bring it down.
+#define FLAG_WORLD_MAP_CAUGHT_IN_STORM FLAG_MAP_TEMP_F0
+/// The storm is done with, or put away while the Tolbi-bound Ship lies off the
+/// island, and catches no one.
+#define FLAG_WORLD_MAP_STORM_GONE FLAG_MAP_TEMP_F1
+/// The first flag of a byte (read and written with FieldGameFlag_GetByte and
+/// FieldGameFlag_SetByte) counting the frames the storm keeps the party in the
+/// air.
+#define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_MAP_TEMP_F8
 
 static s32 WorldMap_AlignToMap(struct Object *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
@@ -410,13 +427,13 @@ enum {
   ANIM_SHEBA_LIE = 8   ///< lying on her back (spr_006.tsv)
 };
 
-// The world map's map flags:
-// FLAG_MAP_TEMP_00: the falling rock has landed, in Hammet's caravan scene.
-// FLAG_MAP_TEMP_34: Iodem has handed over the Black Orb.
-// FLAG_MAP_TEMP_35: the map's ordinary object event templates are in use.
-// FLAG_MAP_TEMP_F0: the storm holds the party up in the air.
-// FLAG_MAP_TEMP_F1: the storm is done with, or put away.
-// FLAG_MAP_TEMP_F8: a byte: frames left in the air.
+// The world map's map flags: FLAG_WORLD_MAP_FALLING_ROCK_LANDED: the falling
+// rock has landed, in Hammet's caravan scene.
+// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER: Iodem has handed over the Black Orb.
+// FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS: the map's ordinary object event
+// templates are in use. FLAG_WORLD_MAP_CAUGHT_IN_STORM: the storm holds the
+// party up in the air. FLAG_WORLD_MAP_STORM_GONE: the storm is done with, or
+// put away. FLAG_WORLD_MAP_STORM_FRAMES_LEFT: a byte: frames left in the air.
 
 /// Walking near Vine, or talking to him: once a battle is nearly due, half the
 /// time Vine fights; otherwise the next step brings an ordinary battle.
@@ -603,15 +620,15 @@ static s32 WorldMap_SetUpIodem(struct Object *interpreter) {
 /// Sets up the storm (LOCALID_STORM) as it is placed: it does not collide, and
 /// while the Tolbi-bound Ship lies at anchor off the island
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin and
-/// FLAG_MAP_TEMP_F1 keeps it from catching the party.
-/// Called by its object script.
+/// FLAG_WORLD_MAP_STORM_GONE keeps it from catching the party. Called by its
+/// object script.
 static s32 WorldMap_SetUpStorm(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetColorMode(objectEvent, SPRITE_COLOR_RED_TINT);
   objectEvent->collisionFlags = 0;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-    GameFlag_Set(FLAG_MAP_TEMP_F1);
+    GameFlag_Set(FLAG_WORLD_MAP_STORM_GONE);
     objectEvent->x.fixed = 0;
     objectEvent->y.fixed = 0;
   }
@@ -631,7 +648,8 @@ static s32 WorldMap_BlinkObjectEventSprite(struct Object *interpreter) {
 /// Chooses the object events for the warp destination: each scripted moment has
 /// a table of its own while it is still to play, and every other arrival takes
 /// the map sections, the Djinn, the storm and Iodem
-/// (gWorldMapObjectEventTemplates) and sets FLAG_MAP_TEMP_35.
+/// (gWorldMapObjectEventTemplates) and sets
+/// FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS.
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
   switch (gSaveBlock.warpDest) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
@@ -666,7 +684,7 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
     break;
   }
 
-  GameFlag_Set(FLAG_MAP_TEMP_35);
+  GameFlag_Set(FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS);
   return gWorldMapObjectEventTemplates;
 }
 
@@ -840,19 +858,18 @@ static void EventScript_ReturnToTolbiShip(void) {
   Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
 
-/// The map's initialization: it runs the moment the warp destination
-/// selects, the story's moments listed at the top of this file. The two
-/// lighthouse warp destinations and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at
-/// once; every other arrival sets FLAG_RETREAT_BLOCKED, starts
-/// WorldMap_UpdateLocationContacts, opens the screen from a centre line, and
-/// until the Manticore of the Lamakan Desert is beaten
-/// (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile south of Vault
-/// whose bridge over the river is broken in the middle (the world map laid
-/// flat with and without the swap). The arrivals by Crossbone
+/// The map's initialization: it runs the moment the warp destination selects,
+/// the story's moments listed at the top of this file. The two lighthouse warp
+/// destinations and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once; every other
+/// arrival sets FLAG_RETREAT_BLOCKED, starts WorldMap_UpdateLocationContacts,
+/// opens the screen from a centre line, and until the Manticore of the Lamakan
+/// Desert is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile
+/// south of Vault whose bridge over the river is broken in the middle (the
+/// world map laid flat with and without the swap). The arrivals by Crossbone
 /// Isle and from the Suhalla Desert's storm resume the time in the air a storm
-/// left (FLAG_MAP_TEMP_F8). WORLD_MAP_FROM_DEBUG turns encounters off, and
-/// leaving Vale the first time sets FLAG_VALE_PARTY_LEFT and flag 0x85c,
-/// which nothing reads.
+/// left (FLAG_WORLD_MAP_STORM_FRAMES_LEFT). WORLD_MAP_FROM_DEBUG turns
+/// encounters off, and leaving Vale the first time sets FLAG_VALE_PARTY_LEFT
+/// and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
   struct SaveBlock *state = &gSaveBlock;
   s16 *warpDest = &state->warpDest;
@@ -897,7 +914,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_GATEWAY_CAVE:
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
         if (GameFlag_Get(FLAG_BLACK_ORB_RETURNED) == 0 &&
-            GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
+            GameFlag_Get(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) != 0) {
           gWorldMapIodem = LOCALID_IODEM;
           ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(6036), PIXELS(3400));
           ObjectEvent_GetById(gWorldMapIodem)->facing =
@@ -951,7 +968,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_CROSSBONE_ISLE:
     case WORLD_MAP_FROM_SUHALLA_DESERT_STORM:
       GameFlag_Set(FLAG_WORLD_MAP_LEFT);
-      if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8) != 0) {
+      if (FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT) != 0) {
         gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
         FieldScheduler_AddCallback(WorldMap_UpdateStormTimer,
                                    TASK_PRIORITY_MAP);
@@ -1405,9 +1422,9 @@ static void WorldMap_ShakeCameraWhereRockFalls(void) {
   WorldMap_MoveShakeCamera(PIXELS(5608), PIXELS(1736));
 }
 
-/// Keeps the falling rock above its guide as it drops, and lands it once.
-/// Run each frame while the rock falls in WorldMap_ShowHammetsCaravan; sets
-/// FLAG_MAP_TEMP_00 as it lands.
+/// Keeps the falling rock above its guide as it drops, and lands it once. Run
+/// each frame while the rock falls in WorldMap_ShowHammetsCaravan; sets
+/// FLAG_WORLD_MAP_FALLING_ROCK_LANDED as it lands.
 static void WorldMap_UpdateFallingRock(void) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *guide;
@@ -1418,10 +1435,10 @@ static void WorldMap_UpdateFallingRock(void) {
   objectEvent->z.fixed = guide->z.fixed;
   if (objectEvent->y.fixed < PIXELS(10)) {
     objectEvent->y.fixed = PIXELS(10);
-    if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
+    if (Script_GetFlag(FLAG_WORLD_MAP_FALLING_ROCK_LANDED) == 0) {
       Script_PlaySong(SE_145);
       Object_SelectAnimation(objectEvent, FALLING_ROCK_ANIMATION_SHATTER);
-      GameFlag_Set(FLAG_MAP_TEMP_00);
+      GameFlag_Set(FLAG_WORLD_MAP_FALLING_ROCK_LANDED);
       objectEvent->timer = 1;
     }
   }
@@ -1894,12 +1911,12 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 }
 
 /// Out of Gateway Cave: Iodem sees Babi's ship scuttled off the coast, gives
-/// Isaac the Black Orb and prompts him to use it on the ship.
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black
-/// Orb is handed back and before the wounded soldiers are seen in Lalivero
-/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_MAP_TEMP_34 and
-/// FLAG_SAW_SHIP_AT_IDEJIMA, and turns Gateway Cave's warp into
-/// EventScript_IodemCallsLeaderBack.
+/// Isaac the Black Orb and prompts him to use it on the ship. Called by
+/// WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black Orb is
+/// handed back and before the wounded soldiers are seen in Lalivero
+/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets
+/// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and FLAG_SAW_SHIP_AT_IDEJIMA, and turns
+/// Gateway Cave's warp into EventScript_IodemCallsLeaderBack.
 static void WorldMap_RunBlackOrbScene(void) {
   struct ObjectEvent *leader;
 
@@ -1973,7 +1990,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   WorldMap_EndScript();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 10);
   FieldScript_WaitFrames(20);
-  GameFlag_Set(FLAG_MAP_TEMP_34);
+  GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   gSaveBlock.savedMap = (s32)&MapId_WorldMap;
   gSaveBlock.savedWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
@@ -2062,9 +2079,9 @@ static void EventScript_IodemCallsLeaderBack(void) {
 
 /// Searching the wreck off Gateway Cave: "The wreckage of a ship scuttled off
 /// the coast." While Iodem waits for the Black Orb to be used
-/// (FLAG_MAP_TEMP_34) the main menu opens as the search ends, so that the orb
-/// can be used.
-/// Reached by searching MB_WORLD_MAP_SHIPWRECK.
+/// (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) the main menu opens as the search
+/// ends, so that the orb can be used. Reached by searching
+/// MB_WORLD_MAP_SHIPWRECK.
 static void EventScript_SearchShipwreck(void) {
 
   FieldScript_Start();
@@ -2072,7 +2089,7 @@ static void EventScript_SearchShipwreck(void) {
   WorldMap_StartScript();
 #endif
   FieldMessage_Show(MsgWorldMapWreckageShipScuttledOffCoast, 1);
-  if (GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
+  if (GameFlag_Get(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) != 0) {
     gFieldWork->menu = 1;
   }
 #if !TBS_PATCH_3
@@ -2082,9 +2099,9 @@ static void EventScript_SearchShipwreck(void) {
 }
 
 /// Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
-/// and the party is to press on to Babi Lighthouse.
-/// Reached by using the Black Orb on MB_WORLD_MAP_SHIPWRECK until it is handed
-/// back. Clears FLAG_MAP_TEMP_34 and sets FLAG_BLACK_ORB_RETURNED.
+/// and the party is to press on to Babi Lighthouse. Reached by using the Black
+/// Orb on MB_WORLD_MAP_SHIPWRECK until it is handed back. Clears
+/// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and sets FLAG_BLACK_ORB_RETURNED.
 static void EventScript_UseBlackOrb(void) {
   struct ObjectEvent *iodem;
   struct ObjectEvent *orb;
@@ -2213,7 +2230,7 @@ static void EventScript_UseBlackOrb(void) {
   Script_Wait(20);
   WorldMap_RestoreGatewayCaveWarp();
   ObjectEvent_DestroyById(gWorldMapIodem);
-  GameFlag_Clear(FLAG_MAP_TEMP_34);
+  GameFlag_Clear(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_BLACK_ORB_RETURNED);
   Script_End();
 }
@@ -2600,9 +2617,9 @@ static void WorldMap_ShowIslandDrifting(void) {
   Import_ScriptRequestWarp(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
 }
 
-/// Run each frame while a storm holds the party in the air: it spins the
-/// leader and counts the frames left in the byte at FLAG_MAP_TEMP_F8, paused
-/// while a menu is open, raising RAISED_STORM_TIME_UP at the last.
+/// Run each frame while a storm holds the party in the air: it spins the leader
+/// and counts the frames left in the byte at FLAG_WORLD_MAP_STORM_FRAMES_LEFT,
+/// paused while a menu is open, raising RAISED_STORM_TIME_UP at the last.
 static void WorldMap_UpdateStormTimer(void) {
 
   struct ObjectEvent *objectEvent;
@@ -2613,7 +2630,7 @@ static void WorldMap_UpdateStormTimer(void) {
   work = gFieldWork;
   objectEvent->facing = (gFrameCount << 12);
 
-  progress = FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8);
+  progress = FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT);
   if (progress != 0) {
     if (progress == 1) {
       work->raisedEvent = RAISED_STORM_TIME_UP;
@@ -2621,12 +2638,12 @@ static void WorldMap_UpdateStormTimer(void) {
       progress -= 1;
     }
   }
-  FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, progress);
+  FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, progress);
 }
 
-/// Draws the leader into the storm, lifts him and starts its timer.
-/// Called by EventScript_WalkIntoStorm. Sets FLAG_MAP_TEMP_F0 and gives the
-/// party 180 frames in the air (FLAG_MAP_TEMP_F8).
+/// Draws the leader into the storm, lifts him and starts its timer. Called by
+/// EventScript_WalkIntoStorm. Sets FLAG_WORLD_MAP_CAUGHT_IN_STORM and gives the
+/// party 180 frames in the air (FLAG_WORLD_MAP_STORM_FRAMES_LEFT).
 static void WorldMap_CatchInStorm(s32 targetLocalId) {
   s32 alreadyTraveling;
   struct ObjectEvent *objectEvent;
@@ -2635,7 +2652,7 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
 
   id = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(id);
-  alreadyTraveling = Script_GetFlag(FLAG_MAP_TEMP_F0);
+  alreadyTraveling = Script_GetFlag(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
   if (alreadyTraveling == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(id, ATTACHED_EFFECT_IN_FRONT |
@@ -2656,24 +2673,24 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
     objectEvent->velocityY = alreadyTraveling;
     objectEvent->motionFlags = OBJ_EVENT_FLOATS;
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
-    GameFlag_Set(FLAG_MAP_TEMP_F0);
-    FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 180);
+    GameFlag_Set(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
+    FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 180);
     FieldScript_End();
     gFieldWork->battle = 0; // drop any battle this step rolled
   }
 }
 
-/// Walking into the storm: the party is lifted up into the air.
-/// Reached by walking onto MB_WORLD_MAP_STORM until the storm is done with
-/// (FLAG_MAP_TEMP_F1).
+/// Walking into the storm: the party is lifted up into the air. Reached by
+/// walking onto MB_WORLD_MAP_STORM until the storm is done with
+/// (FLAG_WORLD_MAP_STORM_GONE).
 static void EventScript_WalkIntoStorm(void) {
   WorldMap_CatchInStorm(LOCALID_STORM);
 }
 
 /// Starting to cast Douse on the storm: Douse's rain cloud gathers 80 pixels
-/// up, where the party floats (douse.c reads childOption).
-/// Reached by the first phase of Douse on the storm (LOCALID_STORM) while it
-/// holds the party in the air (FLAG_MAP_TEMP_F0).
+/// up, where the party floats (douse.c reads childOption). Reached by the first
+/// phase of Douse on the storm (LOCALID_STORM) while it holds the party in the
+/// air (FLAG_WORLD_MAP_CAUGHT_IN_STORM).
 static void EventScript_StartDousingStorm(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
@@ -2681,17 +2698,17 @@ static void EventScript_StartDousingStorm(void) {
 /// Douse on the storm: the party comes down and the battle with what is in it
 /// begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
 /// Desert's storms. Reached by Douse on the storm (LOCALID_STORM) while it
-/// holds the party in the air. Clears FLAG_MAP_TEMP_F0, sets FLAG_MAP_TEMP_F1
-/// and empties the timer.
+/// holds the party in the air. Clears FLAG_WORLD_MAP_CAUGHT_IN_STORM, sets
+/// FLAG_WORLD_MAP_STORM_GONE and empties the timer.
 static void EventScript_DouseMapStorm(void) {
   struct ObjectEvent *selectedObjectEvent;
 
   if (gFieldWork->raisedEvent == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedEvent = 0;
   }
-  GameFlag_Clear(FLAG_MAP_TEMP_F0);
-  GameFlag_Set(FLAG_MAP_TEMP_F1);
-  FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 0);
+  GameFlag_Clear(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
+  GameFlag_Set(FLAG_WORLD_MAP_STORM_GONE);
+  FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
@@ -3610,7 +3627,7 @@ struct ObjectEventTemplate gWorldMapObjectEventTemplates[] = {
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapAlignToMapScript,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_SANDSTORM, FLAG_MAP_TEMP_F1, (s32)gWorldMapStormScript,
+    { SPRITE_SANDSTORM, FLAG_WORLD_MAP_STORM_GONE, (s32)gWorldMapStormScript,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapIodemScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
@@ -3716,7 +3733,7 @@ struct ObjectEventTemplate gWorldMapObjectEventTemplatesBeforeShebasFall[] = {
 
 struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_COORD, MB_WORLD_MAP_FLINT, FLAG_DJINNI(DJINNI_FLINT), EVENT_SCRIPT(EventScript_MeetFlint) },
-    { MAP_EVENT_COORD, MB_WORLD_MAP_STORM, FLAG_MAP_TEMP_F1, EVENT_SCRIPT(EventScript_WalkIntoStorm) },
+    { MAP_EVENT_COORD, MB_WORLD_MAP_STORM, FLAG_WORLD_MAP_STORM_GONE, EVENT_SCRIPT(EventScript_WalkIntoStorm) },
     { MAP_EVENT_TALK, LOCALID_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetVine) },
     { MAP_EVENT_TALK, LOCALID_CORONA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetCorona) },
     { MAP_EVENT_TALK, LOCALID_HAIL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetHail) },
@@ -3778,8 +3795,8 @@ struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterLalivero) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_WORLD_MAP_TOLBI_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(EventScript_ReturnToTolbiShip) },
     { MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_WORLD_MAP_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_STORM, IF_FLAG_SET(FLAG_MAP_TEMP_F0), EVENT_SCRIPT(EventScript_StartDousingStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_STORM, IF_FLAG_SET(FLAG_MAP_TEMP_F0), EVENT_SCRIPT(EventScript_DouseMapStorm) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT_SCRIPT(EventScript_StartDousingStorm) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT_SCRIPT(EventScript_DouseMapStorm) },
     { MAP_EVENT_RAISED, RAISED_STORM_TIME_UP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StormDropsParty) },
     { MAP_EVENTS_END },
 };

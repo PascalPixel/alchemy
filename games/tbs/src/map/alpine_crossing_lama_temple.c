@@ -156,11 +156,11 @@ enum {
   /// Frost has frozen the puddle into an ice pillar.
   /// ★ Named from what the player sees: a small puddle of water on the path
   /// below the cliffs (its render)
-  FLAG_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
+  FLAG_ALPINE_CROSSING_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
   /// Growth has grown the sprout into a vine the party can climb.
   /// ★ Named from what the player sees: a small sprout at the foot of a cliff
   /// (its render)
-  FLAG_SPROUT_GROWN = FLAG_MAP_TEMP_01
+  FLAG_ALPINE_CROSSING_SPROUT_GROWN = FLAG_MAP_TEMP_01
 };
 
 /// Animations of these maps' own sprites beyond enum ObjectEventAnimation,
@@ -904,7 +904,7 @@ static void AlpineCrossing_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 20, 18);
 
   WaitFrames(1);
-  GameFlag_Set(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN);
   ObjectMotion_SetActionVariant(LOCALID_WATER_FOR_FROST, 2);
   FieldScript_End();
 }
@@ -916,7 +916,7 @@ static void AlpineCrossing_GrowSprout(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(14, 6, 1, 2, 21, 11);
   ObjectEvent_GetById(LOCALID_PLANT)->collisionFlags = (u8)~OBJ_EVENT_SOLID;
-  GameFlag_Set(FLAG_SPROUT_GROWN);
+  GameFlag_Set(FLAG_ALPINE_CROSSING_SPROUT_GROWN);
   FieldScript_End();
 }
 
@@ -960,12 +960,12 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WATER_FOR_FROST), 0);
     ObjectEvent_GetById(LOCALID_WATER_FOR_FROST)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    if (GameFlag_Get(FLAG_PUDDLE_FROZEN)) {
+    if (GameFlag_Get(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN)) {
       Import_ObjectEventSetAnimation(LOCALID_WATER_FOR_FROST,
                                      PUDDLE_ANIMATION_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
-    if (GameFlag_Get(FLAG_SPROUT_GROWN)) {
+    if (GameFlag_Get(FLAG_ALPINE_CROSSING_SPROUT_GROWN)) {
       Import_ObjectEventSetAnimation(LOCALID_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
@@ -1264,9 +1264,9 @@ struct MapEvent gAlpineCrossing_Events[] = {
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_RevealPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_HidePath) },
     // Frost's first phase, as it reaches the puddle
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_WATER_FOR_FROST, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_PrepareFrost) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WATER_FOR_FROST, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_FreezePuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_PLANT, FLAG_SPROUT_GROWN, EVENT_SCRIPT(AlpineCrossing_GrowSprout) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_WATER_FOR_FROST, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_PrepareFrost) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WATER_FOR_FROST, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_FreezePuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_PLANT, FLAG_ALPINE_CROSSING_SPROUT_GROWN, EVENT_SCRIPT(AlpineCrossing_GrowSprout) },
     { BG_EVENT(BG_EVENT_SILENT), MB_ALPINE_CROSSING_SIGNPOST, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_ReadSignpost) },
     { BG_EVENT(BG_EVENT_CHEST), MB_ALPINE_CROSSING_CHEST, FLAG_ALPINE_CROSSING_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { MAP_EVENTS_END },

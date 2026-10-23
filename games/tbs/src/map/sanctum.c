@@ -3,20 +3,20 @@
 /// places in one map (MapId_Sanctum): the warp destination the party arrives at
 /// decides which, and Sanctum_GetObjectEventTemplates and Sanctum_GetEvents
 /// choose that place's tables by it. Spoken to from the front, each place's
-/// healer opens the Sanctum's services (Sanctum_Run); from any other
-/// side the healer talks. Each place's door leads back out to its own town.
+/// healer opens the Sanctum's services (Sanctum_Run); from any other side the
+/// healer talks. Each place's door leads back out to its own town.
 ///
 /// - Vale Sanctum (SANCTUM_FROM_VALE, SANCTUM_FROM_VALE_ERUPTION,
 ///   SANCTUM_VALE_UNUSED and SANCTUM_FROM_QUEST_RESTART), the Great Healer's,
-///   entered from Vale at
-///   SANCTUM_FROM_VALE. Before the trip up Mt. Aleph, the Great Healer and two
-///   other healers (LOCALID_WEST_HEALER and LOCALID_EAST_HEALER) speak of
-///   Psynergy. After the eruption the Great Healer brings Isaac and Garet in
-///   from Vale (vale_eruption.c) to SANCTUM_FROM_VALE_ERUPTION, where Dora, the
-///   Mayor and the healers hear what happened on the mountain, acted out in
-///   sepia (Sanctum_ReenactSolSanctum): the palette fade turns every
-///   background and sprite palette to PALETTE_TINT_SEPIA for the account
-///   and fades back to PALETTE_TINT_NONE over 60 frames after it
+///   entered from Vale at SANCTUM_FROM_VALE. Before the trip up Mt. Aleph, the
+///   Great Healer and two other healers (LOCALID_WEST_HEALER and
+///   LOCALID_EAST_HEALER) speak of Psynergy. After the eruption the Great
+///   Healer brings Isaac and Garet in from Vale (vale_eruption.c) to
+///   SANCTUM_FROM_VALE_ERUPTION, where Dora, the Mayor and the healers hear
+///   what happened on the mountain, acted out in sepia
+///   (Sanctum_ReenactSolSanctum): the palette fade turns every background and
+///   sprite palette to PALETTE_TINT_SEPIA for the account and fades back to
+///   PALETTE_TINT_NONE over 60 frames after it
 ///   (https://alchemy.pascalpixel.com/places/sanctum/account-sepia.gif: the
 ///   account's first ten seconds and its last five, beside the 16 background
 ///   and 16 sprite palettes). The Great Healer asks Isaac to take on the Wise
@@ -26,16 +26,16 @@
 ///   while effects circle him (Sanctum_SpawnOrbitingEffect)
 ///   (https://alchemy.pascalpixel.com/places/sanctum/healer-afterimages.gif:
 ///   the screen, the healer boxed, beside the sprites and the sprites without
-///   the afterimage). Accepting plays
-///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
-///   SANCTUM_TO_VALE_GATE takes the two to MapId_ValeGate (vale_gate.c).
-///   Refusing leaves the room to gSanctum_QuestEvents: the Great Healer asks
-///   again when spoken to (EventScript_ReconsiderQuest), the door draws a
-///   warning (FLAG_MAP_TEMP_00), and leaving anyway ends the game
+///   the afterimage). Accepting plays Sanctum_ReceiveWiseOnesMission and sets
+///   FLAG_SANCTUM_QUEST_ACCEPTED, and SANCTUM_TO_VALE_GATE takes the two to
+///   MapId_ValeGate (vale_gate.c). Refusing leaves the room to
+///   gSanctum_QuestEvents: the Great Healer asks again when spoken to
+///   (EventScript_ReconsiderQuest), the door draws a warning
+///   (FLAG_SANCTUM_WARNED_BEFORE_LEAVING), and leaving anyway ends the game
 ///   (EventScript_LeaveAfterRefusing): `And so the world began drifting toward
 ///   its fated destruction...` From there the player can start again from the
 ///   Great Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART,
-///   which skips the account (FLAG_MAP_TEMP_01), or leave by
+///   which skips the account (FLAG_SANCTUM_QUEST_RESTARTED), or leave by
 ///   SANCTUM_TO_MAIN_MENU to MapId_MainMenu. After the party has left Vale
 ///   (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay
 ///   (FLAG_KALAY_REACHED), the three talk of what the eruption and the Wise One
@@ -104,6 +104,13 @@
 #include "fixed_math.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
+
+/// After the quest is refused, the Great Healer has warned that stepping
+/// outside the village is final.
+#define FLAG_SANCTUM_WARNED_BEFORE_LEAVING FLAG_MAP_TEMP_00
+/// The party is starting again from the Great Healer after refusing the quest,
+/// so the account of Sol Sanctum is skipped.
+#define FLAG_SANCTUM_QUEST_RESTARTED FLAG_MAP_TEMP_01
 
 // Map flags, in Vale Sanctum: 00 is set once the Great Healer has
 // warned Isaac that leaving the village cannot be undone; 01 marks the visit
@@ -449,9 +456,9 @@ static void EventScript_AskAboutPsynergyChanges(void) {
 /// Sets up the place for its warp destination and plays its opening scene.
 /// Vault Sanctum places LOCALID_GOLD_STATUE once the thieves are jailed; Vale
 /// Sanctum's quest visits (SANCTUM_FROM_VALE_ERUPTION, and
-/// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets FLAG_MAP_TEMP_01)
-/// restore the floor and play the request, unless the party is returning after
-/// a battle.
+/// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets
+/// FLAG_SANCTUM_QUEST_RESTARTED) restore the floor and play the request, unless
+/// the party is returning after a battle.
 s32 Sanctum_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -480,7 +487,7 @@ s32 Sanctum_Initialize(void) {
     break;
   case SANCTUM_FROM_QUEST_RESTART:
     Sanctum_RestoreQuestFloor();
-    GameFlag_Set(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_SANCTUM_QUEST_RESTARTED);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
@@ -491,9 +498,9 @@ s32 Sanctum_Initialize(void) {
 }
 
 /// Vale Sanctum: heading for the door after refusing the quest (metatile
-/// behavior 2, until FLAG_MAP_TEMP_00 is set, which it sets). The Great Healer
-/// warns that the choice is final: "Once you step outside the village, you
-/// cannot take back your decision."
+/// behavior 2, until FLAG_SANCTUM_WARNED_BEFORE_LEAVING is set, which it sets).
+/// The Great Healer warns that the choice is final: "Once you step outside the
+/// village, you cannot take back your decision."
 static void EventScript_WarnBeforeLeaving(void) {
   FieldScript_Start();
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
@@ -506,7 +513,7 @@ static void EventScript_WarnBeforeLeaving(void) {
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgSanctumOnceStepOutsideVillageCannot);
   FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_SANCTUM_WARNED_BEFORE_LEAVING);
   FieldScript_End();
 }
 
@@ -620,7 +627,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
 
   FieldScript_Start();
   // A repeat visit skips the account of Sol Sanctum.
-  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_SANCTUM_QUEST_RESTARTED) != 0) {
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_PARTY_LEADER, 0);
@@ -2477,7 +2484,7 @@ struct MapEvent gSanctum_QuestEvents[] = {
     { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
     { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveAfterRefusing) },
-    { MAP_EVENT_COORD, 2, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_WarnBeforeLeaving) },
+    { MAP_EVENT_COORD, 2, FLAG_SANCTUM_WARNED_BEFORE_LEAVING, EVENT_SCRIPT(EventScript_WarnBeforeLeaving) },
     { MAP_EVENTS_END },
 };
 

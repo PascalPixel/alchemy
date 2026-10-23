@@ -4,19 +4,19 @@
 /// missing in it. Three maps share this overlay and the area name Suhalla
 /// Desert:
 ///
-/// - SuhallaDesertNorth (MapId_SuhallaDesertNorth): entered from the world
-///   map near Suhalla, with five storms.
+/// - SuhallaDesertNorth (MapId_SuhallaDesertNorth): entered from the world map
+///   near Suhalla, with five storms.
 /// - SuhallaDesertSouth (MapId_SuhallaDesertSouth): four storms and a fifth
 ///   that gives chase, Flash, a Mars Djinni, a stone pillar that Reveal shows,
 ///   and near its way out Iodem's question whether to search on for Sheba
 ///   (EventScript_IodemAsksWhetherToPressOn,
 ///   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
-/// - SuhallaDesertCaves (MapId_SuhallaDesertCaves): two caves under the
-///   desert, reached from SuhallaDesertSouth; they place nothing.
+/// - SuhallaDesertCaves (MapId_SuhallaDesertCaves): two caves under the desert,
+///   reached from SuhallaDesertSouth; they place nothing.
 ///
 /// One warp table and, for the first two maps, one event table serve the
-/// overlay; the warps in that event table keep their numbers, which each
-/// map's warp rows lead its own way.
+/// overlay; the warps in that event table keep their numbers, which each map's
+/// warp rows lead its own way.
 ///
 /// The storms are the desert's mechanism, LOCALID_FIRST_STORM to
 /// LOCALID_LAST_STORM in the first two maps. As the party nears one (metatile
@@ -35,18 +35,21 @@
 /// leader on the move.
 ///
 /// A doused storm's flag is a map section flag, five from
-/// FLAG_FIRST_MAP_STORM_DOUSED and five from FLAG_SECOND_MAP_STORM_DOUSED,
-/// so the storm stays gone until the party leaves the desert's map section; the
+/// FLAG_FIRST_MAP_STORM_DOUSED and five from FLAG_SECOND_MAP_STORM_DOUSED, so
+/// the storm stays gone until the party leaves the desert's map section; the
 /// chasing storm, once doused, is gone for good
 /// (FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED). Its map flags:
 ///
-/// - FLAG_MAP_TEMP_06 to FLAG_MAP_TEMP_0A: storms LOCALID_FIRST_STORM to
+/// - FLAG_SUHALLA_DESERT_FIRST_WHIRLWIND_RISEN to
+///   FLAG_SUHALLA_DESERT_FIFTH_WHIRLWIND_RISEN: storms LOCALID_FIRST_STORM to
 ///   LOCALID_LAST_STORM have risen on this visit.
-/// - FLAG_MAP_TEMP_0E: the chasing storm has set off.
-/// - FLAG_MAP_TEMP_0F: a storm has caught the leader.
-/// - FLAG_MAP_TEMP_10: a byte, the frames left before the storm carries the
-///   party away.
-/// - FLAG_MAP_TEMP_18: a byte, the storm that caught the leader.
+/// - FLAG_SUHALLA_DESERT_CHASING_WHIRLWIND_SET_OFF: the chasing storm has set
+///   off.
+/// - FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND: a storm has caught the leader.
+/// - FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT: a byte, the frames left before
+///   the storm carries the party away.
+/// - FLAG_SUHALLA_DESERT_CATCHING_WHIRLWIND: a byte, the storm that caught the
+///   leader.
 ///
 /// Open questions:
 /// - XXX (no evidence): what flag 0x1b7 holds, which
@@ -169,6 +172,29 @@ static u16 sSuhallaDesertSavedColor;
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
+/// The first whirlwind (LOCALID_FIRST_STORM) has risen on this visit; the four
+/// flags after it are the next four whirlwinds'.
+#define FLAG_SUHALLA_DESERT_FIRST_WHIRLWIND_RISEN FLAG_MAP_TEMP_06
+/// The second whirlwind has risen on this visit.
+#define FLAG_SUHALLA_DESERT_SECOND_WHIRLWIND_RISEN FLAG_MAP_TEMP_07
+/// The third whirlwind has risen on this visit.
+#define FLAG_SUHALLA_DESERT_THIRD_WHIRLWIND_RISEN FLAG_MAP_TEMP_08
+/// The fourth whirlwind (LOCALID_FOURTH_STORM) has risen on this visit.
+#define FLAG_SUHALLA_DESERT_FOURTH_WHIRLWIND_RISEN FLAG_MAP_TEMP_09
+/// The fifth whirlwind (LOCALID_LAST_STORM) has risen on this visit.
+#define FLAG_SUHALLA_DESERT_FIFTH_WHIRLWIND_RISEN FLAG_MAP_TEMP_0A
+/// In SuhallaDesertSouth, the whirlwind that gives chase has set off after the
+/// leader.
+#define FLAG_SUHALLA_DESERT_CHASING_WHIRLWIND_SET_OFF FLAG_MAP_TEMP_0E
+/// A whirlwind has caught the leader and lifts the party, and Douse can put it
+/// out.
+#define FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND FLAG_MAP_TEMP_0F
+/// A byte flag: the frames left before the whirlwind that caught the leader
+/// carries the party away.
+#define FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT FLAG_MAP_TEMP_10
+/// A byte flag: the local id of the whirlwind that caught the leader.
+#define FLAG_SUHALLA_DESERT_CATCHING_WHIRLWIND FLAG_MAP_TEMP_18
+
 void Map_QueueMusic(s32 cue);
 
 /// In SuhallaDesertSouth, talking to Flash, a Mars Djinni, starts its battle.
@@ -240,7 +266,8 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   requests = gFieldWork;
   selectedObjectEvent->facing = (gFrameCount << 12);
 
-  remainingFrames = FieldGameFlag_GetByte(FLAG_MAP_TEMP_10);
+  remainingFrames =
+      FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT);
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
       requests->raisedEvent = RAISED_STORM_CARRIES_PARTY_AWAY;
@@ -248,7 +275,8 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
       remainingFrames -= 1;
     }
   }
-  FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, remainingFrames);
+  FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT,
+                        remainingFrames);
 }
 
 /// The leader walks into a storm: drawn to its centre and lifted, the party
@@ -266,7 +294,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   stormIdCopy = stormId;
   selectedObjectEvent = ObjectEvent_GetById(leaderLocalId);
   ObjectEvent_Get(stormIdCopy);
-  captureActive = Script_GetFlag(FLAG_MAP_TEMP_0F);
+  captureActive = Script_GetFlag(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND);
   if (captureActive == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
@@ -290,9 +318,10 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     selectedObjectEvent->velocityY = captureActive;
     selectedObjectEvent->motionFlags = OBJ_EVENT_FLOATS;
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
-    GameFlag_Set(FLAG_MAP_TEMP_0F);
-    FieldGameFlag_SetByte(FLAG_MAP_TEMP_18, stormIdCopy);
-    FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, STORM_CAPTURE_FRAMES);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND);
+    FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CATCHING_WHIRLWIND, stormIdCopy);
+    FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT,
+                          STORM_CAPTURE_FRAMES);
     FieldScript_End();
     gFieldWork->battle = 0; // drop any battle this step rolled
   }
@@ -371,7 +400,8 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     WaitFrames(1);
     frame = nextFrame;
   } while (frame <= 15);
-  GameFlag_Set((FLAG_MAP_TEMP_06 - LOCALID_FIRST_STORM + stormIdCopy));
+  GameFlag_Set((FLAG_SUHALLA_DESERT_FIRST_WHIRLWIND_RISEN -
+                LOCALID_FIRST_STORM + stormIdCopy));
   GameFlag_Set(FLAG_STORMS_RISEN);
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
       Script_GetFlag(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
@@ -588,7 +618,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
 /// appears behind the party and gives chase.
 static void EventScript_StormGivesChase(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED) == 0) {
-    GameFlag_Set(FLAG_MAP_TEMP_0E);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_WHIRLWIND_SET_OFF);
     ObjectEvent_SetPosition(LOCALID_CHASING_STORM, PIXELS(120), PIXELS(824));
     ObjectEvent_SetActionScript(LOCALID_CHASING_STORM,
                                 gSuhallaDesertChaseScript);
@@ -616,7 +646,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   if (gFieldWork->raisedEvent == RAISED_STORM_CARRIES_PARTY_AWAY) {
     gFieldWork->raisedEvent = 0;
   }
-  GameFlag_Clear(FLAG_MAP_TEMP_0F);
+  GameFlag_Clear(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND);
   if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertNorth) {
     GameFlag_Set((stormId + FLAG_FIRST_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
   } else {
@@ -625,7 +655,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
           (stormId + FLAG_SECOND_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
     }
   }
-  FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, 0);
+  FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   state = &gSaveBlock;
@@ -655,7 +685,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   struct ObjectEvent *storm;
   s32 frame;
 
-  stormId = FieldGameFlag_GetByte(FLAG_MAP_TEMP_18);
+  stormId = FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_WHIRLWIND);
   selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   storm = ObjectEvent_GetById(stormId);
   FieldScript_Start();
@@ -683,7 +713,8 @@ static void EventScript_StormCarriesPartyAway(void) {
   FieldScript_End();
   GameFlag_Set(FLAG_ARRIVE_FALLING);
   if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth &&
-      FieldGameFlag_GetByte(FLAG_MAP_TEMP_18) == LOCALID_FOURTH_STORM) {
+      FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_WHIRLWIND) ==
+          LOCALID_FOURTH_STORM) {
     FieldScript_SetDestination((s32)&MapId_WorldMap,
                                WORLD_MAP_FROM_SUHALLA_DESERT_STORM);
   } else {
@@ -786,7 +817,7 @@ s32 Map_Initialize(void) {
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_10) != 0) {
+  if (FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_MAP);
@@ -820,19 +851,19 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   s32 stormAlpha = 0;
 
   if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED)) {
-    GameFlag_Set(FLAG_MAP_TEMP_06);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_FIRST_WHIRLWIND_RISEN);
   }
   if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 1)) {
-    GameFlag_Set(FLAG_MAP_TEMP_07);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_SECOND_WHIRLWIND_RISEN);
   }
   if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 2)) {
-    GameFlag_Set(FLAG_MAP_TEMP_08);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_THIRD_WHIRLWIND_RISEN);
   }
   if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 3)) {
-    GameFlag_Set(FLAG_MAP_TEMP_09);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_FOURTH_WHIRLWIND_RISEN);
   }
   if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 4)) {
-    GameFlag_Set(FLAG_MAP_TEMP_0A);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_FIFTH_WHIRLWIND_RISEN);
   }
   for (stormId = LOCALID_FIRST_STORM; stormId <= LOCALID_LAST_STORM;
        stormId++) {
@@ -866,13 +897,13 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   s32 stormAlpha = 0;
 
   if (GameFlag_Get(FLAG_SECOND_MAP_STORM_DOUSED)) {
-    GameFlag_Set(FLAG_MAP_TEMP_06);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_FIRST_WHIRLWIND_RISEN);
   }
   if (GameFlag_Get(FLAG_SECOND_MAP_STORM_DOUSED + 1)) {
-    GameFlag_Set(FLAG_MAP_TEMP_07);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_SECOND_WHIRLWIND_RISEN);
   }
   if (GameFlag_Get(FLAG_SECOND_MAP_STORM_DOUSED + 2)) {
-    GameFlag_Set(FLAG_MAP_TEMP_08);
+    GameFlag_Set(FLAG_SUHALLA_DESERT_THIRD_WHIRLWIND_RISEN);
   }
   for (stormId = LOCALID_FIRST_STORM; stormId < LOCALID_FOURTH_STORM;
        stormId++) {
@@ -1084,32 +1115,32 @@ struct MapEvent gSuhallaDesertEventsOther[] = {
     { MAP_EVENT_COORD, 51, FLAG_SECOND_MAP_STORM_DOUSED, EVENT_SCRIPT(EventScript_CaughtByFirstStorm) },
     { MAP_EVENT_COORD, 52, FLAG_SECOND_MAP_STORM_DOUSED + 1, EVENT_SCRIPT(EventScript_CaughtBySecondStorm) },
     { MAP_EVENT_COORD, 53, FLAG_SECOND_MAP_STORM_DOUSED + 2, EVENT_SCRIPT(EventScript_CaughtByThirdStorm) },
-    { MAP_EVENT_COORD, 61, FLAG_MAP_TEMP_06, EVENT_SCRIPT(EventScript_FirstStormRises) },
-    { MAP_EVENT_COORD, 62, FLAG_MAP_TEMP_07, EVENT_SCRIPT(EventScript_SecondStormRises) },
-    { MAP_EVENT_COORD, 63, FLAG_MAP_TEMP_08, EVENT_SCRIPT(EventScript_ThirdStormRises) },
-    { MAP_EVENT_COORD, 64, FLAG_MAP_TEMP_09, EVENT_SCRIPT(EventScript_FourthStormRises) },
-    { MAP_EVENT_COORD, 65, FLAG_MAP_TEMP_0A, EVENT_SCRIPT(EventScript_FifthStormRises) },
-    { MAP_EVENT_COORD, 71, FLAG_MAP_TEMP_06, EVENT_SCRIPT(EventScript_FirstStormRises) },
-    { MAP_EVENT_COORD, 72, FLAG_MAP_TEMP_07, EVENT_SCRIPT(EventScript_SecondStormRises) },
-    { MAP_EVENT_COORD, 73, FLAG_MAP_TEMP_08, EVENT_SCRIPT(EventScript_ThirdStormRises) },
+    { MAP_EVENT_COORD, 61, FLAG_SUHALLA_DESERT_FIRST_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_FirstStormRises) },
+    { MAP_EVENT_COORD, 62, FLAG_SUHALLA_DESERT_SECOND_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_SecondStormRises) },
+    { MAP_EVENT_COORD, 63, FLAG_SUHALLA_DESERT_THIRD_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_ThirdStormRises) },
+    { MAP_EVENT_COORD, 64, FLAG_SUHALLA_DESERT_FOURTH_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_FourthStormRises) },
+    { MAP_EVENT_COORD, 65, FLAG_SUHALLA_DESERT_FIFTH_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_FifthStormRises) },
+    { MAP_EVENT_COORD, 71, FLAG_SUHALLA_DESERT_FIRST_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_FirstStormRises) },
+    { MAP_EVENT_COORD, 72, FLAG_SUHALLA_DESERT_SECOND_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_SecondStormRises) },
+    { MAP_EVENT_COORD, 73, FLAG_SUHALLA_DESERT_THIRD_WHIRLWIND_RISEN, EVENT_SCRIPT(EventScript_ThirdStormRises) },
     { MAP_EVENT_COORD, 54, FLAG_SECOND_MAP_STORM_DOUSED + 3, EVENT_SCRIPT(EventScript_CaughtByFourthStorm) },
-    { MAP_EVENT_COORD, 81, FLAG_MAP_TEMP_0E, EVENT_SCRIPT(EventScript_StormGivesChase) },
+    { MAP_EVENT_COORD, 81, FLAG_SUHALLA_DESERT_CHASING_WHIRLWIND_SET_OFF, EVENT_SCRIPT(EventScript_StormGivesChase) },
     { MAP_EVENT_TALK, LOCALID_FLASH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FightDjinni) },
     { BG_EVENT(BG_EVENT_SILENT), TREASURE_SPOT_PSYNERGY_STONE, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET, FIND_ITEM(ITEM_VIRTUOUS_ARMLET) },
     { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_SUHALLA_DESERT_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_SUHALLA_DESERT_COOKIE, FIND_ITEM(ITEM_COOKIE) },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_SUHALLA_DESERT_MIMIC_BEATEN, FIND_MIMIC | 6 },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 1, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 2, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 3, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 4, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 1, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 2, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 3, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 4, IF_FLAG_SET(FLAG_MAP_TEMP_0F), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 1, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 2, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 3, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_STORM + 4, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 1, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 2, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 3, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_STORM + 4, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_WHIRLWIND), EVENT_SCRIPT(EventScript_DouseStorm) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealStarts) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealEnds) },
     { MAP_EVENT_RAISED, RAISED_STORM_CARRIES_PARTY_AWAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StormCarriesPartyAway) },

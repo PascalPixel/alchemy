@@ -205,14 +205,15 @@ enum {
   /// Set while the two suspects run from the party, until the party steps
   /// aside to talk it over.
   /// ★ Named from the game: "Don't let him near me!" (MsgVaultWant)
-  FLAG_SUSPECTS_FLEEING = 0x300
+  FLAG_SUSPECTS_FLEEING = FLAG_MAPSEC_TEMP_00
 };
 
-// Map flags here:
-// - FLAG_MAP_TEMP_50: at the inn once the thieves are jailed, the leader
-//   stands beside the Bone on the floor (Vault_UpdateBoneProximityFlag); in
-//   the guests' room, set while the party corners the suspects, when talking
-//   to Ivan or the suspects does nothing.
+// The map flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
+// (common/vault_spotflag.h) once the thieves are jailed means something else in
+// the guests' room:
+/// The party is cornering the two suspects in the guests' room, so talking to
+/// Ivan or the suspects does nothing.
+#define FLAG_VAULT_CORNERING_SUSPECTS FLAG_MAP_TEMP_50
 
 /// The inn's loft (VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM and the two after the
 /// battle), where the thieves hid the stolen goods, numbering
@@ -896,7 +897,8 @@ static void EventScript_MayorGivesWaterOfLife(void) {
 ///
 /// Reached by talking to the girl at the inn (LOCALID_GIRL_AT_THE_INN) after
 /// the thieves are jailed, while the leader is not beside the Bone on the floor
-/// (FLAG_MAP_TEMP_50 clear). Gives a Bone and sets FLAG_VAULT_BONE_RECEIVED.
+/// (FLAG_VAULT_LEADER_BESIDE_BONE clear). Gives a Bone and sets
+/// FLAG_VAULT_BONE_RECEIVED.
 static void EventScript_OfferBones(void) {
   FieldScript_Start();
   VaultInteriors_FaceEachOtherAndWait(LOCALID_GIRL_AT_THE_INN,
@@ -1766,12 +1768,12 @@ static void EventScript_DiscussSuspiciousGuests(void) {
 ///
 /// Reached by stepping on MB_VAULT_INTERIORS_CORNERING_START while
 /// FLAG_VAULT_SUSPECTS_APPROACHED is set. Sets FLAG_MENUS_RAISE_EVENT, so the
-/// menus answer with Garet's refusal, and FLAG_MAP_TEMP_50, so talking to
-/// Ivan or the suspects does nothing; then starts the chase
+/// menus answer with Garet's refusal, and FLAG_VAULT_CORNERING_SUSPECTS, so
+/// talking to Ivan or the suspects does nothing; then starts the chase
 /// (VaultInteriors_StartObjectEventStops).
 static void EventScript_StartCorneringSuspects(void) {
   GameFlag_Set(FLAG_MENUS_RAISE_EVENT);
-  GameFlag_Set(FLAG_MAP_TEMP_50);
+  GameFlag_Set(FLAG_VAULT_CORNERING_SUSPECTS);
   VaultInteriors_StartObjectEventStops();
 }
 
@@ -1839,8 +1841,8 @@ static inline void VaultInteriors_SetPartyImagePriority(void) {
 /// Reached through raised events 201 to 203, which
 /// VaultInteriors_UpdateObjectEventStops raises after thirty frames with at
 /// least one suspect blocked: 201 the leader, 202 the thief, 203 both. Stops
-/// the chase, clears FLAG_MENUS_RAISE_EVENT and FLAG_MAP_TEMP_50, plays the
-/// party's talk (VaultInteriors_DiscussMindReading) and sets
+/// the chase, clears FLAG_MENUS_RAISE_EVENT and FLAG_VAULT_CORNERING_SUSPECTS,
+/// plays the party's talk (VaultInteriors_DiscussMindReading) and sets
 /// FLAG_VAULT_SUSPECTS_MIND_READ.
 static void EventScript_ReadCorneredSuspectsMinds(void) {
   s32 localId;
@@ -1850,7 +1852,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   FieldScript_Start();
   Task_Remove(VaultInteriors_UpdateObjectEventStops);
   GameFlag_Clear(FLAG_MENUS_RAISE_EVENT);
-  GameFlag_Clear(FLAG_MAP_TEMP_50);
+  GameFlag_Clear(FLAG_VAULT_CORNERING_SUSPECTS);
   Import_ObjectEventSetAnimation(LOCALID_SUSPECTED_LEADER, ANIM_STAND);
   Import_ObjectEventSetAnimation(LOCALID_SUSPECTED_THIEF, ANIM_STAND);
   Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
@@ -4136,7 +4138,7 @@ struct MapEvent gVaultInteriors_Events[] = {
     { MAP_EVENT_RAISED, FIELD_RAISED_EVENT_MENUS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GaretRefusesToLeave) },
     { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
     { COORD_EVENT_WALKING, MB_VAULT_INTERIORS_ROOF_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcrossRoofGap) },
-    { MAP_EVENT_TALK, LOCALID_IVAN, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
+    { MAP_EVENT_TALK, LOCALID_IVAN, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
     { MAP_EVENT_TALK, LOCALID_IVAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetIvan) },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutRocks) },
@@ -4157,10 +4159,10 @@ struct MapEvent gVaultInteriors_Events[] = {
     { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
     { MAP_EVENT_TALK, LOCALID_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultTheGuestsUpstairsWerentInTheir) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
-    { MAP_EVENT_TALK, LOCALID_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
-    { MAP_EVENT_TALK, LOCALID_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
     { MAP_EVENT_TALK, LOCALID_SUSPECTED_LEADER, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
     { MAP_EVENT_TALK, LOCALID_SUSPECTED_THIEF, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
     { MAP_EVENT_TALK, LOCALID_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedLeaderDodges) },
@@ -4226,7 +4228,7 @@ struct MapEvent gVaultInteriors_EventsAfterThieves[] = {
     { MAP_EVENT_TALK, LOCALID_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
     { MAP_EVENT_TALK, LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MayorGivesWaterOfLife) },
     { MAP_EVENT_TALK, LOCALID_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYoureThePersonWhoGotOur) },
-    { MAP_EVENT_TALK, LOCALID_GIRL_AT_THE_INN, FLAG_MAP_TEMP_50, EVENT_SCRIPT(EventScript_OfferBones) },
+    { MAP_EVENT_TALK, LOCALID_GIRL_AT_THE_INN, FLAG_VAULT_LEADER_BESIDE_BONE, EVENT_SCRIPT(EventScript_OfferBones) },
     { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
     { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
     { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },

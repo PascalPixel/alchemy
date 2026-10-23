@@ -45,14 +45,14 @@
 ///   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). Visiting her
 ///   (FLAG_VISITED_SICK_DORA) she reminds Isaac that he promised not to come
 ///   back until his quest was done, and gets up to show she is well; she stays
-///   up for that visit (FLAG_MAP_TEMP_03), and the setup otherwise puts her
-///   back in bed, where she dreams of Kyle.
+///   up for that visit (FLAG_VALE_DORA_OUT_OF_BED), and the setup otherwise
+///   puts her back in bed, where she dreams of Kyle.
 /// - Babi's Palace (VALE_INTERIORS_INN_FROM_BABI_PALACE, from Babi's Palace's
-///   BABI_PALACE_TO_VALE_INTERIORS_INN, MapId_BabiPalace), in Tolbi, whose
-///   lord is Babi: a room of his scholars, who speak of Alchemy, of Kraden,
-///   Babi's favourite scholar, and of the Venus Ruins under Babi Lighthouse
-///   with a long tunnel beneath them. They talk differently once the Colosso
-///   finals are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
+///   BABI_PALACE_TO_VALE_INTERIORS_INN, MapId_BabiPalace), in Tolbi, whose lord
+///   is Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
+///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
+///   long tunnel beneath them. They talk differently once the Colosso finals
+///   are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
 ///   Kraden. The setup does not show the map section's name there.
 ///
 /// The warps VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST to
@@ -68,11 +68,10 @@
 ///   leader walking north between them stops at the man with it and without it,
 ///   render probe vale-inn), so nothing the player can do shows a use.
 /// - XXX (no evidence): whether the talk row of EventScript_RemarkIsaacHasGrown
-/// was
-///   meant to test FLAG_VALE_MAN_SAW_ISAAC_GROWN, as its Mind Read row does;
-///   the tables show only what plays (the same line either way, the script
-///   setting the man's flag only before the innkeeper's welcome), not what
-///   was intended.
+///   was meant to test FLAG_VALE_MAN_SAW_ISAAC_GROWN, as its Mind Read row
+///   does; the tables show only what plays (the same line either way, the
+///   script setting the man's flag only before the innkeeper's welcome), not
+///   what was intended.
 
 #include "save_block.h"
 #include "vram_cache.h"
@@ -128,6 +127,10 @@ static void ValeInteriorsInn_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
+
+/// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
+/// she is well.
+#define FLAG_VALE_DORA_OUT_OF_BED FLAG_MAP_TEMP_03
 
 /// Vale's placed object events, numbered by the rows of
 /// gValeInteriorsInn_ObjectEventTemplates. The tables after the party leaves
@@ -271,7 +274,7 @@ enum ValeInteriorsInnAnimation {
   ANIM_ISAAC_GET_UP = 19 ///< sitting up, then jumping out of bed
 };
 
-// FLAG_MAP_TEMP_03: Dora got out of her sickbed on this visit.
+// FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
 /// Returns the warp destinations, among them the scenes played on arrival:
 /// VALE_INTERIORS_INN_FROM_BABI_PALACE from Babi's palace
@@ -505,10 +508,10 @@ static void EventScript_WarpToValeStormEast(void) {
 /// Sets up these rooms for the stormy night or the story's villagers. It also
 /// plays the scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Map_Run once
-/// the object events are placed. VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST
-/// sets FLAG_VALE_STORM before EventScript_DoraWakesIsaac; back from Kalay,
-/// Dora is put back in her sickbed unless FLAG_MAP_TEMP_03 says she got up.
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Map_Run once the
+/// object events are placed. VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST sets
+/// FLAG_VALE_STORM before EventScript_DoraWakesIsaac; back from Kalay, Dora is
+/// put back in her sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
 s32 ValeInteriorsInn_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
@@ -535,7 +538,7 @@ s32 ValeInteriorsInn_Initialize(void) {
           gSaveBlock.warpDest ==
               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-          if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
+          if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
             TilesetAnim_Resume(12);
           }
         } else {
@@ -984,7 +987,7 @@ static void EventScript_ReadThoughtsAboutDorasIllness(void) {
 /// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale; she asks
 /// who told him she was ill, then gets up to show she feels well. Reached by
 /// talking to Dora, or by Mind Read on her, until FLAG_VISITED_SICK_DORA is
-/// set. Sets it and FLAG_MAP_TEMP_03.
+/// set. Sets it and FLAG_VALE_DORA_OUT_OF_BED.
 static void EventScript_VisitSickDora(void) {
   struct ObjectEvent *leader;
   s32 firstMessage;
@@ -1102,19 +1105,19 @@ static void EventScript_VisitSickDora(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   GameFlag_Set(FLAG_VISITED_SICK_DORA);
-  GameFlag_Set(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_VALE_DORA_OUT_OF_BED);
   FieldScript_End();
 }
 
 /// Talking to Dora at home in Vale, back from Kalay: in her sickbed she murmurs
 /// Kyle's name; once up, she tells Isaac not to worry. Reached by talking to
 /// her back from Kalay once FLAG_VISITED_SICK_DORA is set; she is up while
-/// FLAG_MAP_TEMP_03 is set.
+/// FLAG_VALE_DORA_OUT_OF_BED is set.
 static void EventScript_TalkToDora(void) {
   s32 message;
 
   FieldScript_Start();
-  if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
+  if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
     ObjectEvent_SetTargetAndCallback(
         LOCALID_DORA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
         gValeInteriorsInn_DoraFacesIsaacScript);
@@ -1755,7 +1758,7 @@ struct MapEvent gValeInteriorsInn_EventsAfterKalay[] = {
     { MAP_EVENT_TALK, LOCALID_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(EventScript_VisitSickDora) },
     { MAP_EVENT_TALK, LOCALID_DORA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDora) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(EventScript_VisitSickDora) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DORA, FLAG_MAP_TEMP_03, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DORA, FLAG_VALE_DORA_OUT_OF_BED, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DORA, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNorthwest) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },

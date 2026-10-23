@@ -1,11 +1,11 @@
 /// @file
-/// MapId_Vale, Isaac's village by day, outside the houses: the door of
-/// Isaac's house, the houses of Garet's family and of Jenna's grandparents,
-/// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
-/// object event templates and map events come in three sets, chosen by the
-/// story flags: before the party leaves Vale, after it has left
-/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED);
-/// VALE_FROM_TITLE has a set of its own. In story order:
+/// MapId_Vale, Isaac's village by day, outside the houses: the door of Isaac's
+/// house, the houses of Garet's family and of Jenna's grandparents, the Sanctum
+/// and the paths out to Mt. Aleph and Kraden's cottage. The object event
+/// templates and map events come in three sets, chosen by the story flags:
+/// before the party leaves Vale, after it has left (FLAG_VALE_PARTY_LEFT) and
+/// back from Kalay (FLAG_KALAY_REACHED); VALE_FROM_TITLE has a set of its own.
+/// In story order:
 ///
 /// - The day the story begins, three years after the storm
 ///   (vale_interiors_inn.c), which took Jenna's family and Isaac's father,
@@ -16,10 +16,10 @@
 ///   that day before going to fetch Isaac to go to Kraden's.
 ///   VALE_TO_ROOF_MENDED brings the party back in at VALE_FROM_ROOF_MENDED,
 ///   where EventScript_RoofMended plays once (map section flag
-///   FLAG_MAPSEC_TEMP_08): Dora praises the roof, remembers Kyle, and sends the
-///   three off on their climb of Mt. Aleph with Kraden, the scholar who teaches
-///   them Alchemy (FLAG_MAP_TEMP_02); for the rest of that visit Dora frets
-///   about the hole clumsy Garet left.
+///   FLAG_VALE_ROOF_MENDED_SCENE_PLAYED): Dora praises the roof, remembers
+///   Kyle, and sends the three off on their climb of Mt. Aleph with Kraden, the
+///   scholar who teaches them Alchemy (FLAG_VALE_ROOF_JUST_MENDED); for the
+///   rest of that visit Dora frets about the hole clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
 ///   Aleph; a bearded man in a long robe jumps out to warn him against sneaking
@@ -34,41 +34,43 @@
 ///   later.
 /// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): Dora will not open
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
-///   away."), and the villagers speak of the tremors and of Kraden, who has
-///   not come back.
+///   away."), and the villagers speak of the tremors and of Kraden, who has not
+///   come back.
 /// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (map section
-///   flag FLAG_MAPSEC_TEMP_03) and asks one of his family to protect it while
-///   he is gone (FLAG_MAPSEC_TEMP_04), a young man asks whether Jenna is back
-///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
-///   about the lack of travellers since the eruption (FLAG_MAPSEC_TEMP_07).
-///   Isaac's house opens again: Dora lies ill inside (vale_interiors_inn.c).
+///   flag FLAG_VALE_GARET_MET_SISTER) and asks one of his family to protect it
+///   while he is gone (FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY), a young man
+///   asks whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another
+///   feels a tremor, another asks about the lack of travellers since the
+///   eruption (FLAG_VALE_ASKED_ABOUT_TRAVELERS). Isaac's house opens again:
+///   Dora lies ill inside (vale_interiors_inn.c).
 ///
 /// In every set: a Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; LOCALID_NUT,
 /// or LOCALID_NUT_AFTER_KALAY), a pillar to push or Move, whose column the
-/// setup restores from FLAG_MAPSEC_TEMP_14 to _16, a ladder up onto the roof of
-/// Isaac's house, climbed on metatile behaviors 100 and 101 (FLAG_MAP_TEMP_04
-/// while on the roof), and cells of
-/// an upper path that change while the leader is on it (FLAG_MAP_TEMP_10);
-/// after a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Warps:
-/// VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol Entrance (MapId_SolEntrance),
-/// VALE_TO_VALE_GATE to MapId_ValeGate, VALE_TO_VALE_KRADEN_NORTH and
-/// VALE_TO_VALE_KRADEN_SOUTH to MapId_ValeKraden, the doors
-/// VALE_TO_VALE_INTERIORS_SHOPS_EAST, VALE_TO_VALE_INTERIORS_SHOPS_SOUTH,
-/// VALE_TO_VALE_INTERIORS_SHOPS_NORTH, VALE_TO_VALE_INTERIORS_SHOPS_WEST and
+/// setup restores from FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and
+/// _IN_EAST_COLUMN, a ladder up onto the roof of Isaac's house, climbed on
+/// metatile behaviors 100 and 101 (FLAG_VALE_ON_ROOF while on the roof), and
+/// cells of an upper path that change while the leader is on it
+/// (FLAG_VALE_ON_UPPER_PATH); after a battle (FLAG_KEEP_PARTY_POSITION) the
+/// setup restores both. Warps: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
+/// Entrance (MapId_SolEntrance), VALE_TO_VALE_GATE to MapId_ValeGate,
+/// VALE_TO_VALE_KRADEN_NORTH and VALE_TO_VALE_KRADEN_SOUTH to MapId_ValeKraden,
+/// the doors VALE_TO_VALE_INTERIORS_SHOPS_EAST,
+/// VALE_TO_VALE_INTERIORS_SHOPS_SOUTH, VALE_TO_VALE_INTERIORS_SHOPS_NORTH,
+/// VALE_TO_VALE_INTERIORS_SHOPS_WEST and
 /// VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR into the houses
 /// (MapId_ValeInteriorsShops, vale_interiors_shops.c),
 /// VALE_TO_VALE_INTERIORS_INN into Isaac's house (MapId_ValeInteriorsInn) and
 /// VALE_TO_SANCTUM into MapId_Sanctum. Two scenes no table reaches remain:
 /// EventScript_UnusedRoofMended, a copy of the roof's end, and
 /// EventScript_UnusedWaterBurstsByTheRiver, which sets map section flag
-/// FLAG_MAPSEC_TEMP_05. FLAG_MAP_TEMP_41 pauses the man who watches Isaac while
-/// a menu is open. The TBS_PATCH_4 editions also set Dora's sprite priority
-/// before Kalay.
+/// FLAG_VALE_UNUSED_WATER_BURST_SEEN. FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses
+/// the man who watches Isaac while a menu is open. The TBS_PATCH_4 editions
+/// also set Dora's sprite priority before Kalay.
 ///
 /// In the opening Garet trains his Psynergy on the pillar: his sprite flashes
-/// white, then cycles through its colour modes with sparks about him, while
-/// the hand of Move (LOCALID_OPENING_MOVE_HAND) pushes the pillar west, the
-/// pillar cycling its colour modes too, and sheds sparkles
+/// white, then cycles through its colour modes with sparks about him, while the
+/// hand of Move (LOCALID_OPENING_MOVE_HAND) pushes the pillar west, the pillar
+/// cycling its colour modes too, and sheds sparkles
 /// (https://alchemy.pascalpixel.com/places/vale/opening-move.gif: the screen,
 /// Garet, the pillar and the hand boxed, beside the sprites alone and the 16
 /// sprite palettes).
@@ -236,8 +238,8 @@ enum ValeLocalId {
   /// in a green shirt and shorts (its render)
   LOCALID_GARETS_BROTHER,
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed
-  /// (EventScript_PushPillar) or
-  /// moved with Move, its column kept in FLAG_MAPSEC_TEMP_14 to _16
+  /// (EventScript_PushPillar) or moved with Move, its column kept in
+  /// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN
   /// (EventScript_SettleMovedPillar).
   /// ★ Named from what the player sees: a stone pillar of brown rock standing
   /// below the cliff north of the village (its render)
@@ -374,6 +376,39 @@ enum ValeAnimation {
 
 #include "common/object_staged_object_event.h"
 
+/// The roof of Isaac's house has just been mended; for the rest of the visit
+/// Dora frets about the hole Garet left.
+#define FLAG_VALE_ROOF_JUST_MENDED FLAG_MAP_TEMP_02
+/// The leader has climbed the ladder onto the roof of Isaac's house, whose
+/// cells are changed so it can be walked.
+#define FLAG_VALE_ON_ROOF FLAG_MAP_TEMP_04
+/// The leader is on the upper path, whose metatile behaviors are swapped until
+/// the leader steps off it.
+#define FLAG_VALE_ON_UPPER_PATH FLAG_MAP_TEMP_10
+/// The man guarding Mt. Aleph is paused while a menu is open.
+#define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_MAP_TEMP_41
+/// Back from Kalay, Garet has met his sister.
+#define FLAG_VALE_GARET_MET_SISTER FLAG_MAPSEC_TEMP_03
+/// Back from Kalay, Garet has asked his brother to protect the family while he
+/// is gone.
+#define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_MAPSEC_TEMP_04
+/// Unused: the water has burst up by the river and the strongman has remembered
+/// Felix (EventScript_UnusedWaterBurstsByTheRiver, which nothing reaches).
+#define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_MAPSEC_TEMP_05
+/// Back from Kalay, the burly man has asked about the lack of travellers since
+/// the eruption.
+#define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_MAPSEC_TEMP_07
+/// EventScript_RoofMended has played, in which Dora praises the roof and sends
+/// the three off to Mt. Aleph.
+#define FLAG_VALE_ROOF_MENDED_SCENE_PLAYED FLAG_MAPSEC_TEMP_08
+/// The stone pillar below the cliff stands in its west column.
+#define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_MAPSEC_TEMP_14
+/// The stone pillar below the cliff stands in its middle column, where it
+/// starts.
+#define FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN FLAG_MAPSEC_TEMP_15
+/// The stone pillar below the cliff stands in its east column.
+#define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_MAPSEC_TEMP_16
+
 const struct MapWarpDest *Vale_GetWarpDests(void) { return gVale_WarpDests; }
 
 const struct MapWarpRegion *Vale_GetRegions(void) { return NULL; }
@@ -493,11 +528,11 @@ static void EventScript_ArgueWithGaretsSister(void) {
 }
 
 /// Talking to Dora in Vale before the party leaves: right after the roof is
-/// mended (FLAG_MAP_TEMP_02) she frets about the hole clumsy Garet left;
-/// otherwise, since it will not rain for a while, Isaac can fix it later.
+/// mended (FLAG_VALE_ROOF_JUST_MENDED) she frets about the hole clumsy Garet
+/// left; otherwise, since it will not rain for a while, Isaac can fix it later.
 static void EventScript_DoraFretsAboutTheRoof(void) {
   FieldScript_Start();
-  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
     FieldScript_SetMessageId(MsgValeIToldGaretItWas);
   } else {
     FieldScript_SetMessageId(MsgValeItWontRainForSome);
@@ -535,7 +570,7 @@ static void EventScript_ReactToAnotherTremor(void) {
 
 /// A burly grey-haired man asks about the lack of travellers since the
 /// eruption. He (LOCALID_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
-/// the talk sets map section flag FLAG_MAPSEC_TEMP_07.
+/// the talk sets map section flag FLAG_VALE_ASKED_ABOUT_TRAVELERS.
 static void EventScript_AskAboutTheLackOfTravelers(void) {
   FieldScript_Start();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MAN_MISSING_TRAVELERS, 2);
@@ -544,21 +579,21 @@ static void EventScript_AskAboutTheLackOfTravelers(void) {
                               LOCALID_PARTY_LEADER, 20);
   FieldScript_SetMessageId(MsgValeNoTravelersSinceTheEruption);
   FieldScript_AskYesNoAndShowResponse(LOCALID_MAN_MISSING_TRAVELERS, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_07);
+  GameFlag_Set(FLAG_VALE_ASKED_ABOUT_TRAVELERS);
   FieldScript_End();
 }
 
 /// Walking onto the upper path in Vale (metatile behavior 15): its cells'
-/// metatile behaviors change, remembered in FLAG_MAP_TEMP_10.
+/// metatile behaviors change, remembered in FLAG_VALE_ON_UPPER_PATH.
 static void EventScript_SetPathCellOverride(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_10);
+  GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 /// Walking off the upper path in Vale (metatile behavior 14) restores its
 /// cells' metatile behaviors.
 static void EventScript_ClearPathCellOverride(void) {
-  GameFlag_Clear(FLAG_MAP_TEMP_10);
+  GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -796,22 +831,22 @@ static void EventScript_TurnBackFromThePuppies(void) {
 
 /// Metatile behavior 100 in Vale, at the foot of the ladder beside Isaac's
 /// house: walking north into it climbs the leader up onto the roof, whose cells
-/// change so it can be walked (FLAG_MAP_TEMP_04 set while there).
+/// change so it can be walked (FLAG_VALE_ON_ROOF set while there).
 static void EventScript_ClimbLadderOntoRoof(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   Vale_MoveObjectEventAlongLowerZPath(LOCALID_PARTY_LEADER, 10, 11, 1);
-  GameFlag_Set(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_VALE_ON_ROOF);
   FieldScript_End();
 }
 
 /// Metatile behavior 101 in Vale, at the top of the ladder beside Isaac's
 /// house: walking south into it climbs the leader back down, and the roof's
-/// cells are put back (FLAG_MAP_TEMP_04 cleared).
+/// cells are put back (FLAG_VALE_ON_ROOF cleared).
 static void EventScript_ClimbDownFromRoof(void) {
   FieldScript_Start();
   Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 1);
-  GameFlag_Clear(FLAG_MAP_TEMP_04);
+  GameFlag_Clear(FLAG_VALE_ON_ROOF);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   FieldScript_End();
 }
@@ -969,10 +1004,10 @@ static void EventScript_RepeatMtAlephWarningAtEitherPause(void) {
 /// Unused: another cut of EventScript_RoofMended, the end of the morning the
 /// story begins.
 ///
-/// No table names it. It plays the same lines as the scene the game uses,
-/// `Good job, Garet.` and `I was devastated when Kyle died...` among them, but
-/// frames them with its own camera and map grid cells, and sets
-/// FLAG_MAP_TEMP_02 as that scene does.
+/// No table names it. It plays the same lines as the scene the game uses, `Good
+/// job, Garet.` and `I was devastated when Kyle died...` among them, but frames
+/// them with its own camera and map grid cells, and sets
+/// FLAG_VALE_ROOF_JUST_MENDED as that scene does.
 UNUSED static void EventScript_UnusedRoofMended(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
@@ -1531,7 +1566,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(100);
-  GameFlag_Set(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   *leaderMotion = leaderMotionFlags;
   FieldScript_End();
@@ -1562,9 +1597,9 @@ s32 Vale_Initialize(void) {
     objectEvent = ObjectEvent_GetById((GameFlag_Get(FLAG_KALAY_REACHED) != 0) +
                                       LOCALID_PILLAR);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    if (GameFlag_Get(FLAG_MAPSEC_TEMP_14)) {
+    if (GameFlag_Get(FLAG_VALE_PILLAR_IN_WEST_COLUMN)) {
       objectEvent->x.fixed = 181 << 17;
-    } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_16)) {
+    } else if (GameFlag_Get(FLAG_VALE_PILLAR_IN_EAST_COLUMN)) {
       objectEvent->x.fixed = 197 << 17;
     } else {
       objectEvent->x.fixed = 189 << 17;
@@ -1579,10 +1614,10 @@ s32 Vale_Initialize(void) {
 #if TBS_PATCH_4
     if (GameFlag_Get(FLAG_KALAY_REACHED)) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
+        if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
+        if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
           EventScript_SetPathCellOverride();
         }
       }
@@ -1619,7 +1654,7 @@ s32 Vale_Initialize(void) {
           }
         } else {
           ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = set;
-          GameFlag_Clear(FLAG_MAP_TEMP_41);
+          GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
         }
         if (gSaveBlock.warpDest != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
@@ -1627,17 +1662,17 @@ s32 Vale_Initialize(void) {
                                      TASK_PRIORITY_MAP);
         }
       }
-      if (!Script_GetFlag(FLAG_MAPSEC_TEMP_08) &&
+      if (!Script_GetFlag(FLAG_VALE_ROOF_MENDED_SCENE_PLAYED) &&
           gSaveBlock.warpDest == VALE_FROM_ROOF_MENDED) {
         EventScript_RoofMended();
-        GameFlag_Set(FLAG_MAPSEC_TEMP_08);
+        GameFlag_Set(FLAG_VALE_ROOF_MENDED_SCENE_PLAYED);
       }
 #if TBS_PATCH_4
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
+        if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
+        if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
           EventScript_SetPathCellOverride();
         }
       }
@@ -1653,10 +1688,10 @@ s32 Vale_Initialize(void) {
     }
 #if !TBS_PATCH_4
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
+      if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
         MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
+      if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
         EventScript_SetPathCellOverride();
       }
     }
@@ -1669,7 +1704,8 @@ s32 Vale_Initialize(void) {
 }
 
 /// Back from Kalay, Garet meets his sister in Vale; sets map section flag
-/// FLAG_MAPSEC_TEMP_03. "Ah! It's been a while... You're back?" ("Sis...").
+/// FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're back?"
+/// ("Sis...").
 static void EventScript_GaretMeetsHisSister(void) {
   struct ObjectEvent *record;
   s32 msg;
@@ -1756,14 +1792,14 @@ static void EventScript_GaretMeetsHisSister(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_03);
+  GameFlag_Set(FLAG_VALE_GARET_MET_SISTER);
   FieldScript_End();
 }
 
 /// Back from Kalay, Garet asks one of his family in Vale
 /// (LOCALID_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone; sets
-/// map section flag FLAG_MAPSEC_TEMP_04. "WHATEVER YOU DO, you must protect the
-/// family while I'm gone."
+/// map section flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
+/// you must protect the family while I'm gone."
 static void EventScript_GaretAsksToProtectFamily(void) {
   struct ObjectEvent *record;
 
@@ -1848,7 +1884,7 @@ static void EventScript_GaretAsksToProtectFamily(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_04);
+  GameFlag_Set(FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY);
   FieldScript_End();
 }
 
@@ -1856,11 +1892,11 @@ static void EventScript_GaretAsksToProtectFamily(void) {
 /// tremor shakes Vale and water bursts up three times north of the strongman by
 /// the river who remembers Felix.
 ///
-/// No table names it. He would have started, sniffled through
-/// `I still remember when Felix and I used to play here...*Sniff*`, turned to
-/// the leader to say that Felix must be protecting Jenna, and set map section
-/// flag FLAG_MAPSEC_TEMP_05. His talk and Mind Read rows show the same two
-/// lines.
+/// No table names it. He would have started, sniffled through `I still remember
+/// when Felix and I used to play here...*Sniff*`, turned to the leader to say
+/// that Felix must be protecting Jenna, and set map section flag
+/// FLAG_VALE_UNUSED_WATER_BURST_SEEN. His talk and Mind Read rows show the same
+/// two lines.
 UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
   struct ObjectEvent *objectEvent;
   const s32 *actions;
@@ -1896,7 +1932,7 @@ UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
   Script_ShowMessage(LOCALID_STRONGMAN_REMEMBERING_FELIX, 0);
   ObjectEvent_FaceDirection(LOCALID_STRONGMAN_REMEMBERING_FELIX, FACING_WEST,
                             10);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_05);
+  GameFlag_Set(FLAG_VALE_UNUSED_WATER_BURST_SEEN);
   FieldScript_End();
 }
 
@@ -2977,7 +3013,7 @@ static void EventScript_RoofMended(void) {
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(100);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
-  GameFlag_Set(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 #if TBS_PATCH_1
   leader->motionFlags = 3;
@@ -3224,8 +3260,9 @@ static void EventScript_PushPillar(void) {
 }
 
 /// Records where the pillar now stands and blocks its cell. After Move or a
-/// push, it records the pillar's column in FLAG_MAPSEC_TEMP_14 to _16 and
-/// blocks the cell the pillar now stands on.
+/// push, it records the pillar's column in FLAG_VALE_PILLAR_IN_WEST_COLUMN,
+/// _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN and blocks the cell the pillar now
+/// stands on.
 static void EventScript_SettleMovedPillar(void) {
   struct ObjectEvent *objectEvent;
   s32 column;
@@ -3237,19 +3274,19 @@ static void EventScript_SettleMovedPillar(void) {
     objectEvent = ObjectEvent_GetById(LOCALID_PILLAR);
   if (objectEvent == NULL)
     return;
-  Script_ClearFlag(FLAG_MAPSEC_TEMP_14);
-  Script_ClearFlag(FLAG_MAPSEC_TEMP_15);
-  Script_ClearFlag(FLAG_MAPSEC_TEMP_16);
+  Script_ClearFlag(FLAG_VALE_PILLAR_IN_WEST_COLUMN);
+  Script_ClearFlag(FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN);
+  Script_ClearFlag(FLAG_VALE_PILLAR_IN_EAST_COLUMN);
   column = objectEvent->x.fixed >> 20;
   if (column == 22) {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    GameFlag_Set(FLAG_MAPSEC_TEMP_14);
+    GameFlag_Set(FLAG_VALE_PILLAR_IN_WEST_COLUMN);
   } else if (column == 23) {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    GameFlag_Set(FLAG_MAPSEC_TEMP_15);
+    GameFlag_Set(FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN);
   } else {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, 24, 36);
-    GameFlag_Set(FLAG_MAPSEC_TEMP_16);
+    GameFlag_Set(FLAG_VALE_PILLAR_IN_EAST_COLUMN);
   }
 }
 
@@ -3271,16 +3308,16 @@ static void EventScript_SearchTheLockedDoor(void) {
 static void Vale_SynchronizeAlephGuardPause(void) {
   s32 pauseFlag;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_41) != 0) {
+  if (Script_GetFlag(FLAG_VALE_MT_ALEPH_GUARD_PAUSED) != 0) {
     pauseFlag = GameFlag_Get(FLAG_MENU_OPEN);
     if (pauseFlag == 0) {
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = pauseFlag;
-      GameFlag_Clear(FLAG_MAP_TEMP_41);
+      GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
     }
   } else {
     if (GameFlag_Get(FLAG_MENU_OPEN) != 0) {
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = 1;
-      GameFlag_Set(FLAG_MAP_TEMP_41);
+      GameFlag_Set(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
     }
   }
 }
@@ -3796,9 +3833,9 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
 };
 
 struct MapEvent gVale_EventsAfterKalay[] = {
-    { MAP_EVENT_TALK, LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_MAPSEC_TEMP_03, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
+    { MAP_EVENT_TALK, LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
     { MAP_EVENT_TALK, LOCALID_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_MAPSEC_TEMP_04, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
+    { MAP_EVENT_TALK, LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
     { MAP_EVENT_TALK, LOCALID_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(EventScript_AskWhetherJennaHasReturned) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
@@ -3807,9 +3844,9 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { MAP_EVENT_TALK, LOCALID_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReactToAnotherTremor) },
     { MAP_EVENT_TALK, LOCALID_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
     { MAP_EVENT_TALK, LOCALID_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutTheLackOfTravelers) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_MAPSEC_TEMP_03, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_MAPSEC_TEMP_04, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(EventScript_AskWhetherJennaHasReturned) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
@@ -3817,7 +3854,7 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAN_MISSING_TRAVELERS, FLAG_MAPSEC_TEMP_07, EVENT_SCRIPT(EventScript_AskAboutTheLackOfTravelers) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAN_MISSING_TRAVELERS, FLAG_VALE_ASKED_ABOUT_TRAVELERS, EVENT_SCRIPT(EventScript_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSanctum) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ApproachMtAleph) },

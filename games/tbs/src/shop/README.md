@@ -25,7 +25,8 @@ the field menu are never open together.
 
 ![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
 
-Every counter and the item picker take `HEAP_SLOT_MENU` as
+Every counter and the item picker take the menu's heap block (memory the
+engine lends out, under the numbered slot `HEAP_SLOT_MENU`) as
 `struct ShopRuntime` with `Shop_InitializeCursorWork` and give it back with
 `Shop_ReleaseCursorWork`; the layout is in
 [`include/shop.h`](../../include/shop.h). Some of the shop's pieces are used

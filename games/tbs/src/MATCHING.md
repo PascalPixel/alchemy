@@ -435,6 +435,10 @@ one for reaching a heap block.
   `Item_CopyWords` (tagged).
 - A neighbouring heap block is reached from the menu control slot as
   `cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL]`.
+- The menu work is read through one struct per screen
+  (`InventoryMenuState`, `PsynergyMenuState`, `CharacterMenuState`,
+  `DjinnMenuWork`, `FourObjectMotionState`), as the field object's views
+  are, because each is what its own screen's code matches with.
 
 ### Battles
 

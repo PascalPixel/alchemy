@@ -32,7 +32,8 @@ unpacked messages and the blanks a message fills in. Because all of it is in
 one place, the code that reads it is the same in every edition even though
 the Japanese edition has more window slots and a shorter ring.
 
-In the code the block is `struct UiRenderWork`, allocated in heap slot
+In the code the block is `struct UiRenderWork`, borrowed from the heap (the
+memory the engine lends out to whatever runs) under the numbered slot
 `HEAP_SLOT_WINDOW` by `UiWork_InitializeWithResourceCounters` for the field
 and by `UiWork_Initialize` for battle; it lasts until the next scene change
 and is reached as `UI_WORK`. In order it holds:
@@ -161,10 +162,12 @@ linker symbols (`MsgGameSaved`); their text is in the PO catalogs under
 ([`window/decode.c`](window/decode.c)) decodes a whole message at once into
 the ring.
 
-Messages are Huffman-coded with a separate tree for each previous symbol
-(`Text_MessageContexts`), so the code just decoded chooses the tree for the
-next. The routine that walks the trees, `Text_DecodeSymbol`, is handwritten
-ARM in `graphics/text/decode_symbol.s`; the decoder copies it into heap slot
+Messages are Huffman-coded: common symbols get short codes and rare ones
+long codes, read one bit at a time down a tree of choices. There is a
+separate tree for each previous symbol (`Text_MessageContexts`), so the code
+just decoded chooses the tree for the next. The routine that walks the
+trees, `Text_DecodeSymbol`, is handwritten in the processor's 32-bit ARM
+instructions in `graphics/text/decode_symbol.s`; the decoder copies it into heap slot
 `TEXT_WORK_BLOCK` for the call, runs it from there one symbol at a time and
 releases the slot at the end.
 
@@ -370,12 +373,13 @@ window and a countdown of `UI_AREA_NOTICE_FRAMES` (90) in the event work, and
 [Menus, windows and shops](../../menus.md) explains why messages are decoded
 ahead of typing and why every window shares one tilemap. Within the window
 code, the two routines that run per pixel or per bit, the canvas renderer and
-the tree walker, are ARM code copied into RAM, while everything else is Thumb
-code run from ROM. XXX: likely for speed, because ARM code fetched from the
-cartridge's 16-bit bus is slow; nothing in the code says so. The work block's
-two layouts are one struct whose array sizes come from `tbs_edition.h`, so the
-code that reads it is the same in every edition. XXX: the likely reason the
-ring was doubled is the longer European text; the bytes show only the change.
+the tree walker, are ARM code (the processor's full 32-bit instructions)
+copied into RAM, while everything else is Thumb code (its compact 16-bit
+form) run from ROM, likely for speed, because ARM code fetched from the
+cartridge's 16-bit bus is slow. The work block's two layouts are one struct
+whose array sizes come from `tbs_edition.h`, so the code that reads it is the
+same in every edition; the ring was likely doubled for the longer European
+text.
 
 ## Limits
 
@@ -473,6 +477,12 @@ picture's frames come from the English glyph widths (`graphics/font/text.tsv`)
 and the pairing rule in `UiWork_StepChannelScript`, and agree with a
 recording of the window opening (`guides/window/window-open.png`), whose
 first typed frame shows "Yo".
+
+XXX: likely the canvas renderer and the tree walker are ARM code run from
+RAM for speed, because ARM code fetched from the cartridge's 16-bit bus is
+slow; nothing in the code says so. XXX: the likely reason the ring was
+doubled outside Japan is the longer European text; the bytes show only the
+change.
 
 A message longer than the ring would be cut, its terminator landing on its own
 start, but no message is that long. Counting each control code and line break

@@ -35,13 +35,14 @@ own way, as its own list of windows, members and entries. The shop counters
 take the same block, which is why a counter and the field menu are never open
 together.
 
-The block is heap slot `HEAP_SLOT_MENU`, `MENU_WORK_SIZE` bytes, reached as
-`gMenuWork`. Each screen reads it through its own struct:
-`InventoryMenuState` (the Item screen, and the pieces the screens share),
-`PsynergyMenuState`, `CharacterMenuState`, `DjinnMenuWork` and
-`FourObjectMotionState`. The views stay separate structs, as the views of a
-field object do in [Field](../field/README.md), because each is what its own
-screen's code matches with. The work has room for eight party members
+The block is borrowed from the heap, the memory the engine lends out to
+whatever runs, under the numbered slot `HEAP_SLOT_MENU`: `MENU_WORK_SIZE`
+bytes, reached as `gMenuWork`. Each screen reads it through its own struct,
+naming the fields that screen uses: `InventoryMenuState` (the Item screen,
+and the pieces the screens share), `PsynergyMenuState`,
+`CharacterMenuState`, `DjinnMenuWork` and `FourObjectMotionState`. Why they
+stay separate structs rather than one is a question of rebuilding the
+original bytes, which [Matching](../MATCHING.md) covers. The work has room for eight party members
 (`ownerIds`) and 32 listed entries (`entryIcons`, `items`). The counters take
 the same slot as `struct ShopRuntime`, and the save screen uses it for its
 sprites.
@@ -71,7 +72,8 @@ to use on the field, the screen returns with that choice and the menu closes.
 The Djinn screen always returns to the icons.
 
 Each screen is entered from the field menu by its `FIELD_MENU_` id through
-the far-call table `system/far_call/MENU.S`. Every screen but Djinn returns
+the far-call table `system/far_call/MENU.S`, the jumps at the start of the
+menu bank that code in other banks of the program calls. Every screen but Djinn returns
 -1 when the player backs out or presses Start; the Psynergy and Item screens
 return 1 when Psynergy or an item is to be used on the field. The Djinn
 screen always returns 1, which `Menu_RunTopSelection` also takes as "open the

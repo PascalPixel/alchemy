@@ -24,7 +24,7 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 /// holding equally few, the earliest in the party order gets it.
 s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
-  s32 leastLoadedOwner = 0;
+  s32 leastLoadedMember = 0;
   s32 fewestDjinn = 999;
   s32 partySize;
   s32 partyIndex;
@@ -44,7 +44,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
         ownedDjinn += unit->djinnHeldCounts[elementIndex];
       if (fewestDjinn > ownedDjinn) {
         fewestDjinn = ownedDjinn;
-        leastLoadedOwner = gGameState.party[partyIndex];
+        leastLoadedMember = gGameState.party[partyIndex];
       }
     }
   }
@@ -52,10 +52,10 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   if (fewestDjinn == 999)
     return -2;
 
-  Djinn_Give(leastLoadedOwner, element, djinn);
-  DjinnRecovery_AddStandby(leastLoadedOwner, element, djinn);
+  Djinn_Give(leastLoadedMember, element, djinn);
+  DjinnRecovery_AddStandby(leastLoadedMember, element, djinn);
   GameFlag_SetBit(flag);
-  return leastLoadedOwner;
+  return leastLoadedMember;
 }
 
 /// Gives Djinni `djinnIndex` of `element` to a unit: sets its bit in
@@ -63,8 +63,8 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 /// element or has it already. Called by Djinn_GiveToParty and
 /// Djinn_Transfer, by the scenes where a member joins with Djinn, and by the
 /// debug menus.
-s32 Djinn_Give(s32 owner, s32 element, s32 djinnIndex) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
+  struct Unit *unit = Unit_Get(unitId);
 
   if (unit->djinnHeldCounts[element] > 9)
     return -1;
@@ -79,8 +79,8 @@ s32 Djinn_Give(s32 owner, s32 element, s32 djinnIndex) {
 /// already, not recovering and not held by a summon. A count of set Djinn
 /// above 9 is clamped to 10 on the way. Called by the Djinn menu to list what
 /// can be set, and by battle to tell which Djinn can be unleashed.
-s32 Djinn_CanSet(s32 owner, s32 element, s32 djinnIndex) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
+  struct Unit *unit = Unit_Get(unitId);
   struct DjinnRecoveryList *list;
   s32 entryIndex;
   s32 recoveryTurns;
@@ -97,7 +97,7 @@ s32 Djinn_CanSet(s32 owner, s32 element, s32 djinnIndex) {
     return 0;
 
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-               (owner < 0 || owner > PIERS)))
+               (unitId < 0 || unitId > PIERS)))
               ->list;
   for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
     if (element == list->entries[entryIndex].element &&
@@ -115,8 +115,8 @@ s32 Djinn_CanSet(s32 owner, s32 element, s32 djinnIndex) {
 }
 
 /// Returns 1 when the Djinni is set on the unit.
-u32 Djinn_IsSet(s32 owner, s32 element, s32 djinnIndex) {
-  s32 activeBit = Unit_Get(owner)->djinnSet[element] & (1 << djinnIndex);
+u32 Djinn_IsSet(s32 unitId, s32 element, s32 djinnIndex) {
+  s32 activeBit = Unit_Get(unitId)->djinnSet[element] & (1 << djinnIndex);
 
   return (u32)(-activeBit | activeBit) >> 31;
 }
@@ -124,9 +124,9 @@ u32 Djinn_IsSet(s32 owner, s32 element, s32 djinnIndex) {
 /// Sets a ready Djinni on the unit, counts it and works out the unit's class
 /// again. Returns 1 when it was set. Called by the Djinn menu, by battle when
 /// a Djinni recovers, and by Djinn_Transfer.
-s32 Djinn_Set(s32 owner, s32 element, s32 djinnIndex) {
-  struct Unit *unit = Unit_Get(owner);
-  s32 isReady = Djinn_CanSet(owner, element, djinnIndex);
+s32 Djinn_Set(s32 unitId, s32 element, s32 djinnIndex) {
+  struct Unit *unit = Unit_Get(unitId);
+  s32 isReady = Djinn_CanSet(unitId, element, djinnIndex);
 
   if (isReady != 0) {
     if (unit->djinnHeld[element] & (1 << djinnIndex)) {
@@ -135,7 +135,7 @@ s32 Djinn_Set(s32 owner, s32 element, s32 djinnIndex) {
       return 0;
     }
     unit->djinnSetCounts[element]++;
-    Unit_UpdateClass(owner);
+    Unit_UpdateClass(unitId);
   }
   return isReady;
 }
@@ -143,14 +143,14 @@ s32 Djinn_Set(s32 owner, s32 element, s32 djinnIndex) {
 /// Takes a set Djinni off the unit and works out its class again. Returns 1
 /// when it was set. Called by the Djinn menu, by battle when a Djinni is
 /// unleashed, and by Djinn_Transfer.
-u32 Djinn_PutOnStandby(s32 owner, s32 element, s32 djinnIndex) {
-  struct Unit *unit = Unit_Get(owner);
-  u32 wasActive = Djinn_IsSet(owner, element, djinnIndex);
+u32 Djinn_PutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
+  struct Unit *unit = Unit_Get(unitId);
+  u32 wasActive = Djinn_IsSet(unitId, element, djinnIndex);
 
   if (wasActive != 0) {
     unit->djinnSetCounts[element]--;
     unit->djinnSet[element] &= ~(1 << djinnIndex);
-    Unit_UpdateClass(owner);
+    Unit_UpdateClass(unitId);
   }
   return wasActive;
 }
@@ -158,13 +158,13 @@ u32 Djinn_PutOnStandby(s32 owner, s32 element, s32 djinnIndex) {
 /// Takes the Djinni off its side's standby and recovery list, closing the
 /// gap. Returns 1 when it was there. Called when a Djinni is set again, by the
 /// Djinn menu and by battle's recovery.
-s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
+s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
   struct DjinnRecoveryList *list;
   s32 removed = 0;
   s32 entryIndex;
 
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-               (owner < 0 || owner > PIERS)))
+               (unitId < 0 || unitId > PIERS)))
               ->list;
   for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
     if (element == list->entries[entryIndex].element &&
@@ -180,22 +180,22 @@ s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
   return removed;
 }
 
-/// Puts the owner's Djinni at the end of its side's list on standby
+/// Puts unit unitId's Djinni at the end of its side's list on standby
 /// (DJINN_RECOVERY_AFTER_BATTLE), moving it there if it was already listed.
 /// Returns a pointer to the list's count. Nothing checks the list's 64-entry
 /// capacity. Called when a Djinni joins, by the Djinn menu's standby command,
 /// by battle and by the scene where Flint joins.
-u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
+u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *list;
   s32 entryIndex;
 
-  DjinnRecovery_Remove(owner, element, djinnIndex);
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(owner > PIERS))
+  DjinnRecovery_Remove(unitId, element, djinnIndex);
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(unitId > PIERS))
               ->list;
   entryIndex = list->count;
   list->entries[entryIndex].element = element;
   list->entries[entryIndex].index = djinnIndex;
-  list->entries[entryIndex].unitId = owner;
+  list->entries[entryIndex].unitId = unitId;
   list->entries[entryIndex].turns = DJINN_RECOVERY_AFTER_BATTLE;
   list->count = entryIndex + 1;
   return (u32 *)&list->count;
@@ -273,16 +273,16 @@ s32 Djinn_GetAbilityId(u32 group, u32 index) {
 /// elements for -1. Called by the save summary, the field summary screen, the
 /// battle status screen and the battle command menu.
 s32 Party_SumDjinnCounts(s32 element) {
-  u16 owners[16];
+  u16 unitIds[16];
   s32 djinnCount = 0;
-  s32 partySize = Party_ListMembers(owners);
+  s32 partySize = Party_ListMembers(unitIds);
 
   if (djinnCount < partySize) {
-    u16 *ownerCursor = owners;
-    s32 remainingOwners = partySize;
+    u16 *unitCursor = unitIds;
+    s32 remainingUnits = partySize;
 
     do {
-      struct Unit *unit = Unit_Get(*ownerCursor++);
+      struct Unit *unit = Unit_Get(*unitCursor++);
 
       if (element == -1) {
         djinnCount += unit->djinnHeldCounts[0];
@@ -292,8 +292,8 @@ s32 Party_SumDjinnCounts(s32 element) {
       } else {
         djinnCount += unit->djinnHeldCounts[element];
       }
-      remainingOwners--;
-    } while (remainingOwners != 0);
+      remainingUnits--;
+    } while (remainingUnits != 0);
   }
   return djinnCount;
 }

@@ -68,11 +68,11 @@ u32 Party_GetAverageLevel(void) {
   return totalLevels;
 }
 
-/// Returns the unit of `owner`: ISAAC to PIERS are the playable
+/// Returns the unit of `unitId`: ISAAC to PIERS are the playable
 /// characters in the game state, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
 /// bank calls it, through GAME.S as Unit_GetFar.
-struct Unit *Unit_Get(u32 owner) {
+struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;
 
@@ -85,12 +85,12 @@ struct Unit *Unit_Get(u32 owner) {
     asm("" : : "l"(caller));
   }
   states = gGameState.units;
-  if (owner <= PIERS) {
-    unit = &states[owner];
+  if (unitId <= PIERS) {
+    unit = &states[unitId];
     return unit;
   }
-  if (owner - 0x80 < 6 && gEnemyUnits != NULL) {
-    unit = &((struct Unit *)gEnemyUnits)[owner - 0x80];
+  if (unitId - 0x80 < 6 && gEnemyUnits != NULL) {
+    unit = &((struct Unit *)gEnemyUnits)[unitId - 0x80];
     return unit;
   }
   return NULL;
@@ -149,7 +149,7 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.
-void Unit_Calculate(s32 owner) {
+void Unit_Calculate(s32 unitId) {
   struct StatWork *stats;
   struct Unit *unit;
   s32 index, effectIndex, elementIndex;
@@ -162,7 +162,7 @@ void Unit_Calculate(s32 owner) {
 
   // Start with the unit's base stats and elemental power/resistance.
   stats = AllocEwram(sizeof(struct StatWork));
-  unit = Unit_Get(owner);
+  unit = Unit_Get(unitId);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
   stats->atk = unit->baseAttack;
@@ -559,7 +559,7 @@ void GameState_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, map state, flags and save metadata in DMA order:
-  // 0xb0 words are gGameState up to the characters (owners, which
+  // 0xb0 words are gGameState up to the characters (units, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gMapLocalState
   // through gInventorySnapshot and gObjectEventSnapshot; 0x80 words are all
   // 4096 flags.
@@ -642,7 +642,7 @@ void Party_StartChildhood(void) {
 /// the prologue hands over to Vale, three years later.
 /// XXX: flag 0x901 is set here with no name; its readers would name it.
 void Party_EndChildhood(void) {
-  s32 owner;
+  s32 unitId;
 
   GameFlag_ClearBit(FLAG_CHILDHOOD);
   GameFlag_ClearBit(FLAG_ISAAC_WEARS_TUNIC);
@@ -652,8 +652,8 @@ void Party_EndChildhood(void) {
   GameFlag_ClearBit(FLAG_KEEP_MUSIC_HELD);
   GameFlag_SetBit(FLAG_KEEP_MUSIC);
 
-  for (owner = 0; owner <= 1; owner++) {
-    struct Unit *unit = Unit_Get(owner);
+  for (unitId = 0; unitId <= 1; unitId++) {
+    struct Unit *unit = Unit_Get(unitId);
     s32 slot;
 
     unit->hp = unit->hpMax;
@@ -663,13 +663,13 @@ void Party_EndChildhood(void) {
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
       if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == ITEM_MACHETE) {
         unit->inventory[slot] = ITEM_SHORT_SWORD;
-        Inventory_Equip(owner, slot);
+        Inventory_Equip(unitId, slot);
         break;
       }
     }
 
-    Unit_UpdateClass(owner);
-    Unit_Calculate(owner);
+    Unit_UpdateClass(unitId);
+    Unit_Calculate(unitId);
   }
 
   Unit_LearnPsynergy(ISAAC, ABILITY_MOVE);
@@ -710,15 +710,15 @@ void Party_RestoreHpPp(s32 cureConditions) {
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;
-  u8 ownerId;
+  u8 unitId;
   s32 elementGroup;
   s32 restorePp;
   struct Unit *unit;
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    ownerId = gGameState.party[partyIndex];
-    elementGroup = gCharacter_ElementGroupTable[ownerId];
+    unitId = gGameState.party[partyIndex];
+    elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {
       if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT) ||
@@ -736,7 +736,7 @@ void Party_RestorePpOfLitElements(void) {
       continue;
     }
 
-    unit = Unit_Get(ownerId);
+    unit = Unit_Get(unitId);
     unit->pp = unit->ppMax;
     Unit_UpdateGauges(unit);
   }
@@ -745,14 +745,14 @@ void Party_RestorePpOfLitElements(void) {
 /// Unused: reserved entry; keeps its place in the far-call table.
 UNUSED void Unit_GaugeNoOp(void) {}
 
-/// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so
+/// Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
 /// that Unit_Calculate keeps the same fractions. Called after anything that
 /// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
 /// battle.
-void Unit_RecalculateGauges(s32 owner) {
+void Unit_RecalculateGauges(s32 unitId) {
   struct Unit *unit;
 
-  unit = Unit_Get(owner);
+  unit = Unit_Get(unitId);
   Unit_UpdateGauges(unit);
 }
 
@@ -790,11 +790,11 @@ void Unit_SetPp(struct Unit *unit, s32 pp) {
   Unit_UpdateGauges(unit);
 }
 
-/// Adds delta to the HP of unit owner, clamped to 0..hpMax, recomputes its
+/// Adds delta to the HP of unit unitId, clamped to 0..hpMax, recomputes its
 /// gauges and returns the new HP. Called by battle's round end, poison and
 /// regeneration, and by the field's damage floors and status damage.
-s32 Unit_AddHp(s32 owner, s32 delta) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Unit_AddHp(s32 unitId, s32 delta) {
+  struct Unit *unit = Unit_Get(unitId);
   s32 currentHp = unit->hp;
   s32 maximumHp = unit->hpMax;
   s32 value = currentHp + delta;
@@ -802,16 +802,16 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumHp);
   unit->hp = result;
-  Unit_RecalculateGauges(owner);
+  Unit_RecalculateGauges(unitId);
   return unit->hp;
 }
 
-/// Adds delta to the PP of unit owner, clamped to 0..ppMax, recomputes its
+/// Adds delta to the PP of unit unitId, clamped to 0..ppMax, recomputes its
 /// gauges and returns the new PP. Called when Psynergy is used in the field,
 /// in battle and from the menu, by PP recovery at the end of a battle round,
 /// and by the debug menu.
-s16 Unit_AddPp(s32 owner, s32 delta) {
-  struct Unit *unit = Unit_Get(owner);
+s16 Unit_AddPp(s32 unitId, s32 delta) {
+  struct Unit *unit = Unit_Get(unitId);
   s32 currentPp = unit->pp;
   s32 maximumPp = unit->ppMax;
   s32 value = currentPp + delta;
@@ -819,7 +819,7 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumPp);
   unit->pp = result;
-  Unit_RecalculateGauges(owner);
+  Unit_RecalculateGauges(unitId);
   return unit->pp;
 }
 

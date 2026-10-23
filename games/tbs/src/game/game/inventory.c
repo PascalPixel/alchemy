@@ -14,8 +14,8 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 /// Returns whether the character can equip `item`: bit classId of the item's
 /// equipMask. Units past the eight characters cannot. Inventory_Equip checks
 /// it first.
-s32 Item_CanUnitEquipDirect(s32 owner, s32 item) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Item_CanUnitEquipDirect(s32 unitId, s32 item) {
+  struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *itemDefinition = Item_GetDirect(item);
   s32 equipMask = itemDefinition->equipMask;
 
@@ -61,25 +61,25 @@ s32 Item_GetEquipmentGroup(s32 itemId) {
 /// Returns how many of the item in `slot` the unit carries (0 for an empty
 /// slot). The entry stores one less than the count. Reached through GAME.S as
 /// Shop_GetSelectionState; nothing in this image calls it by name.
-s32 Inventory_GetQuantity(s32 owner, s32 slot) {
+s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
   s32 itemId;
 
-  owner = Unit_Get(owner)->inventory[slot];
+  unitId = Unit_Get(unitId)->inventory[slot];
   itemId = INVENTORY_ITEM_ID_MASK;
-  itemId &= owner;
-  owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
-  owner++;
+  itemId &= unitId;
+  unitId = (u32)unitId >> INVENTORY_QUANTITY_SHIFT;
+  unitId++;
   if (itemId == 0) {
-    owner = 0;
+    unitId = 0;
   }
-  return owner;
+  return unitId;
 }
 
 /// Counts filled inventory slots up to the first empty slot; the inventory is
 /// kept closed up, so this is how many items the unit carries. Called by the
 /// shops before they add an item and to lay out their item grids.
-s32 Inventory_Count(s32 owner) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Inventory_Count(s32 unitId) {
+  struct Unit *unit = Unit_Get(unitId);
   s32 count = 0;
 
   if (unit->inventory[count] != 0) {
@@ -96,22 +96,22 @@ s32 Inventory_Count(s32 owner) {
 /// inventory slot. Called by the scripts that give an item (the Vault's Water
 /// of Life and the bones) and the debug item menus.
 s32 PartyInventory_HasSpace(void) {
-  s16 owners[10];
-  s32 ownerCount;
-  s32 ownerIndex;
-  s16 *ownerCursor;
+  s16 unitIds[10];
+  s32 unitCount;
+  s32 unitIndex;
+  s16 *unitCursor;
 
   if (Inventory_Count(gGameState.leaderLocalId) != INVENTORY_SLOTS)
     return 1;
-  ownerCount = Party_ListMembers(owners);
-  ownerCursor = owners;
-  ownerIndex = 0;
-  if (ownerIndex < ownerCount) {
+  unitCount = Party_ListMembers(unitIds);
+  unitCursor = unitIds;
+  unitIndex = 0;
+  if (unitIndex < unitCount) {
     do {
-      if (Inventory_Count(*ownerCursor++) != INVENTORY_SLOTS)
+      if (Inventory_Count(*unitCursor++) != INVENTORY_SLOTS)
         return 1;
-      ownerIndex++;
-    } while (ownerIndex < ownerCount);
+      unitIndex++;
+    } while (unitIndex < unitCount);
   }
   return 0;
 }
@@ -119,18 +119,18 @@ s32 PartyInventory_HasSpace(void) {
 /// Returns the free inventory slots of the whole party. Called by the Tolbi
 /// spring game and the lucky wheels to cap what the player can win.
 s32 PartyInventory_CountFreeSlots(void) {
-  s16 owners[10];
-  s32 ownerCount = Party_ListMembers(owners);
+  s16 unitIds[10];
+  s32 unitCount = Party_ListMembers(unitIds);
   s32 freeSlots = 0;
-  s16 *ownerCursor = owners;
+  s16 *unitCursor = unitIds;
 
-  if (freeSlots < ownerCount) {
-    s32 remainingOwners = ownerCount;
+  if (freeSlots < unitCount) {
+    s32 remainingUnits = unitCount;
 
     do {
-      freeSlots = freeSlots - Inventory_Count(*ownerCursor++) + INVENTORY_SLOTS;
-      remainingOwners--;
-    } while (remainingOwners != 0);
+      freeSlots = freeSlots - Inventory_Count(*unitCursor++) + INVENTORY_SLOTS;
+      remainingUnits--;
+    } while (remainingUnits != 0);
   }
   return freeSlots;
 }
@@ -140,8 +140,8 @@ s32 PartyInventory_CountFreeSlots(void) {
 /// if another slot is free. Writes the inventory slot; returns it, or -1 when
 /// there was no room. Called by the shops, the new game set-up, the debug
 /// presets and PartyInventory_Add.
-s32 Inventory_AddItem(s32 owner, s32 itemId) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Inventory_AddItem(s32 unitId, s32 itemId) {
+  struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 slot;
 
@@ -187,30 +187,30 @@ s32 Inventory_AddItem(s32 owner, s32 itemId) {
 /// or -1. Called for a battle's spoils, a chest or search in the field, and
 /// the scripts that give items.
 s32 PartyInventory_Add(s32 itemId) {
-  s16 owners[10];
-  s32 ownerCount;
-  s32 ownerIndex;
-  s16 *ownerCursor;
+  s16 unitIds[10];
+  s32 unitCount;
+  s32 unitIndex;
+  s16 *unitCursor;
 
-  ownerCount = Party_ListMembers(owners);
-  ownerCursor = owners;
-  ownerIndex = 0;
-  if (ownerIndex < ownerCount) {
+  unitCount = Party_ListMembers(unitIds);
+  unitCursor = unitIds;
+  unitIndex = 0;
+  if (unitIndex < unitCount) {
     do {
-      s16 ownerId = *ownerCursor++;
+      s16 unitId = *unitCursor++;
 
-      if (Inventory_AddItem(ownerId, itemId) >= 0)
-        return ownerId;
-      ownerIndex++;
-    } while (ownerIndex < ownerCount);
+      if (Inventory_AddItem(unitId, itemId) >= 0)
+        return unitId;
+      unitIndex++;
+    } while (unitIndex < unitCount);
   }
   return -1;
 }
 
 /// Returns the first slot holding `itemId` (any quantity, equipped or not),
 /// or -1. Called by the shops and the scripts that check for an item.
-s32 Inventory_Find(s32 owner, s32 itemId) {
-  struct Unit *inv = Unit_Get(owner);
+s32 Inventory_Find(s32 unitId, s32 itemId) {
+  struct Unit *inv = Unit_Get(unitId);
   s32 slot = 0;
   u16 *entry = inv->inventory;
 
@@ -227,24 +227,24 @@ s32 Inventory_Find(s32 owner, s32 itemId) {
 /// Called by the scripts that need a key item, such as the Mercury Lighthouse's
 /// Hermes' Water and Kolima's Tret.
 s32 PartyInventory_FindMember(s32 itemId) {
-  s16 owners[10];
-  s32 ownerCount;
-  s32 ownerIndex;
-  s16 *ownerCursor;
-  s16 owner;
+  s16 unitIds[10];
+  s32 unitCount;
+  s32 unitIndex;
+  s16 *unitCursor;
+  s16 unitId;
 
   if (Inventory_Find(gGameState.leaderLocalId, itemId) != -1)
     return gGameState.leaderLocalId;
-  ownerCount = Party_ListMembers(owners);
-  ownerCursor = owners;
-  ownerIndex = 0;
-  if (ownerIndex < ownerCount) {
+  unitCount = Party_ListMembers(unitIds);
+  unitCursor = unitIds;
+  unitIndex = 0;
+  if (unitIndex < unitCount) {
     do {
-      owner = *ownerCursor++;
-      if (Inventory_Find(owner, itemId) != -1)
-        return owner;
-      ownerIndex++;
-    } while (ownerIndex < ownerCount);
+      unitId = *unitCursor++;
+      if (Inventory_Find(unitId, itemId) != -1)
+        return unitId;
+      unitIndex++;
+    } while (unitIndex < unitCount);
   }
   return -1;
 }
@@ -254,14 +254,14 @@ s32 PartyInventory_FindMember(s32 itemId) {
 /// Psynergy and stats. Returns 0, -1 when the unit cannot equip it, or -2
 /// when the item it would replace is cursed on. Called by the item menu, the
 /// shop's equip prompt, the new game set-up and the debug presets.
-s32 Inventory_Equip(s32 owner, s32 slot) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Inventory_Equip(s32 unitId, s32 slot) {
+  struct Unit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];
   struct ItemDefinition *item;
   u8 type;
   s32 equippedSlot;
 
-  if (Item_CanUnitEquipDirect(owner, inventoryEntry) == 0)
+  if (Item_CanUnitEquipDirect(unitId, inventoryEntry) == 0)
     return -1;
   if (inventoryEntry & INVENTORY_EQUIPPED)
     return 0;
@@ -285,16 +285,16 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
   }
 
   unit->inventory[slot] |= INVENTORY_EQUIPPED;
-  Unit_RefreshPsynergy(owner);
-  Unit_Calculate(owner);
+  Unit_RefreshPsynergy(unitId);
+  Unit_Calculate(unitId);
   return 0;
 }
 
 /// Returns the slot of the equipped item of `type`, or -1. Called by the
 /// shops to compare what is worn and to repair it, and by the battle sprites
 /// to draw the member's weapon.
-s32 Inventory_FindEquipped(s32 owner, s32 type) {
-  struct Unit *base = Unit_Get(owner);
+s32 Inventory_FindEquipped(s32 unitId, s32 type) {
+  struct Unit *base = Unit_Get(unitId);
   s32 index;
   struct ItemDefinition *item;
 
@@ -352,8 +352,8 @@ s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
 /// list is not rebuilt here (Unit_RefreshPsynergy), so a removed item's
 /// Psynergy stays listed until something rebuilds it. Called by using an item
 /// in the field or in battle, by the shops and by Inventory_Discard.
-s32 Inventory_Remove(s32 owner, s32 slot) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Inventory_Remove(s32 unitId, s32 slot) {
+  struct Unit *unit = Unit_Get(unitId);
   u16 item = unit->inventory[slot];
   s32 result = INVENTORY_REMOVE_EMPTY_SLOT;
 
@@ -367,16 +367,16 @@ s32 Inventory_Remove(s32 owner, s32 slot) {
       result = INVENTORY_REMOVE_LAST;
     }
   }
-  Unit_Calculate(owner);
+  Unit_Calculate(unitId);
   return result;
 }
 
 /// Removes one item as Inventory_Remove does, and puts a rare item back into
 /// circulation (its counter goes up by one) for the shops to sell. Called
 /// by selling an item and by the scripts that take an item away.
-s32 Inventory_Discard(s32 owner, s32 slot) {
-  s32 item = Unit_Get(owner)->inventory[slot];
-  s32 removalResult = Inventory_Remove(owner, slot);
+s32 Inventory_Discard(s32 unitId, s32 slot) {
+  s32 item = Unit_Get(unitId)->inventory[slot];
+  s32 removalResult = Inventory_Remove(unitId, slot);
 
   if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {
     Item_AdjustCounter(item, 1);
@@ -388,8 +388,8 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
 /// Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
 /// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
 /// Called by the shop's item picker before it lets an item go.
-s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
+  struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirect(itemId);
 
@@ -410,11 +410,11 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
 /// Called by the scripts that use up a key item, the Lucky Wheels' Game
 /// Tickets and the field shortcut that uses an item.
 s32 PartyInventory_Remove(s32 itemId) {
-  s32 owner = PartyInventory_FindMember(itemId);
+  s32 unitId = PartyInventory_FindMember(itemId);
 
-  if (owner == -1)
+  if (unitId == -1)
     return 0;
-  Inventory_Remove(owner, Inventory_Find(owner, itemId));
+  Inventory_Remove(unitId, Inventory_Find(unitId, itemId));
   return 0;
 }
 
@@ -422,18 +422,18 @@ s32 PartyInventory_Remove(s32 itemId) {
 /// does; always returns 0. Called by the scripts that take an item back, such
 /// as the Vault dog's bone and the Black Orb.
 s32 PartyInventory_Discard(s32 itemId) {
-  s32 owner = PartyInventory_FindMember(itemId);
+  s32 unitId = PartyInventory_FindMember(itemId);
 
-  if (owner == -1)
+  if (unitId == -1)
     return 0;
-  Inventory_Discard(owner, Inventory_Find(owner, itemId));
+  Inventory_Discard(unitId, Inventory_Find(unitId, itemId));
   return 0;
 }
 
 /// Marks the item in `slot` broken; returns -1 for an empty slot. Called when
 /// a used item breaks, in battle or from the item menu.
-s32 Inventory_Break(s32 owner, s32 slot) {
-  struct Unit *inv = Unit_Get(owner);
+s32 Inventory_Break(s32 unitId, s32 slot) {
+  struct Unit *inv = Unit_Get(unitId);
   if (inv->inventory[slot] == 0) {
     return -1;
   }
@@ -443,8 +443,8 @@ s32 Inventory_Break(s32 owner, s32 slot) {
 
 /// Clears the broken mark of the item in `slot`; returns -1 for an empty
 /// slot. Called by the shop's repair.
-s32 Inventory_Repair(s32 owner, s32 slot) {
-  struct Unit *inv = Unit_Get(owner);
+s32 Inventory_Repair(s32 unitId, s32 slot) {
+  struct Unit *inv = Unit_Get(unitId);
   if (inv->inventory[slot] == 0) {
     return -1;
   }
@@ -504,8 +504,8 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 /// Counts matching nonstackable items, or the quantity in the first matching
 /// stack. Called by PartyInventory_CountItem and by the scripts that give an
 /// item, to keep stacks under their limit.
-s32 Inventory_CountItem(s32 owner, s32 itemId) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Inventory_CountItem(s32 unitId, s32 itemId) {
+  struct Unit *unit = Unit_Get(unitId);
   s32 count = 0;
   s32 itemIdOnly = itemId & INVENTORY_ITEM_ID_MASK;
   s32 slot = 0;
@@ -528,18 +528,18 @@ s32 Inventory_CountItem(s32 owner, s32 itemId) {
 /// Counts `itemId` across the party. Called by Lucky Wheels (Game
 /// Tickets) and the Tolbi spring game.
 s32 PartyInventory_CountItem(s32 itemId) {
-  u16 owners[16];
+  u16 unitIds[16];
   s32 itemCount = 0;
-  s32 ownerCount = Party_ListMembers(owners);
+  s32 unitCount = Party_ListMembers(unitIds);
 
-  if (itemCount < ownerCount) {
-    u16 *ownerCursor = owners;
-    s32 remainingOwners = ownerCount;
+  if (itemCount < unitCount) {
+    u16 *unitCursor = unitIds;
+    s32 remainingUnits = unitCount;
 
     do {
-      itemCount += Inventory_CountItem(*ownerCursor++, itemId);
-      remainingOwners--;
-    } while (remainingOwners != 0);
+      itemCount += Inventory_CountItem(*unitCursor++, itemId);
+      remainingUnits--;
+    } while (remainingUnits != 0);
   }
   return itemCount;
 }

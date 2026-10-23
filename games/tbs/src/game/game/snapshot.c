@@ -6,17 +6,17 @@
 
 /// Gives a unit `itemId` and equips every exactly matching inventory entry.
 /// Called by InventorySnapshot_Save to arm Isaac for the Colosso.
-void Inventory_AddAndEquip(s32 owner, s32 itemId) {
-  struct Unit *unit = Unit_Get(owner);
+void Inventory_AddAndEquip(s32 unitId, s32 itemId) {
+  struct Unit *unit = Unit_Get(unitId);
   u16 *entry;
   s32 slot;
 
-  Inventory_AddItem(owner, itemId);
+  Inventory_AddItem(unitId, itemId);
   slot = 0;
   entry = unit->inventory;
   do {
     if (*entry++ == itemId)
-      Inventory_Equip(owner, slot);
+      Inventory_Equip(unitId, slot);
     slot++;
   } while (slot < INVENTORY_SLOTS);
 }
@@ -36,7 +36,7 @@ void InventorySnapshot_Save(void) {
   u16 *save;
   struct Unit *unit;
   s16 *inventory;
-  s32 owner;
+  s32 unitId;
   s32 slot;
   s16 firstShortcut;
   s16 secondShortcut;
@@ -47,8 +47,8 @@ void InventorySnapshot_Save(void) {
     firstShortcut = gGameState.firstShortcut;
     secondShortcut = gGameState.secondShortcut;
     // Save each inventory before retaining its Psynergy-granting items.
-    for (owner = 0; owner < 4; owner++) {
-      unit = Unit_Get(owner);
+    for (unitId = 0; unitId < 4; unitId++) {
+      unit = Unit_Get(unitId);
       for (slot = 0; slot < INVENTORY_SLOTS; slot++)
         *save++ = unit->inventory[slot];
       for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -57,8 +57,8 @@ void InventorySnapshot_Save(void) {
       }
       inventory = unit->inventory;
       Inventory_CompactSlots(inventory);
-      Unit_UpdateClass(owner);
-      Unit_Calculate(owner);
+      Unit_UpdateClass(unitId);
+      Unit_Calculate(unitId);
     }
     // Keep shortcuts and party order with the inventory snapshot.
     *save++ = firstShortcut;
@@ -82,23 +82,23 @@ void InventorySnapshot_Save(void) {
 /// put aside, then clears the snapshot and FLAG_COLOSSO_HOLDS_EQUIPMENT. Called
 /// by the Babi palace map after the Colosso, and by the main menu.
 void InventorySnapshot_Restore(void) {
-  s32 owner;
+  s32 unitId;
   u16 *source = gInventorySnapshot;
 
   if (*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
-    owner = 0;
+    unitId = 0;
     do {
-      u16 *inventory = Unit_Get(owner)->inventory;
+      u16 *inventory = Unit_Get(unitId)->inventory;
       s32 remaining = 14;
 
       do {
         *inventory++ = *source++;
         remaining--;
       } while (remaining >= 0);
-      Unit_UpdateClass(owner);
-      Unit_Calculate(owner);
-      owner++;
-    } while (owner <= 3);
+      Unit_UpdateClass(unitId);
+      Unit_Calculate(unitId);
+      unitId++;
+    } while (unitId <= 3);
 
     gGameState.firstShortcut = *source++;
     gGameState.secondShortcut = *source++;

@@ -13,7 +13,7 @@
 /// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
 /// Battle Arena passes the opponent's party to the battle in a copy of this
 /// block (menu/battle_arena.c).
-#define LINK_OWNER_STATES_SIZE 0x7c8
+#define ENEMY_UNITS_SIZE 0x7c8
 
 /// Fights the battle against the enemy formation enemyGroup, from the
 /// opening transition to the end, and returns how it ended: the number of
@@ -38,11 +38,11 @@ s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
   struct BattleWork *battle;
-  u8 *ownerStates;
+  u8 *enemyUnits;
   struct BattleViewWork *view;
   struct BattleMessageWork *display;
   s32 enemyCount;
-  u8 *ownerStateDestination;
+  u8 *enemyUnitDestination;
   s32 actionCount;
   s32 i;
   s32 result;
@@ -61,8 +61,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // is (field/field/animation.c, runtime/runtime/heap.c).
   camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = AllocHeapSlotEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
-  ownerStates =
-      AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, LINK_OWNER_STATES_SIZE);
+  enemyUnits = AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
   view = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
   AllocHeapSlotEwram(11, 0x280);
   focus = camera->focus;
@@ -70,7 +69,7 @@ s32 Battle_Run(s32 enemyGroup) {
    * CSE takes the setup's zeros from; without it, 122 of 645 instructions
    * differ in tbs-en. */
   result = 0;
-  Iwram_ClearWords(ownerStates, LINK_OWNER_STATES_SIZE);
+  Iwram_ClearWords(enemyUnits, ENEMY_UNITS_SIZE);
   Task_ResetAll();
   // The transition owns the background (flag) until the entry transition
   // is over, the camera toward the party's view.
@@ -139,9 +138,9 @@ s32 Battle_Run(s32 enemyGroup) {
       }
     }
     battle->linkSide = SIO_MULTI_PLAYER_ID();
-    ownerStateDestination = gEnemyUnits;
-    for (copyIndex = 0; copyIndex < LINK_OWNER_STATES_SIZE; copyIndex++)
-      *ownerStateDestination++ = gActorSpriteSlots[copyIndex];
+    enemyUnitDestination = gEnemyUnits;
+    for (copyIndex = 0; copyIndex < ENEMY_UNITS_SIZE; copyIndex++)
+      *enemyUnitDestination++ = gActorSpriteSlots[copyIndex];
     enemyCount = GameFlag_GetByteFar(FLAG_LINK_PARTY_COUNT);
     BattleParty_AssignOpponentSlots();
     battle->layout = FORMATION_LAYOUT_SHUFFLED;
@@ -377,12 +376,12 @@ finished:
 }
 
 /// Lists the party members who fight (the first four of the party, three in
-/// a link battle) and marks each unit as a party member. owners, if not
+/// a link battle) and marks each unit as a party member. unitIds, if not
 /// null, receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many
 /// fight. Called across the battle parts whenever they need the party, and
 /// through its far stub by the party status window (party_status.c). Sets
 /// each fighting member's side to BATTLE_SIDE_PARTY.
-s32 BattleParty_PrepareMembers(u16 *owners) {
+s32 BattleParty_PrepareMembers(u16 *unitIds) {
   s32 limit;
   s32 count;
   s32 index;
@@ -396,15 +395,15 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
     count = limit;
 
   for (index = 0; index < count; index++) {
-    s32 owner = gGameState.party[index];
+    s32 unitId = gGameState.party[index];
 
-    if (owners != 0)
-      *owners++ = owner;
-    Unit_GetFar(owner)->side = BATTLE_SIDE_PARTY;
+    if (unitIds != 0)
+      *unitIds++ = unitId;
+    Unit_GetFar(unitId)->side = BATTLE_SIDE_PARTY;
   }
 
-  if (owners != 0)
-    *owners = BATTLE_UNIT_LIST_END;
+  if (unitIds != 0)
+    *unitIds = BATTLE_UNIT_LIST_END;
   return count;
 }
 

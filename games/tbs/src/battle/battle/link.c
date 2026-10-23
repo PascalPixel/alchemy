@@ -117,7 +117,7 @@ s32 LinkBattle_SendParty(void) {
   s32 count;
   s32 i;
   s32 noSlot;
-  u16 owners[8];
+  u16 unitIds[8];
 
   size = LINK_PARTY_UNIT_BYTES;
   buffer = (u8 *)AllocEwram(size);
@@ -127,12 +127,12 @@ s32 LinkBattle_SendParty(void) {
     battle->opponentSlots[i] = noSlot;
 
   // The members, each marked as the opponent's.
-  count = BattleParty_PrepareMembers(owners);
+  count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++) {
-    Iwram_CopyWords(buffer, Unit_GetFar(owners[i]), size);
+    Iwram_CopyWords(buffer, Unit_GetFar(unitIds[i]), size);
     ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
     // FIRST_ENEMY_UNIT + i, in a byte.
-    battle->opponentSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
+    battle->opponentSlots[unitIds[i]] = i - FIRST_ENEMY_UNIT;
     if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();

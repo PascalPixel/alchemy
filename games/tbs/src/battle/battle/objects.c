@@ -210,7 +210,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
   struct SpriteAnim *shownIcon;
   struct SpriteAnim *icon;
   struct Sprite *record;
-  struct MotionObject *owner;
+  struct MotionObject *object;
   s32 iconAnimation;
   s32 iconHandle;
   s32 previousCondition;
@@ -228,7 +228,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
               1) == 0) ||
       battleObject->cycleTimer == 0) {
     iconAnimation = -1;
-    owner = battleObject->object;
+    object = battleObject->object;
     if ((s16)battleObject->activeStatuses != 0) {
       // The next status after the shown one, wrapping around.
       previousCondition = battleObject->shownStatus;
@@ -250,7 +250,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 
     // Swap the icon on the unit's first sprite; iconAnimation is -1 when no
     // status is left.
-    record = GetMotionRecord(owner, 0);
+    record = GetMotionRecord(object, 0);
     if (record != 0) {
       // Units 32 pixels wide take their own set of icon animations.
       if (iconAnimation >= 0) {

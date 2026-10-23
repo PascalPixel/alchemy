@@ -127,11 +127,11 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
 /// Returns the element the unit attacks with (ELEMENT_NONE for none): an
 /// enemy's comes from its kind, a character's from its equipped weapon.
 /// Called by BattleTurn_Build for an attack's element.
-s32 Item_GetEquippedElement(s32 owner) {
+s32 Item_GetEquippedElement(s32 unitId) {
   struct ItemDefinition *item;
   struct Unit *unit;
 
-  unit = Unit_Get(owner);
+  unit = Unit_Get(unitId);
   if (unit->classId == CLASS_NONE)
     return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
@@ -168,21 +168,21 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 /// unleashChance times 5 percent plus what the equipment adds. Returns the
 /// unleash action, or 1 for a plain attack. Called by BattleTurn_Build for
 /// each Attack command.
-s32 RollWeaponUnleash(struct Unit *owner) {
+s32 RollWeaponUnleash(struct Unit *unit) {
   struct ItemDefinition *item;
   s32 rate;
 
-  if (owner->classId == CLASS_NONE) {
+  if (unit->classId == CLASS_NONE) {
     return 1;
   }
-  item = Inventory_GetEquippedDefinition(owner, ITEM_TYPE_WEAPON);
+  item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
   if (item == NULL) {
     return 1;
   }
   if (item->unleashAbility == 0) {
     return 1;
   }
-  rate = ((Equipment_GetUnleashRateBonus(owner) + (item->unleashChance * 5))
+  rate = ((Equipment_GetUnleashRateBonus(unit) + (item->unleashChance * 5))
           << 0x10) /
          100;
   if (rate > (Battle_Random() & 0xFFFF)) {

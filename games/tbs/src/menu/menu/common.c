@@ -110,8 +110,10 @@ void Window_CloseIfOpen(struct Window **handle, s32 style) {
   }
 }
 
-/// Copies one Unit with the resident IWRAM word copy.
-static inline void Owner_Copy(struct Unit *destination, struct Unit *source) {
+/// Copies one Unit through _call_via_r3 to the resident IWRAM word copy, where
+/// menu/djinn.c's Unit_Copy calls Iwram_CopyWords.
+static inline void Unit_CopyViaR3(struct Unit *destination,
+                                  struct Unit *source) {
   _call_via_r3(destination, source, sizeof(struct Unit), IwramCopyWords);
 }
 
@@ -222,14 +224,14 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
     // recalculate its stats, show them against the saved copy, then put the
     // unit back as it was.
     backup = Alloc(sizeof(struct Unit));
-    Owner_Copy(backup, unit);
+    Unit_CopyViaR3(backup, unit);
     if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);
     Unit_CalculateFar(owner);
     Text_DrawStatComparison(unit, backup, window);
-    Owner_Copy(unit, backup);
+    Unit_CopyViaR3(unit, backup);
     Free(backup);
     break;
   }

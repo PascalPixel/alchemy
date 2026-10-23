@@ -199,11 +199,11 @@ void BattleParty_ResetActiveRuntimeFields(void) {
 #else
 s32 BattleParty_ResetActiveRuntimeFields(void) {
 #endif
-  u16 owners[10];
+  u16 unitIds[10];
   s32 count;
   s32 i;
 
-  count = BattleParty_PrepareMembers(owners);
+  count = BattleParty_PrepareMembers(unitIds);
 
   i = 0;
   if (i < count) {
@@ -212,7 +212,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
     s32 remaining;
 
     do {
-      unit = Unit_GetFar(owners[i]);
+      unit = Unit_GetFar(unitIds[i]);
 
       // The four element levels, cleared from the last.
       level = (u8 *)&unit->summonBoost[ELEMENT_COUNT - 1];
@@ -245,7 +245,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->agilityStage = 0;
       unit->challenge = 0;
 
-      Unit_CalculateFar(owners[i]);
+      Unit_CalculateFar(unitIds[i]);
       i++;
     } while (i < count);
   }
@@ -262,25 +262,25 @@ void DjinnRecovery_Reconcile(void) {
 #else
 s32 DjinnRecovery_Reconcile(void) {
 #endif
-  u16 owners[10];
+  u16 unitIds[10];
   s32 count;
   s32 i;
-  s32 owner;
+  s32 unitId;
   s32 element;
   s32 djinni;
 
-  count = BattleParty_PrepareMembers(owners);
+  count = BattleParty_PrepareMembers(unitIds);
 
   // Units 0 to 7 use the party's list, any other the opponent's.
   for (i = 0; i < count; i++) {
-    owner = owners[i];
+    unitId = unitIds[i];
     for (element = 0; element < ELEMENT_COUNT; element++) {
       for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
-        if (Djinn_CanSetFar(owner, element, djinni) != 0) {
+        if (Djinn_CanSetFar(unitId, element, djinni) != 0) {
           struct DjinnRecoveryList *list =
               &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                    (owner < 0 || owner > ALLY_MAX) ? DJINN_RECOVERY_OPPONENT
-                                                    : DJINN_RECOVERY_PARTY))
+                    (unitId < 0 || unitId > ALLY_MAX) ? DJINN_RECOVERY_OPPONENT
+                                                      : DJINN_RECOVERY_PARTY))
                    ->list;
           s32 j;
 
@@ -290,7 +290,7 @@ s32 DjinnRecovery_Reconcile(void) {
               break;
           }
           if (j == list->count)
-            DjinnRecovery_AddStandbyFar(owner, element, djinni);
+            DjinnRecovery_AddStandbyFar(unitId, element, djinni);
         }
       }
     }

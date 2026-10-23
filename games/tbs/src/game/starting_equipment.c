@@ -6,7 +6,7 @@
 /// Party_InitializeCharacters reads it at a new game: each listed character
 /// gets its definition's items, equipped, its class and its starting level.
 // clang-format off
-const s32 gCharacter_StartingEquipOwnerIds[6] = {
+const s32 gCharacter_StartingEquipUnitIds[6] = {
     ISAAC, GARET, IVAN, MIA, JENNA, -1,
 };
 // clang-format on

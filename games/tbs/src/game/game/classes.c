@@ -69,8 +69,8 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 /// `ELEMENT_NONE`.
 /// Called by the two status screens to show the element levels, and by
 /// Battle_IsReviveEffect.
-s32 Unit_GetElementLevel(s32 owner, s32 element) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Unit_GetElementLevel(s32 unitId, s32 element) {
+  struct Unit *unit = Unit_Get(unitId);
   s32 summonBoost[4];
   s32 result = 0;
 
@@ -99,16 +99,16 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
 // tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnit_Set
 // and Unit_UpdateClass, which both ignore the result.
 #ifdef UBFIX
-void Unit_CalculateBaseElements(s32 owner,
+void Unit_CalculateBaseElements(s32 unitId,
                                 struct BattleElementStats *destination) {
 #else
-u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
+u32 Unit_CalculateBaseElements(s32 unitId, s16 destination[4][2]) {
 #endif
   // Without UBFIX the return type is u32, which keeps r0 as the ROM does
   // (as void, the two return instructions differ: 4 in tbs-en), and the
   // destination is the array view, which keeps the table address added
   // after the first store (the typed fields differ by 2 in tbs-en).
-  struct Unit *state = Unit_Get(owner);
+  struct Unit *state = Unit_Get(unitId);
   u32 index;
   s32 values[4];
   s32 i;
@@ -239,14 +239,14 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 /// psynergy and baseElement. Called when a Djinni is set or put on
 /// standby, at the prologue's start and end, at a new game and around the
 /// Colosso's inventory snapshot.
-void Unit_UpdateClass(s32 ownerId) {
-  struct Unit *owner = Unit_Get(ownerId);
+void Unit_UpdateClass(s32 unitId) {
+  struct Unit *unit = Unit_Get(unitId);
 
-  owner->classId = Class_Determine(owner->id, (u8 *)owner->djinnHeld);
-  Unit_RefreshPsynergy(ownerId);
+  unit->classId = Class_Determine(unit->id, (u8 *)unit->djinnHeld);
+  Unit_RefreshPsynergy(unitId);
 #ifdef UBFIX
-  Unit_CalculateBaseElements(ownerId, owner->baseElement);
+  Unit_CalculateBaseElements(unitId, unit->baseElement);
 #else
-  Unit_CalculateBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
+  Unit_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
 #endif
 }

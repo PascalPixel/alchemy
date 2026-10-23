@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-extern const s32 gCharacter_StartingEquipOwnerIds[6];
+extern const s32 gCharacter_StartingEquipUnitIds[6];
 
 #endif

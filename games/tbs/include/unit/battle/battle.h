@@ -81,7 +81,7 @@ s32 BattleUnit_TickSleep(s32 unitId);
     }                                                                          \
   }
 
-s32 BattleParty_PrepareMembers(u16 *owners);
+s32 BattleParty_PrepareMembers(u16 *unitIds);
 s32 BattleEnemy_List(s16 *unitIds);
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds);
@@ -360,9 +360,9 @@ void Irq_RemoveVCountHandler(void);
 s32 BattleFormation_AverageLevel(s32 recordId);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
 #ifdef UBFIX
-void BattleEnemy_AdjustLevel(s32 owner, s32 levels);
+void BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 #else
-s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels);
+s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 #endif
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused);
 #ifdef UBFIX

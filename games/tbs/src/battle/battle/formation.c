@@ -199,9 +199,9 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 /// out its stats again (Unit_Calculate). Called by
 /// BattleFormation_BuildEnemyList for each enemy of a monster battle.
 #ifdef UBFIX
-void BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
+void BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 #else
-s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
+s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 #endif
   struct BattleBaseStats *base;
   struct Unit *unit;
@@ -210,7 +210,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   s32 element;
 
   base = AllocEwram(sizeof(struct BattleBaseStats));
-  unit = Unit_GetFar(owner);
+  unit = Unit_GetFar(unitId);
   Iwram_CopyWords(base, &unit->baseHp, sizeof(struct BattleBaseStats));
 
   value = unit->baseHp;
@@ -254,7 +254,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   }
 
   unit->level += levels;
-  Unit_CalculateFar(owner);
+  Unit_CalculateFar(unitId);
   Free(base);
 }
 

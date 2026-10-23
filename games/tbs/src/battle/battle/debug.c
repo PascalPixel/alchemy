@@ -29,7 +29,7 @@
 /// teach. A row whose member is -1 ends a preset. Read only by
 /// DebugParty_LoadPreset.
 struct DebugPartyEntry {
-  s8 owner;                      ///< the party member, or DEBUG_PRESET_END
+  s8 unitId;                     ///< the party member, or DEBUG_PRESET_END
   u8 level;                      ///< the level the member is raised to
   s8 djinnCounts[ELEMENT_COUNT]; ///< Djinn of each element to give and Set
   u16 items[4];                  ///< items to add and equip; 0 for none
@@ -55,7 +55,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
   // The next Djinni number of each element to hand out.
   s32 nextDjinn[ELEMENT_COUNT];
   struct Unit *member;
-  s32 owner;
+  s32 unitId;
   s32 notFound;
   s32 row;
   s32 djinnIndex;
@@ -77,12 +77,12 @@ s32 DebugParty_LoadPreset(s32 preset) {
   // Presets are runs of rows each ended by a DEBUG_PRESET_END row; skip
   // to the run numbered preset and apply its rows.
   for (row = 0;; row++) {
-    owner = gDebug_PartyPresets[row].owner;
+    unitId = gDebug_PartyPresets[row].unitId;
     if (row < 0 || row > DEBUG_PRESET_LAST_ROW) {
       notFound = 1;
       break;
     }
-    if (owner == DEBUG_PRESET_END) {
+    if (unitId == DEBUG_PRESET_END) {
       if (currentPreset == preset)
         break;
       currentPreset++;
@@ -91,11 +91,11 @@ s32 DebugParty_LoadPreset(s32 preset) {
     if (currentPreset != preset)
       continue;
 
-    Party_AddMemberFar(owner);
-    Unit_LevelUpToFar(owner, gDebug_PartyPresets[row].level);
+    Party_AddMemberFar(unitId);
+    Unit_LevelUpToFar(unitId, gDebug_PartyPresets[row].level);
 
     // Start from no Djinn and no abilities.
-    member = (struct Unit *)Unit_GetFar(owner);
+    member = (struct Unit *)Unit_GetFar(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       member->djinnHeldCounts[i] = 0;
       member->djinnSetCounts[i] = 0;
@@ -108,15 +108,15 @@ s32 DebugParty_LoadPreset(s32 preset) {
       *(u16 *)&member->psynergy[i] = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_PartyPresets[row].abilities[i] != 0)
-        Unit_LearnPsynergyFar(owner, gDebug_PartyPresets[row].abilities[i]);
+        Unit_LearnPsynergyFar(unitId, gDebug_PartyPresets[row].abilities[i]);
     }
 
     // Djinn are numbered across the party, so no two members get the same.
     for (i = 0; i < ELEMENT_COUNT; i++) {
       for (djinnIndex = 0; djinnIndex < gDebug_PartyPresets[row].djinnCounts[i];
            djinnIndex++) {
-        Djinn_GiveFar(owner, i, nextDjinn[i]);
-        Djinn_SetFar(owner, i, nextDjinn[i]);
+        Djinn_GiveFar(unitId, i, nextDjinn[i]);
+        Djinn_SetFar(unitId, i, nextDjinn[i]);
         nextDjinn[i]++;
       }
     }
@@ -124,12 +124,12 @@ s32 DebugParty_LoadPreset(s32 preset) {
     // Empty the inventory, removing slot 0 one time more than there are
     // slots, then add and equip the row's items.
     for (i = 0; i < INVENTORY_SLOTS + 1; i++)
-      Inventory_RemoveFar(owner, 0);
+      Inventory_RemoveFar(unitId, 0);
     for (i = 0; i < 4; i++) {
       if (gDebug_PartyPresets[row].items[i] != 0)
         Inventory_EquipFar(
-            owner,
-            Inventory_AddItemFar(owner, gDebug_PartyPresets[row].items[i]));
+            unitId,
+            Inventory_AddItemFar(unitId, gDebug_PartyPresets[row].items[i]));
     }
   }
   return notFound;

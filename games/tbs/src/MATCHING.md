@@ -473,9 +473,10 @@ its cells.
 Two spellings recur in the menus, one for copying a party member's unit and
 one for reaching a heap block.
 
-- A unit is copied with the resident IWRAM routine as `Iwram_CopyWords`,
-  through `_call_via_r3(..., IwramCopyWords)` (`Owner_Copy`), or through
-  `Item_CopyWords` (tagged).
+- A unit is copied with the resident IWRAM routine as `Iwram_CopyWords`
+  (`Unit_Copy` in `menu/djinn.c`), through
+  `_call_via_r3(..., IwramCopyWords)` (`Unit_CopyViaR3`), or
+  through `Item_CopyWords` (tagged).
 - A neighbouring heap block is reached from the menu control slot as
   `cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM]`.
 - The menu work is read through one struct per screen

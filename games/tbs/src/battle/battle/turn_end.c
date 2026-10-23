@@ -565,7 +565,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
   }
   {
     s32 i;
-    s32 owner;
+    s32 holderId;
     struct DjinnRecoveryList *pending;
     pending = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                     (unitId < 0 || unitId > ALLY_MAX)))
@@ -578,19 +578,19 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
       counts[i] = 0;
     }
     for (;;) {
-      owner = -1;
+      holderId = -1;
       for (i = 0; i < pending->count; i++) {
         if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
-          owner = pending->entries[i].unitId;
+          holderId = pending->entries[i].unitId;
           break;
         }
       }
-      if (owner == -1) {
+      if (holderId == -1) {
         break;
       }
       recoveryTurn = -1;
       for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].unitId == owner &&
+        if (pending->entries[i].unitId == holderId &&
             pending->entries[i].turns > recoveryTurn) {
           recoveryTurn = pending->entries[i].turns;
         }
@@ -600,7 +600,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
         recoveryTurn = 2;
       }
       for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].unitId == owner &&
+        if (pending->entries[i].unitId == holderId &&
             pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
           pending->entries[i].turns = recoveryTurn;
           counts[pending->entries[i].element]++;

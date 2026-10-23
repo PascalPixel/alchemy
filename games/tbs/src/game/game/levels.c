@@ -26,8 +26,8 @@ struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
 /// Returns 1 when `actionId` is in the unit's action list. Called by the
 /// scripts that check whether a member knows a Psynergy
 /// (FieldScript_ValidatePackedId).
-s32 Unit_KnowsPsynergy(s32 owner, s32 actionId) {
-  struct Unit *unit = Unit_Get(owner);
+s32 Unit_KnowsPsynergy(s32 unitId, s32 actionId) {
+  struct Unit *unit = Unit_Get(unitId);
   struct PsynergyEntry *entry;
   s32 actionMask = PSYNERGY_ABILITY_MASK;
   s32 index = 0;
@@ -66,7 +66,7 @@ enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
 /// alone. Called whenever the class, level or equipment changes:
 /// Inventory_Equip, Unit_UpdateClass, Unit_LevelUp, Unit_LearnPsynergy and the
 /// item menu.
-s32 Unit_RefreshPsynergy(s32 owner) {
+s32 Unit_RefreshPsynergy(s32 unitId) {
   struct Unit *unit;
   struct PsynergyEntry *abilities;
   struct ClassDefinition *classDefinition;
@@ -76,7 +76,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
   u16 originFlag;
   struct ClassAbility *classAbility;
 
-  unit = Unit_Get(owner);
+  unit = Unit_Get(unitId);
   abilities = unit->psynergy;
   classDefinition = Class_GetDefinition(unit->classId);
   if (unit->classId == CLASS_NONE)
@@ -230,9 +230,9 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 /// Levels the character up once if it has the experience. Returns `gains`
 /// filled with the gains, or NULL. Only GAME.S's bare veneer reaches it;
 /// nothing calls it by name.
-struct LevelUpResult *Unit_CheckLevelUp(s32 owner,
+struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
                                         struct LevelUpResult *gains) {
-  return Unit_TryLevelUp(owner, gains);
+  return Unit_TryLevelUp(unitId, gains);
 }
 
 /// Returns character `index`'s definition: growth curves, starting level and
@@ -251,15 +251,15 @@ void Party_InitializeCharacters(void) {
   struct Unit *unit;
   struct CharacterDefinition *character;
   u16 nameBuf[16];
-  s32 owner;
-  const s32 *startingOwner = gCharacter_StartingEquipOwnerIds;
+  s32 unitId;
+  const s32 *startingUnitId = gCharacter_StartingEquipUnitIds;
   s32 i;
   s32 slot;
   u8 *name;
 
-  for (owner = 0; owner <= 7; owner++) {
-    unit = Unit_Get(owner);
-    Message_DecodeRawUnboundedFar(owner + MsgCharacterName, nameBuf);
+  for (unitId = 0; unitId <= 7; unitId++) {
+    unit = Unit_Get(unitId);
+    Message_DecodeRawUnboundedFar(unitId + MsgCharacterName, nameBuf);
     name = unit->name;
     name[0] = nameBuf[0];
     i = 0;
@@ -274,13 +274,13 @@ void Party_InitializeCharacters(void) {
     unit->name[14] = 0;
   }
 
-  // gCharacter_StartingEquipOwnerIds lists the characters given starting
+  // gCharacter_StartingEquipUnitIds lists the characters given starting
   // equipment, ended by -1 (starting_equipment.c).
-  if (*startingOwner != -1) {
+  if (*startingUnitId != -1) {
     do {
-      unit = Unit_Get(*startingOwner);
+      unit = Unit_Get(*startingUnitId);
       if (unit != 0) {
-        unit->id = *startingOwner;
+        unit->id = *startingUnitId;
         character = Character_GetDefinition(unit->id);
 
         for (i = 14; i >= 0; i--)
@@ -288,18 +288,19 @@ void Party_InitializeCharacters(void) {
 
         for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
              i++) {
-          slot = Inventory_AddItem(*startingOwner, character->items[i] & 0x1ff);
-          Inventory_Equip(*startingOwner, slot);
+          slot =
+              Inventory_AddItem(*startingUnitId, character->items[i] & 0x1ff);
+          Inventory_Equip(*startingUnitId, slot);
         }
 
-        Unit_UpdateClass(*startingOwner);
+        Unit_UpdateClass(*startingUnitId);
         unit->ppGauge = 0x4000;
         unit->hpGauge = 0x4000;
-        Unit_LevelUpTo(*startingOwner, character->startingLevel);
-        Unit_Calculate(*startingOwner);
+        Unit_LevelUpTo(*startingUnitId, character->startingLevel);
+        Unit_Calculate(*startingUnitId);
       }
-      startingOwner++;
-    } while (*startingOwner != -1);
+      startingUnitId++;
+    } while (*startingUnitId != -1);
   }
 }
 
@@ -309,8 +310,8 @@ UNUSED void Unit_LevelNoOp(void) {}
 /// Returns the experience a character needs for `level` (0 for level 0 and
 /// below); -1 for an enemy or a level above 99. Called by the levelling code
 /// and by the two status screens to show the experience to the next level.
-u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
-  struct Unit *unit = Unit_Get(owner);
+u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
+  struct Unit *unit = Unit_Get(unitId);
 
   if (unit->classId != CLASS_NONE) {
     if (level <= 0) {
@@ -329,7 +330,7 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
 /// part. Writes the unit's level, base stats and, if short, its experience,
 /// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
 /// returned.
-struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
+struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
   struct LevelUpWork *work;
   u32 requiredExperience;
@@ -337,7 +338,7 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
   s32 growthDifference;
   s32 level;
 
-  unit = Unit_Get(owner);
+  unit = Unit_Get(unitId);
   work = AllocEwram(sizeof(struct LevelUpWork));
   work->classIndex = unit->classId;
   level = unit->level;
@@ -353,10 +354,10 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
   if (level < 99) {
     unit->level++;
     gains->level = level + 1;
-    requiredExperience = Unit_GetExperienceForLevel(owner, unit->level);
+    requiredExperience = Unit_GetExperienceForLevel(unitId, unit->level);
     if (requiredExperience != -1 && unit->experience < requiredExperience)
       unit->experience = requiredExperience;
-    work->growth = Character_GetDefinition(owner);
+    work->growth = Character_GetDefinition(unitId);
     // Level 1 starts from the curve's first point.
     if (gains->level == 1) {
       gains->hp += work->growth->hp[0];
@@ -405,8 +406,8 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
     unit->baseActionCount = 1;
     unit->baseHpRegen = 0;
     unit->basePpRegen = 0;
-    Unit_RefreshPsynergy(owner);
-    Unit_Calculate(owner);
+    Unit_RefreshPsynergy(unitId);
+    Unit_Calculate(unitId);
   }
   Free(work);
   return gains;
@@ -416,31 +417,31 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
 /// Returns `gains` filled with the gains, or NULL. Called after a battle by
 /// Battle_AwardSpoils, once for each level a member reaches. At level 99 the
 /// next level needs -1 (0xffffffff) experience, which none reaches.
-struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
+struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
 
-  unit = Unit_Get(owner);
+  unit = Unit_Get(unitId);
   if ((unit->experience >=
-       Unit_GetExperienceForLevel(owner, unit->level + 1)) &&
-      (Unit_LevelUp(owner, gains) != NULL)) {
+       Unit_GetExperienceForLevel(unitId, unit->level + 1)) &&
+      (Unit_LevelUp(unitId, gains) != NULL)) {
     return gains;
   }
   return 0;
 }
 
-/// Levels character `owner` up one level at a time until `targetLevel`, then
+/// Levels character `unitId` up one level at a time until `targetLevel`, then
 /// recomputes its stats. Called by Party_InitializeCharacters for the starting
 /// levels, and by the debug menus and presets.
-void Unit_LevelUpTo(s32 owner, s32 targetLevel) {
+void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;
-  s32 currentLevel = Unit_Get(owner)->level;
+  s32 currentLevel = Unit_Get(unitId)->level;
 
   while (currentLevel < targetLevel) {
-    Unit_LevelUp(owner, &gains);
+    Unit_LevelUp(unitId, &gains);
     currentLevel++;
   }
-  Unit_Calculate(owner);
+  Unit_Calculate(unitId);
 }
 
 #undef PSYNERGY_ACTION_AT

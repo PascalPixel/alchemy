@@ -492,19 +492,19 @@ static void EventScript_UnusedCheckLeaderAhead(void) { Field_TryJumpForward(); }
 /// Opens the selected blue door, playing its opening when asked.
 static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
   s32 columnOffset = (passageInfo & PASSAGE_INDEX_MASK) * 4;
-  s32 tileColumn = columnOffset + 77;
-  s32 collisionColumn = columnOffset + 13;
+  s32 cellColumn = columnOffset + 77;
+  s32 attributeColumn = columnOffset + 13;
 
   if (passageInfo & PASSAGE_PLAY_OPENING) {
     Sound_PlaySong(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    MapGrid_CopyCells(79, 29, 1, 3, tileColumn, 40);
+    MapGrid_CopyCells(79, 29, 1, 3, cellColumn, 40);
     WaitFrames(40);
   }
-  MapGrid_CopyCells(80, 29, 1, 3, tileColumn, 40);
-  MapGrid_CopyCellAttributes(collisionColumn, 40, 1, 1, collisionColumn, 41);
-  MapGrid_CopyCellAttributes(collisionColumn, 40, 1, 1, collisionColumn, 42);
+  MapGrid_CopyCells(80, 29, 1, 3, cellColumn, 40);
+  MapGrid_CopyCellAttributes(attributeColumn, 40, 1, 1, attributeColumn, 41);
+  MapGrid_CopyCellAttributes(attributeColumn, 40, 1, 1, attributeColumn, 42);
 }
 
 /// Opens the red door, playing its opening when asked.

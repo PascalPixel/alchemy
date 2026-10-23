@@ -2958,13 +2958,13 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
 
 /// Replaces one inventory item in the member and slot that contain it.
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
-  s32 owner = PartyInventory_FindMember(oldItem);
+  s32 member = PartyInventory_FindMember(oldItem);
 
-  if (owner != -1) {
-    s32 inventorySlot = Inventory_Find(owner, oldItem);
+  if (member != -1) {
+    s32 inventorySlot = Inventory_Find(member, oldItem);
 
     if (inventorySlot != -1) {
-      Unit_Get(owner)->inventory[inventorySlot] = newItem;
+      Unit_Get(member)->inventory[inventorySlot] = newItem;
     }
   }
 }
@@ -3052,7 +3052,7 @@ s32 gMercuryLighthouse_SparkScript[] = {
 };
 
 s32 gMercuryLighthouse_RampScript[] = {
-    SC_CALL(ObjectEvent_RampWords24And28Over16Frames),
+    SC_CALL(MercuryLighthouse_GrowLight),
     SC_END,
 };
 

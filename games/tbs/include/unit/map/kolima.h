@@ -38,7 +38,7 @@ extern struct ObjectEventTemplate gKolima_EntryScript[];
 extern struct ObjectEventTemplate gKolimaBridgeObjectEventTemplates[];
 extern struct MapEvent gKolimaEvents[];
 extern struct MapEvent gKolimaBridgeEvents[];
-extern s32 gKolima_Object26Script[];
+extern s32 gKolima_GoldenRingsScript[];
 extern s32 gKolima_RegionScript[];
 extern s32 gFallingEffectScript[];
 

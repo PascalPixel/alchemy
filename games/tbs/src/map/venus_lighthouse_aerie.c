@@ -838,7 +838,7 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 localId, s32 shown) {
 /// and FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
 /// aerie's music.
 static void EventScript_ConfrontSaturosAndMenardi(void) {
-  s32 rodOwner;
+  s32 rodHolder;
   struct ObjectEvent *objectEvent;
   s32 answerAccepted;
   s32 frame;
@@ -1229,8 +1229,8 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   // Save the rod owner for the defeat return path, then enter battle.
-  rodOwner = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
-  GameFlag_Set(rodOwner + FLAG_SHAMANS_ROD_OWNER);
+  rodHolder = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
+  GameFlag_Set(rodHolder + FLAG_SHAMANS_ROD_OWNER);
   PartyInventory_Remove(ITEM_SHAMANS_ROD);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
@@ -1401,7 +1401,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct Sprite *sprite;
   u8 *iconPixels;
   // Reuse the dialogue answer word for the later radial burst directions.
-  u32 sceneStep;
+  u32 answeredYes;
 
   Script_Start();
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
@@ -1483,10 +1483,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Script_ChooseYesNo(0, 0) == 0) {
-    sceneStep = TRUE;
+    answeredYes = TRUE;
   } else {
     gFieldWork->message++;
-    sceneStep = FALSE;
+    answeredYes = FALSE;
   }
   Task_Wait(20);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
@@ -1496,7 +1496,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_ShowMessage(LOCALID_FELIX, 0);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_Wait(40);
-  if (sceneStep) {
+  if (answeredYes) {
     gFieldWork->message++;
   }
 
@@ -1667,14 +1667,14 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_OpenMessage(GARET, 0);
   if (Script_ChooseYesNo(0, 0) == 0) {
     ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-    sceneStep = TRUE;
+    answeredYes = TRUE;
   } else {
     gFieldWork->message++;
     ObjectEvent_SetAnimation(GARET, ANIM_SHAKE_HEAD);
-    sceneStep = FALSE;
+    answeredYes = FALSE;
   }
   VenusLighthouseAerie_ShowMessage(GARET);
-  if (sceneStep) {
+  if (answeredYes) {
     gFieldWork->message++;
   }
   Script_Wait(20);
@@ -1893,8 +1893,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   menardiBurst.update = VenusLighthouseAerie_UpdateDriftingParticle;
   menardiBurst.startScaleX = Q16_ONE;
   menardiBurst.startScaleY = Q16_ONE;
-  for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
-    VenusLighthouseAerie_AimBurst(velocity, sceneStep << 12);
+  for (answeredYes = 0; answeredYes <= 16; answeredYes++) {
+    VenusLighthouseAerie_AimBurst(velocity, answeredYes << 12);
     FieldEffect_Spawn(menardi->x.fixed, menardi->y.fixed, menardi->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1909,8 +1909,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   saturosBurst.update = VenusLighthouseAerie_UpdateDriftingParticle;
   saturosBurst.startScaleX = Q16_ONE;
   saturosBurst.startScaleY = Q16_ONE;
-  for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
-    VenusLighthouseAerie_AimBurst(velocity, sceneStep << 12);
+  for (answeredYes = 0; answeredYes <= 16; answeredYes++) {
+    VenusLighthouseAerie_AimBurst(velocity, answeredYes << 12);
     FieldEffect_Spawn(saturos->x.fixed, saturos->y.fixed, saturos->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |

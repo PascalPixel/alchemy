@@ -400,7 +400,7 @@ s32 Map_Initialize(void) {
         ObjectDispatch_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), 253);
+      Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), MB_CLIMB);
     }
     if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 1) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 1);
@@ -409,7 +409,7 @@ s32 Map_Initialize(void) {
         ObjectDispatch_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), 253);
+      Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), MB_CLIMB);
     }
     if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 2) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 2);
@@ -418,7 +418,7 @@ s32 Map_Initialize(void) {
         ObjectDispatch_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), 253);
+      Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), MB_CLIMB);
     }
     if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 3) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 3);
@@ -427,8 +427,8 @@ s32 Map_Initialize(void) {
         ObjectDispatch_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(144), PIXELS(320), 253);
-      Field_SetMetatileBehaviorAt(0, PIXELS(752), PIXELS(320), 253);
+      Field_SetMetatileBehaviorAt(0, PIXELS(144), PIXELS(320), MB_CLIMB);
+      Field_SetMetatileBehaviorAt(0, PIXELS(752), PIXELS(320), MB_CLIMB);
     }
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_NUT_CAUGHT) != 0) {
       return 0;
@@ -639,7 +639,7 @@ static void EventScript_UnusedGrowFirstPlant(s32 localId) {
     objectEvent->collisionFlags = 0;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
+  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN);
 }
 
@@ -654,7 +654,7 @@ static void EventScript_GrowSecondPlant(s32 localId) {
     objectEvent->collisionFlags = 0;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
+  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 1);
 }
 
@@ -669,7 +669,7 @@ static void EventScript_GrowThirdPlant(s32 localId) {
     objectEvent->collisionFlags = 0;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
+  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 2);
 }
 
@@ -686,8 +686,8 @@ static void EventScript_GrowFourthPlant(s32 localId) {
     objectEvent->collisionFlags = 0;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
-  MapGrid_SetMetatileBehaviorAt(0, secondFixedX, secondFixedZ, 253);
+  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
+  MapGrid_SetMetatileBehaviorAt(0, secondFixedX, secondFixedZ, MB_CLIMB);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 3);
 }
 

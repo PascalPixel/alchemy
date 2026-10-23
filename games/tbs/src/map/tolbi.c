@@ -75,6 +75,7 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "fixed_math.h"
+#include "map_grid.h"
 
 #if TBS_PATCH_1
 #define TOLBI_JAR_SEARCH_KIND                                                  \
@@ -209,7 +210,7 @@ static void Tolbi_GrowSprout(void) {
   }
   sprout = ObjectEvent_GetById(LOCALID_TOLBI_SPROUT);
   ObjectEvent_SetSpriteFlags(sprout, 0);
-  Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), 253);
+  Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), MB_CLIMB);
   Engine_GameFlagSet(FLAG_MAP_TEMP_00);
 }
 

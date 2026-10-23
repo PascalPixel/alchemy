@@ -313,17 +313,17 @@ static inline void BabiPalace_CloseDoors(void) {
 /// After a night in the palace's beds: the party's HP and PP are full,
 /// Garet, Ivan and Mia rejoin, and the inventory Colosso held is returned.
 static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
-  s16 owners[8];
+  s16 members[8];
   struct Unit *state;
-  s32 ownerCount;
+  s32 memberCount;
   s32 i;
 
-  ownerCount = FieldParty_ListMembers(owners);
-  for (i = 0; i < ownerCount; i++) {
-    state = Unit_Get(owners[i]);
+  memberCount = FieldParty_ListMembers(members);
+  for (i = 0; i < memberCount; i++) {
+    state = Unit_Get(members[i]);
     state->hp = state->hpMax;
     state->pp = state->ppMax;
-    Unit_RecalculateGauges(owners[i]);
+    Unit_RecalculateGauges(members[i]);
   }
   Party_AddMember(GARET);
   Party_AddMember(IVAN);

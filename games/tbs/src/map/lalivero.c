@@ -152,8 +152,7 @@ enum LaliveroLocalId {
   LOCALID_BLACK_ORB
 };
 
-/// The door at coord event 6, into the Lalivero Sanctum, is a gate two cells
-/// wide.
+/// The door into the Lalivero Sanctum, a gate two cells wide.
 enum LaliveroMetatileBehavior { MB_LALIVERO_SANCTUM_GATE = 6 };
 
 /// A cell of the wall along the town's south edge (MB_WALL), whose

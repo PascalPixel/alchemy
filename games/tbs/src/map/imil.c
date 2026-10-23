@@ -1613,11 +1613,11 @@ static void Imil_RunIceSlide(void) {
   struct ObjectEvent *subject;
   struct FieldPosition probe;
   s32 heading;
-  s32 goal;
-  s32 marker;
+  s32 startBehavior;
+  s32 nextBehavior;
   s32 z;
   s32 x;
-  u8 *terrainId;
+  u8 *layer;
 
   subject = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 
@@ -1634,14 +1634,13 @@ static void Imil_RunIceSlide(void) {
     probe.z = (subject->z.fixed & 0xfff00000) + PIXELS(8);
     z = probe.z;
     x = probe.x;
-    terrainId = &subject->layer;
-    goal = MapGrid_GetMetatileBehaviorAt(*terrainId, x, z);
+    layer = &subject->layer;
+    startBehavior = MapGrid_GetMetatileBehaviorAt(*layer, x, z);
     Vector_AddPolarOffset(PIXELS(16), heading, &probe);
 
-    marker = MapGrid_GetMetatileBehaviorAt(*terrainId, probe.x, probe.z);
-    if (marker == 255 ||
-        MapGrid_GetTerrainHeight(*terrainId, probe.x, probe.z) -
-                subject->y.fixed >
+    nextBehavior = MapGrid_GetMetatileBehaviorAt(*layer, probe.x, probe.z);
+    if (nextBehavior == MB_WALL ||
+        MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) - subject->y.fixed >
             PIXELS(8)) {
       subject->facing = heading;
       goto tail;
@@ -1661,11 +1660,11 @@ static void Imil_RunIceSlide(void) {
     // Advance along the slide until its next cell is blocked or too high.
     for (;;) {
       FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
-      if ((marker = MapGrid_GetMetatileBehaviorAt(*terrainId, probe.x,
-                                                  probe.z)) == 255) {
+      if ((nextBehavior = MapGrid_GetMetatileBehaviorAt(*layer, probe.x,
+                                                        probe.z)) == 255) {
         break;
       }
-      if (MapGrid_GetTerrainHeight(*terrainId, probe.x, probe.z) -
+      if (MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) -
               subject->y.fixed >
           0x80000) {
         break;
@@ -1676,7 +1675,7 @@ static void Imil_RunIceSlide(void) {
       subject->acceleration = PIXELS(1) / 10;
       Object_SetPosition(subject, probe.x, probe.y, probe.z);
       Object_WaitForMove(subject);
-      if (marker != goal) {
+      if (nextBehavior != startBehavior) {
         goto blocked;
       }
     }

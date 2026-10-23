@@ -548,17 +548,17 @@ static void EventScript_UnlockToadonpaDoor(void) {
 static void LunpaFortress_OpenCaveDoor(s32 doorIndex) {
   s32 doorCellX;
   s32 doorCellY;
-  s32 collisionCellY;
+  s32 attributeCellY;
 
   doorCellX = gLunpaFortressCaveDoorCells[doorIndex * 2];
   doorCellY = gLunpaFortressCaveDoorCells[doorIndex * 2 + 1];
   MapGrid_CopyCells(0, 77, 1, 3, doorCellX, doorCellY);
   MapGrid_CopyCells(1, 77, 1, 1, doorCellX + 1, doorCellY);
-  collisionCellY = doorCellY - 44;
+  attributeCellY = doorCellY - 44;
   MapGrid_CopyCellAttributes(doorCellX, doorCellY - 45, 1, 1, doorCellX,
-                             collisionCellY);
+                             attributeCellY);
   if (doorIndex == 1)
-    MapGrid_CopyCellAttributes(doorCellX, collisionCellY, 1, 1, doorCellX,
+    MapGrid_CopyCellAttributes(doorCellX, attributeCellY, 1, 1, doorCellX,
                                doorCellY - 43);
 }
 

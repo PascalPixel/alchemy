@@ -2607,17 +2607,17 @@ static void WorldMap_ShowIslandDrifting(void) {
 static void WorldMap_UpdateStormTimer(void) {
 
   struct ObjectEvent *objectEvent;
-  struct EventWork *scene;
+  struct EventWork *work;
   s32 progress;
 
   objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
-  scene = gFieldWork;
+  work = gFieldWork;
   objectEvent->facing = (gFrameCount << 12);
 
   progress = FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8);
   if (progress != 0) {
     if (progress == 1) {
-      scene->raisedEvent = RAISED_STORM_TIME_UP;
+      work->raisedEvent = RAISED_STORM_TIME_UP;
     } else if (GameFlag_Test(FLAG_MENU_OPEN) == 0) {
       progress -= 1;
     }

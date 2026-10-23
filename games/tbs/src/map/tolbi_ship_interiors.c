@@ -481,7 +481,7 @@ static void TolbiShipInteriors_PlaceObjectEvent(s32 localId, s32 x, s32 z,
 static void TolbiShipInteriors_MoveCameraAndWait(s32 x, s32 y, s32 z,
                                                  u32 flags);
 static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt);
-static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate);
+static s32 TolbiShipInteriors_FindFirstSetFlag(u32 seat, s32 alternate);
 static void TolbiShipInteriors_HideSelectedPassengers(void);
 static void TolbiShipInteriors_HideSelectedPassenger(s32 localId,
                                                      s32 firstFlag);
@@ -3710,7 +3710,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
 
 /// Finds the selected passenger or rowing-deck object event for a seat's flag
 /// group.
-static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate) {
+static s32 TolbiShipInteriors_FindFirstSetFlag(u32 seat, s32 alternate) {
   s32 flag = 0;
   s32 id = LOCALID_SEA_HOLD_FIRST_PASSENGER;
   u32 i;
@@ -3718,7 +3718,7 @@ static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate) {
   if (alternate == 0) {
     id = LOCALID_ROWING_FIRST_PASSENGER;
   }
-  switch (group) {
+  switch (seat) {
   case 0:
     flag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
     break;

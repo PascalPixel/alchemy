@@ -789,7 +789,7 @@ s32 gMercuryLighthouse_SparkScript[] = {
 };
 
 s32 gMercuryLighthouse_RampScript[] = {
-    SC_CALL(ObjectEvent_RampWords24And28Over16Frames),
+    SC_CALL(MercuryLighthouse_GrowLight),
     SC_END,
 };
 

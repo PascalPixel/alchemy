@@ -177,7 +177,7 @@ static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
 static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject);
-static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep);
+static void Sanctum_SpawnOrbitingEffect(s32 localId, s32 angleStep);
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
@@ -1680,18 +1680,18 @@ static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
 }
 
 /// Creates an orbiting effect with the requested angular step.
-static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
+static void Sanctum_SpawnOrbitingEffect(s32 localId, s32 angleStep) {
   s32 orbitStep;
-  struct ObjectEvent *owner;
+  struct ObjectEvent *center;
   struct ObjectEvent *effect;
   struct Sprite *sprite;
   struct Sprite *sourceSprite;
 
   orbitStep = angleStep;
-  owner = ObjectEvent_GetById(ownerId);
-  if (owner != 0) {
-    effect = ObjectEvent_Create(SPRITE_SPARKLE, owner->x.fixed,
-                                owner->y.fixed + PIXELS(45), owner->z.fixed);
+  center = ObjectEvent_GetById(localId);
+  if (center != 0) {
+    effect = ObjectEvent_Create(SPRITE_SPARKLE, center->x.fixed,
+                                center->y.fixed + PIXELS(45), center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
       ObjectEvent_SetScript(effect, gSanctum_OwnerEffectScript);
@@ -1707,8 +1707,8 @@ static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
         u16 clearFlags = 0;
         sprite->flags = clearFlags;
       }
-      sourceSprite = owner->sprite;
-      effect->linkedObject = owner;
+      sourceSprite = center->sprite;
+      effect->linkedObject = center;
       sprite->image.priority = sourceSprite->image.priority;
     }
   }

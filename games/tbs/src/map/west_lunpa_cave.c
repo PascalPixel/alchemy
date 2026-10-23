@@ -374,7 +374,7 @@ static void EventScript_HammetFindsBunza(void) {
 /// area, and offers his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
-  s32 plan;
+  s32 messageBase;
 
   // Arrange the reunion while the screen is closed, then reveal the group.
   FieldScript_Start();
@@ -620,39 +620,39 @@ static void Reunion_Converse(void) {
   ObjectEvent_FaceObjectEvent(IVAN, LOCALID_BUNZA, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_BUNZA, 0);
   ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  plan = MsgLunpaBunza;
-  FieldScript_SetMessageId(plan + PLAN_HAMMET_ASKS_PLAN);
+  messageBase = MsgLunpaBunza;
+  FieldScript_SetMessageId(messageBase + PLAN_HAMMET_ASKS_PLAN);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_HAS_WAGON);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_HAS_WAGON);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldScript_SetMessageId(plan + PLAN_MIA_ASKS_ABOUT_WAGON);
+  FieldScript_SetMessageId(messageBase + PLAN_MIA_ASKS_ABOUT_WAGON);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | MIA, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, MIA, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_OFFERS_RIDE);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_OFFERS_RIDE);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_FaceObjectEvent(IVAN, LOCALID_BUNZA, 0);
-  FieldScript_SetMessageId(plan + PLAN_IVAN_DOUBTS_WAGON);
+  FieldScript_SetMessageId(messageBase + PLAN_IVAN_DOUBTS_WAGON);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_REASSURES);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_REASSURES);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_BUNZA, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_BUNZA, 0);
-  FieldScript_SetMessageId(plan + PLAN_GARET_AGREES);
+  FieldScript_SetMessageId(messageBase + PLAN_GARET_AGREES);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, GARET, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_IS_UNSUSPECTED);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_IS_UNSUSPECTED);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_LinkPair(LOCALID_HAMMET, IVAN, 0);
   FieldScript_WaitFrames(60);

@@ -191,7 +191,7 @@ const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void) {
 /// into a Mythril Bag. Sets FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED.
 static void EventScript_BagVenusStar(void) {
   u32 i;
-  s32 itemOwner;
+  s32 member;
   s32 message;
 
   FieldScript_Start();
@@ -262,10 +262,10 @@ static void EventScript_BagVenusStar(void) {
   MapGrid_CopyCellsTo(0, 40, 43, 66, 3, 3);
   FieldScript_WaitFrames(20);
   // Present the collected star, then return to Kraden's explanation.
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(220, PIXELS(712),
-                                                      PIXELS(16), PIXELS(464));
+  member = SolSanctumElementalStarRoom_PresentStar(220, PIXELS(712), PIXELS(16),
+                                                   PIXELS(464));
   FieldScript_WaitFrames(40);
-  MessageArgument_Push(itemOwner, 1);
+  MessageArgument_Push(member, 1);
   message = MsgSolSanctumVenusStarBagged;
   FieldMessage_Show(message, 1);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST, 0);
@@ -297,7 +297,7 @@ static void EventScript_BagVenusStar(void) {
 /// FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED.
 static void EventScript_BagMercuryStar(void) {
   u32 i;
-  s32 itemOwner;
+  s32 member;
   s32 message;
 
   FieldScript_Start();
@@ -368,10 +368,10 @@ static void EventScript_BagMercuryStar(void) {
   MapGrid_CopyCellsTo(0, 40, 43, 46, 3, 3);
   FieldScript_WaitFrames(20);
   // Present the collected star, then return to Kraden's explanation.
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(221, PIXELS(712),
-                                                      PIXELS(16), PIXELS(144));
+  member = SolSanctumElementalStarRoom_PresentStar(221, PIXELS(712), PIXELS(16),
+                                                   PIXELS(144));
   FieldScript_WaitFrames(40);
-  MessageArgument_Push(itemOwner, 1);
+  MessageArgument_Push(member, 1);
   message = MsgSolSanctumPutMercuryStar;
   FieldMessage_Show(message, 1);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHEAST, 0);
@@ -418,7 +418,7 @@ static void EventScript_BagJupiterStarAndMeetSaturos(void) {
 /// Reveals the Jupiter Star's crossings and puts the star in a Mythril Bag.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   u32 i;
-  s32 itemOwner;
+  s32 member;
 
   Script_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
@@ -486,10 +486,10 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   FieldScript_WaitFrames(20);
   MapGrid_CopyCellsTo(0, 40, 13, 66, 3, 3);
   FieldScript_WaitFrames(20);
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(223, PIXELS(232),
-                                                      PIXELS(16), PIXELS(464));
+  member = SolSanctumElementalStarRoom_PresentStar(223, PIXELS(232), PIXELS(16),
+                                                   PIXELS(464));
   FieldScript_WaitFrames(40);
-  MessageArgument_Push(itemOwner, 1);
+  MessageArgument_Push(member, 1);
   FieldMessage_Show(MsgSolSanctumJupiterStarBagged, 1);
 }
 
@@ -1262,7 +1262,7 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
 /// collapse (MapId_SolSanctumEruption).
 static void EventScript_TakeMarsStar(void) {
   u8 pass;
-  s32 itemOwner;
+  s32 member;
   struct ObjectEvent *leader;
 
   FieldScript_Start();
@@ -1282,10 +1282,10 @@ static void EventScript_TakeMarsStar(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_CopyCellsTo(0, 40, 13, 46, 3, 3);
   FieldScript_WaitFrames(20);
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(222, PIXELS(232),
-                                                      PIXELS(16), PIXELS(144));
+  member = SolSanctumElementalStarRoom_PresentStar(222, PIXELS(232), PIXELS(16),
+                                                   PIXELS(144));
   FieldScript_WaitFrames(40);
-  MessageArgument_Push(itemOwner, 1);
+  MessageArgument_Push(member, 1);
   FieldMessage_Show(MsgSolSanctumMarsStarBagged, 1);
   ObjectEvent_SetPosition(JENNA, PIXELS(307), PIXELS(277));
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(307), PIXELS(277));
@@ -2199,15 +2199,15 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   GlyphTransfer *glyph;
   struct ObjectEvent *objectEvent;
   struct Sprite *sprite;
-  s32 owner;
+  s32 member;
   s32 slot;
 
   glyph = NULL;
   objectEvent = ObjectEvent_Create(SPRITE_BLANK, x, y, z);
-  owner = PartyInventory_FindMember(ITEM_MYTHRIL_BAG);
-  slot = Inventory_Find(owner, ITEM_MYTHRIL_BAG);
+  member = PartyInventory_FindMember(ITEM_MYTHRIL_BAG);
+  slot = Inventory_Find(member, ITEM_MYTHRIL_BAG);
   if (objectEvent == NULL)
-    return owner;
+    return member;
   ObjectEvent_SetScript(objectEvent,
                         gSolSanctumElementalStarRoom_PresentItemScript);
   sprite = objectEvent->sprite;
@@ -2223,11 +2223,11 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   FreeHeapSlot(17);
   Sound_PlaySong(MUS_TREASURE_FOUND);
   ItemDisplay_ShowPicture(objectEvent, 3);
-  Inventory_Discard(owner, slot);
-  Inventory_AddItem(owner, item);
+  Inventory_Discard(member, slot);
+  Inventory_AddItem(member, item);
   ObjectEvent_Release(objectEvent);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  return owner;
+  return member;
 }
 
 /// Makes room among the items and gives the party four Mythril Bags, keeping

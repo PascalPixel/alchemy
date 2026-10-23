@@ -585,7 +585,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
 static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *shadow;
-  struct ObjectEvent *spriteOwner;
+  struct ObjectEvent *target;
   u8 frame;
 
   shadow = ObjectEvent_GetById(LOCALID_PLATFORM_SHADOW);
@@ -596,8 +596,8 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   FieldScript_WaitFrames(10);
   ObjectEvent_SetPosition(LOCALID_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
   objectEvent = ObjectEvent_GetById(localId);
-  spriteOwner = ObjectEvent_GetById(localId);
-  ObjectEvent_SetSpriteFlags(spriteOwner, 0);
+  target = ObjectEvent_GetById(localId);
+  ObjectEvent_SetSpriteFlags(target, 0);
   ObjectEvent_SetChildValue(localId, 0x100);
   objectEvent->motionFlags = 0;
   Script_PlaySong(SE_201);

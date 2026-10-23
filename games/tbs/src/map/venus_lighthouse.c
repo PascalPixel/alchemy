@@ -621,7 +621,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
 static UNUSED s32 PushedObject_FillGridAttributeRectangle(u32 layerIndex, s32 x,
                                                           s32 z, u32 width,
                                                           u32 height,
-                                                          s32 collisionCode) {
+                                                          s32 behavior) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridCell *cells;
   u32 row;
@@ -638,7 +638,7 @@ static UNUSED s32 PushedObject_FillGridAttributeRectangle(u32 layerIndex, s32 x,
       struct MapGridCell *cell = cells + (row << 7);
 
       for (column = 0; column < width; column++) {
-        cell->behavior = collisionCode;
+        cell->behavior = behavior;
         cell++;
       }
     }
@@ -1707,7 +1707,8 @@ static void EventScript_MoveCarryPillar(void) {
   do {
     pillar = ObjectEvent_GetById(pillarIndex + LOCALID_FIRST_CARRY_PILLAR);
     if (pillar->y.fixed > -PIXELS(16)) {
-      MapGrid_SetMetatileBehaviorAt(0, pillar->x.fixed, pillar->z.fixed, 255);
+      MapGrid_SetMetatileBehaviorAt(0, pillar->x.fixed, pillar->z.fixed,
+                                    MB_WALL);
     }
     pillarIndex++;
   } while (pillarIndex <= 1);
